@@ -85,6 +85,9 @@ plugins:
   - awesome-pages
   - tags
 
+extra_css:
+  - stylesheets/extra.css
+
 copyright: >
   &copy; 2024–2026 sonic-unofficial-docs contributors —
   本ドキュメントは <a href="https://creativecommons.org/licenses/by/4.0/deed.ja">CC BY 4.0</a> の下で提供されます。

@@ -153,41 +153,42 @@ sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --clea
 - 復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。
 - 詳細実装は HLD `doc/warm-reboot/code_implementation.md` を参照（このドキュメントは要点のみ）。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-11 時点の現行 master を裏取り。
 
-2026-05-11 時点の現行 master を裏取り。
+    ### 1. ファイル + 行番号
 
-### 1. ファイル + 行番号
+    - **取り込み済み（warm restart コア）**: `sonic-net/sonic-swss-common` `common/warm_restart.cpp` L56-L58（`STATE_WARM_RESTART_TABLE_NAME` / `CFG_WARM_RESTART_TABLE_NAME` の Table オブジェクト初期化）、同 L122（state 書き込み）、同 L223（`WarmStart::setWarmStartState`）、ヘッダ `common/warm_restart.h`。
+    - **取り込み済み（CLI）**: `sonic-net/sonic-utilities` `config/main.py` の `config warm_restart enable/disable` サブコマンド、`show/main.py` の `show warm_restart`。
+    - **HLD と差分あり**: HLD 本文に列挙された PR/diff URL は `jipanyang` の個人 fork に対する compare URL であり、現行 master ではこれらの単独 PR としては存在しない。**機能としては取り込まれているが、URL を辿ってもコードは見られない**。
 
-- **取り込み済み（warm restart コア）**: `sonic-net/sonic-swss-common` `common/warm_restart.cpp` L56-L58（`STATE_WARM_RESTART_TABLE_NAME` / `CFG_WARM_RESTART_TABLE_NAME` の Table オブジェクト初期化）、同 L122（state 書き込み）、同 L223（`WarmStart::setWarmStartState`）、ヘッダ `common/warm_restart.h`。
-- **取り込み済み（CLI）**: `sonic-net/sonic-utilities` `config/main.py` の `config warm_restart enable/disable` サブコマンド、`show/main.py` の `show warm_restart`。
-- **HLD と差分あり**: HLD 本文に列挙された PR/diff URL は `jipanyang` の個人 fork に対する compare URL であり、現行 master ではこれらの単独 PR としては存在しない。**機能としては取り込まれているが、URL を辿ってもコードは見られない**。
+    ### 2. 差分の中身
 
-### 2. 差分の中身
+    - HLD は `WARM_RESTART_TABLE:<app>` キーに `restart_count` / `state` を保存する旨を書くが、現行コードは **`STATE_WARM_RESTART_TABLE` / `CFG_WARM_RESTART_TABLE` の 2 系統に分離**して扱う（`warm_restart.cpp` L56-L58）。`STATE_DB` 側に `WARM_RESTART_TABLE|<app>` として `state`/`restart_count` が現れる。
+    - `sonic-installer upgrade_docker <name> <tag> <url>` は現行も存在するが、`--cleanup_image` オプションの動作と warm restart シーケンスの噛み合いはバージョン差がある。HLD の virtual switch テスト結果（45 tests passed）は当時のスナップショットで、現行 CI の test 数とは合わない。
+    - `swss-flushdb` というスクリプト名は現行 `sonic-buildimage` の `dockers/docker-orchagent/` 配下では見つからない（コマンド名が変わっている / 内部呼び出しに整理された可能性）。
 
-- HLD は `WARM_RESTART_TABLE:<app>` キーに `restart_count` / `state` を保存する旨を書くが、現行コードは **`STATE_WARM_RESTART_TABLE` / `CFG_WARM_RESTART_TABLE` の 2 系統に分離**して扱う（`warm_restart.cpp` L56-L58）。`STATE_DB` 側に `WARM_RESTART_TABLE|<app>` として `state`/`restart_count` が現れる。
-- `sonic-installer upgrade_docker <name> <tag> <url>` は現行も存在するが、`--cleanup_image` オプションの動作と warm restart シーケンスの噛み合いはバージョン差がある。HLD の virtual switch テスト結果（45 tests passed）は当時のスナップショットで、現行 CI の test 数とは合わない。
-- `swss-flushdb` というスクリプト名は現行 `sonic-buildimage` の `dockers/docker-orchagent/` 配下では見つからない（コマンド名が変わっている / 内部呼び出しに整理された可能性）。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    - HLD 文中の compare URL から実装を読もうとすると 404 / 個人 fork で迷子になる。
+    - `WARM_RESTART_TABLE` を 1 系統前提でデバッグすると、`CFG_DB` 側設定と `STATE_DB` 側状態の分離を見落とす。
+    - `swss-flushdb` 名で手動運用を期待すると見つからない。
 
-- HLD 文中の compare URL から実装を読もうとすると 404 / 個人 fork で迷子になる。
-- `WARM_RESTART_TABLE` を 1 系統前提でデバッグすると、`CFG_DB` 側設定と `STATE_DB` 側状態の分離を見落とす。
-- `swss-flushdb` 名で手動運用を期待すると見つからない。
+    ### 4. 回避策
 
-### 4. 回避策
-
-- 現行コードは以下を起点に追う:
-    - `sonic-swss-common/common/warm_restart.{h,cpp}` （API 層）
-    - `sonic-swss/orchagent/*orch.cpp` の `bake()` / `WarmStart::checkWarmStart` / `setWarmStartState` 呼び出し
-    - `sonic-buildimage/dockers/docker-orchagent/` の起動スクリプト群
-- redis 上での確認:
-  ```bash
-  sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
-  sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|orchagent'
-  sonic-db-cli CONFIG_DB hgetall 'WARM_RESTART|swss'
-  ```
-- 詳細仕様は本 HLD（`code_implementation.md`）ではなく、`doc/warm-reboot/SONiC_Warmboot.md` および `sonic-swss-common` のヘッダコメントを優先で参照。
+    - 現行コードは以下を起点に追う:
+        - `sonic-swss-common/common/warm_restart.{h,cpp}` （API 層）
+        - `sonic-swss/orchagent/*orch.cpp` の `bake()` / `WarmStart::checkWarmStart` / `setWarmStartState` 呼び出し
+        - `sonic-buildimage/dockers/docker-orchagent/` の起動スクリプト群
+    - redis 上での確認:
+      ```bash
+      sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
+      sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|orchagent'
+      sonic-db-cli CONFIG_DB hgetall 'WARM_RESTART|swss'
+      ```
+    - 詳細仕様は本 HLD（`code_implementation.md`）ではなく、`doc/warm-reboot/SONiC_Warmboot.md` および `sonic-swss-common` のヘッダコメントを優先で参照。
+<!-- /diff-admonition -->
 
 ## 引用元
 

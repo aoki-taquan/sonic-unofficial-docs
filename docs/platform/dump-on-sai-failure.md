@@ -121,27 +121,28 @@ sudo show techsupport                    # dump も自動取り込み
 - techsupport に同梱されない → techsupport 側収集ロジックが本ディレクトリを対象にしているか確認
 - abort が遅い → `platform_syncd_dump.sh` の処理時間を計測
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    | 項目 | HLD 表記 | 実装 |
+    |---|---|---|
+    | 汎用スクリプト | `/usr/bin/syncd_dump.sh` | **`/usr/bin/sai_failure_dump.sh`**（`Syncd.cpp:45` の `SAI_FAILURE_DUMP_SCRIPT`）|
+    | 出力先 | `/var/log/sai_failure_dump/` | 一致 |
+    | rotation 上限 | `SAI_MAX_FAILURE_DUMPS=10` | 一致 |
+    | platform スクリプト | `/usr/bin/platform_syncd_dump.sh` | 一致 |
+    | ディスパッチ | `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 経由 | 一致（`Syncd.cpp:4493`）|
 
-| 項目 | HLD 表記 | 実装 |
-|---|---|---|
-| 汎用スクリプト | `/usr/bin/syncd_dump.sh` | **`/usr/bin/sai_failure_dump.sh`**（`Syncd.cpp:45` の `SAI_FAILURE_DUMP_SCRIPT`）|
-| 出力先 | `/var/log/sai_failure_dump/` | 一致 |
-| rotation 上限 | `SAI_MAX_FAILURE_DUMPS=10` | 一致 |
-| platform スクリプト | `/usr/bin/platform_syncd_dump.sh` | 一致 |
-| ディスパッチ | `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 経由 | 一致（`Syncd.cpp:4493`）|
+    **読者への影響**:
 
-**読者への影響**:
+    - 古いランブックで「`/usr/bin/syncd_dump.sh` の有無」を見るスクリプトは **常に存在しない判定** になる
+    - 監視で「汎用 dump スクリプトの最終更新時刻」を見るケースは参照パス更新が必要
+    - HLD 由来手順書は `syncd_dump.sh` を `sai_failure_dump.sh` に置換することを推奨
 
-- 古いランブックで「`/usr/bin/syncd_dump.sh` の有無」を見るスクリプトは **常に存在しない判定** になる
-- 監視で「汎用 dump スクリプトの最終更新時刻」を見るケースは参照パス更新が必要
-- HLD 由来手順書は `syncd_dump.sh` を `sai_failure_dump.sh` に置換することを推奨
+    > 分類: `monitor: evolved_beyond_hld` — HLD 概念は取り込み済みだが、フィールド/パス名が実装で進化。実装側を正として読み替える必要。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD 概念は取り込み済みだが、フィールド/パス名が実装で進化。実装側を正として読み替える必要。
+    ### 関連 GitHub Issue / PR
 
-### 関連 GitHub Issue / PR
-
-- スクリプト改名は dump-on-sai-failure 取り込み PR で同時実施。HLD 文書側は古い名前のまま。HLD と直接紐づくトラッキング Issue / PR は未確認。
+    - スクリプト改名は dump-on-sai-failure 取り込み PR で同時実施。HLD 文書側は古い名前のまま。HLD と直接紐づくトラッキング Issue / PR は未確認。
+<!-- /diff-admonition -->
 
 <!-- next-action -->
 ## このページを読んだ後の次アクション

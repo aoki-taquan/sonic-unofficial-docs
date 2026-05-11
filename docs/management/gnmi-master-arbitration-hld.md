@@ -229,41 +229,42 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 - 一度大きな EID を使うと巻き戻せない: 設計上 EID は単調増加。再採番したい時はサーバ再起動で `masterEID` をリセットするしかない（HLD 仕様）[^1]
 - `Get` は通るのに `Set` だけ落ちる: 仕様通り。Master Arbitration は `Set` のみ対象[^1]
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
 
-実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
+    - **Role.id の扱い**: HLD Restrictions は「default role 以外は **無視** する」と記載しているが、現行 master の `sonic-gnmi/gnmi_server/server.go:1329-1331` は `ma.Role != nil` の場合 `codes.Unimplemented "MA: Role is not implemented"` を返して **拒否** している。HLD どおり「ヘッダに Role を付けても通る」想定でクライアントを実装すると `Set` がエラーになるため注意。
+    - **CONFIG_DB スキーマ**: HLD は `TELEMETRY|gnmi:master_arbitration_enabled` を提案しているが、現行 master の `sonic-gnmi` には対応する CONFIG_DB 駆動の有効化パスは存在せず、`sonic-buildimage` 側にも `master_arbitration_enabled` 名のスキーマは見当たらない。実際の有効化はもっぱら `--with-master-arbitration` 起動フラグ (`sonic-gnmi/telemetry/telemetry.go:188,587-588`) であり、CONFIG_DB 経由の動的 ON/OFF はサポートされていない。
 
-- **Role.id の扱い**: HLD Restrictions は「default role 以外は **無視** する」と記載しているが、現行 master の `sonic-gnmi/gnmi_server/server.go:1329-1331` は `ma.Role != nil` の場合 `codes.Unimplemented "MA: Role is not implemented"` を返して **拒否** している。HLD どおり「ヘッダに Role を付けても通る」想定でクライアントを実装すると `Set` がエラーになるため注意。
-- **CONFIG_DB スキーマ**: HLD は `TELEMETRY|gnmi:master_arbitration_enabled` を提案しているが、現行 master の `sonic-gnmi` には対応する CONFIG_DB 駆動の有効化パスは存在せず、`sonic-buildimage` 側にも `master_arbitration_enabled` 名のスキーマは見当たらない。実際の有効化はもっぱら `--with-master-arbitration` 起動フラグ (`sonic-gnmi/telemetry/telemetry.go:188,587-588`) であり、CONFIG_DB 経由の動的 ON/OFF はサポートされていない。
+    主要な合致点として、`sonic-gnmi/gnmi_server/server.go:1310-1351` の `ReqFromMasterEnabledMA`（extension 走査・末尾 MA 採用・128-bit EID 比較・揮発の `masterEID`・`PermissionDenied` 返却）、`server.go:1070` の `Set` 内での認証前 `ReqFromMaster` 呼び出し、`telemetry/telemetry.go:62,188` の `--with-master-arbitration` フラグは HLD どおり実装されていることを確認した。
 
-主要な合致点として、`sonic-gnmi/gnmi_server/server.go:1310-1351` の `ReqFromMasterEnabledMA`（extension 走査・末尾 MA 採用・128-bit EID 比較・揮発の `masterEID`・`PermissionDenied` 返却）、`server.go:1070` の `Set` 内での認証前 `ReqFromMaster` 呼び出し、`telemetry/telemetry.go:62,188` の `--with-master-arbitration` フラグは HLD どおり実装されていることを確認した。
+    **読者への影響**:
 
-**読者への影響**:
+    - HLD どおり「Role を無視して default として扱う」と思ってクライアントを実装すると、Role を載せた瞬間 `Unimplemented` で `Set` が落ちる。**現行実装では Role 拡張は付けてはいけない**。
+    - CONFIG_DB から `TELEMETRY|gnmi:master_arbitration_enabled` を書いて runtime で ON/OFF する経路は未実装。**機能を有効にするには telemetry の起動オプションを書き換えてプロセス再起動が必要**で、サービス無停止の有効化はできない。
 
-- HLD どおり「Role を無視して default として扱う」と思ってクライアントを実装すると、Role を載せた瞬間 `Unimplemented` で `Set` が落ちる。**現行実装では Role 拡張は付けてはいけない**。
-- CONFIG_DB から `TELEMETRY|gnmi:master_arbitration_enabled` を書いて runtime で ON/OFF する経路は未実装。**機能を有効にするには telemetry の起動オプションを書き換えてプロセス再起動が必要**で、サービス無停止の有効化はできない。
+    **回避策 / 対応方法**:
 
-**回避策 / 対応方法**:
+    - クライアント側は `MasterArbitration` 拡張に Role フィールドを付けず、`ElectionId` のみで送る実装にする。
+    - 機能を有効化したい場合は `/etc/sonic/telemetry/` 系の設定または systemd unit を変更し、`--with-master-arbitration` を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。
+    - マルチ ASIC 構成では `masterEID` がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への `Set` ごとに EID を主張し直す。
 
-- クライアント側は `MasterArbitration` 拡張に Role フィールドを付けず、`ElectionId` のみで送る実装にする。
-- 機能を有効化したい場合は `/etc/sonic/telemetry/` 系の設定または systemd unit を変更し、`--with-master-arbitration` を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。
-- マルチ ASIC 構成では `masterEID` がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への `Set` ごとに EID を主張し直す。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `sonic-gnmi/gnmi_server/server.go:1329-1331` で `ma.Role != nil` → `codes.Unimplemented`。HLD は「無視」と記載するが実装は **明示拒否**。
+    - `--with-master-arbitration` 起動フラグ (`telemetry/telemetry.go:62, 188, 587-588`) でのみ有効化。CONFIG_DB 駆動の動的 ON/OFF は未実装。
+    - `masterEID` は gnmi server プロセス内メモリに保持 (`server.go:1310-1351`)。プロセス再起動で揮発。
+    - 関連 Issue/PR: `sonic-gnmi` の Master Arbitration 取り込み PR は 2024 年前半に merge。Role 拒否挙動は当該 PR で固定化されており、HLD 側更新待ち。
+    - **追加回避策コマンド**: クライアント側 — gNMI `SetRequest` の `extension` には `MasterArbitration{ElectionId: <uint128>}` のみを設定し、`Role` フィールドは空にする。Go gNMI client 例 — `req.Extension = []*gnmi_ext.Extension{{Ext: &gnmi_ext.Extension_MasterArbitration{MasterArbitration: &gnmi_ext.MasterArbitration{ElectionId: &gnmi_ext.Uint128{High: hi, Low: lo}}}}}`。
 
-- `sonic-gnmi/gnmi_server/server.go:1329-1331` で `ma.Role != nil` → `codes.Unimplemented`。HLD は「無視」と記載するが実装は **明示拒否**。
-- `--with-master-arbitration` 起動フラグ (`telemetry/telemetry.go:62, 188, 587-588`) でのみ有効化。CONFIG_DB 駆動の動的 ON/OFF は未実装。
-- `masterEID` は gnmi server プロセス内メモリに保持 (`server.go:1310-1351`)。プロセス再起動で揮発。
-- 関連 Issue/PR: `sonic-gnmi` の Master Arbitration 取り込み PR は 2024 年前半に merge。Role 拒否挙動は当該 PR で固定化されており、HLD 側更新待ち。
-- **追加回避策コマンド**: クライアント側 — gNMI `SetRequest` の `extension` には `MasterArbitration{ElectionId: <uint128>}` のみを設定し、`Role` フィールドは空にする。Go gNMI client 例 — `req.Extension = []*gnmi_ext.Extension{{Ext: &gnmi_ext.Extension_MasterArbitration{MasterArbitration: &gnmi_ext.MasterArbitration{ElectionId: &gnmi_ext.Uint128{High: hi, Low: lo}}}}}`。
+    > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-gnmi #86: sonic-gnmi: Master Arbitration (closed)](https://github.com/sonic-net/sonic-gnmi/pull/86) — Master Arbitration 機能の sonic-gnmi 側追加 PR の痕跡。本 HLD と直接対応するが closed であり、現在の master 取り込み状況は要再確認。
+    - [sonic-gnmi #86: sonic-gnmi: Master Arbitration (closed)](https://github.com/sonic-net/sonic-gnmi/pull/86) — Master Arbitration 機能の sonic-gnmi 側追加 PR の痕跡。本 HLD と直接対応するが closed であり、現在の master 取り込み状況は要再確認。
+<!-- /diff-admonition -->
 
 ## 引用元
 

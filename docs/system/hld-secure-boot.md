@@ -154,55 +154,56 @@ dmesg | grep -i "module verification failed"
 cat /sys/module/<mod>/sections/.note.* 2>/dev/null
 ```
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-11 時点の現行 master を裏取り。
 
-2026-05-11 時点の現行 master を裏取り。
+    ### 1. ファイル + 行番号
 
-### 1. ファイル + 行番号
+    - **取り込み済み（署名スクリプト）**: `sonic-net/sonic-buildimage` `scripts/signing_secure_boot_dev.sh`, `scripts/secure_boot_signature_verification.sh`, `files/image_config/secureboot/`。
+    - **取り込み済み（ビルド変数）**: `sonic-buildimage/rules/config` L280-L295（`SECURE_UPGRADE_DEV_SIGNING_KEY` / `SECURE_UPGRADE_SIGNING_CERT` / `SECURE_UPGRADE_KERNEL_CAFILE` / `SECURE_UPGRADE_MODE` / `SECURE_UPGRADE_PROD_SIGNING_TOOL` / `SECURE_UPGRADE_PROD_TOOL_ARGS`）。
+    - **取り込み済み（Docker 連携）**: `sonic-buildimage/Makefile.work` L366-L383, L625-L628（署名鍵 / 証明書を ONIE installer ビルドコンテナへ bind mount、`SECURE_UPGRADE_MODE` を伝搬）。
+    - **HLD と差分あり**: HLD が示す `SB_BUILD=production` / `SB_DEV_KEY` 形式のビルド変数は **存在しない**。現行は `SECURE_UPGRADE_MODE=prod|dev|no_sign` と `SECURE_UPGRADE_DEV_SIGNING_KEY` / `SECURE_UPGRADE_SIGNING_CERT` のセットに置き換わっている。
 
-- **取り込み済み（署名スクリプト）**: `sonic-net/sonic-buildimage` `scripts/signing_secure_boot_dev.sh`, `scripts/secure_boot_signature_verification.sh`, `files/image_config/secureboot/`。
-- **取り込み済み（ビルド変数）**: `sonic-buildimage/rules/config` L280-L295（`SECURE_UPGRADE_DEV_SIGNING_KEY` / `SECURE_UPGRADE_SIGNING_CERT` / `SECURE_UPGRADE_KERNEL_CAFILE` / `SECURE_UPGRADE_MODE` / `SECURE_UPGRADE_PROD_SIGNING_TOOL` / `SECURE_UPGRADE_PROD_TOOL_ARGS`）。
-- **取り込み済み（Docker 連携）**: `sonic-buildimage/Makefile.work` L366-L383, L625-L628（署名鍵 / 証明書を ONIE installer ビルドコンテナへ bind mount、`SECURE_UPGRADE_MODE` を伝搬）。
-- **HLD と差分あり**: HLD が示す `SB_BUILD=production` / `SB_DEV_KEY` 形式のビルド変数は **存在しない**。現行は `SECURE_UPGRADE_MODE=prod|dev|no_sign` と `SECURE_UPGRADE_DEV_SIGNING_KEY` / `SECURE_UPGRADE_SIGNING_CERT` のセットに置き換わっている。
+    ### 2. 差分の中身
 
-### 2. 差分の中身
+    | HLD（doc/secure_boot/hld_secure_boot.md） | 現行 master |
+    |---|---|
+    | `make SB_BUILD=production all` | `make SECURE_UPGRADE_MODE=prod SECURE_UPGRADE_PROD_SIGNING_TOOL=/path/tool.sh all` |
+    | `SB_BUILD=dev SB_DEV_KEY=... SB_DEV_CERT=...` | `SECURE_UPGRADE_MODE=dev SECURE_UPGRADE_DEV_SIGNING_KEY=... SECURE_UPGRADE_SIGNING_CERT=...` |
+    | Phase 1 のみ（kernel / shim / GRUB のみ署名） | secure upgrade（image 全体の署名）と統合された一連の変数体系に移行。kernel CA 埋め込み (`SECURE_UPGRADE_KERNEL_CAFILE`) も追加 |
 
-| HLD（doc/secure_boot/hld_secure_boot.md） | 現行 master |
-|---|---|
-| `make SB_BUILD=production all` | `make SECURE_UPGRADE_MODE=prod SECURE_UPGRADE_PROD_SIGNING_TOOL=/path/tool.sh all` |
-| `SB_BUILD=dev SB_DEV_KEY=... SB_DEV_CERT=...` | `SECURE_UPGRADE_MODE=dev SECURE_UPGRADE_DEV_SIGNING_KEY=... SECURE_UPGRADE_SIGNING_CERT=...` |
-| Phase 1 のみ（kernel / shim / GRUB のみ署名） | secure upgrade（image 全体の署名）と統合された一連の変数体系に移行。kernel CA 埋め込み (`SECURE_UPGRADE_KERNEL_CAFILE`) も追加 |
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    HLD の `SB_BUILD=production` を渡しても **Makefile に解決規則が無く無視される**（署名なし image が出来てしまう）。production 署名済 image を期待する読者がそのまま打つと、`mokutil --sb-state` で `SecureBoot disabled` の結果に至る恐れがある。
 
-HLD の `SB_BUILD=production` を渡しても **Makefile に解決規則が無く無視される**（署名なし image が出来てしまう）。production 署名済 image を期待する読者がそのまま打つと、`mokutil --sb-state` で `SecureBoot disabled` の結果に至る恐れがある。
+    ### 4. 回避策
 
-### 4. 回避策
+    現行のビルド変数を使う:
 
-現行のビルド変数を使う:
+    ```bash
+    # production（ベンダ署名ツール経由）
+    make SECURE_UPGRADE_MODE=prod \
+         SECURE_UPGRADE_PROD_SIGNING_TOOL=/path/to/vendor_sign.sh \
+         SECURE_UPGRADE_PROD_TOOL_ARGS="..." \
+         SECURE_UPGRADE_KERNEL_CAFILE=/path/to/ca-bundle.pem \
+         all
 
-```bash
-# production（ベンダ署名ツール経由）
-make SECURE_UPGRADE_MODE=prod \
-     SECURE_UPGRADE_PROD_SIGNING_TOOL=/path/to/vendor_sign.sh \
-     SECURE_UPGRADE_PROD_TOOL_ARGS="..." \
-     SECURE_UPGRADE_KERNEL_CAFILE=/path/to/ca-bundle.pem \
-     all
+    # dev（自前鍵）
+    make SECURE_UPGRADE_MODE=dev \
+         SECURE_UPGRADE_DEV_SIGNING_KEY=/path/to/db.key \
+         SECURE_UPGRADE_SIGNING_CERT=/path/to/db.crt \
+         all
+    ```
 
-# dev（自前鍵）
-make SECURE_UPGRADE_MODE=dev \
-     SECURE_UPGRADE_DEV_SIGNING_KEY=/path/to/db.key \
-     SECURE_UPGRADE_SIGNING_CERT=/path/to/db.crt \
-     all
-```
+    最新の変数リストは `sonic-buildimage/rules/config` のコメントブロック（L275-L300 付近）を参照。
 
-最新の変数リストは `sonic-buildimage/rules/config` のコメントブロック（L275-L300 付近）を参照。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-buildimage #5282: Secure boot (open)](https://github.com/sonic-net/sonic-buildimage/pull/5282) — Secure Boot 機能の元 PR。長期 open で部分マージのみ。
-- [sonic-buildimage #24287: Secureboot: Install boot components in sonic-to-sonic installs for Secure Boot enabled images (open)](https://github.com/sonic-net/sonic-buildimage/pull/24287) — sonic-to-sonic upgrade パスでの secureboot 整合性修正 PR (open)。
-- [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #24249: Bug: \[Trixie\] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)](https://github.com/sonic-net/sonic-buildimage/issues/24249) — chain of trust の現実装上の制約を示す bug。
+    - [sonic-buildimage #5282: Secure boot (open)](https://github.com/sonic-net/sonic-buildimage/pull/5282) — Secure Boot 機能の元 PR。長期 open で部分マージのみ。
+    - [sonic-buildimage #24287: Secureboot: Install boot components in sonic-to-sonic installs for Secure Boot enabled images (open)](https://github.com/sonic-net/sonic-buildimage/pull/24287) — sonic-to-sonic upgrade パスでの secureboot 整合性修正 PR (open)。
+    - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #24249: Bug: \[Trixie\] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)](https://github.com/sonic-net/sonic-buildimage/issues/24249) — chain of trust の現実装上の制約を示す bug。
+<!-- /diff-admonition -->
 
 ## 引用元
 

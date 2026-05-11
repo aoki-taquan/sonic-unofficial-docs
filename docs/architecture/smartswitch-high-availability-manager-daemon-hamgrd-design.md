@@ -187,55 +187,56 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 - **BFD responder**: DPU が最終 state に到達したとき DPU actor が program
 - **dpu-graceful-shutdown / DPU upgrade 系**: DPU actor の state 監視と整合性が必要
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05 時点で **schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み**。HLD の半分弱までが master に入っている部分実装状態。
 
-2026-05 時点で **schema 層（HA Set / HA Scope の table 名）は先行採用済みだが、hamgrd バイナリ・actor framework・swbus・VDPU / DPU_STATE は未取り込み**。HLD の半分弱までが master に入っている部分実装状態。
+    ### 1. どこで乖離が確認されたか
 
-### 1. どこで乖離が確認されたか
+    - **取り込み済み**: `sonic-swss-common/common/schema.h` で以下が定義:
+      - APP DB: `APP_DASH_HA_SET_CONFIG_TABLE_NAME = "DASH_HA_SET_CONFIG_TABLE"`, `APP_DASH_HA_SET_TABLE_NAME = "DASH_HA_SET_TABLE"`, `APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME = "DASH_HA_SCOPE_CONFIG_TABLE"`, `APP_DASH_HA_SCOPE_TABLE_NAME = "DASH_HA_SCOPE_TABLE"`（L180-182 付近）。
+      - CFG DB: `CFG_DASH_HA_GLOBAL_CONFIG_TABLE_NAME = "DASH_HA_GLOBAL_CONFIG"`（L391）、`CFG_DPU_TABLE = "DPU_TABLE"`（L390）。
+      - STATE DB: `STATE_DASH_HA_SCOPE_STATE_TABLE_NAME = "DASH_HA_SCOPE_STATE_TABLE"`（L454）、`STATE_DASH_HA_SET_STATE_TABLE_NAME` も同様。
+    - **未取り込み**:
+      - **`hamgrd` バイナリそのものが community master に存在しない**。`grep -ri hamgrd .cache/sonic-sources/sonic-swss/ .cache/sonic-sources/sonic-buildimage/` のヒットは `sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp` の **コメントのみ**。actor framework / NPU actor / DPU actor の C++ 実装は皆無。
+      - `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` の table 定義は schema.h に無い。`VDPU_TABLE` も無し（あるのは `CFG_DPU_TABLE` のみ）。vDPU 抽象は未取り込み。
+      - **swbus**（actor 間メッセージバス）の文字列は `sonic-swss-common` / `sonic-swss` 双方で 0 件。実装は別リポ（候補: `sonic-dash` / vendor 側）に切り出されている可能性が高いが、本 docs のスコープ内には無い。
+      - HLD が TBD としていた Switch-Driven mode の実装は別 phase で未着手。
 
-- **取り込み済み**: `sonic-swss-common/common/schema.h` で以下が定義:
-  - APP DB: `APP_DASH_HA_SET_CONFIG_TABLE_NAME = "DASH_HA_SET_CONFIG_TABLE"`, `APP_DASH_HA_SET_TABLE_NAME = "DASH_HA_SET_TABLE"`, `APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME = "DASH_HA_SCOPE_CONFIG_TABLE"`, `APP_DASH_HA_SCOPE_TABLE_NAME = "DASH_HA_SCOPE_TABLE"`（L180-182 付近）。
-  - CFG DB: `CFG_DASH_HA_GLOBAL_CONFIG_TABLE_NAME = "DASH_HA_GLOBAL_CONFIG"`（L391）、`CFG_DPU_TABLE = "DPU_TABLE"`（L390）。
-  - STATE DB: `STATE_DASH_HA_SCOPE_STATE_TABLE_NAME = "DASH_HA_SCOPE_STATE_TABLE"`（L454）、`STATE_DASH_HA_SET_STATE_TABLE_NAME` も同様。
-- **未取り込み**:
-  - **`hamgrd` バイナリそのものが community master に存在しない**。`grep -ri hamgrd .cache/sonic-sources/sonic-swss/ .cache/sonic-sources/sonic-buildimage/` のヒットは `sonic-swss/tests/mock_tests/dashenifwdorch_ut.cpp` の **コメントのみ**。actor framework / NPU actor / DPU actor の C++ 実装は皆無。
-  - `DASH_HA_DPU_STATE` / `DASH_HA_VDPU_STATE` の table 定義は schema.h に無い。`VDPU_TABLE` も無し（あるのは `CFG_DPU_TABLE` のみ）。vDPU 抽象は未取り込み。
-  - **swbus**（actor 間メッセージバス）の文字列は `sonic-swss-common` / `sonic-swss` 双方で 0 件。実装は別リポ（候補: `sonic-dash` / vendor 側）に切り出されている可能性が高いが、本 docs のスコープ内には無い。
-  - HLD が TBD としていた Switch-Driven mode の実装は別 phase で未着手。
+    ### 2. HLD と実装の差分の中身
 
-### 2. HLD と実装の差分の中身
+    HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU 側 actor が DASH_HA_SET / SCOPE を駆動、DPU 側 actor が BFD responder を program する」と述べているが、現行 master では **driver にあたる daemon が居ない**。テーブル定義だけが先に入った格好で、テーブルに produce/consume するコードが community master 上に存在しない。Switch-Driven HA mode は仕様自体 TBD。
 
-HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU 側 actor が DASH_HA_SET / SCOPE を駆動、DPU 側 actor が BFD responder を program する」と述べているが、現行 master では **driver にあたる daemon が居ない**。テーブル定義だけが先に入った格好で、テーブルに produce/consume するコードが community master 上に存在しない。Switch-Driven HA mode は仕様自体 TBD。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    - DASH HA を community SONiC で「動かす」ことは現状不可能。`hamgrd` というプロセスが起動しない。
+    - HLD の運用例（`config dash ha ...` 系コマンド、`show dash ha-set` 等）は community CLI に未追加。
+    - vendor SmartSwitch 製品（NVIDIA など）には独自実装の hamgrd 相当が入っている可能性があり、ベンダー版と community 版で挙動が大きく違う。
+    - 本ページの仕様記述は将来仕様参考であり、現行 community master で動く設定ではない。
 
-- DASH HA を community SONiC で「動かす」ことは現状不可能。`hamgrd` というプロセスが起動しない。
-- HLD の運用例（`config dash ha ...` 系コマンド、`show dash ha-set` 等）は community CLI に未追加。
-- vendor SmartSwitch 製品（NVIDIA など）には独自実装の hamgrd 相当が入っている可能性があり、ベンダー版と community 版で挙動が大きく違う。
-- 本ページの仕様記述は将来仕様参考であり、現行 community master で動く設定ではない。
+    ### 4. 回避策 / 対応方法
 
-### 4. 回避策 / 対応方法
+    - **community master を使う場合**: DASH HA は使えない。Smart Switch を組まないか、`sonic-dash` 系の別 component が hamgrd を提供しているか確認する。
+    - **検証だけ進めたい場合**: schema 層は揃っているので、`redis-cli -n 0 hset "DASH_HA_SET_CONFIG_TABLE:hs1" ...` で手動でテーブルに値を入れ、consumer が居ない状態の確認まではできる。BFD responder の program は別途自前で組む必要がある。
+    - **ベンダー版 SmartSwitch を採用**: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。
+    - 上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + `DASH_HA_DPU_STATE` / `VDPU_TABLE` の schema 追加 + CLI の 4 点セットが必要。
 
-- **community master を使う場合**: DASH HA は使えない。Smart Switch を組まないか、`sonic-dash` 系の別 component が hamgrd を提供しているか確認する。
-- **検証だけ進めたい場合**: schema 層は揃っているので、`redis-cli -n 0 hset "DASH_HA_SET_CONFIG_TABLE:hs1" ...` で手動でテーブルに値を入れ、consumer が居ない状態の確認まではできる。BFD responder の program は別途自前で組む必要がある。
-- **ベンダー版 SmartSwitch を採用**: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。
-- 上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + `DASH_HA_DPU_STATE` / `VDPU_TABLE` の schema 追加 + CLI の 4 点セットが必要。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `hamgrd` バイナリは community master の `sonic-buildimage/dockers/` 配下に存在しない (`find .cache/sonic-sources/sonic-buildimage/dockers -name '*hamgr*'` 結果 0)。`sonic-swss/orchagent/dash/` にも hamgrd 相当の actor framework は未取り込み。
+    - schema は `sonic-swss-common/common/schema.h` L180-454 周辺に `DASH_HA_SET_CONFIG_TABLE` / `DASH_HA_SCOPE_CONFIG_TABLE` / `DASH_HA_GLOBAL_CONFIG` / `STATE_DASH_HA_SCOPE_STATE_TABLE` が定義され先行採用。一方 `DASH_HA_DPU_STATE` / `VDPU_TABLE` は未定義。
+    - swbus（actor 間メッセージバス）の文字列は community master 全リポで 0 件。`sonic-dash-api` / vendor 側に切出される計画と推測。
+    - 関連 Issue/PR: `sonic-net/DASH` リポに HA HLD ドラフトと一部 reference 実装が存在するが、community SONiC への merge は段階的。Switch-Driven mode は HLD で TBD のまま。
+    - **追加検証コマンド**: schema 層のみ確認 — `redis-cli -n 0 hset 'DASH_HA_SET_CONFIG_TABLE:hs1' ha_owner 'switch'` で書込は通るが、consumer 不在のため STATE_DB に反映されないことを `redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'` で確認。
 
-- `hamgrd` バイナリは community master の `sonic-buildimage/dockers/` 配下に存在しない (`find .cache/sonic-sources/sonic-buildimage/dockers -name '*hamgr*'` 結果 0)。`sonic-swss/orchagent/dash/` にも hamgrd 相当の actor framework は未取り込み。
-- schema は `sonic-swss-common/common/schema.h` L180-454 周辺に `DASH_HA_SET_CONFIG_TABLE` / `DASH_HA_SCOPE_CONFIG_TABLE` / `DASH_HA_GLOBAL_CONFIG` / `STATE_DASH_HA_SCOPE_STATE_TABLE` が定義され先行採用。一方 `DASH_HA_DPU_STATE` / `VDPU_TABLE` は未定義。
-- swbus（actor 間メッセージバス）の文字列は community master 全リポで 0 件。`sonic-dash-api` / vendor 側に切出される計画と推測。
-- 関連 Issue/PR: `sonic-net/DASH` リポに HA HLD ドラフトと一部 reference 実装が存在するが、community SONiC への merge は段階的。Switch-Driven mode は HLD で TBD のまま。
-- **追加検証コマンド**: schema 層のみ確認 — `redis-cli -n 0 hset 'DASH_HA_SET_CONFIG_TABLE:hs1' ha_owner 'switch'` で書込は通るが、consumer 不在のため STATE_DB に反映されないことを `redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'` で確認。
+    > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
-> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — `hamgrd` (NPU 側 actor) は SmartSwitch HA フィーチャ群の一部として段階的に取り込まれており、本 HLD 個別の追跡 Issue / PR は確認できず。関連実装は `sonic-platform-daemons` / `sonic-swss` の SmartSwitch HA 系 PR 群を横断的に参照のこと。
+    - [GitHub Issue / PR の関連リンクは未確認] — `hamgrd` (NPU 側 actor) は SmartSwitch HA フィーチャ群の一部として段階的に取り込まれており、本 HLD 個別の追跡 Issue / PR は確認できず。関連実装は `sonic-platform-daemons` / `sonic-swss` の SmartSwitch HA 系 PR 群を横断的に参照のこと。
+<!-- /diff-admonition -->
 
 ## 引用元
 

@@ -184,49 +184,50 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
 - Write が ASIC に反映されない: `APPL_STATE_DB` に成功が書かれているか確認。書かれていなければ `P4Orch` 側で失敗してロールバックされている可能性[^1]。
 - P4Info push が reject される: PacketIO メタデータと SAI フィールド型の互換性を確認。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
 
-実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+    - **HashOrch は独立コンポーネントではない**: HLD は OrchAgent に「`HashOrch` を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを `SWITCH_TABLE` の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した `HashOrch` クラスは存在しない。代わりに既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費し、`sonic-swss/orchagent/switch/switch_helper.cpp:24-` の `SWITCH_HASH_FIELD_*` ↔ `SAI_NATIVE_HASH_FIELD_*` マップを通じて SAI 属性を設定する (`orchagent/switchorch.cpp:1507`、`orchdaemon.cpp:199`)。HLD の論理（P4RT App → [orchagent](../reference/glossary.md#term-orchagent) → SAI hash 属性）は同等だが、責務が `HashOrch` ではなく `SwitchOrch` 側にある。
 
-- **HashOrch は独立コンポーネントではない**: HLD は OrchAgent に「`HashOrch` を新規追加し、P4Info から渡されたハッシュフィールド/アルゴリズムを `SWITCH_TABLE` の SAI ハッシュ属性に書く」と記載しているが、現行 master では独立した `HashOrch` クラスは存在しない。代わりに既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費し、`sonic-swss/orchagent/switch/switch_helper.cpp:24-` の `SWITCH_HASH_FIELD_*` ↔ `SAI_NATIVE_HASH_FIELD_*` マップを通じて SAI 属性を設定する (`orchagent/switchorch.cpp:1507`、`orchdaemon.cpp:199`)。HLD の論理（P4RT App → [orchagent](../reference/glossary.md#term-orchagent) → SAI hash 属性）は同等だが、責務が `HashOrch` ではなく `SwitchOrch` 側にある。
+    主要な合致点:
 
-主要な合致点:
+    - `sonic-buildimage/dockers/docker-sonic-p4rt/{Dockerfile.j2,supervisord.conf,start.sh,p4rt.sh}` で p4rt コンテナの起動ロジックが存在
+    - `sonic-swss-common/common/schema.h:59,60` に `APP_P4RT_TABLE_NAME` / `APP_P4RT_TABLES_DEFINITION_TABLE_NAME` 定義
+    - `sonic-swss-common/common/schema.h:27` に `APPL_STATE_DB = 14` の DB ID 定義
+    - `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`、`p4orch_util.cpp` に `APP_P4RT_*_TABLE_NAME` の sub-table 定義群
+    - `sonic-swss/orchagent/p4orch/ext_tables_manager.cpp:723` で `APP_P4RT_TABLE_NAME` 経由のレスポンス publish
 
-- `sonic-buildimage/dockers/docker-sonic-p4rt/{Dockerfile.j2,supervisord.conf,start.sh,p4rt.sh}` で p4rt コンテナの起動ロジックが存在
-- `sonic-swss-common/common/schema.h:59,60` に `APP_P4RT_TABLE_NAME` / `APP_P4RT_TABLES_DEFINITION_TABLE_NAME` 定義
-- `sonic-swss-common/common/schema.h:27` に `APPL_STATE_DB = 14` の DB ID 定義
-- `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`、`p4orch_util.cpp` に `APP_P4RT_*_TABLE_NAME` の sub-table 定義群
-- `sonic-swss/orchagent/p4orch/ext_tables_manager.cpp:723` で `APP_P4RT_TABLE_NAME` 経由のレスポンス publish
+    **差分の中身**: HLD は新規クラス `HashOrch` を **OrchAgent に追加**し、P4Info 由来の hash 設定を専任で扱うと示唆していた。実際には既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を購読し、`SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応表 (`switch_helper.cpp:24-`) で SAI 属性に変換するという、より既存設計に寄せた実装に着地した。
 
-**差分の中身**: HLD は新規クラス `HashOrch` を **OrchAgent に追加**し、P4Info 由来の hash 設定を専任で扱うと示唆していた。実際には既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を購読し、`SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応表 (`switch_helper.cpp:24-`) で SAI 属性に変換するという、より既存設計に寄せた実装に着地した。
+    **読者への影響**:
 
-**読者への影響**:
+    - アーキ図に `HashOrch` を書き起こすと **存在しない box** になる。レビュー時に「HashOrch のソースはどこか」と質問された場合、`SwitchOrch` を案内する必要がある。
+    - P4RT App から hash 設定を反映させる経路は HLD と論理的には同じ（P4RT App → CONFIG_DB → orchagent → SAI hash 属性）だが、debug 時に attach するクラス名が違う。
+    - P4Info 由来の hash 設定が反映されない場合のトラブルシュート先は `SwitchOrch::doTask` 系（`switchorch.cpp:1507` 付近）。
 
-- アーキ図に `HashOrch` を書き起こすと **存在しない box** になる。レビュー時に「HashOrch のソースはどこか」と質問された場合、`SwitchOrch` を案内する必要がある。
-- P4RT App から hash 設定を反映させる経路は HLD と論理的には同じ（P4RT App → CONFIG_DB → orchagent → SAI hash 属性）だが、debug 時に attach するクラス名が違う。
-- P4Info 由来の hash 設定が反映されない場合のトラブルシュート先は `SwitchOrch::doTask` 系（`switchorch.cpp:1507` 付近）。
+    **回避策 / 対応方法**:
 
-**回避策 / 対応方法**:
+    - 設計ドキュメントを書く際は HashOrch ではなく **SwitchOrch のハッシュ責務** として記述する。
+    - ハッシュフィールド名の対応は `switch_helper.cpp:24-` のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。
 
-- 設計ドキュメントを書く際は HashOrch ではなく **SwitchOrch のハッシュ責務** として記述する。
-- ハッシュフィールド名の対応は `switch_helper.cpp:24-` のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `HashOrch` クラスは存在せず、`SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費 (`sonic-swss/orchagent/switchorch.cpp:1507`, `orchdaemon.cpp:199`)。
+    - `switch_helper.cpp:24-` に `SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応マップ。
+    - `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`。HLD の主要パスは P4Orch 経由で取り込み済み。
+    - 関連 PR: `sonic-pins` 系の P4Orch 取り込みは 2022-2024 年に段階的 merge。HashOrch は当初設計から SwitchOrch 統合に方針変更（PR description で `Reusing existing SwitchOrch` の旨記載多数）。
+    - **追加コード追跡コマンド**: ハッシュ責務の所在 — `grep -rn 'SAI_NATIVE_HASH_FIELD\|setSwitchHash' .cache/sonic-sources/sonic-swss/orchagent/switch/`。デバッグ時の attach 先は `SwitchOrch::doTask`（switchorch.cpp:1507 周辺）。
 
-- `HashOrch` クラスは存在せず、`SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費 (`sonic-swss/orchagent/switchorch.cpp:1507`, `orchdaemon.cpp:199`)。
-- `switch_helper.cpp:24-` に `SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応マップ。
-- `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`。HLD の主要パスは P4Orch 経由で取り込み済み。
-- 関連 PR: `sonic-pins` 系の P4Orch 取り込みは 2022-2024 年に段階的 merge。HashOrch は当初設計から SwitchOrch 統合に方針変更（PR description で `Reusing existing SwitchOrch` の旨記載多数）。
-- **追加コード追跡コマンド**: ハッシュ責務の所在 — `grep -rn 'SAI_NATIVE_HASH_FIELD\|setSwitchHash' .cache/sonic-sources/sonic-swss/orchagent/switch/`。デバッグ時の attach 先は `SwitchOrch::doTask`（switchorch.cpp:1507 周辺）。
+    > 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
-> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [sonic-pins #232: Device ID for SONiC Virtual Switch with P4RT (open)](https://github.com/sonic-net/sonic-pins/issues/232) — Virtual Switch 環境での P4RT device ID 扱いに関する未解決 issue。
-- [sonic-pins #1647: \[PDPI\] Move from `third_party/pins_infra/p4_pdpi` to `third_party/pins_infra/p4_infra/p4_pdpi` (open)](https://github.com/sonic-net/sonic-pins/pull/1647) — PINS 内 P4 PDPI のリファクタ進行中 PR。本 HLD の gRPC port 9559 サービス取り込みは sonic-pins 側で進行中だが SONiC 本体への統合トラッキングは未整理。
+    - [sonic-pins #232: Device ID for SONiC Virtual Switch with P4RT (open)](https://github.com/sonic-net/sonic-pins/issues/232) — Virtual Switch 環境での P4RT device ID 扱いに関する未解決 issue。
+    - [sonic-pins #1647: \[PDPI\] Move from `third_party/pins_infra/p4_pdpi` to `third_party/pins_infra/p4_infra/p4_pdpi` (open)](https://github.com/sonic-net/sonic-pins/pull/1647) — PINS 内 P4 PDPI のリファクタ進行中 PR。本 HLD の gRPC port 9559 サービス取り込みは sonic-pins 側で進行中だが SONiC 本体への統合トラッキングは未整理。
+<!-- /diff-admonition -->
 
 ## 引用元
 

@@ -196,48 +196,49 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 - **`syslog` rate limit / redirect** 系の各 HLD（critical log 抽出は本 framework と連動）
 - **OrchAgent 全般**: RouteOrch / NeighborOrch / 他 Orch が個別に dump を登録する想定
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05 時点で本 framework は **master に取り込まれておらず、HLD のみ**（2019-07 v0.3 から 6 年以上停滞）。
 
-2026-05 時点で本 framework は **master に取り込まれておらず、HLD のみ**（2019-07 v0.3 から 6 年以上停滞）。
+    ### 1. どこで乖離が確認されたか
 
-### 1. どこで乖離が確認されたか
+    - `sonic-swss-common/common/` 配下に `Debugframework` クラス、`linkWithFramework` 関数、`SWSS_DEBUG_PRINT` マクロのいずれも存在しない（`grep -rn 'Debugframework\|linkWithFramework\|SWSS_DEBUG_PRINT' .cache/sonic-sources/sonic-swss-common/common/` 0 件）。
+    - `sonic-swss/orchagent/natorch.cpp:40-42, 138-142, 4591-` に `#ifdef DEBUG_FRAMEWORK` 内の dead code は残っているが、`DEBUG_FRAMEWORK` マクロを定義する場所が無く、現行ビルドでは到達不能。
+    - `sonic-utilities/show/` 配下に `show debug` / `show interfaces pktdrop` 等のフレームワーク CLI ハンドラが存在しない。
+    - APPL_DB の `Dump table` / `Dump done table` も `sonic-swss-common/common/schema.h` と `sonic-buildimage/src/sonic-yang-models/yang-models/` に登録されていない。
 
-- `sonic-swss-common/common/` 配下に `Debugframework` クラス、`linkWithFramework` 関数、`SWSS_DEBUG_PRINT` マクロのいずれも存在しない（`grep -rn 'Debugframework\|linkWithFramework\|SWSS_DEBUG_PRINT' .cache/sonic-sources/sonic-swss-common/common/` 0 件）。
-- `sonic-swss/orchagent/natorch.cpp:40-42, 138-142, 4591-` に `#ifdef DEBUG_FRAMEWORK` 内の dead code は残っているが、`DEBUG_FRAMEWORK` マクロを定義する場所が無く、現行ビルドでは到達不能。
-- `sonic-utilities/show/` 配下に `show debug` / `show interfaces pktdrop` 等のフレームワーク CLI ハンドラが存在しない。
-- APPL_DB の `Dump table` / `Dump done table` も `sonic-swss-common/common/schema.h` と `sonic-buildimage/src/sonic-yang-models/yang-models/` に登録されていない。
+    ### 2. HLD と実装の差分の中身
 
-### 2. HLD と実装の差分の中身
+    HLD は「コンポーネントが `linkWithFramework` で自身の dump callback を登録 → CLI が APPL_DB の Dump table へリクエスト → 各コンポーネントが Dump done table に応答」というプロトコルを定義しているが、**`linkWithFramework` のシンボルすら存在せず、プロトコルの送信側・受信側のいずれも未実装**。残骸の `#ifdef DEBUG_FRAMEWORK` ブロックは HLD 時代の試作の痕跡で、有効化される経路は無い。
 
-HLD は「コンポーネントが `linkWithFramework` で自身の dump callback を登録 → CLI が APPL_DB の Dump table へリクエスト → 各コンポーネントが Dump done table に応答」というプロトコルを定義しているが、**`linkWithFramework` のシンボルすら存在せず、プロトコルの送信側・受信側のいずれも未実装**。残骸の `#ifdef DEBUG_FRAMEWORK` ブロックは HLD 時代の試作の痕跡で、有効化される経路は無い。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    - HLD どおりに `show debug component <name>` を期待しても、CLI そのものが存在せず `No such command` で終わる。
+    - コンポーネント側で dump を提供する形（HLD 推奨）も無いため、現状の障害解析は **`show techsupport` の一括採取と各 `redis-cli` / `swssloglevel` への手作業ログ抽出** に依存している。
+    - 将来この framework が master に入った場合、HLD と CLI / table 名が**変わる可能性が高い**（v0.3 から長期停滞）。本ページの記述は仕様参考扱い。
 
-- HLD どおりに `show debug component <name>` を期待しても、CLI そのものが存在せず `No such command` で終わる。
-- コンポーネント側で dump を提供する形（HLD 推奨）も無いため、現状の障害解析は **`show techsupport` の一括採取と各 `redis-cli` / `swssloglevel` への手作業ログ抽出** に依存している。
-- 将来この framework が master に入った場合、HLD と CLI / table 名が**変わる可能性が高い**（v0.3 から長期停滞）。本ページの記述は仕様参考扱い。
+    ### 4. 回避策 / 対応方法
 
-### 4. 回避策 / 対応方法
+    - **dump 取得は `show techsupport` で代替**: `/var/dump/` に techsupport tarball が落ちる。OrchAgent 内部状態は `swssloglevel -l DEBUG -c <component>` でログレベルを上げて syslog に吐かせる。
+    - **特定 Orch の internal dump**: `docker exec swss debugsh -c 'show <subsystem>'` 系の swss-side CLI を直接叩く。HLD 経由ではなく各 Orch の hand-crafted dump が個別に存在する。
+    - 本 framework の取り込みを推進する場合、HLD 自体を現行 master 構造（`swss-common` の `ConfigDBConnector` / `Producer/ConsumerStateTable` 前提）に合わせて再ドラフトする必要がある。
 
-- **dump 取得は `show techsupport` で代替**: `/var/dump/` に techsupport tarball が落ちる。OrchAgent 内部状態は `swssloglevel -l DEBUG -c <component>` でログレベルを上げて syslog に吐かせる。
-- **特定 Orch の internal dump**: `docker exec swss debugsh -c 'show <subsystem>'` 系の swss-side CLI を直接叩く。HLD 経由ではなく各 Orch の hand-crafted dump が個別に存在する。
-- 本 framework の取り込みを推進する場合、HLD 自体を現行 master 構造（`swss-common` の `ConfigDBConnector` / `Producer/ConsumerStateTable` 前提）に合わせて再ドラフトする必要がある。
+    ### 監査 round 2 追補（2026-05-11）
 
-### 監査 round 2 追補（2026-05-11）
+    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    - `sonic-swss-common` master HEAD で `Debugframework` クラス・`linkWithFramework` シンボルともに 0 件 (`grep -rn 'class Debugframework\|linkWithFramework' .cache/sonic-sources/sonic-swss-common/`)。
+    - `sonic-swss/orchagent/natorch.cpp` の `#ifdef DEBUG_FRAMEWORK` ブロック (L40-42, L138-142, L4591 付近) は HLD 当時の死コード。マクロ定義側 (`Makefile.am` / `configure.ac`) で `DEBUG_FRAMEWORK` を立てる箇所は存在しない。
+    - 関連 Issue/PR: HLD 自体が 2019-07 v0.3 で停滞しており、フォローアップ PR の提出無し。代替として個別 Orch 単位の `debugsh` / `swssloglevel` で運用するのが既定線。
+    - **追加回避策コマンド**: 全 Orch のログレベル一括引き上げ — `docker exec swss swssloglevel -l DEBUG -a`、syslog 抽出は `docker logs swss 2>&1 | grep -E '<component-name>'`。
 
-- `sonic-swss-common` master HEAD で `Debugframework` クラス・`linkWithFramework` シンボルともに 0 件 (`grep -rn 'class Debugframework\|linkWithFramework' .cache/sonic-sources/sonic-swss-common/`)。
-- `sonic-swss/orchagent/natorch.cpp` の `#ifdef DEBUG_FRAMEWORK` ブロック (L40-42, L138-142, L4591 付近) は HLD 当時の死コード。マクロ定義側 (`Makefile.am` / `configure.ac`) で `DEBUG_FRAMEWORK` を立てる箇所は存在しない。
-- 関連 Issue/PR: HLD 自体が 2019-07 v0.3 で停滞しており、フォローアップ PR の提出無し。代替として個別 Orch 単位の `debugsh` / `swssloglevel` で運用するのが既定線。
-- **追加回避策コマンド**: 全 Orch のログレベル一括引き上げ — `docker exec swss swssloglevel -l DEBUG -a`、syslog 抽出は `docker logs swss 2>&1 | grep -E '<component-name>'`。
+    > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
-> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [[sonic-utilities](../reference/glossary.md#term-sonic-utilities) #1669: \[debug dump util\] Techsupport addition (merged)](https://github.com/sonic-net/sonic-utilities/pull/1669) — `debug dump` ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、`show techsupport` 連携部分はここに収束した。
-- HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は **未確認**。実装は機能ごとの個別 PR に分散している。
+    - [[sonic-utilities](../reference/glossary.md#term-sonic-utilities) #1669: \[debug dump util\] Techsupport addition (merged)](https://github.com/sonic-net/sonic-utilities/pull/1669) — `debug dump` ユーティリティ自体の取り込み PR。HLD の「コンポーネント dump 登録 / assert 拡張」のうち、`show techsupport` 連携部分はここに収束した。
+    - HLD が想定した汎用 assert 拡張・自動 dump 登録機構の包括的トラッキング Issue は **未確認**。実装は機能ごとの個別 PR に分散している。
+<!-- /diff-admonition -->
 
 ## 引用元
 

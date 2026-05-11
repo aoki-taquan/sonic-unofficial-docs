@@ -154,47 +154,48 @@ config bgp error-handling disable
 - `show ip route` に `#` が増えない → `BGP_ERROR_CFG_TABLE.enable=true` 確認、fpmsyncd のログで subscribe 完了確認
 - enable した直後の既存 route には適用されない → BGP session を `clear bgp *` で reset
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-09 時点の現行 master を裏取り。**本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている**。
 
-2026-05-09 時点の現行 master を裏取り。**本 HLD は採用されず、後発の BGP Suppress FIB Pending に置き換えられている**。
+    ### 1. `ERROR_DB` / `ERROR_ROUTE_TABLE` は未実装
 
-### 1. `ERROR_DB` / `ERROR_ROUTE_TABLE` は未実装
+    - **HLD 記述**: 新規 [Redis](../reference/glossary.md#term-redis) DB `ERROR_DB` と `ERROR_ROUTE_TABLE` を導入し、orchagent → fpmsyncd → zebra → bgpd の経路で FIB-install 失敗を伝搬する。
+    - **実装位置**: `sonic-swss-common/common/schema.h`、`sonic-swss/orchagent/`、`sonic-buildimage/src/sonic-yang-models/`、`sonic-frr/` のいずれにも `ERROR_ROUTE_TABLE` / `ERROR_DB`（独立 Redis DB id）の定義は **存在しない**（grep ヒット 0）。
+    - **差分の中身**: HLD で計画された subscriber クラス（fpmsyncd 側 `ErrorListener` 等）も実装されていない。FPM socket の双方向化（zebra への送信路）も入っていない。
+    - **読者への影響**: 「HLD のとおりに `ERROR_ROUTE_TABLE` を watch して BGP advertise を抑止する」設計を期待すると動かない。現行は orchagent の `SWSS_LOG_ERROR` で失敗ログが出るのみで、BGP 側は失敗を構造化された形で受け取らない。
+    - **回避策**: route install 失敗による誤広告を防ぐには次節の **BGP Suppress FIB Pending** を使う。
 
-- **HLD 記述**: 新規 [Redis](../reference/glossary.md#term-redis) DB `ERROR_DB` と `ERROR_ROUTE_TABLE` を導入し、orchagent → fpmsyncd → zebra → bgpd の経路で FIB-install 失敗を伝搬する。
-- **実装位置**: `sonic-swss-common/common/schema.h`、`sonic-swss/orchagent/`、`sonic-buildimage/src/sonic-yang-models/`、`sonic-frr/` のいずれにも `ERROR_ROUTE_TABLE` / `ERROR_DB`（独立 Redis DB id）の定義は **存在しない**（grep ヒット 0）。
-- **差分の中身**: HLD で計画された subscriber クラス（fpmsyncd 側 `ErrorListener` 等）も実装されていない。FPM socket の双方向化（zebra への送信路）も入っていない。
-- **読者への影響**: 「HLD のとおりに `ERROR_ROUTE_TABLE` を watch して BGP advertise を抑止する」設計を期待すると動かない。現行は orchagent の `SWSS_LOG_ERROR` で失敗ログが出るのみで、BGP 側は失敗を構造化された形で受け取らない。
-- **回避策**: route install 失敗による誤広告を防ぐには次節の **BGP Suppress FIB Pending** を使う。
+    ### 2. `BGP_ERROR_CFG_TABLE` / `config bgp error-handling` CLI も未実装
 
-### 2. `BGP_ERROR_CFG_TABLE` / `config bgp error-handling` CLI も未実装
+    - **HLD 記述**: CLI `config bgp error-handling enable/disable` で `BGP_ERROR_CFG_TABLE` を ON/OFF する。
+    - **実装位置**: `sonic-utilities/config/main.py` に `bgp error-handling` サブコマンドは存在せず、`sonic-yang-models` にも `sonic-bgp-error-cfg.yang` 相当は無い。
+    - **差分の中身**: CLI / yang / [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ全てが提案レベルで止まっている。
+    - **読者への影響**: 設定する手段が無いため、本 HLD の「条件分岐」自体が現行 master では発生しない。
+    - **回避策**: 本機能は **設定しない**。必要な機能は次項に置き換わっている。
 
-- **HLD 記述**: CLI `config bgp error-handling enable/disable` で `BGP_ERROR_CFG_TABLE` を ON/OFF する。
-- **実装位置**: `sonic-utilities/config/main.py` に `bgp error-handling` サブコマンドは存在せず、`sonic-yang-models` にも `sonic-bgp-error-cfg.yang` 相当は無い。
-- **差分の中身**: CLI / yang / [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマ全てが提案レベルで止まっている。
-- **読者への影響**: 設定する手段が無いため、本 HLD の「条件分岐」自体が現行 master では発生しない。
-- **回避策**: 本機能は **設定しない**。必要な機能は次項に置き換わっている。
+    ### 3. 後発機能 BGP Suppress FIB Pending が代替
 
-### 3. 後発機能 BGP Suppress FIB Pending が代替
+    - **実装位置**: `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:107`
+      ```
+      bgp suppress-fib-pending
+      ```
+      デフォルトで `bgpd` の起動 config に挿入される。[FRR](../reference/glossary.md#term-frr) 側は `dplane_fpm_nl` と zebra の RTM_F_OFFLOAD/RTM_F_TRAP フラグを利用し、ASIC への install 完了通知を受けるまで BGP advertise を保留する。
+    - **差分の中身**: HLD は「ERROR_DB 経由で失敗を能動通知」だが、実装は「ASIC 取り込み成功の確認を待ってから広告する」**inverse** のアプローチ。失敗時の挙動は「ずっと pending のまま広告しない」となる。
+    - **読者への影響**: 結果として運用観点では本 HLD の意図と同じ「未 install な route は広告しない」が満たされる。一方で「失敗の明示的なカウント／lookup table」は提供されない（pending のままという受動的な状態）。
+    - **回避策**:
+      - 実運用では BGP Suppress FIB Pending を有効のままにする（デフォルト有効）。
+      - 「どの prefix が pending か」を知りたいときは `vtysh -c "show ip route <prefix>"` の `T>` / `>` flag（installed/offloaded）を確認するか、`show bgp ipv4 unicast` の status code を見る。
+      - 詳細は [routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md](./bgp-suppress-announcements-of-routes-not-installed-in-hw.md) を参照。
 
-- **実装位置**: `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:107`
-  ```
-  bgp suppress-fib-pending
-  ```
-  デフォルトで `bgpd` の起動 config に挿入される。[FRR](../reference/glossary.md#term-frr) 側は `dplane_fpm_nl` と zebra の RTM_F_OFFLOAD/RTM_F_TRAP フラグを利用し、ASIC への install 完了通知を受けるまで BGP advertise を保留する。
-- **差分の中身**: HLD は「ERROR_DB 経由で失敗を能動通知」だが、実装は「ASIC 取り込み成功の確認を待ってから広告する」**inverse** のアプローチ。失敗時の挙動は「ずっと pending のまま広告しない」となる。
-- **読者への影響**: 結果として運用観点では本 HLD の意図と同じ「未 install な route は広告しない」が満たされる。一方で「失敗の明示的なカウント／lookup table」は提供されない（pending のままという受動的な状態）。
-- **回避策**:
-  - 実運用では BGP Suppress FIB Pending を有効のままにする（デフォルト有効）。
-  - 「どの prefix が pending か」を知りたいときは `vtysh -c "show ip route <prefix>"` の `T>` / `>` flag（installed/offloaded）を確認するか、`show bgp ipv4 unicast` の status code を見る。
-  - 詳細は [routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md](./bgp-suppress-announcements-of-routes-not-installed-in-hw.md) を参照。
+    ### 結論
 
-### 結論
+    **本 HLD（2019）は採用されなかった**。設計意図は後発の BGP Suppress FIB Pending（FRR `bgp suppress-fib-pending` + RTM_F_OFFLOAD）に引き継がれており、ERROR_DB 経由の仕組みは実装されていない。本ページは設計史としての参考。
 
-**本 HLD（2019）は採用されなかった**。設計意図は後発の BGP Suppress FIB Pending（FRR `bgp suppress-fib-pending` + RTM_F_OFFLOAD）に引き継がれており、ERROR_DB 経由の仕組みは実装されていない。本ページは設計史としての参考。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [GitHub Issue / PR の関連リンクは未確認] — `ERROR_ROUTE_TABLE` / FIB-install pending の HLD 取り込みは fpmsyncd / orchagent の個別 PR に分散しており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+    - [GitHub Issue / PR の関連リンクは未確認] — `ERROR_ROUTE_TABLE` / FIB-install pending の HLD 取り込みは fpmsyncd / orchagent の個別 PR に分散しており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
+<!-- /diff-admonition -->
 
 ## 引用元
 

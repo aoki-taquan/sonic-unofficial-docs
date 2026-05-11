@@ -104,45 +104,46 @@ flowchart LR
 - DF が両側で active → Type-4 受信の確認、`show evpn ethernet-segment` の DF 状態
 - aliasing で trafic が偏る → ECMP hash 設定、remote leaf の Type-1 受信状況
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
 
-2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
+    ### 1. `EVPN_ETHERNET_SEGMENT` テーブル / orch が未実装
 
-### 1. `EVPN_ETHERNET_SEGMENT` テーブル / orch が未実装
+    - **HLD 記述**: [CONFIG_DB](../reference/glossary.md#term-config_db) に `EVPN_ETHERNET_SEGMENT` テーブルを置き、ESI / 紐づく LAG / single-active か all-active か / DF preference を管理。orch（仮称 `EthernetSegmentOrch`）が SAI へ反映。
+    - **実装位置**: `sonic-swss/`、`sonic-buildimage/src/sonic-yang-models/yang-models/`、`sonic-utilities/` のいずれにも `EVPN_ETHERNET_SEGMENT` / `EthernetSegment` / `ESI` 関連のシンボルは見つからない（grep ヒット 0）。yang module `sonic-evpn-mh.yang` のような派生 module も存在しない。
+    - **差分の中身**: テーブル定義 / orch クラス / yang model / CLI のいずれも欠落。HLD は提案段階で止まっている。
+    - **読者への影響**: `config evpn ethernet-segment add ...` を打っても CLI コマンド自体が存在せず、CONFIG_DB に書いても受ける側がいないため何も起こらない。EVPN MH に依存する設計（dual-attached host）を組み立てると動かない。
+    - **回避策**:
+      - dual-attach 構成が必要なら **MC-LAG**（[../switching/mclag-enhancements.md](../switching/mclag-enhancements.md) 等）を使う。MC-LAG は EVPN MH の代替アプローチで、SONiC では実装済み。
+      - どうしても EVPN MH が必要なら、ベンダー版 SONiC（一部ベンダーが独自実装を持つ）または upstream FRR の EVPN-MH（FRR 7.5+ で実装）+ 独自 SAI 連携を自前で書く必要がある。
 
-- **HLD 記述**: [CONFIG_DB](../reference/glossary.md#term-config_db) に `EVPN_ETHERNET_SEGMENT` テーブルを置き、ESI / 紐づく LAG / single-active か all-active か / DF preference を管理。orch（仮称 `EthernetSegmentOrch`）が SAI へ反映。
-- **実装位置**: `sonic-swss/`、`sonic-buildimage/src/sonic-yang-models/yang-models/`、`sonic-utilities/` のいずれにも `EVPN_ETHERNET_SEGMENT` / `EthernetSegment` / `ESI` 関連のシンボルは見つからない（grep ヒット 0）。yang module `sonic-evpn-mh.yang` のような派生 module も存在しない。
-- **差分の中身**: テーブル定義 / orch クラス / yang model / CLI のいずれも欠落。HLD は提案段階で止まっている。
-- **読者への影響**: `config evpn ethernet-segment add ...` を打っても CLI コマンド自体が存在せず、CONFIG_DB に書いても受ける側がいないため何も起こらない。EVPN MH に依存する設計（dual-attached host）を組み立てると動かない。
-- **回避策**:
-  - dual-attach 構成が必要なら **MC-LAG**（[../switching/mclag-enhancements.md](../switching/mclag-enhancements.md) 等）を使う。MC-LAG は EVPN MH の代替アプローチで、SONiC では実装済み。
-  - どうしても EVPN MH が必要なら、ベンダー版 SONiC（一部ベンダーが独自実装を持つ）または upstream FRR の EVPN-MH（FRR 7.5+ で実装）+ 独自 SAI 連携を自前で書く必要がある。
+    ### 2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
 
-### 2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
+    - **HLD 記述**: FRR の BGP-EVPN MH（Type-1 EAD、Type-4 ES route）が SONiC [orchagent](../reference/glossary.md#term-orchagent) に EAD-per-ES / EAD-per-EVI / ES import-RT を渡し、SAI ESI label / split-horizon を設定する。
+    - **実装位置**: SONiC 側受け取り経路（`fpmsyncd` の MH 拡張、`EvpnNvoOrch` への Type-1/Type-4 ハンドラ）は確認できず。
+    - **差分の中身**: FRR 単体では EVPN-MH を pcap で観察できても、SONiC の ASIC まで通知が伝わらない。
+    - **読者への影響**: FRR で EVPN-MH を有効化しても、SONiC 側で DF election・ESI label による split-horizon・aliasing による ECMP は ASIC レベルで効かない。
+    - **回避策**: 上記のとおり MC-LAG を使うか、独自 patch を入れる。
 
-- **HLD 記述**: FRR の BGP-EVPN MH（Type-1 EAD、Type-4 ES route）が SONiC [orchagent](../reference/glossary.md#term-orchagent) に EAD-per-ES / EAD-per-EVI / ES import-RT を渡し、SAI ESI label / split-horizon を設定する。
-- **実装位置**: SONiC 側受け取り経路（`fpmsyncd` の MH 拡張、`EvpnNvoOrch` への Type-1/Type-4 ハンドラ）は確認できず。
-- **差分の中身**: FRR 単体では EVPN-MH を pcap で観察できても、SONiC の ASIC まで通知が伝わらない。
-- **読者への影響**: FRR で EVPN-MH を有効化しても、SONiC 側で DF election・ESI label による split-horizon・aliasing による ECMP は ASIC レベルで効かない。
-- **回避策**: 上記のとおり MC-LAG を使うか、独自 patch を入れる。
+    ### 3. SAI ESI label / split-horizon 拡張のサポートも未確認
 
-### 3. SAI ESI label / split-horizon 拡張のサポートも未確認
+    - **HLD 記述**: SAI 側に ESI 関連属性（split-horizon filter / DF flag 等）の拡張を要求。
+    - **実装位置**: `sonic-sairedis` の SAI header に `SAI_TUNNEL_ATTR_*` の ESI 関連属性は確認できない（コミュニティ SAI に取り込まれていない可能性が高い）。
+    - **読者への影響**: ASIC vendor が SAI 経由で ESI 機能を露出していないため、たとえ orch を自前実装してもベンダー SAI 側が受け付けない可能性が高い。
+    - **回避策**: ASIC ベンダーに ESI 対応 SAI 拡張のサポートを問い合わせる。現状は SONiC コミュニティ master では非対応と認識する。
 
-- **HLD 記述**: SAI 側に ESI 関連属性（split-horizon filter / DF flag 等）の拡張を要求。
-- **実装位置**: `sonic-sairedis` の SAI header に `SAI_TUNNEL_ATTR_*` の ESI 関連属性は確認できない（コミュニティ SAI に取り込まれていない可能性が高い）。
-- **読者への影響**: ASIC vendor が SAI 経由で ESI 機能を露出していないため、たとえ orch を自前実装してもベンダー SAI 側が受け付けない可能性が高い。
-- **回避策**: ASIC ベンダーに ESI 対応 SAI 拡張のサポートを問い合わせる。現状は SONiC コミュニティ master では非対応と認識する。
+    ### 結論
 
-### 結論
+    **本ページの記述は HLD 提案レベルで、現行 master では機能として利用できない**。dual-attached host を扱う実運用構成では MC-LAG を選択する。本 HLD は将来的な機能ロードマップとして参考に留める。
 
-**本ページの記述は HLD 提案レベルで、現行 master では機能として利用できない**。dual-attached host を扱う実運用構成では MC-LAG を選択する。本 HLD は将来的な機能ロードマップとして参考に留める。
+    #### 関連 GitHub Issue / PR
 
-#### 関連 GitHub Issue / PR
-
-- [[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN MH 機能の本体取り込み大型 PR。
-- [sonic-swss #4206: Add support for EVPN MH protocol field (open)](https://github.com/sonic-net/sonic-swss/pull/4206) — MH プロトコルフィールド追加 PR。
-- [sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)](https://github.com/sonic-net/sonic-swss/pull/4039) — MH 向け [fdbsyncd](../reference/glossary.md#term-fdbsyncd) 改修 PR。
-- いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。
+    - [[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262: \[EVPN-MH\] Add EVPN VXLAN Multihoming feature support (open)](https://github.com/sonic-net/sonic-swss/pull/4262) — EVPN MH 機能の本体取り込み大型 PR。
+    - [sonic-swss #4206: Add support for EVPN MH protocol field (open)](https://github.com/sonic-net/sonic-swss/pull/4206) — MH プロトコルフィールド追加 PR。
+    - [sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)](https://github.com/sonic-net/sonic-swss/pull/4039) — MH 向け [fdbsyncd](../reference/glossary.md#term-fdbsyncd) 改修 PR。
+    - いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。
+<!-- /diff-admonition -->
 
 ## 引用元
 

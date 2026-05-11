@@ -243,40 +243,41 @@ sudo config switchport mode routed Ethernet0
 - アップグレード後にモードが routed のまま: `db_migrator` の推論が走ったか確認（メンバ無しなら routed が正しい結果）。
 - 範囲指定 CLI が一部しか反映されない: truncate ポリシーで途中エラーで停止した可能性。エラーメッセージを確認し、不正 VID を除外して再実行。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05-11 時点の現行 master を裏取り。
 
-2026-05-11 時点の現行 master を裏取り。
+    ### 1. ファイル + 行番号
 
-### 1. ファイル + 行番号
+    - **取り込み済み**: `sonic-net/sonic-utilities` `config/switchport.py` L17-L20（click サブコマンド `switchport mode <type> <port>`）、`config/switchport.py` L20-L101（access/trunk/routed 切替時の VLAN 整合チェック）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` L88（`switchport_mode` leaf）、`sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2`（`switchport_mode` 型定義）。
+    - **HLD と差分あり**: `config/switchport.py` L17-L20 の引数は `<mode_type> <port>` の 2 つだけ。HLD が要求する第 3 引数の `<vlan-list>` は **未実装**。
 
-- **取り込み済み**: `sonic-net/sonic-utilities` `config/switchport.py` L17-L20（click サブコマンド `switchport mode <type> <port>`）、`config/switchport.py` L20-L101（access/trunk/routed 切替時の VLAN 整合チェック）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-port.yang` L88（`switchport_mode` leaf）、`sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2`（`switchport_mode` 型定義）。
-- **HLD と差分あり**: `config/switchport.py` L17-L20 の引数は `<mode_type> <port>` の 2 つだけ。HLD が要求する第 3 引数の `<vlan-list>` は **未実装**。
+    ### 2. 差分の中身
 
-### 2. 差分の中身
+    HLD は `config switchport mode access <port> <vlan>` や `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のようにモード切替と VLAN メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は `@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))` と `@click.argument("port", ...)` の 2 引数のみで、VLAN メンバ割当は **依然として別コマンド** `config vlan member add <vlan> <port>` を呼ぶ必要がある。
 
-HLD は `config switchport mode access <port> <vlan>` や `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のようにモード切替と VLAN メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は `@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))` と `@click.argument("port", ...)` の 2 引数のみで、VLAN メンバ割当は **依然として別コマンド** `config vlan member add <vlan> <port>` を呼ぶ必要がある。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    HLD の設定例 `sudo config switchport mode access Ethernet0 10` を打つと `Error: Got unexpected extra argument (10)` で失敗する。1 コマンドで「モード変更 + VLAN メンバ追加」を期待する読者の手順が破綻する。
 
-HLD の設定例 `sudo config switchport mode access Ethernet0 10` を打つと `Error: Got unexpected extra argument (10)` で失敗する。1 コマンドで「モード変更 + VLAN メンバ追加」を期待する読者の手順が破綻する。
+    ### 4. 回避策
 
-### 4. 回避策
+    2 ステップに分割する:
 
-2 ステップに分割する:
+    ```bash
+    # access 例
+    sudo config switchport mode access Ethernet0
+    sudo config vlan member add 10 Ethernet0 --untagged
 
-```bash
-# access 例
-sudo config switchport mode access Ethernet0
-sudo config vlan member add 10 Ethernet0 --untagged
+    # trunk 例
+    sudo config switchport mode trunk PortChannel1
+    sudo config vlan member add 10 PortChannel1 --untagged   # native (untagged)
+    sudo config vlan member add 20 PortChannel1              # tagged
+    sudo config vlan member add 21 PortChannel1
+    ```
 
-# trunk 例
-sudo config switchport mode trunk PortChannel1
-sudo config vlan member add 10 PortChannel1 --untagged   # native (untagged)
-sudo config vlan member add 20 PortChannel1              # tagged
-sudo config vlan member add 21 PortChannel1
-```
-
-`config vlan member add` の `--untagged` フラグで native VLAN を、無印で tagged VLAN を表現する。VLAN range の一括指定（`20-22`）は `config vlan add/del` 側でサポート（`config/vlan.py`）。
+    `config vlan member add` の `--untagged` フラグで native VLAN を、無印で tagged VLAN を表現する。VLAN range の一括指定（`20-22`）は `config vlan add/del` 側でサポート（`config/vlan.py`）。
+<!-- /diff-admonition -->
 
 ## 引用元
 

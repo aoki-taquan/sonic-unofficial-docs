@@ -124,33 +124,34 @@ show static-anycast-gateway
 - IPv6 link-local 応答が来ない → MAC 変更後の link-local me-route 再追加が走っているか。`ip -6 route show local` で確認。
 - ファブリック側にもゲートウェイ IP が広告されてしまう → これは SAG の責務外。EVPN/[BGP](../reference/glossary.md#term-bgp) 側のフィルタを確認。
 
-## 実装との乖離
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    2026-05 時点で **SAG コード / [YANG](../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
 
-2026-05 時点で **SAG コード / [YANG](../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
+    ### 1. どこで乖離が確認されたか
 
-### 1. どこで乖離が確認されたか
+    - `sonic-buildimage/src/sonic-yang-models/yang-models/` に `sonic-sag.yang` 相当が**存在しない**（`grep -rn "SAG\b\|static_anycast" .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/` 0 件）。`SAG` テーブル / `static_anycast_gateway` leaf は未登録。
+    - `sonic-swss/orchagent/` に `SagOrch` / `static_anycast_gateway` を扱うコードが見つからない（`grep -rln "static_anycast\|SagOrch" .cache/sonic-sources/sonic-swss/` 0 件）。
+    - `sonic-utilities/` に `config static-anycast-gateway` / `show static-anycast-gateway` の CLI ハンドラが無い（`grep -rln "static-anycast-gateway" .cache/sonic-sources/sonic-utilities/` 0 件）。
+    - `sonic-frr/` に SAG 連携の patch は見当たらない（hit は babeld 等の無関係箇所のみ）。
 
-- `sonic-buildimage/src/sonic-yang-models/yang-models/` に `sonic-sag.yang` 相当が**存在しない**（`grep -rn "SAG\b\|static_anycast" .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/` 0 件）。`SAG` テーブル / `static_anycast_gateway` leaf は未登録。
-- `sonic-swss/orchagent/` に `SagOrch` / `static_anycast_gateway` を扱うコードが見つからない（`grep -rln "static_anycast\|SagOrch" .cache/sonic-sources/sonic-swss/` 0 件）。
-- `sonic-utilities/` に `config static-anycast-gateway` / `show static-anycast-gateway` の CLI ハンドラが無い（`grep -rln "static-anycast-gateway" .cache/sonic-sources/sonic-utilities/` 0 件）。
-- `sonic-frr/` に SAG 連携の patch は見当たらない（hit は babeld 等の無関係箇所のみ）。
+    ### 2. HLD と実装の差分の中身
 
-### 2. HLD と実装の差分の中身
+    HLD は `SAG|GLOBAL.gateway_mac`（グローバル SAG MAC）+ `VLAN_INTERFACE|<vlan>.static_anycast_gateway`（VLAN ごとの有効化フラグ）を [CONFIG_DB](../reference/glossary.md#term-config_db) に追加し、`SagOrch` が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、**3 つの取り込み箇所（YANG / [orchagent](../reference/glossary.md#term-orchagent) / CLI）すべてが master に無い**。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。
 
-HLD は `SAG|GLOBAL.gateway_mac`（グローバル SAG MAC）+ `VLAN_INTERFACE|<vlan>.static_anycast_gateway`（VLAN ごとの有効化フラグ）を [CONFIG_DB](../reference/glossary.md#term-config_db) に追加し、`SagOrch` が VLAN RIF の MAC を SAG MAC へ差し替える、と述べているが、**3 つの取り込み箇所（YANG / [orchagent](../reference/glossary.md#term-orchagent) / CLI）すべてが master に無い**。NVIDIA など一部ベンダー fork で実装済みだが、community master には未マージ。
+    ### 3. 読者への影響
 
-### 3. 読者への影響
+    - HLD どおりに `sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f` を実行しても `No such command` で終わる。コマンドそのものが存在しない。
+    - EVPN-[VXLAN](../reference/glossary.md#term-vxlan) マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は**個別に各 leaf に同じ MAC を振る運用回避**が必要（後述）。
+    - 本ページの仕様記述は将来仕様 / ベンダー fork 仕様の参考であって、現行 community SONiC で動く設定ではない。
 
-- HLD どおりに `sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f` を実行しても `No such command` で終わる。コマンドそのものが存在しない。
-- EVPN-[VXLAN](../reference/glossary.md#term-vxlan) マルチ leaf 構成で「同一仮想 GW MAC でホストにとっての default gateway を冗長化する」用途は、本機能を待つ間は**個別に各 leaf に同じ MAC を振る運用回避**が必要（後述）。
-- 本ページの仕様記述は将来仕様 / ベンダー fork 仕様の参考であって、現行 community SONiC で動く設定ではない。
+    ### 4. 回避策 / 対応方法
 
-### 4. 回避策 / 対応方法
-
-- **代替手段 1（手動 anycast）**: 各 leaf の `VLAN_INTERFACE|Vlan100` に **個別に同一 IP** を振り、`PORT_INTERFACE` / `INTERFACE` の MAC を `config interface mac` 系（または `/etc/network/interfaces.d/` でブート時設定）で揃える。EVPN Type-2 で自身の MAC/IP を広告しないフィルタを別途設定。
-- **代替手段 2（VRRP）**: 純粋な anycast ではなく VRRP master/backup で疑似的にゲートウェイ冗長化を組む（収束はやや遅い）。
-- **代替手段 3（ベンダー版採用）**: NVIDIA SONiC / Edgecore Enterprise SONiC では SAG 実装が入っているケースがある。community に縛らないなら検討。
-- 上流取り込み推進: `sonic-buildimage`（YANG）+ `sonic-swss`（SagOrch / VlanMgr 改修）+ `sonic-utilities`（CLI）+ `sonic-frr`（EVPN 連携）の 4 リポにまたがる大規模 PR が必要。
+    - **代替手段 1（手動 anycast）**: 各 leaf の `VLAN_INTERFACE|Vlan100` に **個別に同一 IP** を振り、`PORT_INTERFACE` / `INTERFACE` の MAC を `config interface mac` 系（または `/etc/network/interfaces.d/` でブート時設定）で揃える。EVPN Type-2 で自身の MAC/IP を広告しないフィルタを別途設定。
+    - **代替手段 2（VRRP）**: 純粋な anycast ではなく VRRP master/backup で疑似的にゲートウェイ冗長化を組む（収束はやや遅い）。
+    - **代替手段 3（ベンダー版採用）**: NVIDIA SONiC / Edgecore Enterprise SONiC では SAG 実装が入っているケースがある。community に縛らないなら検討。
+    - 上流取り込み推進: `sonic-buildimage`（YANG）+ `sonic-swss`（SagOrch / VlanMgr 改修）+ `sonic-utilities`（CLI）+ `sonic-frr`（EVPN 連携）の 4 リポにまたがる大規模 PR が必要。
+<!-- /diff-admonition -->
 
 ## 引用元
 
