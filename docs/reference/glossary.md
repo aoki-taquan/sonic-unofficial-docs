@@ -827,9 +827,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (21)
 - [運用](../topics/15-security-aaa/operations.md) (19)
-- [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) (15)
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (17)
+- [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) (16)
 - [概念](../topics/15-security-aaa/concept.md) (14)
-- [設定](../topics/15-security-aaa/setup.md) (14)
 
 ### [ACL](#term-acl)
 
@@ -1038,8 +1038,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [FLEX_COUNTER_DB](#term-flex_counter_db)
 
+- [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../platform/fec-flr-support-in-sonic.md) (5)
 - [flexcounter の queue/PG map 生成と watermark 有効化の整合](../acl-qos/align-watermark-flow-with-port-configuration-hld.md) (4)
-- [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../platform/fec-flr-support-in-sonic.md) (4)
 - [counterpoll 種別と watermark / queue / pg-drop マップの整合テストプラン](../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md) (3)
 - [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../architecture/sonic-trap-flow-counter-design.md) (2)
 - [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](../internals/support-multiple-user-defined-redis-database-instances.md) (2)
@@ -1094,11 +1094,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [gNOI](#term-gnoi)
 
+- [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (18)
 - [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (17)
 - [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (17)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (16)
-- [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](../platform/smartswitch-dpu-graceful-shutdown.md) (15)
-- [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (15)
+- [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](../platform/smartswitch-dpu-graceful-shutdown.md) (16)
 
 ### [Graceful Restart](#term-graceful-restart)
 
@@ -1134,7 +1134,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-interface YANG](yang/sonic-interface.md) (39)
 - [sonic-vlan-sub-interface YANG](yang/sonic-vlan-sub-interface.md) (36)
 - [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (35)
-- [sonic-portchannel YANG](yang/sonic-portchannel.md) (30)
+- [config interface サブコマンド](cli/config-interface.md) (30)
 
 ### [intfmgrd](#term-intfmgrd)
 
@@ -1159,7 +1159,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [LOGLEVEL_DB](#term-loglevel_db)
 
-- [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (22)
+- [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](../system/persistent-log-level-hld.md) (23)
 - [Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）](../internals/support-redis-databases-in-multiple-namespaces.md) (2)
 - [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](../internals/support-multiple-user-defined-redis-database-instances.md) (1)
 - [システム](../system/index.md) (1)
@@ -1200,7 +1200,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MPLS](#term-mpls)
 
 - [概念](../topics/17-srv6-mpls/concept.md) (51)
-- [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (40)
+- [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (43)
 - [SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）](../routing/mpls-for-sonic-high-level-design-document.md) (37)
 - [内部実装](../topics/17-srv6-mpls/internals.md) (25)
 - [設定](../topics/17-srv6-mpls/setup.md) (23)
@@ -1320,9 +1320,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [port_config.ini](#term-port-config-ini)
 
-- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (17)
-- [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../platform/sonic-port-naming-convention-change.md) (14)
-- [PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）](../system/platform-monitor-design-for-multi-asic-platforms.md) (8)
+- [port_config.ini パーサ統合（portconfig.py 一元化）](../architecture/sonic-port-configuration-refactor-design.md) (18)
+- [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../platform/sonic-port-naming-convention-change.md) (15)
+- [PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）](../system/platform-monitor-design-for-multi-asic-platforms.md) (10)
 - [VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）](../platform/recirculation-port-support-on-voq-chassis.md) (6)
 - [概要](../topics/14-platform-port-optics/concept.md) (4)
 
@@ -1363,8 +1363,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (3)
 - [QoS / Buffer の設定](../topics/08-qos-buffer/setup.md) (3)
 - [ACL_RULE テーブル](config-db/acl-rule.md) (1)
+- [PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル](config-db/pfc-priority-to-priority-group-map.md) (1)
 - [PFC で帯域が出ない / Buffer overflow](runbooks/pfc-bandwidth.md) (1)
-- [Reboot family の選び方](../topics/11-reboot/concept.md) (1)
 
 ### [Redis](#term-redis)
 
@@ -1393,8 +1393,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SNMP](#term-snmp)
 
 - [sonic-snmp YANG](yang/sonic-snmp.md) (67)
-- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (57)
-- [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (41)
+- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (58)
+- [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (42)
 - [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (32)
 - [MIB / SNMP 関連](../categories/mib-snmp.md) (26)
 
@@ -1403,8 +1403,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概念](../topics/17-srv6-mpls/concept.md) (47)
 - [発展トピック](../topics/17-srv6-mpls/advanced.md) (32)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (28)
+- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../routing/sonic-usid.md) (19)
 - [SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）](../routing/srv6-sid-l3adj.md) (18)
-- [SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）](../routing/static-configuration-of-srv6-in-sonic-hld.md) (18)
 
 ### [SAI](#term-sai)
 
@@ -1522,7 +1522,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [概念](../topics/12-multi-asic-voq/concept.md) (37)
 - [発展トピック](../topics/12-multi-asic-voq/advanced.md) (25)
-- [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../internals/aggregate-voq-counters-in-sonic.md) (23)
+- [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../internals/aggregate-voq-counters-in-sonic.md) (24)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (18)
 - [内部実装](../topics/12-multi-asic-voq/internals.md) (17)
 
