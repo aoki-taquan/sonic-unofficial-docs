@@ -159,7 +159,7 @@ def page_body(md_path: Path) -> str:
 def build_reverse_index(terms: list[tuple[str, str]]) -> dict[str, list[tuple[Path, int]]]:
     """For each term, return list of (path, mention_count) sorted by count desc, path asc."""
     pages: list[tuple[Path, str]] = []
-    for p in sorted(DOCS.rglob("*.md")):
+    for p in sorted(DOCS.rglob("*.md"), key=lambda x: x.relative_to(DOCS).as_posix()):
         if p == GLOSSARY:
             continue
         pages.append((p, page_body(p)))
@@ -175,7 +175,7 @@ def build_reverse_index(terms: list[tuple[str, str]]) -> dict[str, list[tuple[Pa
             count = body.count(term)
             if count:
                 hits.append((path, count))
-        hits.sort(key=lambda x: (-x[1], str(x[0])))
+        hits.sort(key=lambda x: (-x[1], str(x[0].relative_to(DOCS))))
         index[term] = hits[:MAX_PAGES_PER_TERM]
     return index
 
