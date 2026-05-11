@@ -829,7 +829,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (22)
 - [運用](../topics/15-security-aaa/operations.md) (19)
-- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (17)
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (18)
 - [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) (17)
 - [サイトマップ](../_meta/sitemap.md) (16)
 
@@ -1097,8 +1097,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [gNOI](#term-gnoi)
 
 - [サイトマップ](../_meta/sitemap.md) (28)
+- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (18)
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (18)
-- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (17)
 - [gNOI / gNSI](../topics/10-gnmi-openconfig/gnoi-gnsi.md) (17)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (16)
 
@@ -1112,10 +1112,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (64)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (63)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (34)
+- [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (31)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (30)
-- [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (30)
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (28)
 
 ### [hostcfgd](#term-hostcfgd)
@@ -1615,8 +1615,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (228)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (52)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (35)
-- [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../management/openconfig-support-for-ethernet-interfaces.md) (24)
-- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (23)
+- [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../management/openconfig-support-for-ethernet-interfaces.md) (26)
+- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (25)
 
 ### [zebra](#term-zebra)
 
