@@ -2,7 +2,8 @@
 title: 液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
 area: platform
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/bmc/leakage_detection_hld.md
@@ -232,6 +233,19 @@ leak_sensors3     Not OK    LiquidCooling
 - **実装位置**: `mlnx-platform-api/sonic_platform/liquid_cooling.py` に Mellanox 実装が存在（HLD 範囲外だが運用上必要）。
 - **読者への影響**: HLD だけ読むと「実装責務はベンダー」で終わるが、実機検証では platform 側の対応が前提で、対応 SKU は限られる。
 - **回避策**: 対応プラットフォームかどうかは `mlnx-platform-api/sonic_platform/liquid_cooling.py` 相当のベンダー実装が `LiquidCoolingBase` を継承しているかで判断する。未対応 platform では `enable_liquid_cooling` を立てても sensor 検出に至らない。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- STATE_DB テーブル名差異: HLD `LIQUID_COOLING_DEVICE` → 実装 `LIQUID_COOLING_INFO` (`sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526, 547`)。
+- 追加テーブル: HLD に無い `SYSTEM_LEAK_STATUS` (L548) / `LEAK_PROFILE` (L551) が追加実装。
+- `liquid_cooling_update_interval` は CLI 引数で渡る（CONFIG_DB ではない）。
+- system-health 側 hardware_checker も `LIQUID_COOLING_INFO` を見る前提で書かれている。
+- 関連 PR: liquid cooling 機能取り込み PR で table 名がリネーム。HLD 文書側は旧名のまま。
+- **追加検証コマンド**: 全関連 STATE_DB key 確認 — `redis-cli -n 6 keys 'LIQUID_COOLING_INFO*' 'SYSTEM_LEAK_STATUS*' 'LEAK_PROFILE*'`、各 value は `redis-cli -n 6 hgetall <key>` で展開。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

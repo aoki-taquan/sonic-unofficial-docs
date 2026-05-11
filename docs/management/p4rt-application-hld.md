@@ -2,7 +2,8 @@
 title: P4RT アプリケーション（PINS の gRPC サービス、port 9559）
 area: management
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/pins/p4rt_app_hld.md
@@ -184,6 +185,18 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は c
 
 - 設計ドキュメントを書く際は HashOrch ではなく **SwitchOrch のハッシュ責務** として記述する。
 - ハッシュフィールド名の対応は `switch_helper.cpp:24-` のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `HashOrch` クラスは存在せず、`SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費 (`sonic-swss/orchagent/switchorch.cpp:1507`, `orchdaemon.cpp:199`)。
+- `switch_helper.cpp:24-` に `SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応マップ。
+- `sonic-swss/orchagent/p4orch/p4orch.h:46` に `class P4Orch : public ZmqOrch`。HLD の主要パスは P4Orch 経由で取り込み済み。
+- 関連 PR: `sonic-pins` 系の P4Orch 取り込みは 2022-2024 年に段階的 merge。HashOrch は当初設計から SwitchOrch 統合に方針変更（PR description で `Reusing existing SwitchOrch` の旨記載多数）。
+- **追加コード追跡コマンド**: ハッシュ責務の所在 — `grep -rn 'SAI_NATIVE_HASH_FIELD\|setSwitchHash' .cache/sonic-sources/sonic-swss/orchagent/switch/`。デバッグ時の attach 先は `SwitchOrch::doTask`（switchorch.cpp:1507 周辺）。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

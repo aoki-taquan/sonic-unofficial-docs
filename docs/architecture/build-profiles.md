@@ -2,7 +2,8 @@
 title: ビルドプロファイル（rules/profiles/*.mk）
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/sonic-build-system/Build-Profiles.md
@@ -195,6 +196,17 @@ HLD は「`rules/config` < `rules/config.user` < `rules/profiles/$(PROFILE).mk`�
 - **HLD と同等の効果を得る暫定回避策**: ビルド前に `cp rules/profiles/foo.mk rules/config.user` する仕組みを wrapper script / CI ジョブで実装し、`config.user` を「実質プロファイル」として運用する。`config.user` は gitignore 対象なので CI でのみ生成すれば衝突しない。
 - **複数フラグを並べる従来形に倒す**: `make ENABLE_FOO=y ENABLE_BAR=y all` をそのまま CI に書き、可読性は CI ファイル側で補う。
 - 上流取り込みを推進する場合は `sonic-buildimage` 側に `Makefile.work` の 1 行 patch (`-include rules/profiles/$(PROFILE).mk`) + `rules/profiles/` ディレクトリ追加の PR を出すのが最小コスト。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `sonic-buildimage/Makefile.work` 全行を再 grep しても `rules/profiles/` を include する行は 0 件 (`grep -n profiles .cache/sonic-sources/sonic-buildimage/Makefile.work` でヒット無し)。HLD は提案段階のまま。
+- `rules/config` (L1 以降) と `rules/config.user` (`Makefile.work` 末尾の `-include`) の 2 段のみ存在し、3 段目は不在。
+- 関連 Issue/PR: 上流 `sonic-net/SONiC` に該当 HLD はあるが、対応する `sonic-buildimage` の実装 PR は未提出（GitHub 検索で `build profile` 関連 merged PR ヒット無し）。
+- **追加回避策コマンド**: `BUILD_PROFILE=secure ./build_debian.sh` のようなプロファイル切替が必要なら、CI 側で `cp rules/profiles/${BUILD_PROFILE}.mk rules/config.user` を make 直前に挿入する wrapper を採用する。
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

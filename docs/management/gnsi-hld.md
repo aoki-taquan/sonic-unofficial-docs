@@ -2,7 +2,8 @@
 title: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
 area: management
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/mgmt/gnmi/gnsi.md
@@ -238,6 +239,19 @@ gnsi_client credentialz rotate-account \
 - Credentialz が必要な場合は、現状 `ssh_mgmt` host service（dbus 経由）を直接叩くか、`/etc/ssh/sshd_config` / `authorized_keys` をホスト側スクリプトで管理する。gNSI 経由は上流の handler 実装待ち。
 - Authz / Pathz / CRL を有効化する設定は、telemetry config 構造体の `AuthzPolicy = true` / `AuthzPolicyFile = "/path/to/policy.json"` / `PathzPolicy = true` / `PathzPolicyFile = "..."` / `CertCRLConfig = "..."` を設定する。HLD の flag 名表記には引きずられない。
 - gNSI profile state を観測したい場合は、gNMI Probe / Get RPC を直接叩いて handler の戻り値を見る。STATE_DB 経由は機能しない。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `sonic-gnmi/gnmi_server/gnsi_authz.go` / `gnsi_certz.go` / `gnsi_pathz.go` は実装済みだが、`gnsi_credentialz.go` 相当のサーバハンドラは不在 (`ls .cache/sonic-sources/sonic-gnmi/gnmi_server/gnsi_*.go` で credentialz ファイル無し)。
+- フラグ名差異: HLD `EnableAuthzPolicy` → 実装 `AuthzPolicy` (`server.go:240,243`)、ポリシーファイル `AuthzPolicyFile` / `PathzPolicyFile`、CRL は `CertCRLConfig`。
+- Credentialz の dbus client (`sonic_service_client/dbus_client.go:53-`) は準備済み。`TestCredentialzDbusMethods` テストも存在。サーバ側ディスパッチが未配線。
+- STATE_DB に gNSI profile 状態テーブル無し (`grep -i gnsi .cache/sonic-sources/sonic-swss-common/common/schema.h` 0 件)。状態は gnmi プロセス内メモリ保持。
+- 関連 PR: `sonic-gnmi` の Authz/Pathz/Certz は 2024 年内に複数 PR で merge、Credentialz は draft 段階で停止。
+- **追加回避策コマンド**: SSH 鍵 rotate を gNSI 経由で実施したい場合 — 現状は `dbus-send --system --dest=org.SONiC.HostService --type=method_call /org/SONiC/HostService/ssh_mgmt org.SONiC.HostService.ssh_mgmt.<method>` で dbus 直叩き。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

@@ -2,7 +2,8 @@
 title: SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/ssdhealth/ssdhealth_design.md
@@ -225,6 +226,18 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 - 常時監視が必要なら、`show platform ssdhealth` を cron + syslog で wrap するか、`smartctl` を直接 polling する独自 exporter を用意する。
 - 温度 `0` を観測したら、必ず `smartctl -A /dev/sdX | grep -i temperature` で raw 値を併読する運用にする。
 - ベンダープラグインが無い platform で `vendor` モードが空になる場合は、`device/<vendor>/platform/plugins/ssdutil.py` の存在を `dpkg -L sonic-platform-<vendor>` 等で確認。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`, `sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み。
+- HLD の Open Question として残されていた `ssdmond` 常時監視デーモンは未実装。`sonic-platform-daemons/` 配下に `ssdmond` ディレクトリ無し (`find . -iname 'ssdmond*'` 結果 0)。
+- SNMP MIB 露出も未実装（HLD でも明示的にスコープ外と記載）。
+- 関連 PR: `sonic-platform-common` への SsdBase 取り込みは 2019-2020 年に merge 済み。`ssdmond` は提案 PR 無し。
+- **追加運用コマンド**: 常時監視を要する場合 — `*/15 * * * * /usr/local/bin/show platform ssdhealth | logger -t ssdhealth` の cron 化で代替。閾値割れの検知は `show platform ssdhealth | awk '/Health/{if ($2+0 < 10) exit 1}'` でテレメトリ連携。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

@@ -2,7 +2,8 @@
 title: SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: not_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
@@ -186,6 +187,18 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 - **検証だけ進めたい場合**: schema 層は揃っているので、`redis-cli -n 0 hset "DASH_HA_SET_CONFIG_TABLE:hs1" ...` で手動でテーブルに値を入れ、consumer が居ない状態の確認まではできる。BFD responder の program は別途自前で組む必要がある。
 - **ベンダー版 SmartSwitch を採用**: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。
 - 上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + `DASH_HA_DPU_STATE` / `VDPU_TABLE` の schema 追加 + CLI の 4 点セットが必要。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `hamgrd` バイナリは community master の `sonic-buildimage/dockers/` 配下に存在しない (`find .cache/sonic-sources/sonic-buildimage/dockers -name '*hamgr*'` 結果 0)。`sonic-swss/orchagent/dash/` にも hamgrd 相当の actor framework は未取り込み。
+- schema は `sonic-swss-common/common/schema.h` L180-454 周辺に `DASH_HA_SET_CONFIG_TABLE` / `DASH_HA_SCOPE_CONFIG_TABLE` / `DASH_HA_GLOBAL_CONFIG` / `STATE_DASH_HA_SCOPE_STATE_TABLE` が定義され先行採用。一方 `DASH_HA_DPU_STATE` / `VDPU_TABLE` は未定義。
+- swbus（actor 間メッセージバス）の文字列は community master 全リポで 0 件。`sonic-dash-api` / vendor 側に切出される計画と推測。
+- 関連 Issue/PR: `sonic-net/DASH` リポに HA HLD ドラフトと一部 reference 実装が存在するが、community SONiC への merge は段階的。Switch-Driven mode は HLD で TBD のまま。
+- **追加検証コマンド**: schema 層のみ確認 — `redis-cli -n 0 hset 'DASH_HA_SET_CONFIG_TABLE:hs1' ha_owner 'switch'` で書込は通るが、consumer 不在のため STATE_DB に反映されないことを `redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'` で確認。
+
+> 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
 ## 引用元
 

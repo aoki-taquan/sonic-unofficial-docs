@@ -2,7 +2,8 @@
 title: SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
 area: platform
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/SAI_failure_handling/SAI_failure_handling.md
@@ -184,6 +185,18 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
 - **回避策**: 現行挙動は `saihelper.cpp` のソース読みが正本。
 
 したがって本ページは Proposal 段階の設計記述であり、現行 master の挙動を読み解く際は `saihelper.cpp` の自由関数 4 本と各 Orch の呼び出しサイトを直接参照する必要がある。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- `handleSai{Create,Set,Remove,Get}Status` は `Orch` 基底 virtual ではなく `sonic-swss/orchagent/saihelper.h:19-22` の **free function**。共通実装が `saihelper.cpp` に集約。
+- 個別 Orch（28 箇所程度: `vrforch.cpp` / `copporch.cpp` / `dtelorch.cpp` / `macsecorch.cpp` / `sfloworch.cpp` / `natorch.cpp` / `dash/dashportmaporch.cpp` / `dash/dashvnetorch.cpp` 等）は呼び出し側として利用するのみで override 無し。
+- 戻り値分岐は `task_process_status` enum (`orch.h`) で `task_need_retry` / `task_failed` / `task_success` を返す。
+- 関連 PR: 実装は HLD 提案後の review で free function 形式に変更（Orch 基底へ追加する設計から、再利用性のため saihelper.cpp に集約）。
+- **追加コード追跡コマンド**: 全呼出元の列挙 — `grep -rn 'handleSaiCreateStatus\|handleSaiSetStatus\|handleSaiRemoveStatus\|handleSaiGetStatus' .cache/sonic-sources/sonic-swss/orchagent/ | wc -l` で約 100+ 箇所、`saihelper.cpp` の関数本体に breakpoint を設定すれば全 SAI 失敗を一元的にトラップ可能。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 

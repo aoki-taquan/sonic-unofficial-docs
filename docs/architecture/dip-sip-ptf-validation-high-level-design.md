@@ -2,7 +2,8 @@
 title: DIP=SIP PTF 検証テスト
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
+monitor: evolved_beyond_hld
 sources:
   - repo: sonic-net/SONiC
     path: doc/dip-sip/DIP=SIP_HLD.md
@@ -224,6 +225,18 @@ ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest te
 - **テストを走らせる**: 旧 ansible 直叩き `ansible-playbook ... -e 'testcase_name=dip_sip'` は **そのまま動く**（ラッパが pytest を呼ぶため）。HLD の旧手順を保ったまま実行可能。
 - **テストを読み解く**: 本体ロジックは `sonic-mgmt/tests/ipfwd/test_dip_sip.py` を `grep -n` で参照する。クラス名 / log 名のドキュメント不一致は本ページの記述ではなくコード側を真として扱う。
 - **新規 topology / RIF を追加する**: pytest 側の parametrize / fixture を編集し、必要なら `dip_sip.yml` の `test_node` 指定とは別経路で `pytestmark` の設定を変える。
+
+### 監査 round 2 追補（2026-05-11）
+
+監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+
+- 旧 PTF スクリプト `ansible/roles/test/files/ptftests/dip_sip.py` は GitHub `sonic-net/sonic-mgmt` master でヒット 0（削除確定）。
+- 現行本体 `tests/ipfwd/test_dip_sip.py` は pytest 形式で、`DipSipTest` 同等のテストが pytest case にリファクタされている。
+- `ansible/roles/test/tasks/dip_sip.yml` (114 B) は pytest_runner ラッパに縮退。HLD の前処理／後処理ステップは pytest fixture (`tests/common/fixtures/duthosts.py` 等) に移行。
+- 関連 PR: `sonic-mgmt` における ansible→pytest 移行は 2021-2023 年に複数 PR で段階実施済み（特定 PR ID は HLD では未参照）。
+- **追加実行コマンド**: 現行で走らせる場合 — `cd sonic-mgmt/tests && pytest ipfwd/test_dip_sip.py --topology=t0 --testbed=<tb>`。旧 `ansible-playbook ... -e testcase_name=dip_sip` 経路もラッパ越しに動作する。
+
+> 分類: `monitor: evolved_beyond_hld` — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。
 
 ## 引用元
 
