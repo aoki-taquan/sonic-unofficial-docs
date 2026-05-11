@@ -1,0 +1,11 @@
+# robots.txt for sonic-unofficial-docs
+# Search engines are welcome to index the public documentation.
+
+User-agent: *
+Allow: /
+
+# Archived / deprecated content should not be indexed.
+Disallow: /ARCHIVE/
+Disallow: /archive/
+
+Sitemap: https://aoki-taquan.github.io/sonic-unofficial-docs/sitemap.xml
