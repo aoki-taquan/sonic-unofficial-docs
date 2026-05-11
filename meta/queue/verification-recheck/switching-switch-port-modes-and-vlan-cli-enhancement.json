@@ -1,0 +1,16 @@
+{
+  "page": "docs/switching/switch-port-modes-and-vlan-cli-enhancement.md",
+  "verification": "discrepancy-found",
+  "monitor": "partially_implemented",
+  "kind": "recheck",
+  "concerns": [
+    "sonic-utilities/config/vlan.py の switchport mode (access/trunk/routed) サブコマンド網羅状況を再確認",
+    "CONFIG_DB PORT.mode / VLAN_MEMBER.tagging_mode の YANG 制約が HLD 仕様と合っているか sonic-yang-models を確認",
+    "vlanmgrd / intfmgr の mode 変更時 transition 処理が完成しているか sonic-swss/cfgmgr を再 grep",
+    "HLD 改訂日と upstream PR (sonic-utilities) の追加コマンド差分"
+  ],
+  "verified_concerns": [],
+  "priority": "low",
+  "last_verified": "2026-05-11",
+  "notes": "再裏取り対象: discrepancy-index 由来。CLI 拡張は段階的に取り込み中の可能性があり、未取り込み残差を次回サイクルで確認する。"
+}
