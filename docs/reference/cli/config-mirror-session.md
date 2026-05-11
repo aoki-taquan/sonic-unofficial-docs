@@ -1,0 +1,151 @@
+---
+title: config mirror_session サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db:
+    - MIRROR_SESSION
+  cli:
+    - config mirror_session
+  yang:
+    - sonic-mirror-session
+---
+
+# config mirror_session サブコマンド
+
+## 概要
+
+`config mirror_session` はポートミラー / ERSPAN セッションを CONFIG_DB の `MIRROR_SESSION` テーブルに登録・削除する。タイプは 2 種類:
+
+- **ERSPAN** ... GRE カプセル化して remote analyzer に転送
+- **SPAN** ... 同一スイッチ内の特定ポートに複製出力
+
+実装は `config/main.py` のみ（独立モジュールではない）に集約されており、`add_erspan` / `add_span` ヘルパが CONFIG_DB の `MIRROR_SESSION|<session_name>` を `set_entry` で書き込む[^1]。multi-ASIC 環境では front_ns 全てに同じセッションを複製書き込みし、`src_port` が指定された場合は **該当ポートが属する namespace にのみ** `src_port` を書く設計になっている。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `config mirror_session add ...` | （レガシー）ERSPAN セッション追加 |
+| `config mirror_session erspan add ...` | ERSPAN セッション追加 |
+| `config mirror_session span add ...` | SPAN セッション追加 |
+| `config mirror_session remove <session_name>` | セッション削除 |
+
+## 各コマンドの詳細
+
+### `config mirror_session add` (レガシー)
+
+**用法**:
+
+```
+config mirror_session add <session_name> <src_ip> <dst_ip> <dscp> <ttl>
+    [<gre_type>] [<queue>] [--policer <name>]
+```
+
+**動作**: 後述 `erspan add` の薄いラッパとして実装されており、`src_port` / `direction` を取らない。新規利用は `erspan add` を推奨。
+
+### `config mirror_session erspan add`
+
+**用法**:
+
+```
+config mirror_session erspan add <session_name> <src_ip> <dst_ip> <dscp> <ttl>
+    [<gre_type>] [<queue>] [<src_port>] [<direction>] [--policer <name>]
+```
+
+**引数**:
+
+- `<session_name>` ... ASCII 任意。CONFIG_DB のキーになる
+- `<src_ip>` / `<dst_ip>` ... IPv4 のみ（`validate_ipv4_address` callback）
+- `<dscp>` ... `DSCP_RANGE` (0-63)
+- `<ttl>` ... `TTL_RANGE` (1-255)
+- `<gre_type>` ... 任意。`validate_gre_type` で 0x0000-0xFFFF 範囲を検証
+- `<queue>` ... `QUEUE_RANGE` 任意
+- `<src_port>` ... 任意。カンマ区切りで複数ポート可。指定するとフローベース mirror になる
+- `<direction>` ... 任意。`rx` / `tx` / `both`。未指定で `src_port` がある場合は `both` を補う
+
+**オプション**:
+
+- `--policer <name>` ... `POLICER` テーブルの policer 名
+
+**動作**:
+`session_info = {"type": "ERSPAN", "src_ip", "dst_ip", "dscp", "ttl", ...}` を組み立て、`config_db.set_entry("MIRROR_SESSION", session_name, session_info)`[^2]。multi-ASIC 環境では front_ns 全てに同じ「base info」を書き込み、`src_port` が指定されている場合だけ `get_port_namespace(orig)` で対応 namespace を解決し、そこにのみ `src_port` + `direction` を書く（front-panel port でなければ即 fail）。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L3213-L3313 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  def add_erspan(session_name, src_ip, dst_ip, dscp, ttl, gre_type, queue, policer, src_port=None, direction=None):
+      session_info = {"type": "ERSPAN", "src_ip": src_ip, "dst_ip": dst_ip, "dscp": dscp, "ttl": ttl}
+      ...
+      config_db.set_entry("MIRROR_SESSION", session_name, session_info)
+-->
+
+### `config mirror_session span add`
+
+**用法**:
+
+```
+config mirror_session span add <session_name> <dst_port>
+    [<src_port>] [<direction>] [<queue>] [--policer <name>]
+```
+
+**引数**:
+
+- `<dst_port>` ... 必須。ミラー出力先ポート
+- `<src_port>` ... 任意。カンマ区切り複数可
+- `<direction>` ... `rx` / `tx` / `both`
+- `<queue>` ... 任意
+
+**動作**:
+`session_info = {"type": "SPAN", "dst_port": ..., ...}` を組み立て `MIRROR_SESSION` に書き込む。`dst_port` の **元名** から namespace を判定して該当 namespace に書く（multi-ASIC）。`validate_mirror_session_config` で同名セッションの重複や `dst_port` の妥当性を事前検証する。
+
+### `config mirror_session remove <session_name>`
+
+**用法**:
+
+```
+config mirror_session remove <session_name>
+```
+
+**動作**:
+`config_db.set_entry("MIRROR_SESSION", session_name, None)` で削除[^3]。multi-ASIC では front_ns を走査し、各 namespace に該当エントリが存在すれば削除。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/config/main.py#L3418-L3445 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @mirror_session.command()
+  @click.argument('session_name', required=True)
+  def remove(session_name):
+      ...
+      config_db.set_entry("MIRROR_SESSION", session_name, None)
+-->
+
+## 関連する CONFIG_DB
+
+| テーブル | 書き換える key / フィールド | 操作するコマンド |
+|----------|----------------------------|------------------|
+| `MIRROR_SESSION` | `<session_name>` (`type`, `src_ip`, `dst_ip`, `dscp`, `ttl`, `gre_type`, `queue`, `src_port`, `direction`, `dst_port`, `policer`) | `config mirror_session (add\|erspan add\|span add\|remove)` |
+
+## multi-ASIC スコープ
+
+- ERSPAN base info: front_ns 全てに同じデータを書く（destination が remote analyzer なので各 ASIC で独立に GRE 送信できるようにする）
+- `src_port` は **該当ポートのある namespace にのみ** 書く（front-panel でなければ fail）
+- SPAN は `dst_port` の namespace を判定し、そこにのみ書く
+
+## 引用元
+
+[^1]: グループ定義 `config/main.py` L3150-L3155。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py#L3148>
+
+[^2]: ERSPAN 追加ロジックは L3213-L3313。
+
+[^3]: 削除ロジックは L3418-L3445。
+
+## 関連ページ
+
+- [reference/CLI: config acl](config-acl.md)
+- [reference/CLI: show acl](show-acl.md)

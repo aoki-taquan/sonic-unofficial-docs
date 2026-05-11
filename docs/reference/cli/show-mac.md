@@ -1,0 +1,114 @@
+---
+title: show mac サブコマンド
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: show/main.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+related:
+  config_db: []
+  cli:
+    - show mac
+  yang: []
+---
+
+# show mac サブコマンド
+
+## 概要
+
+`show mac` は FDB (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと FDB を、`aging-time` を指定すると別系統 (APPL_DB) を読みに行く。
+
+## コマンド一覧
+
+| コマンド | 用途 |
+|---------|------|
+| `show mac [options]` | FDB エントリの表示 |
+| `show mac aging-time` | スイッチの FDB エージング時間（秒） |
+
+## 各コマンドの詳細
+
+### `show mac [options]`
+
+**用法**:
+
+```
+show mac
+    [-v|--vlan <vlan>]
+    [-p|--port <port>]
+    [-a|--address <mac>]
+    [-t|--type <static|dynamic>]
+    [-c|--count]
+    [-n|--namespace <ns>]
+    [--verbose]
+```
+
+**オプション**:
+
+- `-v / --vlan` ... 特定 VLAN の FDB のみ
+- `-p / --port` ... 特定ポート上の FDB のみ
+- `-a / --address` ... 指定 MAC アドレス
+- `-t / --type` ... `static` / `dynamic` のみ
+- `-c / --count` ... 件数表示モード（エントリ一覧の代わりに件数のみ）
+- `-n / --namespace` ... multi-ASIC 環境向け
+
+**動作**:
+`fdbshow` コマンドにフラグを渡して exec する。例: `--vlan 100 --port Ethernet0` の場合は `fdbshow -v 100 -p Ethernet0`。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/main.py#L1199-L1244 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @cli.group(cls=clicommon.AliasedGroup, invoke_without_command="true")
+  def mac(ctx, vlan, port, address, type, count, verbose, namespace):
+      if ctx.invoked_subcommand is not None:
+          return
+      cmd = ["fdbshow"]
+      if vlan is not None:    cmd += ['-v', str(vlan)]
+      if port is not None:    cmd += ['-p', str(port)]
+      if address is not None: cmd += ['-a', str(address)]
+      if type is not None:    cmd += ['-t', str(type)]
+      if count:               cmd += ["-c"]
+      if namespace is not None: cmd += ['-n', str(namespace)]
+      run_command(cmd, display_cmd=verbose)
+-->
+
+### `show mac aging-time`
+
+**用法**:
+
+```
+show mac aging-time
+```
+
+**動作**:
+**FDB 表示とは別系統** で、`SonicV2Connector` 経由で **APPL_DB** の `SWITCH_TABLE*` を列挙し、各キーから `fdb_aging_time` を取得して表示する[^2]。設定されていなければ `Aging time not configured for the switch` を出力。
+
+<!-- evidence:
+source: sonic-net/sonic-utilities/show/main.py#L1245-L1262 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
+excerpt: |
+  @mac.command('aging-time')
+  def aging_time(ctx):
+      app_db = SonicV2Connector()
+      app_db.connect(app_db.APPL_DB)
+      keys = app_db.keys(app_db.APPL_DB, "SWITCH_TABLE*")
+      for key in keys:
+          fdb_aging_time = app_db.get(app_db.APPL_DB, key, 'fdb_aging_time')
+          ...
+-->
+
+## 補足
+
+- `fdbshow` 自体は APPL_DB / ASIC_DB / STATE_DB を読み合わせて FDB を組み立てる。CONFIG_DB は使わない
+- aging time の **設定** は `config mac aging_time <seconds>` 等が存在する場合に行う（本ページは表示系のみ）
+
+## 引用元
+
+[^1]: <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1199>
+
+[^2]: APPL_DB の `SWITCH_TABLE` は orchagent が書き込む。`fdb_aging_time` は秒単位。
+
+## 関連ページ
+
+- [reference/CLI: show vlan](show-vlan.md)
+- [reference/CLI: show interfaces](show-interfaces.md)
