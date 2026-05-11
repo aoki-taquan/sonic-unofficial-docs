@@ -26441,6 +26441,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 reference
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28873,6 +28884,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 reference
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29001,8 +29023,8 @@
 <ul>
 <li><code>flowchart LR</code> — パケット経路・データプレーンの流れ・状態の左→右遷移</li>
 <li><code>flowchart TD</code> — レイヤ構造・コンポーネント階層・「上位 → 下位」関係</li>
-<li><code>sequenceDiagram</code> — orchagent / syncd / SAI / kernel をまたぐ呼び出し順序</li>
-<li><code>stateDiagram-v2</code> — BGP / LACP / BFD などのプロトコル状態機械</li>
+<li><code>sequenceDiagram</code> — <a href="../glossary/#term-orchagent">orchagent</a> / <a href="../glossary/#term-syncd">syncd</a> / <a href="../glossary/#term-sai">SAI</a> / kernel をまたぐ呼び出し順序</li>
+<li><code>stateDiagram-v2</code> — <a href="../glossary/#term-bgp">BGP</a> / <a href="../glossary/#term-lacp">LACP</a> / <a href="../glossary/#term-bfd">BFD</a> などのプロトコル状態機械</li>
 </ul>
 <p>ノードラベル内では絵文字を使わない（PDF / 一部レンダラで文字化けする）。代わりに <code>[警告: ...]</code> のような括弧表記を使う。色指定 (<code>classDef</code>) は最小限にとどめる。</p>
 <h2 id="admonition">admonition 使い方<a class="headerlink" href="#admonition" title="Permanent link">&para;</a></h2>
@@ -29012,7 +29034,7 @@
 <li><code>!!! tip</code> — 運用 Tips / コツ</li>
 <li><code>!!! warning</code> — 既知の落とし穴・設定ミスしやすい点</li>
 <li><code>!!! danger</code> — データ損失・ループ・サービス停止に直結する操作</li>
-<li><code>!!! diff</code> — HLD と実装の乖離を示す専用ブロック (<code>discrepancy-found</code> ページのみ)</li>
+<li><code>!!! diff</code> — <a href="../glossary/#term-hld">HLD</a> と実装の乖離を示す専用ブロック (<code>discrepancy-found</code> ページのみ)</li>
 </ul>
 <p><code>!!! diff</code> は必ず HLD 側の主張・現行 master の状態・読み手への影響を 3 段で書く。</p>
 <h2 id="glossary">glossary 用語<a class="headerlink" href="#glossary" title="Permanent link">&para;</a></h2>
@@ -29047,7 +29069,7 @@
 <ul>
 <li>文体は「である調」で統一する。「ですます調」は本ガイドおよび README 等の対人向けページに限定する</li>
 <li>技術用語は原則カタカナ表記とする。例: ルータ / スイッチ / オーケストレータ / オーバーレイ</li>
-<li>固有名詞・プロダクト名・コマンド名は原綴のままにする。例: SONiC / orchagent / syncd / FRR / Mellanox</li>
+<li>固有名詞・プロダクト名・コマンド名は原綴のままにする。例: SONiC / orchagent / syncd / <a href="../glossary/#term-frr">FRR</a> / Mellanox</li>
 <li>助詞「は / が / を / に」の重複を避ける。長い修飾句は読点で区切る</li>
 <li>半角英数字と日本語の間にスペースは入れない（MkDocs の表示で間延びするため）</li>
 <li>箇条書きは「、」「。」を統一する。文の集まりは句点で終え、語句の列挙は句読点なしで揃える</li>
@@ -29089,6 +29111,13 @@
 </ul>
 <h2 id="_8">引用<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>本ページはプロジェクト内ルールを集約した <code>meta</code> ページであり、SONiC 一次情報源を持たない。スキーマ・テンプレートの正本は <code>meta/templates/</code> 配下のファイルである。</p>
+<h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../">Reference index</a></li>
+<li><a href="../glossary/">Glossary</a></li>
+<li><a href="../../topics/22-reference-index/">Topics: Reference index</a></li>
+</ul>
+<!-- glossary-links-injected: 779e8be0b8c1 -->
 
 
 

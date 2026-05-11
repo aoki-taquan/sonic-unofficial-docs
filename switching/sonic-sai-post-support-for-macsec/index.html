@@ -10394,6 +10394,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28960,6 +28971,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29206,6 +29228,12 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 <li><code>fail</code> の場合 syslog の <code>Switch MACSec POST failed</code> / <code>MACSec POST failed: oid ...</code> を grep して詳細を取得</li>
 <li><code>in-progress</code> で進まない場合、SAI から完了 callback が来ていない可能性。<code>syncd</code> ログで POST API 呼び出しと callback を確認</li>
 <li>FIPS 有効化したのに POST が走らない場合、<code>/proc/cmdline</code> の <code>sonic_fips=1</code> または <code>/etc/fips/fips_enable</code> を確認</li>
+</ul>
+<h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../reference/yang/sonic-macsec/">YANG: sonic-macsec</a></li>
+<li><a href="../../reference/runbooks/macsec-mka-not-established/">Runbook: macsec mka not established</a></li>
+<li><a href="../../topics/15-security-aaa/">Topics: Security / AAA</a></li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

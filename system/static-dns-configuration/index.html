@@ -14259,6 +14259,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28927,6 +28938,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29165,6 +29187,12 @@ reasoning: 静的 / 動的の排他切替ロジックの根拠。
 <li>動的 DNS に戻したい: <code>config dns nameserver del &lt;ip&gt;</code> ですべて削除すれば、<code>resolv-config.sh</code> が動的更新を再有効化する。</li>
 <li>コンテナ内だけ古い DNS が残る: <code>update-containers</code> プラグインの動作不良が疑われる。各コンテナに <code>docker exec ... cat /etc/resolv.conf</code> で照合する。</li>
 <li>IPv6 link-local DNS: <code>fe80::</code> 系は zone id が必要なケースがある。CONFIG_DB / CLI 側でゾーン記法を受けるかどうかは HLD では明記されていないため、実装裏取りが必要。</li>
+</ul>
+<h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../reference/yang/sonic-dns/">YANG: sonic-dns</a></li>
+<li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP / DNS</a></li>
+<li><a href="../../reference/cli/config-aaa/">CLI: config aaa</a></li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
