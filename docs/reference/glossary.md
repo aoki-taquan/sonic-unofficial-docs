@@ -903,8 +903,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [config_db.json](#term-config_db.json)
 
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (11)
+- [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (11)
 - [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (10)
-- [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (9)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (8)
 - [config reload が完了しない / hang する](runbooks/config-reload-stuck.md) (7)
 
@@ -1168,8 +1168,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [LACP](#term-lacp)
 
 - [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../switching/brief-introduction-of-iccp-code.md) (24)
+- [PortChannel メンバーで LACP が確立しない](runbooks/portchannel-lacp-not-established.md) (10)
 - [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](../switching/increasing-lacp-pdu-timeout-during-warm-reboot.md) (10)
-- [PortChannel メンバーで LACP が確立しない](runbooks/portchannel-lacp-not-established.md) (9)
 - [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (9)
 - [config portchannel サブコマンド](cli/config-portchannel.md) (8)
 
@@ -1215,8 +1215,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [minigraph.xml](#term-minigraph.xml)
 
+- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (7)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (6)
-- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (6)
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (5)
 - [sonic-cfggen コマンド](cli/sonic-cfggen.md) (4)
 - [SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像](../management/sonic-user-manual.md) (3)
