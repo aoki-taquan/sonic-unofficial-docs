@@ -29301,7 +29301,7 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    require_manual_refresh : &quot;true&quot; | (未設定)
 </span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>該当 <a href="../../reference/glossary/#term-yang">YANG</a> モジュールは HLD で言及されていない。</p>
+<p>HLD 自体は YANG 言及なし。<code>LOGGER</code> テーブルは <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-logger.yang</code> の <code>container LOGGER</code> で取り込まれており、<code>require_manual_refresh</code> leaf も定義済。syslog 系設定は <code>sonic-syslog.yang</code> を参照。</p>
 <h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>対象は <strong><code>sonic_py_common.syslogger.SysLogger</code> のみ</strong>。<code>logger.Logger</code> は deprecate 予定で対象外<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
