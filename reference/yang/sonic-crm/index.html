@@ -23427,10 +23427,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         ツリー（概略）
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         リソースクラス一覧
@@ -23568,7 +23585,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23579,7 +23596,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23624,7 +23641,21 @@
 <li>top container: <code>sonic-crm</code></li>
 </ul>
 <p>Critical Resource Monitoring (CRM) 設定の YANG モデル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ASIC 上の各種ハードウェアリソース（ACL カウンタ/エントリ、route、neighbor、nexthop、FDB、NAT、MPLS、SRv6、DASH オブジェクト 等）について <code>threshold_type</code> / <code>high_threshold</code> / <code>low_threshold</code> の 3 リーフをひとセットとして繰り返し定義する大型モジュール。</p>
-<h2 id="_2">ツリー（概略）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- yang-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  Y["sonic-crm"]
+  C1[("CONFIG_DB&lt;br/&gt;CRM")]
+  Y --&gt; C1
+  D1["CrmOrch"]
+  C1 --&gt; D1</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文を参照。</p>
+</div>
+<!-- /yang-mermaid -->
+
+<h2 id="_3">ツリー（概略）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-crm
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-crm
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw CRM
@@ -23636,7 +23667,7 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>           +--rw &lt;resource&gt;_low_threshold?                      uint16
 </span></code></pre></div>
 <p>すべての <code>_high_threshold</code> は対応する <code>_low_threshold</code> より大きいことが must 制約で要求される。<code>PERCENTAGE</code> 系では値 &lt; 100 制約も付く。</p>
-<h2 id="_3">リソースクラス一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">リソースクラス一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>CRM が監視する論理リソース（<code>&lt;class&gt;_threshold_type</code> / <code>_high_threshold</code> / <code>_low_threshold</code> の 3 リーフが定義されているもの）:</p>
 <h3 id="acl">ACL 系<a class="headerlink" href="#acl" title="Permanent link">&para;</a></h3>
 <p><code>acl_counter</code>, <code>acl_entry</code>, <code>acl_group</code>, <code>acl_table</code></p>
@@ -23722,14 +23753,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/crm/"><code>CRM</code></a></li>
 <li>CLI: <code>crm config</code> / <code>crm show</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -23427,10 +23427,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="概要">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー (自動生成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         ツリー（概略）
@@ -23441,7 +23458,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         カウンタグループ一覧
@@ -23518,7 +23535,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23529,7 +23546,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23574,7 +23591,21 @@
 <li>top container: <code>sonic-flex_counter</code></li>
 </ul>
 <p><code>syncd</code> の Flex Counter Manager が ASIC SAI カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する YANG モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の <code>FLEX_COUNTER_STATUS</code> / <code>FLEX_COUNTER_DELAY_STATUS</code> / <code>POLL_INTERVAL</code> パターン（一部は <code>POLL_INTERVAL</code> を持たない）が繰り返される。加えてルート単位フローカウンタ用の <code>FLOW_COUNTER_ROUTE_PATTERN</code> を別コンテナで定義する。</p>
-<h2 id="_2">ツリー（概略）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<!-- yang-mermaid -->
+<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+  Y["sonic-flex_counter"]
+  C1[("CONFIG_DB&lt;br/&gt;FLOW_COUNTER_ROUTE_PATTERN")]
+  Y --&gt; C1
+  D1["FlowCounterRouteOrch"]
+  C1 --&gt; D1</code></pre>
+<div class="admonition note">
+<p class="admonition-title">凡例</p>
+<p>YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文を参照。</p>
+</div>
+<!-- /yang-mermaid -->
+
+<h2 id="_3">ツリー（概略）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-flex_counter
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-flex_counter
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw FLEX_COUNTER_TABLE
@@ -23591,7 +23622,7 @@
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>           +--rw ip_prefix         inet:ip-prefix
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>           +--rw max_match_count?  uint32 (range 1..50)
 </span></code></pre></div>
-<h2 id="_3">カウンタグループ一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">カウンタグループ一覧<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><code>FLEX_COUNTER_TABLE</code> 配下のサブコンテナ:</p>
 <table>
 <thead>
@@ -23830,14 +23861,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../../config-db/flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a> / <code>FLOW_COUNTER_ROUTE_PATTERN</code></li>
 <li>CLI: <code>counterpoll</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
