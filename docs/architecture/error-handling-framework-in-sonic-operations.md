@@ -19,6 +19,7 @@ related:
   - sonic-clear error-database
   - clear
   yang: []
+  _no_yang: true
 ---
 
 # Error Handling Framework 設定・運用

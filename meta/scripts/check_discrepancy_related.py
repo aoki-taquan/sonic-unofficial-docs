@@ -17,7 +17,12 @@ Usage:
                                                [--report PATH]
 
 Skip semantics:
-- Pages whose `related._no_related: true` are excluded (explicit opt-out).
+- Pages whose `related._no_related: true` are excluded (explicit opt-out
+  from all related-pages back-refs).
+- Pages whose `related._no_yang: true` are excluded (narrower opt-out:
+  the feature has no YANG model by design — e.g. HLD-only proposals
+  that pre-date YANG modelling, platform-only behaviour with no
+  CONFIG_DB schema, etc.).
 - Only pages whose top-level frontmatter contains
   `verification: discrepancy-found` are scanned.
 
@@ -50,7 +55,9 @@ def split_frontmatter(text: str):
 
 def is_opted_out(fm: dict) -> bool:
     rel = fm.get("related") or {}
-    return isinstance(rel, dict) and rel.get("_no_related") is True
+    if not isinstance(rel, dict):
+        return False
+    return rel.get("_no_related") is True or rel.get("_no_yang") is True
 
 
 def yang_is_empty(fm: dict) -> bool:
@@ -117,7 +124,7 @@ def main() -> int:
         f"scanned {scanned} pages, "
         f"{discrepancy_total} discrepancy-found, "
         f"{len(violations)} have empty related.yang, "
-        f"{len(opted)} opted out (_no_related)",
+        f"{len(opted)} opted out (_no_related / _no_yang)",
         file=sys.stderr,
     )
 
@@ -135,7 +142,7 @@ def main() -> int:
         out.append(f"- scanned: {scanned}")
         out.append(f"- discrepancy-found total: {discrepancy_total}")
         out.append(f"- empty `related.yang`: {len(violations)}")
-        out.append(f"- opted out (`_no_related: true`): {len(opted)}")
+        out.append(f"- opted out (`_no_related` / `_no_yang`): {len(opted)}")
         out.append("")
         out.append("## Violations")
         out.append("")

@@ -22,6 +22,7 @@ related:
   cli:
   - show bfd
   yang: []
+  _no_yang: true
 ---
 
 <!-- topics-tip -->

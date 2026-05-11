@@ -23,6 +23,7 @@ related:
   cli:
   - show bfd
   yang: []
+  _no_yang: true
 ---
 
 # SmartSwitch HA HAMgrD 制限事項と実装乖離

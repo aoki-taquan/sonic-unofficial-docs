@@ -22,6 +22,7 @@ related:
   - MID_PLANE_BRIDGE
   cli: []
   yang: []
+  _no_yang: true
 ---
 
 # SmartSwitch HA HAMgrD 設定経路（CONFIG/APP/STATE_DB）
