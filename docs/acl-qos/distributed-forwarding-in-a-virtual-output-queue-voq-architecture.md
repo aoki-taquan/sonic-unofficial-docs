@@ -1,17 +1,28 @@
 ---
 title: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
-description: "VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。"
+description: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual
+  Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/voq/architecture.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/voq/architecture.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VOQ_INBAND_INTERFACE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - QUEUE
+  - DPUS
+  - CRM
+  cli:
+  - show queue
+  yang:
+  - sonic-queue
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

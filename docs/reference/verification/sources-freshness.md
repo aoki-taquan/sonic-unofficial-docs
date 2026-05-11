@@ -1,11 +1,17 @@
 ---
 title: ソース pinned SHA の新鮮度（sources-freshness）
-description: "ソース pinned SHA の新鮮度（sources-freshness） — meta/index/repos.json で固定している commit SHA と各リポの upstream HEAD を突き合わせ、本サイトのスナップショットがどれだけ master から遅れているかを一覧化する。"
+description: ソース pinned SHA の新鮮度（sources-freshness） — meta/index/repos.json で固定している
+  commit SHA と各リポの upstream HEAD を突き合わせ、本サイトのスナップショットがどれだけ master から遅れているかを一覧化する。
 verification: meta
 last_verified: 2026-05-11
 tags:
-  - verification
-  - sources
+- verification
+- sources
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # ソース pinned SHA の新鮮度（sources-freshness）

@@ -1,17 +1,19 @@
 ---
 title: ZMQ ProducerStateTable / ConsumerStateTable 設計
-description: "ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶ。"
+description: ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable
+  / ConsumerStateTable は Redis 経由でメッセージを運ぶ。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-swss-common/ZMQ producer-consumer state table design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-swss-common/ZMQ producer-consumer state table design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->

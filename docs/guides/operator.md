@@ -1,9 +1,15 @@
 ---
 title: 運用者向けガイド
-description: "運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。"
+description: 運用者向けガイド — 既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、CONFIG_DB の意味確認、show
+  techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。
 area: guides
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 運用者向けガイド

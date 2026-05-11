@@ -5,19 +5,20 @@ area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-swss
-    path: orchagent/orchdaemon.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss
-    path: cfgmgr/
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss-common
-    path: common/schema.h
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss
+  path: orchagent/orchdaemon.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss
+  path: cfgmgr/
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 # CONFIG_DB ↔ orchagent クラス対応表

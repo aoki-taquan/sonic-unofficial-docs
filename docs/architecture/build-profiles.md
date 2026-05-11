@@ -1,18 +1,20 @@
 ---
 title: ビルドプロファイル（rules/profiles/*.mk）
-description: "ビルドプロファイル（rules/profiles/*.mk） — SONiC のビルドは多数のビルドフラグ（ENABLE_ZTP, SECURE_UPGRADE_*, USERNAME, PASSWORD, CHANGE_DEFAULT_PASSWORD 等）の組み合わせで挙動が変わる。"
+description: ビルドプロファイル（rules/profiles/*.mk） — SONiC のビルドは多数のビルドフラグ（ENABLE_ZTP, SECURE_UPGRADE_*,
+  USERNAME, PASSWORD, CHANGE_DEFAULT_PASSWORD 等）の組み合わせで挙動が変わる。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-build-system/Build-Profiles.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-build-system/Build-Profiles.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->

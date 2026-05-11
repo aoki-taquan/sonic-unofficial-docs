@@ -1,9 +1,14 @@
 ---
 title: SAI 拡張属性追加系
-description: "SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。"
+description: SAI 拡張属性追加系 — このカテゴリは、SAI そのものを横断するページを集めます。
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # SAI 拡張属性追加系

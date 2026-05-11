@@ -5,16 +5,17 @@ area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-sairedis
-    path: meta/
-    ref: 88bc51ae95df66977601957515e5527119ffd4c5
-  - repo: sonic-net/sonic-swss
-    path: orchagent/
-    ref: 88bc51ae95df66977601957515e5527119ffd4c5
+- repo: sonic-net/sonic-sairedis
+  path: meta/
+  ref: 88bc51ae95df66977601957515e5527119ffd4c5
+- repo: sonic-net/sonic-swss
+  path: orchagent/
+  ref: 88bc51ae95df66977601957515e5527119ffd4c5
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 # 頻出 SAI 属性早見表

@@ -1,18 +1,20 @@
 ---
 title: SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）
-description: "SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust） — UEFI Secure Boot を SONiC のブートチェーンに適用する。"
+description: SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust） — UEFI Secure
+  Boot を SONiC のブートチェーンに適用する。
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/secure_boot/hld_secure_boot.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/secure_boot/hld_secure_boot.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->

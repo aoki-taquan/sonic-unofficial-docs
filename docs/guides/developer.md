@@ -1,9 +1,15 @@
 ---
 title: 開発者向けガイド
-description: "開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。"
+description: 開発者向けガイド — SONiC に機能追加・拡張を入れたい読者を想定しています。HLD、YANG、CONFIG_DB、CLI、daemon
+  / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。
 area: guides
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 開発者向けガイド

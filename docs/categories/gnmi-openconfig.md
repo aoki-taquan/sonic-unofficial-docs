@@ -1,9 +1,16 @@
 ---
 title: gNMI / gNOI / OpenConfig 関連
-description: "gNMI / gNOI / OpenConfig 関連 — SONiC の管理プレーンは Management Framework（REST / gNMI / Translib / Transformer）と sonic-gnmi（gNMI Server）を中心に、CONFIG_DB と SONiC YANG / O…"
+description: gNMI / gNOI / OpenConfig 関連 — SONiC の管理プレーンは Management Framework（REST
+  / gNMI / Translib / Transformer）と sonic-gnmi（gNMI Server）を中心に、CONFIG_DB と SONiC
+  YANG / O…
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # gNMI / gNOI / OpenConfig 関連

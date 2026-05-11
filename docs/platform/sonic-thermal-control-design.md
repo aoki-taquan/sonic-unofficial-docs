@@ -1,16 +1,21 @@
 ---
 title: Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）
-description: "Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御） — switch を適温に保つために cooling device（主に fan）を制御する 2 階建ての仕組み:"
+description: 'Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御） — switch を適温に保つために
+  cooling device（主に fan）を制御する 2 階建ての仕組み:'
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/thermal-control/thermal-control-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/thermal-control/thermal-control-design.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show platform
   yang: []
 ---
 
