@@ -127,11 +127,64 @@ flowchart TB
 - 下り方向のパスが何によって決まるか（mux state / SoC forwarding state）を意識して切り分けに臨める。
 - `linkmgrd` と `MuxOrch` が neighbor / route の nexthop をどう書き換えるかをイメージできる。
 
+## CONFIG_DB / APPL_DB の主要テーブル
+
+Dual-ToR で見るべき主な DB は次のとおりです。
+
+| Table | 場所 | 用途 |
+| --- | --- | --- |
+| `MUX_CABLE` | CONFIG_DB | server-facing port ごとの `cable_type` / `state` / server IP / SoC IP / neighbor mode |
+| `MUX_LINKMGR` | CONFIG_DB | linkmgrd の各種パラメータ（heartbeat 間隔 / timeout / mode） |
+| `TUNNEL` / `TUNNEL_DECAP_TABLE` | CONFIG_DB / APPL_DB | MuxTunnel の IPinIP 設定 |
+| `HW_MUX_CABLE_TABLE` | STATE_DB | ycabled が見る physical mux 方向 |
+| `MUX_CABLE_TABLE` | STATE_DB | linkmgrd の論理 state（active/standby/unknown） |
+| `MUX_LINKMGR_TABLE` | STATE_DB | link prober の状態 |
+| `MUX_CABLE_COMMAND_TABLE` | STATE_DB | linkmgrd → ycabled への切替指示 |
+
+linkmgrd は ICMP heartbeat（link prober）/ HW link / mux 方向の 3 信号を STATE_DB 越しに集めて状態遷移を決め、MuxOrch が neighbor / route の nexthop を直接サーバ向け or tunnel 向けに切り替えます。
+
+## 切替の信号フロー
+
+```mermaid
+sequenceDiagram
+    participant LP as link prober<br/>(linkmgrd)
+    participant YC as ycabled (AS) /<br/>gRPC client (AA)
+    participant SDB as STATE_DB
+    participant ORCH as MuxOrch
+    participant ASIC as SAI tunnel / nhop
+    LP->>SDB: server / peer reachability
+    YC->>SDB: HW_MUX_CABLE direction
+    SDB->>ORCH: MUX_CABLE_TABLE 状態遷移
+    ORCH->>ASIC: neighbor / route の nexthop を切替
+    ORCH->>SDB: MUX_CABLE_COMMAND_TABLE で ycabled へ
+```
+
+Active-Standby ではこの SDB を経由した制御が中心で、Active-Active では同様の構図で gRPC client が SoC との forwarding state を扱います。
+
+## prefix-based mux neighbor の意味
+
+Active-Standby では、サーバ側 neighbor を残したまま **`/32` / `/128` route の nexthop だけ** を切り替える方式（prefix-based mux neighbor）が使われます。理由は、neighbor を削除すると ARP/ND の再解決が必要になり、切替時間が伸びるからです。詳細は [Prefix-based mux neighbors](../../routing/prefix-based-mux-neighbors.md) を参照してください。
+
+## ループ回避と境界
+
+```mermaid
+flowchart LR
+  Spine[Spine] --> ToR1[ToR1 active]
+  Spine --> ToR2[ToR2 standby]
+  ToR1 -- direct --> Server((Server))
+  ToR2 -. IPinIP tunnel .-> ToR1
+  ToR1 == decap ==> Server
+```
+
+standby から peer に IPinIP で戻したパケットを **peer 側でループしてもう一度 tunnel に乗せない** ように、MuxOrch は tunnel decap 後の nexthop を local server 向けに固定します。Active-Active では両 ToR が直接サーバへ送るためこのループ問題は出ず、代わりに「**北行きの 5-tuple ハッシュが両側で一致するか**」が観測すべき項目になります。
+
 ## 関連ページ
 
 - [Active-Standby Dual ToR](../../overlay/active-standby-dual-tor.md)
 - [Active-Active Dual ToR](../../overlay/active-active-dual-tor.md)
 - [Dual-ToR 関連](../../categories/dual-tor.md)
+- [Prefix-based mux neighbors](../../routing/prefix-based-mux-neighbors.md)
+- [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 
 <!-- xref-prereq -->
 ## この章の前提知識

@@ -122,11 +122,58 @@ DASH ACL は通常の `ACL_TABLE` / `ACL_RULE` と同じ名前空間ではなく
 - CPU 負荷の問題を「CoPP policer が緩い / 厳しすぎ / 該当 trap が落ちている」のどれかに切り分けられる。
 - パケットキャプチャ / 観測の要件を、ACL mirror action と `MIRROR_SESSION` のどちらで実現するか選べる。
 
+## CONFIG_DB の主要テーブル
+
+ACL / CoPP / Mirror の周辺で押さえておくべき CONFIG_DB を整理します。
+
+| Table | 用途 |
+| --- | --- |
+| `ACL_TABLE` | type / stage / bind point / ports |
+| `ACL_TABLE_TYPE` | カスタム table type（user-defined match / action / bind point） |
+| `ACL_RULE` | match / action / priority |
+| `MIRROR_SESSION` | 観測先 session（local / ERSPAN / DSCP / queue） |
+| `POLICER` | rate-limit 単位（ACL / CoPP 双方から参照） |
+| `COPP_TRAP` / `COPP_GROUP` | CPU 行き trap と policer / queue の組 |
+| `FLEX_COUNTER_TABLE` の `ACL` / `TRAP_FLOW_COUNTER` | カウンタ収集設定 |
+
+`ACL_TABLE_TYPE` を使うと「どの match を許す table を作るか」をユーザ側で定義でき、user-defined table type のサンプルとして DASH や P4 拡張系の HLD が引かれます。詳細は [ACL user-defined table type support](../../acl-qos/acl-user-defined-table-type-support.md) を参照してください。
+
+## stage と bind point の組み合わせ
+
+```mermaid
+flowchart LR
+  Pkt[受信パケット] --> Ing{Ingress ACL<br/>port/lag/vlan/switch}
+  Ing -->|hit| IngA[DROP / FWD / MIRROR / POLICER]
+  Ing -->|miss| L3[Forwarding]
+  L3 --> Eg{Egress ACL<br/>port/lag/switch}
+  Eg -->|hit| EgA[DROP / SET_DSCP / MIRROR_EGRESS]
+  Eg --> Out[送出]
+```
+
+stage（ingress/egress）と bind point（port / LAG / VLAN / switch）の組み合わせで利用可能な match / action が決まります。例えば egress 側で SET_DSCP / MIRROR_EGRESS_ACTION を使う場合は `EGR_SET_DSCP` / `MIRROR` 系の table type を選び、対象 stage は `egress` にします。
+
+## CoPP は SAI capability 確認とセットで読む
+
+CoPP は ASIC 依存が強く、利用可能な trap、policer の単位、CPU queue 数がプラットフォームによって違います。`SWITCH_CAPABILITY` テーブルや `STATE_DB` の関連テーブルで「この ASIC がどの trap / policer を受けるか」を確認するのが診断の入口です。CPU 高負荷時には `show platform queue counters` などで CPU queue 側のドロップが見えていないかも併せて確認します。
+
+## Mirror session の出力種別
+
+| 種別 | 用途 |
+| --- | --- |
+| `SPAN` | 同一 ToR 上のローカルポートへコピー |
+| `ERSPAN` / GRE encap | remote collector へ送る。dst IP、TTL、DSCP、queue を指定 |
+| `Truncated` | 一定サイズで切る observability 用途 |
+
+ERSPAN は GRE outer / DSCP / queue / TTL の各属性が SAI mirror session attr にそのまま伝搬します。複数 ACL ルールから同一 session を参照すると mirror engine が共有されるため、TCAM 消費は ACL 側のみで mirror engine 側は 1 リソースとして使えます。
+
 ## 関連ページ
 
 - [ACL in SONiC](../../acl-qos/acl-in-sonic.md)
 - [ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [SAI 拡張属性追加系](../../categories/sai-extensions.md)
+- [ACL user-defined table type support](../../acl-qos/acl-user-defined-table-type-support.md)
+- [Egress mirroring と ACL action capability](../../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md)
+- [DASH ACL タグ](../../acl-qos/dash-acl-tags.md)
 
 <!-- xref-prereq -->
 ## この章の前提知識

@@ -14,46 +14,33 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified（slave 命名のみ進化）"
-    現行 master で枠組みが維持されていることを確認。`sonic-buildimage/Makefile.work:121-177` で `CONFIGURED_ARCH` / `PLATFORM_ARCH` 変数（default `amd64`）と `SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)` を確認。`onie-image.conf` / `onie-image-armhf.conf` / `onie-image-arm64.conf` がリポジトリルートに揃っており、`platform/aspeed/onie-image-arm64.conf` 等も追加されている。`installer/install.sh` も存在。slave docker は `sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2` の per-distribution テンプレートに進化し、`-march-<arch>` サフィックスを実行時に付ける形（HLD の `sonic-slave-armhf` / `sonic-slave-arm64` 固定ディレクトリは廃止）。動作の枠組み・変数名は HLD と一致（verified at: 2026-05-09）。
+    `sonic-buildimage/Makefile.work:121-177` で `CONFIGURED_ARCH` / `PLATFORM_ARCH`（default `amd64`）と `SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)` を確認。`onie-image.conf` / `onie-image-armhf.conf` / `onie-image-arm64.conf` がリポジトリルートに揃い、`platform/aspeed/onie-image-arm64.conf` 等も追加。`installer/install.sh` も存在。slave docker は `sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2` の per-distribution テンプレートに進化し、`-march-<arch>` サフィックスを実行時に付ける形（HLD の固定ディレクトリ `sonic-slave-armhf` / `arm64` は廃止）。動作枠組み・変数名は HLD と一致（verified at: 2026-05-09）。
 
 # SONiC の ARM (armhf / arm64) ビルドサポート（`PLATFORM_ARCH` と qemu-static）
 
-## 概要
+## なぜ必要か
 
-SONiC ビルドシステムを **ARM32 (armhf) / ARM64** に対応させるための設計[^1]。SONiC は元々 x86_64 中心で書かれており、Makefile / docker / onie installer / kernel ビルド / sonic-installer 等が AMD64 をハードコードしていた。本 HLD は変更対象を整理する。
+SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 HLD は **ARM32 (armhf) / ARM64 サポート** のため変更対象を整理する[^1]。
 
-変更対象モジュール[^1]:
+変更対象: `sonic-slave`（ビルド環境 docker）、`dockers/`（base / ptf 等）、`rules/` / `Makefile` / build script、`apt` repo list、ONIE image / installer。
 
-- `sonic-slave` (ビルド環境 docker)
-- `dockers/`（base / ptf 等の docker image）
-- `rules/` / `Makefile` / build script
-- `apt` repo list
-- ONIE image / installer
+## ビルド時オプション
 
-## 動作仕様
-
-### ビルド時オプション
-
-ユーザーは `make configure` 時に `PLATFORM` と一緒に `PLATFORM_ARCH` (or `SONIC_ARCH`) を指定[^1]:
+`make configure` 時に `PLATFORM` と `PLATFORM_ARCH`（or `SONIC_ARCH`）を指定[^1]:
 
 ```bash
-# armhf
 make configure PLATFORM=marvell-armhf SONIC_ARCH=armhf
-
-# arm64
 make configure PLATFORM=marvell-arm64 SONIC_ARCH=arm64
 ```
 
-未指定なら **`amd64`** が default[^1]。
+未指定なら **`amd64`** が default。
 
-### Makefile 変数
+## Makefile 変数
 
 | 変数 | 用途 |
 |------|------|
-| `PLATFORM_ARCH` | ターゲットアーキテクチャ（`armhf` / `arm64` / `amd64`） |
-| `CONFIGURED_ARCH` | Makefile 内で `amd64` 直書きの代わりに使う変数 |
-
-例[^1]:
+| `PLATFORM_ARCH` | ターゲット arch（`armhf` / `arm64` / `amd64`） |
+| `CONFIGURED_ARCH` | Makefile 内で `amd64` 直書きの代替変数 |
 
 ```makefile
 # 旧
@@ -62,55 +49,33 @@ LINUX_IMAGE = linux-image-$(KVERSION)_..._amd64.deb
 LINUX_IMAGE = linux-image-$(KVERSION)_..._$(CONFIGURED_ARCH).deb
 ```
 
-`amd64` をハードコードしている全 `rules/*.mk` / `src/*/Makefile` を `$(CONFIGURED_ARCH)` に置換する[^1]。
+`rules/*.mk` / `src/*/Makefile` 内の `amd64` ハードコードを全て `$(CONFIGURED_ARCH)` に置換する[^1]。
 
-### Docker base image
+## Docker base / sonic-slave
 
-SONiC docker は **`debian` ベース** から **`multiarch/<distribution>-<arm_arch>`** ベースに切替[^1]:
-
-```text
-dockers/docker-base
-dockers/docker-base-stretch
-dockers/docker-ptf
-```
-
-これにより各種コンパイル / packaging が ARM アーキテクチャ向けに走る。
-
-### `sonic-slave` クロスビルド
-
-`sonic-slave` は他全 docker のビルド環境を提供する。**ホスト x86_64 上で ARM バイナリを動かすため `binfmt-misc` + `qemu-static` を使う**[^1]:
-
-```text
-sonic-slave-armhf
-sonic-slave-arm64
-```
-
-セットアップ:
-
-- `qemu-static` をホストに install
-- docker `multiarch/qemu-user-static:register` を実行して binfmt 登録
+- `dockers/docker-base*` / `dockers/docker-ptf` を **`multiarch/<dist>-<arm_arch>`** ベースに切替[^1]
+- `sonic-slave-armhf` / `sonic-slave-arm64` を新設。**ホスト x86_64 上で ARM バイナリ実行のため `binfmt-misc` + `qemu-static`** を使う[^1]
 
 ```mermaid
 graph LR
-    HOST[Host x86_64]
-    QEMU[binfmt-misc<br/>qemu-static]
-    SLA[sonic-slave-armhf / arm64<br/>(ARM image)]
-    BIN[ARM bin 実行]
-    HOST --> QEMU --> SLA --> BIN
+    HOST[Host x86_64] --> QEMU[binfmt-misc + qemu-static]
+    QEMU --> SLA[sonic-slave-armhf / arm64<br/>ARM image]
+    SLA --> BIN[ARM バイナリ実行 / build]
 ```
 
-### ARM 固有 / X86 固有パッケージの分岐
+セットアップ: `qemu-static` を host に install、`docker run --rm --privileged multiarch/qemu-user-static:register` で binfmt 登録。
 
-`ixgbe` / `grub` のような X86 専用パッケージは **ARM ビルドから除外**[^1]。アーキテクチャ別の package 一覧を Makefile / rules で切替。
+> 現行 master では slave は `sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2` の per-distribution テンプレートに進化し、`-march-<arch>` サフィックスを runtime で付ける形に変わっている（裏取りメモ参照）。
 
-### Platform レイアウト
+## アーキ別パッケージ / Platform レイアウト
 
-同じ board でも CPU vendor が違うことがあるため、**platform を arch 別** にする[^1]:
+`ixgbe` / `grub` のような X86 専用パッケージは **ARM ビルドから除外**[^1]。Makefile / rules でアーキ別 package 一覧を切替。
+
+platform は **arch 別に並列配置**[^1]:
 
 ```text
 platform/marvell-armhf/
-  ├ docker-syncd-mrvl-rpc.mk
-  ├ docker-syncd-mrvl-rpc/...
+  ├ docker-syncd-mrvl-rpc.mk / 関連 docker
   ├ libsaithrift-dev.mk
   ├ linux-kernel-armhf.mk
   ├ one-image.mk
@@ -119,136 +84,94 @@ platform/marvell-armhf/
   └ sai.mk
 ```
 
-### apt repo
+## apt repo
 
-Azure debian repo は ARM パッケージを提供しないため、**ARM 用に sources.list を差し替え**[^1]:
+Azure debian repo は ARM 非提供のため、ARM 用 sources.list を別途用意[^1]:
 
 ```text
 files/apt/sources.list-armhf
 files/build_templates/sonic_debian_extension.j2
 ```
 
-### ONIE image / installer
+## ONIE image / installer
 
-ONIE image 設定 / インストーラスクリプトを arch 別に分ける[^1]:
+ONIE image 設定とインストーラを arch 別に分離[^1]:
 
-| 設定ファイル | 用途 |
-|-----------|------|
+| 設定 | 用途 |
+|------|------|
 | `onie-image.conf` | x86_64 |
 | `onie-image-armhf.conf` | ARMHF |
 | `onie-image-arm64.conf` | ARM64 |
-| `platform/<TARGET>/platform.conf` | 各プラットフォーム固有設定。primary storage / partition / bootloader |
+| `platform/<TARGET>/platform.conf` | platform 固有: primary storage / partition / bootloader |
 
-ONIE installer script[^1]:
+ONIE installer の責務: bootloader update、primary disk format / partition、`/host` への SONiC image 展開。
 
-```text
-installer/x86_64/install.sh
-installer/arm64/install.sh
-installer/armhf/install.sh
-```
+### ストレージとブートローダ
 
-役割:
-
-- bootloader update（boot image 詳細）
-- primary disk のフォーマット / パーティション
-- SONiC image を `/host` に展開
-
-#### ストレージとブートローダ
-
-ARM はストレージとブートローダのバリエーションが大きいため `platform.conf` で差を吸収[^1]:
+ARM はバリエーションが大きいため `platform.conf` で差を吸収[^1]:
 
 | 区分 | x86_64 | ARM |
 |------|--------|-----|
 | Primary storage | SATA 系 | NAND / NOR / SD / MMC など |
 | Bootloader | grub | uboot or 独自 |
 
-`platform.conf` で:
+mount path を共通 SONiC installer に渡し、image 展開等の共通処理を再利用する。
 
-- primary storage の選択 / partition / format / mount
-- bootloader 設定（boot image 詳細を書く方法）
+## `sonic-installer` と kernel
 
-mount path を共通 SONiC installer に渡し、image 展開等の共通処理は再利用する設計。
+- `sonic-installer/main.py` は image upgrade / boot order 変更に bootloader を扱う。x86 は grub、**ARM は uboot ファームウェアユーティリティ**[^1]
+- `src/sonic-linux-kernel` の Makefile / patch を ARM 向けに更新。`.config` 生成時に `dpkg` 環境変数で対象 arch を正しく選択[^1]
+- ARM では default kernel と異なる版が必要なケースがあり、`platform/marvell-armhf/linux-kernel-armhf.mk` で **platform 固有 makefile が上書き**[^1]
 
-### `sonic-installer`
-
-`sonic-installer/main.py` は image upgrade / deletion / boot order 変更のため bootloader 設定を扱う。x86 では grub、**ARM では uboot 用ファームウェアユーティリティ** で boot 設定を読み書き[^1]。
-
-### Kernel ARM サポート
-
-`src/sonic-linux-kernel` の Makefile / patch を ARM 向けにも make できるよう更新[^1]。`.config` は debian build infrastructure 経由で生成されるため、`dpkg` 環境変数で対象アーキテクチャを正しく選択する必要。
-
-#### Custom Kernel (Expert Mode)
-
-ARM では SONiC default kernel と異なるバージョンが必要なケースがあり、**platform 固有 makefile で上書き** する[^1]:
-
-```text
-platform/marvell-armhf/linux-kernel-armhf.mk
-```
-
-## 設定
-
-### CLI / CONFIG_DB / YANG
-
-本 HLD は **runtime 設定を伴わない**。ビルド時オプション (`SONIC_ARCH`) と Makefile / docker 構成のみ。
-
-### 設定例
+## 設定 / ビルド例
 
 ```bash
-# ARMHF (32-bit ARM) image
+# ARMHF
 make configure PLATFORM=marvell-armhf SONIC_ARCH=armhf
 make target/sonic-marvell-armhf.bin
 
-# ARM64 image
+# ARM64
 make configure PLATFORM=marvell-arm64 SONIC_ARCH=arm64
 make target/sonic-marvell-arm64.bin
 
-# 既定（x86_64）
-make configure PLATFORM=mellanox
-make
-```
-
-ビルド前提:
-
-```bash
-# qemu-static を有効化（ホスト x86_64 上で ARM バイナリを実行）
+# 前提: qemu-static を有効化（host x86_64 上で ARM バイナリ実行）
 docker run --rm --privileged multiarch/qemu-user-static:register
 ```
 
+runtime 設定は不要（本 HLD はビルド時オプションのみ）。
+
 ## 制限事項
 
-- ARM では **debian repo を別途用意** する必要がある（azure debian repo 非対応）[^1]
-- カスタムカーネルは platform 固有 makefile で上書きが必要[^1]
-- ARM ビルドはホスト x86_64 上で **qemu emulation** が必須。ネイティブ ARM ホストでビルドする場合は別経路
-- `amd64` ハードコード箇所が **多数の Makefile に散在**。新機能追加時にも `$(CONFIGURED_ARCH)` を使うことを忘れないよう注意
-- HLD は ARM 対応初期のものであり、**現在の SONiC build 構成と差分** がある可能性大
-- ONIE installer の partition / bootloader 部分は **platform vendor 依存度が高い**
+- ARM では **debian repo を別途用意**（azure debian repo 非対応）
+- ARM ビルドはホスト x86_64 上で **qemu emulation** 必須（ネイティブ ARM ホストでは別経路）
+- `amd64` ハードコード箇所は **多数の Makefile に散在**。新規追加時に `$(CONFIGURED_ARCH)` を忘れない
+- ONIE installer の partition / bootloader は **platform vendor 依存** が大きい
+- HLD は ARM 対応初期版で、現行 SONiC build 構成との差分あり（slave 命名が進化、後述）
 
 ## 干渉する機能
 
-- **`sonic-buildimage` 全体**: rules / Makefile / docker 構成
-- **`sonic-slave`**: クロスビルド環境
-- **`sonic-linux-kernel`**: kernel build
-- **`sonic-installer`**: bootloader アクセス（grub / uboot）
-- **ONIE installer**: image インストール
-- **platform vendor のリポジトリ** (`platform/marvell-armhf` 等): platform 固有 mk / conf
+- `sonic-buildimage` 全体（rules / Makefile / docker）
+- `sonic-slave`（クロスビルド環境）
+- `sonic-linux-kernel`、`sonic-installer`、ONIE installer
+- platform vendor リポジトリ（`platform/marvell-armhf` 等の固有 mk / conf）
 
 ## トラブルシューティング
 
-- ARM build が x86 binary を吐く → `SONIC_ARCH` 指定漏れ、`PLATFORM_ARCH` の参照箇所を確認
-- docker build が失敗 → `multiarch/qemu-user-static:register` 実行済みか、`binfmt-misc` が有効か (`update-binfmts --display`)
-- apt 取得失敗 → `files/apt/sources.list-armhf` の repo 設定が正しいか
-- onie installer が動かない → `platform/<target>/platform.conf` の partition / bootloader 設定を確認
-- sonic-installer が boot order を変更できない → ARM では uboot ファームウェアユーティリティが入っているかを確認
+```bash
+update-binfmts --display | grep qemu       # binfmt 登録確認
+file target/sonic-marvell-armhf/...        # 出力 binary の arch 確認
+```
+
+- ARM build が x86 binary を吐く → `SONIC_ARCH` 指定漏れ
+- docker build 失敗 → `multiarch/qemu-user-static:register` 実行済か
+- apt 失敗 → `files/apt/sources.list-armhf` の repo
+- sonic-installer が boot order 変更不可 → ARM の uboot ユーティリティを確認
+
+## 関連 Topics
+
+- [19-build-packaging/concept](../topics/19-build-packaging/concept.md): SONiC ビルドシステムの全体像
+- [14-platform-port-optics/concept](../topics/14-platform-port-optics/concept.md): platform レイアウトと vendor 連携
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-multi-architecture/sonic_arm_support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
-
-<!-- concerns hint:
-- PLATFORM_ARCH / CONFIGURED_ARCH 変数の現行 Makefile 命名と amd64 ハードコード残存の確認
-- sonic-slave-armhf / sonic-slave-arm64 の現行 Dockerfile 構成と qemu-static 連携確認
-- onie-image-armhf.conf / onie-image-arm64.conf / installer/<arch>/install.sh の現行存在確認
-- sonic-installer.main の uboot 連携経路実装確認
-- src/sonic-linux-kernel の ARM 向けパッチと .config 生成 (dpkg 環境変数) の現行確認
-- platform/marvell-armhf 等のリファレンス platform 配下構成の現行確認
--->
