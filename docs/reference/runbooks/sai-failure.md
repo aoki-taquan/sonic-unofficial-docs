@@ -18,6 +18,9 @@ related:
 
 # Runbook: SAI failure / syncd リスタート多発
 
+!!! danger "実行前提"
+    `systemctl restart swss` は syncd 連動再起動を伴い、**ASIC を一度再初期化** するため data plane が 30 秒～数分中断する（cold restart 相当）。warm_restart が enable でも syncd crash 直後は再生成必須。実行前に `sudo cp -r /var/log/syncd* /tmp/syncd.bak.$(date +%s)/` で crash log を退避し、`show techsupport` を取得して原因解析用 evidence を残す。問題が ASIC ハード障害の場合は再起動しても改善せず、platform vendor の RMA フロー（chassis 全交換）が必要。
+
 ## 症状
 
 - `syncd` コンテナが `Exited (134)` / `Aborted (core dumped)` で再起動を繰り返す

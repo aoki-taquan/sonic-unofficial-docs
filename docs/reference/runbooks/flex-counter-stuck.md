@@ -21,6 +21,9 @@ related:
 
 # Runbook: counter が更新されない (FLEX_COUNTER)
 
+!!! danger "実行前提"
+    `systemctl restart swss` は data plane を 30 秒～数分中断する重操作のため最後の手段。まずは `counterpoll <group> disable && counterpoll <group> enable` の group 単位 toggle で対処を試みる（これは counter polling thread のみ再生成、forwarding は無影響）。実行前に `redis-cli -n 4 HGETALL FLEX_COUNTER_TABLE > /tmp/fc.bak.$(date +%s)` で polling 設定 backup、`counterpoll show > /tmp/fc.show.bak`。誤って disable した group は `counterpoll <group> enable` で即時復旧。
+
 ## 症状
 
 - `show interfaces counters` の数字が固まる / 増加が止まる

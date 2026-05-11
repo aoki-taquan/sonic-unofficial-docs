@@ -21,6 +21,9 @@ related:
 
 # Runbook: BGP セッションが UP しない
 
+!!! danger "実行前提"
+    `systemctl restart bgp` / `config reload -y` は FRR の全 neighbor を一旦切り、再収束まで数十秒～数分の経路断が発生する。実行前に `sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)` でロールバック用 backup を取り、ECMP メンバーがいる場合は本機を `config bgp shutdown all` で graceful drain してから対処すること。問題が悪化した場合は backup を `cp` で戻して `config reload -y` で復旧する。
+
 ## 症状
 
 - `show ip bgp summary` で対向の State が `Active` / `Connect` / `Idle (Admin)` のままになる

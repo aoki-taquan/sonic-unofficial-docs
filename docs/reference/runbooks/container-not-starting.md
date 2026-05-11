@@ -18,6 +18,9 @@ related:
 
 # Runbook: コンテナが起動しない (FEATURE)
 
+!!! danger "実行前提"
+    `config feature state <feature> disabled` → `enabled` の toggle は当該機能（bgp / teamd / lldp 等）を 5～15 秒中断する。**`bgp` / `swss` / `syncd` を disabled にすると data plane / control plane が落ちる** ため絶対に redundant ToR がない状態で実施しない。実行前に `sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)` で backup、`show feature status > /tmp/feature.bak` で現状保存。誤って必須 feature を disable してしまった場合は `config feature state <feature> enabled` で即時復旧、それで戻らなければ backup を戻して `config reload -y`。
+
 ## 症状
 
 - `show feature status` で対象 feature が `enabled` だが state が `failed` / `exited`

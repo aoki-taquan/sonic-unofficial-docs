@@ -18,6 +18,9 @@ related:
 
 # Runbook: SmartSwitch DPU が応答しない
 
+!!! danger "実行前提"
+    `config chassis modules shutdown DPU<n>` / `startup` および `systemctl restart pmon` は当該 DPU 上の DASH ENI / packet pipeline を 30 秒～数分中断する（DPU host OS の再起動を含むベンダーもある）。実行前に対象 DPU の `show dash eni > /tmp/eni.bak.$(date +%s)` で ENI 一覧を退避、`sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.json.bak.$(date +%s)` で host 設定 backup。Active flow がある DPU を停止する場合は ECMP redundancy か peer DPU に明示的に flow drain してから実施。DPU が完全に応答不能で graceful shutdown が効かない場合は最後の手段として `config chassis modules shutdown DPU<n> -f` で強制断する（運用中 flow は drop）。
+
 ## 症状
 
 - `show chassis modules status` で DPU の state が `Offline` / `Empty` のまま
