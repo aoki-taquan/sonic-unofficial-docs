@@ -17,46 +17,63 @@ related:
     - sonic-warm-restart
 ---
 
-!!! warning "裏取りステータス: code-verified"
-    本 HLD（27KB）は warm reboot の要件記述。詳細な going down / going up の path は `system-wide-warmboot.md`（同 area）を併読。
-
-!!! note "Verifier 注記（2026-05-10）"
-    実コード裏取り: `sonic-utilities/scripts/warm-reboot` に warm reboot script、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang` に CONFIG_DB WARM_RESTART スキーマを確認。HLD の going-down / going-up シーケンスと整合する。
+!!! success "裏取りステータス: code-verified"
+    `sonic-utilities/scripts/warm-reboot` の warm reboot script、`sonic-buildimage/.../sonic-warm-restart.yang` の `WARM_RESTART` スキーマで HLD の going-down / going-up シーケンスと整合を確認（Verifier 2026-05-10）。詳細な going down / up path は [`system-wide-warmboot.md`](system-wide-warmboot.md) を併読。
 
 # SONiC Warm Reboot（要件・順序・docker 別 warm restart）
 
-## 概要
+## 読み手が知りたいこと
 
-Warm reboot は **データプレーンを乱さずに control plane を再起動** する SONiC の機能[^1]。本 HLD は次の 3 視点を整理する:
+1. **warm reboot とは何で、cold / fast / express とどう違うか**
+2. **どこに何が保存され、何が復元されるか**（SAI dump / Redis dump）
+3. **各 docker（bgp / teamd / swss / lldp / dhcp_relay）は何を準備するべきか**
+4. **どの CLI で有効化・実行・確認するか**
+5. **データプレーン断や reconcile 失敗のときに何を見るか**
 
-- **LibSAI / ASIC** に求める warm restart 期待値（state の保存 / 復元）
-- **syncd** に求める動作（warm shutdown / recovery）
-- **network applications**（swss / bgp / teamd / lldp / dhcp_relay 等）に求める orch data の保存
+## 1. warm reboot とは
 
-## LibSAI / ASIC への要件
+**データプレーンを乱さずに control plane（kernel / docker）を再起動** する SONiC の機能[^1]。LibSAI が ASIC state をファイルに退避→ kexec → 復元、という流れで、上限 90 秒の制御平面ダウンを許容しつつフォワーディングは継続させる。
 
-- `SAI_KEY_BOOT_TYPE = 1`（warm）で起動できる
-- `SAI_SWITCH_ATTR_RESTART_WARM = true` の状態で `remove_switch()` を受けると state を `SAI_KEY_WARM_BOOT_WRITE_FILE` に書き出す
-- `create_switch` を `SAI_SWITCH_ATTR_INIT_SWITCH = true` で呼ぶと、保存ファイルから state を復元
-- callback / notification は **SAI が保持しない**。アプリ側で再 register
+- 同 image / version upgrade は対象、**downgrade は対象外**
+- すべての docker / SAI vendor が warm restart を実装している前提
+- BGP の GR-helper や teamd の LACP 拡張 timer が peer 側に必要
 
-## syncd への要件
+cold / fast / express との関係は [11-reboot](../topics/11-reboot/index.md) を参照。詳細な going-down / up path と `SONIC_BOOT_TYPE` の扱いは [`system-wide-warmboot.md`](system-wide-warmboot.md)。
 
-- warm shutdown のリクエストを ASIC_DB / 制御 channel から受け取り SAI に橋渡し
-- warm recovery 時、Redis dump (`/host/warmboot/dump.rdb`) と SAI dump (`/host/warmboot/sai-warmboot.bin`) を読み込んで内部状態を復元
-- orchagent との **init view → apply view → diff** プロトコルを実装し、新しい view との差分のみを SAI に流す
+## 2. どこに何が保存されるか
 
-## アプリケーションへの要件（orch data の保存）
+| 物 | 保存先 | 役割 |
+|----|--------|------|
+| ASIC / SAI state | `/host/warmboot/sai-warmboot.bin` | SAI が `remove_switch()` 時に dump、`create_switch` 時に復元 |
+| Redis 全体 | `/host/warmboot/dump.rdb` | APP_DB / ASIC_DB / STATE_DB を再起動後 load |
+| `WARM_RESTART_TABLE:system` | STATE_DB | shutdown 進行中フラグ |
 
-各アプリは自身の orch / state を warm reboot を跨いで永続化する責務を持つ。代表例:
+## 3. 各レイヤへの要件
 
-- **bgp**: graceful restart で peer に GR-helper をしてもらい、リスタート中の RIB を保持
-- **teamd**: 90 秒間 LACP 拡張 timer などで partner にリンクを切らせない
-- **swss / orchagent**: APP_DB / ASIC_DB / STATE_DB を Redis dump で保存し、再起動後に SAI と diff
-- **lldp**: 影響軽微（再認識で済む）
-- **dhcp_relay**: lease は server 側に保持。relay 自体は影響なし
+### LibSAI / ASIC
 
-## state machine
+- `SAI_KEY_BOOT_TYPE = 1`（warm）で起動可能（0=cold, 2=fast）
+- `SAI_SWITCH_ATTR_RESTART_WARM = true` で `remove_switch()` を受けたら state を `SAI_KEY_WARM_BOOT_WRITE_FILE` に書き出す
+- `create_switch` を `SAI_SWITCH_ATTR_INIT_SWITCH = true` で呼ぶと保存ファイルから復元
+- callback / notification は **SAI が保持しない**。app が再 register
+
+### syncd
+
+- ASIC_DB / 制御 channel から warm shutdown を受けて SAI に橋渡し
+- 復旧時に Redis dump と SAI dump を read
+- orchagent との **init view → apply view → diff** で差分のみ SAI に流す
+
+### アプリケーション
+
+各 docker は自身の orch / state を warm reboot を跨いで永続化する責務を持つ:
+
+- **bgp**: graceful restart で peer に GR-helper を促し RIB を保持
+- **teamd**: LACP 拡張 timer で 90 秒間 partner にリンクを切らせない
+- **swss / orchagent**: APP_DB / ASIC_DB / STATE_DB を Redis dump 保存、再起動後に SAI と diff
+- **lldp**: 影響軽微（再認識）
+- **dhcp_relay**: lease は server 側保持、relay 自体は無影響
+
+## 4. state machine
 
 ```mermaid
 stateDiagram-v2
@@ -70,14 +87,7 @@ stateDiagram-v2
     Failed --> Enabled: 手動回復
 ```
 
-## 関連 CONFIG_DB
-
-| Key | 説明 |
-|-----|------|
-| `WARM_RESTART|<docker>` | docker 別の `enable` / `timer` |
-| `WARM_RESTART|system` | システム全体の状態 |
-
-## 関連 CLI
+## 5. 設定と実行
 
 | Command | 用途 |
 |---------|------|
@@ -86,35 +96,24 @@ stateDiagram-v2
 | `sudo warm-reboot` | warm reboot 実施 |
 | `show warm_restart` | 状態確認 |
 
-## 制限事項
+CONFIG_DB:
 
-- **同 image / upgrade のみが対象**（HLD 表記）。downgrade は対象外
-- すべての docker / SAI vendor が warm restart を実装している前提
-- BGP GR-helper を peer 側がサポートしないと convergence 中断
+| Key | 説明 |
+|-----|------|
+| `WARM_RESTART\|<docker>` | docker 別の `enable` / `timer` |
+| `WARM_RESTART\|system` | システム全体の状態 |
 
-## 干渉する機能
+## 6. トラブルシューティング
 
-- **system-wide warmboot**: より詳細な going down / up の HLD（同 area）
-- **fast-reboot**: 同じスクリプト基盤
-- **multi-asic warm reboot**: namespace 横断版
-- **warmboot manager**: 後発の shutdown orchestrator
-- **express reboot**: warm reboot のさらなる短縮版
+- **90s 超のデータプレーン断** → syncd warm recovery 失敗。`sai-warmboot.bin` の有無を確認
+- **BGP convergence 不良** → peer の GR-helper 対応、`config bgp graceful-restart` の値
+- **orchagent reconcile が永遠** → APP_DB と ASIC_DB の不一致、syncd ログ
 
-## トラブルシューティング
+## 関連 Topics 章
 
-- 90s 超のデータプレーン断 → syncd warm recovery 失敗、`sai-warmboot.bin` の有無
-- BGP convergence 不良 → peer 側 GR-helper、`config bgp graceful-restart` の値
-- orchagent reconcile が永遠 → APP_DB と ASIC_DB の不一致、ログを確認
+- [11-reboot](../topics/11-reboot/index.md): warm / fast / express / cold の比較と運用全体像
+- [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): orchagent と SAI の init view / apply view プロトコル
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/SONiC_Warmboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
-
-<!-- concerns hint:
-- WARM_RESTART スキーマ（system / docker 別）の現行 sonic-yang-models 取り込み確認
-- warm-reboot script の現行 SONIC_BOOT_TYPE / sai-warmboot.bin パスの確認
-- syncd warm recovery（init view → apply view）の現行実装確認
-- 各アプリ（bgp / teamd / lldp / dhcp_relay）の warm restart 対応の現行実装範囲確認
-- HLD 記述（同 image only）と express-reboot / fast-reboot 等の派生機能との関係整理
-- vendor SAI の warm boot サポート要件の現行 community SAI 文書確認
--->
