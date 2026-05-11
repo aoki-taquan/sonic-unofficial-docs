@@ -7627,6 +7627,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4. 回避策 / 対応方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -22983,6 +23000,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4. 回避策 / 対応方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23198,6 +23232,11 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <li><strong>既定値挙動を確認</strong>: <code>redis-cli -n 0 hgetall "SFLOW_SESSION_TABLE:Ethernet0"</code> で <code>sample_rate</code> フィールドを確認。speed 通り（例: 100G なら 100000）になっているはず。</li>
 <li><strong>port speed 変更時</strong>: <code>findSamplingRate()</code> が <code>STATE_DB</code> の <code>oper_speed</code> 変更を契機に再計算する（<code>sflowmgr.cpp:194-212</code>）ため、明示設定していない場合は新 speed の Mbps 値に切り替わる。HLD どおり。</li>
 <li>本ページの仕様記述に古い sample_rate 表が残っていないか、編集時には <code>sonic-swss/cfgmgr/sflowmgr.cpp::findSamplingRate()</code> を再参照すること。</li>
+</ul>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/20327">sonic-buildimage #20327: Sflow configurations cannot be removed with SONiC CLI commands (open)</a> — CLI からの設定削除の不整合。HLD と現行 sflowmgrd 実装の運用面ギャップとして既知。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16607">sonic-buildimage #16607: [sflow] Remove the ENABLE_SFLOW_DROPMON flag (merged)</a> — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

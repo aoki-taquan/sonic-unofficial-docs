@@ -9204,6 +9204,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -22861,6 +22878,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4.3 FRR BGP-EVPN 連携は frr.conf テンプレート経由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23082,6 +23116,12 @@
 <li><strong>実装位置</strong>: <code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code>、および <code>sonic-frr/bgpd/bgp_evpn.c</code>。Type-5/Type-2 受け取りは fpmsyncd 経由 netlink + 専用 FPM channel</li>
 <li><strong>読者への影響</strong>: SONiC CLI だけで EVPN 設定が完結すると誤解しやすい</li>
 <li><strong>回避</strong>: 実運用では <code>frr.conf</code> template 差し替え、または <code>vtysh</code> で <code>address-family l2vpn evpn</code> を直接設定する</li>
+</ul>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-swss/issues/2181">sonic-swss #2181: Missing ARP and ND Suppression implementation (open)</a> — EVPN VXLAN HLD が前提とする ARP/ND suppression が未実装である旨の long-open issue。</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/issues/3384">sonic-swss #3384: NEIGH_TABLE not populated with VXLAN routes (closed)</a> — Type-2 neighbor 学習の不整合事例。</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/4262">sonic-swss #4262: [EVPN-MH] Add EVPN VXLAN Multihoming feature support (open)</a> — EVPN multihoming 大型 PR。基本 EVPN HLD の機能セット完成度を高める。</li>
 </ul>
 <h2 id="5">5. 制限事項<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>

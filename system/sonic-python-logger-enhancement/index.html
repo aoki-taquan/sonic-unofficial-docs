@@ -12592,6 +12592,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4. 回避策">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23105,6 +23122,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="4. 回避策">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23377,6 +23411,10 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 <li>「同じ component で 1 つの logger 状態を共有したい」場合は <code>logging.getLogger(name)</code> の共有性に依存する（インスタンス側ではなく logger 側に状態を持たせる）。</li>
 <li>redis 未起動時に備えるなら、上位で <code>update_log_level()</code> の戻り値を <code>(success, msg)</code> で判定し、<code>enable_runtime_config=False</code> のフォールバック経路を別途用意する。</li>
 <li>短命 Python スクリプトは SIGHUP では追従しないので、起動時に必ず <code>update_log_level()</code> を呼ぶか、<code>config syslog level</code> の <code>--container</code> / <code>--program</code> で対象プロセスを明示する。</li>
+</ul>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li>[GitHub Issue / PR の関連リンクは未確認] — <code>SysLogger</code> 拡張 (runtime log level / <code>require_manual_refresh</code> / SIGHUP) は <code>sonic-py-common</code> の小規模機能追加として段階的に取り込まれており、HLD と 1:1 で紐づくトラッキング Issue / PR は確認できず。</li>
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

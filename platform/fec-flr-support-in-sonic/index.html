@@ -15679,6 +15679,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23039,6 +23056,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23416,6 +23450,11 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <blockquote>
 <p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
 </blockquote>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-utilities/pull/4126">sonic-utilities #4126: Add secondary poll factor to flex counter infra (open)</a> — <code>counterpoll port flr-interval-factor</code> 周辺で必要となる flex counter 二次ポーリング機構の追加 PR。本 HLD の <code>port_flr.lua</code> 実装と整合させる前提。</li>
+<li>HLD 本体の FLR 算出ロジック (<code>port_flr.lua</code>) の取り込み PR は明示的に紐づく単独 PR が確認できず、断片的な flexcounter / port counter 改修に混在している。</li>
+</ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - port_flr.lua の swss 取り込み確認

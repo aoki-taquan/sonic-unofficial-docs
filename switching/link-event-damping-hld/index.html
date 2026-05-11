@@ -10055,6 +10055,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22965,6 +22976,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23213,6 +23235,12 @@
 </span></code></pre></div>
 <p><code>config_db.json</code> で永続化する場合は <code>PORT</code> セクションに 6 フィールドを記述。SwSS は 6 フィールドを <strong>組として</strong> 受けるので、欠落させると damping が disable になる点に注意（<code>porthlpr.cpp</code> L1345-L1373）。</p>
 <h1 id="aied-syncd-intercept">リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）<a class="headerlink" href="#aied-syncd-intercept" title="Permanent link">&para;</a></h1>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/2933">sonic-swss #2933: Add SWSS support for link event damping feature (merged)</a> — AIED アルゴリズム取り込みの本体 PR。</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/2916">sonic-swss #2916: Implement link event damping SWSS component (closed)</a> — 上記の先行 PR (closed)。</li>
+<li>SyncD intercept 経路の完成度については追加トラッキング Issue 未確認。</li>
+</ul>
 <h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>光トランシーバの汚れや不良ケーブルなどで SerDes の lock/unlock が繰り返されると、ポートの up/down トランジションが短時間に大量発生する（link flap）。SONiC ではこれらが SAI → SyncD → ASIC_DB → PortsOrch → applications まで素通しに伝搬し、WCMP メンバ刈り取り・ルート再計算・broadcast 過多などの <strong>下流負荷</strong> を引き起こす<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>本機能は <strong>インタフェース単位で link up / down イベントを抑制（damping）</strong> する仕組みを SONiC に追加する。多くの NOS で標準的な慣習で、SONiC では SyncD で intercept する形で実装される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

@@ -12368,6 +12368,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -22921,6 +22938,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="実装との乖離（裏取りメモ（Verifier batch 29））">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -23050,6 +23084,10 @@
 <li>一方、reset-factory script (<code>sonic-buildimage/files/image_config/reset-factory/reset-factory</code>) は <strong><code>/etc/sonic/default_users.json</code> 経由でローカルユーザのパスワードを既定値に戻す</strong> 処理を実装しており（L14, L88-L104）、<code>build_debian.sh</code> L579 で <code>default_users.json</code> を j2 テンプレから生成している</li>
 </ul>
 <p>つまり「default_users.json で復元」という基礎部品は採用されたが、HLD が要求する <strong>long reset button トリガ + 専用 systemd service + plat 抽象 + 設定 YANG</strong> の枠組みは取り込まれていない。<code>discrepancy-found</code> を維持。</p>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li>[GitHub Issue / PR の関連リンクは未確認] — <code>reset-local-users-passwords.service</code> と long reset button トリガの取り込みは個別 image_config PR で進行しているが、HLD と直接紐づくトラッキング Issue は確認できず（検索結果 #24867 は無関係な doc refactor link issue）。</li>
+</ul>
 <div class="footnote">
 <hr />
 <ol>

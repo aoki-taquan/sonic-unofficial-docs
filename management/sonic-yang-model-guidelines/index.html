@@ -14197,6 +14197,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23083,6 +23100,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23439,6 +23473,12 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 <blockquote>
 <p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
 </blockquote>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/17348">sonic-buildimage #17348: [yang] Sonic yangs with nested lists (list within a list) deviate from Sonic yang modelling guidelines (closed)</a> — 本ガイドラインからの逸脱を指摘した代表的 issue。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/10386">sonic-buildimage #10386: [YANG]sonic-dot1p-tc-map.yang would cause failed deployment via mgmt-framework (open)</a> — ガイドライン違反が運用障害となった具体例。</li>
+<li>ABNF.json → sonic-*.yang 変換規約全体の包括的 issue は確認できず、個別の YANG 追加 PR (例 #13314, #10786, #9116) で慣行が蓄積されている。</li>
+</ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-buildimage `src/sonic-yang-models/yang-models/` に `sonic-*.yang` が 130 件以上存在（命名規約 #1 整合）

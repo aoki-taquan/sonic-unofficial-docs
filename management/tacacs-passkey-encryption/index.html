@@ -14640,6 +14640,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23017,6 +23034,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-issue-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 GitHub Issue / PR
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -23329,6 +23363,12 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <blockquote>
 <p>分類: <code>monitor: evolved_beyond_hld</code> — HLD はおおむね取り込まれているが、フィールド名・パス名・責務分担が実装側で進化／変更されている分類。実装側を正として読み替える必要がある。</p>
 </blockquote>
+<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/issues/13846">sonic-buildimage #13846: TACACS+ passkey encryption (open)</a> — 本 HLD のトラッキング Issue。長期 open で部分実装中。</li>
+<li><a href="https://github.com/sonic-net/sonic-buildimage/pull/17201">sonic-buildimage #17201: Adding support of common security cipher module for encryption and decryption of a passkey (merged)</a> — 共通暗号モジュール (master key /etc/cipher_pass 基盤) の取り込み PR。</li>
+<li><a href="https://github.com/sonic-net/sonic-utilities/pull/3027">sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)</a> — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。</li>
+</ul>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装
