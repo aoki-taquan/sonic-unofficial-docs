@@ -5,6 +5,7 @@ area: architecture
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
+page_kind: split-hub
 sources:
   - repo: sonic-net/SONiC
     path: doc/error-handling/error_handling_design_spec.md
@@ -33,6 +34,14 @@ related:
     本ページは HLD 仕様の参考資料として残すが、現行 master では SAI 失敗の app 通知は実装されていない（依然として fail-fast / orchagent crash 系）。
 
 # Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
+
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [error-handling-framework-in-sonic-concepts.md](error-handling-framework-in-sonic-concepts.md) — 設計思想 / `SWSS_RC_*` / 報告のみの責務
+    - [error-handling-framework-in-sonic-operations.md](error-handling-framework-in-sonic-operations.md) — `show / clear error-database` と ERROR_DB スキーマ
+    - [error-handling-framework-in-sonic-internals.md](error-handling-framework-in-sonic-internals.md) — OrchAgent producer / ErrorListener / SAI 翻訳
+    - [error-handling-framework-in-sonic-limitations.md](error-handling-framework-in-sonic-limitations.md) — コア機構未実装と CRM 代替運用
 
 ## 概要
 

@@ -67,7 +67,7 @@ VALID_MONITORS = {
 # different rubric to chapter indices (relaxed body-volume / per-claim
 # verification requirements). The linter accepts it as optional and only
 # validates the enum value when present.
-VALID_PAGE_KINDS = {"chapter-index", "split-child"}
+VALID_PAGE_KINDS = {"chapter-index", "split-child", "split-hub"}
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n(.*)\Z", re.DOTALL)
 
@@ -204,8 +204,12 @@ def lint_file(path: Path, *, check_paths: bool):
                 violations.append('b: code-verified page has HLD-only admonition')
             break
 
-    # c) discrepancy-found must contain a 実装との乖離 section
-    if verification == "discrepancy-found":
+    # c) discrepancy-found must contain a 実装との乖離 section.
+    # Exception: split-child pages delegate this section to the sibling
+    # '-limitations.md' page (the split-hub keeps verification/sources but
+    # the discrepancy detail lives in the limitations child).
+    page_kind_val = str(fm.get("page_kind") or "").strip()
+    if verification == "discrepancy-found" and page_kind_val != "split-child":
         if "実装との乖離" not in body and "実装からの乖離" not in body:
             violations.append("c: discrepancy-found page missing '実装との乖離' section")
 

@@ -852,8 +852,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）](../internals/l3-scaling-and-performance-enhancements.md) (35)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (13)
 - [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../switching/brief-introduction-of-iccp-code.md) (12)
+- [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../internals/l3-scaling-and-performance-enhancements-limitations.md) (10)
 - [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (9)
-- [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](../overlay/active-standby-dual-tor-internals.md) (8)
 
 ### [ASIC_DB](#term-asic_db)
 
@@ -1049,8 +1049,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [flexcounter の queue/PG map 生成と watermark 有効化の整合](../acl-qos/align-watermark-flow-with-port-configuration-hld.md) (19)
 - [FlexCounter リファクタ（CounterContext テンプレート化）](../internals/sonic-flexcounter-refactor.md) (18)
 - [sai_query_stats_capability による Counter Capability 一括取得](../platform/query-stats-capability-new-sai-api-indroduction.md) (9)
+- [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../platform/fec-flr-support-in-sonic.md) (8)
 - [内部実装](../topics/09-telemetry-snmp/internals.md) (8)
-- [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../architecture/sonic-bulk-counter-design.md) (7)
 
 ### [FPM](#term-fpm)
 
@@ -1110,7 +1110,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (57)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (64)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (32)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (27)
 - [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (27)
@@ -1452,7 +1452,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SWSS docker の Warm Restart 実装メモ（開発時リファレンス）](../system/swss-docker-warm-restart-code-reference.md) (8)
 - [Debug Framework（コンポーネント dump 登録 / assert 拡張）](../architecture/debug-framework-in-sonic.md) (7)
 - [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md) (7)
-- [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../internals/aggregate-voq-counters-in-sonic.md) (4)
+- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../architecture/error-handling-framework-in-sonic-limitations.md) (5)
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 

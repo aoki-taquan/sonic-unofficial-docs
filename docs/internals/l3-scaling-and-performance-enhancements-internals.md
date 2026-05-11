@@ -1,0 +1,123 @@
+---
+title: L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show arp）
+description: "L3 Scaling と Performance 強化 HLD の内部実装。RouteOrch の bulk route API (gRouteBulker) と 1 秒 timer flush、fpmsyncd の rt_table==0 lookup スキップ、sairedis JSON 更新、show arp / show ndp の個別 FDB lookup 化を実装ファイル位置と合わせて解説する。"
+area: internals
+verification: discrepancy-found
+last_verified: 2026-05-11
+page_kind: split-child
+monitor: partially_implemented
+sources:
+  - repo: sonic-net/SONiC
+    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+# L3 Scaling と Performance 強化 内部実装
+
+このページは [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md) の派生で、**`RouteOrch` / `fpmsyncd` / `sairedis` / CLI 改修の内部実装** に絞る。概念は [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md)、CLI / sysctl 設定は [l3-scaling-and-performance-enhancements-operations.md](l3-scaling-and-performance-enhancements-operations.md)、制限事項と乖離は [l3-scaling-and-performance-enhancements-limitations.md](l3-scaling-and-performance-enhancements-limitations.md) を参照。
+
+## 1. kernel ARP/ND の cache 拡大
+
+旧 SONiC は ~2400 entry が上限だった。kernel ARP cache の garbage collector 閾値を HLD は次のように引き上げる提案[^1]:
+
+| パラメータ | 既定 | 提案 (IPv4) | 提案 (IPv6) |
+|-----------|------|------------|------------|
+| `gc_thresh1` | 128 | 16000 | 8000 |
+| `gc_thresh2` | 512 | 32000 | 16000 |
+| `gc_thresh3` | 1024 | 48000 | 32000 |
+
+burst 時の add/remove ループで entry が満杯にならない問題の解消が主眼。CoPP では ARP/ND の最大 600 pps → **8000 pps** に引き上げる提案[^1]。
+
+## 2. Route programming 時間短縮
+
+旧時計値（AS7712 / Tomahawk 上）[^1]:
+
+| 経路数 | IPv4 所要時間 | IPv6 所要時間 |
+|--------|-------------|-------------|
+| 10k | 11s | 11s |
+| 30k | 30s | 30s |
+| 60k | 48s | - |
+| 90k | 68s | - |
+
+### 2.1 sairedis bulk route API の利用
+
+旧: `RouteOrch` は 1 経路ごとに sairedis API を呼ぶ。Redis pipelining でいくらかバルク化はされるが **1 経路 = 1 Redis message**[^1]。
+
+新:
+
+- `RouteOrch` は 64 件まとめて bulk API に渡す
+- meta_sai layer は内部で個別オブジェクトを作るが、**Redis に流れる message は 1 件** に集約
+- ASIC 側は bulk route create を実装していないため `syncd` は 1 件ずつ処理する → 純粋な節約は **Redis message 数の削減**
+
+`RouteOrch` に **新 timer** を追加し、未送信のバッチを **1 秒ごとに flush**[^1]。
+
+```mermaid
+sequenceDiagram
+    participant RO as RouteOrch
+    participant SA as sairedis (meta_sai)
+    participant ADB as ASIC_DB
+    participant SY as syncd
+    participant SAI
+    Note over RO: 64 経路を内部キューに溜める / 1秒 timer
+    RO->>SA: bulk_create_routes([r1..r64])
+    SA->>SA: meta object を 64 件作る
+    SA->>ADB: 1 Redis message
+    ADB->>SY: 通知
+    loop 各経路
+        SY->>SAI: create_route_entry()
+    end
+```
+
+### 2.2 `fpmsyncd` の最適化
+
+旧: 各経路の処理で **`rt_table` 属性から master device 名を kernel から取得**。VNET_ROUTE_TABLE 判定のため[^1]。
+
+問題: VNET が無い環境でも lookup が **常に失敗 → cache 更新を毎経路で行う**。これが route 投入を遅くする。
+
+修正: **`route.rt_table == 0`（global routing table）** なら lookup を **skip**。10k 経路の APP_DB 投入が **7-8s → 4-5s** に短縮[^1]。
+
+### 2.3 sairedis 内 JSON ライブラリ更新
+
+`nlohmann/json` ライブラリの **v2.0 → v3.6** への更新で `dump()` 系最適化を取り込む[^1]。
+
+### 期待効果
+
+上記合算で **route programming 時間 30% 削減** を目標[^1]。
+
+## 3. `show arp` / `show ndp` の高速化
+
+旧: VLAN L3 interface 上の ARP の **outgoing interface を求めるため FDB 全件を fetch**。エントリが大量だと show が秒〜分単位かかる[^1]。
+
+修正: 該当 ARP/ND **特定エントリだけの FDB lookup** に変更。CLI スクリプト側の改修。
+
+```mermaid
+flowchart LR
+    OLD[show arp 旧] -->|FDB 全件取得| F1[1 entry 解決]
+    NEW[show arp 新] -->|"FDB 個別 GET (mac, vlan)"| F2[1 entry 解決]
+```
+
+## 4. 現行 master 実装ファイル位置
+
+| 項目 | ファイル / 行 |
+|------|--------------|
+| RouteOrch bulker | `sonic-swss/orchagent/routeorch.cpp:41` で `gRouteBulker(sai_route_api, gMaxBulkSize)`、L626-1116 で add/remove と flush |
+| fpmsyncd master device lookup skip | `sonic-swss/fpmsyncd/routesync.cpp:2077-2082` |
+| sysctl 適用 | `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:21-26`（HLD 値ではなく 1024/2048/4096 が現行 default）|
+| CoPP 設定 | `sonic-buildimage/files/image_config/copp/copp_cfg.j2`（ARP は `queue4_group2`、cir/cbs=600）|
+
+詳細な行番号付きコード抜粋と乖離分析は [l3-scaling-and-performance-enhancements-limitations.md](l3-scaling-and-performance-enhancements-limitations.md) を参照。
+
+## 関連ページ
+
+- [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md)
+- [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md)
+- [l3-scaling-and-performance-enhancements-operations.md](l3-scaling-and-performance-enhancements-operations.md)
+- [l3-scaling-and-performance-enhancements-limitations.md](l3-scaling-and-performance-enhancements-limitations.md)
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

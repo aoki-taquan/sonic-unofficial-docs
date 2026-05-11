@@ -5,6 +5,7 @@ area: internals
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
+page_kind: split-hub
 sources:
   - repo: sonic-net/SONiC
     path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
@@ -27,6 +28,14 @@ related:
     現行 master を裏取りした結果、HLD 提案の **kernel `gc_thresh*` 値**と **CoPP ARP/ND 上限**は採用されておらず、より保守的な default に再設定されている。一方で **`RouteOrch` の bulk route API**（`gRouteBulker`）と **`fpmsyncd` の master device lookup スキップ**は実装済み。詳細は本文末尾の「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / `show arp`）
+
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md) — スケール / 性能目標と改善 4 系統の位置づけ
+    - [l3-scaling-and-performance-enhancements-operations.md](l3-scaling-and-performance-enhancements-operations.md) — sysctl / `COPP_TABLE` / `show arp` 確認手順
+    - [l3-scaling-and-performance-enhancements-internals.md](l3-scaling-and-performance-enhancements-internals.md) — RouteOrch bulker / fpmsyncd / sairedis 内部
+    - [l3-scaling-and-performance-enhancements-limitations.md](l3-scaling-and-performance-enhancements-limitations.md) — 制限事項と HLD 提案値の未採用乖離
 
 ## 概要
 

@@ -14,18 +14,18 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
 
-全 **50** ページ。
+全 **62** ページ。
 
 ## area 別件数
 
 | area | 件数 |
 |------|-----:|
 | `acl-qos` | 2 |
-| `architecture` | 12 |
-| `internals` | 1 |
+| `architecture` | 16 |
+| `internals` | 5 |
 | `management` | 8 |
 | `overlay` | 1 |
-| `platform` | 7 |
+| `platform` | 11 |
 | `routing` | 6 |
 | `switching` | 4 |
 | `system` | 9 |
@@ -35,9 +35,9 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 | monitor | 件数 |
 |---------|-----:|
 | `deprecated`（deprecated） | 3 |
-| `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 20 |
+| `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 24 |
 | `not_implemented`（未実装） | 18 |
-| `partially_implemented`（partially_implemented） | 9 |
+| `partially_implemented`（partially_implemented） | 17 |
 
 ## エントリ一覧（area 別）
 
@@ -64,6 +64,18 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05 時点で本 framework は **master に取り込まれておらず、HLD のみ**（2019-07 v0.3 から 6 年以上停滞）。
+
+- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [Error Handling Framework 設定・運用（show / clear error-database / ERROR_DB スキーマ）](../../architecture/error-handling-framework-in-sonic-operations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 - [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -114,6 +126,18 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   2026-05 時点で本機能は **HLD は提案されたが master にコードが入っていない**、純粋な未実装状態である。
 
 ### internals
+
+- [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show arp）](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）](../../internals/l3-scaling-and-performance-enhancements-operations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）](../../internals/l3-scaling-and-performance-enhancements.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -170,6 +194,18 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   verified at: 2026-05-09。
 
 ### platform
+
+- [FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）](../../platform/fec-flr-support-in-sonic-internals.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）](../../platform/fec-flr-support-in-sonic-limitations.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](../../platform/fec-flr-support-in-sonic-concepts.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../../platform/fec-flr-support-in-sonic-operations.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
 
 - [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](../../platform/fec-flr-support-in-sonic.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
