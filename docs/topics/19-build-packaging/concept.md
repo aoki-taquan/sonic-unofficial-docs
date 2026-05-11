@@ -1,18 +1,24 @@
 ---
 title: 概要
-description: "概要 — SONiC の build / packaging は、開発者向けの「ソースから ONIE installer を作る話」と、運用者向けの「機能 docker を後から足す話」が一本の鎖でつながっている。混同を避けるために、層を先に分けると読みやすい。"
+description: 概要 — SONiC の build / packaging は、開発者向けの「ソースから ONIE installer を作る話」と、運用者向けの「機能
+  docker を後から足す話」が一本の鎖でつながっている。混同を避けるために、層を先に分けると読みやすい。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
 keywords:
-  - Build
-  - Packaging
-  - 概要
-  - sonic-buildimage
-  - Debian
-  - Docker image
-  - ビルド構成
+- Build
+- Packaging
+- 概要
+- sonic-buildimage
+- Debian
+- Docker image
+- ビルド構成
+related:
+  cli: []
+  config_db:
+  - FEATURE
+  yang: []
 ---
 
 # 概要

@@ -1,10 +1,35 @@
 ---
 title: 設定
-description: "設定 — SWSS / SAI / Redis レイヤの「設定」は、機能 CLI のように config bgp で投入できる対象ではなく、SONiC の起動構成そのものを決めるファイル群です。"
+description: 設定 — SWSS / SAI / Redis レイヤの「設定」は、機能 CLI のように config bgp で投入できる対象ではなく、SONiC
+  の起動構成そのものを決めるファイル群です。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - show feature
+  - show platform
+  - config bgp
+  - show ip
+  - show interfaces
+  - show bgp
+  config_db:
+  - FEATURE
+  - VOQ_INBAND_INTERFACE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
+  - sonic-bgp-monitor
 ---
 
 # 設定

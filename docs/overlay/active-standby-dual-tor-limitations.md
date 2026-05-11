@@ -1,18 +1,37 @@
 ---
 title: Active-Standby Dual ToR 制限事項と既知の課題
-description: "Active-Standby Dual ToR の制限事項。switchover 時のパケット破損、ARP/NDP/GARP 依存、IPv6 neighbor FAILED 問題、HLD 上 TBD のままの directed broadcast、I2C リトライ、干渉する周辺機能を整理する。"
+description: Active-Standby Dual ToR の制限事項。switchover 時のパケット破損、ARP/NDP/GARP 依存、IPv6
+  neighbor FAILED 問題、HLD 上 TBD のままの directed broadcast、I2C リトライ、干渉する周辺機能を整理する。
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/dualtor/dualtor_active_standby_hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/dualtor/dualtor_active_standby_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VLAN
+  - ACL_RULE
+  - ACL_TABLE
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - MUX_LINKMGR
+  - MUX_CABLE
+  cli:
+  - show arp
+  - config vlan
+  - show acl
+  - config acl
+  - show vlan
+  - show ndp
+  yang:
+  - sonic-vlan
+  - sonic-mux-cable
+  - sonic-vlan-sub-interface
+  - sonic-port
+  - sonic-crm
 ---
 
 # Active-Standby Dual ToR 制限事項と既知の課題

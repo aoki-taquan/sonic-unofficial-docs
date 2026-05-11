@@ -1,10 +1,19 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。"
+description: アーキテクチャ — SONiC の内部実装を 1 枚で押さえるなら、左から CLI / gNMI / 制御プレーン daemon、中央に
+  Redis DB 群、右に syncd と SAI/ASIC を置く絵になる。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli: []
+  config_db:
+  - CRM
+  - TELEMETRY
+  - GNMI
+  yang:
+  - sonic-crm
 ---
 
 # アーキテクチャ

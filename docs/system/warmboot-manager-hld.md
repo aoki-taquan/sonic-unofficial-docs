@@ -1,18 +1,35 @@
 ---
 title: Warmboot Manager（shutdown orchestration / reconciliation 統一）
-description: "Warmboot Manager（shutdown orchestration / reconciliation 統一） — 既存の warm-boot 仕組み（fast-reboot script + finalize-warmboot.sh）を補完する新 daemon Warmboot Manager。"
+description: Warmboot Manager（shutdown orchestration / reconciliation 統一） — 既存の warm-boot
+  仕組み（fast-reboot script + finalize-warmboot.sh）を補完する新 daemon Warmboot Manager。
 area: system
 verification: discrepancy-found
 monitor: not_implemented
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/warm-reboot/Warmboot_Manager_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/warm-reboot/Warmboot_Manager_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  - BGP_PEER_GROUP
+  cli:
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
+  - sonic-bgp-monitor
 ---
 
 !!! warning "裏取りステータス: HLD-only / 採否不明な提案"

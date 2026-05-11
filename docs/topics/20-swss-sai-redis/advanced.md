@@ -1,10 +1,31 @@
 ---
 title: 発展トピック
-description: "発展トピック — 起動、readiness、warm reboot のように「DB と daemon の状態を時間軸で扱う」テーマを集める。機能章で「reload 直後の動作」「warm reboot 中の差分適用」が前提として出てくるとき、ここに戻る。"
+description: 発展トピック — 起動、readiness、warm reboot のように「DB と daemon の状態を時間軸で扱う」テーマを集める。機能章で「reload
+  直後の動作」「warm reboot 中の差分適用」が前提として出てくるとき、ここに戻る。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - config bgp
+  - show bgp
+  config_db:
+  - FEATURE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
+  - sonic-bgp-monitor
 ---
 
 # 発展トピック

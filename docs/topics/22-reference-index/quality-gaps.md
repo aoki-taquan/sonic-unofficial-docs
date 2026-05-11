@@ -1,9 +1,16 @@
 ---
 title: 品質と gap
-description: "品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。"
+description: 品質と gap — 本ページは、Phase 6 以降の検証作業で残った 2 種類の「不完全さ」をどこで追跡するかをまとめる。
 area: topics
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  yang: []
 ---
 
 # 品質と gap

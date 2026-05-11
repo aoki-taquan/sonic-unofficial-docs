@@ -1,19 +1,39 @@
 ---
 title: Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）
-description: "Error Handling Framework HLD の制限事項。SWSS_RC enum だけが先行採用され ERROR_DB / ErrorListener / CLI は丸ごと未実装な部分採用状況、サイレント RIB-FIB 乖離リスク、CRM (Critical Resource Monitor) ベースの代替運用設計を詳述する。"
+description: Error Handling Framework HLD の制限事項。SWSS_RC enum だけが先行採用され ERROR_DB /
+  ErrorListener / CLI は丸ごと未実装な部分採用状況、サイレント RIB-FIB 乖離リスク、CRM (Critical Resource Monitor)
+  ベースの代替運用設計を詳述する。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/error-handling/error_handling_design_spec.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/error-handling/error_handling_design_spec.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - CRM
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  cli:
+  - show ip
+  - clear
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-crm
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
 ---
 
 # Error Handling Framework 制限事項と HLD との乖離

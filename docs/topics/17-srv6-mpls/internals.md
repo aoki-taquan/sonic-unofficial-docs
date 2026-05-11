@@ -1,17 +1,32 @@
 ---
 title: 内部実装
-description: "内部実装 — ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元 HLD ページに紐付いており、verifier が裏取り済みです。"
+description: 内部実装 — ここでは SRv6 / MPLS / Path Tracing の主要 daemon・ファイル・SAI 属性のうち、設計を理解する上で欠かせない部分を集約します。コード位置は元
+  HLD ページに紐付いており、verifier が裏取り済みです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/sonic-usid.md
-  - docs/routing/srv6-sid-l3adj.md
-  - docs/routing/srv6-vpn-hld.md
-  - docs/routing/static-configuration-of-srv6-in-sonic-hld.md
-  - docs/routing/mpls-for-sonic-high-level-design-document.md
-  - docs/routing/path-tracing-midpoint.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/sonic-usid.md
+- docs/routing/srv6-sid-l3adj.md
+- docs/routing/srv6-vpn-hld.md
+- docs/routing/static-configuration-of-srv6-in-sonic-hld.md
+- docs/routing/mpls-for-sonic-high-level-design-document.md
+- docs/routing/path-tracing-midpoint.md
+related:
+  cli:
+  - config qos
+  config_db:
+  - PORT_QOS_MAP
+  - VRF
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - FLEX_COUNTER_TABLE
+  - BUFFER_PORT_INGRESS_PROFILE_LIST
+  yang:
+  - sonic-srv6
+  - sonic-crm
 ---
 
 # 内部実装

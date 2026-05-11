@@ -1,14 +1,38 @@
 ---
 title: 運用
-description: "運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR / netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。"
+description: 運用 — SRv6 / MPLS / Path Tracing の運用確認は、「設定が CONFIG_DB に正しく入ったか」「FRR /
+  netlink 経由で APP_DB に渡ったか」「SAI / ASIC に programming されたか」の三段を順に追います。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources:
-  - docs/routing/segment-routing-over-ipv6-srv6-hld.md
-  - docs/routing/mpls-for-sonic-high-level-design-document.md
-  - docs/routing/path-tracing-midpoint.md
-  - docs/routing/router-interface-counters-in-sonic.md
+- docs/routing/segment-routing-over-ipv6-srv6-hld.md
+- docs/routing/mpls-for-sonic-high-level-design-document.md
+- docs/routing/path-tracing-midpoint.md
+- docs/routing/router-interface-counters-in-sonic.md
+related:
+  cli:
+  - show interfaces
+  - clear counters
+  - show bgp
+  - config qos
+  - config bgp
+  config_db:
+  - CRM
+  - PORT_QOS_MAP
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
 ---
 
 # 運用

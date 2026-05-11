@@ -1,16 +1,18 @@
 ---
 title: SONiC Logging & System Dumps（要件レベル仕様）
-description: "SONiC Logging & System Dumps（要件レベル仕様） — このドキュメントは SONiC におけるロギングとシステムダンプの 要件と概念設計 を記述する。実装ファイル名・関数名は与えられず、各機能要件のチェックリスト的な体裁になっている。"
+description: SONiC Logging & System Dumps（要件レベル仕様） — このドキュメントは SONiC におけるロギングとシステムダンプの
+  要件と概念設計 を記述する。実装ファイル名・関数名は与えられず、各機能要件のチェックリスト的な体裁になっている。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/logging/Logging_and_sysdump_arch_spec.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/logging/Logging_and_sysdump_arch_spec.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
-  cli: []
+  cli:
+  - show techsupport
   yang: []
 ---
 

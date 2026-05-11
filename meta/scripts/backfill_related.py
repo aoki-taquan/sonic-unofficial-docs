@@ -21,12 +21,29 @@ Two modes:
   - **via-CLI CDB inference**: for each `related.cli` we end up suggesting,
     open the corresponding `docs/reference/cli/<slug>.md` and harvest its
     own `related.config_db` to add to the page.
+  - **STATE_DB / COUNTERS_DB / ASIC_DB inference**: tokens of the form
+    `STATE_DB:FOO_TABLE`, `` `COUNTERS_DB` ``, `ASIC_DB`-adjacent uppercase
+    tokens are extracted; the table name is matched (loosely, stripping
+    trailing `_TABLE`) against existing CDB ref slugs.
+  - **chassis / SmartSwitch keyword map**: hardcoded keyword -> CDB/CLI/YANG
+    expansion for chassis-state / dpu-state / smartswitch-* / mid-plane,
+    which the legacy heuristics tend to miss because these tokens are
+    typically not bracketed.
+  - **discrepancy-found next-action links**: for pages with
+    `verification: discrepancy-found`, parse the `<!-- next-action -->`
+    block for `../reference/{cli,config-db,yang}/<slug>.md` links and
+    surface those references in `related`.
+  - **via-runbook inference**: title / slug token prefix-match against
+    runbook ref pages; for each matched runbook, harvest its own
+    `related.{cli,config_db,yang}` and add to candidates.
 
 Each list is capped at 7 entries (5 in default mode), ranked by occurrence
 frequency.
 
-Only pages whose `related` is fully empty are touched. Existing non-empty
-fields are never overwritten.
+By default only pages whose `related` is fully empty are touched. With
+`--thin-threshold N`, pages where every list has < N entries are also
+considered. Existing non-empty fields are never overwritten; new
+candidates are *appended* up to the per-list cap.
 
 This script is not part of CI (non-deterministic vs. evolving content).
 
@@ -66,6 +83,45 @@ DEFAULT_TARGET_DIRS = [
 CLI_REF_DIR = "docs/reference/cli"
 CDB_REF_DIR = "docs/reference/config-db"
 YANG_REF_DIR = "docs/reference/yang"
+RUNBOOK_REF_DIR = "docs/reference/runbooks"
+
+# Keyword -> {cdb, cli, yang} hardcoded map for chassis / SmartSwitch / DPU
+# topic clusters. Entries are only emitted when the corresponding ref page
+# actually exists in the repo (validated at runtime).
+CHASSIS_KEYWORD_MAP: dict[str, dict[str, list[str]]] = {
+    "chassis": {
+        "config_db": ["CHASSIS_MODULE", "MID_PLANE_BRIDGE", "DPU"],
+        "cli": ["show chassis modules status", "config chassis modules"],
+    },
+    "chassis-state": {
+        "config_db": ["CHASSIS_MODULE", "MID_PLANE_BRIDGE", "DPU"],
+        "cli": ["show chassis modules status"],
+    },
+    "smartswitch": {
+        "config_db": ["DPU", "CHASSIS_MODULE", "MID_PLANE_BRIDGE", "DPUS"],
+        "cli": ["show chassis modules status", "show platform inventory"],
+    },
+    "dpu": {
+        "config_db": ["DPU", "CHASSIS_MODULE", "MID_PLANE_BRIDGE"],
+        "cli": ["show chassis modules status", "show platform inventory"],
+    },
+    "dpu-state": {
+        "config_db": ["DPU", "CHASSIS_MODULE"],
+        "cli": ["show chassis modules status"],
+    },
+    "mid-plane": {
+        "config_db": ["MID_PLANE_BRIDGE"],
+    },
+    "midplane": {
+        "config_db": ["MID_PLANE_BRIDGE"],
+    },
+    "pdu": {
+        "config_db": ["DPU", "CHASSIS_MODULE"],
+    },
+    "voq": {
+        "config_db": ["VOQ_INBAND_INTERFACE"],
+    },
+}
 
 # ---------- frontmatter helpers ----------
 
@@ -97,6 +153,21 @@ def related_is_empty(fm: dict) -> bool:
     for key in ("cli", "config_db", "yang"):
         v = rel.get(key) or []
         if v:
+            return False
+    return True
+
+
+def related_is_thin(fm: dict, threshold: int) -> bool:
+    """Page qualifies as 'thin': every related list has < threshold entries.
+
+    threshold <= 1 is equivalent to `related_is_empty`.
+    """
+    rel = fm.get("related") or {}
+    if not isinstance(rel, dict):
+        return False
+    for key in ("cli", "config_db", "yang"):
+        v = rel.get(key) or []
+        if isinstance(v, list) and len(v) >= threshold:
             return False
     return True
 
@@ -169,6 +240,33 @@ def load_yang_index(root: Path) -> set[str]:
     return out
 
 
+def load_runbook_refs(root: Path) -> dict[str, dict[str, list[str]]]:
+    """Load runbook ref pages: slug -> {cli, config_db, yang} from frontmatter."""
+    out: dict[str, dict[str, list[str]]] = {}
+    d = root / RUNBOOK_REF_DIR
+    if not d.is_dir():
+        return out
+    for f in d.iterdir():
+        if f.suffix != ".md" or f.name == "index.md":
+            continue
+        try:
+            t = f.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        fm, _ = split_frontmatter(t)
+        if not fm:
+            continue
+        rel = fm.get("related") or {}
+        if not isinstance(rel, dict):
+            continue
+        out[f.stem] = {
+            "cli": [str(x) for x in (rel.get("cli") or []) if x],
+            "config_db": [str(x) for x in (rel.get("config_db") or []) if x],
+            "yang": [str(x) for x in (rel.get("yang") or []) if x],
+        }
+    return out
+
+
 def load_cli_to_cdb(root: Path) -> dict[str, list[str]]:
     """For each CLI ref page, harvest its frontmatter `related.config_db`."""
     out: dict[str, list[str]] = {}
@@ -208,6 +306,25 @@ YANG_PAT = re.compile(r"\b(sonic-[a-z0-9\-]+)\b")
 
 # `#term-foo` anchors in body (markdown link target into glossary).
 GLOSSARY_ANCHOR_PAT = re.compile(r"#term-([a-z0-9][a-z0-9_\-]*)")
+
+# STATE_DB / COUNTERS_DB / ASIC_DB scoped table references such as
+# `STATE_DB:CHASSIS_MODULE_TABLE`, ``STATE_DB`` followed by a backticked
+# uppercase table name, ASIC_DB:ASIC_STATE etc.
+STATE_DB_SCOPED_PAT = re.compile(
+    r"\b(STATE_DB|COUNTERS_DB|ASIC_DB|APPL_DB|APP_DB|FLEX_COUNTER_DB)\s*[:`]+\s*([A-Z][A-Z0-9_]{2,})"
+)
+# Uppercase tables ending in _TABLE, _SET, _LIST that often appear in
+# STATE_DB / COUNTERS_DB descriptions.
+SCOPED_UPPER_PAT = re.compile(r"\b([A-Z][A-Z0-9_]{3,}(?:_TABLE|_LIST|_SET|_STATE))\b")
+
+# Reference page links inside `next-action` admonitions.
+NEXT_ACTION_BLOCK_PAT = re.compile(
+    r"<!--\s*next-action\s*-->(.*?)<!--\s*/next-action\s*-->",
+    re.S,
+)
+REF_LINK_PAT = re.compile(
+    r"\(\.\.\/reference\/(cli|config-db|yang|runbooks)\/([a-z0-9][a-z0-9\-_]*)\.md(?:#[^)]*)?\)"
+)
 
 # Slug / title tokens: alphanumeric runs >=3 chars.
 TOKEN_PAT = re.compile(r"[a-z0-9]{3,}")
@@ -320,14 +437,176 @@ def _prefix_match_cli(tokens: list[str], cli_slugs: dict[str, str]) -> list[str]
     return out
 
 
+def _cdb_match_with_strip(token: str, cdb_idx: set[str], cdb_slugs: dict[str, str]) -> str | None:
+    """Match an uppercase token (possibly with `_TABLE` suffix) to a CDB table.
+
+    Returns the canonical table name if found, else None.
+    """
+    # 1) direct match
+    if token in cdb_idx:
+        return token
+    # 2) strip common scope suffixes
+    for suf in ("_TABLE", "_LIST", "_SET", "_STATE"):
+        if token.endswith(suf):
+            base = token[: -len(suf)]
+            if base in cdb_idx:
+                return base
+    return None
+
+
+def extract_state_db(
+    body: str, cdb_idx: set[str], cdb_slugs: dict[str, str]
+) -> list[str]:
+    """Detect STATE_DB / COUNTERS_DB / ASIC_DB scoped table references and
+    return CDB table names that match the existing reference index.
+    """
+    counter: Counter = Counter()
+    for m in STATE_DB_SCOPED_PAT.finditer(body):
+        tok = m.group(2)
+        canon = _cdb_match_with_strip(tok, cdb_idx, cdb_slugs)
+        if canon:
+            counter[canon] += 1
+    # Also catch `_TABLE` / `_STATE` suffix tokens anywhere in body — these
+    # are often STATE_DB key prefixes that share base name with a CDB table.
+    for m in SCOPED_UPPER_PAT.finditer(body):
+        tok = m.group(1)
+        canon = _cdb_match_with_strip(tok, cdb_idx, cdb_slugs)
+        if canon:
+            counter[canon] += 1
+    return [k for k, _ in counter.most_common()]
+
+
+def extract_chassis_keywords(
+    body: str,
+    fm: dict,
+    path: Path,
+    cdb_idx: set[str],
+    cli_idx: dict[str, str],
+    yang_idx: set[str],
+) -> tuple[list[str], list[str], list[str]]:
+    """Match hardcoded chassis/SmartSwitch/DPU keywords and emit candidates."""
+    extra_cli: list[str] = []
+    extra_cdb: list[str] = []
+    extra_yang: list[str] = []
+    title = str(fm.get("title") or "").lower()
+    slug = path.stem.lower()
+    haystack_meta = f"{title} {slug}"
+    # Body-level signals require a clear contextual match (not just any
+    # appearance of `dpu`); use a slightly stricter regex.
+    body_lc = body.lower()
+    for kw, mapping in CHASSIS_KEYWORD_MAP.items():
+        if kw in haystack_meta or re.search(rf"\b{re.escape(kw)}\b", body_lc):
+            for tbl in mapping.get("config_db", []):
+                if tbl not in extra_cdb:
+                    extra_cdb.append(tbl)
+            for cmd in mapping.get("cli", []):
+                if cmd in cli_idx and cmd not in extra_cli:
+                    extra_cli.append(cmd)
+            for y in mapping.get("yang", []):
+                if y in yang_idx and y not in extra_yang:
+                    extra_yang.append(y)
+    return extra_cli, extra_cdb, extra_yang
+
+
+def extract_next_action_links(
+    body: str,
+    fm: dict,
+    cli_idx: dict[str, str],
+    cli_slugs: dict[str, str],
+    cdb_slugs: dict[str, str],
+    yang_idx: set[str],
+    runbook_refs: dict[str, dict[str, list[str]]],
+) -> tuple[list[str], list[str], list[str]]:
+    """Parse `<!-- next-action -->` block for `../reference/...` links and
+    convert them into CLI / CDB / YANG candidates.
+
+    Only emitted for `discrepancy-found` pages where the next-action block
+    is the canonical place to surface alternative references.
+    """
+    if str(fm.get("verification") or "") != "discrepancy-found":
+        return [], [], []
+    m = NEXT_ACTION_BLOCK_PAT.search(body)
+    if not m:
+        return [], [], []
+    block = m.group(1)
+    cli_out: list[str] = []
+    cdb_out: list[str] = []
+    yang_out: list[str] = []
+    for lm in REF_LINK_PAT.finditer(block):
+        kind = lm.group(1)
+        slug = lm.group(2)
+        if kind == "cli":
+            cmd = cli_slugs.get(slug)
+            if cmd and cmd not in cli_out:
+                cli_out.append(cmd)
+        elif kind == "config-db":
+            tbl = cdb_slugs.get(slug)
+            if tbl and tbl not in cdb_out:
+                cdb_out.append(tbl)
+        elif kind == "yang":
+            if slug in yang_idx and slug not in yang_out:
+                yang_out.append(slug)
+        elif kind == "runbooks":
+            # Harvest the runbook's own related.{cli,cdb,yang}.
+            rb = runbook_refs.get(slug)
+            if rb:
+                for cmd in rb.get("cli", []):
+                    if cmd in cli_idx and cmd not in cli_out:
+                        cli_out.append(cmd)
+                for tbl in rb.get("config_db", []):
+                    if tbl not in cdb_out:
+                        cdb_out.append(tbl)
+                for y in rb.get("yang", []):
+                    if y in yang_idx and y not in yang_out:
+                        yang_out.append(y)
+    return cli_out, cdb_out, yang_out
+
+
+def extract_via_runbook(
+    tokens: list[str],
+    cli_idx: dict[str, str],
+    yang_idx: set[str],
+    runbook_refs: dict[str, dict[str, list[str]]],
+) -> tuple[list[str], list[str], list[str]]:
+    """For tokens that prefix-match a runbook slug, harvest the runbook's
+    own related.{cli,config_db,yang}.
+    """
+    extra_cli: list[str] = []
+    extra_cdb: list[str] = []
+    extra_yang: list[str] = []
+    if not runbook_refs:
+        return extra_cli, extra_cdb, extra_yang
+    matched_slugs: list[str] = []
+    for tok in tokens:
+        for rslug in runbook_refs:
+            if rslug == tok or rslug.startswith(tok + "-"):
+                if rslug not in matched_slugs:
+                    matched_slugs.append(rslug)
+    for rslug in matched_slugs:
+        rb = runbook_refs[rslug]
+        for cmd in rb.get("cli", []):
+            if cmd in cli_idx and cmd not in extra_cli:
+                extra_cli.append(cmd)
+        for tbl in rb.get("config_db", []):
+            if tbl not in extra_cdb:
+                extra_cdb.append(tbl)
+        for y in rb.get("yang", []):
+            if y in yang_idx and y not in extra_yang:
+                extra_yang.append(y)
+    return extra_cli, extra_cdb, extra_yang
+
+
 def extract_aggressive(
     body: str,
     fm: dict,
     path: Path,
+    cli_idx: dict[str, str],
     cli_slugs: dict[str, str],
+    cdb_idx: set[str],
     cdb_slugs: dict[str, str],
     yang_idx: set[str],
     cli_to_cdb: dict[str, list[str]],
+    runbook_refs: dict[str, dict[str, list[str]]],
 ) -> tuple[list[str], list[str], list[str]]:
     """Return additional (cli, cdb, yang) candidates from aggressive heuristics.
 
@@ -365,6 +644,43 @@ def extract_aggressive(
     for cmd in _prefix_match_cli(uniq_tokens, cli_slugs):
         extra_cli[cmd] += 1
 
+    # 3. STATE_DB / COUNTERS_DB / ASIC_DB scoped table refs in body.
+    for tbl in extract_state_db(body, cdb_idx, cdb_slugs):
+        extra_cdb[tbl] += 1
+
+    # 4. chassis / SmartSwitch / DPU keyword map.
+    ck_cli, ck_cdb, ck_yang = extract_chassis_keywords(
+        body, fm, path, cdb_idx, cli_idx, yang_idx
+    )
+    for cmd in ck_cli:
+        extra_cli[cmd] += 1
+    for tbl in ck_cdb:
+        extra_cdb[tbl] += 1
+    for y in ck_yang:
+        extra_yang[y] += 1
+
+    # 5. discrepancy-found next-action back-links.
+    na_cli, na_cdb, na_yang = extract_next_action_links(
+        body, fm, cli_idx, cli_slugs, cdb_slugs, yang_idx, runbook_refs
+    )
+    for cmd in na_cli:
+        extra_cli[cmd] += 2  # boost: explicit author-curated links
+    for tbl in na_cdb:
+        extra_cdb[tbl] += 2
+    for y in na_yang:
+        extra_yang[y] += 2
+
+    # 6. via-runbook inference: token prefix-match against runbook ref slugs.
+    rb_cli, rb_cdb, rb_yang = extract_via_runbook(
+        uniq_tokens, cli_idx, yang_idx, runbook_refs
+    )
+    for cmd in rb_cli:
+        extra_cli[cmd] += 1
+    for tbl in rb_cdb:
+        extra_cdb[tbl] += 1
+    for y in rb_yang:
+        extra_yang[y] += 1
+
     return (
         [k for k, _ in extra_cli.most_common()],
         [k for k, _ in extra_cdb.most_common()],
@@ -396,14 +712,18 @@ def process_file(
     cdb_slugs,
     yang_idx,
     cli_to_cdb,
+    runbook_refs,
     mode: str,
     dry_run: bool,
+    thin_threshold: int,
 ):
     text = path.read_text(encoding="utf-8")
     fm, body = split_frontmatter(text)
     if fm is None:
         return None
-    if not related_is_empty(fm):
+    is_empty = related_is_empty(fm)
+    is_thin = thin_threshold > 1 and related_is_thin(fm, thin_threshold)
+    if not is_empty and not is_thin:
         return None
 
     aggressive = mode == "aggressive"
@@ -415,7 +735,8 @@ def process_file(
 
     if aggressive:
         ex_cli, ex_cdb, ex_yang = extract_aggressive(
-            body, fm, path, cli_slugs, cdb_slugs, yang_idx, cli_to_cdb
+            body, fm, path, cli_idx, cli_slugs, cdb_idx, cdb_slugs,
+            yang_idx, cli_to_cdb, runbook_refs,
         )
         # via-CLI CDB: for each CLI candidate, pick up its related.config_db
         via_cli_cdb: list[str] = []
@@ -433,24 +754,41 @@ def process_file(
     rel = fm.get("related") or {}
     if not isinstance(rel, dict):
         rel = {}
-    if cli and not (rel.get("cli") or []):
-        rel["cli"] = cli
-    else:
-        rel.setdefault("cli", rel.get("cli") or [])
-    if cdb and not (rel.get("config_db") or []):
-        rel["config_db"] = cdb
-    else:
-        rel.setdefault("config_db", rel.get("config_db") or [])
-    if yng and not (rel.get("yang") or []):
-        rel["yang"] = yng
-    else:
-        rel.setdefault("yang", rel.get("yang") or [])
+
+    # Preserve existing entries. For thin pages we APPEND new candidates
+    # (deduped) up to the per-list cap, never overwriting.
+    def _merge_existing(existing: list, new_items: list[str]) -> list[str]:
+        existing = [str(x) for x in (existing or []) if x]
+        seen = set(existing)
+        merged = list(existing)
+        for it in new_items:
+            if it in seen:
+                continue
+            if len(merged) >= cap:
+                break
+            seen.add(it)
+            merged.append(it)
+        return merged
+
+    new_cli = _merge_existing(rel.get("cli"), cli)
+    new_cdb = _merge_existing(rel.get("config_db"), cdb)
+    new_yang = _merge_existing(rel.get("yang"), yng)
+
+    # If nothing actually changed, skip the write.
+    if (new_cli == (rel.get("cli") or [])
+            and new_cdb == (rel.get("config_db") or [])
+            and new_yang == (rel.get("yang") or [])):
+        return ("noop", path, [], [], [])
+
+    rel["cli"] = new_cli
+    rel["config_db"] = new_cdb
+    rel["yang"] = new_yang
     fm["related"] = rel
 
     new_text = "---\n" + dump_frontmatter(fm) + "---\n" + body
     if not dry_run:
         path.write_text(new_text, encoding="utf-8")
-    return ("update", path, cli, cdb, yng)
+    return ("update", path, new_cli, new_cdb, new_yang)
 
 
 def main():
@@ -474,6 +812,15 @@ def main():
         default=",".join(DEFAULT_TARGET_DIRS),
         help="comma-separated directories to scan",
     )
+    ap.add_argument(
+        "--thin-threshold",
+        type=int,
+        default=1,
+        help=(
+            "When > 1, also process pages whose every related list has < N "
+            "entries (existing entries are preserved, new candidates appended)."
+        ),
+    )
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -483,6 +830,7 @@ def main():
     cdb_slugs = load_cdb_slugs(root)
     yang_idx = load_yang_index(root)
     cli_to_cdb = load_cli_to_cdb(root) if args.mode == "aggressive" else {}
+    runbook_refs = load_runbook_refs(root) if args.mode == "aggressive" else {}
 
     target_dirs = [d.strip() for d in args.targets.split(",") if d.strip()]
 
@@ -509,8 +857,10 @@ def main():
             cdb_slugs,
             yang_idx,
             cli_to_cdb,
+            runbook_refs,
             args.mode,
             args.dry_run,
+            args.thin_threshold,
         )
         if res is None:
             continue

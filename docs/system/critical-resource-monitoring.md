@@ -1,17 +1,27 @@
 ---
 title: クリティカルリソースモニタリング (CRM) 要件
-description: "クリティカルリソースモニタリング (CRM) 要件 — SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった テーブル容量が有限なリソース を抱えている。"
+description: クリティカルリソースモニタリング (CRM) 要件 — SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor
+  / ACL TCAM / FDB といった テーブル容量が有限なリソース を抱えている。
 area: system
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/crm/CRM_requirements.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/crm/CRM_requirements.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_APPLIANCE
+  cli:
+  - show acl
+  - config acl
+  yang:
+  - sonic-crm
 ---
 
 !!! success "裏取りステータス: Code-verified"

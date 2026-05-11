@@ -1,10 +1,36 @@
 ---
 title: 運用
-description: "運用 — ここでは lab を「日常的にどう回すか」を、persona 別と test plan 別に整理します。実機運用の章本文ではなく、lab 環境の運用に閉じた話だけを書きます。"
+description: 運用 — ここでは lab を「日常的にどう回すか」を、persona 別と test plan 別に整理します。実機運用の章本文ではなく、lab
+  環境の運用に閉じた話だけを書きます。
 area: topics
 verification: meta
 last_verified: 2026-05-11
 sources: []
+related:
+  cli:
+  - show techsupport
+  - show version
+  - show interfaces
+  - config interface
+  - show ip
+  - show vlan
+  - config vlan
+  config_db:
+  - VLAN
+  - VRF
+  - VLAN_MEMBER
+  - PFC_WD
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - VLAN_SUB_INTERFACE
+  yang:
+  - sonic-vlan
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vrf
+  - sonic-vlan-sub-interface
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
 ---
 
 # 運用

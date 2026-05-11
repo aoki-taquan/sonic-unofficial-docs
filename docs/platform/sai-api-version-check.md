@@ -1,17 +1,21 @@
 ---
 title: SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）
-description: "SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査） — SONiC の syncd は OCP SAI リポジトリのヘッダ に対してコンパイルされ、リンクは vendor が sonic-buildimage 配下に配置した libsai.so に対して行われる。"
+description: SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査） — SONiC の syncd は
+  OCP SAI リポジトリのヘッダ に対してコンパイルされ、リンクは vendor が sonic-buildimage 配下に配置した libsai.so に対して行われる。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-build-system/saiversioncheck.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-build-system/saiversioncheck.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - CRM
+  cli:
+  - show version
+  yang:
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

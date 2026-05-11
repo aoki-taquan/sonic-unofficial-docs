@@ -1,17 +1,28 @@
 ---
 title: SensorMon（PMON 内の voltage / current センサ監視）
-description: "SensorMon（PMON 内の voltage / current センサ監視） — ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の 環境センサ が多数ある。Linux の lm-sensors / hwmon でも一部読めるが、HLD は次の限界を指摘:"
+description: 'SensorMon（PMON 内の voltage / current センサ監視） — ボード上には電圧コントローラ / 電流センサ
+  / 高度センサ等、温度以外の 環境センサ が多数ある。Linux の lm-sensors / hwmon でも一部読めるが、HLD は次の限界を指摘:'
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/pmon/pmon-sensormon.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/pmon/pmon-sensormon.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - SNMP
+  - SNMP_AGENT_ADDRESS_CONFIG
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_TRAP_CONFIG
+  - MGMT_VRF_CONFIG
+  cli:
+  - show platform
+  - config snmp
+  - show snmpagentaddress
+  yang:
+  - sonic-snmp
 ---
 
 !!! info "裏取りステータス: code-verified"

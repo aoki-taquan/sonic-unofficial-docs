@@ -1,10 +1,33 @@
 ---
 title: 発展トピック
-description: "発展トピック — 評価・初学を超えて、CI / 大規模 lab / DPU 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先 HLD を直接読むのが早く、本ページは「どれを開くか」のしおりです。"
+description: 発展トピック — 評価・初学を超えて、CI / 大規模 lab / DPU 検証まで踏み込むときに開く話題を集めます。基本的にはここのリンク先
+  HLD を直接読むのが早く、本ページは「どれを開くか」のしおりです。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli:
+  - show acl
+  - config acl
+  - show pfc
+  - config vxlan
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  - PFC_WD
+  - VXLAN_TUNNEL
+  - VXLAN_EVPN_NVO
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  yang:
+  - sonic-vxlan
+  - sonic-pfc-priority-queue-map
+  - sonic-pfc-priority-priority-group-map
+  - sonic-srv6
+  - sonic-pfcwd
+  - sonic-buffer-pool
+  - sonic-buffer-profile
 ---
 
 # 発展トピック

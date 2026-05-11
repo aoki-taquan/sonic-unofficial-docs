@@ -1,18 +1,27 @@
 ---
-title: "SmartSwitch HA HAMgrD 制限事項と実装乖離"
-description: "HAMgrD の制限事項と実装乖離。community master 上で hamgrd バイナリ未取り込み、DASH_HA_DPU_STATE / VDPU_TABLE 未定義、swbus 不在、Switch-Driven mode TBD など、HLD と実装の差分を整理する。"
+title: SmartSwitch HA HAMgrD 制限事項と実装乖離
+description: HAMgrD の制限事項と実装乖離。community master 上で hamgrd バイナリ未取り込み、DASH_HA_DPU_STATE
+  / VDPU_TABLE 未定義、swbus 不在、Switch-Driven mode TBD など、HLD と実装の差分を整理する。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_APPLIANCE
+  cli:
+  - show bfd
   yang: []
 ---
 

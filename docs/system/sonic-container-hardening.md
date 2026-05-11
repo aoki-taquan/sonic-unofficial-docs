@@ -1,17 +1,23 @@
 ---
 title: SONiC Container Hardening（capability / read-only / privileged 削減）
-description: "SONiC Container Hardening（capability / read-only / privileged 削減） — SONiC の docker は歴史的に多くが --privileged で動いていた。"
+description: SONiC Container Hardening（capability / read-only / privileged 削減） — SONiC
+  の docker は歴史的に多くが --privileged で動いていた。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/Container Hardening/SONiC_container_hardening_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/Container Hardening/SONiC_container_hardening_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - FEATURE
+  - CRM
+  cli:
+  - show techsupport
+  yang:
+  - sonic-feature
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

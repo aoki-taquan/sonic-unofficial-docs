@@ -1,18 +1,37 @@
 ---
 title: SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）
-description: "SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB） — orchagent は APPL_DB 経由で受けた要求を SAI コール列に展開して syncd / SAI に投げる。"
+description: SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB） — orchagent は APPL_DB
+  経由で受けた要求を SAI コール列に展開して syncd / SAI に投げる。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/SAI_failure_handling/SAI_failure_handling.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/SAI_failure_handling/SAI_failure_handling.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  cli:
+  - show acl
+  - config acl
+  - config bgp
+  - show bgp
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-crm
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

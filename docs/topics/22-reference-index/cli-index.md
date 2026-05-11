@@ -1,9 +1,35 @@
 ---
 title: CLI 横断索引
-description: "CLI 横断索引 — docs/reference/cli/ 配下の 48 ページを、Phase B の機能章でどこから引かれるかで並べ直した索引である。各 CLI ページは config- / show- / debug-* のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。"
+description: CLI 横断索引 — docs/reference/cli/ 配下の 48 ページを、Phase B の機能章でどこから引かれるかで並べ直した索引である。各
+  CLI ページは config- / show- / debug-* のグループごとに分かれており、本ページではこれを機能章ごとに束ね直す。
 area: topics
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli:
+  - config interface
+  - show ip
+  - config platform firmware
+  - config bgp
+  - show bgp
+  - config vxlan
+  - config vnet
+  config_db:
+  - VRF
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - BGP_PEER_GROUP_AF
+  - BGP_GLOBALS_AF_NETWORK
+  - BGP_GLOBALS_AF_AGGREGATE_ADDR
+  - BGP_AGGREGATE_ADDRESS
+  yang:
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-vrf
+  - sonic-bgp-bbr
+  - sonic-bgp-peerrange
+  - sonic-bgp-device-global
+  - sonic-bgp-sentinel
 ---
 
 # CLI 横断索引

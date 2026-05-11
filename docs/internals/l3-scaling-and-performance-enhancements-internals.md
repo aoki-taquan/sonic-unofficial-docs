@@ -1,19 +1,39 @@
 ---
-title: L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show arp）
-description: "L3 Scaling と Performance 強化 HLD の内部実装。RouteOrch の bulk route API (gRouteBulker) と 1 秒 timer flush、fpmsyncd の rt_table==0 lookup スキップ、sairedis JSON 更新、show arp / show ndp の個別 FDB lookup 化を実装ファイル位置と合わせて解説する。"
+title: L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show
+  arp）
+description: L3 Scaling と Performance 強化 HLD の内部実装。RouteOrch の bulk route API (gRouteBulker)
+  と 1 秒 timer flush、fpmsyncd の rt_table==0 lookup スキップ、sairedis JSON 更新、show arp /
+  show ndp の個別 FDB lookup 化を実装ファイル位置と合わせて解説する。
 area: internals
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: partially_implemented
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/l3-performance-scaling/L3_performance_and_scaling_enchancements_HLD.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - VNET
+  - VLAN
+  - VLAN_INTERFACE
+  - VLAN_MEMBER
+  - VLAN_SUB_INTERFACE
+  - COPP_GROUP
+  - COPP_TRAP
+  cli:
+  - show arp
+  - show ndp
+  - config vlan
+  - show vlan
+  - config vnet
+  yang:
+  - sonic-vlan
+  - sonic-vlan-sub-interface
+  - sonic-copp
+  - sonic-vnet
+  - sonic-port
 ---
 
 # L3 Scaling と Performance 強化 内部実装

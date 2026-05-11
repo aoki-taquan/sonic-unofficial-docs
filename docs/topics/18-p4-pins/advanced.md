@@ -1,13 +1,29 @@
 ---
 title: 発展トピック
-description: "発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得 / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。"
+description: 発展トピック — PINS は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると 状態取得
+  / config push の管理面（gNMI / OpenConfig）と組で読む のが自然です。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/management/sonic-management-framework.md
-  - docs/management/gnmi-usage.md
-  - docs/management/p4rt-application-hld.md
+- docs/management/sonic-management-framework.md
+- docs/management/gnmi-usage.md
+- docs/management/p4rt-application-hld.md
+related:
+  cli:
+  - show acl
+  - config acl
+  config_db:
+  - ACL_RULE
+  - ACL_TABLE
+  - COPP_GROUP
+  - COPP_TRAP
+  - CRM
+  - TELEMETRY
+  - GNMI
+  yang:
+  - sonic-copp
+  - sonic-crm
 ---
 
 # 発展トピック

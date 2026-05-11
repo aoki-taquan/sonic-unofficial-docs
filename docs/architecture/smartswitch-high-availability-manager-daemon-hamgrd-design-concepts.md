@@ -1,18 +1,25 @@
 ---
-title: "SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）"
-description: "HAMgrD の概念。NPU 側 actor model、vDPU 抽象、HA Set / HA Scope の役割、DPU-Driven / Switch-Driven mode の違いを整理する。"
+title: SmartSwitch HA HAMgrD 概念（actor model と vDPU 抽象）
+description: HAMgrD の概念。NPU 側 actor model、vDPU 抽象、HA Set / HA Scope の役割、DPU-Driven
+  / Switch-Driven mode の違いを整理する。
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
 monitor: not_implemented
 page_kind: split-child
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPUS
+  - BFD_SESSION_TABLE
+  cli:
+  - show bfd
   yang: []
 ---
 

@@ -1,10 +1,22 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — 仮想 SONiC には用途別に複数の系統があります。「どれが本物の SONiC か」ではなく、「どこを再現したいか」で選びます。"
+description: アーキテクチャ — 仮想 SONiC には用途別に複数の系統があります。「どれが本物の SONiC か」ではなく、「どこを再現したいか」で選びます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
+related:
+  cli: []
+  config_db:
+  - DPU
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DASH_ENI_TABLE
+  - DASH_VNET
+  - DASH_APPLIANCE
+  - CRM
+  yang:
+  - sonic-crm
 ---
 
 # アーキテクチャ

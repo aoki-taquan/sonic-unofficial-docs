@@ -1,19 +1,28 @@
 ---
 title: FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）
-description: "FEC FLR の制限事項。SAI counter 未サポート interface、interleaving factor X の固定テーブル前提、線形回帰の最小データ点数制約、そして HLD 提案の `counterpoll port flr-interval-factor` サブコマンドが現行 master に取り込まれず lua ハードコード値で固定されている乖離点をまとめる。"
+description: FEC FLR の制限事項。SAI counter 未サポート interface、interleaving factor X の固定テーブル前提、線形回帰の最小データ点数制約、そして
+  HLD 提案の `counterpoll port flr-interval-factor` サブコマンドが現行 master に取り込まれず lua ハードコード値で固定されている乖離点をまとめる。
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/port_fec_flr/port_fec_flr.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/port_fec_flr/port_fec_flr.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
-  cli: []
-  yang: []
+  config_db:
+  - PORT
+  - TRANSCEIVER_INFO
+  - CRM
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - show interfaces
+  yang:
+  - sonic-port
+  - sonic-crm
 ---
 
 # FEC FLR 制限事項と HLD との乖離

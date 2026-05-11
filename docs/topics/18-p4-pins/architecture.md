@@ -1,14 +1,26 @@
 ---
 title: アーキテクチャ
-description: "アーキテクチャ — PINS の data path は「コントローラ → P4RT App → APPL_DB → P4Orch → SAI → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。"
+description: アーキテクチャ — PINS の data path は「コントローラ → P4RT App → APPL_DB → P4Orch → SAI
+  → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。
 area: topics
 verification: meta
 last_verified: 2026-05-10
 sources:
-  - docs/management/pins-hld.md
-  - docs/management/p4rt-application-hld.md
-  - docs/internals/p4-orchagent.md
-  - docs/management/p4rt-read-cache-hld.md
+- docs/management/pins-hld.md
+- docs/management/p4rt-application-hld.md
+- docs/internals/p4-orchagent.md
+- docs/management/p4rt-read-cache-hld.md
+related:
+  cli: []
+  config_db:
+  - COPP_GROUP
+  - COPP_TRAP
+  - CRM
+  - P4RT_TABLE
+  - DEVICE_METADATA
+  yang:
+  - sonic-copp
+  - sonic-crm
 ---
 
 # アーキテクチャ
