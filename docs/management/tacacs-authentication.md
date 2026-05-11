@@ -21,141 +21,100 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified"
-    `sonic-host-services/scripts/hostcfgd` L354 `class AaaCfg`、L2185 で `self.aaacfg = AaaCfg(self.config_db)`、L2224-2225 で `init_data['TACPLUS']` / `init_data['TACPLUS_SERVER']` 初期化、L748-752 で `/etc/pam.d/sshd` と `/etc/pam.d/login` を `common-auth` ↔ `common-auth-sonic` で切替、L28-35 で `PAM_AUTH_CONF_TEMPLATE = "common-auth-sonic.j2"` / `NSS_TACPLUS_CONF_TEMPLATE = "tacplus_nss.conf.j2"` を確認。`pam_tacplus` の `source_ip` パッチは `sonic-buildimage/src/tacacs/pam/0006-Add-support-for-source-ip-address.patch` で当たっている。CLI は `sonic-utilities/config/aaa.py` L200-318 に `config tacacs` / `add` / `delete` 全部取り込み済み（verified at: 2026-05-09）。
+    `hostcfgd` の `class AaaCfg` で `AAA` / `TACPLUS` / `TACPLUS_SERVER` を購読し `/etc/pam.d/common-auth-sonic` と `/etc/tacplus_nss.conf` を生成、`pam_tacplus` の `source_ip` パッチ (`0006-Add-support-for-source-ip-address.patch`)、`sonic-utilities/config/aaa.py` の `config tacacs` CLI 群を確認済み（verified at: 2026-05-09）。
 
-# TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）
+# TACACS+ 認証
 
-## 概要
+## 読み手が知りたいこと
 
-SONiC は SSH / コンソールログインで TACACS+ サーバを使った認証をサポートする。Linux の Pluggable Authentication Modules (PAM) と Name Service Switch (NSS) の枠組みに **`pam_tacplus`** と **`nss_tacplus`** を組み込み、CONFIG_DB の `AAA` / `TACPLUS` / `TACPLUS_SERVER` テーブルから `hostcfgd` が PAM/NSS 設定ファイルを生成する[^1]。
+- SONiC で TACACS+ を有効化するとどこに何が書き込まれるか
+- ローカル認証と TACACS+ の優先順位、フェイルオーバはどう決まるか
+- なぜ `common-auth-sonic` が分離されているか
+- 何を設定すれば動くか / 動かないときどこを見るか
 
-主要要件（HLD §Requirements）[^1]:
-
-- SSH と console の両方で TACACS+ ログイン認証
-- TACACS+ パケットの送信元 IP 指定
-- 複数 TACACS+ サーバ + 優先度
-- ローカル認証と TACACS+ 認証の順序設定
-- fail_through（あるサーバで失敗したら次へ）
-- **root のみローカル認証** に固定
-
-## 動作仕様
-
-### 全体構成
+## 全体構成（CONFIG_DB → hostcfgd → PAM/NSS）
 
 ```mermaid
 flowchart LR
-  CLI[config aaa / config tacacs] --> CDB[(ConfigDB:<br>AAA / TACPLUS /<br>TACPLUS_SERVER)]
-  CDB --> HC[hostcfgd<br>AAA Config Module]
+  CLI[config aaa / tacacs] --> CDB[(CONFIG_DB:<br>AAA / TACPLUS /<br>TACPLUS_SERVER)]
+  CDB --> HC[hostcfgd AaaCfg]
   HC --> PAM[/etc/pam.d/common-auth-sonic/]
   HC --> NSS[/etc/tacplus_nss.conf]
   HC --> NSWITCH[/etc/nsswitch.conf]
-  SSH[SSH] --> PAMLIB[PAM libs]
-  CON[Console] --> PAMLIB
-  PAMLIB --> PAM
-  PAMLIB --> TAC[(TACACS+ Server)]
+  SSH[SSH / Console] --> PAMLIB[PAM]
+  PAMLIB --> PAM --> TAC[(TACACS+ server)]
 ```
 
-`hostcfgd` の AAA module が CONFIG_DB を購読し、PAM/NSS 設定ファイルをホスト上に生成する。SSH/console の認証フローは標準 PAM 経由で `pam_tacplus.so` を呼ぶ[^1]。
+CONFIG_DB を真実の相とし、`hostcfgd` の AAA モジュールが PAM/NSS 設定ファイルを書き換える[^1]。
 
-### pam_tacplus の拡張
+## なぜ `common-auth-sonic` を分離するか
 
-`pam_tacplus` は server / secret / timeout 等の標準オプションは持つが **送信元 IP 指定が無い** ため、SONiC は `source_ip` を加えるパッチを当てている[^1]。
+既存 `/etc/pam.d/common-auth` を直接編集すると cron など他サブシステムに波及する。SONiC は **専用ファイル `common-auth-sonic`** を作り、SSH / login だけがこれを参照するよう差し替える[^1]。
 
-### nss_tacplus と権限テーブル
+## なぜ `nss_tacplus` が必要か
 
-TACACS+ 認証ユーザは通常 `/etc/passwd` に存在しないため、TACACS+ 認証だけでは getpwnam が失敗してログインが切れる。SONiC は **`nss_tacplus`** を NSS プラグインとして導入し、`getpwnam_r()` で TACACS+ サーバから user privilege を取得し、ローカルにユーザレコードを擬似的に提供する[^1]。
+TACACS+ ユーザは `/etc/passwd` に存在しない。`getpwnam` が失敗するとログインが切れるため、NSS プラグイン `nss_tacplus` で TACACS+ サーバからユーザ privilege を取得しローカルレコードを擬似提供する[^1]。
 
-`/etc/tacplus_nss.conf` で TACACS+ 接続情報（と権限テーブル）を保持する。`hostcfgd` の AAA module がこのファイルを更新する[^1]。
-
-#### 既定の権限テーブル
-
-| user privilege | user info | gid | secondary groups | shell |
-|----------------|-----------|-----|------------------|-------|
-| 15 | `remote_user_su` | 1000 | `sudo,docker` | `/bin/bash` |
-| 1 〜 14 | `remote_user`    | 999  | `docker`      | `/bin/bash` |
-
-`/etc/tacplus_nss.conf` で再定義した例[^1]（`netops` と `operator` を分割）:
-
-```
-user_priv=7;pw_info=netops;gid=999;group=docker;shell=/bin/bash
-user_priv=1;pw_info=operator;gid=999;group=docker;shell=/bin/rbash
-```
-
-| user privilege | user info | shell |
-|----------------|-----------|-------|
-| 15      | `remote_user_su` | `/bin/bash` |
-| 14 〜 7 | `netops`         | `/bin/bash` |
-| 1 〜 6  | `operator`       | `/bin/rbash` |
-
-ホームディレクトリは `/home/<username>` に作成される。
-
-#### 有効化
-
-`nss_tacplus` は既定では無効。TACACS+ 認証を有効化したときに `/etc/nsswitch.conf` の `passwd` 行へ `tacplus` を追記する[^1]:
+`/etc/nsswitch.conf` の `passwd` 行に `tacplus` を追記:
 
 ```
 passwd: compat tacplus
 ```
 
-### PAM configuration
+### 既定の権限テーブル
 
-既存 `common-auth` をそのまま編集すると他のアプリ（cron など）に影響するため、SONiC は **`/etc/pam.d/common-auth-sonic`** を独立に作成し、SSH / login がこれを参照するように差し替える[^1]。
+| user privilege | user info | gid | secondary groups | shell |
+|----------------|-----------|-----|------------------|-------|
+| 15 | `remote_user_su` | 1000 | `sudo,docker` | `/bin/bash` |
+| 1〜14 | `remote_user` | 999 | `docker` | `/bin/bash` |
 
-#### パターン 1: 2 サーバ、`source_ip` 指定、`fail_through` 無効
+`/etc/tacplus_nss.conf` で privilege 範囲ごとに `user_priv` / `pw_info` / `shell` を再定義できる[^1]。ホームは `/home/<username>`。
+
+## どう PAM ファイルを書き分けるか（3 パターン）
+
+### パターン 1: 2 サーバ + `source_ip` + fail_through 無効
 
 ```
-auth [success=done new_authtok_reqd=done default=ignore auth_err=die] pam_unix.so nullok try_first_pass
-auth [success=done new_authtok_reqd=done default=ignore auth_err=die] pam_tacplus.so server=10.65.254.222:49 secret=test123 login=pap timeout=3 source_ip=100.0.0.9 try_first_pass
-auth [success=1 default=ignore] pam_tacplus.so server=10.65.254.248:49 secret=test123 login=pap timeout=3 source_ip=100.0.0.9 try_first_pass
+auth [success=done ... auth_err=die] pam_unix.so nullok try_first_pass
+auth [success=done ... auth_err=die] pam_tacplus.so server=A:49 secret=X source_ip=Y try_first_pass
+auth [success=1 default=ignore]      pam_tacplus.so server=B:49 secret=X source_ip=Y try_first_pass
 auth requisite pam_deny.so
-auth required  pam_permit.so
 ```
 
-`auth_err=die` により最初のサーバで認証エラーが返ったら **次サーバを試さない**（fail_through 無効）[^1]。
+`auth_err=die` で最初のサーバが認証エラーなら **次は試さない**[^1]。
 
-#### パターン 2: `fail_through` 有効
+### パターン 2: fail_through 有効
 
-```
-auth [success=done new_authtok_reqd=done default=ignore] pam_unix.so nullok try_first_pass
-auth [success=1   new_authtok_reqd=done default=ignore] pam_tacplus.so server=10.65.254.223:49 secret=test123 login=pap timeout=5 try_first_pass
-auth requisite pam_deny.so
-auth required  pam_permit.so
-```
+`auth_err=die` を外すと失敗時に次の TACACS+ 行へフォールスルーする[^1]。
 
-`auth_err=die` を外すことで失敗時に次の TACACS+ 行へフォールスルーする。
+### パターン 3: TACACS+ 優先 + root はローカル
 
-#### パターン 3: TACACS+ 優先 + root はローカル
+冒頭に `pam_succeed_if user=root` を置いて root だけ TACACS+ をスキップさせる構造[^1]:
 
 ```
-auth [success=1 new_authtok_reqd=done default=ignore] pam_succeed_if.so user = root debug
-auth [success=done new_authtok_reqd=done default=ignore] pam_tacplus.so server=10.65.254.222:49 secret=test123 login=pap timeout=3 try_first_pass
+auth [success=1 ...] pam_succeed_if.so user = root debug
+auth [success=done ...] pam_tacplus.so ... try_first_pass
 auth [success=1 default=ignore] pam_unix.so nullok try_first_pass
-auth requisite pam_deny.so
-auth required  pam_permit.so
 ```
 
-冒頭の `pam_succeed_if user=root` で root だけ TACACS+ をスキップさせる構造[^1]。
+要件として **root はローカル限定**[^1]。
 
-<!-- evidence:
-source: sonic-net/SONiC/doc/aaa/TACACS+ Authentication.md#L104-L146 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  If TACACS+ Authentication is enabled, a new PAM configuration file "common-auth-sonic" is created
-  and replaced in login and ssh, and the other application which authentication include "common-auth" will not be affected.
-reasoning: 専用 PAM ファイル分離と root ローカル限定の根拠。
--->
+## なぜ `source_ip` が必要か
 
-### CONFIG_DB スキーマ
+`pam_tacplus` 上流には送信元 IP 指定が無い。マルチホーム switch では TACACS+ サーバが特定の管理ネットワーク経由でのみ到達できることが多いため、SONiC は `source_ip` を加えるパッチを当てている[^1]。
 
-#### `AAA`
+## CONFIG_DB スキーマ
+
+### `AAA`
 
 ```
 key = "authentication"
-protocol    = LIST(local, tacacs+)   ; pam modules
+protocol    = LIST(local, tacacs+)
 fallback    = "True"|"False"
 failthrough = "True"|"False"
 ```
 
-#### `TACPLUS` (global)
+### `TACPLUS`（global）
 
 ```
 key = "global"
@@ -165,7 +124,7 @@ src_ip    = IPAddress
 timeout   = 1-99
 ```
 
-#### `TACPLUS_SERVER`
+### `TACPLUS_SERVER`
 
 ```
 key = <server IP>
@@ -176,29 +135,9 @@ priority  = 1-64
 timeout   = 1-99
 ```
 
-`TACPLUS_SERVER` のフィールドは `TACPLUS` のグローバル値を **個別に上書き** する形で評価される[^1]。
+`TACPLUS_SERVER` は global を **個別に上書き**[^1]。
 
-## 設定
-
-### 関連する CLI
-
-```
-config aaa authentication login {local | tacacs+}
-config aaa authentication failthrough enable|disable
-show aaa
-
-config tacacs src_ip <ADDRESS>
-config tacacs timeout <0-60>
-config tacacs authtype {pap|chap|mschap}
-config tacacs passkey <TEXT>
-config tacacs add <ADDRESS> --port <1-65535> --timeout <0-60> --key <TEXT> --type {pap|chap|mschap} --pri <1-64>
-config tacacs delete <ADDRESS>
-show tacacs
-```
-
-CLI は `sonic-utilities` の click モジュールで実装される[^1]。
-
-### 設定例
+## 設定例
 
 ```bash
 config tacacs src_ip 100.0.0.9
@@ -208,25 +147,35 @@ config aaa authentication login tacacs+
 config aaa authentication failthrough enable
 ```
 
+CLI 一覧:
+
+```
+config aaa authentication login {local | tacacs+}
+config aaa authentication failthrough enable|disable
+config tacacs {src_ip|timeout|authtype|passkey|add|delete} ...
+show aaa
+show tacacs
+```
+
 ## 制限事項
 
-- **root はローカルのみ**: 要件として明示されており、TACACS+ では root を認証できない[^1]。
-- **`pam_tacplus` 上流に `source_ip` が無い**: SONiC は独自パッチで対応。upstream 取り込み状況は別途確認が必要[^1]。
-- **TACACS+ 認可・アカウンティング**: 本 HLD は **認証** に閉じる。authorization / accounting は別の設計（pam_tacplus 自体は対応するが本 HLD では言及最小）[^1]。
-- **ホームディレクトリ作成**: 認証成功時に `/home/<username>` を作成する仕様。ディスク逼迫時の挙動は未規定。
+- **root はローカルのみ**（要件として明示）[^1]
+- `pam_tacplus` 上流に `source_ip` 未取込、SONiC 独自パッチで対応[^1]
+- 本 HLD は **認証** に限定。authorization / accounting は別設計
+- ホームディレクトリ自動作成、ディスク逼迫時の挙動は未規定
 
 ## 干渉する機能
 
-- **`hostcfgd`**: 本機能の本体。`AAA` / `TACPLUS` / `TACPLUS_SERVER` を購読して PAM/NSS ファイルを再生成する。`hostcfgd` 停止中は CONFIG_DB 変更が反映されない。
-- **`/etc/pam.d/common-auth`**: SONiC は **触らない**。共通 auth を変えると他サブシステム（cron 等）に波及するため、専用 `common-auth-sonic` を分離して使う[^1]。
-- **NSS の `passwd` ライン**: 本機能を有効化すると `tacplus` が追記される。他 NSS プラグイン（ldap 等）と共存させる場合は順序に注意。
+- **`hostcfgd`**: 本機能の本体。停止中は CONFIG_DB 変更が反映されない
+- **`/etc/pam.d/common-auth`**: SONiC は触らない（cron 等への波及防止）
+- **NSS の `passwd` ライン**: 他 NSS プラグイン（ldap 等）と共存させる場合は順序注意
 
 ## トラブルシューティング
 
-- ログインは認証通るがホームディレクトリが無い: `nss_tacplus` の `getpwnam_r` 経路、`/etc/tacplus_nss.conf` の権限テーブルを確認。
-- `source_ip` が反映されない: `pam_tacplus` のパッチ取り込み状況、PAM 設定行の `source_ip=` を確認。
-- フェイルオーバーしない: PAM の `auth_err=die` の有無を確認。`failthrough enable` 時は `die` を外す構造。
-- root が TACACS+ に流れる: `pam_succeed_if user=root` の前置きが入っているか確認。
+- ホームディレクトリが無い → `nss_tacplus` の `getpwnam_r`、`/etc/tacplus_nss.conf` の権限テーブル確認
+- `source_ip` 反映されない → PAM 設定行の `source_ip=` 有無、パッチ取り込み確認
+- フェイルオーバしない → PAM の `auth_err=die` の有無、`failthrough enable` の整合確認
+- root が TACACS+ に流れる → `pam_succeed_if user=root` 前置きの有無を確認
 
 ## 引用元
 

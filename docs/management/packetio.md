@@ -15,41 +15,34 @@ related:
 ---
 
 !!! success "裏取りステータス: Code-verified（SONiC 共通基盤）"
-    `sonic-swss/orchagent/copporch.h` L44-46 で `genetlink_name` / `genetlink_mcgrp_name` フィールドを確認、`copporch.cpp` L446 (`SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK`)、L657-669 `CoppOrch::createGenetlinkHostIf()`、L833-844 で trap_group ごとに genetlink hostif 作成する経路を確認。`sonic-swss/orchagent/portsorch.cpp` L771 (`APP_SEND_TO_INGRESS_PORT_TABLE_NAME` の Table 登録)、L7106-7120 `PortsOrch::addSendToIngressHostIf()`、`orchdaemon.cpp` L219 でテーブル登録優先度も確認。`sonic-buildimage/files/image_config/copp/copp_cfg.j2` L76-83 で `queue2_group1` に `genetlink_mcgrp_name: "packets"` / `genetlink_name: "psample"` の trap group 定義を確認。ベンダ依存の kernel `genl_packet` filter 実装は SONiC リポジトリ範囲外で本ページのスコープ外 (verified at: 2026-05-09)。
+    `copporch` の `genetlink_name` / `genetlink_mcgrp_name` フィールドと `createGenetlinkHostIf()`、`portsorch` の `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 登録と `addSendToIngressHostIf()`、`copp_cfg.j2` の `queue2_group1` に `genetlink_mcgrp_name: "packets"` / `genetlink_name: "psample"` を確認。kernel `genl_packet` filter のベンダ側実装はリポジトリ外でスコープ外 (verified at: 2026-05-09)。
 
-# P4Runtime PacketIO（generic netlink + send_to_ingress）
+# P4Runtime PacketIO
 
-## 概要
+## 読み手が知りたいこと
 
-SONiC は通常の netdev 経由の Packet I/O をサポートしているが、**P4Runtime（PINS / SDN コントローラ）** には固有の要件があり、それを満たすための拡張を本 HLD が定義する[^1]。
+- 通常の netdev PacketIO で何が足りなくて、なぜ別経路が必要なのか
+- 受信側で **input port + 期待 egress port** メタデータをどう運ぶか
+- `send_to_ingress` とは何で、どこで設定するか
+- ベンダ ASIC ドライバに何を実装してもらう必要があるか
 
-要件[^1]:
+## なぜ PacketIO に拡張が要るか
 
-- **Receive**:
-    - controller が install した punt flow に **マッチするパケットだけ** が届く専用チャネル
-    - パケットの **input port + target egress port (= switch pipeline で出ていたであろう port)** をメタデータとして取得
-- **Transmit**:
-    - 任意の設定済み port に直接 packet を出す **directed transmit**
-    - **`send_to_ingress`** 機能で「ASIC の forwarding pipeline に再注入」して egress 選択を ASIC に任せる送信モード
+通常 netdev では **すべての punt パケット** が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要[^1]:
 
-## 動作仕様
+- Receive: controller が install した punt flow にマッチする **専用チャネル**、**input port + target egress port** のメタデータ付き
+- Transmit: 任意 port への directed transmit、および **`send_to_ingress`**（ASIC pipeline 再注入で egress 選択を ASIC に任せる送信モード）
 
-### Receive 側設計
+## Receive 側設計（generic netlink + user-defined trap）
 
-#### genetlink hostif 利用
-
-通常の netdev port は **すべての punt パケット** を受信し、メタデータも input port のみ。P4Runtime はこれを区別したいため、**`SAI_HOSTIF_TYPE_GENETLINK` 型の hostif** を使う[^1]:
+通常 netdev とは別に **`SAI_HOSTIF_TYPE_GENETLINK`** 型 hostif を作り、user-defined trap を `HOSTIF_TABLE_ENTRY` で bind する[^1]。
 
 | SAI 属性 | 用途 |
 |----------|------|
-| `SAI_HOSTIF_TYPE_GENETLINK` | hostif 種別 = generic netlink |
-| `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` | 受信側が listen する multicast group 名 |
+| `SAI_HOSTIF_TYPE_GENETLINK` | generic netlink hostif |
+| `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` | listen する multicast group 名 |
 
-これは sFlow の sample 配信と同じ仕組み。
-
-#### user-defined trap → genetlink hostif
-
-P4Runtime は **user-defined trap** を作成し、これを genetlink hostif に bind する。`HOSTIF_TABLE_ENTRY` で trap → hostif マッピングを programming する[^1]:
+sFlow / psample と同じ仕組みを流用。
 
 ```mermaid
 sequenceDiagram
@@ -57,180 +50,126 @@ sequenceDiagram
     participant CO as CoppOrch
     participant SAI
     participant KDR as kernel driver
-    P4->>CO: ACL/punt flow install with user-defined trap
-    CO->>SAI: create_hostif (GENETLINK, mcgrp_name)
-    CO->>SAI: create_hostif_trap (user-defined)
-    CO->>SAI: hostif_table_entry: trap → genetlink hostif
-    Note over P4,KDR: 実トラフィック
-    KDR->>KDR: punted pkt header の tag を判定
+    P4->>CO: punt flow install (user-defined trap)
+    CO->>SAI: create_hostif (GENETLINK)
+    CO->>SAI: hostif_table_entry: trap → hostif
+    KDR->>KDR: header tag を判定
     alt tag == user-defined
         KDR->>P4: genetlink multicast (metadata 付き)
     else
-        KDR->>KDR: 既存 netdev に dispatch
+        KDR->>KDR: 既存 netdev へ
     end
 ```
 
-#### CoppOrch の役割
+CoppOrch は **CPU queue ごとの新 trap group** を処理し、ACL entry 単位で trap を作る[^1]。
 
-CoppOrch は **CPU queue ごとの新 trap group** を処理し[^1]、ACL entry ごとに user-defined trap を作る:
+## ベンダ kernel driver の責務（3 つ）
 
-- 受信 punt パケットの **CPU QoS queue を ACL entry 単位で制御**
-- trap → hostif マッピングを CONFIG_DB の `copp_cfg.j2` 由来で生成
+[^1]
 
-### ベンダドライバ側の Receive 実装
+1. **経路判定**: punt パケット header の識別子で netdev か genetlink か振り分け。`knet_filter_cb` で `GENL_PACKET_NAME` を分岐:
 
-ASIC ベンダの kernel ドライバ（DMA 受信側）に 3 つの責務[^1]:
+    ```c
+    if (strncmp(kf->desc, GENL_PACKET_NAME, ...) == 0)
+        return generic_filter_cb(...);
+    ```
 
-#### 1. パケット経路判定
+2. **メタデータ正規化**: ベンダ固有 (unit / port) を `ifindex` 等の汎用表現に変換（sFlow 実装の流用想定）。
+3. **generic netlink で送出**: `ingress_ifindex` / `egress_ifindex` をパックし multicast socket へ。
 
-各 punt パケットの header に含まれる識別子を見て、**netdev へ送るか genetlink へ送るか** を判定:
+## Transmit 側設計
 
-```c
-#define GENL_PACKET_NAME "genl_packet"
+### Directed transmit
 
-static int knet_filter_cb(uint8_t *pkt, int size, int dev_no, void *meta,
-                          int chan, kcom_filter_t *kf)
-{
-    if (strncmp(kf->desc, PSAMPLE_CB_NAME, KCOM_FILTER_DESC_MAX) == 0)
-        return psample_filter_cb(pkt, size, dev_no, meta, chan, kf);
-    if (strncmp(kf->desc, GENL_PACKET_NAME, KCOM_FILTER_DESC_MAX) == 0)
-        return generic_filter_cb(pkt, size, dev_no, meta, chan, kf);
-    return strip_tag_filter_cb(pkt, size, dev_no, meta, chan, kf);
-}
-```
+特別な変更不要。P4Runtime が init 時に各 netdev port socket を作り `write()`[^1]。
 
-#### 2. メタデータ抽出と汎用形式化
+### `send_to_ingress`
 
-ベンダ固有 (unit / port number) を **`ifindex` 等の汎用表現** に変換。sFlow 実装の流用が想定される。
-
-#### 3. genetlink で送出
-
-`ingress_ifindex` / `egress_ifindex` 等の属性をパックし、generic netlink multicast socket に送る。SONiC 側に **vendor-independent な submodule** が用意されている[^1]。
-
-### Transmit 側設計
-
-#### Directed transmit
-
-特別な変更は不要。P4Runtime は init 時に各 netdev port の socket を作り、対応 socket に `write()` する。
-
-#### `send_to_ingress`
-
-新しい **CPU port 紐づけ netdev port** を作り、そこに書いたパケットが **ASIC の forwarding pipeline の入口** に注入される[^1]。
+**CPU port に紐づく新 netdev port** を作り、そこに書いたパケットを **ASIC pipeline の入口** に再注入する[^1]:
 
 ```mermaid
 graph LR
-    P4[P4Runtime app] -->|write socket| NDV[send_to_ingress<br/>netdev port]
+    P4[P4Runtime] -->|write socket| NDV[send_to_ingress netdev]
     NDV --> CPU[CPU port (ASIC)]
-    CPU --> PIPE[ASIC forwarding pipeline]
+    CPU --> PIPE[forwarding pipeline]
     PIPE --> EGR[egress port 自動選択]
 ```
 
-設定は `CONFIG_DB` の **`SEND_TO_INGRESS_PORT`** table[^1]:
+設定は CONFIG_DB の `SEND_TO_INGRESS_PORT`:
 
 ```json
-{
-  "SEND_TO_INGRESS_PORT": {
-    "send_to_ingress": {}
-  }
-}
+{"SEND_TO_INGRESS_PORT": {"send_to_ingress": {}}}
 ```
 
-`PortsOrch` がこれを購読し、SAI の `create_hostif` を CPU port に対して呼び **netdev type hostif を CPU port に紐づけて作る**[^1]。
+`PortsOrch` がこれを購読し、SAI `create_hostif` を **CPU port に対して** 呼ぶ（netdev type hostif を CPU port に紐づける）[^1]。
 
-#### ベンダ Transmit 拡張
+### ベンダ Transmit 拡張
 
-[^1]:
-
-- 通常 SAI の hostif (netdev) は **physical port / VLAN / LAG にのみ作れる**。CPU port 用に作れるよう拡張が必要
-- packet が **CPU port から ingress** したときに ASIC が forward するためのベンダ固有設定（通常 CPU port は egress 側のみ）
-
-### イベントフロー（receive + transmit 統合）
-
-```mermaid
-sequenceDiagram
-    participant P4 as P4Runtime
-    participant CO as CoppOrch
-    participant PO as PortsOrch
-    participant SAI
-    participant ASIC
-    P4->>CO: trap install (user-defined)
-    CO->>SAI: hostif (GENETLINK) + trap
-    P4->>PO: SEND_TO_INGRESS_PORT 設定
-    PO->>SAI: create_hostif on CPU port (netdev)
-    Note over P4,ASIC: 動的トラフィック
-    ASIC-->>P4: punted pkt → genetlink mcgrp (metadata 付き)
-    P4->>SAI: write to send_to_ingress netdev
-    SAI->>ASIC: CPU port 経由で pipeline に injection
-    ASIC->>ASIC: 通常の forwarding
-```
+通常 SAI hostif (netdev) は **physical port / VLAN / LAG にのみ作成可能**。CPU port 用に作れるようベンダ SAI の拡張が必要[^1]。CPU port ingress を ASIC が forward するベンダ固有設定もセットで要る。
 
 ## 設定
 
-### 関連する CONFIG_DB
+### CONFIG_DB
 
 | Table | Key | フィールド | 説明 |
 |-------|-----|-----------|------|
 | `SEND_TO_INGRESS_PORT` | `send_to_ingress` | (空) | CPU port を ingress として使う netdev port を作る |
 
-### 関連する SAI
+### SAI
 
 | 機能 | 利用 |
 |------|------|
-| `SAI_HOSTIF_TYPE_GENETLINK` | generic netlink hostif 作成 |
-| `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` | listen するマルチキャストグループ名 |
-| `create_hostif (CPU port)` | send_to_ingress の netdev hostif 作成（ベンダ拡張） |
+| `SAI_HOSTIF_TYPE_GENETLINK` | Receive チャネル |
+| `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` | multicast group 名 |
+| `create_hostif (CPU port)` | send_to_ingress netdev（ベンダ拡張）|
 
-### 関連する CLI
+### CLI
 
-本 HLD は **CLI 拡張を伴わない**[^1]。P4Runtime / PINS スタック側の設定経路を使う。
+本 HLD は CLI 拡張を伴わない[^1]。P4Runtime / PINS コントローラ経由で操作する。
 
 ### 設定例
 
 ```json
 // /etc/sonic/config_db.json 抜粋
-{
-  "SEND_TO_INGRESS_PORT": {
-    "send_to_ingress": {}
-  }
-}
+{"SEND_TO_INGRESS_PORT": {"send_to_ingress": {}}}
 ```
-
-実運用は P4Runtime コントローラが punt flow / send_to_ingress 操作を行うため、ユーザがコマンドで触る場面は少ない。
 
 ## 制限事項
 
-- **ベンダ kernel driver の対応必須**[^1]。`generic_filter_cb` 等の実装が無い ASIC では receive metadata が出ない
-- send_to_ingress は **SAI hostif の CPU port 対応** が必要。community SAI / ベンダ SAI 双方の対応次第
-- P4Runtime / PINS スタック前提の設計であり、汎用 SDN 用ではない
-- `SEND_TO_INGRESS_PORT` の table 名 / フィールドが固定（`send_to_ingress` 単一エントリ）
-- punt パケットへのメタデータ付与は **ベンダ独自の packet header tag** に依存。標準フォーマット未定
-- HLD 当時 (2021) は P4Runtime + PINS が新興。current master の取り込み状況は別途確認
+- **ベンダ kernel driver の対応必須**。`generic_filter_cb` が無い ASIC では receive metadata が出ない[^1]
+- send_to_ingress は SAI hostif の **CPU port 対応** が前提
+- P4Runtime / PINS スタック前提、汎用 SDN 用途ではない
+- `SEND_TO_INGRESS_PORT` の table 名 / フィールドが固定
+- punt パケットへのメタデータ付与は **ベンダ独自 packet header tag** に依存（標準フォーマット未定）
 
 ## 干渉する機能
 
-- **`CoppOrch`**: user-defined trap + genetlink hostif の生成主体
-- **`PortsOrch`**: `SEND_TO_INGRESS_PORT` の処理 + CPU port 用 netdev hostif 作成
-- **既存 sFlow / `psample` 系**: genetlink 仕様を流用するため共存可能
-- **ベンダ ASIC SDK / kernel driver**: receive 経路と CPU port ingress を実装する責務
-- **P4Runtime daemon**: コントローラ側 endpoint
+- **CoppOrch**: user-defined trap + genetlink hostif 生成主体
+- **PortsOrch**: `SEND_TO_INGRESS_PORT` 処理 + CPU port netdev 作成
+- **既存 sFlow / `psample`**: genetlink 仕様を共有
+- **ベンダ ASIC SDK / kernel driver**: receive 経路と CPU port ingress を実装
 - **既存 CoPP (`copp_cfg.j2`)**: trap group / queue マッピングの拡張
 
 ## トラブルシューティング
 
-- punt パケットが genetlink に出ない → `dmesg` で kernel driver の filter が登録されているか、user-defined trap が SAI に作られているか確認
-- `send_to_ingress` から送ったパケットが forwarding されない → ベンダ SAI が CPU port ingress を許可しているか、ASIC で `SEND_TO_INGRESS_PORT` 配下の netdev port が見えるか (`ip link`)
-- メタデータ ifindex が 0 → ベンダ kernel driver の metadata 抽出ロジックが未実装の可能性
-- 通常 netdev とのパケット重複受信 → user-defined trap → genetlink hostif マッピングが正しく適用されているか確認
+- punt が genetlink に出ない → kernel driver filter 登録、user-defined trap の SAI 作成を `dmesg` で確認
+- send_to_ingress から forward されない → ベンダ SAI の CPU port ingress 対応、`ip link` で netdev 確認
+- メタデータ ifindex が 0 → kernel driver の metadata 抽出未実装の可能性
+- 通常 netdev と重複受信 → trap → hostif マッピング適用確認
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/Packet_io.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+## 関連ページ
+
+- [Topic: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
+- [HLD: send_to_ingress](send-to-ingress-hld.md)
+
 <!-- concerns hint:
 - CoppOrch の user-defined trap + GENETLINK hostif 生成の現行実装確認
-- SEND_TO_INGRESS_PORT table の PortsOrch 処理 + CPU port netdev hostif 作成実装確認
-- SAI_HOSTIF_TYPE_GENETLINK / SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME の community SAI 取り込み確認
-- ベンダ kernel driver の genl_packet filter 実装と generic netlink 送信 submodule の現行 sonic-buildimage への取り込み確認
+- SEND_TO_INGRESS_PORT の PortsOrch 処理 + CPU port netdev hostif 作成確認
+- SAI_HOSTIF_TYPE_GENETLINK / GENETLINK_MCGRP_NAME の community SAI 取り込み確認
+- ベンダ kernel driver の genl_packet filter 実装の現行確認
 - copp_cfg.j2 の per-CPU-queue trap group 設定の現行確認
-- P4Runtime / PINS スタックの SONiC master 取り込み状況確認
 -->
