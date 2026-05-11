@@ -1,1 +1,1 @@
-{"mappings": []}
+{"mappings": [{"item": {"url": "_meta/changelog/", "title": "\u5909\u66f4\u5c65\u6b74"}, "tags": ["changelog", "meta"]}, {"item": {"url": "reference/verification/sources-freshness/", "title": "\u30bd\u30fc\u30b9 pinned SHA \u306e\u65b0\u9bae\u5ea6\uff08sources-freshness\uff09"}, "tags": ["sources", "verification"]}, {"item": {"url": "reference/verification/stale-verified/", "title": "\u53e4\u3044\u88cf\u53d6\u308a\u30da\u30fc\u30b8"}, "tags": ["stale", "verification"]}]}
