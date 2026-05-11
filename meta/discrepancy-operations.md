@@ -153,5 +153,25 @@ frontmatter `sources` は **コードや HLD のスナップショット** を�
 | `meta/scripts/gen_discrepancy_index.py` | `docs/reference/verification/discrepancy-index.md` 自動生成 |
 | `meta/scripts/aggregate_queue.py` | per-page queue → `meta/verification-queue.json` 集約 |
 | `meta/scripts/frontmatter_lint.py` | frontmatter enum / 必須フィールド検査 |
+| `meta/scripts/gen_changelog.py` | merged PR から `docs/_meta/changelog.md` を機械生成 |
 | `docs/reference/verification/discrepancy-index.md` | 読み手向け discrepancy 一覧 |
 | `docs/reference/verification/index.md` | 裏取り運用方針サマリ（本ガイドの読み手向け要約） |
+
+---
+
+## 7. 定期実行スクリプト
+
+CI には組み込んでおらず、メンテ時に手動で回すスクリプト群。
+
+### 7.1 `gen_changelog.py`
+
+`gh` CLI で merged PR を取得し、`docs/_meta/changelog.md` を mergedAt 降順・月単位で再生成する。
+
+```bash
+# 認証済み gh CLI が必要
+python3 meta/scripts/gen_changelog.py            # 書き出し
+python3 meta/scripts/gen_changelog.py --check    # drift 確認（soft check, exit 0）
+python3 meta/scripts/gen_changelog.py --check --strict  # drift 時 exit 1
+```
+
+実行タイミングの目安: 四半期サイクル開始時、または「merged PR が 50 件溜まった」あたり。CI には組み込まず、main 変更後に手で commit する運用とする（CI 自動 push は権限と複雑度の都合で見送り）。

@@ -1,3 +1,6 @@
-title: 実装との乖離
+title: メタ
+hide: true
 nav:
+  - coverage.md
+  - changelog.md
   - discrepancies.md
