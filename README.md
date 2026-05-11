@@ -63,4 +63,16 @@ mkdocs build
 
 ## ライセンス
 
-ドキュメントの内容は [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja)。
+本ドキュメントの内容は [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) の下で提供されています。
+
+- ライセンス全文（英語・正本）: [`LICENSE`](./LICENSE)
+- 日本語訳（公式・参考）: [`LICENSE.ja`](./LICENSE.ja)
+- 概要（Commons Deed・日本語）: <https://creativecommons.org/licenses/by/4.0/deed.ja>
+
+利用条件の要点:
+
+- **表示（Attribution）**: 著作者名（本プロジェクト名 `sonic-unofficial-docs` および本リポジトリ URL）を表示し、ライセンスの種類とリンクを明記し、改変を行った場合はその旨を示してください。
+- 商用・非商用を問わず、複製・配布・改変・翻案・派生作物の作成が許諾されます。
+- 本ドキュメントが引用する SONiC 上流リポジトリのコード断片・図・HLD 抜粋などは、各上流リポジトリのライセンス（多くは Apache License 2.0）に従います。本リポジトリの CC BY 4.0 は、本ドキュメントとして再構成した日本語解説テキストに対して適用されます。
+
+プロジェクトの目的・スコープ・フィードバック窓口を含む全体像は [`docs/about.md`](./docs/about.md) にまとめています。
