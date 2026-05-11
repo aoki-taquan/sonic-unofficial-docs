@@ -154,3 +154,64 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 - すなわち実装 key 名は `nexthop_group` / `zebra_nexthop` の 2 つに分かれており、本文の `fpm_use_nexthop_groups` という単一キー名は **HLD 段階の表記がそのまま残った乖離**。本文の CONFIG_DB スニペットおよび設定例は将来 Writer に戻して key 名を実装に揃える必要がある。
 
 実装の存在自体は確認できたが key 名の不整合があるため `discrepancy-found` のまま据え置き。
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2` L9-L26:
+
+```jinja
+{% block zebra_nexthop %}
+{% if (('localhost' in DEVICE_METADATA) and ('zebra_nexthop' in DEVICE_METADATA['localhost']) and
+       (DEVICE_METADATA['localhost']['zebra_nexthop'] == 'disabled')) %}
+no zebra nexthop kernel enable
+{% else %}
+zebra nexthop kernel enable
+{% endif %}
+{% endblock zebra_nexthop %}
+
+{% if ( ('localhost' in DEVICE_METADATA) and ('nexthop_group' in  DEVICE_METADATA['localhost']) and
+        (DEVICE_METADATA['localhost']['nexthop_group'] == 'enabled') ) %}
+...
+fpm use-next-hop-groups
+{% else %}
+no fpm use-next-hop-groups
+{% endif %}
+```
+
+- 有効化 key の実装名: `DEVICE_METADATA.localhost.nexthop_group` (= `enabled` / `disabled`)、および `DEVICE_METADATA.localhost.zebra_nexthop`（kernel への NHG push を抑止する場合 `disabled` を指定）。
+- HLD 表記の `fpm_use_nexthop_groups` という単一キー名は **実装に存在しない**。
+
+#### 読者への影響
+
+- HLD 通りに `redis-cli -n 4 hset 'DEVICE_METADATA|localhost' fpm_use_nexthop_groups enabled` を打っても、`zebra.conf` 再生成では `no fpm use-next-hop-groups` が出力されたままで **NHG 機能は有効化されない**。`fpmsyncd` 起動ログを見ても `RTM_NEWNEXTHOP` を受け取らないため `NEXTHOP_GROUP_TABLE` は空のまま。
+- key 名を勘違いしたまま BGP PIC を運用設計すると、ECMP 切替時の収束が NHG 経由ではなく従来の per-route 経路で行われ、HLD が謳う収束時間短縮が得られない。
+
+#### 回避策の実コマンド
+
+```bash
+# 正しい有効化（実装側 key 名）
+sudo sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" nexthop_group enabled
+# kernel NHG push を残したい場合（デフォルト動作）は zebra_nexthop は未設定 or "enabled"
+sudo sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" zebra_nexthop enabled
+
+# 反映: BGP container 再起動が必要
+sudo systemctl restart bgp
+
+# 確認
+vtysh -c 'show running-config zebra' | grep -i "fpm use-next-hop-groups\|nexthop kernel"
+sonic-db-cli APPL_DB keys 'NEXTHOP_GROUP_TABLE:*' | head
+```
+
+`fpm use-next-hop-groups` が `running-config` に出ていれば成功。`NEXTHOP_GROUP_TABLE:*` キーが見えれば fpmsyncd 経路も生きている。
+
+#### 関連 GitHub Issue / PR
+
+- [sonic-buildimage #16762: \[fpmsyncd\] Fpmsyncd Next Hop Table Enhancement (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16762) — `zebra.conf.j2` への NHG 切替フラグ導入。
+- [sonic-buildimage #23500: \[frr\] update next hop group support by metadata value with disabled as the default value (merged, 202511)](https://github.com/sonic-net/sonic-buildimage/pull/23500) — default を `disabled` に固定する change。デフォルトでは NHG が **無効** な点に注意。
+- [sonic-buildimage #16941: \[action\]\[PR:16747\] fix default zebra config not inserted into empty zebra.conf (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16941) — 関連の zebra.conf 生成バグ修正。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)

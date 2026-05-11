@@ -2,7 +2,7 @@
 title: Switchport モード（access / trunk / routed）と VLAN CLI 拡張
 area: switching
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md
@@ -262,3 +262,71 @@ sudo config vlan member add 21 PortChannel1
 - [CONFIG_DB: VLAN](../reference/config-db/vlan.md)
 - [CONFIG_DB: VLAN_MEMBER](../reference/config-db/vlan-member.md)
 - [YANG: sonic-vlan](../reference/yang/sonic-vlan.md)
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-utilities/config/switchport.py` L17-L22:
+
+```python
+@switchport.command("mode")
+@click.argument("type", metavar="<mode_type>", required=True, type=click.Choice(["access", "trunk", "routed"]))
+@click.argument("port", metavar="port", required=True)
+@clicommon.pass_db
+def switchport_mode(db, type, port):
+    """switchport mode help commands.Mode_type can be access or trunk or routed"""
+```
+
+- 引数は `<mode_type>` + `<port>` の 2 個のみ。HLD の `config switchport mode access <port> <vlan>` / `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のような第 3 引数（VLAN リスト）は **無い**。
+- VLAN メンバ追加は別コマンド `config vlan member add <vid> <port> [--untagged]` (`sonic-utilities/config/vlan.py`)。
+
+#### 読者への影響
+
+- `sudo config switchport mode access Ethernet0 10` をそのまま打つと `Error: Got unexpected extra argument (10)` で失敗。
+- HLD を読んで「モード切替 1 コマンドで VLAN メンバまで設定できる」と想定して runbook を作ると、本番投入時にすべて失敗する。特に大量ポートの自動化スクリプトで顕在化する。
+- HLD の `trunk` 例（`native-vlan + vlan-list` を 1 コマンド指定）も同様に成立せず、native と tagged を別々に `--untagged` 有無で書き分ける必要がある。
+
+#### 回避策の実コマンド
+
+access ポート（VLAN 10 untagged）:
+
+```bash
+sudo config switchport mode access Ethernet0
+sudo config vlan member add 10 Ethernet0 --untagged
+```
+
+trunk ポート（native=10, tagged=20,21）:
+
+```bash
+sudo config switchport mode trunk PortChannel1
+sudo config vlan member add 10 PortChannel1 --untagged
+sudo config vlan member add 20 PortChannel1
+sudo config vlan member add 21 PortChannel1
+```
+
+連続適用（同 VLAN を複数ポートに）:
+
+```bash
+for p in Ethernet0 Ethernet4 Ethernet8; do
+  sudo config switchport mode access $p
+  sudo config vlan member add 100 $p --untagged
+done
+```
+
+確認:
+
+```bash
+show vlan brief
+show interfaces status  # PR #3788 取込後は switchport mode 列が出る
+```
+
+#### 関連 GitHub Issue / PR
+
+- [sonic-utilities #3247: Switchport Mode & CLI Modified Fix (merged)](https://github.com/sonic-net/sonic-utilities/pull/3247) — 現行 `switchport mode` の確定実装。
+- [sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)](https://github.com/sonic-net/sonic-utilities/pull/3788) — `show interfaces status` で switchport mode を表示。
+- [SONiC #1136: Switchport Mode Hybrid Support (open)](https://github.com/sonic-net/SONiC/issues/1136) — HLD で謳う追加機能（hybrid 等）の future work が未着手であることを示す。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)

@@ -158,3 +158,77 @@ per-page queue で既出の通り部分実装。再走査結果:
 - `sonic-utilities/config/` / `show/` 配下に **`twamp-light` CLI が存在しない**
 
 HLD が示すスタック全体のうち orch/SAI 層のみ取り込み済みで、YANG と CLI が未取り込み。`discrepancy-found` を維持。
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-swss/orchagent/twamporch.cpp` L55-L109 で **TwampOrch クラスは存在**し、SAI 層は取り込み済み:
+
+```cpp
+static map<string, sai_twamp_session_role_t> twamp_role_map = { ... };  // L55
+const vector<sai_twamp_session_stat_t> twamp_session_stat_ids = { ... }; // L92
+TwampOrch::TwampOrch(TableConnector confDbConnector, TableConnector stateDbConnector,
+                     SwitchOrch *switchOrch, PortsOrch *portOrch, VRFOrch *vrfOrch) // L109
+```
+
+一方:
+
+```bash
+$ ls .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-twamp*.yang
+ls: cannot access ...: No such file or directory
+
+$ grep -rn "twamp" .cache/sonic-sources/sonic-utilities/config/ .cache/sonic-sources/sonic-utilities/show/
+# 0 件
+```
+
+→ **orch / SAI 層は完備、YANG / CLI 層が完全欠落**。
+
+#### 読者への影響
+
+- HLD の例 `config twamp-light session add ...` / `show twamp-light session` を打つと `No such command`。CLI ハンドラが存在しない。
+- YANG が無いため `config save` / `config load` で `CFG_TWAMP_SESSION_TABLE` の内容が **そのまま保存されない**（schema validation で reject される場合がある / 生 JSON でも書けるが `sonic-cfggen` warning が出る）。
+- TWAMP セッションを使いたい場合、CONFIG_DB 直書きで起動できるが、永続化と HA / config_reload 越しの再現には独自の playbook が必要。
+
+#### 回避策の実コマンド
+
+CONFIG_DB 直書きでセッションを起動:
+
+```bash
+# Session-Sender 側
+sonic-db-cli CONFIG_DB hmset 'TWAMP_SESSION|sender1' \
+  mode "LIGHT" role "SENDER" \
+  src_ip "10.0.0.1" dst_ip "10.0.0.2" \
+  src_udp_port "862" dst_udp_port "862" \
+  packet_count "100" tx_interval "1000" timeout "5" \
+  vrf_name "default"
+
+# Session-Reflector 側
+sonic-db-cli CONFIG_DB hmset 'TWAMP_SESSION|reflector1' \
+  mode "LIGHT" role "REFLECTOR" \
+  src_ip "10.0.0.2" dst_ip "10.0.0.1" \
+  src_udp_port "862" dst_udp_port "862" \
+  vrf_name "default"
+
+# 状態確認
+sonic-db-cli STATE_DB keys 'TWAMP_SESSION_TABLE|*'
+sonic-db-cli STATE_DB hgetall 'TWAMP_SESSION_TABLE|sender1'
+
+# capability 確認（ASIC 側 TWAMP offload 有無）
+sonic-db-cli STATE_DB hgetall 'SWITCH_CAPABILITY|switch'  | grep -i twamp
+
+# counter
+sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
+```
+
+`config save` で永続化できない場合は `/etc/sonic/config_db.json` を直接編集してロールアウト。
+
+#### 関連 GitHub Issue / PR
+
+- [sonic-swss #2927: \[orchagent\] TWAMP Light orchagent implementation (merged)](https://github.com/sonic-net/sonic-swss/pull/2927) — TwampOrch 取り込み確定 PR。
+- [sonic-buildimage #24135: Enhancement: \[YANG\] YANG model needed for TWAMP_SESSION (open)](https://github.com/sonic-net/sonic-buildimage/issues/24135) — YANG 欠落 issue。本 issue が解決するまで `config save/load` 経由は不安定。
+- [SONiC #1192: Two-Way Active Measurement Protocol (TWAMP) Light (open)](https://github.com/sonic-net/SONiC/issues/1192) — 機能全体の community トラッキング。CLI 取り込みは未完。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)

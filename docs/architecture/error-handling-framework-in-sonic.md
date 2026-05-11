@@ -2,7 +2,7 @@
 title: Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）
 area: architecture
 verification: discrepancy-found
-last_verified: 2026-05-09
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/error-handling/error_handling_design_spec.md
@@ -197,3 +197,79 @@ HLD は「OrchAgent が SAI から失敗を受け取る → `ERROR_DB` の `ERRO
 - show error-database / sonic-clear error-database CLI の sonic-utilities 取り込み確認",
 - 2019-05 v0.1 Initial で 6 年以上経過、master への取り込み・採否未確認"
 -->
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-swss-common/common/status_code_util.h` L11-L25:
+
+```cpp
+enum StatusCode {
+    SWSS_RC_SUCCESS,
+    SWSS_RC_INVALID_PARAM,
+    SWSS_RC_DEADLINE_EXCEEDED,
+    SWSS_RC_UNAVAIL,
+    SWSS_RC_NOT_FOUND,
+    SWSS_RC_NO_MEMORY,
+    SWSS_RC_EXISTS,
+    SWSS_RC_PERMISSION_DENIED,
+    SWSS_RC_FULL,
+    SWSS_RC_IN_USE,
+    SWSS_RC_INTERNAL,
+    SWSS_RC_UNIMPLEMENTED,
+    SWSS_RC_NOT_EXECUTED,
+    SWSS_RC_FAILED_PRECONDITION,
+    SWSS_RC_UNKNOWN,
+```
+
+→ enum **だけ**取り込み済み。HLD のコア機構は欠落:
+
+```bash
+$ grep -rln "ERROR_DB\|ERROR_ROUTE_TABLE\|ERROR_NEIGH_TABLE\|ErrorListener\|ErrorReporter" \
+    .cache/sonic-sources/sonic-swss-common/ .cache/sonic-sources/sonic-swss/
+# 0 件（LAG_ID_ALLOCATOR_ERROR_DB_ERROR は別物の戻り値定数）
+
+$ grep -rn "error-database\|error_database" .cache/sonic-sources/sonic-utilities/
+# 0 件
+```
+
+#### 読者への影響
+
+- BGP が経路追加を要求し、ASIC FIB がそれを `SAI_STATUS_TABLE_FULL` で reject した場合、fpmsyncd / bgpd は **失敗を知らない**ため、`show ip route` には経路が見えるが `show ip fib` には無い、というサイレントな乖離が発生する。
+- HLD 通りに `show error-database` を期待する自動化スクリプトは即座に失敗する。
+- retry / rollback ロジックが実装されないため、ASIC リソース不足（TCAM full 等）の状態は手動介入が必要。
+- 一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。
+
+#### 回避策の実コマンド
+
+```bash
+# 1) SAI 失敗の発見
+sudo grep -E "SAI_STATUS_(TABLE_FULL|INSUFFICIENT_RESOURCES|FAILURE|NOT_SUPPORTED|OBJECT_IN_USE)" \
+  /var/log/syslog | tail -50
+
+# 2) OrchAgent ログ詳細化（必要時のみ、ノイズ多い）
+sudo swssloglevel -l NOTICE -c orchagent
+sudo swssloglevel -l NOTICE -c routeorch
+sudo swssloglevel -l NOTICE -c neighorch
+
+# 3) RIB ↔ FIB 突合の手動チェック
+diff <(show ip route json | jq -r 'keys[]' | sort) \
+     <(show ip fib | awk '{print $1}' | sort) | head
+
+# 4) CRM（Critical Resource Monitor）で SAI リソース上限を監視
+show crm resources all
+sonic-db-cli COUNTERS_DB hgetall 'CRM:STATS'
+
+# 5) ASIC_DB 内のエラー状態（限定的）
+redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB と突合
+```
+
+#### 関連 GitHub Issue / PR
+
+- 本 HLD（2019-05 v0.1）の実装着手 PR は **見つからない**。`SWSS_RC_*` enum を導入した PR (`sonic-swss-common` 経由) のみが部分採用の痕跡。
+- 代替の retry/recovery 機構は CRM (Critical Resource Monitor: `sonic-swss/orchagent/crmorch.cpp`) で部分的にカバーされており、こちらは production で稼働中。`show crm resources` / `CRM_TABLE` 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)

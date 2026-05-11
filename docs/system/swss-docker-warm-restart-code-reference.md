@@ -2,7 +2,7 @@
 title: SWSS docker の Warm Restart 実装メモ（開発時リファレンス）
 area: system
 verification: discrepancy-found
-last_verified: 2026-05-10
+last_verified: 2026-05-11
 sources:
   - repo: sonic-net/SONiC
     path: doc/warm-reboot/code_implementation.md
@@ -190,3 +190,60 @@ sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --clea
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/code_implementation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+### 深掘り（2026-05-11、batch q3-disc-detail）
+
+#### HLD 記述と実装の差分（行番号 + コード抜粋）
+
+`sonic-swss-common/common/warm_restart.cpp` L56-L58:
+
+```cpp
+warmStart.m_stateWarmRestartTable =
+    std::unique_ptr<Table>(new Table(warmStart.m_stateDb.get(), STATE_WARM_RESTART_TABLE_NAME));
+warmStart.m_cfgWarmRestartTable =
+    std::unique_ptr<Table>(new Table(warmStart.m_cfgDb.get(), CFG_WARM_RESTART_TABLE_NAME));
+```
+
+同 L223 で `WarmStart::setWarmStartState()` が `STATE_WARM_RESTART_TABLE_NAME` 側に書き込み、CONFIG 側は `CFG_WARM_RESTART_TABLE_NAME` で別。HLD が `WARM_RESTART_TABLE` 1 系統で書いている記述は **実装と異なる**。
+
+#### 読者への影響
+
+- HLD 内に貼られた `jipanyang` の compare URL から実装を読もうとすると 404 / fork 迷子。
+- 「`WARM_RESTART_TABLE|<app>` に restart_count と state が並ぶ」と読んでデバッグスクリプトを書くと、現行では `STATE_DB/WARM_RESTART_TABLE` と `CONFIG_DB/WARM_RESTART` の二系統を別々に見ないと完全な情報が取れず、片側だけ見て「state が無い」と誤判定する。
+- `swss-flushdb` の名前で `sudo /usr/bin/swss-flushdb` を期待しても見つからない。
+
+#### 回避策の実コマンド
+
+```bash
+# 1) CONFIG 側設定（enable/disable, timer 値）
+sonic-db-cli CONFIG_DB hgetall 'WARM_RESTART|swss'
+sonic-db-cli CONFIG_DB hgetall 'WARM_RESTART|bgp'
+
+# 2) ランタイム状態（restart_count / state = freeze/checkpoint/restored/reconciled）
+sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
+sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|orchagent'
+
+# 3) warm-reboot 実行
+sudo config warm_restart enable swss
+sudo config warm_restart enable bgp
+sudo warm-reboot
+
+# 4) 完了確認（reconciled が出ているか）
+sonic-db-cli STATE_DB hget 'WARM_RESTART_TABLE|orchagent' state   # -> reconciled
+sonic-db-cli STATE_DB hget 'WARM_RESTART_TABLE|bgp' state         # -> reconciled
+```
+
+`swss-flushdb` 相当（warm-restart 失敗からのリカバリ）は現行ではコンテナ再起動で対応:
+
+```bash
+sudo systemctl restart swss   # warm restart 状態をクリアしてフル再起動
+```
+
+#### 関連 GitHub Issue / PR
+
+- 現行 master に取り込まれている warm restart 系の改修は多数。HLD 当時の特定 PR を辿る代わりに、`sonic-swss-common/common/warm_restart.{h,cpp}` の git log と `doc/warm-reboot/SONiC_Warmboot.md` を参照することを推奨。
+- HLD ページ自身が古い fork URL を含むため、本ページは仕様史料として残し、デバッグ手順は本「深掘り」セクションを優先する。
+
+#### 検証日
+
+2026-05-11 (q3-disc-detail batch)
