@@ -1,0 +1,69 @@
+---
+title: sonic-hash YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-hash.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [SWITCH_HASH]
+  cli: ["config switch-hash"]
+  yang: [sonic-fine-grained-ecmp]
+---
+
+# sonic-hash YANG
+
+## 概要
+
+- module: `sonic-hash`
+- namespace: `http://github.com/sonic-net/sonic-hash`
+- revision: `2023-09-25`（前 revision: 2022-09-05）
+- import: `sonic-types`
+- top container: `sonic-hash`
+
+ECMP および LAG パケットハッシングに使用するフィールドとアルゴリズムをグローバルに指定する YANG モジュール[^1]。
+
+## ツリー
+
+```
+module: sonic-hash
+  +--rw sonic-hash
+     +--rw SWITCH_HASH
+        +--rw GLOBAL
+           +--rw ecmp_hash*             hash:hash-field
+           +--rw lag_hash*              hash:hash-field
+           +--rw ecmp_hash_algorithm?   stypes:hash-algorithm
+           +--rw lag_hash_algorithm?    stypes:hash-algorithm
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `ecmp_hash` | `sonic-hash/SWITCH_HASH/GLOBAL/ecmp_hash` | `leaf-list hash:hash-field` |  |  | enum 一覧（下記） | ECMP 経路選択用のハッシュフィールド集合 |
+| `lag_hash` | `sonic-hash/SWITCH_HASH/GLOBAL/lag_hash` | `leaf-list hash:hash-field` |  |  | enum 一覧（下記） | LAG メンバ選択用のハッシュフィールド集合 |
+| `ecmp_hash_algorithm` | `sonic-hash/SWITCH_HASH/GLOBAL/ecmp_hash_algorithm` | `stypes:hash-algorithm` |  |  |  | ECMP ハッシュアルゴリズム |
+| `lag_hash_algorithm` | `sonic-hash/SWITCH_HASH/GLOBAL/lag_hash_algorithm` | `stypes:hash-algorithm` |  |  |  | LAG ハッシュアルゴリズム |
+
+### typedef `hash-field` enum
+
+`IN_PORT`, `DST_MAC`, `SRC_MAC`, `ETHERTYPE`, `VLAN_ID`, `IP_PROTOCOL`, `DST_IP`, `SRC_IP`, `L4_DST_PORT`, `L4_SRC_PORT`, `INNER_DST_MAC`, `INNER_SRC_MAC`, `INNER_ETHERTYPE`, `INNER_IP_PROTOCOL`, `INNER_DST_IP`, `INNER_SRC_IP`, `INNER_L4_DST_PORT`, `INNER_L4_SRC_PORT`, `IPV6_FLOW_LABEL`
+
+## leafref / 依存
+
+- なし
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `SWITCH_HASH|GLOBAL`
+- CLI: `config switch-hash`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-hash.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`

@@ -1,0 +1,65 @@
+---
+title: sonic-mgmt_interface YANG
+area: reference
+verification: code-verified
+last_verified: 2026-05-11
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: [MGMT_INTERFACE]
+  cli: ["config interface ip"]
+  yang: [sonic-mgmt_port, sonic-mgmt_vrf]
+---
+
+# sonic-mgmt_interface YANG
+
+## 概要
+
+- module: `sonic-mgmt_interface`
+- namespace: `http://github.com/sonic-net/sonic-mgmt_interface`
+- revision: `2021-04-07`
+- import: `sonic-mgmt_port`, `ietf-inet-types`, `sonic-types`
+- top container: `sonic-mgmt_interface`
+
+OOB マネジメントインタフェース（`eth0` 等）の IP アドレス・デフォルトゲートウェイ・強制ルートを定義する YANG モジュール[^1]。
+
+## ツリー
+
+```
+module: sonic-mgmt_interface
+  +--rw sonic-mgmt_interface
+     +--rw MGMT_INTERFACE
+        +--rw MGMT_INTERFACE_LIST* [name ip_prefix]
+           +--rw name                  -> /mgmtprt:sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name
+           +--rw ip_prefix             stypes:sonic-ip-prefix
+           +--rw gwaddr?               inet:ip-address
+           +--rw forced_mgmt_routes*   union(stypes:sonic-ip-prefix, inet:ip-address)
+```
+
+## leaf 一覧
+
+| leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
+|------|------|----|------|-----------|----------------------|------|
+| `name` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/name` | `leafref` | yes |  | `/mgmtprt:sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | 対象マネジメントポート名（`eth0` 等） |
+| `ip_prefix` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/ip_prefix` | `stypes:sonic-ip-prefix` | yes |  | must: `gwaddr` と family が一致 | マネジメントインタフェース IP/プレフィックス |
+| `gwaddr` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/gwaddr` | `inet:ip-address` |  |  | must: `ip_prefix` と family が一致 | デフォルトゲートウェイアドレス |
+| `forced_mgmt_routes` | `sonic-mgmt_interface/MGMT_INTERFACE/MGMT_INTERFACE_LIST/forced_mgmt_routes` | `leaf-list union(sonic-ip-prefix, ip-address)` |  |  | ordered-by user | デフォルト VRF または management VRF に追加する強制ルート（`interfaces.j2` で展開） |
+
+## leafref / 依存
+
+- `MGMT_INTERFACE_LIST/name` → `sonic-mgmt_port` の `MGMT_PORT_LIST/name`
+
+## augment / deviation
+
+- なし
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `MGMT_INTERFACE|<name>|<ip_prefix>`
+- CLI: `config interface ip add eth0 <addr>`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
