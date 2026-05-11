@@ -1613,6 +1613,10 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/acl-rule-no-hit/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/appdb-asicdb-sync-lag/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
@@ -1621,11 +1625,27 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/bgp-route-not-advertised/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/bgp-session-down/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/config-db-persistence-failure/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/config-save-diff-unexpected/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/config-save-load/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/container-memory-limit-exceeded/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1665,11 +1685,27 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/interface-counters-reset/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/interface-mtu-mismatch/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/link-flapping/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/macsec-mka-not-established/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/mclag-sync-failure/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/minigraph-reload-stuck/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1689,7 +1725,19 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/platform-fan-psu-anomaly/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/portchannel-lacp-not-established/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/rif-acl-counter-zero/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/routing-loop-detected/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
@@ -1697,11 +1745,23 @@
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/sai-table-full/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/smartswitch-dpu-graceful-shutdown-failure/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/smartswitch-dpu-image-install-failure/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/smartswitch-dpu-unresponsive/</loc>
+         <lastmod>2026-05-11</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/reference/runbooks/snmp-polling-timeout/</loc>
          <lastmod>2026-05-11</lastmod>
     </url>
     <url>
