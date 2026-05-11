@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — ACL（Access Control List）と CoPP（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、それぞれが解いている問題は別 です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

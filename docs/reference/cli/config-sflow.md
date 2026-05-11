@@ -1,5 +1,6 @@
 ---
 title: config sflow サブコマンド
+description: "config sflow サブコマンド — config sflow は sFlow のグローバル制御（admin / polling-interval / sample-direction / agent-id）と、インターフェイス単位のサンプル設定、最大 2 件のコレクタ登録を扱う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: config pfcwd サブコマンド
+description: "config pfcwd サブコマンド — config pfcwd は PFC watchdog の設定操作を pfcwd 実行ファイルへ委譲するラッパー。Click 側で範囲・選択肢を検証し、実際の CONFIG_DB 更新や daemon 連携は pfcwd 側が担う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

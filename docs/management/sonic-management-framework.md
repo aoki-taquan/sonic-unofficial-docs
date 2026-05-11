@@ -1,5 +1,6 @@
 ---
 title: SONiC Management Framework（REST / gNMI / Translib / Transformer）
+description: "SONiC Management Framework（REST / gNMI / Translib / Transformer） — sonic-mgmt-framework は外部 API（REST / gNMI / CLI）と内部 CONFIG_DB / 各種 daemon 間の モデル翻訳層 を担う。"
 area: management
 verification: code-verified
 last_verified: 2026-05-10

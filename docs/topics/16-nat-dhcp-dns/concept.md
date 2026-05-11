@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — 「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

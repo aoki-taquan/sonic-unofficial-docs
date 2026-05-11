@@ -1,5 +1,6 @@
 ---
 title: SONiC Debian アップグレード方針（base / container / 廃止 cadence）
+description: "SONiC Debian アップグレード方針（base / container / 廃止 cadence） — SONiC は Debian-based Linux の上に立つため、新 Debian release を取り込む cadence を明文化することが本ドキュメントの目的。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

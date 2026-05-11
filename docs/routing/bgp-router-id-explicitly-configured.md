@@ -1,5 +1,6 @@
 ---
 title: BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）
+description: "BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id） — SONiC の BGP は長らく Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う 設計になっていた。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

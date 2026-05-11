@@ -1,5 +1,6 @@
 ---
 title: SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）
+description: "SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証） — SONiC を basic L2 switch として構成した場合の最小機能を T0 トポロジで検証する。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

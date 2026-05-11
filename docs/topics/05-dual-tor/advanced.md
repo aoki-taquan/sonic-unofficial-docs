@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR の発展トピック
+description: "Dual-ToR の発展トピック — Dual-ToR は mux state だけで閉じた機能ではありません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

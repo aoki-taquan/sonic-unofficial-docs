@@ -1,5 +1,6 @@
 ---
 title: アーキテクチャ
+description: "アーキテクチャ — PINS の data path は「コントローラ → P4RT App → APPL_DB → P4Orch → SAI → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

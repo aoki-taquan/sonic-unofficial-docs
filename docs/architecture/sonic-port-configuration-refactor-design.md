@@ -1,5 +1,6 @@
 ---
 title: port_config.ini パーサ統合（portconfig.py 一元化）
+description: "port_config.ini パーサ統合（portconfig.py 一元化） — SONiC のポート定義は伝統的に port_config.ini（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

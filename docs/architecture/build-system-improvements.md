@@ -1,5 +1,6 @@
 ---
 title: ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
+description: "ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — 本 HLD は主に第 2 段階に焦点を当て、4 つの最適化を提案する:"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

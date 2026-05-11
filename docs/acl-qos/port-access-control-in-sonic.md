@@ -1,5 +1,6 @@
 ---
 title: "Port Access Control（PAC: 802.1x / MAB / RADIUS）"
+description: "Port Access Control（PAC: 802.1x / MAB / RADIUS） — 物理ポート単位の クライアント認証 （IEEE 802.1x + MAB）を SONiC に持ち込む機能。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-11

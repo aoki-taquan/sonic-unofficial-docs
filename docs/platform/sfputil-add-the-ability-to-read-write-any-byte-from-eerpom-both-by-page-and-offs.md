@@ -1,5 +1,6 @@
 ---
 title: sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）
+description: "sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き） — 光モジュールやケーブル（CMIS QSFP-DD / SFF-8636 QSFP+ / SFF-8472 SFP）の EEPROM を page + offset + size で直接…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

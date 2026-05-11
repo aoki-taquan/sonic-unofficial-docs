@@ -1,5 +1,6 @@
 ---
 title: ルータインタフェース (RIF) カウンタ
+description: "ルータインタフェース (RIF) カウンタ — SONiC のポート単位カウンタ（portstat 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される ルータインタフェース (RIF) 単位の入出力統計は別経路で取得する必要がある。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

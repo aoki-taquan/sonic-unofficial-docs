@@ -1,5 +1,6 @@
 ---
 title: BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）
+description: "BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路） — FRR/bfdd の BFD dataplane (DP) インターフェース を経由して、BGP が要求した BFD セッションを SONiC の BfdOrch 経由でハードウェアオフロードする仕組み。"
 area: routing
 verification: discrepancy-found
 last_verified: 2026-05-11

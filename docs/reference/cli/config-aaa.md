@@ -1,5 +1,6 @@
 ---
 title: config aaa / tacacs / radius サブコマンド
+description: "config aaa / tacacs / radius サブコマンド — AAA (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

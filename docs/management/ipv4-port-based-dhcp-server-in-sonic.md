@@ -1,5 +1,6 @@
 ---
 title: ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）
+description: "ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携） — SONiC に 組み込み IPv4 DHCP Server を持つ。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

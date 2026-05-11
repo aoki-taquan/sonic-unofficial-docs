@@ -1,5 +1,6 @@
 ---
 title: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+description: "gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル — gNSI（gRPC Network Security Interface）は、ネットワーク機器の セキュリティクレデンシャルを gRPC 経由で安全にローテーションする ためのマイクロサービス群である。"
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）
+description: "ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ） — ECMP nexthop の選択を outer ヘッダではなく inner パケットの 5-tuple（src/dst IP、L4 port、IP proto）でハッシュさせ…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

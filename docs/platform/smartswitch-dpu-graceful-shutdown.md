@@ -1,5 +1,6 @@
 ---
 title: Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
+description: "Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT） — SmartSwitch では DPU の graceful reboot に続き graceful shutdown をサポートする。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）
+description: "CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled） — CoppMgr は CONFIG_DB の COPP_TRAP と FEATURE を観測し、各 trap (BGP / ARP / LACP / UDLD / IP2ME 等) を SAI host…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: NTP_KEY テーブル
+description: "NTP_KEY テーブル — NTP 認証 (symmetric key) で使用する鍵を CONFIG_DB に蓄積するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE
+description: "Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE — SONiC の Management Framework Transformer は YANG（OpenConfig 等）↔ 内部 ABNF / CONFIG_DB を変換するコンポーネント。"
 area: management
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: sonic-storm-control YANG
+description: "sonic-storm-control YANG — ポート単位の BUM (Broadcast / Unknown unicast / Multicast) ストーム制御レート上限を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

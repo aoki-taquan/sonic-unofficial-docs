@@ -1,5 +1,6 @@
 ---
 title: VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis）
+description: "VoQ アーキテクチャの分散転送（FSI/SSI と Chassis DB / redis_chassis） — VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が 内部ファブリック で繋がれた 1 つの論理ルータとして動く。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

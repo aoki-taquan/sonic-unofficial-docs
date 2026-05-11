@@ -1,5 +1,6 @@
 ---
 title: SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）
+description: "SONiC FIPS 140-3 デプロイ — データセンタ用途で FIPS 140-3 適合 が要求される場合の、SONiC 上での有効化設計を規定する。設計の中核:"
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld

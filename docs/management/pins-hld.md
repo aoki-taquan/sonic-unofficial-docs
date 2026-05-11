@@ -1,5 +1,6 @@
 ---
 title: PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
+description: "PINS（P4 Integrated Network Stack） — PINS は P4Runtime ベースの SDN 制御 interface を SONiC に opt-in で追加するプロジェクト。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

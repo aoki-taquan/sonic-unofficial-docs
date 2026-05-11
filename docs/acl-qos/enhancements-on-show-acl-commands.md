@@ -1,5 +1,6 @@
 ---
 title: show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）
+description: "show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status） — ACL 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

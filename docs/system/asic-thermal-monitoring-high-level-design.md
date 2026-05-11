@@ -1,5 +1,6 @@
 ---
 title: ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
+description: "ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO） — スイッチ上の温度センサのうち 外部（オンボード） は既存ドライバで読めるが、ASIC 内部センサは ASIC SDK 経由でしか読めない。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

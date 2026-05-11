@@ -1,5 +1,6 @@
 ---
 title: sonic-flex_counter YANG
+description: "sonic-flex_counter YANG — syncd の Flex Counter Manager が ASIC SAI カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

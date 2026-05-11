@@ -1,5 +1,6 @@
 ---
 title: Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）
+description: "Warm-reboot 中の LACP retry count 拡張 — LACP の long rate は 30 秒間隔、3 回連続未受信で LAG Down → 実効タイムアウト 90 秒。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

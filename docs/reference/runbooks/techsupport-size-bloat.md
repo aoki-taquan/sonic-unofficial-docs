@@ -1,5 +1,6 @@
 ---
 title: show techsupport の出力サイズが肥大化する
+description: "Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化 — : sonic-net/sonic-utilities @ master — generate_dump : sonic-net/sonic-utilities @ master — show/m…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

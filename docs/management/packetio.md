@@ -1,5 +1,6 @@
 ---
 title: P4Runtime PacketIO（generic netlink + send_to_ingress）
+description: "P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

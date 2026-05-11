@@ -1,5 +1,6 @@
 ---
 title: SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
+description: "SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 — DASH（Disaggregated APIs for SONiC Hosts）は、SmartSwitch DPU や appliance card 上で SONiC スタックが多数の ENI (Ela…"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

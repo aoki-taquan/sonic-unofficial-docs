@@ -1,5 +1,6 @@
 ---
 title: sonic-ssh-server YANG
+description: "sonic-ssh-server YANG — SSH server daemon configuration YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

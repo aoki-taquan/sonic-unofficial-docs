@@ -1,5 +1,6 @@
 ---
 title: linkmgrd のデフォルトルート連動（DualToR mux 制御）
+description: "linkmgrd のデフォルトルート連動（DualToR mux 制御） — DualToR 構成では 2 台の ToR が active / standby または active-active の役割で同一サーバ群を収容する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11

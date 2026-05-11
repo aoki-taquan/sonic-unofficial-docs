@@ -1,5 +1,6 @@
 ---
 title: カバレッジ
+description: "カバレッジ — このページは docs/**/*.md の frontmatter verification フィールドを集計したものです。meta/scripts/gen_coverage.py で自動生成されます。"
 verification: meta
 last_verified: 2026-05-11
 ---

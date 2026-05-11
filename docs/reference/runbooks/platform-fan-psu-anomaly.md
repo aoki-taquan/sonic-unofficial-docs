@@ -1,5 +1,6 @@
 ---
 title: show platform fan / psu で異常値が出る
+description: "Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons @ 4305596 — thermalctld : sonic-net/sonic-platform-common @ 4305596 — fan_base /…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

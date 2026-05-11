@@ -1,5 +1,6 @@
 ---
 title: config muxcable サブコマンド
+description: "config muxcable サブコマンド — config muxcable は Dual-ToR 構成で使用する Y-Cable (NIC ↔ ToR-A / ToR-B) の状態と低レイヤ機能 (PRBS, loopback, FW, FEC, ANLT 等) を CLI から操作する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

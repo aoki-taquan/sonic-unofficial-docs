@@ -1,5 +1,6 @@
 ---
 title: JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割）
+description: "JSON Patch ordering（YANG 制約に従う apply-patch のステップ分割） — config apply-patch で投入された JsonPatch (RFC6902) を、SONiC YANG モデル制約を満たしつつ任意の中間状態が valid となるように複数 JsonChange…"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

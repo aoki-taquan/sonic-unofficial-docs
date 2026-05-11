@@ -1,5 +1,6 @@
 ---
 title: SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）
+description: "SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR） — SRv6 SDN を BGP に頼らず構築するシナリオ向けに、SONiC の CONFIG_DB から SRv6 ロケータと local SID を 静的に 投入する仕組みを定義する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

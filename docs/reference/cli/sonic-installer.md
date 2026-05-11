@@ -1,5 +1,6 @@
 ---
 title: sonic-installer コマンド
+description: "sonic-installer コマンド — sonic-installer は SONiC のイメージ管理（install / list / set-default / set-next-boot / remove / cleanup / verify-next-image）と、Docker コンテナ単位での up…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

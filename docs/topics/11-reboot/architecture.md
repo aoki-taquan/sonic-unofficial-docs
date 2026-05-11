@@ -1,5 +1,6 @@
 ---
 title: Warm path の内部構造
+description: "Warm path の内部構造 — warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

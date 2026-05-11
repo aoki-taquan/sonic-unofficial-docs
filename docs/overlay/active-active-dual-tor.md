@@ -1,5 +1,6 @@
 ---
 title: Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）
+description: "Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor） — active-active は 両 ToR が常時トラフィックを処理する 設計。"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: SONiC Warm Reboot（要件・順序・docker 別 warm restart）
+description: "SONiC Warm Reboot（要件・順序・docker 別 warm restart） — cold / fast / express との関係は 11-reboot を参照。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

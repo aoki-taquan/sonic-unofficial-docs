@@ -1,5 +1,6 @@
 ---
 title: 設定変更の選び方
+description: "設定変更の選び方 — SONiC には設定変更の入口が複数あります。選び方の軸は「変更範囲」「停止影響」「検証と rollback が必要か」「永続化するか」です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

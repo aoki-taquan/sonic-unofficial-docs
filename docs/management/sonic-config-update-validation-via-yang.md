@@ -1,5 +1,6 @@
 ---
 title: YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）
+description: "YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ） — SONiC では従来、config 系 CLI が ConfigDB に書き込む前のフィールド検証を Python のハードコード（ad-hoc）と YANG モデルの両方 で重複定義していた。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

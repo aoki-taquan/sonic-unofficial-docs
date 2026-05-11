@@ -1,5 +1,6 @@
 ---
 title: VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）
+description: "VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証） — vrf-vs-test-plan が SwSS 内部の DB 反映を見るのに対し、本プランは 実 SONiC スイッチ上で VRF 機能を E2E 検証 する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-11

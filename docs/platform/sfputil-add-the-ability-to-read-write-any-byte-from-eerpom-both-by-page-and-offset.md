@@ -1,5 +1,6 @@
 ---
 title: sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
+description: "sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作） — 既存 platform API sfp.read_eeprom / sfp.write_eeprom は 「全体 offset」 しか取らず、ユーザは規格毎に page/of…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

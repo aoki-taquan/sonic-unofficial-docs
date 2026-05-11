@@ -1,5 +1,6 @@
 ---
 title: show pfc サブコマンド
+description: "show pfc サブコマンド — show pfc は PFC counter と PFC priority mapping を表示する CLI グループ。show pfcwd は同じ領域の watchdog 表示 wrapper で、pfcwd show ... に委譲する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: show techsupport が timeout する
+description: "Runbook: show techsupport が timeout する — : sonic-net/sonic-utilities @ 39732bceb — scripts/generate_dump : sonic-net/sonic-utilities @ 39732bceb — show/main.py"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: ACL_RULE テーブル
+description: "ACL_RULE テーブル — ACL_TABLE 内の個別ルールを定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

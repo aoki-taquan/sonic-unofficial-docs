@@ -1,5 +1,6 @@
 ---
 title: P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）
+description: "P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み） — PINS (P4 Integrated Network Stack) は SONiC を P4 / P4Runtime で遠隔制御 する。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

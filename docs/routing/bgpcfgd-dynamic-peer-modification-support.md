@@ -1,5 +1,6 @@
 ---
 title: bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）
+description: "bgpcfgd の dynamic BGP peer 動的変更 — 従来 bgpcfgd は BGP_PEER_RANGE を create only で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

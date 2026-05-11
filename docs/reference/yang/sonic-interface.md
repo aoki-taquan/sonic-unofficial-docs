@@ -1,5 +1,6 @@
 ---
 title: sonic-interface YANG
+description: "sonic-interface YANG — Physical Ethernet interface L3 configuration including IP addressing, VRF binding, and NAT zones"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

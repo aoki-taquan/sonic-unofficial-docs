@@ -1,5 +1,6 @@
 ---
 title: LDAP_SERVER テーブル
+description: "LDAP_SERVER テーブル — LDAP 認証サーバの一覧と global LDAP クライアント設定。hostcfgd が CONFIG_DB を購読し、/etc/nslcd.conf を生成する。最大 8 サーバまで登録可能。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: show techsupport コマンド
+description: "show techsupport コマンド — show techsupport は障害解析用の techsupport ダンプ を生成する。実態は sudo generate_dump -v ... のラッパで、システム情報・ログ・config・SAI/syncd データなどを 1 つの tar.gz にまとめる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

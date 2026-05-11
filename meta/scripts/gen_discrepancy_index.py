@@ -121,6 +121,7 @@ def render(entries: list[dict]) -> str:
     out: list[str] = []
     out.append("---")
     out.append("title: HLD と実装の乖離 一覧（discrepancy-index）")
+    out.append('description: "HLD と実装の乖離 一覧（discrepancy-index） — このページは、verification: discrepancy-found が付いた全ページを自動収集して並べたものです。meta/scripts/gen_discrepancy_index.py で生成されます。"')
     out.append("verification: meta")
     out.append("last_verified: 2026-05-11")
     out.append("---")

@@ -1,5 +1,6 @@
 ---
 title: sonic-buffer-pg YANG
+description: "sonic-buffer-pg YANG — Ingress buffer priority group configuration for SONiC ports."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

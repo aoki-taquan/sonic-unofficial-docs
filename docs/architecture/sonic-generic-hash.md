@@ -1,5 +1,6 @@
 ---
 title: Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）
+description: "Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御） — switch グローバルの hash 設定（フィールド集合 と アルゴリズム）を ECMP / LAG それぞれで指定できる単一テーブル機能。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

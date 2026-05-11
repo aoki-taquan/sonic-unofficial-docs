@@ -1,5 +1,6 @@
 ---
 title: sonic-system-aaa YANG
+description: "sonic-system-aaa YANG — Authentication, Authorization, and Accounting (AAA) YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

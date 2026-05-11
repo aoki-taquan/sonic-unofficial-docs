@@ -1,5 +1,6 @@
 ---
 title: Local ARS（Adaptive Routing & Switching の local 完結版）
+description: "Local ARS（Adaptive Routing & Switching の local 完結版） — Local ARS は ECMP の next-hop 選択を 静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える 機能。"
 area: routing
 verification: discrepancy-found
 monitor: not_implemented

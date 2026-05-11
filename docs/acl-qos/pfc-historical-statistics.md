@@ -1,5 +1,6 @@
 ---
 title: PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）
+description: "PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI） — PFC pause を 受けていた累積時間 / 遷移回数 / 直近 pause 時刻 を PFCWD の lua ポーリングから推定して COUNTERS_DB に書き、show pfc counters…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）
+description: "Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR） — CLI / REST / gNMI から non-management な static route を SONiC 管理フレームワーク経由で投入する設計。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

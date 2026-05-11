@@ -1,5 +1,6 @@
 ---
 title: ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）
+description: "ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group） — ポート単位の SAI バッファドロップカウンタは「なぜ専用 FC グループにしたか」「何を取るのか」「CLI でどう操作するか」の 3 点が分かれば全体像はつかめる。順に答える。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

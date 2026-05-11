@@ -1,5 +1,6 @@
 ---
 title: BMP（BGP Monitoring Protocol / BMP_STATE_DB）
+description: "BMP（BGP Monitoring Protocol / BMP_STATE_DB） — SONiC の Redis ROUTE_TABLE には neighbor / nexthop しかなく、BGP の deeper view（capabilities、graceful_restart、AS path、in/o…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

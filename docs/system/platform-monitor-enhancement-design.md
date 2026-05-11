@@ -1,5 +1,6 @@
 ---
 title: pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
+description: "pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

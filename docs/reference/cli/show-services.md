@@ -1,5 +1,6 @@
 ---
 title: show services サブコマンド
+description: "show services サブコマンド — show services は 稼働中の SONiC docker コンテナ全てに対して ps aux を一括実行して結果を結合表示するデバッグ用コマンド。各 docker サービスの中で動いているプロセスツリーをまとめて見られる。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

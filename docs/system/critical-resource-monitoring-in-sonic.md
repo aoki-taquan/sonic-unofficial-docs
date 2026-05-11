@@ -1,5 +1,6 @@
 ---
 title: Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
+description: "Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視） — ASIC 側の各種リソース（route 表、neighbor、ACL counter、FDB、NAT 等）は ハードウェアサイズで上限がある。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

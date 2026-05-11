@@ -1,5 +1,6 @@
 ---
 title: show priority-group サブコマンド
+description: "show priority-group サブコマンド — show priority-group は priority group (PG) の watermark と drop counter を表示する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR mux が切り替わらない
+description: "Runbook: Dual-ToR mux が切り替わらない — : sonic-net/sonic-linkmgrd @ 65f5633 — LinkManagerStateMachine : sonic-net/sonic-swss @ 4305596 — muxorch"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

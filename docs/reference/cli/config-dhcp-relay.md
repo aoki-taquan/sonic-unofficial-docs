@@ -1,5 +1,6 @@
 ---
 title: config dhcp_relay / dhcpv4_relay サブコマンド
+description: "config dhcp_relay / dhcpv4_relay サブコマンド — config dhcp_relay および config dhcpv4_relay グループは、sonic-buildimage 側の docker-dhcp-relay コンテナの CLI plugin (cli/config/pl…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

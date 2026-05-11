@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — ここでは、port / optics / PHY を「ベンダー実装の境界」から見直します。SONiC core と platform driver の責任分担、Gearbox 接続、sysfs / BMC 経由の管理を 1 枚にして読みます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

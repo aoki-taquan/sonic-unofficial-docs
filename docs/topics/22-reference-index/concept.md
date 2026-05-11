@@ -1,5 +1,6 @@
 ---
 title: リファレンス設計の考え方
+description: "リファレンス設計の考え方 — このページでは、docs/reference/ 配下の辞書ページ群が機能章 (docs/topics/) およびカテゴリページ (docs/categories/) とどう棲み分けているかを整理する。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

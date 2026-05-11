@@ -1,5 +1,6 @@
 ---
 title: 概念
+description: "概念 — Multi-ASIC と VOQ chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

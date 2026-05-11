@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch HA - DPU-Scope-DPU-Driven 構成
+description: "SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと ENI-Scope-NPU-Driven（NPU 上の hamgrd が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

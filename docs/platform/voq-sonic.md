@@ -1,5 +1,6 @@
 ---
 title: VoQ SONiC（distributed VoQ chassis / system-port / fabric）
+description: "VoQ SONiC（distributed VoQ chassis / system-port / fabric） — 複数の NPU（line card）を fabric card で繋ぎ、外側からは「1 台のスイッチ」に見える 分散 VoQ chassis を SONiC で動かす設計。要点:"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

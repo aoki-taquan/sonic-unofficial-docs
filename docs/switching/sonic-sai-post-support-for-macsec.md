@@ -1,5 +1,6 @@
 ---
 title: FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）
+description: "FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE） — FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が 動作開始前に Pre-Operational Self-Test (POST) を通っていなければならない。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

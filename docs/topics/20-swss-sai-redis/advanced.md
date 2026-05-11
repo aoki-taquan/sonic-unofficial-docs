@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — 起動、readiness、warm reboot のように「DB と daemon の状態を時間軸で扱う」テーマを集める。機能章で「reload 直後の動作」「warm reboot 中の差分適用」が前提として出てくるとき、ここに戻る。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

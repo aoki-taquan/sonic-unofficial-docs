@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — ここでは platform 層の信頼チェーンと container hardening を扱います。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

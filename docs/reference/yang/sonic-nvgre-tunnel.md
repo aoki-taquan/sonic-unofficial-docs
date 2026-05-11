@@ -1,5 +1,6 @@
 ---
 title: sonic-nvgre-tunnel YANG
+description: "sonic-nvgre-tunnel YANG — NVGRE トンネルとそれに紐付く VLAN-VSID マッピングを定義する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

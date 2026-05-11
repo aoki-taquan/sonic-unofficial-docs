@@ -1,5 +1,6 @@
 ---
 title: sonic-system-ldap YANG
+description: "sonic-system-ldap YANG — Lightweight Directory Access Protocol (LDAP) authentication YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

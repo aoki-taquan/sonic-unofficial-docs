@@ -1,5 +1,6 @@
 ---
 title: FLEX_COUNTER_TABLE テーブル
+description: "FLEX_COUNTER_TABLE テーブル — orchagent / syncd に対し、各種ハードウェアカウンタのポーリング有効化と周期、bulk API のチャンクサイズを指定するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

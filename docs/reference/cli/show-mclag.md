@@ -1,5 +1,6 @@
 ---
 title: show mclag (mclagdctl) コマンド
+description: "show mclag (mclagdctl) コマンド — SONiC には show mclag という Click サブコマンドは存在しない。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

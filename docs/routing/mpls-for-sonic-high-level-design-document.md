@@ -1,5 +1,6 @@
 ---
 title: SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）
+description: "SONiC の MPLS 基盤 — SONiC の初期 MPLS 対応は 静的 LSP を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針:"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: BGP_DEVICE_GLOBAL テーブル
+description: "BGP_DEVICE_GLOBAL テーブル — スイッチ全体（VRF 横断）の BGP 動作スイッチを保持する。BGP_GLOBALS が VRF 単位なのに対し、BGP_DEVICE_GLOBAL は装置全体スコープ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

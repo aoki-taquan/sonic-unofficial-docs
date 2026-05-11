@@ -1,5 +1,6 @@
 ---
 title: sonic-pfcwd YANG
+description: "sonic-pfcwd YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-pfcwd.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

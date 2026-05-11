@@ -1,5 +1,6 @@
 ---
 title: COPP_GROUP テーブル
+description: "COPP_GROUP テーブル — CPU 宛トラフィックをレート制限する Control Plane Policing (CoPP) のグループ定義。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

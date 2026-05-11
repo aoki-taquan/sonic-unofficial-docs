@@ -1,5 +1,6 @@
 ---
 title: ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計
+description: "ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計 — ターミナルサーバ機能を持つ SONiC 装置はフロントパネルに複数のシリアルポートを持ち、内部で USB hub + USB-to-UART (例: cp210x) チップ を介して /dev/ttyUSB に枚挙される。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

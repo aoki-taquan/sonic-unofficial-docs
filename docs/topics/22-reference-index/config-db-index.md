@@ -1,5 +1,6 @@
 ---
 title: CONFIG_DB 横断索引
+description: "CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 76 ページを、Phase B の機能章ごとに table family で並べ直した索引である。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: sai_query_stats_capability による Counter Capability 一括取得
+description: "sai_query_stats_capability による Counter Capability 一括取得 — SONiC syncd の FlexCounter は、各オブジェクト（Port / Queue / Priority Group / RIF / Buffer Pool）について 「どの統計 ID が…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

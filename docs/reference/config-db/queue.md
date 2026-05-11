@@ -1,5 +1,6 @@
 ---
 title: QUEUE テーブル
+description: "QUEUE テーブル — ポートの egress queue ごとに SCHEDULER (WRR/DWRR/STRICT) と WRED_PROFILE を割り当てる。qosorch が SAI queue scheduler / WRED を設定する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

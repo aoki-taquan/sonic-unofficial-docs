@@ -1,5 +1,6 @@
 ---
 title: TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）
+description: "TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass） — TACACS+ は SONiC のリモート認証で広く使われるが、TACACS+ passkey は CONFIG_DB に平文で保存 されてきた。"
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11

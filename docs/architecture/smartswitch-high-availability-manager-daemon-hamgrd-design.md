@@ -1,5 +1,6 @@
 ---
 title: "SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）"
+description: "SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） — hamgrd は SmartSwitch の NPU 側 HA container 内で動く管理デーモン。"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11

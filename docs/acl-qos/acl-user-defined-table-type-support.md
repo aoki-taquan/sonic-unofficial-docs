@@ -1,5 +1,6 @@
 ---
 title: ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
+description: "ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType） — 従来の ACL は L3 / L3V6 / MIRROR / PFC_WD 等の 事前定義テーブルタイプ を AclOrch 内に持っており、新機能追加のたびに orchagent を改修する必要があった。"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

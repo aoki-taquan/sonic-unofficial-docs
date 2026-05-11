@@ -1,5 +1,6 @@
 ---
 title: sonic-pfc-priority-priority-group-map YANG
+description: "sonic-pfc-priority-priority-group-map YANG — PFC_PRIORITY_TO_PRIORITY_GROUP_MAP yang Module for SONiC OS. PFC 優先度 (0-7) を ingress priority group にマップしロスレス転送を制御…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

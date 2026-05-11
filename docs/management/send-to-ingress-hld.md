@@ -1,5 +1,6 @@
 ---
 title: Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）
+description: "Send to Ingress（CPU から ingress pipeline へパケット注入する hostif） — PINS（P4 Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される:"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

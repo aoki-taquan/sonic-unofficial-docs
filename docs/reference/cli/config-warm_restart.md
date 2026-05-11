@@ -1,5 +1,6 @@
 ---
 title: config warm_restart サブコマンド
+description: "config warm_restart サブコマンド — config warm_restart は warm restart の enable 状態と daemon timer を設定する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

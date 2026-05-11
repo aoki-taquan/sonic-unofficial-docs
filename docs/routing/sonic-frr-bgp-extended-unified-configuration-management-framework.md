@@ -1,5 +1,6 @@
 ---
 title: FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）
+description: "FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP） — SONiC Management Framework（REST / gNMI / IS-CLI）から OpenConfig BGP モデル経由で FRR-BGP を一気通貫に扱えるようにする設計。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）
+description: "SONiC NOS の設定手段一覧 — SONiC は CONFIG_DB（Redis db 4）に 複数の入口 を提供し、最終的に /etc/sonic/config_db.json で永続化する。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

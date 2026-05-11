@@ -1,5 +1,6 @@
 ---
 title: QoS / Buffer の内部実装
+description: "QoS / Buffer の内部実装 — ここでは「設定が変わるたびに buffer がどう再計算されるか」「ポートを足したり消したりしたとき何が起きるか」「使われていない reserved 領域はどう返却されるか」といった、動的バッファモード固有の話を扱います。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

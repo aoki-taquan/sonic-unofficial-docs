@@ -1,5 +1,6 @@
 ---
 title: VRF と Static Route の設定
+description: "VRF と Static Route の設定 — 設定を読む入口は 3 つあります。作業者が打つのは CLI、永続設定として残るのは CONFIG_DB、外部管理システムが検証する型は YANG です。このページでは VRF 付き L3 設定の最小単位をその順で整理します。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

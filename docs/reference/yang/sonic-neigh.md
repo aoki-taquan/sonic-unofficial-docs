@@ -1,5 +1,6 @@
 ---
 title: sonic-neigh YANG
+description: "sonic-neigh YANG — 静的な隣接 (neighbor) エントリを CONFIG_DB に書き込むための YANG モジュール。(port, neighbor_ip) -> MAC, family のマッピング。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: CLI リファレンス
+description: "CLI リファレンス — SONiC の運用 CLI は sonic-utilities リポジトリの click ベースのコマンドツリーで定義される。"
 area: reference
 verification: meta
 last_verified: 2026-05-09

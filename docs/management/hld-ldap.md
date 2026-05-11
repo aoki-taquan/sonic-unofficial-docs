@@ -1,5 +1,6 @@
 ---
 title: LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携）
+description: "LDAP 認証（hostcfgd / nslcd / NSS / PAM 連携） — SONiC スイッチの SSH / シリアルログインを 外部 LDAP サーバで認証 できるようにする Phase 1 設計。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

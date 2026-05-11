@@ -1,5 +1,6 @@
 ---
 title: multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）
+description: "multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...） — SONiC は従来 minigraph を設定の真実の相としており、multi-ASIC 機でも 1 ファイルの minigraph を解釈してホスト + 各 ASIC…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

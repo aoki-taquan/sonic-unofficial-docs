@@ -1,5 +1,6 @@
 ---
 title: BUM ストームコントロール（PORT_STORM_CONTROL）
+description: "BUM ストームコントロール — BUM（Broadcast / Unknown-unicast / unknown-Multicast）ストームは L2 ドメインを劣化させる典型的障害。本機能は 物理ポート単位で 3 タイプを個別に kbps レート制限 し、SAI policer をポート入力段に紐付ける:"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

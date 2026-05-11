@@ -1,5 +1,6 @@
 ---
 title: VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
+description: "VRF サポート（vrfmgrd / vrforch / FRR vrf-aware） — SONiC の VRF サポートは、Linux kernel の VRF master device を基盤に、FRR (zebra / bgpd) を vrf-aware 化し、SONiC 側に vrfmgrd / vrfo…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

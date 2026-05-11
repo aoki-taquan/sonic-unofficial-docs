@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — AAA と管理面ポリシーは「動いている間は気付かれない」種類の機能のため、運用上は事故の予防と回復の手順が中心になります。ここでは password、default credential、reset、フォールバック確認の四つを順に扱います。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

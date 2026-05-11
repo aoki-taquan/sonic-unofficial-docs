@@ -1,5 +1,6 @@
 ---
 title: 初学者向けガイド
+description: "初学者向けガイド — SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、Redis DB、SAI、設定反映の流れを把握し、各 area の意味を理解するための導線です。"
 area: guides
 verification: meta
 last_verified: 2026-05-10

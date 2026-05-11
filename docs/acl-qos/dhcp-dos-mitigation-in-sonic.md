@@ -1,5 +1,6 @@
 ---
 title: DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）
+description: "DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース） — 「なぜ CoPP 全体ではダメか」「何を投入すれば効くのか」「いま master でどこまで効くのか」が読み手の最大の関心。"
 area: acl-qos
 verification: discrepancy-found
 last_verified: 2026-05-11

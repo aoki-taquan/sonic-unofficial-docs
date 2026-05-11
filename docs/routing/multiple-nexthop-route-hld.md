@@ -1,5 +1,6 @@
 ---
 title: dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
+description: "dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (= 異なる…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: VXLAN_TUNNEL テーブル
+description: "VXLAN_TUNNEL テーブル — VXLAN VTEP (Virtual Tunnel End Point) を定義するテーブル。source / destination IP と decap TTL モードを保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

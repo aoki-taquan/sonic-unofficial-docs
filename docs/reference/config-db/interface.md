@@ -1,5 +1,6 @@
 ---
 title: INTERFACE テーブル
+description: "INTERFACE テーブル — 物理 Ethernet ポート (PORT) を L3 IF として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local モード、MAC を持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

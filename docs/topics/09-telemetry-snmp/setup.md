@@ -1,5 +1,6 @@
 ---
 title: 設定
+description: "設定 — 監視機能の設定は経路ごとに別の CONFIG_DB table と CLI に分かれます。ここではシナリオ別の最小手順、確認用の show 出力、よくある設定エラーをまとめます。項目の意味の深掘りは参照ページに任せます。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

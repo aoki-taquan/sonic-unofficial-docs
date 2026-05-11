@@ -1,5 +1,6 @@
 ---
 title: Bulk Counter（sai_bulk_object_get_stats / chunk size）
+description: "Bulk Counter（sai_bulk_object_get_stats / chunk size） — SAI に追加された bulk stats API（sai_bulk_object_get_stats / sai_bulk_object_clear_stats、SAI PR #1352）を SONiC の…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

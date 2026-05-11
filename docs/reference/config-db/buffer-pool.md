@@ -1,5 +1,6 @@
 ---
 title: BUFFER_POOL テーブル
+description: "BUFFER_POOL テーブル — ASIC 上の共有 / 専用バッファプールを CONFIG_DB で定義するテーブル。BUFFER_PROFILE.pool から leafref で参照される。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

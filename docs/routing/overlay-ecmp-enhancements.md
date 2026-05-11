@@ -1,5 +1,6 @@
 ---
 title: Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張
+description: "Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張 — 「Overlay ECMP with BFD monitoring」HLD（SONiC/doc/vxlan/Overlay ECMP with BFD.md）の 後付け拡張 で、VxLAN VNET ルートに 4…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

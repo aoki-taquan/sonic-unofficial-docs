@@ -1,5 +1,6 @@
 ---
 title: DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）
+description: "DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化） — 旧設計の DHCPv4 counter は dhcpmon のプロセスメモリ内で VLAN/PortChannel 粒度のみ を持ち、ユーザは syslog からしか可視化できな…"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

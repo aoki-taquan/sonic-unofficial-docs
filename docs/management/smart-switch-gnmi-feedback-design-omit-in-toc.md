@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
+description: "SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id） — SmartSwitch アーキテクチャでは外部コントローラ（VNET / SDN コントローラ）が NPU 上の gNMI サーバ を介して各 DPU を設定する。"
 area: management
 verification: discrepancy-found
 monitor: not_implemented

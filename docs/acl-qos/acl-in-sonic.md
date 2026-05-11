@@ -1,5 +1,6 @@
 ---
 title: ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
+description: "ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン） — 読み手が真っ先に知りたいのは「SONiC の ACL はどの単位で書き、どこを経由して TCAM に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule…"
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: AUTO_TECHSUPPORT テーブル
+description: "AUTO_TECHSUPPORT テーブル — イベント駆動 (core dump 生成) で show techsupport を自動実行・古いダンプを掃除する機能の設定。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: sonic-dhcp-server YANG
+description: "sonic-dhcp-server YANG — DHCP SERVER YANG module for SONiC OS"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）
+description: "プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化） — Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサーバ向けネイバエントリを 追加・削除 する必要があり、ネイバ数が多い ToR では切替時の処理量と SAI コール回数が線形に増えていく。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

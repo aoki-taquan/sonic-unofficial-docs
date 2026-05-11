@@ -1,5 +1,6 @@
 ---
 title: sonic-buffer-profile YANG
+description: "sonic-buffer-profile YANG — Named buffer configuration profiles with pool reference, size, and thresholds."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: DIP=SIP PTF 検証テスト
+description: "DIP=SIP PTF 検証テスト — 「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを SONiC スイッチが正しくルーティングできるかを PTF (Packet Test Framework) で検証 するテストの設計。"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11

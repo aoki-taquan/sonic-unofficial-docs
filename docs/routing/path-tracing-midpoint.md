@@ -1,5 +1,6 @@
 ---
 title: Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記）
+description: "Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） — 本 HLD は Midpoint の SONiC 実装を扱う。Source / Sink の HLD は別。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10

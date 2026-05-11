@@ -1,5 +1,6 @@
 ---
 title: Debug Framework（コンポーネント dump 登録 / assert 拡張）
+description: "Debug Framework（コンポーネント dump 登録 / assert 拡張） — SONiC コンポーネント（特に OrchAgent モジュール）が 内部状態のスナップショットダンプ を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み。"
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11

@@ -1,5 +1,6 @@
 ---
 title: VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
+description: "VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化） — Smart Switch（NPU + 複数 DPU）の HA では NPU から local DPU / remote DPU へパケットを送り分ける。"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

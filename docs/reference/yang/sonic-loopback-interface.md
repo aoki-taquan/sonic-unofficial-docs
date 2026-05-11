@@ -1,5 +1,6 @@
 ---
 title: sonic-loopback-interface YANG
+description: "sonic-loopback-interface YANG — Loopback interface configuration for virtual interfaces used as router IDs and service IPs"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

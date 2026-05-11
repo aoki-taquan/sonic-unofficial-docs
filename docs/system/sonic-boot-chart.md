@@ -1,5 +1,6 @@
 ---
 title: SONiC Boot Chart（systemd-bootchart 統合）
+description: "SONiC Boot Chart（systemd-bootchart 統合） — SONiC は モジュール構成 で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

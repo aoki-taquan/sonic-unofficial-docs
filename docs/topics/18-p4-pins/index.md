@@ -1,5 +1,6 @@
 ---
 title: P4 / PINS / Programmable Pipeline
+description: "P4 / PINS / Programmable Pipeline — この章は、SONiC を P4Runtime ベースの SDN コントローラから直接プログラムする ための仕組み（PINS: P4 Integrated Network Stack）をまとめて読むための入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

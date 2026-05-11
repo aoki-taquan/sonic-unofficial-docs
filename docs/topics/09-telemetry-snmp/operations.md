@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — 障害調査では「どこまで生きているか」「いつから壊れたか」「保全は取れたか」の順で見ます。SONiC は調べる対象によって CLI が分かれているので、調査順をルーチン化しておくと迷いません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

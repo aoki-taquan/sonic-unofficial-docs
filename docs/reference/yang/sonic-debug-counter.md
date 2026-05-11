@@ -1,5 +1,6 @@
 ---
 title: sonic-debug-counter YANG
+description: "sonic-debug-counter YANG — パケットドロップ理由ベースのデバッグカウンタ設定と、永続的ドロップモニタの YANG モジュール。3 つのサブコンテナ DEBUG_COUNTER / DEBUG_COUNTER_DROP_REASON / DEBUG_DROP_MONITOR を持つ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

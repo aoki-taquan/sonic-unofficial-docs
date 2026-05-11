@@ -1,5 +1,6 @@
 ---
 title: DHCPv6 Relay Agent（Option 79 / dual ToR loopback）
+description: "DHCPv6 Relay Agent（Option 79 / dual ToR loopback） — DHCPv6 では SONiC 自前実装の relay daemon を使う。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

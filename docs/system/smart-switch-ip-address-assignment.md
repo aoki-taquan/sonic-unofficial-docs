@@ -1,5 +1,6 @@
 ---
 title: Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
+description: "Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server） — DASH SmartSwitch では NPU と各 DPU が PCIe ベースの control plane interface (netdev) で繋がる。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

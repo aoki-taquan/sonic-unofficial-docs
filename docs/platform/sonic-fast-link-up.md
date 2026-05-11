@@ -1,5 +1,6 @@
 ---
 title: SONiC Fast Link-Up（リンク再起動時の EQ 再利用）
+description: "SONiC Fast Link-Up — 100G 以上の高速 Ethernet（特に PAM4）では link training (EQ) 自体が秒オーダーかかる。リンクフラップごとにフル EQ を回すと数秒〜10 秒の収束遅延になる。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

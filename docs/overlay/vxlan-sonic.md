@@ -1,5 +1,6 @@
 ---
 title: VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
+description: "VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） — SONiC の VXLAN は VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ で実装される。HLD は次のスコープを定める:"
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09

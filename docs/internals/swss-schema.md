@@ -1,5 +1,6 @@
 ---
 title: swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）
+description: "swss-schema（APPL_DB / STATE_DB の中心スキーマ参照） — SONiC の APPL_DB / STATE_DB に存在する主要テーブルを、RFC 5234 ABNF 構文 で機械可読に定義する sonic-swss リポジトリ内の参照ドキュメント。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-11

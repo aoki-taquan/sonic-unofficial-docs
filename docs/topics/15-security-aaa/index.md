@@ -1,5 +1,6 @@
 ---
 title: Security / AAA / FIPS / Hardening
+description: "Security / AAA / FIPS / Hardening — この章は、SONiC で「誰がログインできるか」「どの経路で管理できるか」「データプレーンの暗号と完全性」「起動とアップグレードの信頼チェーン」を一望するための入口です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

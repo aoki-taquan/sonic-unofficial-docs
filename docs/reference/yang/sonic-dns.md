@@ -1,5 +1,6 @@
 ---
 title: sonic-dns YANG
+description: "sonic-dns YANG — Domain Name System (DNS) resolver configuration YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

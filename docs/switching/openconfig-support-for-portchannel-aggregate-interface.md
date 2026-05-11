@@ -1,5 +1,6 @@
 ---
 title: PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）
+description: "PortChannel (LAG) の OpenConfig YANG サポート — SONiC の PortChannel は REST/gNMI で操作できるが、SONiC 独自 YANG（sonic-portchannel 等）に縛られる。"
 area: switching
 verification: code-verified
 last_verified: 2026-05-09

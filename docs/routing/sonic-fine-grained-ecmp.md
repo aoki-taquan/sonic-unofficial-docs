@@ -1,5 +1,6 @@
 ---
 title: Fine Grained ECMP（FG_NHG / fgnhgorch）
+description: "Fine Grained ECMP（FG_NHG / fgnhgorch） — 通常 ECMP は next-hop が増減するたびに hash redistribution が全 flow に波及 する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

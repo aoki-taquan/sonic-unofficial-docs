@@ -1,5 +1,6 @@
 ---
 title: sonic-port-qos-map YANG
+description: "sonic-port-qos-map YANG — Binds QoS maps and scheduler profiles to specific ports or globally."
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

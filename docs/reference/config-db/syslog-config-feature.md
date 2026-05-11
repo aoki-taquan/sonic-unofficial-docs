@@ -1,5 +1,6 @@
 ---
 title: SYSLOG_CONFIG_FEATURE テーブル
+description: "SYSLOG_CONFIG_FEATURE テーブル — SYSLOG_CONFIG.GLOBAL の rate-limit を FEATURE (docker) ごとに上書きするテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

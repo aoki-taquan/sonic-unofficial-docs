@@ -1,5 +1,6 @@
 ---
 title: Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
+description: "Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report） — 全モード共通で switch_id と report session（src/dst IP, UDP port） が必須。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

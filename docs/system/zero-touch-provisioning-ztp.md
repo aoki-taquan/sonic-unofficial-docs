@@ -1,5 +1,6 @@
 ---
 title: Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
+description: "Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine） — ZTP は 箱出し直後の SONiC を、DHCP オプションで指示された ZTP JSON を取得・順次適用して自動構成する 仕組み。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

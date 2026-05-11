@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
+description: "Multi-ASIC Single JSON Configuration（Golden Config に namespace layer） — minigraph 廃止後の Golden Config（NDM 生成 → HwProxy で push）を multi-ASIC 機にも適用するための JSON スキーマ拡…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

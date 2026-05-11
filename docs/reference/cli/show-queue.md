@@ -1,5 +1,6 @@
 ---
 title: show queue サブコマンド
+description: "show queue サブコマンド — show queue は queue counter、WRED counter、queue watermark を表示する CLI グループ。counter は queuestat / wredstat、watermark は watermarkstat へ委譲する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
+description: "SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red） — IETF RFC 8754 / 8986 で定義される Segment Routing over IPv6 を SONiC に実装する HLD。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: Sub-port Interface（dot1q encap / VRF RIF / 命名規則）
+description: "Sub-port Interface（dot1q encap / VRF RIF / 命名規則） — 物理 port または PortChannel に . 付きの 802.1Q encap sub-interface を作成し、VRF binding した L3 router interface（RIF）として使う…"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

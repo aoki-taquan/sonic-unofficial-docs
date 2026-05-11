@@ -1,5 +1,6 @@
 ---
 title: Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）
+description: "Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期） — TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、BGP に対して 「ネイバへ経路を広告しない」Route Policy を適用する。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

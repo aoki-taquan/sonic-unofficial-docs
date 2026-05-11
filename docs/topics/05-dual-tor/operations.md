@@ -1,5 +1,6 @@
 ---
 title: Dual-ToR の運用
+description: "Dual-ToR の運用 — Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

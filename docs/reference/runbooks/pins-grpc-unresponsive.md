@@ -1,5 +1,6 @@
 ---
 title: PINS gRPC (P4Runtime) が応答しない
+description: "Runbook: PINS p4rt gRPC が応答しない / セッション張れない — : sonic-net/sonic-pins @ master — p4runtime_impl.cc : sonic-net/sonic-pins @ master — app_db_manager.cc"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

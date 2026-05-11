@@ -1,5 +1,6 @@
 ---
 title: SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
+description: "SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER） — SONiC の SNMP 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が /etc/sonic/snmp.yml と config_db.json の SNMP_ACL に分散していた…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: 評価者向けガイド
+description: "評価者向けガイド — ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、VLAN、BGP などの基本設定を入れ、状態確認まで一連の流れを辿るための導線です。"
 area: guides
 verification: meta
 last_verified: 2026-05-10

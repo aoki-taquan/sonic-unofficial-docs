@@ -1,5 +1,6 @@
 ---
 title: ZMQ ProducerStateTable / ConsumerStateTable 設計
+description: "ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable / ConsumerStateTable は Redis 経由でメッセージを運ぶ。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

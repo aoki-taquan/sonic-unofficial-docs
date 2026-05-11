@@ -16,6 +16,9 @@ v2 additions:
   h) sources[].path liveness check against `.cache/sonic-sources/<repo-name>/<path>`.
      Skipped automatically when the cache directory is absent (e.g. CI runners) so
      that the check does not flake. Force-enable via FRONTMATTER_LINT_CHECK_PATHS=1.
+  i) description field is optional but recommended (warn-only). Used by
+     mkdocs-material to populate the `<meta name="description">` tag for SEO.
+     Generate missing values with `python meta/scripts/gen_descriptions.py`.
 
 Output: meta/frontmatter-lint-report.md     (v1-compatible, hard violations only)
         meta/frontmatter-lint-report-v2.md  (v2 enhanced: hard + warnings)
@@ -194,6 +197,11 @@ def lint_file(path: Path, *, check_paths: bool):
             violations.append(f"f: monitor '{mm}' not in valid enum")
     elif verification == "discrepancy-found":
         violations.append("f: discrepancy-found page missing 'monitor' field")
+
+    # i) description recommended (warn-only)
+    description = fm.get("description")
+    if description is None or not str(description).strip():
+        warnings.append("i: description field missing (recommended for SEO; run gen_descriptions.py)")
 
     # h) sources[].path liveness check (warning bucket)
     if check_paths and isinstance(sources, list):

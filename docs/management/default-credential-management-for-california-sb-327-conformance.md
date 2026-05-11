@@ -1,5 +1,6 @@
 ---
 title: 既定パスワードの初回ログイン強制変更（California SB-327 準拠）
+description: "既定パスワードの初回ログイン強制変更（California SB-327 準拠） — California SB-327 は IoT 機器の既定パスワード使用を制限する州法であり、初回ログイン時にユーザに強制でパスワード変更させる ことが代表的な準拠手段である。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09

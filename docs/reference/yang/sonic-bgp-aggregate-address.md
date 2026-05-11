@@ -1,5 +1,6 @@
 ---
 title: sonic-bgp-aggregate-address YANG
+description: "sonic-bgp-aggregate-address YANG — SONIC BGP aggregate address configuration module."
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

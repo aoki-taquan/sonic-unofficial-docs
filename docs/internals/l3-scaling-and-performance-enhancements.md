@@ -1,5 +1,6 @@
 ---
 title: L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）
+description: "L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp） — SONiC 201908 リリース時に行われた L3 のスケール拡大と性能改善 をまとめた HLD。"
 area: internals
 verification: discrepancy-found
 monitor: partially_implemented

@@ -1,5 +1,6 @@
 ---
 title: fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
+description: "fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） — FRR zebra は dplane_fpm_nl プラグインで Linux kernel の NextHop Group (NHG) netlink メッセージ（RTM_NEWNEXTH…"
 area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld

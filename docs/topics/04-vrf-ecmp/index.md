@@ -1,5 +1,6 @@
 ---
 title: VRF / ECMP / RIB-FIB パイプライン
+description: "VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…"
 area: topics
 verification: meta
 last_verified: 2026-05-10

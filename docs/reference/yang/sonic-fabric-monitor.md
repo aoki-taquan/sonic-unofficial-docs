@@ -1,5 +1,6 @@
 ---
 title: sonic-fabric-monitor YANG
+description: "sonic-fabric-monitor YANG — VoQ Chassis のファブリックリンクモニタリング設定。CRC エラー率に基づくリンク isolation / inclusion の閾値、容量警告閾値を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

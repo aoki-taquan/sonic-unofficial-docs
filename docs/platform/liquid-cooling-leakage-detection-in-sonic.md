@@ -1,5 +1,6 @@
 ---
 title: 液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）
+description: "液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント） — 高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11

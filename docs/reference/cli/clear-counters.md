@@ -1,5 +1,6 @@
 ---
 title: clear counters サブコマンド群（詳細）
+description: "clear counters サブコマンド群（詳細） — sonic-clear（sonic-utilities の click グループ clear/main.py:cli）には カウンタ系のリセット用サブコマンドが多数定義されており、いずれも外部の C++/Python ユーティリティを -c または -C フラ…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

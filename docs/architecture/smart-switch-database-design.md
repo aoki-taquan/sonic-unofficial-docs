@@ -1,5 +1,6 @@
 ---
 title: Smart Switch のデータベース構成（NPU 上の DPU overlay DB）
+description: "Smart Switch のデータベース構成（NPU 上の DPU overlay DB） — DPU の DASH overlay 用 Redis を NPU 側に container として立て、DPU から midplane 経由で remote 接続 させる。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

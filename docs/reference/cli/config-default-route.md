@@ -1,5 +1,6 @@
 ---
 title: config default-route（デフォルトルート設定パターン）
+description: "config default-route（デフォルトルート設定パターン） — SONiC には config default-route という独立した click コマンドは 存在しない。デフォルトルート（0.0.0.0/0 / ::/0）を設定する場合は、用途に応じて以下のいずれかを使う:"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

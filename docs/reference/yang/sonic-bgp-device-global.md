@@ -1,5 +1,6 @@
 ---
 title: sonic-bgp-device-global YANG
+description: "sonic-bgp-device-global YANG — デバイスレベル BGP のグローバル設定。TSA (Traffic Shift Away)、 WCMP (Weighted ECMP)、 IDF isolation 状態、および BGP confederation 設定を保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

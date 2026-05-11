@@ -1,5 +1,6 @@
 ---
 title: gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
+description: "gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED） — gNMI Subscribe は YANG path に紐づくデータを stream / poll / once モードでクライアントに push する仕組み。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10

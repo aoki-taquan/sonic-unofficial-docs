@@ -1,5 +1,6 @@
 ---
 title: config buffer サブコマンド
+description: "config buffer サブコマンド — config buffer は dynamic buffer が有効なシステムで、CONFIG_DB の BUFFER_PROFILE を追加・更新する CLI グループ。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10

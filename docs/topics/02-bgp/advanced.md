@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — この章の基本経路を押さえた後は、VoQ、BFD、EVPN の順に読むと BGP が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

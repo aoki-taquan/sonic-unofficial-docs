@@ -1,5 +1,6 @@
 ---
 title: Alpine 仮想 SONiC（ALViS / KNE デプロイ）
+description: "Alpine 仮想 SONiC（ALViS / KNE デプロイ） — ALPINE は Google が提案した SONiC のスイッチスタックシミュレーションフレームワーク。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

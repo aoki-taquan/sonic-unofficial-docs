@@ -1,5 +1,6 @@
 ---
 title: VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
+description: "VoQ シャーシでの BGP 構成 — VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は 入口 ASIC で 1 回だけ 行われ、その後はファブリック経由で出口へ運ばれる。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

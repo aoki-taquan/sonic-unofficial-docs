@@ -1,5 +1,6 @@
 ---
 title: トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）
+description: "トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避） — Dual-ToR（Active / Standby）でサーバ側輻輳が起きると upper / lower 両 ToR に PFC pause が同時に伝搬 する。"
 area: overlay
 verification: discrepancy-found
 last_verified: 2026-05-11

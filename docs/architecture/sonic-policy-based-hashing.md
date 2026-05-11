@@ -1,5 +1,6 @@
 ---
 title: "Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）"
+description: "Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple） — NVGRE / VxLAN のような encapsulated トラフィックでは、ECMP / LAG ハッシュが outer ヘッダだけを見ると flow が偏る。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

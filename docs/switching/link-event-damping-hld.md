@@ -1,5 +1,6 @@
 ---
 title: リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
+description: "リンクイベントダンピング（AIED アルゴリズムと SyncD intercept） — HLD は config interface link_event_damping_algorithm aied の click サブコマンド追加と、config interface link_event_damping_alg…"
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented

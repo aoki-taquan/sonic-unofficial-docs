@@ -1,5 +1,6 @@
 ---
 title: BMP テーブル
+description: "BMP テーブル — BGP Monitoring Protocol (BMP, RFC 7854) の テーブルダンプ機能のオンオフを設定するテーブル。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

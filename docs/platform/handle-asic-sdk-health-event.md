@@ -1,5 +1,6 @@
 ---
 title: ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action）
+description: "ASIC / SDK Health Event のハンドリング（SAI notification → STATE_DB → action） — ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを SAI の health event 通知 として上…"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

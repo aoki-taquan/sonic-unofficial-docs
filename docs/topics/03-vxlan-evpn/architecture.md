@@ -1,5 +1,6 @@
 ---
 title: Overlay アーキテクチャ
+description: "Overlay アーキテクチャ — Overlay を読むときの中心は、設定テーブルそのものではなく「誰がどの table を見て、最終的にどの SAI object を作るか」です。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

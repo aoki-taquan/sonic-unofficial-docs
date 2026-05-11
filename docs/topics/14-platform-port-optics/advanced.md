@@ -1,5 +1,6 @@
 ---
 title: 発展トピック
+description: "発展トピック — ここでは、port / platform 章の中でも比較的新しい、または運用上の影響が大きい設計を 3 つ取り上げます。詳細は元 HLD に従い、本章では「ほかの章と何が変わるか」に絞ります。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

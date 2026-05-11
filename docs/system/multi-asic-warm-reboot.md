@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
+description: "Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot） — multi-ASIC platform では各 ASIC が 独自の swss / syncd / FRR インスタンス を持つ。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

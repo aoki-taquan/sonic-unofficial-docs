@@ -1,5 +1,6 @@
 ---
 title: Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）
+description: "Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig） — Multi-ASIC SONiC（複数 NPU を持つデバイス）では、各 NPU を Linux network namespace で隔離し、その中で swss / syncd / data…"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

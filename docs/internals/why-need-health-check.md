@@ -1,5 +1,6 @@
 ---
 title: コンテナ health-check（k8s readiness probe）
+description: "コンテナ health-check（k8s readiness probe） — SONiC の k8s 連携では、コンテナそのものが起動しているかどうかは kubelet が把握しているが、コンテナ内の supervisor 配下サービスが本当に正常か は外から見えない。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

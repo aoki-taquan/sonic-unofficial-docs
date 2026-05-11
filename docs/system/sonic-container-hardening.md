@@ -1,5 +1,6 @@
 ---
 title: SONiC Container Hardening（capability / read-only / privileged 削減）
+description: "SONiC Container Hardening（capability / read-only / privileged 削減） — SONiC の docker は歴史的に多くが --privileged で動いていた。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

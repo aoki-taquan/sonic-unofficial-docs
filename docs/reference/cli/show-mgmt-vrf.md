@@ -1,5 +1,6 @@
 ---
 title: show mgmt-vrf サブコマンド
+description: "show mgmt-vrf サブコマンド — show mgmt-vrf は管理 VRF (mgmt) の有効・無効状態、Linux 上の VRF デバイス情報、ルーティングテーブルを表示する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

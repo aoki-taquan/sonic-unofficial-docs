@@ -1,5 +1,6 @@
 ---
 title: SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
+description: "SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界） — 「SmartSwitch」は 同一筐体内に Network ASIC（NPU）と DPU（Data Processing Unit）を持つ platform。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

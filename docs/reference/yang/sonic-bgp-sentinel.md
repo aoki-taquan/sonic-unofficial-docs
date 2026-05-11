@@ -1,5 +1,6 @@
 ---
 title: sonic-bgp-sentinel YANG
+description: "sonic-bgp-sentinel YANG — SONiC BGP Sentinel 機能の YANG モデル。ToR 配下の特定 IP 範囲に対する Sentinel BGP セッション設定。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

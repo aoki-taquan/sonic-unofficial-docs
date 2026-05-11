@@ -1,5 +1,6 @@
 ---
 title: sonic-fine-grained-ecmp YANG
+description: "sonic-fine-grained-ecmp YANG — Fine-Grained ECMP (FG_NHG) のグループ・対象プレフィックス・メンバの 3 テーブルを保持する。bucket-size と match_mode により flow-to-nexthop の固定マッピングを記述する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

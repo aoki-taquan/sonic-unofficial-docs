@@ -1,5 +1,6 @@
 ---
 title: SWSS docker warm restart（state restore / consistency / sync up）
+description: "SWSS docker warm restart（state restore / consistency / sync up） — SWSS container（orchagent + 周辺 syncd 連携）を再起動・上げ替える際にデータプレーンを乱さないため、control plane state を compl…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

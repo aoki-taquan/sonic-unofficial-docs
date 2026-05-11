@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — VXLAN / EVPN / VNET の内部実装は「FRR (bgpd) が EVPN type-2/type-5 を学習し、zebra が kernel/fpmsyncd に渡し、orchagent が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて…"
 area: topics
 verification: meta
 last_verified: 2026-05-11

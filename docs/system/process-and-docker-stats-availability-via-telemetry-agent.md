@@ -1,5 +1,6 @@
 ---
 title: Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
+description: "Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS） — SONiC のテレメトリエージェント（gNMI / gNOI ストリーミング）から プロセス毎の CPU/メモリ使用量 および docker コンテナ毎のリソース消費 を購読できるようにする…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

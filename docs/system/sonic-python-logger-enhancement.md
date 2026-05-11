@@ -1,5 +1,6 @@
 ---
 title: SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP）
+description: "SysLogger 拡張（runtime log level + LOGGER.require_manual_refresh + SIGHUP） — SONiC の Python デーモンが使う logger には複数の選択肢があるが、いずれも 動作中にログレベルを変更できない または redis 起動前に呼べない…"
 area: system
 verification: discrepancy-found
 monitor: evolved_beyond_hld

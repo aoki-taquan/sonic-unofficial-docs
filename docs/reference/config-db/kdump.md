@@ -1,5 +1,6 @@
 ---
 title: KDUMP テーブル
+description: "KDUMP テーブル — Linux kernel crash dump (kdump) の設定。KDUMP|config の単一 container。hostcfgd がこの container を購読し、/etc/default/kdump-tools の生成・kdump-config の起動を実施する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

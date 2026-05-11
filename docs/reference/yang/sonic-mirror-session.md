@@ -1,5 +1,6 @@
 ---
 title: sonic-mirror-session YANG
+description: "sonic-mirror-session YANG — SONiC Mirror session yang model"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

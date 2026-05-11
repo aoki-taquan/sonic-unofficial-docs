@@ -1,5 +1,6 @@
 ---
 title: リファレンス横断索引
+description: "リファレンス横断索引 — この章は、docs/reference/ 配下に集めた CLI / CONFIG_DB / YANG の辞書ページと、Phase B で新設された機能章 (docs/topics/) との間を行き来するための索引である。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: 運用
+description: "運用 — gNMI を運用する局面では、複数クライアントが同じ device を触る競合制御、再起動を跨いで設定を残す save-on-set、collector へ push する dial-out telemetry、subscription の安定性が課題になる。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: show platform サブコマンド
+description: "show platform サブコマンド — show platform はハードウェアプラットフォーム関連の状態（HwSKU・PSU・FAN・温度・電圧・SSD・PCIe・syseeprom・firmware・BMC・leakage）を表示する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

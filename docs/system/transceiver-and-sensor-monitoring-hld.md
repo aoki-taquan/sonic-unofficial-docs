@@ -1,5 +1,6 @@
 ---
 title: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
+description: "Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*） — PMON コンテナ内の xcvrd daemon が SFP / QSFP / QSFP-DD などの光モジュールから EEPROM 情報・DOM（Digital Optical Monitori…"
 area: system
 verification: code-verified
 last_verified: 2026-05-11

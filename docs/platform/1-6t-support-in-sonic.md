@@ -1,5 +1,6 @@
 ---
 title: 1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch）
+description: "1.6T Ethernet 対応（200G SerDes / SFF-8024 / xcvrd / PortsOrch） — IEEE P802.3dj が定める 200 / 400 / 800 Gb/s と 1.6 Tb/s のインターフェース定義を SONiC に取り込むための変更点を列挙した HLD。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

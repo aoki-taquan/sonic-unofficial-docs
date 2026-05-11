@@ -1,5 +1,6 @@
 ---
 title: BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）
+description: "BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending） — ASIC への route install が（CRM 制限などで）失敗した場合に、その情報を ERROR_DB.ERROR_ROUTE_TABLE 経由で fpms…"
 area: routing
 verification: discrepancy-found
 monitor: deprecated

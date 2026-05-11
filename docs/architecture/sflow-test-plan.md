@@ -1,5 +1,6 @@
 ---
 title: sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling）
+description: "sFlow テストプラン（hsflowd + 2 collector / sampling rate / agent-id / counter polling） — T0 上で SONiC sFlow 機能を機能検証するテスト。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

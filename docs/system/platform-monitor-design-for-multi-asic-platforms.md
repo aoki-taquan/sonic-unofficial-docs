@@ -1,5 +1,6 @@
 ---
 title: PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担）
+description: "PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） — Multi-ASIC SONiC では、システム共通の DB が host 上の \"global database\" container に居て、ASIC 毎の DB は 各 ASIC names…"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

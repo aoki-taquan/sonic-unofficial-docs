@@ -1,5 +1,6 @@
 ---
 title: gNMI / gNOI / OpenConfig / YANG
+description: "gNMI / gNOI / OpenConfig / YANG — この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: sonic-ntp YANG
+description: "sonic-ntp YANG — Network Time Protocol (NTP) client configuration YANG module for SONiC OS."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

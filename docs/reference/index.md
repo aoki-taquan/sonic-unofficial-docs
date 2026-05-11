@@ -1,5 +1,6 @@
 ---
 title: リファレンス
+description: "リファレンス — CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。"
 verification: stub
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）
+description: "platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable） — スイッチ機器のプラットフォーム部品（fan, PSU, status LED, thermal 等）は、機種ごとに 制御可能性と取りうる値の範囲 が異なる。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-09

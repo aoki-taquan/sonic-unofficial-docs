@@ -1,5 +1,6 @@
 ---
 title: sonic-vrf YANG
+description: "sonic-vrf YANG — Virtual Routing and Forwarding (VRF) instance configuration for L3 traffic isolation"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

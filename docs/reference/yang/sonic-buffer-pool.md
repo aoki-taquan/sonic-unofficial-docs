@@ -1,5 +1,6 @@
 ---
 title: sonic-buffer-pool YANG
+description: "sonic-buffer-pool YANG — Shared and dedicated memory pool configuration for packet buffering."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

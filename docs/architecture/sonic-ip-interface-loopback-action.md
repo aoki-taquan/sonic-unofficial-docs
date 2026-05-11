@@ -1,5 +1,6 @@
 ---
 title: IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）
+description: "IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward） — ルータが受信したパケットをルーティングテーブルに従って転送した結果、同じ RIF (Router Interface) から出ていく ケースが発生することがある。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）
+description: "複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散） — 従来の SONiC は 単一の Redis インスタンス に APPL_DB / ASIC_DB / CONFIG_DB / STATE_DB 等をすべて載せていた。"
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: Overlay 発展トピック
+description: "Overlay 発展トピック — ここでは、基本の VXLAN / VNET / EVPN の延長に見えるが、別の前提や別の orch を持つ機能を整理します。設計検討では同じ overlay として並びますが、運用手順や実装成熟度は同一ではありません。"
 area: topics
 verification: meta
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: kdump（kexec ベース kernel crash dump / makedumpfile）
+description: "kdump（kexec ベース kernel crash dump / makedumpfile） — Linux kernel の kexec を使い、kernel panic 直後に 予約された別メモリ領域に展開済みの capture kernel を起動して crash dump を /var/crash//…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

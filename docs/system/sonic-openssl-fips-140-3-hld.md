@@ -1,5 +1,6 @@
 ---
 title: OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）
+description: "OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1） — FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を組み立てるための HLD。"
 area: system
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: クリティカルリソースモニタリング (CRM) 要件
+description: "クリティカルリソースモニタリング (CRM) 要件 — SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった テーブル容量が有限なリソース を抱えている。"
 area: system
 verification: code-verified
 last_verified: 2026-05-11

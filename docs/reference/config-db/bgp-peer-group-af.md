@@ -1,5 +1,6 @@
 ---
 title: BGP_PEER_GROUP_AF テーブル
+description: "BGP_PEER_GROUP_AF テーブル — BGP_PEER_GROUP の アドレスファミリ別 設定を保持するテーブル。frr-mgmt-framework が DEVICE_METADATA.frr_mgmt_framework_config = true のときに使用する generic 形式。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

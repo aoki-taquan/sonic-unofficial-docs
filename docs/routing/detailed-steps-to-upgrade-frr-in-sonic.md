@@ -1,5 +1,6 @@
 ---
 title: SONiC における FRR upgrade の手順とパッチ管理
+description: "SONiC における FRR upgrade の手順とパッチ管理 — SONiC は upstream frrouting/frr を branch スナップショット + per-release patch 集 という形で取り込んでいる。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,5 +1,6 @@
 ---
 title: System-wide Warmboot（going down / up path / SAI 期待値）
+description: "System-wide Warmboot（going down / up path / SAI 期待値） — 全 SONiC コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない warmboot の枠組…"
 area: system
 verification: code-verified
 last_verified: 2026-05-09

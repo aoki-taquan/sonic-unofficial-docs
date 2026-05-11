@@ -1,5 +1,6 @@
 ---
 title: fwutil（platform component firmware の install / update / show）
+description: "fwutil（platform component firmware の install / update / show） — BIOS、CPLD、FPGA、BMC、SSD などのプラットフォームコンポーネントの ファームウェアを統一 CLI から操作 するためのユーティリティ。狙い:"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

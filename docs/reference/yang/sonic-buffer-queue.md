@@ -1,5 +1,6 @@
 ---
 title: sonic-buffer-queue YANG
+description: "sonic-buffer-queue YANG — Egress queue buffer configuration per port."
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,5 +1,6 @@
 ---
 title: show aaa サブコマンド
+description: "show aaa サブコマンド — show aaa は CONFIG_DB の AAA テーブルを読み、authentication / authorization / accounting 各機能の現在値（または default 値）を行ごとに表示する click コマンド。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

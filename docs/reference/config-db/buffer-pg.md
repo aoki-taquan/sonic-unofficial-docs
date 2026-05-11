@@ -1,5 +1,6 @@
 ---
 title: BUFFER_PG テーブル
+description: "BUFFER_PG テーブル — ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する。lossless トラフィックの xon/xoff 閾値、PFC 動作の根本となる設定。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

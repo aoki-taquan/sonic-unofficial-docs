@@ -1,5 +1,6 @@
 ---
 title: 内部実装
+description: "内部実装 — このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。"
 area: topics
 verification: meta
 last_verified: 2026-05-10
