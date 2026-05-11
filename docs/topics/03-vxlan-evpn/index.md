@@ -78,6 +78,19 @@ related:
 
 この章は overlay / routing / platform / architecture / reference の既存ページ 22 件を横断しています。各ページの末尾に、深掘り用の関連ページを置いています。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (173 行) | meta |
+| setup | ✅ 完成 (240 行) | meta |
+| operations | ✅ 完成 (167 行) | meta |
+| internals | ✅ 完成 (130 行) | meta |
+| advanced | ⚠️ プレースホルダ (75 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

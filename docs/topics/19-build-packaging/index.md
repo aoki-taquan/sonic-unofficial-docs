@@ -51,6 +51,19 @@ related:
 
 この章は architecture / system / management / categories の build・package 系ページ 13 件を横断している。各サブページ末尾の「関連ページ」から原文の HLD と裏取りステータスへ辿れる。
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (142 行) | meta |
+| setup | ❌ 未着手 | - |
+| operations | ✅ 完成 (180 行) | meta |
+| internals | ✅ 完成 (126 行) | meta |
+| advanced | ⚠️ プレースホルダ (81 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

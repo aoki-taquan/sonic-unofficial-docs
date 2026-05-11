@@ -85,6 +85,19 @@ related:
 - [YANG リファレンス](../../reference/yang/index.md)
 - [Discrepancy index](../../reference/verification/discrepancy-index.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ⚠️ プレースホルダ (57 行) | meta |
+| setup | ❌ 未着手 | - |
+| operations | ❌ 未着手 | - |
+| internals | ✅ 完成 (133 行) | meta |
+| advanced | ❌ 未着手 | - |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 

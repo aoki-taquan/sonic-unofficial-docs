@@ -83,6 +83,19 @@ related:
 - [config warm_restart サブコマンド](../../reference/cli/config-warm_restart.md)
 - [sonic-installer コマンド](../../reference/cli/sonic-installer.md)
 
+<!-- chapter-progress -->
+## 章構成と進捗
+
+| ページ | 状態 | verification |
+|---|---|---|
+| concept | ✅ 完成 (140 行) | meta |
+| setup | ✅ 完成 (176 行) | meta |
+| operations | ✅ 完成 (192 行) | meta |
+| internals | ✅ 完成 (121 行) | meta |
+| advanced | ⚠️ プレースホルダ (51 行) | meta |
+
+<!-- /chapter-progress -->
+
 <!-- next-reads -->
 ## 次に読むべき記事
 
