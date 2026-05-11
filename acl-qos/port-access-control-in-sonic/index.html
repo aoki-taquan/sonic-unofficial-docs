@@ -27,7 +27,7 @@
     
     
       
-        <title>Port access control in sonic - SONiC 非公式ドキュメント</title>
+        <title>Port Access Control（PAC: 802.1x / MAB / RADIUS） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Port access control in sonic
+              Port Access Control（PAC: 802.1x / MAB / RADIUS）
             
           </span>
         </div>
@@ -7074,7 +7074,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7466,7 +7466,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11328,7 +11328,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11346,7 +11346,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11815,7 +11815,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -14943,7 +14943,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22414,28 +22414,6 @@
   
 
 
-<hr />
-<p>title: Port Access Control（PAC: 802.1x / MAB / RADIUS）
-area: acl-qos
-verification: code-verified
-last_verified: 2026-05-11
-sources:
-  - repo: sonic-net/SONiC
-    path: doc/pac/Port Access Control.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db:
-    - PAC_PORT_CONFIG_TABLE
-    - HOSTAPD_GLOBAL_CONFIG_TABLE
-    - RADIUS
-    - RADIUS_SERVER
-  cli:
-    - config authentication
-    - config dot1x
-    - config mab
-    - show authentication
-  yang: []</p>
-<hr />
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
 <p><code>sonic-buildimage/src/sonic-pac/</code> 配下に PAC のコンポーネント (<code>authmgr</code>, <code>mab</code>, <code>mabmgr</code>, <code>hostapdmgr</code>, <code>pacmgr</code>, <code>paccfg</code>, <code>pacoper</code>, <code>fpinfra</code>, <code>json_lib</code>) が取り込み済みであることを確認。<code>hostapdmgr.cpp</code> L43-L46 で <code>CFG_PAC_PORT_CONFIG_TABLE</code> / <code>CFG_PAC_HOSTAPD_GLOBAL_CONFIG_TABLE</code> / <code>RADIUS_SERVER</code> / <code>RADIUS</code> 4 テーブルを subscribe する経路を確認。SAI Bridge port learning モード変更詳細・host interface trap の詳細は sai_redis / vendor SAI スコープのため別途。</p>
@@ -22638,6 +22616,9 @@ reasoning: 物理 IF 限定・802.1x/MAB 併用・3 種 port mode の根拠。
 
 
 
+
+  
+  
 
 
 

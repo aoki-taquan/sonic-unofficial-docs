@@ -27,7 +27,7 @@
     
     
       
-        <title>Smartswitch high availability manager daemon hamgrd design - SONiC 非公式ドキュメント</title>
+        <title>SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Smartswitch high availability manager daemon hamgrd design
+              SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
             
           </span>
         </div>
@@ -7079,7 +7079,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7480,7 +7480,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -7498,7 +7498,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11565,7 +11565,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11837,7 +11837,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -14965,7 +14965,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22458,26 +22458,6 @@
   
 
 
-<hr />
-<p>title: SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
-area: architecture
-verification: discrepancy-found
-last_verified: 2026-05-11
-monitor: not_implemented
-sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db:
-    - DPU
-    - VDPU
-    - DASH_HA_GLOBAL_CONFIG_TABLE
-    - DASH_HA_SET_CONFIG_TABLE
-    - DASH_HA_SCOPE_CONFIG_TABLE
-  cli: []
-  yang: []</p>
-<hr />
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: discrepancy-found（部分実装）</p>
 <p><code>sonic-swss-common/common/schema.h</code> に <code>APP_DASH_HA_SET_CONFIG_TABLE</code> / <code>APP_DASH_HA_SET_TABLE</code> / <code>APP_DASH_HA_SCOPE_CONFIG_TABLE</code> / <code>APP_DASH_HA_SCOPE_TABLE</code> / <code>STATE_DASH_HA_SET_STATE_TABLE</code> / <code>STATE_DASH_HA_SCOPE_STATE_TABLE</code> および <code>CFG_DASH_HA_GLOBAL_CONFIG_TABLE</code> (<code>DASH_HA_GLOBAL_CONFIG</code>) は定義済。一方で <strong><code>hamgrd</code> バイナリは sonic-swss / sonic-buildimage には存在しない</strong>（mock test の dashenifwdorch コメント言及のみ）。<strong><code>DASH_HA_DPU_STATE</code> / <code>DASH_HA_VDPU_STATE</code> table も swss-common schema には未定義</strong> で、HLD で示される DPU / vDPU の STATE_DB エントリは現時点で実装されていない。<code>swbus</code> ローカルメッセージバスの実装も本リポ群には見当たらず、HLD は v0.1 (2025-02 Initial Proposal) のため大半が未着手。</p>
@@ -22707,6 +22687,9 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 
 
 
+
+  
+  
 
 
 

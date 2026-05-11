@@ -7074,7 +7074,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7466,7 +7466,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11726,7 +11726,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11998,7 +11998,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -15126,7 +15126,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22780,8 +22780,8 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
 <p><code>portsorch</code> が <code>CHASSIS_APP_DB</code> の <code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_LAG_MEMBER_TABLE</code> を購読し remote LAG として SAI に programming する経路、<code>SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID</code> への <code>system_lag_id</code> 反映、<code>chassisdb.conf</code> の <code>SYSTEM_LAG_ID_START/END</code> 読込、Lua atomic <code>lag_id_add</code> / <code>lag_id_delete</code> / <code>lag_id_get</code> の実装は実コードでの裏取り未済。</p>
 </div>
 <h1 id="voq-lagsystem_lag_table-system_lag_id">分散 VOQ シャシでの LAG（<code>SYSTEM_LAG_TABLE</code> と <code>system_lag_id</code>）<a class="headerlink" href="#voq-lagsystem_lag_table-system_lag_id" title="Permanent link">&para;</a></h1>

@@ -27,7 +27,7 @@
     
     
       
-        <title>Sonic policy based hashing - SONiC 非公式ドキュメント</title>
+        <title>Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Sonic policy based hashing
+              Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
             
           </span>
         </div>
@@ -7088,7 +7088,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7106,7 +7106,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7684,7 +7684,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11532,7 +11532,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11804,7 +11804,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -14932,7 +14932,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22392,27 +22392,6 @@
   
 
 
-<hr />
-<p>title: Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
-area: architecture
-verification: code-verified
-last_verified: 2026-05-11
-sources:
-  - repo: sonic-net/SONiC
-    path: doc/pbh/pbh-design.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db:
-    - PBH_TABLE
-    - PBH_RULE
-    - PBH_HASH
-    - PBH_HASH_FIELD
-  cli:
-    - config pbh
-    - show pbh
-  yang:
-    - sonic-pbh</p>
-<hr />
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
 <p><code>PbhOrch</code> は <code>sonic-swss/orchagent/pbhorch.h</code> L13-L19 に class 宣言、<code>orchdaemon.cpp</code> L52 で <code>gPbhOrch</code> 大域インスタンス、L553-L570 で <code>CFG_PBH_TABLE_TABLE_NAME</code> を含む 4 テーブル接続と <code>new PbhOrch(pbhTableConnectorList, gAclOrch, gPortsOrch)</code> 初期化、<code>m_orchList.push_back(gPbhOrch)</code> まで取り込み済みであることを確認。スキーマ定数 <code>PBH_TABLE_INTERFACE_LIST</code> / <code>PBH_TABLE_DESCRIPTION</code> は <code>orchagent/pbh/pbhschema.h</code> L5-L6 を確認。SAI fine-grained hash 属性 / CRM 連携の深掘りは別バッチ。</p>
@@ -22532,6 +22511,9 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 
 
 
+
+  
+  
 
 
 

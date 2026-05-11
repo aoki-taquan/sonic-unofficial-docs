@@ -27,7 +27,7 @@
     
     
       
-        <title>Redis client manager rcm hld - SONiC 非公式ドキュメント</title>
+        <title>Redis Client Manager（RCM: connection pool / transactional client） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Redis client manager rcm hld
+              Redis Client Manager（RCM: connection pool / transactional client）
             
           </span>
         </div>
@@ -7074,7 +7074,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7466,7 +7466,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11314,7 +11314,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11586,7 +11586,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -14728,7 +14728,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -14746,7 +14746,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22358,22 +22358,8 @@
   
 
 
-<hr />
-<p>title: Redis Client Manager（RCM: connection pool / transactional client）
-area: management
-verification: code-verified
-last_verified: 2026-05-11
-sources:
-  - repo: sonic-net/SONiC
-    path: doc/mgmt/redis_client_manager.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db: []
-  cli: []
-  yang: []</p>
-<hr />
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
 <p><code>sonic-mgmt-common</code> 上の RCM 4 関数（<code>RedisClient</code> / <code>TransactionalRedisClient</code> / <code>TransactionalRedisClientWithOpts</code> / <code>CloseRedisClient</code>）の現行 master 取り込み、<code>DBStats</code> への counter 統合は未確認。</p>
 </div>
 <h1 id="redis-client-managerrcm-connection-pool-transactional-client">Redis Client Manager（RCM: connection pool / transactional client）<a class="headerlink" href="#redis-client-managerrcm-connection-pool-transactional-client" title="Permanent link">&para;</a></h1>
@@ -22509,6 +22495,9 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 
 
 
+
+  
+  
 
 
 

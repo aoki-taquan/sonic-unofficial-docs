@@ -27,7 +27,7 @@
     
     
       
-        <title>Independent dpu upgrade - SONiC 非公式ドキュメント</title>
+        <title>Smart Switch: DPU 独立アップグレード（gNOI 経路） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Independent dpu upgrade
+              Smart Switch: DPU 独立アップグレード（gNOI 経路）
             
           </span>
         </div>
@@ -7074,7 +7074,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7466,7 +7466,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11314,7 +11314,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11600,7 +11600,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -11618,7 +11618,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -14871,7 +14871,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22270,20 +22270,6 @@
   
 
 
-<hr />
-<p>title: Smart Switch: DPU 独立アップグレード（gNOI 経路）
-area: system
-verification: code-verified
-last_verified: 2026-05-09
-sources:
-  - repo: sonic-net/SONiC
-    path: doc/smart-switch/upgrade/dpu-upgrade-hld.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db: []
-  cli: []
-  yang: []</p>
-<hr />
 <div class="admonition info">
 <p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-gnmi master で DPU Proxy（GNMI/GNOI Splitter）が <code>pkg/interceptors/dpuproxy/proxy.go</code> に実装済み（<code>ForwardToDPU</code> / <code>HandleLocally</code>）。Containerz gNOI は <code>gnmi_server/gnoi_containerz.go</code> および <code>gnoi_client/containerz/</code> に、<code>System.SetPackage</code> 等は <code>pkg/gnoi/system/system.go</code> / <code>gnmi_server/gnoi_system.go</code> に実装。HLD で言及されている主要ハンドラ群は master に取り込み済み。</p>
@@ -22415,6 +22401,9 @@ reasoning: gNOI API 系列と各 phase の根拠。
 
 
 
+
+  
+  
 
 
 

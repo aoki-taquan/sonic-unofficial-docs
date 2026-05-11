@@ -7074,7 +7074,7 @@
   <span class="md-ellipsis">
     
   
-    Sonic policy based hashing
+    Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）
   
 
     
@@ -7466,7 +7466,7 @@
   <span class="md-ellipsis">
     
   
-    Smartswitch high availability manager daemon hamgrd design
+    SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
   
 
     
@@ -11482,7 +11482,7 @@
   <span class="md-ellipsis">
     
   
-    Port access control in sonic
+    Port Access Control（PAC: 802.1x / MAB / RADIUS）
   
 
     
@@ -11754,7 +11754,7 @@
   <span class="md-ellipsis">
     
   
-    Independent dpu upgrade
+    Smart Switch: DPU 独立アップグレード（gNOI 経路）
   
 
     
@@ -14882,7 +14882,7 @@
   <span class="md-ellipsis">
     
   
-    Redis client manager rcm hld
+    Redis Client Manager（RCM: connection pool / transactional client）
   
 
     
@@ -22292,8 +22292,8 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: Code-verified</p>
 <p>本テストプランは Virtual Switch (VS) 上で <code>vrfmgrd</code> / <code>intfmgrd</code> / <code>Orchagent</code> が CONFIG_DB → APP_DB → ASIC_DB / Linux kernel に正しく VRF 設定を流すことを検証する設計記述。FRR / SAI 観点は別の ansible テストでカバー。</p>
 </div>
 <h1 id="vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel">VRF VS テストプラン（<code>vrfmgrd</code> / <code>intfmgrd</code> / <code>Orchagent</code> → APP_DB / ASIC_DB / kernel）<a class="headerlink" href="#vrf-vs-vrfmgrd-intfmgrd-orchagent-app_db-asic_db-kernel" title="Permanent link">&para;</a></h1>
