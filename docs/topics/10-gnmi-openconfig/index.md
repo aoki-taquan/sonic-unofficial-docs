@@ -35,6 +35,8 @@ keywords:
 4. [運用](operations.md): master arbitration、save-on-set、dial-out telemetry、subscription の競合制御と永続化。
 5. [gNOI / gNSI](gnoi-gnsi.md): System、OS、File、Factory Reset、Healthz、gNSI の API と SONiC service の対応表。
 6. [YANG リファレンス](yang-reference.md): 機能章別の YANG モジュール参照表。
+7. [内部実装](internals.md): gNMI server / Translib / Transformer / sonic-mgmt-common の責務分担と、YANG → ABNF/CONFIG_DB 変換を実装側から見る。
+8. [発展トピック](advanced.md): dial-out telemetry、master arbitration、gNSI、save-on-set、他章との境界。
 
 ## 統合した既存ページ
 

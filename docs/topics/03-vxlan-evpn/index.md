@@ -45,6 +45,7 @@ keywords:
 3. [設定](setup.md): VXLAN tunnel、VNET、EVPN NVO、VNET route、tunnel decap、PBH inner hash の入口を選ぶ。
 4. [運用](operations.md): Overlay ECMP、BFD monitoring、DSCP remap、inner hash の確認順を扱う。
 5. [発展トピック](advanced.md): EVPN multihoming、DASH / SmartSwitch、NVGRE、subnet decap との境界を確認する。
+6. [内部実装](internals.md): VxlanTunnelOrch / VnetOrch のオブジェクト整合と、FRR EVPN との状態同期を実装側から見る。
 
 ## 統合した既存ページ
 

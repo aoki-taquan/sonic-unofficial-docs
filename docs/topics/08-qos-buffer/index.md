@@ -79,6 +79,7 @@ keywords:
 3. [設定](setup.md): lossless / lossy の代表設定、PFC、PFCWD、WRED の最小例。
 4. [運用](operations.md): 輻輳・PFC storm・drop counter 調査の順序。
 5. [内部実装](internals.md): reclaim、dynamic headroom、port add/del での再計算。
+6. [発展トピック](advanced.md): asymmetric PFC、historical PFC stats、watermark alignment、他章との境界。
 
 ## 関連ページ
 

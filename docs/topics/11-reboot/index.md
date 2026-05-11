@@ -42,6 +42,8 @@ keywords:
 3. [Setup](setup.md): CLI と設定。`reboot` 系コマンド、warm restart enable、timer、blocking mode。
 4. [Operations](operations.md): 原因調査と失敗時の確認順。reboot-cause、LACP timeout、multi-ASIC、Warmboot Manager、SWSS warm restart。
 5. [Upgrade](upgrade.md): image lifecycle。`sonic-installer`、secure upgrade、Debian cadence、versioning、DPU independent upgrade。
+6. [内部実装 / Internals](internals.md): warm reboot で SWSS / orchagent / syncd が保持する state の構造と、SAI view switching を実装側から見る。
+7. [発展トピック / Advanced](advanced.md): express boot、multi-ASIC warmboot、SmartSwitch / DPU の独立アップグレード、他章との境界。
 
 ## 章内の境界
 

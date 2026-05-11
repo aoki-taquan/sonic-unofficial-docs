@@ -62,6 +62,7 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 3. [設定](setup.md): NAT、DHCP relay、DHCP server の CONFIG_DB / CLI / YANG リファレンス。
 4. [運用](operations.md): counter、DoS 緩和、service health の確認順序。
 5. [発展トピック](advanced.md): NTP / chrony 移行、static DNS、TWAMP Light、terminal server udev。
+6. [内部実装](internals.md): natsyncd / natorch / dhcp_relayd / kea-dhcp / chrony の責務分担と CONFIG_DB / APPL_DB / SAI への変換を実装側から見る。
 
 ## 関連ページ
 

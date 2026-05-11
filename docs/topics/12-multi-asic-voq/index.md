@@ -58,6 +58,7 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 3. [設定](setup.md): single JSON、`asic.conf`、Golden Config、module provisioning、single-ASIC fixed VOQ 設定。
 4. [運用](operations.md): aggregate VOQ counter、PMON、Entity MIB、supervisor / line card 観点の確認順。
 5. [発展トピック](advanced.md): VOQ BGP、distributed LAG、VOQ Everflow、TSA、Multi-ASIC warm reboot、各章への橋渡し。
+6. [内部実装](internals.md): Chassis DB / namespace ごとの DB の整合、system port allocation、fabric reachability の実装視点。
 
 ## 関連ページ
 
