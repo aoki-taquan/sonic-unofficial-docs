@@ -5,6 +5,7 @@ description: SSD ヘルスチェック（show platform ssdhealth + ssdutil プ�
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
+page_kind: split-hub
 monitor: evolved_beyond_hld
 sources:
 - repo: sonic-net/SONiC
@@ -38,6 +39,14 @@ related:
     本ページの記述は HLD 文書としての履歴的価値はあるが、現行コード・パスを参照する場合は ssdutil (`ssdutil/main.py`) と `sonic_storage/` 構成を確認すること。
 
 # SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）
+
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [ssdhealth-design-concepts.md](ssdhealth-design-concepts.md) — 機能の目的と二段プラグイン構造（SsdBase / SsdUtil）
+    - [ssdhealth-design-operations.md](ssdhealth-design-operations.md) — CLI / 表示モード / 設定 / 確認コマンド
+    - [ssdhealth-design-internals.md](ssdhealth-design-internals.md) — API 仕様 / Optional pmon `ssdmond` デーモン
+    - [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) — 制限事項と HLD-実装乖離（ssdutil への移行、sonic_storage 再構成）
 
 ## 概要
 

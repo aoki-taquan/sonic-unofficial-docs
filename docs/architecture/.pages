@@ -48,5 +48,13 @@ nav:
   - sonic-bulk-counter-design.md
   - sonic-trap-flow-counter-design.md
   - ssdhealth-design.md
+  - ssdhealth-design-concepts.md
+  - ssdhealth-design-operations.md
+  - ssdhealth-design-internals.md
+  - ssdhealth-design-limitations.md
   - dip-sip-ptf-validation-high-level-design.md
+  - dip-sip-ptf-validation-high-level-design-concepts.md
+  - dip-sip-ptf-validation-high-level-design-operations.md
+  - dip-sip-ptf-validation-high-level-design-internals.md
+  - dip-sip-ptf-validation-high-level-design-limitations.md
   - sonic-application-extension-infrastructure.md
