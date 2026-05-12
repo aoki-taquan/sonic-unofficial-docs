@@ -112,7 +112,7 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 | setup | ✅ 完成 (282 行) | meta |
 | operations | ✅ 完成 (186 行) | meta |
 | internals | ✅ 完成 (128 行) | meta |
-| advanced | ⚠️ プレースホルダ (79 行) | meta |
+| advanced | ✅ 完成 (110 行) | meta |
 
 <!-- /chapter-progress -->
 

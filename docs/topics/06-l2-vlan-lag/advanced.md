@@ -114,4 +114,32 @@ Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能�
 - `teamd` カスタマイズ層と Linux upstream `libteam` のバージョン差で LACP debug ログのフォーマットがずれる事例があり、PR でフォーマット安定化が進む。
 - OpenConfig transformer ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common) で VLAN / PortChannel の YANG 対応拡張が定期的に入る。設定変換の境界が拡張されるごとに `show running-configuration` の出力が変わる。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、area HLD の [switching/](../../switching/index.md) 配下のページ群で完結する。VLAN_MEMBER / PORTCHANNEL_MEMBER のテーブル遷移と portsorch / lagorch の責務分担は internals で扱う。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config vlan` / `config portchannel` 系と、`VLAN`, `VLAN_MEMBER`, `VLAN_INTERFACE`, `PORTCHANNEL`, `PORTCHANNEL_MEMBER` の [CONFIG_DB スキーマ](../../reference/config-db/index.md)、および `sonic-vlan`, `sonic-portchannel` YANG モジュールに集約。
+- **本ページ** は OpenConfig 変換、distributed VOQ LAG の制約、WoL、micro-BFD、storm control、PortChannel min-links/drain など、L2 単独で閉じない発展トピックを扱う。
+
+## トラブルシュート観点
+
+- PortChannel が up しないときは、まず `show interfaces portchannel` で member の collected/distributed 状態を確認する。LACP PDU が片方向しか流れていない場合 (一方が active/passive 設定不一致) は `teamdctl <po> state` の `runner.actor_lacpdu_info` と `runner.partner_lacpdu_info` を見比べる。
+- VLAN flooding が想定外の port に届く・届かないときは、`fdbshow` と `bcmcmd 'l2 show'` (Broadcom 系) で FDB と ASIC の MAC table を突き合わせる。`MAC_LEARN_LIMIT` 到達時は新規 MAC が flooding 扱いになる。
+- distributed VOQ chassis で `SYSTEM_LAG_TABLE` に LAG が現れない場合、`chassis_db` の Redis 接続と、各 ASIC の `bgp` docker から `redis-cli -h <supervisor>` でアクセスできるかを点検する。
+
+## 検証パスとラボ要件
+
+- LACP fast rate と member down 検出時間は、`sonic-mgmt` の `lag/test_lag_2.py` 系テストで member を意図的に shut/no-shut させ、上流 BGP が再収束するまでの時間を計測する。target は fast rate で 3 秒以内、micro-BFD 併用で 1 秒以内。
+- VLAN 大量 (4k 近く) 構成での scale 検証は、CONFIG_DB へ `VLAN|Vlan100`〜`Vlan4094` を投入し、`swssloglevel` を notice にして orchagent / vlanmgrd のレイテンシを観測する。`syncd` queue depth が異常に伸びる場合、ASIC capability の VLAN 数上限を確認する。
+- OpenConfig 変換は `gnmi_cli` で `openconfig-interfaces:interfaces` を get/set し、変換後の CONFIG_DB と round-trip 一致を確認する。`sonic-mgmt-common` の `transformer/test_*` がベースライン。
+
+## 関連ページ (追補)
+
+- [OpenConfig support for PortChannel](../../switching/openconfig-support-for-portchannel-aggregate-interface.md)
+- [VLAN interface OpenConfig YANG support](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
+- [LAG on distributed VOQ system](../../switching/lag-on-distributed-voq-system.md)
+- [Wake-on-LAN in SONiC](../../switching/wake-on-lan-in-sonic.md)
+- [05 Dual-ToR: MC-LAG / ICCP / peer link 設計](../05-dual-tor/index.md)
+- [10 gNMI / OpenConfig: 変換層の責務](../10-gnmi-openconfig/index.md)
+- [12 Multi-ASIC / VOQ: chassis 内 LAG とリモート LAG](../12-multi-asic-voq/index.md)
+
 <!-- glossary-links-injected: 9caf06a8d97f -->

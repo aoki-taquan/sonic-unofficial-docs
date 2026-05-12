@@ -123,4 +123,33 @@ DPU の PCIe / midplane / 電源 / リセットといった物理層は Platform
 - `sonic-buildimage` の SmartSwitch 関連 PR が活発で、independent DPU upgrade、graceful shutdown、reboot 順序、health monitoring など分野が広がる。
 - DASH P4 reference implementation (DASH repo) と SONiC sai 実装の bridging が継続して進む。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [SONiC DASH HLD](../../overlay/sonic-dash-hld.md), [SmartSwitch reboot HLD](../../system/smart-switch-reboot-high-level-design.md), [Independent DPU upgrade](../../system/independent-dpu-upgrade.md) で完結する。DPU / NPU の責務分担、`DASH_APPL_DB`, `SDN_APPL_DB`, `DPU_APPL_DB` の関係性は internals で詳細化済み。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `show dpu` / `show dash` 系、`DPU`, `DASH_ENI`, `DASH_VNET`, `DASH_ACL_GROUP`, `DASH_ROUTE` の [CONFIG_DB スキーマ](../../reference/config-db/index.md)、および `sonic-dash-api` の proto / gRPC interface に集約。
+- **本ページ** は DASH counter aggregation、独立 reboot 順序、VNET tunnel との優先度競合、SmartSwitch HA / flow sync など、章境界をまたぐ発展領域だけを扱う。
+
+## トラブルシュート観点
+
+- DPU が NPU から見えないときは、`show dpu status` と `DPU_STATE` テーブルの health/state、midplane ネットワーク (DPU 内部管理 IP) への ping、`/var/log/syslog` の `dpu_health` ログを点検する。midplane MAC 衝突や DHCP 失敗が原因のことが多い。
+- ENI flow が programming されないときは、SDN controller → `SDN_APPL_DB` → `DASH_APPL_DB` → DPU SAI の各段で `redis-cli -h <dpu_ip>` を使い、エントリ数の差分を確認する。proto バージョン不一致で controller の write が無視される事例あり。
+- DPU 独立 reboot 中に flow 切替が起きないときは、`dpuctl shutdown --graceful` で flow sync が完了したことを peer DPU の `DashFlowSyncState` で確認してから reboot する。
+
+## 検証パスとラボ要件
+
+- ENI scale 検証は SDN controller から 10k〜100k ENI を投入し、per-DPU の `SDN_APPL_DB` メモリ消費と DPU SAI の programming 時間を計測する。target は 100k ENI で 5 分以内、メモリ 4GB 以下。
+- flow sync 検証は active DPU を意図的にダウンさせ、peer DPU の `DashFlowSyncState` が `synced` に遷移するまでの時間と、サーバ間 connection の継続性 (TCP keep-alive で観測) を確認する。target は < 1 秒の flow takeover。
+- DASH counter export の遅延検証は、controller 側 collector で per-flow counter の到達 timestamp と DPU 内部の counter 更新 timestamp の差を取得する。`DashCounter` aggregation 粒度を 1s / 10s / 60s で比較。
+
+## 関連ページ (追補)
+
+- [SONiC DASH HLD](../../overlay/sonic-dash-hld.md)
+- [Independent DPU upgrade](../../system/independent-dpu-upgrade.md)
+- [SmartSwitch reboot HLD](../../system/smart-switch-reboot-high-level-design.md)
+- [SmartSwitch DPU graceful shutdown](../../platform/smartswitch-dpu-graceful-shutdown.md)
+- [gNOI HLD for OS APIs](../../management/gnoi-hld-for-os-apis.md)
+- [05 Dual-ToR: mux state と DPU 連携](../05-dual-tor/index.md)
+- [07 ACL / CoPP / Mirror: DPU 上の flow rule](../07-acl-copp-mirror/index.md)
+- [18 P4 / PINS: P4 pipeline の表現](../18-p4-pins/index.md)
+
 <!-- glossary-links-injected: ca666ecaafdc -->

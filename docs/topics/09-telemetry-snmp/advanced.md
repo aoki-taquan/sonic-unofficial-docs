@@ -117,4 +117,32 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - `sonic-snmpagent` で transceiver / entity / sensor 対応の拡張、SNMP v3 関連修正が継続。
 - DTel / sFlow の test plan が更新され、ASIC capability matrix が PR で明確化される傾向。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、area HLD の [system/](../../system/index.md) 配下 telemetry / SNMP ページ群、および [sFlow HLD](../../architecture/sflow-high-level-design.md) で完結する。`telemetry` docker、`snmpd` agent、sFlow / DTel agent の責務分担は internals で詳細化。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `show snmp` / `show sflow` / `config sflow` 系、`SFLOW`, `SFLOW_COLLECTOR`, `TELEMETRY`, `SNMP` の [CONFIG_DB スキーマ](../../reference/config-db/index.md)、および `sonic-sflow`, `sonic-snmp` YANG モジュールが該当。
+- **本ページ** は OTel との連携、DTel/INT、IPFIX、SNMPv3 USM/SMI などの「Streaming/Push 系への移行と従来 SNMP のレガシー併走」発展領域だけを扱う。
+
+## トラブルシュート観点
+
+- gNMI subscribe が応答しないときは、`docker exec telemetry telemetryctl status` で agent up、`/var/log/syslog` で TLS / cert エラーを確認する。`TELEMETRY|certs` の `ca_crt` パス、`gnmi.server.crt`/`key` の存在も併せて点検。
+- SNMP walk が timeout する場合、`snmpd` の view ACL 設定 (`/etc/sonic/snmp.yml`)、`SNMP_AGENT_ADDRESS_CONFIG` のリスン IP、`snmpd` プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。
+- sFlow sample が collector に届かないときは `show sflow interface` で sample rate、`config sflow polling-interval` の有効性、`SFLOW_COLLECTOR` の宛先到達性 (UDP 6343) を点検。
+
+## 検証パスとラボ要件
+
+- gNMI subscribe の性能検証は `gnmi_cli -subscribe` で 1k〜10k path を sample 並列受信し、telemetry agent の CPU/メモリと、`COUNTERS_DB` の polling 間隔への影響を計測する。
+- SNMP scale 検証は `snmpwalk -t 30 -r 3` で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。
+- DTel / sFlow の sampling 精度検証は、`pktgen` で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。
+
+## 関連ページ (追補)
+
+- [Dataplane telemetry in SONiC](../../system/dataplane-telemetry-in-sonic.md)
+- [sFlow high-level design](../../architecture/sflow-high-level-design.md)
+- [SONiC entity MIB / entity sensor MIB extension](../../system/sonic-entity-mib-and-entity-sensor-mib-extension.md)
+- [Reboot cause information via telemetry agent](../../system/reboot-cause-information-via-telemetry-agent.md)
+- [02 BGP: BMP との連携](../02-bgp/index.md)
+- [10 gNMI / OpenConfig: 変換層と subscribe path](../10-gnmi-openconfig/index.md)
+- [20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計](../20-swss-sai-redis/index.md)
+
 <!-- glossary-links-injected: fe5aa1fcc436 -->

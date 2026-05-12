@@ -114,4 +114,35 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 - DASH ACL tags は `sonic-dash-api` (proto) の更新で flow rule 表現が拡張されており、controller 側との binding が変化しやすい。
 - 802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、[AAA](../../reference/glossary.md#term-aaa) 章 ([15](../15-security-aaa/index.md)) と相互に影響する。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、area HLD の [acl-qos/](../../acl-qos/index.md) 配下の ACL / CoPP / Mirror 系ページで完結する。aclorch / coppmgrd / coppmgr / mirror orch の責務分担は internals に集約。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config acl` / `show acl` / `config copp` / `show mirror` 系、`ACL_RULE`, `ACL_TABLE`, `COPP_TRAP`, `COPP_GROUP`, `MIRROR_SESSION` の [CONFIG_DB スキーマ](../../reference/config-db/index.md) で網羅される。
+- **本ページ** は ACL counter export、CoPP policer の動的調整、ERSPAN/SPAN の境界、DASH ACL tags、P4 表現といった「ACL/CoPP/Mirror を周辺機能と結合する」発展領域だけを扱う。
+
+## トラブルシュート観点
+
+- ACL rule が ASIC に降りないときは、まず `aclshow -a` で counter の有無、`redis-cli -n 1 keys 'ACL_*'` で APPL_DB / ASIC_DB の rule 数を確認する。TCAM 不足の場合は `swss` の `syncd` ログに `SAI_STATUS_INSUFFICIENT_RESOURCES` が出る。
+- CoPP で control plane を drop しているときは、`docker exec swss coppmgr` の状態と `show copp` の rate/burst を確認する。BGP / LACP / ARP のような protocol trap が `MATCH_DROP` に分類されていると、コンソール経由でも疎通しない事象が起きる。
+- mirror session が動作しないときは、`show mirror_session` で session の active/inactive、`MIRROR_SESSION` テーブルの GRE/ERSPAN 設定、宛先 next-hop の到達性を点検する。VXLAN 経由 mirror は dst VTEP の MAC 解決失敗で停止しやすい。
+
+## 検証パスとラボ要件
+
+- ACL scale 検証は `sonic-mgmt` の `acl/test_acl.py` を baseline に、4k〜16k rule を投入して TCAM 使用率と orchagent レイテンシを計測する。ASIC capability (TCAM 段数、stateful 数) を事前に `saictl query` で取得しておく。
+- CoPP 検証は `iperf3` や `hping3` で各 trap rate の限界を計測する。target rate は `COPP_GROUP` の `cir/cbs` 設定通りに収まるべきで、超過時は `policer drop counter` が増えることを確認。
+- Mirror session の throughput / drop は `ostinato` / `pktgen` で帯域を上げ、`show mirror_session` の active 状態と GRE encap オーバーヘッドを考慮した宛先側受信量を比較する。
+
+## 関連ページ (追補)
+
+- [ACL in SONiC](../../acl-qos/acl-in-sonic.md)
+- [ACL support in SONiC](../../acl-qos/acl-support-in-sonic.md)
+- [Everflow test plan](../../acl-qos/everflow-test-plan.md)
+- [SONiC port mirroring HLD](../../acl-qos/sonic-port-mirroring-hld.md)
+- [CoPP manager redesign test plan](../../acl-qos/copp-manager-redesign-test-plan.md)
+- [DASH ACL tags](../../acl-qos/dash-acl-tags.md)
+- [02 BGP: CoPP の BGP trap rate チューニング](../02-bgp/index.md)
+- [13 DASH / SmartSwitch: DPU 上の ACL flow rule](../13-dash-smartswitch/index.md)
+- [15 Security / AAA: 802.1X / MAB / RADIUS の境界](../15-security-aaa/index.md)
+- [18 P4 / PINS: P4 表現での ACL](../18-p4-pins/index.md)
+
 <!-- glossary-links-injected: 4d9f23481e68 -->

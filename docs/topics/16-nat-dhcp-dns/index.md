@@ -107,7 +107,7 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 | setup | ✅ 完成 (225 行) | meta |
 | operations | ✅ 完成 (215 行) | meta |
 | internals | ✅ 完成 (127 行) | meta |
-| advanced | ⚠️ プレースホルダ (90 行) | meta |
+| advanced | ✅ 完成 (120 行) | meta |
 
 <!-- /chapter-progress -->
 

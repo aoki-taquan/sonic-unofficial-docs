@@ -97,7 +97,7 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 | setup | ✅ 完成 (268 行) | meta |
 | operations | ✅ 完成 (236 行) | meta |
 | internals | ✅ 完成 (155 行) | meta |
-| advanced | ⚠️ プレースホルダ (89 行) | meta |
+| advanced | ✅ 完成 (118 行) | meta |
 
 <!-- /chapter-progress -->
 
