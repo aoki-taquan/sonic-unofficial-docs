@@ -34,7 +34,15 @@ related:
 | switching | 1 |
 | **合計** | **42** |
 
-`architecture` と `system` に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。Indexer 段で除外ルールを足すか、v1.1 で個別精査するかは未決定。
+`architecture` と `system` に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。**2026-05-12 に分類整理を完了**: 全 42 件を `meta/backlog/README.md` で **drop 27 件 / low-priority 11 件 / defer 4 件** に分類。
+
+| カテゴリ | 件数 | 処理方針 |
+|----------|------|----------|
+| drop（Indexer 除外推奨） | 27 | リリースノート 13 件 + 章節断片 9 件 + ビルド系 3 件 + テンプレ 1 件 + 重複 1 件 |
+| low-priority（v1.1 検討） | 11 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 3 件 + 第三者拡張 1 件 |
+| defer（既存ページに統合済） | 4 | acl flow-charts / vendor mapping / egress ACL bug fix / ecmp-calculator stub |
+
+詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。v1.1 サイクル開始時に Indexer 除外フィルタを `meta/_gen_backlog.py` に組み込み、drop / defer 計 31 件を `meta/backlog/_archived/` へ移動予定（既存 archived 344 件と同列）。
 
 ## 2. discrepancy-found ページの monitor 別分布
 
