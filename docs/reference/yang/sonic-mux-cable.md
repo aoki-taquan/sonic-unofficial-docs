@@ -99,6 +99,18 @@ module: sonic-mux-cable
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MUX_CABLE`
 - CLI: `config mux`, `show mux`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-tunnel`](sonic-tunnel.md)
+- [`sonic-nvgre-tunnel`](sonic-nvgre-tunnel.md)
+- [`sonic-srv6`](sonic-srv6.md)
+- [`sonic-vnet`](sonic-vnet.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

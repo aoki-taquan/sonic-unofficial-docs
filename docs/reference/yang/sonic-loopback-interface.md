@@ -104,6 +104,18 @@ module: sonic-loopback-interface
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `LOOPBACK_INTERFACE`
 - CLI: `config loopback`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-vlan-sub-interface`](sonic-vlan-sub-interface.md)
+- [`sonic-port`](sonic-port.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-mgmt_vrf`](sonic-mgmt_vrf.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

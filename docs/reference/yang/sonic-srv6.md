@@ -103,6 +103,18 @@ module: sonic-srv6
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `SRV6_MY_LOCATORS`, `SRV6_MY_SIDS`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-mux-cable`](sonic-mux-cable.md)
+- [`sonic-nvgre-tunnel`](sonic-nvgre-tunnel.md)
+- [`sonic-tunnel`](sonic-tunnel.md)
+- [`sonic-vnet`](sonic-vnet.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

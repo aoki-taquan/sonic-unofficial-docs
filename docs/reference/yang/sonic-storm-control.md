@@ -91,6 +91,18 @@ module: sonic-storm-control
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_STORM_CONTROL`
 - CLI: `config interface storm-control`, `show storm-control`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-mclag`](sonic-mclag.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-spanning-tree`](sonic-spanning-tree.md)
+- [`sonic-vlan`](sonic-vlan.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

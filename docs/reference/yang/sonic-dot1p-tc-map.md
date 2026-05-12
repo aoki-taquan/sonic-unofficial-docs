@@ -92,6 +92,18 @@ module: sonic-dot1p-tc-map
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `DOT1P_TO_TC_MAP`
 - CLI: `config qos`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port-qos-map`](sonic-port-qos-map.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+- [`sonic-buffer-profile`](sonic-buffer-profile.md)
+- [`sonic-buffer-queue`](sonic-buffer-queue.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

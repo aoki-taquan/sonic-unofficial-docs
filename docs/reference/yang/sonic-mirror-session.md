@@ -105,6 +105,17 @@ module: sonic-mirror-session
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MIRROR_SESSION`
 - CLI: `config mirror_session`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-copp`](sonic-copp.md)
+- [`sonic-debug-counter`](sonic-debug-counter.md)
+- [`sonic-pbh`](sonic-pbh.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

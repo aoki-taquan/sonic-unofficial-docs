@@ -126,6 +126,18 @@ module: sonic-static-route
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_ROUTE`
 - CLI: `config route`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-route-common`](sonic-route-common.md)
+- [`sonic-route-map`](sonic-route-map.md)
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-interface`](sonic-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

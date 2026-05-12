@@ -181,6 +181,18 @@ module: sonic-spanning-tree
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `STP`, `STP_VLAN`, `STP_VLAN_PORT`, `STP_PORT`, `STP_MST`, `STP_MST_INST`, `STP_MST_PORT`
 - CLI: `config spanning-tree`, `show spanning-tree`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vlan`](sonic-vlan.md)
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-mclag`](sonic-mclag.md)
+- [`sonic-storm-control`](sonic-storm-control.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

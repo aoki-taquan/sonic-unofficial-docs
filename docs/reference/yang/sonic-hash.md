@@ -93,6 +93,16 @@ module: sonic-hash
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `SWITCH_HASH|GLOBAL`
 - CLI: `config switch-hash`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-fine-grained-ecmp`](sonic-fine-grained-ecmp.md)
+- [`sonic-route-common`](sonic-route-common.md)
+- [`sonic-trimming`](sonic-trimming.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

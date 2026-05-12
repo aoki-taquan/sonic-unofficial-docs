@@ -120,6 +120,18 @@ module: sonic-lldp
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `LLDP_PORT`
 - CLI: `show lldp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-banner`](sonic-banner.md)
+- [`sonic-device_metadata`](sonic-device_metadata.md)
+- [`sonic-feature`](sonic-feature.md)
+- [`sonic-fips`](sonic-fips.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -120,6 +120,18 @@ module: sonic-vxlan
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VXLAN_EVPN_NVO`
 - CLI: `config vxlan`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vlan`](sonic-vlan.md)
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-mux-cable`](sonic-mux-cable.md)
+- [`sonic-nvgre-tunnel`](sonic-nvgre-tunnel.md)
+- [`sonic-srv6`](sonic-srv6.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

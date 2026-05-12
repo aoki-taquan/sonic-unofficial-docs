@@ -147,6 +147,18 @@ module: sonic-portchannel
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL_MEMBER`
 - CLI: `config portchannel`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-breakout_cfg`](sonic-breakout_cfg.md)
+- [`sonic-fabric-port`](sonic-fabric-port.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-loopback-interface`](sonic-loopback-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

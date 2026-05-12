@@ -116,6 +116,18 @@ module: sonic-debug-counter
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEBUG_COUNTER`, `DEBUG_COUNTER_DROP_REASON`, `DEBUG_DROP_MONITOR`
 - CLI: `config debug-counter`, `show debug-counter`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-flex_counter`](sonic-flex_counter.md)
+- [`sonic-copp`](sonic-copp.md)
+- [`sonic-mirror-session`](sonic-mirror-session.md)
+- [`sonic-pbh`](sonic-pbh.md)
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

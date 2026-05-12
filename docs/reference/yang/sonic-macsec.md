@@ -109,6 +109,16 @@ module: sonic-macsec
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MACSEC_PROFILE|<name>`
 - CLI: `config macsec`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-passw-hardening`](sonic-passw-hardening.md)
+- [`sonic-system-aaa`](sonic-system-aaa.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

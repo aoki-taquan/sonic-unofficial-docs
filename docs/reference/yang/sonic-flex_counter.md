@@ -153,6 +153,18 @@ module: sonic-flex_counter
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLEX_COUNTER_TABLE|<GROUP>`, `FLOW_COUNTER_ROUTE_PATTERN`
 - CLI: `counterpoll <group> {enable|disable|interval <ms>}`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-debug-counter`](sonic-debug-counter.md)
+- [`sonic-pfcwd`](sonic-pfcwd.md)
+- [`sonic-port`](sonic-port.md)
+- [`sonic-queue`](sonic-queue.md)
+- [`sonic-srv6`](sonic-srv6.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

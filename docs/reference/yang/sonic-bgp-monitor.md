@@ -99,6 +99,18 @@ module: sonic-bgp-monitor
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_MONITORS`
 - CLI: なし（`bgpcfgd` が [config_db.json](../../reference/glossary.md#term-config_db.json) から読み取り [FRR](../../reference/glossary.md#term-frr) 設定に反映）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-bgp-neighbor`](sonic-bgp-neighbor.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

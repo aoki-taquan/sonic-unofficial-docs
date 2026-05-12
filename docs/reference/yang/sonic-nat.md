@@ -173,6 +173,18 @@ module: sonic-nat
 - CONFIG_DB: `NAT_BINDINGS`
 - CLI: `config nat`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-dhcp-server`](sonic-dhcp-server.md)
+- [`sonic-dns`](sonic-dns.md)
+- [`sonic-neigh`](sonic-neigh.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

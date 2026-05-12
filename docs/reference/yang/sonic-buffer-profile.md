@@ -100,6 +100,18 @@ module: sonic-buffer-profile
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PROFILE`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-queue`](sonic-buffer-queue.md)
+- [`sonic-dot1p-tc-map`](sonic-dot1p-tc-map.md)
+- [`sonic-dscp-tc-map`](sonic-dscp-tc-map.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

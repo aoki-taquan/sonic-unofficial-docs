@@ -111,6 +111,18 @@ module: sonic-bgp-aggregate-address
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_AGGREGATE_ADDRESS`
 - CLI: `config bgp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-bgp-neighbor`](sonic-bgp-neighbor.md)
+- [`sonic-route-map`](sonic-route-map.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

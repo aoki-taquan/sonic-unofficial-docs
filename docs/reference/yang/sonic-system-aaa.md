@@ -119,6 +119,18 @@ module: sonic-system-aaa
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `RADIUS`
 - CLI: `config aaa`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-system-radius`](sonic-system-radius.md)
+- [`sonic-system-tacacs`](sonic-system-tacacs.md)
+- [`sonic-system-ldap`](sonic-system-ldap.md)
+- [`sonic-banner`](sonic-banner.md)
+- [`sonic-device_metadata`](sonic-device_metadata.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

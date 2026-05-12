@@ -94,6 +94,18 @@ docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-add
 
 `status=enabled` のとき、`BGP_AGGREGATE_ADDRESS` の BBR 連動ロジック（`suppress-map` の動的切替）が `bgpcfgd` の Jinja テンプレートで生成される。`disabled` に切り替えても `aggregate-address` 設定自体は残るため、[FRR](../../reference/glossary.md#term-frr) 側の `running-config` 差分で「BBR 機能のみが OFF」を確認するのがポイント。
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+- [`sonic-bgp-neighbor`](sonic-bgp-neighbor.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

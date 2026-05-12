@@ -117,6 +117,18 @@ module: sonic-mclag
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MCLAG_UNIQUE_IP`
 - CLI: `config mclag`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-vlan`](sonic-vlan.md)
+- [`sonic-spanning-tree`](sonic-spanning-tree.md)
+- [`sonic-storm-control`](sonic-storm-control.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -100,6 +100,18 @@ module: sonic-kdump
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `KDUMP|config`
 - CLI: `config kdump`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-banner`](sonic-banner.md)
+- [`sonic-device_metadata`](sonic-device_metadata.md)
+- [`sonic-feature`](sonic-feature.md)
+- [`sonic-fips`](sonic-fips.md)
+- [`sonic-lldp`](sonic-lldp.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
