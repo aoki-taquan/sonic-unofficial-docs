@@ -29873,6 +29873,12 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 <li><code>max_syslogins</code> を効かせたのに無制限のまま: <code>/etc/security/limits.conf</code> に該当行が出ているか、PAM がそれを読む構成（<code>session required pam_limits.so</code>）になっているかを確認。</li>
 <li><code>inactivity_timeout</code> が SSH に効かない: <code>TMOUT</code> は login shell + interactive shell でのみ効く。<code>bash -c "command"</code> のような非対話起動では効かない。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># SSH server 設定確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>ssh
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>sshd<span class="w"> </span>-T<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SSH_SERVER|POLICIES&#39;</span>
+</span></code></pre></div>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

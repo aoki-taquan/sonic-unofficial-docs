@@ -29485,6 +29485,12 @@
 <li><code>config reload</code> 時に長時間止まる → GCU <code>apply-patch</code> への置き換えを検討</li>
 <li>show techsupport が膨大 → 個別 <code>show</code> コマンド + journalctl で特定コンテナ単位に絞る</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
+</span></code></pre></div>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - User Manual の現行版（章構成変更）と HLD 集合との整合確認

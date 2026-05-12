@@ -29549,6 +29549,12 @@
 <li>400 / validation 失敗 → mgmt-framework ログで YANG エラー詳細を確認</li>
 <li>gNMI subscription が来ない → STATE_DB へ更新が出ているか、subscription path が schema 上 valid か</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
+</span></code></pre></div>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-mgmt-framework / sonic-mgmt-common の現行 master 取り込み確認

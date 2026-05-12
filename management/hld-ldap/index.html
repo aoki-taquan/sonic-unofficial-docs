@@ -29801,6 +29801,13 @@
 <li>認証は通るが <code>sudo</code> で失敗 → group 解決失敗の可能性。<code>getent group &lt;gid&gt;</code> で確認。</li>
 <li>bind 失敗 → <code>LDAP_TABLE.bind_dn</code> / <code>bind_password</code> と <code>base_dn</code> の対応、サーバ FQDN 解決を確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># LDAP 認証設定と疎通確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>aaa
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ldapsearch<span class="w"> </span>-x<span class="w"> </span>-H<span class="w"> </span>ldap://&lt;server&gt;<span class="w"> </span>-b<span class="w"> </span>&lt;base-dn&gt;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>cat<span class="w"> </span>/etc/nslcd.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>nslcd<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span></code></pre></div>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

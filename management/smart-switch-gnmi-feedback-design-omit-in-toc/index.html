@@ -29808,6 +29808,13 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <li><code>version_id</code> が更新されない: 非子オブジェクトかどうかを確認。子は <code>result</code> のみで <code>version_id</code> は親側に出る。</li>
 <li>Subscribe が初回データを返さない: gNMI Server の subscribe 登録時のスナップショット取得処理を確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># gNOI/gNSI/gNMI クライアント疎通と server 状態</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnmi_cli<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>-capabilities<span class="w"> </span>-insecure
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>gnmi<span class="w"> </span>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;telemetry|gnmi&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;GNMI|certs&#39;</span>
+</span></code></pre></div>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- diff-admonition -->
 <div class="admonition diff">

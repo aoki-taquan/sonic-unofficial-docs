@@ -29897,6 +29897,11 @@ reasoning: transformer の attribute mapping ルールの根拠。
 <li>subinterface index &gt; 0 で GET → 空配列: 仕様通り、<code>empty</code> を返す<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>重複 IP エラー: 別の interface に既に存在している。validation で reject される</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># OpenConfig YANG path / gNMI 確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>gnmi_cli<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>-get<span class="w"> </span><span class="s1">&#39;openconfig-interfaces:interfaces&#39;</span><span class="w"> </span>-insecure
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.INTERFACE
+</span></code></pre></div>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-mgmt-common 内の transformer が openconfig-interfaces / -if-ethernet / -if-ip を実装しているか

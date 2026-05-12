@@ -29818,6 +29818,13 @@
 <li>パスワードログイン検証: <code>sshpass -p '&lt;pw&gt;' ssh &lt;user&gt;@DUT whoami</code></li>
 <li>TACACS+ サーバ側で <code>tac_plus -G</code> の foreground 起動 + tcpdump で UDP/TCP 49 を観測</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># TACACS+ 認証状態確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>tacacs
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>aaa
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;TACPLUS|global&#39;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>hostcfgd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>tacacs<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
 <p>テストプランが前提とする TACACS+ 認証経路の各実装を <code>hostcfgd</code> で確認した。</p>

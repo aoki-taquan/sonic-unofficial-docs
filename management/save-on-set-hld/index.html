@@ -29852,6 +29852,12 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <li>フラグは渡っているのに保存されない場合、<code>sonic-host-services</code> の DBUS エンドポイント (<code>SaveStartupConfig</code> 相当) のログを確認する。v0.3 以降はエラーが返ってくれば gNMI クライアントへ伝播する設計になっているはずなので、Set のレスポンスを見ること。</li>
 <li>性能劣化が見られる場合、<code>save_on_set</code> を一時的に無効化（telemetry 再起動が必要）して切り分ける。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
+</span></code></pre></div>
 <h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Set ごとのディスク書き込み</strong>: 1 Set ごとに ConfigDB を <code>/etc/sonic/config_db.json</code> に保存するため、大量の Set を高頻度で投入すると I/O コストが上がる。バルクで設定する運用ではこの機能を無効化したほうが望ましい場合がある。</li>

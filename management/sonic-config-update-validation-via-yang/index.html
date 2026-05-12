@@ -29880,6 +29880,12 @@ reasoning: 緊急時の検証バイパスフラグの根拠。
 <li>性能劣化: 性能要件のあるパスで GCU が走っていないか確認。warm/fast reboot は ad-hoc が望ましい<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>バイパスが効かない: <code>DEVICE_METADATA.localhost.yang_config_validation</code> の値を直接 redis で確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># YANG validation 状態</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span>&gt;<span class="w"> </span>/tmp/cfg.json
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-cfggen<span class="w"> </span>-j<span class="w"> </span>/tmp/cfg.json<span class="w"> </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>yangcli<span class="w"> </span>--module<span class="o">=</span>sonic-port<span class="w"> </span>--<span class="w"> </span><span class="s1">&#39;xget /sonic-port:sonic-port&#39;</span>
+</span></code></pre></div>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: a0345c62ade3 -->
 

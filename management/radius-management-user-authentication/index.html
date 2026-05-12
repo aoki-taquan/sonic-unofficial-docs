@@ -29802,6 +29802,13 @@ reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachabl
 <li>認証失敗が続く → <code>passkey</code> 確認、priority 順番確認、<code>unreachable</code> 扱いになっていないかログ確認</li>
 <li>privilege が変わらない → <code>User Privilege Table</code> で RADIUS 値→Linux role マッピングを確認</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># RADIUS 認証設定確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>radius
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>aaa
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;RADIUS|global&#39;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>cat<span class="w"> </span>/etc/pam.d/common-auth<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - pam_radius と nss-mapper の現行 sonic-buildimage 取り込み確認

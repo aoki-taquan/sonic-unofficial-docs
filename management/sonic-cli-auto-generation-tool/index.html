@@ -29702,6 +29702,12 @@
 <li><code>sonic-cli-gen generate config &lt;module&gt;</code> を実行し、生成 plugin の import エラーは <code>python3 -c "import config.plugins.auto.&lt;module&gt;_yang"</code> で確認</li>
 <li><code>docker exec sonic-package-manager sonic-package-manager list</code> — Application Extension の有効化状況</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 自動生成 CLI の出力確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-cli
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>running-configuration<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ls<span class="w"> </span>/usr/local/lib/python*/dist-packages/show/plugins
+</span></code></pre></div>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

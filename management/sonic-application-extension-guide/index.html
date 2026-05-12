@@ -29662,6 +29662,12 @@
 <li>CLI plugin が <code>show</code> から見えない → plugin の <code>register</code> 関数が呼ばれているか、配置パスが <code>dockers/docker-xxx/cli/</code> 配下になっているかを確認。</li>
 <li>アップグレードで設定が消える → manifest の volume 宣言で永続化対象を明示しているかを確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Application Extension パッケージ状態</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-package-manager<span class="w"> </span>list
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>&lt;pkg-name&gt;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.Names}}   {{.Status}}&#39;</span>
+</span></code></pre></div>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 20dbc11976b6 -->
 

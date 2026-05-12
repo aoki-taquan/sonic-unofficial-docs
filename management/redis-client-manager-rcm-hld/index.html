@@ -29622,6 +29622,12 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 <li>pool 枯渇でレスポンス遅延 → <code>DBStats</code> の go-redis pool stats（timeouts / waits）を確認</li>
 <li>connection refused がログ → init での ping 失敗、Redis 起動順を確認</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Redis Client Manager 状態</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>redis-cli<span class="w"> </span>ping
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>redis-cli<span class="w"> </span>client<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>redis-cli<span class="w"> </span>info<span class="w"> </span>clients
+</span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/20-swss-sai-redis/">Topics: SWSS / SAI / Redis</a></li>
