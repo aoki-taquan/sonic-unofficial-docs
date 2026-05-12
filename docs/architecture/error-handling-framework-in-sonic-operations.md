@@ -20,6 +20,7 @@ related:
   - clear
   yang: []
   _no_yang: true
+  _no_related_cdb: true
 ---
 
 # Error Handling Framework 設定・運用

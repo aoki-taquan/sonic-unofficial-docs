@@ -1,6 +1,7 @@
 ---
 title: Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module）
-description: Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module） — SONiC モジュラー chassis では、各 line card（LC）が 独立した SONiC インスタンスとして動作 する。
+description: Chassis Line Card 自動プロビジョニング（sonic-provisiond / provision_module） — SONiC
+  モジュラー chassis では、各 line card（LC）が 独立した SONiC インスタンスとして動作 する。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,11 +15,18 @@ related:
   - MID_PLANE_BRIDGE
   - DPU
   - VOQ_INBAND_INTERFACE
-  cli: []
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  cli:
+  - show interfaces
+  - show ip
+  - config syslog
   yang:
   - sonic-chassis-module
   - sonic-device_metadata
   - sonic-system-defaults
+  - sonic-syslog
   _no_related_cli: true
 ---
 

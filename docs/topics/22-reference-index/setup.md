@@ -1,6 +1,7 @@
 ---
 title: 設定
-description: 設定 — リファレンス索引章での「設定」は、reference 索引そのものを生成・更新するための meta 設定を扱う。読者が CLI / CONFIG_DB / YANG を辿るための frontmatter スキーマ、related ブロックの書き方、自動生成スクリプトの入口を整理する。
+description: 設定 — リファレンス索引章での「設定」は、reference 索引そのものを生成・更新するための meta 設定を扱う。読者が CLI
+  / CONFIG_DB / YANG を辿るための frontmatter スキーマ、related ブロックの書き方、自動生成スクリプトの入口を整理する。
 area: topics
 verification: meta
 last_verified: 2026-05-12
@@ -23,6 +24,7 @@ related:
   config_db: []
   yang: []
   _no_related_cli: true
+  _no_related_cdb: true
 ---
 
 # 設定

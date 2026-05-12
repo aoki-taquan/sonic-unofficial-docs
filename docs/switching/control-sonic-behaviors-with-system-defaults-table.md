@@ -1,6 +1,7 @@
 ---
 title: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約
-description: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約 — SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が CONFIG_DB の DEVICE_METADATA|localhost に蓄積されてきた。
+description: SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約 — SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が
+  CONFIG_DB の DEVICE_METADATA|localhost に蓄積されてきた。
 area: switching
 verification: code-verified
 last_verified: 2026-05-11
@@ -12,9 +13,18 @@ related:
   config_db:
   - SYSTEM_DEFAULTS
   - DEVICE_METADATA
-  cli: []
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - PORT
+  - PORTCHANNEL
+  cli:
+  - show interfaces
+  - show ip
+  - config syslog
   yang:
   - sonic-system-defaults
+  - sonic-syslog
   _no_related_cli: true
 ---
 
