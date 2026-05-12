@@ -8555,6 +8555,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dipsip-ptf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DIP/SIP PTF 検証の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29710,6 +29721,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dipsip-ptf_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DIP/SIP PTF 検証の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30089,19 +30111,27 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 </div>
 <!-- /diff-admonition -->
 
+<h3 id="dipsip-ptf_1">コマンド例: DIP/SIP PTF 検証の確認<a class="headerlink" href="#dipsip-ptf_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># PTF テスト走行ログとシグネチャ照合</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>ptf<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>--no-pager
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># 該当インタフェースで受信したパケットを ringbuffer dump</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-nei<span class="w"> </span>Ethernet0<span class="w"> </span>-c<span class="w"> </span><span class="m">30</span><span class="w"> </span>-w<span class="w"> </span>/tmp/dipsip.pcap
+</span></code></pre></div>
 <h2 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># PTF テストイメージとトポロジ</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>ls<span class="w"> </span>.cache/sonic-sources/sonic-mgmt/ansible/group_vars/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ptf
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># PTF runner の起動例 (sonic-mgmt 配下)</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nb">cd</span><span class="w"> </span>.cache/sonic-sources/sonic-mgmt/tests<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span>pytest<span class="w"> </span>--inventory<span class="o">=</span>../ansible/veos<span class="w"> </span>--testbed<span class="o">=</span>vms-kvm-t0<span class="w"> </span>--testbed_file<span class="o">=</span>../ansible/testbed.yaml<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">         </span>dip_sip/test_dip_sip.py<span class="w"> </span>--collect-only
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># DUT 側 ACL / mirror セッション (DIP/SIP 検査が依存する場合)</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>show<span class="w"> </span>acl<span class="w"> </span>table
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>show<span class="w"> </span>mirror_session
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># PTF テストイメージとトポロジ</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ls<span class="w"> </span>.cache/sonic-sources/sonic-mgmt/ansible/group_vars/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ptf
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># PTF runner の起動例 (sonic-mgmt 配下)</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="nb">cd</span><span class="w"> </span>.cache/sonic-sources/sonic-mgmt/tests<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span>pytest<span class="w"> </span>--inventory<span class="o">=</span>../ansible/veos<span class="w"> </span>--testbed<span class="o">=</span>vms-kvm-t0<span class="w"> </span>--testbed_file<span class="o">=</span>../ansible/testbed.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">         </span>dip_sip/test_dip_sip.py<span class="w"> </span>--collect-only
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># DUT 側 ACL / mirror セッション (DIP/SIP 検査が依存する場合)</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>show<span class="w"> </span>acl<span class="w"> </span>table
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>show<span class="w"> </span>mirror_session
 </span></code></pre></div>
 <h2 id="_12">トラブルシュート<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>

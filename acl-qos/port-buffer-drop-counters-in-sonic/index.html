@@ -12008,6 +12008,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-buffer-drop-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Port buffer drop counter 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29346,6 +29363,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-buffer-drop-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Port buffer drop counter 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29551,6 +29585,15 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 <li>drop count が 0 のまま: <code>counterpoll show</code> で enable 状態か確認</li>
 <li>値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮</li>
 </ul>
+<h3 id="port-buffer-drop-counter">コマンド例: Port buffer drop counter 確認<a class="headerlink" href="#port-buffer-drop-counter" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># buffer-drop counter の polling と現在値</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>counterpoll<span class="w"> </span>port-buffer-drop<span class="w"> </span>show
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># COUNTERS_DB の BUFFER_DROP 系キー</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;*BUFFER_DROP*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
 <h2 id="_5">関連トピック<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer</a></li>

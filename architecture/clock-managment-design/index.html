@@ -7175,6 +7175,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clock-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Clock management の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29546,6 +29563,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clock-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Clock management の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29761,6 +29795,16 @@ reasoning: 「NTP 有効時に timezone は OK / date は拒否」という分�
 <li>timezone が再起動で戻ってしまう場合、<code>DEVICE_METADATA|localhost.timezone</code> が永続化されているか確認</li>
 <li>ログのタイムスタンプがおかしい場合、<code>rsyslog</code> 再起動が走ったかを <code>journalctl -u rsyslog</code> で確認</li>
 </ul>
+<h3 id="clock-management">コマンド例: Clock management の確認<a class="headerlink" href="#clock-management" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># システム時刻 / NTP / PTP の状態を確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ntp
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>timedatectl<span class="w"> </span>status
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;NTP_SERVER|&lt;ip&gt;&#39;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># chrony / ntpd ログ</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>chronyd<span class="w"> </span>-n<span class="w"> </span><span class="m">50</span>
+</span></code></pre></div>
 <h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../../reference/cli/show-clock/">show clock</a> / <a href="../../reference/cli/config-clock/">config clock</a> / <a href="../../reference/cli/config-ntp/">config ntp</a></li>

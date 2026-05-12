@@ -12276,6 +12276,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wred-ecn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: WRED / ECN 統計確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29490,6 +29507,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wred-ecn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: WRED / ECN 統計確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29748,6 +29782,14 @@
 <li>syslog エラー → 全カウンタ非対応グループを enable した場合の仕様</li>
 <li><code>show interfaces counters detailed</code> に WRED 行が出ない → <code>WRED_ECN_PORT</code> が disable / capability false</li>
 </ul>
+<h3 id="wred-ecn">コマンド例: WRED / ECN 統計確認<a class="headerlink" href="#wred-ecn" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># WRED profile と queue ごとの ECN マーク / drop 数</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>queue<span class="w"> </span>counters
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WRED_PROFILE|*&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
 <h2 id="_8">関連トピック<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer</a></li>

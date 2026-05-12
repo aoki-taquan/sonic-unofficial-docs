@@ -7808,6 +7808,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv6-relay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DHCPv6 relay の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29479,6 +29496,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv6-relay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DHCPv6 relay の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29691,6 +29725,16 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 <li><code>sonic-db-cli CONFIG_DB hgetall "DHCP_RELAY|&lt;vlan&gt;"</code> — <code>dhcpv6_servers</code> / <code>rfc6939_support</code> 設定確認</li>
 <li><code>tcpdump -ni Vlan1000 'udp port 547'</code> — Relay-Forward/Reply を直接観測</li>
 </ul>
+<h3 id="dhcpv6-relay">コマンド例: DHCPv6 relay の確認<a class="headerlink" href="#dhcpv6-relay" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># DHCPv6 relay 設定と統計の確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>dhcp6relay_counters<span class="w"> </span>interface
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DHCP_RELAY|*&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DHCPv6_COUNTER_TABLE|*&#39;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># dhcp-relay container のログ</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>docker<span class="w"> </span>logs<span class="w"> </span>dhcp_relay<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span></code></pre></div>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>

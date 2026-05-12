@@ -12142,6 +12142,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#watermark-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Watermark counter 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29390,6 +29407,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#watermark-counter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Watermark counter 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29698,6 +29732,14 @@ reasoning: 3 系統 (PERIODIC / USER / PERSISTENT) を分離する目的の根�
 <li>PG OID と物理 port の対応不明: <code>COUNTERS_PG_PORT_MAP</code> / <code>COUNTERS_PG_INDEX_MAP</code> を redis から</li>
 <li><code>clear</code> で他人の観測値が消えた: 仕様。sudo を要求しているのもこのため</li>
 </ul>
+<h3 id="watermark-counter">コマンド例: Watermark counter 確認<a class="headerlink" href="#watermark-counter" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Watermark の polling 有効化と現在値</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll<span class="w"> </span>watermark<span class="w"> </span>show
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>queue<span class="w"> </span>persistent-watermark
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>priority-group<span class="w"> </span>persistent-watermark<span class="w"> </span>headroom
+</span></code></pre></div>
 <h2 id="_3">関連トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer</a></li>

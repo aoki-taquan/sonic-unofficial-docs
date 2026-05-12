@@ -15947,6 +15947,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv4-relay-giaddr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DHCPv4 relay giaddr 指定確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv4-relay-giaddr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DHCPv4 relay giaddr 指定確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29607,6 +29635,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv4-relay-giaddr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DHCPv4 relay giaddr 指定確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhcpv4-relay-giaddr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: DHCPv4 relay giaddr 指定確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29887,6 +29943,22 @@ reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) �
 <li><code>config interface ip add ... --secondary</code> が拒否される: primary の IP が同 VLAN にまだ無い可能性。CLI 側で「primary が無いと secondary を入れられない」一貫性チェックがあると HLD は記述している<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>大量の secondary を入れたが反映されない: <code>docker-dhcp-relay</code> のサプライザード設定再生成（<code>systemctl restart dhcp_relay</code> 等）が必要なケースがある。</li>
 </ul>
+<h3 id="dhcpv4-relay-giaddr">コマンド例: DHCPv4 relay giaddr 指定確認<a class="headerlink" href="#dhcpv4-relay-giaddr" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># DHCPv4 relay の giaddr 指定と counter</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>helper
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DHCP_RELAY|Vlan1000&#39;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>dhcp_relay<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-30
+</span></code></pre></div>
+<h3 id="dhcpv4-relay-giaddr_1">コマンド例: DHCPv4 relay giaddr 指定確認<a class="headerlink" href="#dhcpv4-relay-giaddr_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># DHCPv4 relay の giaddr 指定と counter</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>helper
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DHCP_RELAY|Vlan1000&#39;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>dhcp_relay<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-30
+</span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

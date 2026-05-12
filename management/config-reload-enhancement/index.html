@@ -16199,6 +16199,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: config reload 動作確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: config reload 動作確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29585,6 +29613,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: config reload 動作確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-reload_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: config reload 動作確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29881,6 +29937,22 @@ reasoning: has_timer→delayed のスキーマ変更と PortInitDone 駆動の�
 <li>warm reboot がいつまでも完了しない: 全 delayed サービスの起動を待つ拡張により、待ちが長くなっている可能性<sup id="fnref28:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> のログで未起動サービスを特定する。</li>
 <li><a href="../../reference/glossary/#term-syncd">syncd</a> の SDK タイムアウトログ（30 秒超）が出る: 本 HLD はこのログ自体を <code>config reload</code> の同時起動による CPU 競合のせいと指摘している<sup id="fnref29:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機構が有効なら起動順分散により解消が期待される。解消していないならクリティカルサービス自体（swss/syncd/bgp）の競合が残っている可能性。</li>
 </ul>
+<h3 id="config-reload">コマンド例: config reload 動作確認<a class="headerlink" href="#config-reload" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># config reload の実行ログとサービス再起動状況</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y<span class="w"> </span>-f
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>config-setup<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>--no-pager
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>services
+</span></code></pre></div>
+<h3 id="config-reload_1">コマンド例: config reload 動作確認<a class="headerlink" href="#config-reload_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># config reload の実行ログとサービス再起動状況</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y<span class="w"> </span>-f
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>config-setup<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>--no-pager
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>show<span class="w"> </span>services
+</span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 50471caccd14 -->
 

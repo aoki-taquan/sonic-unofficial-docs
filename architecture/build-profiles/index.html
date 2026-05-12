@@ -7396,6 +7396,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#build-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Build profile 適用状態の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-profile_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Build profile 適用状態の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29677,6 +29699,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#build-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Build profile 適用状態の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-profile_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Build profile 適用状態の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29956,6 +30000,22 @@ reasoning: 取り込み順位と後方互換性の根拠。
 </div>
 <!-- /diff-admonition -->
 
+<h3 id="build-profile">コマンド例: Build profile 適用状態の確認<a class="headerlink" href="#build-profile" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+</span></code></pre></div>
+<h3 id="build-profile_1">コマンド例: Build profile 適用状態の確認<a class="headerlink" href="#build-profile_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+</span></code></pre></div>
 <h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/">Reference 索引</a></li>

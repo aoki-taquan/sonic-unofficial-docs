@@ -11800,6 +11800,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: show acl 拡張表示の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29490,6 +29507,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#show-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: show acl 拡張表示の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29682,6 +29716,14 @@
 <li><code>Status</code> 列が空 → STATE_DB に書かれていない（<code>aclorch</code> 未処理 or 内部生成 ACL）</li>
 <li><code>redis-cli -n 6 hgetall 'ACL_RULE_TABLE|DATAACL|RULE_1'</code> で実値を直接確認</li>
 </ul>
+<h3 id="show-acl">コマンド例: show acl 拡張表示の確認<a class="headerlink" href="#show-acl" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Status 列を含む拡張表示と、STATE_DB 直読みでの突き合わせ</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>acl<span class="w"> </span>rule
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE_TABLE|*&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_RULE_TABLE|DATAACL|RULE_1&#39;</span>
+</span></code></pre></div>
 <h2 id="_8">関連トピック<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror</a></li>

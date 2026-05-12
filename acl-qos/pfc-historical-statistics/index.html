@@ -11996,6 +11996,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: PFC 統計履歴の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29490,6 +29507,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: PFC 統計履歴の確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29710,6 +29744,15 @@
 <li>値が増え続けてクリア効かない → <code>sonic-clear pfc</code> は CLI 内 diff 方式。CLI 再起動でキャッシュが消えるとリセット効果も消える点に注意</li>
 <li>transitions 数が多すぎる → RX-only モードでは短い pause が遷移として水増しされる場合あり</li>
 </ul>
+<h3 id="pfc">コマンド例: PFC 統計履歴の確認<a class="headerlink" href="#pfc" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># PFC stats と historical counter（pfc_wd 含む）の確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>pfc<span class="w"> </span>counters
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>stats
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># COUNTERS_DB から RX/TX PFC キュー別カウンタを直接取得</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS:oid:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
 <h2 id="_11">関連トピック<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer</a></li>

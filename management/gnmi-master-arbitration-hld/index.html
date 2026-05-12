@@ -15211,6 +15211,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#gnmi-master-arbitration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: gNMI master arbitration 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-master-arbitration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: gNMI master arbitration 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29628,6 +29650,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#gnmi-master-arbitration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: gNMI master arbitration 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-master-arbitration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: gNMI master arbitration 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29940,6 +29984,22 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 </div>
 <!-- /diff-admonition -->
 
+<h3 id="gnmi-master-arbitration">コマンド例: gNMI master arbitration 確認<a class="headerlink" href="#gnmi-master-arbitration" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># gNMI master election 状態と現在の master ID</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>gnmi_cli<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>-client_types<span class="o">=</span>gnmi<span class="w"> </span>-insecure<span class="w"> </span>-encoding<span class="o">=</span><span class="m">4</span><span class="w"> </span>-alsologtostderr<span class="w"> </span>-capabilities<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;GNMI_MASTER|&lt;role&gt;&#39;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-30
+</span></code></pre></div>
+<h3 id="gnmi-master-arbitration_1">コマンド例: gNMI master arbitration 確認<a class="headerlink" href="#gnmi-master-arbitration_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># gNMI master election 状態と現在の master ID</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>gnmi_cli<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>-client_types<span class="o">=</span>gnmi<span class="w"> </span>-insecure<span class="w"> </span>-encoding<span class="o">=</span><span class="m">4</span><span class="w"> </span>-alsologtostderr<span class="w"> </span>-capabilities<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;GNMI_MASTER|&lt;role&gt;&#39;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-30
+</span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi の telemetry サーバに ReqFromMasterEnabledMA が実装されているか

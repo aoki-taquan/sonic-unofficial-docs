@@ -12562,6 +12562,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Port Access Control 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29491,6 +29508,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Port Access Control 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29738,6 +29772,16 @@ reasoning: 物理 IF 限定・802.1x/MAB 併用・3 種 port mode の根拠。
 <li>VLAN が変わらない → RADIUS Accept に VLAN attribute（Tunnel-Type / Tunnel-Medium-Type / Tunnel-Private-Group-ID）が来ているか抽出ログ確認</li>
 <li>MAB が誤判定 → <code>mabd</code> ログで MAC 学習契機と RADIUS リクエスト送出を確認</li>
 </ul>
+<h3 id="port-access-control">コマンド例: Port Access Control 確認<a class="headerlink" href="#port-access-control" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># PAC 機能 (802.1X / MAB) の認証状態と CONFIG_DB を確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>authentication<span class="w"> </span>interface<span class="w"> </span>all
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PAC_*&#39;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PAC_PORT_CONFIG_TABLE|Ethernet0&#39;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># hostapd / pac-agent のログ</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-Ei<span class="w"> </span><span class="s1">&#39;hostapd|pac&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span></code></pre></div>
 <h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>PAC コンポーネントツリー: <code>sonic-buildimage/src/sonic-pac/</code> 配下の <code>authmgr/</code>, <code>mab/</code>, <code>mabmgr/</code>, <code>hostapdmgr/</code>, <code>pacmgr/</code>, <code>paccfg/</code>, <code>pacoper/</code>, <code>fpinfra/</code>, <code>json_lib/</code> を確認</li>

@@ -8419,6 +8419,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#application-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Application extension 状態確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-extension_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Application extension 状態確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29357,6 +29385,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#application-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Application extension 状態確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-extension_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Application extension 状態確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29546,6 +29602,24 @@
 <li>起動しない → <code>systemctl status &lt;feature&gt;</code> と docker ログ / <code>config feature</code> 状態</li>
 <li>CLI が出ない → plugin entry-point の取り込み、<code>sonic-utilities</code> 再起動 / shell 再ログイン</li>
 </ul>
+<h3 id="application-extension">コマンド例: Application extension 状態確認<a class="headerlink" href="#application-extension" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># インストール済み拡張 Docker package 一覧</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>list
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>&lt;name&gt;<span class="w"> </span>manifest
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 拡張サービスの稼働状況</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>systemctl<span class="w"> </span>list-units<span class="w"> </span><span class="s1">&#39;*.service&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>package
+</span></code></pre></div>
+<h3 id="application-extension_1">コマンド例: Application extension 状態確認<a class="headerlink" href="#application-extension_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># インストール済み拡張 Docker package 一覧</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>list
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>&lt;name&gt;<span class="w"> </span>manifest
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># 拡張サービスの稼働状況</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>systemctl<span class="w"> </span>list-units<span class="w"> </span><span class="s1">&#39;*.service&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>package
+</span></code></pre></div>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/19-build-packaging/architecture/">Topic 19 Build/Packaging - architecture</a></li>

@@ -12389,10 +12389,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: ポート動的追加/削除確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29291,10 +29308,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: ポート動的追加/削除確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29474,7 +29508,16 @@
 <li><a href="../../reference/glossary/#term-lldp">LLDP</a> が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
-<h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h3 id="_1">コマンド例: ポート動的追加/削除確認<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># CONFIG_DB の PORT エントリ追加・削除と orchagent 反映状況</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 動的変更時の orchagent ログ</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;portsorch|PortConfigDone|PortInitDone&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span></code></pre></div>
+<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 4bc2a4aae15e -->
 
 <div class="footnote">

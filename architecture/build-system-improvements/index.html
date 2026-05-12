@@ -7377,6 +7377,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Build system 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29580,6 +29597,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Build system 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29883,6 +29917,15 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <li>BuildKit が効かない: docker version 18.09 以上か確認、<code>DOCKER_BUILDKIT=1</code> 環境変数。</li>
 <li>並列ビルドで失敗: dh compat 10 以上または <code>dh --parallel</code> 設定、各 debian/rules で並列実行に対応しているか確認。</li>
 </ul>
+<h3 id="build-system">コマンド例: Build system 確認<a class="headerlink" href="#build-system" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># sonic-buildimage のビルドキャッシュとオプション確認</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>generic
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>make<span class="w"> </span>-j<span class="w"> </span><span class="nv">SONIC_CONFIG_PRINT_DEPENDENCIES</span><span class="o">=</span>y<span class="w"> </span>target/sonic-vs.img.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># slave docker のキャッシュ状況</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic
+</span></code></pre></div>
 <h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/19-build-packaging/">Topics: Build / Packaging</a></li>

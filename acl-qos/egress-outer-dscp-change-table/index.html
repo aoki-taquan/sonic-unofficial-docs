@@ -12226,6 +12226,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#egress-dscp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Egress DSCP 書き換え確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29491,6 +29508,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#egress-dscp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: Egress DSCP 書き換え確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29676,6 +29710,15 @@ reasoning: 採用案 Option-C と SAI 要件の根拠。
 <li>table 作成失敗 → <code>STATE_DB.ACL_ACTIONS</code> で <code>SET_ACL_META_DATA</code> / <code>ACL_USER_META</code> capability を確認</li>
 <li>DSCP が変わらない → encap が egress の本 ACL より前に走っているか確認、ingress 側の MARK_META rule が hit しているか aclshow で確認</li>
 </ul>
+<h3 id="egress-dscp">コマンド例: Egress DSCP 書き換え確認<a class="headerlink" href="#egress-dscp" title="Permanent link">&para;</a></h3>
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 対象 ACL テーブルとルール、ヒットカウンタを確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>acl<span class="w"> </span>table
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>acl<span class="w"> </span>rule
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># STATE_DB の ACL アクション capability を確認</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span><span class="w"> </span>ACL_ACTIONS_EGRESS
+</span></code></pre></div>
 <h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Table type 定数: <code>sonic-swss/orchagent/acltable.h</code> L38-L42 (<code>TABLE_TYPE_MARK_META</code> / <code>TABLE_TYPE_MARK_META_V6</code> / <code>TABLE_TYPE_EGR_SET_DSCP</code> / <code>TABLE_TYPE_UNDERLAY_SET_DSCP</code> / <code>TABLE_TYPE_UNDERLAY_SET_DSCPV6</code>)</li>

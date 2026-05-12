@@ -7355,6 +7355,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rfs-split-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: RFS split build 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rfs-split-build_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: RFS split build 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29458,6 +29486,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rfs-split-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: RFS split build 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rfs-split-build_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例: RFS split build 確認
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29625,6 +29681,22 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <li>期待した時間短縮効果が出ない: 他のクリティカルパス（docker image build 等）に律速されている可能性。<code>make -j</code> 並列度と他ターゲットのプロファイルを見る。</li>
 <li>フラグが効かない: <code>rules/config</code> での <code>ENABLE_RFS_SPLIT_BUILD</code> を確認。<code>y</code> でも <code>slave.mk</code> 側のターゲットが生成されているか <code>make -n</code> で確認。</li>
 </ul>
+<h3 id="rfs-split-build">コマンド例: RFS split build 確認<a class="headerlink" href="#rfs-split-build" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ls<span class="w"> </span>-la<span class="w"> </span>target/sonic-broadcom.bin<span class="w"> </span>target/sonic-mellanox.bin<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>make<span class="w"> </span>-n<span class="w"> </span>target/sonic-generic.bin<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+</span></code></pre></div>
+<h3 id="rfs-split-build_1">コマンド例: RFS split build 確認<a class="headerlink" href="#rfs-split-build_1" title="Permanent link">&para;</a></h3>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ls<span class="w"> </span>-la<span class="w"> </span>target/sonic-broadcom.bin<span class="w"> </span>target/sonic-mellanox.bin<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>make<span class="w"> </span>-n<span class="w"> </span>target/sonic-generic.bin<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+</span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../build-system-improvements/">HLD: build-system-improvements</a></li>
