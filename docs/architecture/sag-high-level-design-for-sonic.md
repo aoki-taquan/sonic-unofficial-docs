@@ -258,7 +258,13 @@ arping -I Vlan100 10.0.100.1   # 自身に対する ARP 応答が安定するか
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**:
+    - **代替手段 / 回避策** (Static Anycast Gateway (SAG) が master 未実装の間、EVPN-VXLAN leaf で同一仮想 GW MAC を擬似的に提供する手順):
+        1. 各 leaf に同一 IP / 同一 MAC を手動投入: `sudo config vlan add 100` `sudo config interface ip add Vlan100 10.0.100.1/24` を全 leaf に流し、`sudo ip link set dev Vlan100 address 00:11:22:33:44:55` で MAC を統一する
+        2. EVPN Type-2 でこの IP/MAC を再広告しないようフィルタ: `vtysh -c 'configure terminal' -c 'route-map RM-SAG-FILTER deny 10' -c 'match mac address SAG-MAC'` を入れ、各 leaf 自身の anycast gateway entry がリーク広告されないようにする
+        3. VRRP で代替する場合: `sudo config vrrp add Vlan100 1 10.0.100.1` で VRID を作成し、`sudo config vrrp ip add Vlan100 1 10.0.100.1` で VIP を投入。SAG ほど高速ではないが master/backup 構成で擬似 anycast を組める
+        4. 設定が反映されたか確認: `sonic-db-cli APPL_DB hgetall 'INTF_TABLE:Vlan100'` と `ip -d link show Vlan100` で MAC / IP がすべての leaf で揃ったかを比較する
+        5. ベンダー fork を選ぶ場合: NVIDIA SONiC / Edgecore Enterprise SONiC は SAG を独自に実装済みのため、コミュニティ master 縛りを外せるなら `show ip sag` / `config sag` 系 CLI が直接使えるベンダー版を採用する
+    - **関連 reference**:
         - [CONFIG_DB: VLAN_INTERFACE](../reference/config-db/vlan-interface.md)
         - [YANG: `sonic-vlan`](../reference/yang/sonic-vlan.md)
 

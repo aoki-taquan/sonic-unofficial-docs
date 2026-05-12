@@ -238,7 +238,13 @@ HLD で具体の CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) は�
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **代替手段 / 回避策** (warmboot-manager (`wb_mgrd`) が未実装の間、既存 `warm-reboot` で同等品質の無瞬断再起動を組む手順):
+        1. 既存スクリプト経由で warm reboot を実行: `sudo config warm_restart enable system` で warm restart モードを有効化し、`sudo warm-reboot` で再起動。`wb_mgrd` 不在の代わりに `warm-reboot` シェルスクリプトが一連の reconcile を直接実行する
+        2. コンポーネント別 warm restart の状態を Redis で確認: `sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|swss'` および `sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|bgp'` で各サブシステムの restart state / reconcile 完了を観測する
+        3. timer / 設定の上書き: `sudo config warm_restart neighsyncd_timer 30` `sudo config warm_restart bgp_timer 120` で HLD が `wb_mgrd` 集約管理する想定だった timer を **個別 CLI** で投入する
+        4. 新規 daemon の reconcile 参加: `wb_mgrd` の component 登録 API の代わりに、独自 daemon 側で `WARM_RESTART_TABLE|<app>` を `state=reconciled` まで自前で進める。最低限 `state=initialized` → `state=restored` → `state=reconciled` の 3 遷移を Redis に書く
+        5. fallback: warm reboot に失敗した場合は `sudo config warm_restart disable system && sudo reboot` で通常 reboot に切り替える。`/var/log/swss/sairedis.rec` と `journalctl -u swss` で reconcile 失敗箇所を切り分ける
+    - **関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
 
 !!! note "本ドキュメントの追跡"
     - monitor: `not_implemented` / last_verified: `2026-05-11`
