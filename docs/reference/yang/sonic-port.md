@@ -42,6 +42,31 @@ flowchart LR
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
 
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`PORT`](../config-db/port.md)
+
+### 関連 CLI
+
+- [`config interface`](../cli/config-interface.md)
+- [`show interfaces`](../cli/show-interfaces.md)
+
+### 関連 HLD
+
+- [運用](../../topics/14-platform-port-optics/operations.md)
+
+### 関連 Topics
+
+- [Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
+
+<!-- /yang-xref -->
+
 ## ツリー
 
 ```

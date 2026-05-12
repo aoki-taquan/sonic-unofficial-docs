@@ -42,6 +42,25 @@ flowchart LR
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
 
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`FEATURE`](../config-db/feature.md)
+
+### 関連 HLD
+
+- [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
+- [System Health Monitor（critical service / Monit / peripheral）](../../system/sonic-system-health-monitor-high-level-design.md)
+- [設定 / 運用](../../topics/19-build-packaging/operations.md)
+
+<!-- /yang-xref -->
+
 ## ツリー
 
 ```

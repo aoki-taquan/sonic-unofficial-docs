@@ -42,6 +42,27 @@ flowchart LR
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
 
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`WARM_RESTART`](../config-db/warm-restart.md)
+
+### 関連 CLI
+
+- [`config warm_restart`](../cli/config-warm_restart.md)
+
+### 関連 HLD
+
+- [Reboot-cause 履歴の STATE_DB / テレメトリ公開](../../system/reboot-cause-information-via-telemetry-agent.md)
+- [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../../system/smart-switch-reboot-high-level-design.md)
+
+<!-- /yang-xref -->
+
 ## ツリー
 
 ```
