@@ -64,6 +64,8 @@ flowchart TD
     D -- Yes --> E[COUNTERS_DB のキー存在を確認]
 ```
 
+## 確認コマンド
+
 ### 1. counterpoll の有効状態と interval
 
 ```bash

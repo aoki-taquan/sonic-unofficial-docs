@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[クライアント側 deadline / NW 経路を確認]
 ```
 
+## 確認コマンド
+
 ### 1. セッション統計の確認
 
 ```bash

@@ -49,6 +49,8 @@ flowchart TD
     D -- Yes --> E[ASIC port MTU と sysctl を確認]
 ```
 
+## 確認コマンド
+
 ### 1. 両端 MTU 比較
 
 ```bash

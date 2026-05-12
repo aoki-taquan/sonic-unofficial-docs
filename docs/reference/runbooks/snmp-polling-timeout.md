@@ -50,6 +50,8 @@ flowchart TD
     D -- No --> E[NW 経路 / MTU を確認]
 ```
 
+## 確認コマンド
+
 ### 1. host 側 reachability
 
 ```bash

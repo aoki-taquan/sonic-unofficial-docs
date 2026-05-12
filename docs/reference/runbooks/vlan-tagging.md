@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[ASIC ingress/egress VLAN translation を確認]
 ```
 
+## 確認コマンド
+
 ### 1. CONFIG_DB の確認
 
 ```bash

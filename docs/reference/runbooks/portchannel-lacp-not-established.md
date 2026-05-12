@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[ASIC LAG bind 状態を確認]
 ```
 
+## 確認コマンド
+
 ### 1. メンバーポートの L1 状態
 
 ```bash

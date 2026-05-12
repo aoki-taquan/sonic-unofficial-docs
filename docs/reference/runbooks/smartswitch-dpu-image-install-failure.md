@@ -49,6 +49,8 @@ flowchart TD
     D -- Yes --> E[install 後の reboot / 起動失敗ログを調査]
 ```
 
+## 確認コマンド
+
 ### 1. DPU 状態
 
 ```bash

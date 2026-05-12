@@ -53,6 +53,8 @@ flowchart TD
     D -- No --> E[SDK driver ログ / platform.json 速度設定確認]
 ```
 
+## 確認コマンド
+
 ### 1. FEC モード確認
 
 ```bash

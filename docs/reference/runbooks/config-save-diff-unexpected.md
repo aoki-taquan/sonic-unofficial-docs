@@ -53,6 +53,8 @@ flowchart TD
     D -- No --> E[手動編集と save の順序を確認]
 ```
 
+## 確認コマンド
+
 ### 1. 現 running と保存 config の差分
 
 ```bash

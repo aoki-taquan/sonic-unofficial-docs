@@ -54,6 +54,8 @@ flowchart TD
     D -- Yes --> E[対向側 congestion / receiver を確認]
 ```
 
+## 確認コマンド
+
 ### 1. QoS マッピングと PFC enabled priority の整合
 
 ```bash

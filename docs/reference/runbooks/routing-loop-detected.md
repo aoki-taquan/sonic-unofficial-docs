@@ -50,6 +50,8 @@ flowchart TD
     D -- No --> E[redistribute / route-map のループを確認]
 ```
 
+## 確認コマンド
+
 ### 1. traceroute で loop hop 特定
 
 ```bash

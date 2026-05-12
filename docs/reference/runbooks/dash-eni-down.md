@@ -63,6 +63,8 @@ flowchart TD
     D -- Yes --> E[DPU データプレーン / SAI DASH counter 確認]
 ```
 
+## 確認コマンド
+
 ### 1. CONFIG_DB / APPL_DB
 
 ```bash

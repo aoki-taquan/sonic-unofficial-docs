@@ -65,6 +65,8 @@ flowchart TD
     D -- Yes --> E[swss@<id> / syncd@<id> の状態確認]
 ```
 
+## 確認コマンド
+
 ### 1. namespace 一覧と feature 状態
 
 ```bash

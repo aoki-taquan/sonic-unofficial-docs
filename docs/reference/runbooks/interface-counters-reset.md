@@ -66,6 +66,8 @@ flowchart TD
     D -- No --> E[orchagent ログ確認 / SAI 異常調査]
 ```
 
+## 確認コマンド
+
 ### 1. 直近の clear 実行
 
 ```bash

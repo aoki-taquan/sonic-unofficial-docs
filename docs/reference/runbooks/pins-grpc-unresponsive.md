@@ -62,6 +62,8 @@ flowchart TD
     D -- Yes --> E[p4rt log / swss P4Orch の状態確認]
 ```
 
+## 確認コマンド
+
 ### 1. container / process
 
 ```bash
