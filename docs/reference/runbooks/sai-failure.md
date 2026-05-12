@@ -43,6 +43,23 @@ related:
 - `ASIC_DB` への書き込みが詰まる、[orchagent](../../reference/glossary.md#term-orchagent) ログに `SAI API failed` が連続
 - ASIC レベルのテーブル限界エラー (`CRM` の overflow) が観測される
 
+## 確認コマンド
+
+```bash
+# syncd 異常終了 / core
+docker ps -a | grep syncd
+sudo journalctl -u syncd -n 200
+docker logs syncd 2>&1 | tail -200
+ls /var/core/ /var/dump/ 2>/dev/null
+
+# SAI API エラー (orchagent 側)
+docker logs swss 2>&1 | grep -iE "SAI_STATUS|SAI API failed" | tail -50
+
+# ASIC リソース枯渇 (CRM)
+crm show resources all
+crm show thresholds all
+```
+
 ## 想定原因
 
 1. **[CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) で table 枯渇**: [FDB](../../reference/glossary.md#term-fdb) / ROUTE / NEXTHOP / [ACL](../../reference/glossary.md#term-acl) のいずれかが ASIC 容量を超過
