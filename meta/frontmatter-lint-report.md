@@ -1,6 +1,6 @@
 # Frontmatter Lint Report
 
-- Scanned: 892 files
+- Scanned: 894 files
 - Violations: 0 files
 
 All checks pass.

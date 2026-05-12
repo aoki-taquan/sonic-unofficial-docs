@@ -1,6 +1,7 @@
 title: メタ
 hide: true
 nav:
+  - snapshot.md
   - coverage.md
   - sitemap.md
   - changelog.md

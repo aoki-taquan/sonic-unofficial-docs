@@ -4,8 +4,8 @@ Informational lint — discrepancy-found pages typically reference
 YANG modules in the body. Leaving `related.yang` empty hides those
 back-refs from the related-pages sidebar.
 
-- scanned: 839
-- discrepancy-found total: 62
+- scanned: 853
+- discrepancy-found total: 74
 - empty `related.yang`: 0
 - opted out (`_no_related` / `_no_yang`): 9
 
