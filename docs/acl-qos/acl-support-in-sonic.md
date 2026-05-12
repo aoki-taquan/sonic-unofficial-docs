@@ -264,6 +264,17 @@ HLD 段階で明示されている制限[^1]:
 - 同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。`l3`+`mirror` の組み合わせから始めるのが安全[^1]。
 - ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で `swssconfig` partial モードで削除する必要[^1]。
 
+確認コマンド例:
+
+```bash
+# ACL テーブル / ルール / バインドと MIRROR_SESSION を一望
+redis-cli -n 4 keys 'ACL_TABLE|*'
+redis-cli -n 4 keys 'ACL_RULE|*'
+redis-cli -n 4 hgetall 'MIRROR_SESSION|<name>'
+show acl table
+show acl rule
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/acl.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

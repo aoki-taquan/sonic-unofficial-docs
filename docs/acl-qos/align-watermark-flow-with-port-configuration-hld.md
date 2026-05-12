@@ -243,6 +243,16 @@ counterpoll watermark enable
 - queue counter は動くが queue-watermark stat が出ない → `counterpoll show` で watermark group の状態を確認
 - 一旦 disable した後に enable し直すと stat が二重に出る → `FLEX_COUNTER_DB` の残存 entry が原因の可能性
 
+確認コマンド例:
+
+```bash
+# watermark counter poll 状態と queue map / flex counter キーを確認
+counterpoll show
+redis-cli -n 2 keys 'COUNTERS_QUEUE_*_MAP'
+redis-cli -n 5 keys 'FLEX_COUNTER_TABLE|QUEUE_WATERMARK*'
+show priority-group watermark headroom
+```
+
 ## 参考リンク
 
 - [CLI: show priority-group](../reference/cli/show-priority-group.md)

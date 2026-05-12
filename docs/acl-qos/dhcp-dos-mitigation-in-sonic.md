@@ -184,6 +184,16 @@ CLI ルール[^1]:
 - 正規クライアントまでドロップ: `dhcp_rate_limit` が小さすぎる可能性。リース更新時のバーストを考慮
 - 値変更が反映されない: 同ポートに既存 rate があると add が拒否される仕様。先に delete
 
+確認コマンド例:
+
+```bash
+# ingress policer 設定と CONFIG_DB の rate-limit エントリを確認
+sudo tc -s qdisc show dev Ethernet0 handle ffff:
+sudo tc -s filter show dev Ethernet0 parent ffff:
+redis-cli -n 4 hget 'PORT|Ethernet0' dhcp_rate_limit
+docker exec swss supervisorctl status | grep portmgrd
+```
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
