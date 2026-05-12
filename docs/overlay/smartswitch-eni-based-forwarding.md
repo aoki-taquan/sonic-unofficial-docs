@@ -1,7 +1,6 @@
 ---
 title: SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-description: 'SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-  — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:'
+description: 'SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:'
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
@@ -23,7 +22,8 @@ related:
   - config acl
   - show bfd
   yang:
-  - sonic-crm
+  - sonic-dash
+  - sonic-smart-switch
 ---
 
 <!-- topics-tip -->

@@ -1,7 +1,6 @@
 ---
 title: DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張）
-description: DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張） — DASH (Disaggregated
-  APIs for SONiC Hosts) の ACL では、サービスタグ が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。
+description: DASH ACL タグ（DASH_PREFIX_TAG_TABLE と DASH_ACL_RULE_TABLE 拡張） — DASH (Disaggregated APIs for SONiC Hosts) の ACL では、サービスタグ が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09
@@ -22,7 +21,7 @@ related:
   - show acl
   - config acl
   yang:
-  - sonic-crm
+  - sonic-dash
 ---
 
 <!-- topics-tip -->

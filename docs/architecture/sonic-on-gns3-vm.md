@@ -1,7 +1,6 @@
 ---
 title: GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）
-description: GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート） — GNS3 はネットワーク機器をエミュレートして簡易トポロジを
-  Windows 上または Ubuntu サーバ上で実行できるツールである。
+description: GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート） — GNS3 はネットワーク機器をエミュレートして簡易トポロジを Windows 上または Ubuntu サーバ上で実行できるツールである。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,7 +13,8 @@ related:
   - CRM
   cli: []
   yang:
-  - sonic-crm
+  - sonic-device_metadata
+  - sonic-feature
 ---
 
 <!-- topics-tip -->

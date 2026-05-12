@@ -1,7 +1,6 @@
 ---
 title: Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）
-description: Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート） — Express Reboot は SONiC
-  の再起動シーケンスを拡張し、サブ秒のデータプレーン断 で SW アップグレードを行うためのモード。
+description: Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート） — Express Reboot は SONiC の再起動シーケンスを拡張し、サブ秒のデータプレーン断 で SW アップグレードを行うためのモード。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -19,7 +18,8 @@ related:
   - express-reboot
   - show reboot-cause
   yang:
-  - sonic-crm
+  - sonic-warm-restart
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->
