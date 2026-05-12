@@ -186,6 +186,16 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 - prefix route の nexthop が更新されない: `MuxOrch` のログ、SAI route attribute の最新値（`saidump` 等）を確認。
 - `dualtor_neighbor_check` の出力で `PREFIX_ROUTE=no`: prefix_route モードのはずなのに作られていない → NeighborOrch 側のフォールバック分岐を確認。
 
+### コマンド例
+
+Dual-ToR の prefix-based mux neighbor 設定を確認する。
+
+```bash
+show mux status
+show mux config
+redis-cli -n 4 keys 'MUX_CABLE|*'
+```
+
 ## 参考リンク
 
 - [CLI: show muxcable](../reference/cli/show-muxcable.md)

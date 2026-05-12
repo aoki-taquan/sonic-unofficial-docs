@@ -285,6 +285,17 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 - pre / post counter が乖離する: 抑制が効いている証拠。差分が大きい場合は flap 多発を疑う。
 
 <!-- phase-boundary -->
+
+### コマンド例
+
+link event damping の有効状態とカウンタを確認する。
+
+```bash
+show interfaces link-event-damping
+redis-cli -n 4 keys 'PORT|Ethernet*' | head
+show interfaces counters errors
+```
+
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"

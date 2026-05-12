@@ -199,6 +199,16 @@ Portchannel0002
 - 値がすべてゼロ / 動かない場合、当該プラットフォームの SAI が `SAI_ROUTER_INTERFACE_STAT_*` を実装していない可能性がある。HLD は SAI 必須カウンタを列挙しているが、ベンダー実装が揃っているとは限らない。
 - 特定 RIF の VID と名前の対応を確認するには `COUNTERS_RIF_NAME_MAP` を redis から直接読む。
 
+### コマンド例
+
+router interface (L3) のカウンタを確認する。
+
+```bash
+show interfaces counters rif
+render-counters
+redis-cli -n 2 keys 'COUNTERS:oid:0x6*' | head
+```
+
 ## 制限事項
 
 - counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト trafic は反映が遅れる。

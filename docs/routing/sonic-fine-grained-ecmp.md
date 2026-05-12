@@ -167,6 +167,16 @@ SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX     # bucket index
 - 期待する NH が ASIC に出ていない → `show fgnhg active-hops` で `FG_NHG_MEMBER` 定義と一致するか確認。route/nexthop モードでは未定義 NH は無視
 - bucket がぶれる → `STATE_DB.FG_ROUTE_TABLE` を直接確認。warm reboot 後に空ならダンプ経路の不整合
 
+### コマンド例
+
+Fine-grained ECMP (FG NHG) の bucket 配分を確認する。
+
+```bash
+show fgnhg active-hops
+show fgnhg hash-view
+redis-cli -n 4 keys 'FG_NHG*'
+```
+
 ## 10. 次に読む
 
 - Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [ECMP 詳細](../topics/04-vrf-ecmp/ecmp.md), [VRF / ECMP 内部実装](../topics/04-vrf-ecmp/internals.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)

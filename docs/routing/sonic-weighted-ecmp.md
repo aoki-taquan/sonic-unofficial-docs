@@ -175,6 +175,16 @@ Disabled   Enabled
 - `vtysh -c "show ip route <prefix>"` — RIB 段で NHG メンバの weight を確認
 - `sonic-db-cli APPL_DB hgetall "ROUTE_TABLE:<prefix>"` / `NEXT_HOP_GROUP_TABLE` で weight 反映を確認
 
+### コマンド例
+
+weighted ECMP の path weight を確認する。
+
+```bash
+show ip route summary
+redis-cli -n 0 hgetall 'ROUTE_TABLE:0.0.0.0/0' 2>/dev/null
+redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER*' | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wcmp/wcmp-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

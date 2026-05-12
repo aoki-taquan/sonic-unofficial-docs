@@ -293,6 +293,19 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 | L3 VXLAN で経路が乗らない | `VNET_ROUTE_TUNNEL_TABLE.endpoint` が remote VTEP IP と一致 |
 | VRF が SAI に作られない | `VrfMgrD` の STATE_DB 更新が間に合っているか |
 
+### コマンド例
+
+VXLAN トンネルと EVPN ピアの状態を確認する。
+
+```bash
+# VXLAN tunnel / VNI / EVPN
+show vxlan tunnel
+show vxlan remotevni all
+show evpn vni
+redis-cli -n 4 keys 'VXLAN_TUNNEL|*'
+docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
+```
+
 ## 制限事項
 
 - Phase 1 では BGP EVPN 統合なし

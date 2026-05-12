@@ -201,6 +201,16 @@ uDT46（[VRF](../reference/glossary.md#term-vrf) にデキャプ）:
 - `un` / `ua` を SET したのに ASIC に入らない場合、まず `srv6orch` のログで behavior マップヒットを確認。SAI から `SAI_STATUS_NOT_SUPPORTED` が返ってきている場合は ASIC ベンダーの SAI 実装が UN/UA 未対応の可能性
 - uSID carrier の解釈ずれは locator_block_len 等の合意値が一致しているかを確認
 
+### コマンド例
+
+SRv6 uSID locator / SID list を確認する。
+
+```bash
+show srv6 sid
+show srv6 locator
+docker exec bgp vtysh -c 'show segment-routing srv6 locator' 2>/dev/null | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/srv6/SRv6_uSID.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -165,6 +165,16 @@ APPL_DB:MACSEC_INGRESS_SA_TABLE:<ifname>:<sci>:<an>
 | 暗号化されない | `redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_MACSEC_*'` で SAI オブジェクト確認 |
 | PFC が止まる | MACsec 適用後の PFC バイパス ACL を `show acl-entry` 系で確認 |
 
+### コマンド例
+
+MACsec セッション (CA, SA) の状態と統計を確認する。
+
+```bash
+show macsec
+ipsec statusall 2>/dev/null | head
+redis-cli -n 4 keys 'MACSEC_PROFILE|*'
+```
+
 ## 制限事項
 
 - HLD は 60KB 超。詳細フロー（Init / Create SC / Create SA / Disable SA / Deinit Port）は HLD §4 参照

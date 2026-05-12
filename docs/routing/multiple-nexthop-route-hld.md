@@ -177,6 +177,16 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*11.11.11.0/24
 - nexthop group のまま → `is_mux_nexthop()` が false。`mux_nexthop_tb_` 登録確認
 - ECMP したい → 本 [HLD](../reference/glossary.md#term-hld) は **mux nexthop ECMP を許容しない** 設計
 
+### コマンド例
+
+複数 nexthop 経路 (ECMP) の登録と分散を確認する。
+
+```bash
+show ip route summary
+redis-cli -n 0 keys 'ROUTE_TABLE*' | head
+redis-cli -n 1 hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*' 2>/dev/null | head
+```
+
 ## 関連トピック
 
 - [Topics: Dual-ToR](../topics/05-dual-tor/index.md) — active-standby と mux の全体像

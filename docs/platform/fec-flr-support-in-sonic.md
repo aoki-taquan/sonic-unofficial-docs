@@ -327,6 +327,12 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 ここで直接観測できる。
 
 ```bash
+# 0. FEC / Link up の基本状態
+show interfaces status
+show interfaces fec status
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+docker exec swss show fast-link-status 2>&1 | tail
+
 # 1. port_flr.lua の実体とハードコード値の確認
 docker exec swss cat /usr/share/swss/port_flr.lua | grep -nE 'FEC_FLR_POLL_INTERVAL|BIN_FILTER_VALUE|MIN_SIGNIFICANT_BINS|MFC'
 

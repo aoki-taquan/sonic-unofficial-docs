@@ -191,6 +191,16 @@ router bgp 65001
 - ASIC neighbor → `redis-cli -n 1 keys '*NEIGHBOR*'`
 - ECMP に複数 link-local → `NEIGH_TABLE:<ifname>:<ip>` がインタフェースごとに分かれているか
 
+### コマンド例
+
+IPv6 link-local アドレスと BGP unnumbered ピアを確認する。
+
+```bash
+show ipv6 interface brief
+show ipv6 bgp neighbors 2>/dev/null | head
+ip -6 addr show scope link
+```
+
 ## 関連トピック
 
 - [Topics: BGP](../topics/02-bgp/index.md) — BGP unnumbered の運用文脈

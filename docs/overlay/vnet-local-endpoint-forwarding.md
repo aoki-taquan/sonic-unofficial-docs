@@ -189,6 +189,18 @@ reasoning: failover transient 対策として high-priority ACL + TUNNEL_TERM ma
 - ACL 数が肥大: directly connected nexthop が多い環境。prefix 単位の見積もりが必要。
 - redirect 先が想定外: `IntfOrch` 経由の local nexthop interface alias を `VnetOrch` ログで追う。
 
+### コマンド例
+
+VNet 経路とローカル endpoint 設定を確認する。
+
+```bash
+# VNet route / endpoint
+show vnet routes all
+show vnet endpoint
+redis-cli -n 4 keys 'VNET|*'
+redis-cli -n 4 keys 'VNET_ROUTE_TUNNEL_TABLE|*'
+```
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) — ACL_TABLE_TYPE / TUNNEL_TERM match

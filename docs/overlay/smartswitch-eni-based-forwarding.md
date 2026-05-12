@@ -215,6 +215,18 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 - failover 直後の輻輳: TUNN_TERM ルール (PRIORITY 9997) が SET されているか。
 - Remote 経路で drop: `VxLanTunnOrch` の tunnel NH OID と `ACL_RULE.REDIRECT` の `<PA>@<tunnel>,<vni>` 表記の整合。
 
+### コマンド例
+
+SmartSwitch DPU の ENI 転送状態と HA を確認する。
+
+```bash
+# SmartSwitch DPU / ENI
+show chassis modules status
+redis-cli -n 4 keys 'DPU|*'
+redis-cli -n 4 keys 'DASH_ENI_TABLE:*'
+docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
+```
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) — ACL_TABLE_TYPE / REDIRECT 概観

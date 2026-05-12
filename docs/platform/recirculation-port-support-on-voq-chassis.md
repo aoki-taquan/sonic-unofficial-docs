@@ -204,6 +204,21 @@ show interfaces status | grep -E 'Recirc|Ether-(Rec|IB)'
 - VOQ 機の inband が機能しない → `Ethernet-IB0` 等の port が APPL_DB.PORT_TABLE に作られているか確認
 - mirror 用 recycle が動かない → Everflow が `Rec` role の port を選んでいるか確認
 
+### コマンド例
+
+multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+
+```bash
+# multi-ASIC / VoQ chassis
+show chassis modules status
+show platform summary
+sudo ip netns list
+for ns in $(sudo ip netns list | awk '{print $1}'); do
+  echo "== $ns =="
+  sudo ip netns exec "$ns" show interfaces status | head
+done
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/recirculation-port/recirculation_port.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

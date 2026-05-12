@@ -177,6 +177,17 @@ exit-address-family
 - iBGP nexthop が FIB に出ない → `show ip route <prefix>` の `inactive` を確認。`bgp bestpath peer-type multipath-relax` 設定の有無
 - 内部ピアが `BGP_NEIGHBOR` に入る → `<VoQChassisInternal>` 要素と `sonic-config-engine` バージョン
 
+### コマンド例
+
+VoQ chassis の iBGP/eBGP ピアと ECMP を確認する。
+
+```bash
+show bgp summary
+show ip route summary
+for a in asic0 asic1; do docker exec bgp$a vtysh -c 'show bgp ipv4 unicast summary' | head; done
+redis-cli -n 4 keys 'BGP_NEIGHBOR|*'
+```
+
 ## 関連 Topic
 
 - [12 Multi-ASIC / VoQ / architecture](../topics/12-multi-asic-voq/architecture.md)

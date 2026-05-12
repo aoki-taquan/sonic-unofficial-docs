@@ -156,6 +156,17 @@ HLD で新規 [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI の言�
 - 大量 route 投入後に subscriber が古いデータを見る → pipeline 末尾の PUBLISH 一回化で modified key set が正しく回っているか確認
 - 500ms 体感ラグ → 500 未満バッチでは即時 flush のはずなので、skip 判定ロジック側の bug を疑う
 
+### コマンド例
+
+BGP route 大量投入時の pipeline / publish の振る舞いを確認する。
+
+```bash
+# fpmsyncd の subscriber 滞留
+docker exec bgp ps -ef | grep fpmsyncd
+redis-cli -n 0 monitor | grep -E 'ROUTE_TABLE|PUBLISH' | head
+show ip route summary
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bgp_loading_optimization/bgp-loading-optimization-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

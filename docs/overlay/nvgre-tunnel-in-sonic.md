@@ -201,6 +201,18 @@ show nvgre-tunnel-map
 - 削除拒否: 紐付く `NVGRE_TUNNEL_MAP` を先に削除。
 - SAI バージョン: 1.9 未満ベンダーは未対応。`syncd` の SAI バージョン確認。
 
+### コマンド例
+
+トンネル DSCP マップと再書換ポリシーを確認する。
+
+```bash
+# トンネル DSCP / マップ
+show tunnel
+redis-cli -n 4 keys 'TUNNEL_DECAP_TABLE:*'
+redis-cli -n 4 hgetall 'TC_TO_DSCP_MAP|AZURE'
+redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*' | head
+```
+
 ## 関連トピック
 
 - [Topics: VXLAN / EVPN](../topics/03-vxlan-evpn/index.md) — L2 over L3 トンネルの基礎

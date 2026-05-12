@@ -213,6 +213,17 @@ show platform pcieinfo -c
 - 一部デバイスが `[Failed]`: PCIe トポロジ実状と yaml の bus/dev/fn/id が合っていない。ハード交換・差し替えや、yaml の更新漏れを疑う。
 - `pcieutil` 自体が見つからない: `sonic-utilities` パッケージ版が古い可能性。
 
+### コマンド例
+
+PCIe デバイス情報を確認する。
+
+```bash
+# PCIe
+show platform pcieinfo -c
+sudo lspci -nn | head
+redis-cli -n 6 keys 'PCIE_DEVICE|*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pcie-mon/pcieinfo_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

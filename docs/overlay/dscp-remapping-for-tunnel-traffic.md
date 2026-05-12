@@ -221,6 +221,18 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
     - [GitHub Issue / PR の関連リンクは未確認] — Dual-ToR PFC デッドロック回避向けトンネル DSCP / TC リマップは dualtor 系 PR と SAI tunnel TC リマップ機能の組み合わせで段階的に取り込まれており、HLD 単独の上流 Issue は確認できず。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+トンネル DSCP マップと再書換ポリシーを確認する。
+
+```bash
+# トンネル DSCP / マップ
+show tunnel
+redis-cli -n 4 keys 'TUNNEL_DECAP_TABLE:*'
+redis-cli -n 4 hgetall 'TC_TO_DSCP_MAP|AZURE'
+redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*' | head
+```
+
 ## 制限事項
 
 - **Dual-ToR (active-standby) 限定**: `qos_config.j2` は `subtype == DualToR` のときだけ `AZURE_TUNNEL` マップと `MuxTunnel0` の DSCP/TC リマップ属性を出力する。Single-ToR / 通常 IPinIP トポロジでは適用されない。

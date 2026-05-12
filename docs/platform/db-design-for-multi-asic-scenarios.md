@@ -212,6 +212,21 @@ config save /tmp/all_config.json
 - `config apply-patch` のパスが効かない → `/<asic>/...` のパスフォーマットを使っているか確認
 - `show runningconfiguration all` が host のみ → multi-ASIC 拡張版 sonic-utilities が入っているか確認
 
+### コマンド例
+
+multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+
+```bash
+# multi-ASIC / VoQ chassis
+show chassis modules status
+show platform summary
+sudo ip netns list
+for ns in $(sudo ip netns list | awk '{print $1}'); do
+  echo "== $ns =="
+  sudo ip netns exec "$ns" show interfaces status | head
+done
+```
+
 ## 参考リンク
 
 - [Topics: Multi-ASIC / VOQ](../topics/12-multi-asic-voq/index.md)

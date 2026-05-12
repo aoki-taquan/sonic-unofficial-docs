@@ -145,6 +145,16 @@ flowchart LR
     - いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+EVPN multihoming の ESI / DF election 状態を確認する。
+
+```bash
+docker exec bgp vtysh -c 'show evpn es'
+docker exec bgp vtysh -c 'show evpn es-evi'
+show bgp l2vpn evpn route type 4 2>/dev/null | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/EVPN/EVPN_VxLAN_Multihoming.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

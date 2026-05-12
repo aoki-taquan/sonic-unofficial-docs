@@ -194,6 +194,17 @@ sudo show techsupport     # BMC dump 自動同梱
 - techsupport に BMC dump が無い → `generate-dump` log の trigger / collect 各 stage 結果
 - session 枯渇 → CLI ごとに logout が走っているか、decorator が外れていないか
 
+### コマンド例
+
+BMC との通信を確認する。
+
+```bash
+# BMC
+sudo ipmitool mc info 2>&1 | head
+sudo ipmitool sdr list 2>&1 | head
+redis-cli -n 6 keys 'BMC_*'
+```
+
 ## 関連 reference
 
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)

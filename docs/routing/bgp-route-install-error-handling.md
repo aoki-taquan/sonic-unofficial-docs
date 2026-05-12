@@ -218,6 +218,16 @@ config bgp error-handling disable
     - [GitHub Issue / PR の関連リンクは未確認] — `ERROR_ROUTE_TABLE` / FIB-install pending の HLD 取り込みは fpmsyncd / orchagent の個別 PR に分散しており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+BGP route install error の有効状態と ERROR_DB を確認する (現行 master では未実装、Suppress FIB Pending に置換)。
+
+```bash
+show runningconfig bgp | grep -iE 'error|suppress'
+redis-cli -n 0 keys 'ERROR_ROUTE_TABLE*'
+docker exec bgp vtysh -c 'show bgp summary' | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

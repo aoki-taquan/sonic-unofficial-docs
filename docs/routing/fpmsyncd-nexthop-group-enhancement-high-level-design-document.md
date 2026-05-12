@@ -170,6 +170,16 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 - 有効化しても `NEXTHOP_GROUP_TABLE` が空 → zebra 設定で `fpm use-nexthop-groups` が出ているか `vtysh -c 'show running'` 確認
 - libnl のバージョン違い → `RTM_NEWNEXTHOP` 受信が無い場合に発生
 
+### コマンド例
+
+fpmsyncd の nexthop group メッセージ処理を確認する。
+
+```bash
+docker logs bgp 2>&1 | grep -i 'NEXTHOP_GROUP' | tail
+redis-cli -n 0 keys 'NEXTHOP_GROUP_TABLE*' | head
+redis-cli -n 1 hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*' 2>/dev/null | head
+```
+
 ## 確認コマンド
 
 ```bash

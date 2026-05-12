@@ -168,6 +168,16 @@ sonic-db-cli CONFIG_DB hset "DEVICE_METADATA|localhost" suppress-fib-pending ena
 - 有効化後に route advertise が極端に遅い → `dplane_fpm_nl` への移行が完了しているか確認
 - consistency monitor が誤判定 → スクリプトの周期と [STATE_DB](../reference/glossary.md#term-state_db) 反映遅延の関係を確認
 
+### コマンド例
+
+Suppress FIB Pending の有効化と route advertise 状況を確認する。
+
+```bash
+docker exec bgp vtysh -c 'show running-config' | grep -iE 'suppress|fib'
+show ip route summary
+show bgp ipv4 unicast statistics 2>/dev/null | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/BGP/BGP-supress-fib-pending.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

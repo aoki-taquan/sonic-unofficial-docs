@@ -118,6 +118,21 @@ flowchart LR
 - iBGP が上がらない → `BGP_INTERNAL_NEIGHBOR`、internal link 物理状態、`sub_role` を確認
 - per-asic Redis に接続できない → `redis-cli -s /var/run/redis<asic>/redis.sock` の socket を確認
 
+### コマンド例
+
+multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+
+```bash
+# multi-ASIC / VoQ chassis
+show chassis modules status
+show platform summary
+sudo ip netns list
+for ns in $(sudo ip netns list | awk '{print $1}'); do
+  echo "== $ns =="
+  sudo ip netns exec "$ns" show interfaces status | head
+done
+```
+
 ## 関連 Topics
 
 - [Topics 12 Multi-ASIC / VOQ - architecture](../topics/12-multi-asic-voq/architecture.md)

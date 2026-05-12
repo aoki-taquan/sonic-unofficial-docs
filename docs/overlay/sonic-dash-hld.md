@@ -151,6 +151,18 @@ DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の [YANG](..
 - 外向き / 内向きで ACL 適用順が想定と違う → HLD §2 のパケットフロー図と routing_type の対応を確認。
 - メータリングの値が出ない → DASH_METER_* テーブルが対応する ACL ルールに紐付いているかを確認。
 
+### コマンド例
+
+DASH ENI / VNET 経路と DPU 上のデータパスを確認する。
+
+```bash
+# DASH / ENI の状態
+show dash eni
+show dash vnet
+redis-cli -n 4 keys 'DASH_ENI_TABLE:*'
+docker exec swss orchagent_restart_check 2>&1 | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dash/dash-sonic-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

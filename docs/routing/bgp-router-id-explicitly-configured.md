@@ -229,6 +229,16 @@ module sonic-device_metadata {
 - ピアが一切登録されない場合、`bgpcfgd` のログを確認する。`Loopback0` IPv4 不在で `bgp_router_id` 未設定だと「neighbors adding を中断」する経路に入る。
 - マルチ ASIC で iBGP のみ上がらない場合、対応 ASIC の `Loopback4096` IPv4 設定を確認する。`bgp_router_id` では iBGP 依存は解消されない。
 
+### コマンド例
+
+明示設定された router-id が BGP セッションに反映されているか確認する。
+
+```bash
+sonic-cfggen -d -v 'DEVICE_METADATA["localhost"]["bgp_router_id"]'
+docker exec bgp vtysh -c 'show bgp summary' | head
+docker logs bgp 2>&1 | grep -i 'router-id' | tail
+```
+
 ## 制限事項
 
 - router-id を自動選出から明示設定に切り替える際、FRR が稼働中だと一度 BGP セッションが reset される。メンテナンス時間に実施する。

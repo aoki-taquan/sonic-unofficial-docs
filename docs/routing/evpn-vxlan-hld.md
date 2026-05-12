@@ -156,6 +156,16 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - MAC が学習されない → BGP-EVPN session、`show evpn mac vni`、Type-2 受信
 - Type-5 ルートが入らない → L3 VNI ↔ VRF マッピングと `show evpn vni detail`
 
+### コマンド例
+
+EVPN VXLAN セッションと VNI mapping を確認する。
+
+```bash
+show vxlan tunnel
+show vxlan vlanvnimap
+show bgp l2vpn evpn summary 2>/dev/null | head
+```
+
 ## 確認コマンド
 
 ```bash

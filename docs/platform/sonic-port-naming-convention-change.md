@@ -248,6 +248,17 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
     - 命名規則自体を SONiC 全体に強制する HLD レベルのトラッキング Issue は確認できず、現状は各プラットフォーム個別の [port_config.ini](../reference/glossary.md#term-port-config-ini) 更新で部分採用。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+ポート命名と alias マップを確認する。
+
+```bash
+# Port naming / alias
+show interfaces alias | head
+redis-cli -n 4 keys 'PORT|*' | head
+cat /usr/share/sonic/device/*/Force10-S6000/port_config.ini 2>/dev/null | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-port-name/sonic-port-name.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

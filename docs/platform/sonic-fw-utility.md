@@ -90,6 +90,17 @@ flowchart LR
 - `install` が失敗 → image 形式（vendor-specific binary）と plugin の対応版を確認
 - 反映されない → 再起動種別（cold が必要）を満たしているか確認
 
+### コマンド例
+
+firmware ユーティリティを確認する。
+
+```bash
+# Firmware
+sudo fwutil show status
+sudo fwutil show version
+ls /usr/share/sonic/device/*/fw/ 2>/dev/null | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fwutil/fwutil.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

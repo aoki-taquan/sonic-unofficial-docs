@@ -271,6 +271,16 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 - MLACP FSM が STAGE1/STAGE2 で止まる場合、ARP/MAC 同期メッセージの欠落・サイズ過大を疑う
 - standby 側の system-id が active と異なる場合、MLACP の system-id 同期段が完了していない可能性
 
+### コマンド例
+
+ICCP / MCLAG の peer 状態と sync を確認する。
+
+```bash
+show mclag brief
+show mclag interface
+docker logs iccpd 2>&1 | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mclag/iccpd-code-introduction.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

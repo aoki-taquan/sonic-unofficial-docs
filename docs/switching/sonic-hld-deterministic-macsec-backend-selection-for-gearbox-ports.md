@@ -231,6 +231,16 @@ _GEARBOX_TABLE:phy:<phy_id>
 - バックエンド選定結果は orchagent ログの `MACsec: <port> -> backend=NPU (phy marked unsupported)` NOTICE で確認できる
 - `_GEARBOX_TABLE` 自体が無い場合、`gearsyncd` が `gearbox_config.json` をパースできていない可能性。gearsyncd ログを確認
 
+### コマンド例
+
+Gearbox port での MACsec backend 選択を確認する。
+
+```bash
+show macsec
+show interfaces transceiver presence
+docker logs macsec 2>&1 | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/macsec-gearbox/macsec_backend_gearbox.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

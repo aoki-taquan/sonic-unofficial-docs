@@ -5,6 +5,7 @@ description: DIP=SIP PTF 検証テスト — 「DIP（destination IP）と SIP�
 area: architecture
 verification: discrepancy-found
 last_verified: 2026-05-11
+page_kind: split-hub
 monitor: evolved_beyond_hld
 sources:
 - repo: sonic-net/SONiC
@@ -40,6 +41,14 @@ related:
     HLD で提案されている独立 PTF スクリプト `ansible/roles/test/files/ptftests/dip_sip.py` は **既に削除済**。代わりに `sonic-mgmt/tests/ipfwd/test_dip_sip.py` (pytest) に移行されており、`ansible/roles/test/tasks/dip_sip.yml` は `pytest_runner.yml` を呼ぶラッパに縮約されている (114 byte)。`vars/testcases.yml` は実在 (11721 byte)。HLD のテスト本体記述は **現行コードと構造が異なる** ため、test_dip_sip.py 側の最新仕様に追従する必要あり。
 
 # DIP=SIP PTF 検証テスト
+
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [dip-sip-ptf-validation-high-level-design-concepts.md](dip-sip-ptf-validation-high-level-design-concepts.md) — テストの目的・トポロジ・対応 testbed
+    - [dip-sip-ptf-validation-high-level-design-operations.md](dip-sip-ptf-validation-high-level-design-operations.md) — ファイル構成 / 前処理 / 実行コマンド
+    - [dip-sip-ptf-validation-high-level-design-internals.md](dip-sip-ptf-validation-high-level-design-internals.md) — パケット仕様 / パラメータ / 判定
+    - [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) — 制限事項と HLD-実装乖離（pytest 移行）
 
 ## 概要
 
