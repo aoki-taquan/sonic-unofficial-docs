@@ -1791,9 +1791,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [内部実装](../topics/21-lab-vs-developer/internals.md) (40)
 - [概念](../topics/21-lab-vs-developer/concept.md) (26)
+- [発展トピック](../topics/21-lab-vs-developer/advanced.md) (16)
 - [運用](../topics/21-lab-vs-developer/operations.md) (16)
 - [アーキテクチャ](../topics/21-lab-vs-developer/architecture.md) (14)
-- [設定](../topics/21-lab-vs-developer/setup.md) (14)
 
 ### [VLAN](#term-vlan)
 
