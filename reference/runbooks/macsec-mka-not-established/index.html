@@ -27742,7 +27742,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        確認
       
     </span>
   </a>
@@ -27751,6 +27751,17 @@
       
         <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29133,7 +29144,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        確認
       
     </span>
   </a>
@@ -29142,6 +29153,17 @@
       
         <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29234,12 +29256,21 @@
 <li>cipher 統一: <code>sudo config macsec profile add &lt;profile&gt; --cipher_suite GCM-AES-XPN-256 ...</code></li>
 <li>時刻同期: NTP 復旧後に MKA 再確立を待つ</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>対処後の正常化を以下で裏取りする。</p>
+<ul>
+<li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
+<li><strong>再発監視</strong>: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと</li>
+<li><strong>副作用なし</strong>: 関連サブシステム (<a href="../../glossary/#term-syslog">syslog</a> / <code>show interfaces counters errors</code> / <code>show ip bgp summary</code> 等) に新規 error が出ていないこと</li>
+<li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
+</ul>
+<p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/15-security-aaa/concept/">../../topics/15-security-aaa/concept.md</a></li>
 <li><a href="../../../topics/15-security-aaa/operations/">../../topics/15-security-aaa/operations.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 1fe559aeba2e -->
 
 <div class="footnote">

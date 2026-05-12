@@ -28190,7 +28190,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        確認
       
     </span>
   </a>
@@ -28199,6 +28199,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29133,7 +29144,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        確認
       
     </span>
   </a>
@@ -29142,6 +29153,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29242,12 +29264,21 @@
 <li>両端 FEC mode 統一: <code>sudo config interface fec Ethernet0 rs</code></li>
 <li>暫定で <code>config interface speed Ethernet0 &lt;lower&gt;</code> に落とす</li>
 </ul>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>対処後の正常化を以下で裏取りする。</p>
+<ul>
+<li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
+<li><strong>再発監視</strong>: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと</li>
+<li><strong>副作用なし</strong>: 関連サブシステム (<a href="../../glossary/#term-syslog">syslog</a> / <code>show interfaces counters errors</code> / <code>show ip bgp summary</code> 等) に新規 error が出ていないこと</li>
+<li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
+</ul>
+<p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../fec-errors/">fec-errors.md</a></li>
 <li><a href="../asic-link-autoneg-mismatch/">asic-link-autoneg-mismatch.md</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: b1725b0a9c6a -->
 
 <div class="footnote">

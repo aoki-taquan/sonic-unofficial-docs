@@ -28050,7 +28050,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        確認
       
     </span>
   </a>
@@ -28059,6 +28059,17 @@
       
         <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29133,7 +29144,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        確認
       
     </span>
   </a>
@@ -29142,6 +29153,17 @@
       
         <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29233,13 +29255,22 @@
 <li>route-map 修正: <code>route-map RM_OUT permit 100</code> を追加、または既存の deny を緩める</li>
 <li>iBGP 経路で next-hop 問題: <code>neighbor &lt;peer&gt; next-hop-self</code></li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>対処後の正常化を以下で裏取りする。</p>
+<ul>
+<li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
+<li><strong>再発監視</strong>: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと</li>
+<li><strong>副作用なし</strong>: 関連サブシステム (syslog / <code>show interfaces counters errors</code> / <code>show ip bgp summary</code> 等) に新規 error が出ていないこと</li>
+<li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
+</ul>
+<p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../bgp-session-down/">bgp-session-down.md</a></li>
 <li><a href="../../../topics/02-bgp/operations/">../../topics/02-bgp/operations.md</a></li>
 <li><a href="../../config-db/route-map/">../config-db/route-map.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 035b99b8e325 -->
 
 <div class="footnote">
