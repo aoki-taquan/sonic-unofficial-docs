@@ -1,7 +1,6 @@
 ---
 title: SONiC OS と Docker イメージのセマンティックバージョニング
-description: SONiC OS と Docker イメージのセマンティックバージョニング — SONiC Application Extension Infrastructure
-  により SONiC docker（= SONiC Package）と Base OS が独立配布 されるようになった。
+description: SONiC OS と Docker イメージのセマンティックバージョニング — SONiC Application Extension Infrastructure により SONiC docker（= SONiC Package）と Base OS が独立配布 されるようになった。
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,7 +13,8 @@ related:
   - CRM
   cli: []
   yang:
-  - sonic-crm
+  - sonic-versions
+  - sonic-feature
 ---
 
 !!! success "裏取りステータス: Code-verified（一部例は未採用）"

@@ -14,7 +14,8 @@ related:
   - CRM
   cli: []
   yang:
-  - sonic-crm
+  - sonic-device_metadata
+  - sonic-feature
 ---
 
 <!-- topics-tip -->
