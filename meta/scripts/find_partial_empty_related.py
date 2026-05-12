@@ -65,17 +65,35 @@ def main():
                 continue
             if not fm:
                 continue
+            # Top-level _no_related is a legacy fallback; the canonical
+            # location is under `related:` (see SCHEMA.md "related の opt-out
+            # マーカー").
             if fm.get("_no_related") is True:
                 continue
             rel = fm.get("related") or {}
             if not isinstance(rel, dict):
                 continue
+            # Full opt-out: skip entirely.
+            if rel.get("_no_related") is True:
+                continue
+            # Narrower opt-outs: a given axis is considered "allowed empty"
+            # and is not reported as a partial-empty axis.
+            opt_axes = set()
+            if rel.get("_no_related_yang") is True or rel.get("_no_yang") is True:
+                opt_axes.add("yang")
+            if rel.get("_no_related_cli") is True:
+                opt_axes.add("cli")
+            if rel.get("_no_related_config_db") is True:
+                opt_axes.add("config_db")
             empties = []
             haves = []
             for k in ("cli", "config_db", "yang"):
                 v = rel.get(k) or []
                 if isinstance(v, list) and v:
                     haves.append(k)
+                elif k in opt_axes:
+                    # opted-out axis: not counted as empty
+                    continue
                 else:
                     empties.append(k)
             if empties and haves:

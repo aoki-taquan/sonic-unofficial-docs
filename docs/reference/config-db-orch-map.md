@@ -19,6 +19,7 @@ related:
   cli: []
   yang: []
   _no_related: true
+  _no_related: true
 ---
 
 # CONFIG_DB ↔ orchagent クラス対応表

@@ -17,6 +17,11 @@
 | `related.config_db` | optional | list | 関連 CONFIG_DB テーブル名 |
 | `related.cli` | optional | list | 関連 CLI コマンド |
 | `related.yang` | optional | list | 関連 YANG モジュール |
+| `related._no_related` | optional | bool | `true` のとき本ページは **3 種すべて** (`cli` / `config_db` / `yang`) について related が空であることを意図的に許容する opt-out マーカー。Reference の index ページ / glossary / style-guide 等の meta ページに付与する |
+| `related._no_related_yang` | optional | bool | `true` のとき `related.yang` のみ空を許容する narrower opt-out（CLI / CONFIG_DB は通常通り埋める）。daemon 内部設計の HLD など、YANG モデルが存在しないテーマで使う |
+| `related._no_related_cli` | optional | bool | `true` のとき `related.cli` のみ空を許容する narrower opt-out（内部 daemon / SAI レイヤなど、CLI 公開コマンドを持たないテーマ向け） |
+| `related._no_related_config_db` | optional | bool | `true` のとき `related.config_db` のみ空を許容する narrower opt-out（CONFIG_DB に固有テーブルを持たないテーマ向け） |
+| `related._no_yang` | optional | bool | `_no_related_yang` の旧名（互換 alias）。新規ページは `_no_related_yang` を使うこと |
 | `monitor` | conditional | enum | `not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated`。`verification: discrepancy-found` のとき **必須**。それ以外は optional |
 | `page_kind` | optional | enum | `chapter-index` / `split-child` / `split-hub`。22 章扉 (`docs/topics/NN-slug/index.md`) には `chapter-index` を付与する。大型 HLD の章分割で派生した `<base>-concepts.md` / `-operations.md` / `-internals.md` / `-limitations.md` 等のサブページには `split-child`、その親（概要ハブとして残した元 HLD ページ）には `split-hub` を付与する。品質監査の評価軸を区別するためのタグ。未指定 = 通常の解説ページ |
 
@@ -34,6 +39,33 @@
 `page_kind: split-hub` は分割後に概要ハブとして残した元 HLD ページに付与する。本文の大半は維持しつつ冒頭で派生ページへの導線（concepts / operations / internals / limitations）を提示する責務を負う。`split-child` ページ群と同じ HLD ソースを共有するため `verification` / `sources` は一致する。監査では「ハブとして派生群を網羅的にリンクしているか」「概要として読み終えられるか」を主に見る。
 
 `related.*` は **空配列でも合格**。HLD で言及されていない実装由来の項目を推測で書いてはならない。確実なもののみ列挙し、不明なら空配列にして本文側に「該当する CLI / CONFIG_DB は HLD では未定義」等を注記する。
+
+## related の opt-out マーカー
+
+リファレンス章の index ページや用語集 / style-guide / 404 等の **meta 系ページ** は、設計として related triangle (cli / config_db / yang) を埋められない（あるいは埋める意味が無い）。この種のページが `find_empty_related.py` や `check_discrepancy_related.py` 等の lint で「related が空」と継続的に報告されると、本当に埋めるべきページの shortfall が埋もれてしまう。
+
+そこで以下 4 種の opt-out マーカーを `related:` 配下に置ける:
+
+| マーカー | 効果 | 用途 |
+|---------|------|------|
+| `_no_related: true` | 3 種すべて (`cli` / `config_db` / `yang`) について空を許容 | Reference 章 index、`glossary.md`、`style-guide.md`、トップ `index.md`、`about.md`、`404.md`、`categories/index.md` 等 |
+| `_no_related_yang: true` | `related.yang` のみ空を許容 | YANG モデルが存在しない daemon 内部設計（hamgrd 等）。CLI / CONFIG_DB は通常通り埋める |
+| `_no_related_cli: true` | `related.cli` のみ空を許容 | CLI 公開コマンドを持たない内部レイヤ（SAI / orchagent 内部 etc.） |
+| `_no_related_config_db: true` | `related.config_db` のみ空を許容 | CONFIG_DB に固有テーブルを持たないテーマ（経路計算ロジックの内部解説等） |
+
+`_no_yang` は `_no_related_yang` の旧名で、互換のために引き続き受理する。新規ページは `_no_related_yang` を使うこと。
+
+マーカーは `related:` dict の中に置く:
+
+```yaml
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
+```
+
+opt-out マーカーが付いたページは `frontmatter_lint.py` / `find_empty_related.py` / `check_discrepancy_related.py` / `find_partial_empty_related.py` の関連検査から除外される（hard violation・warning ともに抑止）。安易に付けず、「設計として埋まる余地が無い」ページに限定して使うこと。
 
 ## verification の意味
 
