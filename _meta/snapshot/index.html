@@ -6,17 +6,17 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="カバレッジ — このページは docs/**/*.md の frontmatter verification フィールドを集計したものです。meta/scripts/gen_coverage.py で自動生成されます。">
+        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/_meta/coverage/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/_meta/snapshot/">
       
       
-        <link rel="prev" href="../changelog/">
+        <link rel="prev" href="../sitemap/">
       
       
-        <link rel="next" href="../discrepancies/">
+        <link rel="next" href="../../acl-qos/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>カバレッジ - SONiC 非公式ドキュメント</title>
+        <title>スナップショット - SONiC 非公式ドキュメント</title>
       
     
     
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              カバレッジ
+              スナップショット
             
           </span>
         </div>
@@ -29097,10 +29097,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#verification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        全体合計
+        verification 分布
       
     </span>
   </a>
@@ -29108,10 +29108,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#area" class="md-nav__link">
+  <a href="#topics-22-sub-page" class="md-nav__link">
     <span class="md-ellipsis">
       
-        area 別マトリクス
+        Topics 22 章 sub-page 完成度
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quality-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        最新 quality-audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        その他指標
       
     </span>
   </a>
@@ -29135,7 +29168,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/_meta/coverage.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/_meta/snapshot.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -29143,24 +29176,19 @@
   
 
 
-<h1 id="_1">カバレッジ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>このページは <code>docs/**/*.md</code> の frontmatter <code>verification</code> フィールドを集計したものです。<code>meta/scripts/gen_coverage.py</code> で自動生成されます。</p>
-<p>各状態の意味は次のとおりです。</p>
-<ul>
-<li><strong>code-verified</strong>: HLD と現行 master 実装を突き合わせて整合が取れているページ</li>
-<li><strong>runbook-verified</strong>: Runbook 専用ステータス。実運用で症状再現性が確認されており、HLD 一致は副次的</li>
-<li><strong>discrepancy-found</strong>: 実装と HLD の間に乖離が確認されたページ（<a href="../discrepancies/">一覧</a>）</li>
-<li><strong>issue-confirmed</strong>: GitHub issue / PR で裏取り済みだが実コード突き合わせ未完了のページ</li>
-<li><strong>hld-only</strong>: HLD のみを根拠にしたページ（読み手は鵜呑みにせず実コード確認推奨）</li>
-<li><strong>meta</strong>: プロジェクト運用のメタページ（このページや discrepancies など）</li>
-<li><strong>stub</strong>: 雛形のみ・frontmatter 未設定のページ</li>
-</ul>
-<h2 id="_2">全体合計<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h1 id="_1">スナップショット<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>リポジトリ全体の状態を 1 ページに集約した自動生成サマリ。個別の詳細は <code>coverage.md</code> / <code>sitemap.md</code> / <code>discrepancies.md</code> を参照。</p>
+<div class="admonition note">
+<p class="admonition-title">生成元</p>
+<p><code>python3 meta/scripts/gen_snapshot.py</code> で再生成。
+<code>--check</code> で drift 検出 (CI integration 用)。</p>
+</div>
+<h2 id="verification">verification 分布<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <p>全 <strong>894</strong> ページ。</p>
 <table>
 <thead>
 <tr>
-<th>状態</th>
+<th>verification</th>
 <th style="text-align: right;">件数</th>
 </tr>
 </thead>
@@ -29193,192 +29221,95 @@
 <td>stub</td>
 <td style="text-align: right;">9</td>
 </tr>
+<tr>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"><strong>894</strong></td>
+</tr>
 </tbody>
 </table>
-<h2 id="area">area 別マトリクス<a class="headerlink" href="#area" title="Permanent link">&para;</a></h2>
+<h2 id="topics-22-sub-page">Topics 22 章 sub-page 完成度<a class="headerlink" href="#topics-22-sub-page" title="Permanent link">&para;</a></h2>
+<p>5 種 (concept/setup/operations/internals/advanced) × 22 章 = 110 想定。閾値: 本文 100 行未満は placeholder 扱い。</p>
 <table>
 <thead>
 <tr>
-<th>area</th>
-<th style="text-align: right;">code-verified</th>
-<th style="text-align: right;">runbook-verified</th>
-<th style="text-align: right;">discrepancy-found</th>
-<th style="text-align: right;">issue-confirmed</th>
-<th style="text-align: right;">hld-only</th>
-<th style="text-align: right;">meta</th>
-<th style="text-align: right;">stub</th>
-<th style="text-align: right;">合計</th>
+<th>状態</th>
+<th style="text-align: right;">件数</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>_meta</code></td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5</td>
+<td>完成</td>
+<td style="text-align: right;">68</td>
 </tr>
 <tr>
-<td><code>_root</code></td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
+<td>placeholder</td>
+<td style="text-align: right;">42</td>
 </tr>
 <tr>
-<td><code>acl-qos</code></td>
-<td style="text-align: right;">29</td>
+<td>欠落</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">36</td>
 </tr>
 <tr>
-<td><code>architecture</code></td>
-<td style="text-align: right;">33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">50</td>
-</tr>
-<tr>
-<td><code>categories</code></td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">11</td>
-</tr>
-<tr>
-<td><code>guides</code></td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr>
-<td><code>internals</code></td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">17</td>
-</tr>
-<tr>
-<td><code>management</code></td>
-<td style="text-align: right;">35</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">48</td>
-</tr>
-<tr>
-<td><code>overlay</code></td>
-<td style="text-align: right;">16</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">18</td>
-</tr>
-<tr>
-<td><code>platform</code></td>
-<td style="text-align: right;">36</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">48</td>
-</tr>
-<tr>
-<td><code>reference</code></td>
-<td style="text-align: right;">305</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">344</td>
-</tr>
-<tr>
-<td><code>routing</code></td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">52</td>
-</tr>
-<tr>
-<td><code>switching</code></td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">24</td>
-</tr>
-<tr>
-<td><code>system</code></td>
-<td style="text-align: right;">61</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">72</td>
-</tr>
-<tr>
-<td><code>topics</code></td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">161</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">161</td>
+<td><strong>合計</strong></td>
+<td style="text-align: right;"><strong>110</strong></td>
 </tr>
 </tbody>
 </table>
-<p>推移情報（時系列）は本ページでは扱いません。スナップショットのみ。</p>
+<h2 id="reference">Reference カバレッジ<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th style="text-align: right;">公開ページ</th>
+<th style="text-align: right;">索引総数</th>
+<th style="text-align: right;">カバレッジ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLI</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">298</td>
+<td style="text-align: right;">24.2%</td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>YANG</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">136</td>
+<td style="text-align: right;">61.8%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quality-audit">最新 quality-audit<a class="headerlink" href="#quality-audit" title="Permanent link">&para;</a></h2>
+<ul>
+<li>round <strong>39</strong> — 総平均スコア <strong>4.944 / 5</strong></li>
+<li>詳細: <code>meta/quality-audit-39.md</code></li>
+</ul>
+<h2 id="_2">その他指標<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>低密度ページ残数 (link-density &lt; 2)</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>backlog 残数 (active)</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
 
 
 
