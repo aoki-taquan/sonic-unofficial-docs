@@ -535,6 +535,21 @@ def render(today: _dt.date) -> str:
     lines.append(f"| backlog 残数 (active) | {backlog} |")
     lines.append("")
 
+    # 関連メタページ (cross-link)
+    lines.append("## 関連メタページ")
+    lines.append("")
+    lines.append(
+        "本スナップショットと併読する自動生成メタ系ページ。"
+        "それぞれ独立した観点で repo 全体を俯瞰する。"
+    )
+    lines.append("")
+    lines.append("- [residual-tasks](../reference/verification/residual-tasks.md) — verification 残タスク / 未裏取り箇所の一覧")
+    lines.append("- [stale-verified](../reference/verification/stale-verified.md) — `last_verified` が古いページ (再裏取り候補)")
+    lines.append("- [sources-freshness](../reference/verification/sources-freshness.md) — 引用元 SHA の鮮度 / 参照リポジトリの追従状況")
+    lines.append("- [changelog](changelog.md) — 主要変更履歴 (自動生成サマリ含む)")
+    lines.append("- [discrepancy-index](../reference/verification/discrepancy-index.md) — HLD と実装の乖離を抽出したインデックス")
+    lines.append("")
+
     return "\n".join(lines) + "\n"
 
 

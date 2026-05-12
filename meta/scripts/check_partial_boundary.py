@@ -19,6 +19,10 @@ Usage:
     python3 meta/scripts/check_partial_boundary.py            # default report
     python3 meta/scripts/check_partial_boundary.py --check    # informational (exit 0)
     python3 meta/scripts/check_partial_boundary.py --report   # markdown table
+    python3 meta/scripts/check_partial_boundary.py --strict-phase-table
+        # HLD 系 (`docs/<area>/` 配下、Reference 除く) の partially_implemented
+        # ページにフェーズ別表 (Phase / フェーズ / 段階 等 + 実装済 + 未実装 が
+        # 同一 Markdown 表内に揃う) を必須化。検出ありで exit 1。CI strict 用。
 """
 from __future__ import annotations
 
@@ -212,6 +216,49 @@ def collect() -> list[dict[str, str]]:
     return suspects
 
 
+def _is_hld_area_page(rel: str) -> bool:
+    """Return True if the page belongs to a HLD-area sub-directory under
+    ``docs/<area>/`` excluding Reference and meta sub-trees.
+
+    ``docs/index.md`` (top index) and pages directly under ``docs/`` are also
+    excluded — the strict-phase-table rule is targeted at the technical
+    chapters where partial implementation status is meaningful.
+    """
+    parts = rel.split("/")
+    if len(parts) < 3:
+        return False  # docs/<file>.md — not in an <area>
+    if parts[0] != "docs":
+        return False
+    area = parts[1]
+    # excluded sub-trees
+    if area in {"reference", "_meta", "topics", "stylesheets", "assets"}:
+        return False
+    return True
+
+
+def collect_strict_phase_table() -> list[dict[str, str]]:
+    """Collect HLD-area `partially_implemented` pages that lack an explicit
+    phase-by-phase boundary table (Phase / フェーズ / 段階 etc. keyword + 実装済
+    + 未実装 cells colocated in one Markdown table).
+
+    Used by ``--strict-phase-table`` mode for CI enforcement.
+    """
+    suspects: list[dict[str, str]] = []
+    for md in sorted(DOCS_DIR.rglob("*.md")):
+        rel = str(md.relative_to(REPO_ROOT))
+        if not _is_hld_area_page(rel):
+            continue
+        text = md.read_text(encoding="utf-8")
+        fm, body = parse_frontmatter(text)
+        if fm.get("monitor") != "partially_implemented":
+            continue
+        cleaned = strip_noise(body)
+        if has_phase_boundary_table(cleaned):
+            continue
+        suspects.append({"path": rel, "reason": "missing phase-by-phase table"})
+    return suspects
+
+
 def render_report(suspects: list[dict[str, str]]) -> str:
     if not suspects:
         return "No partial-boundary suspects found.\n"
@@ -232,7 +279,29 @@ def main() -> int:
                     help="informational mode (count to stderr, exit 0)")
     ap.add_argument("--report", action="store_true",
                     help="print markdown table of suspects to stdout")
+    ap.add_argument(
+        "--strict-phase-table",
+        action="store_true",
+        help=(
+            "enforce phase-by-phase Markdown table on HLD-area "
+            "(docs/<area>/, excluding reference/_meta/topics) "
+            "partially_implemented pages. exit 1 on detection."
+        ),
+    )
     args = ap.parse_args()
+
+    if args.strict_phase_table:
+        strict = collect_strict_phase_table()
+        if strict:
+            print(
+                f"partial-boundary (strict-phase-table) violations: {len(strict)}",
+                file=sys.stderr,
+            )
+            for s in strict:
+                print(f"  {s['path']} -- {s['reason']}", file=sys.stderr)
+            return 1
+        print("[check_partial_boundary] strict-phase-table: no violations")
+        return 0
 
     suspects = collect()
 

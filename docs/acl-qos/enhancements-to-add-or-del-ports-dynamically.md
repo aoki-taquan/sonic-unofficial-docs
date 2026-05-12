@@ -294,19 +294,23 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
     - ref counter の上流取り込みが必要な場合、新たな PR を `sonic-swss` 側に提案する（既存 #2022 のリベース）必要がある。
 <!-- /diff-admonition -->
 
-### コマンド例: ポート動的追加/削除確認
+<!-- phase-boundary -->
+## 実装フェーズ境界
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+!!! info "Phase 別の実装済 / 未実装 サマリ"
+    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
+    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
+    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
+    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
 
-```bash
-# CONFIG_DB の PORT エントリ追加・削除と orchagent 反映状況
-redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
-show interfaces status | head
-# 動的変更時の orchagent ログ
-sudo grep -E 'portsorch|PortConfigDone|PortInitDone' /var/log/syslog | tail -50
-```
+    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
+    |---|---|---|---|
+    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
+    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
+    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
 
+    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
+<!-- /phase-boundary -->
 
 ## 引用元
 
