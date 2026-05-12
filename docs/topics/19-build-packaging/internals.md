@@ -7,12 +7,23 @@ verification: meta
 last_verified: 2026-05-11
 sources: []
 related:
-  cli: []
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - FEATURE
   - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
   yang:
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 # 内部実装

@@ -15,6 +15,8 @@ related:
   cli: []
   yang:
   - sonic-fips
+  - sonic-system-defaults
+  _no_related_cli: true
 ---
 
 !!! danger "裏取りステータス: Discrepancy-found（実装名と HLD 記載に差異あり）"

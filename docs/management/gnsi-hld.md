@@ -14,12 +14,15 @@ related:
   config_db:
   - TELEMETRY
   - GNMI
-  cli: []
+  - AAA
+  cli:
+  - show aaa
   yang:
   - openconfig-gnsi-certz
   - openconfig-gnsi-authz
   - openconfig-gnsi-pathz
   - openconfig-gnsi-credentialz
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

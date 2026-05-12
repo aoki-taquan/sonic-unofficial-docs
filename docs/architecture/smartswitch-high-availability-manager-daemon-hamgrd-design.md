@@ -21,7 +21,11 @@ related:
   - MID_PLANE_BRIDGE
   cli:
   - show bfd
-  yang: []
+  - show platform
+  - config vnet
+  yang:
+  - sonic-vnet
+  - sonic-system-defaults
   _no_yang: true
 ---
 

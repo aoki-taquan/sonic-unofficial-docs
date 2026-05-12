@@ -1,6 +1,8 @@
 ---
 title: CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）
-description: CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用） — QSFP-DD / OSFP / QSFP の高速モジュールでは、プラットフォーム × モジュール組み合わせ毎に Signal Integrity (SI) 値を再調整 しないと link…
+description: CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用） — QSFP-DD
+  / OSFP / QSFP の高速モジュールでは、プラットフォーム × モジュール組み合わせ毎に Signal Integrity (SI) 値を再調整 しないと
+  link…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -11,10 +13,24 @@ sources:
 related:
   config_db:
   - CRM
-  cli: []
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  - PORT
+  cli:
+  - show interfaces
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-port
   - sonic-cable-length
+  - sonic-crm
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

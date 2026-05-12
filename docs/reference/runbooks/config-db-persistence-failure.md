@@ -1,6 +1,7 @@
 ---
 title: CONFIG_DB の永続化が失敗する
-description: 'Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 4305596 — configdb.cpp'
+description: 'Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities
+  @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 4305596 — configdb.cpp'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -12,12 +13,23 @@ sources:
   path: common/configdb.cpp
   ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
-  config_db: []
+  config_db:
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  - INTERFACE
   cli:
   - config save
   - sonic-cfggen
+  - show interfaces
+  - show ip
+  - config syslog
   yang:
   - sonic-system-defaults
+  - sonic-syslog
 ---
 
 # Runbook: CONFIG_DB の永続化が失敗する (config save 失敗)

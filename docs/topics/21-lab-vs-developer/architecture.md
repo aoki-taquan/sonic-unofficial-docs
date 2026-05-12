@@ -6,7 +6,13 @@ verification: meta
 last_verified: 2026-05-10
 sources: []
 related:
-  cli: []
+  cli:
+  - show platform
+  - config vnet
+  - show techsupport
+  - show version
+  - show acl
+  - config acl
   config_db:
   - DPU
   - CHASSIS_MODULE
@@ -17,6 +23,8 @@ related:
   - CRM
   yang:
   - sonic-crm
+  - sonic-vnet
+  - sonic-system-defaults
 ---
 
 # アーキテクチャ

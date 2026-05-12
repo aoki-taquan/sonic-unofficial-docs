@@ -16,10 +16,20 @@ related:
   - PORT
   - TRANSCEIVER_INFO
   - CRM
-  cli: []
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-port
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 # FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）

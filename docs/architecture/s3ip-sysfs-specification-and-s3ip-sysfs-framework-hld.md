@@ -1,6 +1,7 @@
 ---
 title: S3IP sysfs（/sys_switch 統一ハードウェアアクセス層）
-description: S3IP sysfs（/sys_switch 統一ハードウェアアクセス層） — SONiC は ASIC こそ共通でも PSU / FAN / 温度センサ / sysled / トランシーバ等、周辺ハードウェア はベンダ・機種ごとに大きく異なる。
+description: S3IP sysfs（/sys_switch 統一ハードウェアアクセス層） — SONiC は ASIC こそ共通でも PSU / FAN
+  / 温度センサ / sysled / トランシーバ等、周辺ハードウェア はベンダ・機種ごとに大きく異なる。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10
@@ -12,10 +13,12 @@ related:
   config_db:
   - SWITCH_TRIMMING
   - SWITCH_HASH
-  cli: []
+  cli:
+  - show platform
   yang:
   - sonic-asic-sensors
   - sonic-chassis-module
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

@@ -1,6 +1,8 @@
 ---
 title: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）
-description: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC の counter は counter group（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で flex…
+description: flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats） — SONiC
+  の counter は counter group（port / port-drop / PG-drop / queue / watermark / RIF 等）単位で
+  flex…
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,10 +16,21 @@ related:
   - CRM
   - ACL_RULE
   - ACL_TABLE
-  cli: []
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - show interfaces
+  - show queue
+  - show pfc
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
   yang:
   - sonic-flex_counter
   - sonic-debug-counter
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

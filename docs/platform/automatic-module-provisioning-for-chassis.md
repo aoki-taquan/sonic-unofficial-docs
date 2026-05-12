@@ -18,6 +18,8 @@ related:
   yang:
   - sonic-chassis-module
   - sonic-device_metadata
+  - sonic-system-defaults
+  _no_related_cli: true
 ---
 
 <!-- topics-tip -->

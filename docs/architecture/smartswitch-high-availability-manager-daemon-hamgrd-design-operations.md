@@ -20,7 +20,8 @@ related:
   - DASH_HA_SCOPE_CONFIG_TABLE
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
-  cli: []
+  cli:
+  - show platform
   yang: []
   _no_yang: true
 ---

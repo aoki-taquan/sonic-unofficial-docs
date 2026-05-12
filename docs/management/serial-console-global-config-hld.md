@@ -1,7 +1,6 @@
 ---
 title: シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
-description: シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES） — シリアル（tty）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、自動ログアウトのタイマー
-  と SysRq カパビリティ を運用ポリシーに合わせて設定したいという要件がある。
+description: シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES） — シリアル（tty）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、自動ログアウトのタイマー と SysRq カパビリティ を運用ポリシーに合わせて設定したいという要件がある。
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -18,6 +17,8 @@ related:
   cli: []
   yang:
   - sonic-serial-console
+  - sonic-system-defaults
+  _no_related_cli: true
 ---
 
 <!-- topics-tip -->

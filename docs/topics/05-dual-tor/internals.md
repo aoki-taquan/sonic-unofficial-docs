@@ -12,11 +12,20 @@ sources:
 - docs/overlay/active-active-dual-tor.md
 - docs/overlay/active-standby-dual-tor.md
 related:
-  cli: []
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - MUX_LINKMGR
   - MUX_CABLE
   - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
   yang:
   - sonic-mux-cable
   - sonic-crm
