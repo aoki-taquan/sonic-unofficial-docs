@@ -241,15 +241,29 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
     - [sonic-pins #1647: \[PDPI\] Move from `third_party/pins_infra/p4_pdpi` to `third_party/pins_infra/p4_infra/p4_pdpi` (open)](https://github.com/sonic-net/sonic-pins/pull/1647) — PINS 内 P4 PDPI のリファクタ進行中 PR。本 HLD の gRPC port 9559 サービス取り込みは sonic-pins 側で進行中だが SONiC 本体への統合トラッキングは未整理。
 <!-- /diff-admonition -->
 
-確認コマンド例:
+## 確認コマンド
+
+下記コマンドで p4rt コンテナ・APP_P4RT_TABLE・SwitchOrch ハッシュ責務を順に
+確認し、HLD の `HashOrch` 想定と実装の SwitchOrch 統合がどう乖離しているかを
+master 上で直接観測できる。
 
 ```bash
-# Application Extension パッケージ状態
-sonic-package-manager list
-sonic-package-manager show <pkg-name>
-docker ps -a --format '{{.Names}}	{{.Status}}'
+# 1. p4rt コンテナと Application Extension の状態
+sonic-package-manager list | grep -i p4rt
+docker ps -a --format '{{.Names}}\t{{.Status}}' | grep -i p4rt
+
+# 2. APP_P4RT_TABLE / APPL_STATE_DB の活きエントリ
+redis-cli -n 0 keys 'P4RT_TABLE:*' | head
+redis-cli -n 14 keys 'P4RT_TABLE:*' | head   # APPL_STATE_DB = DB 14
+
+# 3. ハッシュ責務が SwitchOrch にあることを CFG/STATE/CONFIG_DB で確認
+redis-cli -n 4 hgetall 'SWITCH_HASH|GLOBAL'
+docker exec swss grep -rn 'SAI_NATIVE_HASH_FIELD' /usr/lib/ 2>/dev/null | head
+docker logs swss 2>&1 | grep -iE 'SwitchOrch|HashOrch' | tail -20
 ```
 
+上記コマンドで `HashOrch` クラスの痕跡が swss コンテナ内に存在しないこと、
+代わりに `SwitchOrch` が `SWITCH_HASH` を購読していることが確認できる。
 
 ## 引用元
 

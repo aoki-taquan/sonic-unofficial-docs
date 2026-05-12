@@ -282,31 +282,28 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
     - [sonic-gnmi #86: sonic-gnmi: Master Arbitration (closed)](https://github.com/sonic-net/sonic-gnmi/pull/86) — Master Arbitration 機能の sonic-gnmi 側追加 PR の痕跡。本 HLD と直接対応するが closed であり、現在の master 取り込み状況は要再確認。
 <!-- /diff-admonition -->
 
-### コマンド例: gNMI master arbitration 確認
+## 確認コマンド
 
 下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+突き合わせ、HLD 記載の挙動と現在の master の実挙動が一致しているか確認できる。
+特に **Role 拒否** と **CONFIG_DB 駆動 ON/OFF 未実装** の 2 点は実機で再現可能。
 
 ```bash
-# gNMI master election 状態と現在の master ID
-gnmi_cli -a 127.0.0.1:8080 -client_types=gnmi -insecure -encoding=4 -alsologtostderr -capabilities | head
-redis-cli -n 6 hgetall 'GNMI_MASTER|<role>'
-docker logs gnmi 2>&1 | tail -30
+# 1. telemetry プロセスの起動オプション確認 (--with-master-arbitration の有無)
+docker exec gnmi ps -ef | grep -E 'telemetry|gnmi' | grep -o 'with-master-arbitration'
+
+# 2. gNMI Capabilities で master arbitration extension の応答確認
+gnmi_cli -a 127.0.0.1:8080 -client_types=gnmi -insecure -capabilities | head -30
+
+# 3. CONFIG_DB に master_arbitration_enabled スキーマが無いことを確認 (空のはず)
+redis-cli -n 4 keys 'TELEMETRY|*' | xargs -I{} redis-cli -n 4 hgetall {}
+
+# 4. telemetry コンテナのログで MasterArbitration 拡張のパース結果を確認
+docker logs gnmi 2>&1 | grep -iE 'master|arbitration|PermissionDenied|Unimplemented' | tail -30
 ```
 
-### コマンド例: gNMI master arbitration 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# gNMI master election 状態と現在の master ID
-gnmi_cli -a 127.0.0.1:8080 -client_types=gnmi -insecure -encoding=4 -alsologtostderr -capabilities | head
-redis-cli -n 6 hgetall 'GNMI_MASTER|<role>'
-docker logs gnmi 2>&1 | tail -30
-```
-
-
+上記 4 ステップを順に走らせると、HLD と実装の差分（Role 拒否 / CONFIG_DB 経路無し）が
+runtime ログと CONFIG_DB の状態から具体的に確認できる。
 
 ## 引用元
 
