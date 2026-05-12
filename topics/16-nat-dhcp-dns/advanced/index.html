@@ -29358,14 +29358,14 @@
 </ul>
 <h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../architecture/nat-in-sonic/">NAT in SONiC</a>, <a href="../../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent</a>, <a href="../../../system/sonic-migration-to-chrony/">chrony 移行</a>, <a href="../../../system/static-dns-configuration/">静的 DNS 設定</a> で完結する。<code>natorch</code> / <code>natsyncd</code> の APPL_DB ↔ ASIC_DB 経路、DHCP relay の Option 82/79 制御は internals で扱う。</li>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../architecture/nat-in-sonic/">NAT in SONiC</a>, <a href="../../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent</a>, <a href="../../../system/sonic-migration-to-chrony/">chrony 移行</a>, <a href="../../../system/static-dns-configuration/">静的 DNS 設定</a> で完結する。<code>natorch</code> / <code>natsyncd</code> の <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> ↔ <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> 経路、DHCP relay の Option 82/79 制御は internals で扱う。</li>
 <li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config nat</code> / <code>show nat</code> / <code>config dhcp_relay</code> / <code>show dhcp_relay</code> / <code>config ntp</code> 系、<code>NAT</code>, <code>STATIC_NAT</code>, <code>DHCP_RELAY</code>, <code>DNS_NAMESERVER</code>, <code>NTP_SERVER</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a> に集約。</li>
 <li><strong>本ページ</strong> は NAT64/DNS64、TWAMP Light、PTP / chrony 切替、resolv.conf container 同期、DHCP DoS 緩和との競合など、章境界をまたぐ発展領域だけを扱う。</li>
 </ul>
 <h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>NAT セッションが超過しているときは、<code>show nat translations count</code> で current/max を確認し、<code>config nat add timeout</code> で aging を短縮する。<code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が syncd ログに出る場合は TCAM 物理上限到達。</li>
-<li>DHCP relay で <code>discover</code> が forward されない場合、<code>show dhcp_relay ipv4 helper</code> で helper IP の到達性、VLAN 上の broadcast bind、Option 82 の <code>link-selection</code> が relay/server で一致しているかを点検する。</li>
+<li>NAT セッションが超過しているときは、<code>show nat translations count</code> で current/max を確認し、<code>config nat add timeout</code> で aging を短縮する。<code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が <a href="../../../reference/glossary/#term-syncd">syncd</a> ログに出る場合は TCAM 物理上限到達。</li>
+<li>DHCP relay で <code>discover</code> が forward されない場合、<code>show dhcp_relay ipv4 helper</code> で helper IP の到達性、<a href="../../../reference/glossary/#term-vlan">VLAN</a> 上の broadcast bind、Option 82 の <code>link-selection</code> が relay/server で一致しているかを点検する。</li>
 <li>chrony が NTP sync しないときは、<code>chronyc tracking</code> / <code>chronyc sources -v</code> で Stratum / reach、<code>chronyc activity</code> で source 数を確認。mgmt VRF 配下では <code>bindaddress</code> の固定が必須。</li>
 </ul>
 <h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -29386,7 +29386,7 @@
 <li><a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror: DHCP DoS 緩和との境界</a></li>
 <li><a href="../../15-security-aaa/">15 Security / AAA: mgmt VRF と service bind</a></li>
 </ul>
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: cc3a30e152f2 -->
 
 
 

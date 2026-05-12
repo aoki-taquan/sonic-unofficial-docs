@@ -29294,7 +29294,7 @@
 </div>
 <h1 id="egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp">Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）<a class="headerlink" href="#egress-outer-dscp-aclunderlay_set_dscp-metadata-egr_set_dscp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>encapsulated 後の <strong>outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える</strong> ための <a href="../../reference/glossary/#term-acl">ACL</a> table type<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Microsoft 提案、2024-07 初版。</p>
+<p>encapsulated 後の <strong>outer header の <a href="../../reference/glossary/#term-dscp">DSCP</a> を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える</strong> ための <a href="../../reference/glossary/#term-acl">ACL</a> table type<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Microsoft 提案、2024-07 初版。</p>
 <p>既存の手段の限界:</p>
 <ul>
 <li>Ingress L3 ACL で DSCP を書き換えると <strong>inner DSCP 自体が変わってしまう</strong>（後段で復元できない）</li>
@@ -29431,7 +29431,7 @@ reasoning: 採用案 Option-C と SAI 要件の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2e78c47a04ed -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 <div class="footnote">
 <hr />

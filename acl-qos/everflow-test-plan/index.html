@@ -29272,7 +29272,7 @@
 </div>
 <h1 id="everflow-ingress-egress-mirrorlag-ecmp-ipv6">Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）<a class="headerlink" href="#everflow-ingress-egress-mirrorlag-ecmp-ipv6" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Everflow（<a href="../../reference/glossary/#term-sai">SAI</a> mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく <strong>本番に近い構成での functional / negative テスト</strong> を行うプラン<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-lag">LAG</a>・<a href="../../reference/glossary/#term-bgp">BGP</a> route advertise・<a href="../../reference/glossary/#term-ecmp">ECMP</a> next-hop 変動・neighbor MAC 変更・policer DSCP enforcement を含む。</p>
+<p>Everflow（<a href="../../reference/glossary/#term-sai">SAI</a> mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく <strong>本番に近い構成での functional / negative テスト</strong> を行うプラン<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-lag">LAG</a>・<a href="../../reference/glossary/#term-bgp">BGP</a> route advertise・<a href="../../reference/glossary/#term-ecmp">ECMP</a> next-hop 変動・neighbor MAC 変更・policer <a href="../../reference/glossary/#term-dscp">DSCP</a> enforcement を含む。</p>
 <p>旧 Everflow テストプランからの拡張点:</p>
 <ul>
 <li><strong>Egress <a href="../../reference/glossary/#term-acl">ACL</a> table</strong> と <strong>Egress mirror session</strong> の追加カバレッジ</li>
@@ -29406,7 +29406,7 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 <ul>
 <li><strong>ACL Flex Counter</strong>: <code>aclshow</code> の counter は別 framework 由来（rule 単位）。テストの counter assertion はここに依存</li>
 <li><strong>Mirror session resolve</strong>: best match route 経由・neighbor MAC で encap header を組むため、route / neighbor 変動に追随する [neighorch / mirrororch] 挙動が前提</li>
-<li><strong>Policer</strong>: rule に policer を載せた場合の rate / DSCP enforcement 確認</li>
+<li><strong><a href="../../reference/glossary/#term-policer">Policer</a></strong>: rule に policer を載せた場合の rate / DSCP enforcement 確認</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29440,7 +29440,7 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 33e61764da82 -->
+<!-- glossary-links-injected: 61eb99dc6b8c -->
 
 <div class="footnote">
 <hr />

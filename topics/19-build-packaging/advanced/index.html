@@ -29311,12 +29311,12 @@
 <p><code>sonic-buildimage</code> は <code>PLATFORM=&lt;vendor&gt;</code> 単位で完全に独立した image を生成するため、ビルドを横方向に分割しやすい。実運用での並列化パターンは次の三段になる。</p>
 <ul>
 <li><strong><code>make -j</code> レベル</strong>: 単一 platform 内で <code>dpkg-buildpackage</code> / docker build を並列化する。<code>SONIC_BUILD_JOBS</code> と <code>SONIC_CONFIG_BUILD_JOBS</code> を物理コアに合わせて指定。</li>
-<li><strong>platform レベル</strong>: CI runner / sub-job を <code>PLATFORM=broadcom</code> / <code>mellanox</code> / <code>marvell</code> などで分割する。共通 deb (<code>target/debs/</code>) は cache で再利用し、syncd と SDK 依存パッケージだけ platform 個別に作る。</li>
+<li><strong>platform レベル</strong>: CI runner / sub-job を <code>PLATFORM=broadcom</code> / <code>mellanox</code> / <code>marvell</code> などで分割する。共通 deb (<code>target/debs/</code>) は cache で再利用し、<a href="../../../reference/glossary/#term-syncd">syncd</a> と SDK 依存パッケージだけ platform 個別に作る。</li>
 <li><strong>arch レベル</strong>: <code>PLATFORM_ARCH=amd64</code> / <code>arm64</code> / <code>armhf</code> を別 matrix セルに展開する。<code>sonic-slave-&lt;dist&gt;-&lt;arch&gt;</code> docker を pre-pull しておくと <code>docker-base</code> のフェーズ時間が大きく短縮する。</li>
 </ul>
 <p>CI 全体は「<code>target/debs/</code> cache (全 platform 共通) → platform 並列 build → image 集約」の三層パイプラインで構成するのが安定する。</p>
 <h2 id="sdk-vendor-sdk">SDK 切替と vendor SDK の取り扱い<a class="headerlink" href="#sdk-vendor-sdk" title="Permanent link">&para;</a></h2>
-<p>vendor SDK (Broadcom SAI / OpenNSL、NVIDIA SDK、Marvell Prestera 等) はバージョン依存が強く、<code>platform/&lt;vendor&gt;/&lt;sai&gt;.mk</code> で deb 名 / URL / SHA を pin している。SDK を上げるときは次を同時に確認する。</p>
+<p>vendor SDK (Broadcom <a href="../../../reference/glossary/#term-sai">SAI</a> / OpenNSL、NVIDIA SDK、Marvell Prestera 等) はバージョン依存が強く、<code>platform/&lt;vendor&gt;/&lt;sai&gt;.mk</code> で deb 名 / URL / SHA を pin している。SDK を上げるときは次を同時に確認する。</p>
 <ul>
 <li><code>platform/&lt;vendor&gt;/*.mk</code> の <code>SAI</code> / <code>SDK</code> バージョン変数</li>
 <li><code>dockers/docker-syncd-&lt;vendor&gt;/</code> の Dockerfile 依存</li>
@@ -29378,7 +29378,7 @@
 <li>SPM (<code>sonic-package-manager</code>) で manifest schema 拡張と署名検証関連の議論が継続。</li>
 <li>SBOM 出力と CVE スキャン自動化の PR が CI 周りで議題化。</li>
 </ul>
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 6ee6deac630a -->
 
 
 

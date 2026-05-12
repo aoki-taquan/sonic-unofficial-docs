@@ -29365,7 +29365,7 @@
 <h3 id="_3">テストケース<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <h4 id="1-int-end-point-as-int-source">1. INT end-point as INT source<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#1-int-end-point-as-int-source" title="Permanent link">&para;</a></h4>
 <p>DUT を <strong>INT パケット生成元</strong> にする:
-- Switch ID / INT L4 DSCP / latency quantization
+- Switch ID / INT L4 <a href="../../reference/glossary/#term-dscp">DSCP</a> / latency quantization
 - INT session（max hop=8、collect switch id のみ ON）
 - Flow watchlist（src/dst IP + EtherType=0x800 + sample 100% + report all）</p>
 <p>→ PTF 送信パケットが INT ヘッダ付き in-band で受信。watchlist 外は INT 無し、disable 時も INT 無し。</p>
@@ -29427,7 +29427,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8f15c1459e58 -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 <div class="footnote">
 <hr />

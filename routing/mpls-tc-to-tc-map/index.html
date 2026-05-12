@@ -29343,7 +29343,7 @@
 </div>
 <h1 id="mpls-tc-tc-mapmpls-qos-classification">MPLS TC → TC map（MPLS パケットの QoS classification）<a class="headerlink" href="#mpls-tc-tc-mapmpls-qos-classification" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の <a href="../../reference/glossary/#term-qos">QoS</a> は DSCP / DOT1P / TC の各値間でマップを定義し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>*_TO_*_MAP</code> テーブルとポート毎の <code>PORT_QOS_MAP</code> を介して <a href="../../reference/glossary/#term-sai">SAI</a> に降ろす設計を取っている。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong><a href="../../reference/glossary/#term-mpls">MPLS</a> パケットの TC（Traffic Class、旧称 EXP、RFC 5462）</strong> から内部 TC へのマップを既存 QoS フローに追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>SONiC の <a href="../../reference/glossary/#term-qos">QoS</a> は <a href="../../reference/glossary/#term-dscp">DSCP</a> / DOT1P / TC の各値間でマップを定義し、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>*_TO_*_MAP</code> テーブルとポート毎の <code>PORT_QOS_MAP</code> を介して <a href="../../reference/glossary/#term-sai">SAI</a> に降ろす設計を取っている。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong><a href="../../reference/glossary/#term-mpls">MPLS</a> パケットの TC（Traffic Class、旧称 EXP、RFC 5462）</strong> から内部 TC へのマップを既存 QoS フローに追加する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>これにより、<strong>MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用</strong> できるようになる。SAI 自体は既に <code>SAI_QOS_MAP_MPLS_EXP_TO_TC</code> をサポートしており、本 HLD の作業は <strong>SONiC スタック側の対応（CONFIG_DB スキーマ → <a href="../../reference/glossary/#term-orchagent">orchagent</a> → CLI）</strong> が中心<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <blockquote>
 <p>名称について: HLD 0.2 で <strong>「MPLS EXP」を「MPLS TC」に統一</strong>（RFC 5462 準拠）されている<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -29528,7 +29528,7 @@ reasoning: 新テーブルのスキーマと PORT_QOS_MAP への field 追加・
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 47919f2738a1 -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 <div class="footnote">
 <hr />

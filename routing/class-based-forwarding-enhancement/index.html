@@ -29172,7 +29172,7 @@
 </div>
 <h1 id="cbf">クラスベース転送 (CBF)<a class="headerlink" href="#cbf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>同じ宛先に対して <strong>Forwarding Class (FC) ごとに異なるパス</strong> を取らせる traffic engineering。FC は Traffic Class（<a href="../../reference/glossary/#term-qos">QoS</a> キュー）とは別概念で、入力時に DSCP / <a href="../../reference/glossary/#term-mpls">MPLS</a> EXP から決まる "どのパスを通すか" のラベル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>同じ宛先に対して <strong>Forwarding Class (FC) ごとに異なるパス</strong> を取らせる traffic engineering。FC は Traffic Class（<a href="../../reference/glossary/#term-qos">QoS</a> キュー）とは別概念で、入力時に <a href="../../reference/glossary/#term-dscp">DSCP</a> / <a href="../../reference/glossary/#term-mpls">MPLS</a> EXP から決まる "どのパスを通すか" のラベル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>典型例は「foreground は最短路、background は長尺路」のように分離転送する設計。QoS キューでバックグラウンドを絞ると帯域が消えてしまう問題を、CBF は別パスで回避する。実装は OpenCompute <a href="https://github.com/opencomputeproject/SAI/pull/1193">SAI #1193</a> の <code>SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED</code> と NHG 入れ子モデルを前提とする<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">処理フロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
@@ -29281,7 +29281,7 @@
 <li><a href="../../topics/17-srv6-mpls/advanced/">17-srv6-mpls/advanced</a>: MPLS EXP との連携</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 76b5994c62b3 -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 <div class="footnote">
 <hr />

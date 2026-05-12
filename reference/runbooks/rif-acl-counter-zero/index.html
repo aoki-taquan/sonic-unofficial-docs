@@ -29191,7 +29191,7 @@
 <ol>
 <li><strong><code>FLEX_COUNTER_TABLE|ACL</code> / <code>FLEX_COUNTER_TABLE|RIF</code> が disable</strong></li>
 <li><strong><a href="../../glossary/#term-acl">ACL</a> rule が ASIC に install されていない</strong>: <a href="../../glossary/#term-orchagent">orchagent</a> エラーで install 失敗</li>
-<li><strong>rule の match 条件にトラフィックが該当していない</strong> (DSCP / src_ip / in_port のミスマッチ)</li>
+<li><strong>rule の match 条件にトラフィックが該当していない</strong> (<a href="../../glossary/#term-dscp">DSCP</a> / src_ip / in_port のミスマッチ)</li>
 <li><strong>rule 優先度 (<code>PRIORITY</code>) が他 rule に隠されている</strong>: 先に match した別 rule に取られている</li>
 <li><strong>stage / type 不一致</strong>: L3 rule を <code>INGRESS_L2</code> テーブルに入れている</li>
 </ol>
@@ -29247,7 +29247,7 @@
 <ul>
 <li>counter group の enable: <code>counterpoll acl enable</code> / <code>counterpoll rif enable</code></li>
 <li>rule の install 失敗時: 該当 rule を <code>config acl update full &lt;json&gt;</code> で再投入</li>
-<li>match の見直し（src_ip / DSCP / ip_protocol 等を実トラフィックに合わせる）</li>
+<li>match の見直し（src_ip / <a href="../../glossary/#term-dscp">DSCP</a> / ip_protocol 等を実トラフィックに合わせる）</li>
 <li>優先度衝突は <code>PRIORITY</code> を引き上げ / 下げて切り分け</li>
 </ul>
 <h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
@@ -29259,7 +29259,7 @@
 <li><a href="../../config-db/acl-rule/">../config-db/acl-rule.md</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: e2892b76fd9a -->
+<!-- glossary-links-injected: eebb97ac8e67 -->
 
 <div class="footnote">
 <hr />

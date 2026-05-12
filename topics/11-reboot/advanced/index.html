@@ -29256,7 +29256,7 @@
 </ul>
 <h2 id="express-reboot">Express reboot の内部設計<a class="headerlink" href="#express-reboot" title="Permanent link">&para;</a></h2>
 <p>Express reboot は warm reboot の延長で、SAI 状態と data plane を保持したまま control plane だけ swap する。鍵となるのは (1) <code>syncd</code> の SAI object handle dump と新 image の <code>syncd</code> での再 attach、(2) <code>orchagent</code> の internal cache を <code>APPL_STATE_DB</code> 経由でリビルド、(3) <code>bgpd</code> の GR/LLGR による経路再学習を上位 plane 側でブロックしない、という 3 つの同期点。期待ダウンタイムは &lt; 1 秒 (data plane forward 停止時間) であり、warm reboot (数秒〜十数秒) より大幅に短い。</p>
-<p>実装の依存は ASIC SDK 側の <code>sai_switch_attribute_t::SAI_SWITCH_ATTR_FAST_API_ENABLE</code> と、SDK が持つ shared memory hand-off API。これに対応していない platform では express reboot は不可。</p>
+<p>実装の依存は <a href="../../../reference/glossary/#term-asic-sdk">ASIC SDK</a> 側の <code>sai_switch_attribute_t::SAI_SWITCH_ATTR_FAST_API_ENABLE</code> と、SDK が持つ shared memory hand-off API。これに対応していない platform では express reboot は不可。</p>
 <h2 id="graceful-drain-tsa">graceful drain &amp; TSA 連携<a class="headerlink" href="#graceful-drain-tsa" title="Permanent link">&para;</a></h2>
 <p>reboot 前に BGP / BFD を drain する手順は <code>reliable-tsa</code> (Traffic Shift Away) HLD で形式化されている。<code>config bgp shutdown all</code> だけでは ECMP から外れるまでに peer 側の hold timer 切れを待つため、<code>graceful-shutdown</code> community (RFC 8326) を付与して即時 deprefer させる流れが推奨される。drain 後の reboot で transient を最小化できる。</p>
 <p>逆に reboot 後の <code>reliable-tso</code> (Traffic Shift Over) は、forwarding が確立してから順に peer に announce 再開する。SONiC では <code>BGP_DEVICE_GLOBAL.tsa_enabled</code> を切り替えるだけで template 経由で route-map 適用される設計。</p>
@@ -29295,7 +29295,7 @@
 </ul>
 <h2 id="_6">検証パスとラボ要件<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>VS lab で warm reboot を再現するときは、<code>docker exec swss supervisorctl restart all</code> ではなく <code>sonic-installer</code> 経由の本物 warm reboot path を <code>pretest_warm_reboot.sh</code> で実行する。orchagent reconciliation 動作が VS でも観察可能。</li>
+<li>VS lab で warm reboot を再現するときは、<code>docker exec swss supervisorctl restart all</code> ではなく <code>sonic-installer</code> 経由の本物 warm reboot path を <code>pretest_warm_reboot.sh</code> で実行する。<a href="../../../reference/glossary/#term-orchagent">orchagent</a> reconciliation 動作が VS でも観察可能。</li>
 <li>chassis 級は <code>sonic-mgmt</code> の <code>chassis_reboot</code> test suite が CHASSIS_APP_DB の <code>module_state</code> 遷移を assertion している。</li>
 </ul>
 <h2 id="_7">関連ページ (追補)<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -29327,7 +29327,7 @@
 <li><a href="../../../system/multi-asic-warm-reboot/">Multi-ASIC warm reboot</a></li>
 <li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ</a></li>
 </ul>
-<!-- glossary-links-injected: db511538c2a3 -->
+<!-- glossary-links-injected: de69bafad385 -->
 
 
 

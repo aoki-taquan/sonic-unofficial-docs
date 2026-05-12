@@ -29323,7 +29323,7 @@
 <p>port illegal packets drop design は、RIF / <a href="../../../reference/glossary/#term-vlan">VLAN</a> など L3 側の SAI counter を Interface MIB へどう集約するかを扱います。<a href="../../../reference/glossary/#term-snmp">SNMP</a> で <code>ifInErrors</code> や <code>ifOutErrors</code> を監視している環境では、L2 port counter と RIF counter の集約方針がトラブルシュート結果に影響します。</p>
 <p>snmpwalk で <code>IF-MIB::ifInErrors</code> が振り切れているのに <code>portstat</code> の RX_ERR が静かな場合、RIF 側の counter が SNMP 集約されている可能性があります。逆もまた然りで、SNMP モニタと CLI counter の数字が違っても整合は取れているケースが多いです。</p>
 <h2 id="copp">CoPP の確認<a class="headerlink" href="#copp" title="Permanent link">&para;</a></h2>
-<p>CoPP (Control Plane Policer) は CPU 向け punt traffic を trap group ごとに policing します。<code>show copp</code> 系のコマンドは限定的なので、CONFIG_DB と <code>show flowcnt trap</code> を併用します。</p>
+<p>CoPP (Control Plane <a href="../../../reference/glossary/#term-policer">Policer</a>) は CPU 向け punt traffic を trap group ごとに policing します。<code>show copp</code> 系のコマンドは限定的なので、CONFIG_DB と <code>show flowcnt trap</code> を併用します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ show flowcnt trap stats
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    Trap Name         Packets    Bytes    PPS    Trap Group
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>-----------------  ---------    -----    -----    ----------
@@ -29421,7 +29421,7 @@
 <li><a href="../../../acl-qos/copp-neighbor-miss-trap-and-enhancements/">CoPP neighbor-miss trap と強化</a> — CoPP の trap group 設計</li>
 <li><a href="../../../acl-qos/copp-manager-redesign-test-plan/">CoPP manager リデザイン テストプラン</a> — trap 別の挙動確認の観点</li>
 </ul>
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: 7346a8b8c6b2 -->
 
 
 

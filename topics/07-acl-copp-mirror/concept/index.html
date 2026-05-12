@@ -29404,7 +29404,7 @@
 
 
 <h1 id="_1">概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p><a href="../../../reference/glossary/#term-acl">ACL</a>（Access Control List）と <a href="../../../reference/glossary/#term-copp">CoPP</a>（Control Plane Policing）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、<strong>それぞれが解いている問題は別</strong> です。最初にこの 3 つを分けて理解しておかないと、<code>ACL_TABLE</code> / <code>COPP_TRAP</code> / <code>MIRROR_SESSION</code> の使い分けで迷うことになります。</p>
+<p><a href="../../../reference/glossary/#term-acl">ACL</a>（Access Control List）と <a href="../../../reference/glossary/#term-copp">CoPP</a>（Control Plane <a href="../../../reference/glossary/#term-policing">Policing</a>）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、<strong>それぞれが解いている問題は別</strong> です。最初にこの 3 つを分けて理解しておかないと、<code>ACL_TABLE</code> / <code>COPP_TRAP</code> / <code>MIRROR_SESSION</code> の使い分けで迷うことになります。</p>
 <h2 id="3">この 3 機能は何を解決するか<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29416,7 +29416,7 @@
 <tbody>
 <tr>
 <td>ACL</td>
-<td>data plane に流れるパケットを <strong>classify して、許可 / 拒否 / リダイレクト / カウント / ミラー / DSCP 書き換え</strong> などの action を当てる</td>
+<td>data plane に流れるパケットを <strong>classify して、許可 / 拒否 / リダイレクト / カウント / ミラー / <a href="../../../reference/glossary/#term-dscp">DSCP</a> 書き換え</strong> などの action を当てる</td>
 </tr>
 <tr>
 <td>CoPP</td>
@@ -29679,7 +29679,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: d03af94d438f -->
 
 
 

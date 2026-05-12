@@ -29300,7 +29300,7 @@
 
 <h1 id="acl_rule">ACL_RULE テーブル<a class="headerlink" href="#acl_rule" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>ACL_TABLE</code> 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>AclOrch</code> が <code>ACL_TABLE</code> 配下のルールを <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-acl">ACL</a> entry として展開する。</p>
+<p><code>ACL_TABLE</code> 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、<a href="../../glossary/#term-dscp">DSCP</a> 上書き、DTel 等) を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>AclOrch</code> が <code>ACL_TABLE</code> 配下のルールを <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-acl">ACL</a> entry として展開する。</p>
 <div class="admonition warning">
 <p class="admonition-title">YANG 未定義</p>
 <p><code>ACL_RULE</code> テーブルは YANG モジュールで未定義。スキーマの正本は <code>sonic-swss/orchagent/aclorch.{h,cpp}</code>。</p>
@@ -29400,7 +29400,7 @@
 </tr>
 <tr>
 <td><code>DSCP</code> / <code>TC</code></td>
-<td>DSCP / TC 値</td>
+<td><a href="../../glossary/#term-dscp">DSCP</a> / TC 値</td>
 </tr>
 <tr>
 <td><code>ICMP_TYPE</code> / <code>ICMP_CODE</code> / <code>ICMPV6_TYPE</code> / <code>ICMPV6_CODE</code></td>
@@ -29475,7 +29475,7 @@
 </tr>
 <tr>
 <td><code>DSCP_ACTION</code></td>
-<td>DSCP 上書き</td>
+<td><a href="../../glossary/#term-dscp">DSCP</a> 上書き</td>
 </tr>
 <tr>
 <td><code>INNER_SRC_MAC_REWRITE_ACTION</code></td>
@@ -29540,7 +29540,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: bf720d5ccd5d -->
+<!-- glossary-links-injected: b4c5898e0257 -->
 
 <div class="footnote">
 <hr />

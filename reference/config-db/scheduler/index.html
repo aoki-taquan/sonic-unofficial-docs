@@ -29256,7 +29256,7 @@
 
 <h1 id="scheduler">SCHEDULER テーブル<a class="headerlink" href="#scheduler" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>キュー / ポートに適用するスケジューラ（DWRR / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> scheduler を生成、<code>QUEUE.scheduler</code> から leafref で参照される。</p>
+<p>キュー / ポートに適用するスケジューラ（<a href="../../glossary/#term-dwrr">DWRR</a> / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> scheduler を生成、<code>QUEUE.scheduler</code> から leafref で参照される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29305,7 +29305,7 @@
 <td>uint8 (1..100)</td>
 <td>-</td>
 <td><code>1</code></td>
-<td>重み（DWRR/WRR で使用）</td>
+<td>重み（<a href="../../glossary/#term-dwrr">DWRR</a>/WRR で使用）</td>
 </tr>
 <tr>
 <td><code>priority</code></td>
@@ -29403,7 +29403,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 812c93439b0b -->
+<!-- glossary-links-injected: 3bdddda32f9d -->
 
 <div class="footnote">
 <hr />

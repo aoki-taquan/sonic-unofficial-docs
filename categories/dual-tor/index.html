@@ -29184,7 +29184,7 @@
 <h1 id="dual-tor">Dual-ToR 関連<a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><strong>Dual-ToR</strong> は、サーバを 2 つの ToR スイッチに <strong>active-standby</strong> または <strong>active-active</strong> で冗長接続し、片側 ToR の障害時にもサービス断を最小化するクラウド向けトポロジです。Microsoft Azure 由来で、現行 SONiC は <strong>y-cable + <a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a></strong> ベースの active-standby と、<strong>prefix-based neighbor + gRPC</strong> ベースの active-active の 2 系統を実装しています。</p>
-<p>このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。<strong>overlay</strong>（active-active / active-standby の <a href="../../reference/glossary/#term-hld">HLD</a>、トンネル DSCP リマップ）・<strong>routing</strong>（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・<strong>platform</strong>（ICMP HW offload による link prober <a href="../../reference/glossary/#term-npu">NPU</a> 化）・<strong>management</strong>（DualToR 用 gRPC client）・<strong>reference</strong>（<code>config muxcable</code> / <code>show muxcable</code> / <code>MUX_CABLE</code> テーブル）に分散しているのが特徴です。</p>
+<p>このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。<strong>overlay</strong>（active-active / active-standby の <a href="../../reference/glossary/#term-hld">HLD</a>、トンネル <a href="../../reference/glossary/#term-dscp">DSCP</a> リマップ）・<strong>routing</strong>（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・<strong>platform</strong>（ICMP HW offload による link prober <a href="../../reference/glossary/#term-npu">NPU</a> 化）・<strong>management</strong>（DualToR 用 gRPC client）・<strong>reference</strong>（<code>config muxcable</code> / <code>show muxcable</code> / <code>MUX_CABLE</code> テーブル）に分散しているのが特徴です。</p>
 <p>Dual-ToR は <strong>active-standby</strong> のほうがマスター実装としては成熟しており、<strong>active-active</strong> は比較的新しく gRPC ベースのケーブル制御に依存します。Y-cable と SoC（Service-on-Cable）が混在する用語空間なので、最初に <a href="../../overlay/active-standby-dual-tor/"><code>active-standby-dual-tor.md</code></a> を読むと state machine の語彙が整理されます。</p>
 <p>主要キーワード: <code>Dual-ToR</code>, <code>active-active</code>, <code>active-standby</code>, <code>MUX</code>, <code>linkmgrd</code>, <code>Y-cable</code>, <code>SoC</code>, <code>linkprober</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -29247,7 +29247,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 856e5b1efe05 -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 
 

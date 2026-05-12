@@ -29193,7 +29193,7 @@
 <td><a href="../../../reference/yang/sonic-queue/">sonic-queue</a></td>
 </tr>
 <tr>
-<td>Scheduler / shaping</td>
+<td><a href="../../../reference/glossary/#term-scheduler">Scheduler</a> / shaping</td>
 <td><a href="../../../reference/config-db/scheduler/"><code>SCHEDULER</code></a></td>
 <td><a href="../../../reference/yang/sonic-scheduler/">sonic-scheduler</a></td>
 </tr>
@@ -29203,7 +29203,7 @@
 <td>—</td>
 </tr>
 <tr>
-<td>DSCP→TC</td>
+<td><a href="../../../reference/glossary/#term-dscp">DSCP</a>→TC</td>
 <td><a href="../../../reference/config-db/dscp-to-tc-map/"><code>DSCP_TO_TC_MAP</code></a></td>
 <td>—</td>
 </tr>
@@ -29230,7 +29230,7 @@
 </tbody>
 </table>
 <h2 id="1-lossy-tor">シナリオ 1: 最小構成 — lossy のみ ToR<a class="headerlink" href="#1-lossy-tor" title="Permanent link">&para;</a></h2>
-<p>「100G lossy だけのアクセス ToR」を想定して、queue 0 を strict、queue 1–7 を DWRR (weight 15) で並べる例です。テンプレ展開を待たずに最低限手で組むなら、pool / profile / scheduler / port_qos_map の 4 つを作って 1 ポートに当てるところまでが必要最小限です。</p>
+<p>「100G lossy だけのアクセス ToR」を想定して、queue 0 を strict、queue 1–7 を <a href="../../../reference/glossary/#term-dwrr">DWRR</a> (weight 15) で並べる例です。テンプレ展開を待たずに最低限手で組むなら、pool / profile / scheduler / port_qos_map の 4 つを作って 1 ポートに当てるところまでが必要最小限です。</p>
 <p>操作の順番は次のとおり。</p>
 <ol>
 <li><code>BUFFER_POOL</code> を ingress / egress で 1 本ずつ定義する。</li>
@@ -29414,7 +29414,7 @@
 <li>YANG: <a href="../../../reference/yang/sonic-buffer-pool/">sonic-buffer-pool</a> / <a href="../../../reference/yang/sonic-buffer-profile/">sonic-buffer-profile</a> / <a href="../../../reference/yang/sonic-pfcwd/">sonic-pfcwd</a></li>
 <li>同章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> / <a href="../operations/">operations</a></li>
 </ul>
-<!-- glossary-links-injected: d51fadc7323f -->
+<!-- glossary-links-injected: db2ed97924a6 -->
 
 
 

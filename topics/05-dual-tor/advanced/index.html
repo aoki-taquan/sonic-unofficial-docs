@@ -29264,7 +29264,7 @@
 <p>このページでは、章の本筋から外れるものの、Dual-ToR を設計・運用するときに境界を理解しておきたい 2 つの機能を扱います。</p>
 <h2 id="tunnel-dscp-remap">tunnel DSCP remap<a class="headerlink" href="#tunnel-dscp-remap" title="Permanent link">&para;</a></h2>
 <p>Active-Standby では、standby ToR が受けたサーバ宛トラフィックを MuxTunnel で active ToR へ戻します。この「バウンスバック」経路が通常トラフィックと同じ queue / priority group を使うと、PFC pause が T1 と ToR の間で固着し、デッドロックを起こす可能性があります。</p>
-<p>tunnel DSCP remap は、encap 時に outer DSCP や queue を別系統へ移し、decap 時に tunnel 用の DSCP / TC / PG map を使うことで、通常経路とバウンスバック経路を分離する仕組みです。</p>
+<p>tunnel <a href="../../../reference/glossary/#term-dscp">DSCP</a> remap は、encap 時に outer DSCP や queue を別系統へ移し、decap 時に tunnel 用の DSCP / TC / PG map を使うことで、通常経路とバウンスバック経路を分離する仕組みです。</p>
 <p>運用上の読みどころは次の 3 つです。</p>
 <table>
 <thead>
@@ -29374,7 +29374,7 @@
 <h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">tunnel DSCP remap</a>, <a href="../../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent</a> で完結する。linkmgrd state machine の論理と <code>APP_DB:MUX_CABLE_TABLE</code> の遷移は internals で詳細化済み。</li>
-<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config mux</code>, <code>show mux</code>, <code>show muxcable</code> 系、および <code>MUX_CABLE</code>, <code>MUX_LINKMGR</code>, <code>TUNNEL</code> の各 <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、<code>sonic-mux*</code> YANG モジュールで網羅される。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config mux</code>, <code>show mux</code>, <code>show muxcable</code> 系、および <code>MUX_CABLE</code>, <code>MUX_LINKMGR</code>, <code>TUNNEL</code> の各 <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、<code>sonic-mux*</code> <a href="../../../reference/glossary/#term-yang">YANG</a> モジュールで網羅される。</li>
 <li><strong>本ページ</strong> は tunnel DSCP remap / DHCPv6 loopback / link prober offload など、章境界をまたぐクロスオーバー領域と、Active-Active / SmartSwitch 連携といった発展トピックのみを扱う。</li>
 </ul>
 <h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -29397,7 +29397,7 @@
 <li><a href="../../13-dash-smartswitch/">13 DASH / SmartSwitch: DPU と mux state の同期</a></li>
 <li><a href="../../14-platform-port-optics/">14 Platform / Port / Optics: link prober の hardware offload</a></li>
 </ul>
-<!-- glossary-links-injected: 76b7df4b6b16 -->
+<!-- glossary-links-injected: 3e049dc787aa -->
 
 
 

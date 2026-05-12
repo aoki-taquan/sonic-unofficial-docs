@@ -29234,7 +29234,7 @@
 
 <h1 id="dscp_to_tc_map">DSCP_TO_TC_MAP テーブル<a class="headerlink" href="#dscp_to_tc_map" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>DSCP 値 (0..63) を Traffic Class へマップする ingress <a href="../../glossary/#term-qos">QoS</a> 分類定義<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-qos">QoS</a> map (<code>SAI_QOS_MAP_TYPE_DSCP_TO_TC</code>) を生成し、ポートにバインドする (<code>PORT_QOS_MAP.dscp_to_tc_map</code>)。</p>
+<p><a href="../../glossary/#term-dscp">DSCP</a> 値 (0..63) を Traffic Class へマップする ingress <a href="../../glossary/#term-qos">QoS</a> 分類定義<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-qos">QoS</a> map (<code>SAI_QOS_MAP_TYPE_DSCP_TO_TC</code>) を生成し、ポートにバインドする (<code>PORT_QOS_MAP.dscp_to_tc_map</code>)。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29274,7 +29274,7 @@
 <td><code>dscp</code> (key)</td>
 <td>string <code>0..63</code></td>
 <td>✅</td>
-<td>DSCP 値</td>
+<td><a href="../../glossary/#term-dscp">DSCP</a> 値</td>
 </tr>
 <tr>
 <td><code>tc</code></td>
@@ -29329,7 +29329,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 1024efc8dead -->
+<!-- glossary-links-injected: eebb97ac8e67 -->
 
 <div class="footnote">
 <hr />

@@ -29263,7 +29263,7 @@
 <p>この章の基本経路を押さえた後は、VoQ、<a href="../../../reference/glossary/#term-bfd">BFD</a>、<a href="../../../reference/glossary/#term-evpn">EVPN</a> の順に読むと <a href="../../../reference/glossary/#term-bgp">BGP</a> が他章へどうつながるかが見える。いずれも BGP 単体の話ではなく、シャーシ構成、障害検出、overlay control plane と結びつく。</p>
 <h2 id="_2">ハンドオフ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area HLD の <a href="../../../routing/">BGP / FRR 系 routing/ 配下のページ群</a> で完結する。FRR 統合の基本フロー (zebra ↔ fpmsyncd ↔ APPL_DB ↔ orchagent) はそこで詳細化されている。</li>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area HLD の <a href="../../../routing/">BGP / FRR 系 routing/ 配下のページ群</a> で完結する。FRR 統合の基本フロー (zebra ↔ <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> ↔ <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> ↔ orchagent) はそこで詳細化されている。</li>
 <li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config bgp</code> / <code>show bgp</code> 系、<a href="../../../reference/config-db/">reference/config_db/BGP_*</a>, <code>BGP_NEIGHBOR</code>, <code>BGP_PEER_GROUP</code> に集約されている。</li>
 <li><strong>本ページ</strong> は VoQ シャーシ・BFD・EVPN という章境界のクロスオーバー、および BGP suppress-fib-pending / BGP PIC / BMP / Dynamic neighbor といった「FRR の発展機能を SONiC schema に取り込む」運用領域だけを扱う。</li>
 </ul>
@@ -29318,8 +29318,8 @@
 </ul>
 <h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>FRR からの経路が APPL_DB / ASIC_DB まで到達しないときは、まず <code>fpmsyncd</code> の Redis 接続と queue depth を疑う。<code>docker exec bgp supervisorctl status</code> で daemon の up 状態、<code>redis-cli -n 0 keys 'ROUTE_TABLE:*' | wc -l</code> で投入数を確認。</li>
-<li><code>show ip bgp summary</code> で peer が Active のまま停止する場合、TCP MD5 / GTSM (TTL security) / ACL で TCP 179 が阻まれていないかを <code>iptables -L INPUT</code>, <code>ip6tables</code>, CoPP の <code>bgp</code> trap で点検する。</li>
+<li>FRR からの経路が APPL_DB / <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> まで到達しないときは、まず <code>fpmsyncd</code> の Redis 接続と queue depth を疑う。<code>docker exec bgp supervisorctl status</code> で daemon の up 状態、<code>redis-cli -n 0 keys 'ROUTE_TABLE:*' | wc -l</code> で投入数を確認。</li>
+<li><code>show ip bgp summary</code> で peer が Active のまま停止する場合、TCP MD5 / GTSM (TTL security) / <a href="../../../reference/glossary/#term-acl">ACL</a> で TCP 179 が阻まれていないかを <code>iptables -L INPUT</code>, <code>ip6tables</code>, <a href="../../../reference/glossary/#term-copp">CoPP</a> の <code>bgp</code> trap で点検する。</li>
 <li>multipath が成立しない場合は <code>bestpath as-path multipath-relax</code> と、neighbor 側 <code>addpath-tx-all-paths</code> を疑う。RR 経由の場合は RR 側で <code>additional-paths send/receive</code> が必要。</li>
 </ul>
 <h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -29349,7 +29349,7 @@
 <li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ: chassis 内 iBGP full mesh</a></li>
 <li><a href="../../17-srv6-mpls/">17 SRv6 / MPLS: BGP SR signaling</a></li>
 </ul>
-<!-- glossary-links-injected: 8214fd17dd58 -->
+<!-- glossary-links-injected: 247f1deb5a6e -->
 
 
 

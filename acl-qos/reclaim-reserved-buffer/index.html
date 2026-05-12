@@ -29309,7 +29309,7 @@
 <p>両方で reclaim が走る。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">「単純削除」では起きる不整合<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、<a href="../../reference/glossary/#term-hld">HLD</a> はこれを否定する。<a href="../../reference/glossary/#term-sai">SAI</a> / SDK は <strong>「設定が無いとき = SDK default 値（一部は非ゼロ）」</strong> であり、設定削除（<code>SAI_NULL_OBJECT_ID</code>）すると <strong>0 にリセット</strong> される。結果、</p>
+<p>最初に思いつくのは「admin-down ポートの <a href="../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> / BUFFER_QUEUE エントリを削除する」だが、<a href="../../reference/glossary/#term-hld">HLD</a> はこれを否定する。<a href="../../reference/glossary/#term-sai">SAI</a> / SDK は <strong>「設定が無いとき = SDK default 値（一部は非ゼロ）」</strong> であり、設定削除（<code>SAI_NULL_OBJECT_ID</code>）すると <strong>0 にリセット</strong> される。結果、</p>
 <ul>
 <li>起動時設定なし → SDK default（非ゼロ）</li>
 <li>起動後に削除 → 0</li>
@@ -29429,7 +29429,7 @@ reasoning: lossless PG は削除、それ以外は zero_profile という分担�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 568143337d00 -->
+<!-- glossary-links-injected: 1af9c6208afc -->
 
 <div class="footnote">
 <hr />

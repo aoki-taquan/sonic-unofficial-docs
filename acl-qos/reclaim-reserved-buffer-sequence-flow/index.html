@@ -29473,7 +29473,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BUFFER_MAX_PARAM_TABLE|&lt;port&gt;&#39;</span><span class="w">   </span><span class="c1"># 最大 PG/queue が来ているか</span>
 </span></code></pre></div>
 <ul>
-<li>INACTIVE ポートの予約が解放されない → zero profile 名と BUFFER_PG の値を確認</li>
+<li>INACTIVE ポートの予約が解放されない → zero profile 名と <a href="../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> の値を確認</li>
 <li>shutdown 後にバッファが残る → ASIC の PG/queue 削除サポート有無を確認</li>
 <li><code>BUFFER_MAX_PARAM_TABLE</code> が空 → <code>portsorch</code> 初期化が完了していない可能性</li>
 </ul>
@@ -29490,7 +29490,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4e2c45f685fb -->
+<!-- glossary-links-injected: 1af9c6208afc -->
 
 <div class="footnote">
 <hr />

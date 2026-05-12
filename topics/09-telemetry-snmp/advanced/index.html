@@ -29405,7 +29405,7 @@
 <h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>gNMI subscribe が応答しないときは、<code>docker exec telemetry telemetryctl status</code> で agent up、<code>/var/log/syslog</code> で TLS / cert エラーを確認する。<code>TELEMETRY|certs</code> の <code>ca_crt</code> パス、<code>gnmi.server.crt</code>/<code>key</code> の存在も併せて点検。</li>
-<li>SNMP walk が timeout する場合、<code>snmpd</code> の view ACL 設定 (<code>/etc/sonic/snmp.yml</code>)、<code>SNMP_AGENT_ADDRESS_CONFIG</code> のリスン IP、<code>snmpd</code> プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。</li>
+<li>SNMP walk が timeout する場合、<code>snmpd</code> の view <a href="../../../reference/glossary/#term-acl">ACL</a> 設定 (<code>/etc/sonic/snmp.yml</code>)、<code>SNMP_AGENT_ADDRESS_CONFIG</code> のリスン IP、<code>snmpd</code> プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。</li>
 <li>sFlow sample が collector に届かないときは <code>show sflow interface</code> で sample rate、<code>config sflow polling-interval</code> の有効性、<code>SFLOW_COLLECTOR</code> の宛先到達性 (UDP 6343) を点検。</li>
 </ul>
 <h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
@@ -29424,7 +29424,7 @@
 <li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: 変換層と subscribe path</a></li>
 <li><a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計</a></li>
 </ul>
-<!-- glossary-links-injected: fe5aa1fcc436 -->
+<!-- glossary-links-injected: 1f2da1437d5b -->
 
 
 

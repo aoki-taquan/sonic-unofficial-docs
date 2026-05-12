@@ -29378,12 +29378,12 @@
 <ul>
 <li>PortChannel が up しないときは、まず <code>show interfaces portchannel</code> で member の collected/distributed 状態を確認する。LACP PDU が片方向しか流れていない場合 (一方が active/passive 設定不一致) は <code>teamdctl &lt;po&gt; state</code> の <code>runner.actor_lacpdu_info</code> と <code>runner.partner_lacpdu_info</code> を見比べる。</li>
 <li>VLAN flooding が想定外の port に届く・届かないときは、<code>fdbshow</code> と <code>bcmcmd 'l2 show'</code> (Broadcom 系) で FDB と ASIC の MAC table を突き合わせる。<code>MAC_LEARN_LIMIT</code> 到達時は新規 MAC が flooding 扱いになる。</li>
-<li>distributed VOQ chassis で <code>SYSTEM_LAG_TABLE</code> に LAG が現れない場合、<code>chassis_db</code> の Redis 接続と、各 ASIC の <code>bgp</code> docker から <code>redis-cli -h &lt;supervisor&gt;</code> でアクセスできるかを点検する。</li>
+<li>distributed VOQ chassis で <code>SYSTEM_LAG_TABLE</code> に LAG が現れない場合、<code>chassis_db</code> の <a href="../../../reference/glossary/#term-redis">Redis</a> 接続と、各 ASIC の <code>bgp</code> docker から <code>redis-cli -h &lt;supervisor&gt;</code> でアクセスできるかを点検する。</li>
 </ul>
 <h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>LACP fast rate と member down 検出時間は、<code>sonic-mgmt</code> の <code>lag/test_lag_2.py</code> 系テストで member を意図的に shut/no-shut させ、上流 BGP が再収束するまでの時間を計測する。target は fast rate で 3 秒以内、micro-BFD 併用で 1 秒以内。</li>
-<li>VLAN 大量 (4k 近く) 構成での scale 検証は、CONFIG_DB へ <code>VLAN|Vlan100</code>〜<code>Vlan4094</code> を投入し、<code>swssloglevel</code> を notice にして orchagent / vlanmgrd のレイテンシを観測する。<code>syncd</code> queue depth が異常に伸びる場合、ASIC capability の VLAN 数上限を確認する。</li>
+<li>VLAN 大量 (4k 近く) 構成での scale 検証は、CONFIG_DB へ <code>VLAN|Vlan100</code>〜<code>Vlan4094</code> を投入し、<code>swssloglevel</code> を notice にして <a href="../../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../../reference/glossary/#term-vlanmgrd">vlanmgrd</a> のレイテンシを観測する。<code>syncd</code> queue depth が異常に伸びる場合、ASIC capability の VLAN 数上限を確認する。</li>
 <li>OpenConfig 変換は <code>gnmi_cli</code> で <code>openconfig-interfaces:interfaces</code> を get/set し、変換後の CONFIG_DB と round-trip 一致を確認する。<code>sonic-mgmt-common</code> の <code>transformer/test_*</code> がベースライン。</li>
 </ul>
 <h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
@@ -29396,7 +29396,7 @@
 <li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: 変換層の責務</a></li>
 <li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ: chassis 内 LAG とリモート LAG</a></li>
 </ul>
-<!-- glossary-links-injected: 9caf06a8d97f -->
+<!-- glossary-links-injected: 53f62ebf112b -->
 
 
 

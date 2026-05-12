@@ -29265,7 +29265,7 @@
 <li><strong>profile</strong> — 使い方のテンプレート（lossless / lossy / mirror など）。</li>
 <li><strong>PG / queue 割当</strong> — ポート×index への適用。</li>
 </ol>
-<p>そして「ConfigDB の SCHEDULER / <a href="../../../reference/glossary/#term-wred">WRED</a> / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「BUFFER_PG / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。</p>
+<p>そして「ConfigDB の SCHEDULER / <a href="../../../reference/glossary/#term-wred">WRED</a> / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「<a href="../../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。</p>
 <h2 id="qos-buffer_1">データフロー（QoS / Buffer 全体）<a class="headerlink" href="#qos-buffer_1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB&lt;br/&gt;BUFFER_POOL/PROFILE/PG/QUEUE&lt;br/&gt;QUEUE/SCHEDULER/WRED/*_MAP)] --&gt; BMG[buffermgrd&lt;br/&gt;+ Lua / Jinja]
@@ -29388,7 +29388,7 @@
 <li>PFC watchdog は queue 単位の statistical detection で、瞬間的な burst にも反応する設計。<code>detection_time</code> / <code>restoration_time</code> のチューニングが必要。</li>
 <li>WRED / ECN の閾値は ASIC で粒度（cell vs byte）が違い、<code>SAI_WRED_ATTR_*</code> の単位解釈が SDK ベンダごとに分かれる。</li>
 </ul>
-<!-- glossary-links-injected: 9561e337df7c -->
+<!-- glossary-links-injected: 1af9c6208afc -->
 
 
 

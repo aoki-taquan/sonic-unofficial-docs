@@ -30052,7 +30052,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>sudo config interface shutdown EthernetX</code> 後に CONFIG_DB から直接 <code>PORT|EthernetX</code> を消すと、orchagent が以下を順次出す:</li>
-<li><code>SAI_STATUS_OBJECT_IN_USE</code>（VLAN_MEMBER / ACL_TABLE / BUFFER_PG が参照中）</li>
+<li><code>SAI_STATUS_OBJECT_IN_USE</code>（VLAN_MEMBER / ACL_TABLE / <a href="../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> が参照中）</li>
 <li><code>SAI_STATUS_INVALID_OBJECT_ID</code>（既に部分削除された下流 SAI オブジェクト）</li>
 <li>最悪は orchagent 自体が <code>abort()</code> し <a href="../../reference/glossary/#term-syncd">syncd</a> / swss コンテナが crash loop に入る。<code>fast-reboot</code> / <code>warm-reboot</code> が必要になる。</li>
 <li>chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で <code>pending_cmds</code> が滞留し、lldp neighbor 表に古い情報が残る。</li>
@@ -30135,7 +30135,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7d213842fcc9 -->
+<!-- glossary-links-injected: 1af9c6208afc -->
 
 <div class="footnote">
 <hr />

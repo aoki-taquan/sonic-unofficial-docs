@@ -29355,7 +29355,7 @@
 </ul>
 <h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>orchagent throughput 検証は CONFIG_DB に 10k〜100k entry (route / FDB / ACL rule) を一括投入し、ASIC_DB 反映までのレイテンシを計測する。SAI bulk API 利用時の倍率向上 (target 2x〜5x) を確認する。</li>
+<li>orchagent throughput 検証は CONFIG_DB に 10k〜100k entry (route / <a href="../../../reference/glossary/#term-fdb">FDB</a> / <a href="../../../reference/glossary/#term-acl">ACL</a> rule) を一括投入し、ASIC_DB 反映までのレイテンシを計測する。SAI bulk API 利用時の倍率向上 (target 2x〜5x) を確認する。</li>
 <li>view switching 検証は warm reboot を多数回繰り返し、<code>ProducerStateTable</code> の view A/B 切替と、orchagent / syncd の状態差分が cleanup される過程を <code>redis-cli</code> で観察する。</li>
 <li>closest UP status 検証は意図的に container を 1 つ kill し、<code>system-health</code> / <code>sysmonitor</code> の event aggregation で上位 status (<code>Operational</code>/<code>Degraded</code>/<code>Failed</code>) が期待通り遷移することを確認する。</li>
 </ul>
@@ -29371,7 +29371,7 @@
 <li><a href="../../11-reboot/">11 Reboot: warm reboot と view switching</a></li>
 <li><a href="../../21-lab-vs-developer/">21 Lab / Developer: dev container 内での swss/sai 開発</a></li>
 </ul>
-<!-- glossary-links-injected: 1a6c1d175ab5 -->
+<!-- glossary-links-injected: edbcf324be25 -->
 
 
 

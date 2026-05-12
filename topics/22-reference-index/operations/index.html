@@ -29193,11 +29193,11 @@
 <p>reference 側に未カバーの項目があると、機能章の <code>related</code> に書かれた名前が解決できない、または索引から該当ページに飛べないという事象になる。検出と修復の標準動線は次の通り。</p>
 <ol>
 <li><strong>Indexer 出力を見る</strong>: <code>.cache/sonic-sources/</code> の最新 clone から <code>meta/index/cli.json</code>、<code>meta/index/yang.json</code>、<code>meta/index/config-db.json</code> を再生成し、reference 側にまだ存在しない slug を抽出する。</li>
-<li><strong><code>meta/reference-gaps.md</code> に積む</strong>: 抽出結果は人間レビュー用に <code>meta/reference-gaps.md</code> (見出しごとに CLI / CONFIG_DB / YANG) に追加する。優先度は「機能章が <code>related</code> で参照しているのに reference が無い」 &gt; 「Indexer 側にあるが機能章未参照」の順。</li>
+<li><strong><code>meta/reference-gaps.md</code> に積む</strong>: 抽出結果は人間レビュー用に <code>meta/reference-gaps.md</code> (見出しごとに CLI / <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-yang">YANG</a>) に追加する。優先度は「機能章が <code>related</code> で参照しているのに reference が無い」 &gt; 「Indexer 側にあるが機能章未参照」の順。</li>
 <li><strong>Writer に backlog を投入</strong>: <code>meta/backlog/&lt;area&gt;/&lt;slug&gt;.json</code> を作って Writer が拾えるようにする。area は <code>reference-cli</code> / <code>reference-config-db</code> / <code>reference-yang</code> を使い分ける。</li>
 <li><strong>生成 PR の merge 後に再計算</strong>: reference が増えた後、機能章側の <code>related</code> に表示名を足し、<code>frontmatter_lint.py</code> で再検査する。</li>
 </ol>
-<p><code>meta/reference-gaps.md</code> を空に保つことは原則目標にしない (新規 HLD/CLI が常に増えるため)。一定量を超えたら一括 Writer バッチで掃く運用が現実的。</p>
+<p><code>meta/reference-gaps.md</code> を空に保つことは原則目標にしない (新規 <a href="../../../reference/glossary/#term-hld">HLD</a>/CLI が常に増えるため)。一定量を超えたら一括 Writer バッチで掃く運用が現実的。</p>
 <h2 id="discrepancy">discrepancy 運用<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <p><code>verification: discrepancy-found</code> のページは、HLD の記述と実コードの挙動が乖離している箇所を示す。索引側での運用は次の通り。</p>
 <ul>
@@ -29312,6 +29312,7 @@
 <li>品質と未カバー → <a href="../quality-gaps/">品質と gap</a>。</li>
 <li>内部構造 → <a href="../internals/">内部実装</a> と <a href="../advanced/">発展</a>。</li>
 </ul>
+<!-- glossary-links-injected: 20dbc11976b6 -->
 
 
 

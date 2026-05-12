@@ -29235,7 +29235,7 @@
 <h1 id="switch_trimming">SWITCH_TRIMMING テーブル<a class="headerlink" href="#switch_trimming" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>輻輳テレメトリ向けの <strong>パケットトリミング (packet trimming)</strong> を全スイッチに対して設定するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-ドロップ予定のパケットを「短縮コピー」して別の DSCP / TC / queue で送り出すことで、輻輳発生を末端まで伝える。</p>
+ドロップ予定のパケットを「短縮コピー」して別の <a href="../../glossary/#term-dscp">DSCP</a> / TC / queue で送り出すことで、輻輳発生を末端まで伝える。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29272,7 +29272,7 @@
 <tr>
 <td><code>dscp_value</code></td>
 <td>uint8 (0..63) または <code>from-tc</code></td>
-<td>トリミング後パケットに付ける DSCP。<code>from-tc</code> で <code>tc_value</code> から DSCP_TO_TC マッピング逆引きで導出</td>
+<td>トリミング後パケットに付ける <a href="../../glossary/#term-dscp">DSCP</a>。<code>from-tc</code> で <code>tc_value</code> から DSCP_TO_TC マッピング逆引きで導出</td>
 </tr>
 <tr>
 <td><code>tc_value</code></td>
@@ -29313,7 +29313,7 @@
 <h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key: <code>SWITCH_TRIMMING|GLOBAL</code> (シングルトン)。</li>
-<li><code>size</code>: 128〜256 bytes 程度。<code>dscp_value</code>: <code>from-tc</code> または明示 DSCP。</li>
+<li><code>size</code>: 128〜256 bytes 程度。<code>dscp_value</code>: <code>from-tc</code> または明示 <a href="../../glossary/#term-dscp">DSCP</a>。</li>
 <li><code>queue_index</code>: <code>dynamic</code> または特定 queue。</li>
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
@@ -29327,7 +29327,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 766c2b488f5d -->
+<!-- glossary-links-injected: b4c5898e0257 -->
 
 <div class="footnote">
 <hr />

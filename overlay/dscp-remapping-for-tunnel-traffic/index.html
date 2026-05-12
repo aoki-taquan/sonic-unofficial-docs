@@ -29373,7 +29373,7 @@
 <h1 id="dscp-tc-dual-tor-pfc">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）<a class="headerlink" href="#dscp-tc-dual-tor-pfc" title="Permanent link">&para;</a></h1>
 <h2 id="_1">なぜ必要か<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>Dual-ToR（Active / Standby）でサーバ側輻輳が起きると <strong>upper / lower 両 ToR に <a href="../../reference/glossary/#term-pfc">PFC</a> pause が同時に伝搬</strong> する。Standby ToR は南向きトラフィックを <strong>同じキューでバウンスバック</strong> して T1 経由で Active ToR に送るため、T1 ↔ ToR 間で pause が固着する <strong>PFC デッドロック</strong> が起きる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>本機能は tunnel encap 時に <strong>キュー / DSCP を別系統に書き換え</strong>、decap 時にポート単位マップを <strong>AZURE_TUNNEL</strong> で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。<code>202012</code> / <code>202205</code> を最初のターゲットとし、<a href="../../reference/glossary/#term-sai">SAI</a> 新規 tunnel 属性が前提<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>本機能は tunnel encap 時に <strong>キュー / <a href="../../reference/glossary/#term-dscp">DSCP</a> を別系統に書き換え</strong>、decap 時にポート単位マップを <strong>AZURE_TUNNEL</strong> で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。<code>202012</code> / <code>202205</code> を最初のターゲットとし、<a href="../../reference/glossary/#term-sai">SAI</a> 新規 tunnel 属性が前提<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">どう動くか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">バウンスバックの経路分離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29667,7 +29667,7 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4a6c1db4c93d -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 <div class="footnote">
 <hr />

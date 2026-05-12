@@ -29255,7 +29255,7 @@
 <li><strong>Asymmetric PFC</strong>: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、<code>PORT_QOS_MAP|&lt;port&gt;.pfc_to_queue_map</code> と peer ToR の設定整合が要点。</li>
 <li><strong>動的 buffer model</strong>: 旧来の static buffer profile から、<code>BUFFER_POOL</code> の thresholds と alpha (dynamic threshold) を ASIC レベルで決める動的モデルへの移行。<code>buffermgrd</code> が <code>BUFFER_PROFILE</code> を auto 計算する。</li>
 <li><strong>PFC watchdog の per-queue 詳細化</strong>: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。<code>PFC_WD_TABLE</code> のパラメータ調整。</li>
-<li><strong>Tunnel DSCP remap</strong>: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は <a href="../../05-dual-tor/advanced/">05 Dual-ToR</a> と相互参照。</li>
+<li><strong>Tunnel <a href="../../../reference/glossary/#term-dscp">DSCP</a> remap</strong>: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は <a href="../../05-dual-tor/advanced/">05 Dual-ToR</a> と相互参照。</li>
 <li><strong><a href="../../../reference/glossary/#term-headroom">Headroom</a> pool</strong>: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。</li>
 <li><strong><a href="../../../reference/glossary/#term-wred">WRED</a> / ECN の細分化</strong>: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。</li>
 <li><strong>Watermark の align-with-port-config</strong>: port admin down 時に watermark を 0 に clear する整合性改善で、運用 dashboard の誤検知を減らす。</li>
@@ -29296,7 +29296,7 @@
 </ul>
 <h2 id="_6">検証パスとラボ要件<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>PFC end-to-end の検証は <code>sonic-mgmt</code> の <code>qos/test_qos_sai.py</code> で行う。SAI 側 attribute と Redis 設定の整合確認が含まれる。</li>
+<li>PFC end-to-end の検証は <code>sonic-mgmt</code> の <code>qos/test_qos_sai.py</code> で行う。SAI 側 attribute と <a href="../../../reference/glossary/#term-redis">Redis</a> 設定の整合確認が含まれる。</li>
 <li>動的 buffer model の alpha チューニングは、合成 burst (microburst injector) を流して <code>BUFFER_POOL_WATERMARK_STAT_COUNTER</code> の peak を観察する手順が標準。</li>
 </ul>
 <h2 id="_7">関連ページ (追補)<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -29328,7 +29328,7 @@
 <li><a href="../../../acl-qos/watermark-counters-in-sonic/">Watermark Counters</a></li>
 <li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">Tunnel DSCP remap</a></li>
 </ul>
-<!-- glossary-links-injected: 0b23a3c63c91 -->
+<!-- glossary-links-injected: c7a6a719fb35 -->
 
 
 

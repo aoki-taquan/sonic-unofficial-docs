@@ -29196,9 +29196,9 @@
 <h1 id="_1">発展トピック<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。個別機能の発展トピックは各章 (<code>02-bgp/advanced.md</code> 以降) を読む。本章では「全体像を一段深く読むときに引っ掛かりやすい点」だけを扱う。</p>
 <h2 id="gcu-json-patch">GCU と JSON Patch の現実<a class="headerlink" href="#gcu-json-patch" title="Permanent link">&para;</a></h2>
-<p><a href="../../../reference/glossary/#term-gcu">GCU</a> (Generic Config Updater) は <code>config apply-patch</code> / <code>config replace</code> の中身で、CONFIG_DB を JSON 木として扱い RFC 6902 の JSON Patch を当てる仕組みである。</p>
+<p><a href="../../../reference/glossary/#term-gcu">GCU</a> (Generic Config Updater) は <code>config apply-patch</code> / <code>config replace</code> の中身で、<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を JSON 木として扱い RFC 6902 の JSON Patch を当てる仕組みである。</p>
 <ul>
-<li>patch は <code>sonic-yang-models</code> の YANG で validate される。validation を通らない patch はそもそも適用されない。</li>
+<li>patch は <code>sonic-yang-models</code> の <a href="../../../reference/glossary/#term-yang">YANG</a> で validate される。validation を通らない patch はそもそも適用されない。</li>
 <li>適用順序は YANG の依存 (<code>leafref</code> 等) を尊重して order を組み替える。順序依存で失敗するときは patch の中で参照が前方になっていないかを確認する。</li>
 <li>rollback 用の inverse patch が自動生成され、失敗時はそれで巻き戻す。inverse patch は CONFIG_DB の現在値に依存するため、別ホストで使い回せない。</li>
 </ul>
@@ -29230,14 +29230,14 @@
 <tr>
 <td>warm reboot</td>
 <td>ほぼゼロ</td>
-<td>SAI/syncd の state 引き継ぎ、ASIC 内 forwarding 継続</td>
+<td><a href="../../../reference/glossary/#term-sai">SAI</a>/<a href="../../../reference/glossary/#term-syncd">syncd</a> の state 引き継ぎ、ASIC 内 forwarding 継続</td>
 <td>主要 daemon の hot upgrade</td>
 </tr>
 <tr>
 <td>warm-restart (per-daemon)</td>
 <td>ほぼゼロ</td>
 <td>bgpd など個別 daemon の hot restart</td>
-<td>BGP graceful restart 連動</td>
+<td><a href="../../../reference/glossary/#term-bgp">BGP</a> graceful restart 連動</td>
 </tr>
 </tbody>
 </table>
@@ -29246,7 +29246,7 @@
 <p>SONiC を「箱の中に 1 つの ASIC」前提で読むと、最近の以下二系は混乱の元になる。</p>
 <ul>
 <li><strong>Multi-ASIC / VoQ</strong>: 1 シャーシ内に複数 ASIC があり、<code>/etc/sonic/sonic_environment</code> の <code>NAMESPACE_*</code> で namespace を切る構成。<code>show</code> 系コマンドは <code>-n asic0</code> のような namespace 修飾を要求する。詳細は <a href="../../12-multi-asic-voq/">Multi-ASIC 章</a>。</li>
-<li><strong>SmartSwitch / DPU</strong>: NPU + DPU の混載で、DPU 側は独立 SONiC instance になることがある。CONFIG_DB は NPU 側、DASH 用の DPU_APPL_DB / DPU_STATE_DB は DPU 側、と DB が物理的に分かれる。詳細は <a href="../../13-dash-smartswitch/">DASH/SmartSwitch 章</a>。</li>
+<li><strong><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> / <a href="../../../reference/glossary/#term-dpu">DPU</a></strong>: <a href="../../../reference/glossary/#term-npu">NPU</a> + DPU の混載で、DPU 側は独立 SONiC instance になることがある。CONFIG_DB は NPU 側、<a href="../../../reference/glossary/#term-dash">DASH</a> 用の DPU_APPL_DB / DPU_STATE_DB は DPU 側、と DB が物理的に分かれる。詳細は <a href="../../13-dash-smartswitch/">DASH/SmartSwitch 章</a>。</li>
 </ul>
 <p>両者とも「DB 1 つを redis-cli で見れば全体が分かる」前提を崩すため、<code>show ip route</code> のような単純コマンドの結果が namespace 別で違うことに最初に気付けるかが分水嶺になる。</p>
 <h2 id="application-extension-infrastructure-aei">Application Extension Infrastructure (AEI)<a class="headerlink" href="#application-extension-infrastructure-aei" title="Permanent link">&para;</a></h2>
@@ -29258,10 +29258,10 @@
 </ul>
 <p>詳細は <a href="../../19-build-packaging/">Build / Packaging 章</a> と <a href="../../../architecture/sonic-application-extension-infrastructure/">SONiC Application Extension Infrastructure</a>。</p>
 <h2 id="streaming-telemetry">Streaming Telemetry の前提知識<a class="headerlink" href="#streaming-telemetry" title="Permanent link">&para;</a></h2>
-<p>SNMP polling から streaming telemetry (gNMI / OpenConfig) へ移る運用では、SONiC は次の点で他 NOS と異なる。</p>
+<p><a href="../../../reference/glossary/#term-snmp">SNMP</a> polling から streaming telemetry (<a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig) へ移る運用では、SONiC は次の点で他 NOS と異なる。</p>
 <ul>
 <li>telemetry 用 daemon <code>telemetry</code> (旧) と <code>gnmi</code> (新) があり、image 版で切替中。<code>show feature config</code> で確認する。</li>
-<li>subscribe path は SONiC 内部の Redis path を XPath で叩く <code>SONIC-DB</code> モードと、OpenConfig YANG をマップする <code>OC</code> モードがあり、collector 側でどちらを使うか決める。</li>
+<li>subscribe path は SONiC 内部の <a href="../../../reference/glossary/#term-redis">Redis</a> path を XPath で叩く <code>SONIC-DB</code> モードと、OpenConfig YANG をマップする <code>OC</code> モードがあり、collector 側でどちらを使うか決める。</li>
 <li>secure 化は <code>config telemetry secure-mode enable</code> で TLS を有効にし、<code>/etc/sonic/telemetry/</code> の証明書ファイルを正にする。</li>
 </ul>
 <p>詳細は <a href="../../09-telemetry-snmp/">Telemetry / gNMI 章</a> と <a href="../../10-gnmi-openconfig/">gNMI / OpenConfig 章</a>。</p>
@@ -29269,8 +29269,8 @@
 <p>「変更後に何を確認すれば良いか」を一巡しておくと運用での迷いが減る。</p>
 <ol>
 <li><code>show running-configuration &lt;area&gt;</code> または <code>sonic-cfggen -d -y /dev/null --print-data | jq '.&lt;TABLE&gt;'</code> で CONFIG_DB の現状を読む。</li>
-<li><code>redis-cli -n 0 keys '&lt;TABLE&gt;:*'</code> で APPL_DB を読み、<code>*mgrd</code> が反応しているか確認する。</li>
-<li><code>redis-cli -n 1 keys 'ASIC_STATE:*'</code> で ASIC_DB を読み、SAI に投影されているか確認する。</li>
+<li><code>redis-cli -n 0 keys '&lt;TABLE&gt;:*'</code> で <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> を読み、<code>*mgrd</code> が反応しているか確認する。</li>
+<li><code>redis-cli -n 1 keys 'ASIC_STATE:*'</code> で <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を読み、SAI に投影されているか確認する。</li>
 <li><code>show logging</code> と <code>show platform summary</code> で異常 / version を確認する。</li>
 <li>必要なら <code>gnmi_cli</code> または <code>gnmic</code> で OC path を読み、telemetry 経路でも観測できるかを確認する。</li>
 </ol>
@@ -29292,7 +29292,7 @@
 </ul>
 <p>image 切替を CI / 自動化で扱うときは、SSH 切れに耐える wrapper (<code>nohup</code> + log redirect) で <code>sonic-installer install</code> を起動し、reboot 後の <code>show version</code> で <code>Build commit</code> を確認するまでを 1 ループにする。</p>
 <h2 id="discrepancy">Discrepancy が見つかった時の動線<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
-<p><code>docs/_meta/discrepancies.md</code> には HLD と実コードが乖離している箇所が一覧化されている。発展トピックとしての扱いは次の通り。</p>
+<p><code>docs/_meta/discrepancies.md</code> には <a href="../../../reference/glossary/#term-hld">HLD</a> と実コードが乖離している箇所が一覧化されている。発展トピックとしての扱いは次の通り。</p>
 <ul>
 <li><code>monitor: not_implemented</code> のページは HLD だけが先行している。Issue / PR を upstream に投げるか、本リポで discrepancy として残す判断をする。</li>
 <li><code>monitor: evolved_beyond_hld</code> のページは実コードが先行している。HLD 改稿 PR を upstream に出すか、本リポの該当章で「実コード優先」と明記する。</li>
@@ -29305,6 +29305,7 @@
 <li>個別機能の発展 → 各章の <code>advanced.md</code>。</li>
 <li>障害時の動線 → <a href="../operations/">運用入口</a> と <a href="../../11-reboot/">Reboot 章</a>。</li>
 </ul>
+<!-- glossary-links-injected: 4ff373e68edd -->
 
 
 

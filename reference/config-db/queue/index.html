@@ -29256,7 +29256,7 @@
 
 <h1 id="queue">QUEUE テーブル<a class="headerlink" href="#queue" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ポートの egress queue ごとに <code>SCHEDULER</code> (WRR/DWRR/STRICT) と <code>WRED_PROFILE</code> を割り当てる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> queue scheduler / <a href="../../glossary/#term-wred">WRED</a> を設定する。<a href="../../glossary/#term-voq">VOQ</a> シャーシでは <code>QUEUE_LIST</code> ではなく <code>VOQ_QUEUE_LIST</code> を使う。</p>
+<p>ポートの egress queue ごとに <code>SCHEDULER</code> (WRR/<a href="../../glossary/#term-dwrr">DWRR</a>/STRICT) と <code>WRED_PROFILE</code> を割り当てる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>qosorch</code> が <a href="../../glossary/#term-sai">SAI</a> queue scheduler / <a href="../../glossary/#term-wred">WRED</a> を設定する。<a href="../../glossary/#term-voq">VOQ</a> シャーシでは <code>QUEUE_LIST</code> ではなく <code>VOQ_QUEUE_LIST</code> を使う。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29412,7 +29412,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2ae60ae29e92 -->
+<!-- glossary-links-injected: eae0af312767 -->
 
 <div class="footnote">
 <hr />

@@ -29274,8 +29274,8 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC の <a href="../../reference/glossary/#term-qos">QoS</a> には <strong>scheduling</strong> と <strong>shaping</strong> の 2 軸がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>Scheduling</strong>: egress queue への帯域配分。SP / WRR / DWRR の 3 方式</li>
-<li><strong>Shaping</strong>: queue / port 単位の最大帯域（および queue では最小帯域）制限</li>
+<li><strong>Scheduling</strong>: egress queue への帯域配分。SP / WRR / <a href="../../reference/glossary/#term-dwrr">DWRR</a> の 3 方式</li>
+<li><strong><a href="../../reference/glossary/#term-shaping">Shaping</a></strong>: queue / port 単位の最大帯域（および queue では最小帯域）制限</li>
 </ul>
 <p>scheduler オブジェクトは <strong>profile</strong> 単位で定義し、queue または port にバインドする。<a href="../../reference/glossary/#term-sai">SAI</a> レイヤでは <code>saischeduler.h</code> の <code>create_scheduler</code> / <code>set_scheduler_group_attribute</code> / <code>set_port_attribute</code> を使う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>要件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -29416,7 +29416,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 19aae067fe9e -->
+<!-- glossary-links-injected: de04c96fcae0 -->
 
 <div class="footnote">
 <hr />

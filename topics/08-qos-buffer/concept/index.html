@@ -29260,11 +29260,11 @@
 <h2 id="_1">用語の定義<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>混同しやすい用語をここで一度切り分けておきます。</p>
 <ul>
-<li><strong>TC (Traffic Class)</strong>: SONiC 内部で使うクラス番号 (0〜7)。受信側で DSCP / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。</li>
-<li><strong>PG (Priority Group)</strong>: ingress 側のバッファ計上単位。<code>xon</code>/<code>xoff</code> を持って <a href="../../../reference/glossary/#term-pfc">PFC</a> のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。</li>
+<li><strong><a href="../../../reference/glossary/#term-tc">TC (Traffic Class)</a></strong>: SONiC 内部で使うクラス番号 (0〜7)。受信側で <a href="../../../reference/glossary/#term-dscp">DSCP</a> / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。</li>
+<li><strong><a href="../../../reference/glossary/#term-pg">PG (Priority Group)</a></strong>: ingress 側のバッファ計上単位。<code>xon</code>/<code>xoff</code> を持って <a href="../../../reference/glossary/#term-pfc">PFC</a> のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。</li>
 <li><strong>Queue</strong>: egress 側のバッファ計上 + 出力順制御単位。WRED ドロッパと scheduler はここに紐付きます。典型的には UC 用 8 個 + MC 用 8 個。</li>
 <li><strong><a href="../../../reference/glossary/#term-buffer-pool">Buffer Pool</a></strong>: ingress / egress 別に存在する共有バッファのプール。<code>size</code>、<code>mode</code> (static / dynamic)、<code>type</code> (lossless / lossy) を持ちます。</li>
-<li><strong>Buffer Profile</strong>: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (<code>dynamic_th</code>) で配分し、<code>xon</code>/<code>xoff</code> の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。</li>
+<li><strong><a href="../../../reference/glossary/#term-buffer-profile">Buffer Profile</a></strong>: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (<code>dynamic_th</code>) で配分し、<code>xon</code>/<code>xoff</code> の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。</li>
 <li><strong>WRED / ECN</strong>: 平均キュー長がある閾値を超えたら、確率的に drop または ECN mark する仕組み。WRED テーブルは色（green / yellow / red）ごとに別閾値を持てます。</li>
 <li><strong>PFC (Priority-Based Flow Control)</strong>: 802.1Qbb。PG 単位で「止めて」をリンク相手の MAC 層に送り、特定 priority のフレームだけ流量を絞る仕組み。</li>
 <li><strong>PFCWD</strong>: PFC を受けたまま回復しない queue / port を強制的に drop モードに落として、PFC storm を波及させない監視 daemon。</li>
@@ -29319,7 +29319,7 @@
 <li><strong>出力 queue を決める</strong>: <code>TC_TO_QUEUE_MAP</code> が egress queue を選びます。</li>
 <li><strong>出力バッファに積む</strong>: <code>BUFFER_QUEUE</code> が queue 単位で <code>BUFFER_PROFILE</code> を割り当てます。<code>QUEUE</code> テーブルでは queue ごとの WRED と scheduler を紐付けます。</li>
 <li><strong>混んできたら捨てるか mark する</strong>: <code>WRED_PROFILE</code> で WRED / ECN 閾値を決めます。詳細は <a href="../../../acl-qos/wred-and-ecn-statistics/">WRED and ECN statistics</a> を参照。</li>
-<li><strong>取り出す順番を決める</strong>: <code>SCHEDULER</code> が strict priority / DWRR / shaping を設定します。<code>sonic-qos-scheduler-and-shaping</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が背景です。詳細は <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler / shaping</a>。</li>
+<li><strong>取り出す順番を決める</strong>: <code>SCHEDULER</code> が strict priority / <a href="../../../reference/glossary/#term-dwrr">DWRR</a> / shaping を設定します。<code>sonic-qos-scheduler-and-shaping</code> <a href="../../../reference/glossary/#term-hld">HLD</a> が背景です。詳細は <a href="../../../acl-qos/sonic-qos-scheduler-and-shaping/">SONiC QoS scheduler / shaping</a>。</li>
 </ol>
 <p>このうち「入力側で止める仕組み」が PFC、「出力側で捨てる/mark する仕組み」が WRED / ECN、「使ったバッファのピークを覚える仕組み」が watermark です。</p>
 <h2 id="4">バッファに登場する 4 つのテーブル<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
@@ -29399,7 +29399,7 @@
 <td>Storm Control は BUM (broadcast/unknown unicast/multicast) フレームの rate を粗く制限する仕組み。queue 単位の輻輳制御ではない。</td>
 </tr>
 <tr>
-<td>Policer (ingress rate-limit)</td>
+<td><a href="../../../reference/glossary/#term-policer">Policer</a> (ingress rate-limit)</td>
 <td>「速度を制限する」点</td>
 <td>Policer は ingress でトークンバケットによる drop / mark。QoS の shaper は egress queue ごとの送出速度上限で、バッファに溜める点が違う。</td>
 </tr>
@@ -29434,7 +29434,7 @@
 <li><a href="../../14-platform-port-optics/">Platform / Port / Optics / PHY</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
-<!-- glossary-links-injected: f7696bbf835c -->
+<!-- glossary-links-injected: 1ef61890526a -->
 
 
 

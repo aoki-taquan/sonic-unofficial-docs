@@ -29287,7 +29287,7 @@
 </ul>
 <p>per-<a href="../../../reference/glossary/#term-rif">RIF</a> の MPLS 有効化（<code>INTERFACE.&lt;intf&gt;.mpls = enable</code>）は <code>intfmgrd</code> / <code>IntfMgr</code> が SAI の RIF 属性として渡し、ASIC が MPLS フレームを受理するかどうかを切り替えます。</p>
 <h2 id="qos">QoS との接続<a class="headerlink" href="#qos" title="Permanent link">&para;</a></h2>
-<p><code>sonic-swss/orchagent/qosorch.cpp</code> の <code>m_qos_handler_map</code> に <code>CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME</code> が登録され、<code>mpls_tc_to_tc_field_name</code> が <code>PORT_QOS_MAP</code> のフィールド名として参照されます。ハンドラは <code>QosOrch::handleMplsTcToTcTable</code> です。DSCP / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、<a href="../../../reference/glossary/#term-qos">QoS</a> 側の運用知識がそのまま使えます。</p>
+<p><code>sonic-swss/orchagent/qosorch.cpp</code> の <code>m_qos_handler_map</code> に <code>CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME</code> が登録され、<code>mpls_tc_to_tc_field_name</code> が <code>PORT_QOS_MAP</code> のフィールド名として参照されます。ハンドラは <code>QosOrch::handleMplsTcToTcTable</code> です。<a href="../../../reference/glossary/#term-dscp">DSCP</a> / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、<a href="../../../reference/glossary/#term-qos">QoS</a> 側の運用知識がそのまま使えます。</p>
 <h2 id="path-tracing-sai">Path Tracing の SAI 属性<a class="headerlink" href="#path-tracing-sai" title="Permanent link">&para;</a></h2>
 <p>Path Tracing Midpoint は SAI 側で port 属性として実装されています。</p>
 <ul>
@@ -29421,7 +29421,7 @@
 <li><a href="../../../routing/mpls-for-sonic-high-level-design-document/">MPLS HLD</a></li>
 <li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
 </ul>
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 
 

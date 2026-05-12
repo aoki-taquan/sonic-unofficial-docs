@@ -29246,7 +29246,7 @@
 <li>EVPN 利用時は <a href="../../../reference/glossary/#term-bgp">BGP</a>-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。</li>
 <li>VNET route 利用時は <code>VNET_ROUTE_TUNNEL_TABLE</code>、endpoint、monitoring、<a href="../../../reference/glossary/#term-bfd">BFD</a> state を見る。</li>
 <li>ASIC 側で tunnel object、tunnel nexthop、NHG member、route / <a href="../../../reference/glossary/#term-fdb">FDB</a> が作られているかを確認する。</li>
-<li>負荷分散や loss が問題なら DSCP remap、PBH inner hash、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> / ARS の影響を切り分ける。</li>
+<li>負荷分散や loss が問題なら <a href="../../../reference/glossary/#term-dscp">DSCP</a> remap、PBH inner hash、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> / ARS の影響を切り分ける。</li>
 </ol>
 <h2 id="overlay-ecmp-bfd">Overlay ECMP と BFD<a class="headerlink" href="#overlay-ecmp-bfd" title="Permanent link">&para;</a></h2>
 <p>Overlay ECMP は、1 prefix に複数 tunnel endpoint を持たせ、VnetOrch が tunnel nexthop group を作る仕組みです。BFD monitoring 付きでは、<code>endpoint_monitor</code> に対応する BFD state が Down になると、その endpoint は NHG から外れます。</p>
@@ -29452,7 +29452,7 @@
 <li><a href="../../../architecture/sonic-policy-based-hashing/">Policy Based Hashing</a></li>
 <li><a href="../../../routing/local-ars-hld/">Local ARS</a></li>
 </ul>
-<!-- glossary-links-injected: a80c59f067fa -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 
 

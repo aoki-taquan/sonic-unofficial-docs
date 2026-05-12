@@ -29285,7 +29285,7 @@
 <p>ここでは、基本の <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> の延長に見えるが、別の前提や別の orch を持つ機能を整理します。設計検討では同じ overlay として並びますが、運用手順や実装成熟度は同一ではありません。</p>
 <h2 id="_1">ハンドオフ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area HLD の <a href="../../../overlay/vxlan-sonic/">vxlan-sonic</a>, <a href="../../../overlay/sonic-dash-hld/">sonic-dash-hld</a>, <a href="../../../routing/evpn-vxlan-multihoming/">evpn-vxlan-multihoming</a> に集約されている。tunnel orchagent と FRR EVPN の協調は area HLD 側で詳細化されている。</li>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area HLD の <a href="../../../overlay/vxlan-sonic/">vxlan-sonic</a>, <a href="../../../overlay/sonic-dash-hld/">sonic-dash-hld</a>, <a href="../../../routing/evpn-vxlan-multihoming/">evpn-vxlan-multihoming</a> に集約されている。tunnel <a href="../../../reference/glossary/#term-orchagent">orchagent</a> と FRR EVPN の協調は area HLD 側で詳細化されている。</li>
 <li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config vxlan</code> / <code>config vnet</code> 系コマンド、<a href="../../../reference/config-db/">reference/config_db/VXLAN_TUNNEL</a>, <code>VNET</code>, <code>VNET_INTERFACE</code>, <code>EVPN_NVO</code> に集約されている。</li>
 <li><strong>本ページ</strong> は基本 VXLAN/VNET/EVPN を踏まえた読者向けに、EVPN MH, NVGRE, Subnet decap, Overlay ECMP w/ BFD, DASH 連携といった発展領域だけを扱う。</li>
 </ul>
@@ -29313,7 +29313,7 @@
 <ul>
 <li><strong>Overlay ECMP with <a href="../../../reference/glossary/#term-bfd">BFD</a> monitoring</strong>: VNET tunnel nexthop に BFD を貼ることで、underlay の障害を検出して nexthop group から外す。<code>overlay-ecmp-with-bfd-monitoring</code> HLD と <code>overlay-ecmp-enhancements</code> で扱う。VNET の規模が大きいときに収束時間を支配する要素になる。</li>
 <li><strong>EVPN Type-5 (IP Prefix Route)</strong>: tenant <a href="../../../reference/glossary/#term-vrf">VRF</a> の prefix を route target 経由で配る方法。Type-2 ベースの MAC/IP モデルと、Type-5 ベースの prefix モデルが共存するときの優先度を意識する。</li>
-<li><strong>DSCP remapping for tunnel traffic</strong>: outer DSCP を VNET 単位で書き換える機能。<code>overlay/dscp-remapping-for-tunnel-traffic</code> で扱われ、<a href="../../../reference/glossary/#term-qos">QoS</a> 章 (<a href="../../08-qos-buffer/">08 QoS</a>) の DSCP-to-TC マップと組み合わさる。</li>
+<li><strong><a href="../../../reference/glossary/#term-dscp">DSCP</a> remapping for tunnel traffic</strong>: outer DSCP を VNET 単位で書き換える機能。<code>overlay/dscp-remapping-for-tunnel-traffic</code> で扱われ、<a href="../../../reference/glossary/#term-qos">QoS</a> 章 (<a href="../../08-qos-buffer/">08 QoS</a>) の DSCP-to-TC マップと組み合わさる。</li>
 <li><strong>Symmetric IRB</strong>: ingress / egress 双方で L3VNI を経由する設計。FRR 側設定と SONiC schema 双方で <code>VXLAN_TUNNEL_MAP</code> に L3 mapping を入れる。</li>
 <li><strong>VXLAN counters / drop visibility</strong>: <code>COUNTERS_DB</code> に tunnel ごとの ingress/egress カウンタが入る。tunnel drop の切り分けは ASIC SAI 側のカウンタも併用する。</li>
 </ul>
@@ -29365,7 +29365,7 @@
 <li><a href="../../../overlay/sonic-dash-hld/">SONiC DASH HLD</a></li>
 <li><a href="../../../overlay/vxlan-sonic/">VXLAN SONiC concepts/internals/operations</a></li>
 </ul>
-<!-- glossary-links-injected: 4f24af8e8ba5 -->
+<!-- glossary-links-injected: 3656a3709ce7 -->
 
 
 

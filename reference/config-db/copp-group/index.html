@@ -29256,7 +29256,7 @@
 
 <h1 id="copp_group">COPP_GROUP テーブル<a class="headerlink" href="#copp_group" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>CPU 宛トラフィックをレート制限する Control Plane Policing (<a href="../../glossary/#term-copp">CoPP</a>) のグループ定義。各グループに CPU 受信キューと埋め込み policer (sr_TCM / tr_TCM / storm) を持ち、<code>COPP_TRAP</code> の <code>trap_group</code> から参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>copp.json</code> テンプレ → <code>coppmgr</code> → <a href="../../glossary/#term-appl_db">APPL_DB</a> → <code>orchagent</code> (<code>CoppOrch</code>) → <a href="../../glossary/#term-sai">SAI</a> HOSTIF_TRAP_GROUP / POLICER の流れで反映される。</p>
+<p>CPU 宛トラフィックをレート制限する Control Plane <a href="../../glossary/#term-policing">Policing</a> (<a href="../../glossary/#term-copp">CoPP</a>) のグループ定義。各グループに CPU 受信キューと埋め込み policer (sr_TCM / tr_TCM / storm) を持ち、<code>COPP_TRAP</code> の <code>trap_group</code> から参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>copp.json</code> テンプレ → <code>coppmgr</code> → <a href="../../glossary/#term-appl_db">APPL_DB</a> → <code>orchagent</code> (<code>CoppOrch</code>) → <a href="../../glossary/#term-sai">SAI</a> HOSTIF_TRAP_GROUP / POLICER の流れで反映される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29423,7 +29423,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 3ecb83db7603 -->
+<!-- glossary-links-injected: 87fa713c3c5e -->
 
 <div class="footnote">
 <hr />

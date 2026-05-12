@@ -29295,7 +29295,7 @@
 </span></code></pre></div>
 <p>設定を読むときは <code>ACL_TABLE|DATAACL</code> の <code>type</code>、<code>stage</code>、<code>ports</code> を先に見ます。その後に <code>ACL_RULE|DATAACL|DROP_SRC_10_0_0_1</code> の <code>PRIORITY</code>、match、action を見ます。</p>
 <h2 id="acl_rule">ACL_RULE の基本<a class="headerlink" href="#acl_rule" title="Permanent link">&para;</a></h2>
-<p><code>PRIORITY</code> は値が大きいほど優先です。match は <code>SRC_IP</code> / <code>DST_IP</code>、<code>SRC_IPV6</code> / <code>DST_IPV6</code>、<code>IP_PROTOCOL</code>、<code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code>、<code>ETHER_TYPE</code>、<code>TCP_FLAGS</code> などを組み合わせます。action は <code>PACKET_ACTION</code>、<code>REDIRECT_ACTION</code>、mirror action、<code>POLICER</code>、DSCP 書換などです。</p>
+<p><code>PRIORITY</code> は値が大きいほど優先です。match は <code>SRC_IP</code> / <code>DST_IP</code>、<code>SRC_IPV6</code> / <code>DST_IPV6</code>、<code>IP_PROTOCOL</code>、<code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code>、<code>ETHER_TYPE</code>、<code>TCP_FLAGS</code> などを組み合わせます。action は <code>PACKET_ACTION</code>、<code>REDIRECT_ACTION</code>、mirror action、<code>POLICER</code>、<a href="../../../reference/glossary/#term-dscp">DSCP</a> 書換などです。</p>
 <p>table type が action の可否を制限するため、rule JSON だけを別 table に移すと失敗することがあります。特に egress stage、mirror、DSCP 書換、packet trimming のような action は ASIC capability の影響を受けます。</p>
 <h2 id="policer">Policer<a class="headerlink" href="#policer" title="Permanent link">&para;</a></h2>
 <p><code>POLICER</code> は単独で packet を分類しません。ACL rule、<a href="../../../reference/glossary/#term-copp">CoPP</a> group、mirror session などから参照される rate limiting 部品です。<code>METER_TYPE</code>、<code>MODE</code>、<code>CIR</code> / <code>CBS</code>、<code>PIR</code> / <code>PBS</code>、色別 action を持ちます。</p>
@@ -29540,7 +29540,7 @@
 <li><a href="../../../reference/yang/sonic-copp/">sonic-copp YANG</a></li>
 <li><a href="../../../reference/yang/sonic-mirror-session/">sonic-mirror-session YANG</a></li>
 </ul>
-<!-- glossary-links-injected: 9311b0e01b19 -->
+<!-- glossary-links-injected: e1fd4940b990 -->
 
 
 
