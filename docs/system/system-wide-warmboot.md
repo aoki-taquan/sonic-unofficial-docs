@@ -155,8 +155,8 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 ## 制限事項
 
 - system-wide warm-boot は全ての SONiC コンテナが warm-restart 対応であることを前提とし、サードパーティ追加コンテナがある環境では成立しない。
-- BGP / LACP / BFD の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。
-- ASIC SDK が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。
+- BGP / [LACP](../reference/glossary.md#term-lacp) / [BFD](../reference/glossary.md#term-bfd) の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。
+- [ASIC SDK](../reference/glossary.md#term-asic-sdk) が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。
 
 ## 引用元
 
@@ -169,4 +169,4 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 446a7059dd14 -->
+<!-- glossary-links-injected: fc2c782c004a -->

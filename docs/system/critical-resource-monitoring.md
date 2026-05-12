@@ -176,10 +176,10 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 ## 制限事項
 
 - **ベンダー SAI からの取得値に依存**: CRM のリソース使用量は `sai_object_type_get_availability` 等の SAI API で取得する。ベンダー実装が値を返さない / 不正確な場合は CRM のしきい値判定そのものが信用できない。
-- **ポーリング間隔のトレードオフ**: `CRM.Config.polling_interval` を短くするとリアルタイム性は上がるが orchagent / SAI への負荷が上がる。既定 300 秒は spike を捉えるには長い。
+- **ポーリング間隔のトレードオフ**: `CRM.Config.polling_interval` を短くするとリアルタイム性は上がるが [orchagent](../reference/glossary.md#term-orchagent) / SAI への負荷が上がる。既定 300 秒は spike を捉えるには長い。
 - **しきい値の type 制約**: `high_threshold` / `low_threshold` は `type` (`percentage` / `used` / `free`) と整合する必要がある。整合しない設定は CRM が無視するか warn を吐くのみで運用ミスに気付きにくい。
-- **counter 名の固定**: `CRM` で監視できるリソースの種類 (`ipv4_route`, `ipv6_route`, `fdb_entry`, `acl_table`, `acl_entry`, `nexthop`, `nexthop_group_member`, `snat_entry` 等) は実装側で固定。新規リソース追加には orchagent / `crm` CLI / YANG の三点修正が必要。
-- **アラートは syslog 経由のみ**: しきい値超過は syslog (`CRITICAL_RESOURCE: ...`) に出るのみで、SNMP trap や gNMI subscribe には標準で乗っていない。外部監視は syslog forward を組む必要がある。
+- **counter 名の固定**: `CRM` で監視できるリソースの種類 (`ipv4_route`, `ipv6_route`, `fdb_entry`, `acl_table`, `acl_entry`, `nexthop`, `nexthop_group_member`, `snat_entry` 等) は実装側で固定。新規リソース追加には orchagent / `crm` CLI / [YANG](../reference/glossary.md#term-yang) の三点修正が必要。
+- **アラートは syslog 経由のみ**: しきい値超過は syslog (`CRITICAL_RESOURCE: ...`) に出るのみで、[SNMP](../reference/glossary.md#term-snmp) trap や [gNMI](../reference/glossary.md#term-gnmi) subscribe には標準で乗っていない。外部監視は syslog forward を組む必要がある。
 - **複数 ASIC**: multi-ASIC では namespace ごとに `crm` を実行する必要があり、グローバルな集計ビューは標準提供されない。
 
 ## 引用元
@@ -203,4 +203,4 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: 20f8b00eaafa -->

@@ -168,7 +168,7 @@ router bgp 65001
 
 ## 制限事項
 
-- SRv6 VPN は ASIC SAI capability (`SAI_SWITCH_ATTR_SRV6_*`) に依存し、未対応 NPU では機能しない。
+- SRv6 VPN は ASIC SAI capability (`SAI_SWITCH_ATTR_SRV6_*`) に依存し、未対応 [NPU](../reference/glossary.md#term-npu) では機能しない。
 - locator / behavior (`End`, `End.DT4`, `End.DT6`, `End.DX4` 等) のサポート範囲は SAI 実装ベンダーごとに差があり、HLD の網羅範囲とは一致しない。
 - FRR と SAI 間の MSDP 等周辺プロトコル協調はまだ実験的で、商用配備例は限定的。
 
@@ -183,4 +183,4 @@ router bgp 65001
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 053f95bd27bf -->
+<!-- glossary-links-injected: 717245b7d27e -->

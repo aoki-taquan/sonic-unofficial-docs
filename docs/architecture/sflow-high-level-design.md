@@ -219,7 +219,7 @@ docker exec sflow hsflowd -d -F 2>&1 | head -40
 ## トラブルシュート
 
 - コレクタにサンプルが届かない場合、まず DUT 側で `tcpdump -i eth0 udp port 6343` でパケット送出を確認する。
-- sampling rate を上げてもサンプルが増えない場合、ASIC 側でサンプリング機能が NPU 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性。`saidump | grep SAMPLEPACKET` を確認。
+- sampling rate を上げてもサンプルが増えない場合、ASIC 側でサンプリング機能が [NPU](../reference/glossary.md#term-npu) 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性。`saidump | grep SAMPLEPACKET` を確認。
 - sFlow agent IP が management interface ではなく Loopback を使うべき設計が一般的。`config sflow agent-id` で固定推奨。
 
 ## 引用元
@@ -259,4 +259,4 @@ docker exec sflow hsflowd -d -F 2>&1 | head -40
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7c7826dedf86 -->
+<!-- glossary-links-injected: 717245b7d27e -->

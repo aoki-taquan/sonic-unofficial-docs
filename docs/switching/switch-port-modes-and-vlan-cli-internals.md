@@ -28,7 +28,7 @@ related:
 
 # Switchport モードと VLAN CLI 拡張 — 内部実装
 
-本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **YANG / CONFIG_DB / db_migrator** 周りを切り出した派生ページ。概要・モード定義は [concepts](switch-port-modes-and-vlan-cli-concepts.md) を参照。
+本ページは親 [HLD](../reference/glossary.md#term-hld) [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **[YANG](../reference/glossary.md#term-yang) / [CONFIG_DB](../reference/glossary.md#term-config_db) / db_migrator** 周りを切り出した派生ページ。概要・モード定義は [concepts](switch-port-modes-and-vlan-cli-concepts.md) を参照。
 
 ## YANG / CONFIG_DB
 
@@ -113,3 +113,5 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

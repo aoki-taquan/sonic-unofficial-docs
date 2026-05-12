@@ -31,7 +31,7 @@ related:
 
 # 動的ポート add/del 設定と運用
 
-このページは [動的ポート add/del（概要ハブ）](enhancements-to-add-or-del-ports-dynamically.md) の派生で、**設定経路と安全な運用手順** に絞る。概念は [enhancements-to-add-or-del-ports-dynamically-concepts.md](enhancements-to-add-or-del-ports-dynamically-concepts.md)、内部実装は [enhancements-to-add-or-del-ports-dynamically-internals.md](enhancements-to-add-or-del-ports-dynamically-internals.md)、HLD と実装の乖離は [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md) を参照。
+このページは [動的ポート add/del（概要ハブ）](enhancements-to-add-or-del-ports-dynamically.md) の派生で、**設定経路と安全な運用手順** に絞る。概念は [enhancements-to-add-or-del-ports-dynamically-concepts.md](enhancements-to-add-or-del-ports-dynamically-concepts.md)、内部実装は [enhancements-to-add-or-del-ports-dynamically-internals.md](enhancements-to-add-or-del-ports-dynamically-internals.md)、[HLD](../reference/glossary.md#term-hld) と実装の乖離は [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md) を参照。
 
 ## 1. 関連する CONFIG_DB
 
@@ -106,11 +106,13 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 
 ## 5. トラブルシューティング
 
-- ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。orchagent 連動が止まっている可能性。
-- ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
+- ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。[orchagent](../reference/glossary.md#term-orchagent) 連動が止まっている可能性。
+- ポート削除で [SAI](../reference/glossary.md#term-sai) エラーが大量: 依存（buffer / [ACL](../reference/glossary.md#term-acl) / [VLAN](../reference/glossary.md#term-vlan)）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
 - [LLDP](../reference/glossary.md#term-lldp) が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
 - zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 2e78c47a04ed -->

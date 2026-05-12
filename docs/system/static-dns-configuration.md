@@ -217,7 +217,7 @@ CONFIG_DB JSON:
 ## 制限事項
 
 - DHCP から取得した DNS と静的設定の DNS が混在する場合、`/etc/resolv.conf` 生成順は resolvconf / systemd-resolved の挙動に依存し、HLD 通りにならない事がある。
-- management VRF を使う場合、DNS lookup を VRF 内で行うために `ip vrf exec mgmt nslookup ...` のラップが必要となるユーティリティがある。
+- management [VRF](../reference/glossary.md#term-vrf) を使う場合、DNS lookup を VRF 内で行うために `ip vrf exec mgmt nslookup ...` のラップが必要となるユーティリティがある。
 - IPv6 DNS サーバの優先順位制御は CLI からは表現できず、`config_db.json` 直編集に頼る場合がある。
 
 ## 引用元
@@ -231,4 +231,4 @@ CONFIG_DB JSON:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c2ecb3310ac8 -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->

@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する CONFIG_DB / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -56,6 +56,11 @@ flowchart LR
 ### 関連 CLI
 
 - [`config bgp`](../cli/config-bgp.md)
+
+### 関連 HLD
+
+- [sonic-bgp-aggregate-address YANG](../../reference/yang/sonic-bgp-aggregate-address.md)
+- [sonic-bgp-sentinel YANG](../../reference/yang/sonic-bgp-sentinel.md)
 
 <!-- /yang-xref -->
 

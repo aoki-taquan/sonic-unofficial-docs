@@ -232,11 +232,11 @@ module sonic-device_metadata {
 ## 制限事項
 
 - router-id を自動選出から明示設定に切り替える際、FRR が稼働中だと一度 BGP セッションが reset される。メンテナンス時間に実施する。
-- multi-vrf / multi-asic 環境では VRF / namespace ごとに router-id を分離設定する必要があり、共通 ID 使用は実装上推奨されない。
+- multi-vrf / multi-asic 環境では [VRF](../reference/glossary.md#term-vrf) / namespace ごとに router-id を分離設定する必要があり、共通 ID 使用は実装上推奨されない。
 - 設定変更後に `config_db.json` を保存し忘れるとリブート時に自動選出に戻る。`config save -y` の運用を明示する。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/BGP/BGP-router-id.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 2e36dfd7f559 -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->

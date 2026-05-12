@@ -31,13 +31,13 @@ related:
 - **CRL の蓄積**: Go 版 gRPC は起動以降の **CRL 全履歴** を必要とする[^1]。CRL ローテーション回数に応じてメモリ・I/O が線形に増える
 - **`gnxi` profile は削除不可**[^1]
 - **同時 Rotate 拒否**: 各サービスで Concurrent Rotate を reject する想定（Unit Test cases 明記）[^1]
-- HLD 自体に `Pathz` の policy 形式詳細は無く、policy processor のライブラリ実装は別途必要[^1]
+- [HLD](../reference/glossary.md#term-hld) 自体に `Pathz` の policy 形式詳細は無く、policy processor のライブラリ実装は別途必要[^1]
 - Credentialz の `set` で sshd は再起動される。short-window で SSH 接続が拒否される可能性[^1]
 
 ## 2. 干渉する機能
 
-- **gNMI Master Arbitration**: gNSI の `Rotate` は `Set` ではないので Master Arbitration の対象外
-- **gNOI FactoryReset**: `retain_certs=true` で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い
+- **[gNMI](../reference/glossary.md#term-gnmi) Master Arbitration**: gNSI の `Rotate` は `Set` ではないので Master Arbitration の対象外
+- **[gNOI](../reference/glossary.md#term-gnoi) FactoryReset**: `retain_certs=true` で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い
 - **TACACS / Linux PAM**: Credentialz が `/etc/passwd` / `/etc/shadow` を置換するため、TACACS や RADIUS 連携の有無で挙動が変わる
 - **既存 sshd 設定**: `ssh_mgmt.set` は既存 `authorized_keys` を **置換** する（追記ではない）。warm boot 時の rollback ファイル管理に注意
 
@@ -84,3 +84,5 @@ related:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: f5d0d14cf73e -->

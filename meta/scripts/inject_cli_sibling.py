@@ -104,7 +104,9 @@ AREA_MAP: dict[str, str] = {
 
 
 def area_of(tokens: set[str]) -> str | None:
-    for t in tokens:
+    # Deterministic ordering: iterate sorted tokens so repeated runs return
+    # the same area for slugs whose tokens map to multiple areas.
+    for t in sorted(tokens):
         if t in AREA_MAP:
             return AREA_MAP[t]
     return None
@@ -183,8 +185,12 @@ def insert_block(text: str, block: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--check", action="store_true",
+                        help="dry-run; exit 1 if any drift detected")
     parser.add_argument("--min-siblings", type=int, default=3)
     args = parser.parse_args()
+    if args.check:
+        args.dry_run = True
 
     pages: dict[str, Path] = {}
     for path in sorted(CLI_DIR.glob("*.md")):
@@ -210,6 +216,8 @@ def main() -> int:
             updated += 1
 
     print(f"updated: {updated}, skipped: {skipped}, total: {len(pages)}")
+    if args.check and updated > 0:
+        return 1
     return 0
 
 
