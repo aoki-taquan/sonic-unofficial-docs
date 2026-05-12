@@ -66,6 +66,7 @@ related:
   - sonic-system-ldap
   - sonic-system-tacacs
   - sonic-vrf
+  - sonic-crm
 ---
 
 # Security / AAA / FIPS / Hardening

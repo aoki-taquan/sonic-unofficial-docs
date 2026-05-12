@@ -82,6 +82,7 @@ related:
   - sonic-portchannel
   - sonic-vlan
   - sonic-vlan-sub-interface
+  - sonic-cable-length
 ---
 
 # Platform / Port / Optics / PHY

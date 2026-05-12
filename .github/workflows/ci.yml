@@ -75,6 +75,11 @@ jobs:
       - name: Check topics chapter progress table drift (informational)
         run: python3 meta/scripts/gen_chapter_progress.py --check || true
 
+      - name: Check chapter-index related.* aggregation drift (strict)
+        run: |
+          pip install PyYAML
+          python3 meta/scripts/enrich_chapter_index_related.py --check
+
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4
