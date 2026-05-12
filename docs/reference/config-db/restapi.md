@@ -14,6 +14,7 @@ related:
   cli: []
   yang:
     - sonic-restapi
+  _no_related_cli: true
 ---
 
 # RESTAPI テーブル

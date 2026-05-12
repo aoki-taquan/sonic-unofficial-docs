@@ -13,6 +13,7 @@ related:
     - FIPS
   yang:
     - sonic-fips
+  _no_related_cli: true
 ---
 
 # FIPS テーブル

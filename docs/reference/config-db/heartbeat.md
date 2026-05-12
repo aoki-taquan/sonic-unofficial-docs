@@ -13,6 +13,7 @@ related:
     - HEARTBEAT
   yang:
     - sonic-heartbeat
+  _no_related_cli: true
 ---
 
 # HEARTBEAT テーブル

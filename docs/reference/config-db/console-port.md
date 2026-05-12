@@ -14,6 +14,7 @@ related:
     - CONSOLE_SWITCH
   yang:
     - sonic-console
+  _no_related_cli: true
 ---
 
 # CONSOLE_PORT / CONSOLE_SWITCH テーブル
