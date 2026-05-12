@@ -4,6 +4,10 @@ nav:
   - add-support-for-vlan-interface-using-openconfig-yang.md
   - sonic-basic-l2-mode-test-plan.md
   - switch-port-modes-and-vlan-cli-enhancement.md
+  - switch-port-modes-and-vlan-cli-concepts.md
+  - switch-port-modes-and-vlan-cli-internals.md
+  - switch-port-modes-and-vlan-cli-operations.md
+  - switch-port-modes-and-vlan-cli-discrepancy.md
   - brief-introduction-of-iccp-code.md
   - lag-on-distributed-voq-system.md
   - mclag-enhancements.md

@@ -28,6 +28,23 @@ related:
 - `docker ps` に該当コンテナが居ない
 - `systemctl status <feature>.service` が `activating` / `failed` ループ
 
+## 確認コマンド
+
+```bash
+# feature の状態と CONFIG_DB / STATE_DB 整合
+show feature status
+sonic-db-cli CONFIG_DB hgetall "FEATURE|<name>"
+sonic-db-cli STATE_DB  hgetall "FEATURE|<name>"
+
+# systemd unit (multi-asic は <name>@<asic> も確認)
+sudo systemctl status <name>
+sudo journalctl -u <name> -n 200
+
+# docker image / リソース
+docker images | grep -E "sonic-(bgp|swss|teamd|snmp|database|pmon|nat|dhcp)"
+df -h / ; df -hi ; free -h
+```
+
 ## 想定原因
 
 1. **`FEATURE|<name>` の `state` が `disabled` / `always_disabled`** → [hostcfgd](../../reference/glossary.md#term-hostcfgd) が起動を抑制

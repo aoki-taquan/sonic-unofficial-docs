@@ -14,7 +14,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
 
-全 **62** ページ。
+全 **66** ページ。
 
 ## area 別件数
 
@@ -27,7 +27,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 | `overlay` | 1 |
 | `platform` | 11 |
 | `routing` | 6 |
-| `switching` | 4 |
+| `switching` | 8 |
 | `system` | 9 |
 
 ## monitor タグ別件数
@@ -37,7 +37,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 | `deprecated`（deprecated） | 3 |
 | `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 21 |
 | `not_implemented`（未実装） | 11 |
-| `partially_implemented`（partially_implemented） | 27 |
+| `partially_implemented`（partially_implemented） | 31 |
 
 ## エントリ一覧（area 別）
 
@@ -278,6 +278,18 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   実コード裏取りで判明（verified at: 2026-05-09）:
+
+- [Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離](../../switching/switch-port-modes-and-vlan-cli-discrepancy.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [Switchport モードと VLAN CLI 拡張 — 内部実装](../../switching/switch-port-modes-and-vlan-cli-internals.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [Switchport モードと VLAN CLI 拡張 — 設定と運用](../../switching/switch-port-modes-and-vlan-cli-operations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
