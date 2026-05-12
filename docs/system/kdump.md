@@ -148,6 +148,13 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 - **disk I/O 削減 HLD**: `/var/crash` への書込みは disk I/O に乗る
 - **fast-reboot / warm-reboot**: 排他
 
+## 確認コマンド
+
+- `show kdump status` / `show kdump memory` / `show kdump num_dumps` — kdump の有効状態・予約メモリ・保持数を確認
+- `show kdump files` — `/var/crash/` 配下に保持されている vmcore 一覧
+- `cat /proc/cmdline | tr ' ' '\n' | grep crashkernel` — カーネル cmdline に `crashkernel=` が乗っているか確認
+- `kexec -l` の状態は `dmesg | grep -i kexec` で確認可能
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/kdump/SONiC-kdump.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

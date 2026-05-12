@@ -168,6 +168,13 @@ Disabled   Enabled
 
 - [WCMP SWSS HLD #738](https://github.com/sonic-net/SONiC/pull/738)
 
+## 確認コマンド
+
+- `show bgp device-global` — WCMP の有効/無効を確認
+- `vtysh -c "show bgp ipv4 unicast <prefix>"` — link-bandwidth extended community と nexthop weight を確認
+- `vtysh -c "show ip route <prefix>"` — RIB 段で NHG メンバの weight を確認
+- `sonic-db-cli APPL_DB hgetall "ROUTE_TABLE:<prefix>"` / `NEXT_HOP_GROUP_TABLE` で weight 反映を確認
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wcmp/wcmp-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

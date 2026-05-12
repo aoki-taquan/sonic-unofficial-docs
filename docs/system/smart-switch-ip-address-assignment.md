@@ -183,6 +183,13 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 - **`config-setup` / sonic-cfggen**: `t1-smartswitch` テンプレ
 - **DASH HA / hamgrd**: midplane が NPU↔DPU の lifeline
 
+## 確認コマンド
+
+- `ip -d link show bridge-midplane` / `ip addr show bridge-midplane` — midplane bridge と IP 割り当て
+- `systemctl status midplane-network-npu midplane-network-dpu` — bridge 立上げ用 oneshot サービス
+- `sonic-db-cli CONFIG_DB hgetall "MID_PLANE_BRIDGE|GLOBAL"` — bridge IP/subnet の宣言
+- `sonic-db-cli CONFIG_DB keys "DHCP_SERVER_IPV4_PORT|*"` — port-based static lease の DPU 割当
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/ip-address-assigment/smart-switch-ip-address-assignment.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

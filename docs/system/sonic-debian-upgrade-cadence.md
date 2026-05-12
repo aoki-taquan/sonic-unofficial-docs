@@ -157,6 +157,13 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 - [Topic: Build / Packaging](../topics/19-build-packaging/index.md)
 - [Topic: Reboot / Upgrade](../topics/11-reboot/index.md)
 
+## 確認コマンド
+
+- `cat /etc/os-release` / `lsb_release -a` — image の Debian バージョン
+- `dpkg -l | grep linux-image` — kernel パッケージとバージョン
+- `show version` — SONiC build / Debian version / kernel を一括表示
+- `apt-cache policy <pkg>` — slave container 構築時の参照 suite を確認
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

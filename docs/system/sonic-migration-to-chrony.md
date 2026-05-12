@@ -142,6 +142,13 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 - [Glossary](../reference/glossary.md)
 - [Topics: Overview](../topics/01-overview/index.md)
 
+## 確認コマンド
+
+- `chronyc tracking` — 現在の参照サーバと stratum、最終 sync からの経過時間を確認
+- `chronyc sources -v` — 候補 NTP サーバ一覧と reach ビットマップ
+- `show ntp` — sonic-utilities 経由でユーザ向け要約を取得
+- `systemctl status chrony` — chrony デーモンの起動状態と直近ログ
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ntp/migration-to-chrony.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

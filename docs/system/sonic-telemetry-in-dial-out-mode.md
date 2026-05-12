@@ -163,6 +163,13 @@ OpenConfig の [telemetry yang model](https://github.com/openconfig/public/blob/
 - **gNMI Server**（dial-in）: 同コンテナ内の別サービス
 - **OpenConfig telemetry**: 設定スキーマの参照モデル
 
+## 確認コマンド
+
+- `sonic-db-cli CONFIG_DB hgetall "TELEMETRY_CLIENT|Global"` — dial-out 全体設定（retry / encoding 等）
+- `sonic-db-cli CONFIG_DB keys "TELEMETRY_CLIENT|DestinationGroup_*"` — 送信先 collector グループ
+- `docker exec telemetry supervisorctl status dialout_client` — dialout クライアント状態
+- `docker logs telemetry 2>&1 | grep -i dialout` — 接続再試行・publish エラーを確認
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/system-telemetry/dialout.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/system-telemetry/dialout.md)

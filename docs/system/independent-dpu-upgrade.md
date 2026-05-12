@@ -148,6 +148,13 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - **[gNMI](../reference/glossary.md#term-gnmi) / sonic-telemetry**: GNMI/GNOI Splitter 経由のため依存
 - **Offloader / Containerz**: NPU 側 container 制御の標準 API
 
+## 確認コマンド
+
+- `show chassis modules status` — DPU/NPU の admin/oper 状態
+- `sonic-db-cli STATE_DB hgetall "CHASSIS_MODULE_INFO_TABLE|DPU0"` — DPU の運用情報
+- `gnoi_client -target <dpu> -rpc System.RebootStatus` — gNOI Reboot ステータス
+- `gnoi_client -target <dpu> -rpc Containerz.ListImage` — DPU 内 container image を列挙
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/upgrade/dpu-upgrade-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -155,6 +155,13 @@ sonic-cli-gen remove   config sonic-acl
 - **手書き CLI plugin**: `manifest.json` で共存可能（config は自動・show は手書き等）
 - **YANG 検証**: 生成 CLI は実行時に validation を通す。CVL / mgmt-framework と同じ YANG 集合に依存
 
+## 確認コマンド
+
+- `ls /usr/local/lib/python3*/dist-packages/config/plugins/auto/` — 自動生成 plugin の有無
+- `ls /usr/local/yang-models/` — 対象 YANG モジュール一覧
+- `sonic-cli-gen generate config <module>` を実行し、生成 plugin の import エラーは `python3 -c "import config.plugins.auto.<module>_yang"` で確認
+- `docker exec sonic-package-manager sonic-package-manager list` — Application Extension の有効化状況
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/cli_auto_generation/cli_auto_generation.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cli_auto_generation/cli_auto_generation.md)

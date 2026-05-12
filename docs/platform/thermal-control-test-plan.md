@@ -156,6 +156,13 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 - **xcvrd / sfp-refactor**: optic 由来の温度はこの policy には含まれない
 - **show platform CLI**: `fanstatus` / `temperature` 出力フォーマット契約
 
+## 確認コマンド
+
+- `show platform fanstatus` / `show platform temperature` — fan speed と各温度センサの状況
+- `sonic-db-cli STATE_DB keys "FAN_INFO|*"` / `"TEMPERATURE_INFO|*"` — daemon の publish 結果を直接確認
+- `docker exec pmon supervisorctl status thermalctld` — thermal control daemon の状態
+- `docker logs pmon 2>&1 | grep -i thermal` — policy reload / algorithm 切替のログを追う
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/sonic_thermal_control_test_plan.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

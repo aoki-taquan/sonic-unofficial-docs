@@ -158,6 +158,13 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 - **`sonic-installer`**: install path に検証ステップを挿入
 - **`build_image.sh` / `onie-mk-demo.sh`**: build フラグ駆動
 
+## 確認コマンド
+
+- `sonic-installer list` — installed/next image を確認し、署名済みイメージか把握
+- `sonic-installer install <image>` — 失敗時はログに `verify` ステップの diff（sha1/size mismatch）が出る
+- `dmesg | grep -i secure` / `mokutil --sb-state` — Secure Boot 有効/無効の確認
+- build フラグは `cat /etc/sonic/sonic_version.yml` で `build_metadata` から間接確認
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/secure_upgrade/secure_upgrade.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
