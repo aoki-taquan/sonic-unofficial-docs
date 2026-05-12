@@ -11176,6 +11176,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29275,6 +29286,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29512,7 +29534,15 @@
 <li><a href="../active-standby-dual-tor-internals/">active-standby-dual-tor-internals.md</a> — 内部実装</li>
 <li><a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> — 制限事項</li>
 </ul>
-<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>詳細な制限の正典は別ページ</strong>: 設計上の制約は <a href="../active-standby-dual-tor-limitations/">active-standby-dual-tor-limitations.md</a> を参照。本ページでは運用面で意識すべき制限のみを抜粋する。</li>
+<li><strong>I2C アクセスは順次</strong>: <code>MUX_CABLE</code> の <code>i2c_retry_count</code> を増やしても、I2C はバス共有でシリアル化されるため、同時 mux 切替の並列度は限られる。短時間に多数の切替を起こすとレイテンシが伸びる。</li>
+<li><strong><code>config mux</code> の即時反映なし</strong>: CLI による mux state 変更は MuxOrch / linkmgrd 経由のため、<code>MUX_CABLE.state</code> が反映されるまで数秒のラグがある。</li>
+<li><strong><code>show mux status</code> の値は STATE_DB スナップショット</strong>: 切替中のレース観測のため瞬間値は揺れる。安定値を見るときは 1 〜 2 秒空けて再取得する運用が必要。</li>
+<li><strong>runbook 推奨</strong>: 異常時のフロー切り分けは Dual-ToR 用 runbook (mux-state-flap, server-traffic-blackhole 等) を併用すること。CLI コマンド単独では切り分けきれないケースが多い。</li>
+</ul>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: d61f8c399306 -->
 
 <div class="footnote">

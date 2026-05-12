@@ -13618,6 +13618,17 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29541,6 +29552,17 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29748,7 +29770,16 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <li><a href="../../reference/runbooks/crm-threshold-exceeded/">Runbook: CRM threshold exceeded</a></li>
 <li><a href="../../topics/20-swss-sai-redis/">Topics: SWSS / SAI / Redis</a></li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_13">制限事項<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>ベンダー SAI からの取得値に依存</strong>: CRM のリソース使用量は <code>sai_object_type_get_availability</code> 等の SAI API で取得する。ベンダー実装が値を返さない / 不正確な場合は CRM のしきい値判定そのものが信用できない。</li>
+<li><strong>ポーリング間隔のトレードオフ</strong>: <code>CRM.Config.polling_interval</code> を短くするとリアルタイム性は上がるが orchagent / SAI への負荷が上がる。既定 300 秒は spike を捉えるには長い。</li>
+<li><strong>しきい値の type 制約</strong>: <code>high_threshold</code> / <code>low_threshold</code> は <code>type</code> (<code>percentage</code> / <code>used</code> / <code>free</code>) と整合する必要がある。整合しない設定は CRM が無視するか warn を吐くのみで運用ミスに気付きにくい。</li>
+<li><strong>counter 名の固定</strong>: <code>CRM</code> で監視できるリソースの種類 (<code>ipv4_route</code>, <code>ipv6_route</code>, <code>fdb_entry</code>, <code>acl_table</code>, <code>acl_entry</code>, <code>nexthop</code>, <code>nexthop_group_member</code>, <code>snat_entry</code> 等) は実装側で固定。新規リソース追加には orchagent / <code>crm</code> CLI / YANG の三点修正が必要。</li>
+<li><strong>アラートは syslog 経由のみ</strong>: しきい値超過は syslog (<code>CRITICAL_RESOURCE: ...</code>) に出るのみで、SNMP trap や gNMI subscribe には標準で乗っていない。外部監視は syslog forward を組む必要がある。</li>
+<li><strong>複数 ASIC</strong>: multi-ASIC では namespace ごとに <code>crm</code> を実行する必要があり、グローバルな集計ビューは標準提供されない。</li>
+</ul>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
 <p>CRM 要件 HLD の実装は <code>sonic-swss</code> の <code>orchagent</code> と <code>sonic-utilities</code> の <code>crm</code> CLI に取り込み済み。</p>
 <ul>

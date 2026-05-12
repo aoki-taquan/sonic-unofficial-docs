@@ -16558,6 +16558,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29519,6 +29530,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29700,7 +29722,16 @@ reasoning: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシ�
 <li><a href="../../topics/20-swss-sai-redis/">Topics: SWSS / SAI / Redis</a></li>
 <li><a href="../../reference/runbooks/sai-failure/">Runbook: SAI failure</a></li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>ビルド時限定の検査</strong>: <code>configure.ac</code> の <code>AC_TRY_RUN</code> で行うため、検査が走るのは <code>sonic-sairedis</code> のビルド時のみ。バイナリ配布後の runtime で libsai を入れ替えた場合は検出できない。</li>
+<li><strong><code>sai_query_api_version</code> 必須</strong>: vendor libsai がこの API を実装していないとビルドが <code>AC_MSG_ERROR</code> で停止する。古い vendor SDK は対応していないため、SDK 更新が前提条件。</li>
+<li><strong>HLD 案より緩い実装</strong>: HLD 提案は MAJOR.MINOR equality 比較だが、実装は <code>minversion = SAI_VERSION(1,9,0)</code> の <strong>floor</strong> 比較のみ (<code>return (version &lt; minversion) || (SAI_API_VERSION &lt; minversion);</code>)。HLD と実装の乖離があり、本ページは <code>discrepancy-found</code> 系の扱い。</li>
+<li><strong>PATCH バージョン無視</strong>: PATCH 差は意図的に無視される。OCP SAI の enum / struct 互換性保証 (PR 1297 / 1795 参照) に依存。</li>
+<li><strong>runtime バグの取り逃し</strong>: vendor libsai が <code>SAI_API_VERSION</code> を実態と異なる値で返すバグは検知できない。属性 ID / enum 値の異常は依然発生し得る。</li>
+<li><strong>vendor 越境の責任分界</strong>: <code>sonic-sairedis</code> 更新時には対応する vendor libsai を同 PR で更新する責任が CI workflow にハードコードされており、片側だけ更新すると CI が落ちる。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-sairedis `configure.ac` l.226-261: `AC_CHECK_FUNCS(sai_query_api_version, [AC_MSG_CHECKING([SAI headers API version and library version check]) AC_TRY_RUN([...])`
 - 実装は **`minversion = SAI_VERSION(1,9,0)` floor** で `return (version < minversion) || (SAI_API_VERSION < minversion);` のみ判定（HLD 案の MAJOR.MINOR equality より緩い）。理由は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）と PR 1795（structs）を参照

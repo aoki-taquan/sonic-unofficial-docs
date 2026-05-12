@@ -13327,6 +13327,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29508,6 +29519,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29775,7 +29797,16 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <li>マルチライン: <code>\n</code> をシェル経由で渡す際にクォートを正しくしないと改行が消える。<code>config banner login "line1\nline2"</code> のようにダブルクォート + <code>\n</code> で渡す。</li>
 <li><code>show banner</code> でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>state=disabled</code> のとき CONFIG_DB の値は無視</strong>: <code>BANNER_MESSAGE</code> テーブルに login/motd/logout が書かれていても、<code>state</code> が <code>disabled</code> だと反映されない。</li>
+<li><strong>永続化は別オペレーション</strong>: バナー設定は CONFIG_DB に書かれているだけでは再起動後に消える可能性がある。<code>config save</code> を別途実行しないと永続化されない。</li>
+<li><strong><code>/etc/issue</code> / <code>/etc/issue.net</code> の race</strong>: 他の systemd ユニット (cloud-init, debian-maintenance) がこれらファイルを再生成する場合、<code>banner-config</code> と書き込みが競合する。基本は <code>banner-config</code> 後勝ち。</li>
+<li><strong>既存セッションには反映されない</strong>: SSH の <code>/etc/issue.net</code> 更新は次回接続から有効。すでに接続中のセッションには適用されない。</li>
+<li><strong>マルチラインのクォート扱い</strong>: <code>\n</code> をシェル経由で渡す場合のクォートに注意が必要 (<code>"line1\nline2"</code>)。HLD では escape 規約の厳密な仕様は未定義。</li>
+<li><strong>整形 / 幅調整なし</strong>: <code>show banner</code> は生の文字列をそのまま出力する。ターミナル幅やロゴアスキーアートの整形は行わない。</li>
+</ul>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

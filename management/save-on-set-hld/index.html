@@ -15035,6 +15035,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -15054,7 +15065,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29547,6 +29558,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29566,7 +29588,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29830,7 +29852,16 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <li>フラグは渡っているのに保存されない場合、<code>sonic-host-services</code> の DBUS エンドポイント (<code>SaveStartupConfig</code> 相当) のログを確認する。v0.3 以降はエラーが返ってくれば gNMI クライアントへ伝播する設計になっているはずなので、Set のレスポンスを見ること。</li>
 <li>性能劣化が見られる場合、<code>save_on_set</code> を一時的に無効化（telemetry 再起動が必要）して切り分ける。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Set ごとのディスク書き込み</strong>: 1 Set ごとに ConfigDB を <code>/etc/sonic/config_db.json</code> に保存するため、大量の Set を高頻度で投入すると I/O コストが上がる。バルクで設定する運用ではこの機能を無効化したほうが望ましい場合がある。</li>
+<li><strong>DBUS 依存</strong>: 保存処理は telemetry コンテナから <strong>ホスト側 <code>sonic-host-services</code> の DBUS</strong> 経由で実行される。DBUS が利用できない環境 (古い image / unsupported プラットフォーム) では保存が失敗する。</li>
+<li><strong>既定は無効</strong>: <code>--with-save-on-set</code> フラグ未指定時は保存されない。CLI で Set した設定はリブートで失われる。</li>
+<li><strong><code>config save</code> との競合</strong>: 同時に <code>config save</code> を実行すると、<code>/etc/sonic/config_db.json</code> への書き込みが race して中身が壊れる可能性がある。HLD は file lock の具体仕様まで踏み込んでいない。</li>
+<li><strong>partial save の不在</strong>: ConfigDB 全体を毎回保存する。差分保存 / 特定 table のみの保存はサポートされない。</li>
+<li><strong>保存先固定</strong>: 保存先パスは <code>/etc/sonic/config_db.json</code> 固定。代替パスを指定する API は無い。</li>
+</ul>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
 <p><code>sonic-gnmi</code> の telemetry エントリポイントと Set ハンドラに Save-On-Set 実装を確認した。</p>
 <ul>
@@ -29842,7 +29873,7 @@ reasoning: フラグ→関数ポインタ差し替え→Set 末尾呼び出し�
 <!-- glossary-links-injected: 36c0149d5a9b -->
 
 <!-- ops-entry -->
-<h2 id="_13">運用入口<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">運用入口<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="config_db_1">関連 CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <ul>

@@ -13148,6 +13148,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29430,6 +29441,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29618,7 +29640,16 @@
 <li><a href="../../topics/11-reboot/">11-reboot</a>: warm / fast / express / cold の比較と運用全体像</li>
 <li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: orchagent と SAI の init view / apply view プロトコル</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>90 秒のデータプレーン断目標</strong>: HLD は warm reboot のデータプレーン断を 90 秒以内に抑える設計目標を掲げるが、ASIC SDK の <code>sai-warmboot.bin</code> 復元時間や orchagent reconcile に依存し、ベンダー実装で延びることがある。</li>
+<li><strong>BGP GR (Graceful Restart) 依存</strong>: 隣接 BGP ルータが GR helper をサポートしないとピアセッション切断時にルートが drop される。FRR 側の <code>graceful-restart-time</code> と peer 側の対応が前提。</li>
+<li><strong>config 変更の禁止</strong>: warm reboot 進行中 (<code>pre-shutdown</code> → <code>reconcile</code> 完了まで) の config 変更は未定義動作。<code>config save</code> / <code>config reload</code> / runtime CLI 変更は避ける必要がある。</li>
+<li><strong>対応コンテナの限定</strong>: warm restart は対応する docker (<code>bgp</code> / <code>swss</code> / <code>syncd</code> / <code>teamd</code> / <code>nat</code> / 一部 <code>lldp</code>) のみで有効化される。それ以外のコンテナは cold restart 相当となる。</li>
+<li><strong>multi-ASIC / chassis</strong>: 単体スイッチを想定した設計で、multi-ASIC や VOQ chassis では追加の制約 (namespace 単位の順序、<code>multi-asic-warm-reboot</code> 補助 HLD) が必要。</li>
+<li><strong>storage 要件</strong>: <code>/host/warmboot/</code> 配下に <code>sai-warmboot.bin</code> などの状態ファイルが書き込めるディスク容量が必要。</li>
+</ul>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>
