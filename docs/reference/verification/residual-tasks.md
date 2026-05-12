@@ -25,20 +25,17 @@ related:
 | area | 件数 |
 |------|------|
 | system | 7 |
-| architecture | 2 |
 | platform | 2 |
-| routing | 2 |
-| acl-qos | 1 |
-| management | 1 |
-| **合計** | **15** |
+| architecture | 1 |
+| **合計** | **10** |
 
-**2026-05-12 更新**: `meta/backlog/README.md` の **drop 27 件を per-page json から削除済み**（リリースノート 13 件 + 章節断片 9 件 + ビルド系 3 件 + テンプレ 1 件 + 重複 1 件）。残りは low-priority 11 件 + defer 4 件 = 15 件。
+**2026-05-12 round 38 update**: `meta/backlog/README.md` の **defer 4 件 + 実質 drop 1 件 = 5 件を `_archived` へ追加移動**（`acl-qos/flow-charts` / `architecture/import-the-vendor-to-module-mapping` / `routing/egress-acl-bug-fix-description` / `routing/ecmp-calculator` / `management/pins-supplementary-hld`）。残りは **low-priority 10 件**（大型 HLD 4 + telemetry/openconfig 3 + PINS/chassis 2 + 第三者拡張 1）。
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
-| drop（削除済み） | 0（旧 27） | 2026-05-12 に json 削除完了 |
-| low-priority（v1.1 検討） | 11 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 3 件 + 第三者拡張 1 件 |
-| defer（既存ページに統合済） | 4 | acl flow-charts / vendor mapping / egress ACL bug fix / ecmp-calculator stub |
+| low-priority（v1.1 検討） | 10 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 2 件 + 第三者拡張 1 件 |
+| _archived（本 PR で追加） | 5 | defer 4 件（既存ページ取込済）+ drop 1 件（empty stub） |
+| _archived（旧 drop, round 36 以前） | 27 | リリースノート 13 + 章節断片 9 + ビルド系 3 + テンプレ 1 + 重複 1 |
 
 詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。`meta/_gen_backlog.py` への Indexer 除外フィルタ組込みは v1.1 サイクル開始時に対応する。
 
