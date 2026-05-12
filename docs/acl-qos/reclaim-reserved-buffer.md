@@ -163,6 +163,21 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 - shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか [APPL_DB](../reference/glossary.md#term-appl_db) で確認
 - lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認
 
+### コマンド例: Reserved buffer reclaim 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# 各ポートの shutdown 状態と buffer profile 適用状況
+show interfaces status
+show buffer_pool
+redis-cli -n 4 keys 'BUFFER_PG|Ethernet*' | head
+# buffermgrd ログ
+sudo grep -i 'buffermgrd' /var/log/syslog | tail -30
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - 設計コメント＋実装本体: `sonic-swss/cfgmgr/buffermgrdyn.cpp` L232-L275（`pgs_to_apply_zero_profile` / `ingress_zero_profile` / `queues_to_apply_zero_profile` / `egress_zero_profile` のパースとプール referenced 時の `zero_profile_name` 紐付け）

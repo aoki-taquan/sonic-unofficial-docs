@@ -179,6 +179,21 @@ LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"
 - speed 変更後 headroom が更新されない → `buffermgrd` ログで Lua plugin invoke を確認、`BUFFER_MAX_PARAM` legality check で reject されていないか確認
 - shared pool の sum が合わない → `xoff` の有無、independent vs shared headroom モデルを確認
 
+### コマンド例: 動的 headroom の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# 各ポートで適用中の dynamic profile / headroom 値を確認
+show buffer pool
+show priority-group persistent-watermark headroom
+redis-cli -n 4 hgetall 'BUFFER_PROFILE|pg_lossless_100000_5m_profile'
+# buffermgrd ログから dynamic 再計算イベントを抽出
+sudo grep -i 'buffermgrd' /var/log/syslog | tail -50
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - `default_dynamic_th` 読み込み: `sonic-swss/cfgmgr/buffermgrdyn.cpp` L148-L153

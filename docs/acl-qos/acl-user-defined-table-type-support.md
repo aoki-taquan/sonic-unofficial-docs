@@ -247,6 +247,21 @@ sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 - table type 削除できない: 参照する `ACL_TABLE` が残っている可能性。YANG validation または orchagent ログで確認。
 - ルール挙動が古い派生クラス通りでない: 新方式は単一 `AclRuleBase` で動的に validate する設計。古い `AclRuleL3` 等の挙動を期待しないこと[^1]。
 
+### コマンド例: ユーザ定義 ACL table type
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# STATE_DB の capability から、stage ごとに使えるアクション一覧を確認
+redis-cli -n 6 hgetall 'ACL_STAGE_CAPABILITY|INGRESS'
+redis-cli -n 6 hgetall 'ACL_STAGE_CAPABILITY|EGRESS'
+# CONFIG_DB の ACL_TABLE_TYPE 定義と参照テーブルを確認
+redis-cli -n 4 keys 'ACL_TABLE_TYPE|*'
+redis-cli -n 4 hgetall 'ACL_TABLE_TYPE|<NAME>'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/ACL-Table-Type-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

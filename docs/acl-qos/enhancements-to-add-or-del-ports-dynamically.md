@@ -294,6 +294,20 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
     - ref counter の上流取り込みが必要な場合、新たな PR を `sonic-swss` 側に提案する（既存 #2022 のリベース）必要がある。
 <!-- /diff-admonition -->
 
+### コマンド例: ポート動的追加/削除確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# CONFIG_DB の PORT エントリ追加・削除と orchagent 反映状況
+redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
+show interfaces status | head
+# 動的変更時の orchagent ログ
+sudo grep -E 'portsorch|PortConfigDone|PortInitDone' /var/log/syslog | tail -50
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

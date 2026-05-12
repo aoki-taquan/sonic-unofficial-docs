@@ -157,6 +157,21 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 - `sonic-db-cli CONFIG_DB hgetall "DHCP_RELAY|<vlan>"` — `dhcpv6_servers` / `rfc6939_support` 設定確認
 - `tcpdump -ni Vlan1000 'udp port 547'` — Relay-Forward/Reply を直接観測
 
+### コマンド例: DHCPv6 relay の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# DHCPv6 relay 設定と統計の確認
+show dhcp6relay_counters interface
+redis-cli -n 4 keys 'DHCP_RELAY|*'
+redis-cli -n 6 keys 'DHCPv6_COUNTER_TABLE|*'
+# dhcp-relay container のログ
+docker logs dhcp_relay 2>&1 | tail -50
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

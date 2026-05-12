@@ -173,6 +173,20 @@ show copp configuration detailed --group queue1_group3
 - ある trap が `not-installed` のまま → `STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids` に該当 trap があるか確認
 - 設定したのに ASIC に反映されない → syslog の `Copporch` ERR を確認
 
+### コマンド例: Neighbor miss trap の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# CoPP の neighbor-miss trap 設定とパケット数を確認
+show copp
+redis-cli -n 4 hget 'COPP_TRAP|default' trap_ids
+# host CPU 宛て到達パケットを観察
+sudo tcpdump -ni Ethernet0 -c 50 'icmp or arp'
+```
+
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)

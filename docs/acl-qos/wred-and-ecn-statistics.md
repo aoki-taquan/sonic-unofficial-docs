@@ -164,6 +164,19 @@ sonic-clear queue wredcounters
 - syslog エラー → 全カウンタ非対応グループを enable した場合の仕様
 - `show interfaces counters detailed` に WRED 行が出ない → `WRED_ECN_PORT` が disable / capability false
 
+### コマンド例: WRED / ECN 統計確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# WRED profile と queue ごとの ECN マーク / drop 数
+show queue counters
+redis-cli -n 4 keys 'WRED_PROFILE|*'
+redis-cli -n 2 keys 'COUNTERS:*' | head
+```
+
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)

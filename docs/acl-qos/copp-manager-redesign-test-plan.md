@@ -166,6 +166,21 @@ reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 - `redis-cli -n 4 hgetall "FEATURE|<name>"` で feature の state 確認
 - `aclshow` 相当の trap 表示は CLI 化されていない可能性があり、SAI hostif trap の状態は SAI debug 経由で確認
 
+### コマンド例: CoPP 設定状態の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# CoPP trap / group のランタイム表示と、CONFIG_DB の最終構成を確認
+show copp
+redis-cli -n 4 keys 'COPP_*'
+redis-cli -n 4 hgetall 'COPP_GROUP|default'
+# coppmgr が APP_DB へ展開した結果
+redis-cli -n 0 keys 'COPP_TABLE:*'
+```
+
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/copp/Copp_Manager_Redesign_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/copp/Copp_Manager_Redesign_test_plan.md)
