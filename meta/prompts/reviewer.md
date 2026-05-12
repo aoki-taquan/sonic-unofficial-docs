@@ -49,6 +49,7 @@ Writer が出した PR を機械的に検査し、整合性チェックの結果
 - [ ] `verification` が `hld-only` または `issue-confirmed` の場合、`meta/queue/<area>-<slug>.json` というファイルが PR に追加されている（集約ビュー `meta/verification-queue.json` は `aggregate_queue.py` で再生成済みでも良い／なくても良い。per-page ファイル側が真実）
 - [ ] 該当 per-page ファイルに **`pr` フィールドが現在の PR 番号で埋まっている**（Writer が空のまま提出していたら Reviewer/Merger が後埋めする。pass の前提条件ではなく、**自動修正項目**として扱う）
 - [ ] `discrepancy-found` の場合は本文に注記があり、別 issue が立てられている（または PR 本文に立てる旨が記載されている）
+- [ ] `discrepancy-found` の subtype 別評価基準（[`meta/quality-audit-guide.md` §5](../quality-audit-guide.md#5-discrepancy-found-subtype-別評価基準)）に沿っており、`monitor: partially_implemented` は本文に「実装済 / 未実装 境界明示」（推奨形はフェーズ別境界表）を含み `meta/scripts/check_partial_boundary.py` で pass する
 
 ## 出力
 
