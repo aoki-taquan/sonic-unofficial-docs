@@ -1876,7 +1876,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-cfggen コマンド](cli/sonic-cfggen.md) (13)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (7)
-- [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (6)
+- [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (7)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (6)
 - [設定変更の選び方](../topics/01-overview/configuration.md) (6)
 
@@ -2010,9 +2010,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [TUNNEL テーブル](config-db/tunnel.md) (3)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (2)
-- [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (2)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (1)
-- [sonic-tunnel YANG](yang/sonic-tunnel.md) (1)
+- [SUBNET_DECAP テーブル](config-db/subnet-decap.md) (1)
+- [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (1)
 
 ### [VOQ](#term-voq)
 
