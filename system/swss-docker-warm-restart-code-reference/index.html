@@ -30135,7 +30135,7 @@
 </span></code></pre></div>
 <h2 id="_9">トラブルシュート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
-<li>reconciliation がタイムアウトする場合、<code>config warm_restart bgp_timer</code> / <code>neighsyncd_timer</code> を延長して再試行する。デフォルトは BGP 600s / neighsyncd 60s。</li>
+<li>reconciliation がタイムアウトする場合、<code>config warm_restart bgp_timer</code> / <code>neighsyncd_timer</code> を延長して再試行する。デフォルトは <a href="../../reference/glossary/#term-bgp">BGP</a> 600s / <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> 60s。</li>
 <li><code>STATE_DB</code> の <code>WARM_RESTART_TABLE|&lt;app&gt;</code> が <code>reconciled</code> に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。</li>
 <li>同一ホスト上で swss と syncd の warm-restart タイミングがずれると ASIC 上の stale エントリが残る。<code>docker exec syncd ls /var/warmboot/</code> の checkpoint ファイル mtime で順序を確認。</li>
 </ul>
@@ -30206,7 +30206,7 @@
 </div>
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 580e0024e364 -->
+<!-- glossary-links-injected: c85711a7b21a -->
 
 <div class="footnote">
 <hr />

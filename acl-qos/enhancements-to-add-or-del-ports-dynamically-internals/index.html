@@ -29438,7 +29438,7 @@
 </tr>
 <tr>
 <td><code>xcvrd</code> (PMON)</td>
-<td>既存 PR で対応済み（sonic-buildimage #8422、sonic-platform-daemons #212）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>既存 PR で対応済み（<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> #8422、sonic-platform-daemons #212）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
 </tr>
 <tr>
 <td><code>buffermgrd</code></td>
@@ -29460,14 +29460,14 @@
 <li>Debug counters: port ingress / egress drops（<code>DEBUG_COUNTER</code> table）— <strong>追加要</strong></li>
 <li><a href="../../reference/glossary/#term-pfc">PFC</a> watchdog counters — <strong>追加要</strong></li>
 </ul>
-<p>これら counter は従来 init 完了後に <strong>全ポートまとめて作成</strong> されていた。動的化すれば未存在ポートに対する誤登録が消える<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は sonic-swss #2019 で対応中。</p>
+<p>これら counter は従来 init 完了後に <strong>全ポートまとめて作成</strong> されていた。動的化すれば未存在ポートに対する誤登録が消える<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は <a href="../../reference/glossary/#term-sonic-swss">sonic-swss</a> #2019 で対応中。</p>
 <h2 id="3-buffermgrd-race-condition">3. buffermgrd の改修と race condition<a class="headerlink" href="#3-buffermgrd-race-condition" title="Permanent link">&para;</a></h2>
 <h3 id="race">加入時 race<a class="headerlink" href="#race" title="Permanent link">&para;</a></h3>
 <p>ユーザが port を追加 → buffer cfg を入れる順だが、port 加入と並行に buffermgr が cfg を見ると、APP_DB に未到着のうちに buffer cfg を流し込む可能性がある。<strong>APP_DB に port が存在することを buffermgr 側でチェックしてから書く</strong> 設計<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="race_1">削除時 race（深刻）<a class="headerlink" href="#race_1" title="Permanent link">&para;</a></h3>
-<p>依存 buffer cfg を残したまま port を消すと、portsorch が SAI port を消す前に buffer cfg が残っていて SAI エラーが連発する。<a href="../../reference/glossary/#term-hld">HLD</a> の解決策<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>依存 buffer cfg を残したまま port を消すと、portsorch が <a href="../../reference/glossary/#term-sai">SAI</a> port を消す前に buffer cfg が残っていて SAI エラーが連発する。<a href="../../reference/glossary/#term-hld">HLD</a> の解決策<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>buffer cfg にも <strong>per-port reference counter</strong> を持たせる（既存の ACL/VLAN/INTERFACE と同じ仕組み）</li>
+<li>buffer cfg にも <strong>per-port reference counter</strong> を持たせる（既存の <a href="../../reference/glossary/#term-acl">ACL</a>/<a href="../../reference/glossary/#term-vlan">VLAN</a>/INTERFACE と同じ仕組み）</li>
 <li>ref-count &gt; 0 の port は portsorch が削除を拒否する</li>
 <li>結果として SAI エラーは「依存解除前に削除しようとした」warning 1 回に集約される</li>
 </ul>
@@ -29482,7 +29482,7 @@
 <ul>
 <li><code>lldpcli</code> 実行前に <strong><a href="../../reference/glossary/#term-state_db">STATE_DB</a> の port エントリ（=host i/f 存在）を確認</strong></li>
 <li>APP_DB の del イベント受信時に <code>pending_cmds</code> から該当を <strong>除去</strong></li>
-<li>CONFIG_DB と APP_DB の両方を見る既存ロジックは整理する</li>
+<li><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> と APP_DB の両方を見る既存ロジックは整理する</li>
 </ul>
 <!-- evidence:
 source: sonic-net/SONiC/doc/port-add-del-dynamically/dynamic_port_add_del_hld.md#L240-L284 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -29508,6 +29508,8 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <!-- evidence-rendered:end -->
 
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 53a15d491c92 -->
+
 <div class="footnote">
 <hr />
 <ol>

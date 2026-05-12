@@ -29330,7 +29330,7 @@
 
 
 <h1 id="adddel">動的ポート add/del 設定と運用<a class="headerlink" href="#adddel" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del（概要ハブ）</a> の派生で、<strong>設定経路と安全な運用手順</strong> に絞る。概念は <a href="../enhancements-to-add-or-del-ports-dynamically-concepts/">enhancements-to-add-or-del-ports-dynamically-concepts.md</a>、内部実装は <a href="../enhancements-to-add-or-del-ports-dynamically-internals/">enhancements-to-add-or-del-ports-dynamically-internals.md</a>、HLD と実装の乖離は <a href="../enhancements-to-add-or-del-ports-dynamically-limitations/">enhancements-to-add-or-del-ports-dynamically-limitations.md</a> を参照。</p>
+<p>このページは <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del（概要ハブ）</a> の派生で、<strong>設定経路と安全な運用手順</strong> に絞る。概念は <a href="../enhancements-to-add-or-del-ports-dynamically-concepts/">enhancements-to-add-or-del-ports-dynamically-concepts.md</a>、内部実装は <a href="../enhancements-to-add-or-del-ports-dynamically-internals/">enhancements-to-add-or-del-ports-dynamically-internals.md</a>、<a href="../../reference/glossary/#term-hld">HLD</a> と実装の乖離は <a href="../enhancements-to-add-or-del-ports-dynamically-limitations/">enhancements-to-add-or-del-ports-dynamically-limitations.md</a> を参照。</p>
 <h2 id="1-config_db">1. 関連する CONFIG_DB<a class="headerlink" href="#1-config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29445,7 +29445,7 @@
 <td>❌ 自動解除なし（運用側で手順 2 を実行）</td>
 </tr>
 <tr>
-<td>port 削除時の VLAN / PortChannel メンバ解除</td>
+<td>port 削除時の VLAN / <a href="../../reference/glossary/#term-portchannel">PortChannel</a> メンバ解除</td>
 <td>—</td>
 <td>❌ 自動解除なし（運用側で手順 3 を実行）</td>
 </tr>
@@ -29456,7 +29456,7 @@
 </tr>
 <tr>
 <td>port 削除本体 (<code>config_db</code> から <code>PORT</code> を消す)</td>
-<td>✅ portsorch / portsyncd が SAI port + host i/f を削除</td>
+<td>✅ portsorch / <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> が SAI port + host i/f を削除</td>
 <td>—</td>
 </tr>
 <tr>
@@ -29469,12 +29469,14 @@
 <p><code>✅</code> フェーズはユーザが触らずに動作するが、<code>❌</code> フェーズは現行 master では自動化されておらず、後述の <code>redis-cli</code> / <code>sonic-db-cli</code> 手順を運用側で踏む必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5">5. トラブルシューティング<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ポート追加に時間がかかる: <code>PortConfigDone</code> / <code>PortInitDone</code> フラグの状態を確認。orchagent 連動が止まっている可能性。</li>
-<li>ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ポート追加に時間がかかる: <code>PortConfigDone</code> / <code>PortInitDone</code> フラグの状態を確認。<a href="../../reference/glossary/#term-orchagent">orchagent</a> 連動が止まっている可能性。</li>
+<li>ポート削除で <a href="../../reference/glossary/#term-sai">SAI</a> エラーが大量: 依存（buffer / <a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a>）が残っている。HLD の ref counter 機構が動作していない可能性<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><a href="../../reference/glossary/#term-lldp">LLDP</a> が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 4bc2a4aae15e -->
+
 <div class="footnote">
 <hr />
 <ol>

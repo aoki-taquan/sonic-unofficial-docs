@@ -29308,7 +29308,7 @@
 
 
 <h1 id="switchport-vlan-cli-hld">Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離<a class="headerlink" href="#switchport-vlan-cli-hld" title="Permanent link">&para;</a></h1>
-<p>本ページは親 HLD <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong>HLD と実装の乖離</strong> を切り出した派生ページ。概念や設定例は <a href="../switch-port-modes-and-vlan-cli-concepts/">concepts</a> / <a href="../switch-port-modes-and-vlan-cli-operations/">operations</a> を参照。</p>
+<p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong>HLD と実装の乖離</strong> を切り出した派生ページ。概念や設定例は <a href="../switch-port-modes-and-vlan-cli-concepts/">concepts</a> / <a href="../switch-port-modes-and-vlan-cli-operations/">operations</a> を参照。</p>
 <h2 id="1">1. ファイル + 行番号<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>取り込み済み</strong>:<ul>
@@ -29321,7 +29321,7 @@
 <li><strong>HLD と差分あり</strong>: <code>config/switchport.py</code> L17-L20 の引数は <code>&lt;mode_type&gt; &lt;port&gt;</code> の 2 つだけ。HLD が要求する第 3 引数の <code>&lt;vlan-list&gt;</code> は <strong>未実装</strong></li>
 </ul>
 <h2 id="2">2. 差分の中身<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
-<p>HLD は <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> や <code>config switchport mode trunk &lt;port&gt; [&lt;native-vlan&gt;] [&lt;vlan-list&gt;]</code> のようにモード切替と VLAN メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は <code>@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))</code> と <code>@click.argument("port", ...)</code> の 2 引数のみで、VLAN メンバ割当は <strong>依然として別コマンド</strong> <code>config vlan member add &lt;vlan&gt; &lt;port&gt;</code> を呼ぶ必要がある。</p>
+<p>HLD は <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> や <code>config switchport mode trunk &lt;port&gt; [&lt;native-vlan&gt;] [&lt;vlan-list&gt;]</code> のようにモード切替と <a href="../../reference/glossary/#term-vlan">VLAN</a> メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は <code>@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))</code> と <code>@click.argument("port", ...)</code> の 2 引数のみで、VLAN メンバ割当は <strong>依然として別コマンド</strong> <code>config vlan member add &lt;vlan&gt; &lt;port&gt;</code> を呼ぶ必要がある。</p>
 <p>実コード（<code>sonic-utilities/config/switchport.py</code> L17-L22）:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@switchport</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;mode_type&gt;&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -29374,6 +29374,7 @@
 <li>設定 / 運用: <a href="../switch-port-modes-and-vlan-cli-operations/">switch-port-modes-and-vlan-cli-operations</a></li>
 <li>discrepancy 一覧: <a href="../../reference/verification/discrepancy-index/">verification/discrepancy-index</a></li>
 </ul>
+<!-- glossary-links-injected: 97c0d8538677 -->
 
 
 

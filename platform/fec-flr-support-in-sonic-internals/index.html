@@ -29516,7 +29516,7 @@
 <h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>実装内部の観点から運用に効く制限点 (HLD と実装の乖離を含む詳細は <a href="../fec-flr-support-in-sonic-limitations/">limitations</a>)。</p>
 <ul>
-<li><strong><code>port_flr.lua</code> は Redis-side script として swss に同梱</strong>: 書き換えるには docker イメージ内のファイル編集 + <code>docker restart swss</code> で再ロードが必要。host から CONFIG_DB / CLI で差し替える機構は無い。</li>
+<li><strong><code>port_flr.lua</code> は <a href="../../reference/glossary/#term-redis">Redis</a>-side script として swss に同梱</strong>: 書き換えるには docker イメージ内のファイル編集 + <code>docker restart swss</code> で再ロードが必要。host から CONFIG_DB / CLI で差し替える機構は無い。</li>
 <li><strong><code>FLR_INTERVAL_FACTOR</code> は lua ハードコード</strong>: HLD で示唆される <code>counterpoll port flr-interval-factor</code> CLI は <code>sonic-utilities</code> master に未取り込み。実効 poll 周期は <code>port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR</code> で決まる。</li>
 <li><strong><code>FlexCounterOrch</code> の伝搬経路は提案止まり</strong>: HLD の <code>FlexCounterOrch</code> から factor を受け渡す経路は実装上は静的定数になっており、<code>flexcounterorch.cpp</code> に対応コードは見当たらない。</li>
 <li><strong><code>crates/countersyncd</code> (Rust) 経由の SAI counter 列挙</strong>: 旧来の C++ flex counter とは別経路で <code>IF_IN_FEC_CODEWORD_ERRORS_S0..S16</code> を集める。一部プラットフォーム SAI が <code>S16</code> 全部を返さないと FLR 計算が中断する。</li>
@@ -29566,7 +29566,7 @@
 </div>
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 5440b86e15ed -->
+<!-- glossary-links-injected: 0f594312e2b7 -->
 
 <div class="footnote">
 <hr />

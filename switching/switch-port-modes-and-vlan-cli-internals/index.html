@@ -29308,7 +29308,7 @@
 
 
 <h1 id="switchport-vlan-cli">Switchport モードと VLAN CLI 拡張 — 内部実装<a class="headerlink" href="#switchport-vlan-cli" title="Permanent link">&para;</a></h1>
-<p>本ページは親 HLD <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong>YANG / CONFIG_DB / db_migrator</strong> 周りを切り出した派生ページ。概要・モード定義は <a href="../switch-port-modes-and-vlan-cli-concepts/">concepts</a> を参照。</p>
+<p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong><a href="../../reference/glossary/#term-yang">YANG</a> / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / db_migrator</strong> 周りを切り出した派生ページ。概要・モード定義は <a href="../switch-port-modes-and-vlan-cli-concepts/">concepts</a> を参照。</p>
 <h2 id="yang-config_db">YANG / CONFIG_DB<a class="headerlink" href="#yang-config_db" title="Permanent link">&para;</a></h2>
 <p><code>sonic-port</code> / <code>sonic-portchannel</code> に新規 leaf を追加<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-yang highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">typedef</span><span class="w"> </span><span class="nv">switchport-mode-type</span><span class="w"> </span><span class="p">{</span>
@@ -29385,7 +29385,7 @@
 <td>YANG must 制約や orchagent 側の強制バリデーションは未取り込み</td>
 </tr>
 <tr>
-<td>trunk native VLAN（<code>switchport trunk native vlan</code> 相当）の CONFIG_DB 表現</td>
+<td>trunk native <a href="../../reference/glossary/#term-vlan">VLAN</a>（<code>switchport trunk native vlan</code> 相当）の CONFIG_DB 表現</td>
 <td>—</td>
 <td>❌ HLD では暗黙、master では <code>VLAN_MEMBER</code> <code>untagged</code> の併用に依存（明示フィールドなし）</td>
 </tr>
@@ -29429,6 +29429,8 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li>CONFIG_DB: <a href="../../reference/config-db/port/">PORT</a> / <a href="../../reference/config-db/portchannel/">PORTCHANNEL</a> / <a href="../../reference/config-db/vlan-member/">VLAN_MEMBER</a></li>
 </ul>
 <h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f7808c6675e0 -->
+
 <div class="footnote">
 <hr />
 <ol>

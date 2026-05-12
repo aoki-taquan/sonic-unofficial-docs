@@ -29489,13 +29489,13 @@
 <p>このページは <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del（概要ハブ）</a> の派生で、<strong>制限事項と実装乖離</strong> に絞る。概念は <a href="../enhancements-to-add-or-del-ports-dynamically-concepts/">enhancements-to-add-or-del-ports-dynamically-concepts.md</a>、設定 / 安全削除手順は <a href="../enhancements-to-add-or-del-ports-dynamically-operations/">enhancements-to-add-or-del-ports-dynamically-operations.md</a>、内部実装は <a href="../enhancements-to-add-or-del-ports-dynamically-internals/">enhancements-to-add-or-del-ports-dynamically-internals.md</a> を参照。</p>
 <h2 id="1-hld">1. HLD レベルの制限事項<a class="headerlink" href="#1-hld" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>依存削除はユーザ責任</strong>: ACL / VLAN / LAG / buffer PG を <strong>先に消してから</strong> port を消す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD は ref counter の自動防御を提案するが、それでも上位設定の整合は外で担保する必要がある。</li>
+<li><strong>依存削除はユーザ責任</strong>: <a href="../../reference/glossary/#term-acl">ACL</a> / <a href="../../reference/glossary/#term-vlan">VLAN</a> / <a href="../../reference/glossary/#term-lag">LAG</a> / buffer PG を <strong>先に消してから</strong> port を消す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-hld">HLD</a> は ref counter の自動防御を提案するが、それでも上位設定の整合は外で担保する必要がある。</li>
 <li><strong>zero-port は「これまで未テスト」</strong>: HLD 自体が「new type of init that was never tested」と明記している<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実機投入前に十分検証が要る。</li>
 <li><strong>race condition が複数残存</strong>: buffermgr 加入・削除時の両方に race の可能性。実装側で順序保証が必要<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="2">2. 干渉する機能<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>ACL / VLAN / LAG / Buffer PG</strong>: port 削除の事前条件。ref counter による orchagent の防御に依存。</li>
+<li><strong>ACL / VLAN / LAG / Buffer PG</strong>: port 削除の事前条件。ref counter による <a href="../../reference/glossary/#term-orchagent">orchagent</a> の防御に依存。</li>
 <li><strong>flex counter</strong>: 各 counter group の動的 add/del で実装が広範に変わる。ASIC 側の counter リソース管理にも影響。</li>
 <li><strong>line card manager (chassis 系)</strong>: 本機能の主要利用者。プロビジョニング時に PORT エントリ + buffer cfg を一連で投入する。</li>
 <li><strong><code>lldpmgrd</code></strong>: 改修依存度が高い。pending_cmds 処理が変わる。</li>
@@ -29536,10 +29536,10 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>.cache/sonic-sources/sonic-swss/orchagent/
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># 0 件</span>
 </span></code></pre></div>
-<p><code>sonic-swss/orchagent/portsorch.cpp</code> 内の <code>removePort()</code> / <code>del PORT</code> 経路は依然として SAI 削除を試み、失敗時の syslog 出力のみで上位（VLAN / LAG / ACL / buffer PG）側の依存をチェックしない。</p>
+<p><code>sonic-swss/orchagent/portsorch.cpp</code> 内の <code>removePort()</code> / <code>del PORT</code> 経路は依然として <a href="../../reference/glossary/#term-sai">SAI</a> 削除を試み、失敗時の syslog 出力のみで上位（VLAN / LAG / ACL / buffer PG）側の依存をチェックしない。</p>
 <h3 id="_1">読者への影響（深掘り）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>sudo config interface shutdown EthernetX</code> 後に CONFIG_DB から直接 <code>PORT|EthernetX</code> を消すと、orchagent が以下を順次出す:</li>
+<li><code>sudo config interface shutdown EthernetX</code> 後に <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から直接 <code>PORT|EthernetX</code> を消すと、orchagent が以下を順次出す:</li>
 <li><code>SAI_STATUS_OBJECT_IN_USE</code>（VLAN_MEMBER / ACL_TABLE / <a href="../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> が参照中）</li>
 <li><code>SAI_STATUS_INVALID_OBJECT_ID</code>（既に部分削除された下流 SAI オブジェクト）</li>
 <li>最悪は orchagent 自体が <code>abort()</code> し <a href="../../reference/glossary/#term-syncd">syncd</a> / swss コンテナが crash loop に入る。<code>fast-reboot</code> / <code>warm-reboot</code> が必要になる。</li>
@@ -29548,12 +29548,14 @@
 </ul>
 <h3 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/1112">sonic-swss #1112: [DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch] Support dynamic port add/deletion without dependencies (merged)</a> — 動的 port add/del のコア実装（<a href="../../reference/glossary/#term-dpb">DPB</a>: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。</li>
+<li><a href="https://github.com/sonic-net/[sonic-swss](../reference/glossary.md#term-sonic-swss)/pull/1112">sonic-swss #1112: [DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch] Support dynamic port add/deletion without dependencies (merged)</a> — 動的 port add/del のコア実装（<a href="../../reference/glossary/#term-dpb">DPB</a>: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。</li>
 <li>HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。</li>
 </ul>
 <h3 id="_2">検証日<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: e8af0d068bd1 -->
+
 <div class="footnote">
 <hr />
 <ol>

@@ -29288,7 +29288,7 @@
 </tr>
 <tr>
 <td>setup</td>
-<td>✅ 完成 (141 行)</td>
+<td>✅ 完成 (143 行)</td>
 <td>meta</td>
 </tr>
 <tr>
@@ -29316,27 +29316,28 @@
 <ul>
 <li><a href="concept/">概要</a></li>
 <li><a href="architecture/">アーキテクチャ</a></li>
+<li><a href="setup/">設定</a></li>
 <li><a href="operations/">運用: 設定 / 運用</a></li>
 <li><a href="internals/">内部実装</a></li>
 <li><a href="advanced/">発展トピック</a></li>
 </ul>
 <p><strong>関連する HLD 7 件</strong></p>
 <ul>
-<li><a href="../../architecture/sonic-application-extension-infrastructure/">SONiC Application Extension Infrastructure（sonic-package-manager / SPM）</a></li>
-<li><a href="../../system/swss-docker-warm-restart-code-reference/">SWSS docker の Warm Restart 実装メモ（開発時リファレンス）</a></li>
-<li><a href="../../system/sonic-swss-docker-warm-restart/">SWSS docker warm restart（state restore / consistency / sync up）</a></li>
-<li><a href="../../system/fast-reboot-flow-improvements-hld/">Fast-reboot Flow Improvements（finalizer / reconciliation）</a></li>
-<li><a href="../../system/sonic-container-hardening/">SONiC Container Hardening（capability / read-only / privileged 削減）</a></li>
+<li><a href="../../system/sonic-os-sonic-docker-images-versioning/">SONiC OS と Docker イメージのセマンティックバージョニング</a></li>
+<li><a href="../../system/sonic-feature-quality-definition/">SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）</a></li>
+<li><a href="../../architecture/alpine-high-level-design/">Alpine 仮想 SONiC（ALViS / KNE デプロイ）</a></li>
+<li><a href="../../architecture/sonic-on-gns3-vm/">GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）</a></li>
 <li><a href="../../system/sonic-debian-upgrade-cadence/">SONiC Debian アップグレード方針（base / container / 廃止 cadence）</a></li>
-<li><a href="../../system/sonic-express-reboot-hld-spec/">Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）</a></li>
+<li><a href="../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a></li>
+<li><a href="../../architecture/error-handling-framework-in-sonic-internals/">Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）</a></li>
 </ul>
 <p><strong>関連トラブルシュート 5 件</strong></p>
 <ul>
-<li><a href="../../reference/runbooks/techsupport-timeout/">show techsupport が timeout する</a></li>
-<li><a href="../../reference/runbooks/container-memory-limit-exceeded/">コンテナ memory limit 超過 / OOM kill</a></li>
-<li><a href="../../reference/runbooks/pins-grpc-unresponsive/">PINS gRPC (P4Runtime) が応答しない</a></li>
 <li><a href="../../reference/runbooks/sai-failure/">SAI failure / syncd リスタート多発</a></li>
 <li><a href="../../reference/runbooks/warm-reboot-failure/">Warm Reboot が失敗 / 通信断が長引く</a></li>
+<li><a href="../../reference/runbooks/multi-asic-namespace/">Multi-ASIC で namespace 間通信できない</a></li>
+<li><a href="../../reference/runbooks/pins-grpc-unresponsive/">PINS gRPC (P4Runtime) が応答しない</a></li>
+<li><a href="../../reference/runbooks/appdb-asicdb-sync-lag/">APP_DB → ASIC_DB の反映が遅延・停止する</a></li>
 </ul>
 <!-- /next-reads -->
 

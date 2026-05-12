@@ -29338,13 +29338,13 @@
 <li><strong>CRL の蓄積</strong>: Go 版 gRPC は起動以降の <strong>CRL 全履歴</strong> を必要とする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CRL ローテーション回数に応じてメモリ・I/O が線形に増える</li>
 <li><strong><code>gnxi</code> profile は削除不可</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>同時 Rotate 拒否</strong>: 各サービスで Concurrent Rotate を reject する想定（Unit Test cases 明記）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>HLD 自体に <code>Pathz</code> の policy 形式詳細は無く、policy processor のライブラリ実装は別途必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><a href="../../reference/glossary/#term-hld">HLD</a> 自体に <code>Pathz</code> の policy 形式詳細は無く、policy processor のライブラリ実装は別途必要<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>Credentialz の <code>set</code> で sshd は再起動される。short-window で SSH 接続が拒否される可能性<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="2">2. 干渉する機能<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>gNMI Master Arbitration</strong>: gNSI の <code>Rotate</code> は <code>Set</code> ではないので Master Arbitration の対象外</li>
-<li><strong>gNOI FactoryReset</strong>: <code>retain_certs=true</code> で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い</li>
+<li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> Master Arbitration</strong>: gNSI の <code>Rotate</code> は <code>Set</code> ではないので Master Arbitration の対象外</li>
+<li><strong><a href="../../reference/glossary/#term-gnoi">gNOI</a> FactoryReset</strong>: <code>retain_certs=true</code> で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い</li>
 <li><strong>TACACS / Linux PAM</strong>: Credentialz が <code>/etc/passwd</code> / <code>/etc/shadow</code> を置換するため、TACACS や RADIUS 連携の有無で挙動が変わる</li>
 <li><strong>既存 sshd 設定</strong>: <code>ssh_mgmt.set</code> は既存 <code>authorized_keys</code> を <strong>置換</strong> する（追記ではない）。warm boot 時の rollback ファイル管理に注意</li>
 </ul>
@@ -29390,6 +29390,8 @@
 </ul>
 </div>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: f5d0d14cf73e -->
+
 <div class="footnote">
 <hr />
 <ol>

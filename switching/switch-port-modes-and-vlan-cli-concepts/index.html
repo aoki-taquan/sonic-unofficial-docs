@@ -29308,7 +29308,7 @@
 
 
 <h1 id="switchport-vlan-cli">Switchport モードと VLAN CLI 拡張 — 概念<a class="headerlink" href="#switchport-vlan-cli" title="Permanent link">&para;</a></h1>
-<p>本ページは親 HLD <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> から <strong>概念 / 用語 / モード定義</strong> を切り出した派生ページ。実装詳細は <a href="../switch-port-modes-and-vlan-cli-internals/">internals</a>、設定例は <a href="../switch-port-modes-and-vlan-cli-operations/">operations</a>、HLD と実装の乖離は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
+<p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> から <strong>概念 / 用語 / モード定義</strong> を切り出した派生ページ。実装詳細は <a href="../switch-port-modes-and-vlan-cli-internals/">internals</a>、設定例は <a href="../switch-port-modes-and-vlan-cli-operations/">operations</a>、HLD と実装の乖離は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
 <p>モード概念のうち <strong><code>access</code> / <code>trunk</code> の CLI（<code>config switchport mode access|trunk</code>）と複数 VLAN 一括 add/del は master に取り込み済</strong> で動作する。一方、HLD が想定していた <strong><code>routed</code> モードへの明示遷移コマンドと PORTCHANNEL 一括移行は未実装</strong> に近く、対応 PR が未取り込みの部分が残る。詳細は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
@@ -29376,6 +29376,8 @@
 <li>Topics 読み物: <a href="../../topics/06-l2-vlan-lag/">06 章: L2 / VLAN / LAG</a></li>
 </ul>
 <h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 167700005048 -->
+
 <div class="footnote">
 <hr />
 <ol>

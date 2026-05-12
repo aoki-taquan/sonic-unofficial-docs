@@ -29873,7 +29873,7 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 <h2 id="_9">トラブルシュート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>コレクタにサンプルが届かない場合、まず DUT 側で <code>tcpdump -i eth0 udp port 6343</code> でパケット送出を確認する。</li>
-<li>sampling rate を上げてもサンプルが増えない場合、ASIC 側でサンプリング機能が NPU 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性。<code>saidump | grep SAMPLEPACKET</code> を確認。</li>
+<li>sampling rate を上げてもサンプルが増えない場合、ASIC 側でサンプリング機能が <a href="../../reference/glossary/#term-npu">NPU</a> 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性。<code>saidump | grep SAMPLEPACKET</code> を確認。</li>
 <li>sFlow agent IP が management interface ではなく Loopback を使うべき設計が一般的。<code>config sflow agent-id</code> で固定推奨。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -29917,7 +29917,7 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7c7826dedf86 -->
+<!-- glossary-links-injected: 717245b7d27e -->
 
 <div class="footnote">
 <hr />

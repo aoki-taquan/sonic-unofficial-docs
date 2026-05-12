@@ -29589,8 +29589,8 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 <h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>system-wide warm-boot は全ての SONiC コンテナが warm-restart 対応であることを前提とし、サードパーティ追加コンテナがある環境では成立しない。</li>
-<li>BGP / LACP / BFD の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。</li>
-<li>ASIC SDK が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。</li>
+<li>BGP / <a href="../../reference/glossary/#term-lacp">LACP</a> / <a href="../../reference/glossary/#term-bfd">BFD</a> の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。</li>
+<li><a href="../../reference/glossary/#term-asic-sdk">ASIC SDK</a> が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。</li>
 </ul>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -29600,7 +29600,7 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 446a7059dd14 -->
+<!-- glossary-links-injected: fc2c782c004a -->
 
 <div class="footnote">
 <hr />

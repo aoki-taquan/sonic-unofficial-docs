@@ -29872,7 +29872,7 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 <h2 id="_9">トラブルシュート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ルート学習後に ASIC まで反映されない場合、<code>fpmsyncd</code> の NLMSG パースに失敗していないかを <code>docker logs bgp</code> と <code>/var/log/swss/swss.rec</code> の両方で確認。</li>
-<li>NHG 上限超過時は orchagent が単一ホップにフォールバックする。<code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> と現在数 (<code>ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP</code> の総数) を比較する。</li>
+<li>NHG 上限超過時は <a href="../../reference/glossary/#term-orchagent">orchagent</a> が単一ホップにフォールバックする。<code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> と現在数 (<code>ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP</code> の総数) を比較する。</li>
 <li>FRR と kernel の NHG ID 対応が崩れた場合は <code>bgp</code> コンテナ再起動で再 sync するが、APPL_DB の stale エントリは <code>swssconfig</code> で flush することを検討。</li>
 </ul>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -29976,7 +29976,7 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </div>
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 60508bd384e0 -->
+<!-- glossary-links-injected: e2892b76fd9a -->
 
 <div class="footnote">
 <hr />

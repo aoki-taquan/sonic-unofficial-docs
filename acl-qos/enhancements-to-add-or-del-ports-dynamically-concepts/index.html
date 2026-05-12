@@ -29364,7 +29364,7 @@
 
 
 <h1 id="adddel">動的ポート add/del 概念<a class="headerlink" href="#adddel" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del（概要ハブ）</a> の派生で、<strong>概念とユーザ責務</strong> に絞る。設定 / 安全削除手順は <a href="../enhancements-to-add-or-del-ports-dynamically-operations/">enhancements-to-add-or-del-ports-dynamically-operations.md</a>、各 mgrd / orch の内部仕様は <a href="../enhancements-to-add-or-del-ports-dynamically-internals/">enhancements-to-add-or-del-ports-dynamically-internals.md</a>、HLD と実装の乖離は <a href="../enhancements-to-add-or-del-ports-dynamically-limitations/">enhancements-to-add-or-del-ports-dynamically-limitations.md</a> を参照。</p>
+<p>このページは <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del（概要ハブ）</a> の派生で、<strong>概念とユーザ責務</strong> に絞る。設定 / 安全削除手順は <a href="../enhancements-to-add-or-del-ports-dynamically-operations/">enhancements-to-add-or-del-ports-dynamically-operations.md</a>、各 mgrd / orch の内部仕様は <a href="../enhancements-to-add-or-del-ports-dynamically-internals/">enhancements-to-add-or-del-ports-dynamically-internals.md</a>、<a href="../../reference/glossary/#term-hld">HLD</a> と実装の乖離は <a href="../enhancements-to-add-or-del-ports-dynamically-limitations/">enhancements-to-add-or-del-ports-dynamically-limitations.md</a> を参照。</p>
 <h2 id="1">1. 機能スコープ<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <p>SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに <strong>post-init で動的に <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORT</code> テーブルに add/del</strong> することでポート追加・削除を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -29489,6 +29489,8 @@
 <h3 id="_2">ポート削除<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p><code>portmgrd</code> 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 167700005048 -->
+
 <div class="footnote">
 <hr />
 <ol>

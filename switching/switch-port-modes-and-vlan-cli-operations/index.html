@@ -29352,7 +29352,7 @@
 
 
 <h1 id="switchport-vlan-cli">Switchport モードと VLAN CLI 拡張 — 設定と運用<a class="headerlink" href="#switchport-vlan-cli" title="Permanent link">&para;</a></h1>
-<p>本ページは親 HLD <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong>設定例・運用 Tips・トラブルシューティング</strong> を切り出した派生ページ。HLD 上の CLI 形と現行実装の差分は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を必ず参照（HLD の例そのままでは動かない）。</p>
+<p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong>設定例・運用 Tips・トラブルシューティング</strong> を切り出した派生ページ。HLD 上の CLI 形と現行実装の差分は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を必ず参照（HLD の例そのままでは動かない）。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
 <p>本ページのコマンド例のうち、<strong><code>config switchport mode {access,trunk} &lt;if&gt;</code> と <code>config vlan add 10-20</code> の範囲指定一括 add/del は <code>sonic-utilities</code> に取り込み済</strong> で動作する（master で <code>supported</code>）。一方、HLD が示す <strong><code>config switchport mode routed</code> への明示遷移コマンドと、PORTCHANNEL に対する一部の一括操作は未実装</strong> の状態で、対応 PR が未取り込み。具体的な差分は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
@@ -29411,7 +29411,7 @@
 <tbody>
 <tr>
 <td><code>config vlan add &lt;vid\|range\|list&gt;</code></td>
-<td>複数 VLAN 追加</td>
+<td>複数 <a href="../../reference/glossary/#term-vlan">VLAN</a> 追加</td>
 </tr>
 <tr>
 <td><code>config vlan del &lt;vid\|range\|list&gt;</code></td>
@@ -29455,7 +29455,7 @@
 <ul>
 <li><strong>モード切替は VLAN 整合が前提</strong>: <code>routed</code> に戻すには既存 VLAN メンバを先に外す必要がある<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>truncate ポリシー</strong>: 一括 CLI で 1 件失敗するとそこで停止する。前段は反映済みなので途中状態に注意<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li><strong>アーキテクチャ拡張なし</strong>: orchagent / SAI / vlanmgr の改修は無く、CLI と CONFIG_DB の契約だけが変わる</li>
+<li><strong>アーキテクチャ拡張なし</strong>: <a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-sai">SAI</a> / vlanmgr の改修は無く、CLI と <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の契約だけが変わる</li>
 </ul>
 <h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29481,6 +29481,8 @@
 <li>Topics 読み物: <a href="../../topics/06-l2-vlan-lag/">06 章: L2 / VLAN / LAG</a></li>
 </ul>
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 33d01a0d37a4 -->
+
 <div class="footnote">
 <hr />
 <ol>

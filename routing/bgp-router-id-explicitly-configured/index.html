@@ -29790,11 +29790,11 @@ reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時�
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>router-id を自動選出から明示設定に切り替える際、FRR が稼働中だと一度 BGP セッションが reset される。メンテナンス時間に実施する。</li>
-<li>multi-vrf / multi-asic 環境では VRF / namespace ごとに router-id を分離設定する必要があり、共通 ID 使用は実装上推奨されない。</li>
+<li>multi-vrf / multi-asic 環境では <a href="../../reference/glossary/#term-vrf">VRF</a> / namespace ごとに router-id を分離設定する必要があり、共通 ID 使用は実装上推奨されない。</li>
 <li>設定変更後に <code>config_db.json</code> を保存し忘れるとリブート時に自動選出に戻る。<code>config save -y</code> の運用を明示する。</li>
 </ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 2e36dfd7f559 -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <div class="footnote">
 <hr />

@@ -29336,7 +29336,7 @@
 <p>本ページが扱うフラグ / YANG / 運用フローのうち、<strong>Certz 系の設定経路（<code>EnableCrl</code> / <code>CertCRLConfig</code> など）と Rotate / Finalize 運用は master に取り込み済</strong> で動作する。一方 <strong>Authz / Pathz / Credentialz 系のフラグ（<code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> / <code>SshCredMetaFile</code> など）は未実装</strong> で対応 PR が未取り込み。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 </div>
 <h2 id="1-gnmi-sonic-gnmi">1. gNMI / sonic-gnmi 側のフラグ追加<a class="headerlink" href="#1-gnmi-sonic-gnmi" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-hld">HLD</a> は gNMI server に以下のフラグを追加する想定<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-gnmi">gNMI</a> server に以下のフラグを追加する想定<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -29401,6 +29401,8 @@
 <li><code>Pathz</code> の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 658dfbdca882 -->
+
 <div class="footnote">
 <hr />
 <ol>
