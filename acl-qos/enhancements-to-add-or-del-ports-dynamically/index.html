@@ -16,7 +16,7 @@
         <link rel="prev" href="../distributed-forwarding-in-a-virtual-output-queue-voq-architecture/">
       
       
-        <link rel="next" href="../port-access-control-in-sonic/">
+        <link rel="next" href="../enhancements-to-add-or-del-ports-dynamically-concepts/">
       
       
         
@@ -11326,6 +11326,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -12681,6 +12689,118 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enhancements-to-add-or-del-ports-dynamically-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポート add/del 概念（zero-port 起動と post-init モデル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enhancements-to-add-or-del-ports-dynamically-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enhancements-to-add-or-del-ports-dynamically-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポート add/del 内部実装（portsyncd / portsorch / mgrd 群と race condition）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enhancements-to-add-or-del-ports-dynamically-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -15024,6 +15144,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -15457,6 +15585,118 @@
     
   
     gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnsi-hld-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI 概念（4 サービスと Rotate モデル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnsi-hld-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnsi-hld-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnsi-hld-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）
   
 
     
@@ -29773,6 +30013,16 @@
 <p>backlog 上では <code>acl-qos</code> カテゴリだが、実体はポートライフサイクル管理の話で他多くの章（routing / system / platform）とも干渉する。本ページは backlog の指定に従い <code>acl-qos</code> 配下に置く。</p>
 </div>
 <h1 id="add-delzero-port-post-init">ポートの動的 add / del（zero-port 起動と post-init 操作）<a class="headerlink" href="#add-delzero-port-post-init" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">章分割済み</p>
+<p>本ページは大型 HLD の <strong>概要ハブ</strong> として保持。詳細は以下の派生ページを参照:</p>
+<ul>
+<li><a href="../enhancements-to-add-or-del-ports-dynamically-concepts/">enhancements-to-add-or-del-ports-dynamically-concepts.md</a> — zero-port / init フラグ / ユーザ責務の概念</li>
+<li><a href="../enhancements-to-add-or-del-ports-dynamically-operations/">enhancements-to-add-or-del-ports-dynamically-operations.md</a> — CONFIG_DB / 設定例 / 安全な port 削除手順</li>
+<li><a href="../enhancements-to-add-or-del-ports-dynamically-internals/">enhancements-to-add-or-del-ports-dynamically-internals.md</a> — portsyncd / portsorch / buffermgrd / lldpmgrd の改修と race</li>
+<li><a href="../enhancements-to-add-or-del-ports-dynamically-limitations/">enhancements-to-add-or-del-ports-dynamically-limitations.md</a> — HLD と実装の乖離（ref counter 未取り込み等）</li>
+</ul>
+</div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに <strong>post-init で動的に <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORT</code> テーブルに add/del</strong> することでポート追加・削除を可能にする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

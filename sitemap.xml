@@ -101,6 +101,22 @@
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-to-add-or-del-ports-dynamically-internals/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-to-add-or-del-ports-dynamically-operations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/acl-qos/enhancements-to-add-or-del-ports-dynamically/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
@@ -538,6 +554,22 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnoi-hld-for-system-apis/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld-concepts/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld-internals/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld-limitations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld-operations/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
