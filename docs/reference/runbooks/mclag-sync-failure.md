@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[fdbsyncd / mclagsyncd ログ確認]
 ```
 
+## 確認コマンド
+
 ### 1. MCLAG state
 
 ```bash

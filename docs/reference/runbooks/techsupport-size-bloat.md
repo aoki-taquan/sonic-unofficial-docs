@@ -69,6 +69,8 @@ flowchart TD
     D -- No --> E[show techsupport の since オプションで範囲限定]
 ```
 
+## 確認コマンド
+
 ### 1. dump 構成
 
 ```bash

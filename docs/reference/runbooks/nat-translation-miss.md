@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[CRM SNAT/DNAT エントリ枯渇を確認]
 ```
 
+## 確認コマンド
+
 ### 1. グローバル / interface
 
 ```bash

@@ -61,6 +61,8 @@ flowchart TD
     D -- No --> E[hostcfgd ログを確認]
 ```
 
+## 確認コマンド
+
 ### 1. minigraph 構文
 
 ```bash

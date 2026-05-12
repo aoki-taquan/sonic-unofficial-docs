@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[FEC / training の状態を確認]
 ```
 
+## 確認コマンド
+
 ### 1. interface 状態
 
 ```bash

@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[FW update API の戻り値とログを精査]
 ```
 
+## 確認コマンド
+
 ### 1. 現状把握
 
 ```bash

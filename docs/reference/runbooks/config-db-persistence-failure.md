@@ -53,6 +53,8 @@ flowchart TD
     D -- Yes --> E[load_minigraph / write_standby スクリプトを確認]
 ```
 
+## 確認コマンド
+
 ### 1. ディスク状態
 
 ```bash

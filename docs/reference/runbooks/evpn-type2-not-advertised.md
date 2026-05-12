@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[bgp l2vpn evpn neighbor の send-community 確認]
 ```
 
+## 確認コマンド
+
 ### 1. VXLAN / VNI
 
 ```bash

@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[macsecmgrd / SAI MACSEC 設定を確認]
 ```
 
+## 確認コマンド
+
 ### 1. profile / port 状態
 
 ```bash

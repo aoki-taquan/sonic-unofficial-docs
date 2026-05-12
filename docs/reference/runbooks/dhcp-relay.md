@@ -72,6 +72,8 @@ flowchart TD
     E -- Yes --> F[dhcpmon カウンタとログを確認]
 ```
 
+## 確認コマンド
+
 ### 1. CONFIG_DB に helper が入っているか
 
 ```bash

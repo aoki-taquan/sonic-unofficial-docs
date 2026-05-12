@@ -58,6 +58,8 @@ flowchart TD
     D -- No --> E[config reload のログを確認]
 ```
 
+## 確認コマンド
+
 ### 1. ファイル時刻 / 権限
 
 ```bash

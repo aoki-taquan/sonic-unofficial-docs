@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[最終的に強制 shutdown を実施]
 ```
 
+## 確認コマンド
+
 ### 1. 現状
 
 ```bash

@@ -61,6 +61,8 @@ flowchart TD
     D -- Yes --> E[gRPC / tunnel orch の状態確認]
 ```
 
+## 確認コマンド
+
 ### 1. mux 状態と peer 状態
 
 ```bash

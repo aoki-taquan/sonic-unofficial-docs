@@ -64,6 +64,8 @@ flowchart TD
     D -- Yes --> E[DPU reset (graceful → force)]
 ```
 
+## 確認コマンド
+
 ### 1. モジュール状態
 
 ```bash

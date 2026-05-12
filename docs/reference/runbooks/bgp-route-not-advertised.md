@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[clear bgp <peer> soft out で再送信]
 ```
 
+## 確認コマンド
+
 ### 1. local RIB と Adj-RIB-Out
 
 ```bash

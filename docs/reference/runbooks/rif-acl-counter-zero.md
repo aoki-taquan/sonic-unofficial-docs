@@ -53,6 +53,8 @@ flowchart TD
     D -- Yes --> E[SAI counter ID と bind を点検]
 ```
 
+## 確認コマンド
+
 ### 1. FLEX_COUNTER の状態
 
 ```bash
