@@ -195,6 +195,16 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 - `sonic-db-cli COUNTERS_DB hgetall "DHCPV4_COUNTER_TABLE:Vlan1000"` — DB 直読みで生 counter を確認
 - `sonic-clear dhcp_relay ipv4 counter <vlan>` で 0 化 → 再現テスト
 
+### コマンド例
+
+DHCP relay の interface 別カウンタを確認する。
+
+```bash
+show dhcp_relay ipv4 counters
+show dhcp_relay ipv6 counters
+redis-cli -n 6 keys 'DHCP_COUNTER_TABLE|*'
+```
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_relay/DHCP-per-interface-counter.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_relay/DHCP-per-interface-counter.md)

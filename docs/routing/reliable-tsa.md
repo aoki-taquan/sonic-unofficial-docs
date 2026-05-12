@@ -216,6 +216,16 @@ Supervisor で全体 TSA、LC2 だけ独立に TSB:
 - LC ローカルが FALSE なのに TSA のままなら Supervisor 側 TRUE が原因
 - Supervisor 再起動で TSA が解除される場合、Supervisor の `config_db.json` に `tsa_enabled` が保存されているか確認
 
+### コマンド例
+
+Traffic Shift Away (TSA) 状態と community を確認する。
+
+```bash
+show tsa
+docker exec bgp vtysh -c 'show running-config' | grep -i tsa
+show ip bgp summary | head
+```
+
 ## 参考リンク
 
 - [CLI: config bgp](../reference/cli/config-bgp.md)

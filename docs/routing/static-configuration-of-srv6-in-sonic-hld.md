@@ -231,6 +231,16 @@ sonic-cfggen -a '{
 - FRR 側の取り込み状況は `vtysh -c 'show running-config' | grep -A20 srv6` で確認する。
 - APPL_DB に SID が出ていない場合は FRR バージョンと PR#16894 の有無を疑う。
 
+### コマンド例
+
+static SRv6 SID / locator 設定の反映を確認する。
+
+```bash
+show srv6 sid
+show srv6 locator
+sonic-cfggen -d -v 'SRV6_MY_SIDS'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/srv6/srv6_static_config_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

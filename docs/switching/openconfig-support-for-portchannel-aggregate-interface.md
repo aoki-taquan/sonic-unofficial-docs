@@ -150,6 +150,16 @@ gNMI も `Capabilities` で同 YANG を公開し `Get` / `Set` で同等[^1]。
 - `min-links` が反映されない → `oc-lag:aggregation/config` のパスを確認
 - counter が 0 → `counterpoll port` 状態と `COUNTERS_DB` 確認
 
+### コマンド例
+
+OpenConfig 経由の PortChannel 情報取得を確認する。
+
+```bash
+gnmic -a localhost:8080 --skip-verify -u admin -p YourPaSsWoRd \
+  get --path '/openconfig-interfaces:interfaces/interface[name=PortChannel0001]/aggregation' 2>&1 | head
+show interfaces portchannel
+```
+
 ## 関連 Topics
 
 - [10-gnmi-openconfig](../topics/10-gnmi-openconfig/index.md): gNMI / OpenConfig 全体像

@@ -197,6 +197,16 @@ show ip bgp vrf Vnet1 summary
 - diff が誤算出 → vtysh の `show ip bgp listen range` と CONFIG_DB を突き合わせ
 - VNET 上で `show ip bgp vrf <name>` が動かない → [sonic-utilities](../reference/glossary.md#term-sonic-utilities) のバージョン確認
 
+### コマンド例
+
+bgpcfgd の動的ピア更新と config 反映を確認する。
+
+```bash
+docker logs bgp 2>&1 | grep -i bgpcfgd | tail
+sonic-cfggen -d -v 'BGP_NEIGHBOR'
+docker exec bgp vtysh -c 'show bgp neighbors' | head
+```
+
 ## 関連 Topic
 
 - [02 BGP / internals](../topics/02-bgp/internals.md)

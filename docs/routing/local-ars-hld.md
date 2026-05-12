@@ -144,6 +144,16 @@ flowchart LR
     - [sonic-swss #3597: Local ARS (Adaptive Routing and Switching) (open)](https://github.com/sonic-net/sonic-swss/pull/3597) — 本 HLD の本体取り込み PR。2026-05 時点で open であり master 未取り込み。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+Adaptive Routing & Switching (ARS) の有効状態と統計を確認する。
+
+```bash
+show ars profile
+show ars interfaces
+redis-cli -n 4 keys 'ARS*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ARS/Local_ARS_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
