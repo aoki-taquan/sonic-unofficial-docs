@@ -1183,18 +1183,6 @@
     },
     {
       "repo": "sonic-net/SONiC",
-      "path": "doc/ecmp/ecmp_calculator.md",
-      "revision_date": "2026-05-07",
-      "revision_count": 1,
-      "status": "unknown",
-      "has_images": false,
-      "image_count": 0,
-      "size_bytes": 28,
-      "content_size_bytes": 24,
-      "age_years": 0.0
-    },
-    {
-      "repo": "sonic-net/SONiC",
       "path": "doc/ecmp/fine_grained_next_hop_hld.md",
       "revision_date": "2024-09-16",
       "revision_count": 7,
@@ -2332,18 +2320,6 @@
       "size_bytes": 9023,
       "content_size_bytes": 8044,
       "age_years": 4.9
-    },
-    {
-      "repo": "sonic-net/SONiC",
-      "path": "doc/pins/in_progress.md",
-      "revision_date": "2026-05-07",
-      "revision_count": 1,
-      "status": "unknown",
-      "has_images": false,
-      "image_count": 0,
-      "size_bytes": 73,
-      "content_size_bytes": 71,
-      "age_years": 0.0
     },
     {
       "repo": "sonic-net/SONiC",

@@ -50,8 +50,8 @@ sources: []
 
 ## 最新 quality-audit
 
-- round **38** — 総平均スコア **4.986 / 5**
-- 詳細: `meta/quality-audit-38.md`
+- round **39** — 総平均スコア **4.944 / 5**
+- 詳細: `meta/quality-audit-39.md`
 
 ## その他指標
 

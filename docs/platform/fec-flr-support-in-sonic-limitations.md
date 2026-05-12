@@ -77,6 +77,26 @@ related:
 - [fec-flr-support-in-sonic-operations.md](fec-flr-support-in-sonic-operations.md)
 - [fec-flr-support-in-sonic-internals.md](fec-flr-support-in-sonic-internals.md)
 
+## 確認コマンド
+
+```bash
+# 現行 master の FLR_INTERVAL_FACTOR ハードコード値を確認 (動的変更不可の根拠)
+docker exec swss grep -n 'FLR_INTERVAL_FACTOR\|FEC_FLR_POLL_INTERVAL' /usr/share/swss/port_flr.lua
+
+# 実効 poll 周期 (= port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR) を逆算
+sonic-db-cli CONFIG_DB hget 'FLEX_COUNTER_TABLE|PORT' POLL_INTERVAL
+
+# in-place で factor を 60 に縮めた場合の検証 (恒久化には buildimage patch 必須)
+docker exec swss sed -i 's/FEC_FLR_POLL_INTERVAL = 120/FEC_FLR_POLL_INTERVAL = 60/' /usr/share/swss/port_flr.lua
+docker restart swss
+
+# CLI が未取り込みか確認 (取り込まれていれば counterpoll port flr-interval-factor が見える)
+show counterpoll | grep -i flr || echo "FLR counterpoll CLI 未取り込み"
+
+# 関連 PR (sonic-utilities #4126) の取り込み状況確認
+git -C .cache/sonic-sources/sonic-utilities log --oneline | grep -iE 'flr|flex.*secondary'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

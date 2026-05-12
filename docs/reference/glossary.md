@@ -1339,7 +1339,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [DSCP](#term-dscp)
 
 - [Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）](../acl-qos/egress-outer-dscp-change-table.md) (55)
-- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (36)
+- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (38)
 - [sonic-dscp-tc-map YANG](yang/sonic-dscp-tc-map.md) (21)
 - [Packet Trimming（symmetric / asymmetric DSCP / ACL disable）](../architecture/sonic-packet-trimming.md) (18)
 - [サイトマップ](../_meta/sitemap.md) (17)
@@ -1386,7 +1386,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [EVPN](#term-evpn)
 
-- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (52)
+- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (53)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (45)
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../routing/evpn-vxlan-multihoming.md) (33)
 - [サイトマップ](../_meta/sitemap.md) (32)
@@ -1562,8 +1562,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (9)
 - [サイトマップ](../_meta/sitemap.md) (8)
 - [VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）](../platform/subnet-decapsulation-with-sonic.md) (8)
+- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (6)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (5)
-- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (5)
 
 ### [LOGLEVEL_DB](#term-loglevel_db)
 
@@ -1866,8 +1866,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-buildimage](#term-sonic-buildimage)
 
+- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (20)
 - [サイトマップ](../_meta/sitemap.md) (17)
-- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (16)
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../system/sonic-network-time-protocol-ntp-client-configuration.md) (14)
 - [SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）](../system/hld-secure-boot.md) (12)
 - [SAG（Static Anycast Gateway）for SONiC](../architecture/sag-high-level-design-for-sonic.md) (11)
@@ -2116,7 +2116,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (52)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (35)
 - [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../management/openconfig-support-for-ethernet-interfaces.md) (26)
-- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (25)
+- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (26)
 
 ### [zebra](#term-zebra)
 
