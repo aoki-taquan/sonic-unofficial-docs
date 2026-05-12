@@ -6349,6 +6349,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#virtual-sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        virtual SONiC でのトポロジ自動化
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kvm-vs-physical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kvm-vs-physical の差分
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug-build-diagnostics-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug build と diagnostics image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#rfc" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6552,6 +6585,8 @@
       
         
       
+        
+      
     
     
     
@@ -6607,6 +6642,34 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../22-reference-index/advanced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    発展トピック
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -28795,6 +28858,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#virtual-sonic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        virtual SONiC でのトポロジ自動化
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kvm-vs-physical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kvm-vs-physical の差分
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug-build-diagnostics-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        debug build と diagnostics image
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#rfc" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28923,6 +29019,67 @@
 <li>Code coverage / mutation testing の標準化。</li>
 <li>DASH KVM の HLD 完成と community 投入。</li>
 </ul>
+<h2 id="virtual-sonic">virtual SONiC でのトポロジ自動化<a class="headerlink" href="#virtual-sonic" title="Permanent link">&para;</a></h2>
+<p>実機 lab を持たないチームが CI / 教育 / RFE 試作で再現性を出すための主要パスは三つある。</p>
+<ul>
+<li><strong><code>sonic-mgmt</code> 標準 topology</strong>: <code>ansible/vars/topo_*.yaml</code> で <code>t0</code>、<code>t1-lag</code>、<code>ptf32</code>、<code>dualtor</code> などの canonical topology を宣言する。<code>testbed.csv</code> と <code>inventory</code> を組み合わせると、virtual chassis / Dual-ToR / Multi-DUT も同じテンプレで起動できる。</li>
+<li><strong>KNE / kne-topologies</strong>: Kubernetes 上に SONiC-VS pod を並べる。SONiC を他 NOS (Arista cEOS、Juniper cRPD 等) と mix した topology が必要なときに採用しやすい。<code>kne create topology.pb.txt</code> で立ち上げ、CNI 経由で link を張る。</li>
+<li><strong>containerlab</strong>: <code>clab</code> の <code>kind: sonic-vs</code> ノードで軽量に複数 DUT を並べる。CI runner のローカル dev loop に近く、<code>docker compose</code> 感覚で扱える。</li>
+</ul>
+<p>いずれも image は <code>target/sonic-vs.img.gz</code> が起点で、<code>docker-sonic-vs</code> を直接 docker run する経路と、kvm に load する経路の二択になる。CI で何百並列も起動するなら docker 直走、kernel datapath 検証が要るなら kvm を選ぶ。</p>
+<h2 id="kvm-vs-physical">kvm-vs-physical の差分<a class="headerlink" href="#kvm-vs-physical" title="Permanent link">&para;</a></h2>
+<p>virtual / 物理間で動作が乖離する代表領域は次のとおり。</p>
+<table>
+<thead>
+<tr>
+<th>領域</th>
+<th>virtual (VS / kvm)</th>
+<th>物理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Forwarding plane</td>
+<td>SAI VS = CPU 実装</td>
+<td>ASIC pipeline</td>
+</tr>
+<tr>
+<td>Counters / WRED / queue depth</td>
+<td>dummy 値 / 近似</td>
+<td>実時間 telemetry</td>
+</tr>
+<tr>
+<td>Link timing (carrier up/down)</td>
+<td>ms 単位の Linux event</td>
+<td>optics / PHY の物理遅延</td>
+</tr>
+<tr>
+<td>MAC learning / flooding</td>
+<td>bridge based 簡略</td>
+<td>ASIC FDB hashing</td>
+</tr>
+<tr>
+<td>LAG hashing</td>
+<td>Linux team driver</td>
+<td>SAI hash + UDF</td>
+</tr>
+<tr>
+<td>BFD micro / sub-ms timer</td>
+<td>jiffies 制約</td>
+<td>HW BFD offload</td>
+</tr>
+</tbody>
+</table>
+<p>機能 path の論理確認は VS で十分だが、性能 / timing / counter は実機が前提。test plan には <code>vs_supported: yes/no</code> メタを置き、CI 側で skip 判定する運用が一般的。</p>
+<h2 id="debug-build-diagnostics-image">debug build と diagnostics image<a class="headerlink" href="#debug-build-diagnostics-image" title="Permanent link">&para;</a></h2>
+<p><code>make</code> には debug 用のフラグ群がいくつかある。Issue 再現用に常備しておくと便利。</p>
+<ul>
+<li><code>SONIC_DEBUGGING_ON=y</code>: <code>-O0 -g</code> / strip 抑止で symbol 付き docker を生成。<code>gdb</code> / <code>perf</code> / <code>bcc-tools</code> 連携が前提。</li>
+<li><code>ENABLE_PY_DEBUG=y</code>: python パッケージを debug build。</li>
+<li><code>INCLUDE_KERNEL_DEBUG_TOOLS=y</code> / <code>INSTALL_DEBUG_TOOLS=y</code>: image に <code>strace</code> / <code>tcpdump</code> / <code>bpftrace</code> を含める。</li>
+<li><code>DEFAULT_USERNAME</code> / <code>DEFAULT_PASSWORD</code> 変更: lab image で SSH 鍵管理を簡素化。</li>
+</ul>
+<p><code>sonic-installer</code> には <code>binary</code> / <code>firmware</code> の他に <code>coredump</code> 経路があるため、debug build は coredump enable と SCP destination 設定を ZTP 段で済ませておくとデバッグサイクルが速い。</p>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="https://github.com/p4lang/behavioral-model">P4 Behavioral Model (BMv2)</a> — DASH KVM の data plane</li>
