@@ -29240,10 +29240,14 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;LOSSLESS_TRAFFIC_PATTERN")]
-  DM["buffermgrdyn"]
+  DM["buffermgrd"]
   CDB --&gt; DM
+  APPDB[("APP_DB&lt;br/&gt;APP_BUFFER_PROFILE_TABLE")]
+  DM --&gt; APPDB
+  SYNCD["syncd"]
+  APPDB --&gt; SYNCD
   SAI["SAI&lt;br/&gt;sai_buffer_api"]
-  DM --&gt; SAI</code></pre>
+  SYNCD --&gt; SAI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
