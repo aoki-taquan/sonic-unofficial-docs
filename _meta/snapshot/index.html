@@ -29108,6 +29108,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#last_verified" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        last_verified 鮮度
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics-22-sub-page" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29130,10 +29141,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quality-audit" class="md-nav__link">
+  <a href="#mermaid-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        最新 quality-audit
+        Mermaid カバレッジ (Reference 系)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ops-hint-cli-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ops-hint カバレッジ (CLI Reference)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-round-quality-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        直近 5 round quality-audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lint-informational" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lint / informational 検出件数
       
     </span>
   </a>
@@ -29227,6 +29282,38 @@
 </tr>
 </tbody>
 </table>
+<h2 id="last_verified">last_verified 鮮度<a class="headerlink" href="#last_verified" title="Permanent link">&para;</a></h2>
+<p>基準日 <strong>2026-05-12</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>バケツ</th>
+<th style="text-align: right;">件数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>今日 (0d)</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td>7 日以内 (1-7d)</td>
+<td style="text-align: right;">873</td>
+</tr>
+<tr>
+<td>30 日以内 (8-30d)</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>30 日超 / 古い</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>不明 / パース不可</td>
+<td style="text-align: right;">11</td>
+</tr>
+</tbody>
+</table>
 <h2 id="topics-22-sub-page">Topics 22 章 sub-page 完成度<a class="headerlink" href="#topics-22-sub-page" title="Permanent link">&para;</a></h2>
 <p>5 種 (concept/setup/operations/internals/advanced) × 22 章 = 110 想定。閾値: 本文 100 行未満は placeholder 扱い。</p>
 <table>
@@ -29286,11 +29373,133 @@
 </tr>
 </tbody>
 </table>
-<h2 id="quality-audit">最新 quality-audit<a class="headerlink" href="#quality-audit" title="Permanent link">&para;</a></h2>
+<h2 id="mermaid-reference">Mermaid カバレッジ (Reference 系)<a class="headerlink" href="#mermaid-reference" title="Permanent link">&para;</a></h2>
+<p>各 Reference サブツリーで <code>```mermaid</code> ブロックを含むページ比率。</p>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th style="text-align: right;">mermaid あり</th>
+<th style="text-align: right;">総ページ</th>
+<th style="text-align: right;">カバレッジ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">100.0%</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">100.0%</td>
+</tr>
+<tr>
+<td>YANG</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">100.0%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ops-hint-cli-reference">ops-hint カバレッジ (CLI Reference)<a class="headerlink" href="#ops-hint-cli-reference" title="Permanent link">&para;</a></h2>
+<p><code>&lt;!-- ops-hint --&gt;</code> 埋め込み済み: <strong>45 / 72</strong> (62.5%)</p>
+<h2 id="glossary">Glossary<a class="headerlink" href="#glossary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用語数 (<code>###</code> アンカー)</td>
+<td style="text-align: right;">288</td>
+</tr>
+<tr>
+<td>docs 内被リンク数</td>
+<td style="text-align: right;">7524</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-round-quality-audit">直近 5 round quality-audit<a class="headerlink" href="#5-round-quality-audit" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">round</th>
+<th style="text-align: right;">総平均スコア / 5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">4.986</td>
+</tr>
+<tr>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">4.972</td>
+</tr>
+<tr>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">4.972</td>
+</tr>
+<tr>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">4.944</td>
+</tr>
+<tr>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">4.986</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li>round <strong>39</strong> — 総平均スコア <strong>4.944 / 5</strong></li>
-<li>詳細: <code>meta/quality-audit-39.md</code></li>
+<li>最新詳細: <code>meta/quality-audit-42.md</code></li>
 </ul>
+<h2 id="lint-informational">Lint / informational 検出件数<a class="headerlink" href="#lint-informational" title="Permanent link">&para;</a></h2>
+<p>各レポート (<code>meta/*-report*.md</code> / <code>meta/*-violations.md</code>) から抽出した検出件数。strict / informational を区別せず一覧化する。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th style="text-align: right;">件数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>frontmatter-lint (hard)</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>frontmatter-lint (warn)</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>link-density low (&lt;2.0/1k)</td>
+<td style="text-align: right;">68</td>
+</tr>
+<tr>
+<td>link-density high (&gt;30.0/1k)</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>discrepancy-related-yang violations</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>related.* empty pages</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>daemon-name violations</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
 <h2 id="_2">その他指標<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29302,7 +29511,7 @@
 <tbody>
 <tr>
 <td>低密度ページ残数 (link-density &lt; 2)</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">68</td>
 </tr>
 <tr>
 <td>backlog 残数 (active)</td>
