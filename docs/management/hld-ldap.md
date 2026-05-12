@@ -155,6 +155,17 @@ sudo config aaa authentication login ldap local
 - 認証は通るが `sudo` で失敗 → group 解決失敗の可能性。`getent group <gid>` で確認。
 - bind 失敗 → `LDAP_TABLE.bind_dn` / `bind_password` と `base_dn` の対応、サーバ FQDN 解決を確認。
 
+確認コマンド例:
+
+```bash
+# LDAP 認証設定と疎通確認
+show aaa
+ldapsearch -x -H ldap://<server> -b <base-dn>
+cat /etc/nslcd.conf | head
+journalctl -u nslcd | tail
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/aaa/ldap/hld_ldap.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

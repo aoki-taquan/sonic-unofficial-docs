@@ -208,6 +208,16 @@ sudo config portchannel add PortChannel04    # ad-hoc 検証だけが走る
 - 性能劣化: 性能要件のあるパスで GCU が走っていないか確認。warm/fast reboot は ad-hoc が望ましい[^1]。
 - バイパスが効かない: `DEVICE_METADATA.localhost.yang_config_validation` の値を直接 redis で確認。
 
+確認コマンド例:
+
+```bash
+# YANG validation 状態
+show runningconfiguration all > /tmp/cfg.json
+sonic-cfggen -j /tmp/cfg.json --print-data | head
+yangcli --module=sonic-port -- 'xget /sonic-port:sonic-port'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/config_yang_validation/config_db_yang_validation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

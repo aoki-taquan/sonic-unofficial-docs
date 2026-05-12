@@ -203,6 +203,16 @@ ip link show send_to_ingress
 - 作成されたが UP しない場合、`SAI_HOSTIF_ATTR_OPER_STATUS=true` で create されているか確認（false で作ると以降上げられない）
 - パケットを書いたのに ASIC が転送しない場合、ingress パイプラインの [ACL](../reference/glossary.md#term-acl) / forwarding テーブルとマッチしているか確認
 
+確認コマンド例:
+
+```bash
+# Host-CPU packet I/O / send-to-ingress 確認
+ip -s -s link show eth0
+redis-cli -n 4 hgetall 'HOST_INTERFACE|<name>'
+docker logs swss 2>&1 | grep -i 'hostif' | tail
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/send_to_ingress_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

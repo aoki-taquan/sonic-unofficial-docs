@@ -42,9 +42,34 @@ SKIP_FILES = {"index.md"}
 MIN_LINES = 100
 TARGET_VERIFICATION = {"code-verified", "discrepancy-found"}
 
+# H2 揺れを幅広く認識する:
+#   - numbered prefix: "## 5. トラブルシューティング" / "## 5.1 ..."
+#   - 絵文字/装飾文字 prefix: "## 🛠 トラブルシュート"
+#   - 日本語: トラブルシュート/トラブルシューティング/確認コマンド/動作確認/
+#     デバッグ/診断/運用確認/動作検証 (+ 任意の suffix "・制限" "(続き)" 等)
+#   - 英語: Troubleshooting / Verification / Debug(ging) / Operations / How to verify
+#   - "設定例とトラブルシューティング" のように後置複合表現も拾う
+_JA_KEYWORDS = (
+    r"トラブルシュート|トラブルシューティング|確認コマンド|動作確認|"
+    r"デバッグ|診断|運用確認|動作検証|検証コマンド|確認手順|障害解析"
+)
+_EN_KEYWORDS = (
+    r"Troubleshoot(?:ing)?|Verification|How to verify|Debug(?:ging)?|"
+    r"Operations?|Verify|Diagnos(?:tic|is|tics)"
+)
 TROUBLESHOOT_H2_RE = re.compile(
-    r"^##\s+(?:\d+\.\s*)?(トラブルシュート|トラブルシューティング|確認コマンド|Troubleshooting|動作確認)\s*$",
-    re.MULTILINE,
+    r"^##\s+"
+    # optional numbered prefix (1. / 5.1 / 5.1.2 など)
+    r"(?:\d+(?:\.\d+)*\.?\s*)?"
+    # optional decorative prefix (絵文字 / 記号)
+    r"(?:[^\w\s]{1,3}\s*)?"
+    # optional leading words like "設定例と" "詳細な" etc. (max ~10 chars)
+    r"(?:[^\n#]{0,20}?)"
+    # core keyword (JP or EN)
+    r"(?:" + _JA_KEYWORDS + r"|" + _EN_KEYWORDS + r")"
+    # optional trailing suffix until EOL
+    r"[^\n]*$",
+    re.MULTILINE | re.IGNORECASE,
 )
 VERIFICATION_RE = re.compile(r"^verification:\s*(\S+)\s*$", re.MULTILINE)
 

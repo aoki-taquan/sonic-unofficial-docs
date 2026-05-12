@@ -197,6 +197,17 @@ reasoning: 多サーバ priority + 8 上限 + passphrase 不一致を unreachabl
 - 認証失敗が続く → `passkey` 確認、priority 順番確認、`unreachable` 扱いになっていないかログ確認
 - privilege が変わらない → `User Privilege Table` で RADIUS 値→Linux role マッピングを確認
 
+確認コマンド例:
+
+```bash
+# RADIUS 認証設定確認
+show radius
+show aaa
+redis-cli -n 4 hgetall 'RADIUS|global'
+cat /etc/pam.d/common-auth | head
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/aaa/radius_authentication.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

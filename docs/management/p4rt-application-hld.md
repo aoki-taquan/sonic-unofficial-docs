@@ -241,6 +241,16 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
     - [sonic-pins #1647: \[PDPI\] Move from `third_party/pins_infra/p4_pdpi` to `third_party/pins_infra/p4_infra/p4_pdpi` (open)](https://github.com/sonic-net/sonic-pins/pull/1647) — PINS 内 P4 PDPI のリファクタ進行中 PR。本 HLD の gRPC port 9559 サービス取り込みは sonic-pins 側で進行中だが SONiC 本体への統合トラッキングは未整理。
 <!-- /diff-admonition -->
 
+確認コマンド例:
+
+```bash
+# Application Extension パッケージ状態
+sonic-package-manager list
+sonic-package-manager show <pkg-name>
+docker ps -a --format '{{.Names}}	{{.Status}}'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/p4rt_app_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

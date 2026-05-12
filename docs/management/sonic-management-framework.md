@@ -121,6 +121,16 @@ sequenceDiagram
 - 400 / validation 失敗 → mgmt-framework ログで YANG エラー詳細を確認
 - gNMI subscription が来ない → STATE_DB へ更新が出ているか、subscription path が schema 上 valid か
 
+確認コマンド例:
+
+```bash
+# CLI / 設定パイプライン状態確認
+show runningconfiguration all | head
+config save -y
+diff /etc/sonic/config_db.json <(show runningconfiguration all)
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/Management Framework.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

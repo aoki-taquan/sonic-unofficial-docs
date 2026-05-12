@@ -270,6 +270,17 @@ TACPLUS global passkey configured Yes
     - [sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)](https://github.com/sonic-net/sonic-utilities/pull/3027) — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。
 <!-- /diff-admonition -->
 
+確認コマンド例:
+
+```bash
+# TACACS+ 認証状態確認
+show tacacs
+show aaa
+redis-cli -n 4 hgetall 'TACPLUS|global'
+journalctl -u hostcfgd | grep -i tacacs | tail
+```
+
+
 ## 参考リンク
 
 - [CONFIG_DB: TACPLUS / TACPLUS_SERVER](../reference/config-db/aaa.md)

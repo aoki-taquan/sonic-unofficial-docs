@@ -130,6 +130,16 @@ docker ps | grep my-extension
 - CLI plugin が `show` から見えない → plugin の `register` 関数が呼ばれているか、配置パスが `dockers/docker-xxx/cli/` 配下になっているかを確認。
 - アップグレードで設定が消える → manifest の volume 宣言で永続化対象を明示しているかを確認。
 
+確認コマンド例:
+
+```bash
+# Application Extension パッケージ状態
+sonic-package-manager list
+sonic-package-manager show <pkg-name>
+docker ps -a --format '{{.Names}}	{{.Status}}'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extension-guide.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

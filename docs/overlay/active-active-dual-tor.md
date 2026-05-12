@@ -253,6 +253,17 @@ Ethernet4   active    active           healthy   consistent  2023-Mar-27 07:57:4
 | standby 切替で traffic 断 | `show mux tunnel-route <port>` で prefix route の next hop を確認 |
 | 両 ToR standby で通信不能 | linkmgrd の rescue ロジックと default route 状態 |
 
+確認コマンド例:
+
+```bash
+# Dual ToR / MUX 状態確認
+show mux status
+show mux config
+redis-cli -n 6 hgetall 'MUX_CABLE_TABLE|Ethernet0'
+redis-cli -n 4 hgetall 'MUX_CABLE|Ethernet0'
+```
+
+
 ## 制限事項
 
 - **warm reboot** は [HLD](../reference/glossary.md#term-hld) で TBD

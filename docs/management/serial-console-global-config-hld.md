@@ -218,6 +218,16 @@ config save
 - 再起動後にロスト: `config save` 漏れ。CONFIG_DB の SERIAL_CONSOLE は `config_db.json` に保存されないと cold/fast boot で消える。
 - `inactivity_timeout=0`: HLD では 0 が「無効化」かどうかの解釈は明記されていない。実装裏取りで挙動確認が必要。
 
+確認コマンド例:
+
+```bash
+# Console / serial 設定確認
+show line
+redis-cli -n 4 hgetall 'CONSOLE_PORT|1'
+ls -l /dev/ttyUSB* /dev/ttyS*
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/console/serial-console-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

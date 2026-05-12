@@ -295,6 +295,16 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
 <!-- /diff-admonition -->
 
 <!-- phase-boundary -->
+
+確認コマンド例:
+
+```bash
+# 動的 port 追加/削除の状態確認
+show interfaces status
+redis-cli -n 4 keys 'PORT|*'
+docker logs swss 2>&1 | grep -i 'port_create\|port_remove' | tail
+```
+
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"

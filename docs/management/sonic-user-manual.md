@@ -89,6 +89,16 @@ flowchart LR
 - `config reload` 時に長時間止まる → GCU `apply-patch` への置き換えを検討
 - show techsupport が膨大 → 個別 `show` コマンド + journalctl で特定コンテナ単位に絞る
 
+確認コマンド例:
+
+```bash
+# CLI / 設定パイプライン状態確認
+show runningconfiguration all | head
+config save -y
+diff /etc/sonic/config_db.json <(show runningconfiguration all)
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/user-manual/SONiC-User-Manual.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

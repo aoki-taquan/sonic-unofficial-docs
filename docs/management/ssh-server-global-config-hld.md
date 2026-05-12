@@ -210,6 +210,16 @@ config save
 - `max_syslogins` を効かせたのに無制限のまま: `/etc/security/limits.conf` に該当行が出ているか、PAM がそれを読む構成（`session required pam_limits.so`）になっているかを確認。
 - `inactivity_timeout` が SSH に効かない: `TMOUT` は login shell + interactive shell でのみ効く。`bash -c "command"` のような非対話起動では効かない。
 
+確認コマンド例:
+
+```bash
+# SSH server 設定確認
+show ssh
+sudo sshd -T | head
+redis-cli -n 4 hgetall 'SSH_SERVER|POLICIES'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssh_config/ssh_config.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

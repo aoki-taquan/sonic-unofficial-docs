@@ -181,6 +181,16 @@ flowchart LR
 - ZTP が起動しない → `/var/log/ztp.log`、DHCP option 67 / USB 検出確認
 - gNMI / RESTCONF 接続不可 → server 有効化と証明書/ユーザ設定確認
 
+確認コマンド例:
+
+```bash
+# CLI / 設定パイプライン状態確認
+show runningconfiguration all | head
+config save -y
+diff /etc/sonic/config_db.json <(show runningconfiguration all)
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/configuration/SONiC_NOS_Configuration_Methods.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
