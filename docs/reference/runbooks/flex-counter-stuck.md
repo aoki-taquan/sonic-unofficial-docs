@@ -1,7 +1,6 @@
 ---
 title: counter が更新されない (FLEX_COUNTER)
-description: 'Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596
-  — flexcounterorch : sonic-net/sonic-utilities @ 39732bceb — counterpoll CLI'
+description: 'Runbook: counter が更新されない (FLEX_COUNTER) — : sonic-net/sonic-swss @ 4305596 — flexcounterorch : sonic-net/sonic-utilities @ 39732bceb — counterpoll CLI'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -28,7 +27,8 @@ related:
   - show interfaces
   - show queue
   - show pfc
-  yang: []
+  yang:
+  - sonic-flex_counter
 ---
 
 # Runbook: counter が更新されない (FLEX_COUNTER)

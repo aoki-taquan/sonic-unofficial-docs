@@ -1,7 +1,6 @@
 ---
 title: 運用
-description: 運用 — ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元
-  HLD を参照してください。
+description: 運用 — ここでは、装置 health と optics に関連する確認順序を、運用シナリオ別に整理します。各 daemon の詳細は元 HLD を参照してください。
 area: topics
 verification: meta
 last_verified: 2026-05-10
@@ -32,7 +31,10 @@ related:
   - MID_PLANE_BRIDGE
   - DPU
   - VOQ_INBAND_INTERFACE
-  yang: []
+  yang:
+  - sonic-port
+  - sonic-xcvrd-log
+  - sonic-cable-length
 ---
 
 # 運用

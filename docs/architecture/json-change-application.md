@@ -1,7 +1,6 @@
 ---
 title: JSON Change Application（apply-change / table 単位 alphabetical 適用）
-description: JSON Change Application（apply-change / table 単位 alphabetical 適用） — 親
-  HLD Generic Config Update and Rollback で定義された apply-change(JsonChange) の実装設計。
+description: JSON Change Application（apply-change / table 単位 alphabetical 適用） — 親 HLD Generic Config Update and Rollback で定義された apply-change(JsonChange) の実装設計。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,7 +13,8 @@ related:
   - DEVICE_NEIGHBOR
   cli:
   - config apply-patch
-  yang: []
+  yang:
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

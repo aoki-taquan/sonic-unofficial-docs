@@ -12,7 +12,9 @@ related:
   config_db:
   - FEATURE
   - WARM_RESTART
-  yang: []
+  yang:
+  - sonic-versions
+  - sonic-feature
 ---
 
 # 設定 / 運用
