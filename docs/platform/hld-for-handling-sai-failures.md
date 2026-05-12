@@ -247,6 +247,18 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
     - [GitHub Issue / PR の関連リンクは未確認] — `handleSai*Status` virtual / ERROR_DB ハンドリングは [sonic-swss](../reference/glossary.md#term-sonic-swss) orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。[CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+SAI / SDK のエラーログと dump を確認する。
+
+```bash
+# SAI failure / SDK health
+docker logs syncd 2>&1 | grep -iE 'sai_status|fail|error' | tail
+ls -lt /var/dump/ | head
+show techsupport --silent --since '1 hour ago'
+redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
+```
+
 ## 確認コマンド
 
 ```bash

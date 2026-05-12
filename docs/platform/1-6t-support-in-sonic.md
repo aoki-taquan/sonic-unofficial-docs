@@ -224,6 +224,21 @@ show interfaces status | grep Ethernet0
 - `port_rates.lua` で `Invalid serdes speed` ログ: lane 200000 分岐が未追加
 - xcvrd が 1.6T インタフェースを `0` 速度で扱う: `get_interface_speed` の分岐未追加
 
+### コマンド例
+
+multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+
+```bash
+# multi-ASIC / VoQ chassis
+show chassis modules status
+show platform summary
+sudo ip netns list
+for ns in $(sudo ip netns list | awk '{print $1}'); do
+  echo "== $ns =="
+  sudo ip netns exec "$ns" show interfaces status | head
+done
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-1.6t-support/port-1.6t-support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

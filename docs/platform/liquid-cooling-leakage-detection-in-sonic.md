@@ -288,6 +288,18 @@ leak_sensors3     Not OK    LiquidCooling
     - system-health gNMI イベント公開は本 PR では未取り込みで、追加の gNMI / system-health 側 PR が必要。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+冷却 / thermal センサーの状態を確認する。
+
+```bash
+# Thermal / cooling
+show platform temperature
+show platform fan
+redis-cli -n 6 keys 'TEMPERATURE_INFO|*'
+redis-cli -n 6 keys 'FAN_INFO|*'
+```
+
 ## 確認コマンド
 
 ```bash

@@ -100,6 +100,18 @@ flowchart LR
 - reboot が効かない → `set_admin_state` / `reboot` plugin 実装の存在を確認
 - `show platform module` に DPU が出ない → `Chassis.get_module_list()` の DPU 含有設定を確認
 
+### コマンド例
+
+SmartSwitch DPU の ENI 転送状態と HA を確認する。
+
+```bash
+# SmartSwitch DPU / ENI
+show chassis modules status
+redis-cli -n 4 keys 'DPU|*'
+redis-cli -n 4 keys 'DASH_ENI_TABLE:*'
+docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/pmon/smartswitch-pmon.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

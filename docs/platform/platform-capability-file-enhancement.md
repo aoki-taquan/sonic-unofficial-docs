@@ -206,6 +206,17 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 - PSU の LED 制御が無視される: 仕様どおり。BMC 管理のため `controllable=false`。NOS から触らない設計[^1]。
 - 古いプラットフォームで動かない: `capabilities` セクション未記述でも `controllable` の既定 `true` で従来挙動になる[^1]。それでも動かない場合は他の HLD（dynamic port breakout 等）の互換性問題を疑う。
 
+### コマンド例
+
+platform capability ファイルを確認する。
+
+```bash
+# Platform capability
+cat /usr/share/sonic/device/$(show platform summary | awk '/Platform/{print $2}')/platform.json | head
+show platform summary
+redis-cli -n 6 keys 'CHASSIS_INFO|*'
+```
+
 ## 参考リンク
 
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)

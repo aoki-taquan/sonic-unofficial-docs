@@ -110,6 +110,18 @@ C-CMIS 拡張[^1]:
 - laser power が想定値と違う → `transceiver-power` 設定値、module 側上下限
 - frequency が変わらない → ITU グリッド外指定、module の wavelength 範囲
 
+### コマンド例
+
+CMIS / トランシーバの状態と provisioning を確認する。
+
+```bash
+# Transceiver / CMIS
+show interfaces transceiver eeprom Ethernet0
+show interfaces transceiver info Ethernet0
+redis-cli -n 6 hgetall 'TRANSCEIVER_INFO|Ethernet0'
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+```
+
 ## 関連 reference
 
 - [HLD: custom-si-settings-for-cmis-modules](custom-si-settings-for-cmis-modules.md)

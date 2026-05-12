@@ -144,6 +144,19 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 | L3 VXLAN で経路が乗らない | `VNET_ROUTE_TUNNEL_TABLE.endpoint` が remote VTEP IP と一致 |
 | [VRF](../reference/glossary.md#term-vrf) が [SAI](../reference/glossary.md#term-sai) に作られない | `VrfMgrD` の [STATE_DB](../reference/glossary.md#term-state_db) 更新が間に合っているか |
 
+### コマンド例
+
+VXLAN トンネルと EVPN ピアの状態を確認する。
+
+```bash
+# VXLAN tunnel / VNI / EVPN
+show vxlan tunnel
+show vxlan remotevni all
+show evpn vni
+redis-cli -n 4 keys 'VXLAN_TUNNEL|*'
+docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
+```
+
 ## 関連ページ
 
 - [VXLAN / VNet 全体設計（概要ハブ）](vxlan-sonic.md) — 元 [HLD](../reference/glossary.md#term-hld) ページ

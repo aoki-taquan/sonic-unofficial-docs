@@ -96,6 +96,18 @@ flowchart LR
 - `show` で何も出ない → STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE` を `redis-cli` で直接確認
 - 抑制が効かない → `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の key 名と category 名のスペル確認
 
+### コマンド例
+
+SAI / SDK のエラーログと dump を確認する。
+
+```bash
+# SAI failure / SDK health
+docker logs syncd 2>&1 | grep -iE 'sai_status|fail|error' | tail
+ls -lt /var/dump/ | head
+show techsupport --silent --since '1 hour ago'
+redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/handle-ASIC-SDK-health-event/handle-ASIC-SDK-health-event.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

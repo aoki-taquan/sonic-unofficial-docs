@@ -230,6 +230,18 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
 - `APPL_DB` に SET したのにセッションが現れない場合、`BfdOrch` ログ・[syncd](../reference/glossary.md#term-syncd) ログに SAI エラーが出ていないか確認（SAI BFD 未対応 ASIC では create が失敗）
 - HW オフロード対応 SAI 属性は ASIC ベンダー依存。`SAI_BFD_SESSION_OFFLOAD_TYPE_FULL` を解釈できない実装では full offload にならない可能性あり
 
+### コマンド例
+
+BFD セッションと HW オフロード状態を確認する。
+
+```bash
+# BFD
+show bfd summary
+show bfd peer all
+redis-cli -n 4 keys 'BFD_SESSION|*'
+docker exec bgp vtysh -c 'show bfd peers' | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bfd/BFD HW Offload HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

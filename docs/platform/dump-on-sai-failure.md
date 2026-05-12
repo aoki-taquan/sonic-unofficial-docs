@@ -148,6 +148,19 @@ sudo show techsupport                    # dump も自動取り込み
 <!-- /diff-admonition -->
 
 <!-- next-action -->
+
+### コマンド例
+
+SAI / SDK のエラーログと dump を確認する。
+
+```bash
+# SAI failure / SDK health
+docker logs syncd 2>&1 | grep -iE 'sai_status|fail|error' | tail
+ls -lt /var/dump/ | head
+show techsupport --silent --since '1 hour ago'
+redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
+```
+
 ## このページを読んだ後の次アクション
 
 !!! tip "読み手向け"
