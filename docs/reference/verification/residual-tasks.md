@@ -132,4 +132,8 @@ find docs -name '*.md' -not -path 'docs/_meta/*' -exec wc -l {} + \
 - [sources-freshness](sources-freshness.md)
 - [stale-verified](stale-verified.md)
 
+## 関連スナップショット
+
+- [スナップショット](../../_meta/snapshot.md) — repo 全体の verification / coverage / lint 指標を 1 ページに集約した自動生成サマリ。本ページの残課題が全体指標のどの位置にあるか俯瞰する用途。
+
 <!-- glossary-links-injected: 130cca349dcf -->
