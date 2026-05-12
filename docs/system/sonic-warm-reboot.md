@@ -120,6 +120,15 @@ stateDiagram-v2
 - [11-reboot](../topics/11-reboot/index.md): warm / fast / express / cold の比較と運用全体像
 - [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): orchagent と SAI の init view / apply view プロトコル
 
+## 制限事項
+
+- **90 秒のデータプレーン断目標**: HLD は warm reboot のデータプレーン断を 90 秒以内に抑える設計目標を掲げるが、ASIC SDK の `sai-warmboot.bin` 復元時間や orchagent reconcile に依存し、ベンダー実装で延びることがある。
+- **BGP GR (Graceful Restart) 依存**: 隣接 BGP ルータが GR helper をサポートしないとピアセッション切断時にルートが drop される。FRR 側の `graceful-restart-time` と peer 側の対応が前提。
+- **config 変更の禁止**: warm reboot 進行中 (`pre-shutdown` → `reconcile` 完了まで) の config 変更は未定義動作。`config save` / `config reload` / runtime CLI 変更は避ける必要がある。
+- **対応コンテナの限定**: warm restart は対応する docker (`bgp` / `swss` / `syncd` / `teamd` / `nat` / 一部 `lldp`) のみで有効化される。それ以外のコンテナは cold restart 相当となる。
+- **multi-ASIC / chassis**: 単体スイッチを想定した設計で、multi-ASIC や VOQ chassis では追加の制約 (namespace 単位の順序、`multi-asic-warm-reboot` 補助 HLD) が必要。
+- **storage 要件**: `/host/warmboot/` 配下に `sai-warmboot.bin` などの状態ファイルが書き込めるディスク容量が必要。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/SONiC_Warmboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

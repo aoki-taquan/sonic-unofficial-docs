@@ -97,6 +97,14 @@ config muxcable mode auto all
 - [active-standby-dual-tor-internals.md](active-standby-dual-tor-internals.md) — 内部実装
 - [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) — 制限事項
 
+## 制限事項
+
+- **詳細な制限の正典は別ページ**: 設計上の制約は [active-standby-dual-tor-limitations.md](active-standby-dual-tor-limitations.md) を参照。本ページでは運用面で意識すべき制限のみを抜粋する。
+- **I2C アクセスは順次**: `MUX_CABLE` の `i2c_retry_count` を増やしても、I2C はバス共有でシリアル化されるため、同時 mux 切替の並列度は限られる。短時間に多数の切替を起こすとレイテンシが伸びる。
+- **`config mux` の即時反映なし**: CLI による mux state 変更は MuxOrch / linkmgrd 経由のため、`MUX_CABLE.state` が反映されるまで数秒のラグがある。
+- **`show mux status` の値は STATE_DB スナップショット**: 切替中のレース観測のため瞬間値は揺れる。安定値を見るときは 1 〜 2 秒空けて再取得する運用が必要。
+- **runbook 推奨**: 異常時のフロー切り分けは Dual-ToR 用 runbook (mux-state-flap, server-traffic-blackhole 等) を併用すること。CLI コマンド単独では切り分けきれないケースが多い。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

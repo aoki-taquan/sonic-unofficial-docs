@@ -209,6 +209,15 @@ sudo systemctl restart telemetry
 - フラグは渡っているのに保存されない場合、`sonic-host-services` の DBUS エンドポイント (`SaveStartupConfig` 相当) のログを確認する。v0.3 以降はエラーが返ってくれば gNMI クライアントへ伝播する設計になっているはずなので、Set のレスポンスを見ること。
 - 性能劣化が見られる場合、`save_on_set` を一時的に無効化（telemetry 再起動が必要）して切り分ける。
 
+## 制限事項
+
+- **Set ごとのディスク書き込み**: 1 Set ごとに ConfigDB を `/etc/sonic/config_db.json` に保存するため、大量の Set を高頻度で投入すると I/O コストが上がる。バルクで設定する運用ではこの機能を無効化したほうが望ましい場合がある。
+- **DBUS 依存**: 保存処理は telemetry コンテナから **ホスト側 `sonic-host-services` の DBUS** 経由で実行される。DBUS が利用できない環境 (古い image / unsupported プラットフォーム) では保存が失敗する。
+- **既定は無効**: `--with-save-on-set` フラグ未指定時は保存されない。CLI で Set した設定はリブートで失われる。
+- **`config save` との競合**: 同時に `config save` を実行すると、`/etc/sonic/config_db.json` への書き込みが race して中身が壊れる可能性がある。HLD は file lock の具体仕様まで踏み込んでいない。
+- **partial save の不在**: ConfigDB 全体を毎回保存する。差分保存 / 特定 table のみの保存はサポートされない。
+- **保存先固定**: 保存先パスは `/etc/sonic/config_db.json` 固定。代替パスを指定する API は無い。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/save_on_set.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
