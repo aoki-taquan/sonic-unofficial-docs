@@ -152,6 +152,18 @@ module: sonic-vnet
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VNET_ROUTE_TUNNEL`
 - CLI: `config vnet`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vxlan`](sonic-vxlan.md)
+- [`sonic-mux-cable`](sonic-mux-cable.md)
+- [`sonic-nvgre-tunnel`](sonic-nvgre-tunnel.md)
+- [`sonic-srv6`](sonic-srv6.md)
+- [`sonic-tunnel`](sonic-tunnel.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

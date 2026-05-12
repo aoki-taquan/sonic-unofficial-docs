@@ -104,6 +104,18 @@ module: sonic-queue
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `QUEUE`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-scheduler`](sonic-scheduler.md)
+- [`sonic-wred-profile`](sonic-wred-profile.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -132,6 +132,17 @@ module: sonic-copp
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_GROUP`
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `COPP_TRAP`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-flex_counter`](sonic-flex_counter.md)
+- [`sonic-debug-counter`](sonic-debug-counter.md)
+- [`sonic-mirror-session`](sonic-mirror-session.md)
+- [`sonic-pbh`](sonic-pbh.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

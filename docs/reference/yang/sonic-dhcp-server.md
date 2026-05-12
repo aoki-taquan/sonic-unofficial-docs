@@ -83,6 +83,17 @@ module: sonic-dhcp-server
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `DHCP_SERVER`
 - CLI: なし
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-dns`](sonic-dns.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-nat`](sonic-nat.md)
+- [`sonic-neigh`](sonic-neigh.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

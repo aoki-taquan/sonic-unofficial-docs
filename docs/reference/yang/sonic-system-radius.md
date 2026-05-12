@@ -128,6 +128,18 @@ module: sonic-system-radius
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `RADIUS|global`, `RADIUS_SERVER|<ipaddress>`
 - CLI: `config radius`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-loopback-interface`](sonic-loopback-interface.md)
+- [`sonic-mgmt_port`](sonic-mgmt_port.md)
+- [`sonic-system-aaa`](sonic-system-aaa.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

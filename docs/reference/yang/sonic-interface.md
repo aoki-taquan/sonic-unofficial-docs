@@ -113,6 +113,18 @@ module: sonic-interface
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `INTERFACE`
 - CLI: `config interface`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-vlan-sub-interface`](sonic-vlan-sub-interface.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-loopback-interface`](sonic-loopback-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -250,6 +250,18 @@ module: sonic-bgp-global
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS_AF`
 - CLI: `config bgp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

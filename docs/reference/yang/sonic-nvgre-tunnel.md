@@ -99,6 +99,18 @@ module: sonic-nvgre-tunnel
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `NVGRE_TUNNEL`, `NVGRE_TUNNEL_MAP`
 - CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-vxlan`](sonic-vxlan.md)
+- [`sonic-vnet`](sonic-vnet.md)
+- [`sonic-mux-cable`](sonic-mux-cable.md)
+- [`sonic-srv6`](sonic-srv6.md)
+- [`sonic-tunnel`](sonic-tunnel.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

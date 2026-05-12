@@ -118,6 +118,18 @@ module: sonic-fine-grained-ecmp
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `FG_NHG`, `FG_NHG_PREFIX`, `FG_NHG_MEMBER`
 - CLI: なし（[config_db.json](../../reference/glossary.md#term-config_db.json) で直接設定）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-port`](sonic-port.md)
+- [`sonic-hash`](sonic-hash.md)
+- [`sonic-route-common`](sonic-route-common.md)
+- [`sonic-trimming`](sonic-trimming.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

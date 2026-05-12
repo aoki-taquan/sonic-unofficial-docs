@@ -104,6 +104,18 @@ module: sonic-bgp-peerrange
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_PEER_RANGE`
 - CLI: なし（`bgpcfgd` が [config_db.json](../../reference/glossary.md#term-config_db.json) から読み取り [FRR](../../reference/glossary.md#term-frr) `bgp listen range` に反映）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-vnet`](sonic-vnet.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

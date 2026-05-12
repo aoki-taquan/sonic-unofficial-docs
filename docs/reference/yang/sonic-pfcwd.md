@@ -93,6 +93,18 @@ module: sonic-pfcwd
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PFC_WD`
 - CLI: `pfcwd`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+- [`sonic-buffer-profile`](sonic-buffer-profile.md)
+- [`sonic-buffer-queue`](sonic-buffer-queue.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

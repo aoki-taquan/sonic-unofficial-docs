@@ -93,6 +93,18 @@ module: sonic-fabric-monitor
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `FABRIC_MONITOR|FABRIC_MONITOR_DATA`
 - CLI: `config fabric monitor`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-fabric-port`](sonic-fabric-port.md)
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+- [`sonic-crm`](sonic-crm.md)
+- [`sonic-debug-counter`](sonic-debug-counter.md)
+- [`sonic-flex_counter`](sonic-flex_counter.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

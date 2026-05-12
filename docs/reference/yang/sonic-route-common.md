@@ -84,6 +84,18 @@ module: sonic-route-common
 
 - 関連 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) は本ページからは未リンク（[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブル名は本モジュールの top-level container と一致するのが通例）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-route-map`](sonic-route-map.md)
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-static-route`](sonic-static-route.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -105,6 +105,18 @@ module: sonic-tunnel
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `TUNNEL`
 - CLI: なし（DualToR 構築時に [config_db.json](../../reference/glossary.md#term-config_db.json) で直接設定）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-mux-cable`](sonic-mux-cable.md)
+- [`sonic-nvgre-tunnel`](sonic-nvgre-tunnel.md)
+- [`sonic-srv6`](sonic-srv6.md)
+- [`sonic-vnet`](sonic-vnet.md)
+- [`sonic-vxlan`](sonic-vxlan.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

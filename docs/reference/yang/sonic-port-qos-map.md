@@ -122,6 +122,18 @@ module: sonic-port-qos-map
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORT_QOS_MAP`
 - CLI: `config qos`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-tc-priority-group-map`](sonic-tc-priority-group-map.md)
+- [`sonic-tc-queue-map`](sonic-tc-queue-map.md)
+- [`sonic-pfc-priority-queue-map`](sonic-pfc-priority-queue-map.md)
+- [`sonic-pfc-priority-priority-group-map`](sonic-pfc-priority-priority-group-map.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

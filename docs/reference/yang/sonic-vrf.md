@@ -96,6 +96,18 @@ module: sonic-vrf
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VRF`
 - CLI: `config vrf`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-mgmt_vrf`](sonic-mgmt_vrf.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-route-common`](sonic-route-common.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-loopback-interface`](sonic-loopback-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

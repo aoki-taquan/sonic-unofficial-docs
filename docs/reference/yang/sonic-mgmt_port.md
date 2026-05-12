@@ -99,6 +99,18 @@ module: sonic-mgmt_port
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_PORT|<name>`
 - CLI: `config interface`（管理ポート用 サブセット）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-mgmt_interface`](sonic-mgmt_interface.md)
+- [`sonic-mgmt_vrf`](sonic-mgmt_vrf.md)
+- [`sonic-breakout_cfg`](sonic-breakout_cfg.md)
+- [`sonic-fabric-port`](sonic-fabric-port.md)
+- [`sonic-interface`](sonic-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

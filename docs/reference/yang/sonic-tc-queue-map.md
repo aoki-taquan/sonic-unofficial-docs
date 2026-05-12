@@ -92,6 +92,18 @@ module: sonic-tc-queue-map
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `TC_TO_QUEUE_MAP`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-dscp-tc-map`](sonic-dscp-tc-map.md)
+- [`sonic-port-qos-map`](sonic-port-qos-map.md)
+- [`sonic-pfc-priority-queue-map`](sonic-pfc-priority-queue-map.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

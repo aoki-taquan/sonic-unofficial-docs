@@ -87,6 +87,18 @@ module: sonic-bmp
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BMP|table`
 - CLI: `config bmp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

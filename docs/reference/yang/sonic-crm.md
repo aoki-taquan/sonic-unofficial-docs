@@ -129,6 +129,18 @@ module: sonic-crm
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `CRM|Config`
 - CLI: `crm config thresholds <type> <resource> ...`, `crm show resources`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-device_metadata`](sonic-device_metadata.md)
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+- [`sonic-debug-counter`](sonic-debug-counter.md)
+- [`sonic-fabric-monitor`](sonic-fabric-monitor.md)
+- [`sonic-flex_counter`](sonic-flex_counter.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

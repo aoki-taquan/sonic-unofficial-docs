@@ -97,6 +97,18 @@ module: sonic-bgp-device-global
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_DEVICE_GLOBAL`
 - CLI: `config bgp` (`tsa`/`wcmp`/`idf`), `show bgp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-monitor`](sonic-bgp-monitor.md)
+- [`sonic-bgp-neighbor`](sonic-bgp-neighbor.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -87,6 +87,18 @@ module: sonic-mgmt_vrf
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_VRF_CONFIG|vrf_global`
 - CLI: `config vrf add mgmt`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-mgmt_interface`](sonic-mgmt_interface.md)
+- [`sonic-mgmt_port`](sonic-mgmt_port.md)
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-loopback-interface`](sonic-loopback-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -86,6 +86,18 @@ module: sonic-breakout_cfg
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BREAKOUT_CFG`
 - CLI: `config interface breakout`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-fabric-port`](sonic-fabric-port.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-loopback-interface`](sonic-loopback-interface.md)
+- [`sonic-mgmt_interface`](sonic-mgmt_interface.md)
+- [`sonic-mgmt_port`](sonic-mgmt_port.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

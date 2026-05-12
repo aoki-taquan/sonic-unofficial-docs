@@ -162,6 +162,18 @@ module: sonic-port
 - CLI: `config interface`
 - CLI: `show interfaces`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-vlan`](sonic-vlan.md)
+- [`sonic-breakout_cfg`](sonic-breakout_cfg.md)
+- [`sonic-fabric-port`](sonic-fabric-port.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

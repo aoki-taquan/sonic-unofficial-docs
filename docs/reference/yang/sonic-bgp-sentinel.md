@@ -81,6 +81,18 @@ module: sonic-bgp-sentinel
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_SENTINELS|<sentinel_name>`
 - CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-neighbor`](sonic-bgp-neighbor.md)
+- [`sonic-bgp-peergroup`](sonic-bgp-peergroup.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+- [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

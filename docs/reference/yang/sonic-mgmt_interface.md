@@ -89,6 +89,18 @@ module: sonic-mgmt_interface
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `MGMT_INTERFACE|<name>|<ip_prefix>`
 - CLI: `config interface ip add eth0 <addr>`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-mgmt_port`](sonic-mgmt_port.md)
+- [`sonic-mgmt_vrf`](sonic-mgmt_vrf.md)
+- [`sonic-breakout_cfg`](sonic-breakout_cfg.md)
+- [`sonic-fabric-port`](sonic-fabric-port.md)
+- [`sonic-interface`](sonic-interface.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

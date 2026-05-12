@@ -97,6 +97,18 @@ module: sonic-dns
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `DNS_OPTIONS`
 - CLI: `config dns`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-system-defaults`](sonic-system-defaults.md)
+- [`sonic-dhcp-server`](sonic-dhcp-server.md)
+- [`sonic-interface`](sonic-interface.md)
+- [`sonic-nat`](sonic-nat.md)
+- [`sonic-neigh`](sonic-neigh.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

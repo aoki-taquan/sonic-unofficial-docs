@@ -113,6 +113,18 @@ module: sonic-wred-profile
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `WRED_PROFILE`
 - CLI: `config qos`, `show qos`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-queue`](sonic-queue.md)
+- [`sonic-port-qos-map`](sonic-port-qos-map.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+- [`sonic-buffer-profile`](sonic-buffer-profile.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

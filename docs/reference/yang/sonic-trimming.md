@@ -89,6 +89,18 @@ module: sonic-trimming
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `SWITCH_TRIMMING|GLOBAL`
 - CLI: `config switch-trimming`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-buffer-profile`](sonic-buffer-profile.md)
+- [`sonic-queue`](sonic-queue.md)
+- [`sonic-dscp-tc-map`](sonic-dscp-tc-map.md)
+- [`sonic-fine-grained-ecmp`](sonic-fine-grained-ecmp.md)
+- [`sonic-hash`](sonic-hash.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

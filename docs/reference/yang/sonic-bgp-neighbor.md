@@ -257,6 +257,18 @@ module: sonic-bgp-neighbor
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_NEIGHBOR_AF`
 - CLI: `config bgp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-bgp-global`](sonic-bgp-global.md)
+- [`sonic-bgp-peergroup`](sonic-bgp-peergroup.md)
+- [`sonic-route-map`](sonic-route-map.md)
+- [`sonic-port`](sonic-port.md)
+- [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

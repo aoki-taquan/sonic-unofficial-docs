@@ -75,6 +75,18 @@ module: sonic-tc-priority-group-map
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `TC_TO_PRIORITY_GROUP_MAP|<name>`、`PORT_QOS_MAP|<port>/tc_to_pg_map` から参照
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port-qos-map`](sonic-port-qos-map.md)
+- [`sonic-buffer-pg`](sonic-buffer-pg.md)
+- [`sonic-buffer-pool`](sonic-buffer-pool.md)
+- [`sonic-buffer-profile`](sonic-buffer-profile.md)
+- [`sonic-buffer-queue`](sonic-buffer-queue.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

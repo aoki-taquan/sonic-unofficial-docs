@@ -145,6 +145,18 @@ module: sonic-pbh
 - CONFIG_DB: `PBH_TABLE`
 - CLI: なし
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-copp`](sonic-copp.md)
+- [`sonic-debug-counter`](sonic-debug-counter.md)
+- [`sonic-mirror-session`](sonic-mirror-session.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -144,6 +144,18 @@ module: sonic-ntp
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `NTP_KEY`
 - CLI: `config ntp`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-system-aaa`](sonic-system-aaa.md)
+- [`sonic-mgmt_vrf`](sonic-mgmt_vrf.md)
+- [`sonic-banner`](sonic-banner.md)
+- [`sonic-device_metadata`](sonic-device_metadata.md)
+- [`sonic-feature`](sonic-feature.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -110,6 +110,18 @@ module: sonic-vlan-sub-interface
 - CLI: `config subinterface`
 - CLI: `show subinterfaces`
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-vnet`](sonic-vnet.md)
+- [`sonic-breakout_cfg`](sonic-breakout_cfg.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

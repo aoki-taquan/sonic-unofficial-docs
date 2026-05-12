@@ -84,6 +84,18 @@ module: sonic-versions
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `VERSIONS|DATABASE` キーで `VERSION` フィールドを保持
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-banner`](sonic-banner.md)
+- [`sonic-device_metadata`](sonic-device_metadata.md)
+- [`sonic-feature`](sonic-feature.md)
+- [`sonic-fips`](sonic-fips.md)
+- [`sonic-kdump`](sonic-kdump.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -81,6 +81,18 @@ module: sonic-neigh
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `NEIGH|<port>|<neighbor>`
 - CLI: なし（[CONFIG_DB](../../reference/glossary.md#term-config_db) 直接設定 / minigraph）
 
+<!-- yang-sibling -->
+### 関連 YANG モジュール
+
+意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
+
+- [`sonic-port`](sonic-port.md)
+- [`sonic-portchannel`](sonic-portchannel.md)
+- [`sonic-vlan`](sonic-vlan.md)
+- [`sonic-dhcp-server`](sonic-dhcp-server.md)
+- [`sonic-dns`](sonic-dns.md)
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
