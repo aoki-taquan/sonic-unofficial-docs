@@ -21,6 +21,7 @@ related:
   - show arp
   - show ndp
   yang:
+  - sonic-warm-restart
   - sonic-crm
 ---
 
