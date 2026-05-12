@@ -6,6 +6,7 @@ nav:
   - config-db-orch-map.md
   - yang
   - style-guide.md
+  - lints.md
   - glossary.md
   - sai-attributes.md
   - verification
