@@ -29,6 +29,14 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
 <!-- /topics-tip -->
 
+!!! info "派生ページ（章ごとに分割）"
+    本ページは大型 HLD のため、用途別の派生ページに章分割した。本ページは引き続き「正本」として全文を保持する。
+
+    - 概念 / モード定義: [switch-port-modes-and-vlan-cli-concepts](switch-port-modes-and-vlan-cli-concepts.md)
+    - 内部実装 (YANG / CONFIG_DB / db_migrator): [switch-port-modes-and-vlan-cli-internals](switch-port-modes-and-vlan-cli-internals.md)
+    - 設定例 / 運用 / トラブルシューティング: [switch-port-modes-and-vlan-cli-operations](switch-port-modes-and-vlan-cli-operations.md)
+    - HLD と実装の乖離 (CLI 引数の差分と回避策): [switch-port-modes-and-vlan-cli-discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md)
+
 !!! warning "裏取りステータス: Discrepancy-found"
     sonic-utilities `config/switchport.py` L17 で `mode_type` enum `["access", "trunk", "routed"]` を、L57-78 で `port_data["mode"]` への書き込みを確認、`config/main.py` L119 で `PORT_MODE = "switchport_mode"` 定数定義、L1787 `config.add_command(switchport.switchport)` 登録、L5777 で `interface_mode == "trunk" or interface_mode == "access"` 判定を確認。YANG 側は sonic-yang-models `yang-models/sonic-port.yang` L86-89 / `sonic-portchannel.yang` L71 で `leaf mode { type stypes:switchport_mode; }`、`sonic-types.yang.j2` L244 で `typedef switchport_mode` を確認。
     

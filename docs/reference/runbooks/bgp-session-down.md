@@ -31,6 +31,25 @@ related:
 - Peer の確立後すぐ flap する (`Established` → `Idle`)
 - Container `bgp` 内では [FRR](../../reference/glossary.md#term-frr) (bgpd) が動作しているが、SONiC 側 `show` で peer が表示されない
 
+## 確認コマンド
+
+最初に状態を 1 枚で確認するためのワンライナー集 (詳細手順は後述「切り分け手順」)。
+
+```bash
+# Peer State / AS / Uptime の一覧
+show ip bgp summary
+
+# 特定 peer の詳細 (Active / OpenSent / Established 等)
+docker exec bgp vtysh -c "show bgp neighbor <peer_ip>"
+
+# CONFIG_DB と FRR の整合
+sonic-db-cli CONFIG_DB hgetall "BGP_NEIGHBOR|<peer_ip>"
+docker exec bgp vtysh -c "show running-config" | grep -A5 "router bgp"
+
+# notification 抽出 (直近のエラー)
+docker exec bgp tail -n 200 /var/log/frr/bgpd.log | grep -iE "notification|fsm"
+```
+
 ## 想定原因（優先度順）
 
 1. **L1 / L2 / L3 の事前条件が満たされていない**: interface oper down、IP 未設定、MTU 不一致、対向側 [ACL](../../reference/glossary.md#term-acl) でブロック

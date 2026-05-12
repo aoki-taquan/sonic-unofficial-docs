@@ -51,6 +51,9 @@ jobs:
       - name: Check runbook verification status
         run: python3 meta/scripts/check_runbook_status.py --check
 
+      - name: Report runbook structure (5-section check, informational)
+        run: python3 meta/scripts/check_runbook_structure.py --check || true
+
       - name: Report citation-deficient pages (informational)
         run: python3 meta/scripts/check_citation_quality.py --check
 

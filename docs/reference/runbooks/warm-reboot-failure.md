@@ -53,6 +53,24 @@ related:
 - `warm-reboot` 自体が途中で abort して通常の `reboot` にフォールバックする
 - 再起動後に [SAI](../../reference/glossary.md#term-sai) object が再生成され、[FDB](../../reference/glossary.md#term-fdb) / [ARP](../../reference/glossary.md#term-arp) / Route が全部 relearn になっている
 
+## 確認コマンド
+
+```bash
+# Warm Restart enable / state
+show warm_restart config
+show warm_restart state
+sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|swss"
+sonic-db-cli CONFIG_DB hgetall "WARM_RESTART|bgp"
+sonic-db-cli STATE_DB hgetall "WARM_RESTART_TABLE|orchagent"
+
+# warm boot 前のチェック (pending op)
+sudo /usr/local/bin/check_warmboot_progress.sh 2>/dev/null || true
+docker logs swss 2>&1 | grep -iE "warm.*restore|reconcil" | tail -50
+
+# BGP graceful-restart capability
+docker exec bgp vtysh -c "show bgp neighbor" | grep -A3 "Graceful Restart"
+```
+
 ## 想定原因
 
 1. **`WARM_RESTART` テーブルで該当機能が enable されていない** (bgp / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / swss / [syncd](../../reference/glossary.md#term-syncd) / nat 等)
