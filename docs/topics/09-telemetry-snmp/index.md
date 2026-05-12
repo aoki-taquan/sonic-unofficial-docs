@@ -119,7 +119,7 @@ related:
 | setup | ✅ 完成 (248 行) | meta |
 | operations | ✅ 完成 (187 行) | meta |
 | internals | ✅ 完成 (129 行) | meta |
-| advanced | ⚠️ プレースホルダ (90 行) | meta |
+| advanced | ✅ 完成 (118 行) | meta |
 
 <!-- /chapter-progress -->
 

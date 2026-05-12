@@ -122,4 +122,30 @@ sonic-clear dhcprelay_counters
 - DHCPv6 relay agent のループバック source、Option 79、counter export 周辺が community PR で議題に上がる頻度が高い。
 - [DASH](../../reference/glossary.md#term-dash) / SmartSwitch との接続を見据え、mux state を外部 controller (NSM / SDN) と同期するインタフェース提案が散見される。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [tunnel DSCP remap](../../overlay/dscp-remapping-for-tunnel-traffic.md), [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md) で完結する。linkmgrd state machine の論理と `APP_DB:MUX_CABLE_TABLE` の遷移は internals で詳細化済み。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config mux`, `show mux`, `show muxcable` 系、および `MUX_CABLE`, `MUX_LINKMGR`, `TUNNEL` の各 [CONFIG_DB スキーマ](../../reference/config-db/index.md)、`sonic-mux*` YANG モジュールで網羅される。
+- **本ページ** は tunnel DSCP remap / DHCPv6 loopback / link prober offload など、章境界をまたぐクロスオーバー領域と、Active-Active / SmartSwitch 連携といった発展トピックのみを扱う。
+
+## トラブルシュート観点
+
+- mux state が `unknown` のまま固着するときは、まず `show muxcable status` で peer 側の最新状態と、`linkmgrd` のログ (`/var/log/syslog` の `LINKMGRD` 行) を確認する。peer ToR への gRPC / ICMP 到達性、`LinkProber` の RTT 統計、`MUX_CABLE_RESPONSE_TABLE` の応答有無が決め手になる。
+- standby 経由のバウンスバックで packet loss が発生するときは、`show pfc counters` と `show queue counters` で対象 PG / queue が tunnel 用にマップされているかを確認する。`DSCP_TO_TC_MAP|AZURE_TUNNEL` などの専用 map が抜けていると、通常 PG と衝突する。
+- DHCPv6 が片側 ToR で取得できない場合は `show dhcp6relay_counters` を両 ToR で見比べる。`use-loopback-address` の片肺設定、または Option 79 の有無で relay-forward が破棄されているケースが多い。
+
+## 検証パスとラボ要件
+
+- linkmgrd の state machine 検証は `sonic-mgmt` の `dualtor` テストグループで実施する。`toggle_mux_status` / `link_flap` / `peer_down` の組合せを minute 単位で連続走行し、`MUX_CABLE_TABLE` の遷移と上流 BGP の収束時間 (target: < 1s) を計測する。
+- tunnel DSCP remap の検証では、サーバ→standby ToR→active ToR→上流の経路で `tcpreplay` などにより 0.1〜10Gbps の負荷をかけ、`show queue counters` で tunnel 用 queue が分離されていること、PFC pause が通常経路へ波及しないことを確認する。
+- DHCPv6 loopback source mode は両 ToR で同時に `use-loopback-address enable` を設定したうえで、client → relay-forward → server → relay-reply の Wireshark/`tcpdump` キャプチャを取得し、loopback IP が source として一貫しているかを点検する。
+
+## 関連ページ (追補)
+
+- [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
+- [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
+- [02 BGP: Dual-ToR の上流到達性と graceful drain](../02-bgp/index.md)
+- [13 DASH / SmartSwitch: DPU と mux state の同期](../13-dash-smartswitch/index.md)
+- [14 Platform / Port / Optics: link prober の hardware offload](../14-platform-port-optics/index.md)
+
 <!-- glossary-links-injected: 76b7df4b6b16 -->

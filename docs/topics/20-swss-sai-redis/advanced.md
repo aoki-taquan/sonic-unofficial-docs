@@ -100,4 +100,34 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 - `system-health` / `sysmonitor` で closest UP status の event 集約ロジック改善が議題化。
 - Redis 6.2 → 7.x への対応検討と、複数 Redis instance での scale 改善議論が続く。
 
+## ハンドオフ
+
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [System Ready HLD](../../system/system-ready-hld.md), [view switching in ProducerStateTable](../../switching/view-switching-in-producerstatetable.md), [config reload enhancement](../../management/config-reload-enhancement.md) で完結する。`orchagent` の event loop、`syncd` の SAI binding、Redis pub/sub の責務分担は internals で詳述。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `swssloglevel`, `saictl`, `redis-cli`、`FEATURE`, `DEVICE_METADATA`, `COUNTERS_DB` 各種 [CONFIG_DB スキーマ](../../reference/config-db/index.md) に集約。
+- **本ページ** は ProducerStateTable view switching、SAI bulk API、Redis 7.x 移行、複数 Redis instance、closest UP status などの「実装基盤の進化」発展領域だけを扱う。
+
+## トラブルシュート観点
+
+- orchagent が CPU 100% で hang する場合は、`docker exec swss orchent --dump-state` (debug build) や `swssloglevel -l DEBUG -c orchagent` でログを上げ、`ASIC_DB` の特定テーブル更新でループしているかを点検する。SAI bulk API 失敗時のリトライ無限ループも疑う。
+- COUNTERS_DB が肥大化して redis OOM が起きる場合、`redis-cli -n 2 info memory` で used_memory を確認し、`FLEX_COUNTER_TABLE` の polling 間隔と counter group 数を見直す。`maxmemory-policy noeviction` の維持は必須。
+- FEATURE 起動順 race による依存先未起動は、`show feature status` と `systemctl list-dependencies sonic.target` で `delayed` / `auto_restart` の設定を確認し、`/etc/sonic/feature_advanced.json` の dependency を補正する。
+
+## 検証パスとラボ要件
+
+- orchagent throughput 検証は CONFIG_DB に 10k〜100k entry (route / FDB / ACL rule) を一括投入し、ASIC_DB 反映までのレイテンシを計測する。SAI bulk API 利用時の倍率向上 (target 2x〜5x) を確認する。
+- view switching 検証は warm reboot を多数回繰り返し、`ProducerStateTable` の view A/B 切替と、orchagent / syncd の状態差分が cleanup される過程を `redis-cli` で観察する。
+- closest UP status 検証は意図的に container を 1 つ kill し、`system-health` / `sysmonitor` の event aggregation で上位 status (`Operational`/`Degraded`/`Failed`) が期待通り遷移することを確認する。
+
+## 関連ページ (追補)
+
+- [System Ready HLD](../../system/system-ready-hld.md)
+- [SONiC bulk counter design](../../architecture/sonic-bulk-counter-design.md)
+- [SONiC optional feature control enhancement](../../system/sonic-optional-feature-control-enhancement.md)
+- [view switching in ProducerStateTable](../../switching/view-switching-in-producerstatetable.md)
+- [config reload enhancement](../../management/config-reload-enhancement.md)
+- [02 BGP: orchagent の route programming throughput](../02-bgp/index.md)
+- [09 Telemetry / SNMP: COUNTERS_DB の polling](../09-telemetry-snmp/index.md)
+- [11 Reboot: warm reboot と view switching](../11-reboot/index.md)
+- [21 Lab / Developer: dev container 内での swss/sai 開発](../21-lab-vs-developer/index.md)
+
 <!-- glossary-links-injected: 1a6c1d175ab5 -->
