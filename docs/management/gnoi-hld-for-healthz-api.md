@@ -234,7 +234,6 @@ gnoi_client healthz acknowledge \
 - HLD 2025-06 v0.1 と現行 master の差分有無
 -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

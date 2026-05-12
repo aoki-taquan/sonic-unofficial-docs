@@ -247,7 +247,6 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 
 <!-- /topics-back-ref -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

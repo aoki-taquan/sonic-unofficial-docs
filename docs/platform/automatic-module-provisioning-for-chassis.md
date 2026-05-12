@@ -245,7 +245,6 @@ HLD では新しい [CONFIG_DB](../reference/glossary.md#term-config_db) スキ�
 
 <!-- /topics-back-ref -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

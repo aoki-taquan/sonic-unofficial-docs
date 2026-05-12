@@ -311,7 +311,6 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 
 <!-- /topics-back-ref -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:
@@ -321,6 +320,5 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 - [`sonic-port` YANG モジュール](../reference/yang/sonic-port.md)
 
 <!-- augmented-links: v1 -->
-
 
 <!-- glossary-links-injected: 710f941d149a -->

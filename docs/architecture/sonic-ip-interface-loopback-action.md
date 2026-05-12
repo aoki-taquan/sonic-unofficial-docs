@@ -247,7 +247,6 @@ show ip interfaces loopback-action
 
 [^1]: `sonic-net/SONiC` `doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

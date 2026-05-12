@@ -1,0 +1,116 @@
+---
+title: 動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）
+description: 動的ポート add/del の運用。zero-port 起動から redis-cli でのポート追加例、安全な port 削除の手順、トラブルシューティングを扱う。
+area: acl-qos
+verification: discrepancy-found
+monitor: partially_implemented
+last_verified: 2026-05-11
+page_kind: split-child
+sources:
+- repo: sonic-net/SONiC
+  path: doc/port-add-del-dynamically/dynamic_port_add_del_hld.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+related:
+  config_db:
+  - PORT
+  - DEBUG_COUNTER
+  - BUFFER_PG
+  - VLAN
+  - ACL_TABLE
+  - VLAN_MEMBER
+  cli:
+  - config interface
+  - config vlan
+  - show vlan
+  - show acl
+  - config acl
+  yang:
+  - sonic-port
+  - sonic-vlan
+---
+
+# 動的ポート add/del 設定と運用
+
+このページは [動的ポート add/del（概要ハブ）](enhancements-to-add-or-del-ports-dynamically.md) の派生で、**設定経路と安全な運用手順** に絞る。概念は [enhancements-to-add-or-del-ports-dynamically-concepts.md](enhancements-to-add-or-del-ports-dynamically-concepts.md)、内部実装は [enhancements-to-add-or-del-ports-dynamically-internals.md](enhancements-to-add-or-del-ports-dynamically-internals.md)、HLD と実装の乖離は [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md) を参照。
+
+## 1. 関連する CONFIG_DB
+
+| Table | 用途 |
+|-------|------|
+| `PORT` | 動的 add/del の対象。`admin_status`、`speed`、`mtu` 等 |
+| `DEBUG_COUNTER` | port ingress/egress drop counter（動的に作成）|
+| `BUFFER_PG` 系 | port 削除前に必ず先に削除 |
+
+## 2. 関連する CLI
+
+特定 CLI は HLD 内で追加されない。`config_db.json` 直接編集または `redis-cli` で `CONFIG_DB.PORT` を操作する想定[^1]。
+
+## 3. 設定例（zero-port 起動からのポート追加）
+
+```bash
+# zero-port SKU で起動後、redis 経由でポート追加
+redis-cli -n 4 HMSET 'PORT|Ethernet0' \
+  speed 100000 admin_status down lanes 0,1,2,3 mtu 9100
+
+# buffer 設定は別途投入（ref counter 経由）
+# 最後に admin up
+redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
+```
+
+## 4. 安全な port 削除手順（運用 runbook）
+
+!!! warning "HLD の ref counter は未取り込み"
+    HLD は port 削除時の race を「ref counter による orchagent 側の自動拒否」で守ると述べているが、現行 master ではこの拒否ロジックが存在しない（詳細は [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md)）。**運用側で全部やりきる**しかない。
+
+port 削除の安全手順:
+
+```bash
+PORT=Ethernet64
+
+# 1) 全依存を列挙
+for db in 4 6; do
+  sonic-db-cli $([ "$db" = "4" ] && echo CONFIG_DB || echo STATE_DB) keys "*$PORT*"
+done
+
+# 2) ACL バインド解除
+for tbl in $(sonic-db-cli CONFIG_DB keys 'ACL_TABLE|*'); do
+  ports=$(sonic-db-cli CONFIG_DB hget "$tbl" ports)
+  if [[ "$ports" == *"$PORT"* ]]; then
+    new=$(echo "$ports" | sed "s/,$PORT//;s/$PORT,//;s/^$PORT$//")
+    sonic-db-cli CONFIG_DB hset "$tbl" ports "$new"
+  fi
+done
+
+# 3) VLAN / PortChannel メンバ解除
+for vm in $(sonic-db-cli CONFIG_DB keys "VLAN_MEMBER|*|$PORT"); do
+  sonic-db-cli CONFIG_DB del "$vm"
+done
+for pcm in $(sonic-db-cli CONFIG_DB keys "PORTCHANNEL_MEMBER|*|$PORT"); do
+  sonic-db-cli CONFIG_DB del "$pcm"
+done
+
+# 4) buffer PG / queue / qos-map をすべて消す
+for k in $(sonic-db-cli CONFIG_DB keys "BUFFER_PG|$PORT|*" "BUFFER_QUEUE|$PORT|*" "QUEUE|$PORT|*" "PORT_QOS_MAP|$PORT"); do
+  sonic-db-cli CONFIG_DB del "$k"
+done
+
+# 5) admin down → 削除
+sudo config interface shutdown $PORT
+sonic-db-cli CONFIG_DB del "PORT|$PORT"
+
+# 6) orchagent ログで SAI_STATUS_OBJECT_IN_USE が出ていないか確認
+sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
+```
+
+自動化する場合、削除前に `redis-cli -n 4 keys '*|<port>*'` で残依存を列挙して 0 件になることを確認する pre-check を入れる。
+
+## 5. トラブルシューティング
+
+- ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。orchagent 連動が止まっている可能性。
+- ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
+- [LLDP](../reference/glossary.md#term-lldp) が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
+- zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
+
+## 引用元
+
+[^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -256,7 +256,6 @@ sudo reset-factory keep-basic
 - gNOI FactoryReset との関係
 -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

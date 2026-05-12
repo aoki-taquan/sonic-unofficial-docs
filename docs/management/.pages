@@ -15,6 +15,10 @@ nav:
   - gnoi-hld-for-os-apis.md
   - gnoi-hld-for-system-apis.md
   - gnsi-hld.md
+  - gnsi-hld-concepts.md
+  - gnsi-hld-operations.md
+  - gnsi-hld-internals.md
+  - gnsi-hld-limitations.md
   - openconfig-support-for-ethernet-interfaces.md
   - smart-switch-gnmi-feedback-design-omit-in-toc.md
   - sonic-gnmi-server-interface-design.md

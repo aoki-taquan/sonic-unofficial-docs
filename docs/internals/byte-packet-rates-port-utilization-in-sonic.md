@@ -285,7 +285,6 @@ config rate smoothing_interval port 5    # EMA N=5
 
 <!-- /topics-back-ref -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

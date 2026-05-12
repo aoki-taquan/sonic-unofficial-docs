@@ -1250,7 +1250,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (24)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (23)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (23)
-- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (21)
+- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (22)
 
 ### [config_db.json](#term-config_db.json)
 
@@ -1327,10 +1327,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [DPB](#term-dpb)
 
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (5)
+- [動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）](../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations.md) (2)
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (2)
 - [サイトマップ](../_meta/sitemap.md) (1)
 - [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../architecture/port-profile-init-hld.md) (1)
-- [Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）](../architecture/sonic-policy-based-hashing.md) (1)
 
 ### [DPDK](#term-dpdk)
 
@@ -1474,7 +1474,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (28)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (23)
 - [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (23)
-- [gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル](../management/gnsi-hld.md) (19)
+- [gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル](../management/gnsi-hld.md) (20)
 
 ### [GCU](#term-gcu)
 
@@ -1502,7 +1502,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (64)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (68)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (34)
 - [gNMI Master Arbitration（election ID と SetRequest 拡張）](../management/gnmi-master-arbitration-hld.md) (31)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (30)
@@ -1734,11 +1734,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [portsyncd](#term-portsyncd)
 
-- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (16)
+- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (17)
 - [config reload の event-driven 化（FEATURE.delayed + PortInitDone）](../management/config-reload-enhancement.md) (8)
+- [動的ポート add/del 概念（zero-port 起動と post-init モデル）](../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts.md) (7)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (7)
-- [VOQ シャシでの recirculation port サポート（Inb / Rec ポートロール）](../platform/recirculation-port-support-on-voq-chassis.md) (5)
-- [ポート Auto-Negotiation（advertised-speeds / interface-type）](../architecture/sonic-port-auto-negotiation-design.md) (3)
+- [動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）](../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations.md) (5)
 
 ### [port_config.ini](#term-port-config-ini)
 
