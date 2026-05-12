@@ -57,7 +57,7 @@ MIRROR_SESSION|<name>
 | `src_ip` | ip-address | ERSPAN 時 | - | ERSPAN 外側 IP のソース |
 | `dst_ip` | ip-address | ERSPAN 時 | - | ERSPAN 外側 IP の宛先 |
 | `gre_type` | hex / dec uint16 | no | `0x88be` | ERSPAN 外側 GRE type |
-| `dscp` | uint8 (0..63) | no | - | ERSPAN 外側 DSCP |
+| `dscp` | uint8 (0..63) | no | - | ERSPAN 外側 [DSCP](../../reference/glossary.md#term-dscp) |
 | `ttl` | uint8 (0..255) | no | - | ERSPAN 外側 TTL |
 | `queue` | uint8 | no | - | ミラーフレームを送出する egress queue |
 | `dst_port` | leafref `PORT.name` または `CPU` | SPAN 時 | - | SPAN 出力ポート |
@@ -127,4 +127,4 @@ show mirror_session
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

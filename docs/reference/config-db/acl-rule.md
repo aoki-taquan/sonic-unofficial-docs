@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`ACL_TABLE` 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、DSCP 上書き、DTel 等) を持つ[^1]。`AclOrch` が `ACL_TABLE` 配下のルールを [SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) entry として展開する。
+`ACL_TABLE` 内の個別ルールを定義する。優先度、match 条件 (5-tuple、TCP flags、TC、ICMP、tunnel inner、metadata 等)、action (PACKET_ACTION、REDIRECT、MIRROR、COUNTER、[DSCP](../../reference/glossary.md#term-dscp) 上書き、DTel 等) を持つ[^1]。`AclOrch` が `ACL_TABLE` 配下のルールを [SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) entry として展開する。
 
 !!! warning "YANG 未定義"
     `ACL_RULE` テーブルは YANG モジュールで未定義。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}`。
@@ -79,7 +79,7 @@ ACL_RULE|<table_name>|<rule_name>
 | `VLAN_ID` | uint16 |
 | `TCP_FLAGS` | `<flags>/<mask>` |
 | `IP_TYPE` | enum (`ANY`/`IP`/`NON_IP`/`IPV4ANY`/`IPV6ANY`/...) |
-| `DSCP` / `TC` | DSCP / TC 値 |
+| `DSCP` / `TC` | [DSCP](../../reference/glossary.md#term-dscp) / TC 値 |
 | `ICMP_TYPE` / `ICMP_CODE` / `ICMPV6_TYPE` / `ICMPV6_CODE` | ICMP |
 | `TUNNEL_VNI` | VNI |
 | `INNER_ETHER_TYPE` / `INNER_IP_PROTOCOL` / `INNER_L4_SRC_PORT` / `INNER_L4_DST_PORT` | inner header |
@@ -100,7 +100,7 @@ ACL_RULE|<table_name>|<rule_name>
 | `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` / `FLOW_SAMPLE_PERCENT` / `REPORT_ALL_PACKETS` | DTel (`DTEL_*`) |
 | `COUNTER` | カウンタ装着 |
 | `META_DATA_ACTION` | metadata 上書き |
-| `DSCP_ACTION` | DSCP 上書き |
+| `DSCP_ACTION` | [DSCP](../../reference/glossary.md#term-dscp) 上書き |
 | `INNER_SRC_MAC_REWRITE_ACTION` | inner SRC MAC rewrite |
 
 ユーザ定義型 (`ACL_TABLE_TYPE`) を使う場合、ここで使える match / action は `ACL_TABLE_TYPE.MATCHES` / `.ACTIONS` で許可された集合に限られる。
@@ -166,4 +166,4 @@ aclshow -a -t EVERFLOW
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: bf720d5ccd5d -->
+<!-- glossary-links-injected: b4c5898e0257 -->

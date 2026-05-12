@@ -48,7 +48,7 @@ related:
 
 ## 概要
 
-Everflow（[SAI](../reference/glossary.md#term-sai) mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく **本番に近い構成での functional / negative テスト** を行うプラン[^1]。[LAG](../reference/glossary.md#term-lag)・[BGP](../reference/glossary.md#term-bgp) route advertise・[ECMP](../reference/glossary.md#term-ecmp) next-hop 変動・neighbor MAC 変更・policer DSCP enforcement を含む。
+Everflow（[SAI](../reference/glossary.md#term-sai) mirror session ベースのトラフィックミラーリング）について、SAI API の単体テストではなく **本番に近い構成での functional / negative テスト** を行うプラン[^1]。[LAG](../reference/glossary.md#term-lag)・[BGP](../reference/glossary.md#term-bgp) route advertise・[ECMP](../reference/glossary.md#term-ecmp) next-hop 変動・neighbor MAC 変更・policer [DSCP](../reference/glossary.md#term-dscp) enforcement を含む。
 
 旧 Everflow テストプランからの拡張点:
 
@@ -152,7 +152,7 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 
 - **ACL Flex Counter**: `aclshow` の counter は別 framework 由来（rule 単位）。テストの counter assertion はここに依存
 - **Mirror session resolve**: best match route 経由・neighbor MAC で encap header を組むため、route / neighbor 変動に追随する [neighorch / mirrororch] 挙動が前提
-- **Policer**: rule に policer を載せた場合の rate / DSCP enforcement 確認
+- **[Policer](../reference/glossary.md#term-policer)**: rule に policer を載せた場合の rate / DSCP enforcement 確認
 
 ## トラブルシューティング
 
@@ -188,4 +188,4 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 33e61764da82 -->
+<!-- glossary-links-injected: 61eb99dc6b8c -->

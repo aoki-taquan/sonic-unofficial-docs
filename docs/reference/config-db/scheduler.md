@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-キュー / ポートに適用するスケジューラ（DWRR / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) scheduler を生成、`QUEUE.scheduler` から leafref で参照される。
+キュー / ポートに適用するスケジューラ（[DWRR](../../reference/glossary.md#term-dwrr) / WRR / STRICT）と dual-rate token bucket policer (CIR / PIR / CBS / PBS) のプロファイルを保持する[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) scheduler を生成、`QUEUE.scheduler` から leafref で参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -52,7 +52,7 @@ SCHEDULER|<name>
 |-----------|----|------|-----------|------|
 | `name` (key) | string | ✅ | - | スケジューラ名 |
 | `type` | enum `DWRR`/`WRR`/`STRICT` | - | `WRR` | スケジューリングアルゴリズム |
-| `weight` | uint8 (1..100) | - | `1` | 重み（DWRR/WRR で使用） |
+| `weight` | uint8 (1..100) | - | `1` | 重み（[DWRR](../../reference/glossary.md#term-dwrr)/WRR で使用） |
 | `priority` | uint8 (0..9) | - | - | 優先度 |
 | `meter_type` | enum `packets`/`bytes` | - | `bytes` | meter 単位 |
 | `cir` | uint64 | - | - | committed information rate（Bps or Pps） |
@@ -118,4 +118,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 812c93439b0b -->
+<!-- glossary-links-injected: 3bdddda32f9d -->

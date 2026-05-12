@@ -84,7 +84,7 @@ ACL_TABLE|<table_name>
 - `MUX` ... dual-ToR mux 用
 - `DROP` ... drop 専用最適化
 - `MARK_META` / `MARK_META_V6` ... メタデータマーキング
-- `EGR_SET_DSCP` ... egress DSCP 上書き
+- `EGR_SET_DSCP` ... egress [DSCP](../../reference/glossary.md#term-dscp) 上書き
 - `CTRLPLANE` ... コントロールプレーン (`copp` 制御)
 
 ユーザ定義型は `ACL_TABLE_TYPE|<name>` でフィールド `MATCHES` / `ACTIONS` / `BPOINT_TYPES` を指定する。
@@ -158,4 +158,4 @@ aclshow -a
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 83944bad94c7 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

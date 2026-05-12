@@ -35,7 +35,7 @@ related:
 
 1. **`FLEX_COUNTER_TABLE|ACL` / `FLEX_COUNTER_TABLE|RIF` が disable**
 2. **[ACL](../../reference/glossary.md#term-acl) rule が ASIC に install されていない**: [orchagent](../../reference/glossary.md#term-orchagent) エラーで install 失敗
-3. **rule の match 条件にトラフィックが該当していない** (DSCP / src_ip / in_port のミスマッチ)
+3. **rule の match 条件にトラフィックが該当していない** ([DSCP](../../reference/glossary.md#term-dscp) / src_ip / in_port のミスマッチ)
 4. **rule 優先度 (`PRIORITY`) が他 rule に隠されている**: 先に match した別 rule に取られている
 5. **stage / type 不一致**: L3 rule を `INGRESS_L2` テーブルに入れている
 
@@ -106,7 +106,7 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:oid:<RIF OID>"
 
 - counter group の enable: `counterpoll acl enable` / `counterpoll rif enable`
 - rule の install 失敗時: 該当 rule を `config acl update full <json>` で再投入
-- match の見直し（src_ip / DSCP / ip_protocol 等を実トラフィックに合わせる）
+- match の見直し（src_ip / [DSCP](../../reference/glossary.md#term-dscp) / ip_protocol 等を実トラフィックに合わせる）
 - 優先度衝突は `PRIORITY` を引き上げ / 下げて切り分け
 
 ## 関連ページ
@@ -122,4 +122,4 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:oid:<RIF OID>"
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — aclorch / intfsorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader / aclshow
 
-<!-- glossary-links-injected: e2892b76fd9a -->
+<!-- glossary-links-injected: eebb97ac8e67 -->

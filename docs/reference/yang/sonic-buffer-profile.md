@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -77,7 +77,7 @@ module: sonic-buffer-profile
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/name` | `string` | yes |  |  | Buffer Profile name |
+| `name` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/name` | `string` | yes |  |  | [Buffer Profile](../../reference/glossary.md#term-buffer-profile) name |
 | `static_th` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/static_th` | `uint64` |  |  |  | Static threshold in bytes for the maximum buffer pool occupancy. |
 | `dynamic_th` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/dynamic_th` | `int32` |  |  | range -8..7 | Dynamic threshold alpha value controlling the maximum proportion of free buffer pool space. |
 | `size` | `sonic-buffer-profile/BUFFER_PROFILE/BUFFER_PROFILE_LIST/size` | `uint64` | yes |  |  | Reserved buffer size in bytes for this profile. |
@@ -139,4 +139,4 @@ show buffer profile
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6e0dbc41d9f1 -->
+<!-- glossary-links-injected: 570311bfce27 -->

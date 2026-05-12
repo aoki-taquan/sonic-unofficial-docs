@@ -50,7 +50,7 @@ Overlay の障害切り分けは、underlay、VTEP、control plane、route progr
 3. EVPN 利用時は [BGP](../../reference/glossary.md#term-bgp)-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。
 4. VNET route 利用時は `VNET_ROUTE_TUNNEL_TABLE`、endpoint、monitoring、[BFD](../../reference/glossary.md#term-bfd) state を見る。
 5. ASIC 側で tunnel object、tunnel nexthop、NHG member、route / [FDB](../../reference/glossary.md#term-fdb) が作られているかを確認する。
-6. 負荷分散や loss が問題なら DSCP remap、PBH inner hash、[ECMP](../../reference/glossary.md#term-ecmp) / ARS の影響を切り分ける。
+6. 負荷分散や loss が問題なら [DSCP](../../reference/glossary.md#term-dscp) remap、PBH inner hash、[ECMP](../../reference/glossary.md#term-ecmp) / ARS の影響を切り分ける。
 
 ## Overlay ECMP と BFD
 
@@ -204,4 +204,4 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
 - [Local ARS](../../routing/local-ars-hld.md)
 
-<!-- glossary-links-injected: a80c59f067fa -->
+<!-- glossary-links-injected: e1fd4940b990 -->

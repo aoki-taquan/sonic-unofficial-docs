@@ -126,7 +126,7 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 ## トラブルシュート観点
 
 - gNMI subscribe が応答しないときは、`docker exec telemetry telemetryctl status` で agent up、`/var/log/syslog` で TLS / cert エラーを確認する。`TELEMETRY|certs` の `ca_crt` パス、`gnmi.server.crt`/`key` の存在も併せて点検。
-- SNMP walk が timeout する場合、`snmpd` の view ACL 設定 (`/etc/sonic/snmp.yml`)、`SNMP_AGENT_ADDRESS_CONFIG` のリスン IP、`snmpd` プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。
+- SNMP walk が timeout する場合、`snmpd` の view [ACL](../../reference/glossary.md#term-acl) 設定 (`/etc/sonic/snmp.yml`)、`SNMP_AGENT_ADDRESS_CONFIG` のリスン IP、`snmpd` プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。
 - sFlow sample が collector に届かないときは `show sflow interface` で sample rate、`config sflow polling-interval` の有効性、`SFLOW_COLLECTOR` の宛先到達性 (UDP 6343) を点検。
 
 ## 検証パスとラボ要件
@@ -145,4 +145,4 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - [10 gNMI / OpenConfig: 変換層と subscribe path](../10-gnmi-openconfig/index.md)
 - [20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: fe5aa1fcc436 -->
+<!-- glossary-links-injected: 1f2da1437d5b -->

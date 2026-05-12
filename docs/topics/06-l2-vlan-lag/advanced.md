@@ -124,12 +124,12 @@ Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能�
 
 - PortChannel が up しないときは、まず `show interfaces portchannel` で member の collected/distributed 状態を確認する。LACP PDU が片方向しか流れていない場合 (一方が active/passive 設定不一致) は `teamdctl <po> state` の `runner.actor_lacpdu_info` と `runner.partner_lacpdu_info` を見比べる。
 - VLAN flooding が想定外の port に届く・届かないときは、`fdbshow` と `bcmcmd 'l2 show'` (Broadcom 系) で FDB と ASIC の MAC table を突き合わせる。`MAC_LEARN_LIMIT` 到達時は新規 MAC が flooding 扱いになる。
-- distributed VOQ chassis で `SYSTEM_LAG_TABLE` に LAG が現れない場合、`chassis_db` の Redis 接続と、各 ASIC の `bgp` docker から `redis-cli -h <supervisor>` でアクセスできるかを点検する。
+- distributed VOQ chassis で `SYSTEM_LAG_TABLE` に LAG が現れない場合、`chassis_db` の [Redis](../../reference/glossary.md#term-redis) 接続と、各 ASIC の `bgp` docker から `redis-cli -h <supervisor>` でアクセスできるかを点検する。
 
 ## 検証パスとラボ要件
 
 - LACP fast rate と member down 検出時間は、`sonic-mgmt` の `lag/test_lag_2.py` 系テストで member を意図的に shut/no-shut させ、上流 BGP が再収束するまでの時間を計測する。target は fast rate で 3 秒以内、micro-BFD 併用で 1 秒以内。
-- VLAN 大量 (4k 近く) 構成での scale 検証は、CONFIG_DB へ `VLAN|Vlan100`〜`Vlan4094` を投入し、`swssloglevel` を notice にして orchagent / vlanmgrd のレイテンシを観測する。`syncd` queue depth が異常に伸びる場合、ASIC capability の VLAN 数上限を確認する。
+- VLAN 大量 (4k 近く) 構成での scale 検証は、CONFIG_DB へ `VLAN|Vlan100`〜`Vlan4094` を投入し、`swssloglevel` を notice にして [orchagent](../../reference/glossary.md#term-orchagent) / [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) のレイテンシを観測する。`syncd` queue depth が異常に伸びる場合、ASIC capability の VLAN 数上限を確認する。
 - OpenConfig 変換は `gnmi_cli` で `openconfig-interfaces:interfaces` を get/set し、変換後の CONFIG_DB と round-trip 一致を確認する。`sonic-mgmt-common` の `transformer/test_*` がベースライン。
 
 ## 関連ページ (追補)
@@ -142,4 +142,4 @@ Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能�
 - [10 gNMI / OpenConfig: 変換層の責務](../10-gnmi-openconfig/index.md)
 - [12 Multi-ASIC / VOQ: chassis 内 LAG とリモート LAG](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: 9caf06a8d97f -->
+<!-- glossary-links-injected: 53f62ebf112b -->

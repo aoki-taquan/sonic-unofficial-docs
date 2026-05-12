@@ -28,7 +28,7 @@ related:
 
 # 内部実装
 
-[ACL](../../reference/glossary.md#term-acl) action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、[SAI](../../reference/glossary.md#term-sai) capability と [orchagent](../../reference/glossary.md#term-orchagent) の実装が揃っているかを確認する必要があります。egress mirror、outer DSCP 書換、packet trimming はこの性質が強い機能です。
+[ACL](../../reference/glossary.md#term-acl) action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、[SAI](../../reference/glossary.md#term-sai) capability と [orchagent](../../reference/glossary.md#term-orchagent) の実装が揃っているかを確認する必要があります。egress mirror、outer [DSCP](../../reference/glossary.md#term-dscp) 書換、packet trimming はこの性質が強い機能です。
 
 ## ACL Action Capability
 
@@ -152,4 +152,4 @@ ASIC_DB:
 - [Egress Outer DSCP 書換 ACL](../../acl-qos/egress-outer-dscp-change-table.md)
 - [Packet Trimming](../../architecture/sonic-packet-trimming.md)
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

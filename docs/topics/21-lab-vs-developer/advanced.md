@@ -110,11 +110,11 @@ virtual / 物理間で動作が乖離する代表領域は次のとおり。
 | 領域 | virtual (VS / kvm) | 物理 |
 | --- | --- | --- |
 | Forwarding plane | SAI VS = CPU 実装 | ASIC pipeline |
-| Counters / WRED / queue depth | dummy 値 / 近似 | 実時間 telemetry |
+| Counters / [WRED](../../reference/glossary.md#term-wred) / queue depth | dummy 値 / 近似 | 実時間 telemetry |
 | Link timing (carrier up/down) | ms 単位の Linux event | optics / PHY の物理遅延 |
-| MAC learning / flooding | bridge based 簡略 | ASIC FDB hashing |
+| MAC learning / flooding | bridge based 簡略 | ASIC [FDB](../../reference/glossary.md#term-fdb) hashing |
 | LAG hashing | Linux team driver | SAI hash + UDF |
-| BFD micro / sub-ms timer | jiffies 制約 | HW BFD offload |
+| [BFD](../../reference/glossary.md#term-bfd) micro / sub-ms timer | jiffies 制約 | HW BFD offload |
 
 機能 path の論理確認は VS で十分だが、性能 / timing / counter は実機が前提。test plan には `vs_supported: yes/no` メタを置き、CI 側で skip 判定する運用が一般的。
 
@@ -127,7 +127,7 @@ virtual / 物理間で動作が乖離する代表領域は次のとおり。
 - `INCLUDE_KERNEL_DEBUG_TOOLS=y` / `INSTALL_DEBUG_TOOLS=y`: image に `strace` / `tcpdump` / `bpftrace` を含める。
 - `DEFAULT_USERNAME` / `DEFAULT_PASSWORD` 変更: lab image で SSH 鍵管理を簡素化。
 
-`sonic-installer` には `binary` / `firmware` の他に `coredump` 経路があるため、debug build は coredump enable と SCP destination 設定を ZTP 段で済ませておくとデバッグサイクルが速い。
+`sonic-installer` には `binary` / `firmware` の他に `coredump` 経路があるため、debug build は coredump enable と SCP destination 設定を [ZTP](../../reference/glossary.md#term-ztp) 段で済ませておくとデバッグサイクルが速い。
 
 ## 関連 RFC / 仕様書
 
@@ -143,4 +143,4 @@ virtual / 物理間で動作が乖離する代表領域は次のとおり。
 - KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。
 - CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: 51399410ac24 -->

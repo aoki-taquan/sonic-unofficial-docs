@@ -44,7 +44,7 @@ Dual-ToR は mux state だけで閉じた機能ではありません。standby T
 
 Active-Standby では、standby ToR が受けたサーバ宛トラフィックを MuxTunnel で active ToR へ戻します。この「バウンスバック」経路が通常トラフィックと同じ queue / priority group を使うと、PFC pause が T1 と ToR の間で固着し、デッドロックを起こす可能性があります。
 
-tunnel DSCP remap は、encap 時に outer DSCP や queue を別系統へ移し、decap 時に tunnel 用の DSCP / TC / PG map を使うことで、通常経路とバウンスバック経路を分離する仕組みです。
+tunnel [DSCP](../../reference/glossary.md#term-dscp) remap は、encap 時に outer DSCP や queue を別系統へ移し、decap 時に tunnel 用の DSCP / TC / PG map を使うことで、通常経路とバウンスバック経路を分離する仕組みです。
 
 運用上の読みどころは次の 3 つです。
 
@@ -125,7 +125,7 @@ sonic-clear dhcprelay_counters
 ## ハンドオフ
 
 - **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [tunnel DSCP remap](../../overlay/dscp-remapping-for-tunnel-traffic.md), [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md) で完結する。linkmgrd state machine の論理と `APP_DB:MUX_CABLE_TABLE` の遷移は internals で詳細化済み。
-- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config mux`, `show mux`, `show muxcable` 系、および `MUX_CABLE`, `MUX_LINKMGR`, `TUNNEL` の各 [CONFIG_DB スキーマ](../../reference/config-db/index.md)、`sonic-mux*` YANG モジュールで網羅される。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config mux`, `show mux`, `show muxcable` 系、および `MUX_CABLE`, `MUX_LINKMGR`, `TUNNEL` の各 [CONFIG_DB スキーマ](../../reference/config-db/index.md)、`sonic-mux*` [YANG](../../reference/glossary.md#term-yang) モジュールで網羅される。
 - **本ページ** は tunnel DSCP remap / DHCPv6 loopback / link prober offload など、章境界をまたぐクロスオーバー領域と、Active-Active / SmartSwitch 連携といった発展トピックのみを扱う。
 
 ## トラブルシュート観点
@@ -148,4 +148,4 @@ sonic-clear dhcprelay_counters
 - [13 DASH / SmartSwitch: DPU と mux state の同期](../13-dash-smartswitch/index.md)
 - [14 Platform / Port / Optics: link prober の hardware offload](../14-platform-port-optics/index.md)
 
-<!-- glossary-links-injected: 76b7df4b6b16 -->
+<!-- glossary-links-injected: 3e049dc787aa -->

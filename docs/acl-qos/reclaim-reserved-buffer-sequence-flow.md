@@ -207,7 +207,7 @@ redis-cli -n 4 keys 'BUFFER_PG|*'         # INACTIVE port に zero profile が�
 redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が来ているか
 ```
 
-- INACTIVE ポートの予約が解放されない → zero profile 名と BUFFER_PG の値を確認
+- INACTIVE ポートの予約が解放されない → zero profile 名と [BUFFER_PG](../reference/glossary.md#term-buffer-pg) の値を確認
 - shutdown 後にバッファが残る → ASIC の PG/queue 削除サポート有無を確認
 - `BUFFER_MAX_PARAM_TABLE` が空 → `portsorch` 初期化が完了していない可能性
 
@@ -227,4 +227,4 @@ redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4e2c45f685fb -->
+<!-- glossary-links-injected: 1af9c6208afc -->

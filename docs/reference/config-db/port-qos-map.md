@@ -61,8 +61,8 @@ PORT_QOS_MAP|<PORT.name>
 | `pfcwd_sw_enable` | string pattern `([0-7](,[0-7])*)?` | software PFC watchdog を有効にする queue のカンマ区切り |
 | `pfc_to_queue_map` | leafref `MAP_PFC_PRIORITY_TO_QUEUE.name` | PFC priority から egress queue への map |
 | `pfc_to_pg_map` | leafref `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP.name` | PFC priority から priority group への map |
-| `dscp_to_tc_map` | leafref `DSCP_TO_TC_MAP.name` | DSCP から traffic class への map |
-| `tc_to_dscp_map` | leafref `TC_TO_DSCP_MAP.name` | traffic class から DSCP remarking への map |
+| `dscp_to_tc_map` | leafref `DSCP_TO_TC_MAP.name` | [DSCP](../../reference/glossary.md#term-dscp) から traffic class への map |
+| `tc_to_dscp_map` | leafref `TC_TO_DSCP_MAP.name` | traffic class から [DSCP](../../reference/glossary.md#term-dscp) remarking への map |
 | `dot1p_to_tc_map` | leafref `DOT1P_TO_TC_MAP.name` | 802.1p priority から traffic class への map |
 | `scheduler` | leafref `SCHEDULER.name` | port scheduler profile |
 
@@ -124,4 +124,4 @@ show qos map
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e3877cf541b2 -->
+<!-- glossary-links-injected: eebb97ac8e67 -->

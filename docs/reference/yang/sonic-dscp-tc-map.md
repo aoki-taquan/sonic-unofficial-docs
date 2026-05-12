@@ -50,7 +50,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -75,8 +75,8 @@ module: sonic-dscp-tc-map
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | Name of the DSCP to TC map. |
-| `dscp` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/DSCP_TO_TC_MAP/dscp` | `string` | yes |  | pattern `6[0-3]|[1-5][0-9]?|[0-9]?` | DSCP value (0-63). |
+| `name` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/name` | `string` | yes |  | pattern `[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` | Name of the [DSCP](../../reference/glossary.md#term-dscp) to TC map. |
+| `dscp` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/DSCP_TO_TC_MAP/dscp` | `string` | yes |  | pattern `6[0-3]|[1-5][0-9]?|[0-9]?` | [DSCP](../../reference/glossary.md#term-dscp) value (0-63). |
 | `tc` | `sonic-dscp-tc-map/DSCP_TO_TC_MAP/DSCP_TO_TC_MAP_LIST/DSCP_TO_TC_MAP/tc` | `stypes:tc_type` |  |  |  | Target traffic class. |
 
 ## leafref / 依存
@@ -104,7 +104,7 @@ module: sonic-dscp-tc-map
 
 ### 典型的なデプロイ位置
 
-- DSCP → TC マッピング。`DSCP_TO_TC_MAP|<name>` を qosorch が [SAI](../../reference/glossary.md#term-sai) qos map に反映。
+- [DSCP](../../reference/glossary.md#term-dscp) → TC マッピング。`DSCP_TO_TC_MAP|<name>` を qosorch が [SAI](../../reference/glossary.md#term-sai) qos map に反映。
 
 ### よくある落とし穴
 
@@ -122,4 +122,4 @@ show qos map dscp-tc
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 36ca10160326 -->

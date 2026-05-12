@@ -52,7 +52,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する CONFIG_DB / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -105,8 +105,8 @@ module: sonic-copp
 | `trap_priority` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/trap_priority` | `uint32` |  | 0 |  | Priority assigned to the trap; higher values are matched first. |
 | `trap_action` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/trap_action` | `stypes:policer_packet_action` | yes |  |  | Action applied to trapped packets (forward, drop, copy, etc.). |
 | `meter_type` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/meter_type` | `stypes:meter_type` | yes |  |  | Metering unit for the embedded policer (packets or bytes). |
-| `mode` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/mode` | `enumeration` | yes |  | sr_tcm, tr_tcm, storm | Policer mode: single-rate TCM, two-rate TCM, or storm control. |
-| `color` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/color` | `stypes:policer_color_source` |  |  |  | Policer color awareness mode (aware or blind). |
+| `mode` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/mode` | `enumeration` | yes |  | sr_tcm, tr_tcm, storm | [Policer](../../reference/glossary.md#term-policer) mode: single-rate TCM, two-rate TCM, or storm control. |
+| `color` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/color` | `stypes:policer_color_source` |  |  |  | [Policer](../../reference/glossary.md#term-policer) color awareness mode (aware or blind). |
 | `cir` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/cir` | `uint64` |  | 0 |  | Committed information rate for the dual-rate token  					bucket policer.  This value represents the rate at which  					tokens are added to the primary bucket. |
 | `cbs` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/cbs` | `uint64` |  | 0 |  | Committed burst size for the dual-rate token bucket  					policer.  This value represents the depth of the token  					bucket. |
 | `pir` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/pir` | `uint64` |  |  |  | Peak information rate for the dual-rate token bucket  					policer.  This value represents the rate at which tokens  					are added to the secondary bucket. |
@@ -145,7 +145,7 @@ module: sonic-copp
 
 ### 典型的なデプロイ位置
 
-- Control Plane Policing。`COPP_GROUP` / `COPP_TRAP` を copporch が [SAI](../../reference/glossary.md#term-sai) hostif trap policer に反映。
+- Control Plane [Policing](../../reference/glossary.md#term-policing)。`COPP_GROUP` / `COPP_TRAP` を copporch が [SAI](../../reference/glossary.md#term-sai) hostif trap policer に反映。
 
 ### よくある落とし穴
 
@@ -171,4 +171,4 @@ show copp config
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0114aba323af -->
+<!-- glossary-links-injected: ce1b785cf1da -->

@@ -86,11 +86,11 @@ QoS / Buffer は **データプレーンに最も深く張り付くサブシス�
 
 混同しやすい用語をここで一度切り分けておきます。
 
-- **TC (Traffic Class)**: SONiC 内部で使うクラス番号 (0〜7)。受信側で DSCP / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。
-- **PG (Priority Group)**: ingress 側のバッファ計上単位。`xon`/`xoff` を持って [PFC](../../reference/glossary.md#term-pfc) のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。
+- **[TC (Traffic Class)](../../reference/glossary.md#term-tc)**: SONiC 内部で使うクラス番号 (0〜7)。受信側で [DSCP](../../reference/glossary.md#term-dscp) / DOT1P / EXP から 1 つに決め打ちし、以後の経路選択（PG、queue、scheduler、WRED）は TC を経由します。
+- **[PG (Priority Group)](../../reference/glossary.md#term-pg)**: ingress 側のバッファ計上単位。`xon`/`xoff` を持って [PFC](../../reference/glossary.md#term-pfc) のトリガを担います。lossless TC は通常 PG3 / PG4 に固定します。
 - **Queue**: egress 側のバッファ計上 + 出力順制御単位。WRED ドロッパと scheduler はここに紐付きます。典型的には UC 用 8 個 + MC 用 8 個。
 - **[Buffer Pool](../../reference/glossary.md#term-buffer-pool)**: ingress / egress 別に存在する共有バッファのプール。`size`、`mode` (static / dynamic)、`type` (lossless / lossy) を持ちます。
-- **Buffer Profile**: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (`dynamic_th`) で配分し、`xon`/`xoff` の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。
+- **[Buffer Profile](../../reference/glossary.md#term-buffer-profile)**: 「ある PG / queue がこの pool からどれくらい取って、どう alpha (`dynamic_th`) で配分し、`xon`/`xoff` の閾値はいくつにするか」をまとめた 1 セット。同じ profile を複数の PG / queue で共有します。
 - **WRED / ECN**: 平均キュー長がある閾値を超えたら、確率的に drop または ECN mark する仕組み。WRED テーブルは色（green / yellow / red）ごとに別閾値を持てます。
 - **PFC (Priority-Based Flow Control)**: 802.1Qbb。PG 単位で「止めて」をリンク相手の MAC 層に送り、特定 priority のフレームだけ流量を絞る仕組み。
 - **PFCWD**: PFC を受けたまま回復しない queue / port を強制的に drop モードに落として、PFC storm を波及させない監視 daemon。
@@ -151,7 +151,7 @@ flowchart LR
 4. **出力 queue を決める**: `TC_TO_QUEUE_MAP` が egress queue を選びます。
 5. **出力バッファに積む**: `BUFFER_QUEUE` が queue 単位で `BUFFER_PROFILE` を割り当てます。`QUEUE` テーブルでは queue ごとの WRED と scheduler を紐付けます。
 6. **混んできたら捨てるか mark する**: `WRED_PROFILE` で WRED / ECN 閾値を決めます。詳細は [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md) を参照。
-7. **取り出す順番を決める**: `SCHEDULER` が strict priority / DWRR / shaping を設定します。`sonic-qos-scheduler-and-shaping` [HLD](../../reference/glossary.md#term-hld) が背景です。詳細は [SONiC QoS scheduler / shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)。
+7. **取り出す順番を決める**: `SCHEDULER` が strict priority / [DWRR](../../reference/glossary.md#term-dwrr) / shaping を設定します。`sonic-qos-scheduler-and-shaping` [HLD](../../reference/glossary.md#term-hld) が背景です。詳細は [SONiC QoS scheduler / shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)。
 
 このうち「入力側で止める仕組み」が PFC、「出力側で捨てる/mark する仕組み」が WRED / ECN、「使ったバッファのピークを覚える仕組み」が watermark です。
 
@@ -199,7 +199,7 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 |---|---|---|
 | [ACL](../../reference/glossary.md#term-acl) | 「特定のトラフィックを選別する」点 | ACL は match → action（permit / deny / redirect / counter / mirror）。QoS の入口で TC を決めるのも実は ACL ベースで可能だが、通常は DSCP / DOT1P map を使う。 |
 | Storm Control | 「ある種類のトラフィックを抑える」点 | Storm Control は BUM (broadcast/unknown unicast/multicast) フレームの rate を粗く制限する仕組み。queue 単位の輻輳制御ではない。 |
-| Policer (ingress rate-limit) | 「速度を制限する」点 | Policer は ingress でトークンバケットによる drop / mark。QoS の shaper は egress queue ごとの送出速度上限で、バッファに溜める点が違う。 |
+| [Policer](../../reference/glossary.md#term-policer) (ingress rate-limit) | 「速度を制限する」点 | Policer は ingress でトークンバケットによる drop / mark。QoS の shaper は egress queue ごとの送出速度上限で、バッファに溜める点が違う。 |
 | [CoPP](../../reference/glossary.md#term-copp) | 「CPU 向けトラフィックを優先する」点 | CoPP は trap した制御パケット（[BGP](../../reference/glossary.md#term-bgp)/[LACP](../../reference/glossary.md#term-lacp)/[ARP](../../reference/glossary.md#term-arp) など）を CPU queue ごとに rate-limit する別系統。一般 forwarding 用の QoS とは queue が別。 |
 | Telemetry ([gNMI](../../reference/glossary.md#term-gnmi) / DTel) | 「混雑状況を可視化する」点 | gNMI は COUNTERS_DB を読むだけ、DTel は ASIC が直接 [INT](../../reference/glossary.md#term-int) を export。QoS 自体の輻輳判断には関与しない。 |
 
@@ -226,4 +226,4 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: f7696bbf835c -->
+<!-- glossary-links-injected: 1ef61890526a -->

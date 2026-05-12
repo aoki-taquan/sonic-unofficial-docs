@@ -56,7 +56,7 @@ Azure Netscan は **[IPinIP](../reference/glossary.md#term-ipinip) プローブ*
 | tunnel type | `IPinIP` |
 | decap ECN mode | `copy_from_outer` または `standard` |
 | decap TTL mode | `pipe` |
-| decap DSCP mode | `uniform` |
+| decap [DSCP](../reference/glossary.md#term-dscp) mode | `uniform` |
 
 decap term:
 
@@ -171,4 +171,4 @@ HLD と実装は一致。`SUBNET_DECAP` table、`MP2MP` term、自動生成さ�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 302763aa20ce -->
+<!-- glossary-links-injected: e1fd4940b990 -->

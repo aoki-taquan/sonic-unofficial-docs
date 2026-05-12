@@ -44,7 +44,7 @@ related:
 
 ## ハンドオフ
 
-- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [vxlan-sonic](../../overlay/vxlan-sonic.md), [sonic-dash-hld](../../overlay/sonic-dash-hld.md), [evpn-vxlan-multihoming](../../routing/evpn-vxlan-multihoming.md) に集約されている。tunnel orchagent と FRR EVPN の協調は area HLD 側で詳細化されている。
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [vxlan-sonic](../../overlay/vxlan-sonic.md), [sonic-dash-hld](../../overlay/sonic-dash-hld.md), [evpn-vxlan-multihoming](../../routing/evpn-vxlan-multihoming.md) に集約されている。tunnel [orchagent](../../reference/glossary.md#term-orchagent) と FRR EVPN の協調は area HLD 側で詳細化されている。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config vxlan` / `config vnet` 系コマンド、[reference/config_db/VXLAN_TUNNEL](../../reference/config-db/index.md), `VNET`, `VNET_INTERFACE`, `EVPN_NVO` に集約されている。
 - **本ページ** は基本 VXLAN/VNET/EVPN を踏まえた読者向けに、EVPN MH, NVGRE, Subnet decap, Overlay ECMP w/ BFD, DASH 連携といった発展領域だけを扱う。
 
@@ -84,7 +84,7 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 
 - **Overlay ECMP with [BFD](../../reference/glossary.md#term-bfd) monitoring**: VNET tunnel nexthop に BFD を貼ることで、underlay の障害を検出して nexthop group から外す。`overlay-ecmp-with-bfd-monitoring` HLD と `overlay-ecmp-enhancements` で扱う。VNET の規模が大きいときに収束時間を支配する要素になる。
 - **EVPN Type-5 (IP Prefix Route)**: tenant [VRF](../../reference/glossary.md#term-vrf) の prefix を route target 経由で配る方法。Type-2 ベースの MAC/IP モデルと、Type-5 ベースの prefix モデルが共存するときの優先度を意識する。
-- **DSCP remapping for tunnel traffic**: outer DSCP を VNET 単位で書き換える機能。`overlay/dscp-remapping-for-tunnel-traffic` で扱われ、[QoS](../../reference/glossary.md#term-qos) 章 ([08 QoS](../08-qos-buffer/index.md)) の DSCP-to-TC マップと組み合わさる。
+- **[DSCP](../../reference/glossary.md#term-dscp) remapping for tunnel traffic**: outer DSCP を VNET 単位で書き換える機能。`overlay/dscp-remapping-for-tunnel-traffic` で扱われ、[QoS](../../reference/glossary.md#term-qos) 章 ([08 QoS](../08-qos-buffer/index.md)) の DSCP-to-TC マップと組み合わさる。
 - **Symmetric IRB**: ingress / egress 双方で L3VNI を経由する設計。FRR 側設定と SONiC schema 双方で `VXLAN_TUNNEL_MAP` に L3 mapping を入れる。
 - **VXLAN counters / drop visibility**: `COUNTERS_DB` に tunnel ごとの ingress/egress カウンタが入る。tunnel drop の切り分けは ASIC SAI 側のカウンタも併用する。
 
@@ -136,4 +136,4 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 - [SONiC DASH HLD](../../overlay/sonic-dash-hld.md)
 - [VXLAN SONiC concepts/internals/operations](../../overlay/vxlan-sonic.md)
 
-<!-- glossary-links-injected: 4f24af8e8ba5 -->
+<!-- glossary-links-injected: 3656a3709ce7 -->

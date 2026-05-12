@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -72,7 +72,7 @@ module: sonic-trimming
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `size` | `sonic-trimming/SWITCH_TRIMMING/GLOBAL/size` | `uint32` |  |  | bytes | トリミング後のパケットサイズ |
-| `dscp_value` | `.../dscp_value` | `union(uint8, string)` |  |  | uint8 0..63 または `from-tc` | トリミング後の DSCP 値。`from-tc` で `tc_value` 経由マッピングを使用 |
+| `dscp_value` | `.../dscp_value` | `union(uint8, string)` |  |  | uint8 0..63 または `from-tc` | トリミング後の [DSCP](../../reference/glossary.md#term-dscp) 値。`from-tc` で `tc_value` 経由マッピングを使用 |
 | `tc_value` | `.../tc_value` | `uint8` |  |  |  | トリミング後の TC 値 |
 | `queue_index` | `.../queue_index` | `union(uint8, string)` |  |  | uint8 または `dynamic` | トリミング後の送信キュー。`dynamic` で `dscp_value` 経由マッピング |
 
@@ -102,4 +102,4 @@ module: sonic-trimming
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-trimming.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: bdcdeec1d5aa -->

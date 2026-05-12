@@ -114,7 +114,7 @@ PORT_QOS_MAP|Ethernet0:
   mpls_tc_to_tc_map = AZURE
 ```
 
-DSCP/TC マップと同じ MAP セットに対して、MPLS だけのフィールド名が追加されている形です。詳細は [MPLS TC → TC map](../../routing/mpls-tc-to-tc-map.md) を参照してください。
+[DSCP](../../reference/glossary.md#term-dscp)/TC マップと同じ MAP セットに対して、MPLS だけのフィールド名が追加されている形です。詳細は [MPLS TC → TC map](../../routing/mpls-tc-to-tc-map.md) を参照してください。
 
 ## Path Tracing Midpoint
 
@@ -274,4 +274,4 @@ SRv6 / MPLS / Path Tracing は CLI / CONFIG_DB / YANG の reference が他の章
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 - [sonic-route-common YANG](../../reference/yang/sonic-route-common.md)
 
-<!-- glossary-links-injected: c74e6bbc20f3 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

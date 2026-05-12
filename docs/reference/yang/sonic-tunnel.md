@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-peer-switch`
 - top container: `sonic-tunnel`
 
-DualToR 構成における MuxTunnel ([IPinIP](../../reference/glossary.md#term-ipinip) encap/decap) のパラメータを保持する。DSCP / ECN / TTL の handling mode、 encap/decap [QoS](../../reference/glossary.md#term-qos) map などを定義する[^1]。
+DualToR 構成における MuxTunnel ([IPinIP](../../reference/glossary.md#term-ipinip) encap/decap) のパラメータを保持する。[DSCP](../../reference/glossary.md#term-dscp) / ECN / TTL の handling mode、 encap/decap [QoS](../../reference/glossary.md#term-qos) map などを定義する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -80,14 +80,14 @@ module: sonic-tunnel
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `mux_tunnel` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/mux_tunnel` | `string` | yes |  |  | Name of MuxTunnel |
-| `dscp_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/dscp_mode` | `string` |  |  | uniform, pipe | DSCP handling mode (uniform copies outer, pipe preserves inner) |
+| `dscp_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/dscp_mode` | `string` |  |  | uniform, pipe | [DSCP](../../reference/glossary.md#term-dscp) handling mode (uniform copies outer, pipe preserves inner) |
 | `src_ip` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/src_ip` | `leafref` |  |  | /ps:sonic-peer-switch/PEER_SWITCH/PEER_SWITCH_LIST/address_ipv4 | Tunnel source IPv4 (= peer ToR address) |
 | `dst_ip` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/dst_ip` | `inet:ipv4-address` |  |  |  | Tunnel destination IPv4 (= this switch address) |
 | `ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ecn_mode` | `string` |  |  | standard, copy_from_outer | ECN handling mode on decapsulation |
 | `encap_ecn_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_ecn_mode` | `string` |  |  | standard, copy_from_inner | ECN marking mode on encapsulation |
 | `ttl_mode` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/ttl_mode` | `string` |  |  | uniform, pipe | TTL handling mode |
 | `tunnel_type` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/tunnel_type` | `string` |  |  | IPINIP | Encapsulation type |
-| `decap_dscp_to_tc_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/decap_dscp_to_tc_map` | `string` |  |  |  | DSCP-to-TC map applied on decapsulation |
+| `decap_dscp_to_tc_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/decap_dscp_to_tc_map` | `string` |  |  |  | [DSCP](../../reference/glossary.md#term-dscp)-to-TC map applied on decapsulation |
 | `decap_tc_to_pg_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/decap_tc_to_pg_map` | `string` |  |  |  | TC-to-PG map applied on decapsulation |
 | `encap_tc_to_dscp_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_tc_to_dscp_map` | `string` |  |  |  | TC-to-DSCP map applied on encapsulation |
 | `encap_tc_to_queue_map` | `sonic-tunnel/TUNNEL/TUNNEL_LIST/encap_tc_to_queue_map` | `string` |  |  |  | TC-to-queue map applied on encapsulation |
@@ -117,4 +117,4 @@ module: sonic-tunnel
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tunnel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 36ca10160326 -->

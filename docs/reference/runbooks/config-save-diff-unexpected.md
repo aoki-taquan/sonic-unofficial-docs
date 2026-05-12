@@ -67,7 +67,7 @@ sonic-db-cli CONFIG_DB hgetall "DEVICE_METADATA|localhost" | grep -i buffer_mode
 ```
 
 - `traditional` か `dynamic` か
-- dynamic の場合は BUFFER_PG 等が自動生成
+- dynamic の場合は [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) 等が自動生成
 
 ### 3. multi-asic の各 namespace
 
@@ -99,4 +99,4 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save
 [^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb get/set
 
-<!-- glossary-links-injected: 21eb656ce66c -->
+<!-- glossary-links-injected: 1af9c6208afc -->
