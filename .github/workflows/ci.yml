@@ -12,7 +12,16 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# 全 job 共通の Python 設定。`cache: pip` は setup-python が pip wheel cache を
+# requirements.txt の hash でキー化するため、actions/cache を別途張る必要は
+# ない。lint 系で PyYAML だけ単独 install していたステップも、同じ key で
+# wheel をヒットさせるため `pip install -r requirements.txt` に統一する。
+env:
+  PYTHON_VERSION: "3.12"
+
 jobs:
+  # 静的サイトの build 検証。`--strict` で broken-link / nav 問題を全部落とす。
+  # mkdocs build はこの job 1 つだけで走らせ、他 job では重複させない。
   build:
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +29,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
           cache-dependency-path: requirements.txt
 
@@ -28,128 +37,93 @@ jobs:
 
       - run: mkdocs build --strict
 
-  frontmatter-lint:
+  # frontmatter linter (strict) + 全 drift / 各種 informational check。
+  # 元は job を細かく分けて並走させていたが、setup-python の起動オーバヘッド
+  # の方が大きく、step は ~10 秒 / job 並走による並列効果は小さいため、
+  # lint 系を 1 job に集約してキャッシュも 1 回で済むようにした。
+  # strict 系の中で drift をまとめて流したいものは run_all_checks.sh、
+  # 単独で log を残したいものは個別 step として並べる。
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
 
-      - run: pip install PyYAML
+      - run: pip install -r requirements.txt
 
-      - name: Run frontmatter linter (v2)
-        run: python meta/scripts/frontmatter_lint.py
+      # --- strict checks (exit != 0 で job を落とす) -------------------
+      - name: Frontmatter linter v2 (strict)
+        run: python3 meta/scripts/frontmatter_lint.py
 
-      - name: Report verification self-consistency suspects (informational)
-        run: python3 meta/scripts/check_verification_self_consistency.py || true
-
-      - name: Report monitor-consistency suspects (informational)
-        run: python3 meta/scripts/check_monitor_consistency.py --check || true
-
-      - name: Check runbook verification status
+      - name: Runbook verification status (strict)
         run: python3 meta/scripts/check_runbook_status.py --check
 
-      - name: Check runbook structure (5-section check, strict)
+      - name: Runbook structure 5-section check (strict)
         run: python3 meta/scripts/check_runbook_structure.py --check
 
-      - name: Report citation-deficient pages (informational)
-        run: python3 meta/scripts/check_citation_quality.py --check
-
-      - name: Check .pages awesome-pages integrity
+      - name: .pages awesome-pages integrity (strict)
         run: python3 meta/scripts/check_pages_integrity.py --check
 
-      - name: Report broken intra-doc links (informational)
-        run: python3 meta/scripts/check_broken_links.py --check
-
-      - name: Report link-density outliers (informational) + split-child nav (strict)
-        run: python3 meta/scripts/check_link_density.py --strict-split-child
-
-      - name: Check discrepancy pages have non-empty related.yang (strict)
+      - name: discrepancy pages have non-empty related.yang (strict)
         run: python3 meta/scripts/check_discrepancy_related.py --strict --report meta/discrepancy-related-yang-report.md
 
-      - name: Check topics chapter "next-reads" drift (informational)
+      - name: link-density split-child nav (strict)
+        run: python3 meta/scripts/check_link_density.py --strict-split-child
+
+      # --- generator drift checks (strict, run_all_checks.sh に集約) ----
+      - name: All generator drift checks (strict)
+        run: bash meta/scripts/run_all_checks.sh
+
+      # snapshot / chapter-progress / next-reads は run_all_checks.sh に
+      # 含まれていないため、それぞれ単独で並べる (失敗時 log で即特定)。
+      - name: snapshot.md drift (strict)
+        run: python3 meta/scripts/gen_snapshot.py --check
+
+      # --- informational checks (`|| true` で落とさない) ---------------
+      - name: chapter-progress drift (informational)
+        run: python3 meta/scripts/gen_chapter_progress.py --check || true
+
+      - name: next-reads drift (informational)
         run: python3 meta/scripts/gen_next_reads.py --check || true
 
-      - name: Check topics chapter progress table drift (informational)
-        run: python3 meta/scripts/gen_chapter_progress.py --check || true
+
+      - name: verification self-consistency suspects (informational)
+        run: python3 meta/scripts/check_verification_self_consistency.py || true
+
+      - name: monitor consistency suspects (informational)
+        run: python3 meta/scripts/check_monitor_consistency.py --check || true
+
+      - name: citation-deficient pages (informational)
+        run: python3 meta/scripts/check_citation_quality.py --check || true
+
+      - name: broken intra-doc links (informational)
+        run: python3 meta/scripts/check_broken_links.py --check || true
+
+      - name: link-density outliers (informational)
+        run: python3 meta/scripts/check_link_density.py --check || true
+
+      - name: stale-verified pages (informational)
+        run: python3 meta/scripts/check_stale_verified.py --check || true
+
+      - name: sitemap.md drift (informational)
+        run: python3 meta/scripts/gen_sitemap.py --check || true
+
+      - name: Drop site/ leftover (disk hygiene)
+        if: always()
+        run: rm -rf site/
 
       - name: Upload lint reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: frontmatter-lint-report
+          name: lint-reports
           path: |
             meta/frontmatter-lint-report.md
             meta/frontmatter-lint-report-v2.md
             meta/discrepancy-related-yang-report.md
           if-no-files-found: ignore
-
-  quality-banner:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Check docs/index.md quality banner is up to date
-        run: python3 meta/scripts/gen_index_banner.py --check
-
-  discrepancy-index:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Check docs/reference/verification/discrepancy-index.md is up to date
-        run: python3 meta/scripts/gen_discrepancy_index.py --check
-
-  coverage-matrix:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Check docs/_meta/coverage.md is up to date
-        run: python3 meta/scripts/gen_coverage.py --check
-
-      - name: Report stale-verified pages (informational)
-        run: python3 meta/scripts/check_stale_verified.py --check
-
-      - name: Check docs/_meta/sitemap.md drift (informational)
-        run: |
-          pip install PyYAML
-          python3 meta/scripts/gen_sitemap.py --check || true
-
-  topics-back-ref:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Check area-page Topics back-ref blocks are up to date
-        run: python3 meta/scripts/gen_cross_ref.py --check
-
-  glossary-xref:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Check glossary reverse-index is up to date
-        run: python3 meta/scripts/gen_glossary_xref.py --check
