@@ -60,7 +60,7 @@ related:
 | setup | ❌ 未着手 | - |
 | operations | ✅ 完成 (180 行) | meta |
 | internals | ✅ 完成 (126 行) | meta |
-| advanced | ⚠️ プレースホルダ (81 行) | meta |
+| advanced | ✅ 完成 (115 行) | meta |
 
 <!-- /chapter-progress -->
 

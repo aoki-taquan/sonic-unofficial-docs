@@ -94,7 +94,7 @@ related:
 | setup | ❌ 未着手 | - |
 | operations | ❌ 未着手 | - |
 | internals | ✅ 完成 (133 行) | meta |
-| advanced | ❌ 未着手 | - |
+| advanced | ✅ 完成 (101 行) | meta |
 
 <!-- /chapter-progress -->
 

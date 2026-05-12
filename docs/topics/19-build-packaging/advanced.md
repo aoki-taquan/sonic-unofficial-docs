@@ -50,6 +50,40 @@ SONiC の docker は歴史的に `--privileged` が多かった。CVE 対応と�
 - ARM へ移植する → [ARM architecture support](../../architecture/sonic-arm-architecture-support.md)。
 - リリース判定 → [Feature quality definition](../../system/sonic-feature-quality-definition.md)。
 
+## マルチプラットフォーム build の並列化
+
+`sonic-buildimage` は `PLATFORM=<vendor>` 単位で完全に独立した image を生成するため、ビルドを横方向に分割しやすい。実運用での並列化パターンは次の三段になる。
+
+- **`make -j` レベル**: 単一 platform 内で `dpkg-buildpackage` / docker build を並列化する。`SONIC_BUILD_JOBS` と `SONIC_CONFIG_BUILD_JOBS` を物理コアに合わせて指定。
+- **platform レベル**: CI runner / sub-job を `PLATFORM=broadcom` / `mellanox` / `marvell` などで分割する。共通 deb (`target/debs/`) は cache で再利用し、syncd と SDK 依存パッケージだけ platform 個別に作る。
+- **arch レベル**: `PLATFORM_ARCH=amd64` / `arm64` / `armhf` を別 matrix セルに展開する。`sonic-slave-<dist>-<arch>` docker を pre-pull しておくと `docker-base` のフェーズ時間が大きく短縮する。
+
+CI 全体は「`target/debs/` cache (全 platform 共通) → platform 並列 build → image 集約」の三層パイプラインで構成するのが安定する。
+
+## SDK 切替と vendor SDK の取り扱い
+
+vendor SDK (Broadcom SAI / OpenNSL、NVIDIA SDK、Marvell Prestera 等) はバージョン依存が強く、`platform/<vendor>/<sai>.mk` で deb 名 / URL / SHA を pin している。SDK を上げるときは次を同時に確認する。
+
+- `platform/<vendor>/*.mk` の `SAI` / `SDK` バージョン変数
+- `dockers/docker-syncd-<vendor>/` の Dockerfile 依存
+- `src/sonic-sairedis/` 側の SAI header バージョン整合（sai-api 不一致は build 時の `static_assert` で落ちる）
+- `tests/` 側で sai-stub / sai-vs 互換が壊れていないか
+
+複数 vendor を並走で持つチームは、SDK 切替 PR を vendor ごとに分割し、`make configure PLATFORM=<vendor>` の差分だけ review する運用にすると衝突を避けやすい。
+
+## 再現可能ビルド (reproducible build)
+
+同じ source tree からビルドして bit 一致の image を得る試み。SONiC 単体では未到達だが、debian 由来の `SOURCE_DATE_EPOCH` 伝播、deb 内の timestamp 正規化、docker layer の order 固定、`pip` wheel の hash pin など、段階的な改善が進む。`SONIC_VERSION_CACHE` を使った deb cache 再利用は build 時間短縮と再現性改善の両方に効く。完全 reproducible は kernel module の build-id と docker overlayfs の I/O 順序が残課題。
+
+## CVE 対応のワークフロー
+
+base が debian なので CVE 通知は `debian-security` announce と SBOM の突き合わせが起点になる。優先度判定の典型手順は次のとおり。
+
+- 影響パッケージを SBOM (CycloneDX 出力) で grep し、SONiC image に含まれているかを確認。
+- 含まれていれば `apt-get changelog` で fix 版を特定し、`Makefile.work` の `DEBIAN_VERSION` ピンを更新するか、`src/<pkg>/patch/` で個別 patch を当てる。
+- syncd / kernel module 配下の CVE は vendor SAI / vendor kernel patch の追従が要るため、vendor SDK PR と組で進める。
+- 修正後は `mkdocs build --strict` ではなく実 image build と nightly test plan で regression を見るのが原則。
+
 ## 関連ページ
 
 - [ARM architecture support](../../architecture/sonic-arm-architecture-support.md)

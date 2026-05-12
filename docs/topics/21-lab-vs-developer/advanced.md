@@ -93,6 +93,42 @@ CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非
 - Code coverage / mutation testing の標準化。
 - DASH KVM の HLD 完成と community 投入。
 
+## virtual SONiC でのトポロジ自動化
+
+実機 lab を持たないチームが CI / 教育 / RFE 試作で再現性を出すための主要パスは三つある。
+
+- **`sonic-mgmt` 標準 topology**: `ansible/vars/topo_*.yaml` で `t0`、`t1-lag`、`ptf32`、`dualtor` などの canonical topology を宣言する。`testbed.csv` と `inventory` を組み合わせると、virtual chassis / Dual-ToR / Multi-DUT も同じテンプレで起動できる。
+- **KNE / kne-topologies**: Kubernetes 上に SONiC-VS pod を並べる。SONiC を他 NOS (Arista cEOS、Juniper cRPD 等) と mix した topology が必要なときに採用しやすい。`kne create topology.pb.txt` で立ち上げ、CNI 経由で link を張る。
+- **containerlab**: `clab` の `kind: sonic-vs` ノードで軽量に複数 DUT を並べる。CI runner のローカル dev loop に近く、`docker compose` 感覚で扱える。
+
+いずれも image は `target/sonic-vs.img.gz` が起点で、`docker-sonic-vs` を直接 docker run する経路と、kvm に load する経路の二択になる。CI で何百並列も起動するなら docker 直走、kernel datapath 検証が要るなら kvm を選ぶ。
+
+## kvm-vs-physical の差分
+
+virtual / 物理間で動作が乖離する代表領域は次のとおり。
+
+| 領域 | virtual (VS / kvm) | 物理 |
+| --- | --- | --- |
+| Forwarding plane | SAI VS = CPU 実装 | ASIC pipeline |
+| Counters / WRED / queue depth | dummy 値 / 近似 | 実時間 telemetry |
+| Link timing (carrier up/down) | ms 単位の Linux event | optics / PHY の物理遅延 |
+| MAC learning / flooding | bridge based 簡略 | ASIC FDB hashing |
+| LAG hashing | Linux team driver | SAI hash + UDF |
+| BFD micro / sub-ms timer | jiffies 制約 | HW BFD offload |
+
+機能 path の論理確認は VS で十分だが、性能 / timing / counter は実機が前提。test plan には `vs_supported: yes/no` メタを置き、CI 側で skip 判定する運用が一般的。
+
+## debug build と diagnostics image
+
+`make` には debug 用のフラグ群がいくつかある。Issue 再現用に常備しておくと便利。
+
+- `SONIC_DEBUGGING_ON=y`: `-O0 -g` / strip 抑止で symbol 付き docker を生成。`gdb` / `perf` / `bcc-tools` 連携が前提。
+- `ENABLE_PY_DEBUG=y`: python パッケージを debug build。
+- `INCLUDE_KERNEL_DEBUG_TOOLS=y` / `INSTALL_DEBUG_TOOLS=y`: image に `strace` / `tcpdump` / `bpftrace` を含める。
+- `DEFAULT_USERNAME` / `DEFAULT_PASSWORD` 変更: lab image で SSH 鍵管理を簡素化。
+
+`sonic-installer` には `binary` / `firmware` の他に `coredump` 経路があるため、debug build は coredump enable と SCP destination 設定を ZTP 段で済ませておくとデバッグサイクルが速い。
+
 ## 関連 RFC / 仕様書
 
 - [P4 Behavioral Model (BMv2)](https://github.com/p4lang/behavioral-model) — DASH KVM の data plane
