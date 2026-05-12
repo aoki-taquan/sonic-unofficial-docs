@@ -96,6 +96,8 @@ opt-out マーカーが付いたページは `frontmatter_lint.py` / `find_empty
 
 `verification` が `discrepancy-found` 以外（`hld-only` / `code-verified` 等）でも、将来 monitor タグを再利用する余地はあるが現状は optional 扱い。
 
+軸 6 (完結性) を `monitor` の subtype 別に読み替える詳細なルール（`partially_implemented` の境界明示要件、`evolved_beyond_hld` の差分明示要件、`not_implemented` の N/A 扱い、`deprecated` のリンクのみ評価）は [`meta/quality-audit-guide.md` §5 「`discrepancy-found` subtype 別評価基準」](../quality-audit-guide.md#5-discrepancy-found-subtype-別評価基準) を参照。`partially_implemented` ページの境界明示はフェーズ別境界表（Phase / 実装済 / 未実装 の列）が推奨形であり、`meta/scripts/check_partial_boundary.py` で機械検査される。
+
 ## `discrepancy-found` ページの軸 6 評価基準
 
 品質監査 (`meta/quality-audit-*.md`) では各ページを 6 軸 5 点満点で評価しているが、その **軸 6 (完結性)** は通常ページ向けの基準（本文ボリューム / 機能の網羅性 / ops-hint や troubleshooting の有無）で測ると `discrepancy-found` ページが構造的に天井 4 点に張り付く（実装が未着手 / 進化済みのため「機能としての完結」を書きようがない）。
