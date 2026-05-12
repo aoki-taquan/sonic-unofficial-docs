@@ -163,6 +163,18 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 - `docker exec pmon supervisorctl status thermalctld` — thermal control daemon の状態
 - `docker logs pmon 2>&1 | grep -i thermal` — policy reload / algorithm 切替のログを追う
 
+### コマンド例
+
+冷却 / thermal センサーの状態を確認する。
+
+```bash
+# Thermal / cooling
+show platform temperature
+show platform fan
+redis-cli -n 6 keys 'TEMPERATURE_INFO|*'
+redis-cli -n 6 keys 'FAN_INFO|*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/sonic_thermal_control_test_plan.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -172,6 +172,21 @@ reasoning: chassisdb.conf による分岐方式と、Orchagent の chassis-DB �
 - iBGP 設定が生成されてしまう: `is_voq_chassis()` が True を返している可能性。改修版の判定ロジックが効いているかを確認。
 - `fabric_ports` が表示されない: 単一 ASIC VoQ でも残す前提のため、[orchagent](../reference/glossary.md#term-orchagent) の fabric ポート列挙経路を確認。
 
+### コマンド例
+
+multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+
+```bash
+# multi-ASIC / VoQ chassis
+show chassis modules status
+show platform summary
+sudo ip netns list
+for ns in $(sudo ip netns list | awk '{print $1}'); do
+  echo "== $ns =="
+  sudo ip netns exec "$ns" show interfaces status | head
+done
+```
+
 ## 関連 reference
 
 - [Topics: Multi-ASIC / VOQ](../topics/12-multi-asic-voq/index.md)

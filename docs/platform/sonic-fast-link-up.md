@@ -185,6 +185,18 @@ show interfaces fast-linkup status
 - 一部ポートだけ効かない → syslog の `Fast-linkup not supported (port path)` NOTICE を確認
 - syslog `Unknown field ignored` WARN → CLI / OA のスキーマズレ
 
+### コマンド例
+
+FEC / fast link up の状態を確認する。
+
+```bash
+# FEC / Link up
+show interfaces status
+show interfaces fec status
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+docker exec swss show fast-link-status 2>&1 | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fast-linkup/fast-link-up-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

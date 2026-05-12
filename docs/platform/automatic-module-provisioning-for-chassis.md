@@ -229,6 +229,18 @@ HLD では新しい [CONFIG_DB](../reference/glossary.md#term-config_db) スキ�
 - `ProvisionPending` で固まる場合、ベンダー provisioning スクリプトのログを確認
 - `Provisioned` から `Online` に戻らない場合、chassis 再起動が必要なケース
 
+### コマンド例
+
+CMIS / トランシーバの状態と provisioning を確認する。
+
+```bash
+# Transceiver / CMIS
+show interfaces transceiver eeprom Ethernet0
+show interfaces transceiver info Ethernet0
+redis-cli -n 6 hgetall 'TRANSCEIVER_INFO|Ethernet0'
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+```
+
 ## 関連 reference
 
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)

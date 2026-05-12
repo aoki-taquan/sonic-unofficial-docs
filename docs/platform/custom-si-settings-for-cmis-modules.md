@@ -227,6 +227,18 @@ reasoning: 「キャッシュ→差分マージ→staged→commit」「3 回ま�
 - `config_status` が `Config Success` 以外で 3 回リトライ → スキップ: モジュール側 advertisement と書込値の組合せが不正
 - 既存 SI 値が 0 にリセットされた: キャッシュ→マージステップを飛ばしている可能性
 
+### コマンド例
+
+CMIS / トランシーバの状態と provisioning を確認する。
+
+```bash
+# Transceiver / CMIS
+show interfaces transceiver eeprom Ethernet0
+show interfaces transceiver info Ethernet0
+redis-cli -n 6 hgetall 'TRANSCEIVER_INFO|Ethernet0'
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+```
+
 ## 参考リンク
 
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)

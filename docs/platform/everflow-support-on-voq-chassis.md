@@ -199,6 +199,21 @@ VoQ chassis 上では同じ CLI で動くが、内部的には Option 1 or Optio
 - mirror destination が remote のとき `mirrororch` ログで MONITOR_PORT に何（SYSTEM_PORT / recycle）が選ばれているかを確認
 - パケットは出るが宛先で受からない場合、`neighorch` の remote neighbor 情報が正しいか確認
 
+### コマンド例
+
+multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+
+```bash
+# multi-ASIC / VoQ chassis
+show chassis modules status
+show platform summary
+sudo ip netns list
+for ns in $(sudo ip netns list | awk '{print $1}'); do
+  echo "== $ns =="
+  sudo ip netns exec "$ns" show interfaces status | head
+done
+```
+
 ## 参考リンク
 
 - [CLI: config mirror-session](../reference/cli/config-mirror-session.md)

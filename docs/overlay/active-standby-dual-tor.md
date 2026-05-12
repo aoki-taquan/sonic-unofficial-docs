@@ -304,6 +304,19 @@ config muxcable mode auto all
 | switchover に時間がかかる | `MUX_METRICS_TABLE` の `<app>_switch_active_*` |
 | IPv6 のみ切替で断 | `accept_untracked_na` と `arp_update` の `FAILED → INCOMPLETE` 書き換え |
 
+### コマンド例
+
+下記コマンドで MUX/ToR の状態と切替動作を確認できる。
+
+```bash
+# Dual ToR mux 状態と切替メトリクス
+show mux status
+show mux config
+redis-cli -n 0 keys 'MUX_CABLE_TABLE:*'
+redis-cli -n 6 hgetall 'MUX_LINKMGR_TABLE|Ethernet0'
+redis-cli -n 6 hgetall 'LINK_PROBE_STATS|Ethernet0'
+```
+
 ## 制限事項
 
 - ToR → NIC 方向 switchover で **数パケットの破損 / drop** あり[^1]

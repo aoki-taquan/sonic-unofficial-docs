@@ -219,6 +219,18 @@ KVM 自体には追加 [CONFIG_DB](../reference/glossary.md#term-config_db) ス�
 - `gnmi_cli_py` エラー: Python 2 環境で実行しているか確認。
 - DASH テーブル更新が反映されない: KVM 内 GNMI を証明書付きで再起動しているか確認。
 
+### コマンド例
+
+DASH ENI / VNET 経路と DPU 上のデータパスを確認する。
+
+```bash
+# DASH / ENI の状態
+show dash eni
+show dash vnet
+redis-cli -n 4 keys 'DASH_ENI_TABLE:*'
+docker exec swss orchagent_restart_check 2>&1 | tail
+```
+
 ## 関連トピック
 
 - [Topics: GNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md) — [gNMI](../reference/glossary.md#term-gnmi) 経由の DASH 設定

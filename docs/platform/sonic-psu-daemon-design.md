@@ -177,6 +177,18 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 - `docker exec pmon supervisorctl status psud` — psud デーモンの動作確認
 - `docker logs pmon 2>&1 | grep -i psu` — psud のログを確認
 
+### コマンド例
+
+PSU の状態と daemon を確認する。
+
+```bash
+# PSU
+show platform psustatus
+redis-cli -n 6 keys 'PSU_INFO|*'
+redis-cli -n 6 hgetall 'PSU_INFO|PSU 1'
+ps aux | grep -E 'psud|pmon'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/psud/PSU_daemon_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

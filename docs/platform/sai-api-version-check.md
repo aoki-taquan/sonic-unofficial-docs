@@ -204,6 +204,18 @@ int main(void) {
 - 検査をスキップしたい（緊急ビルド）: HLD では明示されていないが、`AC_TRY_RUN` 検査は configure フラグでスキップ可能なように作るのが一般的。実装裏取り対象。
 - Runtime での挙動が怪しい: ビルド検査は通っても、ベンダー libsai が `SAI_API_VERSION` を **実態と異なる値で返す** バグがあると検知できない。属性 ID / enum 値の異常は依然として可能性がある。
 
+### コマンド例
+
+SAI / SDK のエラーログと dump を確認する。
+
+```bash
+# SAI failure / SDK health
+docker logs syncd 2>&1 | grep -iE 'sai_status|fail|error' | tail
+ls -lt /var/dump/ | head
+show techsupport --silent --since '1 hour ago'
+redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
+```
+
 ## 関連 reference
 
 - [Reference: SAI attributes](../reference/sai-attributes.md)

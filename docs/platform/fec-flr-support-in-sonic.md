@@ -319,6 +319,18 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
     - HLD 本体の FLR 算出ロジック (`port_flr.lua`) の取り込み PR は明示的に紐づく単独 PR が確認できず、断片的な flexcounter / port counter 改修に混在している。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+FEC / fast link up の状態を確認する。
+
+```bash
+# FEC / Link up
+show interfaces status
+show interfaces fec status
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+docker exec swss show fast-link-status 2>&1 | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

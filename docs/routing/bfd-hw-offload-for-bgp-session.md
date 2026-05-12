@@ -250,6 +250,18 @@ show bfd summary
     - [sonic-swss #3515: \[swss\] add bfd session deletion handling in acceleration logic (open)](https://github.com/sonic-net/sonic-swss/pull/3515) — HW offload セッション削除パスの欠落補修 PR。HLD の bfdsyncd 経路に齟齬が残ることを示す。
 <!-- /diff-admonition -->
 
+### コマンド例
+
+BFD セッションと HW オフロード状態を確認する。
+
+```bash
+# BFD
+show bfd summary
+show bfd peer all
+redis-cli -n 4 keys 'BFD_SESSION|*'
+docker exec bgp vtysh -c 'show bfd peers' | head
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bfd/BFD HW Offload for BGP session HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -179,6 +179,17 @@ reasoning: 改修対象関数とフォールバック動作の根拠。
 - 起動が依然遅い: vendor SAI が新 API を実装していない可能性。`syncd` ログで `queryStatsCapability` の status を確認。`SAI_STATUS_NOT_IMPLEMENTED` ならフォールバック動作中。
 - 一部 counter が認識されない: 新 API が返す `stat_enum` 集合と旧 per-ID 列挙の差が無いか、SAI バージョン依存を疑う。
 
+### コマンド例
+
+SAI stats capability を確認する。
+
+```bash
+# SAI stats
+docker exec syncd saidump 2>&1 | head -40
+redis-cli -n 1 keys 'COUNTERS_*' | head
+counterpoll show
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
