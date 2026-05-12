@@ -110,6 +110,9 @@ jobs:
       - name: stale-verified pages (informational)
         run: python3 meta/scripts/check_stale_verified.py --check || true
 
+      - name: troubleshoot/verify-command section coverage (informational)
+        run: python3 meta/scripts/check_troubleshoot_section.py --check || true
+
       - name: sitemap.md drift (informational)
         run: python3 meta/scripts/gen_sitemap.py --check || true
 

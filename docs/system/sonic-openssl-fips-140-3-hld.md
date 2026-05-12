@@ -162,6 +162,13 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 - [Glossary](../reference/glossary.md)
 - [Reference 索引](../reference/index.md)
 
+## 確認コマンド
+
+- `sonic-installer get-fips` — 現在の FIPS モード（enabled/disabled）を確認
+- `openssl version -a` / `openssl list -providers` — FIPS provider が active かを確認
+- `cat /proc/sys/crypto/fips_enabled` — kernel 側の FIPS モード（参考値）
+- `ssh -vvv ...` で SSH の crypto algorithm を観測し、disabled algo が出ていないか確認
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-OpenSSL-FIPS-140-3.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

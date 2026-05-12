@@ -188,6 +188,13 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 - [Runbook: dhcp-relay](../reference/runbooks/dhcp-relay.md)
 - [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
 
+## 確認コマンド
+
+- `show dhcp_relay ipv4 counter --dir RX <vlan>` / `--dir TX <vlan>` — VLAN 単位の per-message-type 統計
+- `show dhcp_relay ipv6 counters --type Solicit <vlan>` — DHCPv6 メッセージ種別での絞り込み
+- `sonic-db-cli COUNTERS_DB hgetall "DHCPV4_COUNTER_TABLE:Vlan1000"` — DB 直読みで生 counter を確認
+- `sonic-clear dhcp_relay ipv4 counter <vlan>` で 0 化 → 再現テスト
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_relay/DHCP-per-interface-counter.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_relay/DHCP-per-interface-counter.md)

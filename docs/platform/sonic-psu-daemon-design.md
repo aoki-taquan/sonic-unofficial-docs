@@ -170,6 +170,13 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 - **`psuutil`** / **`show platform psustatus`** CLI: 状態露出
 - **modular switch**: 全 PSU 合計 power が **switch power budget** を超えるかも別途監視
 
+## 確認コマンド
+
+- `show platform psustatus` — `WARNING` ステータス（`power_overload`）が見える
+- `sonic-db-cli STATE_DB hgetall "PSU_INFO|PSU 1"` — voltage / current / power / threshold / overload を直接確認
+- `docker exec pmon supervisorctl status psud` — psud デーモンの動作確認
+- `docker logs pmon 2>&1 | grep -i psu` — psud のログを確認
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/psud/PSU_daemon_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
