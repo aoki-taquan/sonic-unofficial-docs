@@ -62,7 +62,7 @@ related:
 - VXLAN、VNET、EVPN は同じ機能なのか、どこで役割が分かれるのか。
 - EVPN Type-2 / Type-5、VTEP、VRF、VNI、VNetOrch はどうつながるのか。
 - `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`VNET`、`VNET_ROUTE_TUNNEL` はどの順に設定するのか。
-- Overlay ECMP、BFD monitoring、DSCP remap、inner packet hashing は運用上どこを見るのか。
+- Overlay ECMP、BFD monitoring、[DSCP](../../reference/glossary.md#term-dscp) remap、inner packet hashing は運用上どこを見るのか。
 - NVGRE や subnet decap は VXLAN と同じ章でどう扱えばよいのか。
 
 ## 読む順番
@@ -142,4 +142,4 @@ related:
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 21d7ff6ee0d7 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

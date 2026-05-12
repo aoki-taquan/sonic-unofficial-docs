@@ -103,7 +103,7 @@ reclaim は port の admin down や split port の枝の片側など、「物理
 2. **profile** — 使い方のテンプレート（lossless / lossy / mirror など）。
 3. **PG / queue 割当** — ポート×index への適用。
 
-そして「ConfigDB の SCHEDULER / [WRED](../../reference/glossary.md#term-wred) / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「BUFFER_PG / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。
+そして「ConfigDB の SCHEDULER / [WRED](../../reference/glossary.md#term-wred) / MAP は SAI のオブジェクトに 1:1」「BUFFER_PROFILE は SAI に 1:1 だが、同じ意味のものは共有」「[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE は SAI の port × index の attribute 更新になる」と、それぞれ SAI 側での扱いが違うのが厄介な点です。設定変更時に「参照を外す → 値を変える → 参照を戻す」の順序を守る必要があるのはこのためです。
 
 ## データフロー（QoS / Buffer 全体）
 
@@ -176,4 +176,4 @@ ASIC_DB:
 - PFC watchdog は queue 単位の statistical detection で、瞬間的な burst にも反応する設計。`detection_time` / `restoration_time` のチューニングが必要。
 - WRED / ECN の閾値は ASIC で粒度（cell vs byte）が違い、`SAI_WRED_ATTR_*` の単位解釈が SDK ベンダごとに分かれる。
 
-<!-- glossary-links-injected: 9561e337df7c -->
+<!-- glossary-links-injected: 1af9c6208afc -->

@@ -219,7 +219,7 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 ## 横断参照
 
 - 上流 BGP / BFD が落ちたときの mux 連動: [BGP 章 運用](../02-bgp/operations.md) と [VRF / ECMP 章 運用](../04-vrf-ecmp/operations.md) の default route / FIB 確認。
-- Bounce-back 経路の DSCP / [PFC](../../reference/glossary.md#term-pfc) は [Overlay 章 運用](../03-vxlan-evpn/operations.md) の DSCP remap。
+- Bounce-back 経路の [DSCP](../../reference/glossary.md#term-dscp) / [PFC](../../reference/glossary.md#term-pfc) は [Overlay 章 運用](../03-vxlan-evpn/operations.md) の DSCP remap。
 - mux 配下 server の [VLAN](../../reference/glossary.md#term-vlan) / [FDB](../../reference/glossary.md#term-fdb) / Proxy [ARP](../../reference/glossary.md#term-arp) は [L2 章 運用](../06-l2-vlan-lag/operations.md)。
 - mux / icmp / linkmgrd feature 自体が落ちている場合: [運用入口](../01-overview/operations.md) の feature 切り分け。
 
@@ -234,4 +234,4 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 - [プレフィックスルート方式の Mux ネイバ](../../routing/prefix-based-mux-neighbors.md)
 - [multi-nexthop route ループ回避](../../routing/multiple-nexthop-route-hld.md)
 
-<!-- glossary-links-injected: 2403459d4907 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

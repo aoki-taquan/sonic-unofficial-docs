@@ -63,7 +63,7 @@ related:
 - **Asymmetric PFC**: 上流と下流で PFC enable bitmap を非対称に運用するモデル。lossless TC を一方向だけ pause 対象とする使い方で、`PORT_QOS_MAP|<port>.pfc_to_queue_map` と peer ToR の設定整合が要点。
 - **動的 buffer model**: 旧来の static buffer profile から、`BUFFER_POOL` の thresholds と alpha (dynamic threshold) を ASIC レベルで決める動的モデルへの移行。`buffermgrd` が `BUFFER_PROFILE` を auto 計算する。
 - **PFC watchdog の per-queue 詳細化**: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。`PFC_WD_TABLE` のパラメータ調整。
-- **Tunnel DSCP remap**: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は [05 Dual-ToR](../05-dual-tor/advanced.md) と相互参照。
+- **Tunnel [DSCP](../../reference/glossary.md#term-dscp) remap**: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は [05 Dual-ToR](../05-dual-tor/advanced.md) と相互参照。
 - **[Headroom](../../reference/glossary.md#term-headroom) pool**: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。
 - **[WRED](../../reference/glossary.md#term-wred) / ECN の細分化**: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。
 - **Watermark の align-with-port-config**: port admin down 時に watermark を 0 に clear する整合性改善で、運用 dashboard の誤検知を減らす。
@@ -104,7 +104,7 @@ related:
 
 ## 検証パスとラボ要件
 
-- PFC end-to-end の検証は `sonic-mgmt` の `qos/test_qos_sai.py` で行う。SAI 側 attribute と Redis 設定の整合確認が含まれる。
+- PFC end-to-end の検証は `sonic-mgmt` の `qos/test_qos_sai.py` で行う。SAI 側 attribute と [Redis](../../reference/glossary.md#term-redis) 設定の整合確認が含まれる。
 - 動的 buffer model の alpha チューニングは、合成 burst (microburst injector) を流して `BUFFER_POOL_WATERMARK_STAT_COUNTER` の peak を観察する手順が標準。
 
 ## 関連ページ (追補)
@@ -136,4 +136,4 @@ related:
 - [Watermark Counters](../../acl-qos/watermark-counters-in-sonic.md)
 - [Tunnel DSCP remap](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 
-<!-- glossary-links-injected: 0b23a3c63c91 -->
+<!-- glossary-links-injected: c7a6a719fb35 -->

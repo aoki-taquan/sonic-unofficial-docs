@@ -34,7 +34,7 @@ related:
 
 ## 想定原因
 
-1. **[PFC](../../reference/glossary.md#term-pfc) enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致** → 想定の queue に乗っていない
+1. **[PFC](../../reference/glossary.md#term-pfc) enabled priority と PORT_QOS_MAP の [DSCP](../../reference/glossary.md#term-dscp)→TC マッピング不一致** → 想定の queue に乗っていない
 2. **buffer profile / pool sizing 不足**: `BUFFER_POOL|ingress_lossless_pool` の `size` がトラフィック量に対して過小
 3. **対向側で [PFC](../../reference/glossary.md#term-pfc) pause を生成し続け、[PFC](../../reference/glossary.md#term-pfc) storm に陥っている**: PFC WD が queue を強制 disable
 4. **headroom 計算が cable length と一致していない** (`CABLE_LENGTH` テーブル誤設定)
@@ -62,7 +62,7 @@ sonic-db-cli CONFIG_DB hgetall "DSCP_TO_TC_MAP|AZURE"
 sonic-db-cli CONFIG_DB hgetall "TC_TO_PRIORITY_GROUP_MAP|AZURE"
 ```
 
-- 期待: 送信側 DSCP（例: 26 / 48 など）が `pfc_enable` に含まれる TC に紐づく
+- 期待: 送信側 [DSCP](../../reference/glossary.md#term-dscp)（例: 26 / 48 など）が `pfc_enable` に含まれる TC に紐づく
 - 異常: 別 TC にマップ → 期待 queue/PG にトラフィックが乗っていない
 
 ### 2. Buffer 使用量と headroom
@@ -127,4 +127,4 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bufferorch / pfcwdorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — pfcwd CLI
 
-<!-- glossary-links-injected: 7cb1f9e73b9e -->
+<!-- glossary-links-injected: eebb97ac8e67 -->

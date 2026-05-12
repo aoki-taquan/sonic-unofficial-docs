@@ -114,7 +114,7 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 
 ## 検証パスとラボ要件
 
-- orchagent throughput 検証は CONFIG_DB に 10k〜100k entry (route / FDB / ACL rule) を一括投入し、ASIC_DB 反映までのレイテンシを計測する。SAI bulk API 利用時の倍率向上 (target 2x〜5x) を確認する。
+- orchagent throughput 検証は CONFIG_DB に 10k〜100k entry (route / [FDB](../../reference/glossary.md#term-fdb) / [ACL](../../reference/glossary.md#term-acl) rule) を一括投入し、ASIC_DB 反映までのレイテンシを計測する。SAI bulk API 利用時の倍率向上 (target 2x〜5x) を確認する。
 - view switching 検証は warm reboot を多数回繰り返し、`ProducerStateTable` の view A/B 切替と、orchagent / syncd の状態差分が cleanup される過程を `redis-cli` で観察する。
 - closest UP status 検証は意図的に container を 1 つ kill し、`system-health` / `sysmonitor` の event aggregation で上位 status (`Operational`/`Degraded`/`Failed`) が期待通り遷移することを確認する。
 
@@ -130,4 +130,4 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 - [11 Reboot: warm reboot と view switching](../11-reboot/index.md)
 - [21 Lab / Developer: dev container 内での swss/sai 開発](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: 1a6c1d175ab5 -->
+<!-- glossary-links-injected: edbcf324be25 -->

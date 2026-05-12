@@ -57,7 +57,7 @@ warm / fast / cold reboot の基本パスを押さえた後は、収束時間を
 
 Express reboot は warm reboot の延長で、SAI 状態と data plane を保持したまま control plane だけ swap する。鍵となるのは (1) `syncd` の SAI object handle dump と新 image の `syncd` での再 attach、(2) `orchagent` の internal cache を `APPL_STATE_DB` 経由でリビルド、(3) `bgpd` の GR/LLGR による経路再学習を上位 plane 側でブロックしない、という 3 つの同期点。期待ダウンタイムは < 1 秒 (data plane forward 停止時間) であり、warm reboot (数秒〜十数秒) より大幅に短い。
 
-実装の依存は ASIC SDK 側の `sai_switch_attribute_t::SAI_SWITCH_ATTR_FAST_API_ENABLE` と、SDK が持つ shared memory hand-off API。これに対応していない platform では express reboot は不可。
+実装の依存は [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 側の `sai_switch_attribute_t::SAI_SWITCH_ATTR_FAST_API_ENABLE` と、SDK が持つ shared memory hand-off API。これに対応していない platform では express reboot は不可。
 
 ## graceful drain & TSA 連携
 
@@ -100,7 +100,7 @@ reboot 前に BGP / BFD を drain する手順は `reliable-tsa` (Traffic Shift 
 
 ## 検証パスとラボ要件
 
-- VS lab で warm reboot を再現するときは、`docker exec swss supervisorctl restart all` ではなく `sonic-installer` 経由の本物 warm reboot path を `pretest_warm_reboot.sh` で実行する。orchagent reconciliation 動作が VS でも観察可能。
+- VS lab で warm reboot を再現するときは、`docker exec swss supervisorctl restart all` ではなく `sonic-installer` 経由の本物 warm reboot path を `pretest_warm_reboot.sh` で実行する。[orchagent](../../reference/glossary.md#term-orchagent) reconciliation 動作が VS でも観察可能。
 - chassis 級は `sonic-mgmt` の `chassis_reboot` test suite が CHASSIS_APP_DB の `module_state` 遷移を assertion している。
 
 ## 関連ページ (追補)
@@ -132,4 +132,4 @@ reboot 前に BGP / BFD を drain する手順は `reliable-tsa` (Traffic Shift 
 - [Multi-ASIC warm reboot](../../system/multi-asic-warm-reboot.md)
 - [12 Multi-ASIC / VOQ](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: db511538c2a3 -->
+<!-- glossary-links-injected: de69bafad385 -->

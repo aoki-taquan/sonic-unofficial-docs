@@ -38,7 +38,7 @@ related:
 
 ## なぜ必要か
 
-同じ宛先に対して **Forwarding Class (FC) ごとに異なるパス** を取らせる traffic engineering。FC は Traffic Class（[QoS](../reference/glossary.md#term-qos) キュー）とは別概念で、入力時に DSCP / [MPLS](../reference/glossary.md#term-mpls) EXP から決まる "どのパスを通すか" のラベル[^1]。
+同じ宛先に対して **Forwarding Class (FC) ごとに異なるパス** を取らせる traffic engineering。FC は Traffic Class（[QoS](../reference/glossary.md#term-qos) キュー）とは別概念で、入力時に [DSCP](../reference/glossary.md#term-dscp) / [MPLS](../reference/glossary.md#term-mpls) EXP から決まる "どのパスを通すか" のラベル[^1]。
 
 典型例は「foreground は最短路、background は長尺路」のように分離転送する設計。QoS キューでバックグラウンドを絞ると帯域が消えてしまう問題を、CBF は別パスで回避する。実装は OpenCompute [SAI #1193](https://github.com/opencomputeproject/SAI/pull/1193) の `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` と NHG 入れ子モデルを前提とする[^1]。
 
@@ -135,4 +135,4 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*'
 
 [^1]: `sonic-net/SONiC` `doc/cbf/cbf_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 76b5994c62b3 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

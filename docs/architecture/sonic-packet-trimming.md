@@ -38,7 +38,7 @@ Packet Trimming（PT）はバッファ枯渇で **drop されるはずの大き�
 
 - global PT 設定 + per-buffer-profile での enable/disable
 - [ACL](../reference/glossary.md#term-acl) の **disable trimming action** で fine-grained 除外（v0.1 から）
-- v0.2: **Asymmetric DSCP**（trim 後 packet に異なる DSCP を打つ）
+- v0.2: **Asymmetric [DSCP](../reference/glossary.md#term-dscp)**（trim 後 packet に異なる DSCP を打つ）
 - v0.3: **Drop counters**（trim 数の可視化）
 
 ## 動作仕様
@@ -198,4 +198,4 @@ show switch-trimming counters
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d3de20f7e1ff -->
+<!-- glossary-links-injected: e1fd4940b990 -->

@@ -107,7 +107,7 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 - 2026-05-11 #989 [quality] area HLD ページに Topics 誘導 admonition 追加
 - 2026-05-11 #986 [reference] 用語集 (glossary) 新設
 - 2026-05-11 #985 [meta] 品質改善 サンプリング監査 (round 11)
-- 2026-05-11 #984 [reference] CONFIG_DB ↔ orchagent クラス対応表
+- 2026-05-11 #984 [reference] CONFIG_DB ↔ [orchagent](./reference/glossary.md#term-orchagent) クラス対応表
 - 2026-05-11 #983 [meta] area Topics back-link 強化 + CI drift check
 - 2026-05-11 #982 [meta] 全ページ frontmatter description 追加
 - 2026-05-11 #981 [quality] HLD 中規模残 8 件 再構成
@@ -180,4 +180,4 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 
 本ドキュメントの内容は、特に断りのない限り [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) のもとで提供されます。
 
-<!-- glossary-links-injected: d0c50357f26c -->
+<!-- glossary-links-injected: e2892b76fd9a -->

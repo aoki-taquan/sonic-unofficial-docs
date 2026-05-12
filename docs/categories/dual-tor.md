@@ -17,7 +17,7 @@ related:
 
 **Dual-ToR** は、サーバを 2 つの ToR スイッチに **active-standby** または **active-active** で冗長接続し、片側 ToR の障害時にもサービス断を最小化するクラウド向けトポロジです。Microsoft Azure 由来で、現行 SONiC は **y-cable + [linkmgrd](../reference/glossary.md#term-linkmgrd)** ベースの active-standby と、**prefix-based neighbor + gRPC** ベースの active-active の 2 系統を実装しています。
 
-このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。**overlay**（active-active / active-standby の [HLD](../reference/glossary.md#term-hld)、トンネル DSCP リマップ）・**routing**（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・**platform**（ICMP HW offload による link prober [NPU](../reference/glossary.md#term-npu) 化）・**management**（DualToR 用 gRPC client）・**reference**（`config muxcable` / `show muxcable` / `MUX_CABLE` テーブル）に分散しているのが特徴です。
+このカテゴリは Dual-ToR に関わるページを area 横断でまとめます。**overlay**（active-active / active-standby の [HLD](../reference/glossary.md#term-hld)、トンネル [DSCP](../reference/glossary.md#term-dscp) リマップ）・**routing**（mux 連動デフォルトルート、multi-nexthop ループ回避、prefix-based mux neighbor）・**platform**（ICMP HW offload による link prober [NPU](../reference/glossary.md#term-npu) 化）・**management**（DualToR 用 gRPC client）・**reference**（`config muxcable` / `show muxcable` / `MUX_CABLE` テーブル）に分散しているのが特徴です。
 
 Dual-ToR は **active-standby** のほうがマスター実装としては成熟しており、**active-active** は比較的新しく gRPC ベースのケーブル制御に依存します。Y-cable と SoC（Service-on-Cable）が混在する用語空間なので、最初に [`active-standby-dual-tor.md`](../overlay/active-standby-dual-tor.md) を読むと state machine の語彙が整理されます。
 
@@ -84,4 +84,4 @@ Dual-ToR は **active-standby** のほうがマスター実装としては成熟
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 856e5b1efe05 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

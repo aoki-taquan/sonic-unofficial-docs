@@ -130,6 +130,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: MMU 内で確保される共有バッファ領域の単位。SONiC では Ingress / Egress 方向ごとに `BUFFER_POOL` テーブルでサイズと閾値を定義し、`BUFFER_PROFILE` から参照される。Dynamic Buffer Model では `buffermgrd` がポート速度や PG 設定に応じて動的に再配分する。
 - **関連**: [Buffer Model](#term-buffer-model)、[MMU](#term-mmu)、[Headroom](#term-headroom)
 
+### Buffer Profile {#term-buffer-profile}
+
+- **略称**: Buffer Profile
+- **日本語訳**: バッファプロファイル
+- **説明**: バッファプールから割り当てる Reserved / Dynamic Threshold / Xon / Xoff / Headroom などのパラメータをまとめた設定単位。CONFIG_DB の `BUFFER_PROFILE` テーブルで定義し、`BUFFER_PG` (Ingress) / `BUFFER_QUEUE` (Egress) から参照される。`buffermgrd` が APPL_DB へ展開し、最終的に SAI Ingress/Egress Priority Group / Queue 属性に変換される。
+- **関連**: [Buffer Pool](#term-buffer-pool)、[Headroom](#term-headroom)、[PG (Priority Group)](#term-pg)
+
+### BUFFER_PG {#term-buffer-pg}
+
+- **略称**: BUFFER_PG
+- **日本語訳**: バッファ PG 設定テーブル
+- **説明**: CONFIG_DB のテーブルで、ポート × Priority Group (0-7) ごとに参照する Buffer Profile を指定する。PFC を有効化する PG は無損失プロファイル (Xoff/Headroom 付き)、それ以外は損失許容プロファイルを割り当てる運用が一般的。
+- **関連**: [Buffer Profile](#term-buffer-profile)、[PG (Priority Group)](#term-pg)、[PFC](#term-pfc)
+
 ## C
 
 ### Cold Reboot {#term-cold-reboot}
@@ -226,6 +240,27 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: DPDK
 - **説明**: ユーザ空間で動作する高速パケット処理ライブラリ。SONiC では `sonic-pmd` 系プラットフォームや一部 DPU 実装で利用され、syncd / SAI 実装の下回りで使われることがある。
 
+### DSCP {#term-dscp}
+
+- **略称**: DSCP (Differentiated Services Code Point)
+- **日本語訳**: DSCP
+- **説明**: IP ヘッダ ToS の上位 6 ビットで定義される QoS マーキング (RFC 2474)。SONiC では `DSCP_TO_TC_MAP` で Ingress 側に TC へ変換し、`TC_TO_DSCP_MAP` で Egress リマーキングを行う。`PORT_QOS_MAP` 経由でポートにバインドされる。
+- **関連**: [DSCP-to-TC Map](#term-dscp-to-tc-map)、[TC (Traffic Class)](#term-tc)、[ToS](#term-tos)
+
+### DSCP-to-TC Map {#term-dscp-to-tc-map}
+
+- **略称**: DSCP_TO_TC_MAP
+- **日本語訳**: DSCP→TC マッピング
+- **説明**: 受信パケットの DSCP 値を内部の Traffic Class (TC) に対応付ける QoS マップ。CONFIG_DB の `DSCP_TO_TC_MAP` テーブルで定義し、`qosorch` が SAI QoS Map (DSCP→TC) として ASIC に適用、`PORT_QOS_MAP` でポートに割り当てる。
+- **関連**: [DSCP](#term-dscp)、[TC (Traffic Class)](#term-tc)、[QoS](#term-qos)
+
+### DWRR {#term-dwrr}
+
+- **略称**: DWRR (Deficit Weighted Round Robin)
+- **日本語訳**: DWRR
+- **説明**: 重み付きラウンドロビンに「赤字 (deficit)」カウンタを加え、可変長パケットでも重み比に近い帯域配分を実現するスケジューリングアルゴリズム。SONiC では `SCHEDULER` テーブルの `type=DWRR` と `weight` で設定し、SAI Scheduler `SAI_SCHEDULING_TYPE_DWRR` に対応する。
+- **関連**: [WRR](#term-wrr)、[Scheduler](#term-scheduler)、[Strict Priority](#term-strict-priority)
+
 ## E
 
 ### ECMP {#term-ecmp}
@@ -255,6 +290,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: ENI
 - **説明**: DASH における仮想 NIC 概念。テナント単位のポリシーバインド単位。
 - **関連**: [DASH](#dash)
+
+### ETS {#term-ets}
+
+- **略称**: ETS (Enhanced Transmission Selection)
+- **日本語訳**: ETS
+- **説明**: IEEE 802.1Qaz で規定される DCB 帯域共有機構。Traffic Class グループに最低保証帯域を割り当て、未使用帯域を他 TC が利用する。SONiC では `SCHEDULER` テーブルの `type=DWRR` と `weight` 構成、および `TC_TO_QUEUE_MAP` の組み合わせで ETS 相当の動作を実現する。
+- **関連**: [DWRR](#term-dwrr)、[PFC](#term-pfc)、[Scheduler](#term-scheduler)
 
 ### EVPN {#term-evpn}
 
@@ -459,6 +501,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: リンク集約 / ポートチャネル
 - **説明**: 複数物理ポートを 1 論理リンクに束ねる機能。CONFIG_DB では `PORTCHANNEL` テーブルで表現。
 
+### Leaky Bucket {#term-leaky-bucket}
+
+- **略称**: Leaky Bucket
+- **日本語訳**: リーキーバケット
+- **説明**: 一定速度でトークンが「漏れる」モデルで送出レートを平滑化する古典的アルゴリズム。Shaping (整形) で用いられ、バースト許容のない厳格な平均レート制御に適する。SONiC では SAI Policer / Scheduler 実装の内部アルゴリズムとして、ベンダー ASIC が Token Bucket と組み合わせて採用する。
+- **関連**: [Token Bucket](#term-token-bucket)、[Shaper](#term-shaper)、[Policer](#term-policer)
+
 ### linkmgrd {#term-linkmgrd}
 
 - **略称**: linkmgrd
@@ -603,12 +652,26 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: PFC ウォッチドッグ
 - **説明**: PFC でデッドロックしているキューを検出して一時的にドレインする仕組み。
 
+### PFC Storm {#term-pfc-storm}
+
+- **略称**: PFC Storm
+- **日本語訳**: PFC ストーム
+- **説明**: 受信側 NIC やスイッチが PFC PAUSE フレームを継続的に送出し続け、上流リンクが慢性的に停止してしまう障害状態。RoCEv2 環境で typified に発生する。SONiC では `pfcwd` が連続 PAUSE をキュー単位で検出してドレインモードに遷移させ、ネットワーク全体への波及を抑止する。
+- **関連**: [PFC Watchdog](#term-pfc-watchdog)、[PFC](#term-pfc)、[RoCE](#term-roce)
+
 ### Per-port Queue {#term-per-port-queue}
 
 - **略称**: Per-port Queue
 - **日本語訳**: ポート単位キュー
 - **説明**: 各物理ポートごとに割り当てられた送信キュー集合 (通常 8 本)。SONiC では `QUEUE|<port>|<index>` 形式で CONFIG_DB / APPL_DB に表現され、`SCHEDULER` / `WRED_PROFILE` がポート単位で適用される。VOQ アーキテクチャの ASIC ではキュー粒度がさらに細分化される。
 - **関連**: [Egress Queue](#term-egress-queue)、[VOQ](#term-voq)、[QoS](#term-qos)
+
+### PG (Priority Group) {#term-pg}
+
+- **略称**: PG (Priority Group), Ingress Priority Group
+- **日本語訳**: プライオリティグループ
+- **説明**: Ingress 側で PFC 優先度に対応するバッファ予約単位 (通常 0-7)。SONiC では `BUFFER_PG` テーブルでポート × PG ごとに Buffer Profile を割り当て、PFC を有効化する PG には Xoff / Headroom 付きの無損失プロファイルを適用する。SAI の `SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP` に対応。
+- **関連**: [BUFFER_PG](#term-buffer-pg)、[Buffer Profile](#term-buffer-profile)、[PFC](#term-pfc)
 
 ### portmgrd {#term-portmgrd}
 
@@ -655,6 +718,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: PortChannel
 - **日本語訳**: ポートチャネル
 - **説明**: SONiC の LAG の呼称。CONFIG_DB テーブル名も `PORTCHANNEL`。
+
+### Policer {#term-policer}
+
+- **略称**: Policer
+- **日本語訳**: ポリサー
+- **説明**: フロー / ACL に対し帯域上限を計測し、超過パケットをドロップまたはマーキング (re-color) する機構。CONFIG_DB の `POLICER` テーブルで CIR / PIR / CBS / PBS / `meter_type` (packets|bytes) を定義し、ACL ルールや CoPP テーブルから参照される。SAI の `SAI_OBJECT_TYPE_POLICER` に対応する。
+- **関連**: [Policing](#term-policing)、[CoPP](#term-copp)、[Token Bucket](#term-token-bucket)
+
+### Policing {#term-policing}
+
+- **略称**: Policing
+- **日本語訳**: ポリシング
+- **説明**: トラフィックレートを計測し、設定上限を超えたパケットを即座に廃棄またはマーキングする QoS 動作 (RFC 2697 srTCM / RFC 2698 trTCM 等)。Shaping と異なりキューイングせず即時判定するため、低遅延が必要なエッジ制御や CoPP に向く。SONiC では Policer オブジェクトで実装する。
+- **関連**: [Policer](#term-policer)、[Shaping](#term-shaping)、[Token Bucket](#term-token-bucket)
 
 ## Q
 
@@ -799,6 +876,34 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: SAI 呼び出しを Thrift RPC で外部に公開するテスト用バイナリ (`sonic-sairedis/saiserver`)。`PTF` ベースの SAI 単体試験で利用される。`docker-saiserver` で配布。
 - **関連**: [SAI](#term-sai)、[VS](#term-vs)
 
+### Scheduler {#term-scheduler}
+
+- **略称**: Scheduler
+- **日本語訳**: スケジューラ
+- **説明**: 各 Egress Queue から送出するパケットの順序とレートを決定するアルゴリズム実体。SONiC では `SCHEDULER` テーブル (`type` = `STRICT` / `DWRR` / `WRR`、`weight`、`meter_type`、`pir`/`cir`) で定義し、`QUEUE` テーブルから参照する。`qosorch` が SAI Scheduler オブジェクトに変換する。
+- **関連**: [Strict Priority](#term-strict-priority)、[DWRR](#term-dwrr)、[WRR](#term-wrr)、[Shaper](#term-shaper)
+
+### Shaper {#term-shaper}
+
+- **略称**: Shaper
+- **日本語訳**: シェイパー
+- **説明**: 送信レートに上限を設けて超過分をキューイングし、均された速度で送出する QoS 機構。SONiC では `SCHEDULER` テーブルの `pir` / `meter_type` で表現し、SAI Scheduler の `max_bandwidth_*` 属性として実装される。
+- **関連**: [Shaping](#term-shaping)、[Scheduler](#term-scheduler)、[Leaky Bucket](#term-leaky-bucket)
+
+### Shaping {#term-shaping}
+
+- **略称**: Shaping
+- **日本語訳**: シェイピング
+- **説明**: トラフィックレートを計測し、超過分をキューイングして平滑化する QoS 動作。Policing が即時廃棄するのに対し、Shaping はバッファを使ってジッタを抑える代わりに遅延を許容する。SONiC では Shaper 設定 (Scheduler の PIR) で実現する。
+- **関連**: [Shaper](#term-shaper)、[Policing](#term-policing)、[Token Bucket](#term-token-bucket)
+
+### Shared Buffer {#term-shared-buffer}
+
+- **略称**: Shared Buffer
+- **日本語訳**: 共有バッファ
+- **説明**: 複数ポート / キューが共用する MMU バッファ領域。Reserved (各 PG/Queue に予約) と対比される概念で、突発的なトラフィック (Microburst) を吸収する。SONiC の Dynamic Buffer Model では `BUFFER_POOL.size` から Reserved 合計を差し引いた残量が共有領域となり、`dynamic_th` (α) で各 PG/Queue が利用できる比率が決まる。
+- **関連**: [Buffer Pool](#term-buffer-pool)、[Buffer Profile](#term-buffer-profile)、[Microburst](#term-microburst)
+
 ### SmartNIC {#term-smartnic}
 
 - **略称**: SmartNIC
@@ -811,6 +916,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: SmartSwitch
 - **日本語訳**: SmartSwitch
 - **説明**: NPU + 複数 DPU を 1 シャーシに搭載するアーキテクチャ。DASH と組み合わせて使う。
+
+### Strict Priority {#term-strict-priority}
+
+- **略称**: SP (Strict Priority)
+- **日本語訳**: 厳格優先
+- **説明**: 高優先キューにパケットがある限り低優先キューを完全に待たせるスケジューリング方式。SONiC では `SCHEDULER` テーブルの `type=STRICT` で設定し、SAI Scheduler `SAI_SCHEDULING_TYPE_STRICT` に対応する。低遅延制御プレーンや音声/同期トラフィックに用いるが、低優先キューの飢餓に注意。
+- **関連**: [Scheduler](#term-scheduler)、[DWRR](#term-dwrr)、[QoS](#term-qos)
 
 ### STATE_DB {#term-state_db}
 
@@ -839,6 +951,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: SAI TAM API (`SAI_OBJECT_TYPE_TAM*`) を用いた帯域内テレメトリ機能群。INT / IFA / Drop monitor / Postcard 等を扱う。SONiC では `TAM_*` CONFIG_DB テーブルと TAM オーチが提供される。
 - **関連**: [INT](#term-int)
 
+### TC (Traffic Class) {#term-tc}
+
+- **略称**: TC (Traffic Class)
+- **日本語訳**: トラフィッククラス
+- **説明**: ASIC 内部での QoS 優先度識別子 (通常 0-7)。Ingress 側で `DSCP_TO_TC_MAP` や `DOT1P_TO_TC_MAP` により決定され、Egress 側で `TC_TO_QUEUE_MAP` / `TC_TO_PG_MAP` / `TC_TO_DSCP_MAP` の入力として使われる。SAI では QoS Map のキー / 値として扱う。
+- **関連**: [DSCP-to-TC Map](#term-dscp-to-tc-map)、[TC-to-Queue Map](#term-tc-to-queue-map)、[QoS](#term-qos)
+
+### TC-to-Queue Map {#term-tc-to-queue-map}
+
+- **略称**: TC_TO_QUEUE_MAP
+- **日本語訳**: TC→キューマッピング
+- **説明**: 内部 Traffic Class を Egress Queue インデックスに対応付ける QoS マップ。CONFIG_DB の `TC_TO_QUEUE_MAP` テーブルで定義し、`PORT_QOS_MAP` でポートに割り当てる。`qosorch` が SAI QoS Map (`SAI_QOS_MAP_TYPE_TC_TO_QUEUE`) として ASIC に書き出す。
+- **関連**: [TC (Traffic Class)](#term-tc)、[Egress Queue](#term-egress-queue)、[Scheduler](#term-scheduler)
+
 ### TCAM {#term-tcam}
 
 - **略称**: TCAM (Ternary Content Addressable Memory)
@@ -858,6 +984,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: teamd / teamsyncd / teammgrd
 - **日本語訳**: teamd 系 LAG デーモン
 - **説明**: Linux `libteam` ベースの LACP 実装。`teammgrd` が CONFIG_DB 購読、`teamsyncd` が Netlink ↔ APPL_DB 同期、`teamd` が LACP プロトコル本体。
+
+### Token Bucket {#term-token-bucket}
+
+- **略称**: Token Bucket
+- **日本語訳**: トークンバケット
+- **説明**: 一定速度でトークンを生成し、パケット送信時にバケットからトークンを消費するレート制御アルゴリズム。バケット容量分のバーストを許容しつつ平均レートを保証する。SONiC の Policer / Shaper の CIR / CBS / PIR / PBS は Token Bucket パラメータに対応し、RFC 2697 srTCM / RFC 2698 trTCM のメータリングを表現する。
+- **関連**: [Leaky Bucket](#term-leaky-bucket)、[Policer](#term-policer)、[Shaper](#term-shaper)
+
+### ToS {#term-tos}
+
+- **略称**: ToS (Type of Service)
+- **日本語訳**: ToS フィールド
+- **説明**: IPv4 ヘッダのサービス品質指定用 8 ビットフィールド (RFC 791)。現在は上位 6 ビットを DSCP (RFC 2474)、下位 2 ビットを ECN (RFC 3168) として再定義して用いる。IPv6 では Traffic Class フィールドが対応物。
+- **関連**: [DSCP](#term-dscp)、[ECN](#term-ecn)
 
 ### tunnelmgrd {#term-tunnelmgrd}
 
@@ -940,6 +1080,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: 重み付きランダム早期検出
 - **説明**: バッファ輻輳前にパケットをランダムドロップ / ECN マークする QoS 機能。CONFIG_DB の `WRED_PROFILE` で定義。
 
+### WRR {#term-wrr}
+
+- **略称**: WRR (Weighted Round Robin)
+- **日本語訳**: 重み付きラウンドロビン
+- **説明**: 各キューに割り当てた重みに応じて、ラウンドごとに送出パケット数を比例配分するスケジューリング方式。可変長パケットでは厳密な帯域比にならないため、SONiC / SAI では通常 DWRR を推奨する。`SCHEDULER` テーブルの `type=WRR` で指定可能。
+- **関連**: [DWRR](#term-dwrr)、[Scheduler](#term-scheduler)、[Strict Priority](#term-strict-priority)
+
 ## Y
 
 ### YANG {#term-yang}
@@ -995,7 +1142,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [AAA](#term-aaa)
 
-- [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (22)
+- [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (24)
 - [運用](../topics/15-security-aaa/operations.md) (19)
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (18)
 - [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) (17)
@@ -1048,7 +1195,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [AsterNOS](#term-asternos)
 
-- [このドキュメントについて](../about.md) (1)
+- [このドキュメントについて](../about.md) (2)
 - [SAG（Static Anycast Gateway）for SONiC](../architecture/sag-high-level-design-for-sonic.md) (1)
 
 ### [BFD](#term-bfd)
@@ -1061,9 +1208,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [BGP](#term-bgp)
 
-- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (246)
-- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (231)
-- [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (214)
+- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (248)
+- [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (233)
+- [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (216)
 - [サイトマップ](../_meta/sitemap.md) (122)
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../routing/bgp-setup-for-voq-chassis.md) (58)
 
@@ -1082,6 +1229,20 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）](../acl-qos/port-buffer-drop-counters-in-sonic.md) (1)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (1)
 - [QoS / Buffer の運用](../topics/08-qos-buffer/operations.md) (1)
+
+### [Buffer Profile](#term-buffer-profile)
+
+- [sonic-buffer-pg YANG](yang/sonic-buffer-pg.md) (1)
+- [sonic-buffer-profile YANG](yang/sonic-buffer-profile.md) (1)
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (1)
+
+### [BUFFER_PG](#term-buffer-pg)
+
+- [sonic-buffer-pg YANG](yang/sonic-buffer-pg.md) (16)
+- [未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス](../acl-qos/reclaim-reserved-buffer-sequence-flow.md) (8)
+- [BUFFER_PG テーブル](config-db/buffer-pg.md) (7)
+- [Reclaim Reserved Buffer（admin-down ポートの zero_profile）](../acl-qos/reclaim-reserved-buffer.md) (5)
+- [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (5)
 
 ### [CONFIG_DB](#term-config_db)
 
@@ -1129,7 +1290,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (23)
 - [アーキテクチャ](../topics/09-telemetry-snmp/architecture.md) (17)
 - [サイトマップ](../_meta/sitemap.md) (16)
-- [概念](../topics/09-telemetry-snmp/concept.md) (14)
+- [sonic-crm YANG](yang/sonic-crm.md) (14)
 
 ### [ConsumerStateTable](#term-consumerstatetable)
 
@@ -1175,6 +1336,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../overlay/dash-sonic-kvm.md) (2)
 
+### [DSCP](#term-dscp)
+
+- [Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）](../acl-qos/egress-outer-dscp-change-table.md) (55)
+- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (36)
+- [sonic-dscp-tc-map YANG](yang/sonic-dscp-tc-map.md) (21)
+- [Packet Trimming（symmetric / asymmetric DSCP / ACL disable）](../architecture/sonic-packet-trimming.md) (18)
+- [サイトマップ](../_meta/sitemap.md) (17)
+
+### [DWRR](#term-dwrr)
+
+- [サイトマップ](../_meta/sitemap.md) (4)
+- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (4)
+- [SCHEDULER テーブル](config-db/scheduler.md) (4)
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (4)
+- [QoS / Buffer の設定](../topics/08-qos-buffer/setup.md) (4)
+
 ### [ECMP](#term-ecmp)
 
 - [サイトマップ](../_meta/sitemap.md) (35)
@@ -1198,6 +1375,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [NPU-DPU DB と ENI ベース転送の内部構造](../topics/13-dash-smartswitch/internals.md) (28)
 - [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](../overlay/sonic-dash-hld.md) (21)
 - [sonic-passwh YANG](yang/sonic-passw-hardening.md) (16)
+
+### [ETS](#term-ets)
+
+- [ルータインタフェース (RIF) カウンタ](../routing/router-interface-counters-in-sonic.md) (20)
+- [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../architecture/port-illegal-packets-drop-design.md) (13)
+- [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](../internals/byte-packet-rates-port-utilization-in-sonic.md) (10)
+- [内部実装](../topics/09-telemetry-snmp/internals.md) (8)
+- [WRED / ECN 統計（per-queue / per-port、capability ベース）](../acl-qos/wred-and-ecn-statistics.md) (7)
 
 ### [EVPN](#term-evpn)
 
@@ -1353,11 +1538,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [INT](#term-int)
 
-- [sonic-vlan YANG](yang/sonic-vlan.md) (44)
-- [sonic-interface YANG](yang/sonic-interface.md) (42)
+- [sonic-vlan YANG](yang/sonic-vlan.md) (45)
+- [sonic-interface YANG](yang/sonic-interface.md) (43)
 - [IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）](../architecture/sonic-ip-interface-loopback-action.md) (39)
-- [sonic-vlan-sub-interface YANG](yang/sonic-vlan-sub-interface.md) (36)
-- [config interface サブコマンド](cli/config-interface.md) (30)
+- [sonic-vlan-sub-interface YANG](yang/sonic-vlan-sub-interface.md) (37)
+- [sonic-portchannel YANG](yang/sonic-portchannel.md) (31)
 
 ### [intfmgrd](#term-intfmgrd)
 
@@ -1399,7 +1584,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [LAG](#term-lag)
 
 - [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](../switching/lag-on-distributed-voq-system.md) (63)
-- [sonic-mclag YANG](yang/sonic-mclag.md) (60)
+- [sonic-mclag YANG](yang/sonic-mclag.md) (61)
 - [サイトマップ](../_meta/sitemap.md) (53)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (50)
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (33)
@@ -1414,7 +1599,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [LLDP](#term-lldp)
 
-- [sonic-lldp YANG](yang/sonic-lldp.md) (33)
+- [sonic-lldp YANG](yang/sonic-lldp.md) (35)
 - [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (19)
 - [サイトマップ](../_meta/sitemap.md) (15)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (14)
@@ -1430,7 +1615,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [MCLAG](#term-mclag)
 
-- [sonic-mclag YANG](yang/sonic-mclag.md) (60)
+- [sonic-mclag YANG](yang/sonic-mclag.md) (61)
 - [config mclag サブコマンド](cli/config-mclag.md) (28)
 - [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (27)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (18)
@@ -1455,7 +1640,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MUX](#term-mux)
 
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (43)
-- [sonic-mux-cable YANG](yang/sonic-mux-cable.md) (30)
+- [sonic-mux-cable YANG](yang/sonic-mux-cable.md) (31)
 - [MUX_LINKMGR テーブル](config-db/mux-linkmgr.md) (20)
 - [Dual-ToR の設定](../topics/05-dual-tor/setup.md) (20)
 - [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](../overlay/active-standby-dual-tor-internals.md) (18)
@@ -1535,6 +1720,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PFC で帯域が出ない / Buffer overflow](runbooks/pfc-bandwidth.md) (1)
 - [sonic-flex_counter YANG](yang/sonic-flex_counter.md) (1)
 
+### [PG (Priority Group)](#term-pg)
+
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (1)
+
 ### [portmgrd](#term-portmgrd)
 
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (12)
@@ -1583,6 +1772,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-portchannel YANG](yang/sonic-portchannel.md) (15)
 - [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (14)
 
+### [Policer](#term-policer)
+
+- [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (5)
+- [BUM ストームコントロール（PORT_STORM_CONTROL）](../switching/sonic-bum-storm-control.md) (4)
+- [内部実装](../topics/07-acl-copp-mirror/internals.md) (3)
+- [sonic-copp YANG](yang/sonic-copp.md) (2)
+- [運用](../topics/07-acl-copp-mirror/operations.md) (2)
+
+### [Policing](#term-policing)
+
+- [サイトマップ](../_meta/sitemap.md) (2)
+- [COPP_GROUP テーブル](config-db/copp-group.md) (1)
+- [sonic-copp YANG](yang/sonic-copp.md) (1)
+- [概念](../topics/07-acl-copp-mirror/concept.md) (1)
+- [概念](../topics/15-security-aaa/concept.md) (1)
+
 ### [QoS](#term-qos)
 
 - [サイトマップ](../_meta/sitemap.md) (33)
@@ -1625,7 +1830,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SNMP](#term-snmp)
 
-- [sonic-snmp YANG](yang/sonic-snmp.md) (71)
+- [sonic-snmp YANG](yang/sonic-snmp.md) (73)
 - [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (58)
 - [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (47)
 - [サイトマップ](../_meta/sitemap.md) (42)
@@ -1715,6 +1920,27 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）](../management/tacacs-passkey-encryption.md) (10)
 - [SAG（Static Anycast Gateway）for SONiC](../architecture/sag-high-level-design-for-sonic.md) (9)
 
+### [Scheduler](#term-scheduler)
+
+- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (4)
+- [サイトマップ](../_meta/sitemap.md) (2)
+- [sonic-queue YANG](yang/sonic-queue.md) (2)
+- [sonic-scheduler YANG](yang/sonic-scheduler.md) (2)
+- [変更履歴](../_meta/changelog.md) (1)
+
+### [Shaper](#term-shaper)
+
+- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (3)
+- [サイトマップ](../_meta/sitemap.md) (2)
+- [変更履歴](../_meta/changelog.md) (1)
+- [ACL & QoS](../acl-qos/index.md) (1)
+
+### [Shaping](#term-shaping)
+
+- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (1)
+- [WRED / ECN 統計（per-queue / per-port、capability ベース）](../acl-qos/wred-and-ecn-statistics.md) (1)
+- [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (1)
+
 ### [SmartNIC](#term-smartnic)
 
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (4)
@@ -1763,6 +1989,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）](../acl-qos/pfc-historical-statistics.md) (1)
 - [頻出 SAI 属性早見表](sai-attributes.md) (1)
 
+### [TC (Traffic Class)](#term-tc)
+
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (1)
+
 ### [TCAM](#term-tcam)
 
 - [発展トピック](../topics/07-acl-copp-mirror/advanced.md) (5)
@@ -1770,6 +2000,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](../acl-qos/acl-in-sonic.md) (3)
 - [概念](../topics/07-acl-copp-mirror/concept.md) (3)
 - [発展トピック](../topics/16-nat-dhcp-dns/advanced.md) (3)
+
+### [ToS](#term-tos)
+
+- [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md) (7)
+- [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](../routing/bgp-loading-optimization-for-sonic.md) (3)
 
 ### [tunnelmgrd](#term-tunnelmgrd)
 
@@ -1797,7 +2032,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [VLAN](#term-vlan)
 
-- [sonic-vlan YANG](yang/sonic-vlan.md) (111)
+- [sonic-vlan YANG](yang/sonic-vlan.md) (114)
 - [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (55)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (55)
 - [config vlan サブコマンド](cli/config-vlan.md) (54)
@@ -1813,7 +2048,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [VNET](#term-vnet)
 
-- [sonic-vnet YANG](yang/sonic-vnet.md) (85)
+- [sonic-vnet YANG](yang/sonic-vnet.md) (86)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
 - [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (40)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (26)
@@ -1837,7 +2072,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [VXLAN](#term-vxlan)
 
-- [sonic-vxlan YANG](yang/sonic-vxlan.md) (56)
+- [sonic-vxlan YANG](yang/sonic-vxlan.md) (59)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../overlay/vxlan-sonic.md) (52)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (43)
 - [サイトマップ](../_meta/sitemap.md) (41)
@@ -1862,10 +2097,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [WRED](#term-wred)
 
 - [WRED / ECN 統計（per-queue / per-port、capability ベース）](../acl-qos/wred-and-ecn-statistics.md) (48)
-- [sonic-wred-profile YANG](yang/sonic-wred-profile.md) (46)
+- [sonic-wred-profile YANG](yang/sonic-wred-profile.md) (47)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (20)
 - [sonic-queue YANG](yang/sonic-queue.md) (13)
 - [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (13)
+
+### [WRR](#term-wrr)
+
+- [SCHEDULER テーブル](config-db/scheduler.md) (9)
+- [サイトマップ](../_meta/sitemap.md) (8)
+- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (8)
+- [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (4)
+- [QoS / Buffer の設定](../topics/08-qos-buffer/setup.md) (4)
 
 ### [YANG](#term-yang)
 

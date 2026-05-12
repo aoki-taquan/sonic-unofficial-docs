@@ -39,7 +39,7 @@ Build / Packaging 章での「設定」は、機能 docker の有効化と exten
 | 既存 docker (機能) を on/off する | `config feature state` / [FEATURE](../../reference/config-db/feature.md) | image 再ビルド不要 |
 | 機能 docker を後付けで追加する | SPM (`sonic-package-manager install`) | manifest + docker image |
 | image そのものを差し替える | `sonic-installer install <bin>` | `next` / `current` の 2 image slot |
-| 別 platform / arch を build する | `make configure PLATFORM=<vendor>` + `make target/sonic-<vendor>.bin` | sonic-buildimage を clone してから |
+| 別 platform / arch を build する | `make configure PLATFORM=<vendor>` + `make target/sonic-<vendor>.bin` | [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) を clone してから |
 | build 速度や CI cache を変える | `Makefile.work` 変数 (`SONIC_BUILD_JOBS` ほか) | 環境変数で override 可 |
 
 混在しても問題ない (`FEATURE` と SPM は別レイヤ) が、変更履歴を追えるよう「機能 on/off は config CLI」「extension 追加は SPM」「image 全替えは sonic-installer」と入口を固定するのが運用上は無難。
@@ -61,7 +61,7 @@ sudo config feature state telemetry disabled
 sudo config feature autorestart bgp enabled
 ```
 
-CONFIG_DB 側の構造は次の通り。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) 側の構造は次の通り。
 
 ```text
 FEATURE|<docker-name>
@@ -71,7 +71,7 @@ FEATURE|<docker-name>
   has_per_asic_scope: True | False
 ```
 
-`always_enabled` は image build 時に固定された機能 (swss / syncd など) を示し、CLI から変更しても無視される。`has_per_asic_scope` が True の機能は multi-ASIC 構成で ASIC 数ぶん docker が起動する。詳細は [FEATURE table](../../reference/config-db/feature.md)。
+`always_enabled` は image build 時に固定された機能 (swss / [syncd](../../reference/glossary.md#term-syncd) など) を示し、CLI から変更しても無視される。`has_per_asic_scope` が True の機能は multi-ASIC 構成で ASIC 数ぶん docker が起動する。詳細は [FEATURE table](../../reference/config-db/feature.md)。
 
 ## extension を SPM で入れる (運用パス)
 
@@ -168,3 +168,5 @@ SONIC_BUILD_JOBS=8 make target/sonic-broadcom.bin
 - 構造を読み直す → [アーキテクチャ](architecture.md)。
 - 後付け配布の運用 → [運用](operations.md)。
 - ARM や container hardening、再現可能ビルド → [発展トピック](advanced.md)。
+
+<!-- glossary-links-injected: ef250042e9c0 -->

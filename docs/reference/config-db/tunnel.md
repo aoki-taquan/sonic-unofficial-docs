@@ -63,13 +63,13 @@ TUNNEL|<mux_tunnel>
 | `tunnel_type` | enum `IPINIP` | カプセル化方式。Dual-ToR では [IPinIP](../../reference/glossary.md#term-ipinip) 固定 |
 | `src_ip` | leafref → `PEER_SWITCH.address_ipv4` | トンネル送信元 (= peer ToR の IPv4) |
 | `dst_ip` | inet:ipv4-address | トンネル宛先 (自スイッチの IPv4) |
-| `dscp_mode` | string `uniform`/`pipe` | DSCP 継承モード |
+| `dscp_mode` | string `uniform`/`pipe` | [DSCP](../../reference/glossary.md#term-dscp) 継承モード |
 | `ecn_mode` | string `copy_from_outer`/`standard` | デカプセル時 ECN 処理 |
 | `encap_ecn_mode` | string `standard` | カプセル時 ECN マーキング |
 | `ttl_mode` | string `uniform`/`pipe` | TTL 継承モード |
-| `decap_dscp_to_tc_map` | string | デカプセル時 DSCP→TC マップ名 |
+| `decap_dscp_to_tc_map` | string | デカプセル時 [DSCP](../../reference/glossary.md#term-dscp)→TC マップ名 |
 | `decap_tc_to_pg_map` | string | デカプセル時 TC→PG マップ名 |
-| `encap_tc_to_dscp_map` | string | カプセル時 TC→DSCP マップ名 |
+| `encap_tc_to_dscp_map` | string | カプセル時 TC→[DSCP](../../reference/glossary.md#term-dscp) マップ名 |
 | `encap_tc_to_queue_map` | string | カプセル時 TC→Queue マップ名 |
 
 ## 制約
@@ -121,4 +121,4 @@ show tunnel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7e370733bdf6 -->
+<!-- glossary-links-injected: b4c5898e0257 -->

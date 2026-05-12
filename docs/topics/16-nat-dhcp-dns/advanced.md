@@ -126,14 +126,14 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 ## ハンドオフ
 
-- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [NAT in SONiC](../../architecture/nat-in-sonic.md), [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md), [chrony 移行](../../system/sonic-migration-to-chrony.md), [静的 DNS 設定](../../system/static-dns-configuration.md) で完結する。`natorch` / `natsyncd` の APPL_DB ↔ ASIC_DB 経路、DHCP relay の Option 82/79 制御は internals で扱う。
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [NAT in SONiC](../../architecture/nat-in-sonic.md), [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md), [chrony 移行](../../system/sonic-migration-to-chrony.md), [静的 DNS 設定](../../system/static-dns-configuration.md) で完結する。`natorch` / `natsyncd` の [APPL_DB](../../reference/glossary.md#term-appl_db) ↔ [ASIC_DB](../../reference/glossary.md#term-asic_db) 経路、DHCP relay の Option 82/79 制御は internals で扱う。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config nat` / `show nat` / `config dhcp_relay` / `show dhcp_relay` / `config ntp` 系、`NAT`, `STATIC_NAT`, `DHCP_RELAY`, `DNS_NAMESERVER`, `NTP_SERVER` の [CONFIG_DB スキーマ](../../reference/config-db/index.md) に集約。
 - **本ページ** は NAT64/DNS64、TWAMP Light、PTP / chrony 切替、resolv.conf container 同期、DHCP DoS 緩和との競合など、章境界をまたぐ発展領域だけを扱う。
 
 ## トラブルシュート観点
 
-- NAT セッションが超過しているときは、`show nat translations count` で current/max を確認し、`config nat add timeout` で aging を短縮する。`SAI_STATUS_INSUFFICIENT_RESOURCES` が syncd ログに出る場合は TCAM 物理上限到達。
-- DHCP relay で `discover` が forward されない場合、`show dhcp_relay ipv4 helper` で helper IP の到達性、VLAN 上の broadcast bind、Option 82 の `link-selection` が relay/server で一致しているかを点検する。
+- NAT セッションが超過しているときは、`show nat translations count` で current/max を確認し、`config nat add timeout` で aging を短縮する。`SAI_STATUS_INSUFFICIENT_RESOURCES` が [syncd](../../reference/glossary.md#term-syncd) ログに出る場合は TCAM 物理上限到達。
+- DHCP relay で `discover` が forward されない場合、`show dhcp_relay ipv4 helper` で helper IP の到達性、[VLAN](../../reference/glossary.md#term-vlan) 上の broadcast bind、Option 82 の `link-selection` が relay/server で一致しているかを点検する。
 - chrony が NTP sync しないときは、`chronyc tracking` / `chronyc sources -v` で Stratum / reach、`chronyc activity` で source 数を確認。mgmt VRF 配下では `bindaddress` の固定が必須。
 
 ## 検証パスとラボ要件
@@ -154,4 +154,4 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - [07 ACL / CoPP / Mirror: DHCP DoS 緩和との境界](../07-acl-copp-mirror/index.md)
 - [15 Security / AAA: mgmt VRF と service bind](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: cc3a30e152f2 -->

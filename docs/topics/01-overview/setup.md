@@ -39,8 +39,8 @@ SONiC には設定を入れる入口が複数あり、最終的にはすべて C
 | 入口 | 典型用途 | 性質 |
 | --- | --- | --- |
 | `config` CLI (Click 系) | 手動運用、変更の都度 commit | CONFIG_DB を直接書く。validation は最低限 |
-| `sonic-cli` / Management Framework | gNMI/REST/RESTCONF を併用する自動化 | [YANG](../../reference/glossary.md#term-yang) validation あり |
-| `config_db.json` 直編集 + `config reload` | bootstrap、ラボ、ZTP | DB を丸ごと差し替え |
+| `sonic-cli` / Management Framework | [gNMI](../../reference/glossary.md#term-gnmi)/REST/RESTCONF を併用する自動化 | [YANG](../../reference/glossary.md#term-yang) validation あり |
+| `config_db.json` 直編集 + `config reload` | bootstrap、ラボ、[ZTP](../../reference/glossary.md#term-ztp) | DB を丸ごと差し替え |
 | `config apply-patch` / `replace` ([GCU](../../reference/glossary.md#term-gcu)) | 差分適用と rollback | YANG-aware な partial update |
 | `sonic-cfggen` | minigraph / template から CONFIG_DB を生成 | 主に build/ZTP/初期化フェーズ |
 
@@ -74,7 +74,7 @@ SONiC の設定は **2 つのレイヤ** で永続化される。読み違える
 
 | レイヤ | 何が保存されるか | 触る操作 |
 | --- | --- | --- |
-| Redis CONFIG_DB (in-memory) | 現在の意図 | CLI / gNMI / `redis-cli` |
+| [Redis](../../reference/glossary.md#term-redis) CONFIG_DB (in-memory) | 現在の意図 | CLI / gNMI / `redis-cli` |
 | `/etc/sonic/config_db.json` (disk) | 再起動時に CONFIG_DB に load する snapshot | `config save` / `config load` / `config reload` |
 
 `config reload` は disk の `config_db.json` を CONFIG_DB に再 load し、`*mgrd` を再起動する。つまり「DB に直接書いたが save していない変更」は `config reload` で消える。ラボでは `config save` → `config reload -y` の往復で確実に永続化を試験する。
@@ -95,10 +95,10 @@ bootstrap で読むべき設定は `DEVICE_METADATA|localhost`、`FEATURE|<docke
 | 機能 | 設定入口の章 |
 | --- | --- |
 | [BGP](../../reference/glossary.md#term-bgp) / route policy | [BGP 章 - 設定](../02-bgp/setup.md) |
-| L2 / VLAN / LAG | [L2 章 - 設定](../06-l2-vlan-lag/setup.md) |
-| [VxLAN](../../reference/glossary.md#term-vxlan) / EVPN / VNET | [VxLAN EVPN 章 - 設定](../03-vxlan-evpn/setup.md) |
+| L2 / [VLAN](../../reference/glossary.md#term-vlan) / [LAG](../../reference/glossary.md#term-lag) | [L2 章 - 設定](../06-l2-vlan-lag/setup.md) |
+| [VxLAN](../../reference/glossary.md#term-vxlan) / [EVPN](../../reference/glossary.md#term-evpn) / [VNET](../../reference/glossary.md#term-vnet) | [VxLAN EVPN 章 - 設定](../03-vxlan-evpn/setup.md) |
 | [ACL](../../reference/glossary.md#term-acl) / [CoPP](../../reference/glossary.md#term-copp) / mirror | [ACL 章 - 設定](../07-acl-copp-mirror/setup.md) |
-| QoS / buffer | [QoS 章 - 設定](../08-qos-buffer/setup.md) |
+| [QoS](../../reference/glossary.md#term-qos) / buffer | [QoS 章 - 設定](../08-qos-buffer/setup.md) |
 | telemetry / gNMI | [Telemetry 章 - 設定](../09-telemetry-snmp/setup.md) |
 
 ## つまずきパターン
@@ -146,3 +146,5 @@ gNMI set / get の例は [gNMI / OpenConfig 章](../10-gnmi-openconfig/index.md)
 - 設定がどう daemon に流れるかを追いたい → [設定データフロー](architecture.md) と [内部実装](internals.md)。
 - 運用観点 (rollback / 監視 / failure) → [運用入口](operations.md)。
 - 個別機能の設定 → 各章 (`02-bgp/setup.md` ほか)。
+
+<!-- glossary-links-injected: 09e201c74bd0 -->

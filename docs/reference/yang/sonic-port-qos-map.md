@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -100,7 +100,7 @@ module: sonic-port-qos-map
 | `dscp_to_tc_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/dscp_to_tc_map` | `leafref` |  |  | /dtm:sonic-dscp-tc-map/dtm:DSCP_TO_TC_MAP/dtm:DSCP_TO_TC_MAP_LIST/dtm:name | Reference to a DSCP to traffic class map. |
 | `tc_to_dscp_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/tc_to_dscp_map` | `leafref` |  |  | /tdm:sonic-tc-dscp-map/tdm:TC_TO_DSCP_MAP/tdm:TC_TO_DSCP_MAP_LIST/tdm:name | Reference to a traffic class to DSCP remarking map. |
 | `dot1p_to_tc_map` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/dot1p_to_tc_map` | `leafref` |  |  | /dot1ptm:sonic-dot1p-tc-map/dot1ptm:DOT1P_TO_TC_MAP/dot1ptm:DOT1P_TO_TC_MAP_LIST/dot1ptm:name | Reference to a DOT1P to traffic class map. |
-| `scheduler` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/scheduler` | `leafref` |  |  | /sch:sonic-scheduler/sch:SCHEDULER/sch:SCHEDULER_LIST/sch:name | Scheduler for port. |
+| `scheduler` | `sonic-port-qos-map/PORT_QOS_MAP/PORT_QOS_MAP_LIST/scheduler` | `leafref` |  |  | /sch:sonic-scheduler/sch:SCHEDULER/sch:SCHEDULER_LIST/sch:name | [Scheduler](../../reference/glossary.md#term-scheduler) for port. |
 
 ## leafref / 依存
 
@@ -142,4 +142,4 @@ module: sonic-port-qos-map
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e0f6f792519a -->
+<!-- glossary-links-injected: f3f3fc42e967 -->

@@ -65,7 +65,7 @@ Mellanox プラットフォームで顕著な「admin-down ポートにも defau
 
 ### 「単純削除」では起きる不整合
 
-最初に思いつくのは「admin-down ポートの BUFFER_PG / BUFFER_QUEUE エントリを削除する」だが、[HLD](../reference/glossary.md#term-hld) はこれを否定する。[SAI](../reference/glossary.md#term-sai) / SDK は **「設定が無いとき = SDK default 値（一部は非ゼロ）」** であり、設定削除（`SAI_NULL_OBJECT_ID`）すると **0 にリセット** される。結果、
+最初に思いつくのは「admin-down ポートの [BUFFER_PG](../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE エントリを削除する」だが、[HLD](../reference/glossary.md#term-hld) はこれを否定する。[SAI](../reference/glossary.md#term-sai) / SDK は **「設定が無いとき = SDK default 値（一部は非ゼロ）」** であり、設定削除（`SAI_NULL_OBJECT_ID`）すると **0 にリセット** される。結果、
 
 - 起動時設定なし → SDK default（非ゼロ）
 - 起動後に削除 → 0
@@ -189,4 +189,4 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 568143337d00 -->
+<!-- glossary-links-injected: 1af9c6208afc -->

@@ -37,7 +37,7 @@ related:
 
 ## ハンドオフ
 
-- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [BGP / FRR 系 routing/ 配下のページ群](../../routing/index.md) で完結する。FRR 統合の基本フロー (zebra ↔ fpmsyncd ↔ APPL_DB ↔ orchagent) はそこで詳細化されている。
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [BGP / FRR 系 routing/ 配下のページ群](../../routing/index.md) で完結する。FRR 統合の基本フロー (zebra ↔ [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) ↔ [APPL_DB](../../reference/glossary.md#term-appl_db) ↔ orchagent) はそこで詳細化されている。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config bgp` / `show bgp` 系、[reference/config_db/BGP_*](../../reference/config-db/index.md), `BGP_NEIGHBOR`, `BGP_PEER_GROUP` に集約されている。
 - **本ページ** は VoQ シャーシ・BFD・EVPN という章境界のクロスオーバー、および BGP suppress-fib-pending / BGP PIC / BMP / Dynamic neighbor といった「FRR の発展機能を SONiC schema に取り込む」運用領域だけを扱う。
 
@@ -99,8 +99,8 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 
 ## トラブルシュート観点
 
-- FRR からの経路が APPL_DB / ASIC_DB まで到達しないときは、まず `fpmsyncd` の Redis 接続と queue depth を疑う。`docker exec bgp supervisorctl status` で daemon の up 状態、`redis-cli -n 0 keys 'ROUTE_TABLE:*' | wc -l` で投入数を確認。
-- `show ip bgp summary` で peer が Active のまま停止する場合、TCP MD5 / GTSM (TTL security) / ACL で TCP 179 が阻まれていないかを `iptables -L INPUT`, `ip6tables`, CoPP の `bgp` trap で点検する。
+- FRR からの経路が APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) まで到達しないときは、まず `fpmsyncd` の Redis 接続と queue depth を疑う。`docker exec bgp supervisorctl status` で daemon の up 状態、`redis-cli -n 0 keys 'ROUTE_TABLE:*' | wc -l` で投入数を確認。
+- `show ip bgp summary` で peer が Active のまま停止する場合、TCP MD5 / GTSM (TTL security) / [ACL](../../reference/glossary.md#term-acl) で TCP 179 が阻まれていないかを `iptables -L INPUT`, `ip6tables`, [CoPP](../../reference/glossary.md#term-copp) の `bgp` trap で点検する。
 - multipath が成立しない場合は `bestpath as-path multipath-relax` と、neighbor 側 `addpath-tx-all-paths` を疑う。RR 経由の場合は RR 側で `additional-paths send/receive` が必要。
 
 ## 検証パスとラボ要件
@@ -130,4 +130,4 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 - [12 Multi-ASIC / VOQ: chassis 内 iBGP full mesh](../12-multi-asic-voq/index.md)
 - [17 SRv6 / MPLS: BGP SR signaling](../17-srv6-mpls/index.md)
 
-<!-- glossary-links-injected: 8214fd17dd58 -->
+<!-- glossary-links-injected: 247f1deb5a6e -->

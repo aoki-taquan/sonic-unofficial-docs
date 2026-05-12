@@ -306,7 +306,7 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 #### 読者への影響
 
 - `sudo config interface shutdown EthernetX` 後に CONFIG_DB から直接 `PORT|EthernetX` を消すと、orchagent が以下を順次出す:
-  - `SAI_STATUS_OBJECT_IN_USE`（VLAN_MEMBER / ACL_TABLE / BUFFER_PG が参照中）
+  - `SAI_STATUS_OBJECT_IN_USE`（VLAN_MEMBER / ACL_TABLE / [BUFFER_PG](../reference/glossary.md#term-buffer-pg) が参照中）
   - `SAI_STATUS_INVALID_OBJECT_ID`（既に部分削除された下流 SAI オブジェクト）
   - 最悪は orchagent 自体が `abort()` し [syncd](../reference/glossary.md#term-syncd) / swss コンテナが crash loop に入る。`fast-reboot` / `warm-reboot` が必要になる。
 - chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で `pending_cmds` が滞留し、lldp neighbor 表に古い情報が残る。
@@ -389,4 +389,4 @@ orchagent 側に上記前処理が無いため、**運用側で全部やりき�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7d213842fcc9 -->
+<!-- glossary-links-injected: 1af9c6208afc -->

@@ -176,7 +176,7 @@ snmpwalk で `IF-MIB::ifInErrors` が振り切れているのに `portstat` の 
 
 ## CoPP の確認
 
-CoPP (Control Plane Policer) は CPU 向け punt traffic を trap group ごとに policing します。`show copp` 系のコマンドは限定的なので、CONFIG_DB と `show flowcnt trap` を併用します。
+CoPP (Control Plane [Policer](../../reference/glossary.md#term-policer)) は CPU 向け punt traffic を trap group ごとに policing します。`show copp` 系のコマンドは限定的なので、CONFIG_DB と `show flowcnt trap` を併用します。
 
 ```text
 admin@sonic:~$ show flowcnt trap stats
@@ -223,4 +223,4 @@ ip2me                   50        4000     0       default
 - [CoPP neighbor-miss trap と強化](../../acl-qos/copp-neighbor-miss-trap-and-enhancements.md) — CoPP の trap group 設計
 - [CoPP manager リデザイン テストプラン](../../acl-qos/copp-manager-redesign-test-plan.md) — trap 別の挙動確認の観点
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: 7346a8b8c6b2 -->

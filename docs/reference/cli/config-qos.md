@@ -158,7 +158,7 @@ flowchart LR
 ### 典型的な利用シーン
 
 - QoS プロファイルの再ロード、TC マップ・スケジューラ・[WRED](../../reference/glossary.md#term-wred) の更新。
-- DSCP / dot1p / [PFC](../../reference/glossary.md#term-pfc) priority の対応付け確認。
+- [DSCP](../../reference/glossary.md#term-dscp) / dot1p / [PFC](../../reference/glossary.md#term-pfc) priority の対応付け確認。
 
 ### よくある落とし穴
 
@@ -174,4 +174,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5026cb7f9a38 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

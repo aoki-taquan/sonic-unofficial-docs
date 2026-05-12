@@ -55,14 +55,14 @@ SONiC の docker は歴史的に `--privileged` が多かった。CVE 対応と�
 `sonic-buildimage` は `PLATFORM=<vendor>` 単位で完全に独立した image を生成するため、ビルドを横方向に分割しやすい。実運用での並列化パターンは次の三段になる。
 
 - **`make -j` レベル**: 単一 platform 内で `dpkg-buildpackage` / docker build を並列化する。`SONIC_BUILD_JOBS` と `SONIC_CONFIG_BUILD_JOBS` を物理コアに合わせて指定。
-- **platform レベル**: CI runner / sub-job を `PLATFORM=broadcom` / `mellanox` / `marvell` などで分割する。共通 deb (`target/debs/`) は cache で再利用し、syncd と SDK 依存パッケージだけ platform 個別に作る。
+- **platform レベル**: CI runner / sub-job を `PLATFORM=broadcom` / `mellanox` / `marvell` などで分割する。共通 deb (`target/debs/`) は cache で再利用し、[syncd](../../reference/glossary.md#term-syncd) と SDK 依存パッケージだけ platform 個別に作る。
 - **arch レベル**: `PLATFORM_ARCH=amd64` / `arm64` / `armhf` を別 matrix セルに展開する。`sonic-slave-<dist>-<arch>` docker を pre-pull しておくと `docker-base` のフェーズ時間が大きく短縮する。
 
 CI 全体は「`target/debs/` cache (全 platform 共通) → platform 並列 build → image 集約」の三層パイプラインで構成するのが安定する。
 
 ## SDK 切替と vendor SDK の取り扱い
 
-vendor SDK (Broadcom SAI / OpenNSL、NVIDIA SDK、Marvell Prestera 等) はバージョン依存が強く、`platform/<vendor>/<sai>.mk` で deb 名 / URL / SHA を pin している。SDK を上げるときは次を同時に確認する。
+vendor SDK (Broadcom [SAI](../../reference/glossary.md#term-sai) / OpenNSL、NVIDIA SDK、Marvell Prestera 等) はバージョン依存が強く、`platform/<vendor>/<sai>.mk` で deb 名 / URL / SHA を pin している。SDK を上げるときは次を同時に確認する。
 
 - `platform/<vendor>/*.mk` の `SAI` / `SDK` バージョン変数
 - `dockers/docker-syncd-<vendor>/` の Dockerfile 依存
@@ -128,4 +128,4 @@ base が debian なので CVE 通知は `debian-security` announce と SBOM の�
 - SPM (`sonic-package-manager`) で manifest schema 拡張と署名検証関連の議論が継続。
 - SBOM 出力と CVE スキャン自動化の PR が CI 周りで議題化。
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 6ee6deac630a -->

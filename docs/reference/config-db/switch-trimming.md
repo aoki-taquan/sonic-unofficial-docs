@@ -20,7 +20,7 @@ related:
 ## 概要
 
 輻輳テレメトリ向けの **パケットトリミング (packet trimming)** を全スイッチに対して設定するテーブル[^1]。
-ドロップ予定のパケットを「短縮コピー」して別の DSCP / TC / queue で送り出すことで、輻輳発生を末端まで伝える。
+ドロップ予定のパケットを「短縮コピー」して別の [DSCP](../../reference/glossary.md#term-dscp) / TC / queue で送り出すことで、輻輳発生を末端まで伝える。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -51,7 +51,7 @@ SWITCH_TRIMMING|GLOBAL
 | フィールド | 型 | 説明 |
 |-----------|----|------|
 | `size` | uint32 | トリミング後のパケットサイズ [bytes] |
-| `dscp_value` | uint8 (0..63) または `from-tc` | トリミング後パケットに付ける DSCP。`from-tc` で `tc_value` から DSCP_TO_TC マッピング逆引きで導出 |
+| `dscp_value` | uint8 (0..63) または `from-tc` | トリミング後パケットに付ける [DSCP](../../reference/glossary.md#term-dscp)。`from-tc` で `tc_value` から DSCP_TO_TC マッピング逆引きで導出 |
 | `tc_value`  | uint8 | トリミング後パケットに付ける Traffic Class |
 | `queue_index` | uint8 または `dynamic` | トリミング後パケットの送信キュー。`dynamic` で `dscp_value` から導出 |
 
@@ -86,7 +86,7 @@ SWITCH_TRIMMING|GLOBAL
 ### 典型値
 
 - key: `SWITCH_TRIMMING|GLOBAL` (シングルトン)。
-- `size`: 128〜256 bytes 程度。`dscp_value`: `from-tc` または明示 DSCP。
+- `size`: 128〜256 bytes 程度。`dscp_value`: `from-tc` または明示 [DSCP](../../reference/glossary.md#term-dscp)。
 - `queue_index`: `dynamic` または特定 queue。
 
 ### よくある誤設定
@@ -102,4 +102,4 @@ show switch-trimming
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 766c2b488f5d -->
+<!-- glossary-links-injected: b4c5898e0257 -->
