@@ -28,7 +28,7 @@ related:
 
 # Switchport モードと VLAN CLI 拡張 — 内部実装
 
-本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **YANG / CONFIG_DB / db_migrator** 周りを切り出した派生ページ。概要・モード定義は [concepts](switch-port-modes-and-vlan-cli-concepts.md) を参照。
+本ページは親 [HLD](../reference/glossary.md#term-hld) [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **[YANG](../reference/glossary.md#term-yang) / [CONFIG_DB](../reference/glossary.md#term-config_db) / db_migrator** 周りを切り出した派生ページ。概要・モード定義は [concepts](switch-port-modes-and-vlan-cli-concepts.md) を参照。
 
 ## YANG / CONFIG_DB
 
@@ -82,7 +82,7 @@ PORTCHANNEL|<name>
 | `tagging_mode` (`untagged` / `tagged`) の意味付け | ✅ 既存 `VLAN_MEMBER` を流用 | — |
 | orchagent / vlanmgr / SAI 側のモード対応 | ✅ 改修不要（既存 `VLAN_MEMBER` 経由で従来動作）| — |
 | `routed` モードでの `VLAN_MEMBER` 拒否バリデーション | 🟡 CLI 側のチェック | YANG must 制約や orchagent 側の強制バリデーションは未取り込み |
-| trunk native VLAN（`switchport trunk native vlan` 相当）の CONFIG_DB 表現 | — | ❌ HLD では暗黙、master では `VLAN_MEMBER` `untagged` の併用に依存（明示フィールドなし）|
+| trunk native [VLAN](../reference/glossary.md#term-vlan)（`switchport trunk native vlan` 相当）の CONFIG_DB 表現 | — | ❌ HLD では暗黙、master では `VLAN_MEMBER` `untagged` の併用に依存（明示フィールドなし）|
 
 `✅` フェーズは現行 master で素直に動作するが、`🟡` / `❌` フェーズは CLI のガードに依存しており、`redis-cli` 直接編集で routed ポートに VLAN メンバを追加する等の整合性違反は防げない。詳細は [discrepancy ページ](switch-port-modes-and-vlan-cli-discrepancy.md) を参照[^1]。
 
@@ -130,3 +130,5 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: f7808c6675e0 -->

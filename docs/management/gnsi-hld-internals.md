@@ -24,7 +24,7 @@ related:
 
 # gNSI 内部実装
 
-このページは [gNSI（概要ハブ）](gnsi-hld.md) の派生で、**4 サービスの内部実装と host service** に絞る。概念は [gnsi-hld-concepts.md](gnsi-hld-concepts.md)、設定 / 運用は [gnsi-hld-operations.md](gnsi-hld-operations.md)、制限と HLD 乖離は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
+このページは [gNSI（概要ハブ）](gnsi-hld.md) の派生で、**4 サービスの内部実装と host service** に絞る。概念は [gnsi-hld-concepts.md](gnsi-hld-concepts.md)、設定 / 運用は [gnsi-hld-operations.md](gnsi-hld-operations.md)、制限と [HLD](../reference/glossary.md#term-hld) 乖離は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 !!! note "実装状況の境界（partially implemented）"
     以下の内部実装記述のうち、**Certz の handler は `sonic-gnmi` に実装済** で master 上で動作する。一方 **Authz / Pathz handler および Credentialz の `console_mgmt` / `ssh_mgmt` host service は未実装** で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
@@ -40,7 +40,7 @@ related:
 
 ### Profile
 
-PKI 群を **SSL profile** 単位で束ねる。デフォルトは `gnxi` プロファイル（gNMI / [gNOI](../reference/glossary.md#term-gnoi) / gNSI 自身が使う）[^1]:
+PKI 群を **SSL profile** 単位で束ねる。デフォルトは `gnxi` プロファイル（[gNMI](../reference/glossary.md#term-gnmi) / [gNOI](../reference/glossary.md#term-gnoi) / gNSI 自身が使う）[^1]:
 
 | RPC | 用途 |
 |-----|------|
@@ -115,3 +115,5 @@ sequenceDiagram
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: fb8223262e3a -->

@@ -91,8 +91,8 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (107 行) | meta |
-| setup | ✅ 完成 (123 行) | meta |
-| operations | ✅ 完成 (111 行) | meta |
+| setup | ✅ 完成 (125 行) | meta |
+| operations | ✅ 完成 (113 行) | meta |
 | internals | ✅ 完成 (133 行) | meta |
 | advanced | ✅ 完成 (101 行) | meta |
 
@@ -104,17 +104,20 @@ related:
 **この章を読み進める順**
 
 - [概要: リファレンス設計の考え方](concept.md)
+- [設定](setup.md)
+- [運用](operations.md)
 - [内部実装](internals.md)
+- [発展トピック](advanced.md)
 
-**関連する [HLD](../../reference/glossary.md#term-hld) 7 件**
+**関連する HLD 7 件**
 
+- [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
 - [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
 - [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
 - [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
 - [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
-- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
 
 **関連トラブルシュート 5 件**
 

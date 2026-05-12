@@ -46,6 +46,19 @@ flowchart LR
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。`ROUTE_REDISTRIBUTE` は FRR の `redistribute` ステートメントを `bgpcfgd` 経由で投入する。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
 
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 関連 HLD
+
+- [sonic-static-route YANG](../../reference/yang/sonic-static-route.md)
+- [sonic-vrf YANG](../../reference/yang/sonic-vrf.md)
+
+<!-- /yang-xref -->
+
 ## ツリー
 
 ```

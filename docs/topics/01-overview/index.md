@@ -89,10 +89,10 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (153 行) | meta |
-| setup | ✅ 完成 (119 行) | meta |
+| setup | ✅ 完成 (121 行) | meta |
 | operations | ✅ 完成 (181 行) | meta |
 | internals | ✅ 完成 (137 行) | meta |
-| advanced | ✅ 完成 (102 行) | meta |
+| advanced | ✅ 完成 (104 行) | meta |
 
 <!-- /chapter-progress -->
 
@@ -103,18 +103,20 @@ related:
 
 - [概要: 概念と読み始め方](concept.md)
 - [アーキテクチャ: 設定データフロー](architecture.md)
+- [設定](setup.md)
 - [設定: 設定変更の選び方](configuration.md)
 - [運用: 運用入口](operations.md)
 - [内部実装](internals.md)
+- [発展トピック](advanced.md)
 
 **関連する HLD 7 件**
 
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
+- [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
 - [Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）](../../system/what-are-the-development-phases-and-scope-for-warm-reboot.md)
 - [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
 - [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
 - [System-wide Warmboot（going down / up path / SAI 期待値）](../../system/system-wide-warmboot.md)
-- [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
 
 **関連トラブルシュート 5 件**

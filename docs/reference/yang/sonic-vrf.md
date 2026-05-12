@@ -51,7 +51,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -60,6 +60,12 @@ flowchart LR
 ### 関連 CLI
 
 - [`config vrf`](../cli/config-vrf.md)
+
+### 関連 HLD
+
+- [sonic-nat YANG](../../reference/yang/sonic-nat.md)
+- [sonic-route-common YANG](../../reference/yang/sonic-route-common.md)
+- [sonic-static-route YANG](../../reference/yang/sonic-static-route.md)
 
 <!-- /yang-xref -->
 

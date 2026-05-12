@@ -185,10 +185,10 @@ docker exec syncd grep -i 'dump' /var/log/syslog | tail
 
 - dump 機能が無効になっている platform では HLD どおり動作しない。`/etc/sonic/sonic_version.yml` のベンダー platform 名を確認のうえ SAI ベンダーに有効化を依頼。
 - dump が大量生成されてディスクを圧迫する場合は `logrotate` 設定 (`/etc/logrotate.d/`) で世代管理する。
-- dump 採取後は CONFIG_DB / APPL_DB / ASIC_DB の同タイムスタンプ snapshot (`show techsupport`) と一緒に保管するとベンダー解析が早い。
+- dump 採取後は [CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) の同タイムスタンプ snapshot (`show techsupport`) と一緒に保管するとベンダー解析が早い。
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/dump_on_sai_failure.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 2d37518e0eae -->
+<!-- glossary-links-injected: f18034062bd1 -->

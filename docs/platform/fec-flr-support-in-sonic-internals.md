@@ -130,7 +130,7 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 
 実装内部の観点から運用に効く制限点 (HLD と実装の乖離を含む詳細は [limitations](fec-flr-support-in-sonic-limitations.md))。
 
-- **`port_flr.lua` は Redis-side script として swss に同梱**: 書き換えるには docker イメージ内のファイル編集 + `docker restart swss` で再ロードが必要。host から CONFIG_DB / CLI で差し替える機構は無い。
+- **`port_flr.lua` は [Redis](../reference/glossary.md#term-redis)-side script として swss に同梱**: 書き換えるには docker イメージ内のファイル編集 + `docker restart swss` で再ロードが必要。host から CONFIG_DB / CLI で差し替える機構は無い。
 - **`FLR_INTERVAL_FACTOR` は lua ハードコード**: HLD で示唆される `counterpoll port flr-interval-factor` CLI は `sonic-utilities` master に未取り込み。実効 poll 周期は `port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR` で決まる。
 - **`FlexCounterOrch` の伝搬経路は提案止まり**: HLD の `FlexCounterOrch` から factor を受け渡す経路は実装上は静的定数になっており、`flexcounterorch.cpp` に対応コードは見当たらない。
 - **`crates/countersyncd` (Rust) 経由の SAI counter 列挙**: 旧来の C++ flex counter とは別経路で `IF_IN_FEC_CODEWORD_ERRORS_S0..S16` を集める。一部プラットフォーム SAI が `S16` 全部を返さないと FLR 計算が中断する。
@@ -179,4 +179,4 @@ sonic-db-cli CONFIG_DB hget 'FLEX_COUNTER_TABLE|PORT' POLL_INTERVAL
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 5440b86e15ed -->
+<!-- glossary-links-injected: 0f594312e2b7 -->

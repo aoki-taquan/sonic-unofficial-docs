@@ -28,7 +28,7 @@ related:
 
 # Switchport モードと VLAN CLI 拡張 — 概念
 
-本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) から **概念 / 用語 / モード定義** を切り出した派生ページ。実装詳細は [internals](switch-port-modes-and-vlan-cli-internals.md)、設定例は [operations](switch-port-modes-and-vlan-cli-operations.md)、HLD と実装の乖離は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+本ページは親 [HLD](../reference/glossary.md#term-hld) [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) から **概念 / 用語 / モード定義** を切り出した派生ページ。実装詳細は [internals](switch-port-modes-and-vlan-cli-internals.md)、設定例は [operations](switch-port-modes-and-vlan-cli-operations.md)、HLD と実装の乖離は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
 !!! note "実装状況の境界（partially implemented）"
     モード概念のうち **`access` / `trunk` の CLI（`config switchport mode access|trunk`）と複数 VLAN 一括 add/del は master に取り込み済** で動作する。一方、HLD が想定していた **`routed` モードへの明示遷移コマンドと PORTCHANNEL 一括移行は未実装** に近く、対応 PR が未取り込みの部分が残る。詳細は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
@@ -96,3 +96,5 @@ flowchart LR
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 167700005048 -->

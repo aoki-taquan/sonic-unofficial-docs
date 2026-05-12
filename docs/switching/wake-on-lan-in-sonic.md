@@ -257,7 +257,7 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 ## 制限事項
 
 - WoL マジックパケット送出機能は SONiC ホスト側の utility として実装され、受信側 NIC / target 側 OS 設定 (BIOS, ethtool wol g) に依存する。
-- ターゲット VLAN へのリレーには UDP/9 を許可する ACL / firewall 設定が必要で、デフォルト構成ではブロックされる場合がある。
+- ターゲット VLAN へのリレーには UDP/9 を許可する [ACL](../reference/glossary.md#term-acl) / firewall 設定が必要で、デフォルト構成ではブロックされる場合がある。
 - SecureOn (パスワード付 WoL) の対応は NIC によりまちまちで、SONiC 側の CLI からは未公開の場合がある。
 
 ## 引用元
@@ -285,4 +285,4 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d6835cb78451 -->
+<!-- glossary-links-injected: 1f2da1437d5b -->

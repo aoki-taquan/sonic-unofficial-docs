@@ -60,7 +60,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する CONFIG_DB / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -74,6 +74,12 @@ flowchart LR
 ### 関連 HLD
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
+- [sonic-banner YANG](../../reference/yang/sonic-banner.md)
+- [sonic-fips YANG](../../reference/yang/sonic-fips.md)
+- [sonic-ntp YANG](../../reference/yang/sonic-ntp.md)
+- [sonic-passwh YANG](../../reference/yang/sonic-passw-hardening.md)
+- [sonic-snmp YANG](../../reference/yang/sonic-snmp.md)
+- [sonic-ssh-server YANG](../../reference/yang/sonic-ssh-server.md)
 - [発展トピック](../../topics/15-security-aaa/advanced.md)
 
 <!-- /yang-xref -->
