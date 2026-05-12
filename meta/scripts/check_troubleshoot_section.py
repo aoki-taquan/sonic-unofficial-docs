@@ -120,55 +120,6 @@ def check(pages: list[Path]) -> tuple[list[Path], list[Path]]:
     return missing, thin
 
 
-def find_section_body(text: str) -> str | None:
-    """対象 H2 セクション本文 (次の H2/EOF まで) を返す。複数あれば結合。"""
-    lines = text.splitlines()
-    bodies: list[str] = []
-    i = 0
-    while i < len(lines):
-        if TROUBLESHOOT_H2_RE.match(lines[i]):
-            j = i + 1
-            buf: list[str] = []
-            while j < len(lines) and not lines[j].startswith("## "):
-                buf.append(lines[j])
-                j += 1
-            bodies.append("\n".join(buf))
-            i = j
-        else:
-            i += 1
-    if not bodies:
-        return None
-    return "\n\n".join(bodies)
-
-
-def is_thin(body: str) -> bool:
-    """3 行未満の本文または code block なしを thin と判定。"""
-    non_empty = [l for l in body.splitlines() if l.strip()]
-    if len(non_empty) < 3:
-        return True
-    if "```" not in body:
-        return True
-    return False
-
-
-def find_thin(pages: list[Path]) -> list[Path]:
-    thin: list[Path] = []
-    for f in pages:
-        text = f.read_text(encoding="utf-8")
-        lines = text.splitlines()
-        if len(lines) < MIN_LINES:
-            continue
-        ver = parse_frontmatter_verification(text)
-        if ver not in TARGET_VERIFICATION:
-            continue
-        body = find_section_body(text)
-        if body is None:
-            continue
-        if is_thin(body):
-            thin.append(f)
-    return thin
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
@@ -180,11 +131,6 @@ def main() -> int:
         "--thin",
         action="store_true",
         help="print only thin-content pages",
-    )
-    parser.add_argument(
-        "--thin",
-        action="store_true",
-        help="list pages whose troubleshoot/verify section is too thin (<3 lines or no code block)",
     )
     args = parser.parse_args()
 

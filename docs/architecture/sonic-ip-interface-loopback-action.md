@@ -236,6 +236,32 @@ show ip interfaces loopback-action
 - 設定が再起動で消える: `config save` 漏れ。CONFIG_DB は永続化していないと cold/fast boot で揮発する。
 - SAI 側未対応: ベンダー SAI 実装で `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` をサポートしていないと `set_router_interface_attribute` が失敗する。`syslog` の SWSS / SAI ログを確認。
 
+### コマンド例: Loopback action 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# loopback_action 設定の確認
+show ip interfaces
+redis-cli -n 4 keys 'INTERFACE|*' | head
+redis-cli -n 4 hgetall 'INTERFACE|Ethernet0'
+```
+
+### コマンド例: Loopback action 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# loopback_action 設定の確認
+show ip interfaces
+redis-cli -n 4 keys 'INTERFACE|*' | head
+redis-cli -n 4 hgetall 'INTERFACE|Ethernet0'
+```
+
+
+
 ## 関連 reference
 
 - [CLI: config interface](../reference/cli/config-interface.md)
