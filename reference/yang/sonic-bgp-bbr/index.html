@@ -25189,6 +25189,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="redis-cli での観測">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 YANG モジュール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29155,6 +29172,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="redis-cli での観測">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 YANG モジュール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29341,6 +29375,18 @@
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config bgpd&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;aggregate-address|bbr&#39;</span>
 </span></code></pre></div>
 <p><code>status=enabled</code> のとき、<code>BGP_AGGREGATE_ADDRESS</code> の BBR 連動ロジック（<code>suppress-map</code> の動的切替）が <code>bgpcfgd</code> の Jinja テンプレートで生成される。<code>disabled</code> に切り替えても <code>aggregate-address</code> 設定自体は残るため、<a href="../../glossary/#term-frr">FRR</a> 側の <code>running-config</code> 差分で「BBR 機能のみが OFF」を確認するのがポイント。</p>
+<!-- yang-sibling -->
+<h3 id="yang">関連 YANG モジュール<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter <code>related.yang</code> から自動抽出):</p>
+<ul>
+<li><a href="../sonic-bgp-global/"><code>sonic-bgp-global</code></a></li>
+<li><a href="../sonic-bgp-aggregate-address/"><code>sonic-bgp-aggregate-address</code></a></li>
+<li><a href="../sonic-bgp-device-global/"><code>sonic-bgp-device-global</code></a></li>
+<li><a href="../sonic-bgp-monitor/"><code>sonic-bgp-monitor</code></a></li>
+<li><a href="../sonic-bgp-neighbor/"><code>sonic-bgp-neighbor</code></a></li>
+</ul>
+<!-- /yang-sibling -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
