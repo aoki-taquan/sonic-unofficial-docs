@@ -83,6 +83,12 @@ going up は逆順を namespace ごとに走らせ、[orchagent](../reference/gl
 - internal BGP がフラップ → hold timer、GR negotiation の成功確認
 - 一部 ASIC だけ syncd 復元失敗 → per-namespace `sai-warmboot.bin` の有無と vendor SAI ログ
 
+## 制限事項
+
+- multi-asic 環境では namespace ごとに warm-restart timer が独立しており、最も遅い ASIC に律速される。
+- chassis 内の internal fabric (CPU<->LC fabric) を warm-restart 対象外とする実装が一部に存在し、本 HLD どおりに無瞬断とはならない場合がある。
+- multi-asic + Multi-DUT MLAG 同時運用の warm-reboot は組み合わせ検証が不十分で、慎重な事前検証を推奨。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/Multi_ASIC_warm_reboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

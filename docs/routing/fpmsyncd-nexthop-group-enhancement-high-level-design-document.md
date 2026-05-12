@@ -170,6 +170,27 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 - 有効化しても `NEXTHOP_GROUP_TABLE` が空 → zebra 設定で `fpm use-nexthop-groups` が出ているか `vtysh -c 'show running'` 確認
 - libnl のバージョン違い → `RTM_NEWNEXTHOP` 受信が無い場合に発生
 
+## 確認コマンド
+
+```bash
+# fpmsyncd の nexthop group 関連ログ
+docker exec bgp tail -n 200 /var/log/zebra.log | grep -iE 'nexthop|nhg'
+sudo grep -i 'nexthop_group' /var/log/syslog | tail
+
+# APPL_DB / ASIC_DB の NEXT_HOP_GROUP オブジェクト
+sonic-db-cli APPL_DB KEYS 'NEXTHOP_GROUP_TABLE:*'
+sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP:*' | wc -l
+
+# FRR 側 NHG state
+docker exec bgp vtysh -c 'show nexthop-group rib'
+```
+
+## トラブルシュート
+
+- ルート学習後に ASIC まで反映されない場合、`fpmsyncd` の NLMSG パースに失敗していないかを `docker logs bgp` と `/var/log/swss/swss.rec` の両方で確認。
+- NHG 上限超過時は orchagent が単一ホップにフォールバックする。`SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` と現在数 (`ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP` の総数) を比較する。
+- FRR と kernel の NHG ID 対応が崩れた場合は `bgp` コンテナ再起動で再 sync するが、APPL_DB の stale エントリは `swssconfig` で flush することを検討。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pic/hld_fpmsyncd.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

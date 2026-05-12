@@ -199,6 +199,29 @@ config sflow interface sample-rate Ethernet0 10000
     - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16607: \[sflow\] Remove the ENABLE_SFLOW_DROPMON flag (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16607) — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# sFlow グローバル設定 / コレクタ / エージェント
+show sflow
+sonic-db-cli CONFIG_DB KEYS 'SFLOW|*'
+sonic-db-cli CONFIG_DB KEYS 'SFLOW_COLLECTOR|*'
+sonic-db-cli CONFIG_DB KEYS 'SFLOW_SESSION|*'
+
+# hsflowd プロセス確認
+docker exec sflow supervisorctl status
+docker exec sflow cat /etc/hsflowd.conf
+
+# サンプル送出統計
+docker exec sflow hsflowd -d -F 2>&1 | head -40
+```
+
+## トラブルシュート
+
+- コレクタにサンプルが届かない場合、まず DUT 側で `tcpdump -i eth0 udp port 6343` でパケット送出を確認する。
+- sampling rate を上げてもサンプルが増えない場合、ASIC 側でサンプリング機能が NPU 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性。`saidump | grep SAMPLEPACKET` を確認。
+- sFlow agent IP が management interface ではなく Loopback を使うべき設計が一般的。`config sflow agent-id` で固定推奨。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sflow/sflow_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

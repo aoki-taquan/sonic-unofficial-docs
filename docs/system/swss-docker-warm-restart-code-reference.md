@@ -197,6 +197,27 @@ sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --clea
     - 詳細仕様は本 HLD（`code_implementation.md`）ではなく、`doc/warm-reboot/SONiC_Warmboot.md` および `sonic-swss-common` のヘッダコメントを優先で参照。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# warm-restart 状態
+sudo config warm_restart show
+show warm_restart state
+
+# orchagent / portsyncd 等の warm-restart チェックポイント
+sonic-db-cli STATE_DB KEYS 'WARM_RESTART_TABLE|*'
+sonic-db-cli STATE_DB KEYS 'WARM_RESTART_ENABLE_TABLE|*'
+
+# swss コンテナの warm-boot 関連ログ
+docker logs swss 2>&1 | grep -iE 'warm|restoration|reconcile' | tail -40
+```
+
+## トラブルシュート
+
+- reconciliation がタイムアウトする場合、`config warm_restart bgp_timer` / `neighsyncd_timer` を延長して再試行する。デフォルトは BGP 600s / neighsyncd 60s。
+- `STATE_DB` の `WARM_RESTART_TABLE|<app>` が `reconciled` に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。
+- 同一ホスト上で swss と syncd の warm-restart タイミングがずれると ASIC 上の stale エントリが残る。`docker exec syncd ls /var/warmboot/` の checkpoint ファイル mtime で順序を確認。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/code_implementation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

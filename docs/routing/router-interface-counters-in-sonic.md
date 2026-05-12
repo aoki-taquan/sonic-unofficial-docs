@@ -199,6 +199,12 @@ Portchannel0002
 - 値がすべてゼロ / 動かない場合、当該プラットフォームの SAI が `SAI_ROUTER_INTERFACE_STAT_*` を実装していない可能性がある。HLD は SAI 必須カウンタを列挙しているが、ベンダー実装が揃っているとは限らない。
 - 特定 RIF の VID と名前の対応を確認するには `COUNTERS_RIF_NAME_MAP` を redis から直接読む。
 
+## 制限事項
+
+- counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト trafic は反映が遅れる。
+- ASIC が per-RIF counter を持たない platform では本機能は no-op となり、`show interfaces counters rif` が常に 0 になる。
+- multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/rif-counters/RIF_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

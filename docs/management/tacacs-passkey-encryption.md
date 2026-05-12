@@ -277,6 +277,28 @@ TACPLUS global passkey configured Yes
 - [CLI: config aaa](../reference/cli/config-aaa.md)
 - [Topics: Security / AAA](../topics/15-security-aaa/index.md)
 
+## 確認コマンド
+
+```bash
+# TACACS+ サーバ設定 (passkey は CONFIG_DB に暗号化されて保存)
+show tacacs
+sonic-db-cli CONFIG_DB HGETALL 'TACPLUS|global'
+sonic-db-cli CONFIG_DB KEYS 'TACPLUS_SERVER|*'
+
+# 暗号化に使われた master key の生成元 (platform 依存)
+ls -l /etc/sonic/ | grep -i key
+sudo cat /etc/pam.d/common-auth | grep -i tacplus
+
+# TACACS+ 認証試行のログ
+sudo grep -iE 'tacacs|pam_tacplus' /var/log/auth.log | tail
+```
+
+## トラブルシュート
+
+- passkey が CONFIG_DB に平文で残っている古い構成では `config tacacs passkey <key>` で再投入し暗号化形式に migration する。
+- 暗号化マスタキーが装置固有 (TPM / platform 固有値) の場合、`config_db.json` を別装置に流用しても TACACS+ 認証が失敗する。装置毎に再設定する運用にする。
+- TACACS+ サーバ到達性問題と passkey 不一致は同じ「Auth failed」ログとなる事が多い。まず `tcpdump -i <mgmt> port 49` でパケット到達を確認してから passkey を疑う。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

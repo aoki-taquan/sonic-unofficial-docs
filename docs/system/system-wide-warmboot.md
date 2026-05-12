@@ -152,6 +152,12 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 - [11-reboot](../topics/11-reboot/index.md): cold / fast / warm / express の比較と運用フロー
 - [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): orchagent–syncd–SAI の init view / apply view
 
+## 制限事項
+
+- system-wide warm-boot は全ての SONiC コンテナが warm-restart 対応であることを前提とし、サードパーティ追加コンテナがある環境では成立しない。
+- BGP / LACP / BFD の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。
+- ASIC SDK が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/system-warmboot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

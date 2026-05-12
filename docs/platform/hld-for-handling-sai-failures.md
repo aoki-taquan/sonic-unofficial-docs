@@ -247,6 +247,28 @@ ERROR_DB は **上位プロセスが消費して削除する** 前提で設計�
     - [GitHub Issue / PR の関連リンクは未確認] — `handleSai*Status` virtual / ERROR_DB ハンドリングは [sonic-swss](../reference/glossary.md#term-sonic-swss) orchagent の段階的改修として進んでおり、HLD と 1:1 で対応するトラッキング Issue / PR は確認できず。[CRM](../reference/glossary.md#term-crm) (Critical Resource Monitor) など別系統の運用機構が実質的な代替となっている。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# orchagent / syncd の SAI 失敗ログ
+docker logs swss 2>&1 | grep -iE 'SAI_STATUS|fail' | tail -40
+docker logs syncd 2>&1 | grep -iE 'SAI_STATUS|fail' | tail -40
+
+# SAI failure dump (sai-failure-dump 機能が有効な platform)
+ls -lt /var/dump/ | head
+docker exec syncd ls /var/log/ | grep -i sai
+
+# orchagent の crash / restart 履歴
+docker ps -a | grep swss
+sudo journalctl -u swss --since '-1d' | grep -iE 'restart|exit'
+```
+
+## トラブルシュート
+
+- SAI 失敗で orchagent が exit-loop に入る場合、`sairedis.rec` の最後の数十エントリを確認して再生原因の操作を特定する。
+- ベンダー SAI が NULL pointer dereference 等で syncd 自体を落とす場合、`/var/core/` の core dump を採取し SAI ベンダーへ提供。
+- 軽度な SAI failure (重複作成等) は orchagent 側で `LOG_NOTICE` に降格されているため、`-v` ログレベルでないと見えない事がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/SAI_failure_handling.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

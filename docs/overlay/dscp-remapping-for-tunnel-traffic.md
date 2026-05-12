@@ -235,6 +235,27 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
 - [Topics: Dual ToR](../topics/05-dual-tor/index.md) — Dual-ToR MuxTunnel と本機能の関係
 - [active-standby dual ToR](active-standby-dual-tor.md)
 
+## 確認コマンド
+
+```bash
+# DSCP_TO_TC_MAP / TC_TO_DSCP_MAP / TUNNEL の現状 CONFIG_DB 設定
+sonic-db-cli CONFIG_DB KEYS 'DSCP_TO_TC_MAP|*'
+sonic-db-cli CONFIG_DB KEYS 'TC_TO_DSCP_MAP|*'
+sonic-db-cli CONFIG_DB KEYS 'TUNNEL|*'
+
+# tunnel decap 経路で適用されている QoS map を ASIC_DB 経由で確認
+sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
+
+# tunnel に紐付く SAI QoS map 種別 (DECAP_DSCP_TO_TC / ENCAP_TC_TO_DSCP)
+docker exec swss saidump | grep -A2 -E 'TUNNEL|DECAP_DSCP_TO_TC|ENCAP_TC_TO_DSCP' | head
+```
+
+## トラブルシュート
+
+- decap 後の DSCP が期待通り再書き換えされない場合、`DSCP_TO_TC_MAP` と `TC_TO_DSCP_MAP` の TUNNEL 適用 (`config qos remap` / `TUNNEL` テーブル) を確認する。
+- ASIC が DSCP 透過 (`SAI_TUNNEL_DECAP_TTL_MODE_PIPE_MODEL` の挙動差) の場合、`saidump` で `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` が NULL でないか確認する。
+- VxLAN / IPinIP 共存環境では tunnel 種別ごとに別 map を要する場合があり、orchagent ログ (`grep -i tunnel /var/log/swss/swss.rec`) で適用順序を追う。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/tunnel_dscp_remapping.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

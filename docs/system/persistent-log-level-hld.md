@@ -235,6 +235,12 @@ swssloglevel -d
 - [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
 - [HLD: sonic-python-logger-enhancement](sonic-python-logger-enhancement.md)
 
+## 制限事項
+
+- 設定は CONFIG_DB の `LOGGER` テーブルに保存されるが、`config save` を実行しないとリブート後に消える。
+- ベンダー追加デーモンが `sonic_py_common.logger` を使っていない場合、本機能で log level を変更できない。
+- multi-asic 環境では namespace ごとに別 `LOGGER` テーブルとなるため、全 ASIC 一括変更には個別投入が必要。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/logging/persistent_logger/persistent_loglevel.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

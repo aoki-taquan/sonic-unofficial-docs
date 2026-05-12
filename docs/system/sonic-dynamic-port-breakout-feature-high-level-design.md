@@ -109,6 +109,12 @@ flowchart LR
 - [14-platform-port-optics](../topics/14-platform-port-optics/index.md): port profile / lane / media SI / CMIS との結線
 - [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): VLAN_MEMBER / PORT_CHANNEL_MEMBER の依存解決対象
 
+## 制限事項
+
+- breakout 可能なポート組合せは platform.json の `BRKOUT_CFG` に定義された範囲に限られ、HLD 記述よりも実機サポート範囲が狭い場合がある。
+- breakout 実行時は対象ポートが一時的に down し、隣接機器の LLDP / LAG メンバーシップが flap する点を運用で考慮する。
+- 動的 breakout 中に CONFIG_DB が中間状態となるため、並行して `config save` を実行すると不整合な config が保存される。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

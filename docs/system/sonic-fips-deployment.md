@@ -158,6 +158,27 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
 
 - [15-security-aaa](../topics/15-security-aaa/index.md): セキュリティ機能全般
 
+## 確認コマンド
+
+```bash
+# FIPS モード状態
+sudo sonic-installer get-fips
+cat /proc/sys/crypto/fips_enabled
+
+# OpenSSL FIPS provider
+openssl list -providers
+openssl list -providers -verbose 2>&1 | grep -i fips
+
+# kernel cmdline (fips=1)
+cat /proc/cmdline | tr ' ' '\n' | grep fips
+```
+
+## トラブルシュート
+
+- `fips=1` 起動なのに `fips_enabled=0` の場合、initramfs に FIPS module が含まれていない。`sonic-installer set-fips --enable` 後に reboot が必要。
+- SSH / SNMP / TACACS+ で許可されていない algorithm を使うと接続失敗する。`/etc/ssh/sshd_config` の `Ciphers` / `MACs` を FIPS-approved に絞る。
+- FIPS 有効時は MD5 / DES 等が利用不可になり、古い NMS との互換性問題が発生する。事前に運用ツールの compliance を確認。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-OpenSSL-FIPS-140-3-deployment.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

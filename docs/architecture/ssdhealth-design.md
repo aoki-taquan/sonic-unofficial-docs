@@ -293,6 +293,27 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 - [HLD: pcieinfo-design](../platform/pcieinfo-design.md)
 - [CLI: show platform](../reference/cli/show-platform.md)
 
+## 確認コマンド
+
+```bash
+# ssdhealth が書き込む STATE_DB
+sonic-db-cli STATE_DB KEYS 'SSD_INFO|*'
+sonic-db-cli STATE_DB HGETALL 'SSD_INFO|/dev/sda'
+
+# プロセス稼働確認
+docker exec pmon supervisorctl status | grep -i ssd
+docker exec pmon ps -ef | grep ssdmon
+
+# 直接 SMART を読む
+sudo smartctl -A /dev/sda
+```
+
+## トラブルシュート
+
+- `SSD_INFO` テーブルが空の場合は pmon コンテナ内の `ssdutil` プラグインが platform-specific に実装されているか確認 (`/usr/share/sonic/device/<platform>/plugins/`)。
+- health が `Bad` 報告される場合、`smartctl -a` の `Media_Wearout_Indicator` / `Available_Spare` を確認し、ベンダー RMA 基準と突き合わせる。
+- pmon コンテナ再起動後も値が古い場合、ssdmon の polling 間隔 (デフォルト 1h) を待つか `docker restart pmon` で再取得。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
