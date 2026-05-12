@@ -11472,7 +11472,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
+        制限事項
       
     </span>
   </a>
@@ -11483,7 +11483,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連トピック
       
     </span>
   </a>
@@ -11492,6 +11492,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29564,7 +29575,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
+        制限事項
       
     </span>
   </a>
@@ -29575,7 +29586,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連トピック
       
     </span>
   </a>
@@ -29584,6 +29595,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29897,15 +29919,23 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_8">関連トピック<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Dual-ToR (active-standby) 限定</strong>: <code>qos_config.j2</code> は <code>subtype == DualToR</code> のときだけ <code>AZURE_TUNNEL</code> マップと <code>MuxTunnel0</code> の DSCP/TC リマップ属性を出力する。Single-ToR / 通常 IPinIP トポロジでは適用されない。</li>
+<li><strong><code>dscp_mode=pipe</code> 前提</strong>: outer DSCP を独立に書き換えるため <code>decap_dscp_to_tc_map</code> を効かせるには pipe モード必須。<code>uniform</code> モードでは outer が inner に被さって本機能の効きが見えない。</li>
+<li><strong><code>pfcwd_sw_enable</code> の派生は upgrade 経路でのみ自動</strong>: <code>db_migrator.py</code> を経由しない新規構築では <code>pfc_enable</code> から <code>pfcwd_sw_enable</code> が生成されない。<code>config_db.json</code> テンプレートで明示投入する必要がある。</li>
+<li><strong>port-level <code>AZURE</code> マップ衝突</strong>: 同一ポートでプラットフォーム固有の port-level マップを上書きしている環境では、<code>MuxTunnel0</code> 側の terminator が <code>P2P</code> に分離していることが前提となり、<code>P2MP</code> のままだと per-port マップが優先されて期待動作にならない。</li>
+<li><strong>HLD フィールド名との乖離</strong>: HLD の <code>pfc_wd_sw_enable</code> をそのまま CONFIG_DB に投入すると YANG validation で弾かれる（実装名は <code>pfcwd_sw_enable</code>）。</li>
+</ul>
+<h2 id="_9">関連トピック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/08-qos-buffer/">Topics: QoS / Buffer</a> — DSCP/TC/PG/Queue/PFC の全体像</li>
 <li><a href="../../topics/05-dual-tor/">Topics: Dual ToR</a> — Dual-ToR MuxTunnel と本機能の関係</li>
 <li><a href="../active-standby-dual-tor/">active-standby dual ToR</a></li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
