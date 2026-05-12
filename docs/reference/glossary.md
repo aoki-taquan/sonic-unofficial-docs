@@ -1265,8 +1265,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (37)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [内部実装](../topics/01-overview/internals.md) (5)
+- [サイトマップ](../_meta/sitemap.md) (3)
 - [変更履歴](../_meta/changelog.md) (2)
-- [サイトマップ](../_meta/sitemap.md) (2)
 
 ### [COUNTERS_DB](#term-counters_db)
 
@@ -1866,7 +1866,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-buildimage](#term-sonic-buildimage)
 
-- [サイトマップ](../_meta/sitemap.md) (16)
+- [サイトマップ](../_meta/sitemap.md) (17)
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../management/sonic-yang-model-guidelines.md) (16)
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../system/sonic-network-time-protocol-ntp-client-configuration.md) (14)
 - [SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）](../system/hld-secure-boot.md) (12)
