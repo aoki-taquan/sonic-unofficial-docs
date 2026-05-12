@@ -103,6 +103,35 @@ def is_noise_slug(slug: str) -> bool:
         return True
     return bool(NOISE_SLUG_RE.match(slug.strip().lower()))
 
+
+# Minimum useful HLD payload size. HLDs below this are usually stubs,
+# "in_progress" placeholders, or single-line redirects.
+HLD_MIN_SIZE_BYTES = 500
+
+
+def _slug_from_path(path: str) -> str:
+    """Derive a normalised slug from a doc file path (stem only)."""
+    name = path.rsplit("/", 1)[-1]
+    if name.lower().endswith(".md"):
+        name = name[:-3]
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def is_low_quality_hld(entry: dict) -> tuple[bool, str]:
+    """Return (drop, reason) for an HLD index entry.
+
+    Drops entries whose filename slug matches the generic HLD section
+    noise pattern (introduction-N, revision, appendix-X, etc.) or whose
+    payload is below HLD_MIN_SIZE_BYTES (stub / placeholder files).
+    """
+    slug = _slug_from_path(entry.get("path", ""))
+    if is_noise_slug(slug):
+        return True, f"noise-slug ({slug})"
+    size = int(entry.get("size_bytes") or 0)
+    if size < HLD_MIN_SIZE_BYTES:
+        return True, f"stub ({size}B < {HLD_MIN_SIZE_BYTES}B)"
+    return False, ""
+
 AREA_KEYWORDS = [
     ("routing", ["bgp", "ospf", "isis", "route", "frr", "vrf", "static-route",
                  "rip", "fpm", "ecmp", "bfd", "nexthop", "prefix-list", "routemap",
@@ -165,6 +194,7 @@ def extract_h1(file_path: Path, max_bytes: int = 200_000) -> str:
 
 def build_hld() -> list[dict]:
     entries = []
+    dropped: list[tuple[str, str]] = []
     for repo in REPOS:
         repo_path = SRC / repo
         if not repo_path.exists():
@@ -186,14 +216,24 @@ def build_hld() -> list[dict]:
                 continue
             title = extract_h1(p)
             area = guess_area(rel, title)
-            entries.append({
+            cand = {
                 "repo": f"sonic-net/{repo}",
                 "path": rel,
                 "ref": sha,
                 "title": title,
                 "area_hint": area,
                 "size_bytes": size,
-            })
+            }
+            drop, reason = is_low_quality_hld(cand)
+            if drop:
+                dropped.append((f"{repo}/{rel}", reason))
+                continue
+            entries.append(cand)
+    if dropped:
+        print(f"[hld] filtered {len(dropped)} low-quality entries:",
+              file=sys.stderr)
+        for path, reason in dropped:
+            print(f"  - {path}: {reason}", file=sys.stderr)
     return entries
 
 # ----- CLI index -----
