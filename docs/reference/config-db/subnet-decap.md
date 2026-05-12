@@ -31,9 +31,9 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SUBNET_DECAP")]
-  DM["subnetdecapmgrd"]
+  DM["tunnelmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_DB")]
+  APPDB[("APP_DB<br/>APP_TUNNEL_DECAP_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

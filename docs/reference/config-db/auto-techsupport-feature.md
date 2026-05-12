@@ -31,7 +31,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>AUTO_TECHSUPPORT_FEATURE")]
-  DM["auto-techsupport"]
+  DM["coredump_gen_handler"]
   CDB --> DM
 ```
 

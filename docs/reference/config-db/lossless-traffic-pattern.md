@@ -30,10 +30,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>LOSSLESS_TRAFFIC_PATTERN")]
-  DM["buffermgrdyn"]
+  DM["buffermgrd"]
   CDB --> DM
+  APPDB[("APP_DB<br/>APP_BUFFER_PROFILE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_buffer_api"]
-  DM --> SAI
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

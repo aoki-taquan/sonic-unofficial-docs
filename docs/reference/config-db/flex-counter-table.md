@@ -30,8 +30,10 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["flexcounterorch"]
+  DM["syncd"]
   CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"

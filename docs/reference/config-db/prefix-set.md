@@ -30,7 +30,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>PREFIX_SET")]
-  DM["bgpcfgd"]
+  DM["frrcfgd"]
   CDB --> DM
 ```
 

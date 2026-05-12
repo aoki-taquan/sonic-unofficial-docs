@@ -36,7 +36,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BGP_GLOBALS_AF_AGGREGATE_ADDR")]
-  DM["bgpcfgd"]
+  DM["frrcfgd"]
   CDB --> DM
 ```
 

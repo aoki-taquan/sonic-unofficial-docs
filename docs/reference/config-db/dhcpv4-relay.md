@@ -32,7 +32,7 @@ DHCPv4 relay agent の [VLAN](../../reference/glossary.md#term-vlan) 単位設�
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DHCPV4_RELAY")]
-  DM["dhcprelayd"]
+  DM["sonic-dhcpv4-relay"]
   CDB --> DM
 ```
 
