@@ -19,7 +19,9 @@ related:
   - express-reboot
   - show reboot-cause
   yang:
+  - sonic-warm-restart
   - sonic-crm
+  - sonic-bgp-device-global
 ---
 
 <!-- topics-tip -->
