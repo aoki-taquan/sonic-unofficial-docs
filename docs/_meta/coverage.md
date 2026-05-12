@@ -21,16 +21,16 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **874** ページ。
+全 **883** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
 | code-verified | 586 |
 | runbook-verified | 27 |
-| discrepancy-found | 62 |
+| discrepancy-found | 66 |
 | issue-confirmed | 0 |
 | hld-only | 0 |
-| meta | 190 |
+| meta | 195 |
 | stub | 9 |
 
 ## area 別マトリクス
@@ -49,8 +49,8 @@ last_verified: 2026-05-11
 | `platform` | 36 | 0 | 11 | 0 | 0 | 0 | 1 | 48 |
 | `reference` | 305 | 27 | 0 | 0 | 0 | 10 | 0 | 342 |
 | `routing` | 45 | 0 | 6 | 0 | 0 | 0 | 1 | 52 |
-| `switching` | 15 | 0 | 4 | 0 | 0 | 0 | 1 | 20 |
+| `switching` | 15 | 0 | 8 | 0 | 0 | 0 | 1 | 24 |
 | `system` | 61 | 0 | 9 | 0 | 0 | 1 | 1 | 72 |
-| `topics` | 0 | 0 | 0 | 0 | 0 | 156 | 0 | 156 |
+| `topics` | 0 | 0 | 0 | 0 | 0 | 161 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。
