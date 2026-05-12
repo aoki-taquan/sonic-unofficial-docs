@@ -29,7 +29,7 @@ process monitor は登録された `name` のプロセスから `heartbeat_inter
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>HEARTBEAT")]
-  DM["linkmgrd"]
+  DM["process-monitor"]
   CDB --> DM
 ```
 

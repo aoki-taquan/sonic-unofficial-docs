@@ -34,7 +34,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DEVICE_RUNTIME_METADATA")]
-  DM["hostcfgd"]
+  DM["sonic-cfggen"]
   CDB --> DM
 ```
 

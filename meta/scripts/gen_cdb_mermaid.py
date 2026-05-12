@@ -95,6 +95,41 @@ def extract_sai(sai: str) -> Optional[str]:
     return None
 
 
+# Fallback dictionary for tables not parseable from orch-map (or whose
+# orch-map row lacks a daemon/app/sai token). Manually curated from the
+# corresponding CONFIG_DB ref pages. daemon は CONFIG_DB の直接 subscriber、
+# app_db_table と sai は経路がある場合のみ指定（None → 図には出ない）。
+FALLBACK_MAP: dict[str, dict[str, Optional[str]]] = {
+    "AS_PATH_SET": {"daemon": "bgpcfgd", "app_db_table": None, "sai": None},
+    "AUTO_TECHSUPPORT": {"daemon": "coredump_gen_handler", "app_db_table": None, "sai": None},
+    "AUTO_TECHSUPPORT_FEATURE": {"daemon": "coredump_gen_handler", "app_db_table": None, "sai": None},
+    "BGP_ALLOWED_PREFIXES": {"daemon": "bgpcfgd", "app_db_table": None, "sai": None},
+    "BGP_GLOBALS_AF_AGGREGATE_ADDR": {"daemon": "frrcfgd", "app_db_table": None, "sai": None},
+    "BGP_GLOBALS_AF_NETWORK": {"daemon": "frrcfgd", "app_db_table": None, "sai": None},
+    "BGP_NEIGHBOR_AF": {"daemon": "frrcfgd", "app_db_table": None, "sai": None},
+    "BGP_PEER_GROUP_AF": {"daemon": "frrcfgd", "app_db_table": None, "sai": None},
+    "COMMUNITY_SET": {"daemon": "bgpcfgd", "app_db_table": None, "sai": None},
+    "CONSOLE_PORT": {"daemon": "consutil", "app_db_table": None, "sai": None},
+    "DEVICE_NEIGHBOR": {"daemon": "lldpmgrd", "app_db_table": None, "sai": None},
+    "DEVICE_NEIGHBOR_METADATA": {"daemon": "lldpmgrd", "app_db_table": None, "sai": None},
+    "DEVICE_RUNTIME_METADATA": {"daemon": "sonic-cfggen", "app_db_table": None, "sai": None},
+    "DHCPV4_RELAY": {"daemon": "sonic-dhcpv4-relay", "app_db_table": None, "sai": None},
+    "FLEX_COUNTER_TABLE": {"daemon": "syncd", "app_db_table": None, "sai": "sai_*_stats"},
+    "HEARTBEAT": {"daemon": "process-monitor", "app_db_table": None, "sai": None},
+    "KUBERNETES_MASTER": {"daemon": "ctrmgrd", "app_db_table": None, "sai": None},
+    "LOSSLESS_TRAFFIC_PATTERN": {"daemon": "buffermgrd", "app_db_table": "APP_BUFFER_PROFILE_TABLE", "sai": "sai_buffer_api"},
+    "MUX_LINKMGR": {"daemon": "linkmgrd", "app_db_table": None, "sai": None},
+    "PREFIX_LIST": {"daemon": "bgpcfgd", "app_db_table": None, "sai": None},
+    "PREFIX_SET": {"daemon": "frrcfgd", "app_db_table": None, "sai": None},
+    "SUBNET_DECAP": {"daemon": "tunnelmgrd", "app_db_table": "APP_TUNNEL_DECAP_TABLE", "sai": "sai_tunnel_api"},
+    "SYSLOG_CONFIG_FEATURE": {"daemon": "hostcfgd", "app_db_table": None, "sai": None},
+    "TELEMETRY": {"daemon": "telemetry", "app_db_table": None, "sai": None},
+    "TELEMETRY_CLIENT": {"daemon": "telemetry", "app_db_table": None, "sai": None},
+    "TUNNEL_DECAP_TABLE": {"daemon": "tunneldecaporch", "app_db_table": "APP_TUNNEL_DECAP_TABLE", "sai": "sai_tunnel_api"},
+    "WARM_RESTART": {"daemon": "warmboot-finalizer", "app_db_table": None, "sai": None},
+}
+
+
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 
 
@@ -209,6 +244,8 @@ def main() -> int:
     drift: list[str] = []
 
     for page in sorted(PAGES_DIR.glob("*.md")):
+        if page.name == "index.md":
+            continue
         text = page.read_text(encoding="utf-8")
         table = get_first_config_db_table(text)
         if not table:
@@ -218,10 +255,16 @@ def main() -> int:
             # also try uppercased slug
             alt = slug_to_table(page.stem)
             info = mapping.get(alt)
-            if not info:
-                skipped_no_map += 1
-                continue
-            table = alt
+            if info:
+                table = alt
+        # fallback dictionary if mapping missing or empty
+        if (info is None) or not (info["daemon"] or info["app_db_table"] or info["sai"]):
+            fb = FALLBACK_MAP.get(table) or FALLBACK_MAP.get(slug_to_table(page.stem))
+            if fb:
+                info = fb
+        if info is None:
+            skipped_no_map += 1
+            continue
         # need at least daemon or app or sai
         if not (info["daemon"] or info["app_db_table"] or info["sai"]):
             skipped_no_map += 1
