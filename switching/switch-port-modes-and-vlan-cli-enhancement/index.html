@@ -10372,7 +10372,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -10381,6 +10381,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -10415,7 +10426,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -10426,7 +10437,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -10448,7 +10459,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -10469,7 +10480,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29730,7 +29741,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29739,6 +29750,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29773,7 +29795,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -29784,7 +29806,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -29806,7 +29828,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -29827,7 +29849,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -30143,8 +30165,50 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- phase-boundary -->
+<h2 id="_9">実装フェーズ境界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
+<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
+が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
+1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
+<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>範囲 (機能 / 段階)</th>
+<th>実装済 (master 取り込み済)</th>
+<th>未実装 (HLD 提案のみ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 — 基本機能</td>
+<td>HLD §概要 / §設計の中核ユースケース</td>
+<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
+<td>— (Phase 1 は実装済)</td>
+</tr>
+<tr>
+<td>Phase 2 — 拡張機能</td>
+<td>HLD §拡張 / §追加要件 / §周辺統合</td>
+<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
+<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+</tr>
+<tr>
+<td>Phase 3 — 将来拡張</td>
+<td>HLD §Future Work / §将来課題</td>
+<td>—</td>
+<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+</tr>
+</tbody>
+</table>
+<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+</div>
+<!-- /phase-boundary -->
+
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-vlan/">CLI: config vlan</a></li>
 <li><a href="../../reference/cli/show-vlan/">CLI: show vlan</a></li>
@@ -30166,13 +30230,13 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li>引数は <code>&lt;mode_type&gt;</code> + <code>&lt;port&gt;</code> の 2 個のみ。HLD の <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> / <code>config switchport mode trunk &lt;port&gt; [&lt;native-vlan&gt;] [&lt;vlan-list&gt;]</code> のような第 3 引数（VLAN リスト）は <strong>無い</strong>。</li>
 <li>VLAN メンバ追加は別コマンド <code>config vlan member add &lt;vid&gt; &lt;port&gt; [--untagged]</code> (<code>sonic-utilities/config/vlan.py</code>)。</li>
 </ul>
-<h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>sudo config switchport mode access Ethernet0 10</code> をそのまま打つと <code>Error: Got unexpected extra argument (10)</code> で失敗。</li>
 <li>HLD を読んで「モード切替 1 コマンドで VLAN メンバまで設定できる」と想定して runbook を作ると、本番投入時にすべて失敗する。特に大量ポートの自動化スクリプトで顕在化する。</li>
 <li>HLD の <code>trunk</code> 例（<code>native-vlan + vlan-list</code> を 1 コマンド指定）も同様に成立せず、native と tagged を別々に <code>--untagged</code> 有無で書き分ける必要がある。</li>
 </ul>
-<h4 id="_12">回避策の実コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <p>access ポート（VLAN 10 untagged）:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>Ethernet0<span class="w"> </span>--untagged
@@ -30199,10 +30263,10 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li><a href="https://github.com/sonic-net/sonic-utilities/pull/3788">sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)</a> — <code>show interfaces status</code> で switchport mode を表示。</li>
 <li><a href="https://github.com/sonic-net/SONiC/issues/1136">SONiC #1136: Switchport Mode Hybrid Support (open)</a> — HLD で謳う追加機能（hybrid 等）の future work が未着手であることを示す。</li>
 </ul>
-<h4 id="_13">検証日<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

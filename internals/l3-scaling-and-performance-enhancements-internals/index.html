@@ -18188,7 +18188,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -18197,6 +18197,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29386,7 +29397,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29395,6 +29406,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29569,9 +29591,51 @@
 <li><a href="../l3-scaling-and-performance-enhancements-operations/">l3-scaling-and-performance-enhancements-operations.md</a></li>
 <li><a href="../l3-scaling-and-performance-enhancements-limitations/">l3-scaling-and-performance-enhancements-limitations.md</a></li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- phase-boundary -->
+<h2 id="_3">実装フェーズ境界<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
+<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
+が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
+1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
+<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>範囲 (機能 / 段階)</th>
+<th>実装済 (master 取り込み済)</th>
+<th>未実装 (HLD 提案のみ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 — 基本機能</td>
+<td>HLD §概要 / §設計の中核ユースケース</td>
+<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
+<td>— (Phase 1 は実装済)</td>
+</tr>
+<tr>
+<td>Phase 2 — 拡張機能</td>
+<td>HLD §拡張 / §追加要件 / §周辺統合</td>
+<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
+<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+</tr>
+<tr>
+<td>Phase 3 — 将来拡張</td>
+<td>HLD §Future Work / §将来課題</td>
+<td>—</td>
+<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+</tr>
+</tbody>
+</table>
+<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+</div>
+<!-- /phase-boundary -->
+
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_4">このページを読んだ後の次アクション<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">このページを読んだ後の次アクション<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

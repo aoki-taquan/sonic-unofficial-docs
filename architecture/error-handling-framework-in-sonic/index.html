@@ -8245,6 +8245,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -8277,7 +8288,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -8288,7 +8299,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -8310,7 +8321,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -8331,7 +8342,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29630,6 +29641,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29662,7 +29684,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -29673,7 +29695,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -29695,7 +29717,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -29716,7 +29738,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29995,7 +30017,49 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- phase-boundary -->
+<h2 id="_7">実装フェーズ境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
+<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
+が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を
+1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および
+<a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>範囲 (機能 / 段階)</th>
+<th>実装済 (master 取り込み済)</th>
+<th>未実装 (HLD 提案のみ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 — 基本機能</td>
+<td>HLD §概要 / §設計の中核ユースケース</td>
+<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
+<td>— (Phase 1 は実装済)</td>
+</tr>
+<tr>
+<td>Phase 2 — 拡張機能</td>
+<td>HLD §拡張 / §追加要件 / §周辺統合</td>
+<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
+<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+</tr>
+<tr>
+<td>Phase 3 — 将来拡張</td>
+<td>HLD §Future Work / §将来課題</td>
+<td>—</td>
+<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+</tr>
+</tbody>
+</table>
+<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+</div>
+<!-- /phase-boundary -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-18, discrepancy):
 - sonic-swss-common/common/status_code_util.h: `SWSS_RC_SUCCESS|INVALID_PARAM|DEADLINE_EXCEEDED|UNAVAIL|NOT_FOUND|NO_MEMORY|EXISTS|PERMISSION_DENIED` 等の enum 確認済
 - sonic-swss-common, sonic-swss: `ERROR_DB` / `ERROR_ROUTE_TABLE` / `ERROR_NEIGH_TABLE` の table 名は未登録
@@ -30039,14 +30103,14 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>$<span class="w"> </span>grep<span class="w"> </span>-rn<span class="w"> </span><span class="s2">&quot;error-database\|error_database&quot;</span><span class="w"> </span>.cache/sonic-sources/sonic-utilities/
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># 0 件</span>
 </span></code></pre></div>
-<h4 id="_8">読者への影響<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<h4 id="_9">読者への影響<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
 <ul>
 <li>BGP が経路追加を要求し、ASIC FIB がそれを <code>SAI_STATUS_TABLE_FULL</code> で reject した場合、fpmsyncd / bgpd は <strong>失敗を知らない</strong>ため、<code>show ip route</code> には経路が見えるが <code>show ip fib</code> には無い、というサイレントな乖離が発生する。</li>
 <li>HLD 通りに <code>show error-database</code> を期待する自動化スクリプトは即座に失敗する。</li>
 <li>retry / rollback ロジックが実装されないため、ASIC リソース不足（<a href="../../reference/glossary/#term-tcam">TCAM</a> full 等）の状態は手動介入が必要。</li>
 <li>一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。</li>
 </ul>
-<h4 id="_9">回避策の実コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<h4 id="_10">回避策の実コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 1) SAI 失敗の発見</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;SAI_STATUS_(TABLE_FULL|INSUFFICIENT_RESOURCES|FAILURE|NOT_SUPPORTED|OBJECT_IN_USE)&quot;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
@@ -30072,10 +30136,10 @@ reasoning: ERROR_DB の役割と producer/consumer 構成の根拠。
 <li>本 HLD（2019-05 v0.1）の実装着手 PR は <strong>見つからない</strong>。<code>SWSS_RC_*</code> enum を導入した PR (<code>sonic-swss-common</code> 経由) のみが部分採用の痕跡。</li>
 <li>代替の retry/recovery 機構は <a href="../../reference/glossary/#term-crm">CRM</a> (Critical Resource Monitor: <code>sonic-swss/orchagent/crmorch.cpp</code>) で部分的にカバーされており、こちらは production で稼働中。<code>show crm resources</code> / <code>CRM_TABLE</code> 経由でリソース閾値監視が可能。HLD ベースではなく CRM ベースで運用設計する方が現実的。</li>
 </ul>
-<h4 id="_10">検証日<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
