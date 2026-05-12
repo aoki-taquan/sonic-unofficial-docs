@@ -45,7 +45,7 @@ related:
 
 Dual-ToR（Active / Standby）でサーバ側輻輳が起きると **upper / lower 両 ToR に [PFC](../reference/glossary.md#term-pfc) pause が同時に伝搬** する。Standby ToR は南向きトラフィックを **同じキューでバウンスバック** して T1 経由で Active ToR に送るため、T1 ↔ ToR 間で pause が固着する **PFC デッドロック** が起きる[^1]。
 
-本機能は tunnel encap 時に **キュー / DSCP を別系統に書き換え**、decap 時にポート単位マップを **AZURE_TUNNEL** で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。`202012` / `202205` を最初のターゲットとし、[SAI](../reference/glossary.md#term-sai) 新規 tunnel 属性が前提[^1]。
+本機能は tunnel encap 時に **キュー / [DSCP](../reference/glossary.md#term-dscp) を別系統に書き換え**、decap 時にポート単位マップを **AZURE_TUNNEL** で上書きして TC / PG を再設定し、バウンスバック経路と通常経路を別キューに分離する。`202012` / `202205` を最初のターゲットとし、[SAI](../reference/glossary.md#term-sai) 新規 tunnel 属性が前提[^1]。
 
 ## どう動くか
 
@@ -257,4 +257,4 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4a6c1db4c93d -->
+<!-- glossary-links-injected: e1fd4940b990 -->

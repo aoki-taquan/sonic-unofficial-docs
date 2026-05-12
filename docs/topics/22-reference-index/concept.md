@@ -96,12 +96,12 @@ reference ページの slug は **コマンド名 / table 名 / モジュール�
 
 実際に読み手が辿るパスを 1 つ追うと、3 層の役割分担が見える。
 
-例: 「BGP neighbor を 1 つ足したい」と思った読者の動きはこうなる。
+例: 「[BGP](../../reference/glossary.md#term-bgp) neighbor を 1 つ足したい」と思った読者の動きはこうなる。
 
 1. 機能章 [BGP - 設定](../02-bgp/setup.md) で「何を CONFIG_DB に書くか」「どの CLI を打つか」の **手順** を読む。
 2. 手順内のリンクから reference [config bgp](../../reference/cli/config-bgp.md) に飛び、CLI 全オプションを引く。
 3. 同じく [BGP_NEIGHBOR](../../reference/config-db/bgp-neighbor.md) で table の全カラムを引く。
-4. gNMI から入れたい場合だけ [sonic-bgp-neighbor](../../reference/yang/sonic-bgp-neighbor.md) を引く。
+4. [gNMI](../../reference/glossary.md#term-gnmi) から入れたい場合だけ [sonic-bgp-neighbor](../../reference/yang/sonic-bgp-neighbor.md) を引く。
 5. SAI 拡張観点で他機能と並べたい場合は categories の [SAI 拡張](../../categories/sai-extensions.md) を参照する。
 
 機能章は (1) と (2)〜(5) への入口で、reference は **同じ操作対象を別の名前から引き直す** ための層になる。
@@ -124,4 +124,4 @@ reference 索引は次の不変条件を満たす前提で運用している。C
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: 2e72833604bb -->
+<!-- glossary-links-injected: 3fe800163a71 -->

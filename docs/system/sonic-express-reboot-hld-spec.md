@@ -20,6 +20,7 @@ related:
   yang:
   - sonic-warm-restart
   - sonic-system-defaults
+  - sonic-bgp-device-global
 ---
 
 <!-- topics-tip -->

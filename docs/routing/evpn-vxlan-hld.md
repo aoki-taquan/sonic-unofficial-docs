@@ -147,7 +147,7 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 
 - **MC-LAG / multihoming**: ESI / DF election と組合せると挙動が複雑化
 - **VRF / underlay BGP**: VTEP loopback 到達性は underlay BGP に依存
-- **DSCP remarking**: encap パケットの DSCP 維持/書換え
+- **[DSCP](../reference/glossary.md#term-dscp) remarking**: encap パケットの DSCP 維持/書換え
 - **fpmsyncd / nexthop group**: Type-5 の next-hop group インストール
 
 ## 7. トラブルシューティング
@@ -200,4 +200,4 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f55535219856 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

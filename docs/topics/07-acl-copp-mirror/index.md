@@ -85,7 +85,7 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - ACL table type、match、action、counter はどの階層で理解するのか。
 - CoPP、policer、trap、mirror は ACL とどこで交わり、どこから別物なのか。
 - `show acl`、`aclshow`、trap flow counter、drop counter は運用でどう使い分けるのか。
-- egress mirror、outer DSCP 書換、packet trimming のような ASIC 依存 action はどう確認するのか。
+- egress mirror、outer [DSCP](../../reference/glossary.md#term-dscp) 書換、packet trimming のような ASIC 依存 action はどう確認するのか。
 - [DASH](../../reference/glossary.md#term-dash) ACL、PAC、DHCP DoS 緩和は通常 ACL と同じ章で読むべきか。
 
 ## 読み進め方
@@ -167,4 +167,4 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 
-<!-- glossary-links-injected: f551dc9c3d84 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

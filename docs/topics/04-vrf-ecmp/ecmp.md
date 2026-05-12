@@ -35,7 +35,7 @@ related:
 | Fine Grained ECMP | member 変化時の flow 移動を抑える。 | `FG_NHG` bucket / member / prefix | appliance 経由、flow stickiness が重要な構成。 |
 | Ordered ECMP | ECMP member の順序を揃える。 | ordered NHG / sequence id | 複数装置で同じ flow を同じ上流へ寄せたい構成。 |
 | Generic Hash | hash field / algorithm を制御する。 | `SWITCH_HASH` | ECMP / [LAG](../../reference/glossary.md#term-lag) の分散キーを設計したい場合。 |
-| CBF | forwarding class ごとに path を変える。 | DSCP/EXP to FC、class-based NHG | traffic engineering。 |
+| CBF | forwarding class ごとに path を変える。 | [DSCP](../../reference/glossary.md#term-dscp)/EXP to FC、class-based NHG | traffic engineering。 |
 
 ## 通常 ECMP を基準にする
 
@@ -79,4 +79,4 @@ Class Based Forwarding は、DSCP / [MPLS](../../reference/glossary.md#term-mpls
 - [Generic Hash](../../architecture/sonic-generic-hash.md)
 - [クラスベース転送](../../routing/class-based-forwarding-enhancement.md)
 
-<!-- glossary-links-injected: 79de31b5b699 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

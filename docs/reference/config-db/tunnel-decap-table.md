@@ -67,13 +67,13 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 | `tunnel_type` | string `IPINIP` | カプセル化種別。それ以外はエラー |
 | `src_ip` | IPv4 アドレス | トンネル送信元 IP |
 | `dst_ip` | IPv4 アドレスのカンマ区切りリスト | 終端 IP 群（`TUNNEL_DECAP_TERM_TABLE` で個別管理） |
-| `dscp_mode` | string `uniform`/`pipe` | DSCP 継承 |
+| `dscp_mode` | string `uniform`/`pipe` | [DSCP](../../reference/glossary.md#term-dscp) 継承 |
 | `ecn_mode` | string `copy_from_outer`/`standard` | ECN モード（create-only） |
 | `encap_ecn_mode` | string `standard` | カプセル時 ECN |
 | `ttl_mode` | string `uniform`/`pipe` | TTL モード |
-| `decap_dscp_to_tc_map` | string | DSCP→TC マップ名（OID 解決） |
+| `decap_dscp_to_tc_map` | string | [DSCP](../../reference/glossary.md#term-dscp)→TC マップ名（OID 解決） |
 | `decap_tc_to_pg_map` | string | TC→PG マップ名 |
-| `encap_tc_to_dscp_map` | string | TC→DSCP マップ名 |
+| `encap_tc_to_dscp_map` | string | TC→[DSCP](../../reference/glossary.md#term-dscp) マップ名 |
 | `encap_tc_to_queue_map` | string | TC→Queue マップ名 |
 
 ## 制約
@@ -124,4 +124,4 @@ sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 6f36db8074ad -->
+<!-- glossary-links-injected: b4c5898e0257 -->

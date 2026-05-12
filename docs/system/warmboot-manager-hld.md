@@ -12,6 +12,7 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
+  - WARM_RESTART
   - BGP_NEIGHBOR
   - BGP_GLOBALS
   - BGP_PEER_GROUP_AF
@@ -20,9 +21,12 @@ related:
   - BGP_AGGREGATE_ADDRESS
   - BGP_PEER_GROUP
   cli:
+  - config warm_restart
+  - show warm_restart
   - config bgp
   - show bgp
   yang:
+  - sonic-warm-restart
   - sonic-bgp-global
   - sonic-bgp-neighbor
   - sonic-bgp-bbr

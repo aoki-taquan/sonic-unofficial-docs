@@ -111,7 +111,7 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 ## 検証パスとラボ要件
 
 - `sonic-pins` の `pins_ondatra` (Google OnDatra fork) が integration test として available。VS lab で P4Orch を起こし、controller 側で P4Info push → table entry write → PacketIO の往復を観察できる。
-- P4Orch と SwitchOrch / AclOrch の境界が不明確なとき、ASIC_DB を `redis-cli MONITOR` で観察すると、両 orch が同じ SAI object に対して update を出すケースが識別できる。
+- P4Orch と SwitchOrch / AclOrch の境界が不明確なとき、[ASIC_DB](../../reference/glossary.md#term-asic_db) を `redis-cli MONITOR` で観察すると、両 orch が同じ SAI object に対して update を出すケースが識別できる。
 
 ## 関連ページ (追補)
 
@@ -128,5 +128,5 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - [10 gNMI / OpenConfig: 管理面 API との二系統運用](../10-gnmi-openconfig/index.md)
 
 <!-- glossary-links-injected: 4d9f23481e68 -->
-<!-- glossary-links-injected: 8c23ac0ed680 -->
 
+<!-- glossary-links-injected: c22475bfc39e -->

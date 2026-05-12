@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-encapsulated 後の **outer header の DSCP を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える** ための [ACL](../reference/glossary.md#term-acl) table type[^1]。Microsoft 提案、2024-07 初版。
+encapsulated 後の **outer header の [DSCP](../reference/glossary.md#term-dscp) を、inner header（元パケット L3 フィールド）の値に基づいて egress 段階で書き換える** ための [ACL](../reference/glossary.md#term-acl) table type[^1]。Microsoft 提案、2024-07 初版。
 
 既存の手段の限界:
 
@@ -196,4 +196,4 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2e78c47a04ed -->
+<!-- glossary-links-injected: e1fd4940b990 -->

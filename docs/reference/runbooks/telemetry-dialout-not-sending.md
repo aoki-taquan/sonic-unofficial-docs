@@ -53,6 +53,8 @@ flowchart TD
     D -- Yes --> E[gnmi DialOut ログでエラー確認]
 ```
 
+## 確認コマンド
+
 ### 1. CONFIG_DB の設定確認
 
 ```bash

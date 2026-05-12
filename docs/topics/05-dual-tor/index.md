@@ -70,7 +70,7 @@ related:
 - Active-Active と Active-Standby Dual-ToR は何が違い、どちらを選ぶのか。
 - `linkmgrd`、`MuxOrch`、`ycabled`、gRPC client はそれぞれ何を管理するのか。
 - mux state、prefix-based neighbor、default route 連動はどの障害を避けるのか。
-- ICMP hardware offload、[BFD](../../reference/glossary.md#term-bfd)、DSCP remap、DHCPv6 loopback は Dual-ToR でどこに関係するのか。
+- ICMP hardware offload、[BFD](../../reference/glossary.md#term-bfd)、[DSCP](../../reference/glossary.md#term-dscp) remap、DHCPv6 loopback は Dual-ToR でどこに関係するのか。
 
 ## 読み進め方
 
@@ -150,4 +150,4 @@ related:
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 
-<!-- glossary-links-injected: 8b515830f775 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

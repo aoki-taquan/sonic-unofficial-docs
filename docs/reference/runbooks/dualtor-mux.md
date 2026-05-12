@@ -61,6 +61,8 @@ flowchart TD
     D -- Yes --> E[gRPC / tunnel orch の状態確認]
 ```
 
+## 確認コマンド
+
 ### 1. mux 状態と peer 状態
 
 ```bash
@@ -113,6 +115,17 @@ show muxcable cableinfo
 - LinkProber heartbeat 経路を Loopback0 で確認・修正
 - 不整合の根本対策として `config reload -y` で全テーブル再注入
 - firmware up-to-date 化 (`config muxcable firmware download/activate`)
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

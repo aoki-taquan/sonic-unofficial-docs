@@ -75,9 +75,7 @@ def check_runbook(path: Path) -> list[str]:
     if not triage_titles:
         missing.append("切り分け")
 
-    # 確認コマンド: 明示的な H2 が望ましい。
-    # ただし旧テンプレート (``### 1. xxx`` の下に bash ブロックを並べるパターン) は
-    # ``--lenient`` 指定時のみ救済する。
+    # 確認コマンド: 明示的な H2 を必須にする (CI strict)。
     has_cmd_h2 = bool(titles & CMD_H2)
     if not has_cmd_h2:
         missing.append("確認コマンド")

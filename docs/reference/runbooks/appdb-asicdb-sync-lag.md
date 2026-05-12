@@ -60,6 +60,8 @@ related:
 
 ## 切り分け手順
 
+## 確認コマンド
+
 ### 1. DB 規模・差分
 
 ```bash
@@ -104,6 +106,17 @@ sonic-db-cli APPL_DB info clients | head
 - [orchagent](../../reference/glossary.md#term-orchagent) ハング: まずは原因 task を log から特定。restart は最後の手段（**ロールバック**: `config_db.json` 退避済みなら `config reload`）
 - ベンダ SDK ブロック: vendor support と stack を共有
 - multi-asic: 該当 namespace で `sudo ip netns exec asic0 docker logs swss`
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム (syslog / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

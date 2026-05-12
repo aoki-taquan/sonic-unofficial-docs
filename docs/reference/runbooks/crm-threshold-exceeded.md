@@ -52,6 +52,8 @@ flowchart TD
     B4 --> C
 ```
 
+## 確認コマンド
+
 ### 1. 現在の使用量
 
 ```bash
@@ -102,6 +104,17 @@ docker logs swss 2>&1 | grep -iE "crm|table_full|sai_status" | tail -100
 - leak 疑い: `docker restart swss` は影響が極めて大きい。先に `sonic-db-cli` で [APPL_DB](../../reference/glossary.md#term-appl_db) と [ASIC_DB](../../reference/glossary.md#term-asic_db) の差分を取得しベンダ / コミュニティに報告
 - multi-asic 偏り: [ECMP](../../reference/glossary.md#term-ecmp) hash の見直し、internal [BGP](../../reference/glossary.md#term-bgp) の announce 制御
 - [ACL](../../reference/glossary.md#term-acl) counter 過剰: 未使用 ACL rule の整理、`SAI_ACL_COUNTER` 不要分の解放
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

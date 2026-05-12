@@ -124,7 +124,7 @@ Path Tracing Midpoint は MCD を HbH-PT に書くだけで、収集側は Regio
 ## ハンドオフ
 
 - **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、area HLD の [routing/](../../routing/index.md) 配下の SRv6 / SR-MPLS / Path Tracing ページ群、および FRR の SR plugin で完結する。`srv6orch`, `MY_SID_TABLE`, locator/function block の責務分担は internals で扱う。
-- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config bgp` (SR-related)、`show bgp ipv6 segment-routing-srv6` 系、`SRV6_MY_SID_TABLE`, `SRV6_SID_LIST`, `MPLS_TC_TO_TC_MAP` の [CONFIG_DB スキーマ](../../reference/config-db/index.md)、`sonic-srv6` YANG モジュールに集約。
+- **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config bgp` (SR-related)、`show bgp ipv6 segment-routing-srv6` 系、`SRV6_MY_SID_TABLE`, `SRV6_SID_LIST`, `MPLS_TC_TO_TC_MAP` の [CONFIG_DB スキーマ](../../reference/config-db/index.md)、`sonic-srv6` [YANG](../../reference/glossary.md#term-yang) モジュールに集約。
 - **本ページ** は HMAC、sBFD、Binding SID、Path Tracing midpoint、SR-MPLS と SRv6 共存、BGP SR signaling などの「FRR の発展機能を SONiC schema へ取り込む」発展領域だけを扱う。
 
 ## トラブルシュート観点
@@ -151,4 +151,4 @@ Path Tracing Midpoint は MCD を HbH-PT に書くだけで、収集側は Regio
 - [04 VRF / ECMP: SRv6 VPN と VRF leaking](../04-vrf-ecmp/index.md)
 - [12 Multi-ASIC / VOQ: VOQ chassis での SR ラベルスタック](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: 7c1ab6e0d97f -->
+<!-- glossary-links-injected: d5320e852f7a -->

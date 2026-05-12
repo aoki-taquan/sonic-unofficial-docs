@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-DSCP 値 (0..63) を Traffic Class へマップする ingress [QoS](../../reference/glossary.md#term-qos) 分類定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_DSCP_TO_TC`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_tc_map`)。
+[DSCP](../../reference/glossary.md#term-dscp) 値 (0..63) を Traffic Class へマップする ingress [QoS](../../reference/glossary.md#term-qos) 分類定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_DSCP_TO_TC`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_tc_map`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -52,7 +52,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `name` (key) | string (1..32) | ✅ | マップ名 |
-| `dscp` (key) | string `0..63` | ✅ | DSCP 値 |
+| `dscp` (key) | string `0..63` | ✅ | [DSCP](../../reference/glossary.md#term-dscp) 値 |
 | `tc` | `tc_type` (0..7) | - | 対応 TC |
 
 [YANG](../../reference/glossary.md#term-yang) 上は親子 list 構造。[Redis](../../reference/glossary.md#term-redis) に展開すると `DSCP_TO_TC_MAP|<name>` の hash field として `<dscp>: <tc>` ペアが格納される。
@@ -107,4 +107,4 @@ show qos map dscp-tc
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 1024efc8dead -->
+<!-- glossary-links-injected: eebb97ac8e67 -->

@@ -60,6 +60,8 @@ flowchart TD
     D -- No --> E[thermalctld ログを精査]
 ```
 
+## 確認コマンド
+
 ### 1. STATE_DB / sensor
 
 ```bash

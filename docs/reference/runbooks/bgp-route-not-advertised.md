@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[clear bgp <peer> soft out で再送信]
 ```
 
+## 確認コマンド
+
 ### 1. local RIB と Adj-RIB-Out
 
 ```bash
@@ -92,6 +94,17 @@ sonic-db-cli CONFIG_DB keys "PREFIX_LIST|*"
 - `network` 文追加: `vtysh -c "conf t" -c "router bgp <ASN>" -c "network 1.1.1.0/24"` → [CONFIG_DB](../../reference/glossary.md#term-config_db) 側にも反映
 - route-map 修正: `route-map RM_OUT permit 100` を追加、または既存の deny を緩める
 - iBGP 経路で next-hop 問題: `neighbor <peer> next-hop-self`
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム (syslog / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

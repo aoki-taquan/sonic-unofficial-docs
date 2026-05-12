@@ -72,7 +72,7 @@ OpenSSL FIPS、secure boot、secure upgrade、container hardening は、いず�
 
 ## 章の境界
 
-- 管理プレーン向け [CoPP](../../reference/glossary.md#term-copp)（Control Plane Policing）は本章ではなく [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。
+- 管理プレーン向け [CoPP](../../reference/glossary.md#term-copp)（Control Plane [Policing](../../reference/glossary.md#term-policing)）は本章ではなく [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) で扱います。本章は「誰が触れるか」の認証面、CoPP 章は「触ってよいパケットの帯域」の制御面と切り分けます。
 - secure upgrade はライフサイクル全体の [Reboot / Upgrade / Lifecycle](../11-reboot/index.md) と重複しますが、本章では「信頼チェーン」の観点に限定し、warm/fast/SONiC-To-SONiC の手順は 11 章に委ねます。
 
 ## まず読み手の質問に答える
@@ -186,4 +186,4 @@ sequenceDiagram
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: c88ef50a2df3 -->
+<!-- glossary-links-injected: 87fa713c3c5e -->

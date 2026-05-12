@@ -76,9 +76,9 @@ related:
 | Ingress PG 割当 | [`BUFFER_PG`](../../reference/config-db/buffer-pg.md) | [sonic-buffer-pg](../../reference/yang/sonic-buffer-pg.md) |
 | Egress queue 割当 | [`BUFFER_QUEUE`](../../reference/config-db/buffer-queue.md) | [sonic-buffer-queue](../../reference/yang/sonic-buffer-queue.md) |
 | Queue × scheduler/WRED | [`QUEUE`](../../reference/config-db/queue.md) | [sonic-queue](../../reference/yang/sonic-queue.md) |
-| Scheduler / shaping | [`SCHEDULER`](../../reference/config-db/scheduler.md) | [sonic-scheduler](../../reference/yang/sonic-scheduler.md) |
+| [Scheduler](../../reference/glossary.md#term-scheduler) / shaping | [`SCHEDULER`](../../reference/config-db/scheduler.md) | [sonic-scheduler](../../reference/yang/sonic-scheduler.md) |
 | WRED / ECN | [`WRED_PROFILE`](../../reference/config-db/wred-profile.md) | — |
-| DSCP→TC | [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) | — |
+| [DSCP](../../reference/glossary.md#term-dscp)→TC | [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) | — |
 | TC→queue | [`TC_TO_QUEUE_MAP`](../../reference/config-db/tc-to-queue-map.md) | [sonic-tc-queue-map](../../reference/yang/sonic-tc-queue-map.md) |
 | ポート単位の map 適用 | [`PORT_QOS_MAP`](../../reference/config-db/port-qos-map.md) | [sonic-port-qos-map](../../reference/yang/sonic-port-qos-map.md) |
 | PFC priority→PG | [`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`](../../reference/config-db/pfc-priority-to-priority-group-map.md) | — |
@@ -86,7 +86,7 @@ related:
 
 ## シナリオ 1: 最小構成 — lossy のみ ToR
 
-「100G lossy だけのアクセス ToR」を想定して、queue 0 を strict、queue 1–7 を DWRR (weight 15) で並べる例です。テンプレ展開を待たずに最低限手で組むなら、pool / profile / scheduler / port_qos_map の 4 つを作って 1 ポートに当てるところまでが必要最小限です。
+「100G lossy だけのアクセス ToR」を想定して、queue 0 を strict、queue 1–7 を [DWRR](../../reference/glossary.md#term-dwrr) (weight 15) で並べる例です。テンプレ展開を待たずに最低限手で組むなら、pool / profile / scheduler / port_qos_map の 4 つを作って 1 ポートに当てるところまでが必要最小限です。
 
 操作の順番は次のとおり。
 
@@ -272,4 +272,4 @@ gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BU
 - YANG: [sonic-buffer-pool](../../reference/yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../../reference/yang/sonic-buffer-profile.md) / [sonic-pfcwd](../../reference/yang/sonic-pfcwd.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md)
 
-<!-- glossary-links-injected: d51fadc7323f -->
+<!-- glossary-links-injected: db2ed97924a6 -->

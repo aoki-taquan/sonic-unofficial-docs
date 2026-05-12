@@ -62,6 +62,8 @@ flowchart TD
     D -- Yes --> E[p4rt log / swss P4Orch の状態確認]
 ```
 
+## 確認コマンド
+
 ### 1. container / process
 
 ```bash
@@ -108,6 +110,17 @@ openssl x509 -in /etc/sonic/credentials/ca.crt -noout -dates
 - election ID 衝突: controller 側で election_id を一意に
 - 滞留: [orchagent](../../reference/glossary.md#term-orchagent) restart は影響大なので、まず `sonic-db-cli APPL_STATE_DB` で何が pending か確認
 - 証明書: 旧証明書を退避 → 新証明書配置 → `docker restart p4rt`。**ロールバック**: 退避から戻す
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

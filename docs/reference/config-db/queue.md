@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ポートの egress queue ごとに `SCHEDULER` (WRR/DWRR/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) queue scheduler / [WRED](../../reference/glossary.md#term-wred) を設定する。[VOQ](../../reference/glossary.md#term-voq) シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
+ポートの egress queue ごとに `SCHEDULER` (WRR/[DWRR](../../reference/glossary.md#term-dwrr)/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) queue scheduler / [WRED](../../reference/glossary.md#term-wred) を設定する。[VOQ](../../reference/glossary.md#term-voq) シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -130,4 +130,4 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2ae60ae29e92 -->
+<!-- glossary-links-injected: eae0af312767 -->

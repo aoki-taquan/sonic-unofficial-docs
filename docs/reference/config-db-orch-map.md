@@ -35,7 +35,7 @@ SONiC の **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル** 
    - cfgmgr は CONFIG_DB の生値を APPL_DB の運用用テーブル形式に変換し、orchagent が APPL_DB を購読して SAI を叩く
    - インターフェース系・[LAG](../reference/glossary.md#term-lag)・[VLAN](../reference/glossary.md#term-vlan)・[FDB](../reference/glossary.md#term-fdb)・Tunnel など大半のデータパス系
 2. **CONFIG_DB を orchagent が直接 subscribe → SAI**
-   - [QoS](../reference/glossary.md#term-qos) / Buffer (一部) / [ACL](../reference/glossary.md#term-acl) / Policer / Mirror / Mux / Dtel / Pbh / DebugCounter / Mlag / TWAMP / Hft 等、APPL_DB 化が省略される系統
+   - [QoS](../reference/glossary.md#term-qos) / Buffer (一部) / [ACL](../reference/glossary.md#term-acl) / [Policer](../reference/glossary.md#term-policer) / Mirror / Mux / Dtel / Pbh / DebugCounter / Mlag / TWAMP / Hft 等、APPL_DB 化が省略される系統
 
 下表は `orchdaemon.cpp` の Orch 構築コードと、`cfgmgr/*.cpp` の `TableConnector` 登録から逆引きしたもの。
 
@@ -345,4 +345,4 @@ flowchart LR
 - [`sonic-swss/cfgmgr/`](https://github.com/sonic-net/sonic-swss/tree/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr) (各 `*mgrd.cpp`)
 - [`sonic-swss-common/common/schema.h`](https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h)
 
-<!-- glossary-links-injected: a118e8b048d0 -->
+<!-- glossary-links-injected: 7346a8b8c6b2 -->

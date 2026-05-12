@@ -58,6 +58,8 @@ flowchart TD
     D -- No --> E[generate_dump.sh の timeout 値を引き上げ]
 ```
 
+## 確認コマンド
+
 ### 1. 直近の dump サイズ / 残骸
 
 ```bash

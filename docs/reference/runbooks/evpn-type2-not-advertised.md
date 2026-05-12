@@ -50,6 +50,8 @@ flowchart TD
     D -- Yes --> E[bgp l2vpn evpn neighbor の send-community 確認]
 ```
 
+## 確認コマンド
+
 ### 1. VXLAN / VNI
 
 ```bash
@@ -95,6 +97,17 @@ docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
 - [VLAN](../../reference/glossary.md#term-vlan)-VNI mapping 作成: `sudo config vxlan map add <tunnel> <vlan> <vni>`（**ロールバック**: `config vxlan map del`）
 - RT 不一致: `route-target import/export` を対向と揃える
 - [FDB](../../reference/glossary.md#term-fdb) が学習されない: MAC learning enable、port が trunk として正しいか確認
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

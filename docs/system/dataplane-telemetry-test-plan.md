@@ -76,7 +76,7 @@ def dscp_value(self, value):
 #### 1. INT end-point as INT source[^1]
 
 DUT を **INT パケット生成元** にする:
-- Switch ID / INT L4 DSCP / latency quantization
+- Switch ID / INT L4 [DSCP](../reference/glossary.md#term-dscp) / latency quantization
 - INT session（max hop=8、collect switch id のみ ON）
 - Flow watchlist（src/dst IP + EtherType=0x800 + sample 100% + report all）
 
@@ -158,4 +158,4 @@ DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8f15c1459e58 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

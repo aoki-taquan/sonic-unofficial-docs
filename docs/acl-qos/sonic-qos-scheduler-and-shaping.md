@@ -49,8 +49,8 @@ related:
 
 SONiC の [QoS](../reference/glossary.md#term-qos) には **scheduling** と **shaping** の 2 軸がある[^1]:
 
-- **Scheduling**: egress queue への帯域配分。SP / WRR / DWRR の 3 方式
-- **Shaping**: queue / port 単位の最大帯域（および queue では最小帯域）制限
+- **Scheduling**: egress queue への帯域配分。SP / WRR / [DWRR](../reference/glossary.md#term-dwrr) の 3 方式
+- **[Shaping](../reference/glossary.md#term-shaping)**: queue / port 単位の最大帯域（および queue では最小帯域）制限
 
 scheduler オブジェクトは **profile** 単位で定義し、queue または port にバインドする。[SAI](../reference/glossary.md#term-sai) レイヤでは `saischeduler.h` の `create_scheduler` / `set_scheduler_group_attribute` / `set_port_attribute` を使う[^1]。
 
@@ -180,4 +180,4 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 19aae067fe9e -->
+<!-- glossary-links-injected: de04c96fcae0 -->

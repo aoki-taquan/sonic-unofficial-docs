@@ -40,7 +40,7 @@ reference ページと機能章は同じ frontmatter スキーマで管理され
 | `area` | yes | `topics` / `reference` / `categories` / `architecture` … |
 | `verification` | yes | `meta` / `code-verified` / `discrepancy-found` |
 | `last_verified` | yes | 裏取り日付。CI で stale 検出に使う |
-| `sources` | recommended | reference や HLD への根拠リンク |
+| `sources` | recommended | reference や [HLD](../../reference/glossary.md#term-hld) への根拠リンク |
 | `related.cli` / `related.config_db` / `related.yang` | recommended | 機能章 → reference の前方リンク |
 | `keywords` | optional | search index 用 |
 
@@ -147,3 +147,5 @@ reference 索引と機能章の往復を維持するうえで、メンテの優�
 - 索引の運用 → [運用](operations.md)。
 - 索引の品質と未カバー領域 → [品質と gap](quality-gaps.md)。
 - frontmatter / 命名規約の根拠 → [`meta/templates/SCHEMA.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/templates/SCHEMA.md)。
+
+<!-- glossary-links-injected: 167700005048 -->

@@ -49,6 +49,8 @@ flowchart TD
     D -- Yes --> E[ASIC port MTU と sysctl を確認]
 ```
 
+## 確認コマンド
+
 ### 1. 両端 MTU 比較
 
 ```bash
@@ -86,6 +88,17 @@ portstat -c
 - 両端を揃える: `sudo config interface mtu Ethernet0 9100` を双方で実行
 - [VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel): `sudo config interface mtu Vlan100 9100`
 - 保存: `sudo config save -y`
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

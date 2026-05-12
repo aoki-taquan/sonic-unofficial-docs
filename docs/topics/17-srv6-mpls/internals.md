@@ -65,7 +65,7 @@ per-[RIF](../../reference/glossary.md#term-rif) の MPLS 有効化（`INTERFACE.
 
 ## QoS との接続
 
-`sonic-swss/orchagent/qosorch.cpp` の `m_qos_handler_map` に `CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME` が登録され、`mpls_tc_to_tc_field_name` が `PORT_QOS_MAP` のフィールド名として参照されます。ハンドラは `QosOrch::handleMplsTcToTcTable` です。DSCP / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、[QoS](../../reference/glossary.md#term-qos) 側の運用知識がそのまま使えます。
+`sonic-swss/orchagent/qosorch.cpp` の `m_qos_handler_map` に `CFG_MPLS_TC_TO_TC_MAP_TABLE_NAME` が登録され、`mpls_tc_to_tc_field_name` が `PORT_QOS_MAP` のフィールド名として参照されます。ハンドラは `QosOrch::handleMplsTcToTcTable` です。[DSCP](../../reference/glossary.md#term-dscp) / TC / PG マップと同じ枠組みで MPLS TC が扱われるため、[QoS](../../reference/glossary.md#term-qos) 側の運用知識がそのまま使えます。
 
 ## Path Tracing の SAI 属性
 
@@ -156,4 +156,4 @@ ASIC_DB:
 - [MPLS HLD](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

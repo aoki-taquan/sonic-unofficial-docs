@@ -55,11 +55,11 @@ python3 meta/scripts/aggregate_queue.py
 reference 側に未カバーの項目があると、機能章の `related` に書かれた名前が解決できない、または索引から該当ページに飛べないという事象になる。検出と修復の標準動線は次の通り。
 
 1. **Indexer 出力を見る**: `.cache/sonic-sources/` の最新 clone から `meta/index/cli.json`、`meta/index/yang.json`、`meta/index/config-db.json` を再生成し、reference 側にまだ存在しない slug を抽出する。
-2. **`meta/reference-gaps.md` に積む**: 抽出結果は人間レビュー用に `meta/reference-gaps.md` (見出しごとに CLI / CONFIG_DB / YANG) に追加する。優先度は「機能章が `related` で参照しているのに reference が無い」 > 「Indexer 側にあるが機能章未参照」の順。
+2. **`meta/reference-gaps.md` に積む**: 抽出結果は人間レビュー用に `meta/reference-gaps.md` (見出しごとに CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang)) に追加する。優先度は「機能章が `related` で参照しているのに reference が無い」 > 「Indexer 側にあるが機能章未参照」の順。
 3. **Writer に backlog を投入**: `meta/backlog/<area>/<slug>.json` を作って Writer が拾えるようにする。area は `reference-cli` / `reference-config-db` / `reference-yang` を使い分ける。
 4. **生成 PR の merge 後に再計算**: reference が増えた後、機能章側の `related` に表示名を足し、`frontmatter_lint.py` で再検査する。
 
-`meta/reference-gaps.md` を空に保つことは原則目標にしない (新規 HLD/CLI が常に増えるため)。一定量を超えたら一括 Writer バッチで掃く運用が現実的。
+`meta/reference-gaps.md` を空に保つことは原則目標にしない (新規 [HLD](../../reference/glossary.md#term-hld)/CLI が常に増えるため)。一定量を超えたら一括 Writer バッチで掃く運用が現実的。
 
 ## discrepancy 運用
 
@@ -135,3 +135,5 @@ Writer / Verifier を並列に動かすとき、索引層のメタファイル�
 - frontmatter / 生成スクリプトの使い方 → [設定](setup.md)。
 - 品質と未カバー → [品質と gap](quality-gaps.md)。
 - 内部構造 → [内部実装](internals.md) と [発展](advanced.md)。
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

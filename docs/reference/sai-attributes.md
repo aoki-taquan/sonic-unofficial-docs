@@ -155,7 +155,7 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 | `SAI_BFD_SESSION_ATTR_UDP_SRC_PORT` | UDP src | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID` | HW lookup 有効 | `BfdOrch` |
 | `SAI_BFD_SESSION_ATTR_MULTIHOP` | mhop BFD | `BfdOrch` |
-| `SAI_BFD_SESSION_ATTR_TOS` | DSCP/TOS | `BfdOrch` |
+| `SAI_BFD_SESSION_ATTR_TOS` | [DSCP](../reference/glossary.md#term-dscp)/TOS | `BfdOrch` |
 | 関連: [BFD HW offload](../routing/bfd-hw-offload.md) | | |
 
 ## ICMP_ECHO_SESSION (`sai_icmp_echo_api`)
@@ -236,7 +236,7 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 | `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | [WRED](../reference/glossary.md#term-wred) バインド | `QosOrch` |
 | `SAI_QUEUE_ATTR_PAUSE_STATUS` | PFC pause 状態 (RO) | `PfcWdOrch` |
 | `SAI_QUEUE_ATTR_PFC_DLR_INIT` | DLR トリガ | `PfcWdOrch` |
-| `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` | SP / WRR / DWRR | `QosOrch` (`SCHEDULER\|type`) |
+| `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` | SP / WRR / [DWRR](../reference/glossary.md#term-dwrr) | `QosOrch` (`SCHEDULER\|type`) |
 | `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT` | weight | `QosOrch` (`weight`) |
 | `SAI_SCHEDULER_ATTR_METER_TYPE` | bytes / packets | `QosOrch` |
 | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE` / `MIN_BANDWIDTH_BURST_RATE` | min shaper | `QosOrch` |
@@ -371,4 +371,4 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 - [sonic-net/sonic-swss `orchagent/`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent) — `SAI_*_ATTR_*` の全件 grep より抽出
 - SAI ヘッダ本体: [sonic-net/SAI](https://github.com/sonic-net/SAI) の `inc/sai*.h`
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: 225b3753e8b5 -->

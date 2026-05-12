@@ -158,7 +158,7 @@ CLI 一覧:
 ## 干渉する機能
 
 - **Mirror セッション**: Mirror table は `MIRROR_SESSION` と密結合
-- **EVERFLOW / DSCP-based mirror**: Mirror 上に積み重ねる別 HLD
+- **EVERFLOW / [DSCP](../reference/glossary.md#term-dscp)-based mirror**: Mirror 上に積み重ねる別 HLD
 - **PFCWD / DROP / [MUX](../reference/glossary.md#term-mux)**: 同じ ACL_TABLE 機構を type 違いで再利用
 - **ACL Flex Counters**: Phase 2 から導入
 - **port / LAG**: `ports` で bind。LAG 解体時の rebind は AclOrch 側ロジック
@@ -183,4 +183,4 @@ CLI 一覧:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

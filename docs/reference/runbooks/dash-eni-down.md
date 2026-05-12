@@ -63,6 +63,8 @@ flowchart TD
     D -- Yes --> E[DPU データプレーン / SAI DASH counter 確認]
 ```
 
+## 確認コマンド
+
 ### 1. CONFIG_DB / APPL_DB
 
 ```bash
@@ -105,6 +107,17 @@ show dash counter eni <eni>
 - MAC / IP 不整合: controller 側 inventory と突合、[CONFIG_DB](../../reference/glossary.md#term-config_db) を `redis-cli hset` で修正（**ロールバック**: 退避値で hset 戻し）
 - DPU dataplane 異常: [SmartSwitch](../../reference/glossary.md#term-smartswitch) の DPU を graceful shutdown → 再起動（[smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) を参照）
 - 容量超過: ENI 数を削減、ベンダ提供の max_eni を確認
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
 
 ## 関連ページ
 

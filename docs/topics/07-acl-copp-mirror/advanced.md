@@ -106,7 +106,7 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 - [RFC 7011](https://datatracker.ietf.org/doc/html/rfc7011) — IPFIX (ACL hit を export する将来形)
 - [IEEE 802.1X](https://1.ieee802.org/security/802-1x/) — Port Access Control の基準
 - [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749) — OAuth2 (PAC + RADIUS 連携の将来モデル)
-- [RFC 2475](https://datatracker.ietf.org/doc/html/rfc2475) — DiffServ (CoPP の DSCP マッチで参照)
+- [RFC 2475](https://datatracker.ietf.org/doc/html/rfc2475) — DiffServ (CoPP の [DSCP](../../reference/glossary.md#term-dscp) マッチで参照)
 
 ## upstream 開発の最新動向
 
@@ -122,13 +122,13 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 
 ## トラブルシュート観点
 
-- ACL rule が ASIC に降りないときは、まず `aclshow -a` で counter の有無、`redis-cli -n 1 keys 'ACL_*'` で APPL_DB / ASIC_DB の rule 数を確認する。TCAM 不足の場合は `swss` の `syncd` ログに `SAI_STATUS_INSUFFICIENT_RESOURCES` が出る。
+- ACL rule が ASIC に降りないときは、まず `aclshow -a` で counter の有無、`redis-cli -n 1 keys 'ACL_*'` で [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) の rule 数を確認する。TCAM 不足の場合は `swss` の `syncd` ログに `SAI_STATUS_INSUFFICIENT_RESOURCES` が出る。
 - CoPP で control plane を drop しているときは、`docker exec swss coppmgr` の状態と `show copp` の rate/burst を確認する。BGP / LACP / ARP のような protocol trap が `MATCH_DROP` に分類されていると、コンソール経由でも疎通しない事象が起きる。
-- mirror session が動作しないときは、`show mirror_session` で session の active/inactive、`MIRROR_SESSION` テーブルの GRE/ERSPAN 設定、宛先 next-hop の到達性を点検する。VXLAN 経由 mirror は dst VTEP の MAC 解決失敗で停止しやすい。
+- mirror session が動作しないときは、`show mirror_session` で session の active/inactive、`MIRROR_SESSION` テーブルの GRE/ERSPAN 設定、宛先 next-hop の到達性を点検する。[VXLAN](../../reference/glossary.md#term-vxlan) 経由 mirror は dst VTEP の MAC 解決失敗で停止しやすい。
 
 ## 検証パスとラボ要件
 
-- ACL scale 検証は `sonic-mgmt` の `acl/test_acl.py` を baseline に、4k〜16k rule を投入して TCAM 使用率と orchagent レイテンシを計測する。ASIC capability (TCAM 段数、stateful 数) を事前に `saictl query` で取得しておく。
+- ACL scale 検証は `sonic-mgmt` の `acl/test_acl.py` を baseline に、4k〜16k rule を投入して TCAM 使用率と [orchagent](../../reference/glossary.md#term-orchagent) レイテンシを計測する。ASIC capability (TCAM 段数、stateful 数) を事前に `saictl query` で取得しておく。
 - CoPP 検証は `iperf3` や `hping3` で各 trap rate の限界を計測する。target rate は `COPP_GROUP` の `cir/cbs` 設定通りに収まるべきで、超過時は `policer drop counter` が増えることを確認。
 - Mirror session の throughput / drop は `ostinato` / `pktgen` で帯域を上げ、`show mirror_session` の active 状態と GRE encap オーバーヘッドを考慮した宛先側受信量を比較する。
 
@@ -145,4 +145,4 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 - [15 Security / AAA: 802.1X / MAB / RADIUS の境界](../15-security-aaa/index.md)
 - [18 P4 / PINS: P4 表現での ACL](../18-p4-pins/index.md)
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: 5e36326edf13 -->

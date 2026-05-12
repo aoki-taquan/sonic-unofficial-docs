@@ -34,7 +34,15 @@ related:
 | switching | 1 |
 | **合計** | **42** |
 
-`architecture` と `system` に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。Indexer 段で除外ルールを足すか、v1.1 で個別精査するかは未決定。
+`architecture` と `system` に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。**2026-05-12 に分類整理を完了**: 全 42 件を `meta/backlog/README.md` で **drop 27 件 / low-priority 11 件 / defer 4 件** に分類。
+
+| カテゴリ | 件数 | 処理方針 |
+|----------|------|----------|
+| drop（Indexer 除外推奨） | 27 | リリースノート 13 件 + 章節断片 9 件 + ビルド系 3 件 + テンプレ 1 件 + 重複 1 件 |
+| low-priority（v1.1 検討） | 11 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 3 件 + 第三者拡張 1 件 |
+| defer（既存ページに統合済） | 4 | acl flow-charts / vendor mapping / egress ACL bug fix / ecmp-calculator stub |
+
+詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。v1.1 サイクル開始時に Indexer 除外フィルタを `meta/_gen_backlog.py` に組み込み、drop / defer 計 31 件を `meta/backlog/_archived/` へ移動予定（既存 archived 344 件と同列）。
 
 ## 2. discrepancy-found ページの monitor 別分布
 
@@ -42,7 +50,7 @@ related:
 
 | monitor | 件数 | 性質 |
 |---------|------|------|
-| `partially_implemented` | 27 | HLD のうち一部だけ取り込まれ、残りは欠落 |
+| `partially_implemented` | 27 | [HLD](../../reference/glossary.md#term-hld) のうち一部だけ取り込まれ、残りは欠落 |
 | `evolved_beyond_hld` | 21 | 実装が HLD から進化し、名前 / 構造 / 経路が異なる |
 | `not_implemented` | 11 | HLD は提案段階で、master に対応コードが一切無い |
 | `deprecated` | 3 | HLD の方針自体が廃止 |
@@ -85,11 +93,11 @@ related:
 
 | 行数 | パス | 検討候補 |
 |------|------|---------|
-| 392 | `docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md` | ACL port-add/del flow を operation 別に分割 |
-| 386 | `docs/switching/switch-port-modes-and-vlan-cli-enhancement.md` | port modes / VLAN CLI を独立サブページ化 |
-| 377 | `docs/overlay/active-standby-dual-tor.md` | DualToR の linkmgrd / mux / orchagent 章を分割 |
+| 392 | `docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md` | [ACL](../../reference/glossary.md#term-acl) port-add/del flow を operation 別に分割 |
+| 386 | `docs/switching/switch-port-modes-and-vlan-cli-enhancement.md` | port modes / [VLAN](../../reference/glossary.md#term-vlan) CLI を独立サブページ化 |
+| 377 | `docs/overlay/active-standby-dual-tor.md` | DualToR の [linkmgrd](../../reference/glossary.md#term-linkmgrd) / mux / [orchagent](../../reference/glossary.md#term-orchagent) 章を分割 |
 | 371 | `docs/platform/fec-flr-support-in-sonic.md` | FEC と FLR を別ページに分離 |
-| 371 | `docs/overlay/vxlan-sonic.md` | VXLAN の data-plane / control-plane / EVPN 連携を分離 |
+| 371 | `docs/overlay/vxlan-sonic.md` | [VXLAN](../../reference/glossary.md#term-vxlan) の data-plane / control-plane / [EVPN](../../reference/glossary.md#term-evpn) 連携を分離 |
 
 いずれも v1.0 内では「読める長さ」と判断したが、roadmap-v2（v1.2 多言語化）の前に章単位分割しておく方が翻訳コストが下がる。
 
@@ -128,3 +136,5 @@ find docs -name '*.md' -not -path 'docs/_meta/*' -exec wc -l {} + \
 - [HLD と実装の乖離 一覧](discrepancy-index.md)
 - [sources-freshness](sources-freshness.md)
 - [stale-verified](stale-verified.md)
+
+<!-- glossary-links-injected: 80aec4b758dc -->

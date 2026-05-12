@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する CONFIG_DB / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -72,7 +72,7 @@ module: sonic-buffer-pg
 |------|------|----|------|-----------|----------------------|------|
 | `port` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/port` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which the buffer priority group is configured. |
 | `pg_num` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/pg_num` | `string` | yes |  | pattern `[0-7]((-)[0-7])?` | Priority Group number |
-| `profile` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/profile` | `union` |  | 0 | union(leafref, string) | Buffer Profile associated with Priority Group number for a port |
+| `profile` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/profile` | `union` |  | 0 | union(leafref, string) | [Buffer Profile](../../reference/glossary.md#term-buffer-profile) associated with Priority Group number for a port |
 
 ## leafref / 依存
 
@@ -125,4 +125,4 @@ show priority-group persistent-watermark headroom
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a35f1b1cdfa7 -->
+<!-- glossary-links-injected: f7191d012485 -->

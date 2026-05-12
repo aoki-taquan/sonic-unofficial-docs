@@ -34,7 +34,7 @@ related:
 
 ## 想定原因
 
-1. **[PFC](../../reference/glossary.md#term-pfc) enabled priority と PORT_QOS_MAP の DSCP→TC マッピング不一致** → 想定の queue に乗っていない
+1. **[PFC](../../reference/glossary.md#term-pfc) enabled priority と PORT_QOS_MAP の [DSCP](../../reference/glossary.md#term-dscp)→TC マッピング不一致** → 想定の queue に乗っていない
 2. **buffer profile / pool sizing 不足**: `BUFFER_POOL|ingress_lossless_pool` の `size` がトラフィック量に対して過小
 3. **対向側で [PFC](../../reference/glossary.md#term-pfc) pause を生成し続け、[PFC](../../reference/glossary.md#term-pfc) storm に陥っている**: PFC WD が queue を強制 disable
 4. **headroom 計算が cable length と一致していない** (`CABLE_LENGTH` テーブル誤設定)
@@ -54,6 +54,8 @@ flowchart TD
     D -- Yes --> E[対向側 congestion / receiver を確認]
 ```
 
+## 確認コマンド
+
 ### 1. QoS マッピングと PFC enabled priority の整合
 
 ```bash
@@ -62,7 +64,7 @@ sonic-db-cli CONFIG_DB hgetall "DSCP_TO_TC_MAP|AZURE"
 sonic-db-cli CONFIG_DB hgetall "TC_TO_PRIORITY_GROUP_MAP|AZURE"
 ```
 
-- 期待: 送信側 DSCP（例: 26 / 48 など）が `pfc_enable` に含まれる TC に紐づく
+- 期待: 送信側 [DSCP](../../reference/glossary.md#term-dscp)（例: 26 / 48 など）が `pfc_enable` に含まれる TC に紐づく
 - 異常: 別 TC にマップ → 期待 queue/PG にトラフィックが乗っていない
 
 ### 2. Buffer 使用量と headroom
@@ -114,6 +116,17 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 - CABLE_LENGTH を実値に: `config interface cable-length Ethernet0 5m`
 - 根本対策: 対向 NIC 側 PFC 設定を点検（送信し過ぎていないか、CNP / ECN との連携が壊れていないか）
 
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
+
 ## 関連ページ
 
 - [../../topics/08-qos-buffer/operations.md](../../topics/08-qos-buffer/operations.md)
@@ -127,4 +140,4 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bufferorch / pfcwdorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — pfcwd CLI
 
-<!-- glossary-links-injected: 7cb1f9e73b9e -->
+<!-- glossary-links-injected: eebb97ac8e67 -->
