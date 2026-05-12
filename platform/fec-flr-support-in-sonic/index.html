@@ -17047,19 +17047,19 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        確認コマンド
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -29862,19 +29862,19 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        確認コマンド
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -30327,13 +30327,30 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 </div>
 <!-- /diff-admonition -->
 
-<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>FEC / fast link up の状態を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># FEC / Link up</span>
+<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>下記コマンドで FLR コアロジック・portstat 表示・COUNTER_DB の RATES エントリ・
+ハードコードされた poll 周期を順に master 実機で確認できる。HLD と実装の差分
+（<code>counterpoll port flr-interval-factor</code> 未実装 / lua 内ハードコード固定）が
+ここで直接観測できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 0. FEC / Link up の基本状態</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>fec<span class="w"> </span>status
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>show<span class="w"> </span>fast-link-status<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># 1. port_flr.lua の実体とハードコード値の確認</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>cat<span class="w"> </span>/usr/share/swss/port_flr.lua<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">&#39;FEC_FLR_POLL_INTERVAL|BIN_FILTER_VALUE|MIN_SIGNIFICANT_BINS|MFC&#39;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># 2. portstat に FLR 列が出ているか</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>-f<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="c1"># 3. COUNTER_DB の RATES に FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED があるか</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS_PORT_NAME_MAP&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;RATES:oid:0x10000000000XX&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;FEC_FLR&#39;</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="c1"># 4. counterpoll に flr-interval-factor サブコマンドが無いことを確認 (期待: 未実装)</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>counterpoll<span class="w"> </span>--help<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;flr|fec&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;flr-interval-factor: 未実装 (HLD と乖離)&#39;</span>
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:

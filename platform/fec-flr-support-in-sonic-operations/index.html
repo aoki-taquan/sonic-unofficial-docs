@@ -16978,7 +16978,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -16987,6 +16987,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29570,7 +29581,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29579,6 +29590,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29733,9 +29755,30 @@
 <li><strong><a href="../../reference/glossary/#term-sai">SAI</a> counter 依存</strong>: ASIC が <code>SAI_PORT_STAT_IF_IN_FEC_*</code> を返さないと FLR(O) / FLR(P) ともに値が出ない。プラットフォーム SAI の対応状況により利用可否が変わる。</li>
 <li><strong><code>FLR(O) &gt; 0</code> は既に欠落発生済み</strong>: Observed は事後指標。早期検知は Predicted の経時変化を主軸にする。</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">確認コマンド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>運用フロー (<code>5. 運用フロー</code>) で示した手順を master 上で実走するための具体的な
+コマンド列。HLD で提案された動的設定 CLI が未実装である点も併せて再確認できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. portstat で FLR(O) / FLR(P) / Accuracy を観測（運用での主要 view）</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>-f<span class="w"> </span>Ethernet0<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;FLR|FEC&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 2. COUNTER_DB:RATES に FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED が</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1">#    書かれていることを直接確認</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">for</span><span class="w"> </span>oid<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hvals<span class="w"> </span><span class="s1">&#39;COUNTERS_PORT_NAME_MAP&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--- </span><span class="nv">$oid</span><span class="s2"> ---&quot;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;RATES:</span><span class="nv">$oid</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;FEC_FLR&#39;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="k">done</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># 3. lua 内のハードコード値（POLL_INTERVAL/BIN_FILTER/MFC）と</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="c1">#    sonic-utilities 側に flr-interval-factor サブコマンドが無いことを確認</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>grep<span class="w"> </span>-nE<span class="w"> </span><span class="s1">&#39;FEC_FLR_POLL_INTERVAL|BIN_FILTER_VALUE|MFC&#39;</span><span class="w"> </span>/usr/share/swss/port_flr.lua
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>counterpoll<span class="w"> </span>--help<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;flr|fec&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;flr-interval-factor: 未取り込み&#39;</span>
+</span></code></pre></div>
+<p>これらを実行すると、HLD で記述された <code>counterpoll port flr-interval-factor</code>
+が実機の counterpoll CLI に存在しないことが具体的に確認できる。</p>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_4">このページを読んだ後の次アクション<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">このページを読んだ後の次アクション<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

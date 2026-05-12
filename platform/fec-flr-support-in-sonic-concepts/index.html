@@ -16950,7 +16950,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -16959,6 +16959,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29570,7 +29581,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29579,6 +29590,17 @@
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29715,9 +29737,26 @@
 <li><strong>低 BER 領域の <code>Accuracy</code> 低下</strong>: errored codeword サンプル数が少ない健全リンクでは R² (Accuracy 列) が下がり、<code>FLR(P)</code> の絶対値の信頼性が落ちる。健全時の値はベースラインとしてのみ扱う。</li>
 <li><strong><code>FLR(P)</code> ≪ <code>FLR(O)</code> の領域は外挿が破綻</strong>: Observed が立った時点で外挿モデルの仮定 (低 BER) を超えており、Predicted を運用判断に使うべきではない。</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">確認コマンド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>概念ページの値が master 上の実数値と整合しているかを確認するための最小コマンド
+セット。<code>FLR(O)</code> / <code>FLR(P)</code> / interleaving factor <code>X</code> のいずれが NA か / 0 か /
+高い値かを切り分けるのに使う。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1. portstat で FLR(O) / FLR(P) / Accuracy 列を観測（-f で raw / 通常で human）</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>-f<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;NR&lt;=2 || /FLR/&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-3
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># 2. SAI レベル: S0..S16 (symbol error bin) が COUNTER_DB に流れているか</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hkeys<span class="w"> </span><span class="s1">&#39;COUNTERS:oid:0x10000000000XX&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;FEC_CODEWORD_ERRORS_S&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># 3. lua 計算ロジックの実体（interleaving factor X / BIN_FILTER_VALUE）</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>head<span class="w"> </span>-50<span class="w"> </span>/usr/share/swss/port_flr.lua
+</span></code></pre></div>
+<p><code>N/A</code> が出る場合は ASIC SDK が <code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Sn</code> を
+サポートしていない可能性が高い。S0..S16 のうち 1 つでも非ゼロが出ていれば
+概念ページの計算式が回っている。</p>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_4">このページを読んだ後の次アクション<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">このページを読んだ後の次アクション<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

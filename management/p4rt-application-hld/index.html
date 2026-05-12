@@ -16087,7 +16087,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -16096,6 +16096,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -16117,7 +16128,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29910,7 +29921,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29919,6 +29930,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29940,7 +29962,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -30182,15 +30204,28 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 </div>
 <!-- /diff-admonition -->
 
-<p>確認コマンド例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Application Extension パッケージ状態</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-package-manager<span class="w"> </span>list
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>&lt;pkg-name&gt;
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.Names}}   {{.Status}}&#39;</span>
+<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>下記コマンドで p4rt コンテナ・APP_P4RT_TABLE・SwitchOrch ハッシュ責務を順に
+確認し、HLD の <code>HashOrch</code> 想定と実装の SwitchOrch 統合がどう乖離しているかを
+master 上で直接観測できる。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. p4rt コンテナと Application Extension の状態</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-package-manager<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>p4rt
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.Names}}\t{{.Status}}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>p4rt
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 2. APP_P4RT_TABLE / APPL_STATE_DB の活きエントリ</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;P4RT_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">14</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;P4RT_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w">   </span><span class="c1"># APPL_STATE_DB = DB 14</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># 3. ハッシュ責務が SwitchOrch にあることを CFG/STATE/CONFIG_DB で確認</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_HASH|GLOBAL&#39;</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>grep<span class="w"> </span>-rn<span class="w"> </span><span class="s1">&#39;SAI_NATIVE_HASH_FIELD&#39;</span><span class="w"> </span>/usr/lib/<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;SwitchOrch|HashOrch&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>上記コマンドで <code>HashOrch</code> クラスの痕跡が swss コンテナ内に存在しないこと、
+代わりに <code>SwitchOrch</code> が <code>SWITCH_HASH</code> を購読していることが確認できる。</p>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
@@ -30218,7 +30253,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <!-- glossary-links-injected: f369e75e8733 -->
 
 <!-- ops-entry -->
-<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">運用入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / <a href="../../reference/glossary/#term-yang">YANG</a> / Runbook）を以下にまとめる。</p>
 <h3 id="config_db_1">関連 CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
 <ul>
