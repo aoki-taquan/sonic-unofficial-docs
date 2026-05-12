@@ -20,12 +20,25 @@ related:
   cli:
   - show feature
   - show techsupport
+  - config feature
+  - config acl
+  - show acl
+  - show platform
+  - show version
   config_db:
   - FEATURE
   - CRM
   - WARM_RESTART
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - DEVICE_METADATA
   yang:
   - sonic-crm
+  - sonic-feature
+  - sonic-device-metadata
+  - sonic-system-defaults
+  - sonic-versions
 ---
 
 # Build / Packaging / Application Extension

@@ -13,6 +13,7 @@ the same fields from child pages under the same directory.
 
 from __future__ import annotations
 
+import argparse
 import sys
 from collections import Counter
 from pathlib import Path
@@ -55,6 +56,14 @@ def get_related_lists(fm: dict) -> dict:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Drift detection: exit 1 if any chapter-index would be updated. Does not write files.",
+    )
+    args = parser.parse_args()
+
     chapter_indexes = []
     for p in sorted(DOCS.rglob("index.md")):
         text = p.read_text(encoding="utf-8")
@@ -65,6 +74,7 @@ def main() -> int:
     print(f"Found {len(chapter_indexes)} chapter-index pages")
 
     updated = 0
+    drift_paths: list[Path] = []
     for idx_path in chapter_indexes:
         chap_dir = idx_path.parent
         children = sorted(
@@ -122,9 +132,24 @@ def main() -> int:
         if changed:
             fm["related"] = existing_related
             new_text = "---\n" + dump_frontmatter(fm) + "---\n" + body
-            idx_path.write_text(new_text, encoding="utf-8")
-            updated += 1
-            print(f"  updated: {idx_path.relative_to(ROOT)}")
+            if args.check:
+                drift_paths.append(idx_path)
+                print(f"  drift: {idx_path.relative_to(ROOT)}")
+            else:
+                idx_path.write_text(new_text, encoding="utf-8")
+                updated += 1
+                print(f"  updated: {idx_path.relative_to(ROOT)}")
+
+    if args.check:
+        if drift_paths:
+            print(
+                f"ERROR: {len(drift_paths)} chapter-index page(s) out of sync with child related.* aggregates.\n"
+                "Run: python3 meta/scripts/enrich_chapter_index_related.py",
+                file=sys.stderr,
+            )
+            return 1
+        print("OK: all chapter-index related.* are up to date")
+        return 0
 
     print(f"Updated {updated} chapter-index pages")
     return 0
