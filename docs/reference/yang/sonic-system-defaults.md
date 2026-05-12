@@ -42,6 +42,27 @@ flowchart LR
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
 
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`SYSTEM_DEFAULTS`](../config-db/system-defaults.md)
+
+### 関連 HLD
+
+- [JSON Change Application（apply-change / table 単位 alphabetical 適用）](../../architecture/json-change-application.md)
+- [reset-factory（keep-basic / keep-all-config / only-config）](../../architecture/reset-factory-design.md)
+- [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../../architecture/sonic-generic-configuration-update-and-rollback.md)
+- [config save 後に予期しない diff が出る](../../reference/runbooks/config-save-diff-unexpected.md)
+- [CONFIG_DB save / load が反映されない](../../reference/runbooks/config-save-load.md)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
+
+<!-- /yang-xref -->
+
 ## ツリー
 
 ```

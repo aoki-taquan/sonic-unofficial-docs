@@ -48,6 +48,28 @@ flowchart LR
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
 
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`AAA`](../config-db/aaa.md)
+- [`RADIUS`](../config-db/radius.md)
+
+### 関連 CLI
+
+- [`config aaa`](../cli/config-aaa.md)
+
+### 関連 HLD
+
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
+- [発展トピック](../../topics/15-security-aaa/advanced.md)
+
+<!-- /yang-xref -->
+
 ## ツリー
 
 ```
