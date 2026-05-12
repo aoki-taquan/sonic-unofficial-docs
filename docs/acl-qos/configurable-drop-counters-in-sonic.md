@@ -151,6 +151,17 @@ show dropcounters counts
 - counts が増えない → 該当 reason に該当する drop が起きていない／ASIC が当該 reason を SAI で公開していない可能性。
 - `show dropcounters configuration` が空 → [CONFIG_DB](../reference/glossary.md#term-config_db) の `DEBUG_COUNTER` テーブルに entry があるかを `redis-cli -n 4 keys 'DEBUG_COUNTER|*'` で確認。
 
+確認コマンド例:
+
+```bash
+# drop counter capabilities, 設定, 値をひととおり確認
+show dropcounters capabilities
+show dropcounters configuration
+show dropcounters counts
+redis-cli -n 4 keys 'DEBUG_COUNTER|*'
+redis-cli -n 4 keys 'DEBUG_COUNTER_DROP_REASON|*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/drop_counters/drop_counters_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

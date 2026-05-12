@@ -173,6 +173,16 @@ show copp configuration detailed --group queue1_group3
 - ある trap が `not-installed` のまま → `STATE_DB.COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids` に該当 trap があるか確認
 - 設定したのに ASIC に反映されない → syslog の `Copporch` ERR を確認
 
+確認コマンド例:
+
+```bash
+# neighbor_miss trap と hw_status / capability を確認
+show copp configuration | grep -A2 neighbor_miss
+redis-cli -n 6 hgetall 'COPP_TRAP_CAPABILITY_TABLE|traps'
+redis-cli -n 6 hgetall 'COPP_TABLE|neighbor_miss'
+docker logs swss 2>&1 | grep -i copporch | tail
+```
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)

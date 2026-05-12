@@ -178,6 +178,16 @@ pytest pfc_asym/pfc_asym.py --topology=t0
 - `pfc_gen.py` が Fanout で見つからない: `deploy_pfc_gen` fixture のプラットフォーム別ロジック、対象 Fanout の OS / パスを確認。
 - ARP responder の応答が無い: 設定ファイルの 1 回生成パッチが当たっているか、ARP responder プロセスのログを確認。
 
+確認コマンド例:
+
+```bash
+# Asymmetric PFC mode と PFC カウンタを確認
+show pfc asymmetric
+redis-cli -n 4 hget 'PORT|Ethernet0' pfc_asym
+pfcstat
+docker exec swss supervisorctl status | grep orchagent
+```
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - Asymmetric PFC mode set: `sonic-swss/orchagent/portsorch.cpp` L2519-L2573 `setPortPfcAsym()`（`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE` を `SEPARATE`/`COMBINED` で [SAI](../reference/glossary.md#term-sai) に書き込む）

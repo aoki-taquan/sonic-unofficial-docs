@@ -238,6 +238,16 @@ chassis_db_address=127.100.0.1
 - SSI 障害後、FSI が外部接続を切る: 仕様どおりの防御動作[^1]。SSI を回復させるか、`chassisdb.conf` を修正してから FSI を再起動。
 - Switch ID の衝突: `C` 個連続消費の規則に違反していないか、各チップに与えた Switch ID 範囲を確認。
 
+確認コマンド例:
+
+```bash
+# Chassis DB / FSI / SSI / Switch ID を確認
+cat /etc/sonic/chassisdb.conf
+redis-cli -h redis_chassis.server -p 6380 ping
+redis-cli -h redis_chassis.server -p 6380 keys 'SYSTEM_NEIGH|*'
+show chassis-module status
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/voq/architecture.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
