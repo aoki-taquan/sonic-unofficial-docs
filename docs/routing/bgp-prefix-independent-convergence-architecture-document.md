@@ -158,9 +158,9 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 
 ## 制限事項
 
-- BGP PIC は FRR の対応バージョン (8.x 以降) と該当 SAI capability の両方が必要で、未対応 platform では nexthop group 単位での速い切替にはならない。
+- BGP PIC は FRR の対応バージョン (8.x 以降) と該当 [SAI](../reference/glossary.md#term-sai) capability の両方が必要で、未対応 platform では nexthop group 単位での速い切替にはならない。
 - IBGP PIC edge / core 双方を有効化するには `bgp bestpath multipath-relax` 等の設定組み合わせが前提で、HLD では明示されない場合がある。
-- VRF / EVPN との同時利用は VRF leaking パスで遅延が大きくなる事例があり、本機能の効果が打ち消されるケースがある。
+- [VRF](../reference/glossary.md#term-vrf) / EVPN との同時利用は VRF leaking パスで遅延が大きくなる事例があり、本機能の効果が打ち消されるケースがある。
 
 ## 引用元
 
@@ -182,4 +182,4 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 - single ↔ NHG hitless transition のテスト存在確認
 -->
 
-<!-- glossary-links-injected: 9d861f4dd46a -->
+<!-- glossary-links-injected: 8e8594481100 -->

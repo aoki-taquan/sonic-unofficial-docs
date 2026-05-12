@@ -122,11 +122,11 @@ stateDiagram-v2
 
 ## 制限事項
 
-- **90 秒のデータプレーン断目標**: HLD は warm reboot のデータプレーン断を 90 秒以内に抑える設計目標を掲げるが、ASIC SDK の `sai-warmboot.bin` 復元時間や orchagent reconcile に依存し、ベンダー実装で延びることがある。
-- **BGP GR (Graceful Restart) 依存**: 隣接 BGP ルータが GR helper をサポートしないとピアセッション切断時にルートが drop される。FRR 側の `graceful-restart-time` と peer 側の対応が前提。
+- **90 秒のデータプレーン断目標**: [HLD](../reference/glossary.md#term-hld) は warm reboot のデータプレーン断を 90 秒以内に抑える設計目標を掲げるが、[ASIC SDK](../reference/glossary.md#term-asic-sdk) の `sai-warmboot.bin` 復元時間や orchagent reconcile に依存し、ベンダー実装で延びることがある。
+- **BGP GR ([Graceful Restart](../reference/glossary.md#term-graceful-restart)) 依存**: 隣接 BGP ルータが GR helper をサポートしないとピアセッション切断時にルートが drop される。[FRR](../reference/glossary.md#term-frr) 側の `graceful-restart-time` と peer 側の対応が前提。
 - **config 変更の禁止**: warm reboot 進行中 (`pre-shutdown` → `reconcile` 完了まで) の config 変更は未定義動作。`config save` / `config reload` / runtime CLI 変更は避ける必要がある。
 - **対応コンテナの限定**: warm restart は対応する docker (`bgp` / `swss` / `syncd` / `teamd` / `nat` / 一部 `lldp`) のみで有効化される。それ以外のコンテナは cold restart 相当となる。
-- **multi-ASIC / chassis**: 単体スイッチを想定した設計で、multi-ASIC や VOQ chassis では追加の制約 (namespace 単位の順序、`multi-asic-warm-reboot` 補助 HLD) が必要。
+- **multi-ASIC / chassis**: 単体スイッチを想定した設計で、multi-ASIC や [VOQ](../reference/glossary.md#term-voq) chassis では追加の制約 (namespace 単位の順序、`multi-asic-warm-reboot` 補助 HLD) が必要。
 - **storage 要件**: `/host/warmboot/` 配下に `sai-warmboot.bin` などの状態ファイルが書き込めるディスク容量が必要。
 
 ## 引用元
@@ -140,4 +140,4 @@ stateDiagram-v2
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 28f6e043a6cd -->
+<!-- glossary-links-injected: be4c83d338a5 -->

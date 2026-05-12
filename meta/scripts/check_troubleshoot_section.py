@@ -11,10 +11,13 @@
 判定:
   - ``## トラブルシュート`` / ``## トラブルシューティング`` / ``## 確認コマンド``
     / ``## Troubleshooting`` / ``## 動作確認`` のいずれかの H2 があれば OK
+  - さらにそのセクション本文が **3 行以上の非空行** と
+    **1 個以上のコードブロック (``` フェンス)** を含むこと (内容充実度)
 
 Usage:
     python3 meta/scripts/check_troubleshoot_section.py            # 一覧
     python3 meta/scripts/check_troubleshoot_section.py --check    # CI gate
+    python3 meta/scripts/check_troubleshoot_section.py --thin     # 内容不足のみ
 """
 from __future__ import annotations
 
@@ -45,6 +48,29 @@ TROUBLESHOOT_H2_RE = re.compile(
 )
 VERIFICATION_RE = re.compile(r"^verification:\s*(\S+)\s*$", re.MULTILINE)
 
+MIN_SECTION_NONEMPTY_LINES = 3
+MIN_SECTION_CODEBLOCKS = 1
+
+
+def extract_section_body(text: str, header_match: re.Match[str]) -> str:
+    """Return the body text from after the matched H2 to the next H2 (or EOF)."""
+    start = header_match.end()
+    # Find next H2 boundary
+    next_h2 = re.search(r"^##\s+", text[start:], re.MULTILINE)
+    end = start + next_h2.start() if next_h2 else len(text)
+    return text[start:end]
+
+
+def section_is_thin(body: str) -> bool:
+    nonempty = [ln for ln in body.splitlines() if ln.strip()]
+    fences = len(re.findall(r"^```", body, re.MULTILINE))
+    codeblocks = fences // 2
+    if len(nonempty) < MIN_SECTION_NONEMPTY_LINES:
+        return True
+    if codeblocks < MIN_SECTION_CODEBLOCKS:
+        return True
+    return False
+
 
 def parse_frontmatter_verification(text: str) -> str | None:
     if not text.startswith("---"):
@@ -72,8 +98,10 @@ def collect_target_pages() -> list[Path]:
     return pages
 
 
-def check(pages: list[Path]) -> list[Path]:
+def check(pages: list[Path]) -> tuple[list[Path], list[Path]]:
+    """Return (missing_section_pages, thin_section_pages)."""
     missing: list[Path] = []
+    thin: list[Path] = []
     for f in pages:
         text = f.read_text(encoding="utf-8")
         lines = text.splitlines()
@@ -82,9 +110,14 @@ def check(pages: list[Path]) -> list[Path]:
         ver = parse_frontmatter_verification(text)
         if ver not in TARGET_VERIFICATION:
             continue
-        if not TROUBLESHOOT_H2_RE.search(text):
+        m = TROUBLESHOOT_H2_RE.search(text)
+        if not m:
             missing.append(f)
-    return missing
+            continue
+        body = extract_section_body(text, m)
+        if section_is_thin(body):
+            thin.append(f)
+    return missing, thin
 
 
 def main() -> int:
@@ -92,23 +125,41 @@ def main() -> int:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="exit code 1 if any missing pages exist",
+        help="exit code 1 if any missing or thin pages exist",
+    )
+    parser.add_argument(
+        "--thin",
+        action="store_true",
+        help="print only thin-content pages",
     )
     args = parser.parse_args()
 
     pages = collect_target_pages()
-    missing = check(pages)
+    missing, thin = check(pages)
 
-    if not missing:
+    if args.thin:
+        if not thin:
+            print("OK: no thin troubleshoot sections")
+            return 0
+        print(f"THIN troubleshoot/verify-command section ({len(thin)} page(s)):")
+        for f in thin:
+            print(f"  {f.relative_to(REPO_ROOT)}")
+        return 1 if args.check else 0
+
+    if not missing and not thin:
         print(
-            f"OK: all {len(pages)} candidate pages have a troubleshoot/verify-command section"
+            f"OK: all {len(pages)} candidate pages have a sufficient troubleshoot/verify-command section"
         )
         return 0
 
-    print(f"MISSING troubleshoot/verify-command section ({len(missing)} page(s)):")
-    for f in missing:
-        rel = f.relative_to(REPO_ROOT)
-        print(f"  {rel}")
+    if missing:
+        print(f"MISSING troubleshoot/verify-command section ({len(missing)} page(s)):")
+        for f in missing:
+            print(f"  {f.relative_to(REPO_ROOT)}")
+    if thin:
+        print(f"THIN troubleshoot/verify-command section ({len(thin)} page(s)):")
+        for f in thin:
+            print(f"  {f.relative_to(REPO_ROOT)}")
 
     if args.check:
         return 1

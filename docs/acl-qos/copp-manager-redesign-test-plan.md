@@ -166,6 +166,16 @@ reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 - `redis-cli -n 4 hgetall "FEATURE|<name>"` で feature の state 確認
 - `aclshow` 相当の trap 表示は CLI 化されていない可能性があり、SAI hostif trap の状態は SAI debug 経由で確認
 
+確認コマンド例:
+
+```bash
+# COPP redesign: COPP_TRAP / FEATURE 状態を一覧
+redis-cli -n 4 keys 'COPP_TRAP|*'
+redis-cli -n 4 hgetall 'COPP_TRAP|sflow'
+redis-cli -n 4 hgetall 'FEATURE|sflow'
+show copp configuration
+```
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/copp/Copp_Manager_Redesign_test_plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/copp/Copp_Manager_Redesign_test_plan.md)

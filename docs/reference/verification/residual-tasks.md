@@ -29,7 +29,7 @@ related:
 | architecture | 1 |
 | **合計** | **10** |
 
-**2026-05-12 round 38 update**: `meta/backlog/README.md` の **defer 4 件 + 実質 drop 1 件 = 5 件を `_archived` へ追加移動**（`acl-qos/flow-charts` / `architecture/import-the-vendor-to-module-mapping` / `routing/egress-acl-bug-fix-description` / `routing/ecmp-calculator` / `management/pins-supplementary-hld`）。残りは **low-priority 10 件**（大型 HLD 4 + telemetry/openconfig 3 + PINS/chassis 2 + 第三者拡張 1）。
+**2026-05-12 round 38 update**: `meta/backlog/README.md` の **defer 4 件 + 実質 drop 1 件 = 5 件を `_archived` へ追加移動**（`acl-qos/flow-charts` / `architecture/import-the-vendor-to-module-mapping` / `routing/egress-acl-bug-fix-description` / `routing/ecmp-calculator` / `management/pins-supplementary-hld`）。残りは **low-priority 10 件**（大型 HLD 4 + telemetry/openconfig 3 + [PINS](../../reference/glossary.md#term-pins)/chassis 2 + 第三者拡張 1）。
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
@@ -136,4 +136,4 @@ find docs -name '*.md' -not -path 'docs/_meta/*' -exec wc -l {} + \
 
 - [スナップショット](../../_meta/snapshot.md) — repo 全体の verification / coverage / lint 指標を 1 ページに集約した自動生成サマリ。本ページの残課題が全体指標のどの位置にあるか俯瞰する用途。
 
-<!-- glossary-links-injected: 80aec4b758dc -->
+<!-- glossary-links-injected: 130cca349dcf -->

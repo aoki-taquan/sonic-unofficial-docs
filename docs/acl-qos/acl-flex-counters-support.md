@@ -212,6 +212,16 @@ sonic-clear acl
 - counter が更新されない → `counterpoll show` で ACL group の status と interval、`FLEX_COUNTER_TABLE|ACL` の status を確認
 - mirror flap で counter リセット → 「counter detach 方式」が正しく動いているか syslog で確認
 
+確認コマンド例:
+
+```bash
+# ACL counter / map / poll status をまとめて確認
+aclshow -a
+counterpoll show | grep -i acl
+redis-cli -n 2 hgetall COUNTERS_ACL_COUNTER_RULE_MAP
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|ACL'
+```
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)

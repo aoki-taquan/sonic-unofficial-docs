@@ -56,11 +56,11 @@ PR ごとに GitHub Actions (`.github/workflows/ci.yml`) で実行される。
 | `gen_sitemap.py` | `docs/_meta/sitemap.md` 自動生成 | gen-check (informational) |
 | `gen_changelog.py` | `docs/_meta/changelog.md` を merged PR 一覧から生成 | local-only |
 | `gen_descriptions.py` | 各ページの `description:` frontmatter を H1 + 冒頭段落から自動補完 | local-only |
-| `gen_cdb_mermaid.py` | CONFIG_DB reference ページにミニ data-flow mermaid 埋め込み | local-only |
+| `gen_cdb_mermaid.py` | [CONFIG_DB](../reference/glossary.md#term-config_db) reference ページにミニ data-flow mermaid 埋め込み | local-only |
 | `gen_cli_mermaid.py` | CLI reference ページにミニ data-flow mermaid 埋め込み | local-only |
-| `gen_yang_mermaid.py` | YANG reference ページにミニ data-flow mermaid 埋め込み | local-only |
+| `gen_yang_mermaid.py` | [YANG](../reference/glossary.md#term-yang) reference ページにミニ data-flow mermaid 埋め込み | local-only |
 | `gen_ref_triangle.py` | Reference (YANG ↔ CONFIG_DB ↔ CLI) sibling 三角リンクの埋め込み | local-only |
-| `gen_topics_admonition.py` | HLD 派生ページ冒頭に Topics 章への誘導 admonition を挿入 | local-only |
+| `gen_topics_admonition.py` | [HLD](../reference/glossary.md#term-hld) 派生ページ冒頭に Topics 章への誘導 admonition を挿入 | local-only |
 
 ## CI ワークフロー
 
@@ -82,3 +82,5 @@ deploy は `.github/workflows/deploy.yml` が main push 契機で `gh-pages` ブ
 - **gen-check** が drift で落ちたときは、ローカルで対応する `gen_*.py` を `--check` 無しで再実行 → 出力ファイルを commit に含めて push し直すのが手順
 - `check_sources_freshness.py` / `gen_changelog.py` 等の **local-only** スクリプトは `.cache/` や `gh` 認証に依存するため CI からは除外している。定期メンテのときに手動で回す
 - すべての lint は `python3 meta/scripts/<name>.py --help` で詳細オプションを確認できる
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

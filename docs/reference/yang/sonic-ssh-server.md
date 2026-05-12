@@ -51,11 +51,17 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 関連 CLI
 
 - [`config ssh`](../cli/config-ssh.md)
+
+### 関連 HLD
+
+- [sonic-banner YANG](../../reference/yang/sonic-banner.md)
+- [sonic-fips YANG](../../reference/yang/sonic-fips.md)
+- [sonic-passwh YANG](../../reference/yang/sonic-passw-hardening.md)
 
 <!-- /yang-xref -->
 

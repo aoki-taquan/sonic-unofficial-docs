@@ -312,7 +312,7 @@ show mirror_session
 
 - PTF テスト失敗時はまず `--log-cli-level=DEBUG` で再実行し、注入パケットと受信パケットの diff を確認する。
 - VS テストベッド (KVM) と物理テストベッドで挙動が異なる場合があるため、まず KVM で再現するか確認してから物理機を疑う。
-- DIP/SIP 検査機能自体が NPU 依存で実装されていない platform では skip / xfail マーク扱い。`pytest --collect-only` でテスト適用範囲を事前確認。
+- DIP/SIP 検査機能自体が [NPU](../reference/glossary.md#term-npu) 依存で実装されていない platform では skip / xfail マーク扱い。`pytest --collect-only` でテスト適用範囲を事前確認。
 
 ## 引用元
 
@@ -350,4 +350,4 @@ show mirror_session
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8c0e35007835 -->
+<!-- glossary-links-injected: 717245b7d27e -->

@@ -70,7 +70,7 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (142 行) | meta |
-| setup | ✅ 完成 (141 行) | meta |
+| setup | ✅ 完成 (143 行) | meta |
 | operations | ✅ 完成 (180 行) | meta |
 | internals | ✅ 完成 (126 行) | meta |
 | advanced | ✅ 完成 (115 行) | meta |
@@ -84,27 +84,28 @@ related:
 
 - [概要](concept.md)
 - [アーキテクチャ](architecture.md)
+- [設定](setup.md)
 - [運用: 設定 / 運用](operations.md)
 - [内部実装](internals.md)
 - [発展トピック](advanced.md)
 
 **関連する HLD 7 件**
 
-- [SONiC Application Extension Infrastructure（sonic-package-manager / SPM）](../../architecture/sonic-application-extension-infrastructure.md)
-- [SWSS docker の Warm Restart 実装メモ（開発時リファレンス）](../../system/swss-docker-warm-restart-code-reference.md)
-- [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
-- [Fast-reboot Flow Improvements（finalizer / reconciliation）](../../system/fast-reboot-flow-improvements-hld.md)
-- [SONiC Container Hardening（capability / read-only / privileged 削減）](../../system/sonic-container-hardening.md)
+- [SONiC OS と Docker イメージのセマンティックバージョニング](../../system/sonic-os-sonic-docker-images-versioning.md)
+- [SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）](../../system/sonic-feature-quality-definition.md)
+- [Alpine 仮想 SONiC（ALViS / KNE デプロイ）](../../architecture/alpine-high-level-design.md)
+- [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../../architecture/sonic-on-gns3-vm.md)
 - [SONiC Debian アップグレード方針（base / container / 廃止 cadence）](../../system/sonic-debian-upgrade-cadence.md)
-- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../../system/sonic-express-reboot-hld-spec.md)
+- [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
+- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)
 
 **関連トラブルシュート 5 件**
 
-- [show techsupport が timeout する](../../reference/runbooks/techsupport-timeout.md)
-- [コンテナ memory limit 超過 / OOM kill](../../reference/runbooks/container-memory-limit-exceeded.md)
-- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
 - [SAI failure / syncd リスタート多発](../../reference/runbooks/sai-failure.md)
 - [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
+- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
+- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 
 <!-- /next-reads -->
 

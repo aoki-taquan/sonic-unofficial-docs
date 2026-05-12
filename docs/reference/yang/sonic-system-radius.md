@@ -49,7 +49,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -58,6 +58,7 @@ flowchart LR
 ### 関連 HLD
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
+- [sonic-system-aaa YANG](../../reference/yang/sonic-system-aaa.md)
 - [発展トピック](../../topics/15-security-aaa/advanced.md)
 
 <!-- /yang-xref -->

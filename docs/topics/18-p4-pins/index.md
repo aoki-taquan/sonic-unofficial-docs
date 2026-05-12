@@ -109,12 +109,12 @@ PINS の中心は 4 点です。コントローラと話す **P4RT App**（gRPC 
 **関連する HLD 7 件**
 
 - [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../../architecture/sonic-trap-flow-counter-design.md)
+- [Alpine 仮想 SONiC（ALViS / KNE デプロイ）](../../architecture/alpine-high-level-design.md)
 - [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
 - [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
-- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
-- [P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）](../../internals/p4-orchagent.md)
-- [swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）](../../internals/swss-schema.md)
-- [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](../../internals/byte-packet-rates-port-utilization-in-sonic.md)
+- [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../../architecture/sonic-on-gns3-vm.md)
+- [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md)
+- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)
 
 **関連トラブルシュート 5 件**
 

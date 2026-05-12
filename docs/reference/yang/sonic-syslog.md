@@ -54,7 +54,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する CONFIG_DB / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -64,6 +64,10 @@ flowchart LR
 ### 関連 CLI
 
 - [`config syslog`](../cli/config-syslog.md)
+
+### 関連 HLD
+
+- [SONiC Logging & System Dumps（要件レベル仕様）](../../system/sonic-logging-system-dumps-arch-spec.md)
 
 <!-- /yang-xref -->
 

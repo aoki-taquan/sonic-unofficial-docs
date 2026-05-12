@@ -46,7 +46,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -57,8 +57,11 @@ flowchart LR
 - [JSON Change Application（apply-change / table 単位 alphabetical 適用）](../../architecture/json-change-application.md)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../../architecture/reset-factory-design.md)
 - [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../../architecture/sonic-generic-configuration-update-and-rollback.md)
+- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [config save 後に予期しない diff が出る](../../reference/runbooks/config-save-diff-unexpected.md)
 - [CONFIG_DB save / load が反映されない](../../reference/runbooks/config-save-load.md)
+- [sonic-dns YANG](../../reference/yang/sonic-dns.md)
+- [sonic-feature YANG](../../reference/yang/sonic-feature.md)
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
 
 <!-- /yang-xref -->

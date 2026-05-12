@@ -49,7 +49,7 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 対応 CONFIG_DB
 
@@ -61,7 +61,9 @@ flowchart LR
 
 ### 関連 HLD
 
+- [Smart Switch: DPU 独立アップグレード（gNOI 経路）](../../system/independent-dpu-upgrade.md)
 - [Reboot-cause 履歴の STATE_DB / テレメトリ公開](../../system/reboot-cause-information-via-telemetry-agent.md)
+- [reboot コマンドの blocking mode（reboot.conf / -b / -v）](../../system/reboot-support-blockingmode-in-sonic.md)
 - [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../../system/smart-switch-reboot-high-level-design.md)
 
 <!-- /yang-xref -->
