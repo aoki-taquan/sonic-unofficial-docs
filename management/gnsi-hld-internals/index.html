@@ -29399,6 +29399,10 @@
 
 <h1 id="gnsi">gNSI 内部実装<a class="headerlink" href="#gnsi" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../gnsi-hld/">gNSI（概要ハブ）</a> の派生で、<strong>4 サービスの内部実装と host service</strong> に絞る。概念は <a href="../gnsi-hld-concepts/">gnsi-hld-concepts.md</a>、設定 / 運用は <a href="../gnsi-hld-operations/">gnsi-hld-operations.md</a>、制限と HLD 乖離は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
+<div class="admonition note">
+<p class="admonition-title">実装状況の境界（partially implemented）</p>
+<p>以下の内部実装記述のうち、<strong>Certz の handler は <code>sonic-gnmi</code> に実装済</strong> で master 上で動作する。一方 <strong>Authz / Pathz handler および Credentialz の <code>console_mgmt</code> / <code>ssh_mgmt</code> host service は未実装</strong> で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
+</div>
 <h2 id="1-certz">1. Certz<a class="headerlink" href="#1-certz" title="Permanent link">&para;</a></h2>
 <p><code>Certz.Rotate</code> は <strong>bidirectional streaming RPC</strong> で以下を入れ替える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

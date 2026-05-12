@@ -14464,6 +14464,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29430,6 +29441,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29617,7 +29639,14 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 <li><a href="../../reference/glossary/">Glossary</a></li>
 <li><a href="../../topics/01-overview/">Topics: Overview</a></li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">確認コマンド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>chronyc tracking</code> — 現在の参照サーバと stratum、最終 sync からの経過時間を確認</li>
+<li><code>chronyc sources -v</code> — 候補 NTP サーバ一覧と reach ビットマップ</li>
+<li><code>show ntp</code> — sonic-utilities 経由でユーザ向け要約を取得</li>
+<li><code>systemctl status chrony</code> — chrony デーモンの起動状態と直近ログ</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - chrony パッケージの sonic-buildimage 同梱と ntpd / ntpsec の削除確認
 - /etc/chrony/chrony.conf テンプレートの sonic-buildimage / sonic-host-services 取り込み確認

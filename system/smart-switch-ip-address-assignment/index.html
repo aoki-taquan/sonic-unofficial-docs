@@ -14184,6 +14184,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29430,6 +29441,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29607,7 +29629,14 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 <li><strong><code>config-setup</code> / sonic-cfggen</strong>: <code>t1-smartswitch</code> テンプレ</li>
 <li><strong>DASH HA / hamgrd</strong>: midplane が NPU↔DPU の lifeline</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>ip -d link show bridge-midplane</code> / <code>ip addr show bridge-midplane</code> — midplane bridge と IP 割り当て</li>
+<li><code>systemctl status midplane-network-npu midplane-network-dpu</code> — bridge 立上げ用 oneshot サービス</li>
+<li><code>sonic-db-cli CONFIG_DB hgetall "MID_PLANE_BRIDGE|GLOBAL"</code> — bridge IP/subnet の宣言</li>
+<li><code>sonic-db-cli CONFIG_DB keys "DHCP_SERVER_IPV4_PORT|*"</code> — port-based static lease の DPU 割当</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - bridge-midplane の systemd-networkd 設定 (.netdev / .network) と systemd-sonic-generator 取り込み確認
 - midplane-network-npu.service / dpu.service の oneshot 起動と database.service Before= 連携確認

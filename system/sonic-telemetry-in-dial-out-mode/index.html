@@ -13876,6 +13876,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29475,6 +29486,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29677,7 +29699,14 @@
 <li><strong>gNMI Server</strong>（dial-in）: 同コンテナ内の別サービス</li>
 <li><strong>OpenConfig telemetry</strong>: 設定スキーマの参照モデル</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-db-cli CONFIG_DB hgetall "TELEMETRY_CLIENT|Global"</code> — dial-out 全体設定（retry / encoding 等）</li>
+<li><code>sonic-db-cli CONFIG_DB keys "TELEMETRY_CLIENT|DestinationGroup_*"</code> — 送信先 collector グループ</li>
+<li><code>docker exec telemetry supervisorctl status dialout_client</code> — dialout クライアント状態</li>
+<li><code>docker logs telemetry 2&gt;&amp;1 | grep -i dialout</code> — 接続再試行・publish エラーを確認</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 1642bcc520bc -->
 
 <div class="footnote">

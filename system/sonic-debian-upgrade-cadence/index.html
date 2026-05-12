@@ -13025,6 +13025,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29397,6 +29408,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29579,7 +29601,14 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 <li><a href="../../topics/19-build-packaging/">Topic: Build / Packaging</a></li>
 <li><a href="../../topics/11-reboot/">Topic: Reboot / Upgrade</a></li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">確認コマンド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>cat /etc/os-release</code> / <code>lsb_release -a</code> — image の Debian バージョン</li>
+<li><code>dpkg -l | grep linux-image</code> — kernel パッケージとバージョン</li>
+<li><code>show version</code> — SONiC build / Debian version / kernel を一括表示</li>
+<li><code>apt-cache policy &lt;pkg&gt;</code> — slave container 構築時の参照 suite を確認</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 直近の Debian Bookworm / Trixie 取り込みコミットの sonic-buildimage / sonic-linux-kernel 確認
 - slave container の Azure pipeline 定義状況確認

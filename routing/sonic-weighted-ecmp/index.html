@@ -9435,6 +9435,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29508,6 +29519,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29662,7 +29684,14 @@
 <ul>
 <li><a href="https://github.com/sonic-net/SONiC/pull/738">WCMP SWSS HLD #738</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認コマンド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show bgp device-global</code> — WCMP の有効/無効を確認</li>
+<li><code>vtysh -c "show bgp ipv4 unicast &lt;prefix&gt;"</code> — link-bandwidth extended community と nexthop weight を確認</li>
+<li><code>vtysh -c "show ip route &lt;prefix&gt;"</code> — RIB 段で NHG メンバの weight を確認</li>
+<li><code>sonic-db-cli APPL_DB hgetall "ROUTE_TABLE:&lt;prefix&gt;"</code> / <code>NEXT_HOP_GROUP_TABLE</code> で weight 反映を確認</li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

@@ -13489,6 +13489,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29496,6 +29507,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29648,7 +29670,14 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 <li><a href="../../reference/glossary/">Glossary</a></li>
 <li><a href="../../reference/">Reference 索引</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認コマンド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>sonic-installer get-fips</code> — 現在の FIPS モード（enabled/disabled）を確認</li>
+<li><code>openssl version -a</code> / <code>openssl list -providers</code> — FIPS provider が active かを確認</li>
+<li><code>cat /proc/sys/crypto/fips_enabled</code> — kernel 側の FIPS モード（参考値）</li>
+<li><code>ssh -vvv ...</code> で SSH の crypto algorithm を観測し、disabled algo が出ていないか確認</li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - symcrypt-openssl deb の sonic-buildimage 同梱と version 指定確認
 - /usr/lib/ssl/openssl-fips.cnf テンプレートの install 経路確認

@@ -16239,7 +16239,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -16250,7 +16250,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -16259,6 +16259,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29480,7 +29491,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29491,7 +29502,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29500,6 +29511,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29673,8 +29695,15 @@
 <li><strong>手書き CLI plugin</strong>: <code>manifest.json</code> で共存可能（config は自動・show は手書き等）</li>
 <li><strong>YANG 検証</strong>: 生成 CLI は実行時に validation を通す。CVL / mgmt-framework と同じ YANG 集合に依存</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">確認コマンド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>ls /usr/local/lib/python3*/dist-packages/config/plugins/auto/</code> — 自動生成 plugin の有無</li>
+<li><code>ls /usr/local/yang-models/</code> — 対象 YANG モジュール一覧</li>
+<li><code>sonic-cli-gen generate config &lt;module&gt;</code> を実行し、生成 plugin の import エラーは <code>python3 -c "import config.plugins.auto.&lt;module&gt;_yang"</code> で確認</li>
+<li><code>docker exec sonic-package-manager sonic-package-manager list</code> — Application Extension の有効化状況</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/10-gnmi-openconfig/">Topic: gNMI / OpenConfig</a></li>
 <li><a href="../sonic-yang-model-guidelines/">HLD: SONiC YANG model guidelines</a></li>
@@ -29684,7 +29713,7 @@
 <!-- glossary-links-injected: 20dbc11976b6 -->
 
 <!-- ops-entry -->
-<h2 id="_7">運用入口<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">運用入口<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli_1">関連 CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <ul>

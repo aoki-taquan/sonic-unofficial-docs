@@ -7803,7 +7803,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -7812,6 +7812,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29463,7 +29474,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29472,6 +29483,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29662,8 +29684,15 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 <li><strong>CoPP</strong>: DHCPv6 trap 切替が CoPP manager と連動</li>
 <li><strong>RADV (radvd)</strong>: M/O bit の整合要</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認コマンド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show dhcp6relay_counters interface &lt;vlan&gt;</code> — DHCPv6 メッセージ種別ごとの relay 統計</li>
+<li><code>docker exec dhcp_relay supervisorctl status</code> — dhcp6relay プロセス・ISC dhcrelay の状態</li>
+<li><code>sonic-db-cli CONFIG_DB hgetall "DHCP_RELAY|&lt;vlan&gt;"</code> — <code>dhcpv6_servers</code> / <code>rfc6939_support</code> 設定確認</li>
+<li><code>tcpdump -ni Vlan1000 'udp port 547'</code> — Relay-Forward/Reply を直接観測</li>
+</ul>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../dhcpv4-relay-agent/">Architecture: DHCPv4 Relay Agent</a></li>
 <li><a href="../../topics/16-nat-dhcp-dns/">Topic: NAT / DHCP / DNS</a></li>

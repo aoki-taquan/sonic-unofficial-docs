@@ -17230,6 +17230,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29530,6 +29541,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29725,7 +29747,14 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 <li><strong>xcvrd / sfp-refactor</strong>: optic 由来の温度はこの policy には含まれない</li>
 <li><strong>show platform CLI</strong>: <code>fanstatus</code> / <code>temperature</code> 出力フォーマット契約</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show platform fanstatus</code> / <code>show platform temperature</code> — fan speed と各温度センサの状況</li>
+<li><code>sonic-db-cli STATE_DB keys "FAN_INFO|*"</code> / <code>"TEMPERATURE_INFO|*"</code> — daemon の publish 結果を直接確認</li>
+<li><code>docker exec pmon supervisorctl status thermalctld</code> — thermal control daemon の状態</li>
+<li><code>docker logs pmon 2&gt;&amp;1 | grep -i thermal</code> — policy reload / algorithm 切替のログを追う</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SONiC-mgmt tests/platform/test_platform_info.py への thermal policy ケース追加状況確認
 - valid_policy.json / invalid_format_policy.json / invalid_value_policy.json の同 repo 配置確認

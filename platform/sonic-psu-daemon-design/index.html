@@ -17085,6 +17085,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -17104,7 +17115,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29419,6 +29430,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29438,7 +29460,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29666,7 +29688,14 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 <li><strong><code>psuutil</code></strong> / <strong><code>show platform psustatus</code></strong> CLI: 状態露出</li>
 <li><strong>modular switch</strong>: 全 PSU 合計 power が <strong>switch power budget</strong> を超えるかも別途監視</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show platform psustatus</code> — <code>WARNING</code> ステータス（<code>power_overload</code>）が見える</li>
+<li><code>sonic-db-cli STATE_DB hgetall "PSU_INFO|PSU 1"</code> — voltage / current / power / threshold / overload を直接確認</li>
+<li><code>docker exec pmon supervisorctl status psud</code> — psud デーモンの動作確認</li>
+<li><code>docker logs pmon 2&gt;&amp;1 | grep -i psu</code> — psud のログを確認</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-platform-daemons/sonic-psud/scripts/psud:81 PSU_INFO_UPDATE_PERIOD_SECS = 3, :540 self.stop_event.wait(PSU_INFO_UPDATE_PERIOD_SECS)
 - sonic-platform-daemons/sonic-psud/scripts/psud:60-62 PSU_INFO_POWER_OVERLOAD/_WARNING_SUPPRESS_THRESHOLD/_CRITICAL_THRESHOLD
@@ -29690,7 +29719,7 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../../reference/cli/show-platform/">show platform</a> / <a href="../../reference/cli/show-environment/">show environment</a> / <a href="../../reference/cli/show-system-health/">show system-health</a></li>
 <li>関連 HLD: <a href="../../system/sonic-storage-monitoring-daemon-design/">storage monitoring daemon</a> / <a href="../../system/platform-monitor-enhancement-design/">platform monitor enhancement</a> / <a href="../pcieinfo-design/">pcieinfo design</a> / <a href="../../system/sonic-system-health-monitor-high-level-design/">System Health Monitor</a></li>

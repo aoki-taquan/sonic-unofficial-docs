@@ -12779,6 +12779,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29364,6 +29375,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29534,7 +29556,14 @@ reasoning: gNOI API 系列と各 phase の根拠。
 <li><strong><a href="../../reference/glossary/#term-gnmi">gNMI</a> / sonic-telemetry</strong>: GNMI/GNOI Splitter 経由のため依存</li>
 <li><strong>Offloader / Containerz</strong>: NPU 側 container 制御の標準 API</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>show chassis modules status</code> — DPU/NPU の admin/oper 状態</li>
+<li><code>sonic-db-cli STATE_DB hgetall "CHASSIS_MODULE_INFO_TABLE|DPU0"</code> — DPU の運用情報</li>
+<li><code>gnoi_client -target &lt;dpu&gt; -rpc System.RebootStatus</code> — gNOI Reboot ステータス</li>
+<li><code>gnoi_client -target &lt;dpu&gt; -rpc Containerz.ListImage</code> — DPU 内 container image を列挙</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - DPU Host Services / NPU Offloader バイナリの sonic-host-services 取り込み確認
 - GNMI/GNOI Splitter 実装と path-based 振分けの sonic-gnmi 取り込み確認
