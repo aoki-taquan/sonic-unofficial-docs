@@ -201,6 +201,17 @@ VRF Vrf_Red added.
 ```
 <!-- /usage-example -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show mgmt vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
+- [`show arp`](show-arp.md) — show arp サブコマンド
+- [`show bfd`](show-bfd.md) — show bfd サブコマンド
+- [`show bgp`](show-bgp.md) — show bgp / show ip bgp / show ipv6 bgp サブコマンド
+- [`show ip`](show-ip.md) — show ip サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 - [CONFIG_DB: VRF](../config-db/vrf.md)

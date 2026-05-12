@@ -121,4 +121,15 @@ flowchart LR
 
 [^1]: `show snmpagentaddress` グループ定義は `show/main.py` L585-L600。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L585>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config mirror session`](config-mirror-session.md) — config mirror_session サブコマンド
+- [`config sflow`](config-sflow.md) — config sflow サブコマンド
+- [`config snmp`](config-snmp.md) — config snmp / snmpagentaddress / snmptrap サブコマンド
+- [`config syslog`](config-syslog.md) — config syslog サブコマンド
+- [`show flowcnt`](show-flowcnt.md) — show flowcnt-trap / flowcnt-route サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: a35f1b1cdfa7 -->

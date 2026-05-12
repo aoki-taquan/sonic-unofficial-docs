@@ -128,4 +128,13 @@ show vnet endpoint
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show mclag`](show-mclag.md) — show mclag (mclagdctl) コマンド
+- [`config mclag`](config-mclag.md) — config mclag サブコマンド
+- [`config vxlan`](config-vxlan.md) — config vxlan サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 2acdb695c264 -->

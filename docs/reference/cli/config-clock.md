@@ -142,4 +142,15 @@ flowchart LR
 
 [^2]: `timedatectl set-time` は systemd 提供の操作で OS 時刻のみを変更する。
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show clock`](show-clock.md) — show clock サブコマンド
+- [`show environment`](show-environment.md) — show environment サブコマンド
+- [`show feature`](show-feature.md) — show feature サブコマンド
+- [`show platform`](show-platform.md) — show platform サブコマンド
+- [`show services`](show-services.md) — show services サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: a35f1b1cdfa7 -->

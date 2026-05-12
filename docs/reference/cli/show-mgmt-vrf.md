@@ -128,6 +128,17 @@ flowchart LR
 
 [^1]: `@cli.group('mgmt-vrf', invoke_without_command=True)` + `@click.argument('routes', required=False)` の組み合わせで、`show mgmt-vrf` も `show mgmt-vrf routes` も同じ関数本体に流れる。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L540>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config mgmt trio`](config-mgmt-trio.md) — config save / load / reload / replace / qos reload
+- [`config vrf`](config-vrf.md) — config vrf サブコマンド
+- [`config dhcp relay`](config-dhcp-relay.md) — config dhcp_relay / dhcpv4_relay サブコマンド
+- [`config muxcable`](config-muxcable.md) — config muxcable サブコマンド
+- [`show muxcable`](show-muxcable.md) — show muxcable サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 
 - [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)

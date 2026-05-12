@@ -242,6 +242,15 @@ show vxlan name <tunnel>
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show mclag`](show-mclag.md) — show mclag (mclagdctl) コマンド
+- [`config mclag`](config-mclag.md) — config mclag サブコマンド
+- [`config vnet`](config-vnet.md) — config vnet サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: VXLAN / VNet 全体設計](../../overlay/vxlan-sonic.md)
 - [HLD: EVPN VXLAN](../../routing/evpn-vxlan-hld.md)

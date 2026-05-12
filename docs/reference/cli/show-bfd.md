@@ -170,6 +170,17 @@ sonic-db-cli STATE_DB keys 'BFD_SESSION_TABLE|*'
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config bgp`](config-bgp.md) — config bgp サブコマンド
+- [`config default route`](config-default-route.md) — config default-route（デフォルトルート設定パターン）
+- [`config route`](config-route.md) — config route サブコマンド（static route）
+- [`config vrf`](config-vrf.md) — config vrf サブコマンド
+- [`show arp`](show-arp.md) — show arp サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 
 - [reference/CLI: show bgp](show-bgp.md)

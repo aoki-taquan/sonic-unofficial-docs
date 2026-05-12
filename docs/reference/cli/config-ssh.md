@@ -135,4 +135,14 @@ flowchart LR
 
 [^2]: 書き込みは `ConfigDBConnector().mod_entry("SSH_SERVER", "POLICIES", ...)` で行う。
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show aaa`](show-aaa.md) — show aaa サブコマンド
+- [`show acl`](show-acl.md) — show acl サブコマンド
+- [`config aaa`](config-aaa.md) — config aaa / tacacs / radius サブコマンド
+- [`config acl`](config-acl.md) — config acl サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: a35f1b1cdfa7 -->

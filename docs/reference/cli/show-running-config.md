@@ -237,4 +237,15 @@ vtysh -c 'show running-config'
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config dhcp relay`](config-dhcp-relay.md) — config dhcp_relay / dhcpv4_relay サブコマンド
+- [`config mgmt trio`](config-mgmt-trio.md) — config save / load / reload / replace / qos reload
+- [`config muxcable`](config-muxcable.md) — config muxcable サブコマンド
+- [`show mgmt vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
+- [`show muxcable`](show-muxcable.md) — show muxcable サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 84ca04c9cab5 -->

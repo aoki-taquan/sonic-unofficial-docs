@@ -182,4 +182,13 @@ mclagdctl -i 1000 dump state
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show mclag`](show-mclag.md) — show mclag (mclagdctl) コマンド
+- [`config vnet`](config-vnet.md) — config vnet サブコマンド
+- [`config vxlan`](config-vxlan.md) — config vxlan サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 0bf15a09bb5d -->

@@ -126,6 +126,17 @@ systemctl status rsyslog
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show flowcnt`](show-flowcnt.md) — show flowcnt-trap / flowcnt-route サブコマンド
+- [`show snmpagentaddress`](show-snmpagentaddress.md) — show snmpagentaddress サブコマンド
+- [`show snmptrap`](show-snmptrap.md) — show snmptrap サブコマンド
+- [`show techsupport`](show-techsupport.md) — show techsupport コマンド
+- [`config mirror session`](config-mirror-session.md) — config mirror_session サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: Syslog Source IP](../../system/sonic-syslog-source-ip.md)
 - [CONFIG_DB: SYSLOG_SERVER](../config-db/syslog-server.md)

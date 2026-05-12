@@ -155,6 +155,17 @@ show mac
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config vlan`](config-vlan.md) — config vlan サブコマンド
+- [`config interface`](config-interface.md) — config interface サブコマンド
+- [`config portchannel`](config-portchannel.md) — config portchannel サブコマンド
+- [`show lldp`](show-lldp.md) — show lldp サブコマンド
+- [`show mac`](show-mac.md) — show mac サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
 - [CLI: config vlan](config-vlan.md)

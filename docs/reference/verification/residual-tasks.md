@@ -24,25 +24,23 @@ related:
 
 | area | 件数 |
 |------|------|
-| architecture | 19 |
-| system | 10 |
-| routing | 5 |
-| platform | 4 |
+| system | 7 |
+| architecture | 2 |
+| platform | 2 |
+| routing | 2 |
 | acl-qos | 1 |
-| internals | 1 |
 | management | 1 |
-| switching | 1 |
-| **合計** | **42** |
+| **合計** | **15** |
 
-`architecture` と `system` に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。**2026-05-12 に分類整理を完了**: 全 42 件を `meta/backlog/README.md` で **drop 27 件 / low-priority 11 件 / defer 4 件** に分類。
+**2026-05-12 更新**: `meta/backlog/README.md` の **drop 27 件を per-page json から削除済み**（リリースノート 13 件 + 章節断片 9 件 + ビルド系 3 件 + テンプレ 1 件 + 重複 1 件）。残りは low-priority 11 件 + defer 4 件 = 15 件。
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
-| drop（Indexer 除外推奨） | 27 | リリースノート 13 件 + 章節断片 9 件 + ビルド系 3 件 + テンプレ 1 件 + 重複 1 件 |
+| drop（削除済み） | 0（旧 27） | 2026-05-12 に json 削除完了 |
 | low-priority（v1.1 検討） | 11 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 3 件 + 第三者拡張 1 件 |
 | defer（既存ページに統合済） | 4 | acl flow-charts / vendor mapping / egress ACL bug fix / ecmp-calculator stub |
 
-詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。v1.1 サイクル開始時に Indexer 除外フィルタを `meta/_gen_backlog.py` に組み込み、drop / defer 計 31 件を `meta/backlog/_archived/` へ移動予定（既存 archived 344 件と同列）。
+詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。`meta/_gen_backlog.py` への Indexer 除外フィルタ組込みは v1.1 サイクル開始時に対応する。
 
 ## 2. discrepancy-found ページの monitor 別分布
 

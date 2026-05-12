@@ -193,6 +193,17 @@ flowchart LR
 
 [^3]: <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/flow_counters.py>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config mirror session`](config-mirror-session.md) — config mirror_session サブコマンド
+- [`config sflow`](config-sflow.md) — config sflow サブコマンド
+- [`config snmp`](config-snmp.md) — config snmp / snmpagentaddress / snmptrap サブコマンド
+- [`config syslog`](config-syslog.md) — config syslog サブコマンド
+- [`show snmpagentaddress`](show-snmpagentaddress.md) — show snmpagentaddress サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 
 - [reference/CLI: show interfaces](show-interfaces.md)
