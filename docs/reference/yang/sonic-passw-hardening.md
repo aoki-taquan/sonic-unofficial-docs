@@ -1,17 +1,21 @@
 ---
 title: sonic-passwh YANG
-description: "sonic-passwh YANG — Password hardening policy YANG module for SONiC OS. ローカルユーザーパスワードの複雑さ・有効期限・履歴ポリシーを定義する。"
+description: sonic-passwh YANG — Password hardening policy YANG module for SONiC OS. ローカルユーザーパスワードの複雑さ・有効期限・履歴ポリシーを定義する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-passwh.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-passwh.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [PASSW_HARDENING]
-  cli: ["config passwd-hardening"]
-  yang: []
+  config_db:
+  - PASSW_HARDENING
+  cli:
+  - config passwd-hardening
+  yang:
+  - sonic-system-aaa
+  - sonic-ssh-server
 ---
 
 # sonic-passwh YANG

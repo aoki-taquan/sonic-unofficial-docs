@@ -1,18 +1,19 @@
 ---
 title: Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）
-description: "Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE） — Secure Upgrade (SU) は SONiC image が build から install まで改竄されていないこと を CMS (Cryptographic Message Syntax) 署名で保証…"
+description: Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE） — Secure Upgrade (SU) は SONiC image が build から install まで改竄されていないこと を CMS (Cryptographic Message Syntax) 署名で保証…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/secure_upgrade/secure_upgrade.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/secure_upgrade/secure_upgrade.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - sonic-installer install
-  yang: []
+  - sonic-installer install
+  yang:
+  - sonic-versions
 ---
 
 <!-- topics-tip -->

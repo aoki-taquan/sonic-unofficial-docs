@@ -1,17 +1,23 @@
 ---
 title: sonic-ntp YANG
-description: "sonic-ntp YANG — Network Time Protocol (NTP) client configuration YANG module for SONiC OS."
+description: sonic-ntp YANG — Network Time Protocol (NTP) client configuration YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-ntp.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-ntp.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [NTP, NTP_SERVER, NTP_KEY]
-  cli: ["config ntp"]
-  yang: []
+  config_db:
+  - NTP
+  - NTP_SERVER
+  - NTP_KEY
+  cli:
+  - config ntp
+  yang:
+  - sonic-system-aaa
+  - sonic-mgmt_vrf
 ---
 
 # sonic-ntp YANG

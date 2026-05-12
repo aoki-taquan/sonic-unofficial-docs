@@ -1,17 +1,20 @@
 ---
 title: sonic-device_metadata YANG
-description: "sonic-device_metadata YANG — DEVICE_METADATA YANG Module for SONiC OS"
+description: sonic-device_metadata YANG — DEVICE_METADATA YANG Module for SONiC OS
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-device_metadata.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-device_metadata.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [DEVICE_METADATA]
+  config_db:
+  - DEVICE_METADATA
   cli: []
-  yang: []
+  yang:
+  - sonic-device_neighbor
+  - sonic-device_neighbor_metadata
 ---
 
 # sonic-device_metadata YANG

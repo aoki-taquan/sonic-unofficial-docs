@@ -1,17 +1,21 @@
 ---
 title: sonic-dscp-tc-map YANG
-description: "sonic-dscp-tc-map YANG — DSCP_TO_TC_MAP yang Module for SONiC OS"
+description: sonic-dscp-tc-map YANG — DSCP_TO_TC_MAP yang Module for SONiC OS
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [DSCP_TO_TC_MAP]
+  config_db:
+  - DSCP_TO_TC_MAP
   cli: []
-  yang: []
+  yang:
+  - sonic-tc-queue-map
+  - sonic-tc-dscp-map
+  - sonic-port-qos-map
 ---
 
 # sonic-dscp-tc-map YANG

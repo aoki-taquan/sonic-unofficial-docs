@@ -1,17 +1,21 @@
 ---
 title: sonic-banner YANG
-description: "sonic-banner YANG — Login, MOTD, and logout banner message YANG module for SONiC OS."
+description: sonic-banner YANG — Login, MOTD, and logout banner message YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-banner.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-banner.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [BANNER_MESSAGE]
-  cli: ["config banner"]
-  yang: []
+  config_db:
+  - BANNER_MESSAGE
+  cli:
+  - config banner
+  yang:
+  - sonic-ssh-server
+  - sonic-system-aaa
 ---
 
 # sonic-banner YANG

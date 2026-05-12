@@ -1,17 +1,21 @@
 ---
 title: sonic-dns YANG
-description: "sonic-dns YANG — Domain Name System (DNS) resolver configuration YANG module for SONiC OS."
+description: sonic-dns YANG — Domain Name System (DNS) resolver configuration YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-dns.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-dns.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [DNS_NAMESERVER, DNS_OPTIONS]
-  cli: ["config dns"]
-  yang: []
+  config_db:
+  - DNS_NAMESERVER
+  - DNS_OPTIONS
+  cli:
+  - config dns
+  yang:
+  - sonic-system-defaults
 ---
 
 # sonic-dns YANG

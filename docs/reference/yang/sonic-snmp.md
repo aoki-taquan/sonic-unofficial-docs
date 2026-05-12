@@ -1,17 +1,24 @@
 ---
 title: sonic-snmp YANG
-description: "sonic-snmp YANG — Simple Network Management Protocol (SNMP) agent configuration YANG module for SONiC OS."
+description: sonic-snmp YANG — Simple Network Management Protocol (SNMP) agent configuration YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-snmp.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-snmp.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [SNMP, SNMP_COMMUNITY, SNMP_USER, SNMP_AGENT_ADDRESS_CONFIG]
-  cli: ["config snmp"]
-  yang: []
+  config_db:
+  - SNMP
+  - SNMP_COMMUNITY
+  - SNMP_USER
+  - SNMP_AGENT_ADDRESS_CONFIG
+  cli:
+  - config snmp
+  yang:
+  - sonic-system-aaa
+  - sonic-mgmt_vrf
 ---
 
 # sonic-snmp YANG

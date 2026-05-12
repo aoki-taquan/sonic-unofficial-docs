@@ -1,8 +1,6 @@
 ---
 title: pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）
-description: pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較） — SONiC
-  スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が 本来あるべきトポロジ から欠落していないかを検査するためのツール群を追加する
-  HLD。
+description: pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較） — SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が 本来あるべきトポロジ から欠落していないかを検査するためのツール群を追加する HLD。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,7 +14,8 @@ related:
   - show platform pcieinfo
   - pcieutil
   - show platform
-  yang: []
+  yang:
+  - sonic-asic-sensors
 ---
 
 <!-- topics-tip -->

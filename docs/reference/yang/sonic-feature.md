@@ -1,17 +1,21 @@
 ---
 title: sonic-feature YANG
-description: "sonic-feature YANG — SONiC service/feature enable, disable, and auto-restart control YANG module."
+description: sonic-feature YANG — SONiC service/feature enable, disable, and auto-restart control YANG module.
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-feature.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-feature.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [FEATURE]
-  cli: ["config feature"]
-  yang: []
+  config_db:
+  - FEATURE
+  cli:
+  - config feature
+  yang:
+  - sonic-versions
+  - sonic-system-defaults
 ---
 
 # sonic-feature YANG

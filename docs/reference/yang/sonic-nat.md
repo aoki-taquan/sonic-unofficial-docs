@@ -1,17 +1,25 @@
 ---
 title: sonic-nat YANG
-description: "sonic-nat YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-nat.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: 'sonic-nat YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-nat.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-nat.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-nat.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [STATIC_NAPT, STATIC_NAT, NAT_GLOBAL, NAT_POOL, NAT_BINDINGS]
-  cli: ["config nat"]
-  yang: []
+  config_db:
+  - STATIC_NAPT
+  - STATIC_NAT
+  - NAT_GLOBAL
+  - NAT_POOL
+  - NAT_BINDINGS
+  cli:
+  - config nat
+  yang:
+  - sonic-vrf
+  - sonic-interface
 ---
 
 # sonic-nat YANG
