@@ -3,6 +3,11 @@ title: 裏取り運用方針
 description: "裏取り運用方針 — 本プロジェクトのドキュメントは、SONiC コミュニティ master の HLD と実コードの両方を引用しながら再構成している。"
 verification: meta
 last_verified: 2026-05-11
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 裏取り運用方針

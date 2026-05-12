@@ -5,11 +5,11 @@ area: topics
 verification: meta
 last_verified: 2026-05-10
 sources: []
-_no_related: true
 related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 # 読み物（章立て駆動）

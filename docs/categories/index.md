@@ -4,6 +4,11 @@ description: "横断カテゴリ — このドキュメントの本体は archit
 area: categories
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 横断カテゴリ

@@ -23,6 +23,13 @@ v2 additions:
      ({chapter-index}). Chapter-index pages (22 章扉) are evaluated on a
      different quality-audit rubric (relaxed body-volume / per-claim
      verification requirements); this linter only enforces the enum value.
+  k) related opt-out markers (`_no_related`, `_no_related_yang`,
+     `_no_related_cli`, `_no_related_config_db`, legacy `_no_yang`):
+     when present under `related:`, must be boolean `true`. These are
+     recognized by find_empty_related.py / find_partial_empty_related.py /
+     check_discrepancy_related.py to suppress empty-related warnings for
+     reference-index / glossary / style-guide / meta pages. The linter
+     itself only validates the marker type (warn-only).
 
 Output: meta/frontmatter-lint-report.md     (v1-compatible, hard violations only)
         meta/frontmatter-lint-report-v2.md  (v2 enhanced: hard + warnings)
@@ -260,6 +267,31 @@ def lint_file(path: Path, *, check_paths: bool):
     )
     if not desc_exempt and (description is None or not str(description).strip()):
         warnings.append("i: description field missing (required for SEO; run gen_descriptions.py)")
+
+    # k) related opt-out markers must be boolean true when present.
+    # Recognized markers (under `related:`):
+    #   - _no_related            : opt out all three (cli / config_db / yang)
+    #   - _no_related_yang       : opt out yang only
+    #   - _no_related_cli        : opt out cli only
+    #   - _no_related_config_db  : opt out config_db only
+    #   - _no_yang               : legacy alias for _no_related_yang
+    # The linter only checks the type; downstream lints
+    # (find_empty_related.py / check_discrepancy_related.py /
+    # find_partial_empty_related.py) consume them to suppress warnings.
+    rel_block = fm.get("related")
+    if isinstance(rel_block, dict):
+        for marker in (
+            "_no_related",
+            "_no_related_yang",
+            "_no_related_cli",
+            "_no_related_config_db",
+            "_no_yang",
+        ):
+            if marker in rel_block and rel_block[marker] is not True:
+                warnings.append(
+                    f"k: related.{marker} should be boolean `true` "
+                    f"(got {rel_block[marker]!r})"
+                )
 
     # h) sources[].path liveness check (warning bucket)
     if check_paths and isinstance(sources, list):

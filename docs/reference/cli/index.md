@@ -12,6 +12,7 @@ related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 # CLI リファレンス

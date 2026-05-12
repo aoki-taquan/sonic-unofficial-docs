@@ -6,6 +6,11 @@ last_verified: 2026-05-11
 description: "ドキュメント執筆ルール"
 tags: [meta, styleguide]
 sources: []
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # スタイルガイド

@@ -2,6 +2,11 @@
 title: SONiC 非公式ドキュメント
 description: "SONiC 非公式ドキュメント — 目的別に「最初に開くべきページ」をまとめました。読み進める順番に並んでいます。"
 verification: meta
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # SONiC 非公式ドキュメント

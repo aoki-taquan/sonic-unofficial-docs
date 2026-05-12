@@ -15,6 +15,7 @@ related:
   config_db: []
   cli: []
   yang: []
+  _no_related: true
 ---
 
 # Runbooks (症状逆引き)

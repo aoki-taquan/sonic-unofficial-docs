@@ -57,7 +57,11 @@ def is_opted_out(fm: dict) -> bool:
     rel = fm.get("related") or {}
     if not isinstance(rel, dict):
         return False
-    return rel.get("_no_related") is True or rel.get("_no_yang") is True
+    return (
+        rel.get("_no_related") is True
+        or rel.get("_no_related_yang") is True
+        or rel.get("_no_yang") is True
+    )
 
 
 def yang_is_empty(fm: dict) -> bool:

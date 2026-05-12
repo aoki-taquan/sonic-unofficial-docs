@@ -4,6 +4,11 @@ description: "読み手別ガイド — SONiC ドキュメントを読む目的�
 area: guides
 verification: meta
 last_verified: 2026-05-10
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # 読み手別ガイド

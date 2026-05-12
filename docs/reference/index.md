@@ -3,6 +3,11 @@ title: リファレンス
 description: "リファレンス — CLI、CONFIG_DB、YANG を機械抽出ベースで整理する参照章。"
 verification: meta
 last_verified: 2026-05-11
+related:
+  cli: []
+  config_db: []
+  yang: []
+  _no_related: true
 ---
 
 # リファレンス
