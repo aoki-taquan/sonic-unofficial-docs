@@ -223,7 +223,6 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 
 <!-- /topics-back-ref -->
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

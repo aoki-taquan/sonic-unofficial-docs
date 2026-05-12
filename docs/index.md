@@ -21,8 +21,8 @@ related:
 !!! success "最新の品質状態"
     - **code-verified ページ**: 586 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
-    - **discrepancy-found ページ**: 66 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 34 集計中（`meta/quality-audit-34.md`）
+    - **discrepancy-found ページ**: 74 件（HLD と実装の乖離を明示）
+    - **監査平均評価**: round 37 集計中（`meta/quality-audit-37.md`）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 

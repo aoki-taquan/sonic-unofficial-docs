@@ -14,16 +14,16 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
 
-全 **66** ページ。
+全 **74** ページ。
 
 ## area 別件数
 
 | area | 件数 |
 |------|-----:|
-| `acl-qos` | 2 |
+| `acl-qos` | 6 |
 | `architecture` | 16 |
 | `internals` | 5 |
-| `management` | 8 |
+| `management` | 12 |
 | `overlay` | 1 |
 | `platform` | 11 |
 | `routing` | 6 |
@@ -37,7 +37,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 | `deprecated`（deprecated） | 3 |
 | `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 21 |
 | `not_implemented`（未実装） | 11 |
-| `partially_implemented`（partially_implemented） | 31 |
+| `partially_implemented`（partially_implemented） | 39 |
 
 ## エントリ一覧（area 別）
 
@@ -52,6 +52,20 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `partially_implemented` / last_verified: `2026-05-11`
   
   2026-05 時点の `.cache/sonic-sources/` master を裏取り。
+
+- [動的ポート add/del 内部実装（portsyncd / portsorch / mgrd 群と race condition）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically-internals.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+  
+  2026-05 時点の `.cache/sonic-sources/` master を裏取り。
+
+- [動的ポート add/del 概念（zero-port 起動と post-init モデル）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [動的ポート add/del 設定と運用（zero-port 起動・安全削除手順）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically-operations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 ### architecture
 
@@ -180,6 +194,20 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
+
+- [gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）](../../management/gnsi-hld-internals.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [gNSI 制限事項と HLD との乖離（Credentialz 未配線・フラグ名差異）](../../management/gnsi-hld-limitations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+  
+  実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b76`）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという **一部のみの部分実装** 状態:
+
+- [gNSI 概念（4 サービスと Rotate モデル）](../../management/gnsi-hld-concepts.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
+
+- [gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）](../../management/gnsi-hld-operations.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 - [gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル](../../management/gnsi-hld.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`

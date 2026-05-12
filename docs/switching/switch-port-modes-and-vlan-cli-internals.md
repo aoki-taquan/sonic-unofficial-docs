@@ -82,6 +82,25 @@ excerpt: |
 reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モードの根拠。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md#L141-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+
+    **出典**:
+
+    `sonic-net/SONiC/doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md#L141-L156 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)`
+
+    **抜粋**:
+
+    ```text
+    The overall SONiC architecture will remain the same and no new sub-modules will be introduced.
+    Changes are made only in the CLI container and Config_DB.
+    ... Default port mode is "routed".
+    ```
+
+    **判断根拠**: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モードの根拠。
+
+<!-- evidence-rendered:end -->
+
 ## 関連ページ
 
 - 親 HLD: [switch-port-modes-and-vlan-cli-enhancement](switch-port-modes-and-vlan-cli-enhancement.md)

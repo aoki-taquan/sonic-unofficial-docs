@@ -31,4 +31,8 @@ nav:
   - dhcp-dos-mitigation-in-sonic.md
   - distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md
   - enhancements-to-add-or-del-ports-dynamically.md
+  - enhancements-to-add-or-del-ports-dynamically-concepts.md
+  - enhancements-to-add-or-del-ports-dynamically-operations.md
+  - enhancements-to-add-or-del-ports-dynamically-internals.md
+  - enhancements-to-add-or-del-ports-dynamically-limitations.md
   - port-access-control-in-sonic.md

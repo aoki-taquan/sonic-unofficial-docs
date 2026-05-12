@@ -223,7 +223,6 @@ sonic-cfggen -a '{"SYSTEM_DEFAULTS": {"tunnel_qos_remap": {"status": "enabled"}}
 
 HLD と実装は一致。`code-verified` に昇格。
 
-
 ## 参考リンク
 
 本ページに関連する参照ドキュメント:

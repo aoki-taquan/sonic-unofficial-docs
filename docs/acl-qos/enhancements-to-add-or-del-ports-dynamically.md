@@ -5,6 +5,7 @@ area: acl-qos
 verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
+page_kind: split-hub
 sources:
 - repo: sonic-net/SONiC
   path: doc/port-add-del-dynamically/dynamic_port_add_del_hld.md
@@ -51,6 +52,14 @@ related:
     backlog 上では `acl-qos` カテゴリだが、実体はポートライフサイクル管理の話で他多くの章（routing / system / platform）とも干渉する。本ページは backlog の指定に従い `acl-qos` 配下に置く。
 
 # ポートの動的 add / del（zero-port 起動と post-init 操作）
+
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [enhancements-to-add-or-del-ports-dynamically-concepts.md](enhancements-to-add-or-del-ports-dynamically-concepts.md) — zero-port / init フラグ / ユーザ責務の概念
+    - [enhancements-to-add-or-del-ports-dynamically-operations.md](enhancements-to-add-or-del-ports-dynamically-operations.md) — CONFIG_DB / 設定例 / 安全な port 削除手順
+    - [enhancements-to-add-or-del-ports-dynamically-internals.md](enhancements-to-add-or-del-ports-dynamically-internals.md) — portsyncd / portsorch / buffermgrd / lldpmgrd の改修と race
+    - [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md) — HLD と実装の乖離（ref counter 未取り込み等）
 
 ## 概要
 

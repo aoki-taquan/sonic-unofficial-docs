@@ -5,6 +5,7 @@ description: gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル �
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
+page_kind: split-hub
 monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
@@ -31,6 +32,14 @@ related:
     主要 gNSI サービス（Authz / Certz / Pathz）の handler 実装と host service モジュール（`gnsi_console.py` / `ssh_mgmt.py`）は確認済み。一方で **Credentialz の gNMI server 側 handler は未実装**（dbus client 経由の補助のみ）であり、gNMI server フラグ名も HLD 提案と若干異なる。詳細は本文末尾「実装との乖離」を参照（verified at: 2026-05-09）。
 
 # gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
+
+!!! info "章分割済み"
+    本ページは大型 HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - [gnsi-hld-concepts.md](gnsi-hld-concepts.md) — 4 サービスと Rotate モデルの概念
+    - [gnsi-hld-operations.md](gnsi-hld-operations.md) — gNMI フラグ / CONFIG_DB / YANG / 運用イメージ
+    - [gnsi-hld-internals.md](gnsi-hld-internals.md) — Certz / Authz / Pathz / Credentialz の内部実装
+    - [gnsi-hld-limitations.md](gnsi-hld-limitations.md) — 制限事項と HLD-実装乖離（Credentialz 未配線等）
 
 ## 概要
 
@@ -321,7 +330,6 @@ gnsi_client credentialz rotate-account \
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
-
 
 ## 参考リンク
 
