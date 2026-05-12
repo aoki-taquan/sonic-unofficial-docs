@@ -13422,7 +13422,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -13431,6 +13431,28 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29653,7 +29675,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29662,6 +29684,28 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29897,9 +29941,28 @@
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># UEFI Secure Boot 状態</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>mokutil<span class="w"> </span>--sb-state
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 登録された MOK / shim key</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sudo<span class="w"> </span>mokutil<span class="w"> </span>--list-enrolled<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># GRUB / vmlinuz / initrd の署名検証 (sbverify)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>sbverify<span class="w"> </span>--list<span class="w"> </span>/boot/vmlinuz-*<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># TPM PCR 値 (measured boot)</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>sudo<span class="w"> </span>tpm2_pcrread<span class="w"> </span>sha256:0,1,2,3,7
+</span></code></pre></div>
+<h2 id="_10">トラブルシュート<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Secure Boot 失敗で起動できない場合は UEFI 設定で一時的に Secure Boot を無効化し、shim / GRUB / kernel のいずれの署名が拒否されたかを <code>dmesg | grep -iE 'pkcs7|secure'</code> で確認。</li>
+<li>MOK 鍵入れ替え後は <code>mokutil --import</code> → 再起動 → MOK Manager での承認が必須。承認漏れで初回起動失敗する事例が多い。</li>
+<li>ベンダー BIOS の DB / DBX 更新により以前のイメージが起動拒否される場合がある。新旧イメージで Secure Boot を切り替える運用は避ける。</li>
+</ul>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

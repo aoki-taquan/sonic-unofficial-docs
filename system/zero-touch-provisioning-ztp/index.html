@@ -14705,6 +14705,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29341,6 +29352,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29502,7 +29524,13 @@
 <li><a href="../../topics/16-nat-dhcp-dns/">16-nat-dhcp-dns</a>: DHCP option / relay のスタックと ZTP の依存</li>
 <li><a href="../../topics/11-reboot/">11-reboot</a>: <code>reboot-on-success</code> / <code>reboot-on-failure</code> で起こる再起動</li>
 </ul>
-<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ZTP は DHCP option 67 / 239 等のベンダー固有 option に依存し、上流 DHCP サーバの構成に大きく左右される。</li>
+<li>一度起動後に config を投入した装置で再度 ZTP を発動させるには <code>ztp enable</code> + factory reset が必要で、運用中の装置に誤発動しないよう注意。</li>
+<li>ZTP スクリプトのダウンロード経路 (HTTP/HTTPS) で TLS 証明書検証が緩い実装がベンダー間で散見されるため、専用管理セグメントから配信する運用を推奨。</li>
+</ul>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 7429d2aea81c -->
 
 <div class="footnote">

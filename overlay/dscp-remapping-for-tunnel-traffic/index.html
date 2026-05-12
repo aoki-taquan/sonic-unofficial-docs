@@ -11494,7 +11494,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -11503,6 +11503,28 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29597,7 +29619,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29606,6 +29628,28 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29933,9 +29977,27 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 <li><a href="../../topics/05-dual-tor/">Topics: Dual ToR</a> — Dual-ToR MuxTunnel と本機能の関係</li>
 <li><a href="../active-standby-dual-tor/">active-standby dual ToR</a></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># DSCP_TO_TC_MAP / TC_TO_DSCP_MAP / TUNNEL の現状 CONFIG_DB 設定</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;DSCP_TO_TC_MAP|*&#39;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;TC_TO_DSCP_MAP|*&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;TUNNEL|*&#39;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># tunnel decap 経路で適用されている QoS map を ASIC_DB 経由で確認</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*&#39;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># tunnel に紐付く SAI QoS map 種別 (DECAP_DSCP_TO_TC / ENCAP_TC_TO_DSCP)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>saidump<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;TUNNEL|DECAP_DSCP_TO_TC|ENCAP_TC_TO_DSCP&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
+<h2 id="_11">トラブルシュート<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>decap 後の DSCP が期待通り再書き換えされない場合、<code>DSCP_TO_TC_MAP</code> と <code>TC_TO_DSCP_MAP</code> の TUNNEL 適用 (<code>config qos remap</code> / <code>TUNNEL</code> テーブル) を確認する。</li>
+<li>ASIC が DSCP 透過 (<code>SAI_TUNNEL_DECAP_TTL_MODE_PIPE_MODEL</code> の挙動差) の場合、<code>saidump</code> で <code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> が NULL でないか確認する。</li>
+<li>VxLAN / IPinIP 共存環境では tunnel 種別ごとに別 map を要する場合があり、orchagent ログ (<code>grep -i tunnel /var/log/swss/swss.rec</code>) で適用順序を追う。</li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

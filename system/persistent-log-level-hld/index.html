@@ -14284,7 +14284,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        制限事項
       
     </span>
   </a>
@@ -14293,6 +14293,17 @@
       
         <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29574,7 +29585,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        制限事項
       
     </span>
   </a>
@@ -29583,6 +29594,17 @@
       
         <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29850,8 +29872,14 @@ reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除す�
 <li><a href="../../reference/config-db/syslog-config/">CONFIG_DB: SYSLOG_CONFIG</a></li>
 <li><a href="../sonic-python-logger-enhancement/">HLD: sonic-python-logger-enhancement</a></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<h2 id="_12">参考リンク<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">制限事項<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>設定は CONFIG_DB の <code>LOGGER</code> テーブルに保存されるが、<code>config save</code> を実行しないとリブート後に消える。</li>
+<li>ベンダー追加デーモンが <code>sonic_py_common.logger</code> を使っていない場合、本機能で log level を変更できない。</li>
+<li>multi-asic 環境では namespace ごとに別 <code>LOGGER</code> テーブルとなるため、全 ASIC 一括変更には個別投入が必要。</li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">参考リンク<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../">system カテゴリ目次</a></li>

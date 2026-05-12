@@ -16547,7 +16547,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -16556,6 +16556,28 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29620,7 +29642,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29629,6 +29651,28 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29904,9 +29948,28 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># orchagent / syncd の SAI 失敗ログ</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;SAI_STATUS|fail&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-40
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;SAI_STATUS|fail&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-40
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># SAI failure dump (sai-failure-dump 機能が有効な platform)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>ls<span class="w"> </span>-lt<span class="w"> </span>/var/dump/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>ls<span class="w"> </span>/var/log/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># orchagent の crash / restart 履歴</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>swss
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>swss<span class="w"> </span>--since<span class="w"> </span><span class="s1">&#39;-1d&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;restart|exit&#39;</span>
+</span></code></pre></div>
+<h2 id="_11">トラブルシュート<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>SAI 失敗で orchagent が exit-loop に入る場合、<code>sairedis.rec</code> の最後の数十エントリを確認して再生原因の操作を特定する。</li>
+<li>ベンダー SAI が NULL pointer dereference 等で syncd 自体を落とす場合、<code>/var/core/</code> の core dump を採取し SAI ベンダーへ提供。</li>
+<li>軽度な SAI failure (重複作成等) は orchagent 側で <code>LOG_NOTICE</code> に降格されているため、<code>-v</code> ログレベルでないと見えない事がある。</li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

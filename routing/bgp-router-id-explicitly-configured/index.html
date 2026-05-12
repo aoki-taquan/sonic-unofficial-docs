@@ -8864,6 +8864,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29531,6 +29542,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29765,7 +29787,13 @@ reasoning: 「bgp_router_id があれば常にそれを使う」「未設定時�
 <li>ピアが一切登録されない場合、<code>bgpcfgd</code> のログを確認する。<code>Loopback0</code> IPv4 不在で <code>bgp_router_id</code> 未設定だと「neighbors adding を中断」する経路に入る。</li>
 <li>マルチ ASIC で iBGP のみ上がらない場合、対応 ASIC の <code>Loopback4096</code> IPv4 設定を確認する。<code>bgp_router_id</code> では iBGP 依存は解消されない。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>router-id を自動選出から明示設定に切り替える際、FRR が稼働中だと一度 BGP セッションが reset される。メンテナンス時間に実施する。</li>
+<li>multi-vrf / multi-asic 環境では VRF / namespace ごとに router-id を分離設定する必要があり、共通 ID 使用は実装上推奨されない。</li>
+<li>設定変更後に <code>config_db.json</code> を保存し忘れるとリブート時に自動選出に戻る。<code>config save -y</code> の運用を明示する。</li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 2e36dfd7f559 -->
 
 <div class="footnote">

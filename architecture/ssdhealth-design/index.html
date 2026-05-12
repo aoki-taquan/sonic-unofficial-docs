@@ -8581,7 +8581,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -8590,6 +8590,28 @@
       
         <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -8611,7 +8633,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29798,7 +29820,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29807,6 +29829,28 @@
       
         <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29828,7 +29872,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30191,9 +30235,27 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <li><a href="../../platform/pcieinfo-design/">HLD: pcieinfo-design</a></li>
 <li><a href="../../reference/cli/show-platform/">CLI: show platform</a></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># ssdhealth が書き込む STATE_DB</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SSD_INFO|*&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;SSD_INFO|/dev/sda&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># プロセス稼働確認</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ssd
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ssdmon
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># 直接 SMART を読む</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>sudo<span class="w"> </span>smartctl<span class="w"> </span>-A<span class="w"> </span>/dev/sda
+</span></code></pre></div>
+<h2 id="_12">トラブルシュート<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>SSD_INFO</code> テーブルが空の場合は pmon コンテナ内の <code>ssdutil</code> プラグインが platform-specific に実装されているか確認 (<code>/usr/share/sonic/device/&lt;platform&gt;/plugins/</code>)。</li>
+<li>health が <code>Bad</code> 報告される場合、<code>smartctl -a</code> の <code>Media_Wearout_Indicator</code> / <code>Available_Spare</code> を確認し、ベンダー RMA 基準と突き合わせる。</li>
+<li>pmon コンテナ再起動後も値が古い場合、ssdmon の polling 間隔 (デフォルト 1h) を待つか <code>docker restart pmon</code> で再取得。</li>
+</ul>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
@@ -30218,7 +30280,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_13">参考リンク<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_15">参考リンク<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/cli/show-platform/"><code>show platform ssdhealth</code> CLI リファレンス</a></li>

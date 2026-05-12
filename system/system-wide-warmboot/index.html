@@ -13199,6 +13199,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29420,6 +29431,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29564,7 +29586,13 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 <li><a href="../../topics/11-reboot/">11-reboot</a>: cold / fast / warm / express の比較と運用フロー</li>
 <li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: orchagent–syncd–SAI の init view / apply view</li>
 </ul>
-<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>system-wide warm-boot は全ての SONiC コンテナが warm-restart 対応であることを前提とし、サードパーティ追加コンテナがある環境では成立しない。</li>
+<li>BGP / LACP / BFD の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。</li>
+<li>ASIC SDK が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。</li>
+</ul>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>

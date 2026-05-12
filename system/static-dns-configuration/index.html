@@ -14693,6 +14693,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29552,6 +29563,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29794,7 +29816,13 @@ reasoning: 静的 / 動的の排他切替ロジックの根拠。
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP / DNS</a></li>
 <li><a href="../../reference/cli/config-aaa/">CLI: config aaa</a></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">制限事項<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DHCP から取得した DNS と静的設定の DNS が混在する場合、<code>/etc/resolv.conf</code> 生成順は resolvconf / systemd-resolved の挙動に依存し、HLD 通りにならない事がある。</li>
+<li>management VRF を使う場合、DNS lookup を VRF 内で行うために <code>ip vrf exec mgmt nslookup ...</code> のラップが必要となるユーティリティがある。</li>
+<li>IPv6 DNS サーバの優先順位制御は CLI からは表現できず、<code>config_db.json</code> 直編集に頼る場合がある。</li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

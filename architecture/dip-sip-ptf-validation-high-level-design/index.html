@@ -8564,7 +8564,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -8573,6 +8573,28 @@
       
         <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29697,7 +29719,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        確認コマンド
       
     </span>
   </a>
@@ -29706,6 +29728,28 @@
       
         <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -30045,7 +30089,27 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># PTF テストイメージとトポロジ</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>ls<span class="w"> </span>.cache/sonic-sources/sonic-mgmt/ansible/group_vars/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ptf
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># PTF runner の起動例 (sonic-mgmt 配下)</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nb">cd</span><span class="w"> </span>.cache/sonic-sources/sonic-mgmt/tests<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span>pytest<span class="w"> </span>--inventory<span class="o">=</span>../ansible/veos<span class="w"> </span>--testbed<span class="o">=</span>vms-kvm-t0<span class="w"> </span>--testbed_file<span class="o">=</span>../ansible/testbed.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">         </span>dip_sip/test_dip_sip.py<span class="w"> </span>--collect-only
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># DUT 側 ACL / mirror セッション (DIP/SIP 検査が依存する場合)</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>show<span class="w"> </span>acl<span class="w"> </span>table
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>show<span class="w"> </span>mirror_session
+</span></code></pre></div>
+<h2 id="_12">トラブルシュート<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PTF テスト失敗時はまず <code>--log-cli-level=DEBUG</code> で再実行し、注入パケットと受信パケットの diff を確認する。</li>
+<li>VS テストベッド (KVM) と物理テストベッドで挙動が異なる場合があるため、まず KVM で再現するか確認してから物理機を疑う。</li>
+<li>DIP/SIP 検査機能自体が NPU 依存で実装されていない platform では skip / xfail マーク扱い。<code>pytest --collect-only</code> でテスト適用範囲を事前確認。</li>
+</ul>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - gh api search/code: sonic-net/sonic-mgmt 配下に tests/ipfwd/test_dip_sip.py (pytest) が現存
 - gh api repos/sonic-net/sonic-mgmt/contents/ansible/roles/test/tasks/dip_sip.yml: size 114 byte; 中身は include_tasks: roles/test/tasks/pytest_runner.yml + test_node: ipfwd/test_dip_sip.py のラッパ
@@ -30054,7 +30118,7 @@ reasoning: テストの判定ロジック（DIP=SIP のままルーティング�
 -->
 
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

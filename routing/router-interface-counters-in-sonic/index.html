@@ -9329,6 +9329,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29464,6 +29475,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29714,7 +29736,13 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 <li>値がすべてゼロ / 動かない場合、当該プラットフォームの SAI が <code>SAI_ROUTER_INTERFACE_STAT_*</code> を実装していない可能性がある。HLD は SAI 必須カウンタを列挙しているが、ベンダー実装が揃っているとは限らない。</li>
 <li>特定 RIF の VID と名前の対応を確認するには <code>COUNTERS_RIF_NAME_MAP</code> を redis から直接読む。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト trafic は反映が遅れる。</li>
+<li>ASIC が per-RIF counter を持たない platform では本機能は no-op となり、<code>show interfaces counters rif</code> が常に 0 になる。</li>
+<li>multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

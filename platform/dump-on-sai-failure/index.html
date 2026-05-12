@@ -16441,6 +16441,28 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29453,6 +29475,28 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29667,7 +29711,25 @@
 <li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: SAI / sairedis / syncd 全般</li>
 <li><a href="../../topics/11-reboot/">11-reboot</a>: abort 後の再起動経路</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># SAI failure dump 機能の有効状態</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai_fail
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SUPPRESS_ASIC_SDK_HEALTH_EVENT|*&#39;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># dump 出力先</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>ls<span class="w"> </span>-lt<span class="w"> </span>/var/dump/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ls<span class="w"> </span>-lt<span class="w"> </span>/var/log/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># dump 生成トリガとなった SAI status code</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;dump&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span></code></pre></div>
+<h2 id="_9">トラブルシュート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>dump 機能が無効になっている platform では HLD どおり動作しない。<code>/etc/sonic/sonic_version.yml</code> のベンダー platform 名を確認のうえ SAI ベンダーに有効化を依頼。</li>
+<li>dump が大量生成されてディスクを圧迫する場合は <code>logrotate</code> 設定 (<code>/etc/logrotate.d/</code>) で世代管理する。</li>
+<li>dump 採取後は CONFIG_DB / APPL_DB / ASIC_DB の同タイムスタンプ snapshot (<code>show techsupport</code>) と一緒に保管するとベンダー解析が早い。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 2d37518e0eae -->
 
 <div class="footnote">

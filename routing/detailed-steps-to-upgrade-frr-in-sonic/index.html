@@ -8904,6 +8904,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29275,6 +29286,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29367,7 +29389,13 @@
 <li><a href="../../reference/glossary/#term-bgp">BGP</a> routes がインストールされない → <code>fpmsyncd</code> の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分</li>
 <li>GR 効かない → <code>bgpd</code> GR タイマ、SONiC 側の warm-restart 連動、log の <code>BGP gr</code> メッセージ</li>
 </ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li>FRR のメジャーバージョン跨ぎでは vtysh コマンド体系・config 互換性が崩れる事があり、手順書のバージョンに固定して実施する必要がある。</li>
+<li>SONiC の bgpcfgd / templates と FRR バージョンには 1:1 の依存関係があり、FRR のみ単独差し替えは推奨されない。</li>
+<li>本ページは特定リリースに対する手順であり、master では Dockerfile 側で固定された FRR バージョンに依拠している点に注意。</li>
+</ul>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - src/sonic-frr/patches/ ディレクトリ構造と quilt-like 適用機構の現行実装確認
 - sonic-buildimage submodule pin の現行 frr version 確認

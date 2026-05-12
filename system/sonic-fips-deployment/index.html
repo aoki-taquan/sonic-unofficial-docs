@@ -13372,6 +13372,28 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29430,6 +29452,28 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29654,7 +29698,25 @@
 <ul>
 <li><a href="../../topics/15-security-aaa/">15-security-aaa</a>: セキュリティ機能全般</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># FIPS モード状態</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>sonic-installer<span class="w"> </span>get-fips
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>cat<span class="w"> </span>/proc/sys/crypto/fips_enabled
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># OpenSSL FIPS provider</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>openssl<span class="w"> </span>list<span class="w"> </span>-providers
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>openssl<span class="w"> </span>list<span class="w"> </span>-providers<span class="w"> </span>-verbose<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>fips
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># kernel cmdline (fips=1)</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>cat<span class="w"> </span>/proc/cmdline<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>fips
+</span></code></pre></div>
+<h2 id="_9">トラブルシュート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>fips=1</code> 起動なのに <code>fips_enabled=0</code> の場合、initramfs に FIPS module が含まれていない。<code>sonic-installer set-fips --enable</code> 後に reboot が必要。</li>
+<li>SSH / SNMP / TACACS+ で許可されていない algorithm を使うと接続失敗する。<code>/etc/ssh/sshd_config</code> の <code>Ciphers</code> / <code>MACs</code> を FIPS-approved に絞る。</li>
+<li>FIPS 有効時は MD5 / DES 等が利用不可になり、古い NMS との互換性問題が発生する。事前に運用ツールの compliance を確認。</li>
+</ul>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>

@@ -10837,6 +10837,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -10856,7 +10867,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29675,6 +29686,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        制限事項
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29694,7 +29716,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29959,7 +29981,13 @@ reasoning: スキーマ定義（キー一意性・status の自由度・custom_f
 <li><a href="../../reference/">Reference index</a></li>
 <li><a href="../../reference/glossary/">Glossary</a></li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>SYSTEM_DEFAULTS</code> テーブルで切り替え可能なフラグはバージョン間で増減し、特定の master ブランチでしか参照されない key も存在する。</li>
+<li>一部のフラグは <code>config_db.json</code> での起動時にしか評価されず、ランタイム変更は再起動まで反映されない。</li>
+<li>ベンダー platform 側で hard-coded された動作と競合した場合、<code>SYSTEM_DEFAULTS</code> の値が無視される事例がある。</li>
+</ul>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-system-defaults.yang</code> が master に存在し、<code>container SYSTEM_DEFAULTS</code> 下に <code>list SYSTEM_DEFAULTS_LIST { key "name"; leaf name; leaf status; }</code> を定義。HLD の「キー = <code>feature_name</code>、必須フィールド = <code>status</code>」というスキーマと完全一致。</li>
@@ -29967,7 +29995,7 @@ reasoning: スキーマ定義（キー一意性・status の自由度・custom_f
 <li><code>sonic-utilities</code> 配下も含めて当該 YANG が <code>SYSTEM_DEFAULTS</code> を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> スキーマとして公開する経路が成立している。</li>
 </ul>
 <p>HLD と実装は一致。<code>code-verified</code> に昇格。</p>
-<h2 id="_13">参考リンク<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">参考リンク<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/config-db/system-defaults/"><code>SYSTEM_DEFAULTS</code> CONFIG_DB スキーマ</a></li>
