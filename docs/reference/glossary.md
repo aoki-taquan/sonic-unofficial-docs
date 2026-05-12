@@ -1254,8 +1254,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [config_db.json](#term-config_db.json)
 
+- [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (12)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (11)
-- [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (11)
 - [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (10)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (8)
 - [config reload が完了しない / hang する](runbooks/config-reload-stuck.md) (7)
@@ -1882,11 +1882,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-mgmt](#term-sonic-mgmt)
 
+- [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (20)
+- [sonic-mgmt_port YANG](yang/sonic-mgmt_port.md) (19)
 - [サイトマップ](../_meta/sitemap.md) (16)
-- [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (16)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (15)
-- [sonic-mgmt_port YANG](yang/sonic-mgmt_port.md) (15)
-- [SONiC Logging & System Dumps（要件レベル仕様）](../system/sonic-logging-system-dumps-arch-spec.md) (11)
+- [sonic-mgmt_vrf YANG](yang/sonic-mgmt_vrf.md) (13)
 
 ### [sonic-swss](#term-sonic-swss)
 
