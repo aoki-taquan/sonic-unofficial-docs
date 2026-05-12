@@ -22,7 +22,10 @@ related:
   - DASH_APPLIANCE
   cli:
   - show bfd
-  yang: []
+  - show platform
+  - config vnet
+  yang:
+  - sonic-vnet
   _no_yang: true
 ---
 

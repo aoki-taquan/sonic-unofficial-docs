@@ -21,7 +21,8 @@ related:
   - show platform leakage status
   - show system-health detail
   - show platform
-  yang: []
+  yang:
+  - sonic-system-defaults
   _no_yang: true
 ---
 

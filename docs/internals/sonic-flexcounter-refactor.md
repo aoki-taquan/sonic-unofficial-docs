@@ -14,10 +14,20 @@ related:
   - FLEX_COUNTER_TABLE
   - WRED_PROFILE
   - CRM
-  cli: []
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-wred-profile
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

@@ -15,10 +15,25 @@ related:
   - BGP_DEVICE_GLOBAL
   - DEVICE_METADATA
   - CRM
-  cli: []
+  - BGP_NEIGHBOR
+  - BGP_GLOBALS
+  - ACL_RULE
+  cli:
+  - show bgp
+  - show arp
+  - config bgp
+  - show acl
+  - show techsupport
+  - show platform
+  - show version
   yang:
   - sonic-warm-restart
   - sonic-crm
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 <!-- topics-tip -->

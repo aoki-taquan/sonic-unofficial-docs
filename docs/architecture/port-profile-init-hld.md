@@ -16,11 +16,19 @@ related:
   - PORT_QOS_MAP
   - PORT_TABLE
   - CRM
-  cli: []
+  - ACL_RULE
+  - ACL_TABLE
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-port
   - sonic-port-qos-map
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

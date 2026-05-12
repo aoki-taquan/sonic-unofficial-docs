@@ -20,11 +20,17 @@ related:
   - TRANSCEIVER_INFO
   - PORT_TABLE
   - CRM
-  cli: []
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-port
   - sonic-port-qos-map
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 # FEC FLR 内部実装

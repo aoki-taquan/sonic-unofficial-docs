@@ -11,13 +11,21 @@ sources:
 - docs/internals/p4-orchagent.md
 - docs/management/p4rt-read-cache-hld.md
 related:
-  cli: []
+  cli:
+  - config interface
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - COPP_GROUP
   - COPP_TRAP
   - CRM
   - P4RT_TABLE
   - DEVICE_METADATA
+  - PORT
+  - PORTCHANNEL
   yang:
   - sonic-copp
   - sonic-crm

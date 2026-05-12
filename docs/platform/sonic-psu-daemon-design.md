@@ -1,6 +1,7 @@
 ---
 title: psud（PSU 監視デーモン / power threshold ヒステリシス）
-description: psud（PSU 監視デーモン / power threshold ヒステリシス） — psud は PSU の物理状態と電力指標を周期収集し STATE_DB に書く platform monitor 系 daemon。
+description: psud（PSU 監視デーモン / power threshold ヒステリシス） — psud は PSU の物理状態と電力指標を周期収集し
+  STATE_DB に書く platform monitor 系 daemon。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,7 @@ related:
   - show platform psustatus
   - psuutil
   - show platform
+  - show environment
   yang:
   - sonic-asic-sensors
 ---

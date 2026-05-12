@@ -1,6 +1,7 @@
 ---
 title: reboot コマンドの blocking mode（reboot.conf / -b / -v）
-description: reboot コマンドの blocking mode（reboot.conf / -b / -v） — SONiC の reboot スクリプトは内部で systemctl reboot を呼ぶが、これは 非同期 であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレー…
+description: reboot コマンドの blocking mode（reboot.conf / -b / -v） — SONiC の reboot スクリプトは内部で
+  systemctl reboot を呼ぶが、これは 非同期 であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレー…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,6 +15,7 @@ related:
   - reboot
   yang:
   - sonic-warm-restart
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

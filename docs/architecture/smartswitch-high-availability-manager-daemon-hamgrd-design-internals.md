@@ -18,9 +18,13 @@ related:
   - MID_PLANE_BRIDGE
   - DPUS
   - BFD_SESSION_TABLE
+  - DASH_ENI_TABLE
+  - DASH_VNET
   cli:
   - show bfd
-  yang: []
+  - show platform
+  yang:
+  - sonic-system-defaults
   _no_yang: true
 ---
 

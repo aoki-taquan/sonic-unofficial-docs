@@ -10,7 +10,13 @@ sources:
 - docs/management/p4rt-read-cache-hld.md
 - docs/management/p4rt-application-hld.md
 related:
-  cli: []
+  cli:
+  - config interface
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - DPU
   - CHASSIS_MODULE

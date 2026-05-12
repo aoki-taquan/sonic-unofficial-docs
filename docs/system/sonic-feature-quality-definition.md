@@ -1,6 +1,7 @@
 ---
 title: SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）
-description: 'SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動） — SONiC コミュニティが新機能を contribute する際の 品質レベル定義 。3 段階:'
+description: 'SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動） — SONiC コミュニティが新機能を
+  contribute する際の 品質レベル定義 。3 段階:'
 area: system
 verification: meta
 last_verified: 2026-05-09
@@ -12,10 +13,22 @@ related:
   config_db:
   - FEATURE
   - CRM
-  cli: []
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-feature
   - sonic-versions
+  - sonic-system-defaults
+  - sonic-crm
 ---
 
 !!! info "本ページはガバナンス文書"

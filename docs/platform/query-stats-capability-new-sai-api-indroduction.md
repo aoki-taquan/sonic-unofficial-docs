@@ -1,6 +1,8 @@
 ---
 title: sai_query_stats_capability による Counter Capability 一括取得
-description: sai_query_stats_capability による Counter Capability 一括取得 — SONiC syncd の FlexCounter は、各オブジェクト（Port / Queue / Priority Group / RIF / Buffer Pool）について 「どの統計 ID が…
+description: sai_query_stats_capability による Counter Capability 一括取得 — SONiC syncd
+  の FlexCounter は、各オブジェクト（Port / Queue / Priority Group / RIF / Buffer Pool）について 「どの統計
+  ID が…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -14,10 +16,21 @@ related:
   - ACL_RULE
   - ACL_TABLE
   - FLEX_COUNTER_TABLE
-  cli: []
+  - BUFFER_POOL
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  cli:
+  - show buffer pool
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-flex_counter
   - sonic-debug-counter
+  - sonic-buffer-pool
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

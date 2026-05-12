@@ -1,6 +1,7 @@
 ---
 title: S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
-description: S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開） — S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電圧・電流・FAN・PSU・xcvr・FPGA・CPLD・watchdog・slot・syseeprom・LED）…
+description: S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開） — S3IP (Switch State 系の
+  sysfs 仕様) は、platform hardware（温度・電圧・電流・FAN・PSU・xcvr・FPGA・CPLD・watchdog・slot・syseeprom・LED）…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -12,7 +13,8 @@ related:
   config_db:
   - SWITCH_TRIMMING
   - SWITCH_HASH
-  cli: []
+  cli:
+  - show platform
   yang:
   - sonic-asic-sensors
   - sonic-chassis-module

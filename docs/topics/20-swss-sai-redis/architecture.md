@@ -7,13 +7,23 @@ verification: meta
 last_verified: 2026-05-10
 sources: []
 related:
-  cli: []
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - CRM
   - TELEMETRY
   - GNMI
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
   yang:
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 # アーキテクチャ

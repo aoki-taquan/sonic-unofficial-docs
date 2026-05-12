@@ -16,6 +16,8 @@ related:
   yang:
   - sonic-gnmi
   - sonic-telemetry
+  - sonic-system-defaults
+  _no_related_cli: true
 ---
 
 <!-- topics-tip -->

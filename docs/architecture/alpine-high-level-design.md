@@ -12,10 +12,21 @@ related:
   config_db:
   - DEVICE_METADATA
   - CRM
-  cli: []
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   yang:
   - sonic-device_metadata
   - sonic-feature
+  - sonic-crm
 ---
 
 <!-- topics-tip -->

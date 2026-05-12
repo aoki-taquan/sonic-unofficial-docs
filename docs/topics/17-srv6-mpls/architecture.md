@@ -14,14 +14,25 @@ sources:
 - docs/routing/mpls-for-sonic-high-level-design-document.md
 - docs/routing/path-tracing-midpoint.md
 related:
-  cli: []
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - CRM
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
+  - MID_PLANE_BRIDGE
+  - DPU
   yang:
   - sonic-srv6
   - sonic-interface
   - sonic-port
   - sonic-crm
+  - sonic-system-defaults
 ---
 
 # アーキテクチャ

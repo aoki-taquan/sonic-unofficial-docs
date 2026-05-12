@@ -12,14 +12,24 @@ sources:
 - docs/architecture/sonic-generic-hash.md
 - docs/routing/class-based-forwarding-enhancement.md
 related:
-  cli: []
+  cli:
+  - show techsupport
+  - show platform
+  - show version
+  - show acl
+  - config acl
   config_db:
   - FG_NHG
   - SWITCH_HASH
   - CRM
+  - DSCP_TO_TC_MAP
+  - ACL_RULE
+  - ACL_TABLE
+  - CHASSIS_MODULE
   yang:
   - sonic-fine-grained-ecmp
   - sonic-crm
+  - sonic-dscp-tc-map
 ---
 
 # ECMP Family

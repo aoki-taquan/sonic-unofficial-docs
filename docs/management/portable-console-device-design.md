@@ -1,7 +1,6 @@
 ---
 title: Portable Console Device 設計（USB ベンダー console デバイスの抽象化）
-description: Portable Console Device 設計（USB ベンダー console デバイスの抽象化） — SONiC のホストにプラグインされる
-  USB 接続のポータブル console デバイス に対して、ベンダー横断の抽象 API を定義する設計。
+description: Portable Console Device 設計（USB ベンダー console デバイスの抽象化） — SONiC のホストにプラグインされる USB 接続のポータブル console デバイス に対して、ベンダー横断の抽象 API を定義する設計。
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -21,6 +20,8 @@ related:
   cli: []
   yang:
   - sonic-console
+  - sonic-system-defaults
+  _no_related_cli: true
 ---
 
 <!-- topics-tip -->

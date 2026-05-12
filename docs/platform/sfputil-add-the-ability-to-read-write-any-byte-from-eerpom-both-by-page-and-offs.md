@@ -1,6 +1,7 @@
 ---
 title: sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）
-description: sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き） — 光モジュールやケーブル（CMIS QSFP-DD / SFF-8636 QSFP+ / SFF-8472 SFP）の EEPROM を page + offset + size で直接…
+description: sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き） — 光モジュールやケーブル（CMIS
+  QSFP-DD / SFF-8636 QSFP+ / SFF-8472 SFP）の EEPROM を page + offset + size で直接…
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -9,13 +10,19 @@ sources:
   path: doc/sfputil/read_write_eeprom_by_page.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
   cli:
   - sfputil read-eeprom
   - sfputil write-eeprom
+  - show platform
+  - show interfaces
   yang:
   - sonic-port
   - sonic-xcvrd-log
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

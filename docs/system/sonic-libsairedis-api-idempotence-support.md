@@ -20,10 +20,22 @@ related:
   - ACL_RULE
   - ACL_TABLE
   - FLEX_COUNTER_TABLE
-  cli: []
+  cli:
+  - show bgp
+  - show arp
+  - config bgp
+  - show acl
+  - show techsupport
+  - show platform
+  - show version
   yang:
   - sonic-warm-restart
   - sonic-crm
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-sentinel
 ---
 
 !!! danger "裏取りステータス: discrepancy-found"
