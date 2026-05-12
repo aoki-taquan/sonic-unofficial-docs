@@ -221,6 +221,14 @@ CLI 追加は HLD 上なし。設定は `qos_config.j2` 経由で生成され `d
     - [GitHub Issue / PR の関連リンクは未確認] — Dual-ToR PFC デッドロック回避向けトンネル DSCP / TC リマップは dualtor 系 PR と SAI tunnel TC リマップ機能の組み合わせで段階的に取り込まれており、HLD 単独の上流 Issue は確認できず。
 <!-- /diff-admonition -->
 
+## 制限事項
+
+- **Dual-ToR (active-standby) 限定**: `qos_config.j2` は `subtype == DualToR` のときだけ `AZURE_TUNNEL` マップと `MuxTunnel0` の DSCP/TC リマップ属性を出力する。Single-ToR / 通常 IPinIP トポロジでは適用されない。
+- **`dscp_mode=pipe` 前提**: outer DSCP を独立に書き換えるため `decap_dscp_to_tc_map` を効かせるには pipe モード必須。`uniform` モードでは outer が inner に被さって本機能の効きが見えない。
+- **`pfcwd_sw_enable` の派生は upgrade 経路でのみ自動**: `db_migrator.py` を経由しない新規構築では `pfc_enable` から `pfcwd_sw_enable` が生成されない。`config_db.json` テンプレートで明示投入する必要がある。
+- **port-level `AZURE` マップ衝突**: 同一ポートでプラットフォーム固有の port-level マップを上書きしている環境では、`MuxTunnel0` 側の terminator が `P2P` に分離していることが前提となり、`P2MP` のままだと per-port マップが優先されて期待動作にならない。
+- **HLD フィールド名との乖離**: HLD の `pfc_wd_sw_enable` をそのまま CONFIG_DB に投入すると YANG validation で弾かれる（実装名は `pfcwd_sw_enable`）。
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md) — DSCP/TC/PG/Queue/PFC の全体像

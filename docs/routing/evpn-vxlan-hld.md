@@ -156,6 +156,32 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 - MAC が学習されない → BGP-EVPN session、`show evpn mac vni`、Type-2 受信
 - Type-5 ルートが入らない → L3 VNI ↔ VRF マッピングと `show evpn vni detail`
 
+## 確認コマンド
+
+```bash
+# VTEP / tunnel の oper 状態
+show vxlan tunnel
+show vxlan vlanvnimap
+show vxlan vrfvnimap
+
+# EVPN ルートと MAC/IP 学習
+show bgp l2vpn evpn summary
+show bgp l2vpn evpn route
+show evpn mac vni all
+show evpn vni detail
+
+# Type-5 の next-hop group 反映 (fpmsyncd / nexthop group 連携)
+sonic-db-cli APPL_DB keys 'ROUTE_TABLE:*' | head
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL*'
+
+# underlay reachability
+ping -I Loopback0 <remote-vtep-loopback>
+
+# FRR 側からの確認
+docker exec bgp vtysh -c 'show bgp l2vpn evpn'
+docker exec bgp vtysh -c 'show evpn vni'
+```
+
 ## 8. 次に読む
 
 - Topics: [VXLAN/EVPN 概念](../topics/03-vxlan-evpn/concept.md), [VXLAN/EVPN 構築](../topics/03-vxlan-evpn/setup.md), [VXLAN/EVPN 内部実装](../topics/03-vxlan-evpn/internals.md), [VXLAN/EVPN 運用](../topics/03-vxlan-evpn/operations.md)

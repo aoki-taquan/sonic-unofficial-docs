@@ -102,6 +102,14 @@ redis-cli -n 2 hgetall 'RATES:oid:0x1000000000123'
 - [fec-flr-support-in-sonic-internals.md](fec-flr-support-in-sonic-internals.md)
 - [fec-flr-support-in-sonic-limitations.md](fec-flr-support-in-sonic-limitations.md)
 
+## 制限事項
+
+- **poll 周期は固定 120 秒**: `FLR_INTERVAL_FACTOR` が `port_flr.lua` 内のハードコードで、CONFIG_DB / CLI からの動的変更は不可。短周期化には image リビルドが必要 ([limitations](fec-flr-support-in-sonic-limitations.md))。
+- **`counterpoll port flr-interval-factor` CLI は未取り込み**: HLD で提案された CLI フラグは現行 master の `sonic-utilities` に存在しない。設定の見える化は `show counterpoll` ではなく `port_flr.lua` 内の定数値の grep で行う。
+- **`Accuracy` 列が低い区間で `FLR(P)` を信用しない**: 外挿の信頼度が低いとき Predicted FLR の絶対値を運用閾値に使うと誤警報の原因になる。傾きの相対変化を見るのが安全。
+- **SAI counter 依存**: ASIC が `SAI_PORT_STAT_IF_IN_FEC_*` を返さないと FLR(O) / FLR(P) ともに値が出ない。プラットフォーム SAI の対応状況により利用可否が変わる。
+- **`FLR(O) > 0` は既に欠落発生済み**: Observed は事後指標。早期検知は Predicted の経時変化を主軸にする。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

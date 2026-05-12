@@ -126,6 +126,40 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 - [fec-flr-support-in-sonic-operations.md](fec-flr-support-in-sonic-operations.md)
 - [fec-flr-support-in-sonic-limitations.md](fec-flr-support-in-sonic-limitations.md)
 
+## 制限事項
+
+実装内部の観点から運用に効く制限点 (HLD と実装の乖離を含む詳細は [limitations](fec-flr-support-in-sonic-limitations.md))。
+
+- **`port_flr.lua` は Redis-side script として swss に同梱**: 書き換えるには docker イメージ内のファイル編集 + `docker restart swss` で再ロードが必要。host から CONFIG_DB / CLI で差し替える機構は無い。
+- **`FLR_INTERVAL_FACTOR` は lua ハードコード**: HLD で示唆される `counterpoll port flr-interval-factor` CLI は `sonic-utilities` master に未取り込み。実効 poll 周期は `port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR` で決まる。
+- **`FlexCounterOrch` の伝搬経路は提案止まり**: HLD の `FlexCounterOrch` から factor を受け渡す経路は実装上は静的定数になっており、`flexcounterorch.cpp` に対応コードは見当たらない。
+- **`crates/countersyncd` (Rust) 経由の SAI counter 列挙**: 旧来の C++ flex counter とは別経路で `IF_IN_FEC_CODEWORD_ERRORS_S0..S16` を集める。一部プラットフォーム SAI が `S16` 全部を返さないと FLR 計算が中断する。
+- **`portstat.py` フォーマッタが columns 追加済み**: `fec_flr` / `fec_flr_predicted` / `fec_flr_r_squared` のカラム順は master 取り込み版で固定。プラットフォーム独自パッチで列を増減すると `show interfaces counters fec-stats` の整形が崩れる。
+
+## 確認コマンド
+
+```bash
+# 実装ファイルの存在確認
+ls -l .cache/sonic-sources/sonic-swss/orchagent/port_flr.lua
+ls -l .cache/sonic-sources/sonic-swss/crates/countersyncd/src/sai/saiport.rs
+
+# Rust 側で IF_IN_FEC_CODEWORD_ERRORS_S0..S16 が列挙されているか
+grep -n 'IF_IN_FEC_CODEWORD_ERRORS_S' .cache/sonic-sources/sonic-swss/crates/countersyncd/src/sai/saiport.rs
+
+# utilities 側で fec_flr / fec_flr_predicted カラムが定義されているか
+grep -nE 'fec_flr(_predicted|_r_squared)?' .cache/sonic-sources/sonic-utilities/utilities_common/portstat.py
+
+# orchagent 実行時に port_flr.lua がロードされているか
+docker exec swss redis-cli script exists $(docker exec swss redis-cli script load "$(cat /usr/share/swss/port_flr.lua)")
+
+# COUNTERS_DB の RATES エントリで FLR キーが書き込まれているか
+sonic-db-cli COUNTERS_DB keys 'RATES:oid:*' | head -3
+sonic-db-cli COUNTERS_DB hgetall "$(sonic-db-cli COUNTERS_DB keys 'RATES:oid:*' | head -1)" | grep -i flr
+
+# poll 周期の実値を逆算
+sonic-db-cli CONFIG_DB hget 'FLEX_COUNTER_TABLE|PORT' POLL_INTERVAL
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

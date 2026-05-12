@@ -253,6 +253,27 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
     - ABNF.json → sonic-*.yang 変換規約全体の包括的 issue は確認できず、個別の YANG 追加 PR (例 #13314, #10786, #9116) で慣行が蓄積されている。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# southbound 側で利用可能な sonic-ext 拡張一覧 (実装は db-name のみ)
+grep -nE '^ *extension ' .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-extension.yang.j2
+
+# northbound 側拡張定義 (map-list / key-delim を含む拡張セット)
+grep -nE '^ *extension ' .cache/sonic-sources/sonic-mgmt-common/models/yang/sonic/common/sonic-extension.yang
+
+# HLD で言及される map-list / key-delim が southbound で使われていないことを確認
+grep -rn 'sonic-ext:map-list\|sonic-ext:key-delim' .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/
+
+# yang model 単体検証
+pyang -f tree --path .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models \
+    .cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-acl.yang
+
+# CONFIG_DB 投入時の YANG validation (mgmt-framework)
+docker exec mgmt-framework sonic-cfggen -d --print-data | \
+    docker exec -i mgmt-framework sonic_yang_mgmt --validate
+```
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/mgmt/SONiC_YANG_Model_Guidelines.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/mgmt/SONiC_YANG_Model_Guidelines.md)
