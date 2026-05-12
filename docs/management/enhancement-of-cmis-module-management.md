@@ -122,4 +122,14 @@ m_portTable->set(port.m_alias, {{"host_tx_ready", attr.value.u32 ? "true" : "fal
 
 <!-- /topics-back-ref -->
 
+## 参考リンク
+
+- [CONFIG_DB: PORT](../reference/config-db/port.md)
+- [CLI: show interfaces](../reference/cli/show-interfaces.md)
+- [CLI: show platform](../reference/cli/show-platform.md)
+- [CLI: config warm_restart](../reference/cli/config-warm_restart.md)
+- [Topics: Reboot / Warm / Fast](../topics/11-reboot/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 <!-- glossary-links-injected: 710f941d149a -->

@@ -1,0 +1,7 @@
+{
+  "_comment": "Pages exempted from link-density check. Auto-generated meta pages whose body is mostly tables/lists rather than prose with inline references.",
+  "exceptions": [
+    "docs/_meta/coverage.md",
+    "docs/_meta/changelog.md"
+  ]
+}

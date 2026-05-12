@@ -117,6 +117,17 @@ sequenceDiagram
 - **Overlay ECMP**: 同設計を Tunnel Endpoint IP で適用
 - **ECMP HW Acceleration**: link up/down で nexthop 集合が変わる場面で seq 維持
 
+## 参考リンク
+
+- [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md)
+- [Topic 04 ECMP](../topics/04-vrf-ecmp/ecmp.md)
+- [CLI: config route](../reference/cli/config-route.md)
+- [CLI: config bgp](../reference/cli/config-bgp.md)
+- [CLI: show bgp](../reference/cli/show-bgp.md)
+- [CONFIG_DB: STATIC_ROUTE](../reference/config-db/static-route.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/ecmp/ordered_ecmp_next_hop_hld.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/ecmp/ordered_ecmp_next_hop_hld.md)

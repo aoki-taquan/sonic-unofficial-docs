@@ -156,6 +156,15 @@ sfputil write-eeprom ... --verify
 # モジュールの read-only 領域 / page 不在の可能性
 ```
 
+## 参考リンク
+
+- [CONFIG_DB: PORT](../reference/config-db/port.md)
+- [CLI: show platform](../reference/cli/show-platform.md)
+- [CLI: show interfaces](../reference/cli/show-interfaces.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sfputil/read_write_eeprom_by_page.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

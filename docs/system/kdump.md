@@ -165,6 +165,12 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 ## 関連ページ
 - [CLI: config kdump](../reference/cli/config-kdump.md)
 - [CONFIG_DB: KDUMP](../reference/config-db/kdump.md)
+- [CLI: show techsupport](../reference/cli/show-techsupport.md)
+- [CLI: reboot / fast-reboot / warm-reboot](../reference/cli/reboot-fast-warm.md)
+- [CLI: sonic-installer](../reference/cli/sonic-installer.md)
+- [Topics: Reboot / Warm / Fast](../topics/11-reboot/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
 
 <!-- topics-back-ref -->
 ## 関連 Topics

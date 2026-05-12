@@ -152,6 +152,11 @@ make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
 - [HLD: build-system-improvements](build-system-improvements.md)
 - [HLD: build-profiles](build-profiles.md)
 - [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [Topic 19 Build/Packaging - architecture](../topics/19-build-packaging/architecture.md)
+- [Topic 19 Build/Packaging - operations](../topics/19-build-packaging/operations.md)
+- [CLI: sonic-package-manager](../reference/cli/sonic-package-manager.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
 
 ## 引用元
 

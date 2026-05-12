@@ -210,4 +210,14 @@ show platform pcieinfo -c
 
 <!-- /topics-back-ref -->
 
+## 参考リンク
+
+- [CLI: show platform](../reference/cli/show-platform.md)
+- [CLI: show environment](../reference/cli/show-environment.md)
+- [CLI: show system-health](../reference/cli/show-system-health.md)
+- [CLI: show techsupport](../reference/cli/show-techsupport.md)
+- [CLI: show version](../reference/cli/show-version.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 <!-- glossary-links-injected: 20dbc11976b6 -->
