@@ -10,12 +10,23 @@ sources:
   path: doc/sonic-application-extension/sonic-application-extension-guide.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db: []
+  config_db:
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  - INTERFACE
   cli:
   - sonic-package-manager
+  - show interfaces
+  - show ip
+  - config syslog
   yang:
   - sonic-feature
   - sonic-system-defaults
+  - sonic-syslog
 ---
 
 <!-- topics-tip -->

@@ -1,13 +1,16 @@
 ---
 title: サイトマップ
-description: "サイトマップ — docs/**/*.md を mkdocs nav 順で階層列挙したインデックス（全 867 ページ）。meta/scripts/gen_sitemap.py で自動生成。"
+description: サイトマップ — docs/**/*.md を mkdocs nav 順で階層列挙したインデックス（全 867 ページ）。meta/scripts/gen_sitemap.py
+  で自動生成。
 verification: meta
 last_verified: 2026-05-11
 hide:
-  - toc
+- toc
 tags:
-  - meta
-  - sitemap
+- meta
+- sitemap
+related:
+  _no_related_cdb: true
 ---
 
 # サイトマップ

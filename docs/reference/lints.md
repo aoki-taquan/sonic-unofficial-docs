@@ -3,8 +3,13 @@ title: Lint 一覧と CI 状態
 area: meta
 verification: meta
 last_verified: 2026-05-12
-description: "lint 一覧と CI 状態"
-tags: [meta, lint, ci]
+description: lint 一覧と CI 状態
+tags:
+- meta
+- lint
+- ci
+related:
+  _no_related_cdb: true
 ---
 
 # Lint 一覧と CI 状態

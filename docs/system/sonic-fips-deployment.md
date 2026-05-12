@@ -12,10 +12,20 @@ sources:
 related:
   config_db:
   - FIPS
-  cli: []
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - PORT
+  - PORTCHANNEL
+  - BREAKOUT_CFG
+  cli:
+  - show interfaces
+  - show ip
+  - config syslog
   yang:
   - sonic-fips
   - sonic-system-defaults
+  - sonic-syslog
   _no_related_cli: true
 ---
 

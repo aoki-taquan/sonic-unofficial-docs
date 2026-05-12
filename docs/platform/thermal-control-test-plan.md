@@ -1,6 +1,7 @@
 ---
 title: Thermal Control テストプラン
-description: Thermal Control テストプラン — Thermal Control 機能（FAN status / thermal status / thermal policy）に対する functional テストプラン。
+description: Thermal Control テストプラン — Thermal Control 機能（FAN status / thermal status
+  / thermal policy）に対する functional テストプラン。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,6 +17,7 @@ related:
   - show platform
   yang:
   - sonic-asic-sensors
+  _no_related_cdb: true
 ---
 
 <!-- topics-tip -->

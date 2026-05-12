@@ -1,6 +1,7 @@
 ---
 title: gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）
-description: gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz / Credentialz の運用 rotate イメージを扱う。
+description: gNSI を有効化する gNMI サーバの設定フラグ、関連 OpenConfig YANG モデル、CONFIG_DB / CLI と、Certz
+  / Credentialz の運用 rotate イメージを扱う。
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -14,12 +15,22 @@ related:
   config_db:
   - TELEMETRY
   - GNMI
-  cli: []
+  - SYSLOG_SERVER
+  - SYSLOG_CONFIG
+  - SYSLOG_CONFIG_FEATURE
+  - PORT
+  - PORTCHANNEL
+  cli:
+  - show interfaces
+  - show ip
+  - config syslog
   yang:
   - openconfig-gnsi-certz
   - openconfig-gnsi-authz
   - openconfig-gnsi-pathz
   - openconfig-gnsi-credentialz
+  - sonic-system-defaults
+  - sonic-syslog
 ---
 
 # gNSI 設定と運用

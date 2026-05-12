@@ -1,6 +1,7 @@
 ---
 title: 運用
-description: 運用 — リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、欠落と discrepancy を検出して埋めるための定期作業を扱う。Indexer / Writer / Verifier の境界も整理する。
+description: 運用 — リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、欠落と discrepancy
+  を検出して埋めるための定期作業を扱う。Indexer / Writer / Verifier の境界も整理する。
 area: topics
 verification: meta
 last_verified: 2026-05-12
@@ -23,6 +24,7 @@ related:
   config_db: []
   yang: []
   _no_related_cli: true
+  _no_related_cdb: true
 ---
 
 # 運用

@@ -18,6 +18,7 @@ related:
   - show environment
   yang:
   - sonic-asic-sensors
+  _no_related_cdb: true
 ---
 
 <!-- topics-tip -->
