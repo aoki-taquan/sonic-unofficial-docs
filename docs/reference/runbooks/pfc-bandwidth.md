@@ -114,6 +114,17 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 - CABLE_LENGTH を実値に: `config interface cable-length Ethernet0 5m`
 - 根本対策: 対向 NIC 側 PFC 設定を点検（送信し過ぎていないか、CNP / ECN との連携が壊れていないか）
 
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
+
 ## 関連ページ
 
 - [../../topics/08-qos-buffer/operations.md](../../topics/08-qos-buffer/operations.md)
