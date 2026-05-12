@@ -213,6 +213,22 @@
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dip-sip-ptf-validation-high-level-design-concepts/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dip-sip-ptf-validation-high-level-design-internals/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dip-sip-ptf-validation-high-level-design-limitations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dip-sip-ptf-validation-high-level-design-operations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dip-sip-ptf-validation-high-level-design/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
@@ -366,6 +382,22 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-trap-flow-counter-design/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design-concepts/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design-internals/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design-limitations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/ssdhealth-design-operations/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>

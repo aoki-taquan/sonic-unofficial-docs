@@ -6864,6 +6864,22 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8241,6 +8257,118 @@
   
   
     <li class="md-nav__item">
+      <a href="../../architecture/ssdhealth-design-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/ssdhealth-design-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 運用（CLI / 表示モード）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/ssdhealth-design-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/ssdhealth-design-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 制限事項と HLD-実装乖離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../architecture/dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
@@ -8249,6 +8377,118 @@
     
   
     DIP=SIP PTF 検証テスト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 概念（テストの目的とトポロジ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/dip-sip-ptf-validation-high-level-design-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）
   
 
     
@@ -17235,10 +17475,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29546,10 +29803,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29754,7 +30028,15 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 <li><code>docker exec pmon supervisorctl status thermalctld</code> — thermal control daemon の状態</li>
 <li><code>docker logs pmon 2&gt;&amp;1 | grep -i thermal</code> — policy reload / algorithm 切替のログを追う</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>冷却 / thermal センサーの状態を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Thermal / cooling</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>platform<span class="w"> </span>temperature
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>platform<span class="w"> </span>fan
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TEMPERATURE_INFO|*&#39;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FAN_INFO|*&#39;</span>
+</span></code></pre></div>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - SONiC-mgmt tests/platform/test_platform_info.py への thermal policy ケース追加状況確認
 - valid_policy.json / invalid_format_policy.json / invalid_value_policy.json の同 repo 配置確認

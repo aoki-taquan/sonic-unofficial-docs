@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/dip-sip-ptf-validation-high-level-design/">
       
       
-        <link rel="prev" href="../ssdhealth-design/">
+        <link rel="prev" href="../ssdhealth-design-limitations/">
       
       
-        <link rel="next" href="../sonic-application-extension-infrastructure/">
+        <link rel="next" href="../dip-sip-ptf-validation-high-level-design-concepts/">
       
       
         
@@ -6866,6 +6866,22 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8243,6 +8259,118 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 運用（CLI / 表示モード）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 制限事項と HLD-実装乖離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -8630,6 +8758,118 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 概念（テストの目的とトポロジ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -29829,6 +30069,16 @@
 <p>HLD で提案されている独立 PTF スクリプト <code>ansible/roles/test/files/ptftests/dip_sip.py</code> は <strong>既に削除済</strong>。代わりに <code>sonic-mgmt/tests/ipfwd/test_dip_sip.py</code> (pytest) に移行されており、<code>ansible/roles/test/tasks/dip_sip.yml</code> は <code>pytest_runner.yml</code> を呼ぶラッパに縮約されている (114 byte)。<code>vars/testcases.yml</code> は実在 (11721 byte)。HLD のテスト本体記述は <strong>現行コードと構造が異なる</strong> ため、test_dip_sip.py 側の最新仕様に追従する必要あり。</p>
 </div>
 <h1 id="dipsip-ptf">DIP=SIP PTF 検証テスト<a class="headerlink" href="#dipsip-ptf" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">章分割済み</p>
+<p>本ページは大型 HLD の <strong>概要ハブ</strong> として保持。詳細は以下の派生ページを参照:</p>
+<ul>
+<li><a href="../dip-sip-ptf-validation-high-level-design-concepts/">dip-sip-ptf-validation-high-level-design-concepts.md</a> — テストの目的・トポロジ・対応 testbed</li>
+<li><a href="../dip-sip-ptf-validation-high-level-design-operations/">dip-sip-ptf-validation-high-level-design-operations.md</a> — ファイル構成 / 前処理 / 実行コマンド</li>
+<li><a href="../dip-sip-ptf-validation-high-level-design-internals/">dip-sip-ptf-validation-high-level-design-internals.md</a> — パケット仕様 / パラメータ / 判定</li>
+<li><a href="../dip-sip-ptf-validation-high-level-design-limitations/">dip-sip-ptf-validation-high-level-design-limitations.md</a> — 制限事項と HLD-実装乖離（pytest 移行）</li>
+</ul>
+</div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>「DIP（destination IP）と SIP（source IP）が同じ」L3 パケットを SONiC スイッチが正しくルーティングできるかを <strong>PTF (Packet Test Framework) で検証</strong> するテストの設計。一見奇妙な条件だが、ループバック検証や特定の DOS 系トラフィック形状への耐性、ハードウェアパスでの <a href="../../reference/glossary/#term-acl">ACL</a> / RPF が誤作動しないかを担保する目的で必要となる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>このページは機能 <a href="../../reference/glossary/#term-hld">HLD</a> ではなく <strong>テストインフラの HLD</strong>。SONiC 自体の挙動仕様というより、<strong><code>sonic-mgmt</code> リポジトリにどんな Ansible role / PTF スクリプトを置くか</strong> の設計が記述されている<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

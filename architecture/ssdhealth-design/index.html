@@ -16,7 +16,7 @@
         <link rel="prev" href="../sonic-trap-flow-counter-design/">
       
       
-        <link rel="next" href="../dip-sip-ptf-validation-high-level-design/">
+        <link rel="next" href="../ssdhealth-design-concepts/">
       
       
         
@@ -6866,6 +6866,22 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8681,6 +8697,118 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssdhealth-design-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 運用（CLI / 表示モード）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssdhealth-design-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSD ヘルスチェック 制限事項と HLD-実装乖離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dip-sip-ptf-validation-high-level-design/" class="md-nav__link">
         
   
@@ -8689,6 +8817,118 @@
     
   
     DIP=SIP PTF 検証テスト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 概念（テストの目的とトポロジ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dip-sip-ptf-validation-high-level-design-limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）
   
 
     
@@ -29962,6 +30202,16 @@
 <p>本ページの記述は HLD 文書としての履歴的価値はあるが、現行コード・パスを参照する場合は ssdutil (<code>ssdutil/main.py</code>) と <code>sonic_storage/</code> 構成を確認すること。</p>
 </div>
 <h1 id="ssd-show-platform-ssdhealth-ssdutil">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）<a class="headerlink" href="#ssd-show-platform-ssdhealth-ssdutil" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">章分割済み</p>
+<p>本ページは大型 HLD の <strong>概要ハブ</strong> として保持。詳細は以下の派生ページを参照:</p>
+<ul>
+<li><a href="../ssdhealth-design-concepts/">ssdhealth-design-concepts.md</a> — 機能の目的と二段プラグイン構造（SsdBase / SsdUtil）</li>
+<li><a href="../ssdhealth-design-operations/">ssdhealth-design-operations.md</a> — CLI / 表示モード / 設定 / 確認コマンド</li>
+<li><a href="../ssdhealth-design-internals/">ssdhealth-design-internals.md</a> — API 仕様 / Optional pmon <code>ssdmond</code> デーモン</li>
+<li><a href="../ssdhealth-design-limitations/">ssdhealth-design-limitations.md</a> — 制限事項と HLD-実装乖離（ssdutil への移行、sonic_storage 再構成）</li>
+</ul>
+</div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、<strong>ストレージの寿命と健全性を運用者が把握できる</strong> 必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機能は基本機能として <strong><code>show platform ssdhealth</code></strong> という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。</p>
 <p>実装は <code>sonic-utilities</code> 側のスクリプト + <code>sonic-platform-common</code> 側の <strong>抽象クラス <code>SsdBase</code></strong> + 各ベンダ実装の <strong><code>SsdUtil</code> プラグイン</strong> の三層構成。汎用情報は <code>smartctl</code>（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の <code>iSmart</code>、StorFly/Virtium の <code>SmartCmd</code> 等）から拾う<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
