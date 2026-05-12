@@ -29854,6 +29854,14 @@ reasoning: 設定フローと full / partial モードの根拠。
 <li>同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。<code>l3</code>+<code>mirror</code> の組み合わせから始めるのが安全<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で <code>swssconfig</code> partial モードで削除する必要<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># ACL テーブル / ルール / バインドと MIRROR_SESSION を一望</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_TABLE|*&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE|*&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;MIRROR_SESSION|&lt;name&gt;&#39;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>show<span class="w"> </span>acl<span class="w"> </span>table
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>show<span class="w"> </span>acl<span class="w"> </span>rule
+</span></code></pre></div>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <h2 id="_13">関連ページ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>

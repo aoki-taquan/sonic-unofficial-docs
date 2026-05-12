@@ -29786,6 +29786,13 @@ reasoning: pfc_gen.py の役割と配備 fixture の根拠。
 <li><code>pfc_gen.py</code> が Fanout で見つからない: <code>deploy_pfc_gen</code> fixture のプラットフォーム別ロジック、対象 Fanout の OS / パスを確認。</li>
 <li>ARP responder の応答が無い: 設定ファイルの 1 回生成パッチが当たっているか、ARP responder プロセスのログを確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Asymmetric PFC mode と PFC カウンタを確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>pfc<span class="w"> </span>asymmetric
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>pfc_asym
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>pfcstat
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>orchagent
+</span></code></pre></div>
 <h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Asymmetric PFC mode set: <code>sonic-swss/orchagent/portsorch.cpp</code> L2519-L2573 <code>setPortPfcAsym()</code>（<code>SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL_MODE</code> を <code>SEPARATE</code>/<code>COMBINED</code> で <a href="../../reference/glossary/#term-sai">SAI</a> に書き込む）</li>

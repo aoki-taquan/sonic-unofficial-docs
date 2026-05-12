@@ -29754,6 +29754,13 @@ reasoning: pps→bps 換算と TC コマンドフローの根拠。
 <li>正規クライアントまでドロップ: <code>dhcp_rate_limit</code> が小さすぎる可能性。リース更新時のバーストを考慮</li>
 <li>値変更が反映されない: 同ポートに既存 rate があると add が拒否される仕様。先に delete</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># ingress policer 設定と CONFIG_DB の rate-limit エントリを確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>tc<span class="w"> </span>-s<span class="w"> </span>qdisc<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>Ethernet0<span class="w"> </span>handle<span class="w"> </span>ffff:
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>tc<span class="w"> </span>-s<span class="w"> </span>filter<span class="w"> </span>show<span class="w"> </span>dev<span class="w"> </span>Ethernet0<span class="w"> </span>parent<span class="w"> </span>ffff:
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>dhcp_rate_limit
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>portmgrd
+</span></code></pre></div>
 <h2 id="_8">関連トピック<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror</a></li>

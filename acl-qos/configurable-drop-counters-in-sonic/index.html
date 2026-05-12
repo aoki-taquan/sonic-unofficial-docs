@@ -29674,6 +29674,14 @@
 <li>counts が増えない → 該当 reason に該当する drop が起きていない／ASIC が当該 reason を SAI で公開していない可能性。</li>
 <li><code>show dropcounters configuration</code> が空 → <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>DEBUG_COUNTER</code> テーブルに entry があるかを <code>redis-cli -n 4 keys 'DEBUG_COUNTER|*'</code> で確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># drop counter capabilities, 設定, 値をひととおり確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>capabilities
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>configuration
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>counts
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DEBUG_COUNTER|*&#39;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DEBUG_COUNTER_DROP_REASON|*&#39;</span>
+</span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

@@ -29915,6 +29915,13 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 <li>SSI 障害後、FSI が外部接続を切る: 仕様どおりの防御動作<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SSI を回復させるか、<code>chassisdb.conf</code> を修正してから FSI を再起動。</li>
 <li>Switch ID の衝突: <code>C</code> 個連続消費の規則に違反していないか、各チップに与えた Switch ID 範囲を確認。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Chassis DB / FSI / SSI / Switch ID を確認</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>cat<span class="w"> </span>/etc/sonic/chassisdb.conf
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span>redis_chassis.server<span class="w"> </span>-p<span class="w"> </span><span class="m">6380</span><span class="w"> </span>ping
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span>redis_chassis.server<span class="w"> </span>-p<span class="w"> </span><span class="m">6380</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SYSTEM_NEIGH|*&#39;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>show<span class="w"> </span>chassis-module<span class="w"> </span>status
+</span></code></pre></div>
 <h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

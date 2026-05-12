@@ -29809,6 +29809,13 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 <li>table type 削除できない: 参照する <code>ACL_TABLE</code> が残っている可能性。YANG validation または orchagent ログで確認。</li>
 <li>ルール挙動が古い派生クラス通りでない: 新方式は単一 <code>AclRuleBase</code> で動的に validate する設計。古い <code>AclRuleL3</code> 等の挙動を期待しないこと<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
+<p>確認コマンド例:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># STATE_DB の stage capability と user-defined table type 定義を確認</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_STAGE_CAPABILITY|*&#39;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_STAGE_CAPABILITY|INGRESS&#39;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_TABLE_TYPE|*&#39;</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_TABLE_TYPE|&lt;name&gt;&#39;</span>
+</span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
