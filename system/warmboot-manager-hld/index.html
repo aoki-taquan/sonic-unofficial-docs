@@ -29837,7 +29837,15 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>: 本ページの frontmatter <code>related</code> が空のため、<a href="../../reference/">Reference 索引</a> から関連テーブル / CLI / YANG を辿る</li>
+<li><strong>代替手段 / 回避策</strong> (warmboot-manager (<code>wb_mgrd</code>) が未実装の間、既存 <code>warm-reboot</code> で同等品質の無瞬断再起動を組む手順):<ol>
+<li>既存スクリプト経由で warm reboot を実行: <code>sudo config warm_restart enable system</code> で warm restart モードを有効化し、<code>sudo warm-reboot</code> で再起動。<code>wb_mgrd</code> 不在の代わりに <code>warm-reboot</code> シェルスクリプトが一連の reconcile を直接実行する</li>
+<li>コンポーネント別 warm restart の状態を Redis で確認: <code>sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|swss'</code> および <code>sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|bgp'</code> で各サブシステムの restart state / reconcile 完了を観測する</li>
+<li>timer / 設定の上書き: <code>sudo config warm_restart neighsyncd_timer 30</code> <code>sudo config warm_restart bgp_timer 120</code> で HLD が <code>wb_mgrd</code> 集約管理する想定だった timer を <strong>個別 CLI</strong> で投入する</li>
+<li>新規 daemon の reconcile 参加: <code>wb_mgrd</code> の component 登録 API の代わりに、独自 daemon 側で <code>WARM_RESTART_TABLE|&lt;app&gt;</code> を <code>state=reconciled</code> まで自前で進める。最低限 <code>state=initialized</code> → <code>state=restored</code> → <code>state=reconciled</code> の 3 遷移を Redis に書く</li>
+<li>fallback: warm reboot に失敗した場合は <code>sudo config warm_restart disable system &amp;&amp; sudo reboot</code> で通常 reboot に切り替える。<code>/var/log/swss/sairedis.rec</code> と <code>journalctl -u swss</code> で reconcile 失敗箇所を切り分ける</li>
+</ol>
+</li>
+<li><strong>関連 reference</strong>: 本ページの frontmatter <code>related</code> が空のため、<a href="../../reference/">Reference 索引</a> から関連テーブル / CLI / YANG を辿る</li>
 </ul>
 </div>
 <div class="admonition note">

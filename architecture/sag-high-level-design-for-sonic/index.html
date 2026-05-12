@@ -30056,7 +30056,15 @@
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>:<ul>
+<li><strong>代替手段 / 回避策</strong> (Static Anycast Gateway (SAG) が master 未実装の間、EVPN-VXLAN leaf で同一仮想 GW MAC を擬似的に提供する手順):<ol>
+<li>各 leaf に同一 IP / 同一 MAC を手動投入: <code>sudo config vlan add 100</code> <code>sudo config interface ip add Vlan100 10.0.100.1/24</code> を全 leaf に流し、<code>sudo ip link set dev Vlan100 address 00:11:22:33:44:55</code> で MAC を統一する</li>
+<li>EVPN Type-2 でこの IP/MAC を再広告しないようフィルタ: <code>vtysh -c 'configure terminal' -c 'route-map RM-SAG-FILTER deny 10' -c 'match mac address SAG-MAC'</code> を入れ、各 leaf 自身の anycast gateway entry がリーク広告されないようにする</li>
+<li>VRRP で代替する場合: <code>sudo config vrrp add Vlan100 1 10.0.100.1</code> で VRID を作成し、<code>sudo config vrrp ip add Vlan100 1 10.0.100.1</code> で VIP を投入。SAG ほど高速ではないが master/backup 構成で擬似 anycast を組める</li>
+<li>設定が反映されたか確認: <code>sonic-db-cli APPL_DB hgetall 'INTF_TABLE:Vlan100'</code> と <code>ip -d link show Vlan100</code> で MAC / IP がすべての leaf で揃ったかを比較する</li>
+<li>ベンダー fork を選ぶ場合: NVIDIA SONiC / Edgecore Enterprise SONiC は SAG を独自に実装済みのため、コミュニティ master 縛りを外せるなら <code>show ip sag</code> / <code>config sag</code> 系 CLI が直接使えるベンダー版を採用する</li>
+</ol>
+</li>
+<li><strong>関連 reference</strong>:<ul>
 <li><a href="../../reference/config-db/vlan-interface/">CONFIG_DB: VLAN_INTERFACE</a></li>
 <li><a href="../../reference/yang/sonic-vlan/">YANG: <code>sonic-vlan</code></a></li>
 </ul>

@@ -29834,7 +29834,15 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>:<ul>
+<li><strong>代替手段 / 回避策</strong> (SmartSwitch DPU からの gNMI フィードバック (<code>version_id</code> / APPL_STATE_DB) が未実装の間、設定適用結果を確認する手順):<ol>
+<li>NPU 側で適用結果を Redis から直接観測する: <code>sonic-db-cli APPL_DB keys 'DASH_*' | head</code> および <code>sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_DASH_*' | head</code> で、DASH オブジェクトが NPU の ASIC_DB に降りているかを確認する</li>
+<li>DPU 側コンテナへ入って APPL_STATE_DB を読む: <code>docker exec -it swss redis-cli -n 6 KEYS '*'</code> （<code>APPL_STATE_DB</code> は instance 6）で DPU 内 swss が公開する state を直接読み、orchagent ログから version_id 不在による失敗を読み解く</li>
+<li>NPU の gNMI server で代替 telemetry を購読: <code>gnmic -a &lt;npu&gt;:8080 subscribe --path "/sonic-db:STATE_DB/DASH_*"</code> で STATE_DB を polling subscribe し、HLD が想定する <code>version_id</code> フィードバックを <strong>NPU 側の STATE_DB 反映時刻</strong>で代替する</li>
+<li>APP_STATE_DB.HASH_TABLE pattern が無いので、設定 ack は CONFIG_DB write → APPL_DB key 出現の差で確認する: <code>sonic-db-cli CONFIG_DB hgetall 'DASH_VNET|Vnet1'</code> と <code>sonic-db-cli APPL_DB hgetall 'DASH_VNET_TABLE:Vnet1'</code> を比較して伝搬遅延の有無を観測する</li>
+<li>永続化された "適用済み version" を残したい場合は CLI / Ansible 側で世代管理する: 設定投入時のタイムスタンプを <code>show version</code> 出力と一緒にファイルに保存し、<code>sonic-db-cli APPL_DB hget 'DASH_VNET_TABLE:Vnet1' SAI_OBJECT_ID</code> の存在で適用済みと判定する</li>
+</ol>
+</li>
+<li><strong>関連 reference</strong>:<ul>
 <li><a href="../../reference/config-db/vnet/">CONFIG_DB: VNET</a></li>
 <li><a href="../../reference/config-db/switch-trimming/">CONFIG_DB: SWITCH_TRIMMING</a></li>
 <li><a href="../../reference/config-db/switch-hash/">CONFIG_DB: SWITCH_HASH</a></li>

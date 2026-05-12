@@ -29616,7 +29616,14 @@
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>: 本ページの frontmatter <code>related</code> が空のため、<a href="../../reference/">Reference 索引</a> から関連テーブル / CLI / YANG を辿る</li>
+<li><strong>代替手段 / 回避策</strong> (Enhanced LPO 拡張デバッグレジスタが master に未取り込みの間、運用者が取れる手順):<ol>
+<li>既存の <code>sfputil</code> で per-lane の生 EEPROM ダンプを取得する: <code>sudo sfputil show eeprom -d -p Ethernet0</code> で Page 01h / 11h / 25h の raw byte を確認し、HLD が参照する Byte 195 / VMA / OMA 領域を<strong>手動で</strong>読み出す</li>
+<li>xcvrd が公開する既存 STATE_DB を読む: <code>sonic-db-cli STATE_DB hgetall 'TRANSCEIVER_DOM_SENSOR|Ethernet0'</code> で Tx/Rx パワー・温度・電圧の標準 DOM のみ確認できる（LPO 拡張レジスタは含まれないが、リンク健全性の一次切り分けには十分）</li>
+<li><code>pyaisdk</code> / SAI debug counter 経由で per-lane FEC / BER を補足: <code>sudo show interfaces counters fec-stats</code> および <code>sudo show interfaces counters errors</code> で物理層のエラー傾向を観測し、Enhanced LPO の VMA/OMA 不在を補う</li>
+<li>ベンダー提供ツールにフォールバック: Arista SONiC ビルドが PR を取り込む前提なら、ベンダー側 EOS-utils スクリプトで CMIS Page 25h を直接読む。コミュニティ master ではこの経路は <strong>無い</strong> ため、issue を sonic-net/sonic-platform-common に上げ続ける</li>
+<li>監視ツール側の暫定対応: alert ルールから "enhanced_lpo_vma_low" 等の Redis キー依存を外し、TRANSCEIVER_DOM_SENSOR の Tx power / Rx power 閾値で代替する</li>
+</ol>
+</li>
 </ul>
 </div>
 <div class="admonition note">

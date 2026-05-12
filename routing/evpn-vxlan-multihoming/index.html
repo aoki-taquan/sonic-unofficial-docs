@@ -29711,7 +29711,15 @@
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>:<ul>
+<li><strong>代替手段 / 回避策</strong> (EVPN ESI / MH が master 未実装の間、dual-attached host を SONiC 上で動かす手順):<ol>
+<li>MC-LAG で代替する: <code>sudo config mclag add 1 10.0.0.1 10.0.0.2</code> で MC-LAG ドメインを作り、<code>sudo config mclag member add 1 PortChannel1</code> で対象 LAG を投入する（<a href="../../switching/mclag-enhancements/">MC-LAG enhancements</a> 参照）</li>
+<li>EVPN VXLAN は single-home のままで運用: <code>sudo config vxlan add vtep0 10.1.0.1</code> と <code>sudo config vxlan map add vtep0 Vlan100 1000</code> で L2 VNI を張り、ESI 由来の DF election は MC-LAG の active-active 動作に委ねる</li>
+<li>FRR 側で EVPN-MH を有効化しても SONiC 側に通らないことを確認: <code>vtysh -c 'show evpn es'</code> で FRR は ES を持つが、<code>sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT*'</code> に ESI label 属性が反映されないため、必ず MC-LAG 側で split-horizon を担保する</li>
+<li>受け取り側のフィルタを手動で組む: <code>sudo sonic-db-cli APPL_DB hset 'VXLAN_REMOTE_VNI_TABLE:Vlan100:10.1.0.2' vni 1000</code> で remote VTEP を明示し、HLD が想定する EAD-per-ES の自動 split-horizon を <strong>静的設定</strong>で代替する</li>
+<li>upstream 追従: <code>git -C .cache/sonic-sources/sonic-swss log --oneline --grep="EVPN MH"</code> で PR #4262 / #4206 / #4039 の取り込み状況を定期確認し、merge され次第 monitor を <code>partially_implemented</code> へ昇格させる</li>
+</ol>
+</li>
+<li><strong>関連 reference</strong>:<ul>
 <li><a href="../../reference/config-db/portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
 <li><a href="../../reference/config-db/vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
 </ul>
