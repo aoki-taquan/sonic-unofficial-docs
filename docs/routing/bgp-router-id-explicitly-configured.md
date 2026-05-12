@@ -229,6 +229,12 @@ module sonic-device_metadata {
 - ピアが一切登録されない場合、`bgpcfgd` のログを確認する。`Loopback0` IPv4 不在で `bgp_router_id` 未設定だと「neighbors adding を中断」する経路に入る。
 - マルチ ASIC で iBGP のみ上がらない場合、対応 ASIC の `Loopback4096` IPv4 設定を確認する。`bgp_router_id` では iBGP 依存は解消されない。
 
+## 制限事項
+
+- router-id を自動選出から明示設定に切り替える際、FRR が稼働中だと一度 BGP セッションが reset される。メンテナンス時間に実施する。
+- multi-vrf / multi-asic 環境では VRF / namespace ごとに router-id を分離設定する必要があり、共通 ID 使用は実装上推奨されない。
+- 設定変更後に `config_db.json` を保存し忘れるとリブート時に自動選出に戻る。`config save -y` の運用を明示する。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/BGP/BGP-router-id.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

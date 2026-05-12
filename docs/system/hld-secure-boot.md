@@ -207,6 +207,28 @@ cat /sys/module/<mod>/sections/.note.* 2>/dev/null
     - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #24249: Bug: \[Trixie\] Debian 13 with grub 2.12-9 can't chainload onie with grub 2.04 on secure boot enabled machines (open)](https://github.com/sonic-net/sonic-buildimage/issues/24249) — chain of trust の現実装上の制約を示す bug。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# UEFI Secure Boot 状態
+sudo mokutil --sb-state
+
+# 登録された MOK / shim key
+sudo mokutil --list-enrolled | head -40
+
+# GRUB / vmlinuz / initrd の署名検証 (sbverify)
+sudo sbverify --list /boot/vmlinuz-* 2>&1 | head
+
+# TPM PCR 値 (measured boot)
+sudo tpm2_pcrread sha256:0,1,2,3,7
+```
+
+## トラブルシュート
+
+- Secure Boot 失敗で起動できない場合は UEFI 設定で一時的に Secure Boot を無効化し、shim / GRUB / kernel のいずれの署名が拒否されたかを `dmesg | grep -iE 'pkcs7|secure'` で確認。
+- MOK 鍵入れ替え後は `mokutil --import` → 再起動 → MOK Manager での承認が必須。承認漏れで初回起動失敗する事例が多い。
+- ベンダー BIOS の DB / DBX 更新により以前のイメージが起動拒否される場合がある。新旧イメージで Secure Boot を切り替える運用は避ける。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/secure_boot/hld_secure_boot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

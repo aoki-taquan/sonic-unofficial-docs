@@ -221,6 +221,12 @@ sonic-cfggen -a '{"SYSTEM_DEFAULTS": {"tunnel_qos_remap": {"status": "enabled"}}
 - [Reference index](../reference/index.md)
 - [Glossary](../reference/glossary.md)
 
+## 制限事項
+
+- `SYSTEM_DEFAULTS` テーブルで切り替え可能なフラグはバージョン間で増減し、特定の master ブランチでしか参照されない key も存在する。
+- 一部のフラグは `config_db.json` での起動時にしか評価されず、ランタイム変更は再起動まで反映されない。
+- ベンダー platform 側で hard-coded された動作と競合した場合、`SYSTEM_DEFAULTS` の値が無視される事例がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-flags/control-sonic-behaviors-with-sonic-flags.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

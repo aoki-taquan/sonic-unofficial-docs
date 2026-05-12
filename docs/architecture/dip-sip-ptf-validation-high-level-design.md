@@ -291,6 +291,29 @@ sudo -H ansible-playbook test_sonic.yml -i inventory \
     - [GitHub Issue / PR の関連リンクは未確認] — DIP=SIP ドロップ自体は [SAI](../reference/glossary.md#term-sai) / プラットフォーム側で常時有効な挙動であり、HLD は PTF テスト追加のみが眼目。`sonic-mgmt` 側で対応する PTF テストは命名規則上の独立 PR で取り込まれた可能性が高いが、HLD と紐づく明示的 Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# PTF テストイメージとトポロジ
+ls .cache/sonic-sources/sonic-mgmt/ansible/group_vars/ | head
+docker images | grep -i ptf
+
+# PTF runner の起動例 (sonic-mgmt 配下)
+cd .cache/sonic-sources/sonic-mgmt/tests && \
+  pytest --inventory=../ansible/veos --testbed=vms-kvm-t0 --testbed_file=../ansible/testbed.yaml \
+         dip_sip/test_dip_sip.py --collect-only
+
+# DUT 側 ACL / mirror セッション (DIP/SIP 検査が依存する場合)
+show acl table
+show mirror_session
+```
+
+## トラブルシュート
+
+- PTF テスト失敗時はまず `--log-cli-level=DEBUG` で再実行し、注入パケットと受信パケットの diff を確認する。
+- VS テストベッド (KVM) と物理テストベッドで挙動が異なる場合があるため、まず KVM で再現するか確認してから物理機を疑う。
+- DIP/SIP 検査機能自体が NPU 依存で実装されていない platform では skip / xfail マーク扱い。`pytest --collect-only` でテスト適用範囲を事前確認。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

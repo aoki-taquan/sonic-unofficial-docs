@@ -149,6 +149,12 @@ TACACS+ で `config tacacs add --use-mgmt-vrf <ip>` を打つと `TACPLUS_SERVER
 - Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [VRF / ECMP 構築](../topics/04-vrf-ecmp/setup.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)
 - 関連 HLD: [SONiC VRF Support Design Spec](sonic-vrf-support-design-spec-draft.md)
 
+## 制限事項
+
+- 本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (`mgmt`) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる。
+- non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある。
+- snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で `ip vrf exec` ラップを行う必要がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/sonic_stretch_management_vrf_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

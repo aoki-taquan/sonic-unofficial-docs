@@ -214,6 +214,12 @@ CONFIG_DB JSON:
 - [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
 - [CLI: config aaa](../reference/cli/config-aaa.md)
 
+## 制限事項
+
+- DHCP から取得した DNS と静的設定の DNS が混在する場合、`/etc/resolv.conf` 生成順は resolvconf / systemd-resolved の挙動に依存し、HLD 通りにならない事がある。
+- management VRF を使う場合、DNS lookup を VRF 内で行うために `ip vrf exec mgmt nslookup ...` のラップが必要となるユーティリティがある。
+- IPv6 DNS サーバの優先順位制御は CLI からは表現できず、`config_db.json` 直編集に頼る場合がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/static-dns/static_dns.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

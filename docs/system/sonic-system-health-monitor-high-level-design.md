@@ -153,6 +153,12 @@ v0.2 で "Check service status without monit" が追加[^1]。Monit が使えな
 - [YANG](../reference/glossary.md#term-yang): [sonic-feature](../reference/yang/sonic-feature.md)
 - 関連 [HLD](../reference/glossary.md#term-hld): [event-driven techsupport invocation](event-driven-techsupport-invocation-coredump-mgmt.md) / [storage monitoring daemon](sonic-storage-monitoring-daemon-design.md) / [platform monitor enhancement](platform-monitor-enhancement-design.md)
 
+## 制限事項
+
+- 監視対象 (LED / fan / thermal / プロセス) は platform.json と `system_health_monitoring_config.json` の双方に依存し、未整備な platform では一部チェックが行われない。
+- 異常検知時の LED 制御は platform-specific プラグインに委ねられ、ベンダーによっては実装されていない。
+- システム全体の `Summary` は最悪サブシステムを継承するため、一時的な fan flap で全体が `Fault` となるケースがある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-health-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

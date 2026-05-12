@@ -288,6 +288,29 @@ leak_sensors3     Not OK    LiquidCooling
     - system-health gNMI イベント公開は本 PR では未取り込みで、追加の gNMI / system-health 側 PR が必要。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# 漏液センサ STATE
+sonic-db-cli STATE_DB KEYS 'LEAKAGE_INFO|*'
+sonic-db-cli STATE_DB KEYS 'CHASSIS_MODULE_INFO|*' | head
+
+# pmon コンテナ内のセンサプラグイン
+docker exec pmon ls /usr/share/sonic/device/$(show platform summary | awk '/Platform/{print $2}')/plugins/ 2>/dev/null
+docker exec pmon supervisorctl status | grep -iE 'thermal|leak'
+
+# 直近のアラーム
+sudo grep -i 'leak' /var/log/syslog | tail
+show platform fan
+show platform temperature
+```
+
+## トラブルシュート
+
+- 漏液センサ未対応 platform では本機能はノーオペ。`platform.json` の `leakage_sensors` セクションが空でないか確認。
+- false alarm 連発時はセンサ閾値とサンプリング間隔 (`pmon` 設定 / ベンダー SDK パラメータ) を確認のうえ、ベンダーに調整を依頼。
+- 真の漏液検知時は装置を緊急停止する手順 (政策依存) を runbook 化し、本ページ運用入口に追記すること。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bmc/leakage_detection_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

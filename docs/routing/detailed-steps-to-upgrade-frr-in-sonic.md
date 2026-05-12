@@ -94,6 +94,12 @@ flowchart LR
 - [BGP](../reference/glossary.md#term-bgp) routes がインストールされない → `fpmsyncd` の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分
 - GR 効かない → `bgpd` GR タイマ、SONiC 側の warm-restart 連動、log の `BGP gr` メッセージ
 
+## 制限事項
+
+- FRR のメジャーバージョン跨ぎでは vtysh コマンド体系・config 互換性が崩れる事があり、手順書のバージョンに固定して実施する必要がある。
+- SONiC の bgpcfgd / templates と FRR バージョンには 1:1 の依存関係があり、FRR のみ単独差し替えは推奨されない。
+- 本ページは特定リリースに対する手順であり、master では Dockerfile 側で固定された FRR バージョンに依拠している点に注意。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/frr_maintainer/sonic-frr_upgrade_process.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

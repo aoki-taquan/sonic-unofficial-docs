@@ -254,6 +254,12 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
     - [GitHub Issue / PR の関連リンクは未確認] — `wol` CLI / `SonicWolService` gNOI 実装は [sonic-utilities](../reference/glossary.md#term-sonic-utilities) / sonic-gnmi の個別 PR で取り込まれており、HLD 単独のトラッキング Issue は確認できず。
 <!-- /diff-admonition -->
 
+## 制限事項
+
+- WoL マジックパケット送出機能は SONiC ホスト側の utility として実装され、受信側 NIC / target 側 OS 設定 (BIOS, ethtool wol g) に依存する。
+- ターゲット VLAN へのリレーには UDP/9 を許可する ACL / firewall 設定が必要で、デフォルト構成ではブロックされる場合がある。
+- SecureOn (パスワード付 WoL) の対応は NIC によりまちまちで、SONiC 側の CLI からは未公開の場合がある。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/wol/Wake-on-LAN-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

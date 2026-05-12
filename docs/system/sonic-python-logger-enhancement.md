@@ -271,6 +271,26 @@ HLD 自体は [YANG](../reference/glossary.md#term-yang) 言及なし。`LOGGER`
 - [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
 - [HLD: persistent-log-level](persistent-log-level-hld.md)
 
+## 確認コマンド
+
+```bash
+# 現在の log level 設定 (CONFIG_DB)
+sonic-db-cli CONFIG_DB KEYS 'LOGGER|*'
+sonic-db-cli CONFIG_DB HGETALL 'LOGGER|orchagent'
+
+# 動的変更
+sudo config logging level INFO orchagent
+
+# Python ロガー側 (sonic-py-common.logger) を使うデーモン群
+grep -rn 'from sonic_py_common import logger' .cache/sonic-sources/sonic-buildimage/src/ 2>/dev/null | head
+```
+
+## トラブルシュート
+
+- log level を変更しても反映されない場合、デーモンが `sonic_py_common.logger.Logger.set_min_log_priority_from_cfg_db()` を呼んでいない可能性。該当デーモンの再起動で復帰する。
+- syslog rate limit (`/etc/rsyslog.d/`) によりログが落ちている場合は `rsyslog` の imuxsock / RateLimit パラメータを確認。
+- multi-asic 環境では namespace ごとに `LOGGER` テーブルが分かれる点に注意 (`sonic-db-cli -n asic0 ...`)。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/syslog/python-logger-enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
