@@ -1,16 +1,11 @@
 ---
 title: 変更履歴
-description: 変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。
+description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-11
+last_verified: 2026-05-12
 tags:
-- changelog
-- meta
-related:
-  cli: []
-  config_db: []
-  yang: []
-  _no_related: true
+  - changelog
+  - meta
 ---
 
 # 変更履歴
@@ -28,14 +23,145 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-12 #1122 Add limitations lint + backfill 8 HLD pages
+- 2026-05-12 #1121 Add quality audit round 40 (stratified 7th, milestone retrospective)
+- 2026-05-12 #1119 chore(chapter-index): add --check drift mode + CI strict gate (q42-ap)
+- 2026-05-12 #1120 chore(related): backfill 14 + opt-out 11 for empty related.config_db
+- 2026-05-12 #1118 chore: add snapshot.md generator and optimize CI workflow
+- 2026-05-12 #1117 Add 制限事項 / 確認コマンド sections to 8 evolved_beyond_hld pages
+- 2026-05-12 #1116 Add quality audit round 39 (random 7th, sub-axis 4th cycle)
+- 2026-05-12 #1115 chore: add low-quality HLD filter to indexer (q41-ao)
+- 2026-05-12 #1113 chore(link-density): add 2-layer split-child nav rule + CI strict gate
+- 2026-05-12 #1114 Add audit round 38 + reclassify backlog 15 → 10 active
+- 2026-05-12 #1112 chore: backfill related.cli and opt out 11 pages with no CLI
+- 2026-05-12 #1111 Add lint and gen-script reference page
+- 2026-05-12 #1110 Split 2 large HLDs (dynamic port add/del + gNSI) into 8 child pages
+- 2026-05-12 #1108 Add CLI sibling cross-links and drop 27 stale backlog entries
+- 2026-05-12 #1109 Add quality audit round 37 (random sampling, sub-axis 2nd cycle, 4.972)
+- 2026-05-12 #1107 chore(cdb-mermaid): fallback dict で 27 件補完 → 121/121 (100%)
+- 2026-05-12 #1104 Add YANG sibling cross-link block to 84 YANG ref pages
+- 2026-05-12 #1106 chore: replace fallback sonic-crm yang refs with proper modules in 33 HLD pages
+- 2026-05-12 #1105 Add quality audit round 36 and classify residual backlog (42 items)
+- 2026-05-12 #1103 chore: make runbook structure check strict (40 runbooks completed)
+- 2026-05-12 #1102 chore: warm-reboot 系 3 ページに sonic-warm-restart YANG 補完
+- 2026-05-12 #1100 chore: runbook 5節構造補完 20 件 + quality-audit-35 random
+- 2026-05-12 #1101 chore(glossary): add 21 QoS/Buffer/Queue/Scheduler terms
+- 2026-05-12 #1099 Formalize quality audit sub-axes 5a-c / 6a-c (round 35+)
+- 2026-05-12 #1098 chore: add runbook structure lint + split switchport HLD
+- 2026-05-12 #1097 chore: backfill related.yang for 46 more pages + strict CI check
+- 2026-05-12 #1096 Add inject_yang_xref.py to enrich YANG cross-links
+- 2026-05-12 #1095 Add quality audit round 34 (stratified, sub-axis trial)
+- 2026-05-12 #1094 Add quality audit round 33 (random sampling, 4.972 series-high tie)
+- 2026-05-12 #1093 Add low-impact residual tasks snapshot page
+- 2026-05-12 #1092 chore: improve docs/index.md and docs/about.md for readers
+- 2026-05-12 #1091 Add sub-axes (5a/5b/5c, 6a/6b/6c) to quality-audit-guide
+- 2026-05-12 #1090 Complete topics residue (01-overview / 19-build-packaging / 22-reference-index)
+- 2026-05-12 #1089 chore(reference): expand narrow _no_related_* opt-outs to 17 ref pages
+- 2026-05-12 #1088 chore: backfill related.yang for 32 HLD pages via curated map
+- 2026-05-12 #1087 Add quality audit round 32 (stratified, audit iteration AH)
+- 2026-05-12 #1086 chore: resolve all link-density warnings (15 -> 0)
+- 2026-05-12 #1085 Expand advanced topics for build / lab / reference-index chapters
+- 2026-05-12 #1084 chore: formalize related opt-out markers and seed reference/meta pages
+- 2026-05-12 #1083 Add quality audit round 31 (random sampling, 3rd cycle start)
+- 2026-05-12 #1082 Expand 8 more advanced.md pages from placeholder to complete
+- 2026-05-11 #1080 chore(q32-af): add split-child hub/sibling link check
+- 2026-05-11 #1081 chore: boost link density on 20 low-density pages (round 3)
+- 2026-05-11 #1079 Add quality audit round 30 and update roadmap-v2 progress section
+- 2026-05-11 #1078 Expand 8 chapter advanced.md pages to complete status
+- 2026-05-11 #1077 chore(quality): boost link density on 30 low-density pages
+- 2026-05-11 #1076 chore(q31-ae): resolve discrepancy-found pages with empty related.yang
+- 2026-05-11 #1075 Add quality audit round 29 (stratified 2nd cycle, avg 4.944)
+- 2026-05-11 #1074 chore(docs): boost link density on 30 thin pages
+- 2026-05-11 #1072 Add discrepancy related.yang lint and quality audit round 28
+- 2026-05-11 #1071 Add chapter progress checklist to 22 Topics chapter indexes
+- 2026-05-11 #1070 chore: add CLI-YANG mapping dict, back-fill related.yang on 67 CLI ref pages
+- 2026-05-11 #1069 Add quality audit round 27 (stratified sampling)
+- 2026-05-11 #1068 chore(q29-ac): backfill cli/yang on topics pages with both empty
+- 2026-05-11 #1067 Add docs style guide reference page
+- 2026-05-11 #1066 Add link-density linter (informational)
+- 2026-05-11 #1065 Add 24 ASIC/hardware/platform glossary terms
+- 2026-05-11 #1064 Add next-reads section generator for 22 topic chapters
+- 2026-05-11 #1063 chore: site cleanup in generator scripts + quality audit round 26
+- 2026-05-11 #1062 chore: sweep remaining hld-only pages to code-verified (8 pages)
+- 2026-05-11 #1061 chore(glossary): regenerate xref after PR #1060
+- 2026-05-11 #1060 Fix monitor frontmatter for 11 discrepancy pages
+- 2026-05-11 #1059 chore(management): add 運用入口 section to 38 HLD pages
+- 2026-05-11 #1058 chore(related): backfill partial-empty related.{cli,config_db,yang} (216 pages)
+- 2026-05-11 #1057 chore: enrich chapter-index related from child pages
+- 2026-05-11 #1056 Add quality audit round 25 (random sampling)
+- 2026-05-11 #1055 chore: add gen_sitemap.py for docs/_meta/sitemap.md
+- 2026-05-11 #1054 Add discrepancy-found monitor tag audit (batch q26-z)
+- 2026-05-11 #1053 chore(audit): sweep empty related frontmatter to zero
+- 2026-05-11 #1052 Add quality-audit-24.md sampling audit round 24 (avg 4.88/5)
+- 2026-05-11 #1051 Require description frontmatter for regular pages
+- 2026-05-11 #1047 chore(scripts): add --min-occurrences threshold to glossary injector
+- 2026-05-11 #1050 chore(related): extend backfill heuristics for STATE_DB / chassis / discrepancy
+- 2026-05-11 #1048 chore(lint): require PyYAML in frontmatter_lint (eliminates 675 false positives)
+- 2026-05-11 #1049 Add broken intra-doc link lint (informational)
+- 2026-05-11 #1046 Add quality audit round 23 (random sampling, avg 4.82/5)
+- 2026-05-11 #1045 chore: boost glossary link density in Reference pages
+- 2026-05-11 #1044 chore(runbooks): add triage mermaid flowcharts to 44 runbooks
+- 2026-05-11 #1043 chore: fix monitor-consistency lint false positives (14 -> 0)
+- 2026-05-11 #1042 Add quality audit round 22 (axis 4 saturation reproducibility check)
+- 2026-05-11 #1041 Refresh glossary xref counts
+- 2026-05-11 #1040 chore: wrap discrepancy-found 実装との乖離 sections with diff admonition
+- 2026-05-11 #1039 Inject next-action template into discrepancy-found pages
+- 2026-05-11 #1037 Add awesome-pages .pages integrity lint
+- 2026-05-11 #1035 chore: add monitor-consistency lint (informational)
+- 2026-05-11 #1036 Add quality audit round 21 (random sampling, 4.94/5)
+- 2026-05-11 #1034 Split 3 more large HLDs (fec-flr / l3-scaling / error-handling) into hub + 4 children
+- 2026-05-11 #1033 Add citation-quality lint for verified pages
+- 2026-05-11 #1032 Expand backfill_related.py with aggressive mode; back-fill 130 pages
+- 2026-05-11 #1031 Add quality audit round 20 (discrepancy-found designated sampling)
+- 2026-05-11 #1030 chore: verifier batch q22 - refresh 25 discrepancy entries
+- 2026-05-11 #1029 Split large HLDs into hub + concepts/operations/internals/limitations
+- 2026-05-11 #1028 chore(queue): enqueue 10 verifier recheck candidates (audit18)
+- 2026-05-11 #1027 Add quality audit round 19 (v1.0 GA post 8th observation)
+- 2026-05-11 #1026 chore(cli): cli-mermaid 100% coverage (add 20 manual blocks)
+- 2026-05-11 #1025 Add verification self-consistency checker and demote 8 suspects
+- 2026-05-11 #1024 chore: auto-inject glossary links into docs (5502 links)
+- 2026-05-11 #1023 chore(reference): expand YANG mermaid coverage to 84/84
+- 2026-05-11 #1022 chore: add refresh_sources_sha.py for bulk frontmatter SHA refresh
+- 2026-05-11 #1021 Formalize axis-6 reinterpretation for discrepancy-found pages
+- 2026-05-11 #1020 Add quality audit round 18 (post-GA observation #7, avg 4.88/5)
+- 2026-05-11 #1019 chore: expand CDB/CLI mermaid coverage (CDB 119/122, CLI 52/73)
+- 2026-05-11 #1015 chore: add run_all_{generators,checks}.sh and docs-drift-check pre-commit hook
+- 2026-05-11 #1018 docs(yang): add ops-hint sections to 50 YANG reference pages
+- 2026-05-11 #1017 Add quality audit round 17 (4.86/5)
+- 2026-05-11 #1016 chore(lint): add runbook verification status guard
+- 2026-05-11 #1014 docs(cli-ref): add ops-hint section to 45 major CLI reference pages
+- 2026-05-11 #1013 chore(ref/config-db): 100% ops-hint coverage (final 22 pages)
+- 2026-05-11 #1012 Add runbook-verified verification state for Runbook pages
+- 2026-05-11 #1011 Add quality audit round 16 (avg 4.89 / 5)
+- 2026-05-11 #1010 chore(queue): Add recheck entries for 8 discrepancy-index pages
+- 2026-05-11 #1005 Render verifier evidence comments as collapsible details
+- 2026-05-11 #1009 chore(reference): add 31 new SONiC glossary terms
+- 2026-05-11 #1008 Add CLI data-flow mini mermaid generator + insert into 40 CLI pages
+- 2026-05-11 #1007 Add ops-hint blocks to 49 CONFIG_DB reference pages (batch 2)
+- 2026-05-11 #1006 Add quality audit round 15 (4.83/5, plateau)
+- 2026-05-11 #1004 Add usage-example sections to 37 CLI reference pages
+- 2026-05-11 #1003 chore: introduce page_kind: chapter-index for 22 章扉
+- 2026-05-11 #1002 Add quality audit round 14 sampling report
+- 2026-05-11 #1001 Add YANG mini mermaid generator (50 pages)
+- 2026-05-11 #1000 Add ops hints to 50 CONFIG_DB reference pages
+- 2026-05-11 #999 Add backfill_related.py for empty frontmatter related fields
+- 2026-05-11 #998 Add data-flow mermaid mini-diagrams to 64 CONFIG_DB reference pages
+- 2026-05-11 #997 Add quality audit round 13
+- 2026-05-11 #996 [reference] glossary に用語別逆引きインデックスを追加
+- 2026-05-11 #992 [meta] area Topics back-link fixup (excl. autogen + reference/index)
+- 2026-05-11 #993 Add 7 runbooks for common operational symptoms
+- 2026-05-11 #994 Add sources-freshness checker for pinned SONiC SHAs
+- 2026-05-11 #995 [meta] changelog 自動生成スクリプト追加 (gen_changelog.py)
+- 2026-05-11 #991 Add stale-verified checker for last_verified freshness
+- 2026-05-11 #990 Add quality audit round 12 (post-v1.0 GA random sampling)
 - 2026-05-11 #987 [reference] 横断索引強化 [lgtm]
-- 2026-05-11 #988 [reference] 頻出 [SAI](../reference/glossary.md#term-sai) 属性早見表 [lgtm]
-- 2026-05-11 #989 [quality] area [HLD](../reference/glossary.md#term-hld) ページに Topics 誘導 admonition 追加 [lgtm]
+- 2026-05-11 #988 [reference] 頻出 SAI 属性早見表 [lgtm]
+- 2026-05-11 #989 [quality] area HLD ページに Topics 誘導 admonition 追加 [lgtm]
 - 2026-05-11 #986 [reference] 用語集 (glossary) 新設 [lgtm]
 - 2026-05-11 #985 [meta] 品質改善 サンプリング監査 (round 11) [lgtm]
 - 2026-05-11 #983 [meta] area Topics back-link 強化 + CI drift check [lgtm]
 - 2026-05-11 #982 [meta] 全ページ frontmatter description 追加 [lgtm]
-- 2026-05-11 #984 [reference] [CONFIG_DB](../reference/glossary.md#term-config_db) ↔ [orchagent](../reference/glossary.md#term-orchagent) クラス対応表 [lgtm]
+- 2026-05-11 #984 [reference] CONFIG_DB ↔ orchagent クラス対応表 [lgtm]
 - 2026-05-11 #981 [quality] HLD 中規模残 8 件 再構成 [lgtm]
 - 2026-05-11 #979 [meta] 品質改善 サンプリング監査 (round 10)
 - 2026-05-11 #976 [meta] discrepancy 運用ドキュメント整備
@@ -57,7 +183,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-11 #962 [meta] 横断リンク双方向化 (Topics ↔ area)
 - 2026-05-11 #961 [quality] discrepancy ページ GitHub Issue/PR 紐づけ
 - 2026-05-11 #960 [quality] HLD 最終残 8 件 再構成
-- 2026-05-11 #959 [meta] Reference 三角リンク ([YANG](../reference/glossary.md#term-yang) ↔ CDB ↔ CLI)
+- 2026-05-11 #959 [meta] Reference 三角リンク (YANG ↔ CDB ↔ CLI)
 - 2026-05-11 #958 [meta] 品質バナー自動更新スクリプト + CI 統合
 - 2026-05-11 #957 [reference/cli] batch D (10 件)
 - 2026-05-11 #955 [quality] HLD 横断 高優先残 8 件 再構成
@@ -115,9 +241,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-11 #904 [quality] Topics setup 強化 (batch 1)
 - 2026-05-11 #903 [meta] 品質改善 サンプリング監査 (round 2)
 - 2026-05-11 #901 [reference/cli] batch A (buffer/pfc/qos/warm)
-- 2026-05-11 #902 [reference/config-db] batch A ([BGP](../reference/glossary.md#term-bgp) monitor/range, [MCLAG](../reference/glossary.md#term-mclag), [LLDP](../reference/glossary.md#term-lldp), NVGRE, [VOQ](../reference/glossary.md#term-voq) chassis 等)
+- 2026-05-11 #902 [reference/config-db] batch A (BGP monitor/range, MCLAG, LLDP, NVGRE, VOQ chassis 等)
 - 2026-05-11 #900 [verify] batch 28 (architecture/acl-qos) [lgtm]
-- 2026-05-11 #898 [reference/config-db] batch B ([QoS](../reference/glossary.md#term-qos)/BGP/DHCP 等)
+- 2026-05-11 #898 [reference/config-db] batch B (QoS/BGP/DHCP 等)
 - 2026-05-11 #897 [verify] batch 30 (sw/plat/int/rt/ov)
 - 2026-05-11 #896 [verify] batch 29 (system/management)
 - 2026-05-11 #895 [reference/cli] batch B (vnet/queue/lldp 等)
@@ -156,25 +282,25 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-11 #861 [meta] 構成評価 (他 OSS docs ベンチマーク) [lgtm]
 - 2026-05-11 #860 [meta] 構成評価 (IA 専門家視点) [lgtm]
 - 2026-05-11 #862 [meta] 構成評価 (読み手ペルソナ動線視点)
-- 2026-05-11 #859 [topics/08-qos-buffer] QoS / Buffer / [PFC](../reference/glossary.md#term-pfc) / Watermark [lgtm]
-- 2026-05-11 #858 [topics/16-nat-dhcp-dns] [NAT](../reference/glossary.md#term-nat) / [DHCP Relay](../reference/glossary.md#term-dhcp-relay) / Time-DNS Services [lgtm]
+- 2026-05-11 #859 [topics/08-qos-buffer] QoS / Buffer / PFC / Watermark [lgtm]
+- 2026-05-11 #858 [topics/16-nat-dhcp-dns] NAT / DHCP Relay / Time-DNS Services [lgtm]
 - 2026-05-11 #857 [topics/14-platform-port-optics] Platform / Port / Optics / PHY [lgtm]
 - 2026-05-11 #854 [topics/21-lab-vs-developer] Lab / Virtual SONiC / Developer Entry
-- 2026-05-11 #855 [topics/09-telemetry-snmp] Telemetry / [SNMP](../reference/glossary.md#term-snmp) / Observability [lgtm]
-- 2026-05-11 #856 [topics/20-swss-sai-redis] SWSS / SAI / [Redis](../reference/glossary.md#term-redis) 内部実装
+- 2026-05-11 #855 [topics/09-telemetry-snmp] Telemetry / SNMP / Observability [lgtm]
+- 2026-05-11 #856 [topics/20-swss-sai-redis] SWSS / SAI / Redis 内部実装
 - 2026-05-11 #852 [topics/22-reference-index] リファレンス横断索引
-- 2026-05-11 #853 [topics/17-srv6-mpls] [SRv6](../reference/glossary.md#term-srv6) / [MPLS](../reference/glossary.md#term-mpls) / Path Tracing
-- 2026-05-11 #851 [topics/18-p4-pins] P4 / [PINS](../reference/glossary.md#term-pins) / Programmable Pipeline
-- 2026-05-11 #850 [topics/15-security-aaa] Security / [AAA](../reference/glossary.md#term-aaa) / FIPS / Hardening
+- 2026-05-11 #853 [topics/17-srv6-mpls] SRv6 / MPLS / Path Tracing
+- 2026-05-11 #851 [topics/18-p4-pins] P4 / PINS / Programmable Pipeline
+- 2026-05-11 #850 [topics/15-security-aaa] Security / AAA / FIPS / Hardening
 - 2026-05-11 #849 [topics/19-build-packaging] Build / Packaging / Application Extension
 - 2026-05-11 #847 [topics/12-multi-asic-voq] Multi-ASIC / VOQ Chassis [lgtm]
-- 2026-05-11 #846 [topics/13-dash-smartswitch] [DASH](../reference/glossary.md#term-dash) / [SmartSwitch](../reference/glossary.md#term-smartswitch) [lgtm]
-- 2026-05-11 #848 [topics/10-gnmi-openconfig] [gNMI](../reference/glossary.md#term-gnmi) / [gNOI](../reference/glossary.md#term-gnoi) / OpenConfig / YANG [lgtm]
-- 2026-05-10 #845 [topics/03-vxlan-evpn] [VXLAN](../reference/glossary.md#term-vxlan) / [EVPN](../reference/glossary.md#term-evpn) / [VNET](../reference/glossary.md#term-vnet) オーバーレイ [lgtm]
-- 2026-05-10 #844 [topics/04-vrf-ecmp] [VRF](../reference/glossary.md#term-vrf) / [ECMP](../reference/glossary.md#term-ecmp) / RIB-FIB パイプライン [lgtm]
-- 2026-05-10 #843 [topics/07-acl-copp-mirror] [ACL](../reference/glossary.md#term-acl) / [CoPP](../reference/glossary.md#term-copp) / Mirror / Packet Action [lgtm]
-- 2026-05-10 #842 [topics/06-l2-vlan-lag] L2 / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) / MC-LAG [lgtm]
-- 2026-05-10 #841 [topics/02-bgp] BGP と [FRR](../reference/glossary.md#term-frr) 制御プレーン [lgtm]
+- 2026-05-11 #846 [topics/13-dash-smartswitch] DASH / SmartSwitch [lgtm]
+- 2026-05-11 #848 [topics/10-gnmi-openconfig] gNMI / gNOI / OpenConfig / YANG [lgtm]
+- 2026-05-10 #845 [topics/03-vxlan-evpn] VXLAN / EVPN / VNET オーバーレイ [lgtm]
+- 2026-05-10 #844 [topics/04-vrf-ecmp] VRF / ECMP / RIB-FIB パイプライン [lgtm]
+- 2026-05-10 #843 [topics/07-acl-copp-mirror] ACL / CoPP / Mirror / Packet Action [lgtm]
+- 2026-05-10 #842 [topics/06-l2-vlan-lag] L2 / VLAN / LAG / MC-LAG [lgtm]
+- 2026-05-10 #841 [topics/02-bgp] BGP と FRR 制御プレーン [lgtm]
 - 2026-05-10 #840 [topics/05-dual-tor] Dual-ToR と Mux 制御 [lgtm]
 - 2026-05-10 #839 [topics/01-overview] SONiC 全体像と設定基盤 [lgtm]
 - 2026-05-10 #838 [topics/11-reboot] Reboot / Upgrade / Lifecycle [lgtm]
@@ -222,12 +348,12 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #796 chore(queue): aggregate verification-queue after batch #11
 - 2026-05-10 #795 [system] Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
 - 2026-05-10 #793 [system] 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
-- 2026-05-10 #791 [system] Critical Resource Monitoring（[CRM](../reference/glossary.md#term-crm)・SAI 表枯渇のしきい値監視）
+- 2026-05-10 #791 [system] Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
 - 2026-05-10 #789 [system] PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）
 - 2026-05-10 #787 [system] SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
 - 2026-05-10 #785 [system] storagemond（SSD / eMMC の health 監視）
-- 2026-05-10 #783 [system] SONiC [Warm Reboot](../reference/glossary.md#term-warm-reboot)（要件・順序・docker 別 warm restart）
-- 2026-05-10 #781 [system] Zero Touch Provisioning（[ZTP](../reference/glossary.md#term-ztp)・DHCP option / plugin / state machine）
+- 2026-05-10 #783 [system] SONiC Warm Reboot（要件・順序・docker 別 warm restart）
+- 2026-05-10 #781 [system] Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
 - 2026-05-10 #779 [system] SONiC Container Hardening（capability / read-only / privileged 削減）
 - 2026-05-10 #777 [system] Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
 - 2026-05-10 #775 [system] SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
@@ -238,15 +364,15 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #766 [routing] SONiC における FRR upgrade の手順とパッチ管理
 - 2026-05-10 #764 [routing] Local ARS（Adaptive Routing & Switching の local 完結版）
 - 2026-05-10 #762 [platform] ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
-- 2026-05-10 #760 [platform] SmartSwitch PMON（[NPU](../reference/glossary.md#term-npu) 側 pmon と [DPU](../reference/glossary.md#term-dpu) 連携の境界）
+- 2026-05-10 #760 [platform] SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
 - 2026-05-10 #758 verify(batch-24): promote 18 hld-only pages, mark sflow as discrepancy-found [lgtm]
 - 2026-05-10 #757 [platform] SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
-- 2026-05-10 #755 [platform] ASIC / SDK Health Event ハンドリング（SAI notification → [STATE_DB](../reference/glossary.md#term-state_db) → action）
+- 2026-05-10 #755 [platform] ASIC / SDK Health Event ハンドリング（SAI notification → STATE_DB → action）
 - 2026-05-10 #753 [platform] fwutil（platform component firmware の install / update / show）
 - 2026-05-10 #751 [platform] VoQ SONiC（distributed VoQ chassis / system-port / fabric）
 - 2026-05-10 #749 [management] SONiC User Manual の位置づけと CLI / 運用フローの全体像
 - 2026-05-10 #747 [management] SONiC Management Framework（REST / gNMI / Translib / Transformer）
-- 2026-05-10 #745 [architecture] Generic Config Update / Rollback（[GCU](../reference/glossary.md#term-gcu)・JSON Patch・checkpoint）
+- 2026-05-10 #745 [architecture] Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）
 - 2026-05-10 #743 [architecture] SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
 - 2026-05-10 #741 [architecture] パスワード強化（password hardening / aging / complexity / history）
 - 2026-05-10 #739 verify(batch-23): promote 11 hld-only pages to code-verified, mark 1 as discrepancy-found [lgtm]
@@ -257,7 +383,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #731 [management] Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE [lgtm]
 - 2026-05-10 #729 [management] gRPC client（active-active DualToR / ycabled ↔ SoC 連携） [lgtm]
 - 2026-05-10 #727 [switching] MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC） [lgtm]
-- 2026-05-10 #725 [routing] SONiC の MPLS 基盤（per-[RIF](../reference/glossary.md#term-rif) MPLS / LABEL_ROUTE_TABLE / 静的 LSP） [lgtm]
+- 2026-05-10 #725 [routing] SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP） [lgtm]
 - 2026-05-10 #723 [routing] VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking） [lgtm]
 - 2026-05-10 #721 [routing] Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） [lgtm]
 - 2026-05-10 #719 [acl-qos] ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン） [lgtm]
@@ -268,7 +394,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-10 #709 [system] Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） [lgtm]
 - 2026-05-10 #707 [system] SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） [lgtm]
 - 2026-05-10 #705 [system] syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE） [lgtm]
-- 2026-05-10 #703 [system] [config-setup](../reference/glossary.md#term-config-setup) サービス（first-boot config 生成 / 版間 migration） [lgtm]
+- 2026-05-10 #703 [system] config-setup サービス（first-boot config 生成 / 版間 migration） [lgtm]
 - 2026-05-10 #701 [system] PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） [lgtm]
 - 2026-05-10 #699 [system] SensorMon（PMON 内の voltage / current センサ監視） [lgtm]
 - 2026-05-10 #697 [system] telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT） [lgtm]
@@ -296,7 +422,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #656 verify(batch-20): promote 9 hld-only pages to code-verified, mark 3 as discrepancy-found [lgtm]
 - 2026-05-09 #655 [system] kdump（kexec ベース kernel crash dump / makedumpfile）
 - 2026-05-09 #653 [system] Smart Switch: DPU 独立アップグレード（gNOI 経路）
-- 2026-05-09 #651 [system] Dataplane Telemetry（DTel / [INT](../reference/glossary.md#term-int) / Postcard / Drop / Queue Report）
+- 2026-05-09 #651 [system] Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
 - 2026-05-09 #649 [system] SONiC Disk I/O 削減（writer 分析と tmpfs 化）
 - 2026-05-09 #647 [routing] Weighted ECMP（WCMP / BGP link-bandwidth ext community）
 - 2026-05-09 #645 [routing] SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
@@ -317,7 +443,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #617 [architecture] Port Profile Init（SAI bulk port API による fast-boot 高速化）
 - 2026-05-09 #615 [architecture] JSON Change Application（apply-change / table 単位 alphabetical 適用）
 - 2026-05-09 #612 [architecture] Error Handling Framework（ERROR_DB / SAI 失敗の app 通知）
-- 2026-05-09 #613 verify(batch-17): promote 11 hld-only pages, mark [fpmsyncd](../reference/glossary.md#term-fpmsyncd) NHG as discrepancy-found
+- 2026-05-09 #613 verify(batch-17): promote 11 hld-only pages, mark fpmsyncd NHG as discrepancy-found
 - 2026-05-09 #610 [architecture] DHCPv6 Relay Agent
 - 2026-05-09 #608 [architecture] Debug Framework（コンポーネント dump 登録 / assert 拡張）
 - 2026-05-09 #606 [architecture] Alpine 仮想 SONiC（ALViS / KNE）
@@ -356,7 +482,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #547 [verify] medium 優先度 12 ページの裏取り (batch11) [lgtm]
 - 2026-05-09 #546 [routing] BGP Loading Optimization
 - 2026-05-09 #544 [routing] fpmsyncd NextHop Group 拡張
-- 2026-05-09 #542 [routing] VRF サポート（[vrfmgrd](../reference/glossary.md#term-vrfmgrd) / vrforch / FRR vrf-aware）
+- 2026-05-09 #542 [routing] VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
 - 2026-05-09 #540 [routing] Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）
 - 2026-05-09 #538 [routing] Fine Grained ECMP（FG_NHG / fgnhgorch）
 - 2026-05-09 #536 [verify] medium 優先度 12 ページの裏取り (batch10) [lgtm]
@@ -397,150 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #478 [management] TACACS+ 認証テストプラン
 - 2026-05-09 #476 [reference] config syslog サブコマンド
 - 2026-05-09 #475 [reference] config muxcable サブコマンド
-- 2026-05-09 #474 [internals] dump utility（モジュール単位 debug CLI）
-- 2026-05-09 #472 [reference] config kdump サブコマンド
-- 2026-05-09 #471 [reference] config dhcp_relay / dhcpv4_relay サブコマンド
-- 2026-05-09 #470 [reference] config mclag サブコマンド
-- 2026-05-09 #469 [acl-qos] L3V4V6 ACL テーブル型
-- 2026-05-09 #467 [reference] config nat サブコマンド
-- 2026-05-09 #466 [verify] medium 優先度 12 ページの裏取り (Verifier #5)
-- 2026-05-09 #452 [reference/config-db] KUBERNETES_MASTER テーブル
-- 2026-05-09 #463 [reference/config-db] TACPLUS_SERVER テーブル
-- 2026-05-09 #462 [reference/config-db] MUX_CABLE テーブル
-- 2026-05-09 #461 [reference/config-db] FG_NHG テーブル
-- 2026-05-09 #460 [reference/config-db] SYSTEM_DEFAULTS テーブル
-- 2026-05-09 #459 [reference/config-db] LDAP_SERVER テーブル
-- 2026-05-09 #458 [reference/config-db] AUTO_TECHSUPPORT テーブル
-- 2026-05-09 #457 [reference/config-db] TELEMETRY テーブル
-- 2026-05-09 #456 [reference/config-db] SFLOW テーブル
-- 2026-05-09 #455 [reference/config-db] BGP_AGGREGATE_ADDRESS テーブル
-- 2026-05-09 #454 [reference/config-db] BGP_PEER_GROUP テーブル
-- 2026-05-09 #453 [reference/config-db] ROUTE_MAP テーブル
-- 2026-05-09 #465 [acl-qos] QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）
-- 2026-05-09 #451 [reference/config-db] KDUMP テーブル
-- 2026-05-09 #449 [reference/config-db] PFC_WD テーブル
-- 2026-05-09 #448 [reference/config-db] CRM テーブル
-- 2026-05-09 #447 [reference/config-db] BUFFER_POOL テーブル
-- 2026-05-09 #445 [reference/config-db] WRED_PROFILE テーブル
-- 2026-05-09 #444 [reference/config-db] COPP_TRAP テーブル
-- 2026-05-09 #443 [reference/config-db] COPP_GROUP テーブル
-- 2026-05-09 #450 [acl-qos] ACL Ingress / Egress テストプラン
-- 2026-05-09 #442 [reference/config-db] MIRROR_SESSION テーブル
-- 2026-05-09 #441 [acl-qos] counterpoll 種別 vs マップ整合性テストプラン
-- 2026-05-09 #439 [acl-qos] CoPP Manager 再設計テストプラン
-- 2026-05-09 #437 [verify] Active-Standby Dual ToR（y-cable + [linkmgrd](../reference/glossary.md#term-linkmgrd) + [IPinIP](../reference/glossary.md#term-ipinip)）
-- 2026-05-09 #436 [verify] Active-Active Dual ToR（gRPC + prefix-based neighbor）
-- 2026-05-09 #433 [verify] ACL egress mirror 対応 + SAI action capability 問い合わせ
-- 2026-05-09 #435 chore(meta): worktree path guard + CONFIG_DB index skeleton [lgtm]
-- 2026-05-09 #434 [reference/yang] スケルトン更新 + 主要 YANG モジュール 28 ページ追加
-- 2026-05-09 #432 [verify] IP / LAG / MTU Incremental Update（[portmgrd](../reference/glossary.md#term-portmgrd) / [intfmgrd](../reference/glossary.md#term-intfmgrd) / teammgrd）
-- 2026-05-09 #431 chore(meta): regenerate aggregate verification-queue after batch #6 [lgtm]
-- 2026-05-09 #430 [overlay] SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観 [area/overlay, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #429 [switching] MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI） [area/switching, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #428 [switching] Multiple Spanning Tree Protocol (MSTP) on SONiC [area/switching, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #427 [internals] swss-schema（[APPL_DB](../reference/glossary.md#term-appl_db) / STATE_DB の中心スキーマ参照） [area/internals, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #426 [verify] SmartSwitch [ENI](../reference/glossary.md#term-eni) Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-- 2026-05-09 #425 [routing] Management VRF 設計（201911 release / l3mdev + cgroups） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #424 [verify] VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）
-- 2026-05-09 #423 [management] Portable Console Device 設計（USB ベンダー console デバイスの抽象化） [area/management, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #422 [verify] ポートの動的 add/del（discrepancy-found）
-- 2026-05-09 #421 [management] LDAP 認証（[hostcfgd](../reference/glossary.md#term-hostcfgd) / nslcd / NSS / PAM 連携） [area/management, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #420 [verify] Chassis Line Card 自動プロビジョニング（実装未着手確認）
-- 2026-05-09 #419 [architecture] Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御） [area/architecture, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #418 [verify] SONiC OS と Docker イメージのセマンティックバージョニング
-- 2026-05-09 #417 [routing] Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #415 [verify] SONiC の ARM (armhf / arm64) ビルドサポート
-- 2026-05-09 #416 [routing] SRv6 VPN（L3VPN over SRv6 と SRv6 Policy） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #413 [verify] L3 Scaling と Performance 強化（discrepancy-found）
-- 2026-05-09 #414 [platform] 新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層） [area/platform, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #412 [reference/config-db] DHCPV4_RELAY
-- 2026-05-09 #410 [reference/config-db] DHCP_SERVER_IPV4
-- 2026-05-09 #407 [reference/config-db] ACL_RULE
-- 2026-05-09 #411 [platform] Port FEC BER（Pre/Post FEC BER の算出と show fec-stat 拡張） [area/platform, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #409 [verify] SAI 失敗ハンドリング（discrepancy-found）
-- 2026-05-09 #406 [reference/config-db] ACL_TABLE
-- 2026-05-09 #402 [reference/config-db] FLEX_COUNTER_TABLE
-- 2026-05-09 #408 [routing] Overlay ECMP with [BFD](../reference/glossary.md#term-bfd) monitoring（VxLAN VNet ルートと BFD 連動） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #400 [reference/config-db] NTP_SERVER
-- 2026-05-09 #397 [reference/config-db] SYSLOG_SERVER
-- 2026-05-09 #405 [verify] Gearbox PHY ごとの MACsec backend 決定（macsec_supported）
-- 2026-05-09 #404 [management] SONiC Application Extension 開発・移植ガイド [area/management, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #403 [verify] IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）
-- 2026-05-09 #401 [acl-qos] 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter） [area/acl-qos, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #348 [reference/cli] show bgp / show ip bgp / show ipv6 bgp サブコマンド [lgtm]
-- 2026-05-09 #375 [reference/cli] [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) コマンド [lgtm]
-- 2026-05-09 #370 [reference/cli] sonic-package-manager コマンド [lgtm]
-- 2026-05-09 #365 [reference/cli] sonic-installer コマンド [lgtm]
-- 2026-05-09 #362 [reference/cli] show system-health サブコマンド [lgtm]
-- 2026-05-09 #358 [reference/cli] show techsupport コマンド [lgtm]
-- 2026-05-09 #355 [reference/cli] show runningconfiguration / startupconfiguration サブコマンド [lgtm]
-- 2026-05-09 #351 [reference/cli] show route-map コマンド [lgtm]
-- 2026-05-09 #399 [verify] Reboot-cause 履歴の STATE_DB / テレメトリ公開
-- 2026-05-09 #345 [reference/cli] config route サブコマンド [lgtm]
-- 2026-05-09 #342 [reference/cli] config sflow サブコマンド [lgtm]
-- 2026-05-09 #339 [reference/cli] config snmp / snmpagentaddress / snmptrap サブコマンド [lgtm]
-- 2026-05-09 #338 [reference/cli] config vrf サブコマンド [lgtm]
-- 2026-05-09 #398 [acl-qos] SONiC Port Mirroring（SPAN / ERSPAN） [area/acl-qos, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #396 [reference/config-db] FEATURE
-- 2026-05-09 #394 [reference/config-db] TC_TO_QUEUE_MAP
-- 2026-05-09 #392 [reference/config-db] DSCP_TO_TC_MAP
-- 2026-05-09 #391 [reference/config-db] SCHEDULER
-- 2026-05-09 #389 [reference/config-db] QUEUE
-- 2026-05-09 #388 [reference/config-db] BUFFER_QUEUE
-- 2026-05-09 #386 [reference/config-db] BUFFER_PG
-- 2026-05-09 #385 [reference/config-db] BUFFER_PROFILE
-- 2026-05-09 #393 [verify] Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）
-- 2026-05-09 #395 [acl-qos] PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI） [area/acl-qos, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #390 [architecture] SAG（Static Anycast Gateway）for SONiC [area/architecture, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #387 [system] SWSS docker の Warm Restart 実装メモ（開発時リファレンス） [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #384 [system] Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート） [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #382 [verify] ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）
-- 2026-05-09 #383 [reference/config-db] MGMT_INTERFACE
-- 2026-05-09 #381 [reference/config-db] MGMT_PORT
-- 2026-05-09 #379 [reference/config-db] LOOPBACK_INTERFACE
-- 2026-05-09 #377 [reference/config-db] VRF
-- 2026-05-09 #374 [reference/config-db] VXLAN_TUNNEL_MAP
-- 2026-05-09 #380 [system] show techsupport での SFP EEPROM ページダンプ取り込み [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #378 [verify] VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）
-- 2026-05-09 #376 [system] Reboot-cause 履歴の STATE_DB / テレメトリ公開 [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #364 [reference/config-db] BGP_NEIGHBOR
-- 2026-05-09 #371 [reference/config-db] VXLAN_TUNNEL
-- 2026-05-09 #369 [reference/config-db] BGP_DEVICE_GLOBAL
-- 2026-05-09 #367 [reference/config-db] BGP_GLOBALS
-- 2026-05-09 #372 [verify] VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）
-- 2026-05-09 #360 [reference/config-db] VLAN_INTERFACE
-- 2026-05-09 #373 [system] Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS） [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #368 [system] SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER） [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #366 [verify] gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル
-- 2026-05-09 #363 [system] メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル） [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #361 [verify] P4RT アプリケーション（PINS の gRPC サービス、port 9559）
-- 2026-05-09 #357 [reference/config-db] INTERFACE
-- 2026-05-09 #356 [reference/config-db] PORTCHANNEL_INTERFACE
-- 2026-05-09 #353 [reference/config-db] PORTCHANNEL_MEMBER
-- 2026-05-09 #359 [system] SNMP 設定の snmp.yml → CONFIG_DB 移行 [area/system, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #354 [routing] BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #352 [verify] L2 Forwarding 強化（[FDB](../reference/glossary.md#term-fdb) flush / aging / static MAC / VLAN range）
-- 2026-05-09 #350 [reference/config-db] PORTCHANNEL
-- 2026-05-09 #347 [reference/config-db] VLAN_MEMBER
-- 2026-05-09 #346 [reference/config-db] VLAN
-- 2026-05-09 #349 [routing] IPv6 Link-Local アドレス管理（自動生成と use-link-local-only） [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #344 [verify] ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）
-- 2026-05-09 #343 [routing] Overlay ECMP の Primary/Secondary・カスタム監視・BFD タイマ拡張 [area/routing, type/hld-port, source/hld, verification/hld-only, lgtm]
-- 2026-05-09 #341 [reference/config-db] PORT
-- 2026-05-09 #340 [verify] クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP
-
-<!-- glossary-links-injected: 89bc82a66132 -->
-
-## 参考リンク
-
-- [Reference 索引](../reference/index.md)
-- [Verification index](../reference/verification/index.md)
-- [Topics: Reference index](../topics/22-reference-index/index.md)
-
-## 関連 reference
-
-- [Discrepancy index](../reference/verification/discrepancy-index.md)
-- [Sources freshness](../reference/verification/sources-freshness.md)
-- [Topics: Overview](../topics/01-overview/index.md)
-- [Glossary](../reference/glossary.md)
 
