@@ -1118,9 +1118,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CoPP](#term-copp)
 
 - [概念](../topics/07-acl-copp-mirror/concept.md) (21)
+- [発展トピック](../topics/07-acl-copp-mirror/advanced.md) (20)
 - [サイトマップ](../_meta/sitemap.md) (17)
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (15)
-- [発展トピック](../topics/07-acl-copp-mirror/advanced.md) (13)
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show](../internals/l3-scaling-and-performance-enhancements.md) (12)
 
 ### [CRM](#term-crm)
@@ -1181,7 +1181,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ECMP Family](../topics/04-vrf-ecmp/ecmp.md) (28)
 - [Fine Grained ECMP（FG_NHG / fgnhgorch）](../routing/sonic-fine-grained-ecmp.md) (25)
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (23)
-- [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../routing/bgp-setup-for-voq-chassis.md) (16)
+- [Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）](../routing/high-level-design-document.md) (18)
 
 ### [ECN](#term-ecn)
 
@@ -1570,7 +1570,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ProducerStateTable](#term-producerstatetable)
 
 - [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
-- [発展トピック](../topics/20-swss-sai-redis/advanced.md) (6)
+- [発展トピック](../topics/20-swss-sai-redis/advanced.md) (10)
 - [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
 - [ProducerStateTable の view switching（warm reboot 用の差分適用）](../switching/view-switching-in-producerstatetable.md) (5)
@@ -1634,7 +1634,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SRv6](#term-srv6)
 
 - [概念](../topics/17-srv6-mpls/concept.md) (47)
-- [発展トピック](../topics/17-srv6-mpls/advanced.md) (32)
+- [発展トピック](../topics/17-srv6-mpls/advanced.md) (46)
 - [サイトマップ](../_meta/sitemap.md) (28)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (28)
 - [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../routing/sonic-usid.md) (19)
@@ -1728,8 +1728,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (43)
 - [DASH と SmartSwitch の考え方](../topics/13-dash-smartswitch/concept.md) (22)
 - [SmartSwitch 関連](../categories/smartswitch.md) (16)
+- [gNOI 連携と他章との境界](../topics/13-dash-smartswitch/advanced.md) (13)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (13)
-- [SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）](../system/smart-switch-reboot-high-level-design.md) (11)
 
 ### [STATE_DB](#term-state_db)
 
@@ -1765,11 +1765,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [TCAM](#term-tcam)
 
+- [発展トピック](../topics/07-acl-copp-mirror/advanced.md) (5)
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (4)
 - [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](../acl-qos/acl-in-sonic.md) (3)
 - [概念](../topics/07-acl-copp-mirror/concept.md) (3)
-- [L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）](../acl-qos/support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md) (2)
-- [VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）](../overlay/vnet-local-endpoint-forwarding.md) (2)
+- [発展トピック](../topics/16-nat-dhcp-dns/advanced.md) (3)
 
 ### [tunnelmgrd](#term-tunnelmgrd)
 
@@ -1791,9 +1791,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [内部実装](../topics/21-lab-vs-developer/internals.md) (40)
 - [概念](../topics/21-lab-vs-developer/concept.md) (26)
+- [発展トピック](../topics/21-lab-vs-developer/advanced.md) (16)
 - [運用](../topics/21-lab-vs-developer/operations.md) (16)
 - [アーキテクチャ](../topics/21-lab-vs-developer/architecture.md) (14)
-- [設定](../topics/21-lab-vs-developer/setup.md) (14)
 
 ### [VLAN](#term-vlan)
 

@@ -150,6 +150,16 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 - **s3ip-sysfs spec / framework**: kernel 側 sysfs の代替として将来的に重なる
 - **`show platform` 系 CLI**: STATE_DB ベースに切替
 
+## 参考リンク
+
+- [CLI: show platform](../reference/cli/show-platform.md)
+- [CLI: show environment](../reference/cli/show-environment.md)
+- [CLI: show system-health](../reference/cli/show-system-health.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-enhancement-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

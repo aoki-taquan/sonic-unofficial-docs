@@ -22,7 +22,7 @@ related:
     - **code-verified ページ**: 586 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 62 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 30 集計中（`meta/quality-audit-30.md`）
+    - **監査平均評価**: round 31 集計中（`meta/quality-audit-31.md`）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 

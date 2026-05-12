@@ -128,6 +128,16 @@ docker exec bgp supervisorctl status | grep rsyslog
 
 - [09-telemetry-snmp](../topics/09-telemetry-snmp/index.md): ログ / 監視
 
+## 参考リンク
+
+- [CLI: config syslog](../reference/cli/config-syslog.md)
+- [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
+- [CONFIG_DB: SYSLOG_CONFIG_FEATURE](../reference/config-db/syslog-config-feature.md)
+- [CONFIG_DB: SYSLOG_SERVER](../reference/config-db/syslog-server.md)
+- [CLI: show feature](../reference/cli/show-feature.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/syslog/syslog-rate-limit-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

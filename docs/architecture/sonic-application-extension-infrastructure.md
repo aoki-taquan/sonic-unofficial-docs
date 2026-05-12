@@ -129,6 +129,16 @@ manifest が必須宣言する項目[^1]:
 - [Topic 19 Build/Packaging - architecture](../topics/19-build-packaging/architecture.md)
 - [Topic 19 Build/Packaging - operations](../topics/19-build-packaging/operations.md)
 
+## 参考リンク
+
+- [CLI: sonic-package-manager](../reference/cli/sonic-package-manager.md)
+- [CONFIG_DB: FEATURE](../reference/config-db/feature.md)
+- [CLI: show feature](../reference/cli/show-feature.md)
+- [CLI: show techsupport](../reference/cli/show-techsupport.md)
+- [Topics: Reboot / Warm / Fast](../topics/11-reboot/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extention-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

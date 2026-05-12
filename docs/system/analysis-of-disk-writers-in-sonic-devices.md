@@ -171,6 +171,11 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 - [HLD: ssdhealth-design](../architecture/ssdhealth-design.md)
 - [CLI: show system-health](../reference/cli/show-system-health.md)
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
+- [CLI: show techsupport](../reference/cli/show-techsupport.md)
+- [CLI: show services](../reference/cli/show-services.md)
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
 
 ## 引用元
 

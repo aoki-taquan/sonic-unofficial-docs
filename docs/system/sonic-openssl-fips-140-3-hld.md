@@ -156,6 +156,11 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 - [YANG: sonic-fips](../reference/yang/sonic-fips.md)
 - [Topics: Security / AAA](../topics/15-security-aaa/index.md)
 - [Topics: Build / Packaging](../topics/19-build-packaging/index.md)
+- [CONFIG_DB: FIPS](../reference/config-db/fips.md)
+- [CLI: sonic-installer](../reference/cli/sonic-installer.md)
+- [Topics: Reboot / Warm / Fast](../topics/11-reboot/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
 
 ## 引用元
 

@@ -223,4 +223,13 @@ docker logs pmon 2>&1 | grep -i grpc
 
 <!-- /topics-back-ref -->
 
+## 参考リンク
+
+- [CLI: show muxcable](../reference/cli/show-muxcable.md)
+- [CLI: config muxcable](../reference/cli/config-muxcable.md)
+- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Topics: Security / AAA](../topics/15-security-aaa/index.md)
+- [Glossary](../reference/glossary.md)
+- [Reference 索引](../reference/index.md)
+
 <!-- glossary-links-injected: d12a6eddadee -->
