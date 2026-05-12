@@ -2881,6 +2881,10 @@
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/01-overview/advanced/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/01-overview/architecture/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
@@ -2898,6 +2902,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/01-overview/operations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/01-overview/setup/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
@@ -3409,6 +3417,10 @@
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/19-build-packaging/setup/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/20-swss-sai-redis/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
@@ -3489,7 +3501,15 @@
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/22-reference-index/operations/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/22-reference-index/quality-gaps/</loc>
+         <lastmod>2026-05-12</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/topics/22-reference-index/setup/</loc>
          <lastmod>2026-05-12</lastmod>
     </url>
     <url>
