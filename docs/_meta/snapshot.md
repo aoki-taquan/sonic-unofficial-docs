@@ -85,13 +85,13 @@ sources: []
 
 | round | 総平均スコア / 5 |
 |---:|---:|
+| 43 | 4.986 |
 | 42 | 4.986 |
 | 41 | 4.972 |
 | 40 | 4.972 |
 | 39 | 4.944 |
-| 38 | 4.986 |
 
-- 最新詳細: `meta/quality-audit-42.md`
+- 最新詳細: `meta/quality-audit-43.md`
 
 ## Lint / informational 検出件数
 
@@ -113,4 +113,14 @@ sources: []
 |---|---:|
 | 低密度ページ残数 (link-density < 2) | 68 |
 | backlog 残数 (active) | 10 |
+
+## 関連メタページ
+
+本スナップショットと併読する自動生成メタ系ページ。それぞれ独立した観点で repo 全体を俯瞰する。
+
+- [residual-tasks](../reference/verification/residual-tasks.md) — verification 残タスク / 未裏取り箇所の一覧
+- [stale-verified](../reference/verification/stale-verified.md) — `last_verified` が古いページ (再裏取り候補)
+- [sources-freshness](../reference/verification/sources-freshness.md) — 引用元 SHA の鮮度 / 参照リポジトリの追従状況
+- [changelog](changelog.md) — 主要変更履歴 (自動生成サマリ含む)
+- [discrepancy-index](../reference/verification/discrepancy-index.md) — HLD と実装の乖離を抽出したインデックス
 

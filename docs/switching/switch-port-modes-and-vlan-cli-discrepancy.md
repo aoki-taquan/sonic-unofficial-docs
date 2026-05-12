@@ -111,3 +111,22 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 - 内部実装: [switch-port-modes-and-vlan-cli-internals](switch-port-modes-and-vlan-cli-internals.md)
 - 設定 / 運用: [switch-port-modes-and-vlan-cli-operations](switch-port-modes-and-vlan-cli-operations.md)
 - discrepancy 一覧: [verification/discrepancy-index](../reference/verification/discrepancy-index.md)
+
+<!-- phase-boundary -->
+## 実装フェーズ境界
+
+!!! info "Phase 別の実装済 / 未実装 サマリ"
+    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
+    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
+    1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
+    [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
+
+    | Phase | 範囲 (機能 / 段階) | 実装済 (master 取り込み済) | 未実装 (HLD 提案のみ) |
+    |---|---|---|---|
+    | Phase 1 — 基本機能 | HLD §概要 / §設計の中核ユースケース | 取り込み済 — 本ページの「実装の概観」「実装詳細」節および `diff` admonition の現状側を参照 | — (Phase 1 は実装済) |
+    | Phase 2 — 拡張機能 | HLD §拡張 / §追加要件 / §周辺統合 | 一部のみ取り込み済 — 本ページ「実装詳細」の補足参照 | 未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および `diff` admonition の差分側に列挙 |
+    | Phase 3 — 将来拡張 | HLD §Future Work / §将来課題 | — | 未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点) |
+
+    凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
+<!-- /phase-boundary -->
+
