@@ -33,6 +33,9 @@ related:
 
 本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **設定例・運用 Tips・トラブルシューティング** を切り出した派生ページ。HLD 上の CLI 形と現行実装の差分は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を必ず参照（HLD の例そのままでは動かない）。
 
+!!! note "実装状況の境界（partially implemented）"
+    本ページのコマンド例のうち、**`config switchport mode {access,trunk} <if>` と `config vlan add 10-20` の範囲指定一括 add/del は `sonic-utilities` に取り込み済** で動作する（master で `supported`）。一方、HLD が示す **`config switchport mode routed` への明示遷移コマンドと、PORTCHANNEL に対する一部の一括操作は未実装** の状態で、対応 PR が未取り込み。具体的な差分は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+
 ## Switchport CLI（HLD 仕様）
 
 HLD で定義された CLI は次の形[^1]:

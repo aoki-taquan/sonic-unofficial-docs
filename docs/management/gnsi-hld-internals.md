@@ -26,6 +26,9 @@ related:
 
 このページは [gNSI（概要ハブ）](gnsi-hld.md) の派生で、**4 サービスの内部実装と host service** に絞る。概念は [gnsi-hld-concepts.md](gnsi-hld-concepts.md)、設定 / 運用は [gnsi-hld-operations.md](gnsi-hld-operations.md)、制限と HLD 乖離は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
+!!! note "実装状況の境界（partially implemented）"
+    以下の内部実装記述のうち、**Certz の handler は `sonic-gnmi` に実装済** で master 上で動作する。一方 **Authz / Pathz handler および Credentialz の `console_mgmt` / `ssh_mgmt` host service は未実装** で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
+
 ## 1. Certz
 
 `Certz.Rotate` は **bidirectional streaming RPC** で以下を入れ替える[^1]:

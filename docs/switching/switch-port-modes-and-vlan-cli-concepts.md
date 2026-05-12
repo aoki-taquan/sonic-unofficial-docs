@@ -30,6 +30,9 @@ related:
 
 本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) から **概念 / 用語 / モード定義** を切り出した派生ページ。実装詳細は [internals](switch-port-modes-and-vlan-cli-internals.md)、設定例は [operations](switch-port-modes-and-vlan-cli-operations.md)、HLD と実装の乖離は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
 
+!!! note "実装状況の境界（partially implemented）"
+    モード概念のうち **`access` / `trunk` の CLI（`config switchport mode access|trunk`）と複数 VLAN 一括 add/del は master に取り込み済** で動作する。一方、HLD が想定していた **`routed` モードへの明示遷移コマンドと PORTCHANNEL 一括移行は未実装** に近く、対応 PR が未取り込みの部分が残る。詳細は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
+
 ## なぜこの機能が必要か
 
 SONiC のレガシー [VLAN](../reference/glossary.md#term-vlan) CLI は `config vlan add 10` / `config vlan member add 10 Ethernet0 -u` のように **VLAN ID 単発操作** を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような **意味的なモード** は CLI に明示されておらず、運用者の認知コストが高かった[^1]。

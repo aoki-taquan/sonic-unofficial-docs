@@ -98,6 +98,9 @@ jobs:
       - name: monitor consistency suspects (informational)
         run: python3 meta/scripts/check_monitor_consistency.py --check || true
 
+      - name: partial-boundary suspects (informational)
+        run: python3 meta/scripts/check_partial_boundary.py --check || true
+
       - name: citation-deficient pages (informational)
         run: python3 meta/scripts/check_citation_quality.py --check || true
 
