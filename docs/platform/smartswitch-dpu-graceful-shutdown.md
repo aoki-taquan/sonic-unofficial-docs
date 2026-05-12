@@ -222,6 +222,30 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
     - HALT 機能本体（DPU 個別停止）の取り込み PR は明示的に紐づくものが確認できず、SmartSwitch 系の複数 PR にまたがる。
 <!-- /diff-admonition -->
 
+## 確認コマンド
+
+```bash
+# 現行 master では gnoi_reboot_daemon は未取り込み。代替経路の確認:
+find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'   # 空であることを確認
+
+# chassisd 経由の DPU shutdown 経路を log で追う
+docker logs pmon 2>&1 | grep -E 'chassisd.*(graceful|halt|admin_state)'
+
+# STATE_DB 側の遷移確認 (HLD の CHASSIS_MODULE_INFO_TABLE ではなく CHASSIS_MODULE_TABLE が実装名)
+sonic-db-cli STATE_DB keys 'CHASSIS_MODULE_TABLE|*'
+sonic-db-cli STATE_DB hgetall 'CHASSIS_MODULE_TABLE|DPU0'
+
+# 旧 HLD のキーで参照しても何も出ない (乖離確認)
+sonic-db-cli STATE_DB hgetall 'CHASSIS_MODULE_INFO_TABLE|DPU0'
+
+# DPU shutdown 中の遷移をリアルタイム監視
+redis-cli -n 6 psubscribe '__keyspace@6__:CHASSIS_MODULE_TABLE*'
+
+# CLI からの shutdown 操作
+config chassis module shutdown DPU0
+show chassis modules status
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/graceful-shutdown/graceful-shutdown.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
