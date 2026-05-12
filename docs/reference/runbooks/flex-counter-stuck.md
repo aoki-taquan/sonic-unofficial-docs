@@ -116,6 +116,17 @@ docker logs swss 2>&1 | grep -iE "flexcounter|FLEX_COUNTER" | tail -50
 - 救命的 reset: `sudo systemctl restart swss`（[syncd](../../reference/glossary.md#term-syncd) / counter thread も再生成）
 - 個別 group のみ問題なら、`config save -y` 後に group を disable → enable
 
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
+
 ## 関連ページ
 
 - [../../internals/sonic-flexcounter-refactor.md](../../internals/sonic-flexcounter-refactor.md)

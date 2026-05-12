@@ -97,6 +97,17 @@ sudo dmesg | grep -i nf_conntrack | tail -50
 - [CRM](../../reference/glossary.md#term-crm) 枯渇: pool 拡張 / static NAT の整理
 - conntrack 不整合: `sudo conntrack -F` は全フロー消失する破壊的操作。実施前に **トラフィック断を許容できるメンテ枠**で実行
 
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
+
 ## 関連ページ
 
 - [./crm-threshold-exceeded.md](./crm-threshold-exceeded.md)

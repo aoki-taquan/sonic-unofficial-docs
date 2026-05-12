@@ -109,6 +109,17 @@ free -h
 - イメージ修復: `sudo sonic-installer install <SONiC.bin>` で再導入、または該当 docker image を再 load
 - 起動順序問題は `database` → `swss` → `syncd` → 他、の dependency を確認
 
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
+
 ## 関連ページ
 
 - [../../topics/20-swss-sai-redis/operations.md](../../topics/20-swss-sai-redis/operations.md)

@@ -94,6 +94,17 @@ sudo dmesg | grep -iE "phy|link" | tail -50
 - breakout: `config interface breakout Ethernet0 "4x25G"` （多大なポート再構成あり、メンテ枠必須）
 - transceiver 異常: 別 SFP に差し替え、ベンダ互換性表を確認
 
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「想定原因」リストの次候補に進む。
+
 ## 関連ページ
 
 - [./fec-errors.md](./fec-errors.md)
