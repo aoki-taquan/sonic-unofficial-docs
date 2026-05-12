@@ -139,6 +139,36 @@ HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_
 - RADIUS で role が変わったのに反映されない → 2 回目ログインで反映される workaround を踏んでいる可能性。`/etc/passwd` の local account を確認
 - `sudo` で RADIUS 認証されない → `/etc/pam.d/sudo` の RADIUS module を確認
 
+### コマンド例: AAA 設定確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# AAA 設定と認証経路の確認
+show aaa
+redis-cli -n 4 hgetall 'AAA|authentication'
+redis-cli -n 4 keys 'TACPLUS_SERVER|*'
+# PAM 経路
+sudo cat /etc/pam.d/common-auth-sonic
+```
+
+### コマンド例: AAA 設定確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# AAA 設定と認証経路の確認
+show aaa
+redis-cli -n 4 hgetall 'AAA|authentication'
+redis-cli -n 4 keys 'TACPLUS_SERVER|*'
+# PAM 経路
+sudo cat /etc/pam.d/common-auth-sonic
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/aaa/AAA Improvements/AAA Improvements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

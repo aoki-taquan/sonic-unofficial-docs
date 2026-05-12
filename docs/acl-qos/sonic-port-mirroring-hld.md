@@ -136,13 +136,16 @@ show mirror_session
 - ERSPAN 受信側で抜ける → src_ip / dst_ip / gre_type の組み合わせを受信側 collector と合わせる。
 - 一部メンバのみ反映される → Port-Channel メンバの oper-up を `show interfaces status` で確認。
 
-確認コマンド例:
+### コマンド例: Port mirroring 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# Mirror / Everflow セッション状態
+# Mirror session の状態と CONFIG_DB / STATE_DB を確認
 show mirror_session
-redis-cli -n 4 hgetall 'MIRROR_SESSION|<name>'
-redis-cli -n 0 keys 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION:*'
+redis-cli -n 4 keys 'MIRROR_SESSION|*'
+redis-cli -n 6 hgetall 'MIRROR_SESSION_TABLE|everflow0'
 ```
 
 

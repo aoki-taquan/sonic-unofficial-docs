@@ -197,13 +197,18 @@ config clock date 2024-01-01 12:00:00
 - timezone が再起動で戻ってしまう場合、`DEVICE_METADATA|localhost.timezone` が永続化されているか確認
 - ログのタイムスタンプがおかしい場合、`rsyslog` 再起動が走ったかを `journalctl -u rsyslog` で確認
 
-確認コマンド例:
+### コマンド例: Clock management の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# clock 状態 (chrony / NTP) 確認
+# システム時刻 / NTP / PTP の状態を確認
 show ntp
-chronyc tracking
 timedatectl status
+redis-cli -n 4 hgetall 'NTP_SERVER|<ip>'
+# chrony / ntpd ログ
+sudo journalctl -u chronyd -n 50
 ```
 
 

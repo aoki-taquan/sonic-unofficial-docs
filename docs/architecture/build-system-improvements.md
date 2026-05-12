@@ -225,13 +225,17 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 - BuildKit が効かない: docker version 18.09 以上か確認、`DOCKER_BUILDKIT=1` 環境変数。
 - 並列ビルドで失敗: dh compat 10 以上または `dh --parallel` 設定、各 debian/rules で並列実行に対応しているか確認。
 
-確認コマンド例:
+### コマンド例: Build system 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# build profile / image artifact 確認
-make configure PLATFORM=<vendor>
-cat target/sonic-<vendor>.bin.log | tail
-dpkg -l | grep sonic-
+# sonic-buildimage のビルドキャッシュとオプション確認
+make configure PLATFORM=generic
+make -j SONIC_CONFIG_PRINT_DEPENDENCIES=y target/sonic-vs.img.gz | head
+# slave docker のキャッシュ状況
+docker images | grep sonic
 ```
 
 

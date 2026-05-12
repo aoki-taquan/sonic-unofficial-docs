@@ -125,14 +125,19 @@ config nat add static basic 10.0.0.1 100.64.1.1
 - ASIC が full → CRM `nat_entry` / `napt_entry` で残量を確認、aging timeout 短縮を検討
 - counters が 0 → NatOrch の SAI 設定エラー、[syncd](../reference/glossary.md#term-syncd) ログ確認
 
-確認コマンド例:
+### コマンド例: NAT 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# NAT セッションとカウンタ確認
+# NAT 設定とアクティブ変換エントリを確認
+show nat config
 show nat translations
 show nat statistics
-redis-cli -n 4 hgetall 'NAT_GLOBAL|Values'
-iptables -t nat -nvL | head
+# CONFIG_DB / APP_DB の NAT 関連キー
+redis-cli -n 4 keys 'NAT_*'
+redis-cli -n 0 keys 'NAT_TABLE:*'
 ```
 
 

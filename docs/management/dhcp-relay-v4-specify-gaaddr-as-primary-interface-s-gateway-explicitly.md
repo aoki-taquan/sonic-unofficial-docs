@@ -186,6 +186,32 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 - `config interface ip add ... --secondary` が拒否される: primary の IP が同 VLAN にまだ無い可能性。CLI 側で「primary が無いと secondary を入れられない」一貫性チェックがあると HLD は記述している[^1]。
 - 大量の secondary を入れたが反映されない: `docker-dhcp-relay` のサプライザード設定再生成（`systemctl restart dhcp_relay` 等）が必要なケースがある。
 
+### コマンド例: DHCPv4 relay giaddr 指定確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# DHCPv4 relay の giaddr 指定と counter
+show dhcp_relay ipv4 helper
+redis-cli -n 4 hgetall 'DHCP_RELAY|Vlan1000'
+docker logs dhcp_relay 2>&1 | tail -30
+```
+
+### コマンド例: DHCPv4 relay giaddr 指定確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# DHCPv4 relay の giaddr 指定と counter
+show dhcp_relay ipv4 helper
+redis-cli -n 4 hgetall 'DHCP_RELAY|Vlan1000'
+docker logs dhcp_relay 2>&1 | tail -30
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv4_Gateway/DHCPv4_gateway.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

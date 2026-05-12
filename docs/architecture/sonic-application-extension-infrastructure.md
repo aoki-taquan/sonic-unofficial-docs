@@ -122,14 +122,32 @@ manifest が必須宣言する項目[^1]:
 - 起動しない → `systemctl status <feature>` と docker ログ / `config feature` 状態
 - CLI が出ない → plugin entry-point の取り込み、`sonic-utilities` 再起動 / shell 再ログイン
 
-確認コマンド例:
+### コマンド例: Application extension 状態確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
-# Application Extension パッケージ状態
-sonic-package-manager list
-sonic-package-manager show <pkg-name>
-docker ps -a --format '{{.Names}}	{{.Status}}'
+# インストール済み拡張 Docker package 一覧
+sudo sonic-package-manager list
+sudo sonic-package-manager show <name> manifest
+# 拡張サービスの稼働状況
+systemctl list-units '*.service' | grep -i package
 ```
+
+### コマンド例: Application extension 状態確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# インストール済み拡張 Docker package 一覧
+sudo sonic-package-manager list
+sudo sonic-package-manager show <name> manifest
+# 拡張サービスの稼働状況
+systemctl list-units '*.service' | grep -i package
+```
+
 
 
 ## 関連 Topics

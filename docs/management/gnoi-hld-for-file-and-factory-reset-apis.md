@@ -171,6 +171,32 @@ gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_ce
 - `FactoryReset` が `INVALID_ARGUMENT` → 未対応フラグ（`zero_fill` 等）を指定していないか
 - DBUS 応答なし → SONiC Host Service の稼働と container↔host の DBUS proxy 設定確認
 
+### コマンド例: gNOI File / FactoryReset 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# gNOI File.Get / FactoryReset を gnoic で叩く
+gnoic -a 127.0.0.1:8080 --skip-verify file stat --file /etc/sonic/config_db.json
+gnoic -a 127.0.0.1:8080 --skip-verify factory-reset start --factory-os --zero-fill
+docker logs gnmi 2>&1 | tail -30
+```
+
+### コマンド例: gNOI File / FactoryReset 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# gNOI File.Get / FactoryReset を gnoic で叩く
+gnoic -a 127.0.0.1:8080 --skip-verify file stat --file /etc/sonic/config_db.json
+gnoic -a 127.0.0.1:8080 --skip-verify factory-reset start --factory-os --zero-fill
+docker logs gnmi 2>&1 | tail -30
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_file_factory_reset_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -189,14 +189,32 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 - `ifType=136` の VLAN エントリが見えない場合、`sonic-snmpagent` のバージョンが本 HLD 反映前の可能性がある。
 - テストは `test_snmp_interfaces.py` でカバーされている旨が HLD に記載されており、回帰確認の起点として有用[^1]。
 
-確認コマンド例:
+### コマンド例: Illegal packet drop 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
-# パケットドロップカウンタ確認
-show interfaces counters detailed Ethernet0
+# Drop counter で illegal-packet 系を抽出
 show dropcounters counts
-redis-cli -n 2 keys 'COUNTERS:Ethernet*' | head
+redis-cli -n 4 keys 'DEBUG_COUNTER|*'
+# orchagent の drop reason 反映ログ
+sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 ```
+
+### コマンド例: Illegal packet drop 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Drop counter で illegal-packet 系を抽出
+show dropcounters counts
+redis-cli -n 4 keys 'DEBUG_COUNTER|*'
+# orchagent の drop reason 反映ログ
+sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
+```
+
 
 
 ## 裏取り済み実装位置 (2026-05-11)

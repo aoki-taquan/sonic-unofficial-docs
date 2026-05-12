@@ -163,15 +163,18 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 - shared pool が増えない → admin-down ポートの BUFFER_PG / BUFFER_QUEUE に zero_profile が当たっているか [APPL_DB](../reference/glossary.md#term-appl_db) で確認
 - lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認
 
-確認コマンド例:
+### コマンド例: Reserved buffer reclaim 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# QoS / buffer / counter 系の一次確認
-show priority-group persistent-watermark headroom
-show queue counters
-show pfc counters
-counterpoll show
-redis-cli -n 4 keys 'BUFFER_*|*' | head
+# 各ポートの shutdown 状態と buffer profile 適用状況
+show interfaces status
+show buffer_pool
+redis-cli -n 4 keys 'BUFFER_PG|Ethernet*' | head
+# buffermgrd ログ
+sudo grep -i 'buffermgrd' /var/log/syslog | tail -30
 ```
 
 

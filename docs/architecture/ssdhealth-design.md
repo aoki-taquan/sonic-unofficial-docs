@@ -278,6 +278,32 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
     - [GitHub Issue / PR の関連リンクは未確認] — `ssdutil` プラットフォームプラグインと `show platform ssdhealth` CLI は各ベンダーの platform PR に分散して取り込まれており、HLD 個別のトラッキング Issue は確認できず。
 <!-- /diff-admonition -->
 
+### コマンド例: SSD health 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# SSD 健全性情報と Wear level
+sudo show platform ssdhealth
+sudo smartctl -a /dev/sda | head -40
+redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
+```
+
+### コマンド例: SSD health 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# SSD 健全性情報と Wear level
+sudo show platform ssdhealth
+sudo smartctl -a /dev/sda | head -40
+redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
+```
+
+
+
 ## 参考リンク
 
 - [CLI: show platform](../reference/cli/show-platform.md)

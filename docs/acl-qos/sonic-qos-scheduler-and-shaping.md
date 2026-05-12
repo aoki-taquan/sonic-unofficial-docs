@@ -169,15 +169,18 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 - SAI 失敗: syslog ERROR
 - shaping 効果確認: `show queue counters` を時間差で 2 回取得して bps 計算
 
-確認コマンド例:
+### コマンド例: QoS scheduler / shaping 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# QoS / buffer / counter 系の一次確認
-show priority-group persistent-watermark headroom
+# Scheduler / queue 設定とシェーピング適用状況
 show queue counters
-show pfc counters
-counterpoll show
-redis-cli -n 4 keys 'BUFFER_*|*' | head
+redis-cli -n 4 keys 'SCHEDULER|*'
+redis-cli -n 4 hgetall 'SCHEDULER|scheduler.0'
+# Port queue 別の TX rate
+show interfaces counters rates
 ```
 
 

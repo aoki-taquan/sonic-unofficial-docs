@@ -154,6 +154,32 @@ show pbh table / rule / hash / hash-field
 - PBH 効かない → ACL rule が hit しているか aclshow で確認、`SET_ECMP_HASH`/`SET_LAG_HASH` 設定確認
 - 双方向で別パスに行く → `sequence_id` の対称性確認（src/dst が同じ id か）
 
+### コマンド例: Policy based hashing 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Policy hash table とルールの確認
+show hash
+redis-cli -n 4 keys 'HASH|*'
+redis-cli -n 4 hgetall 'HASH|policy1'
+```
+
+### コマンド例: Policy based hashing 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Policy hash table とルールの確認
+show hash
+redis-cli -n 4 keys 'HASH|*'
+redis-cli -n 4 hgetall 'HASH|policy1'
+```
+
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - `PbhOrch` クラス: `sonic-swss/orchagent/pbhorch.h` L13-L19 (`class PbhOrch final : public Orch`)

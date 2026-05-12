@@ -111,14 +111,18 @@ show dhcp_relay ipv4
 - option-82 が想定と違う → `dhcrelay` 起動引数の circuit-id / remote-id 設定とプラットフォーム実装差を確認
 - dual-ToR で IP がフラップ → ToR モード（active-active / active-standby）と peer 側 relay の状態確認
 
-確認コマンド例:
+### コマンド例: DHCPv4 relay の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# DHCP relay 状態とリレー先設定
-show dhcp_relay ipv4
-show dhcp_relay ipv6
-docker exec dhcp_relay ps aux | grep dhcrelay
-redis-cli -n 4 hgetall 'DHCP_RELAY|Vlan1000'
+# DHCP relay 設定と統計の確認
+show dhcp_relay ipv4 helper
+show dhcp_relay ipv4 counters
+redis-cli -n 4 keys 'DHCP_RELAY|*'
+# dhcrelay / dhcp-relay container のログ
+docker logs dhcp_relay 2>&1 | tail -50
 ```
 
 

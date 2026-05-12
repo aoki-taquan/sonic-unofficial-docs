@@ -129,13 +129,17 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 - [LLDP](../reference/glossary.md#term-lldp) が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
 - zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
 
-確認コマンド例:
+### コマンド例: ポート動的追加/削除確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# 動的 port 追加/削除の状態確認
-show interfaces status
-redis-cli -n 4 keys 'PORT|*'
-docker logs swss 2>&1 | grep -i 'port_create\|port_remove' | tail
+# CONFIG_DB の PORT エントリ追加・削除と orchagent 反映状況
+redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
+show interfaces status | head
+# 動的変更時の orchagent ログ
+sudo grep -E 'portsorch|PortConfigDone|PortInitDone' /var/log/syslog | tail -50
 ```
 
 

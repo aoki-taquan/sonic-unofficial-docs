@@ -282,6 +282,32 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
     - [sonic-gnmi #86: sonic-gnmi: Master Arbitration (closed)](https://github.com/sonic-net/sonic-gnmi/pull/86) — Master Arbitration 機能の sonic-gnmi 側追加 PR の痕跡。本 HLD と直接対応するが closed であり、現在の master 取り込み状況は要再確認。
 <!-- /diff-admonition -->
 
+### コマンド例: gNMI master arbitration 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# gNMI master election 状態と現在の master ID
+gnmi_cli -a 127.0.0.1:8080 -client_types=gnmi -insecure -encoding=4 -alsologtostderr -capabilities | head
+redis-cli -n 6 hgetall 'GNMI_MASTER|<role>'
+docker logs gnmi 2>&1 | tail -30
+```
+
+### コマンド例: gNMI master arbitration 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# gNMI master election 状態と現在の master ID
+gnmi_cli -a 127.0.0.1:8080 -client_types=gnmi -insecure -encoding=4 -alsologtostderr -capabilities | head
+redis-cli -n 6 hgetall 'GNMI_MASTER|<role>'
+docker logs gnmi 2>&1 | tail -30
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/master_arbitration.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

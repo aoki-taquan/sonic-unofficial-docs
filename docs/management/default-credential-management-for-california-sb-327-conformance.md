@@ -168,6 +168,30 @@ CHANGE_DEFAULT_PASSWORD=true make target/sonic.bin
 - 強制 logout 後ループ → password hardening 側の policy（最低長 / 複雑度）にひっかかっているか syslog を確認
 - upgrade 後に再強制されない → 1st boot marker (e.g. `/host/.first_boot` 相当) の有無、`/etc/rc.local` の処理ロジックを確認
 
+### コマンド例: デフォルト認証情報強制変更確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# 初期 admin パスワード変更を強制するフラグ
+redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
+sudo chage -l admin
+```
+
+### コマンド例: デフォルト認証情報強制変更確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# 初期 admin パスワード変更を強制するフラグ
+redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
+sudo chage -l admin
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/California-SB237/California-SB237.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

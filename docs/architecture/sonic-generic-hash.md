@@ -121,6 +121,32 @@ show switch-hash capabilities
 - 分散が変わらない → SwitchOrch ログで SAI set 成功か、新フローのみ反映する ASIC か確認
 - v6 flow label を使いたい → v0.4 以降の HLD 対応か、`IPV6_FLOW_LABEL` が capability にあるか確認
 
+### コマンド例: Generic hash 設定確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# ECMP / LAG の hash 構成と algorithm
+show switch-hash global
+redis-cli -n 4 hgetall 'SWITCH_HASH|GLOBAL'
+redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' HASH_FIELDS
+```
+
+### コマンド例: Generic hash 設定確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# ECMP / LAG の hash 構成と algorithm
+show switch-hash global
+redis-cli -n 4 hgetall 'SWITCH_HASH|GLOBAL'
+redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' HASH_FIELDS
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/hash/hash-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

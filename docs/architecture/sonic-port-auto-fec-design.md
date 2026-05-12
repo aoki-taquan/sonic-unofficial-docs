@@ -149,6 +149,34 @@ PORT|<if>:
 - `auto` にしても変わらない → `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` 対応 SAI か portsorch ログで確認
 - show 表示と実態が違う → `OPER_PORT_FEC_MODE` 未対応の可能性
 
+### コマンド例: Auto FEC ネゴ確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Port FEC 自動ネゴ結果と FEC mode を確認
+show interfaces fec status
+redis-cli -n 6 hget 'PORT_TABLE|Ethernet0' fec
+# transceiver 側の FEC capability
+show interfaces transceiver eeprom Ethernet0 | grep -i fec
+```
+
+### コマンド例: Auto FEC ネゴ確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Port FEC 自動ネゴ結果と FEC mode を確認
+show interfaces fec status
+redis-cli -n 6 hget 'PORT_TABLE|Ethernet0' fec
+# transceiver 側の FEC capability
+show interfaces transceiver eeprom Ethernet0 | grep -i fec
+```
+
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - Capability query: `sonic-swss/orchagent/portsorch.cpp` L991 (`SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE`)

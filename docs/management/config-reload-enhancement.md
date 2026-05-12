@@ -225,6 +225,32 @@ sudo config reload -y
 - warm reboot がいつまでも完了しない: 全 delayed サービスの起動を待つ拡張により、待ちが長くなっている可能性[^1]。`hostcfgd` のログで未起動サービスを特定する。
 - [syncd](../reference/glossary.md#term-syncd) の SDK タイムアウトログ（30 秒超）が出る: 本 HLD はこのログ自体を `config reload` の同時起動による CPU 競合のせいと指摘している[^1]。本機構が有効なら起動順分散により解消が期待される。解消していないならクリティカルサービス自体（swss/syncd/bgp）の競合が残っている可能性。
 
+### コマンド例: config reload 動作確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# config reload の実行ログとサービス再起動状況
+sudo config reload -y -f
+sudo journalctl -u config-setup -n 100 --no-pager
+show services
+```
+
+### コマンド例: config reload 動作確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# config reload の実行ログとサービス再起動状況
+sudo config reload -y -f
+sudo journalctl -u config-setup -n 100 --no-pager
+show services
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/config_reload/config_reload_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

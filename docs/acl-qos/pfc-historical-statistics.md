@@ -154,15 +154,17 @@ show pfc counters --history
 - 値が増え続けてクリア効かない → `sonic-clear pfc` は CLI 内 diff 方式。CLI 再起動でキャッシュが消えるとリセット効果も消える点に注意
 - transitions 数が多すぎる → RX-only モードでは短い pause が遷移として水増しされる場合あり
 
-確認コマンド例:
+### コマンド例: PFC 統計履歴の確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# QoS / buffer / counter 系の一次確認
-show priority-group persistent-watermark headroom
-show queue counters
+# PFC stats と historical counter（pfc_wd 含む）の確認
 show pfc counters
-counterpoll show
-redis-cli -n 4 keys 'BUFFER_*|*' | head
+show pfcwd stats
+# COUNTERS_DB から RX/TX PFC キュー別カウンタを直接取得
+redis-cli -n 2 keys 'COUNTERS:oid:*' | head
 ```
 
 

@@ -162,6 +162,32 @@ HLD が示すテスト計画[^1]:
 - pmon が起動失敗: `sonic-config-engine` が docker 内に配置されていない。`portconfig.py` を import できないため[^1]。
 - ベンダ固有 daemon で `port_config.ini` が見つからない: vendor 側 のリファクタが追従していない可能性[^1]。
 
+### コマンド例: Port config refactor 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# PORT エントリ反映と orchagent ログ
+show interfaces status
+redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
+sudo grep -E 'portsorch' /var/log/syslog | tail -50
+```
+
+### コマンド例: Port config refactor 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# PORT エントリ反映と orchagent ログ
+show interfaces status
+redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
+sudo grep -E 'portsorch' /var/log/syslog | tail -50
+```
+
+
+
 ## 参考リンク
 
 - [YANG: sonic-port](../reference/yang/sonic-port.md)

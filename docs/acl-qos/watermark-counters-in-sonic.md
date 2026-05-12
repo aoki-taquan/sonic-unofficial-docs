@@ -193,15 +193,16 @@ Ethernet0           0  1092     0   380     0     0     0     0
 - PG OID と物理 port の対応不明: `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` を redis から
 - `clear` で他人の観測値が消えた: 仕様。sudo を要求しているのもこのため
 
-確認コマンド例:
+### コマンド例: Watermark counter 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# QoS / buffer / counter 系の一次確認
+# Watermark の polling 有効化と現在値
+counterpoll watermark show
+show queue persistent-watermark
 show priority-group persistent-watermark headroom
-show queue counters
-show pfc counters
-counterpoll show
-redis-cli -n 4 keys 'BUFFER_*|*' | head
 ```
 
 

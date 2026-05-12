@@ -145,15 +145,17 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 - drop count が 0 のまま: `counterpoll show` で enable 状態か確認
 - 値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮
 
-確認コマンド例:
+### コマンド例: Port buffer drop counter 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
-# QoS / buffer / counter 系の一次確認
-show priority-group persistent-watermark headroom
+# buffer-drop counter の polling と現在値
+counterpoll port-buffer-drop show
 show queue counters
-show pfc counters
-counterpoll show
-redis-cli -n 4 keys 'BUFFER_*|*' | head
+# COUNTERS_DB の BUFFER_DROP 系キー
+redis-cli -n 2 keys '*BUFFER_DROP*' | head
 ```
 
 
