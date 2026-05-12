@@ -110,6 +110,32 @@ redis-cli -n 2 hgetall 'RATES:oid:0x1000000000123'
 - **[SAI](../reference/glossary.md#term-sai) counter 依存**: ASIC が `SAI_PORT_STAT_IF_IN_FEC_*` を返さないと FLR(O) / FLR(P) ともに値が出ない。プラットフォーム SAI の対応状況により利用可否が変わる。
 - **`FLR(O) > 0` は既に欠落発生済み**: Observed は事後指標。早期検知は Predicted の経時変化を主軸にする。
 
+## 確認コマンド
+
+運用フロー (`5. 運用フロー`) で示した手順を master 上で実走するための具体的な
+コマンド列。HLD で提案された動的設定 CLI が未実装である点も併せて再確認できる。
+
+```bash
+# 1. portstat で FLR(O) / FLR(P) / Accuracy を観測（運用での主要 view）
+show interfaces counters | head -3
+show interfaces counters -f Ethernet0 | grep -iE 'FLR|FEC'
+
+# 2. COUNTER_DB:RATES に FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED が
+#    書かれていることを直接確認
+for oid in $(redis-cli -n 2 hvals 'COUNTERS_PORT_NAME_MAP' | head); do
+  echo "--- $oid ---"
+  redis-cli -n 2 hgetall "RATES:$oid" | grep -A1 -iE 'FEC_FLR'
+done
+
+# 3. lua 内のハードコード値（POLL_INTERVAL/BIN_FILTER/MFC）と
+#    sonic-utilities 側に flr-interval-factor サブコマンドが無いことを確認
+docker exec swss grep -nE 'FEC_FLR_POLL_INTERVAL|BIN_FILTER_VALUE|MFC' /usr/share/swss/port_flr.lua
+counterpoll --help 2>&1 | grep -iE 'flr|fec' || echo 'flr-interval-factor: 未取り込み'
+```
+
+これらを実行すると、HLD で記述された `counterpoll port flr-interval-factor`
+が実機の counterpoll CLI に存在しないことが具体的に確認できる。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

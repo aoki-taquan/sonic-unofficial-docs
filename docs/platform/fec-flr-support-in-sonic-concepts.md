@@ -117,6 +117,28 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 - **低 BER 領域の `Accuracy` 低下**: errored codeword サンプル数が少ない健全リンクでは R² (Accuracy 列) が下がり、`FLR(P)` の絶対値の信頼性が落ちる。健全時の値はベースラインとしてのみ扱う。
 - **`FLR(P)` ≪ `FLR(O)` の領域は外挿が破綻**: Observed が立った時点で外挿モデルの仮定 (低 BER) を超えており、Predicted を運用判断に使うべきではない。
 
+## 確認コマンド
+
+概念ページの値が master 上の実数値と整合しているかを確認するための最小コマンド
+セット。`FLR(O)` / `FLR(P)` / interleaving factor `X` のいずれが NA か / 0 か /
+高い値かを切り分けるのに使う。
+
+```bash
+# 1. portstat で FLR(O) / FLR(P) / Accuracy 列を観測（-f で raw / 通常で human）
+show interfaces counters -f | awk 'NR<=2 || /FLR/'
+show interfaces counters | head -3
+
+# 2. SAI レベル: S0..S16 (symbol error bin) が COUNTER_DB に流れているか
+redis-cli -n 2 hkeys 'COUNTERS:oid:0x10000000000XX' | grep -E 'FEC_CODEWORD_ERRORS_S' | head
+
+# 3. lua 計算ロジックの実体（interleaving factor X / BIN_FILTER_VALUE）
+docker exec swss head -50 /usr/share/swss/port_flr.lua
+```
+
+`N/A` が出る場合は ASIC SDK が `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Sn` を
+サポートしていない可能性が高い。S0..S16 のうち 1 つでも非ゼロが出ていれば
+概念ページの計算式が回っている。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

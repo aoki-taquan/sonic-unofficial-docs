@@ -319,16 +319,33 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
     - HLD 本体の FLR 算出ロジック (`port_flr.lua`) の取り込み PR は明示的に紐づく単独 PR が確認できず、断片的な flexcounter / port counter 改修に混在している。
 <!-- /diff-admonition -->
 
-### コマンド例
+## 確認コマンド
 
-FEC / fast link up の状態を確認する。
+下記コマンドで FLR コアロジック・portstat 表示・COUNTER_DB の RATES エントリ・
+ハードコードされた poll 周期を順に master 実機で確認できる。HLD と実装の差分
+（`counterpoll port flr-interval-factor` 未実装 / lua 内ハードコード固定）が
+ここで直接観測できる。
 
 ```bash
-# FEC / Link up
+# 0. FEC / Link up の基本状態
 show interfaces status
 show interfaces fec status
 redis-cli -n 4 hgetall 'PORT|Ethernet0'
 docker exec swss show fast-link-status 2>&1 | tail
+
+# 1. port_flr.lua の実体とハードコード値の確認
+docker exec swss cat /usr/share/swss/port_flr.lua | grep -nE 'FEC_FLR_POLL_INTERVAL|BIN_FILTER_VALUE|MIN_SIGNIFICANT_BINS|MFC'
+
+# 2. portstat に FLR 列が出ているか
+show interfaces counters | head -3
+show interfaces counters -f | head -3
+
+# 3. COUNTER_DB の RATES に FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED があるか
+redis-cli -n 2 keys 'COUNTERS_PORT_NAME_MAP' | head
+redis-cli -n 2 hgetall 'RATES:oid:0x10000000000XX' | grep -iE 'FEC_FLR'
+
+# 4. counterpoll に flr-interval-factor サブコマンドが無いことを確認 (期待: 未実装)
+counterpoll --help 2>&1 | grep -iE 'flr|fec' || echo 'flr-interval-factor: 未実装 (HLD と乖離)'
 ```
 
 ## 引用元
