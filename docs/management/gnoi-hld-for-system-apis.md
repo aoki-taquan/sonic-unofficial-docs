@@ -220,6 +220,17 @@ gnoi_client system cancel_reboot --message "delayed by SRE"
 - `Reboot` 受理後に `RebootStatus.active=false`: 既に reboot 完了したか、BE が DB 書き込みを処理しなかった
 - `CancelReboot` が効かない: subcomponents 指定が unmatched、または既に reboot が走り始めている
 
+確認コマンド例:
+
+```bash
+# gNOI/gNSI/gNMI クライアント疎通と server 状態
+gnmi_cli -a 127.0.0.1:8080 -capabilities -insecure
+docker exec gnmi ps aux | grep -E 'telemetry|gnmi'
+docker logs gnmi 2>&1 | tail
+redis-cli -n 4 hgetall 'GNMI|certs'
+```
+
+
 ## 参考リンク
 
 - [Topics: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)

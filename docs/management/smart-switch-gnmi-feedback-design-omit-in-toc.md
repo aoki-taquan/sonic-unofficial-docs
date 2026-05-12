@@ -215,6 +215,17 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 - `version_id` が更新されない: 非子オブジェクトかどうかを確認。子は `result` のみで `version_id` は親側に出る。
 - Subscribe が初回データを返さない: gNMI Server の subscribe 登録時のスナップショット取得処理を確認。
 
+確認コマンド例:
+
+```bash
+# gNOI/gNSI/gNMI クライアント疎通と server 状態
+gnmi_cli -a 127.0.0.1:8080 -capabilities -insecure
+docker exec gnmi ps aux | grep -E 'telemetry|gnmi'
+docker logs gnmi 2>&1 | tail
+redis-cli -n 4 hgetall 'GNMI|certs'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/gnmi-feedback/smart-switch-gnmi-feedback-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

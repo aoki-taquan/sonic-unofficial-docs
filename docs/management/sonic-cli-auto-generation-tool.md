@@ -162,6 +162,16 @@ sonic-cli-gen remove   config sonic-acl
 - `sonic-cli-gen generate config <module>` を実行し、生成 plugin の import エラーは `python3 -c "import config.plugins.auto.<module>_yang"` で確認
 - `docker exec sonic-package-manager sonic-package-manager list` — Application Extension の有効化状況
 
+確認コマンド例:
+
+```bash
+# 自動生成 CLI の出力確認
+sonic-cli
+show running-configuration | head
+ls /usr/local/lib/python*/dist-packages/show/plugins
+```
+
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/cli_auto_generation/cli_auto_generation.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cli_auto_generation/cli_auto_generation.md)

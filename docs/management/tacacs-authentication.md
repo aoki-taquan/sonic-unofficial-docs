@@ -187,6 +187,17 @@ show tacacs
 - フェイルオーバしない → PAM の `auth_err=die` の有無、`failthrough enable` の整合確認
 - root が TACACS+ に流れる → `pam_succeed_if user=root` 前置きの有無を確認
 
+確認コマンド例:
+
+```bash
+# TACACS+ 認証状態確認
+show tacacs
+show aaa
+redis-cli -n 4 hgetall 'TACPLUS|global'
+journalctl -u hostcfgd | grep -i tacacs | tail
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/aaa/TACACS+ Authentication.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -92,6 +92,17 @@ gnsi_client credentialz rotate-account \
 - `Pathz` の評価が遅い: gNMI request 冒頭で policy processor が呼ばれる仕様。policy 規模に対するレイテンシを観測
 
 <!-- phase-boundary -->
+
+確認コマンド例:
+
+```bash
+# gNOI/gNSI/gNMI クライアント疎通と server 状態
+gnmi_cli -a 127.0.0.1:8080 -capabilities -insecure
+docker exec gnmi ps aux | grep -E 'telemetry|gnmi'
+docker logs gnmi 2>&1 | tail
+redis-cli -n 4 hgetall 'GNMI|certs'
+```
+
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"

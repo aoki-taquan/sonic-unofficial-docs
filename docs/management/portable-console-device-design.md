@@ -191,6 +191,16 @@ sudo config console-switch model simulator
     - [GitHub Issue / PR の関連リンクは未確認] — USB ベンダー console デバイスの抽象化は実機 platform plugin の追加に伴って段階的に取り込まれており、HLD 個別の上流 Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+確認コマンド例:
+
+```bash
+# Console / serial 設定確認
+show line
+redis-cli -n 4 hgetall 'CONSOLE_PORT|1'
+ls -l /dev/ttyUSB* /dev/ttyS*
+```
+
+
 ## 参考リンク
 
 - [CONFIG_DB: CONSOLE_PORT](../reference/config-db/console-port.md)

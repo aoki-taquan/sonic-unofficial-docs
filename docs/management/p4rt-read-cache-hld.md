@@ -176,6 +176,16 @@ PI 形式キャッシュのメモリ占有[^1]:
 - Read が依然遅い: cache 自体が無効化されている、または初回起動時で cache 未充填の可能性。
 - メモリ増加が想定外: エントリ種別ごとの 1 件サイズ（前掲表）を参考に、実際のフロー数と突き合わせる。
 
+確認コマンド例:
+
+```bash
+# P4RT controller 接続/cache 状態
+docker ps | grep p4rt
+docker logs p4rt 2>&1 | tail
+redis-cli -n 4 hgetall 'P4RT_TABLE|*'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/p4rt_app_read_cache_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

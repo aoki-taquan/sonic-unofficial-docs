@@ -219,6 +219,17 @@ gnoi_client os verify
 - `Verify` が `UNAVAILABLE` を返し続ける: reboot 完了待ち。gRPC リトライを継続する
 - 起動失敗で旧 image にロールバック: `sonic-installer list` / GRUB の `last_boot` を確認
 
+確認コマンド例:
+
+```bash
+# gNOI/gNSI/gNMI クライアント疎通と server 状態
+gnmi_cli -a 127.0.0.1:8080 -capabilities -insecure
+docker exec gnmi ps aux | grep -E 'telemetry|gnmi'
+docker logs gnmi 2>&1 | tail
+redis-cli -n 4 hgetall 'GNMI|certs'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnoi_os_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

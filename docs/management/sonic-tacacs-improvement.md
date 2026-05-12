@@ -161,6 +161,17 @@ Bad responses: 1
 - syslog で authz/accounting イベントを確認
 - 240 byte 超の長いコマンドは TACACS+ 側で truncate されるため、長尺ワンライナーをスクリプト化する運用が必要
 
+確認コマンド例:
+
+```bash
+# TACACS+ 認証状態確認
+show tacacs
+show aaa
+redis-cli -n 4 hgetall 'TACPLUS|global'
+journalctl -u hostcfgd | grep -i tacacs | tail
+```
+
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/aaa/TACACS+ Design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Design.md)

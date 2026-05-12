@@ -209,6 +209,16 @@ sudo systemctl restart telemetry
 - フラグは渡っているのに保存されない場合、`sonic-host-services` の DBUS エンドポイント (`SaveStartupConfig` 相当) のログを確認する。v0.3 以降はエラーが返ってくれば gNMI クライアントへ伝播する設計になっているはずなので、Set のレスポンスを見ること。
 - 性能劣化が見られる場合、`save_on_set` を一時的に無効化（telemetry 再起動が必要）して切り分ける。
 
+確認コマンド例:
+
+```bash
+# CLI / 設定パイプライン状態確認
+show runningconfiguration all | head
+config save -y
+diff /etc/sonic/config_db.json <(show runningconfiguration all)
+```
+
+
 ## 制限事項
 
 - **Set ごとのディスク書き込み**: 1 Set ごとに ConfigDB を `/etc/sonic/config_db.json` に保存するため、大量の Set を高頻度で投入すると I/O コストが上がる。バルクで設定する運用ではこの機能を無効化したほうが望ましい場合がある。

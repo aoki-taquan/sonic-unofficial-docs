@@ -148,6 +148,17 @@ flowchart LR
 - パスワードログイン検証: `sshpass -p '<pw>' ssh <user>@DUT whoami`
 - TACACS+ サーバ側で `tac_plus -G` の foreground 起動 + tcpdump で UDP/TCP 49 を観測
 
+確認コマンド例:
+
+```bash
+# TACACS+ 認証状態確認
+show tacacs
+show aaa
+redis-cli -n 4 hgetall 'TACPLUS|global'
+journalctl -u hostcfgd | grep -i tacacs | tail
+```
+
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/aaa/TACACS+ Test Plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Test%20Plan.md)

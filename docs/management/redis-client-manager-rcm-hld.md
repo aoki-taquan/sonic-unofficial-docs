@@ -162,6 +162,16 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 - pool 枯渇でレスポンス遅延 → `DBStats` の go-redis pool stats（timeouts / waits）を確認
 - connection refused がログ → init での ping 失敗、Redis 起動順を確認
 
+確認コマンド例:
+
+```bash
+# Redis Client Manager 状態
+redis-cli ping
+redis-cli client list | head
+redis-cli info clients
+```
+
+
 ## 関連 reference
 
 - [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)

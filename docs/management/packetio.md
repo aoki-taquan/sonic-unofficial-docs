@@ -179,6 +179,16 @@ graph LR
 - メタデータ ifindex が 0 → kernel driver の metadata 抽出未実装の可能性
 - 通常 netdev と重複受信 → trap → hostif マッピング適用確認
 
+確認コマンド例:
+
+```bash
+# Host-CPU packet I/O / send-to-ingress 確認
+ip -s -s link show eth0
+redis-cli -n 4 hgetall 'HOST_INTERFACE|<name>'
+docker logs swss 2>&1 | grep -i 'hostif' | tail
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/Packet_io.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

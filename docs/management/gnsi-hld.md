@@ -300,6 +300,17 @@ gnsi_client credentialz rotate-account \
     - gNSI Authz / Pathz / Credentialz の包括的トラッキング Issue は確認できず、各サブシステムは個別 PR で順次取り込まれている。
 <!-- /diff-admonition -->
 
+確認コマンド例:
+
+```bash
+# gNOI/gNSI/gNMI クライアント疎通と server 状態
+gnmi_cli -a 127.0.0.1:8080 -capabilities -insecure
+docker exec gnmi ps aux | grep -E 'telemetry|gnmi'
+docker logs gnmi 2>&1 | tail
+redis-cli -n 4 hgetall 'GNMI|certs'
+```
+
+
 ## 参考リンク
 
 - [Reference 索引](../reference/index.md)

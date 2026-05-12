@@ -180,6 +180,16 @@ config dhcp_server ipv4 enable Vlan1000
 - kea 直: `/tmp/kea-lease.csv` と `journalctl -u dhcp_server`
 - relay 側: `dhcrelay -d` で foreground 起動して Option 82 内容を観察
 
+確認コマンド例:
+
+```bash
+# DHCP server 状態とリース確認
+show dhcp_server ipv4
+docker exec dhcp_server ps aux | grep kea
+redis-cli -n 4 hgetall 'DHCP_SERVER_IPV4|Vlan1000'
+```
+
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/dhcp_server/port_based_dhcp_server_high_level_design.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dhcp_server/port_based_dhcp_server_high_level_design.md)

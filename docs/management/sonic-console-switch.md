@@ -159,6 +159,16 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 - reverse SSH で繋がらない → SONiC sshd の port forwarding 設定、`/dev/ttyXXX` の存在 / 権限を確認
 
 <!-- phase-boundary -->
+
+確認コマンド例:
+
+```bash
+# Console / serial 設定確認
+show line
+redis-cli -n 4 hgetall 'CONSOLE_PORT|1'
+ls -l /dev/ttyUSB* /dev/ttyS*
+```
+
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"
