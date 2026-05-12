@@ -210,6 +210,15 @@ int main(void) {
 - [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
 - [Runbook: SAI failure](../reference/runbooks/sai-failure.md)
 
+## 制限事項
+
+- **ビルド時限定の検査**: `configure.ac` の `AC_TRY_RUN` で行うため、検査が走るのは `sonic-sairedis` のビルド時のみ。バイナリ配布後の runtime で libsai を入れ替えた場合は検出できない。
+- **`sai_query_api_version` 必須**: vendor libsai がこの API を実装していないとビルドが `AC_MSG_ERROR` で停止する。古い vendor SDK は対応していないため、SDK 更新が前提条件。
+- **HLD 案より緩い実装**: HLD 提案は MAJOR.MINOR equality 比較だが、実装は `minversion = SAI_VERSION(1,9,0)` の **floor** 比較のみ (`return (version < minversion) || (SAI_API_VERSION < minversion);`)。HLD と実装の乖離があり、本ページは `discrepancy-found` 系の扱い。
+- **PATCH バージョン無視**: PATCH 差は意図的に無視される。OCP SAI の enum / struct 互換性保証 (PR 1297 / 1795 参照) に依存。
+- **runtime バグの取り逃し**: vendor libsai が `SAI_API_VERSION` を実態と異なる値で返すバグは検知できない。属性 ID / enum 値の異常は依然発生し得る。
+- **vendor 越境の責任分界**: `sonic-sairedis` 更新時には対応する vendor libsai を同 PR で更新する責任が CI workflow にハードコードされており、片側だけ更新すると CI が落ちる。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/saiversioncheck.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

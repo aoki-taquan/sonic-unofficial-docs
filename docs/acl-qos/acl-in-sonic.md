@@ -172,6 +172,14 @@ CLI 一覧:
 - [ACL Flex Counters Support](./acl-flex-counters-support.md)
 - [SONiC Port Mirroring HLD](./sonic-port-mirroring-hld.md)
 
+## 制限事項
+
+- **ASIC TCAM 容量に直結**: ACL_TABLE / ACL_RULE は SAI 経由で TCAM を消費する。`CRM` (Critical Resource Monitor) で `acl_table` / `acl_entry` / `acl_counter` のしきい値超過時、新規 rule 追加は失敗する。
+- **type ごとの match / action 制約**: `L3` / `L3V6` / `MIRROR` / `MIRRORV6` / `PFCWD` / `DROP` / `MUX` で利用できる match field と action は異なる。ベンダー SAI 実装によっては HLD で許される組み合わせの一部が未対応。
+- **bind 対象の単位**: `ports` で port または LAG を指定する。VLAN / subinterface 単位の bind は type とプラットフォーム依存で、HLD は port / LAG を主とする。
+- **Flex Counter 連動**: counter 取得には `FLEX_COUNTER_TABLE` で `ACL` を `enable` にする必要がある。無効時は `aclshow` / `show acl rule` のカウンタが 0 のままになる。
+- **ACL_TABLE の再 bind タイミング**: LAG 解体 / 再構成や Mux active/standby 切替時の rebind 中は短時間 ASIC 上のルールが消える可能性があり、実時間保証はない。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/acl/ACL-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

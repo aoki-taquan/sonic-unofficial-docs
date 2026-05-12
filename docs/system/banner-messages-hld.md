@@ -212,6 +212,15 @@ show banner
 - マルチライン: `\n` をシェル経由で渡す際にクォートを正しくしないと改行が消える。`config banner login "line1\nline2"` のようにダブルクォート + `\n` で渡す。
 - `show banner` でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。
 
+## 制限事項
+
+- **`state=disabled` のとき CONFIG_DB の値は無視**: `BANNER_MESSAGE` テーブルに login/motd/logout が書かれていても、`state` が `disabled` だと反映されない。
+- **永続化は別オペレーション**: バナー設定は CONFIG_DB に書かれているだけでは再起動後に消える可能性がある。`config save` を別途実行しないと永続化されない。
+- **`/etc/issue` / `/etc/issue.net` の race**: 他の systemd ユニット (cloud-init, debian-maintenance) がこれらファイルを再生成する場合、`banner-config` と書き込みが競合する。基本は `banner-config` 後勝ち。
+- **既存セッションには反映されない**: SSH の `/etc/issue.net` 更新は次回接続から有効。すでに接続中のセッションには適用されない。
+- **マルチラインのクォート扱い**: `\n` をシェル経由で渡す場合のクォートに注意が必要 (`"line1\nline2"`)。HLD では escape 規約の厳密な仕様は未定義。
+- **整形 / 幅調整なし**: `show banner` は生の文字列をそのまま出力する。ターミナル幅やロゴアスキーアートの整形は行わない。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/banner/banner_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
