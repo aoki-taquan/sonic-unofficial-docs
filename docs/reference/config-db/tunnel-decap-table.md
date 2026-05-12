@@ -1,22 +1,24 @@
 ---
 title: TUNNEL_DECAP_TABLE (APPL_DB)
-description: "TUNNEL_DECAP_TABLE — tunneldecaporch が消費する アプリケーション層テーブル。CONFIG_DB の TUNNEL を tunnelmgrd が APPL_DB に投影する形で生成され、SAI tunnel/tunnel-term オブジェクトに反映される。"
+description: TUNNEL_DECAP_TABLE — tunneldecaporch が消費する アプリケーション層テーブル。CONFIG_DB の TUNNEL を tunnelmgrd が APPL_DB に投影する形で生成され、SAI tunnel/tunnel-term オブジェクトに反映される。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-swss-common
-    path: common/schema.h
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
-  - repo: sonic-net/sonic-swss
-    path: orchagent/tunneldecaporch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss
+  path: orchagent/tunneldecaporch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
-    - TUNNEL
-    - TUNNEL_DECAP_TABLE
+  - TUNNEL
+  - TUNNEL_DECAP_TABLE
   cli: []
-  yang: []
+  yang:
+  - sonic-tunnel
+  - sonic-vxlan
 ---
 
 # TUNNEL_DECAP_TABLE

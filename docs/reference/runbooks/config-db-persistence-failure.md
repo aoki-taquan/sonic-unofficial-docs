@@ -1,20 +1,23 @@
 ---
 title: CONFIG_DB の永続化が失敗する
-description: "Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 4305596 — configdb.cpp"
+description: 'Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 4305596 — configdb.cpp'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-utilities
-    path: config/main.py
-    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
-  - repo: sonic-net/sonic-swss-common
-    path: common/configdb.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-utilities
+  path: config/main.py
+  ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+- repo: sonic-net/sonic-swss-common
+  path: common/configdb.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db: []
-  cli: [config save, sonic-cfggen]
-  yang: []
+  cli:
+  - config save
+  - sonic-cfggen
+  yang:
+  - sonic-system-defaults
 ---
 
 # Runbook: CONFIG_DB の永続化が失敗する (config save 失敗)

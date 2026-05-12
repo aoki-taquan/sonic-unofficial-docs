@@ -1,17 +1,25 @@
 ---
 title: sonic-nat YANG
-description: "sonic-nat YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-nat.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: 'sonic-nat YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-nat.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-nat.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-nat.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [STATIC_NAPT, STATIC_NAT, NAT_GLOBAL, NAT_POOL, NAT_BINDINGS]
-  cli: ["config nat"]
-  yang: []
+  config_db:
+  - STATIC_NAPT
+  - STATIC_NAT
+  - NAT_GLOBAL
+  - NAT_POOL
+  - NAT_BINDINGS
+  cli:
+  - config nat
+  yang:
+  - sonic-vrf
+  - sonic-interface
 ---
 
 # sonic-nat YANG
@@ -53,6 +61,18 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 関連 CLI
+
+- [`config nat`](../cli/config-nat.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 

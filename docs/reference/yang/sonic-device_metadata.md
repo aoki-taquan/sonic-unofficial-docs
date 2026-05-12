@@ -1,17 +1,20 @@
 ---
 title: sonic-device_metadata YANG
-description: "sonic-device_metadata YANG — DEVICE_METADATA YANG Module for SONiC OS"
+description: sonic-device_metadata YANG — DEVICE_METADATA YANG Module for SONiC OS
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-device_metadata.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-device_metadata.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [DEVICE_METADATA]
+  config_db:
+  - DEVICE_METADATA
   cli: []
-  yang: []
+  yang:
+  - sonic-device_neighbor
+  - sonic-device_neighbor_metadata
 ---
 
 # sonic-device_metadata YANG
@@ -41,6 +44,18 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`DEVICE_METADATA`](../config-db/device-metadata.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 

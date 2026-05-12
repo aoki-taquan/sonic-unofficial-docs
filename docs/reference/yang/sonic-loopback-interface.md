@@ -1,17 +1,22 @@
 ---
 title: sonic-loopback-interface YANG
-description: "sonic-loopback-interface YANG — Loopback interface configuration for virtual interfaces used as router IDs and service IPs"
+description: sonic-loopback-interface YANG — Loopback interface configuration for virtual interfaces used as router IDs and service IPs
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-loopback-interface.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-loopback-interface.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [LOOPBACK_INTERFACE]
-  cli: ["config loopback"]
-  yang: []
+  config_db:
+  - LOOPBACK_INTERFACE
+  cli:
+  - config loopback
+  yang:
+  - sonic-interface
+  - sonic-vlan-sub-interface
+  - sonic-port
 ---
 
 # sonic-loopback-interface YANG
@@ -41,6 +46,18 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 

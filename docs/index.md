@@ -22,7 +22,7 @@ related:
     - **code-verified ページ**: 586 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 66 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 32 集計中（`meta/quality-audit-32.md`）
+    - **監査平均評価**: round 34 集計中（`meta/quality-audit-34.md`）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 
@@ -97,6 +97,43 @@ SONiC（Software for Open Networking in the Cloud）は、Linux（Debian）ベ�
 - 公式 HLD の翻訳ではなく、**再構成**された解説
 - HLD・実コード・issue を横断して引用し、各ページの末尾に出典を明示
 - 各ページに裏取りステータス（HLD-only / Issue-confirmed / Code-verified / Discrepancy-found）を付与
+
+## 最新の追加
+
+直近で merge された主な変更（[変更履歴](_meta/changelog.md) から最新 10 件）:
+
+- 2026-05-11 #987 [reference] 横断索引強化
+- 2026-05-11 #988 [reference] 頻出 SAI 属性早見表
+- 2026-05-11 #989 [quality] area HLD ページに Topics 誘導 admonition 追加
+- 2026-05-11 #986 [reference] 用語集 (glossary) 新設
+- 2026-05-11 #985 [meta] 品質改善 サンプリング監査 (round 11)
+- 2026-05-11 #984 [reference] CONFIG_DB ↔ orchagent クラス対応表
+- 2026-05-11 #983 [meta] area Topics back-link 強化 + CI drift check
+- 2026-05-11 #982 [meta] 全ページ frontmatter description 追加
+- 2026-05-11 #981 [quality] HLD 中規模残 8 件 再構成
+- 2026-05-11 #979 [meta] 品質改善 サンプリング監査 (round 10)
+
+完全な履歴は [変更履歴](_meta/changelog.md) を参照してください。
+
+## 品質指標
+
+サイト全体の現時点での主な品質指標です。
+
+- **code-verified ページ**: 586 件（実コードと照合済み）
+- **監査平均評価**: round 32 で **4.972 / 5.0**（過去 32 ラウンドの最高値）
+- **Topics 章カバレッジ**: 22 章 すべて 100%（概念 / 設定 / 運用 / 内部実装 / 障害切り分け 全部揃い）
+- **Reference Mermaid 図カバレッジ**: CONFIG_DB / CLI / YANG いずれも 100%（各 Reference ページにスキーマ・フロー図を必ず添付）
+- **本文 hld-only ページ**: 0 件（v1.0 GA 達成時点）
+
+詳細は [カバレッジ](_meta/coverage.md) / [実装との乖離](_meta/discrepancies.md) / [変更履歴](_meta/changelog.md) を参照してください。
+
+## 貢献方法
+
+誤情報の報告・改善提案・Pull Request いずれも歓迎します。
+
+- 軽い報告は [GitHub Issues](https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose) / [Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions) へ
+- Pull Request を送る場合は [CONTRIBUTING.md](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CONTRIBUTING.md) の運用ルール（branch 命名、frontmatter 規約、Mermaid のみ、一次情報引用必須）に従ってください
+- プロジェクトの目的・スコープ・ライセンス・運用方針の全体像は [このドキュメントについて](about.md) にまとまっています
 
 ## 検索のヒント
 

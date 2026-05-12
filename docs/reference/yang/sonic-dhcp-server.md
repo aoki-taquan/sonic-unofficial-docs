@@ -1,17 +1,21 @@
 ---
 title: sonic-dhcp-server YANG
-description: "sonic-dhcp-server YANG — DHCP SERVER YANG module for SONiC OS"
+description: sonic-dhcp-server YANG — DHCP SERVER YANG module for SONiC OS
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-dhcp-server.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-dhcp-server.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [DHCP_SERVER]
+  config_db:
+  - DHCP_SERVER
   cli: []
-  yang: []
+  yang:
+  - sonic-dhcp-server-ipv4
+  - sonic-dhcpv4-relay
+  - sonic-dhcpv6-relay
 ---
 
 # sonic-dhcp-server YANG

@@ -1,17 +1,22 @@
 ---
 title: sonic-tc-queue-map YANG
-description: "sonic-tc-queue-map YANG — TC_TO_QUEUE_MAP yang Module for SONiC OS"
+description: sonic-tc-queue-map YANG — TC_TO_QUEUE_MAP yang Module for SONiC OS
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-tc-queue-map.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [TC_TO_QUEUE_MAP]
+  config_db:
+  - TC_TO_QUEUE_MAP
   cli: []
-  yang: []
+  yang:
+  - sonic-dscp-tc-map
+  - sonic-tc-dscp-map
+  - sonic-port-qos-map
+  - sonic-pfc-priority-queue-map
 ---
 
 # sonic-tc-queue-map YANG
@@ -41,6 +46,18 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`TC_TO_QUEUE_MAP`](../config-db/tc-to-queue-map.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 

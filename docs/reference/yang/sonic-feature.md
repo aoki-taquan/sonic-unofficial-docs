@@ -1,17 +1,21 @@
 ---
 title: sonic-feature YANG
-description: "sonic-feature YANG — SONiC service/feature enable, disable, and auto-restart control YANG module."
+description: sonic-feature YANG — SONiC service/feature enable, disable, and auto-restart control YANG module.
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-feature.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-feature.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [FEATURE]
-  cli: ["config feature"]
-  yang: []
+  config_db:
+  - FEATURE
+  cli:
+  - config feature
+  yang:
+  - sonic-versions
+  - sonic-system-defaults
 ---
 
 # sonic-feature YANG
@@ -41,6 +45,25 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`FEATURE`](../config-db/feature.md)
+
+### 関連 HLD
+
+- [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
+- [System Health Monitor（critical service / Monit / peripheral）](../../system/sonic-system-health-monitor-high-level-design.md)
+- [設定 / 運用](../../topics/19-build-packaging/operations.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 

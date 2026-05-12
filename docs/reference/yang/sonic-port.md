@@ -1,17 +1,24 @@
 ---
 title: sonic-port YANG
-description: "sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: 'sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-port.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-port.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [PORT]
-  cli: ["config interface", "show interfaces"]
-  yang: []
+  config_db:
+  - PORT
+  cli:
+  - config interface
+  - show interfaces
+  yang:
+  - sonic-portchannel
+  - sonic-interface
+  - sonic-vlan
+  - sonic-breakout_cfg
 ---
 
 # sonic-port YANG
@@ -41,6 +48,31 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`PORT`](../config-db/port.md)
+
+### 関連 CLI
+
+- [`config interface`](../cli/config-interface.md)
+- [`show interfaces`](../cli/show-interfaces.md)
+
+### 関連 HLD
+
+- [運用](../../topics/14-platform-port-optics/operations.md)
+
+### 関連 Topics
+
+- [Platform / Port / Optics / PHY](../../topics/14-platform-port-optics/index.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 

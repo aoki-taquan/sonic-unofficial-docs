@@ -1,19 +1,21 @@
 ---
 title: sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）
-description: "sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作） — 既存 platform API sfp.read_eeprom / sfp.write_eeprom は 「全体 offset」 しか取らず、ユーザは規格毎に page/of…"
+description: sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作） — 既存 platform API sfp.read_eeprom / sfp.write_eeprom は 「全体 offset」 しか取らず、ユーザは規格毎に page/of…
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sfputil/read_write_eeprom_by_page.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sfputil/read_write_eeprom_by_page.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - sfputil read-eeprom
-    - sfputil write-eeprom
-  yang: []
+  - sfputil read-eeprom
+  - sfputil write-eeprom
+  yang:
+  - sonic-port
+  - sonic-xcvrd-log
 ---
 
 <!-- topics-tip -->

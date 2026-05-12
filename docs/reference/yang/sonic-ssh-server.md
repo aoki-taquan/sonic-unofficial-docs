@@ -1,17 +1,22 @@
 ---
 title: sonic-ssh-server YANG
-description: "sonic-ssh-server YANG — SSH server daemon configuration YANG module for SONiC OS."
+description: sonic-ssh-server YANG — SSH server daemon configuration YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-ssh-server.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-ssh-server.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [SSH_SERVER]
-  cli: ["config ssh"]
-  yang: []
+  config_db:
+  - SSH_SERVER
+  cli:
+  - config ssh
+  yang:
+  - sonic-system-aaa
+  - sonic-passwh
+  - sonic-banner
 ---
 
 # sonic-ssh-server YANG
@@ -41,6 +46,18 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 関連 CLI
+
+- [`config ssh`](../cli/config-ssh.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 
