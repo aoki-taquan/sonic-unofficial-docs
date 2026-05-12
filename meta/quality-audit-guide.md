@@ -127,6 +127,39 @@ N/A を含む場合の例:
 
 新規 round の audit ファイルは `meta/templates/quality-audit-page.md` を雛形として使用する。サブ軸 5a-c / 6a-c の評価表セクションが定義済み。
 
+### 4.6 snapshot 集計ページの評価仕様（round 46 で確定、formal）
+
+`docs/_meta/snapshot.md` をはじめとする `meta/scripts/gen_snapshot.py` 系の **自動生成集計ページ** は通常ページの評価軸をそのまま当てると構造的に低評価へ張り付くため、本節を formal ルールとして固定する。round 46 以降の audit ですべての snapshot 集計ページ抽出に本節を適用する。
+
+**対象ページ**:
+
+- `docs/_meta/snapshot.md`（メイン集計、`gen_snapshot.py` 生成）
+- 同 generator から派生する `coverage.md` / `discrepancies.md` / `sitemap.md` 等の auto-generated 集計ページ（frontmatter `verification: meta` かつ生成元が `meta/scripts/gen_snapshot.py` を含むもの）
+
+**評価方針**:
+
+1. **ページ種別**: `verification: meta` の **auto-generated 集計ページ** として扱う。`page_kind: chapter-index` とは別カテゴリで、`page_kind` 未指定でも本節の評価対象とする
+2. **内容鮮度のみ評価**（6 軸のうち 5/6 サブセット使用 = 軸 2/3/6 は N/A、軸 1/4/5 のみ評価）の **簡易評価モード**:
+    - **軸 1 (構成)**: generator 出力構造の妥当性（H2 セクション分割が `verification 分布` / `area 別件数` / `discrepancy 偏在` 等の集計単位ごとに区切られているか）
+    - **軸 2 (裏取り)**: **N/A**（auto-generated のため引用元は generator スクリプト自体、本文では sources 不要）
+    - **軸 3 (引用)**: **N/A**（同上、引用機構は generator 内に閉じる）
+    - **軸 4 (関連性)**: xref 完備度（`related.*` / `_no_related` 明示、または本文内で `coverage.md` / `sitemap.md` 等の派生集計ページへのリンクが揃っているか）
+    - **軸 5 (可読性)**: 表組み・mermaid figure の評価（サブ軸 5a/5b/5c 適用可）
+    - **軸 6 (完結性)**: **N/A**（運用ページではないため設定例・制限・トラブルシュートを書きようがない）
+3. **内容鮮度の追加スコア（軸 1 内で適用）**:
+    - `last_verified` が **当日（audit 実施日と同じ）** なら 軸 1 = 5.00（満点）
+    - それ以外は **30 日経過ごとに -0.1 減点**（小数第 2 位で四捨五入、`(audit_date - last_verified).days // 30 * 0.1` を 5.00 から減算、下限 1.00）
+    - 計算例: `last_verified: 2026-04-12` で audit 実施日 `2026-05-12` の場合、30 日経過で軸 1 = 4.90
+4. **各 metric の妥当性は本 lint で検証する前提**: snapshot 内に記載される verification 分布件数 / area 別件数等の数値そのものの正確性は audit の評価対象外。`python3 meta/scripts/gen_snapshot.py --check` が pass している（CI green）ことを前提とし、audit では数値の正確性ではなく **構造・xref・鮮度** のみ評価する
+5. **集計表記**: 評価表には軸 2/3/6 = N/A と明記し、軸 1 の鮮度減点があれば備考に書く。例:
+
+```
+[snapshot]  軸 1: 5.00 / 軸 2: N/A / 軸 3: N/A / 軸 4: 5.00 / 軸 5: 5.00 (5a=5, 5b=N/A, 5c=5) / 軸 6: N/A  平均: 5.00
+[snapshot (last_verified 30 日経過)]  軸 1: 4.90 / 軸 2-3: N/A / 軸 4: 5.00 / 軸 5: 5.00 / 軸 6: N/A  平均: 4.97 ※ 鮮度 -0.1
+```
+
+**理由**: snapshot 集計ページは内容の正確性が generator 出力に依存するため、audit でテキスト評価しても発見できる問題は本 lint で先に検出可能。audit ではむしろ **「鮮度（最新の状態を反映しているか）」「読み手が他の集計ページへ辿れるか（xref）」「構造（generator が壊れた出力をしていないか）」** の 3 点に絞ることで、評価の再現性と効率性を両立する。
+
 ### 4.5 snapshot 参照運用（round 46 以降の formal）
 
 audit round の前後で `docs/_meta/snapshot.md` を必ず参照すること。リポジトリ全体の verification 分布・area 別件数・discrepancy 件数を 1 ページに集約した自動生成サマリで、サンプリング設計と母集団傾向の把握に不可欠。
