@@ -38,6 +38,8 @@
 
 `page_kind: split-hub` は分割後に概要ハブとして残した元 HLD ページに付与する。本文の大半は維持しつつ冒頭で派生ページへの導線（concepts / operations / internals / limitations）を提示する責務を負う。`split-child` ページ群と同じ HLD ソースを共有するため `verification` / `sources` は一致する。監査では「ハブとして派生群を網羅的にリンクしているか」「概要として読み終えられるか」を主に見る。
 
+`hub` (optional, `split-child` 専用) は、hub ページが標準命名規約 (`<base>.md`) に従わない場合のオーバーライド。例: `switch-port-modes-and-vlan-cli-{concepts,internals,operations}.md` の hub は `switch-port-modes-and-vlan-cli-enhancement.md` のため、各 split-child の frontmatter に `hub: switch-port-modes-and-vlan-cli-enhancement` を記載する。`check_link_density.py` の 2 層 split-child リンクルール (hub への戻りリンク + 全 sibling split-child へのリンク) で参照される。
+
 `related.*` は **空配列でも合格**。HLD で言及されていない実装由来の項目を推測で書いてはならない。確実なもののみ列挙し、不明なら空配列にして本文側に「該当する CLI / CONFIG_DB は HLD では未定義」等を注記する。
 
 ## related の opt-out マーカー
