@@ -219,6 +219,16 @@ CLI 操作後は `Restarting DHCP relay service...` と表示され、コンテ�
 - リレー先追加で短時間断: `Restarting DHCP relay service...` が出る挙動どおり。コンテナ再起動分のダウンタイムが発生[^1]。
 - `show vlan brief` の `DHCP Helper Address` に v6 が出ない: CLI または `show` 側が当該機能未対応の可能性。実装確認は裏取り課題。
 
+### コマンド例
+
+DHCPv6 relay の設定と統計を確認する。
+
+```bash
+docker exec dhcp_relay ps -ef | grep dhcrelay
+show ipv6 dhcp-relay
+show ipv6 dhcp-relay counters
+```
+
 ## 関連 reference
 
 - [CLI: config dhcp-relay](../reference/cli/config-dhcp-relay.md)

@@ -215,6 +215,16 @@ linkmgrd --default_route
 - 復旧後に Active-Standby で `active` に戻らない場合、`LinkProber` の状態リセットが走っていない可能性がある。HLD では `Link:Up` 受信時と同じパスを通すと記述されているため、`Link:Up` 系のログと突き合わせて切り分けると良い。
 - 本機能のオン/オフは `linkmgrd` 起動引数で決まる。サービスユニットの引数を確認すること。
 
+### コマンド例
+
+デフォルトルート (0.0.0.0/0, ::/0) の存在と nexthop を確認する。
+
+```bash
+show ip route 0.0.0.0/0
+show ipv6 route ::/0
+ip route show default
+```
+
 ## 参考リンク
 
 - [CLI: config default-route](../reference/cli/config-default-route.md)

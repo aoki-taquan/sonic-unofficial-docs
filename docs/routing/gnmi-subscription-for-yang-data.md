@@ -97,6 +97,16 @@ ON_CHANGE で長時間更新がない時、`heartbeat-interval` で生存通知�
 - update が遅い → SAMPLE interval、Redis keyspace notification 設定（`notify-keyspace-events`）
 - TLS エラー → mgmt-framework の cert 設定、`gnmi_cli -insecure` で切り分け
 
+### コマンド例
+
+gNMI subscribe で YANG パスを購読し応答を確認する。
+
+```bash
+gnmic -a localhost:8080 --skip-verify -u admin -p YourPaSsWoRd \
+  sub --path '/sonic-port:sonic-port/PORT' --mode stream --stream-mode sample --sample-interval 5s 2>&1 | head
+show gnmi-server
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gNMI_Subscription_for_YangData.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

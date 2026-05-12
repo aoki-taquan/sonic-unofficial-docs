@@ -155,6 +155,16 @@ sonic-cfggen -a '{
 - VRF leak が動かない → `nexthop-vrf` で指定した VRF が VRF テーブルに存在し、対象インタフェースがその VRF にバインドされているかを確認。
 - 設定が反映されない → `frrcfgd` が起動しているか、CONFIG_DB の `STATIC_ROUTE` キーフォーマット（`vrf|prefix`）が正しいか確認。
 
+### コマンド例
+
+static route 設定とインストール状況を確認する。
+
+```bash
+show ip route static
+show ipv6 route static
+sonic-cfggen -d -v 'STATIC_ROUTE'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/static-route/SONiC_static_route_hdl.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

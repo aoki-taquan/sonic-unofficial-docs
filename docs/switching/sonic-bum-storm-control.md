@@ -130,6 +130,16 @@ show storm-control interface Ethernet0
 - 値の上書きが反映されない → ベンダ SAI が `SET` 未対応の場合は再作成が必要。SWSS/SAI ログ確認
 - `kbps` 範囲外で CLI 拒否 → 0〜100,000,000 にする
 
+### コマンド例
+
+BUM storm control の kbps 設定と適用状態を確認する。
+
+```bash
+show storm-control all
+redis-cli -n 4 keys 'PORT_STORM_CONTROL|*'
+show interfaces counters
+```
+
 ## 関連 Topics
 
 - [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): L2 フラッディング全般

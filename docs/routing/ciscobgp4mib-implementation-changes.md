@@ -161,6 +161,15 @@ snmpwalk -v2c -c <community> 127.0.0.1 iso.3.6.1.4.1.9.9.187
 - 値が `Idle` のまま → 各 BGP コンテナで `bgpmon` が走っているか `supervisorctl` / `ps`
 - 値が古い → `frr.log` の mtime 更新を確認（flush されていないと bgpmon が vty を叩かない）
 
+### コマンド例
+
+CISCO-BGP4-MIB の OID と SNMP 応答を確認する。
+
+```bash
+snmpwalk -v2c -c public localhost 1.3.6.1.4.1.9.9.187 | head
+docker exec snmp grep -i bgp4 /etc/snmp/snmpd.conf
+```
+
 ## 関連 Topic
 
 - [09 Telemetry / SNMP / architecture](../topics/09-telemetry-snmp/architecture.md)

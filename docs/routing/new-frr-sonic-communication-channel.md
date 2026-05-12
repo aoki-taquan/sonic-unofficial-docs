@@ -125,6 +125,16 @@ ps aux | grep zebra | grep -o 'dplane_fpm_[a-z_]*'
 - SRv6 SID が APPL_DB に出ない → `fpmsyncd` ログで `RTM_NEWSRV6LOCALSID` 受理確認
 - ビルド失敗 → `build-dplane-fpm-sonic-module.patch` が現行 FRR に適合か
 
+### コマンド例
+
+FRR<->SONiC 間 dplane_fpm_nl チャネルと socket を確認する。
+
+```bash
+docker exec bgp ss -lntp | grep -E '2620|fpm'
+docker logs bgp 2>&1 | grep -i 'dplane_fpm' | tail
+docker exec bgp vtysh -c 'show fpm status' 2>/dev/null | head
+```
+
 ## 関連トピック
 
 - [Topics: SRv6 / MPLS](../topics/17-srv6-mpls/index.md) — SRv6 SID プログラミングの全体像

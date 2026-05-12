@@ -144,6 +144,16 @@ TACACS+ で `config tacacs add --use-mgmt-vrf <ip>` を打つと `TACPLUS_SERVER
 - NTP 同期しない → `ps -ef | grep ntpd` で `cgexec` 起動か確認
 - TACACS+ が default VRF 経由になる → `show tacacs` で `vrf mgmt` が出ているか確認
 
+### コマンド例
+
+management VRF (mgmt) の状態と route table を確認する。
+
+```bash
+show mgmt-vrf
+ip -d link show type vrf
+ip route show vrf mgmt
+```
+
 ## 9. 次に読む
 
 - Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [VRF / ECMP 構築](../topics/04-vrf-ecmp/setup.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)

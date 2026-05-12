@@ -94,6 +94,16 @@ flowchart LR
 - [BGP](../reference/glossary.md#term-bgp) routes がインストールされない → `fpmsyncd` の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分
 - GR 効かない → `bgpd` GR タイマ、SONiC 側の warm-restart 連動、log の `BGP gr` メッセージ
 
+### コマンド例
+
+FRR バージョンとデーモン状態を確認する。
+
+```bash
+docker exec bgp vtysh -c 'show version'
+docker exec bgp supervisorctl status
+docker exec bgp dpkg -l | grep -i frr
+```
+
 ## 制限事項
 
 - FRR のメジャーバージョン跨ぎでは vtysh コマンド体系・config 互換性が崩れる事があり、手順書のバージョンに固定して実施する必要がある。

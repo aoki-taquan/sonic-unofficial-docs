@@ -161,6 +161,16 @@ router bgp 65001
 - SRv6 トンネルが作られない → `SRv6Orch` ログで encap mapper / Prefix AGG_ID 生成を確認
 - MY_SID 削除がうまくいかない → anycast route ハック workaround が効いているか、fpmsyncd ログで route delete を確認
 
+### コマンド例
+
+SRv6 L3VPN (VPNv4/VPNv6 over SRv6) の状態を確認する。
+
+```bash
+docker exec bgp vtysh -c 'show bgp ipv4 vpn' | head
+docker exec bgp vtysh -c 'show bgp ipv6 vpn' | head
+show srv6 sid
+```
+
 ## 8. 次に読む
 
 - Topics: [SRv6 / MPLS 概念](../topics/17-srv6-mpls/concept.md), [SRv6 / MPLS アーキテクチャ](../topics/17-srv6-mpls/architecture.md), [SRv6 / MPLS 内部実装](../topics/17-srv6-mpls/internals.md)

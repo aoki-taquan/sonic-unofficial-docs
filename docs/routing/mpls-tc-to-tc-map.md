@@ -226,6 +226,16 @@ HLD で明示されている制限[^1]:
 - orchagent ログにバリデーションエラー: 同じ `mpls_tc_value` が複数の `tc_value` にマップされている、または範囲外の数値を入れている可能性[^1]。
 - SAI 側で qos_map 作成失敗: SAI / sairedis 側のサポートは前提だが、ベンダ SAI が `SAI_QOS_MAP_MPLS_EXP_TO_TC` を未実装の場合は降ろせない。`syncd` のログを確認。
 
+### コマンド例
+
+MPLS TC->TC マッピングと QoS 設定を確認する。
+
+```bash
+show qos map mpls-tc-to-tc
+redis-cli -n 4 keys 'MPLS_TC_TO_TC_MAP*'
+show interfaces qos
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/qos/mpls_tc_to_tc_map.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

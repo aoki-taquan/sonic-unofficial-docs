@@ -209,6 +209,15 @@ sonic-cfggen -a '{"SYSTEM_DEFAULTS": {"tunnel_qos_remap": {"status": "enabled"}}
 - マイグレーション後にフラグが見当たらない場合、`DEVICE_METADATA|localhost` 側に残っていないか、`SYSTEM_DEFAULTS|<feature>` 側に移っているかを `redis-cli -n 4 KEYS '*SYSTEM_DEFAULTS*'` 等で確認する。
 - `init_cfg.json` で書いた値が反映されない場合、`config_db.json` 側に同名フラグがあると **`config_db.json` が勝つ**（ロード順による）。
 
+### コマンド例
+
+SYSTEM_DEFAULTS テーブルで feature toggle を確認する。
+
+```bash
+sonic-cfggen -d -v 'SYSTEM_DEFAULTS'
+redis-cli -n 4 keys 'SYSTEM_DEFAULTS|*'
+```
+
 ## 参考リンク
 
 - [YANG: sonic-system-defaults](../reference/yang/sonic-system-defaults.md)

@@ -168,6 +168,16 @@ MSTI 数の上限は `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存。
 | リージョン境界で IST にしか入らない | `region_name` / `revision` / VLAN→MSTI マッピングが対向と完全一致しているか |
 | BPDU が出ない | `STP_PORT.enabled=true` か、stpd ログで送信エラー |
 
+### コマンド例
+
+MSTP インスタンス / port role を確認する。
+
+```bash
+show spanning-tree
+show spanning-tree mst
+show spanning-tree mst-instance brief
+```
+
 ## 制限事項
 
 - HLD は v0.2 (50KB) のため、ここでは中心テーブルとフローのみ抜粋。詳細は HLD `doc/MSTP/MSTP.md`

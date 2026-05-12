@@ -162,6 +162,16 @@ ROUTE_TABLE:10.100.0.0/24
 - ネクストホップ群リソース枯渇 → 暫定 1 メンバ形式になる。`asic-db` の `SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER` 数確認
 - `show ip route` が群参照のまま残る → CLI 解決バグ兆候
 
+### コマンド例
+
+ROUTE_TABLE / NEXTHOP_GROUP_TABLE の登録状況を確認する。
+
+```bash
+redis-cli -n 0 keys 'ROUTE_TABLE*' | head
+redis-cli -n 0 keys 'NEXTHOP_GROUP_TABLE*' | head
+show ip route summary
+```
+
 ## 関連トピック
 
 - [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md) — next-hop group / ECMP の全体像

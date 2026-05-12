@@ -161,6 +161,16 @@ DEVICE_METADATA|localhost:
 - `frr_mgmt_framework_config=true` にしたのに反映されない → BGP container を再起動。`bgpcfgd` プロセスが残っていないか確認
 - gNMI で BGP set したのに FRR に反映されない → `frrcfgd` ログで vty コマンド生成エラーを確認
 
+### コマンド例
+
+BGP unified config の rendering 結果と FRR への反映を確認する。
+
+```bash
+docker exec bgp cat /etc/frr/bgpd.conf | head -40
+docker exec bgp vtysh -c 'show running-config' | head -40
+sonic-cfggen -d -v 'BGP_GLOBALS'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
