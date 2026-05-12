@@ -1,7 +1,6 @@
 ---
 title: gRPC client（active-active DualToR / ycabled ↔ SoC 連携）
-description: gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active
-  構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。
+description: gRPC client（active-active DualToR / ycabled ↔ SoC 連携） — DualToR の active-active 構成では、HOST → FPGA → SoC（外部のサブシステム）の経路で forwarding state が動的に切り替わる。
 area: management
 verification: code-verified
 last_verified: 2026-05-10
@@ -14,7 +13,10 @@ related:
   - MUX_CABLE
   - PEER_SWITCH
   cli: []
-  yang: []
+  yang:
+  - sonic-mux-cable
+  - sonic-mux-linkmgr
+  - sonic-peer-switch
 ---
 
 !!! success "裏取りステータス: code-verified (2026-05-10)"

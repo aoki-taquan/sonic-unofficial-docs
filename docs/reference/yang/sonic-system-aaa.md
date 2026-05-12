@@ -1,17 +1,25 @@
 ---
 title: sonic-system-aaa YANG
-description: "sonic-system-aaa YANG — Authentication, Authorization, and Accounting (AAA) YANG module for SONiC OS."
+description: sonic-system-aaa YANG — Authentication, Authorization, and Accounting (AAA) YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-system-aaa.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-system-aaa.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [AAA, TACPLUS, RADIUS]
-  cli: ["config aaa"]
-  yang: []
+  config_db:
+  - AAA
+  - TACPLUS
+  - RADIUS
+  cli:
+  - config aaa
+  yang:
+  - sonic-system-radius
+  - sonic-system-tacacs
+  - sonic-system-ldap
+  - sonic-passwh
 ---
 
 # sonic-system-aaa YANG

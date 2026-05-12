@@ -1,17 +1,22 @@
 ---
 title: sonic-fips YANG
-description: "sonic-fips YANG — Federal Information Processing Standards (FIPS) 140-3 compliance YANG module for SONiC OS."
+description: sonic-fips YANG — Federal Information Processing Standards (FIPS) 140-3 compliance YANG module for SONiC OS.
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-fips.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-fips.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [FIPS]
-  cli: ["config fips"]
-  yang: []
+  config_db:
+  - FIPS
+  cli:
+  - config fips
+  yang:
+  - sonic-passwh
+  - sonic-ssh-server
+  - sonic-system-aaa
 ---
 
 # sonic-fips YANG

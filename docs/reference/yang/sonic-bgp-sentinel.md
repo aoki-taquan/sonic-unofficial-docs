@@ -1,17 +1,21 @@
 ---
 title: sonic-bgp-sentinel YANG
-description: "sonic-bgp-sentinel YANG — SONiC BGP Sentinel 機能の YANG モデル。ToR 配下の特定 IP 範囲に対する Sentinel BGP セッション設定。"
+description: sonic-bgp-sentinel YANG — SONiC BGP Sentinel 機能の YANG モデル。ToR 配下の特定 IP 範囲に対する Sentinel BGP セッション設定。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [BGP_SENTINELS]
+  config_db:
+  - BGP_SENTINELS
   cli: []
-  yang: []
+  yang:
+  - sonic-bgp-common
+  - sonic-bgp-neighbor
+  - sonic-bgp-peergroup
 ---
 
 # sonic-bgp-sentinel YANG

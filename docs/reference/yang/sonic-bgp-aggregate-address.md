@@ -1,17 +1,23 @@
 ---
 title: sonic-bgp-aggregate-address YANG
-description: "sonic-bgp-aggregate-address YANG — SONIC BGP aggregate address configuration module."
+description: sonic-bgp-aggregate-address YANG — SONIC BGP aggregate address configuration module.
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [BGP_AGGREGATE_ADDRESS]
-  cli: ["config bgp"]
-  yang: []
+  config_db:
+  - BGP_AGGREGATE_ADDRESS
+  cli:
+  - config bgp
+  yang:
+  - sonic-bgp-common
+  - sonic-bgp-global
+  - sonic-bgp-neighbor
+  - sonic-route-map
 ---
 
 # sonic-bgp-aggregate-address YANG

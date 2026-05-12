@@ -1,17 +1,21 @@
 ---
 title: sonic-buffer-pool YANG
-description: "sonic-buffer-pool YANG — Shared and dedicated memory pool configuration for packet buffering."
+description: sonic-buffer-pool YANG — Shared and dedicated memory pool configuration for packet buffering.
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-buffer-pool.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-buffer-pool.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [BUFFER_POOL]
+  config_db:
+  - BUFFER_POOL
   cli: []
-  yang: []
+  yang:
+  - sonic-buffer-profile
+  - sonic-buffer-queue
+  - sonic-buffer-pg
 ---
 
 # sonic-buffer-pool YANG

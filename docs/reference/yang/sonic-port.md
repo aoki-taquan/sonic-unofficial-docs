@@ -1,17 +1,24 @@
 ---
 title: sonic-port YANG
-description: "sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: 'sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-port.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-port.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [PORT]
-  cli: ["config interface", "show interfaces"]
-  yang: []
+  config_db:
+  - PORT
+  cli:
+  - config interface
+  - show interfaces
+  yang:
+  - sonic-portchannel
+  - sonic-interface
+  - sonic-vlan
+  - sonic-breakout_cfg
 ---
 
 # sonic-port YANG

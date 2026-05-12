@@ -1,17 +1,20 @@
 ---
 title: sonic-copp YANG
-description: "sonic-copp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-copp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: 'sonic-copp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-copp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-copp.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-copp.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [COPP_GROUP, COPP_TRAP]
+  config_db:
+  - COPP_GROUP
+  - COPP_TRAP
   cli: []
-  yang: []
+  yang:
+  - sonic-flex_counter
 ---
 
 # sonic-copp YANG

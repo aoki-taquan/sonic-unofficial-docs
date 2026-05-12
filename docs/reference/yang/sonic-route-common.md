@@ -1,17 +1,21 @@
 ---
 title: sonic-route-common YANG
-description: "sonic-route-common YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-route-common.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: 'sonic-route-common YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-route-common.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-route-common.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-route-common.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: []
   cli: []
-  yang: []
+  yang:
+  - sonic-route-map
+  - sonic-routing-policy-sets
+  - sonic-vrf
+  - sonic-static-route
 ---
 
 # sonic-route-common YANG

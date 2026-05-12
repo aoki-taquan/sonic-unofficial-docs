@@ -1,24 +1,28 @@
 ---
 title: POLICER テーブル
-description: "POLICER テーブル — SAI policer (sai_policer) を CONFIG_DB から作成・更新するためのテーブル。"
+description: POLICER テーブル — SAI policer (sai_policer) を CONFIG_DB から作成・更新するためのテーブル。
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-swss
-    path: orchagent/policerorch.cpp
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-  - repo: sonic-net/sonic-swss-common
-    path: common/schema.h
-    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+- repo: sonic-net/sonic-swss
+  path: orchagent/policerorch.cpp
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-swss-common
+  path: common/schema.h
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
-    - POLICER
-    - ACL_RULE
-    - COPP_GROUP
-    - PORT_STORM_CONTROL
+  - POLICER
+  - ACL_RULE
+  - COPP_GROUP
+  - PORT_STORM_CONTROL
   cli: []
-  yang: []
+  yang:
+  - sonic-copp
+  - sonic-storm-control
+  - sonic-scheduler
+  - sonic-mirror-session
 ---
 
 # POLICER テーブル

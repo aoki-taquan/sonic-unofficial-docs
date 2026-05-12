@@ -1,17 +1,22 @@
 ---
 title: sonic-vrf YANG
-description: "sonic-vrf YANG — Virtual Routing and Forwarding (VRF) instance configuration for L3 traffic isolation"
+description: sonic-vrf YANG — Virtual Routing and Forwarding (VRF) instance configuration for L3 traffic isolation
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-vrf.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-vrf.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [VRF]
-  cli: ["config vrf"]
-  yang: []
+  config_db:
+  - VRF
+  cli:
+  - config vrf
+  yang:
+  - sonic-mgmt_vrf
+  - sonic-interface
+  - sonic-route-common
 ---
 
 # sonic-vrf YANG

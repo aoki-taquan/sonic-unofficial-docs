@@ -1,17 +1,20 @@
 ---
 title: sonic-kdump YANG
-description: "sonic-kdump YANG — Linux Kernel crash dumping (Kdump) mechanism configuration. Kdump はカーネルクラッシュ時のメモリダンプを取得する。"
+description: sonic-kdump YANG — Linux Kernel crash dumping (Kdump) mechanism configuration. Kdump はカーネルクラッシュ時のメモリダンプを取得する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-yang-models/yang-models/sonic-kdump.yang
-    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+- repo: sonic-net/sonic-buildimage
+  path: src/sonic-yang-models/yang-models/sonic-kdump.yang
+  ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [KDUMP]
-  cli: ["config kdump"]
-  yang: []
+  config_db:
+  - KDUMP
+  cli:
+  - config kdump
+  yang:
+  - sonic-auto_techsupport
 ---
 
 # sonic-kdump YANG
