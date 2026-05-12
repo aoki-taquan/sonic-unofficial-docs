@@ -29151,7 +29151,34 @@
 </tr>
 </tbody>
 </table>
-<p><code>architecture</code> と <code>system</code> に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。Indexer 段で除外ルールを足すか、v1.1 で個別精査するかは未決定。</p>
+<p><code>architecture</code> と <code>system</code> に偏っており、いずれも generic-name / introduction 系の低品質 stub が中心。<strong>2026-05-12 に分類整理を完了</strong>: 全 42 件を <code>meta/backlog/README.md</code> で <strong>drop 27 件 / low-priority 11 件 / defer 4 件</strong> に分類。</p>
+<table>
+<thead>
+<tr>
+<th>カテゴリ</th>
+<th>件数</th>
+<th>処理方針</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>drop（Indexer 除外推奨）</td>
+<td>27</td>
+<td>リリースノート 13 件 + 章節断片 9 件 + ビルド系 3 件 + テンプレ 1 件 + 重複 1 件</td>
+</tr>
+<tr>
+<td>low-priority（v1.1 検討）</td>
+<td>11</td>
+<td>大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 3 件 + 第三者拡張 1 件</td>
+</tr>
+<tr>
+<td>defer（既存ページに統合済）</td>
+<td>4</td>
+<td>acl flow-charts / vendor mapping / egress ACL bug fix / ecmp-calculator stub</td>
+</tr>
+</tbody>
+</table>
+<p>詳細は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md"><code>meta/backlog/README.md</code></a> を参照。v1.1 サイクル開始時に Indexer 除外フィルタを <code>meta/_gen_backlog.py</code> に組み込み、drop / defer 計 31 件を <code>meta/backlog/_archived/</code> へ移動予定（既存 archived 344 件と同列）。</p>
 <h2 id="2-discrepancy-found-monitor">2. discrepancy-found ページの monitor 別分布<a class="headerlink" href="#2-discrepancy-found-monitor" title="Permanent link">&para;</a></h2>
 <p><code>verification: discrepancy-found</code> のページは合計 <strong>62 件</strong>。monitor 別内訳:</p>
 <table>
