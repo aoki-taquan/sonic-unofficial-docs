@@ -291,6 +291,19 @@ sudo -H ansible-playbook test_sonic.yml -i inventory \
     - [GitHub Issue / PR の関連リンクは未確認] — DIP=SIP ドロップ自体は [SAI](../reference/glossary.md#term-sai) / プラットフォーム側で常時有効な挙動であり、HLD は PTF テスト追加のみが眼目。`sonic-mgmt` 側で対応する PTF テストは命名規則上の独立 PR で取り込まれた可能性が高いが、HLD と紐づく明示的 Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+### コマンド例: DIP/SIP PTF 検証の確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# PTF テスト走行ログとシグネチャ照合
+sudo journalctl -u ptf -n 200 --no-pager
+# 該当インタフェースで受信したパケットを ringbuffer dump
+sudo tcpdump -nei Ethernet0 -c 30 -w /tmp/dipsip.pcap
+```
+
+
 ## 確認コマンド
 
 ```bash

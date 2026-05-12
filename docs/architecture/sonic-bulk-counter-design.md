@@ -163,6 +163,32 @@ CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) の **新規追加な
 - 一部 counter が更新されない → fallback 経路に落ちている可能性。syncd ログで bulk capability rejection を確認
 - chunk 細分化したが分散しない → counter ID prefix の表記揺れに注意
 
+### コマンド例: Bulk counter polling 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Bulk counter 設定と現在の polling 状況を確認
+counterpoll show
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|PORT'
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|QUEUE'
+```
+
+### コマンド例: Bulk counter polling 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Bulk counter 設定と現在の polling 状況を確認
+counterpoll show
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|PORT'
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|QUEUE'
+```
+
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - `BulkStatsContext` 定義: `sonic-sairedis/syncd/FlexCounter.cpp` L208-L211

@@ -117,6 +117,32 @@ m_portTable->set(port.m_alias, {{"host_tx_ready", attr.value.u32 ? "true" : "fal
 - `redis-cli -n 6 hgetall "TRANSCEIVER_INFO|<port>"` でモジュール挿抜状態
 - ASIC 側 capability: vendor SAI のログまたは debug 系コマンドで `HOST_TX_SIGNAL_ENABLE` / `HOST_TX_READY` の値確認
 
+### コマンド例: CMIS module 状態確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# CMIS 対応 transceiver の状態と FW
+show interfaces transceiver info Ethernet0
+show interfaces transceiver eeprom Ethernet0
+redis-cli -n 6 hgetall 'TRANSCEIVER_INFO|Ethernet0'
+```
+
+### コマンド例: CMIS module 状態確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# CMIS 対応 transceiver の状態と FW
+show interfaces transceiver info Ethernet0
+show interfaces transceiver eeprom Ethernet0
+redis-cli -n 6 hgetall 'TRANSCEIVER_INFO|Ethernet0'
+```
+
+
+
 ## 単体テスト[^1]
 
 - `sonic-sairedis/unittest/lib/TestSwitch.cpp` / `meta/TestNotificationFactory.cpp` を新通知に追従

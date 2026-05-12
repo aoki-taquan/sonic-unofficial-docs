@@ -153,6 +153,36 @@ show static-anycast-gateway
     - 上流取り込み推進: `sonic-buildimage`（YANG）+ `sonic-swss`（SagOrch / VlanMgr 改修）+ `sonic-utilities`（CLI）+ `sonic-frr`（EVPN 連携）の 4 リポにまたがる大規模 PR が必要。
 <!-- /diff-admonition -->
 
+### コマンド例: Static Anycast Gateway 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# SAG 設定 / 仮想 MAC / VLAN 適用状況
+show sag
+redis-cli -n 4 keys 'SAG|*'
+redis-cli -n 4 hgetall 'SAG_GLOBAL|IP'
+# kernel route と vlan の整合
+ip addr show | grep -A2 Vlan
+```
+
+### コマンド例: Static Anycast Gateway 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# SAG 設定 / 仮想 MAC / VLAN 適用状況
+show sag
+redis-cli -n 4 keys 'SAG|*'
+redis-cli -n 4 hgetall 'SAG_GLOBAL|IP'
+# kernel route と vlan の整合
+ip addr show | grep -A2 Vlan
+```
+
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sag/sag-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

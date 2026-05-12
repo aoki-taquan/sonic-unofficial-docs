@@ -168,6 +168,32 @@ show switch-trimming counters
 - trim が起きない → buffer profile の `packet_trimming=enabled`、ACL で disable していないか確認
 - 受信 NIC で trim 判別ができない → asymmetric DSCP 設定で受信側に signal するよう運用
 
+### コマンド例: Packet trimming 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Packet trimming 設定と適用状態
+show switch-trimming global
+redis-cli -n 4 hgetall 'SWITCH_TRIMMING|GLOBAL'
+show queue counters | grep -i trim
+```
+
+### コマンド例: Packet trimming 確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# Packet trimming 設定と適用状態
+show switch-trimming global
+redis-cli -n 4 hgetall 'SWITCH_TRIMMING|GLOBAL'
+show queue counters | grep -i trim
+```
+
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - Trim size 設定: `sonic-swss/orchagent/switchorch.cpp` L1004 (`SAI_SWITCH_ATTR_PACKET_TRIM_SIZE`)

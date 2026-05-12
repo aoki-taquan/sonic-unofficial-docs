@@ -242,6 +242,32 @@ HLD で明示の制限事項は無い。実運用上の留意点としては:
     - [GitHub Issue / PR の関連リンクは未確認] — `rules/config` のビルドフラグ群は構造上 HLD と直接 1:1 紐づくものではなく、トラッキング Issue は確認できず。各フラグの導入は個別の機能 PR（INCLUDE_KUBERNETES / ENABLE_AUTO_TECH_SUPPORT 等）に紐づく形で混在しているため、各機能ページの GitHub リンクを参照のこと。
 <!-- /diff-admonition -->
 
+### コマンド例: Build profile 適用状態の確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# ビルドツリーで現在有効な PROFILE 変数を確認
+make -n configure 2>&1 | grep -E 'SONIC_(BUILD|PROFILE)'
+# slave コンテナのキャッシュ状態
+docker images | grep sonic-slave
+```
+
+### コマンド例: Build profile 適用状態の確認
+
+下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+
+```bash
+# ビルドツリーで現在有効な PROFILE 変数を確認
+make -n configure 2>&1 | grep -E 'SONIC_(BUILD|PROFILE)'
+# slave コンテナのキャッシュ状態
+docker images | grep sonic-slave
+```
+
+
+
 ## 参考リンク
 
 - [Reference 索引](../reference/index.md)

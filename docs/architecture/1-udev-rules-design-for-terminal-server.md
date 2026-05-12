@@ -184,6 +184,20 @@ ls -l /dev/Mytty*
 - 一部 port が常に欠損 → hub の物理故障 / cp210x 認識失敗 (`dmesg`) を確認
 - 別ハードで rules を流用したら全滅 → `KERNELS` の bus 位置がハードに依存。新ハードで `udevadm info -a` で属性を改めて確認
 
+### コマンド例: Terminal server udev 確認
+
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+
+```bash
+# udev rule の適用状態と /dev/console-* シンボリックリンクを確認
+ls -l /dev/console-*
+udevadm info --query=all --name=/dev/ttyUSB0 | head -30
+# console_mgr / line-card 認識ログ
+sudo grep -Ei 'udev|console' /var/log/syslog | tail -30
+```
+
+
 ## 関連 reference
 
 - [HLD: portable-console-device-design](../management/portable-console-device-design.md)
