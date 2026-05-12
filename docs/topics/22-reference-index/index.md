@@ -90,9 +90,9 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ⚠️ プレースホルダ (57 行) | meta |
-| setup | ❌ 未着手 | - |
-| operations | ❌ 未着手 | - |
+| concept | ✅ 完成 (107 行) | meta |
+| setup | ✅ 完成 (123 行) | meta |
+| operations | ✅ 完成 (111 行) | meta |
 | internals | ✅ 完成 (133 行) | meta |
 | advanced | ✅ 完成 (101 行) | meta |
 

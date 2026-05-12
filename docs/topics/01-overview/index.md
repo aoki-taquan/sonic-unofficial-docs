@@ -89,10 +89,10 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (153 行) | meta |
-| setup | ❌ 未着手 | - |
+| setup | ✅ 完成 (119 行) | meta |
 | operations | ✅ 完成 (181 行) | meta |
 | internals | ✅ 完成 (137 行) | meta |
-| advanced | ❌ 未着手 | - |
+| advanced | ✅ 完成 (102 行) | meta |
 
 <!-- /chapter-progress -->
 

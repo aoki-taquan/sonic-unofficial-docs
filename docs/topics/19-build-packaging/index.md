@@ -57,7 +57,7 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (142 行) | meta |
-| setup | ❌ 未着手 | - |
+| setup | ✅ 完成 (141 行) | meta |
 | operations | ✅ 完成 (180 行) | meta |
 | internals | ✅ 完成 (126 行) | meta |
 | advanced | ✅ 完成 (115 行) | meta |

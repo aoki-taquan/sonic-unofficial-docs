@@ -2,7 +2,9 @@ title: SONiC 全体像と設定基盤
 nav:
   - index.md
   - concept.md
+  - setup.md
   - architecture.md
   - configuration.md
   - operations.md
   - internals.md
+  - advanced.md

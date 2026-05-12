@@ -1,0 +1,12 @@
+title: リファレンス横断索引
+nav:
+  - index.md
+  - concept.md
+  - setup.md
+  - operations.md
+  - internals.md
+  - advanced.md
+  - cli-index.md
+  - config-db-index.md
+  - yang-index.md
+  - quality-gaps.md

@@ -67,6 +67,56 @@ Phase 6 で `verification: hld-only` のページを 0 件にし、すべて `co
 - [CONFIG_DB 横断索引](config-db-index.md)
 - [YANG 横断索引](yang-index.md)
 
+## 索引の粒度を選ぶ
+
+reference を引くときは、入口になる名前の種類で粒度が変わる。読者の問いから粒度を決めてから索引に入ると迷子にならない。
+
+| 読者の問い | 引き始める索引 | 粒度 |
+| --- | --- | --- |
+| 「`config bgp neighbor add` の引数を確認したい」 | [CLI 横断索引](cli-index.md) → コマンド群ページ | 1 コマンド群 = 1 ページ |
+| 「`BGP_NEIGHBOR_AF` のキー構造を確認したい」 | [CONFIG_DB 横断索引](config-db-index.md) | 1 テーブル = 1 ページ |
+| 「`sonic-bgp-global` がどの leaf を持つか確認したい」 | [YANG 横断索引](yang-index.md) | 1 モジュール = 1 ページ |
+| 「機能 X に関する CLI / table / YANG を一望したい」 | 機能章 (`docs/topics/<NN>-<feature>/index.md`) の `related` | 機能単位 |
+| 「実装階層 (SAI / SWSS / syncd) で HLD を束ねたい」 | `docs/categories/` | 階層単位 |
+
+reference ページ単体には機能章への戻りリンクが付いており、reference → 機能章 → reference の往復が成立するように配置している。
+
+## 命名規約とそろえ方
+
+reference ページの slug は **コマンド名 / table 名 / モジュール名そのもの** を使う。`docs/topics/` の slug は **機能ドメイン名 (kebab-case)** を使う。両者を混同しないよう、次のルールで一貫させている。
+
+- CLI ページ: `docs/reference/cli/<root-command>-<subgroup>.md` (例: `config-bgp.md`、`show-ip.md`)。
+- CONFIG_DB ページ: `docs/reference/config-db/<table-name-lower>.md` (例: `bgp-neighbor.md`)。
+- YANG ページ: `docs/reference/yang/<module-name>.md` (例: `sonic-bgp-global.md`)。
+- 機能章: `docs/topics/<NN>-<feature>/` で 2 桁の章番号を付け、章内ファイルは `concept.md` / `setup.md` / `operations.md` / `internals.md` / `advanced.md` に揃える。
+
+この命名規約は frontmatter の `sources` から逆方向にも辿れる前提を作る。検索エンジンや IDE で「テーブル名」を grep すれば該当 reference ページに当たり、そこから related で機能章に戻れる。
+
+## 3 層の往復例
+
+実際に読み手が辿るパスを 1 つ追うと、3 層の役割分担が見える。
+
+例: 「BGP neighbor を 1 つ足したい」と思った読者の動きはこうなる。
+
+1. 機能章 [BGP - 設定](../02-bgp/setup.md) で「何を CONFIG_DB に書くか」「どの CLI を打つか」の **手順** を読む。
+2. 手順内のリンクから reference [config bgp](../../reference/cli/config-bgp.md) に飛び、CLI 全オプションを引く。
+3. 同じく [BGP_NEIGHBOR](../../reference/config-db/bgp-neighbor.md) で table の全カラムを引く。
+4. gNMI から入れたい場合だけ [sonic-bgp-neighbor](../../reference/yang/sonic-bgp-neighbor.md) を引く。
+5. SAI 拡張観点で他機能と並べたい場合は categories の [SAI 拡張](../../categories/sai-extensions.md) を参照する。
+
+機能章は (1) と (2)〜(5) への入口で、reference は **同じ操作対象を別の名前から引き直す** ための層になる。
+
+## 索引が満たすべき不変条件
+
+reference 索引は次の不変条件を満たす前提で運用している。CI / lint で部分的に検査される。
+
+- すべての reference ページは少なくとも 1 つの機能章から `related` で参照されている (orphan reference は CI で警告)。
+- 機能章の `related.cli` / `related.config_db` / `related.yang` に並ぶ名前は、対応する reference ページが存在する。
+- `discrepancy-found` のページは `docs/_meta/discrepancies.md` から逆引きできる。
+- reference 側の未カバー項目は `meta/reference-gaps.md` に積まれ、本章 [品質と gap](quality-gaps.md) に集約される。
+
+不変条件が崩れたときは「reference を足す」「機能章の related を直す」「discrepancy を昇格させる」のいずれかで埋める。索引層の役割は、この埋め残しを可視化することにある。
+
 <!-- xref-prereq -->
 ## この章の前提知識
 
