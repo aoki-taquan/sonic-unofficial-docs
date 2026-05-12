@@ -1270,9 +1270,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [COUNTERS_DB](#term-counters_db)
 
+- [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (10)
 - [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../architecture/port-illegal-packets-drop-design.md) (9)
 - [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](../internals/byte-packet-rates-port-utilization-in-sonic.md) (9)
-- [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (9)
 - [flexcounter の queue/PG map 生成と watermark 有効化の整合](../acl-qos/align-watermark-flow-with-port-configuration-hld.md) (7)
 - [概念](../topics/09-telemetry-snmp/concept.md) (7)
 
@@ -1339,7 +1339,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [DSCP](#term-dscp)
 
 - [Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）](../acl-qos/egress-outer-dscp-change-table.md) (55)
-- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (38)
+- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (51)
 - [sonic-dscp-tc-map YANG](yang/sonic-dscp-tc-map.md) (21)
 - [Packet Trimming（symmetric / asymmetric DSCP / ACL disable）](../architecture/sonic-packet-trimming.md) (18)
 - [サイトマップ](../_meta/sitemap.md) (17)
@@ -1356,7 +1356,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [サイトマップ](../_meta/sitemap.md) (35)
 - [ECMP Family](../topics/04-vrf-ecmp/ecmp.md) (28)
-- [Fine Grained ECMP（FG_NHG / fgnhgorch）](../routing/sonic-fine-grained-ecmp.md) (25)
+- [Fine Grained ECMP（FG_NHG / fgnhgorch）](../routing/sonic-fine-grained-ecmp.md) (27)
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (23)
 - [Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）](../routing/high-level-design-document.md) (18)
 
@@ -1386,7 +1386,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [EVPN](#term-evpn)
 
-- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (53)
+- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (54)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (45)
 - [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../routing/evpn-vxlan-multihoming.md) (33)
 - [サイトマップ](../_meta/sitemap.md) (32)
@@ -1454,7 +1454,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [fpmsyncd](#term-fpmsyncd)
 
-- [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (17)
+- [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (19)
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../routing/bgp-route-install-error-handling.md) (15)
 - [BGP PIC（Prefix Independent Convergence / NHG 階層）](../routing/bgp-prefix-independent-convergence-architecture-document.md) (14)
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (13)
@@ -1562,7 +1562,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (9)
 - [サイトマップ](../_meta/sitemap.md) (8)
 - [VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）](../platform/subnet-decapsulation-with-sonic.md) (8)
-- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (6)
+- [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](../overlay/dscp-remapping-for-tunnel-traffic.md) (7)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (5)
 
 ### [LOGLEVEL_DB](#term-loglevel_db)
@@ -1698,7 +1698,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [orchagent](#term-orchagent)
 
-- [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (25)
+- [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (29)
 - [サイトマップ](../_meta/sitemap.md) (22)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (19)
 - [運用](../topics/20-swss-sai-redis/operations.md) (18)
@@ -1814,7 +1814,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [RIF](#term-rif)
 
-- [ルータインタフェース (RIF) カウンタ](../routing/router-interface-counters-in-sonic.md) (42)
+- [ルータインタフェース (RIF) カウンタ](../routing/router-interface-counters-in-sonic.md) (44)
 - [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](../internals/byte-packet-rates-port-utilization-in-sonic.md) (34)
 - [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../architecture/port-illegal-packets-drop-design.md) (29)
 - [Route / Interface / Counter の確認](../topics/04-vrf-ecmp/operations.md) (20)
@@ -1840,8 +1840,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [概念](../topics/17-srv6-mpls/concept.md) (47)
 - [発展トピック](../topics/17-srv6-mpls/advanced.md) (46)
+- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (29)
 - [サイトマップ](../_meta/sitemap.md) (28)
-- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (28)
 - [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../routing/sonic-usid.md) (19)
 
 ### [SAI](#term-sai)
@@ -1849,7 +1849,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [頻出 SAI 属性早見表](sai-attributes.md) (241)
 - [サイトマップ](../_meta/sitemap.md) (82)
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (63)
-- [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (42)
+- [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (50)
 - [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (42)
 
 ### [SerDes](#term-serdes)
@@ -1884,8 +1884,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (20)
 - [sonic-mgmt_port YANG](yang/sonic-mgmt_port.md) (19)
+- [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (18)
 - [サイトマップ](../_meta/sitemap.md) (16)
-- [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (15)
 - [sonic-mgmt_vrf YANG](yang/sonic-mgmt_vrf.md) (13)
 
 ### [sonic-swss](#term-sonic-swss)
@@ -1960,8 +1960,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [サイトマップ](../_meta/sitemap.md) (20)
 - [SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）](../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) (20)
+- [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](../platform/liquid-cooling-leakage-detection-in-sonic.md) (18)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (17)
-- [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](../platform/liquid-cooling-leakage-detection-in-sonic.md) (16)
 - [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](../system/platform-monitor-enhancement-design.md) (16)
 
 ### [swssconfig](#term-swssconfig)
@@ -1978,7 +1978,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (35)
 - [運用](../topics/20-swss-sai-redis/operations.md) (33)
 - [内部実装](../topics/20-swss-sai-redis/internals.md) (30)
-- [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (26)
+- [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (27)
 
 ### [TAM](#term-tam)
 
@@ -2119,7 +2119,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [zebra](#term-zebra)
 
-- [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (30)
+- [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (31)
 - [debug / undebug コマンド群](cli/debug-group.md) (25)
 - [経路は RIB にあるが FIB / ASIC に降りない](runbooks/route-not-installed-in-fib.md) (12)
 - [新 FRR-SONiC 通信チャネル（dplane_fpm_sonic モジュール）](../routing/new-frr-sonic-communication-channel.md) (12)
@@ -2127,7 +2127,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [ZTP](#term-ztp)
 
-- [Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）](../system/zero-touch-provisioning-ztp.md) (19)
+- [Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）](../system/zero-touch-provisioning-ztp.md) (22)
 - [ビルドプロファイル（rules/profiles/*.mk）](../architecture/build-profiles.md) (6)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (6)
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (6)
