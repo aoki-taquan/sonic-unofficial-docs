@@ -184,19 +184,15 @@ CLI ルール[^1]:
 - 正規クライアントまでドロップ: `dhcp_rate_limit` が小さすぎる可能性。リース更新時のバーストを考慮
 - 値変更が反映されない: 同ポートに既存 rate があると add が拒否される仕様。先に delete
 
-### コマンド例: DHCP DoS 緩和の確認
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# DHCP rate-limit / drop 設定と現在のドロップカウンタ
-show dhcp_relay ipv4 helper
-show dropcounters counts | grep -i dhcp
-# nftables / iptables 側に DHCP rate-limit ルールが入っているか
-sudo iptables -L -n -v | grep -i 67
+# ingress policer 設定と CONFIG_DB の rate-limit エントリを確認
+sudo tc -s qdisc show dev Ethernet0 handle ffff:
+sudo tc -s filter show dev Ethernet0 parent ffff:
+redis-cli -n 4 hget 'PORT|Ethernet0' dhcp_rate_limit
+docker exec swss supervisorctl status | grep portmgrd
 ```
-
 
 ## 関連トピック
 

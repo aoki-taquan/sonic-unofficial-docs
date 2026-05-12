@@ -227,8 +227,8 @@ linkmgrd --default_route
 - **Dual-ToR 専用機能**: 本 HLD のデフォルトルート連動 (linkmgrd の default-route feature) は Dual-ToR シナリオを前提に設計されており、シングル ToR でこのフラグを有効化しても意味のある効果は得られない。
 - **`enable_feature_default_route` はオプトイン**: linkmgrd 起動引数 (`--enable_default_route_feature`) で有効化しないと、デフォルトルート喪失時の active 切替抑止は働かない。既定は無効。
 - **IPv4 / IPv6 の両方をチェック**: STATE_DB の `ROUTE_TABLE` で v4 / v6 両方のデフォルトルートが正しく書かれていることが前提。片方が欠けると `down` 判定になり、片肺運用では意図せず mux が動かない可能性がある。
-- **`STATE_DB ROUTE_TABLE` 更新タイミング**: orchagent の更新タイミングに依存するため、BGP convergence 中の短時間に linkmgrd が誤判定するレースは設計上存在する。
-- **VRF 対応**: HLD はデフォルト VRF (`global`) を想定している。management VRF や user VRF のデフォルトルートはこのロジックに含まれない。
+- **`STATE_DB ROUTE_TABLE` 更新タイミング**: orchagent の更新タイミングに依存するため、[BGP](../reference/glossary.md#term-bgp) convergence 中の短時間に linkmgrd が誤判定するレースは設計上存在する。
+- **[VRF](../reference/glossary.md#term-vrf) 対応**: HLD はデフォルト VRF (`global`) を想定している。management VRF や user VRF のデフォルトルートはこのロジックに含まれない。
 
 ## 引用元
 
@@ -260,4 +260,4 @@ HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書�
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: e95f91b51175 -->
+<!-- glossary-links-injected: 6c1c191bd48c -->

@@ -151,20 +151,16 @@ show dropcounters counts
 - counts が増えない → 該当 reason に該当する drop が起きていない／ASIC が当該 reason を SAI で公開していない可能性。
 - `show dropcounters configuration` が空 → [CONFIG_DB](../reference/glossary.md#term-config_db) の `DEBUG_COUNTER` テーブルに entry があるかを `redis-cli -n 4 keys 'DEBUG_COUNTER|*'` で確認。
 
-### コマンド例: Drop counter 確認
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# 設定済みの configurable drop counter 一覧と現在値
+# drop counter capabilities, 設定, 値をひととおり確認
+show dropcounters capabilities
 show dropcounters configuration
 show dropcounters counts
-# COUNTERS_DB / CONFIG_DB の生エントリ
 redis-cli -n 4 keys 'DEBUG_COUNTER|*'
-redis-cli -n 2 keys 'COUNTERS_DEBUG*'
+redis-cli -n 4 keys 'DEBUG_COUNTER_DROP_REASON|*'
 ```
-
 
 ## 引用元
 

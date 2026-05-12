@@ -27,7 +27,7 @@ related:
 
 # Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離
 
-本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **HLD と実装の乖離** を切り出した派生ページ。概念や設定例は [concepts](switch-port-modes-and-vlan-cli-concepts.md) / [operations](switch-port-modes-and-vlan-cli-operations.md) を参照。
+本ページは親 [HLD](../reference/glossary.md#term-hld) [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **HLD と実装の乖離** を切り出した派生ページ。概念や設定例は [concepts](switch-port-modes-and-vlan-cli-concepts.md) / [operations](switch-port-modes-and-vlan-cli-operations.md) を参照。
 
 ## 1. ファイル + 行番号
 
@@ -40,7 +40,7 @@ related:
 
 ## 2. 差分の中身
 
-HLD は `config switchport mode access <port> <vlan>` や `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のようにモード切替と VLAN メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は `@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))` と `@click.argument("port", ...)` の 2 引数のみで、VLAN メンバ割当は **依然として別コマンド** `config vlan member add <vlan> <port>` を呼ぶ必要がある。
+HLD は `config switchport mode access <port> <vlan>` や `config switchport mode trunk <port> [<native-vlan>] [<vlan-list>]` のようにモード切替と [VLAN](../reference/glossary.md#term-vlan) メンバ割当を 1 コマンドで行う仕様を提示している。現行実装は `@click.argument("type", ..., type=click.Choice(["access", "trunk", "routed"]))` と `@click.argument("port", ...)` の 2 引数のみで、VLAN メンバ割当は **依然として別コマンド** `config vlan member add <vlan> <port>` を呼ぶ必要がある。
 
 実コード（`sonic-utilities/config/switchport.py` L17-L22）:
 
@@ -111,3 +111,5 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 - 内部実装: [switch-port-modes-and-vlan-cli-internals](switch-port-modes-and-vlan-cli-internals.md)
 - 設定 / 運用: [switch-port-modes-and-vlan-cli-operations](switch-port-modes-and-vlan-cli-operations.md)
 - discrepancy 一覧: [verification/discrepancy-index](../reference/verification/discrepancy-index.md)
+
+<!-- glossary-links-injected: 97c0d8538677 -->

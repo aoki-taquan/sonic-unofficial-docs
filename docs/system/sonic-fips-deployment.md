@@ -176,7 +176,7 @@ cat /proc/cmdline | tr ' ' '\n' | grep fips
 ## トラブルシュート
 
 - `fips=1` 起動なのに `fips_enabled=0` の場合、initramfs に FIPS module が含まれていない。`sonic-installer set-fips --enable` 後に reboot が必要。
-- SSH / SNMP / TACACS+ で許可されていない algorithm を使うと接続失敗する。`/etc/ssh/sshd_config` の `Ciphers` / `MACs` を FIPS-approved に絞る。
+- SSH / [SNMP](../reference/glossary.md#term-snmp) / TACACS+ で許可されていない algorithm を使うと接続失敗する。`/etc/ssh/sshd_config` の `Ciphers` / `MACs` を FIPS-approved に絞る。
 - FIPS 有効時は MD5 / DES 等が利用不可になり、古い NMS との互換性問題が発生する。事前に運用ツールの compliance を確認。
 
 ## 引用元
@@ -190,4 +190,4 @@ cat /proc/cmdline | tr ' ' '\n' | grep fips
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 43901919356e -->
+<!-- glossary-links-injected: 16f9ee1c5f80 -->

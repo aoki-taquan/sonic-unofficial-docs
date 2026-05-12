@@ -23,6 +23,15 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-12 #1131 Add quality audit round 43 (random sampling, 9th cycle)
+- 2026-05-12 #1130 chore: strengthen partial-boundary lint with phase tables and link guide §5
+- 2026-05-12 #1129 chore: enrich snapshot.md with audit history, lint counts, freshness buckets
+- 2026-05-12 #1128 Add troubleshoot-section lint + 確認コマンド for 12 HLD pages
+- 2026-05-12 #1127 Add quality-audit round 42 (stratified, df subtype 3rd cycle)
+- 2026-05-12 #1126 chore: add check_partial_boundary lint and clarify 5 partial pages
+- 2026-05-12 #1125 Add 確認コマンド/トラブルシュート to 13 evolved pages + 制限事項 to 20 pages
+- 2026-05-12 #1124 Add quality audit round 41 + regenerate changelog (q43-aq)
+- 2026-05-12 #1123 Add discrepancy-found subtype evaluation criteria to audit guide
 - 2026-05-12 #1122 Add limitations lint + backfill 8 HLD pages
 - 2026-05-12 #1121 Add quality audit round 40 (stratified 7th, milestone retrospective)
 - 2026-05-12 #1119 chore(chapter-index): add --check drift mode + CI strict gate (q42-ap)
@@ -514,13 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #490 [verify] medium 優先度 11 ページの裏取り完了 (batch7)
 - 2026-05-09 #489 [reference] reboot / fast-reboot / warm-reboot コマンド
 - 2026-05-09 #488 [management] CMIS モジュール管理拡張
-- 2026-05-09 #487 [reference] show muxcable サブコマンド
-- 2026-05-09 #485 [reference] show nat サブコマンド
-- 2026-05-09 #484 [reference] show mclag (mclagdctl) コマンド
-- 2026-05-09 #483 [management] ポートベース IPv4 DHCP Server
-- 2026-05-09 #482 [reference] show feature サブコマンド
-- 2026-05-09 #480 [management] SONiC YANG モデル記述ガイドライン
-- 2026-05-09 #478 [management] TACACS+ 認証テストプラン
-- 2026-05-09 #476 [reference] config syslog サブコマンド
-- 2026-05-09 #475 [reference] config muxcable サブコマンド
 

@@ -238,18 +238,15 @@ chassis_db_address=127.100.0.1
 - SSI 障害後、FSI が外部接続を切る: 仕様どおりの防御動作[^1]。SSI を回復させるか、`chassisdb.conf` を修正してから FSI を再起動。
 - Switch ID の衝突: `C` 個連続消費の規則に違反していないか、各チップに与えた Switch ID 範囲を確認。
 
-### コマンド例: VOQ chassis-db 確認
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# Chassis DB (Redis DB index 12) のキー一覧と System Port 状態
-redis-cli -h redis_chassis.server -p 6380 -n 12 keys 'SYSTEM_PORT_TABLE|*' | head
-# Local switch の VOQ 関連 SAI 属性とエラー
-sudo grep -Ei 'voq|system_port' /var/log/syslog | tail -50
+# Chassis DB / FSI / SSI / Switch ID を確認
+cat /etc/sonic/chassisdb.conf
+redis-cli -h redis_chassis.server -p 6380 ping
+redis-cli -h redis_chassis.server -p 6380 keys 'SYSTEM_NEIGH|*'
+show chassis-module status
 ```
-
 
 ## 引用元
 

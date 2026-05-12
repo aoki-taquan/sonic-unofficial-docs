@@ -178,19 +178,15 @@ pytest pfc_asym/pfc_asym.py --topology=t0
 - `pfc_gen.py` が Fanout で見つからない: `deploy_pfc_gen` fixture のプラットフォーム別ロジック、対象 Fanout の OS / パスを確認。
 - ARP responder の応答が無い: 設定ファイルの 1 回生成パッチが当たっているか、ARP responder プロセスのログを確認。
 
-### コマンド例: Asymmetric PFC 動作確認
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# PFC の asym 設定 (各ポートの pfc_asym 属性) を確認
-show interfaces priority-flow-control
-redis-cli -n 4 hgetall 'PORT|Ethernet0' | grep -i pfc
-# PFC RX/TX のキュー別カウンタを取得
-show pfc counters
+# Asymmetric PFC mode と PFC カウンタを確認
+show pfc asymmetric
+redis-cli -n 4 hget 'PORT|Ethernet0' pfc_asym
+pfcstat
+docker exec swss supervisorctl status | grep orchagent
 ```
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 

@@ -48,10 +48,12 @@ flowchart LR
 
 <!-- yang-xref -->
 
-本 [YANG](../../reference/glossary.md#term-yang) モジュールに対応する CONFIG_DB / CLI / [HLD](../../reference/glossary.md#term-hld) / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
 ### 関連 HLD
 
+- [sonic-feature YANG](../../reference/yang/sonic-feature.md)
+- [Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）](../../system/secure-upgrade.md)
 - [設定 / 運用](../../topics/19-build-packaging/operations.md)
 
 <!-- /yang-xref -->

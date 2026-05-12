@@ -31,7 +31,7 @@ related:
 
 # Switchport モードと VLAN CLI 拡張 — 設定と運用
 
-本ページは親 HLD [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **設定例・運用 Tips・トラブルシューティング** を切り出した派生ページ。HLD 上の CLI 形と現行実装の差分は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を必ず参照（HLD の例そのままでは動かない）。
+本ページは親 [HLD](../reference/glossary.md#term-hld) [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) の **設定例・運用 Tips・トラブルシューティング** を切り出した派生ページ。HLD 上の CLI 形と現行実装の差分は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を必ず参照（HLD の例そのままでは動かない）。
 
 !!! note "実装状況の境界（partially implemented）"
     本ページのコマンド例のうち、**`config switchport mode {access,trunk} <if>` と `config vlan add 10-20` の範囲指定一括 add/del は `sonic-utilities` に取り込み済** で動作する（master で `supported`）。一方、HLD が示す **`config switchport mode routed` への明示遷移コマンドと、PORTCHANNEL に対する一部の一括操作は未実装** の状態で、対応 PR が未取り込み。具体的な差分は [discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md) を参照。
@@ -69,7 +69,7 @@ sudo config switchport mode routed Ethernet0
 
 | CLI | 用途 |
 |-----|------|
-| `config vlan add <vid\|range\|list>` | 複数 VLAN 追加 |
+| `config vlan add <vid\|range\|list>` | 複数 [VLAN](../reference/glossary.md#term-vlan) 追加 |
 | `config vlan del <vid\|range\|list>` | 複数 VLAN 削除 |
 | `config vlan member add <vlan> <port\|range>` | メンバ一括追加 |
 | `config vlan member del <vlan> <port\|range>` | メンバ一括削除 |
@@ -102,7 +102,7 @@ sudo config switchport mode routed PortChannel1
 
 - **モード切替は VLAN 整合が前提**: `routed` に戻すには既存 VLAN メンバを先に外す必要がある[^1]
 - **truncate ポリシー**: 一括 CLI で 1 件失敗するとそこで停止する。前段は反映済みなので途中状態に注意[^1]
-- **アーキテクチャ拡張なし**: orchagent / SAI / vlanmgr の改修は無く、CLI と CONFIG_DB の契約だけが変わる
+- **アーキテクチャ拡張なし**: [orchagent](../reference/glossary.md#term-orchagent) / [SAI](../reference/glossary.md#term-sai) / vlanmgr の改修は無く、CLI と [CONFIG_DB](../reference/glossary.md#term-config_db) の契約だけが変わる
 
 ## 干渉する機能
 
@@ -130,3 +130,5 @@ sudo config switchport mode routed PortChannel1
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 33d01a0d37a4 -->

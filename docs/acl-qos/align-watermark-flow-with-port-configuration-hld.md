@@ -243,20 +243,15 @@ counterpoll watermark enable
 - queue counter は動くが queue-watermark stat が出ない → `counterpoll show` で watermark group の状態を確認
 - 一旦 disable した後に enable し直すと stat が二重に出る → `FLEX_COUNTER_DB` の残存 entry が原因の可能性
 
-### コマンド例: Watermark ポーリング状態確認
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# Watermark counter の polling 有効/間隔を確認
-counterpoll watermark show
-counterpoll queue show
-# STATE_DB の PORT_TABLE で admin/oper status を確認し、
-# 監視対象ポートと watermark の対象集合に齟齬がないかチェック
-redis-cli -n 6 keys 'PORT_TABLE|Ethernet*' | head
+# watermark counter poll 状態と queue map / flex counter キーを確認
+counterpoll show
+redis-cli -n 2 keys 'COUNTERS_QUEUE_*_MAP'
+redis-cli -n 5 keys 'FLEX_COUNTER_TABLE|QUEUE_WATERMARK*'
+show priority-group watermark headroom
 ```
-
 
 ## 参考リンク
 

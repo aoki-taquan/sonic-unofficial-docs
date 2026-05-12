@@ -264,22 +264,16 @@ HLD 段階で明示されている制限[^1]:
 - 同一ポートで複数テーブルが効かない: HLD 上は併用 OK だが、競合する action（例: 両方とも permit/deny を出す）の組み合わせは未定義。`l3`+`mirror` の組み合わせから始めるのが安全[^1]。
 - ポート削除後にバインドが残る: 初期リリースでは自動 unbind 未実装。手動で `swssconfig` partial モードで削除する必要[^1]。
 
-### コマンド例: ACL 設定確認
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# CONFIG_DB の ACL_TABLE / ACL_RULE エントリ確認
+# ACL テーブル / ルール / バインドと MIRROR_SESSION を一望
 redis-cli -n 4 keys 'ACL_TABLE|*'
 redis-cli -n 4 keys 'ACL_RULE|*'
-# 現在ロードされている ACL を CLI で確認
+redis-cli -n 4 hgetall 'MIRROR_SESSION|<name>'
 show acl table
 show acl rule
-# orchagent の SAI エラーを syslog から拾う
-sudo grep -E 'aclorch|SAI_API_ACL' /var/log/syslog | tail -50
 ```
-
 
 ## 引用元
 

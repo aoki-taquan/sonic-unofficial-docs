@@ -42,7 +42,7 @@ related:
 
 ## 1. gNMI / sonic-gnmi 側のフラグ追加
 
-[HLD](../reference/glossary.md#term-hld) は gNMI server に以下のフラグを追加する想定[^1]:
+[HLD](../reference/glossary.md#term-hld) は [gNMI](../reference/glossary.md#term-gnmi) server に以下のフラグを追加する想定[^1]:
 
 | フラグ | 用途 |
 |-------|------|
@@ -94,3 +94,5 @@ gnsi_client credentialz rotate-account \
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 658dfbdca882 -->

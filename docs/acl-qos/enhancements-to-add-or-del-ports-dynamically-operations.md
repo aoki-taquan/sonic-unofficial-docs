@@ -31,7 +31,7 @@ related:
 
 # 動的ポート add/del 設定と運用
 
-このページは [動的ポート add/del（概要ハブ）](enhancements-to-add-or-del-ports-dynamically.md) の派生で、**設定経路と安全な運用手順** に絞る。概念は [enhancements-to-add-or-del-ports-dynamically-concepts.md](enhancements-to-add-or-del-ports-dynamically-concepts.md)、内部実装は [enhancements-to-add-or-del-ports-dynamically-internals.md](enhancements-to-add-or-del-ports-dynamically-internals.md)、HLD と実装の乖離は [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md) を参照。
+このページは [動的ポート add/del（概要ハブ）](enhancements-to-add-or-del-ports-dynamically.md) の派生で、**設定経路と安全な運用手順** に絞る。概念は [enhancements-to-add-or-del-ports-dynamically-concepts.md](enhancements-to-add-or-del-ports-dynamically-concepts.md)、内部実装は [enhancements-to-add-or-del-ports-dynamically-internals.md](enhancements-to-add-or-del-ports-dynamically-internals.md)、[HLD](../reference/glossary.md#term-hld) と実装の乖離は [enhancements-to-add-or-del-ports-dynamically-limitations.md](enhancements-to-add-or-del-ports-dynamically-limitations.md) を参照。
 
 ## 1. 関連する CONFIG_DB
 
@@ -115,17 +115,17 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 | `admin_status` 切替 | ✅ 既存パスで動作 | — |
 | port 削除前の依存検出 | — | ❌ ref counter 自動拒否は未取り込み（運用側で `keys '*|<port>*'` pre-check）|
 | port 削除時の ACL バインド解除 | — | ❌ 自動解除なし（運用側で手順 2 を実行）|
-| port 削除時の VLAN / PortChannel メンバ解除 | — | ❌ 自動解除なし（運用側で手順 3 を実行）|
+| port 削除時の VLAN / [PortChannel](../reference/glossary.md#term-portchannel) メンバ解除 | — | ❌ 自動解除なし（運用側で手順 3 を実行）|
 | port 削除時の buffer PG / queue / qos-map 削除 | — | ❌ 自動削除なし（運用側で手順 4 を実行）|
-| port 削除本体 (`config_db` から `PORT` を消す) | ✅ portsorch / portsyncd が SAI port + host i/f を削除 | — |
+| port 削除本体 (`config_db` から `PORT` を消す) | ✅ portsorch / [portsyncd](../reference/glossary.md#term-portsyncd) が SAI port + host i/f を削除 | — |
 | port restore | — | ❌ HLD 提案のみ未実装、削除後の再構築は手動で再投入 |
 
 `✅` フェーズはユーザが触らずに動作するが、`❌` フェーズは現行 master では自動化されておらず、後述の `redis-cli` / `sonic-db-cli` 手順を運用側で踏む必要がある[^1]。
 
 ## 5. トラブルシューティング
 
-- ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。orchagent 連動が止まっている可能性。
-- ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
+- ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。[orchagent](../reference/glossary.md#term-orchagent) 連動が止まっている可能性。
+- ポート削除で [SAI](../reference/glossary.md#term-sai) エラーが大量: 依存（buffer / [ACL](../reference/glossary.md#term-acl) / [VLAN](../reference/glossary.md#term-vlan)）が残っている。HLD の ref counter 機構が動作していない可能性[^1]。
 - [LLDP](../reference/glossary.md#term-lldp) が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
 - zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
 
@@ -146,3 +146,5 @@ sudo grep -E 'portsorch|PortConfigDone|PortInitDone' /var/log/syslog | tail -50
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 4bc2a4aae15e -->

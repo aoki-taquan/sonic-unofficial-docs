@@ -28,13 +28,13 @@ related:
 
 ## 1. HLD レベルの制限事項
 
-- **依存削除はユーザ責任**: ACL / VLAN / LAG / buffer PG を **先に消してから** port を消す[^1]。HLD は ref counter の自動防御を提案するが、それでも上位設定の整合は外で担保する必要がある。
+- **依存削除はユーザ責任**: [ACL](../reference/glossary.md#term-acl) / [VLAN](../reference/glossary.md#term-vlan) / [LAG](../reference/glossary.md#term-lag) / buffer PG を **先に消してから** port を消す[^1]。[HLD](../reference/glossary.md#term-hld) は ref counter の自動防御を提案するが、それでも上位設定の整合は外で担保する必要がある。
 - **zero-port は「これまで未テスト」**: HLD 自体が「new type of init that was never tested」と明記している[^1]。実機投入前に十分検証が要る。
 - **race condition が複数残存**: buffermgr 加入・削除時の両方に race の可能性。実装側で順序保証が必要[^1]。
 
 ## 2. 干渉する機能
 
-- **ACL / VLAN / LAG / Buffer PG**: port 削除の事前条件。ref counter による orchagent の防御に依存。
+- **ACL / VLAN / LAG / Buffer PG**: port 削除の事前条件。ref counter による [orchagent](../reference/glossary.md#term-orchagent) の防御に依存。
 - **flex counter**: 各 counter group の動的 add/del で実装が広範に変わる。ASIC 側の counter リソース管理にも影響。
 - **line card manager (chassis 系)**: 本機能の主要利用者。プロビジョニング時に PORT エントリ + buffer cfg を一連で投入する。
 - **`lldpmgrd`**: 改修依存度が高い。pending_cmds 処理が変わる。
@@ -83,11 +83,11 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 # 0 件
 ```
 
-`sonic-swss/orchagent/portsorch.cpp` 内の `removePort()` / `del PORT` 経路は依然として SAI 削除を試み、失敗時の syslog 出力のみで上位（VLAN / LAG / ACL / buffer PG）側の依存をチェックしない。
+`sonic-swss/orchagent/portsorch.cpp` 内の `removePort()` / `del PORT` 経路は依然として [SAI](../reference/glossary.md#term-sai) 削除を試み、失敗時の syslog 出力のみで上位（VLAN / LAG / ACL / buffer PG）側の依存をチェックしない。
 
 ### 読者への影響（深掘り）
 
-- `sudo config interface shutdown EthernetX` 後に CONFIG_DB から直接 `PORT|EthernetX` を消すと、orchagent が以下を順次出す:
+- `sudo config interface shutdown EthernetX` 後に [CONFIG_DB](../reference/glossary.md#term-config_db) から直接 `PORT|EthernetX` を消すと、orchagent が以下を順次出す:
   - `SAI_STATUS_OBJECT_IN_USE`（VLAN_MEMBER / ACL_TABLE / [BUFFER_PG](../reference/glossary.md#term-buffer-pg) が参照中）
   - `SAI_STATUS_INVALID_OBJECT_ID`（既に部分削除された下流 SAI オブジェクト）
   - 最悪は orchagent 自体が `abort()` し [syncd](../reference/glossary.md#term-syncd) / swss コンテナが crash loop に入る。`fast-reboot` / `warm-reboot` が必要になる。
@@ -96,7 +96,7 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 
 ### 関連 GitHub Issue / PR
 
-- [sonic-swss #1112: \[DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/sonic-swss/pull/1112) — 動的 port add/del のコア実装（[DPB](../reference/glossary.md#term-dpb): Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
+- [sonic-swss #1112: \[DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/[sonic-swss](../reference/glossary.md#term-sonic-swss)/pull/1112) — 動的 port add/del のコア実装（[DPB](../reference/glossary.md#term-dpb): Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
 - HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。
 
 ### 検証日
@@ -106,3 +106,5 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: e8af0d068bd1 -->

@@ -86,7 +86,7 @@ going up は逆順を namespace ごとに走らせ、[orchagent](../reference/gl
 ## 制限事項
 
 - multi-asic 環境では namespace ごとに warm-restart timer が独立しており、最も遅い ASIC に律速される。
-- chassis 内の internal fabric (CPU<->LC fabric) を warm-restart 対象外とする実装が一部に存在し、本 HLD どおりに無瞬断とはならない場合がある。
+- chassis 内の internal fabric (CPU<->LC fabric) を warm-restart 対象外とする実装が一部に存在し、本 [HLD](../reference/glossary.md#term-hld) どおりに無瞬断とはならない場合がある。
 - multi-asic + Multi-DUT MLAG 同時運用の warm-reboot は組み合わせ検証が不十分で、慎重な事前検証を推奨。
 
 ## 引用元
@@ -109,4 +109,4 @@ going up は逆順を namespace ごとに走らせ、[orchagent](../reference/gl
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3cf123812bf9 -->
+<!-- glossary-links-injected: 167700005048 -->

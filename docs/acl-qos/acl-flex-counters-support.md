@@ -212,21 +212,15 @@ sonic-clear acl
 - counter が更新されない → `counterpoll show` で ACL group の status と interval、`FLEX_COUNTER_TABLE|ACL` の status を確認
 - mirror flap で counter リセット → 「counter detach 方式」が正しく動いているか syslog で確認
 
-### コマンド例: ACL flex counter
-
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+確認コマンド例:
 
 ```bash
-# ACL カウンタ表示と FLEX_COUNTER 設定の確認
-show acl counters
-counterpoll show
-# CONFIG_DB に登録された FLEX_COUNTER_TABLE エントリと polling 有効状態を確認
-redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|ACL'
-# COUNTERS_DB 側で各 ACL ルールに紐付く OID マッピングを確認
+# ACL counter / map / poll status をまとめて確認
+aclshow -a
+counterpoll show | grep -i acl
 redis-cli -n 2 hgetall COUNTERS_ACL_COUNTER_RULE_MAP
+redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|ACL'
 ```
-
 
 ## 関連トピック
 

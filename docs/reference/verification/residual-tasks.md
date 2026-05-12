@@ -29,7 +29,7 @@ related:
 | architecture | 1 |
 | **合計** | **10** |
 
-**2026-05-12 round 38 update**: `meta/backlog/README.md` の **defer 4 件 + 実質 drop 1 件 = 5 件を `_archived` へ追加移動**（`acl-qos/flow-charts` / `architecture/import-the-vendor-to-module-mapping` / `routing/egress-acl-bug-fix-description` / `routing/ecmp-calculator` / `management/pins-supplementary-hld`）。残りは **low-priority 10 件**（大型 HLD 4 + telemetry/openconfig 3 + PINS/chassis 2 + 第三者拡張 1）。
+**2026-05-12 round 38 update**: `meta/backlog/README.md` の **defer 4 件 + 実質 drop 1 件 = 5 件を `_archived` へ追加移動**（`acl-qos/flow-charts` / `architecture/import-the-vendor-to-module-mapping` / `routing/egress-acl-bug-fix-description` / `routing/ecmp-calculator` / `management/pins-supplementary-hld`）。残りは **low-priority 10 件**（大型 HLD 4 + telemetry/openconfig 3 + [PINS](../../reference/glossary.md#term-pins)/chassis 2 + 第三者拡張 1）。
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
@@ -132,4 +132,4 @@ find docs -name '*.md' -not -path 'docs/_meta/*' -exec wc -l {} + \
 - [sources-freshness](sources-freshness.md)
 - [stale-verified](stale-verified.md)
 
-<!-- glossary-links-injected: 80aec4b758dc -->
+<!-- glossary-links-injected: 130cca349dcf -->
