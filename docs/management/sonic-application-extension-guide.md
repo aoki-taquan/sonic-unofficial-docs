@@ -1,18 +1,19 @@
 ---
 title: SONiC Application Extension 開発・移植ガイド
-description: "SONiC Application Extension 開発・移植ガイド — SONiC の docker 化された機能（DHCP relay 等）を Application Extension 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録する…"
+description: SONiC Application Extension 開発・移植ガイド — SONiC の docker 化された機能（DHCP relay 等）を Application Extension 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録する…
 area: management
 verification: code-verified
 last_verified: 2026-05-09
 sources:
-  - repo: sonic-net/SONiC
-    path: doc/sonic-application-extension/sonic-application-extension-guide.md
-    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+- repo: sonic-net/SONiC
+  path: doc/sonic-application-extension/sonic-application-extension-guide.md
+  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db: []
   cli:
-    - sonic-package-manager
-  yang: []
+  - sonic-package-manager
+  yang:
+  - sonic-feature
 ---
 
 <!-- topics-tip -->

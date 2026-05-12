@@ -1,8 +1,6 @@
 ---
 title: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）
-description: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service） —
-  gNOI Healthz は コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を
-  gRPC 経由で…
+description: gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service） — gNOI Healthz は コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で…
 area: management
 verification: code-verified
 last_verified: 2026-05-09
@@ -16,7 +14,9 @@ related:
   - GNMI
   cli:
   - gnoi_client
-  yang: []
+  yang:
+  - sonic-gnmi
+  - sonic-telemetry
 ---
 
 <!-- topics-tip -->

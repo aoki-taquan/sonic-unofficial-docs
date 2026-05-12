@@ -1,7 +1,6 @@
 ---
 title: SmartSwitch DPU が応答しない
-description: 'Runbook: SmartSwitch DPU が応答しない — : sonic-net/sonic-platform-daemons
-  @ 4305596 — chassisd : sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト'
+description: 'Runbook: SmartSwitch DPU が応答しない — : sonic-net/sonic-platform-daemons @ 4305596 — chassisd : sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -26,7 +25,10 @@ related:
   - show platform inventory
   - config chassis modules
   - show platform
-  yang: []
+  yang:
+  - sonic-smart-switch
+  - sonic-chassis-module
+  - sonic-dash
 ---
 
 # Runbook: SmartSwitch DPU が応答しない

@@ -1,7 +1,6 @@
 ---
 title: Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御）
-description: 'Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御） — switch を適温に保つために
-  cooling device（主に fan）を制御する 2 階建ての仕組み:'
+description: 'Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御） — switch を適温に保つために cooling device（主に fan）を制御する 2 階建ての仕組み:'
 area: platform
 verification: code-verified
 last_verified: 2026-05-10
@@ -16,7 +15,8 @@ related:
   - DPU
   cli:
   - show platform
-  yang: []
+  yang:
+  - sonic-asic-sensors
 ---
 
 <!-- topics-tip -->

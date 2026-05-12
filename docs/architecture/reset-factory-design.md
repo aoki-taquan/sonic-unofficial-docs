@@ -1,7 +1,6 @@
 ---
 title: reset-factory（keep-basic / keep-all-config / only-config）
-description: reset-factory（keep-basic / keep-all-config / only-config） — SONiC スイッチの
-  工場出荷状態への復元 を 1 コマンド reset-factory で行えるようにする HLD。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う。
+description: reset-factory（keep-basic / keep-all-config / only-config） — SONiC スイッチの 工場出荷状態への復元 を 1 コマンド reset-factory で行えるようにする HLD。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09
@@ -23,7 +22,8 @@ related:
   - config-setup factory
   - config aaa
   - show aaa
-  yang: []
+  yang:
+  - sonic-system-defaults
 ---
 
 <!-- topics-tip -->

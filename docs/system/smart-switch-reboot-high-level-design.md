@@ -1,8 +1,6 @@
 ---
 title: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）
-description: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）
-  — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel
-  は NPU の…
+description: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel は NPU の…
 area: system
 verification: code-verified
 last_verified: 2026-05-10
@@ -21,7 +19,10 @@ related:
   - TELEMETRY
   cli:
   - reboot
-  yang: []
+  yang:
+  - sonic-smart-switch
+  - sonic-chassis-module
+  - sonic-warm-restart
 ---
 
 <!-- topics-tip -->

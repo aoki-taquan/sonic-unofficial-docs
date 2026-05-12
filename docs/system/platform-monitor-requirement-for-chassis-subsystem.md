@@ -1,7 +1,6 @@
 ---
 title: シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future）
-description: シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future） — このドキュメントはシャーシ型
-  SONiC（Supervisor + Linecards + Fabric Cards）における PMON 関連の必須要件と将来要件 を箇条書きで挙げたチェックリスト形式の…
+description: シャーシサブシステムにおける Platform Monitor 要件（Mandatory + Future） — このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における PMON 関連の必須要件と将来要件 を箇条書きで挙げたチェックリスト形式の…
 area: system
 verification: code-verified
 last_verified: 2026-05-09
@@ -23,7 +22,9 @@ related:
   - show system-health
   - show reboot-cause
   - config qos
-  yang: []
+  yang:
+  - sonic-chassis-module
+  - sonic-asic-sensors
 ---
 
 <!-- topics-tip -->

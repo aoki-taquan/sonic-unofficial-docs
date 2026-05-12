@@ -22,7 +22,11 @@ related:
   - RADIUS
   - RADIUS_SERVER
   - TELEMETRY
-  yang: []
+  yang:
+  - sonic-system-aaa
+  - sonic-system-radius
+  - sonic-system-tacacs
+  - sonic-system-ldap
 ---
 
 # 発展トピック

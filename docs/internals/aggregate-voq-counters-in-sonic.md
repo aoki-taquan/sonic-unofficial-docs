@@ -1,7 +1,6 @@
 ---
 title: VOQ カウンタ集約（chassis supervisor からの aggregate 表示）
-description: VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある
-  出力 VOQ に対応する VOQ が システム内のすべての ASIC に存在する。
+description: VOQ カウンタ集約（chassis supervisor からの aggregate 表示） — distributed VOQ アーキテクチャでは、ある 出力 VOQ に対応する VOQ が システム内のすべての ASIC に存在する。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09
@@ -20,7 +19,9 @@ related:
   - show queue
   - clear
   - clear counters
-  yang: []
+  yang:
+  - sonic-flex_counter
+  - sonic-debug-counter
 ---
 
 <!-- topics-tip -->
