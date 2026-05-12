@@ -6,6 +6,7 @@ verification: discrepancy-found
 monitor: partially_implemented
 last_verified: 2026-05-11
 page_kind: split-child
+hub: switch-port-modes-and-vlan-cli-enhancement
 sources:
   - repo: sonic-net/SONiC
     path: doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md

@@ -63,8 +63,8 @@ jobs:
       - name: Report broken intra-doc links (informational)
         run: python3 meta/scripts/check_broken_links.py --check
 
-      - name: Report link-density outliers (informational)
-        run: python3 meta/scripts/check_link_density.py --check
+      - name: Report link-density outliers (informational) + split-child nav (strict)
+        run: python3 meta/scripts/check_link_density.py --strict-split-child
 
       - name: Check discrepancy pages have non-empty related.yang (strict)
         run: python3 meta/scripts/check_discrepancy_related.py --strict --report meta/discrepancy-related-yang-report.md

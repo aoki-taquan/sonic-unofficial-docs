@@ -11,10 +11,15 @@
 * 高密度 (> 30 links / 1000 chars): リンク過多。glossary 自動注入の
   やりすぎや、ナビゲーション専用ページ等が紛れている可能性
 
-加えて、``page_kind: split-child`` のページについては「hub への戻りリンク」
-「他 split-child へのリンク」のいずれも 1 件以上含むことを必須化し、欠落して
-いれば warning として report する (本来の閾値より厳しめだが、サブページの
-ナビゲーション健全性を担保するため)。
+加えて、``page_kind: split-child`` のページについては 2 層のナビゲーション
+リンクを必須化する:
+
+1. hub への戻りリンク 1 件以上
+2. **同じ hub に属する他の split-child 全件** (concepts/operations/internals/
+   limitations のうち、実ファイルとして存在し自分以外のもの) へのリンク
+
+いずれかが欠落していれば warning として report する。本来の閾値より厳しめ
+だが、サブページのナビゲーション健全性を担保するため。
 
 本文の前処理:
 
@@ -36,7 +41,9 @@ Usage:
     python3 meta/scripts/check_link_density.py --check     # CI informational
 
 Exit codes:
-    0  always (informational)
+    0  always (informational), unless ``--strict-split-child`` is set and any
+       split-child page is missing the hub or any sibling link, in which case
+       the script exits with code 1 (CI gate).
 """
 from __future__ import annotations
 
@@ -62,6 +69,11 @@ HIGH_THRESHOLD = 30.0  # links / 1000 chars
 # split-child suffix → strip these to obtain the parent hub slug
 SPLIT_CHILD_SUFFIXES = ("-concepts", "-operations", "-internals", "-limitations")
 PAGE_KIND_RE = re.compile(r"^page_kind:\s*([\w-]+)\s*$", re.MULTILINE)
+# Optional frontmatter override:
+#   hub: <basename-without-md>
+# Used when the hub page does not follow the default naming convention
+# (e.g. ``<base>-enhancement.md`` instead of ``<base>.md``).
+HUB_OVERRIDE_RE = re.compile(r"^hub:\s*([\w./-]+?)\s*$", re.MULTILINE)
 
 
 def load_exceptions() -> set[str]:
@@ -115,6 +127,20 @@ def extract_page_kind(text: str) -> str | None:
     return pk.group(1) if pk else None
 
 
+def extract_hub_override(text: str) -> str | None:
+    m = FRONTMATTER_RE.match(text)
+    if not m:
+        return None
+    fm = m.group(1)
+    h = HUB_OVERRIDE_RE.search(fm)
+    if not h:
+        return None
+    val = h.group(1).strip()
+    if not val.endswith(".md"):
+        val = val + ".md"
+    return val
+
+
 def split_child_hub_slug(md: Path) -> str | None:
     """Return the parent hub markdown filename for a split-child page, else None.
 
@@ -127,40 +153,56 @@ def split_child_hub_slug(md: Path) -> str | None:
     return None
 
 
-def check_split_child_links(md: Path, body: str) -> dict[str, bool] | None:
-    """Verify that a split-child page links to its hub and at least one sibling.
+def check_split_child_links(
+    md: Path, body: str, hub_override: str | None = None
+) -> dict[str, object] | None:
+    """Verify split-child page links to hub and ALL existing sibling split-children.
 
-    Returns ``{"has_hub": bool, "has_sibling": bool}`` or ``None`` if not a
-    split-child page."""
-    hub_filename = split_child_hub_slug(md)
-    if hub_filename is None:
+    2 層のリンクルール:
+
+    * Layer 1: hub (``<base>.md``) への戻りリンク 1 件以上
+    * Layer 2: 同じ hub の他の split-child (``<base>-<suffix>.md``) のうち
+      **実ファイルとして存在するもの全件** へのリンクが揃っているか
+
+    Returns ``{"has_hub": bool, "expected_siblings": set[str],
+    "linked_siblings": set[str], "missing_siblings": set[str]}`` or ``None``
+    if not a split-child page."""
+    default_hub_filename = split_child_hub_slug(md)
+    if default_hub_filename is None:
         return None
-    base_stem = hub_filename[:-3]  # drop ".md"
-    sibling_stems = {
-        base_stem + suffix
-        for suffix in SPLIT_CHILD_SUFFIXES
-        if base_stem + suffix != md.stem
-    }
+    # Frontmatter override takes precedence (for non-standard hub naming).
+    hub_filename = hub_override or default_hub_filename
+    # Sibling detection still uses the standard suffix-stripped base
+    # (siblings always follow ``<base>-<suffix>.md`` regardless of hub name).
+    base_stem = default_hub_filename[:-3]  # drop ".md"
+    # Layer 2: detect actually-existing siblings on disk
+    expected_siblings: set[str] = set()
+    for suffix in SPLIT_CHILD_SUFFIXES:
+        sib_stem = base_stem + suffix
+        if sib_stem == md.stem:
+            continue
+        sib_path = md.parent / f"{sib_stem}.md"
+        if sib_path.exists():
+            expected_siblings.add(f"{sib_stem}.md")
     has_hub = False
-    has_sibling = False
+    linked_siblings: set[str] = set()
     for m in LINK_RE.finditer(body):
         target = m.group("target")
-        # Strip fragment / anchor / query
         target_path = target.split("#", 1)[0].split("?", 1)[0]
         if not target_path:
             continue
-        # Only consider relative .md links (same-folder or ../)
         tail = target_path.rsplit("/", 1)[-1]
         if tail == hub_filename:
             has_hub = True
-        else:
-            for sib in sibling_stems:
-                if tail == sib + ".md":
-                    has_sibling = True
-                    break
-        if has_hub and has_sibling:
-            break
-    return {"has_hub": has_hub, "has_sibling": has_sibling}
+        elif tail in expected_siblings:
+            linked_siblings.add(tail)
+    missing_siblings = expected_siblings - linked_siblings
+    return {
+        "has_hub": has_hub,
+        "expected_siblings": expected_siblings,
+        "linked_siblings": linked_siblings,
+        "missing_siblings": missing_siblings,
+    }
 
 
 def measure(md: Path) -> dict[str, object] | None:
@@ -169,6 +211,7 @@ def measure(md: Path) -> dict[str, object] | None:
     except (OSError, UnicodeDecodeError):
         return None
     page_kind = extract_page_kind(text)
+    hub_override = extract_hub_override(text)
     body = strip_code_and_comments(strip_frontmatter(text))
     body_chars = len(body)
     if body_chars < MIN_BODY_CHARS:
@@ -183,10 +226,18 @@ def measure(md: Path) -> dict[str, object] | None:
         "page_kind": page_kind,
     }
     if page_kind == "split-child":
-        sc = check_split_child_links(md, body)
+        sc = check_split_child_links(md, body, hub_override=hub_override)
         if sc is not None:
             row["split_child_has_hub"] = sc["has_hub"]
-            row["split_child_has_sibling"] = sc["has_sibling"]
+            row["split_child_expected_siblings"] = sc["expected_siblings"]
+            row["split_child_linked_siblings"] = sc["linked_siblings"]
+            row["split_child_missing_siblings"] = sc["missing_siblings"]
+            # Layer 2 is satisfied iff every existing sibling is linked.
+            # If there are zero expected siblings (lone split-child), treat
+            # Layer 2 as vacuously satisfied.
+            row["split_child_has_all_siblings"] = (
+                len(sc["missing_siblings"]) == 0
+            )
     return row
 
 
@@ -218,7 +269,7 @@ def collect() -> tuple[
             high.append(row)
         if row.get("page_kind") == "split-child" and "split_child_has_hub" in row:
             split_total += 1
-            if not (row["split_child_has_hub"] and row["split_child_has_sibling"]):
+            if not (row["split_child_has_hub"] and row["split_child_has_all_siblings"]):
                 split_warns.append(row)
     low.sort(key=lambda r: r["density"])
     high.sort(key=lambda r: r["density"], reverse=True)
@@ -241,14 +292,15 @@ def render_tsv(
             f"high\t{r['path']}\t{r['body_chars']}\t{r['link_count']}\t{r['density']:.2f}\t"
         )
     for r in split_warns:
-        missing = []
+        missing: list[str] = []
         if not r.get("split_child_has_hub"):
             missing.append("hub")
-        if not r.get("split_child_has_sibling"):
-            missing.append("sibling")
+        miss_sibs = sorted(r.get("split_child_missing_siblings") or [])
+        if miss_sibs:
+            missing.append("siblings:" + ",".join(miss_sibs))
         lines.append(
             f"split-child-warn\t{r['path']}\t{r['body_chars']}\t{r['link_count']}\t"
-            f"{r['density']:.2f}\tmissing={'+'.join(missing)}"
+            f"{r['density']:.2f}\tmissing={'|'.join(missing)}"
         )
     return "\n".join(lines)
 
@@ -312,22 +364,25 @@ def render_report(
     lines.append("## split-child pages missing hub / sibling link")
     lines.append("")
     lines.append(
-        "``page_kind: split-child`` のページは「hub への戻りリンク」と"
-        "「他 split-child へのリンク」の両方を 1 件以上含む必要がある。"
-        "欠落しているページは導線が切れているため、本文に追記を推奨。"
+        "``page_kind: split-child`` のページは 2 層のナビゲーションリンクを"
+        "必須化している: (1) hub への戻りリンク 1 件以上, "
+        "(2) 同じ hub の他 split-child のうち実ファイルとして存在するもの "
+        "**全件** へのリンク。欠落しているページは導線が切れているため、"
+        "本文に追記を推奨。"
     )
     lines.append("")
     if split_warns:
         lines.append("| path | missing | links | density (/1k) |")
         lines.append("|------|---------|------:|--------------:|")
         for r in split_warns:
-            missing = []
+            missing: list[str] = []
             if not r.get("split_child_has_hub"):
                 missing.append("hub")
-            if not r.get("split_child_has_sibling"):
-                missing.append("sibling")
+            miss_sibs = sorted(r.get("split_child_missing_siblings") or [])
+            if miss_sibs:
+                missing.append("siblings: " + ", ".join(miss_sibs))
             lines.append(
-                f"| `{r['path']}` | {'+'.join(missing)} | "
+                f"| `{r['path']}` | {'<br>'.join(missing)} | "
                 f"{r['link_count']} | {r['density']:.2f} |"
             )
     else:
@@ -347,19 +402,42 @@ def main() -> int:
         action="store_true",
         help="Markdown 形式の詳細レポートを stdout に出す。",
     )
+    parser.add_argument(
+        "--strict-split-child",
+        action="store_true",
+        help=(
+            "split-child のリンクルール (hub + 全 sibling) 違反が 1 件でもあれば "
+            "exit code 1 で終了する CI gate モード。density 閾値は引き続き "
+            "informational。"
+        ),
+    )
     args = parser.parse_args()
 
     low, high, split_warns, total, split_total = collect()
 
-    if args.check:
+    if args.check or args.strict_split_child:
+        gate = "strict" if args.strict_split_child else "informational"
         print(
             f"[link-density] evaluated {total} pages: "
             f"{len(low)} low-density (< {LOW_THRESHOLD}/1k), "
             f"{len(high)} high-density (> {HIGH_THRESHOLD}/1k); "
             f"split-child {split_total} pages, "
-            f"{len(split_warns)} missing hub/sibling link (informational)",
+            f"{len(split_warns)} missing hub/sibling link ({gate})",
             file=sys.stderr,
         )
+        if args.strict_split_child and split_warns:
+            for r in split_warns:
+                missing: list[str] = []
+                if not r.get("split_child_has_hub"):
+                    missing.append("hub")
+                miss_sibs = sorted(r.get("split_child_missing_siblings") or [])
+                if miss_sibs:
+                    missing.append("siblings:" + ",".join(miss_sibs))
+                print(
+                    f"  - {r['path']}: missing {' | '.join(missing)}",
+                    file=sys.stderr,
+                )
+            return 1
         return 0
 
     if args.report:
