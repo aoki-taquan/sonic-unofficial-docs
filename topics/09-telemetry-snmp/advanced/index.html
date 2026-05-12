@@ -3417,6 +3417,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28882,6 +28926,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28977,6 +29065,34 @@
 <li><code>sonic-buildimage</code> の telemetry agent 拡張 PR が頻繁に入る（reboot cause、memory stats、process stats など）。</li>
 <li><code>sonic-snmpagent</code> で transceiver / entity / sensor 対応の拡張、SNMP v3 関連修正が継続。</li>
 <li>DTel / sFlow の test plan が更新され、ASIC capability matrix が PR で明確化される傾向。</li>
+</ul>
+<h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、area HLD の <a href="../../../system/">system/</a> 配下 telemetry / SNMP ページ群、および <a href="../../../architecture/sflow-high-level-design/">sFlow HLD</a> で完結する。<code>telemetry</code> docker、<code>snmpd</code> agent、sFlow / DTel agent の責務分担は internals で詳細化。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>show snmp</code> / <code>show sflow</code> / <code>config sflow</code> 系、<code>SFLOW</code>, <code>SFLOW_COLLECTOR</code>, <code>TELEMETRY</code>, <code>SNMP</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、および <code>sonic-sflow</code>, <code>sonic-snmp</code> YANG モジュールが該当。</li>
+<li><strong>本ページ</strong> は OTel との連携、DTel/INT、IPFIX、SNMPv3 USM/SMI などの「Streaming/Push 系への移行と従来 SNMP のレガシー併走」発展領域だけを扱う。</li>
+</ul>
+<h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>gNMI subscribe が応答しないときは、<code>docker exec telemetry telemetryctl status</code> で agent up、<code>/var/log/syslog</code> で TLS / cert エラーを確認する。<code>TELEMETRY|certs</code> の <code>ca_crt</code> パス、<code>gnmi.server.crt</code>/<code>key</code> の存在も併せて点検。</li>
+<li>SNMP walk が timeout する場合、<code>snmpd</code> の view ACL 設定 (<code>/etc/sonic/snmp.yml</code>)、<code>SNMP_AGENT_ADDRESS_CONFIG</code> のリスン IP、<code>snmpd</code> プロセス内の MIB initialization 遅延 (起動後 30 秒程度) を疑う。</li>
+<li>sFlow sample が collector に届かないときは <code>show sflow interface</code> で sample rate、<code>config sflow polling-interval</code> の有効性、<code>SFLOW_COLLECTOR</code> の宛先到達性 (UDP 6343) を点検。</li>
+</ul>
+<h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>gNMI subscribe の性能検証は <code>gnmi_cli -subscribe</code> で 1k〜10k path を sample 並列受信し、telemetry agent の CPU/メモリと、<code>COUNTERS_DB</code> の polling 間隔への影響を計測する。</li>
+<li>SNMP scale 検証は <code>snmpwalk -t 30 -r 3</code> で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。</li>
+<li>DTel / sFlow の sampling 精度検証は、<code>pktgen</code> で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。</li>
+</ul>
+<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../system/dataplane-telemetry-in-sonic/">Dataplane telemetry in SONiC</a></li>
+<li><a href="../../../architecture/sflow-high-level-design/">sFlow high-level design</a></li>
+<li><a href="../../../system/sonic-entity-mib-and-entity-sensor-mib-extension/">SONiC entity MIB / entity sensor MIB extension</a></li>
+<li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot cause information via telemetry agent</a></li>
+<li><a href="../../02-bgp/">02 BGP: BMP との連携</a></li>
+<li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: 変換層と subscribe path</a></li>
+<li><a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計</a></li>
 </ul>
 <!-- glossary-links-injected: fe5aa1fcc436 -->
 

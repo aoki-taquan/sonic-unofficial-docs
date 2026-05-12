@@ -2621,6 +2621,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28838,6 +28882,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28949,6 +29037,34 @@
 <li><code>sonic-swss</code> の <code>portsorch</code> / <code>lagorch</code> で min-links と member 増減時の race 修正 PR が継続。</li>
 <li><code>teamd</code> カスタマイズ層と Linux upstream <code>libteam</code> のバージョン差で LACP debug ログのフォーマットがずれる事例があり、PR でフォーマット安定化が進む。</li>
 <li>OpenConfig transformer (<a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common) で VLAN / PortChannel の YANG 対応拡張が定期的に入る。設定変換の境界が拡張されるごとに <code>show running-configuration</code> の出力が変わる。</li>
+</ul>
+<h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、area HLD の <a href="../../../switching/">switching/</a> 配下のページ群で完結する。VLAN_MEMBER / PORTCHANNEL_MEMBER のテーブル遷移と portsorch / lagorch の責務分担は internals で扱う。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config vlan</code> / <code>config portchannel</code> 系と、<code>VLAN</code>, <code>VLAN_MEMBER</code>, <code>VLAN_INTERFACE</code>, <code>PORTCHANNEL</code>, <code>PORTCHANNEL_MEMBER</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、および <code>sonic-vlan</code>, <code>sonic-portchannel</code> YANG モジュールに集約。</li>
+<li><strong>本ページ</strong> は OpenConfig 変換、distributed VOQ LAG の制約、WoL、micro-BFD、storm control、PortChannel min-links/drain など、L2 単独で閉じない発展トピックを扱う。</li>
+</ul>
+<h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PortChannel が up しないときは、まず <code>show interfaces portchannel</code> で member の collected/distributed 状態を確認する。LACP PDU が片方向しか流れていない場合 (一方が active/passive 設定不一致) は <code>teamdctl &lt;po&gt; state</code> の <code>runner.actor_lacpdu_info</code> と <code>runner.partner_lacpdu_info</code> を見比べる。</li>
+<li>VLAN flooding が想定外の port に届く・届かないときは、<code>fdbshow</code> と <code>bcmcmd 'l2 show'</code> (Broadcom 系) で FDB と ASIC の MAC table を突き合わせる。<code>MAC_LEARN_LIMIT</code> 到達時は新規 MAC が flooding 扱いになる。</li>
+<li>distributed VOQ chassis で <code>SYSTEM_LAG_TABLE</code> に LAG が現れない場合、<code>chassis_db</code> の Redis 接続と、各 ASIC の <code>bgp</code> docker から <code>redis-cli -h &lt;supervisor&gt;</code> でアクセスできるかを点検する。</li>
+</ul>
+<h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>LACP fast rate と member down 検出時間は、<code>sonic-mgmt</code> の <code>lag/test_lag_2.py</code> 系テストで member を意図的に shut/no-shut させ、上流 BGP が再収束するまでの時間を計測する。target は fast rate で 3 秒以内、micro-BFD 併用で 1 秒以内。</li>
+<li>VLAN 大量 (4k 近く) 構成での scale 検証は、CONFIG_DB へ <code>VLAN|Vlan100</code>〜<code>Vlan4094</code> を投入し、<code>swssloglevel</code> を notice にして orchagent / vlanmgrd のレイテンシを観測する。<code>syncd</code> queue depth が異常に伸びる場合、ASIC capability の VLAN 数上限を確認する。</li>
+<li>OpenConfig 変換は <code>gnmi_cli</code> で <code>openconfig-interfaces:interfaces</code> を get/set し、変換後の CONFIG_DB と round-trip 一致を確認する。<code>sonic-mgmt-common</code> の <code>transformer/test_*</code> がベースライン。</li>
+</ul>
+<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../switching/openconfig-support-for-portchannel-aggregate-interface/">OpenConfig support for PortChannel</a></li>
+<li><a href="../../../switching/add-support-for-vlan-interface-using-openconfig-yang/">VLAN interface OpenConfig YANG support</a></li>
+<li><a href="../../../switching/lag-on-distributed-voq-system/">LAG on distributed VOQ system</a></li>
+<li><a href="../../../switching/wake-on-lan-in-sonic/">Wake-on-LAN in SONiC</a></li>
+<li><a href="../../05-dual-tor/">05 Dual-ToR: MC-LAG / ICCP / peer link 設計</a></li>
+<li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: 変換層の責務</a></li>
+<li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ: chassis 内 LAG とリモート LAG</a></li>
 </ul>
 <!-- glossary-links-injected: 9caf06a8d97f -->
 

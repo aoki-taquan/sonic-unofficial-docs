@@ -4498,6 +4498,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28860,6 +28904,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28999,6 +29087,35 @@
 <li><code>sonic-dash-api</code> repo で proto / pipeline 定義の拡張が続く。controller との互換は proto バージョンで管理。</li>
 <li><code>sonic-buildimage</code> の SmartSwitch 関連 PR が活発で、independent DPU upgrade、graceful shutdown、reboot 順序、health monitoring など分野が広がる。</li>
 <li>DASH P4 reference implementation (DASH repo) と SONiC sai 実装の bridging が継続して進む。</li>
+</ul>
+<h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../overlay/sonic-dash-hld/">SONiC DASH HLD</a>, <a href="../../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot HLD</a>, <a href="../../../system/independent-dpu-upgrade/">Independent DPU upgrade</a> で完結する。DPU / NPU の責務分担、<code>DASH_APPL_DB</code>, <code>SDN_APPL_DB</code>, <code>DPU_APPL_DB</code> の関係性は internals で詳細化済み。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>show dpu</code> / <code>show dash</code> 系、<code>DPU</code>, <code>DASH_ENI</code>, <code>DASH_VNET</code>, <code>DASH_ACL_GROUP</code>, <code>DASH_ROUTE</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、および <code>sonic-dash-api</code> の proto / gRPC interface に集約。</li>
+<li><strong>本ページ</strong> は DASH counter aggregation、独立 reboot 順序、VNET tunnel との優先度競合、SmartSwitch HA / flow sync など、章境界をまたぐ発展領域だけを扱う。</li>
+</ul>
+<h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DPU が NPU から見えないときは、<code>show dpu status</code> と <code>DPU_STATE</code> テーブルの health/state、midplane ネットワーク (DPU 内部管理 IP) への ping、<code>/var/log/syslog</code> の <code>dpu_health</code> ログを点検する。midplane MAC 衝突や DHCP 失敗が原因のことが多い。</li>
+<li>ENI flow が programming されないときは、SDN controller → <code>SDN_APPL_DB</code> → <code>DASH_APPL_DB</code> → DPU SAI の各段で <code>redis-cli -h &lt;dpu_ip&gt;</code> を使い、エントリ数の差分を確認する。proto バージョン不一致で controller の write が無視される事例あり。</li>
+<li>DPU 独立 reboot 中に flow 切替が起きないときは、<code>dpuctl shutdown --graceful</code> で flow sync が完了したことを peer DPU の <code>DashFlowSyncState</code> で確認してから reboot する。</li>
+</ul>
+<h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ENI scale 検証は SDN controller から 10k〜100k ENI を投入し、per-DPU の <code>SDN_APPL_DB</code> メモリ消費と DPU SAI の programming 時間を計測する。target は 100k ENI で 5 分以内、メモリ 4GB 以下。</li>
+<li>flow sync 検証は active DPU を意図的にダウンさせ、peer DPU の <code>DashFlowSyncState</code> が <code>synced</code> に遷移するまでの時間と、サーバ間 connection の継続性 (TCP keep-alive で観測) を確認する。target は &lt; 1 秒の flow takeover。</li>
+<li>DASH counter export の遅延検証は、controller 側 collector で per-flow counter の到達 timestamp と DPU 内部の counter 更新 timestamp の差を取得する。<code>DashCounter</code> aggregation 粒度を 1s / 10s / 60s で比較。</li>
+</ul>
+<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../overlay/sonic-dash-hld/">SONiC DASH HLD</a></li>
+<li><a href="../../../system/independent-dpu-upgrade/">Independent DPU upgrade</a></li>
+<li><a href="../../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot HLD</a></li>
+<li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">SmartSwitch DPU graceful shutdown</a></li>
+<li><a href="../../../management/gnoi-hld-for-os-apis/">gNOI HLD for OS APIs</a></li>
+<li><a href="../../05-dual-tor/">05 Dual-ToR: mux state と DPU 連携</a></li>
+<li><a href="../../07-acl-copp-mirror/">07 ACL / CoPP / Mirror: DPU 上の flow rule</a></li>
+<li><a href="../../18-p4-pins/">18 P4 / PINS: P4 pipeline の表現</a></li>
 </ul>
 <!-- glossary-links-injected: ca666ecaafdc -->
 

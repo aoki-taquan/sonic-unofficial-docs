@@ -2352,6 +2352,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28816,6 +28860,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28952,6 +29040,32 @@
 <li><code>sonic-linkmgrd</code> 配下では state machine のリファクタリングと test カバレッジ拡張が継続。ログのフォーマット改善 PR が運用負荷を下げる方向で進んでいる。</li>
 <li>DHCPv6 relay agent のループバック source、Option 79、counter export 周辺が community PR で議題に上がる頻度が高い。</li>
 <li><a href="../../../reference/glossary/#term-dash">DASH</a> / SmartSwitch との接続を見据え、mux state を外部 controller (NSM / SDN) と同期するインタフェース提案が散見される。</li>
+</ul>
+<h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">tunnel DSCP remap</a>, <a href="../../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent</a> で完結する。linkmgrd state machine の論理と <code>APP_DB:MUX_CABLE_TABLE</code> の遷移は internals で詳細化済み。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config mux</code>, <code>show mux</code>, <code>show muxcable</code> 系、および <code>MUX_CABLE</code>, <code>MUX_LINKMGR</code>, <code>TUNNEL</code> の各 <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、<code>sonic-mux*</code> YANG モジュールで網羅される。</li>
+<li><strong>本ページ</strong> は tunnel DSCP remap / DHCPv6 loopback / link prober offload など、章境界をまたぐクロスオーバー領域と、Active-Active / SmartSwitch 連携といった発展トピックのみを扱う。</li>
+</ul>
+<h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>mux state が <code>unknown</code> のまま固着するときは、まず <code>show muxcable status</code> で peer 側の最新状態と、<code>linkmgrd</code> のログ (<code>/var/log/syslog</code> の <code>LINKMGRD</code> 行) を確認する。peer ToR への gRPC / ICMP 到達性、<code>LinkProber</code> の RTT 統計、<code>MUX_CABLE_RESPONSE_TABLE</code> の応答有無が決め手になる。</li>
+<li>standby 経由のバウンスバックで packet loss が発生するときは、<code>show pfc counters</code> と <code>show queue counters</code> で対象 PG / queue が tunnel 用にマップされているかを確認する。<code>DSCP_TO_TC_MAP|AZURE_TUNNEL</code> などの専用 map が抜けていると、通常 PG と衝突する。</li>
+<li>DHCPv6 が片側 ToR で取得できない場合は <code>show dhcp6relay_counters</code> を両 ToR で見比べる。<code>use-loopback-address</code> の片肺設定、または Option 79 の有無で relay-forward が破棄されているケースが多い。</li>
+</ul>
+<h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>linkmgrd の state machine 検証は <code>sonic-mgmt</code> の <code>dualtor</code> テストグループで実施する。<code>toggle_mux_status</code> / <code>link_flap</code> / <code>peer_down</code> の組合せを minute 単位で連続走行し、<code>MUX_CABLE_TABLE</code> の遷移と上流 BGP の収束時間 (target: &lt; 1s) を計測する。</li>
+<li>tunnel DSCP remap の検証では、サーバ→standby ToR→active ToR→上流の経路で <code>tcpreplay</code> などにより 0.1〜10Gbps の負荷をかけ、<code>show queue counters</code> で tunnel 用 queue が分離されていること、PFC pause が通常経路へ波及しないことを確認する。</li>
+<li>DHCPv6 loopback source mode は両 ToR で同時に <code>use-loopback-address enable</code> を設定したうえで、client → relay-forward → server → relay-reply の Wireshark/<code>tcpdump</code> キャプチャを取得し、loopback IP が source として一貫しているかを点検する。</li>
+</ul>
+<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">DSCP remapping for tunnel traffic</a></li>
+<li><a href="../../../architecture/dhcpv6-relay-agent/">DHCPv6 Relay Agent</a></li>
+<li><a href="../../02-bgp/">02 BGP: Dual-ToR の上流到達性と graceful drain</a></li>
+<li><a href="../../13-dash-smartswitch/">13 DASH / SmartSwitch: DPU と mux state の同期</a></li>
+<li><a href="../../14-platform-port-optics/">14 Platform / Port / Optics: link prober の hardware offload</a></li>
 </ul>
 <!-- glossary-links-injected: 76b7df4b6b16 -->
 

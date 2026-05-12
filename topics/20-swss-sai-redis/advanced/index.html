@@ -6123,6 +6123,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28838,6 +28882,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28922,6 +29010,36 @@
 <li><code>sonic-sairedis</code> で bulk API 拡張と syncd の事前計算最適化 PR が散発。</li>
 <li><code>system-health</code> / <code>sysmonitor</code> で closest UP status の event 集約ロジック改善が議題化。</li>
 <li>Redis 6.2 → 7.x への対応検討と、複数 Redis instance での scale 改善議論が続く。</li>
+</ul>
+<h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../system/system-ready-hld/">System Ready HLD</a>, <a href="../../../switching/view-switching-in-producerstatetable/">view switching in ProducerStateTable</a>, <a href="../../../management/config-reload-enhancement/">config reload enhancement</a> で完結する。<code>orchagent</code> の event loop、<code>syncd</code> の SAI binding、Redis pub/sub の責務分担は internals で詳述。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>swssloglevel</code>, <code>saictl</code>, <code>redis-cli</code>、<code>FEATURE</code>, <code>DEVICE_METADATA</code>, <code>COUNTERS_DB</code> 各種 <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a> に集約。</li>
+<li><strong>本ページ</strong> は ProducerStateTable view switching、SAI bulk API、Redis 7.x 移行、複数 Redis instance、closest UP status などの「実装基盤の進化」発展領域だけを扱う。</li>
+</ul>
+<h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>orchagent が CPU 100% で hang する場合は、<code>docker exec swss orchent --dump-state</code> (debug build) や <code>swssloglevel -l DEBUG -c orchagent</code> でログを上げ、<code>ASIC_DB</code> の特定テーブル更新でループしているかを点検する。SAI bulk API 失敗時のリトライ無限ループも疑う。</li>
+<li>COUNTERS_DB が肥大化して redis OOM が起きる場合、<code>redis-cli -n 2 info memory</code> で used_memory を確認し、<code>FLEX_COUNTER_TABLE</code> の polling 間隔と counter group 数を見直す。<code>maxmemory-policy noeviction</code> の維持は必須。</li>
+<li>FEATURE 起動順 race による依存先未起動は、<code>show feature status</code> と <code>systemctl list-dependencies sonic.target</code> で <code>delayed</code> / <code>auto_restart</code> の設定を確認し、<code>/etc/sonic/feature_advanced.json</code> の dependency を補正する。</li>
+</ul>
+<h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>orchagent throughput 検証は CONFIG_DB に 10k〜100k entry (route / FDB / ACL rule) を一括投入し、ASIC_DB 反映までのレイテンシを計測する。SAI bulk API 利用時の倍率向上 (target 2x〜5x) を確認する。</li>
+<li>view switching 検証は warm reboot を多数回繰り返し、<code>ProducerStateTable</code> の view A/B 切替と、orchagent / syncd の状態差分が cleanup される過程を <code>redis-cli</code> で観察する。</li>
+<li>closest UP status 検証は意図的に container を 1 つ kill し、<code>system-health</code> / <code>sysmonitor</code> の event aggregation で上位 status (<code>Operational</code>/<code>Degraded</code>/<code>Failed</code>) が期待通り遷移することを確認する。</li>
+</ul>
+<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../system/system-ready-hld/">System Ready HLD</a></li>
+<li><a href="../../../architecture/sonic-bulk-counter-design/">SONiC bulk counter design</a></li>
+<li><a href="../../../system/sonic-optional-feature-control-enhancement/">SONiC optional feature control enhancement</a></li>
+<li><a href="../../../switching/view-switching-in-producerstatetable/">view switching in ProducerStateTable</a></li>
+<li><a href="../../../management/config-reload-enhancement/">config reload enhancement</a></li>
+<li><a href="../../02-bgp/">02 BGP: orchagent の route programming throughput</a></li>
+<li><a href="../../09-telemetry-snmp/">09 Telemetry / SNMP: COUNTERS_DB の polling</a></li>
+<li><a href="../../11-reboot/">11 Reboot: warm reboot と view switching</a></li>
+<li><a href="../../21-lab-vs-developer/">21 Lab / Developer: dev container 内での swss/sai 開発</a></li>
 </ul>
 <!-- glossary-links-injected: 1a6c1d175ab5 -->
 

@@ -5401,6 +5401,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28882,6 +28926,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28983,6 +29071,36 @@
 <li><code>sonic-swss</code> の <code>srv6orch</code> で SID table、locator、MY_SID 拡張の PR が継続。FRR との <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 整合も並行。</li>
 <li>FRR upstream で SRv6 関連の PR が活発で、SONiC FRR バージョン更新と同期して機能が増える。</li>
 <li>Path Tracing midpoint の SAI extension が議論段階。実装は限定的だが HLD で expectation が示されている。</li>
+</ul>
+<h2 id="_7">ハンドオフ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、area HLD の <a href="../../../routing/">routing/</a> 配下の SRv6 / SR-MPLS / Path Tracing ページ群、および FRR の SR plugin で完結する。<code>srv6orch</code>, <code>MY_SID_TABLE</code>, locator/function block の責務分担は internals で扱う。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config bgp</code> (SR-related)、<code>show bgp ipv6 segment-routing-srv6</code> 系、<code>SRV6_MY_SID_TABLE</code>, <code>SRV6_SID_LIST</code>, <code>MPLS_TC_TO_TC_MAP</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、<code>sonic-srv6</code> YANG モジュールに集約。</li>
+<li><strong>本ページ</strong> は HMAC、sBFD、Binding SID、Path Tracing midpoint、SR-MPLS と SRv6 共存、BGP SR signaling などの「FRR の発展機能を SONiC schema へ取り込む」発展領域だけを扱う。</li>
+</ul>
+<h2 id="_8">トラブルシュート観点<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>SRv6 MY_SID が ASIC に降りないときは、<code>redis-cli -n 0 hgetall 'SRV6_MY_SID_TABLE:*'</code> でエントリ存在、<code>syncd</code> ログの <code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code> 関連エラー、ASIC SAI capability の SRv6 サポート有無 (<code>saictl query</code>) を確認する。</li>
+<li>BGP で SRv6 SID が advertise されないときは、<code>show bgp ipv6 segment-routing-srv6 locator</code> と FRR の <code>vtysh -c 'show segment-routing srv6'</code> でロケータ/SID 設定、<code>bgp segment-routing srv6</code> の有効化、neighbor の <code>send-srv6-sid</code> capability を点検する。</li>
+<li>SR-MPLS と SRv6 が共存する設定では、<code>MPLS_TC_TO_TC_MAP</code> と SRv6 用 traffic class マップが衝突しやすい。<code>show qos map</code> で確認し、TC マップを分離する。</li>
+</ul>
+<h2 id="_9">検証パスとラボ要件<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>SRv6 SID scale 検証は FRR から locator/function block 単位で 1k〜10k SID を生成し、<code>SRV6_MY_SID_TABLE</code> の install レイテンシと、<code>saimetadata</code> での MY_SID_ENTRY 数を計測する。target は 10k SID で 30 秒以内 install。</li>
+<li>SRv6 encap throughput 検証は <code>pktgen</code> で SRH 付き IPv6 を 10G/100G ラインレートで生成し、SID list popping の正常動作と ASIC line-rate 性能を確認する。SRH segments-left の decrement と end.dx4/end.dt4 の挙動を点検。</li>
+<li>BGP SR signaling は <code>bgperf</code> などで peer に大量 SRv6 SID 付き経路を投入し、<code>zebra</code> 経由で <code>SRV6_*</code> テーブルに反映されるまでの収束時間を計測する。</li>
+</ul>
+<h2 id="_10">関連ページ (追補)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../routing/segment-routing-over-ipv6-srv6-hld/">Segment Routing over IPv6 (SRv6) HLD</a></li>
+<li><a href="../../../routing/srv6-sid-l3adj/">SRv6 SID L3 Adjacency</a></li>
+<li><a href="../../../routing/static-configuration-of-srv6-in-sonic-hld/">Static configuration of SRv6 in SONiC HLD</a></li>
+<li><a href="../../../routing/path-tracing-midpoint/">Path Tracing Midpoint</a></li>
+<li><a href="../../../routing/bgp-loading-optimization-for-sonic/">BGP loading optimization for SONiC</a></li>
+<li><a href="../../02-bgp/">02 BGP: SR signaling のサポート範囲</a></li>
+<li><a href="../../03-vxlan-evpn/">03 VXLAN / EVPN: overlay と underlay SR の関係</a></li>
+<li><a href="../../04-vrf-ecmp/">04 VRF / ECMP: SRv6 VPN と VRF leaking</a></li>
+<li><a href="../../12-multi-asic-voq/">12 Multi-ASIC / VOQ: VOQ chassis での SR ラベルスタック</a></li>
 </ul>
 <!-- glossary-links-injected: 7c1ab6e0d97f -->
 

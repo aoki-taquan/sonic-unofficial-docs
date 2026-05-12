@@ -2890,6 +2890,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28860,6 +28904,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハンドオフ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシュート観点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証パスとラボ要件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ (追補)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -28944,6 +29032,37 @@
 <li><code>sonic-swss</code> の <code>aclorch</code> / <code>coppmgr</code> / <code>copporch</code> で trap capability 公開、policer attribute 動的更新、ACL counter race 修正の PR が継続。</li>
 <li>DASH ACL tags は <code>sonic-dash-api</code> (proto) の更新で flow rule 表現が拡張されており、controller 側との binding が変化しやすい。</li>
 <li>802.1X / MAB 関連は hostapd の SONiC docker 統合と RADIUS attribute 拡張の PR が散発的にあり、<a href="../../../reference/glossary/#term-aaa">AAA</a> 章 (<a href="../../15-security-aaa/">15</a>) と相互に影響する。</li>
+</ul>
+<h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、area HLD の <a href="../../../acl-qos/">acl-qos/</a> 配下の ACL / CoPP / Mirror 系ページで完結する。aclorch / coppmgrd / coppmgr / mirror orch の責務分担は internals に集約。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>config acl</code> / <code>show acl</code> / <code>config copp</code> / <code>show mirror</code> 系、<code>ACL_RULE</code>, <code>ACL_TABLE</code>, <code>COPP_TRAP</code>, <code>COPP_GROUP</code>, <code>MIRROR_SESSION</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a> で網羅される。</li>
+<li><strong>本ページ</strong> は ACL counter export、CoPP policer の動的調整、ERSPAN/SPAN の境界、DASH ACL tags、P4 表現といった「ACL/CoPP/Mirror を周辺機能と結合する」発展領域だけを扱う。</li>
+</ul>
+<h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ACL rule が ASIC に降りないときは、まず <code>aclshow -a</code> で counter の有無、<code>redis-cli -n 1 keys 'ACL_*'</code> で APPL_DB / ASIC_DB の rule 数を確認する。TCAM 不足の場合は <code>swss</code> の <code>syncd</code> ログに <code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が出る。</li>
+<li>CoPP で control plane を drop しているときは、<code>docker exec swss coppmgr</code> の状態と <code>show copp</code> の rate/burst を確認する。BGP / LACP / ARP のような protocol trap が <code>MATCH_DROP</code> に分類されていると、コンソール経由でも疎通しない事象が起きる。</li>
+<li>mirror session が動作しないときは、<code>show mirror_session</code> で session の active/inactive、<code>MIRROR_SESSION</code> テーブルの GRE/ERSPAN 設定、宛先 next-hop の到達性を点検する。VXLAN 経由 mirror は dst VTEP の MAC 解決失敗で停止しやすい。</li>
+</ul>
+<h2 id="_8">検証パスとラボ要件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ul>
+<li>ACL scale 検証は <code>sonic-mgmt</code> の <code>acl/test_acl.py</code> を baseline に、4k〜16k rule を投入して TCAM 使用率と orchagent レイテンシを計測する。ASIC capability (TCAM 段数、stateful 数) を事前に <code>saictl query</code> で取得しておく。</li>
+<li>CoPP 検証は <code>iperf3</code> や <code>hping3</code> で各 trap rate の限界を計測する。target rate は <code>COPP_GROUP</code> の <code>cir/cbs</code> 設定通りに収まるべきで、超過時は <code>policer drop counter</code> が増えることを確認。</li>
+<li>Mirror session の throughput / drop は <code>ostinato</code> / <code>pktgen</code> で帯域を上げ、<code>show mirror_session</code> の active 状態と GRE encap オーバーヘッドを考慮した宛先側受信量を比較する。</li>
+</ul>
+<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../acl-qos/acl-in-sonic/">ACL in SONiC</a></li>
+<li><a href="../../../acl-qos/acl-support-in-sonic/">ACL support in SONiC</a></li>
+<li><a href="../../../acl-qos/everflow-test-plan/">Everflow test plan</a></li>
+<li><a href="../../../acl-qos/sonic-port-mirroring-hld/">SONiC port mirroring HLD</a></li>
+<li><a href="../../../acl-qos/copp-manager-redesign-test-plan/">CoPP manager redesign test plan</a></li>
+<li><a href="../../../acl-qos/dash-acl-tags/">DASH ACL tags</a></li>
+<li><a href="../../02-bgp/">02 BGP: CoPP の BGP trap rate チューニング</a></li>
+<li><a href="../../13-dash-smartswitch/">13 DASH / SmartSwitch: DPU 上の ACL flow rule</a></li>
+<li><a href="../../15-security-aaa/">15 Security / AAA: 802.1X / MAB / RADIUS の境界</a></li>
+<li><a href="../../18-p4-pins/">18 P4 / PINS: P4 表現での ACL</a></li>
 </ul>
 <!-- glossary-links-injected: 4d9f23481e68 -->
 
