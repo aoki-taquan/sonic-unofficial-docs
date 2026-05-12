@@ -9171,6 +9171,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -9185,7 +9202,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29642,6 +29659,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29656,7 +29690,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29796,13 +29830,18 @@
 <li>値が <code>Idle</code> のまま → 各 BGP コンテナで <code>bgpmon</code> が走っているか <code>supervisorctl</code> / <code>ps</code></li>
 <li>値が古い → <code>frr.log</code> の mtime 更新を確認（flush されていないと bgpmon が vty を叩かない）</li>
 </ul>
+<h3 id="_6">コマンド例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>CISCO-BGP4-MIB の OID と SNMP 応答を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>snmpwalk<span class="w"> </span>-v2c<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span>localhost<span class="w"> </span><span class="m">1</span>.3.6.1.4.1.9.9.187<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>bgp4<span class="w"> </span>/etc/snmp/snmpd.conf
+</span></code></pre></div>
 <h2 id="topic">関連 Topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/09-telemetry-snmp/architecture/">09 Telemetry / SNMP / architecture</a></li>
 <li><a href="../../topics/09-telemetry-snmp/internals/">09 Telemetry / SNMP / internals</a></li>
 <li><a href="../../topics/02-bgp/operations/">02 BGP / operations</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 148c5064300b -->
 
 <div class="footnote">

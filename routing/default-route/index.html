@@ -9517,10 +9517,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -9531,7 +9548,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -9542,7 +9559,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -9575,7 +9592,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29930,10 +29947,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29944,7 +29978,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29955,7 +29989,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29988,7 +30022,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30171,14 +30205,20 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <li>復旧後に Active-Standby で <code>active</code> に戻らない場合、<code>LinkProber</code> の状態リセットが走っていない可能性がある。HLD では <code>Link:Up</code> 受信時と同じパスを通すと記述されているため、<code>Link:Up</code> 系のログと突き合わせて切り分けると良い。</li>
 <li>本機能のオン/オフは <code>linkmgrd</code> 起動引数で決まる。サービスユニットの引数を確認すること。</li>
 </ul>
-<h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_11">コマンド例<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>デフォルトルート (0.0.0.0/0, ::/0) の存在と nexthop を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="m">0</span>.0.0.0/0
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>ipv6<span class="w"> </span>route<span class="w"> </span>::/0
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>default
+</span></code></pre></div>
+<h2 id="_12">参考リンク<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-default-route/">CLI: config default-route</a></li>
 <li><a href="../../reference/yang/sonic-static-route/">YANG: sonic-static-route</a></li>
 <li><a href="../../reference/runbooks/route-not-installed-in-fib/">Runbook: route not installed in FIB</a></li>
 <li><a href="../../topics/02-bgp/">Topics: BGP</a></li>
 </ul>
-<h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">制限事項<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Dual-ToR 専用機能</strong>: 本 HLD のデフォルトルート連動 (linkmgrd の default-route feature) は Dual-ToR シナリオを前提に設計されており、シングル ToR でこのフラグを有効化しても意味のある効果は得られない。</li>
 <li><strong><code>enable_feature_default_route</code> はオプトイン</strong>: linkmgrd 起動引数 (<code>--enable_default_route_feature</code>) で有効化しないと、デフォルトルート喪失時の active 切替抑止は働かない。既定は無効。</li>
@@ -30186,7 +30226,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <li><strong><code>STATE_DB ROUTE_TABLE</code> 更新タイミング</strong>: orchagent の更新タイミングに依存するため、<a href="../../reference/glossary/#term-bgp">BGP</a> convergence 中の短時間に linkmgrd が誤判定するレースは設計上存在する。</li>
 <li><strong><a href="../../reference/glossary/#term-vrf">VRF</a> 対応</strong>: HLD はデフォルト VRF (<code>global</code>) を想定している。management VRF や user VRF のデフォルトルートはこのロジックに含まれない。</li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h2 id="batch-30-2026-05-11">裏取りメモ (batch 30, 2026-05-11)<a class="headerlink" href="#batch-30-2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-linkmgrd/src/MuxManager.cpp:104</code> の <code>void MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)</code> と続く <code>mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)</code> (line 121) で、デフォルトルート連動機能が <strong>起動引数によるオプトイン</strong> として実装されていることを確認。<code>MuxManager.h:298,302</code> のヘッダコメントにも「shutdowns link prober &amp; avoid switching active when default route is missing」と機能の主旨が明記。</li>
@@ -30200,7 +30240,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_14">参考リンク<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">参考リンク<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/cli/config-default-route/"><code>config default route</code> CLI リファレンス</a></li>

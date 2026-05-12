@@ -9098,6 +9098,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -9112,7 +9129,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29731,6 +29748,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29745,7 +29779,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29966,13 +30000,20 @@
 <li>iBGP nexthop が FIB に出ない → <code>show ip route &lt;prefix&gt;</code> の <code>inactive</code> を確認。<code>bgp bestpath peer-type multipath-relax</code> 設定の有無</li>
 <li>内部ピアが <code>BGP_NEIGHBOR</code> に入る → <code>&lt;VoQChassisInternal&gt;</code> 要素と <code>sonic-config-engine</code> バージョン</li>
 </ul>
+<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>VoQ chassis の iBGP/eBGP ピアと ECMP を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>summary
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">for</span><span class="w"> </span>a<span class="w"> </span><span class="k">in</span><span class="w"> </span>asic0<span class="w"> </span>asic1<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="nv">$a</span><span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp ipv4 unicast summary&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_NEIGHBOR|*&#39;</span>
+</span></code></pre></div>
 <h2 id="topic">関連 Topic<a class="headerlink" href="#topic" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/12-multi-asic-voq/architecture/">12 Multi-ASIC / VoQ / architecture</a></li>
 <li><a href="../../topics/12-multi-asic-voq/internals/">12 Multi-ASIC / VoQ / internals</a></li>
 <li><a href="../../topics/02-bgp/advanced/">02 BGP / advanced</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

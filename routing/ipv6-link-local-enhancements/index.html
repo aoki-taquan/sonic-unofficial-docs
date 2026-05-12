@@ -10285,10 +10285,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連トピック
@@ -10299,7 +10316,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29742,10 +29759,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連トピック
@@ -29756,7 +29790,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29953,13 +29987,19 @@ reasoning: NeighOrch の next-hop key 拡張が link-local ECMP のキー要件�
 <li>ASIC neighbor → <code>redis-cli -n 1 keys '*NEIGHBOR*'</code></li>
 <li>ECMP に複数 link-local → <code>NEIGH_TABLE:&lt;ifname&gt;:&lt;ip&gt;</code> がインタフェースごとに分かれているか</li>
 </ul>
-<h2 id="_10">関連トピック<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_10">コマンド例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>IPv6 link-local アドレスと BGP unnumbered ピアを確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>ipv6<span class="w"> </span>interface<span class="w"> </span>brief
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ipv6<span class="w"> </span>bgp<span class="w"> </span>neighbors<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ip<span class="w"> </span>-6<span class="w"> </span>addr<span class="w"> </span>show<span class="w"> </span>scope<span class="w"> </span>link
+</span></code></pre></div>
+<h2 id="_11">関連トピック<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/02-bgp/">Topics: BGP</a> — BGP unnumbered の運用文脈</li>
 <li><a href="../../topics/04-vrf-ecmp/">Topics: VRF / ECMP</a> — next-hop key と link-local ECMP</li>
 <li><a href="../sonic-vrf-support-design-spec-draft/">sonic-vrf-support-design-spec-draft</a></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 3935300e9c2a -->
 
 <div class="footnote">

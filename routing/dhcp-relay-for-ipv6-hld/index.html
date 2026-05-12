@@ -9988,6 +9988,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -10002,7 +10019,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -10024,7 +10041,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29786,6 +29803,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29800,7 +29834,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29822,7 +29856,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30062,13 +30096,19 @@ reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
 <li>リレー先追加で短時間断: <code>Restarting DHCP relay service...</code> が出る挙動どおり。コンテナ再起動分のダウンタイムが発生<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><code>show vlan brief</code> の <code>DHCP Helper Address</code> に v6 が出ない: CLI または <code>show</code> 側が当該機能未対応の可能性。実装確認は裏取り課題。</li>
 </ul>
+<h3 id="_12">コマンド例<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>DHCPv6 relay の設定と統計を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>dhcp_relay<span class="w"> </span>ps<span class="w"> </span>-ef<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>dhcrelay
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>ipv6<span class="w"> </span>dhcp-relay
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>ipv6<span class="w"> </span>dhcp-relay<span class="w"> </span>counters
+</span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-dhcp-relay/">CLI: config dhcp-relay</a></li>
 <li><a href="../../reference/runbooks/dhcp-relay/">Runbook: dhcp-relay</a></li>
 <li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP / DNS</a></li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -30076,7 +30116,7 @@ reasoning: CoPP 連動・global IPv6 必須・CONFIG_DB スキーマの根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_13">参考リンク<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">参考リンク<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/cli/config-vlan/"><code>config vlan dhcp_relay add</code> CLI リファレンス</a></li>

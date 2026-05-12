@@ -9574,6 +9574,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="9. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -9588,7 +9605,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -9599,7 +9616,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29686,6 +29703,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="9. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29700,7 +29734,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29711,7 +29745,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29908,18 +29942,24 @@
 <li>期待する NH が ASIC に出ていない → <code>show fgnhg active-hops</code> で <code>FG_NHG_MEMBER</code> 定義と一致するか確認。route/nexthop モードでは未定義 NH は無視</li>
 <li>bucket がぶれる → <code>STATE_DB.FG_ROUTE_TABLE</code> を直接確認。warm reboot 後に空ならダンプ経路の不整合</li>
 </ul>
+<h3 id="_2">コマンド例<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>Fine-grained ECMP (FG NHG) の bucket 配分を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>fgnhg<span class="w"> </span>active-hops
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>fgnhg<span class="w"> </span>hash-view
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FG_NHG*&#39;</span>
+</span></code></pre></div>
 <h2 id="10">10. 次に読む<a class="headerlink" href="#10" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Topics: <a href="../../topics/04-vrf-ecmp/concept/">VRF / ECMP 概念</a>, <a href="../../topics/04-vrf-ecmp/ecmp/">ECMP 詳細</a>, <a href="../../topics/04-vrf-ecmp/internals/">VRF / ECMP 内部実装</a>, <a href="../../topics/04-vrf-ecmp/operations/">VRF / ECMP 運用</a></li>
 <li>関連 HLD: <a href="../sonic-weighted-ecmp/">SONiC Weighted ECMP</a>, <a href="../local-ars-hld/">Local ARS HLD</a>, <a href="../overlay-ecmp-enhancements/">Overlay ECMP Enhancements</a>, <a href="../multiple-nexthop-route-hld/">Multiple Nexthop Route HLD</a></li>
 </ul>
-<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FG-ECMP は per-prefix の hash bucket 制御を SAI 経由で行うため、ASIC が <code>SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP</code> を未サポートだと有効化できない。</li>
 <li>bucket 数は platform 依存 (典型的に 16 / 64 / 256) で、<code>FG_NHG</code> テーブルで指定したサイズと一致しない場合は flap 時の影響範囲が変わる。</li>
 <li>inactive nexthop の bucket 入れ替え動作は実装/HLD 間で差異が報告されており、<code>saidump</code> で実際の bucket 配列を検証することを推奨。</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- evidence:
 source: sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |
@@ -29935,9 +29975,9 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 <p><strong>出典</strong>:</p>
 <p><code>sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>A key idea ... is the creation of many hash buckets ... having a next-hop repeated multiple times within it.
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>... in the route/nexthop match modes, by pushing configuration with next-hop bank membership, we can ensure
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>that we only refill the affected hash buckets with those next-hops within the same bank.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>A key idea ... is the creation of many hash buckets ... having a next-hop repeated multiple times within it.
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>... in the route/nexthop match modes, by pushing configuration with next-hop bank membership, we can ensure
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>that we only refill the affected hash buckets with those next-hops within the same bank.
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: bank 内 consistent hashing と「同 bank 内のみで refill」原則の根拠。</p>
 </details>

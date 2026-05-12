@@ -9266,6 +9266,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="8. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -9280,7 +9297,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -9291,7 +9308,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29619,6 +29636,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="8. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29633,7 +29667,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29644,7 +29678,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29838,18 +29872,24 @@
 <li>NTP 同期しない → <code>ps -ef | grep ntpd</code> で <code>cgexec</code> 起動か確認</li>
 <li>TACACS+ が default VRF 経由になる → <code>show tacacs</code> で <code>vrf mgmt</code> が出ているか確認</li>
 </ul>
+<h3 id="_2">コマンド例<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>management VRF (mgmt) の状態と route table を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>mgmt-vrf
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ip<span class="w"> </span>-d<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="nb">type</span><span class="w"> </span>vrf
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>mgmt
+</span></code></pre></div>
 <h2 id="9">9. 次に読む<a class="headerlink" href="#9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Topics: <a href="../../topics/04-vrf-ecmp/concept/">VRF / ECMP 概念</a>, <a href="../../topics/04-vrf-ecmp/setup/">VRF / ECMP 構築</a>, <a href="../../topics/04-vrf-ecmp/operations/">VRF / ECMP 運用</a></li>
 <li>関連 HLD: <a href="../sonic-vrf-support-design-spec-draft/">SONiC VRF Support Design Spec</a></li>
 </ul>
-<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (<code>mgmt</code>) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる。</li>
 <li>non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある。</li>
 <li>snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で <code>ip vrf exec</code> ラップを行う必要がある。</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 3b086e661688 -->
 
 <div class="footnote">

@@ -10146,10 +10146,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29565,10 +29582,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29686,7 +29720,13 @@
 <li>update が遅い → SAMPLE interval、Redis keyspace notification 設定（<code>notify-keyspace-events</code>）</li>
 <li>TLS エラー → mgmt-framework の cert 設定、<code>gnmi_cli -insecure</code> で切り分け</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_6">コマンド例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>gNMI subscribe で YANG パスを購読し応答を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gnmic<span class="w"> </span>-a<span class="w"> </span>localhost:8080<span class="w"> </span>--skip-verify<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span>YourPaSsWoRd<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>sub<span class="w"> </span>--path<span class="w"> </span><span class="s1">&#39;/sonic-port:sonic-port/PORT&#39;</span><span class="w"> </span>--mode<span class="w"> </span>stream<span class="w"> </span>--stream-mode<span class="w"> </span>sample<span class="w"> </span>--sample-interval<span class="w"> </span>5s<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>show<span class="w"> </span>gnmi-server
+</span></code></pre></div>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - gnmi server 実装（sonic-gnmi）の現行 master 取り込みと subscribe ハンドラ確認
 - Redis keyspace notification (notify-keyspace-events) の有効化と STATE_DB / COUNTERS_DB 連携確認
