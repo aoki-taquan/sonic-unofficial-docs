@@ -145,6 +145,18 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 - drop count が 0 のまま: `counterpoll show` で enable 状態か確認
 - 値が桁違いに少ない: interval が長いため瞬間ドロップは積み上がりにくい。観測時の dt を考慮
 
+確認コマンド例:
+
+```bash
+# QoS / buffer / counter 系の一次確認
+show priority-group persistent-watermark headroom
+show queue counters
+show pfc counters
+counterpoll show
+redis-cli -n 4 keys 'BUFFER_*|*' | head
+```
+
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)

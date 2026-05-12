@@ -129,6 +129,16 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 - [LLDP](../reference/glossary.md#term-lldp) が古いポート情報を保持し続ける: `lldpmgrd` の `pending_cmds` を確認、改修取り込み状況を確認[^1]。
 - zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。
 
+確認コマンド例:
+
+```bash
+# 動的 port 追加/削除の状態確認
+show interfaces status
+redis-cli -n 4 keys 'PORT|*'
+docker logs swss 2>&1 | grep -i 'port_create\|port_remove' | tail
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

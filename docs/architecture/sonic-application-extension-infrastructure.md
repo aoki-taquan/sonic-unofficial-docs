@@ -122,6 +122,16 @@ manifest が必須宣言する項目[^1]:
 - 起動しない → `systemctl status <feature>` と docker ログ / `config feature` 状態
 - CLI が出ない → plugin entry-point の取り込み、`sonic-utilities` 再起動 / shell 再ログイン
 
+確認コマンド例:
+
+```bash
+# Application Extension パッケージ状態
+sonic-package-manager list
+sonic-package-manager show <pkg-name>
+docker ps -a --format '{{.Names}}	{{.Status}}'
+```
+
+
 ## 関連 Topics
 
 - [Topic 19 Build/Packaging - architecture](../topics/19-build-packaging/architecture.md)

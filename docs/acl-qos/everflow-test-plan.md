@@ -159,6 +159,16 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 - mirror パケットが届かない → BGP route で collector への best match が取れているか確認、neighbor MAC 解決確認
 - LAG 越しに偏る → LAG hash 確認。テスト側の flow 多様化を確認
 
+確認コマンド例:
+
+```bash
+# Mirror / Everflow セッション状態
+show mirror_session
+redis-cli -n 4 hgetall 'MIRROR_SESSION|<name>'
+redis-cli -n 0 keys 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION:*'
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - Mirror session 制御フィールド: `sonic-swss/orchagent/mirrororch.cpp` L15-L24 (`MIRROR_SESSION_STATUS` / `STATUS_ACTIVE` / `STATUS_INACTIVE` / `NEXT_HOP_IP` / `SRC_IP` / `DST_IP` / `GRE_TYPE` / `DSCP` / `TTL` / `QUEUE`)

@@ -193,6 +193,18 @@ Ethernet0           0  1092     0   380     0     0     0     0
 - PG OID と物理 port の対応不明: `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` を redis から
 - `clear` で他人の観測値が消えた: 仕様。sudo を要求しているのもこのため
 
+確認コマンド例:
+
+```bash
+# QoS / buffer / counter 系の一次確認
+show priority-group persistent-watermark headroom
+show queue counters
+show pfc counters
+counterpoll show
+redis-cli -n 4 keys 'BUFFER_*|*' | head
+```
+
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)

@@ -169,6 +169,18 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 - SAI 失敗: syslog ERROR
 - shaping 効果確認: `show queue counters` を時間差で 2 回取得して bps 計算
 
+確認コマンド例:
+
+```bash
+# QoS / buffer / counter 系の一次確認
+show priority-group persistent-watermark headroom
+show queue counters
+show pfc counters
+counterpoll show
+redis-cli -n 4 keys 'BUFFER_*|*' | head
+```
+
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/qos/scheduler/SONiC_QoS_Scheduler_Shaper.md)

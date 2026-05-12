@@ -165,6 +165,18 @@ redis-cli -n 6 hgetall 'ACL_TABLE_TABLE|DATAACL'
 - `Status` 列が空 → STATE_DB に書かれていない（`aclorch` 未処理 or 内部生成 ACL）
 - `redis-cli -n 6 hgetall 'ACL_RULE_TABLE|DATAACL|RULE_1'` で実値を直接確認
 
+確認コマンド例:
+
+```bash
+# ACL / counter 状態の一次確認
+show acl table
+show acl rule
+aclshow -a
+counterpoll show | grep -i acl
+redis-cli -n 4 keys 'ACL_TABLE|*' | head
+```
+
+
 ## 関連トピック
 
 - [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)

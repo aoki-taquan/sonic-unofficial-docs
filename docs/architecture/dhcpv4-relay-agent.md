@@ -111,6 +111,17 @@ show dhcp_relay ipv4
 - option-82 が想定と違う → `dhcrelay` 起動引数の circuit-id / remote-id 設定とプラットフォーム実装差を確認
 - dual-ToR で IP がフラップ → ToR モード（active-active / active-standby）と peer 側 relay の状態確認
 
+確認コマンド例:
+
+```bash
+# DHCP relay 状態とリレー先設定
+show dhcp_relay ipv4
+show dhcp_relay ipv6
+docker exec dhcp_relay ps aux | grep dhcrelay
+redis-cli -n 4 hgetall 'DHCP_RELAY|Vlan1000'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv4_relay/DHCPv4-relay-agent-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

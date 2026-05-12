@@ -136,6 +136,16 @@ show mirror_session
 - ERSPAN 受信側で抜ける → src_ip / dst_ip / gre_type の組み合わせを受信側 collector と合わせる。
 - 一部メンバのみ反映される → Port-Channel メンバの oper-up を `show interfaces status` で確認。
 
+確認コマンド例:
+
+```bash
+# Mirror / Everflow セッション状態
+show mirror_session
+redis-cli -n 4 hgetall 'MIRROR_SESSION|<name>'
+redis-cli -n 0 keys 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION:*'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-mirroring/SONiC_Port_Mirroring_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

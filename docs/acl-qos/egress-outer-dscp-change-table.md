@@ -168,6 +168,17 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 - table 作成失敗 → `STATE_DB.ACL_ACTIONS` で `SET_ACL_META_DATA` / `ACL_USER_META` capability を確認
 - DSCP が変わらない → encap が egress の本 ACL より前に走っているか確認、ingress 側の MARK_META rule が hit しているか aclshow で確認
 
+確認コマンド例:
+
+```bash
+# 一次切り分け (CONFIG_DB / ASIC_DB / コンテナログ)
+show runningconfiguration all | head
+docker ps --format '{{.Names}}	{{.Status}}'
+redis-cli -n 4 keys '*' | head
+journalctl -u swss | tail
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - Table type 定数: `sonic-swss/orchagent/acltable.h` L38-L42 (`TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`)

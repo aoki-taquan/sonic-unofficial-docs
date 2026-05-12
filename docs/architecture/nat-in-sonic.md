@@ -125,6 +125,17 @@ config nat add static basic 10.0.0.1 100.64.1.1
 - ASIC が full → CRM `nat_entry` / `napt_entry` で残量を確認、aging timeout 短縮を検討
 - counters が 0 → NatOrch の SAI 設定エラー、[syncd](../reference/glossary.md#term-syncd) ログ確認
 
+確認コマンド例:
+
+```bash
+# NAT セッションとカウンタ確認
+show nat translations
+show nat statistics
+redis-cli -n 4 hgetall 'NAT_GLOBAL|Values'
+iptables -t nat -nvL | head
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/nat/nat_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

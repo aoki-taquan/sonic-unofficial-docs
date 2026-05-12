@@ -147,6 +147,16 @@ make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
 - 期待した時間短縮効果が出ない: 他のクリティカルパス（docker image build 等）に律速されている可能性。`make -j` 並列度と他ターゲットのプロファイルを見る。
 - フラグが効かない: `rules/config` での `ENABLE_RFS_SPLIT_BUILD` を確認。`y` でも `slave.mk` 側のターゲットが生成されているか `make -n` で確認。
 
+確認コマンド例:
+
+```bash
+# build profile / image artifact 確認
+make configure PLATFORM=<vendor>
+cat target/sonic-<vendor>.bin.log | tail
+dpkg -l | grep sonic-
+```
+
+
 ## 関連 reference
 
 - [HLD: build-system-improvements](build-system-improvements.md)

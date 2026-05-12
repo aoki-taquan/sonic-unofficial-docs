@@ -154,6 +154,18 @@ show pfc counters --history
 - 値が増え続けてクリア効かない → `sonic-clear pfc` は CLI 内 diff 方式。CLI 再起動でキャッシュが消えるとリセット効果も消える点に注意
 - transitions 数が多すぎる → RX-only モードでは短い pause が遷移として水増しされる場合あり
 
+確認コマンド例:
+
+```bash
+# QoS / buffer / counter 系の一次確認
+show priority-group persistent-watermark headroom
+show queue counters
+show pfc counters
+counterpoll show
+redis-cli -n 4 keys 'BUFFER_*|*' | head
+```
+
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)

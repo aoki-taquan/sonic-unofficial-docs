@@ -107,6 +107,16 @@ PASSW_HARDENING|POLICIES
 - パスワード変更が突然 reject される → `pwquality.conf` の各 class / minlen / dictionary を確認
 - ロックアウト解除 → `pam_faillock --user <u> --reset` 等を root で実行（実装による）
 
+確認コマンド例:
+
+```bash
+# パスワード / 認証ポリシー確認
+show users
+cat /etc/pam.d/common-password
+chage -l admin
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/passw_hardening/hld_password_hardening.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

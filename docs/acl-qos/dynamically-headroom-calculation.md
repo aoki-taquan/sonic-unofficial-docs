@@ -179,6 +179,18 @@ LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"
 - speed 変更後 headroom が更新されない → `buffermgrd` ログで Lua plugin invoke を確認、`BUFFER_MAX_PARAM` legality check で reject されていないか確認
 - shared pool の sum が合わない → `xoff` の有無、independent vs shared headroom モデルを確認
 
+確認コマンド例:
+
+```bash
+# QoS / buffer / counter 系の一次確認
+show priority-group persistent-watermark headroom
+show queue counters
+show pfc counters
+counterpoll show
+redis-cli -n 4 keys 'BUFFER_*|*' | head
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - `default_dynamic_th` 読み込み: `sonic-swss/cfgmgr/buffermgrdyn.cpp` L148-L153

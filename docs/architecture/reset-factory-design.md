@@ -236,6 +236,16 @@ sudo reset-factory keep-basic
 - `keep-basic` で MGMT 接続が切れる場合、`KEEP_BASIC_TABLES` に必要なテーブルが含まれているか確認
 - パスワードがロックされた場合、`/etc/sonic/default_users.json` のハッシュとの整合を確認
 
+確認コマンド例:
+
+```bash
+# factory-reset 状態とログ確認
+show reboot-cause
+show platform inventory
+journalctl -u factory-reset | tail
+```
+
+
 ## 関連 reference
 
 - [CLI: sonic-installer](../reference/cli/sonic-installer.md)

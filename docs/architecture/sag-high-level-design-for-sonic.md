@@ -153,6 +153,16 @@ show static-anycast-gateway
     - 上流取り込み推進: `sonic-buildimage`（YANG）+ `sonic-swss`（SagOrch / VlanMgr 改修）+ `sonic-utilities`（CLI）+ `sonic-frr`（EVPN 連携）の 4 リポにまたがる大規模 PR が必要。
 <!-- /diff-admonition -->
 
+確認コマンド例:
+
+```bash
+# Static Anycast Gateway 状態確認
+show ip anycast-address
+redis-cli -n 4 hgetall 'SAG|Vlan1000|4'
+vtysh -c 'show ip route' | head
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sag/sag-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

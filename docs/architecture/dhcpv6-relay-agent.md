@@ -157,6 +157,17 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 - `sonic-db-cli CONFIG_DB hgetall "DHCP_RELAY|<vlan>"` — `dhcpv6_servers` / `rfc6939_support` 設定確認
 - `tcpdump -ni Vlan1000 'udp port 547'` — Relay-Forward/Reply を直接観測
 
+確認コマンド例:
+
+```bash
+# DHCP relay 状態とリレー先設定
+show dhcp_relay ipv4
+show dhcp_relay ipv6
+docker exec dhcp_relay ps aux | grep dhcrelay
+redis-cli -n 4 hgetall 'DHCP_RELAY|Vlan1000'
+```
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/DHCPv6_relay/DHCPv6-relay-agent-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

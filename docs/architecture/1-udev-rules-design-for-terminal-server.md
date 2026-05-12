@@ -184,6 +184,16 @@ ls -l /dev/Mytty*
 - 一部 port が常に欠損 → hub の物理故障 / cp210x 認識失敗 (`dmesg`) を確認
 - 別ハードで rules を流用したら全滅 → `KERNELS` の bus 位置がハードに依存。新ハードで `udevadm info -a` で属性を改めて確認
 
+確認コマンド例:
+
+```bash
+# udev ルール反映と device node 確認
+udevadm info -q all -n /dev/ttyUSB0
+ls -l /dev/ttyTS*
+journalctl -u systemd-udevd | tail
+```
+
+
 ## 関連 reference
 
 - [HLD: portable-console-device-design](../management/portable-console-device-design.md)

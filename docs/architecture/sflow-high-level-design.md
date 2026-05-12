@@ -199,6 +199,16 @@ config sflow interface sample-rate Ethernet0 10000
     - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16607: \[sflow\] Remove the ENABLE_SFLOW_DROPMON flag (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16607) — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。
 <!-- /diff-admonition -->
 
+確認コマンド例:
+
+```bash
+# sFlow agent / collector 確認
+show sflow
+show sflow interface
+docker exec sflow ps aux | grep hsflowd
+```
+
+
 ## 確認コマンド
 
 ```bash

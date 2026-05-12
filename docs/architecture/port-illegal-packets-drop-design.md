@@ -189,6 +189,16 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 - `ifType=136` の VLAN エントリが見えない場合、`sonic-snmpagent` のバージョンが本 HLD 反映前の可能性がある。
 - テストは `test_snmp_interfaces.py` でカバーされている旨が HLD に記載されており、回帰確認の起点として有用[^1]。
 
+確認コマンド例:
+
+```bash
+# パケットドロップカウンタ確認
+show interfaces counters detailed Ethernet0
+show dropcounters counts
+redis-cli -n 2 keys 'COUNTERS:Ethernet*' | head
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - RIF → Port aggregation テーブル: `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py` L34-L38, L42 (`RIF_DROPS_AGGR_MAP`、`SAI_PORT_STAT_IF_IN_OCTETS` → `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` 等)

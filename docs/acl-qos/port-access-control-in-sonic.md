@@ -199,6 +199,16 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 - VLAN が変わらない → RADIUS Accept に VLAN attribute（Tunnel-Type / Tunnel-Medium-Type / Tunnel-Private-Group-ID）が来ているか抽出ログ確認
 - MAB が誤判定 → `mabd` ログで MAC 学習契機と RADIUS リクエスト送出を確認
 
+確認コマンド例:
+
+```bash
+# Port-based 認証 (hostapd) と PORT_TABLE 整合
+show authentication interface all
+docker exec hostcfgd ps aux | grep hostapd
+redis-cli -n 4 hgetall 'PAC_PORT_CONFIG_TABLE|Ethernet0'
+```
+
+
 ## 裏取り済み実装位置 (2026-05-11)
 
 - PAC コンポーネントツリー: `sonic-buildimage/src/sonic-pac/` 配下の `authmgr/`, `mab/`, `mabmgr/`, `hostapdmgr/`, `pacmgr/`, `paccfg/`, `pacoper/`, `fpinfra/`, `json_lib/` を確認

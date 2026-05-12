@@ -164,6 +164,18 @@ sonic-clear queue wredcounters
 - syslog エラー → 全カウンタ非対応グループを enable した場合の仕様
 - `show interfaces counters detailed` に WRED 行が出ない → `WRED_ECN_PORT` が disable / capability false
 
+確認コマンド例:
+
+```bash
+# QoS / buffer / counter 系の一次確認
+show priority-group persistent-watermark headroom
+show queue counters
+show pfc counters
+counterpoll show
+redis-cli -n 4 keys 'BUFFER_*|*' | head
+```
+
+
 ## 関連トピック
 
 - [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
