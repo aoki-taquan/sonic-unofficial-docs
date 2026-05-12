@@ -29,6 +29,18 @@ sources: []
 | stub | 9 |
 | **合計** | **894** |
 
+## last_verified 鮮度
+
+基準日 **2026-05-12**。
+
+| バケツ | 件数 |
+|---|---:|
+| 今日 (0d) | 10 |
+| 7 日以内 (1-7d) | 873 |
+| 30 日以内 (8-30d) | 0 |
+| 30 日超 / 古い | 0 |
+| 不明 / パース不可 | 11 |
+
 ## Topics 22 章 sub-page 完成度
 
 5 種 (concept/setup/operations/internals/advanced) × 22 章 = 110 想定。閾値: 本文 100 行未満は placeholder 扱い。
@@ -48,15 +60,57 @@ sources: []
 | CONFIG_DB | 121 | — | — |
 | YANG | 84 | 136 | 61.8% |
 
-## 最新 quality-audit
+## Mermaid カバレッジ (Reference 系)
 
-- round **42** — 総平均スコア **4.986 / 5**
-- 詳細: `meta/quality-audit-42.md`
+各 Reference サブツリーで ` ```mermaid ` ブロックを含むページ比率。
+
+| 種別 | mermaid あり | 総ページ | カバレッジ |
+|---|---:|---:|---:|
+| CONFIG_DB | 121 | 121 | 100.0% |
+| CLI | 72 | 72 | 100.0% |
+| YANG | 84 | 84 | 100.0% |
+
+## ops-hint カバレッジ (CLI Reference)
+
+`<!-- ops-hint -->` 埋め込み済み: **45 / 72** (62.5%)
+
+## Glossary
+
+| 項目 | 値 |
+|---|---:|
+| 用語数 (`### ` アンカー) | 288 |
+| docs 内被リンク数 | 7325 |
+
+## 直近 5 round quality-audit
+
+| round | 総平均スコア / 5 |
+|---:|---:|
+| 43 | 4.986 |
+| 42 | 4.986 |
+| 41 | 4.972 |
+| 40 | 4.972 |
+| 39 | 4.944 |
+
+- 最新詳細: `meta/quality-audit-43.md`
+
+## Lint / informational 検出件数
+
+各レポート (`meta/*-report*.md` / `meta/*-violations.md`) から抽出した検出件数。strict / informational を区別せず一覧化する。
+
+| 項目 | 件数 |
+|---|---:|
+| frontmatter-lint (hard) | 0 |
+| frontmatter-lint (warn) | 0 |
+| link-density low (<2.0/1k) | 68 |
+| link-density high (>30.0/1k) | 0 |
+| discrepancy-related-yang violations | 0 |
+| related.* empty pages | 0 |
+| daemon-name violations | 0 |
 
 ## その他指標
 
 | 項目 | 値 |
 |---|---:|
-| 低密度ページ残数 (link-density < 2) | 0 |
+| 低密度ページ残数 (link-density < 2) | 68 |
 | backlog 残数 (active) | 10 |
 

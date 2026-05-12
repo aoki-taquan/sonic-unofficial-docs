@@ -69,6 +69,22 @@ flowchart TD
 | [sonic-swss](../reference/glossary.md#term-sonic-swss) #1808 | `portsyncd` を port 無しで動かす |
 | sonic-swss #1860 | port 削除時の buffer drop counter 削除 |
 
+## 3.1 フェーズ別 実装境界
+
+HLD は「全ポート / 一部 / ゼロポート起動 + post-init add/del + ref counter による安全削除 + restore」までを提案しているが、master では **どのフェーズまで動き、どこから先が未取り込みか** に明確な段差がある[^1]。
+
+| Phase | 実装済 (master で動く) | 未実装 (HLD 提案のみ) |
+|-------|----------------------|---------------------|
+| 全ポート / 一部ポート 起動 | ✅ 取り込み済（既存パス）| — |
+| ゼロポート起動 (`cfggen` / `portsyncd` の port=0 対応) | ✅ sonic-buildimage #7999 / sonic-swss #1808 がマージ済 | — |
+| `PortConfigDone` / `PortInitDone` 待ち合わせ | ✅ orchagent / xcvrd / buffermgrd 側で動作 | — |
+| post-init ポート追加 (`PORT` を CONFIG_DB に投入 → portsorch で SAI port 作成) | ✅ 動作する（基本パス）| — |
+| post-init ポート削除 (admin down → 依存削除 → `PORT` 削除) | 🟡 **運用側で全依存を先に削除すれば動く** | orchagent 側の **ref counter による削除拒否** ロジックは未取り込み |
+| ポート restore (削除後の再構築) | — | ❌ HLD 提案のみ、未実装 |
+| `lldpmgrd` の動的 port 反映 | 🟡 部分的（`pending_cmds` 経由）| 一部改修が未マージ |
+
+`✅` フェーズはユーザ視点で素直に動作するが、`🟡` フェーズは HLD が想定する自動保護が無いため運用側で前述の責務を負う必要があり、`❌` フェーズは現行 master では使えない[^1]。
+
 ## 4. Post-init: 追加 / 削除のシーケンス
 
 ### ポート追加

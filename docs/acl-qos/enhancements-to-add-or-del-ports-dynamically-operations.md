@@ -104,6 +104,24 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 
 自動化する場合、削除前に `redis-cli -n 4 keys '*|<port>*'` で残依存を列挙して 0 件になることを確認する pre-check を入れる。
 
+## 4.1 運用フェーズ別 実装境界
+
+各運用フェーズで、master で実装済みの自動化と未実装で運用側がカバーする必要のある箇所を分けると次のとおり[^1]:
+
+| Phase | 実装済 (master で動く) | 未実装 (HLD 提案のみ・運用側で代替) |
+|-------|----------------------|----------------------------------|
+| zero-port 起動 | ✅ port=0 で boot 完了 | — |
+| redis-cli / config による port 追加 | ✅ portsorch が SAI port を作成 | — |
+| `admin_status` 切替 | ✅ 既存パスで動作 | — |
+| port 削除前の依存検出 | — | ❌ ref counter 自動拒否は未取り込み（運用側で `keys '*|<port>*'` pre-check）|
+| port 削除時の ACL バインド解除 | — | ❌ 自動解除なし（運用側で手順 2 を実行）|
+| port 削除時の VLAN / [PortChannel](../reference/glossary.md#term-portchannel) メンバ解除 | — | ❌ 自動解除なし（運用側で手順 3 を実行）|
+| port 削除時の buffer PG / queue / qos-map 削除 | — | ❌ 自動削除なし（運用側で手順 4 を実行）|
+| port 削除本体 (`config_db` から `PORT` を消す) | ✅ portsorch / [portsyncd](../reference/glossary.md#term-portsyncd) が SAI port + host i/f を削除 | — |
+| port restore | — | ❌ HLD 提案のみ未実装、削除後の再構築は手動で再投入 |
+
+`✅` フェーズはユーザが触らずに動作するが、`❌` フェーズは現行 master では自動化されておらず、後述の `redis-cli` / `sonic-db-cli` 手順を運用側で踏む必要がある[^1]。
+
 ## 5. トラブルシューティング
 
 - ポート追加に時間がかかる: `PortConfigDone` / `PortInitDone` フラグの状態を確認。[orchagent](../reference/glossary.md#term-orchagent) 連動が止まっている可能性。
@@ -115,4 +133,4 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 2e78c47a04ed -->
+<!-- glossary-links-injected: 4bc2a4aae15e -->

@@ -69,6 +69,23 @@ PORTCHANNEL|<name>
 
 これにより既存 SONiC からのアップグレードで CONFIG_DB が破綻しない[^1]。
 
+## フェーズ別 実装境界
+
+`switchport_mode` 機能は CLI / YANG / CONFIG_DB / db_migrator までは master に取り込まれているが、 HLD が触れる関連改修のうち取り込まれていない部分もある。フェーズ別に「実装済」「未実装」を整理する[^1]:
+
+| Phase | 実装済 (master で動く) | 未実装 (HLD 提案のみ) |
+|-------|----------------------|---------------------|
+| YANG `switchport_mode` leaf 追加 (`sonic-port` / `sonic-portchannel`) | ✅ 取り込み済 | — |
+| CONFIG_DB `PORT` / `PORTCHANNEL` の `switchport_mode` カラム | ✅ 取り込み済 | — |
+| `config switchport mode` CLI | ✅ 取り込み済 | — |
+| `db_migrator` による旧 `config_db.json` の自動補完 (`routed` / `access` / `trunk` 推定) | ✅ 取り込み済（VLAN_MEMBER の有無で推定） | — |
+| `tagging_mode` (`untagged` / `tagged`) の意味付け | ✅ 既存 `VLAN_MEMBER` を流用 | — |
+| orchagent / vlanmgr / SAI 側のモード対応 | ✅ 改修不要（既存 `VLAN_MEMBER` 経由で従来動作）| — |
+| `routed` モードでの `VLAN_MEMBER` 拒否バリデーション | 🟡 CLI 側のチェック | YANG must 制約や orchagent 側の強制バリデーションは未取り込み |
+| trunk native [VLAN](../reference/glossary.md#term-vlan)（`switchport trunk native vlan` 相当）の CONFIG_DB 表現 | — | ❌ HLD では暗黙、master では `VLAN_MEMBER` `untagged` の併用に依存（明示フィールドなし）|
+
+`✅` フェーズは現行 master で素直に動作するが、`🟡` / `❌` フェーズは CLI のガードに依存しており、`redis-cli` 直接編集で routed ポートに VLAN メンバを追加する等の整合性違反は防げない。詳細は [discrepancy ページ](switch-port-modes-and-vlan-cli-discrepancy.md) を参照[^1]。
+
 ## アーキテクチャへの影響
 
 - [orchagent](../reference/glossary.md#term-orchagent) / [SAI](../reference/glossary.md#term-sai) / vlanmgr 等の改修は **無し**。`switchport_mode` は CLI 側のメタ情報で、下流は既存の `VLAN_MEMBER`/`tagging_mode` を介して従来通り動く[^1]
@@ -114,4 +131,4 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: f7808c6675e0 -->

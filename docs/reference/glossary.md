@@ -1735,8 +1735,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [portsyncd](#term-portsyncd)
 
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (17)
+- [動的ポート add/del 概念（zero-port 起動と post-init モデル）](../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts.md) (8)
 - [config reload の event-driven 化（FEATURE.delayed + PortInitDone）](../management/config-reload-enhancement.md) (8)
-- [動的ポート add/del 概念（zero-port 起動と post-init モデル）](../acl-qos/enhancements-to-add-or-del-ports-dynamically-concepts.md) (7)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (7)
 - [動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）](../acl-qos/enhancements-to-add-or-del-ports-dynamically-limitations.md) (5)
 
