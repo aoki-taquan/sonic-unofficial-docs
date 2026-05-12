@@ -14,6 +14,10 @@ related:
 
 本ページは `sonic-unofficial-docs` プロジェクトの目的・スコープ・ライセンス・フィードバック窓口・貢献方法をまとめた概要ページです。トップページ ([index.md](index.md)) が「読み始める入口」であるのに対し、本ページは「プロジェクトの性格・規約」を集約する位置付けです。
 
+## ワンライナー
+
+> SONiC NOS（コミュニティ版・`master` ブランチ）の高水準設計（HLD）・実コード・YANG・CLI・GitHub Issue を AI が横断的に**再構成**して書く、**日本語の非公式ドキュメント**です。
+
 ## プロジェクトの目的
 
 [SONiC NOS](https://github.com/sonic-net/SONiC)（Software for Open Networking in the Cloud）のコミュニティ版を対象に、AI 駆動で**日本語の非公式ドキュメントを再構成**することを目的としています。
@@ -25,6 +29,25 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 - 設定（[CONFIG_DB](./reference/glossary.md#term-config_db)）、CLI、[YANG](./reference/glossary.md#term-yang)、daemon／orch 実装の対応関係を機械的に追える資料がない。
 
 本プロジェクトは公式 HLD の翻訳ではなく、**HLD・実コード・YANG・CLI・Issue を横断して再構成**することにより、読み手が「探す単位」でページを引けるドキュメントを目指しています。
+
+## 対象読者
+
+本ドキュメントが特に有用と考える読者:
+
+- **SONiC をこれから触る方**: 全体像・アーキテクチャ・設定モデル・仮想環境での導入手順を順に把握したい（→ [初学者向けガイド](guides/beginner.md)）
+- **運用者**: 日々の状態確認、設定変更、障害切り分けを CLI / [CONFIG_DB](./reference/glossary.md#term-config_db) / Runbook の単位で素早く引きたい（→ [運用者向けガイド](guides/operator.md) / [Runbook 一覧](reference/runbooks/index.md)）
+- **開発者**: [HLD](./reference/glossary.md#term-hld) / [YANG](./reference/glossary.md#term-yang) / CONFIG_DB / daemon／orch 実装の対応関係を追って機能追加・パッチを書きたい（→ [開発者向けガイド](guides/developer.md)）
+- **評価者・PoC 担当**: ラボで SONiC を起動し基本設定と状態確認まで一気通貫で確認したい（→ [評価者向けガイド](guides/evaluator.md)）
+
+## 対象外
+
+以下は本プロジェクトのスコープ外であり、扱いません。
+
+- ベンダー版 SONiC（NVIDIA / Edgecore / Cisco / [AsterNOS](./reference/glossary.md#term-asternos) など）の独自機能や差分
+- コミュニティ版 SONiC の `master` 以外のブランチ（リリースブランチ・古いブランチ）
+- 公式 HLD の直訳・公式ドキュメントの翻訳
+- スクリーンショット / PNG（図は Mermaid のみ）
+- 英語・その他言語版（v2.0 以降で再検討）
 
 ## スコープ
 
@@ -47,16 +70,18 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 | `meta` | プロジェクト運営に関するメタページ（本ページなど） |
 | `stub` | 執筆途中のスタブ（β 段階では極力残さない） |
 
-品質指標（2026-05-11 時点、**v1.0 リリース候補**）:
+品質指標（2026-05-12 時点、**v1.0 GA 後**）:
 
 - 総ページ数: 833
-- `code-verified` ページ: 597（581+ 達成済み）
+- `code-verified` ページ: 597
 - `discrepancy-found` ページ: 48
 - `hld-only` 本文ページ: 0
-- 監査平均評価 (round 8、10 段階): **9.74 / 10.0**
+- 監査平均評価 (round 32、5 段階): **4.972 / 5.0**
+- Topics 22 章 すべて 100% カバレッジ（概念 / 設定 / 運用 / 内部実装 / 障害切り分け 全部揃い）
+- Reference Mermaid 図カバレッジ: CONFIG_DB / CLI / YANG いずれも 100%
 - CLI Reference: 73 ページ / CONFIG_DB Reference: 122 ページ / YANG Reference: 85 ページ / Runbooks: 46 ページ
 
-公開ステータスは **v1.0 RC**（残ブロッカはユーザー手動 2 件のみ）。最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と [`meta/release-checklist-v1.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/release-checklist-v1.md) を参照してください。
+公開ステータスは **v1.0 GA**。最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と `meta/roadmap-v2.md` を参照してください。
 
 ## ライセンス
 
