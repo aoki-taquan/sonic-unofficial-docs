@@ -14,6 +14,7 @@ related:
     - FEATURE
   yang:
     - sonic-system-defaults
+  _no_related_cli: true
 ---
 
 # SYSTEM_DEFAULTS テーブル

@@ -18,6 +18,8 @@ related:
     - FEATURE
   cli: []
   yang: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # DEVICE_RUNTIME_METADATA テーブル

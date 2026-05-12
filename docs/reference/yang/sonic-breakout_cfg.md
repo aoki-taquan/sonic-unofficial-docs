@@ -12,6 +12,7 @@ related:
   config_db: [BREAKOUT_CFG]
   cli: ["config interface breakout"]
   yang: []
+  _no_related_yang: true
 ---
 
 # sonic-breakout_cfg YANG

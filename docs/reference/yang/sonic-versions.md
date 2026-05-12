@@ -12,6 +12,8 @@ related:
   config_db: [VERSIONS]
   cli: []
   yang: []
+  _no_related_cli: true
+  _no_related_yang: true
 ---
 
 # sonic-versions YANG

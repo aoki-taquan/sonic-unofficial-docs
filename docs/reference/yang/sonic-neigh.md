@@ -12,6 +12,7 @@ related:
   config_db: [NEIGH]
   cli: []
   yang: [sonic-port, sonic-portchannel, sonic-vlan]
+  _no_related_cli: true
 ---
 
 # sonic-neigh YANG

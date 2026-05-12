@@ -20,6 +20,7 @@ related:
   - show platform firmware
   yang:
   - sonic-device_metadata
+  _no_related_config_db: true
 ---
 
 # config platform firmware サブコマンド

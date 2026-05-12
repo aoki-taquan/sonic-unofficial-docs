@@ -14,6 +14,7 @@ related:
     - PORT
   yang:
     - sonic-macsec
+  _no_related_cli: true
 ---
 
 # MACSEC_PROFILE テーブル

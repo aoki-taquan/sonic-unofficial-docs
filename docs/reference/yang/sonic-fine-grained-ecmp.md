@@ -12,6 +12,7 @@ related:
   config_db: [FG_NHG, FG_NHG_PREFIX, FG_NHG_MEMBER]
   cli: []
   yang: [sonic-portchannel, sonic-port, sonic-types]
+  _no_related_cli: true
 ---
 
 # sonic-fine-grained-ecmp YANG

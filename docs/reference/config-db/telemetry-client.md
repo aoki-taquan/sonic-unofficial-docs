@@ -15,6 +15,7 @@ related:
   cli: []
   yang:
     - sonic-telemetry_client
+  _no_related_cli: true
 ---
 
 # TELEMETRY_CLIENT テーブル

@@ -20,6 +20,7 @@ related:
   - clear ndp
   yang:
   - sonic-neigh
+  _no_related_config_db: true
 ---
 
 # show ndp サブコマンド

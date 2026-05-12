@@ -12,6 +12,7 @@ related:
   config_db: [SYSTEM_DEFAULTS]
   cli: []
   yang: [sonic-types]
+  _no_related_cli: true
 ---
 
 # sonic-system-defaults YANG
