@@ -12331,6 +12331,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 フェーズ別 実装境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#4-post-init" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29267,6 +29278,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 フェーズ別 実装境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#4-post-init" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29363,8 +29385,8 @@
   PSYNC --&gt; SDB[(STATE_DB)]
   PSYNC --&gt;|全 host i/f 完了| FLAG2[PortInitDone]</code></pre>
 <ul>
-<li><strong><code>PortConfigDone</code></strong>: <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> がポート設定を APP_DB に反映完了。<a href="../../reference/glossary/#term-orchagent">orchagent</a> は <strong>これを待ってから</strong> <a href="../../reference/glossary/#term-sai">SAI</a> ポート作成を始める<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong><code>PortInitDone</code></strong>: 全 host interface が作成完了。<code>xcvrd</code> / <code>buffermgrd</code> / <code>natmgr</code> / <code>natsync</code> は <strong>これを待つ</strong><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>PortConfigDone</code></strong>: <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> がポート設定を APP_DB に反映完了。<a href="../../reference/glossary/#term-orchagent">orchagent</a> は <strong>これを待ってから</strong> <a href="../../reference/glossary/#term-sai">SAI</a> ポート作成を始める<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><code>PortInitDone</code></strong>: 全 host interface が作成完了。<code>xcvrd</code> / <code>buffermgrd</code> / <code>natmgr</code> / <code>natsync</code> は <strong>これを待つ</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="3">3. ゼロポート起動の要件<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <p>新たに <strong>zero-port SKU</strong> が必要<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -29396,6 +29418,55 @@
 </tr>
 </tbody>
 </table>
+<h2 id="31">3.1 フェーズ別 実装境界<a class="headerlink" href="#31" title="Permanent link">&para;</a></h2>
+<p>HLD は「全ポート / 一部 / ゼロポート起動 + post-init add/del + ref counter による安全削除 + restore」までを提案しているが、master では <strong>どのフェーズまで動き、どこから先が未取り込みか</strong> に明確な段差がある<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済 (master で動く)</th>
+<th>未実装 (HLD 提案のみ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全ポート / 一部ポート 起動</td>
+<td>✅ 取り込み済（既存パス）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ゼロポート起動 (<code>cfggen</code> / <code>portsyncd</code> の port=0 対応)</td>
+<td>✅ sonic-buildimage #7999 / sonic-swss #1808 がマージ済</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>PortConfigDone</code> / <code>PortInitDone</code> 待ち合わせ</td>
+<td>✅ orchagent / xcvrd / buffermgrd 側で動作</td>
+<td>—</td>
+</tr>
+<tr>
+<td>post-init ポート追加 (<code>PORT</code> を CONFIG_DB に投入 → portsorch で SAI port 作成)</td>
+<td>✅ 動作する（基本パス）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>post-init ポート削除 (admin down → 依存削除 → <code>PORT</code> 削除)</td>
+<td>🟡 <strong>運用側で全依存を先に削除すれば動く</strong></td>
+<td>orchagent 側の <strong>ref counter による削除拒否</strong> ロジックは未取り込み</td>
+</tr>
+<tr>
+<td>ポート restore (削除後の再構築)</td>
+<td>—</td>
+<td>❌ HLD 提案のみ、未実装</td>
+</tr>
+<tr>
+<td><code>lldpmgrd</code> の動的 port 反映</td>
+<td>🟡 部分的（<code>pending_cmds</code> 経由）</td>
+<td>一部改修が未マージ</td>
+</tr>
+</tbody>
+</table>
+<p><code>✅</code> フェーズはユーザ視点で素直に動作するが、<code>🟡</code> フェーズは HLD が想定する自動保護が無いため運用側で前述の責務を負う必要があり、<code>❌</code> フェーズは現行 master では使えない<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="4-post-init">4. Post-init: 追加 / 削除のシーケンス<a class="headerlink" href="#4-post-init" title="Permanent link">&para;</a></h2>
 <h3 id="_1">ポート追加<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -29416,13 +29487,13 @@
   SAI-&gt;&gt;POR: oper_state 通知 (ASIC_DB)
   POR-&gt;&gt;ADB: oper_state 反映</code></pre>
 <h3 id="_2">ポート削除<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p><code>portmgrd</code> 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>portmgrd</code> 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-add-del-dynamically/dynamic_port_add_del_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-add-del-dynamically/dynamic_port_add_del_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

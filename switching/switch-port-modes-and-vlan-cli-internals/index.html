@@ -10223,7 +10223,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        アーキテクチャへの影響
+        フェーズ別 実装境界
       
     </span>
   </a>
@@ -10234,7 +10234,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        アーキテクチャへの影響
       
     </span>
   </a>
@@ -10243,6 +10243,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29231,7 +29242,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        アーキテクチャへの影響
+        フェーズ別 実装境界
       
     </span>
   </a>
@@ -29242,7 +29253,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        アーキテクチャへの影響
       
     </span>
   </a>
@@ -29251,6 +29262,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29316,9 +29338,63 @@
 <li><code>tagged</code> メンバを 1 つでも持つ → <code>trunk</code></li>
 </ul>
 <p>これにより既存 SONiC からのアップグレードで CONFIG_DB が破綻しない<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_1">アーキテクチャへの影響<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<h2 id="_1">フェーズ別 実装境界<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p><code>switchport_mode</code> 機能は CLI / YANG / CONFIG_DB / db_migrator までは master に取り込まれているが、 HLD が触れる関連改修のうち取り込まれていない部分もある。フェーズ別に「実装済」「未実装」を整理する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済 (master で動く)</th>
+<th>未実装 (HLD 提案のみ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG <code>switchport_mode</code> leaf 追加 (<code>sonic-port</code> / <code>sonic-portchannel</code>)</td>
+<td>✅ 取り込み済</td>
+<td>—</td>
+</tr>
+<tr>
+<td>CONFIG_DB <code>PORT</code> / <code>PORTCHANNEL</code> の <code>switchport_mode</code> カラム</td>
+<td>✅ 取り込み済</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>config switchport mode</code> CLI</td>
+<td>✅ 取り込み済</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>db_migrator</code> による旧 <code>config_db.json</code> の自動補完 (<code>routed</code> / <code>access</code> / <code>trunk</code> 推定)</td>
+<td>✅ 取り込み済（VLAN_MEMBER の有無で推定）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>tagging_mode</code> (<code>untagged</code> / <code>tagged</code>) の意味付け</td>
+<td>✅ 既存 <code>VLAN_MEMBER</code> を流用</td>
+<td>—</td>
+</tr>
+<tr>
+<td>orchagent / vlanmgr / SAI 側のモード対応</td>
+<td>✅ 改修不要（既存 <code>VLAN_MEMBER</code> 経由で従来動作）</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>routed</code> モードでの <code>VLAN_MEMBER</code> 拒否バリデーション</td>
+<td>🟡 CLI 側のチェック</td>
+<td>YANG must 制約や orchagent 側の強制バリデーションは未取り込み</td>
+</tr>
+<tr>
+<td>trunk native VLAN（<code>switchport trunk native vlan</code> 相当）の CONFIG_DB 表現</td>
+<td>—</td>
+<td>❌ HLD では暗黙、master では <code>VLAN_MEMBER</code> <code>untagged</code> の併用に依存（明示フィールドなし）</td>
+</tr>
+</tbody>
+</table>
+<p><code>✅</code> フェーズは現行 master で素直に動作するが、<code>🟡</code> / <code>❌</code> フェーズは CLI のガードに依存しており、<code>redis-cli</code> 直接編集で routed ポートに VLAN メンバを追加する等の整合性違反は防げない。詳細は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy ページ</a> を参照<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_2">アーキテクチャへの影響<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-sai">SAI</a> / vlanmgr 等の改修は <strong>無し</strong>。<code>switchport_mode</code> は CLI 側のメタ情報で、下流は既存の <code>VLAN_MEMBER</code>/<code>tagging_mode</code> を介して従来通り動く<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-sai">SAI</a> / vlanmgr 等の改修は <strong>無し</strong>。<code>switchport_mode</code> は CLI 側のメタ情報で、下流は既存の <code>VLAN_MEMBER</code>/<code>tagging_mode</code> を介して従来通り動く<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>影響範囲は CLI コンテナ（<code>sonic-utilities</code>）と CONFIG_DB スキーマに閉じる。新ベンダ依存・SAI 改修なし</li>
 </ul>
 <!-- evidence:
@@ -29344,7 +29420,7 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 </details>
 <!-- evidence-rendered:end -->
 
-<h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>親 HLD: <a href="../switch-port-modes-and-vlan-cli-enhancement/">switch-port-modes-and-vlan-cli-enhancement</a></li>
 <li>概念: <a href="../switch-port-modes-and-vlan-cli-concepts/">switch-port-modes-and-vlan-cli-concepts</a></li>
@@ -29352,12 +29428,12 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li>HLD と実装の乖離: <a href="../switch-port-modes-and-vlan-cli-discrepancy/">switch-port-modes-and-vlan-cli-discrepancy</a></li>
 <li>CONFIG_DB: <a href="../../reference/config-db/port/">PORT</a> / <a href="../../reference/config-db/portchannel/">PORTCHANNEL</a> / <a href="../../reference/config-db/vlan-member/">VLAN_MEMBER</a></li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

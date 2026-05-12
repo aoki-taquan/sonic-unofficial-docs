@@ -12370,6 +12370,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 運用フェーズ別 実装境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29261,6 +29272,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 運用フェーズ別 実装境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29386,11 +29408,70 @@
 </span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;SAI_STATUS_OBJECT_IN_USE\|</span><span class="nv">$PORT</span><span class="s2">&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </span></code></pre></div>
 <p>自動化する場合、削除前に <code>redis-cli -n 4 keys '*|&lt;port&gt;*'</code> で残依存を列挙して 0 件になることを確認する pre-check を入れる。</p>
+<h2 id="41">4.1 運用フェーズ別 実装境界<a class="headerlink" href="#41" title="Permanent link">&para;</a></h2>
+<p>各運用フェーズで、master で実装済みの自動化と未実装で運用側がカバーする必要のある箇所を分けると次のとおり<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済 (master で動く)</th>
+<th>未実装 (HLD 提案のみ・運用側で代替)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>zero-port 起動</td>
+<td>✅ port=0 で boot 完了</td>
+<td>—</td>
+</tr>
+<tr>
+<td>redis-cli / config による port 追加</td>
+<td>✅ portsorch が SAI port を作成</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>admin_status</code> 切替</td>
+<td>✅ 既存パスで動作</td>
+<td>—</td>
+</tr>
+<tr>
+<td>port 削除前の依存検出</td>
+<td>—</td>
+<td>❌ ref counter 自動拒否は未取り込み（運用側で <code>keys '*|&lt;port&gt;*'</code> pre-check）</td>
+</tr>
+<tr>
+<td>port 削除時の ACL バインド解除</td>
+<td>—</td>
+<td>❌ 自動解除なし（運用側で手順 2 を実行）</td>
+</tr>
+<tr>
+<td>port 削除時の VLAN / PortChannel メンバ解除</td>
+<td>—</td>
+<td>❌ 自動解除なし（運用側で手順 3 を実行）</td>
+</tr>
+<tr>
+<td>port 削除時の buffer PG / queue / qos-map 削除</td>
+<td>—</td>
+<td>❌ 自動削除なし（運用側で手順 4 を実行）</td>
+</tr>
+<tr>
+<td>port 削除本体 (<code>config_db</code> から <code>PORT</code> を消す)</td>
+<td>✅ portsorch / portsyncd が SAI port + host i/f を削除</td>
+<td>—</td>
+</tr>
+<tr>
+<td>port restore</td>
+<td>—</td>
+<td>❌ HLD 提案のみ未実装、削除後の再構築は手動で再投入</td>
+</tr>
+</tbody>
+</table>
+<p><code>✅</code> フェーズはユーザが触らずに動作するが、<code>❌</code> フェーズは現行 master では自動化されておらず、後述の <code>redis-cli</code> / <code>sonic-db-cli</code> 手順を運用側で踏む必要がある<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="5">5. トラブルシューティング<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ポート追加に時間がかかる: <code>PortConfigDone</code> / <code>PortInitDone</code> フラグの状態を確認。orchagent 連動が止まっている可能性。</li>
-<li>ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><a href="../../reference/glossary/#term-lldp">LLDP</a> が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li>ポート削除で SAI エラーが大量: 依存（buffer / ACL / VLAN）が残っている。HLD の ref counter 機構が動作していない可能性<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><a href="../../reference/glossary/#term-lldp">LLDP</a> が古いポート情報を保持し続ける: <code>lldpmgrd</code> の <code>pending_cmds</code> を確認、改修取り込み状況を確認<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -29398,7 +29479,7 @@
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/port-add-del-dynamically/dynamic_port_add_del_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/port-add-del-dynamically/dynamic_port_add_del_hld.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
