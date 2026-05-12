@@ -785,14 +785,6 @@
   },
   {
     "repo": "sonic-net/SONiC",
-    "path": "doc/ecmp/ecmp_calculator.md",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
-    "title": "",
-    "area_hint": "routing",
-    "size_bytes": 28
-  },
-  {
-    "repo": "sonic-net/SONiC",
     "path": "doc/ecmp/fine_grained_next_hop_hld.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC Fine Grained ECMP",
@@ -1550,14 +1542,6 @@
     "title": "**PacketIO**",
     "area_hint": "management",
     "size_bytes": 9023
-  },
-  {
-    "repo": "sonic-net/SONiC",
-    "path": "doc/pins/in_progress.md",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
-    "title": "PINS Supplementary HLD",
-    "area_hint": "management",
-    "size_bytes": 73
   },
   {
     "repo": "sonic-net/SONiC",
