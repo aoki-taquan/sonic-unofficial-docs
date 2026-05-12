@@ -9952,6 +9952,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -10077,6 +10085,118 @@
     
   
     Switchport モード（access / trunk / routed）と VLAN CLI 拡張
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 概念
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 内部実装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 設定と運用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離
   
 
     
@@ -27164,7 +27284,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        想定原因
+        確認コマンド
       
     </span>
   </a>
@@ -27173,6 +27293,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        想定原因
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         切り分け手順
@@ -27244,7 +27375,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27255,7 +27386,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27266,7 +27397,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28919,7 +29050,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        想定原因
+        確認コマンド
       
     </span>
   </a>
@@ -28928,6 +29059,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        想定原因
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         切り分け手順
@@ -28999,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29010,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29021,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29067,7 +29209,21 @@
 <li><code>ASIC_DB</code> への書き込みが詰まる、<a href="../../glossary/#term-orchagent">orchagent</a> ログに <code>SAI API failed</code> が連続</li>
 <li>ASIC レベルのテーブル限界エラー (<code>CRM</code> の overflow) が観測される</li>
 </ul>
-<h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">確認コマンド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># syncd 異常終了 / core</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>syncd
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>syncd<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-200
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ls<span class="w"> </span>/var/core/<span class="w"> </span>/var/dump/<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># SAI API エラー (orchagent 側)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;SAI_STATUS|SAI API failed&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># ASIC リソース枯渇 (CRM)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>crm<span class="w"> </span>show<span class="w"> </span>thresholds<span class="w"> </span>all
+</span></code></pre></div>
+<h2 id="_3">想定原因<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong><a href="../../glossary/#term-crm">CRM</a> (Critical Resource Monitor) で table 枯渇</strong>: <a href="../../glossary/#term-fdb">FDB</a> / ROUTE / NEXTHOP / <a href="../../glossary/#term-acl">ACL</a> のいずれかが ASIC 容量を超過</li>
 <li><strong><a href="../../glossary/#term-sai">SAI</a> 属性の未対応</strong>: SDK バージョンが古く、<a href="../../glossary/#term-orchagent">orchagent</a> が新属性を打って失敗</li>
@@ -29075,7 +29231,7 @@
 <li><strong>メモリ / shared memory 不足</strong>: redis / <a href="../../glossary/#term-syncd">syncd</a> が OOM kill</li>
 <li><strong>HW 側の障害</strong>: ASIC reset、PCIe link down、Fabric link error</li>
 </ol>
-<h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">切り分け手順<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     A[SAI API がエラーを返す] --&gt; B{syncd ログにエラーコード?}
     B -- Yes --&gt; B1[SAI_STATUS_* をベンダ SDK ドキュメントで照合]
@@ -29085,26 +29241,26 @@
     D -- Yes --&gt; D1[該当 object 削除 / 再投入]
     D -- No --&gt; E[syncd 再起動 (warm 不可なら cold)]</code></pre>
 <h3 id="1-syncd">1. syncd の異常終了情報<a class="headerlink" href="#1-syncd" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>syncd
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>syncd<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-200
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ls<span class="w"> </span>/var/core/<span class="w"> </span>/var/dump/<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>syncd
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>syncd<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-200
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>ls<span class="w"> </span>/var/core/<span class="w"> </span>/var/dump/<span class="w"> </span><span class="m">2</span>&gt;/dev/null
 </span></code></pre></div>
 <ul>
 <li>期待: 直近 Exit code 0、core file なし</li>
 <li>異常: <code>SIGABRT</code> / <code>coredump</code> → core を解析（gdb 必要）</li>
 </ul>
 <h3 id="2-crm">2. CRM の閾値超過<a class="headerlink" href="#2-crm" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>crm<span class="w"> </span>show<span class="w"> </span>summary
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>crm<span class="w"> </span>show<span class="w"> </span>thresholds<span class="w"> </span>all
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>crm<span class="w"> </span>show<span class="w"> </span>summary
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>crm<span class="w"> </span>show<span class="w"> </span>thresholds<span class="w"> </span>all
 </span></code></pre></div>
 <ul>
 <li>期待: usage がいずれの table も threshold 未満</li>
 <li>異常: <code>fdb_entry</code>, <code>ipv4_route</code>, <code>ipv6_nexthop</code>, <code>acl_table_entry</code> 等が 95% 超 → 容量超過</li>
 </ul>
 <h3 id="3-orchagent-api">3. orchagent ログから具体的失敗 API<a class="headerlink" href="#3-orchagent-api" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;SAI_STATUS|sai_api|sai_create|sai_remove&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-100
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;SAI_STATUS|sai_api|sai_create|sai_remove&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-100
 </span></code></pre></div>
 <ul>
 <li><code>SAI_STATUS_TABLE_FULL</code> → <a href="../../glossary/#term-crm">CRM</a> 枯渇</li>
@@ -29112,30 +29268,30 @@
 <li><code>SAI_STATUS_INVALID_OBJECT_ID</code> → object 削除順序の問題</li>
 </ul>
 <h3 id="4-sdk">4. プラットフォーム / SDK バージョン<a class="headerlink" href="#4-sdk" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>version
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/sonic/sonic_version.yml
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>ls<span class="w"> </span>/usr/lib/aarch64-linux-gnu/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>version
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/sonic/sonic_version.yml
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>ls<span class="w"> </span>/usr/lib/aarch64-linux-gnu/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai<span class="w"> </span><span class="m">2</span>&gt;/dev/null
 </span></code></pre></div>
 <h3 id="5">5. メモリ<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>free<span class="w"> </span>-h
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>stats<span class="w"> </span>--no-stream
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;oom|kill&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>free<span class="w"> </span>-h
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span>stats<span class="w"> </span>--no-stream
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;oom|kill&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-crm">CRM</a> 枯渇: 容量設計を見直す（<a href="../../glossary/#term-fdb">FDB</a> aging を短く、<a href="../../glossary/#term-acl">ACL</a> の <code>match_in_ports</code> を集約、route summarization）</li>
 <li><a href="../../glossary/#term-syncd">syncd</a> / swss の単発復旧: <code>sudo systemctl restart swss</code> → <a href="../../glossary/#term-syncd">syncd</a> も連動再起動</li>
 <li>重大障害（PCIe 等）の疑い時: techsupport を取得して保守問い合わせ</li>
 <li>SDK のバグの場合: 該当 image にバックポートされた fix を持つ build に更新</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/20-swss-sai-redis/architecture/">../../topics/20-swss-sai-redis/architecture.md</a></li>
 <li><a href="../../../topics/20-swss-sai-redis/internals/">../../topics/20-swss-sai-redis/internals.md</a></li>
 <li><a href="../../config-db/crm/">../config-db/crm.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 00adaba8804d -->
 
 <div class="footnote">

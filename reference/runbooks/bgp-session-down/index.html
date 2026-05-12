@@ -9952,6 +9952,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -10077,6 +10085,118 @@
     
   
     Switchport モード（access / trunk / routed）と VLAN CLI 拡張
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 概念
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 内部実装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 設定と運用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../switching/switch-port-modes-and-vlan-cli-discrepancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離
   
 
     
@@ -26940,7 +27060,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        想定原因（優先度順）
+        確認コマンド
       
     </span>
   </a>
@@ -26949,6 +27069,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        想定原因（優先度順）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         切り分け手順
@@ -27020,7 +27151,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27031,7 +27162,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27042,7 +27173,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -28919,7 +29050,7 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        想定原因（優先度順）
+        確認コマンド
       
     </span>
   </a>
@@ -28928,6 +29059,17 @@
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        想定原因（優先度順）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         切り分け手順
@@ -28999,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29010,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29021,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29067,7 +29209,22 @@
 <li>Peer の確立後すぐ flap する (<code>Established</code> → <code>Idle</code>)</li>
 <li>Container <code>bgp</code> 内では <a href="../../glossary/#term-frr">FRR</a> (bgpd) が動作しているが、SONiC 側 <code>show</code> で peer が表示されない</li>
 </ul>
-<h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">確認コマンド<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>最初に状態を 1 枚で確認するためのワンライナー集 (詳細手順は後述「切り分け手順」)。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Peer State / AS / Uptime の一覧</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>summary
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 特定 peer の詳細 (Active / OpenSent / Established 等)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show bgp neighbor &lt;peer_ip&gt;&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># CONFIG_DB と FRR の整合</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;BGP_NEIGHBOR|&lt;peer_ip&gt;&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show running-config&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;router bgp&quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># notification 抽出 (直近のエラー)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>/var/log/frr/bgpd.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;notification|fsm&quot;</span>
+</span></code></pre></div>
+<h2 id="_3">想定原因（優先度順）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>L1 / L2 / L3 の事前条件が満たされていない</strong>: interface oper down、IP 未設定、MTU 不一致、対向側 <a href="../../glossary/#term-acl">ACL</a> でブロック</li>
 <li><strong><a href="../../glossary/#term-config_db">CONFIG_DB</a> と <a href="../../glossary/#term-frr">FRR</a> の同期失敗</strong>: <code>bgpcfgd</code> (= <a href="../../glossary/#term-frr">FRR</a> config generator) がテンプレ生成エラーで停止し、<code>vtysh -c "show run"</code> に neighbor が出ない</li>
@@ -29075,7 +29232,7 @@
 <li><strong>管理上 disable されている</strong>: <code>BGP_NEIGHBOR|&lt;ip&gt;</code> の <code>admin_status</code> = <code>down</code></li>
 <li><strong><a href="../../glossary/#term-bfd">BFD</a> セッション断</strong>: <code>bfdd</code> が UP しないと <a href="../../glossary/#term-bgp">BGP</a> が即 down する構成（bfd hold-down）</li>
 </ol>
-<h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">切り分け手順<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     A[BGP peer State != Established] --&gt; B{interface oper up?}
     B -- No --&gt; B1[L1/L2 確認: fec-errors / link-flapping]
@@ -29087,32 +29244,32 @@
     E -- No --&gt; E1[BGP_NEIGHBOR.asn / DEVICE_METADATA.bgp_asn 修正]
     E -- Yes --&gt; F[BFD / hold-timer / admin_status を確認]</code></pre>
 <h3 id="1-ip">1. リンク・IP の確認<a class="headerlink" href="#1-ip" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interface<span class="w"> </span>status<span class="w"> </span>Ethernet0
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interface
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>interface<span class="w"> </span>status<span class="w"> </span>Ethernet0
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interface
 </span></code></pre></div>
 <ul>
 <li>期待: <code>oper</code> が <code>up</code>、対向 peer の IP がローカル subnet にある</li>
 <li>異常: <code>oper down</code> → ケーブル / SFP / FEC の確認（<a href="../fec-errors/">fec-errors.md</a> を参照）</li>
 </ul>
 <h3 id="2-icmp-tcp179">2. ICMP / TCP/179 到達確認<a class="headerlink" href="#2-icmp-tcp179" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ping<span class="w"> </span>&lt;peer_ip&gt;<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span>-nn<span class="w"> </span>host<span class="w"> </span>&lt;peer_ip&gt;<span class="w"> </span>and<span class="w"> </span>port<span class="w"> </span><span class="m">179</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ping<span class="w"> </span>&lt;peer_ip&gt;<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span>-nn<span class="w"> </span>host<span class="w"> </span>&lt;peer_ip&gt;<span class="w"> </span>and<span class="w"> </span>port<span class="w"> </span><span class="m">179</span>
 </span></code></pre></div>
 <ul>
 <li>期待: ping 応答あり、TCP SYN / SYN-ACK が双方向に流れる</li>
 <li>異常: TCP SYN は出るが SYN-ACK 戻らない → 対向 <a href="../../glossary/#term-acl">ACL</a> / firewall を確認</li>
 </ul>
 <h3 id="3-config_db-frr">3. CONFIG_DB と FRR の整合<a class="headerlink" href="#3-config_db-frr" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;BGP_NEIGHBOR|&lt;peer_ip&gt;&quot;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;bgp_asn|hostname&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show running-config&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;router bgp&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;BGP_NEIGHBOR|&lt;peer_ip&gt;&quot;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;bgp_asn|hostname&quot;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show running-config&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;router bgp&quot;</span>
 </span></code></pre></div>
 <ul>
 <li>期待: <code>BGP_NEIGHBOR</code> の <code>asn</code> / <code>local_addr</code> / <code>holdtime</code> が FRR 側 <code>neighbor</code> 設定と一致</li>
 <li>異常: <a href="../../glossary/#term-config_db">CONFIG_DB</a> に存在するが FRR に出ない → <code>docker logs bgp 2&gt;&amp;1 | grep bgpcfgd</code> で template エラー確認</li>
 </ul>
 <h3 id="4-bgp">4. BGP セッション状態の詳細<a class="headerlink" href="#4-bgp" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show bgp neighbor &lt;peer_ip&gt;&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show bgp neighbor &lt;peer_ip&gt;&quot;</span>
 </span></code></pre></div>
 <ul>
 <li>状態 <code>Active</code>: outbound TCP がブロックされている (peer 不在 / <a href="../../glossary/#term-acl">ACL</a>)</li>
@@ -29121,16 +29278,16 @@
 <li>状態 <code>Established</code> で即 reset: hold-down 不一致 / route-map evaluation エラー</li>
 </ul>
 <h3 id="5-notification">5. ログ・notification 抽出<a class="headerlink" href="#5-notification" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>/var/log/frr/bgpd.log
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;bgp|bfd&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-100
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>/var/log/frr/bgpd.log
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;bgp|bfd&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-100
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「3.」で <a href="../../glossary/#term-config_db">CONFIG_DB</a> と FRR が乖離している場合: <code>sudo systemctl restart bgp</code> で再生成。これでも反映されないなら <code>bgpcfgd</code> テンプレ (<code>/usr/share/sonic/templates/bgpd/</code>) を確認</li>
 <li>AS / router-id を修正する場合: <code>sonic-cfggen -j /etc/sonic/config_db.json</code> での import 後 <code>config save -y</code> → <code>config reload -y</code></li>
 <li><a href="../../glossary/#term-bfd">BFD</a> で flap している場合: <code>BFD_SESSION_TABLE</code>（<a href="../../glossary/#term-appl_db">APPL_DB</a>）で session 状態を確認し、<a href="../../glossary/#term-bfd">BFD</a> timer を緩める</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/02-bgp/operations/">../../topics/02-bgp/operations.md</a></li>
 <li><a href="../../../topics/02-bgp/concept/">../../topics/02-bgp/concept.md</a></li>
@@ -29138,7 +29295,7 @@
 <li><a href="../../cli/show-bgp/">../cli/show-bgp.md</a></li>
 <li><a href="../../config-db/bgp-neighbor/">../config-db/bgp-neighbor.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 2e8c9c98e933 -->
 
 <div class="footnote">

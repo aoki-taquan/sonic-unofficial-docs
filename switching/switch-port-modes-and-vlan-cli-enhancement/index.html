@@ -16,7 +16,7 @@
         <link rel="prev" href="../sonic-basic-l2-mode-test-plan/">
       
       
-        <link rel="next" href="../brief-introduction-of-iccp-code/">
+        <link rel="next" href="../switch-port-modes-and-vlan-cli-concepts/">
       
       
         
@@ -9954,6 +9954,14 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -10486,6 +10494,118 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../switch-port-modes-and-vlan-cli-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 概念
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../switch-port-modes-and-vlan-cli-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 内部実装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../switch-port-modes-and-vlan-cli-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — 設定と運用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../switch-port-modes-and-vlan-cli-discrepancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switchport モードと VLAN CLI 拡張 — HLD と実装の乖離
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -29490,6 +29610,16 @@
 </div>
 <!-- /topics-tip -->
 
+<div class="admonition info">
+<p class="admonition-title">派生ページ（章ごとに分割）</p>
+<p>本ページは大型 HLD のため、用途別の派生ページに章分割した。本ページは引き続き「正本」として全文を保持する。</p>
+<ul>
+<li>概念 / モード定義: <a href="../switch-port-modes-and-vlan-cli-concepts/">switch-port-modes-and-vlan-cli-concepts</a></li>
+<li>内部実装 (YANG / CONFIG_DB / db_migrator): <a href="../switch-port-modes-and-vlan-cli-internals/">switch-port-modes-and-vlan-cli-internals</a></li>
+<li>設定例 / 運用 / トラブルシューティング: <a href="../switch-port-modes-and-vlan-cli-operations/">switch-port-modes-and-vlan-cli-operations</a></li>
+<li>HLD と実装の乖離 (CLI 引数の差分と回避策): <a href="../switch-port-modes-and-vlan-cli-discrepancy/">switch-port-modes-and-vlan-cli-discrepancy</a></li>
+</ul>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: Discrepancy-found</p>
 <p>sonic-utilities <code>config/switchport.py</code> L17 で <code>mode_type</code> enum <code>["access", "trunk", "routed"]</code> を、L57-78 で <code>port_data["mode"]</code> への書き込みを確認、<code>config/main.py</code> L119 で <code>PORT_MODE = "switchport_mode"</code> 定数定義、L1787 <code>config.add_command(switchport.switchport)</code> 登録、L5777 で <code>interface_mode == "trunk" or interface_mode == "access"</code> 判定を確認。YANG 側は sonic-yang-models <code>yang-models/sonic-port.yang</code> L86-89 / <code>sonic-portchannel.yang</code> L71 で <code>leaf mode { type stypes:switchport_mode; }</code>、<code>sonic-types.yang.j2</code> L244 で <code>typedef switchport_mode</code> を確認。</p>
