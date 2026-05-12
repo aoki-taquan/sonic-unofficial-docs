@@ -3,6 +3,7 @@ title: DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）
 description: DIP=SIP PTF 検証テストの dip_sip.py パラメータと送受信パケット仕様（DIP=SIP のまま L3 ルーティング、TTL/HL が 1 減って受信される）を整理する。
 area: architecture
 verification: discrepancy-found
+_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld

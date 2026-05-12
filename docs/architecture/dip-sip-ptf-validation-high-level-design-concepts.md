@@ -3,6 +3,7 @@ title: DIP=SIP PTF 検証 概念（テストの目的とトポロジ）
 description: DIP=SIP PTF 検証テストの概念・目的・トポロジ・対応 testbed を整理する。SONiC が「SRC_IP = DST_IP」のパケットを正しく L3 ルーティングできるかを sonic-mgmt の PTF / pytest で検証するテストインフラ HLD。
 area: architecture
 verification: discrepancy-found
+_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld

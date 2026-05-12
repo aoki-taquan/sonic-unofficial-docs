@@ -3,6 +3,7 @@ title: SSD ヘルスチェック 制限事項と HLD-実装乖離
 description: SONiC の SSD ヘルスチェック機能の制限事項・干渉する機能・トラブルシューティング、および現行 master と HLD 記述の乖離（ssdutil への移行、sonic_storage 再構成、ssdmond 未取り込み）を整理する。
 area: architecture
 verification: discrepancy-found
+_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld

@@ -3,6 +3,7 @@ title: SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイ�
 description: SONiC の SSD ヘルスチェック機能（show platform ssdhealth + ssdutil プラグイン）の概念と二段プラグインアーキテクチャ（SsdBase / SsdUtil）を整理する。
 area: architecture
 verification: discrepancy-found
+_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
