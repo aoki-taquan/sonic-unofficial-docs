@@ -170,4 +170,15 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
+- [`config banner`](config-banner.md) — config banner サブコマンド
+- [`config clock`](config-clock.md) — config clock サブコマンド
+- [`config kdump`](config-kdump.md) — config kdump サブコマンド
+- [`config ntp`](config-ntp.md) — config ntp サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: a13f05370620 -->

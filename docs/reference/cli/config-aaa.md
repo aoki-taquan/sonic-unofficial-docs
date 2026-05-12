@@ -196,6 +196,16 @@ excerpt: |
 
 [^3]: RADIUS サーバ数の上限は `RADIUS_MAXSERVERS = 8`。`config/aaa.py` L11 と L537-L538 参照。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/aaa.py#L11>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show aaa`](show-aaa.md) — show aaa サブコマンド
+- [`show acl`](show-acl.md) — show acl サブコマンド
+- [`config acl`](config-acl.md) — config acl サブコマンド
+- [`config ssh`](config-ssh.md) — config ssh サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: TACACS+ 認証](../../management/tacacs-authentication.md)
 - [CONFIG_DB: TACPLUS_SERVER](../config-db/tacplus-server.md)

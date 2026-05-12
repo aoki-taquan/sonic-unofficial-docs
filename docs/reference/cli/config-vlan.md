@@ -179,6 +179,17 @@ show interfaces status
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show vlan`](show-vlan.md) — show vlan サブコマンド
+- [`show lldp`](show-lldp.md) — show lldp サブコマンド
+- [`show mac`](show-mac.md) — show mac サブコマンド
+- [`show storm control`](show-storm-control.md) — show storm-control サブコマンド
+- [`config interface`](config-interface.md) — config interface サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
 - [CONFIG_DB: VLAN](../config-db/vlan.md)

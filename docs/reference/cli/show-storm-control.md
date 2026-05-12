@@ -135,4 +135,15 @@ flowchart LR
 
 [^2]: `display_storm_all` / `display_storm_interface` は同じ `show/main.py` 上部のヘルパ関数。
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config interface`](config-interface.md) — config interface サブコマンド
+- [`config portchannel`](config-portchannel.md) — config portchannel サブコマンド
+- [`config vlan`](config-vlan.md) — config vlan サブコマンド
+- [`show lldp`](show-lldp.md) — show lldp サブコマンド
+- [`show mac`](show-mac.md) — show mac サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 896d391185a9 -->

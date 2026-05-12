@@ -147,4 +147,15 @@ vtysh -c 'show ip route 0.0.0.0/0'
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show route map`](show-route-map.md) — show route-map コマンド
+- [`config route`](config-route.md) — config route サブコマンド（static route）
+- [`show arp`](show-arp.md) — show arp サブコマンド
+- [`show bfd`](show-bfd.md) — show bfd サブコマンド
+- [`show bgp`](show-bgp.md) — show bgp / show ip bgp / show ipv6 bgp サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: eb2ea0d223db -->

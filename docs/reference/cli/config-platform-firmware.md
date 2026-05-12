@@ -135,4 +135,15 @@ fwutil show status
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show platform`](show-platform.md) — show platform サブコマンド
+- [`show clock`](show-clock.md) — show clock サブコマンド
+- [`show environment`](show-environment.md) — show environment サブコマンド
+- [`show feature`](show-feature.md) — show feature サブコマンド
+- [`show services`](show-services.md) — show services サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: d12a6eddadee -->

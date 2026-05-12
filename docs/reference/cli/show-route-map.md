@@ -117,4 +117,15 @@ flowchart LR
 
 [^1]: `show/main.py` L1266-L1274。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1266>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config default route`](config-default-route.md) — config default-route（デフォルトルート設定パターン）
+- [`config route`](config-route.md) — config route サブコマンド（static route）
+- [`config bgp`](config-bgp.md) — config bgp サブコマンド
+- [`config vrf`](config-vrf.md) — config vrf サブコマンド
+- [`show arp`](show-arp.md) — show arp サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 84ca04c9cab5 -->

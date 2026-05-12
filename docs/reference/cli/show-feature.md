@@ -137,4 +137,15 @@ pmon           enabled   enabled        up
 ```
 <!-- /usage-example -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config banner`](config-banner.md) — config banner サブコマンド
+- [`config clock`](config-clock.md) — config clock サブコマンド
+- [`config kdump`](config-kdump.md) — config kdump サブコマンド
+- [`config ntp`](config-ntp.md) — config ntp サブコマンド
+- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: f158364c3005 -->

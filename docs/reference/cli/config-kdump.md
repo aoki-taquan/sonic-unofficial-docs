@@ -120,6 +120,17 @@ flowchart LR
 
 [^3]: `add_ssh_key` / `add_ssh_path` の `remote` 必須チェックは `config/kdump.py` L171-L174 / L207-L209。
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show clock`](show-clock.md) — show clock サブコマンド
+- [`show environment`](show-environment.md) — show environment サブコマンド
+- [`show feature`](show-feature.md) — show feature サブコマンド
+- [`show platform`](show-platform.md) — show platform サブコマンド
+- [`show services`](show-services.md) — show services サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: kdump](../../system/kdump.md)
 - [CONFIG_DB: KDUMP](../config-db/kdump.md)

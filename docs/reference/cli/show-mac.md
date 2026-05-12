@@ -211,6 +211,17 @@ show mac count
 ```
 <!-- /usage-example -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config interface`](config-interface.md) — config interface サブコマンド
+- [`config portchannel`](config-portchannel.md) — config portchannel サブコマンド
+- [`config vlan`](config-vlan.md) — config vlan サブコマンド
+- [`show lldp`](show-lldp.md) — show lldp サブコマンド
+- [`show storm control`](show-storm-control.md) — show storm-control サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 
 - [reference/CLI: show vlan](show-vlan.md)

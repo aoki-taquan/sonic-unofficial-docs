@@ -189,4 +189,15 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config mirror session`](config-mirror-session.md) — config mirror_session サブコマンド
+- [`config sflow`](config-sflow.md) — config sflow サブコマンド
+- [`config snmp`](config-snmp.md) — config snmp / snmpagentaddress / snmptrap サブコマンド
+- [`config syslog`](config-syslog.md) — config syslog サブコマンド
+- [`show flowcnt`](show-flowcnt.md) — show flowcnt-trap / flowcnt-route サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: c5a6ce567024 -->

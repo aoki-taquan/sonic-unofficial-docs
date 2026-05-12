@@ -256,4 +256,15 @@ show runningconfiguration | grep -i portchannel
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show lldp`](show-lldp.md) — show lldp サブコマンド
+- [`show mac`](show-mac.md) — show mac サブコマンド
+- [`show storm control`](show-storm-control.md) — show storm-control サブコマンド
+- [`show vlan`](show-vlan.md) — show vlan サブコマンド
+- [`config interface`](config-interface.md) — config interface サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 6e531ba7782c -->

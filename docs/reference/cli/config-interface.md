@@ -299,6 +299,17 @@ show runningconfiguration interfaces
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show lldp`](show-lldp.md) — show lldp サブコマンド
+- [`show mac`](show-mac.md) — show mac サブコマンド
+- [`show storm control`](show-storm-control.md) — show storm-control サブコマンド
+- [`show vlan`](show-vlan.md) — show vlan サブコマンド
+- [`config portchannel`](config-portchannel.md) — config portchannel サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 - [CONFIG_DB: PORT](../config-db/port.md)

@@ -364,6 +364,17 @@ show bgp device-global
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show bgp`](show-bgp.md) — show bgp / show ip bgp / show ipv6 bgp サブコマンド
+- [`show arp`](show-arp.md) — show arp サブコマンド
+- [`show bfd`](show-bfd.md) — show bfd サブコマンド
+- [`show ip`](show-ip.md) — show ip サブコマンド
+- [`show ndp`](show-ndp.md) — show ndp サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 - [CONFIG_DB: BGP_GLOBALS](../config-db/bgp-globals.md)

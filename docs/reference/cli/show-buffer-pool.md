@@ -122,6 +122,17 @@ flowchart LR
 
 [^1]: `show/main.py` L1116-L1196。group: `@cli.group(name='buffer_pool', ...)` / `@cli.group(name='headroom-pool', ...)`。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1116>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config buffer`](config-buffer.md) — config buffer サブコマンド
+- [`show buffer`](show-buffer.md) — show buffer サブコマンド
+- [`config pfcwd`](config-pfcwd.md) — config pfcwd サブコマンド
+- [`config qos`](config-qos.md) — config qos サブコマンド
+- [`show pfc`](show-pfc.md) — show pfc サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 
 - [reference/CLI: show buffer](show-buffer.md)

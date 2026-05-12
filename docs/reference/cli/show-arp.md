@@ -143,4 +143,15 @@ sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config bgp`](config-bgp.md) — config bgp サブコマンド
+- [`config default route`](config-default-route.md) — config default-route（デフォルトルート設定パターン）
+- [`config route`](config-route.md) — config route サブコマンド（static route）
+- [`config vrf`](config-vrf.md) — config vrf サブコマンド
+- [`show bfd`](show-bfd.md) — show bfd サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 2a3b0952d27c -->

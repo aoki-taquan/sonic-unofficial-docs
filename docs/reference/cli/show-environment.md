@@ -88,4 +88,15 @@ flowchart LR
 
 [^1]: `environment` コマンドの実装は `show/main.py` L1756-L1761。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1756>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config banner`](config-banner.md) — config banner サブコマンド
+- [`config clock`](config-clock.md) — config clock サブコマンド
+- [`config kdump`](config-kdump.md) — config kdump サブコマンド
+- [`config ntp`](config-ntp.md) — config ntp サブコマンド
+- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 9dae6d74c08e -->

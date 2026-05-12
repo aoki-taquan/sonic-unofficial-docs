@@ -162,6 +162,16 @@ aclshow -a
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show acl`](show-acl.md) — show acl サブコマンド
+- [`show aaa`](show-aaa.md) — show aaa サブコマンド
+- [`config aaa`](config-aaa.md) — config aaa / tacacs / radius サブコマンド
+- [`config ssh`](config-ssh.md) — config ssh サブコマンド
+
+<!-- /cli-sibling -->
+
 ## 関連ページ
 - [HLD: ACL の基本設計](../../acl-qos/acl-support-in-sonic.md)
 - [CONFIG_DB: ACL_TABLE](../config-db/acl-table.md)

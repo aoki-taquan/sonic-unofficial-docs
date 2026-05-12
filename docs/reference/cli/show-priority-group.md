@@ -113,4 +113,15 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config buffer`](config-buffer.md) — config buffer サブコマンド
+- [`config pfcwd`](config-pfcwd.md) — config pfcwd サブコマンド
+- [`config qos`](config-qos.md) — config qos サブコマンド
+- [`show buffer`](show-buffer.md) — show buffer サブコマンド
+- [`show buffer pool`](show-buffer-pool.md) — show buffer_pool / headroom-pool サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 9dae6d74c08e -->

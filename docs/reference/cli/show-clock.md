@@ -81,4 +81,15 @@ flowchart LR
 
 [^1]: `clock` グループの定義は `show/main.py` L2222-L2238。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L2222>
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`config clock`](config-clock.md) — config clock サブコマンド
+- [`config banner`](config-banner.md) — config banner サブコマンド
+- [`config kdump`](config-kdump.md) — config kdump サブコマンド
+- [`config ntp`](config-ntp.md) — config ntp サブコマンド
+- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: a35f1b1cdfa7 -->

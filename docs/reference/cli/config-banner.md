@@ -137,4 +137,15 @@ flowchart LR
 
 [^2]: テーブル名は `swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` 定数経由で取得される（= `"BANNER_MESSAGE"`）。
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show clock`](show-clock.md) — show clock サブコマンド
+- [`show environment`](show-environment.md) — show environment サブコマンド
+- [`show feature`](show-feature.md) — show feature サブコマンド
+- [`show platform`](show-platform.md) — show platform サブコマンド
+- [`show services`](show-services.md) — show services サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: 1b9a4e23d40f -->

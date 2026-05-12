@@ -174,4 +174,15 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
+<!-- cli-sibling -->
+### 関連 CLI コマンド
+
+- [`show buffer`](show-buffer.md) — show buffer サブコマンド
+- [`show buffer pool`](show-buffer-pool.md) — show buffer_pool / headroom-pool サブコマンド
+- [`show pfc`](show-pfc.md) — show pfc サブコマンド
+- [`show priority group`](show-priority-group.md) — show priority-group サブコマンド
+- [`show queue`](show-queue.md) — show queue サブコマンド
+
+<!-- /cli-sibling -->
+
 <!-- glossary-links-injected: e1fd4940b990 -->
