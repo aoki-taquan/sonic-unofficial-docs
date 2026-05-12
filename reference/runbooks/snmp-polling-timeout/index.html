@@ -27944,7 +27944,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28008,7 +28019,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -28019,7 +28030,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28030,7 +28041,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29055,7 +29066,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29119,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29204,6 +29226,7 @@
     C -- Yes --&gt; D{snmpd CPU 高負荷?}
     D -- Yes --&gt; D1[OID 数削減 / polling 間隔を緩和]
     D -- No --&gt; E[NW 経路 / MTU を確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-host-reachability">1. host 側 reachability<a class="headerlink" href="#1-host-reachability" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-ulnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>:161
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-nn<span class="w"> </span>udp<span class="w"> </span>port<span class="w"> </span><span class="m">161</span><span class="w"> </span>-c<span class="w"> </span><span class="m">10</span>
@@ -29224,19 +29247,19 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-L<span class="w"> </span>INPUT<span class="w"> </span>-n<span class="w"> </span>-v<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">161</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>acl<span class="w"> </span>rule
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>container 再起動: <code>sudo systemctl restart snmp</code></li>
 <li>community 設定確認: <code>sonic-db-cli CONFIG_DB hgetall "SNMP_COMMUNITY|public"</code></li>
 <li>大規模環境: <code>snmpbulkwalk</code> への切り替えを NMS 側に依頼</li>
 <li>SNMPv3 はまず <a href="../snmpv3-auth-failure/">snmpv3-auth-failure.md</a> を確認</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../snmpv3-auth-failure/">snmpv3-auth-failure.md</a></li>
 <li><a href="../telemetry-dialout-not-sending/">telemetry-dialout-not-sending.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 2bcfb6360cc4 -->
 
 <div class="footnote">

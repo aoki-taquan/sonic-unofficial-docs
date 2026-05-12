@@ -27636,7 +27636,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -27700,7 +27711,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27711,7 +27722,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -27722,7 +27733,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27733,7 +27744,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29066,7 +29077,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -29152,7 +29174,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29163,7 +29185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29226,6 +29248,7 @@
     C -- Yes --&gt; D{transceiver / cable 種別対応?}
     D -- No --&gt; D1[platform.json の対応リスト確認]
     D -- Yes --&gt; E[FEC / training の状態を確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-interface">1. interface 状態<a class="headerlink" href="#1-interface" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interface<span class="w"> </span>status<span class="w"> </span>Ethernet0
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>interface<span class="w"> </span>counters<span class="w"> </span>Ethernet0
@@ -29250,7 +29273,7 @@
 <ul>
 <li>両側で <code>speed</code> / <code>fec</code> / <code>autoneg</code> を一致させる（公式互換性表に従う）</li>
 </ul>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>speed 修正: <code>config interface speed Ethernet0 100000</code>（<strong>ロールバック</strong>: 変更前の speed に同コマンドで戻す）</li>
 <li>FEC: <code>config interface fec Ethernet0 rs</code>（<strong>ロールバック</strong>: 元 FEC mode に戻す）</li>
@@ -29258,7 +29281,7 @@
 <li>breakout: <code>config interface breakout Ethernet0 "4x25G"</code> （多大なポート再構成あり、メンテ枠必須）</li>
 <li>transceiver 異常: 別 SFP に差し替え、ベンダ互換性表を確認</li>
 </ul>
-<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>
 <ul>
 <li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
@@ -29267,12 +29290,12 @@
 <li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
 </ul>
 <p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../fec-errors/">./fec-errors.md</a></li>
 <li><a href="../../config-db/port/">../config-db/port.md</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 6d49ad6a28cc -->
 
 <div class="footnote">

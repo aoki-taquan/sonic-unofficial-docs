@@ -28028,7 +28028,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28081,7 +28092,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -28092,7 +28103,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -28103,7 +28114,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28114,7 +28125,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29055,7 +29066,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29108,7 +29130,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29119,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29203,6 +29225,7 @@
     C -- Yes --&gt; D{VLAN/Vxlan の overhead 考慮?}
     D -- No --&gt; D1[overlay 用に +50/+54 増やす]
     D -- Yes --&gt; E[ASIC port MTU と sysctl を確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-mtu">1. 両端 MTU 比較<a class="headerlink" href="#1-mtu" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Ethernet0|PortChannel&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ip<span class="w"> </span>-d<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>Ethernet0
@@ -29225,13 +29248,13 @@
 <ul>
 <li><code>RX_ERR</code> / <code>RX_OVR</code> の増加を確認</li>
 </ul>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>両端を揃える: <code>sudo config interface mtu Ethernet0 9100</code> を双方で実行</li>
 <li><a href="../../glossary/#term-vlan">VLAN</a> / <a href="../../glossary/#term-portchannel">PortChannel</a>: <code>sudo config interface mtu Vlan100 9100</code></li>
 <li>保存: <code>sudo config save -y</code></li>
 </ul>
-<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>
 <ul>
 <li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
@@ -29240,13 +29263,13 @@
 <li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
 </ul>
 <p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../bgp-session-down/">bgp-session-down.md</a></li>
 <li><a href="../../cli/config-interface/">../cli/config-interface.md</a></li>
 <li><a href="../../config-db/port/">../config-db/port.md</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 828d4abcffb6 -->
 
 <div class="footnote">

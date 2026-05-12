@@ -28056,7 +28056,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28120,7 +28131,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -28131,7 +28142,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28142,7 +28153,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29055,7 +29066,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29119,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29204,6 +29226,7 @@
     C -- No --&gt; D{ECMP nh の片側が誤り?}
     D -- Yes --&gt; D1[該当 nh を一時 shutdown]
     D -- No --&gt; E[redistribute / route-map のループを確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-traceroute-loop-hop">1. traceroute で loop hop 特定<a class="headerlink" href="#1-traceroute-loop-hop" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>traceroute<span class="w"> </span>-n<span class="w"> </span>-q<span class="w"> </span><span class="m">1</span><span class="w"> </span>-w<span class="w"> </span><span class="m">1</span><span class="w"> </span>&lt;dst&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mtr<span class="w"> </span>-n<span class="w"> </span>--no-dns<span class="w"> </span>&lt;dst&gt;
@@ -29227,19 +29250,19 @@
 <h3 id="5-counter">5. counter 急上昇<a class="headerlink" href="#5-counter" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>怪しい static を一時 disable: <code>sudo config route del prefix &lt;p&gt;</code></li>
 <li><a href="../../glossary/#term-bgp">BGP</a> の default 広告抑制: <code>neighbor &lt;peer&gt; default-originate</code> を外す</li>
 <li>summary 配下を明示 announce: <code>aggregate-address &lt;p&gt; as-set</code> の見直し</li>
 <li>ループ確定箇所の interface を一時 admin down: <code>sudo config interface shutdown Ethernet0</code></li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../bgp-route-not-advertised/">bgp-route-not-advertised.md</a></li>
 <li><a href="../../../topics/04-vrf-ecmp/concept/">../../topics/04-vrf-ecmp/concept.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 758aafff1fd5 -->
 
 <div class="footnote">

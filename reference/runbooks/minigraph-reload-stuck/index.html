@@ -28084,7 +28084,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28148,7 +28159,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -28159,7 +28170,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28170,7 +28181,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29055,7 +29066,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29119,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29204,6 +29226,7 @@
     C -- Yes --&gt; D{config reload 内部で stuck?}
     D -- Yes --&gt; D1[config-reload-stuck runbook へ]
     D -- No --&gt; E[hostcfgd ログを確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-minigraph">1. minigraph 構文<a class="headerlink" href="#1-minigraph" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>sonic-cfggen<span class="w"> </span>-m<span class="w"> </span>/etc/sonic/minigraph.xml<span class="w"> </span>-p<span class="w"> </span>/usr/share/sonic/device/&lt;platform&gt;/&lt;hwsku&gt;/port_config.ini<span class="w"> </span>--print-data<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
@@ -29225,19 +29248,19 @@
 <h3 id="5-sai">5. SAI 側のエラー<a class="headerlink" href="#5-sai" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;ERR|SAI_STATUS&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>minigraph 修正後 <code>sudo config load_minigraph -y</code> 再実行</li>
 <li>hwsku 差し替え: <code>sudo sonic-cfggen -H -m -k &lt;hwsku&gt; --write-to-db</code></li>
 <li>最悪時の復旧: <code>sudo cp config_db.json.bak.&lt;ts&gt; /etc/sonic/config_db.json &amp;&amp; sudo config reload -y -f</code></li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../container-not-starting/">container-not-starting.md</a></li>
 <li><a href="../sai-failure/">sai-failure.md</a></li>
 <li><a href="../config-save-load/">config-save-load.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 8772b091b635 -->
 
 <div class="footnote">

@@ -27272,7 +27272,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -27336,7 +27347,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27347,7 +27358,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -27358,7 +27369,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27369,7 +27380,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29066,7 +29077,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -29152,7 +29174,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29163,7 +29185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29226,6 +29248,7 @@
     C -- Yes --&gt; D{ycabled / mux_status 一致?}
     D -- No --&gt; D1[ycabled ログ確認 / SoC 通信を点検]
     D -- Yes --&gt; E[gRPC / tunnel orch の状態確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-mux-peer">1. mux 状態と peer 状態<a class="headerlink" href="#1-mux-peer" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>muxcable<span class="w"> </span>status
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>muxcable<span class="w"> </span>config
@@ -29258,7 +29281,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>muxcable<span class="w"> </span>firmware<span class="w"> </span>version<span class="w"> </span>&lt;port&gt;
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>muxcable<span class="w"> </span>cableinfo
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>一時的に手動切替: <code>sudo config muxcable mode standby &lt;port&gt;</code> → 再度 <code>active</code></li>
 <li><a href="../../glossary/#term-linkmgrd">linkmgrd</a> を再起動: <code>sudo docker restart mux</code>（または platform 別 service）</li>
@@ -29266,7 +29289,7 @@
 <li>不整合の根本対策として <code>config reload -y</code> で全テーブル再注入</li>
 <li>firmware up-to-date 化 (<code>config muxcable firmware download/activate</code>)</li>
 </ul>
-<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>
 <ul>
 <li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
@@ -29275,7 +29298,7 @@
 <li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
 </ul>
 <p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/05-dual-tor/operations/">../../topics/05-dual-tor/operations.md</a></li>
 <li><a href="../../../topics/05-dual-tor/concept/">../../topics/05-dual-tor/concept.md</a></li>
@@ -29283,7 +29306,7 @@
 <li><a href="../../cli/show-muxcable/">../cli/show-muxcable.md</a></li>
 <li><a href="../../config-db/mux-cable/">../config-db/mux-cable.md</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 269bb3f69ef2 -->
 
 <div class="footnote">

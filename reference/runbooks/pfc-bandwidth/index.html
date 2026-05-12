@@ -27188,7 +27188,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -27252,7 +27263,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27263,7 +27274,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -27274,7 +27285,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27285,7 +27296,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29066,7 +29077,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -29152,7 +29174,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29163,7 +29185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29227,6 +29249,7 @@
     C -- No --&gt; D{buffer profile size 妥当?}
     D -- No --&gt; D1[BUFFER_PROFILE の xon/xoff 調整]
     D -- Yes --&gt; E[対向側 congestion / receiver を確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-qos-pfc-enabled-priority">1. QoS マッピングと PFC enabled priority の整合<a class="headerlink" href="#1-qos-pfc-enabled-priority" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;PORT_QOS_MAP|Ethernet0&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DSCP_TO_TC_MAP|AZURE&quot;</span>
@@ -29270,14 +29293,14 @@
 <li>期待: 実際のリンク長を反映（例: ToR 間 5m、ToR-Spine 40m）</li>
 <li>異常: 全ポート <code>300m</code> 等のデフォルト → headroom が過大 / 過小に</li>
 </ul>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>PFC storm を起こした queue の復旧: <code>pfcwd start_default</code> の再有効化、または特定ポートで <code>pfcwd start &lt;action&gt; &lt;detect&gt; &lt;restore&gt; &lt;ports&gt;</code> を実行</li>
 <li>buffer pool / profile を <code>buffers.json.j2</code> / <code>buffers_defaults_*.j2</code> を見直して再生成</li>
 <li>CABLE_LENGTH を実値に: <code>config interface cable-length Ethernet0 5m</code></li>
 <li>根本対策: 対向 NIC 側 PFC 設定を点検（送信し過ぎていないか、CNP / ECN との連携が壊れていないか）</li>
 </ul>
-<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>
 <ul>
 <li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
@@ -29286,7 +29309,7 @@
 <li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
 </ul>
 <p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/08-qos-buffer/operations/">../../topics/08-qos-buffer/operations.md</a></li>
 <li><a href="../../../topics/08-qos-buffer/concept/">../../topics/08-qos-buffer/concept.md</a></li>
@@ -29294,7 +29317,7 @@
 <li><a href="../../config-db/pfc-wd/">../config-db/pfc-wd.md</a></li>
 <li><a href="../../config-db/buffer-pool/">../config-db/buffer-pool.md</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: eebb97ac8e67 -->
 
 <div class="footnote">

@@ -27524,7 +27524,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -27588,7 +27599,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27599,7 +27610,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27610,7 +27621,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29055,7 +29066,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29119,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29204,6 +29226,7 @@
     C -- Yes --&gt; D{keepalive / heartbeat 設定?}
     D -- No --&gt; D1[grpc keepalive timeout を調整]
     D -- Yes --&gt; E[クライアント側 deadline / NW 経路を確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1">1. セッション統計の確認<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>telemetry<span class="w"> </span>netstat<span class="w"> </span>-nt<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>:8080
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>ss<span class="w"> </span>-tnpi<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>:8080
@@ -29235,19 +29258,19 @@
 <li>中間 LB / firewall のセッション TTL を 5 分以上に設定</li>
 <li><a href="../../glossary/#term-gnmi">gNMI</a> client 側の <code>keepalive</code> を 30 秒に設定</li>
 </ul>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>過剰 subscribe: <code>sample_interval</code> を緩める（10s → 30s）、wildcard path を具体化</li>
 <li>TLS 期限切れ: 新証明書を退避領域に配置 → <code>systemctl reload telemetry</code>。<strong>ロールバック</strong>: 旧証明書に戻し reload</li>
 <li>LB / firewall TTL: 中間機器側で keepalive を 5 分以上に</li>
 <li>redis 遅延: <code>FLEX_COUNTER_TABLE</code> の <code>POLL_INTERVAL</code> を上げて負荷を軽減（<a href="../flex-counter-stuck/">flex-counter-stuck.md</a> 参照）</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../telemetry-dialout-not-sending/">./telemetry-dialout-not-sending.md</a></li>
 <li><a href="../../../topics/10-gnmi-openconfig/operations/">../../topics/10-gnmi-openconfig/operations.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 0856be05524a -->
 
 <div class="footnote">

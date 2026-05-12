@@ -28140,7 +28140,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -28204,7 +28215,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -28215,7 +28226,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -28226,7 +28237,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -28237,7 +28248,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29066,7 +29077,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認
@@ -29152,7 +29174,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29163,7 +29185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29226,6 +29248,7 @@
     C -- No --&gt; D{config_db.json の JSON 妥当?}
     D -- No --&gt; D1[sonic-cfggen で syntax 確認]
     D -- Yes --&gt; E[load_minigraph / write_standby スクリプトを確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1">1. ディスク状態<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>df<span class="w"> </span>-h<span class="w"> </span>/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mount<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot; / &quot;</span>
@@ -29249,14 +29272,14 @@
 <h3 id="5-dmesg">5. dmesg<a class="headerlink" href="#5-dmesg" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>disk full: <code>sudo find /var/log -size +100M -delete</code> でログ削減</li>
 <li>ro mount: 再起動して fsck 実施</li>
 <li><a href="../../glossary/#term-yang">YANG</a> 違反 key を削除: <code>sudo sonic-db-cli CONFIG_DB del "&lt;key&gt;"</code> で除外、再 save</li>
 <li>backup 復旧: <code>sudo cp /etc/sonic/config_db.json.bak.&lt;ts&gt; /etc/sonic/config_db.json &amp;&amp; sudo config reload -y -f</code></li>
 </ul>
-<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>
 <ul>
 <li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
@@ -29265,12 +29288,12 @@
 <li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
 </ul>
 <p>短時間で再発する場合は「想定原因」リストの次候補に進む。</p>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../config-save-load/">config-save-load.md</a></li>
 <li><a href="../techsupport-size-bloat/">techsupport-size-bloat.md</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">

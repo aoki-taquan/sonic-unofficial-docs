@@ -27132,7 +27132,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -27196,7 +27207,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -27207,7 +27218,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -27218,7 +27229,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29055,7 +29066,18 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="切り分け手順">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="確認コマンド">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29119,7 +29141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         対処方法
@@ -29130,7 +29152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29141,7 +29163,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29204,6 +29226,7 @@
     C -- Yes --&gt; D{特定 lane 偏在?}
     D -- Yes --&gt; D1[ケーブル / コネクタを交換]
     D -- No --&gt; E[SDK driver ログ / platform.json 速度設定確認]</code></pre>
+<h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-fec">1. FEC モード確認<a class="headerlink" href="#1-fec" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>fec<span class="w"> </span>status
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span>fec
@@ -29241,7 +29264,7 @@
 <ul>
 <li>異常: 設定中の speed が <code>support_speeds</code> に無い → サポート外組み合わせ</li>
 </ul>
-<h2 id="_4">対処方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FEC モード合わせ: <code>config interface fec Ethernet0 rs</code> を両端で実行</li>
 <li>一時的に <code>none</code> で flap を止めて切り分け（恒久対策ではない）</li>
@@ -29249,7 +29272,7 @@
 <li>DAC 長と速度の組み合わせ表を再確認し、規格適合品に交換</li>
 <li>platform.json の <code>support_speeds</code> を超えた設定を巻き戻し: <code>config interface speed Ethernet0 &lt;support範囲&gt;</code></li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/14-platform-port-optics/operations/">../../topics/14-platform-port-optics/operations.md</a></li>
 <li><a href="../../../topics/14-platform-port-optics/concept/">../../topics/14-platform-port-optics/concept.md</a></li>
@@ -29257,7 +29280,7 @@
 <li><a href="../../cli/show-interfaces/">../cli/show-interfaces.md</a></li>
 <li><a href="../../config-db/port/">../config-db/port.md</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: ffe7f349ef8a -->
 
 <div class="footnote">
