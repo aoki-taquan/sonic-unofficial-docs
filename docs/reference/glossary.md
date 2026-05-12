@@ -1266,7 +1266,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [内部実装](../topics/01-overview/internals.md) (5)
 - [サイトマップ](../_meta/sitemap.md) (3)
-- [変更履歴](../_meta/changelog.md) (2)
+- [Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）](../system/smart-switch-ip-address-assignment.md) (2)
 
 ### [COUNTERS_DB](#term-counters_db)
 
@@ -1287,7 +1287,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (40)
-- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (23)
+- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (28)
 - [アーキテクチャ](../topics/09-telemetry-snmp/architecture.md) (17)
 - [サイトマップ](../_meta/sitemap.md) (16)
 - [sonic-crm YANG](yang/sonic-crm.md) (14)
@@ -1591,7 +1591,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [linkmgrd](#term-linkmgrd)
 
-- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (23)
+- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (26)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (19)
 - [Mux 制御の内部構造](../topics/05-dual-tor/internals.md) (19)
 - [Dual-ToR の運用](../topics/05-dual-tor/operations.md) (17)
@@ -1643,7 +1643,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-mux-cable YANG](yang/sonic-mux-cable.md) (31)
 - [MUX_LINKMGR テーブル](config-db/mux-linkmgr.md) (20)
 - [Dual-ToR の設定](../topics/05-dual-tor/setup.md) (20)
-- [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](../overlay/active-standby-dual-tor-internals.md) (18)
+- [Active-Standby Dual ToR 設定と運用（CONFIG_DB / CLI / トラブルシューティング）](../overlay/active-standby-dual-tor-operations.md) (19)
 
 ### [NAT](#term-nat)
 
@@ -1848,7 +1848,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [頻出 SAI 属性早見表](sai-attributes.md) (241)
 - [サイトマップ](../_meta/sitemap.md) (82)
-- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (59)
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (63)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (42)
 - [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (42)
 
@@ -1906,7 +1906,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 
-- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (13)
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (15)
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (8)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../system/sonic-libsairedis-api-idempotence-support.md) (8)
 - [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../architecture/sonic-bulk-counter-design.md) (7)
@@ -1932,7 +1932,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (3)
 - [サイトマップ](../_meta/sitemap.md) (2)
-- [変更履歴](../_meta/changelog.md) (1)
 - [ACL & QoS](../acl-qos/index.md) (1)
 
 ### [Shaping](#term-shaping)
@@ -1995,9 +1994,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [TCAM](#term-tcam)
 
+- [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](../acl-qos/acl-in-sonic.md) (5)
 - [発展トピック](../topics/07-acl-copp-mirror/advanced.md) (5)
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (4)
-- [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](../acl-qos/acl-in-sonic.md) (3)
 - [概念](../topics/07-acl-copp-mirror/concept.md) (3)
 - [発展トピック](../topics/16-nat-dhcp-dns/advanced.md) (3)
 
