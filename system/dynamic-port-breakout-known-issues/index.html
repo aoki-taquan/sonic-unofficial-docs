@@ -6,17 +6,18 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…">
+        <meta name="description" content="DPB の YANG モデル不整合、orchagent クラッシュ、LLDP/ACL との相互作用など sonic-buildimage issue tracker から収集した DPB 実装上の注意点。
+">
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/platform-monitor-enhancement-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/dynamic-port-breakout-known-issues/">
       
       
-        <link rel="prev" href="../platform-monitor-design-for-multi-asic-platforms/">
+        <link rel="prev" href="../dump-sfp-eeprom-page-data-in-show-techsupport-command/">
       
       
-        <link rel="next" href="../platform-monitor-requirement-for-chassis-subsystem/">
+        <link rel="next" href="../event-driven-techsupport-invocation-coredump-mgmt/">
       
       
         
@@ -27,7 +28,7 @@
     
     
       
-        <title>pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント</title>
+        <title>動的ポートブレイクアウト（DPB）既知問題と YANG モデル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,17 +64,19 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…" />
-<meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/platform-monitor-enhancement-design.png" />
+<meta property="og:title" content="動的ポートブレイクアウト（DPB）既知問題と YANG モデル - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="DPB の YANG モデル不整合、orchagent クラッシュ、LLDP/ACL との相互作用など sonic-buildimage issue tracker から収集した DPB 実装上の注意点。
+" />
+<meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/dynamic-port-breakout-known-issues.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/platform-monitor-enhancement-design/" />
+<meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/dynamic-port-breakout-known-issues/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…" />
-<meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/platform-monitor-enhancement-design.png" />
+<meta property="twitter:title" content="動的ポートブレイクアウト（DPB）既知問題と YANG モデル - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="DPB の YANG モデル不整合、orchagent クラッシュ、LLDP/ACL との相互作用など sonic-buildimage issue tracker から収集した DPB 実装上の注意点。
+" />
+<meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/dynamic-port-breakout-known-issues.png" />
 </head>
   
   
@@ -93,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pmon-psufansyseeprom-state_db" class="md-skip">
+        <a href="#dpb-yang" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
+              動的ポートブレイクアウト（DPB）既知問題と YANG モデル
             
           </span>
         </div>
@@ -14066,37 +14069,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../platform-monitor-enhancement-design/" class="md-nav__link">
         
   
   
@@ -14112,302 +14088,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Daemon 構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#daemon_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Daemon 共通フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#misc-one-shot-task" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Misc one-shot task
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB Schema
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#business-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Business logic の境界
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-snmp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / SNMP の置換え
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参考リンク
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#bmc-baseboard-management-controller-sonic-buildimage633" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-interface-transceiver-sonic-buildimage5001" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snmp-ifmib-ifname-sonic-buildimage5592" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#master-pmon-platform-monitor-sonic-buildimage5759" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-pmon-sonic-buildimage5986" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hwskujson-fec-sonic-buildimage6495" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpb-xcvrd-sfp-sonic-buildimage6499" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -29737,264 +29417,243 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#1-yang-dpb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. YANG モデル不整合による DPB 失敗
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. YANG モデル不整合による DPB 失敗">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1-portchannel_member-yang-6722" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. PORTCHANNEL_MEMBER YANG モデル欠落 (#6722)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2-bgp_neighbor-yang-dpb-7959" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. BGP_NEIGHBOR YANG モデルが DPB エラーを引き起こす (#7959)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-3-buffer_port_egress_profile-dpb-9801" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-3. BUFFER_PORT_EGRESS_PROFILE 設定時の DPB 失敗 (#9801)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-4-libyang-9312" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-4. libyang バックリンク問題 (#9312)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-platformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. platform.json 関連
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. platform.json 関連">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-1-has_global_scope-invalid-value-9326" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-1. has_global_scope 要素の invalid value (#9326)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-2-none-9663" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-2. None フィールドの非対応 (#9663)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-orchagent-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Orchagent / syncd 相互作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Orchagent / syncd 相互作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3-1-port-host-if-7403" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-1. PORT HOST IF 削除失敗 (#7403)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-2-orchagent-400g-4x100g9653" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-2. Orchagent クラッシュ（400G → 4x100G）(#9653)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-3-dpb-config_db-delete-10005" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-3. DPB 中の CONFIG_DB DELETE 欠落 (#10005)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-lldp-9802" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. LLDP との相互作用 (#9802)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-11190-11418" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. カウンター関連 (#11190, #11418)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. カウンター関連 (#11190, #11418)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#5-1-dpb-11190" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5-1. DPB 時のカウンターエラーログ (#11190)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-2-breakout-11418" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5-2. Breakout ポートのカウンターレート不表示 (#11418)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-config_db-breakout_cfg-7402" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. CONFIG_DB の BREAKOUT_CFG 更新 (#7402)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-redis-io-6935" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Redis I/O エラー (#6935)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dpb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DPB トラブルシューティングフロー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Daemon 構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#daemon_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Daemon 共通フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#misc-one-shot-task" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Misc one-shot task
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB Schema
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#business-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Business logic の境界
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-snmp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / SNMP の置換え
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参考リンク
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#bmc-baseboard-management-controller-sonic-buildimage633" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-interface-transceiver-sonic-buildimage5001" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snmp-ifmib-ifname-sonic-buildimage5592" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#master-pmon-platform-monitor-sonic-buildimage5759" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-pmon-sonic-buildimage5986" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hwskujson-fec-sonic-buildimage6495" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpb-xcvrd-sfp-sonic-buildimage6499" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
+        参照
       
     </span>
   </a>
@@ -30018,7 +29677,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/platform-monitor-enhancement-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/dynamic-port-breakout-known-issues.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -30026,198 +29685,164 @@
   
 
 
-<!-- topics-tip -->
-<div class="admonition tip">
-<p class="admonition-title">Topics で読み物として読む</p>
-<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/14-platform-port-optics/">Topics 14 章: Platform / Port / Optics</a> を参照。</p>
-</div>
-<!-- /topics-tip -->
-
-<div class="admonition info">
+<div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-platform-daemons</code> master に <code>sonic-psud</code>、<code>sonic-syseepromd</code>、<code>sonic-xcvrd</code>、<code>sonic-thermalctld</code> が存在し、HLD で「fand」と呼ばれていた FAN 周期収集は <code>sonic-thermalctld</code> (= thermalctld) として実装されている。<code>scripts/psushow</code> / <code>fanshow</code> (<code>sonic-utilities</code>) が <code>STATE_DB</code> の <code>CHASSIS_INFO</code> / <code>PSU_INFO</code> / <code>FAN_INFO</code> を直接 read することを確認。HLD の中心方針（CLI/SNMP は STATE_DB のみ参照、daemon 側で plugin 直叩きを集約）は master 取り込み済み。<code>fand</code> 単独 daemon は無いという用語差のみ。</p>
+<p>sonic-buildimage issue tracker の実環境報告から抽出。master ブランチ対象。</p>
 </div>
-<h1 id="pmon-psufansyseeprom-state_db">pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）<a class="headerlink" href="#pmon-psufansyseeprom-state_db" title="Permanent link">&para;</a></h1>
+<h1 id="dpb-yang">動的ポートブレイクアウト（DPB）既知問題と YANG モデル<a class="headerlink" href="#dpb-yang" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>pmon</code> container には既に <code>ledd</code>（LED）/ <code>xcvrd</code>（SFP）の daemon があるが、<strong>PSU / FAN / chassis / syseeprom データへの CLI / <a href="../../reference/glossary/#term-snmp">SNMP</a> アクセスは platform plugin を直接叩く</strong> ため遅く、container 跨ぎでデータ重複も発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>PSU / FAN 用 daemon を新設して周期収集 → <a href="../../reference/glossary/#term-state_db">STATE_DB</a></strong>、misc syseeprom 系は <strong>boot 時 1 回 dump → STATE_DB</strong> とし、CLI / SNMP は <strong>DB のみを read</strong> する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="daemon">Daemon 構成<a class="headerlink" href="#daemon" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  subgraph pmon
-    L[ledd]
-    X[xcvrd]
-    P["psud (新)"]
-    F["fand (新)"]
-    M[misc one-shot task]
-  end
-  P -- platform plugin / API --&gt; HW1[(PSU)]
-  F -- platform plugin / API --&gt; HW2[(FAN)]
-  X -- platform plugin / API --&gt; HW3[("SFP / xcvr")]
-  M -- syseeprom decode --&gt; HW4[(syseeprom)]
-  P --&gt; SDB[(STATE_DB)]
-  F --&gt; SDB
-  X --&gt; SDB
-  M --&gt; SDB
-  CLI["show platform / SNMP"] --&gt; SDB
-  CLI -. set led / fan speed .-&gt; CDB[("CONFIG_DB / STATE_DB")]
-  CDB --&gt; P
-  CDB --&gt; F</code></pre>
-<h3 id="daemon_1">Daemon 共通フロー<a class="headerlink" href="#daemon_1" title="Permanent link">&para;</a></h3>
-<ul>
-<li>起動時に <strong>constant data</strong>（serial, manufacturer, model 等）を 1 回読み込み STATE_DB に書く</li>
-<li>以降は <strong>periodic loop</strong>（PSU/FAN/xcvr の variable 値）で温度・電圧・回転数・status を更新</li>
-<li><strong>set 操作</strong>（status LED 色, fan speed 等）は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 変更を subscribe してハンドラから platform API 呼出<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="misc-one-shot-task">Misc one-shot task<a class="headerlink" href="#misc-one-shot-task" title="Permanent link">&para;</a></h3>
-<p>boot up 時に platform hwsku / ASIC 名 / reboot cause / syseeprom decode（model / serial / base MAC / manufacture date / vendor ext 等）をまとめて取得し STATE_DB に書く。<strong>1 回限りで exit</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="state_db-schema">STATE_DB Schema<a class="headerlink" href="#state_db-schema" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PLATFORM_INFO|&lt;platform_name&gt;:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  chassis_list = &lt;STRING&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>CHASSIS_INFO|&lt;chassis_name&gt;:
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  presence, model, serial, status, change_event,
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  base_mac_addr, reboot_cause,
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  module_num, fan_num, psu_num,
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  product_name, mac_addr_num, manufacture_date, manufacture,
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  platform_name, onie_version, crc32_checksum,
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  vendor_ext1, ...
-</span></code></pre></div>
-<p>PSU 系は <code>PSU_INFO|&lt;name&gt;</code>（<code>presence</code>, <code>status</code>, ...）に格納（<code>docs/platform/sonic-psu-daemon-design.md</code> の psud HLD と整合）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FAN 系は <code>FAN_INFO|&lt;name&gt;</code>、xcvr は既存 PORT_TABLE / TRANSCEIVER_INFO 拡張で eeprom 詳細を追加。</p>
-<h3 id="business-logic">Business logic の境界<a class="headerlink" href="#business-logic" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>共通 logic</strong> のみ daemon に置く（例: status enum 変換、抜去/挿入 event の generic 化）</li>
-<li><strong>platform 固有 logic</strong> は platform plugin に閉じ込める<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（fan speed curve, sensor 個別の温度計算等）</li>
-</ul>
-<h3 id="cli-snmp">CLI / SNMP の置換え<a class="headerlink" href="#cli-snmp" title="Permanent link">&para;</a></h3>
-<ul>
-<li>旧: <code>show platform &lt;psu|fan|sfp&gt;</code> が platform plugin を直叩き</li>
-<li>新: STATE_DB を読むだけ → 高速化、container 跨ぎで一貫</li>
-<li>SNMP も同じ STATE_DB が source</li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  In current implementation when user try to fetch switch peripheral devices related data with CLI,
-  underneath it will directly access hardware via platform plugins, in some case it could be very slow
-  ... CLI/SNMP will access cached data(DB) instead, which will be much faster.
-reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
--->
-
-<!-- evidence-rendered:start -->
-<details class="note">
-<summary>📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
-<p><strong>出典</strong>:</p>
-<p><code>sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
-<p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>In current implementation when user try to fetch switch peripheral devices related data with CLI,
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>underneath it will directly access hardware via platform plugins, in some case it could be very slow
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>... CLI/SNMP will access cached data(DB) instead, which will be much faster.
-</span></code></pre></div>
-<p><strong>判断根拠</strong>: 直接 plugin アクセス → STATE_DB 集約への移行根拠。</p>
-</details>
-<!-- evidence-rendered:end -->
-
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>共通 daemon への移行期は platform plugin 互換のため両系統が並存する可能性</li>
-<li>周期 (~3 秒) 内のリアルタイム性は犠牲。緊急 event は別経路で trap 化する必要</li>
-<li>syseeprom 一発 dump は <strong>再投入時の差分</strong>（base_mac_addr 等が変わる）を想定していない</li>
-<li>PSU の業務ロジック（power threshold ヒステリシス）は別 HLD（psud HLD v0.4）で発展している</li>
-</ul>
-<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>psud HLD</strong>（power threshold ヒステリシス）: 本 HLD の延長で実装</li>
-<li><strong>thermal-control / pmon thermal</strong>: FAN/PSU データを利用する policy</li>
-<li><strong>xcvrd / sfp-refactor</strong>: xcvr 側の eeprom 拡張と接続</li>
-<li><strong>s3ip-sysfs spec / framework</strong>: kernel 側 sysfs の代替として将来的に重なる</li>
-<li><strong><code>show platform</code> 系 CLI</strong>: STATE_DB ベースに切替</li>
-</ul>
-<h2 id="_5">参考リンク<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../reference/cli/show-platform/">CLI: show platform</a></li>
-<li><a href="../../reference/cli/show-environment/">CLI: show environment</a></li>
-<li><a href="../../reference/cli/show-system-health/">CLI: show system-health</a></li>
-<li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics</a></li>
-<li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
-<li><a href="../../reference/glossary/">Glossary</a></li>
-<li><a href="../../reference/">Reference 索引</a></li>
-</ul>
-<h2 id="_6">既知の問題<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="bmc-baseboard-management-controller-sonic-buildimage633">BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）<a class="headerlink" href="#bmc-baseboard-management-controller-sonic-buildimage633" title="Permanent link">&para;</a></h3>
-<p>BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォームでは、platform API で BMC インターフェースを使う設計が必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/633">sonic-net/sonic-buildimage#633</a></li>
-</ul>
-<h3 id="lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457">LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）<a class="headerlink" href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" title="Permanent link">&para;</a></h3>
-<p>LLDP の portidsubtype が "locally assigned" ではなく "mac address" にセットされる問題。lldpd の設定で <code>configure lldp portidsubtype local</code> を明示指定することで回避可能</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/1457">sonic-net/sonic-buildimage#1457</a></li>
-</ul>
-<h3 id="sonic-sonic-buildimage4646">ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）<a class="headerlink" href="#sonic-sonic-buildimage4646" title="Permanent link">&para;</a></h3>
-<p>ポートのステータス変更が SONiC に反映されない問題。xcvrd または portsyncd がポートの物理状態変更を正しく検知できていない場合に発生。<code>sudo systemctl restart pmon</code> で回復できることがある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4646">sonic-net/sonic-buildimage#4646</a></li>
-</ul>
-<h3 id="show-interface-transceiver-sonic-buildimage5001">最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題（sonic-buildimage#5001）<a class="headerlink" href="#show-interface-transceiver-sonic-buildimage5001" title="Permanent link">&para;</a></h3>
-<p>最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5001">sonic-net/sonic-buildimage#5001</a></li>
-</ul>
-<h3 id="snmp-ifmib-ifname-sonic-buildimage5592">SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）<a class="headerlink" href="#snmp-ifmib-ifname-sonic-buildimage5592" title="Permanent link">&para;</a></h3>
-<p>SNMP の ifMIB ifName が間違った値を返す問題。<code>show interfaces status</code> の表示名と SNMP の ifName が一致しない場合、インターフェース名のマッピングを確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5592">sonic-net/sonic-buildimage#5592</a></li>
-</ul>
-<h3 id="master-pmon-platform-monitor-sonic-buildimage5759">最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）<a class="headerlink" href="#master-pmon-platform-monitor-sonic-buildimage5759" title="Permanent link">&para;</a></h3>
-<p>最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバーと pmon の Python 3 互換性を確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5759">sonic-net/sonic-buildimage#5759</a></li>
-</ul>
-<h3 id="sonic-pmon-sonic-buildimage5986">最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）<a class="headerlink" href="#sonic-pmon-sonic-buildimage5986" title="Permanent link">&para;</a></h3>
-<p>最新 SONiC イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5986">sonic-net/sonic-buildimage#5986</a></li>
-</ul>
-<h3 id="multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097">multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）<a class="headerlink" href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" title="Permanent link">&para;</a></h3>
-<p>multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題。xcvrd は FrontEnd ASIC の存在を前提としており、全 BackEnd 構成では初期化に失敗する</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6097">sonic-net/sonic-buildimage#6097</a></li>
-</ul>
-<h3 id="hwskujson-fec-sonic-buildimage6495">hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）<a class="headerlink" href="#hwskujson-fec-sonic-buildimage6495" title="Permanent link">&para;</a></h3>
-<p>hwsku.json から FEC パラメータがデフォルト設定できない問題。FEC の設定は <code>config interface fec</code> コマンドで明示的に行う必要がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6495">sonic-net/sonic-buildimage#6495</a></li>
-</ul>
-<h3 id="dpb-xcvrd-sfp-sonic-buildimage6499">DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）<a class="headerlink" href="#dpb-xcvrd-sfp-sonic-buildimage6499" title="Permanent link">&para;</a></h3>
-<p>DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題。DPB 実行後に xcvrd の再起動が必要な場合がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6499">sonic-net/sonic-buildimage#6499</a></li>
-</ul>
-<h3 id="cmis-40-qsfp-dd-eeprom-sonic-buildimage6516">CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）<a class="headerlink" href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" title="Permanent link">&para;</a></h3>
-<p>CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題。CMIS 4.0 対応の xcvrd バージョンが必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6516">sonic-net/sonic-buildimage#6516</a></li>
-</ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- psud / fand 新設 daemon の sonic-platform-daemons 取り込み確認
-- PLATFORM_INFO / CHASSIS_INFO / PSU_INFO / FAN_INFO スキーマの sonic-yang-models 反映確認
-- syseeprom 周辺一括収集 task (one-shot) の実装場所と起動経路確認
-- xcvrd 拡張 (eeprom 詳細) と現行 sonic_xcvr 階層の整合確認
-- show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認
-- ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
--->
-
-<!-- glossary-links-injected: 8b787f87bebc -->
-
-<div class="footnote">
+<p>動的ポートブレイクアウト（<a href="../../reference/glossary/#term-dpb">DPB</a>）は
+reload 不要でポート分割モードを変更する機能だが、
+YANG モデルの不整合・orchagent との競合・LLDP や ACL との非整合など
+実装上のエッジケースが多い。本ページは issue tracker の報告を整理する。</p>
 <hr />
-<ol>
-<li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/pmon/pmon-enhancement-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
+<h2 id="1-yang-dpb">1. YANG モデル不整合による DPB 失敗<a class="headerlink" href="#1-yang-dpb" title="Permanent link">&para;</a></h2>
+<h3 id="1-1-portchannel_member-yang-6722">1-1. <code>PORTCHANNEL_MEMBER</code> YANG モデル欠落 (#6722)<a class="headerlink" href="#1-1-portchannel_member-yang-6722" title="Permanent link">&para;</a></h3>
+<p>DPB の依存チェック時に以下のメッセージが出る。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Note: Below table(s) have no YANG models:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>FEATURE, SNMP_COMMUNITY, SNMP, PORTCHANNEL_MEMBER, TELEMETRY,
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Below Config can not be verified, It may cause harm to the system
+</span></code></pre></div>
+<p><strong>原因</strong>: <code>PORTCHANNEL_MEMBER</code> テーブルに YANG モデルが存在しない。
+DPB の依存解決ロジックが YANG 検証を経由するため、
+モデルがないテーブルは「未検証」として警告扱いになる。</p>
+<p><strong>対処</strong>: PR #7xxx で <code>sonic-portchannel.yang</code> に <code>PORTCHANNEL_MEMBER</code> が追加された。
+master の最新版を使用すること。</p>
+<hr />
+<h3 id="1-2-bgp_neighbor-yang-dpb-7959">1-2. <code>BGP_NEIGHBOR</code> YANG モデルが DPB エラーを引き起こす (#7959)<a class="headerlink" href="#1-2-bgp_neighbor-yang-dpb-7959" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Error: asn key is not matched (uses/grouping keywords not working)
+</span></code></pre></div>
+<p><strong>原因</strong>: YANG の <code>uses</code> / <code>grouping</code> キーワードが
+libyang の特定バージョンで期待通りに動作しない。
+<code>BGP_NEIGHBOR</code> テーブルの ASN フィールドが検証エラーになる。</p>
+<p><strong>影響</strong>: BGP neighbor が設定されている port を breakout しようとすると失敗する。</p>
+<p><strong>回避策</strong>: Breakout 前に BGP neighbor 設定を一時削除する。</p>
+<hr />
+<h3 id="1-3-buffer_port_egress_profile-dpb-9801">1-3. <code>BUFFER_PORT_EGRESS_PROFILE</code> 設定時の DPB 失敗 (#9801)<a class="headerlink" href="#1-3-buffer_port_egress_profile-dpb-9801" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DPB fails when BUFFER_PORT_EGRESS_PROFILE is configured
+</span></code></pre></div>
+<p><strong>原因</strong>: <code>BUFFER_PORT_EGRESS_PROFILE</code> テーブルに YANG モデルが存在しないか、
+DPB の依存解決ロジックがこのテーブルを認識しない。</p>
+<p><strong>対処</strong>: Breakout 前に <code>BUFFER_PORT_EGRESS_PROFILE</code> エントリを削除する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>DEL<span class="w"> </span><span class="s2">&quot;BUFFER_PORT_EGRESS_PROFILE|Ethernet0&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="1-4-libyang-9312">1-4. libyang バックリンク問題 (#9312)<a class="headerlink" href="#1-4-libyang-9312" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[yang-models] Importing other modules sometimes break libyang backlinks
+</span></code></pre></div>
+<p><strong>背景</strong>: libyang のバックリンクコードのバグにより、
+YANG モジュール間の <code>import</code> が特定の組み合わせでビルドを壊す。
+過去のワークアラウンドとしていくつかの YANG フィールドがコメントアウトされた経緯がある。</p>
+<p><strong>現状</strong>: libyang のバージョンアップとパッチで概ね解消。</p>
+<hr />
+<h2 id="2-platformjson">2. <code>platform.json</code> 関連<a class="headerlink" href="#2-platformjson" title="Permanent link">&para;</a></h2>
+<h3 id="2-1-has_global_scope-invalid-value-9326">2-1. <code>has_global_scope</code> 要素の invalid value (#9326)<a class="headerlink" href="#2-1-has_global_scope-invalid-value-9326" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>DPB falls due to invalid value in &quot;has_global_scope&quot; element
+</span></code></pre></div>
+<p><strong>原因</strong>: <code>sonic-feature.yang</code> の <code>has_global_scope</code> リーフの型定義が
+<code>boolean</code> ではなく <code>string</code> になっているなど不整合。</p>
+<p><strong>確認</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="s2">import json</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="s2">with open(&#39;/etc/sonic/platform.json&#39;) as f:</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="s2">    data = json.load(f)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="s2">print(json.dumps(data.get(&#39;interfaces&#39;, {}).get(&#39;Ethernet0&#39;, {}), indent=2))</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="s2">&quot;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="2-2-none-9663">2-2. <code>None</code> フィールドの非対応 (#9663)<a class="headerlink" href="#2-2-none-9663" title="Permanent link">&para;</a></h3>
+<p><code>platform.json</code> で <code>None</code> 値が記載されている場合に CLI が動作しない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>breakout CLI doesn&#39;t work when None is included in platform.json
+</span></code></pre></div>
+<p><strong>対処</strong>: <code>platform.json</code> の breakout モードリストに <code>null</code> ではなく
+有効なモード文字列のみを記載する。</p>
+<hr />
+<h2 id="3-orchagent-syncd">3. Orchagent / syncd 相互作用<a class="headerlink" href="#3-orchagent-syncd" title="Permanent link">&para;</a></h2>
+<h3 id="3-1-port-host-if-7403">3-1. PORT HOST IF 削除失敗 (#7403)<a class="headerlink" href="#3-1-port-host-if-7403" title="Permanent link">&para;</a></h3>
+<p>VS（Virtual Switch）環境での DPB 中に <code>sai_remove_hostif</code> が失敗する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>swss#orchagent: Failed to remove host interface for port
+</span></code></pre></div>
+<p><strong>原因</strong>: VS SAI が HIF 削除シーケンスの順序を正しく処理しない。</p>
+<hr />
+<h3 id="3-2-orchagent-400g-4x100g9653">3-2. Orchagent クラッシュ（400G → 4x100G）(#9653)<a class="headerlink" href="#3-2-orchagent-400g-4x100g9653" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Orchagent crash after performing port breakout of 400G into 4x100G[50G]
+</span></code></pre></div>
+<p><strong>影響プラットフォーム</strong>: 一部の Broadcom ベース 400G NIC。</p>
+<p><strong>確認</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;crash|SIGSEGV|abort&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>show<span class="w"> </span>techsupport
+</span></code></pre></div>
+<hr />
+<h3 id="3-3-dpb-config_db-delete-10005">3-3. DPB 中の CONFIG_DB DELETE 欠落 (#10005)<a class="headerlink" href="#3-3-dpb-config_db-delete-10005" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Orchagent missing DELETE update from CONFIG_DB during DPB
+</span></code></pre></div>
+<p><strong>現象</strong>: DPB 時に一部の CONFIG_DB エントリが orchagent に伝達されず、
+ポートが部分的な状態のまま残る。</p>
+<p><strong>対処</strong>: <code>swss</code> サービスを再起動して状態を再同期する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>swss
+</span></code></pre></div>
+<hr />
+<h2 id="4-lldp-9802">4. LLDP との相互作用 (#9802)<a class="headerlink" href="#4-lldp-9802" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>LLDP does not have logic to gracefully handle port deletion during DPB
+</span></code></pre></div>
+<p><strong>現象</strong>: DPB でポートを削除する際に <code>lldpd</code> がエラーを記録し、
+LLDP neighbor テーブルに古いエントリが残る。</p>
+<p><strong>確認</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>show<span class="w"> </span>lldp<span class="w"> </span>neighbors
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>lldp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;error|warn&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+</span></code></pre></div>
+<p><strong>対処</strong>: DPB 完了後に <code>lldpd</code> を再起動する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>lldp<span class="w"> </span>supervisorctl<span class="w"> </span>restart<span class="w"> </span>lldpd
+</span></code></pre></div>
+<hr />
+<h2 id="5-11190-11418">5. カウンター関連 (#11190, #11418)<a class="headerlink" href="#5-11190-11418" title="Permanent link">&para;</a></h2>
+<h3 id="5-1-dpb-11190">5-1. DPB 時のカウンターエラーログ (#11190)<a class="headerlink" href="#5-1-dpb-11190" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Error logs related to Counters seen when a port is broken out
+</span></code></pre></div>
+<p>Breakout 操作中に counters docker が古いポート OID を参照してエラーになる。
+プラットフォーム依存ではなく、master 全体で発生しうる。</p>
+<h3 id="5-2-breakout-11418">5-2. Breakout ポートのカウンターレート不表示 (#11418)<a class="headerlink" href="#5-2-breakout-11418" title="Permanent link">&para;</a></h3>
+<p>10G モードにブレイクアウトした後、<code>show interfaces counters rates</code> が
+正しく表示されない場合がある。</p>
+<p><strong>条件</strong>: プラットフォームが該当速度をサポートしていない場合は表示異常が出ることがある。</p>
+<hr />
+<h2 id="6-config_db-breakout_cfg-7402">6. CONFIG_DB の <code>BREAKOUT_CFG</code> 更新 (#7402)<a class="headerlink" href="#6-config_db-breakout_cfg-7402" title="Permanent link">&para;</a></h2>
+<p>イメージアップグレード時に <code>config_db.json</code> の <code>BREAKOUT_CFG</code> が
+新しいフォーマットに自動移行されない場合がある。</p>
+<p><strong>確認</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;BREAKOUT_CFG|Ethernet0&quot;</span>
+</span></code></pre></div>
+<p><strong>対処</strong>: 必要に応じて手動で <code>BREAKOUT_CFG</code> を更新するか、
+<code>config migrate</code> コマンドを実行する。</p>
+<hr />
+<h2 id="7-redis-io-6935">7. Redis I/O エラー (#6935)<a class="headerlink" href="#7-redis-io-6935" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: DPB 操作中に Redis の I/O エラーが発生する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>[DPB] redis (database) input/output errors
+</span></code></pre></div>
+<p><strong>原因</strong>: 大規模な CONFIG_DB 変更（多数のポート削除・追加）が
+Redis のパイプライン処理を圧迫する場合がある。</p>
+<p><strong>対処</strong>: <code>database</code> サービスのログを確認し、Redis の状態を診断する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>database<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>INFO<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;used_memory|rdb_|aof_&#39;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="dpb">DPB トラブルシューティングフロー<a class="headerlink" href="#dpb" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    START[DPB 失敗] --&gt; CHECK_YANG{YANG エラー?}
+    CHECK_YANG -- Yes --&gt; FIX_YANG[YANG モデル確認\nPORTCHANNEL_MEMBER\nBUFFER_PORT_EGRESS_PROFILE]
+    CHECK_YANG -- No --&gt; CHECK_PLATFORM{platform.json エラー?}
+    CHECK_PLATFORM -- Yes --&gt; FIX_PLATFORM[None 値除去\nhas_global_scope 確認]
+    CHECK_PLATFORM -- No --&gt; CHECK_DEPS{依存設定あり?}
+    CHECK_DEPS -- Yes --&gt; REMOVE_DEPS[BGP neighbor / ACL / VLAN 削除後に再試行]
+    CHECK_DEPS -- No --&gt; CHECK_ORCH{orchagent crash?}
+    CHECK_ORCH -- Yes --&gt; RESTART[swss restart\nshow techsupport]
+    CHECK_ORCH -- No --&gt; LOGS[docker logs swss\ndocker logs database]</code></pre>
+<hr />
+<h2 id="_2">参照<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../sonic-dynamic-port-breakout-feature-high-level-design/">動的ポートブレイクアウト HLD</a></li>
+<li><a href="../../reference/yang/">YANG モデルリファレンス</a></li>
+</ul>
 
 
 

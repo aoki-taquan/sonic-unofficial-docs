@@ -11873,6 +11873,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mirrorv6-acl-ipv6_next_header-sonic-buildimage4570" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MIRRORV6 ACL では IPV6_NEXT_HEADER キーがサポートされていない制約（sonic-buildimage#4570）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aclshow-acl-sonic-buildimage5015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約（sonic-buildimage#5015）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp-350-iptables-10-sonic-buildimage5275" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約（sonic-buildimage#5275）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-sonic-buildimage5497" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot 後にミラーリングルールの適用が失敗する問題（sonic-buildimage#5497）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29698,6 +29742,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#mirrorv6-acl-ipv6_next_header-sonic-buildimage4570" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MIRRORV6 ACL では IPV6_NEXT_HEADER キーがサポートされていない制約（sonic-buildimage#4570）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aclshow-acl-sonic-buildimage5015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約（sonic-buildimage#5015）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp-350-iptables-10-sonic-buildimage5275" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約（sonic-buildimage#5275）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-sonic-buildimage5497" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot 後にミラーリングルールの適用が失敗する問題（sonic-buildimage#5497）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29961,6 +30049,26 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 <p>PRIORITY 値が大きいほど<strong>低優先度</strong>（最後に評価）となるため、catch-all を最大値に設定することで他のルールが先に評価される。IPv6 トラフィックに対しても別途 <code>IP_TYPE: ipv6any</code> のルールが必要。</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/SONiC/issues/269">sonic-net/SONiC#269</a></li>
+</ul>
+<h3 id="mirrorv6-acl-ipv6_next_header-sonic-buildimage4570">MIRRORV6 ACL では <code>IPV6_NEXT_HEADER</code> キーがサポートされていない制約（sonic-buildimage#4570）<a class="headerlink" href="#mirrorv6-acl-ipv6_next_header-sonic-buildimage4570" title="Permanent link">&para;</a></h3>
+<p>MIRRORV6 ACL では <code>IPV6_NEXT_HEADER</code> キーがサポートされていない制約。IPv6 ミラーリング ACL の設定時は対応フィールドを事前確認すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4570">sonic-net/sonic-buildimage#4570</a></li>
+</ul>
+<h3 id="aclshow-acl-sonic-buildimage5015">aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約（sonic-buildimage#5015）<a class="headerlink" href="#aclshow-acl-sonic-buildimage5015" title="Permanent link">&para;</a></h3>
+<p>aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約。iptables ベースの COPP ACL は <code>iptables -L -n -v</code> で確認すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5015">sonic-net/sonic-buildimage#5015</a></li>
+</ul>
+<h3 id="copp-350-iptables-10-sonic-buildimage5275">COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約（sonic-buildimage#5275）<a class="headerlink" href="#copp-350-iptables-10-sonic-buildimage5275" title="Permanent link">&para;</a></h3>
+<p>COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約。大量の COPP ルールは起動時間に大きく影響するため、ルール数を最小化すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5275">sonic-net/sonic-buildimage#5275</a></li>
+</ul>
+<h3 id="warm-reboot-sonic-buildimage5497">warm reboot 後にミラーリングルールの適用が失敗する問題（sonic-buildimage#5497）<a class="headerlink" href="#warm-reboot-sonic-buildimage5497" title="Permanent link">&para;</a></h3>
+<p>warm reboot 後にミラーリングルールの適用が失敗する問題。ミラー宛先ポートの再設定が warm reboot 後に正しく実行されない場合がある</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5497">sonic-net/sonic-buildimage#5497</a></li>
 </ul>
 <h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>

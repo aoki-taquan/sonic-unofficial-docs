@@ -2733,6 +2733,10 @@
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/buildimage-build-system-known-issues/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/critical-resource-monitoring-in-sonic/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
@@ -2750,6 +2754,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/dump-sfp-eeprom-page-data-in-show-techsupport-command/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/dynamic-port-breakout-known-issues/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
@@ -2997,11 +3005,19 @@
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/warmboot-known-issues-and-troubleshooting/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/warmboot-manager-hld/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/what-are-the-development-phases-and-scope-for-warm-reboot/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/yang-model-issues-and-validation/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>

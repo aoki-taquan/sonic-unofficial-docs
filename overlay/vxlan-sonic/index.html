@@ -11456,6 +11456,34 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        201911 の vnet コマンド (show vnet neighbors/routes) がクラッシュする問題（sonic-buildimage#5795）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29995,6 +30023,34 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        201911 の vnet コマンド (show vnet neighbors/routes) がクラッシュする問題（sonic-buildimage#5795）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -30414,7 +30470,13 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 <li><a href="../../reference/config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 <li><a href="../../reference/yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">既知の問題<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795">201911 の vnet コマンド (<code>show vnet neighbors/routes</code>) がクラッシュする問題（sonic-buildimage#5795）<a class="headerlink" href="#201911-vnet-show-vnet-neighborsroutes-sonic-buildimage5795" title="Permanent link">&para;</a></h3>
+<p>201911 の vnet コマンド (<code>show vnet neighbors/routes</code>) がクラッシュする問題。vnet テーブルが空の場合に None 参照が発生する</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5795">sonic-net/sonic-buildimage#5795</a></li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - HLD 初版が古いため、現行 master の VxlanOrch / VnetOrch 実装と乖離している可能性が高い
 - BGP EVPN 統合 (Phase 2) の現状

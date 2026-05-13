@@ -6,17 +6,18 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…">
+        <meta name="description" content="ウォームブート・高速リブートの既知問題、syncd/SAI との相互作用、LAG フラップ、SSH セッション切断問題など sonic-buildimage issue tracker から収集した実装上の注意点。
+">
       
       
       
-        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/platform-monitor-enhancement-design/">
+        <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/warmboot-known-issues-and-troubleshooting/">
       
       
-        <link rel="prev" href="../platform-monitor-design-for-multi-asic-platforms/">
+        <link rel="prev" href="../useful-sysctl-settings/">
       
       
-        <link rel="next" href="../platform-monitor-requirement-for-chassis-subsystem/">
+        <link rel="next" href="../warmboot-manager-hld/">
       
       
         
@@ -27,7 +28,7 @@
     
     
       
-        <title>pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント</title>
+        <title>ウォームブート既知問題とトラブルシューティング - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,17 +64,19 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…" />
-<meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/platform-monitor-enhancement-design.png" />
+<meta property="og:title" content="ウォームブート既知問題とトラブルシューティング - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="ウォームブート・高速リブートの既知問題、syncd/SAI との相互作用、LAG フラップ、SSH セッション切断問題など sonic-buildimage issue tracker から収集した実装上の注意点。
+" />
+<meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/warmboot-known-issues-and-troubleshooting.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/platform-monitor-enhancement-design/" />
+<meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/warmboot-known-issues-and-troubleshooting/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約） — pmon container には既に ledd（LED）/ xcvrd（SFP）の daemon があるが、PSU / FAN / chassis / syseeprom データへの CLI / SNMP アクセスは pl…" />
-<meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/platform-monitor-enhancement-design.png" />
+<meta property="twitter:title" content="ウォームブート既知問題とトラブルシューティング - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="ウォームブート・高速リブートの既知問題、syncd/SAI との相互作用、LAG フラップ、SSH セッション切断問題など sonic-buildimage issue tracker から収集した実装上の注意点。
+" />
+<meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/warmboot-known-issues-and-troubleshooting.png" />
 </head>
   
   
@@ -93,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pmon-psufansyseeprom-state_db" class="md-skip">
+        <a href="#_1" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
+              ウォームブート既知問題とトラブルシューティング
             
           </span>
         </div>
@@ -14066,37 +14069,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../platform-monitor-enhancement-design/" class="md-nav__link">
         
   
   
@@ -14112,302 +14088,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="動作仕様">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#daemon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Daemon 構成
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#daemon_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Daemon 共通フロー
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#misc-one-shot-task" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Misc one-shot task
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB Schema
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#business-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Business logic の境界
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-snmp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / SNMP の置換え
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参考リンク
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#bmc-baseboard-management-controller-sonic-buildimage633" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-interface-transceiver-sonic-buildimage5001" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snmp-ifmib-ifname-sonic-buildimage5592" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#master-pmon-platform-monitor-sonic-buildimage5759" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-pmon-sonic-buildimage5986" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hwskujson-fec-sonic-buildimage6495" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpb-xcvrd-sfp-sonic-buildimage6499" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -29726,7 +29406,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         概要
@@ -29737,22 +29417,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#1-syncd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        動作仕様
+        1. syncd ウォームスタートエラー
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="動作仕様">
+    <nav class="md-nav" aria-label="1. syncd ウォームスタートエラー">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#daemon" class="md-nav__link">
+  <a href="#1-1-invalid-sai_api_t-passed-to-sai_api_query-6723" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Daemon 構成
+        1-1. Invalid sai_api_t passed to sai_api_query (#6723)
       
     </span>
   </a>
@@ -29760,10 +29440,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#daemon_1" class="md-nav__link">
+  <a href="#1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Daemon 共通フロー
+        1-2. syncd translateVidToRid failures for buffer pools (#6726)
       
     </span>
   </a>
@@ -29771,43 +29451,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#misc-one-shot-task" class="md-nav__link">
+  <a href="#1-3-syncd-apply_view-hostif_trap_group-7071-7094" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Misc one-shot task
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#state_db-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        STATE_DB Schema
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#business-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Business logic の境界
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-snmp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CLI / SNMP の置換え
+        1-3. syncd APPLY_VIEW エラー: hostif_trap_group (#7071, #7094)
       
     </span>
   </a>
@@ -29820,10 +29467,76 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#2-lag-6773" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. LAG フラップ (#6773)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ssh-7127" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SSH セッション切断によるウォームブート失敗 (#7127)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-fast-reboot-7140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. fast-reboot ダウンタイム超過 (#7140)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-7518" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. イメージダウングレード失敗 (#7518)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reboot-cause-12512" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. reboot-cause の誤表示 (#12512)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-202012-fast-reboot-orchagent-9899" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. [202012] fast-reboot orchagent タイムアウト (#9899)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        トラブルシューティングチェックリスト
       
     </span>
   </a>
@@ -29834,167 +29547,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参考リンク
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#bmc-baseboard-management-controller-sonic-buildimage633" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#show-interface-transceiver-sonic-buildimage5001" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snmp-ifmib-ifname-sonic-buildimage5592" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#master-pmon-platform-monitor-sonic-buildimage5759" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sonic-pmon-sonic-buildimage5986" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hwskujson-fec-sonic-buildimage6495" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dpb-xcvrd-sfp-sonic-buildimage6499" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
+        参照
       
     </span>
   </a>
@@ -30018,7 +29571,7 @@
 
 
   
-    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/platform-monitor-enhancement-design.md" title="編集" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/edit/main/docs/system/warmboot-known-issues-and-troubleshooting.md" title="編集" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -30026,198 +29579,171 @@
   
 
 
-<!-- topics-tip -->
-<div class="admonition tip">
-<p class="admonition-title">Topics で読み物として読む</p>
-<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/14-platform-port-optics/">Topics 14 章: Platform / Port / Optics</a> を参照。</p>
-</div>
-<!-- /topics-tip -->
-
-<div class="admonition info">
+<div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-platform-daemons</code> master に <code>sonic-psud</code>、<code>sonic-syseepromd</code>、<code>sonic-xcvrd</code>、<code>sonic-thermalctld</code> が存在し、HLD で「fand」と呼ばれていた FAN 周期収集は <code>sonic-thermalctld</code> (= thermalctld) として実装されている。<code>scripts/psushow</code> / <code>fanshow</code> (<code>sonic-utilities</code>) が <code>STATE_DB</code> の <code>CHASSIS_INFO</code> / <code>PSU_INFO</code> / <code>FAN_INFO</code> を直接 read することを確認。HLD の中心方針（CLI/SNMP は STATE_DB のみ参照、daemon 側で plugin 直叩きを集約）は master 取り込み済み。<code>fand</code> 単独 daemon は無いという用語差のみ。</p>
+<p>sonic-buildimage issue tracker の実環境報告から抽出。master ブランチ対象。</p>
 </div>
-<h1 id="pmon-psufansyseeprom-state_db">pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）<a class="headerlink" href="#pmon-psufansyseeprom-state_db" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>pmon</code> container には既に <code>ledd</code>（LED）/ <code>xcvrd</code>（SFP）の daemon があるが、<strong>PSU / FAN / chassis / syseeprom データへの CLI / <a href="../../reference/glossary/#term-snmp">SNMP</a> アクセスは platform plugin を直接叩く</strong> ため遅く、container 跨ぎでデータ重複も発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> は <strong>PSU / FAN 用 daemon を新設して周期収集 → <a href="../../reference/glossary/#term-state_db">STATE_DB</a></strong>、misc syseeprom 系は <strong>boot 時 1 回 dump → STATE_DB</strong> とし、CLI / SNMP は <strong>DB のみを read</strong> する集約方針への移行を提案する。直接アクセスは pmon container 内に閉じ込める。</p>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<h3 id="daemon">Daemon 構成<a class="headerlink" href="#daemon" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  subgraph pmon
-    L[ledd]
-    X[xcvrd]
-    P["psud (新)"]
-    F["fand (新)"]
-    M[misc one-shot task]
-  end
-  P -- platform plugin / API --&gt; HW1[(PSU)]
-  F -- platform plugin / API --&gt; HW2[(FAN)]
-  X -- platform plugin / API --&gt; HW3[("SFP / xcvr")]
-  M -- syseeprom decode --&gt; HW4[(syseeprom)]
-  P --&gt; SDB[(STATE_DB)]
-  F --&gt; SDB
-  X --&gt; SDB
-  M --&gt; SDB
-  CLI["show platform / SNMP"] --&gt; SDB
-  CLI -. set led / fan speed .-&gt; CDB[("CONFIG_DB / STATE_DB")]
-  CDB --&gt; P
-  CDB --&gt; F</code></pre>
-<h3 id="daemon_1">Daemon 共通フロー<a class="headerlink" href="#daemon_1" title="Permanent link">&para;</a></h3>
-<ul>
-<li>起動時に <strong>constant data</strong>（serial, manufacturer, model 等）を 1 回読み込み STATE_DB に書く</li>
-<li>以降は <strong>periodic loop</strong>（PSU/FAN/xcvr の variable 値）で温度・電圧・回転数・status を更新</li>
-<li><strong>set 操作</strong>（status LED 色, fan speed 等）は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 変更を subscribe してハンドラから platform API 呼出<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-</ul>
-<h3 id="misc-one-shot-task">Misc one-shot task<a class="headerlink" href="#misc-one-shot-task" title="Permanent link">&para;</a></h3>
-<p>boot up 時に platform hwsku / ASIC 名 / reboot cause / syseeprom decode（model / serial / base MAC / manufacture date / vendor ext 等）をまとめて取得し STATE_DB に書く。<strong>1 回限りで exit</strong><sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="state_db-schema">STATE_DB Schema<a class="headerlink" href="#state_db-schema" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PLATFORM_INFO|&lt;platform_name&gt;:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  chassis_list = &lt;STRING&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>CHASSIS_INFO|&lt;chassis_name&gt;:
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  presence, model, serial, status, change_event,
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  base_mac_addr, reboot_cause,
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  module_num, fan_num, psu_num,
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  product_name, mac_addr_num, manufacture_date, manufacture,
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  platform_name, onie_version, crc32_checksum,
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  vendor_ext1, ...
-</span></code></pre></div>
-<p>PSU 系は <code>PSU_INFO|&lt;name&gt;</code>（<code>presence</code>, <code>status</code>, ...）に格納（<code>docs/platform/sonic-psu-daemon-design.md</code> の psud HLD と整合）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。FAN 系は <code>FAN_INFO|&lt;name&gt;</code>、xcvr は既存 PORT_TABLE / TRANSCEIVER_INFO 拡張で eeprom 詳細を追加。</p>
-<h3 id="business-logic">Business logic の境界<a class="headerlink" href="#business-logic" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>共通 logic</strong> のみ daemon に置く（例: status enum 変換、抜去/挿入 event の generic 化）</li>
-<li><strong>platform 固有 logic</strong> は platform plugin に閉じ込める<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>（fan speed curve, sensor 個別の温度計算等）</li>
-</ul>
-<h3 id="cli-snmp">CLI / SNMP の置換え<a class="headerlink" href="#cli-snmp" title="Permanent link">&para;</a></h3>
-<ul>
-<li>旧: <code>show platform &lt;psu|fan|sfp&gt;</code> が platform plugin を直叩き</li>
-<li>新: STATE_DB を読むだけ → 高速化、container 跨ぎで一貫</li>
-<li>SNMP も同じ STATE_DB が source</li>
-</ul>
-<!-- evidence:
-source: sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
-excerpt: |
-  In current implementation when user try to fetch switch peripheral devices related data with CLI,
-  underneath it will directly access hardware via platform plugins, in some case it could be very slow
-  ... CLI/SNMP will access cached data(DB) instead, which will be much faster.
-reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
--->
-
-<!-- evidence-rendered:start -->
-<details class="note">
-<summary>📋 検証エビデンス: sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</summary>
-<p><strong>出典</strong>:</p>
-<p><code>sonic-net/SONiC/doc/pmon/pmon-enhancement-design.md#L13-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
-<p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>In current implementation when user try to fetch switch peripheral devices related data with CLI,
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>underneath it will directly access hardware via platform plugins, in some case it could be very slow
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>... CLI/SNMP will access cached data(DB) instead, which will be much faster.
-</span></code></pre></div>
-<p><strong>判断根拠</strong>: 直接 plugin アクセス → STATE_DB 集約への移行根拠。</p>
-</details>
-<!-- evidence-rendered:end -->
-
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>共通 daemon への移行期は platform plugin 互換のため両系統が並存する可能性</li>
-<li>周期 (~3 秒) 内のリアルタイム性は犠牲。緊急 event は別経路で trap 化する必要</li>
-<li>syseeprom 一発 dump は <strong>再投入時の差分</strong>（base_mac_addr 等が変わる）を想定していない</li>
-<li>PSU の業務ロジック（power threshold ヒステリシス）は別 HLD（psud HLD v0.4）で発展している</li>
-</ul>
-<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>psud HLD</strong>（power threshold ヒステリシス）: 本 HLD の延長で実装</li>
-<li><strong>thermal-control / pmon thermal</strong>: FAN/PSU データを利用する policy</li>
-<li><strong>xcvrd / sfp-refactor</strong>: xcvr 側の eeprom 拡張と接続</li>
-<li><strong>s3ip-sysfs spec / framework</strong>: kernel 側 sysfs の代替として将来的に重なる</li>
-<li><strong><code>show platform</code> 系 CLI</strong>: STATE_DB ベースに切替</li>
-</ul>
-<h2 id="_5">参考リンク<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../reference/cli/show-platform/">CLI: show platform</a></li>
-<li><a href="../../reference/cli/show-environment/">CLI: show environment</a></li>
-<li><a href="../../reference/cli/show-system-health/">CLI: show system-health</a></li>
-<li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics</a></li>
-<li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>
-<li><a href="../../reference/glossary/">Glossary</a></li>
-<li><a href="../../reference/">Reference 索引</a></li>
-</ul>
-<h2 id="_6">既知の問題<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="bmc-baseboard-management-controller-sonic-buildimage633">BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）<a class="headerlink" href="#bmc-baseboard-management-controller-sonic-buildimage633" title="Permanent link">&para;</a></h3>
-<p>BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォームでは、platform API で BMC インターフェースを使う設計が必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/633">sonic-net/sonic-buildimage#633</a></li>
-</ul>
-<h3 id="lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457">LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）<a class="headerlink" href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" title="Permanent link">&para;</a></h3>
-<p>LLDP の portidsubtype が "locally assigned" ではなく "mac address" にセットされる問題。lldpd の設定で <code>configure lldp portidsubtype local</code> を明示指定することで回避可能</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/1457">sonic-net/sonic-buildimage#1457</a></li>
-</ul>
-<h3 id="sonic-sonic-buildimage4646">ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）<a class="headerlink" href="#sonic-sonic-buildimage4646" title="Permanent link">&para;</a></h3>
-<p>ポートのステータス変更が SONiC に反映されない問題。xcvrd または portsyncd がポートの物理状態変更を正しく検知できていない場合に発生。<code>sudo systemctl restart pmon</code> で回復できることがある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4646">sonic-net/sonic-buildimage#4646</a></li>
-</ul>
-<h3 id="show-interface-transceiver-sonic-buildimage5001">最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題（sonic-buildimage#5001）<a class="headerlink" href="#show-interface-transceiver-sonic-buildimage5001" title="Permanent link">&para;</a></h3>
-<p>最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5001">sonic-net/sonic-buildimage#5001</a></li>
-</ul>
-<h3 id="snmp-ifmib-ifname-sonic-buildimage5592">SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）<a class="headerlink" href="#snmp-ifmib-ifname-sonic-buildimage5592" title="Permanent link">&para;</a></h3>
-<p>SNMP の ifMIB ifName が間違った値を返す問題。<code>show interfaces status</code> の表示名と SNMP の ifName が一致しない場合、インターフェース名のマッピングを確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5592">sonic-net/sonic-buildimage#5592</a></li>
-</ul>
-<h3 id="master-pmon-platform-monitor-sonic-buildimage5759">最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）<a class="headerlink" href="#master-pmon-platform-monitor-sonic-buildimage5759" title="Permanent link">&para;</a></h3>
-<p>最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバーと pmon の Python 3 互換性を確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5759">sonic-net/sonic-buildimage#5759</a></li>
-</ul>
-<h3 id="sonic-pmon-sonic-buildimage5986">最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）<a class="headerlink" href="#sonic-pmon-sonic-buildimage5986" title="Permanent link">&para;</a></h3>
-<p>最新 SONiC イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5986">sonic-net/sonic-buildimage#5986</a></li>
-</ul>
-<h3 id="multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097">multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）<a class="headerlink" href="#multi-asic-chassis-asic-backend-pmon-xcvrd-sonic-buildimage6097" title="Permanent link">&para;</a></h3>
-<p>multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題。xcvrd は FrontEnd ASIC の存在を前提としており、全 BackEnd 構成では初期化に失敗する</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6097">sonic-net/sonic-buildimage#6097</a></li>
-</ul>
-<h3 id="hwskujson-fec-sonic-buildimage6495">hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）<a class="headerlink" href="#hwskujson-fec-sonic-buildimage6495" title="Permanent link">&para;</a></h3>
-<p>hwsku.json から FEC パラメータがデフォルト設定できない問題。FEC の設定は <code>config interface fec</code> コマンドで明示的に行う必要がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6495">sonic-net/sonic-buildimage#6495</a></li>
-</ul>
-<h3 id="dpb-xcvrd-sfp-sonic-buildimage6499">DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）<a class="headerlink" href="#dpb-xcvrd-sfp-sonic-buildimage6499" title="Permanent link">&para;</a></h3>
-<p>DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題。DPB 実行後に xcvrd の再起動が必要な場合がある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6499">sonic-net/sonic-buildimage#6499</a></li>
-</ul>
-<h3 id="cmis-40-qsfp-dd-eeprom-sonic-buildimage6516">CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）<a class="headerlink" href="#cmis-40-qsfp-dd-eeprom-sonic-buildimage6516" title="Permanent link">&para;</a></h3>
-<p>CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題。CMIS 4.0 対応の xcvrd バージョンが必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6516">sonic-net/sonic-buildimage#6516</a></li>
-</ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- psud / fand 新設 daemon の sonic-platform-daemons 取り込み確認
-- PLATFORM_INFO / CHASSIS_INFO / PSU_INFO / FAN_INFO スキーマの sonic-yang-models 反映確認
-- syseeprom 周辺一括収集 task (one-shot) の実装場所と起動経路確認
-- xcvrd 拡張 (eeprom 詳細) と現行 sonic_xcvr 階層の整合確認
-- show platform fanstatus / psustatus / temperature が STATE_DB 直読みになっているか確認
-- ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
--->
-
-<!-- glossary-links-injected: 8b787f87bebc -->
-
-<div class="footnote">
+<h1 id="_1">ウォームブート既知問題とトラブルシューティング<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>SONiC のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
+サブシステムが協調する複雑なシーケンスを持つ。本ページは
+sonic-buildimage issue tracker (#6723 〜 #12512 の範囲) に記録された
+実環境での既知問題と対処法をまとめる。</p>
 <hr />
-<ol>
-<li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/pmon/pmon-enhancement-design.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-</ol>
-</div>
+<h2 id="1-syncd">1. syncd ウォームスタートエラー<a class="headerlink" href="#1-syncd" title="Permanent link">&para;</a></h2>
+<h3 id="1-1-invalid-sai_api_t-passed-to-sai_api_query-6723">1-1. <code>Invalid sai_api_t passed to sai_api_query</code> (#6723)<a class="headerlink" href="#1-1-invalid-sai_api_t-passed-to-sai_api_query-6723" title="Permanent link">&para;</a></h3>
+<p><strong>現象</strong>: ウォームブート中に syncd が以下のエラーを出力する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SAI_API_UNSPECIFIED:sai_api_initialize: Invalid sai_api_t passed to sai_api_query
+</span></code></pre></div>
+<p><strong>原因</strong>: 新しい SAI バージョン移行時に旧 <code>sai_api_t</code> 値が
+<code>sai_api_query()</code> に渡されるケース。</p>
+<p><strong>影響</strong>: 単体では crash や warmboot 失敗は発生しない。
+syncd の init は正常に完了し、warmboot シーケンスは継続する。
+複数プラットフォーム（Arista 7050CX3、S6100 等）で確認。</p>
+<p><strong>対処</strong>: エラーログを確認しつつ warmboot シーケンスが完了すれば問題なし。
+SAI バージョンを syncd と整合させることで解消する。</p>
+<hr />
+<h3 id="1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726">1-2. <code>syncd translateVidToRid failures for buffer pools</code> (#6726)<a class="headerlink" href="#1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726" title="Permanent link">&para;</a></h3>
+<p><strong>現象</strong>: ウォームブート後の統計収集時に以下のエラー。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>syncd: translateVidToRid: failed to translate VID &lt;oid&gt; to RID
+</span></code></pre></div>
+<p><strong>原因</strong>: syncd がウォームブート後の新 ASIC VIEW への変換を
+まだ完了していない段階で統計クエリが走ることで、
+ingress/egress buffer pool OID が一時的に無効になる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>syncd: executeOperationsOnAsic: operations to execute on ASIC: 56
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a># ← この時点で orchagent が生成した新 VIEW への変換が未完了
+</span></code></pre></div>
+<p><strong>対処</strong>: 変換が完了するまで待機。ウォームブート完了後に統計収集を再試行する。
+Buffer pool OID の VIDTORID マップが再構築されれば自動解消する。</p>
+<hr />
+<h3 id="1-3-syncd-apply_view-hostif_trap_group-7071-7094">1-3. syncd <code>APPLY_VIEW</code> エラー: hostif_trap_group (#7071, #7094)<a class="headerlink" href="#1-3-syncd-apply_view-hostif_trap_group-7071-7094" title="Permanent link">&para;</a></h3>
+<p><strong>現象</strong>: ウォームブートの going-down フェーズで syncd pre-shutdown が失敗し、
+デバイスがハングする。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SAI_API_ACL:_brcm_sai_free_hostif:10237 field range destroy failed with error Entry not found
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>syncd: APPLY_VIEW error: brcm_sai_remove_hostif_trap_group in use
+</span></code></pre></div>
+<p><strong>原因</strong>: BRCM SAI の特定バージョン（4.3.3.x）でのバグ。
+hostif_trap_group が ACL エントリから参照されたまま削除しようとする。</p>
+<p><strong>対処</strong>:
+- SAI バージョンを <code>4.3.0.13-1</code> 以前（またはバグ修正版）に変更
+- <code>4.3.3.1</code> および <code>4.3.3.1-1</code> でこの問題が確認されている</p>
+<hr />
+<h2 id="2-lag-6773">2. LAG フラップ (#6773)<a class="headerlink" href="#2-lag-6773" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: ウォームブート後（特に 2 回目以降）に PortChannel が数回 flap する。</p>
+<p><strong>対象プラットフォーム</strong>: Broadcom TD3 ベースプラットフォーム、202012 ブランチを含む。</p>
+<p><strong>パターン</strong>:
+- 1 回目のウォームブート: LAG フラップなし
+- <strong>2 回目以降</strong>: LAG が数回 flap してから安定</p>
+<p><strong>原因</strong>: orchagent がウォームブート後に
+PortChannel メンバーの再学習タイミングで競合が発生する。</p>
+<p><strong>対処</strong>: 2 回目以降のウォームブート後に LAG が安定するまで待機（通常 30 秒以内）。
+本番環境では連続ウォームブート間に十分なインターバルを設ける。</p>
+<hr />
+<h2 id="3-ssh-7127">3. SSH セッション切断によるウォームブート失敗 (#7127)<a class="headerlink" href="#3-ssh-7127" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: <code>warm-reboot</code> コマンド実行中に SSH セッションが切断されると、
+ウォームブートが中断する。</p>
+<p><strong>原因</strong>: <code>warm-reboot</code> スクリプトが起動した端末セッションに attach された状態で動作する。
+SSH 切断でプロセスツリーが SIGHUP を受けて終了する。</p>
+<p><strong>解決策</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># バックグラウンド実行でセッション切断に対応</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>nohup<span class="w"> </span>warm-reboot<span class="w"> </span><span class="p">&amp;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># または</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>screen<span class="w"> </span>-d<span class="w"> </span>-m<span class="w"> </span>warm-reboot
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># または</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>tmux<span class="w"> </span>new-session<span class="w"> </span>-d<span class="w"> </span>-s<span class="w"> </span>warmboot<span class="w"> </span><span class="s1">&#39;warm-reboot&#39;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="4-fast-reboot-7140">4. fast-reboot ダウンタイム超過 (#7140)<a class="headerlink" href="#4-fast-reboot-7140" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: fast-reboot のダウンタイムが 30 秒制限を超える。</p>
+<p><strong>主要因</strong>:
+1. orchagent の ASIC プログラミング完了待ちタイムアウト
+2. カーネルの kexec 処理遅延 (#6866)
+3. プラットフォーム固有の SAI 初期化時間</p>
+<p><strong>確認方法</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># /var/log/syslog で fast-reboot の各フェーズのタイムスタンプを確認</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;fast-reboot|kexec|orchagent&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</span></code></pre></div>
+<hr />
+<h2 id="5-7518">5. イメージダウングレード失敗 (#7518)<a class="headerlink" href="#5-7518" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: 最新 master から古いイメージへのダウングレードが失敗する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-installer: package migration failed
+</span></code></pre></div>
+<p><strong>背景</strong>: SONiC は公式にはダウングレードを保証しない。
+master ブランチでインストールされたパッケージが
+古いイメージのパッケージと非互換になる場合がある。</p>
+<p><strong>回避策</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># パッケージ移行をスキップ</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-installer<span class="w"> </span>install<span class="w"> </span>--skip-package-migration<span class="w"> </span>&lt;image&gt;
+</span></code></pre></div>
+<hr />
+<h2 id="6-reboot-cause-12512">6. reboot-cause の誤表示 (#12512)<a class="headerlink" href="#6-reboot-cause-12512" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: ウォームブート後に reboot-cause が正しい理由を表示しない。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># 期待: warm-reboot</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># 実際: Unknown</span>
+</span></code></pre></div>
+<p><strong>原因</strong>: <code>/host/reboot-cause/reboot-cause-file</code> の書き込みタイミングが
+カーネル kexec より後になる競合条件。</p>
+<p><strong>確認</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>cat<span class="w"> </span>/host/reboot-cause/previous-reboot-cause
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>cat<span class="w"> </span>/var/log/reboot-cause/REBOOT_CAUSE
+</span></code></pre></div>
+<hr />
+<h2 id="7-202012-fast-reboot-orchagent-9899">7. [202012] fast-reboot orchagent タイムアウト (#9899)<a class="headerlink" href="#7-202012-fast-reboot-orchagent-9899" title="Permanent link">&para;</a></h2>
+<p><strong>現象</strong>: fast-reboot 中に orchagent が INIT_VIEW 通知の受信を syncd に
+タイムアウトする。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>orchagent: timeout to notify syncd to begin INIT_VIEW
+</span></code></pre></div>
+<p><strong>関連する可能性があるログ</strong>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
+</span></code></pre></div>
+<p><strong>対処</strong>: NIC の TX ハング（ management port）が原因の場合がある。
+ドライバのリセットが完了してから再試行。</p>
+<hr />
+<h2 id="_3">トラブルシューティングチェックリスト<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>チェック項目</th>
+<th>コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ウォームブート状態確認</td>
+<td><code>show warm_restart state</code></td>
+</tr>
+<tr>
+<td>reboot 原因確認</td>
+<td><code>show reboot-cause</code></td>
+</tr>
+<tr>
+<td>syncd ログ確認</td>
+<td><code>docker logs syncd \| tail -100</code></td>
+</tr>
+<tr>
+<td>orchagent ログ確認</td>
+<td><code>docker logs swss \| grep orchagent \| tail -100</code></td>
+</tr>
+<tr>
+<td>LAG 状態確認</td>
+<td><code>show interfaces portchannel</code></td>
+</tr>
+<tr>
+<td>SAI バージョン確認</td>
+<td><code>docker exec syncd saisdump --version 2&gt;/dev/null</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_4">参照<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../sonic-warm-reboot/">ウォームブートアーキテクチャ</a></li>
+<li><a href="../warmboot-manager-hld/">ウォームブートマネージャ</a></li>
+<li><a href="../sonic-swss-docker-warm-restart/">swss Docker ウォームリスタート</a></li>
+<li><a href="../multi-asic-warm-reboot/">multi-ASIC ウォームリブート</a></li>
+</ul>
 
 
 

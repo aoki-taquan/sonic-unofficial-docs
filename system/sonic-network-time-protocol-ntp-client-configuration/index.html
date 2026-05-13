@@ -13755,6 +13755,34 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#management-vrf-rsyslogd-sendto-error-network-issonic-buildimage5880" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        management VRF が有効な時に rsyslogd が "sendto() error: Network is（sonic-buildimage#5880）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -13787,7 +13815,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -13798,7 +13826,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -13820,7 +13848,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -13841,7 +13869,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29874,6 +29902,34 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#management-vrf-rsyslogd-sendto-error-network-issonic-buildimage5880" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        management VRF が有効な時に rsyslogd が "sendto() error: Network is（sonic-buildimage#5880）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29906,7 +29962,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -29917,7 +29973,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -29939,7 +29995,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -29960,7 +30016,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -30189,7 +30245,13 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NTP*&#39;</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.1
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">既知の問題<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="management-vrf-rsyslogd-sendto-error-network-issonic-buildimage5880">management VRF が有効な時に rsyslogd が "sendto() error: Network is（sonic-buildimage#5880）<a class="headerlink" href="#management-vrf-rsyslogd-sendto-error-network-issonic-buildimage5880" title="Permanent link">&para;</a></h3>
+<p>management VRF が有効な時に rsyslogd が "sendto() error: Network is unreachable" を出力する問題。rsyslog のバインドアドレスを management VRF に合わせて設定する必要がある</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5880">sonic-net/sonic-buildimage#5880</a></li>
+</ul>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 現行 master の NTP daemon（ntpd vs chrony）の選定状況確認
 - hostcfgd の NTP config rendering 経路（jinja テンプレート）の現行実装確認
@@ -30214,14 +30276,14 @@
 <li><code>NTP_SERVER|&lt;host&gt;</code> の hash field は <code>admin_state</code> / <code>association_type</code> (<code>server</code>/<code>pool</code>) / <code>resolve_as</code> / <code>iburst</code> 等。HLD が言及する旧 <code>NTP_SERVER</code> の field 名（minpoll / maxpoll / key 等）は形が異なる。</li>
 <li><code>ntp.conf.j2</code> および <code>ntpd.service</code> は <strong>存在しない</strong>。</li>
 </ul>
-<h4 id="_9">読者への影響<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<h4 id="_10">読者への影響<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>ntpq -p</code> / <code>service ntp status</code> を期待しても <code>command not found</code> / <code>Unit ntp.service not found</code>。</li>
 <li><code>/etc/ntp.conf</code> を編集しても効かない。<code>/etc/chrony/chrony.conf</code> (jinja 生成) が真の設定。</li>
 <li>HLD どおりに MD5 key を <code>/etc/ntp.keys</code> に書いても chrony は読まない（chrony は <code>keyfile</code> ディレクティブで <code>/etc/chrony/chrony.keys</code> を見る）。</li>
 <li>mgmt VRF 経由で NTP 同期したい場合、HLD には書かれていない <code>bindcmdaddress</code> / <code>bindaddress</code> の VRF 分岐処理が <code>chrony-config.sh</code> 側にあり、それを知らずに <code>iburst</code> 設定だけ書くと <strong>同期しない</strong>（issue #24333）。</li>
 </ul>
-<h4 id="_10">回避策の実コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<h4 id="_11">回避策の実コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1) NTP サーバ追加（CLI 表面は維持）</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>ntp<span class="w"> </span>add<span class="w"> </span>pool.ntp.org
@@ -30250,10 +30312,10 @@
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/23904">sonic-buildimage #23904: Failed to restart chrony.service on NTP server add (open, NVIDIA)</a> — server add 直後の reload race。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/25863">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #25863: [chrony] NTP not synchronized when MGMT_INTERFACE IP is not static (open)</a> — DHCP mgmt IP 利用時の起動順問題。</li>
 </ul>
-<h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_12">検証日<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

@@ -10803,6 +10803,72 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kernel-49-race-condition-sonic-buildimage1981" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題（sonic-buildimage#1981）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portchannel-portchannel-sonic-buildimage5051" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題（sonic-buildimage#5051）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1000-portchannel-orchagent-sonic-buildimage5054" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1000 個の PortChannel を設定すると orchagent がクラッシュする制約（sonic-buildimage#5054）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#down-sonic-buildimage5347" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        インターフェースを追加・削除した後にインターフェース状態が down のままになる問題（sonic-buildimage#5347）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-teamd-siocaddmultisiocdelmulti-ioctl-lagsonic-buildimage5761" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portchannel-sonic-buildimage6630" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約（sonic-buildimage#6630）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29770,6 +29836,72 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kernel-49-race-condition-sonic-buildimage1981" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題（sonic-buildimage#1981）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portchannel-portchannel-sonic-buildimage5051" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題（sonic-buildimage#5051）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1000-portchannel-orchagent-sonic-buildimage5054" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1000 個の PortChannel を設定すると orchagent がクラッシュする制約（sonic-buildimage#5054）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#down-sonic-buildimage5347" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        インターフェースを追加・削除した後にインターフェース状態が down のままになる問題（sonic-buildimage#5347）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-teamd-siocaddmultisiocdelmulti-ioctl-lagsonic-buildimage5761" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portchannel-sonic-buildimage6630" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約（sonic-buildimage#6630）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30074,6 +30206,36 @@
 </span></code></pre></div>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/SONiC/issues/87">sonic-net/SONiC#87</a></li>
+</ul>
+<h3 id="kernel-49-race-condition-sonic-buildimage1981">Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題（sonic-buildimage#1981）<a class="headerlink" href="#kernel-49-race-condition-sonic-buildimage1981" title="Permanent link">&para;</a></h3>
+<p>Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題。並行してポートチャネルを作成・削除するとカーネルクラッシュが起きる可能性</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/1981">sonic-net/sonic-buildimage#1981</a></li>
+</ul>
+<h3 id="portchannel-portchannel-sonic-buildimage5051">PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題（sonic-buildimage#5051）<a class="headerlink" href="#portchannel-portchannel-sonic-buildimage5051" title="Permanent link">&para;</a></h3>
+<p>PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題。<code>config portchannel member del</code> コマンドを実行してから PortChannel を削除する必要がある</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5051">sonic-net/sonic-buildimage#5051</a></li>
+</ul>
+<h3 id="1000-portchannel-orchagent-sonic-buildimage5054">1000 個の PortChannel を設定すると orchagent がクラッシュする制約（sonic-buildimage#5054）<a class="headerlink" href="#1000-portchannel-orchagent-sonic-buildimage5054" title="Permanent link">&para;</a></h3>
+<p>1000 個の PortChannel を設定すると orchagent がクラッシュする制約。プラットフォームごとの PortChannel 数上限を事前確認すること。一般的には 256 または 512 が上限</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5054">sonic-net/sonic-buildimage#5054</a></li>
+</ul>
+<h3 id="down-sonic-buildimage5347">インターフェースを追加・削除した後にインターフェース状態が down のままになる問題（sonic-buildimage#5347）<a class="headerlink" href="#down-sonic-buildimage5347" title="Permanent link">&para;</a></h3>
+<p>インターフェースを追加・削除した後にインターフェース状態が down のままになる問題。<code>config interface startup &lt;ifname&gt;</code> を実行してインターフェースを明示的に有効化すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5347">sonic-net/sonic-buildimage#5347</a></li>
+</ul>
+<h3 id="warm-reboot-teamd-siocaddmultisiocdelmulti-ioctl-lagsonic-buildimage5761">warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）<a class="headerlink" href="#warm-reboot-teamd-siocaddmultisiocdelmulti-ioctl-lagsonic-buildimage5761" title="Permanent link">&para;</a></h3>
+<p>warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバーとカーネルバージョンの互換性を確認すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5761">sonic-net/sonic-buildimage#5761</a></li>
+</ul>
+<h3 id="portchannel-sonic-buildimage6630">PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約（sonic-buildimage#6630）<a class="headerlink" href="#portchannel-sonic-buildimage6630" title="Permanent link">&para;</a></h3>
+<p>PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約。DPB 実行前に PortChannel メンバーを削除すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6630">sonic-net/sonic-buildimage#6630</a></li>
 </ul>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>

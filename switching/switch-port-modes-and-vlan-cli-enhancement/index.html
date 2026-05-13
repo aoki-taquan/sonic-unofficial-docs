@@ -10618,6 +10618,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#vlan-vlan-sonic-buildimage2658" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN からポートを削除すると、ポートがデフォルト VLAN に残る動作は設計上の制約（sonic-buildimage#2658）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-orchagent-sonic-buildimage2684" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent （sonic-buildimage#2684）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-pvid-sonic-buildimage5928" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグ付き VLAN メンバーに対して PVID が誤って設定される問題（sonic-buildimage#5928）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30037,6 +30070,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#vlan-vlan-sonic-buildimage2658" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN からポートを削除すると、ポートがデフォルト VLAN に残る動作は設計上の制約（sonic-buildimage#2658）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-orchagent-sonic-buildimage2684" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent （sonic-buildimage#2684）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-pvid-sonic-buildimage5928" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タグ付き VLAN メンバーに対して PVID が誤って設定される問題（sonic-buildimage#5928）
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30531,6 +30597,21 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <p><code>config vlan member add</code> コマンドは <code>VLAN_MEMBER_TABLE</code>（正規のテーブル）に加えて、後方互換用の <code>VLAN_TABLE|members@</code> フィールドにも書き込む。タグ付きメンバーとして追加したつもりでも、このフィールドには影響する。sonic-utilities PR#768 で修正済み（古いバージョンではバグが残存する可能性あり）。</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/SONiC/issues/323">sonic-net/SONiC#323</a></li>
+</ul>
+<h3 id="vlan-vlan-sonic-buildimage2658">VLAN からポートを削除すると、ポートがデフォルト VLAN に残る動作は設計上の制約（sonic-buildimage#2658）<a class="headerlink" href="#vlan-vlan-sonic-buildimage2658" title="Permanent link">&para;</a></h3>
+<p>VLAN からポートを削除すると、ポートがデフォルト VLAN に残る動作は設計上の制約。ポートを完全に VLAN から切り離す場合は <code>config vlan member del</code> の後に適切なモード設定が必要</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/2658">sonic-net/sonic-buildimage#2658</a></li>
+</ul>
+<h3 id="vlan-orchagent-sonic-buildimage2684">VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent （sonic-buildimage#2684）<a class="headerlink" href="#vlan-orchagent-sonic-buildimage2684" title="Permanent link">&para;</a></h3>
+<p>VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent がコアダンプする既知の問題。VLAN メンバーから削除してからルーターIF設定を行うこと</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/2684">sonic-net/sonic-buildimage#2684</a></li>
+</ul>
+<h3 id="vlan-pvid-sonic-buildimage5928">タグ付き VLAN メンバーに対して PVID が誤って設定される問題（sonic-buildimage#5928）<a class="headerlink" href="#vlan-pvid-sonic-buildimage5928" title="Permanent link">&para;</a></h3>
+<p>タグ付き VLAN メンバーに対して PVID が誤って設定される問題。タグ付きポートに PVID を設定してはいけない。アクセスポートとトランクポートの設定を正しく区別すること</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5928">sonic-net/sonic-buildimage#5928</a></li>
 </ul>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
