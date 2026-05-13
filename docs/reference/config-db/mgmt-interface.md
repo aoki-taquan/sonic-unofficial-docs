@@ -117,4 +117,20 @@ ip -4 route show vrf mgmt
 - **複合キー (eth0, ip_prefix)**: 同一インターフェースに複数プレフィックスを設定可能。CLI (`config/main.py`) は既存設定の `gwaddr` を参照し、矛盾がある場合に警告を出す。
 - **USB ネットワーク未稼働時の自動リセット**: `reset_mgmt_interface_if_usb_not_running()` が USB ネットワークが未稼働と判断した場合、[CONFIG_DB](../../reference/glossary.md#term-config_db) から MGMT_INTERFACE エントリを削除し eth0 をリセットする (`config/main.py` L1117)。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang / sonic-host-services/scripts/hostcfgd -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `gwaddr` | 有効 IP (ip_prefix と同 family) | mgmtVrfEnabled に応じて mgmt VRF または default VRF にデフォルト GW を設定 |
+| `gwaddr` | 異なる IP family | YANG must 制約違反 → バリデーション拒否 |
+| `gwaddr` | 未設定 | GW なし。mgmt VRF 内に default route がなくリモート接続不能になる恐れ |
+| `forced_mgmt_routes` | prefix/address 列挙 | `mgmtVrfEnabled=true` → mgmt VRF ルートテーブルへ追加。`false` → default VRF |
+| `forced_mgmt_routes` | 未設定 | 強制ルートなし。通常のルーティングに従う |
+
+enum なし。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: 896d391185a9 -->

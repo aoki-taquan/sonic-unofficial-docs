@@ -128,4 +128,25 @@ show mux config
 - **server_ipv4 の形式不正 → YANG が拒否**: `type inet:ipv4-prefix`。不正な IPv4 プレフィックスは YANG バリデーションで拒否される。
 - **MUX_CABLE エントリが存在しない場合**: [linkmgrd](../../reference/glossary.md#term-linkmgrd) は当該インターフェースに対して mux 管理を行わない。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-linkmgrd/src/MuxPort.cpp / sonic-linkmgrd/src/MuxManager.cpp / sonic-swss/orchagent/muxorch.cpp -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `state` | `auto` (default) | ICMP prober の判断で active/standby を自動決定。フェイルオーバも自動 |
+| `state` | `active` | 当該 ToR を強制 active。linkmgrd が MUX を active 側に固定 |
+| `state` | `standby` | 当該 ToR を強制 standby。トラフィックをピア ToR 経由に迂回 |
+| `state` | `manual` | 自動フェイルオーバ無効。現在の active/standby 状態を維持 |
+| `state` | `detach` | active-active 専用。NIC から ToR を論理的に切り離し。active-standby では WARN + 無視 |
+| `cable_type` | `active-standby` (default) | ActiveStandby ステートマシン選択。ICMP prober で片系のみ active |
+| `cable_type` | `active-active` | ActiveActive ステートマシン選択。両 ToR が active。soc_ipv4 が必要 |
+| `prober_type` | `software` (default) | linkmgrd が ICMP パケットをソフトウェアで生成・送信 |
+| `prober_type` | `hardware` | xcvrd 経由でハードウェア MUX に probe を委譲 |
+| `neighbor_mode` | `host-route` (default) | サーバ IP を /32 (/128) host route として処理 |
+| `neighbor_mode` | `prefix-route` | サーバ IP を prefix-based route として処理。動的変更は muxorch で WARN (再起動が必要) |
+
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: 68cc248286f2 -->

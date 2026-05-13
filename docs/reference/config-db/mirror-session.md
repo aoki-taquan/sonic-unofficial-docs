@@ -142,4 +142,26 @@ show mirror_session
 - **type のデフォルト = "ERSPAN"**: YANG `default "ERSPAN"`。type を省略すると ERSPAN として処理される。SPAN セッションは明示的に `type = SPAN` を指定し `dst_port` も必須。
 - **gre_type のデフォルト = 0x88be**: YANG `default 0x88be`。ERSPAN over GRE のデフォルト EtherType。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorOrch / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `type` | `ERSPAN` (default) | GRE/IP ヘッダ付きで dst_ip へ転送。routeOrch に dstIp を attach して nexthop 解決後に `active` |
+| `type` | `SPAN` | ローカル物理ポート (dst_port) に転送。nexthop 解決不要 |
+| `direction` | `RX` | 受信パケットのみミラー |
+| `direction` | `TX` | 送信パケットのみミラー |
+| `direction` | `BOTH` (default) | 送受信両方をミラー |
+| `gre_type` | `0x88be` (default) | ERSPAN Type II (Cisco) GRE EtherType |
+| `gre_type` | `0x8949` | ERSPAN Type III (Broadcom) GRE EtherType |
+| `queue` | 0 (default) | best-effort queue でミラーパケット送出 |
+| `queue` | ≥ m_maxNumTC | task_invalid_entry — HW TC 数超過 |
+| `policer` | 指定あり | ミラートラフィックにレート制限を適用 |
+| `policer` | 未存在 leafref | task_need_retry — policer 追加後に再処理 |
+
+セッション状態は `STATE_DB MIRROR_SESSION_TABLE.status` で "active"/"inactive" を確認可能。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: c326cbcc6490 -->

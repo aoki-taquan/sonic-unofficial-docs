@@ -121,4 +121,23 @@ show ntp
 - **trusted のデフォルト = "no"**: `default no`。NTP 認証モード有効時に当該キーが信頼済みとして使用されるには明示的に `trusted = yes` が必要。
 - **NTP_SERVER から参照中の NTP_KEY は削除不可**: `NTP_SERVER_LIST/key` は `leafref` で `NTP_KEY_LIST/id` を参照。参照中のキーを削除しようとすると YANG バリデーションで整合性エラーが発生する。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP_KEY / sonic-host-services/scripts/hostcfgd -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `type` | `md5` (default) | MD5 ハッシュで NTP パケット認証。セキュリティ強度低 (RFC 8573 で非推奨) |
+| `type` | `sha1` | SHA-1 ハッシュで認証 |
+| `type` | `sha256` | SHA-256 ハッシュで認証 (推奨最低ライン) |
+| `type` | `sha384`/`sha512` | 高強度 SHA 認証 |
+| `trusted` | `no` (default) | chrony の `trustedkey` 指定なし。認証有効時でも当該鍵での同期は行わない |
+| `trusted` | `yes` | chrony の `trustedkey` に追加。当該鍵のサーバのみで時刻同期を許可 |
+| `value` | 1..64字 | chrony keyfile に鍵本体として書き込み |
+| `id` | 1..65535 | chrony keyfile の鍵 ID として使用。NTP_SERVER.key からの leafref 参照元 |
+
+enum: `type`=md5/sha1/sha256/sha384/sha512、`trusted`=yes/no。変更は `systemctl restart chrony` をトリガー。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
