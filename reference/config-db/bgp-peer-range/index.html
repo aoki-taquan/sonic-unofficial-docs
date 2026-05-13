@@ -23406,6 +23406,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name-keyvrfvnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name (key、VRF/VNET 分岐)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_range-leaf-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_range (leaf-list)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29852,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name-keyvrfvnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name (key、VRF/VNET 分岐)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_range-leaf-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_range (leaf-list)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29970,8 +30048,38 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<p>このテーブルには enum フィールドはない。</p>
+<h3 id="vrf_name-keyvrfvnet"><code>vrf_name</code> (key、VRF/VNET 分岐)<a class="headerlink" href="#vrf_name-keyvrfvnet" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>型</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF.name</code> への leafref</td>
+<td>VRF コンテキストで <code>bgp listen range &lt;prefix&gt; peer-group &lt;name&gt;</code> を生成</td>
+</tr>
+<tr>
+<td><code>VNET.name</code> への leafref</td>
+<td>VNET 対応 VRF で同様のコマンドを生成</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ip_range-leaf-list"><code>ip_range</code> (leaf-list)<a class="headerlink" href="#ip_range-leaf-list" title="Permanent link">&para;</a></h3>
+<ul>
+<li>複数プレフィックスを user-ordered で指定可能</li>
+<li><code>dynamic/update.conf.j2</code> が各プレフィックスに対して <code>bgp listen range &lt;prefix&gt; peer-group &lt;name&gt;</code> を展開</li>
+<li>削除時は既存 range との差分を計算して <code>no bgp listen range</code> を発行</li>
+</ul>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

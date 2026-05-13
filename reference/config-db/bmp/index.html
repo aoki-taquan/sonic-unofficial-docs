@@ -23423,6 +23423,34 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#boolean-bmpcfgdpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        boolean フィールドの共通挙動 (bmpcfgd.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29819,34 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#boolean-bmpcfgdpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        boolean フィールドの共通挙動 (bmpcfgd.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29914,8 +29970,43 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>このテーブルには enum フィールドはない。全フィールドは boolean。</p>
+<h3 id="boolean-bmpcfgdpy">boolean フィールドの共通挙動 (<code>bmpcfgd.py</code>)<a class="headerlink" href="#boolean-bmpcfgdpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th><code>true</code></th>
+<th><code>false</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgp_neighbor_table</code></td>
+<td>openbmpd が BGP_NEIGHBOR テーブルダンプを BMP_STATE_DB に書く</td>
+<td>ダンプを送らない</td>
+</tr>
+<tr>
+<td><code>bgp_rib_in_table</code></td>
+<td>Adj-RIB-In テーブルダンプを送る</td>
+<td>ダンプを送らない</td>
+</tr>
+<tr>
+<td><code>bgp_rib_out_table</code></td>
+<td>Adj-RIB-Out テーブルダンプを送る</td>
+<td>ダンプを送らない</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>副作用</strong>: 任意のフィールドを変更すると <code>bmpcfgd</code> は常に <code>openbmpd</code> を stop → <code>BMP_STATE_DB</code> をクリア → start する。部分的な変更でも全テーブルが再構築される。</p>
+</blockquote>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

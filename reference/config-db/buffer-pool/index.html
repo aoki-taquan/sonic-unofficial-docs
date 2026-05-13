@@ -22398,6 +22398,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-enum-ingressegressboth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type (enum: ingress/egress/both)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode-enum-staticdynamic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode (enum: static/dynamic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-mode-xoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type × mode の組み合わせと xoff
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29863,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-enum-ingressegressboth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type (enum: ingress/egress/both)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode-enum-staticdynamic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode (enum: static/dynamic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-mode-xoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type × mode の組み合わせと xoff
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29967,8 +30067,103 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="type-enum-ingressegressboth"><code>type</code> (enum: <code>ingress</code>/<code>egress</code>/<code>both</code>)<a class="headerlink" href="#type-enum-ingressegressboth" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>SAI 属性</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ingress</code></td>
+<td><code>SAI_BUFFER_POOL_TYPE_INGRESS</code></td>
+<td>ingress 方向のみ。<code>xoff</code> 設定は ingress pool でのみ有効</td>
+</tr>
+<tr>
+<td><code>egress</code></td>
+<td><code>SAI_BUFFER_POOL_TYPE_EGRESS</code></td>
+<td>egress 方向のみ</td>
+</tr>
+<tr>
+<td><code>both</code></td>
+<td><code>SAI_BUFFER_POOL_TYPE_BOTH</code></td>
+<td>双方向プール (一部 ASIC のみ)</td>
+</tr>
+</tbody>
+</table>
+<p><code>bufferorch.cpp:443-453</code> で SAI API に渡される。</p>
+<h3 id="mode-enum-staticdynamic"><code>mode</code> (enum: <code>static</code>/<code>dynamic</code>)<a class="headerlink" href="#mode-enum-staticdynamic" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>SAI 属性</th>
+<th>動作モード</th>
+<th><code>percentage</code> フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>static</code></td>
+<td><code>SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC</code></td>
+<td><code>size</code> (bytes) で固定閾値</td>
+<td>無効</td>
+</tr>
+<tr>
+<td><code>dynamic</code></td>
+<td><code>SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC</code></td>
+<td>Alpha 値で動的閾値</td>
+<td>有効 (<code>DEVICE_METADATA.buffer_model=dynamic</code> のとき)</td>
+</tr>
+</tbody>
+</table>
+<p><code>bufferorch.cpp:474-480</code> で SAI API に渡される。</p>
+<h3 id="type-mode-xoff"><code>type</code> × <code>mode</code> の組み合わせと <code>xoff</code><a class="headerlink" href="#type-mode-xoff" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>mode</th>
+<th><code>xoff</code></th>
+<th>典型 pool 名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ingress</code></td>
+<td><code>static</code></td>
+<td>有効 (lossless 用)</td>
+<td><code>ingress_lossless_pool</code></td>
+</tr>
+<tr>
+<td><code>ingress</code></td>
+<td><code>dynamic</code></td>
+<td>無効</td>
+<td><code>ingress_lossy_pool</code></td>
+</tr>
+<tr>
+<td><code>egress</code></td>
+<td><code>static</code></td>
+<td>無効</td>
+<td><code>egress_lossless_pool</code></td>
+</tr>
+<tr>
+<td><code>egress</code></td>
+<td><code>dynamic</code></td>
+<td>無効</td>
+<td><code>egress_lossy_pool</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

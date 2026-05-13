@@ -23378,6 +23378,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autort-bgp_globals_af" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        autort (BGP_GLOBALS_AF)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afi_safi-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        afi_safi (key フィールド、挙動分岐)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advertise-all-vni-booleanl2vpn_evpn-af" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        advertise-all-vni (boolean、l2vpn_evpn AF 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29869,6 +29919,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#autort-bgp_globals_af" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        autort (BGP_GLOBALS_AF)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afi_safi-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        afi_safi (key フィールド、挙動分岐)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advertise-all-vni-booleanl2vpn_evpn-af" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        advertise-all-vni (boolean、l2vpn_evpn AF 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30143,8 +30243,84 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="autort-bgp_globals_af"><code>autort</code> (BGP_GLOBALS_AF)<a class="headerlink" href="#autort-bgp_globals_af" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rfc8365-compatible</code></td>
+<td><code>autort rfc8365-compatible</code></td>
+<td><code>frrcfgd</code> <code>hdl_enum_conversion</code> が <code>_</code> → <code>-</code> 変換して発行</td>
+</tr>
+<tr>
+<td><em>(未設定)</em></td>
+<td>コマンドなし</td>
+<td>EVPN route-target は手動設定が必要</td>
+</tr>
+</tbody>
+</table>
+<h3 id="afi_safi-key"><code>afi_safi</code> (key フィールド、挙動分岐)<a class="headerlink" href="#afi_safi-key" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR address-family</th>
+<th><code>route_flap_dampen*</code></th>
+<th><code>autort</code> / <code>advertise-all-vni</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ipv4_unicast</code></td>
+<td><code>address-family ipv4 unicast</code></td>
+<td>有効</td>
+<td>無効 (YANG must で拒否)</td>
+</tr>
+<tr>
+<td><code>ipv6_unicast</code></td>
+<td><code>address-family ipv6 unicast</code></td>
+<td>無効 (YANG must で拒否)</td>
+<td>無効</td>
+</tr>
+<tr>
+<td><code>l2vpn_evpn</code></td>
+<td><code>address-family l2vpn evpn</code></td>
+<td>無効</td>
+<td>有効</td>
+</tr>
+</tbody>
+</table>
+<h3 id="advertise-all-vni-booleanl2vpn_evpn-af"><code>advertise-all-vni</code> (boolean、l2vpn_evpn AF 限定)<a class="headerlink" href="#advertise-all-vni-booleanl2vpn_evpn-af" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td><code>advertise-all-vni</code></td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td><code>no advertise-all-vni</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

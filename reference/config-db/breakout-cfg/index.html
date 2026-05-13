@@ -23462,6 +23462,34 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#brkout_mode-stringplatformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        brkout_mode (string、platform.json 依存)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29841,34 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#brkout_mode-stringplatformjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        brkout_mode (string、platform.json 依存)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29946,8 +30002,59 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<p>このテーブルには YANG で定義された enum フィールドはない。</p>
+<h3 id="brkout_mode-stringplatformjson"><code>brkout_mode</code> (string、platform.json 依存)<a class="headerlink" href="#brkout_mode-stringplatformjson" title="Permanent link">&para;</a></h3>
+<p><code>brkout_mode</code> の有効値はプラットフォームごとに <code>platform.json</code> で定義される。代表的なパターンと挙動:</p>
+<table>
+<thead>
+<tr>
+<th>値の例</th>
+<th>子ポート数</th>
+<th>PORT テーブル生成例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1x100G[40G]</code></td>
+<td>1</td>
+<td>親ポートのまま (分割なし)</td>
+</tr>
+<tr>
+<td><code>2x50G</code></td>
+<td>2</td>
+<td><code>Ethernet0</code>, <code>Ethernet2</code></td>
+</tr>
+<tr>
+<td><code>4x25G</code></td>
+<td>4</td>
+<td><code>Ethernet0</code>, <code>Ethernet1</code>, <code>Ethernet2</code>, <code>Ethernet3</code></td>
+</tr>
+<tr>
+<td><code>1x400G</code></td>
+<td>1</td>
+<td>親ポートのまま</td>
+</tr>
+<tr>
+<td><code>2x200G</code></td>
+<td>2</td>
+<td>速度変更 + 2 分割</td>
+</tr>
+<tr>
+<td><code>4x100G</code></td>
+<td>4</td>
+<td>4 分割</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>brkout_mode</code> の妥当性は <code>platform.json</code> の <code>interfaces.&lt;port&gt;.breakout_modes</code> で検証される。プラットフォーム依存のため全値を網羅的に示すことはできない。</p>
+</blockquote>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

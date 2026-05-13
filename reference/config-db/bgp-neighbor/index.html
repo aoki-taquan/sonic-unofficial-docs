@@ -21961,6 +21961,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer_type-bgp_peer_type-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer_type (bgp_peer_type、最重要 enum)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29835,6 +29874,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer_type-bgp_peer_type-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer_type (bgp_peer_type、最重要 enum)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30071,8 +30149,79 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="peer_type-bgp_peer_type-enum"><code>peer_type</code> (<code>bgp_peer_type</code>、最重要 enum)<a class="headerlink" href="#peer_type-bgp_peer_type-enum" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>bgpcfgd テンプレディレクトリ</th>
+<th>主な差異</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal</code></td>
+<td><code>bgpd/templates/internal/</code></td>
+<td>timers 3/10、<code>send-community</code> 自動付与、BackEnd/chassis-packet で <code>next-hop-self force</code></td>
+</tr>
+<tr>
+<td><code>external</code> / 未指定 (<code>general</code>)</td>
+<td><code>bgpd/templates/general/</code></td>
+<td>timers 60/180、ToRRouter で <code>allowas-in 1</code>、SpineRouter UpstreamLC で <code>table-map</code></td>
+</tr>
+<tr>
+<td><code>dynamic</code></td>
+<td><code>bgpd/templates/dynamic/</code></td>
+<td><code>bgp listen range</code> 生成、<code>ip_range</code> フィールドを展開</td>
+</tr>
+<tr>
+<td><code>monitors</code></td>
+<td><code>bgpd/templates/monitors/</code></td>
+<td>BGP_MONITORS テーブル専用</td>
+</tr>
+<tr>
+<td><code>voq_chassis</code></td>
+<td><code>bgpd/templates/voq_chassis/</code></td>
+<td>VoQ chassis 間 iBGP</td>
+</tr>
+<tr>
+<td><code>sentinels</code></td>
+<td><code>bgpd/templates/sentinels/</code></td>
+<td>sentinel ピア</td>
+</tr>
+</tbody>
+</table>
+<h3 id="admin_status"><code>admin_status</code><a class="headerlink" href="#admin_status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>bgpcfgd 動作</th>
+<th>FRR コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up</code></td>
+<td><code>apply_admin_status("no shutdown")</code></td>
+<td><code>no neighbor &lt;addr&gt; shutdown</code></td>
+</tr>
+<tr>
+<td><code>down</code></td>
+<td><code>apply_admin_status("shutdown")</code></td>
+<td><code>neighbor &lt;addr&gt; shutdown</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: ライブ更新可能なのは <code>admin_status</code> のみ。他フィールドの変更は <code>managers_bgp.py:309</code> の制約でエラーログを出して drop。</p>
+</blockquote>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

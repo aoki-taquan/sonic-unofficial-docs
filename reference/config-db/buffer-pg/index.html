@@ -22359,6 +22359,45 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#profile-leafref-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        profile (leafref または NULL)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pg_num-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pg_num (key、範囲対応)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29830,45 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#profile-leafref-null" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        profile (leafref または NULL)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pg_num-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pg_num (key、範囲対応)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29927,8 +30005,51 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_11">値依存挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>このテーブルには enum フィールドはない。</p>
+<h3 id="profile-leafref-null"><code>profile</code> (leafref または <code>NULL</code>)<a class="headerlink" href="#profile-leafref-null" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[BUFFER_PROFILE\|&lt;name&gt;]</code></td>
+<td><code>buffermgrd</code> が対応プロファイルの xon/xoff/dynamic_th で PG を設定し APPL_DB に書く</td>
+</tr>
+<tr>
+<td><code>NULL</code></td>
+<td>PG の削除扱い。APPL_DB から該当エントリを削除し SAI が PG バッファを解放</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pg_num-key"><code>pg_num</code> (key、範囲対応)<a class="headerlink" href="#pg_num-key" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>形式</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code>〜<code>7</code> (単一値)</td>
+<td>その PG 番号のみに適用</td>
+</tr>
+<tr>
+<td><code>0-3</code> (範囲)</td>
+<td><code>buffermgrd</code> が範囲をパースして各 PG (0, 1, 2, 3) に個別に適用</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

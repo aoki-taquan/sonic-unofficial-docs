@@ -23378,6 +23378,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_status-sonic-bgp-cmn-neigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status (sonic-bgp-cmn-neigh 由来)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name (固定値制約)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29852,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_status-sonic-bgp-cmn-neigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status (sonic-bgp-cmn-neigh 由来)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name (固定値制約)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29963,8 +30041,56 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="admin_status-sonic-bgp-cmn-neigh"><code>admin_status</code> (sonic-bgp-cmn-neigh 由来)<a class="headerlink" href="#admin_status-sonic-bgp-cmn-neigh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up</code></td>
+<td><code>no neighbor &lt;addr&gt; shutdown</code></td>
+<td><code>managers_bgp.py:334</code></td>
+</tr>
+<tr>
+<td><code>down</code></td>
+<td><code>neighbor &lt;addr&gt; shutdown</code></td>
+<td><code>managers_bgp.py:336</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="name"><code>name</code> (固定値制約)<a class="headerlink" href="#name" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGPMonitor</code></td>
+<td>YANG <code>must</code> 制約で強制。monitors テンプレ (<code>bgpd/templates/monitors/</code>) を使用</td>
+</tr>
+<tr>
+<td>それ以外</td>
+<td>YANG 検証段階で拒否</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: <code>admin_status</code> のみがライブ更新可能。他フィールドの変更は <code>bgpcfgd</code> に到達しても drop される (例外条件参照)。</p>
+</blockquote>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

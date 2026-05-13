@@ -21967,6 +21967,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send_community-bgp_community_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send_community (bgp_community_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx_add_paths-bgp_tx_add_paths_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tx_add_paths (bgp_tx_add_paths_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cap_orf-sonic_bgp_orf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cap_orf (sonic_bgp_orf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afi_safi-keyaf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        afi_safi (key、AF ブロック選択)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29852,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send_community-bgp_community_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send_community (bgp_community_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tx_add_paths-bgp_tx_add_paths_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tx_add_paths (bgp_tx_add_paths_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cap_orf-sonic_bgp_orf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cap_orf (sonic_bgp_orf)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#afi_safi-keyaf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        afi_safi (key、AF ブロック選択)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29907,8 +30029,123 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_11">値依存挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="send_community-bgp_community_type"><code>send_community</code> (<code>bgp_community_type</code>)<a class="headerlink" href="#send_community-bgp_community_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>standard</code></td>
+<td><code>neighbor &lt;X&gt; send-community standard</code></td>
+<td><code>hdl_send_com</code>: まず all 削除、次に指定値を追加</td>
+</tr>
+<tr>
+<td><code>extended</code></td>
+<td><code>neighbor &lt;X&gt; send-community extended</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>both</code></td>
+<td><code>neighbor &lt;X&gt; send-community both</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>large</code></td>
+<td><code>neighbor &lt;X&gt; send-community large</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>all</code></td>
+<td><code>neighbor &lt;X&gt; send-community all</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>コマンド追加なし (send-community 無効)</td>
+<td><code>frrcfgd.py:955</code> — <code>none</code> 判定で追加をスキップ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tx_add_paths-bgp_tx_add_paths_type"><code>tx_add_paths</code> (<code>bgp_tx_add_paths_type</code>)<a class="headerlink" href="#tx_add_paths-bgp_tx_add_paths_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tx_all_paths</code></td>
+<td><code>neighbor &lt;X&gt; addpath-tx-all-paths</code></td>
+</tr>
+<tr>
+<td><code>tx_best_path_per_as</code></td>
+<td><code>neighbor &lt;X&gt; addpath-tx-bestpath-per-AS</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="cap_orf-sonic_bgp_orf"><code>cap_orf</code> (<code>sonic_bgp_orf</code>)<a class="headerlink" href="#cap_orf-sonic_bgp_orf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>send</code></td>
+<td><code>neighbor &lt;X&gt; capability orf prefix-list send</code></td>
+<td>削除時は <code>both</code> を no で除去</td>
+</tr>
+<tr>
+<td><code>receive</code></td>
+<td><code>neighbor &lt;X&gt; capability orf prefix-list receive</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>both</code></td>
+<td><code>neighbor &lt;X&gt; capability orf prefix-list both</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<h3 id="afi_safi-keyaf"><code>afi_safi</code> (key、AF ブロック選択)<a class="headerlink" href="#afi_safi-keyaf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR <code>address-family</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ipv4_unicast</code></td>
+<td><code>address-family ipv4 unicast</code></td>
+</tr>
+<tr>
+<td><code>ipv6_unicast</code></td>
+<td><code>address-family ipv6 unicast</code></td>
+</tr>
+<tr>
+<td><code>l2vpn_evpn</code></td>
+<td><code>address-family l2vpn evpn</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>

@@ -21922,6 +21922,45 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name (key、挙動分岐)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boolean-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的 boolean フィールドの FRR マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29852,45 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name (key、挙動分岐)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#boolean-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的 boolean フィールドの FRR マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30185,8 +30263,75 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>このテーブルは boolean / uint / string フィールドのみで enum フィールドはない。</p>
+<h3 id="vrf_name-key"><code>vrf_name</code> (key、挙動分岐)<a class="headerlink" href="#vrf_name-key" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR コマンド形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default</code></td>
+<td><code>router bgp &lt;local_asn&gt;</code></td>
+</tr>
+<tr>
+<td>任意の VRF 名</td>
+<td><code>router bgp &lt;local_asn&gt; vrf &lt;vrf_name&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="boolean-frr">代表的 boolean フィールドの FRR マッピング<a class="headerlink" href="#boolean-frr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th><code>true</code> 時の FRR コマンド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>graceful_restart_enable</code></td>
+<td><code>bgp graceful-restart</code></td>
+</tr>
+<tr>
+<td><code>log_nbr_state_changes</code></td>
+<td><code>bgp log-neighbor-changes</code></td>
+</tr>
+<tr>
+<td><code>fast_external_failover</code></td>
+<td><code>bgp fast-external-failover</code></td>
+</tr>
+<tr>
+<td><code>graceful_shutdown</code></td>
+<td><code>bgp graceful-shutdown</code></td>
+</tr>
+<tr>
+<td><code>load_balance_mp_relax</code></td>
+<td><code>bgp bestpath as-path multipath-relax</code></td>
+</tr>
+<tr>
+<td><code>always_compare_med</code></td>
+<td><code>bgp always-compare-med</code></td>
+</tr>
+<tr>
+<td><code>deterministic_med</code></td>
+<td><code>bgp deterministic-med</code></td>
+</tr>
+<tr>
+<td><code>network_import_check</code></td>
+<td><code>bgp network import-check</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
