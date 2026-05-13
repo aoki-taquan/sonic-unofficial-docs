@@ -92,15 +92,34 @@ SWITCH_HASH|GLOBAL
 ## 関連ページ
 - [CONFIG_DB index](index.md)
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `ecmp_hash` / `lag_hash` — hash-field 全列挙
+
+`IN_PORT` / `DST_MAC` / `SRC_MAC` / `ETHERTYPE` / `VLAN_ID` / `IP_PROTOCOL` / `DST_IP` / `SRC_IP` / `L4_DST_PORT` / `L4_SRC_PORT` / `INNER_DST_MAC` / `INNER_SRC_MAC` / `INNER_ETHERTYPE` / `INNER_IP_PROTOCOL` / `INNER_DST_IP` / `INNER_SRC_IP` / `INNER_L4_DST_PORT` / `INNER_L4_SRC_PORT` / `IPV6_FLOW_LABEL`
+
+### `ecmp_hash_algorithm` / `lag_hash_algorithm` — hash-algorithm 全列挙
+
+`CRC` / `XOR` / `RANDOM` / `CRC_32LO` / `CRC_32HI` / `CRC_CCITT` / `CRC_XOR`
+
+| フィールド | 値 | [SAI](../../reference/glossary.md#term-sai) 挙動 |
+|-----------|----|---------:|
+| `ecmp_hash` / `lag_hash` | ASIC 非サポートフィールドを含む | SET 拒否 (`capability is not supported`) |
+| `ecmp_hash_algorithm` | ASIC 非サポートアルゴリズム | SET 拒否 (同上) |
+| 任意フィールド | DEL | 拒否 (`operation is not supported`) |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L797-989 -->
 
-- **ASIC capability 未サポート**: `SwitchOrch` が SAI から取得した capability に設定値が含まれない場合、`"Failed to validate switch ECMP/LAG hash: capability is not supported"` を LOG_ERROR して SET を拒否する（`return false`）。適用されず CONFIG_DB の値は保留状態のまま。
+- **ASIC capability 未サポート**: `SwitchOrch` が SAI から取得した capability に設定値が含まれない場合、`"Failed to validate switch ECMP/LAG hash: capability is not supported"` を LOG_ERROR して SET を拒否する（`return false`）。適用されず [CONFIG_DB](../../reference/glossary.md#term-config_db) の値は保留状態のまま。
 - **SAI set 失敗**: SAI API 呼び出しが `SAI_STATUS_SUCCESS` 以外を返すと `"Failed to set switch ECMP/LAG hash in SAI"` を LOG_ERROR して処理を中断する。
 - **DEL 操作不可**: `ecmp_hash` / `lag_hash` / `ecmp_hash_algorithm` / `lag_hash_algorithm` はいずれも DEL 操作をサポートしない。削除を試みると `"Failed to remove switch ECMP/LAG hash configuration: operation is not supported"` を LOG_ERROR して `return false`。
-- **ASIC/CONFIG_DB 乖離**: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に `"Failed to set switch hash: ASIC and CONFIG DB are diverged"`、DEL 時に `"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"` を LOG_ERROR。
+- **ASIC/[CONFIG_DB](../../reference/glossary.md#term-config_db) 乖離**: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に `"Failed to set switch hash: ASIC and CONFIG DB are diverged"`、DEL 時に `"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"` を LOG_ERROR。
 - **空キー**: key が空文字列だと `"Failed to parse switch hash key: empty string"` を LOG_ERROR してエントリをスキップする。
 
 <!-- /cdb-exceptions -->
@@ -125,4 +144,4 @@ show switch-hash global
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 37a4890848e2 -->
+<!-- glossary-links-injected: a26ef253c175 -->

@@ -100,6 +100,35 @@ TUNNEL|<mux_tunnel>
 
 [^1]: YANG 定義: `sonic-tunnel.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-tunnel.yang>; [orchagent](../../reference/glossary.md#term-orchagent) 側パース: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `tunnel_type`: `IPINIP` のみ (YANG pattern 制約)
+
+### `dscp_mode`: `uniform` / `pipe`
+
+### `ecn_mode`: `copy_from_outer` / `standard`
+
+### `encap_ecn_mode`: `standard` のみ (YANG pattern 制約)
+
+### `ttl_mode`: `uniform` / `pipe`
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `tunnel_type` | `IPINIP` | [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が APPL_DB へ通知。[SAI](../../reference/glossary.md#term-sai) tunnel オブジェクト作成 |
+| `tunnel_type` | `IPINIP` 以外 | キャッシュには追加されるが APPL_DB に通知されない |
+| `dscp_mode` | `uniform` | 外側ヘッダの DSCP を内側パケットにコピー |
+| `dscp_mode` | `pipe` | 内側ヘッダの DSCP を保持 |
+| `ecn_mode` | `copy_from_outer` | 外側 ECN フィールドを内側にコピー |
+| `ecn_mode` | `standard` | RFC 6040 準拠 ECN 処理 |
+| `ttl_mode` | `uniform` | 外側 TTL を内側にコピー |
+| `ttl_mode` | `pipe` | 内側 TTL を保持 |
+| `src_ip` | 未設定 (空) | P2MP (ワイルドカード) decap term 作成 — 全 [IPinIP](../../reference/glossary.md#term-ipinip) を受け入れる |
+| `src_ip` | `PEER_SWITCH` に未登録の IP | YANG leafref 違反で CONFIG_DB 書き込み拒否 |
+| `ecn_mode` | 設定後に変更 | SAI create-only 属性のため変更不可。削除→再作成が必要 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -135,4 +164,4 @@ show tunnel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b4c5898e0257 -->
+<!-- glossary-links-injected: ae9e20070353 -->

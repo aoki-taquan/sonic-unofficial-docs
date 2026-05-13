@@ -102,6 +102,30 @@ SYSLOG_SERVER|<server_address>
 
 <!-- /topics-back-ref -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `vrf`: `default` / `mgmt` / VRF 名 (leafref)
+
+### `filter` (syslog-filter-type): `include` / `exclude`
+
+### `protocol` (rsyslog-protocol): `tcp` / `udp`
+
+### `severity` (rsyslog-severity): `none` / `debug` / `info` / `notice` / `warn` / `error` / `crit`
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `vrf` | `mgmt` | 管理 [VRF](../../reference/glossary.md#term-vrf) 経由。`MGMT_VRF_CONFIG.mgmtVrfEnabled != true` なら YANG must 違反で拒否 |
+| `vrf` | `default` | デフォルト [VRF](../../reference/glossary.md#term-vrf) 経由で転送 |
+| `filter` | `include` | `filter_regex` にマッチするメッセージのみ転送 |
+| `filter` | `exclude` | `filter_regex` にマッチするメッセージを除外して転送 |
+| `source` | `server_address` と異なる IP family | YANG must 制約違反で書き込み拒否 |
+| `protocol` | `tcp` | rsyslog が TCP で転送。接続失敗時はキュー蓄積 |
+| `protocol` | `udp` | rsyslog が UDP で転送。パケットロスあり |
+| `severity` | `none` | フィルタなし（全 severity を転送） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -136,4 +160,4 @@ show syslog
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 639b97382f4c -->

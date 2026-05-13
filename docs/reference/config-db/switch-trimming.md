@@ -80,6 +80,22 @@ SWITCH_TRIMMING|GLOBAL
 ## 関連ページ
 - [CONFIG_DB index](index.md)
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+`dscp_value` と `queue_index` は enum ではなく union 型（数値 + 固定文字列）。
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `dscp_value` | `from-tc` | `tc_value` を使い DSCP マッピング逆引きで DSCP を導出。`tc_value` 必須 |
+| `dscp_value` | `0`..`63` (数値) | 指定値をトリミング後パケットの DSCP に直接設定 |
+| `queue_index` | `dynamic` | `dscp_value` からキューを導出 |
+| `queue_index` | `0`..`255` (数値) | 指定インデックスのキューへ送出 |
+| `dscp_value=from-tc` + `queue_index=dynamic` | 組み合わせ | 導出元が循環し得るため非推奨（[YANG](../../reference/glossary.md#term-yang) は禁止しない） |
+| 任意フィールド | DEL | 拒否 (`operation is not supported`) |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -87,8 +103,8 @@ SWITCH_TRIMMING|GLOBAL
 
 - **フィールド削除不可**: `size`・`dscp.mode` はいずれも DEL 操作をサポートしない。削除を試みると `"Failed to remove switch trimming size/DSCP configuration: operation is not supported"` を LOG_ERROR して `return false`。
 - **ASIC capability 未サポート**: DSCP mode / queue_index の capability チェック失敗時、`"Failed to validate switch trimming DSCP mode/queue index: capability is not supported"` を LOG_ERROR して SET を拒否する。
-- **SAI set 失敗**: SAI API 呼び出し失敗時は対応するエラーを LOG_ERROR して `return false`。
-- **ASIC/CONFIG_DB 乖離**: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っていると SET/DEL どちらの操作も `"Failed to set/remove switch trimming: ASIC and CONFIG DB are diverged"` を LOG_ERROR して拒否。
+- **[SAI](../../reference/glossary.md#term-sai) set 失敗**: SAI API 呼び出し失敗時は対応するエラーを LOG_ERROR して `return false`。
+- **ASIC/[CONFIG_DB](../../reference/glossary.md#term-config_db) 乖離**: 初期化時に ASIC 側と [CONFIG_DB](../../reference/glossary.md#term-config_db) 側の値が食い違っていると SET/DEL どちらの操作も `"Failed to set/remove switch trimming: ASIC and CONFIG DB are diverged"` を LOG_ERROR して拒否。
 - **空キー**: key が空文字列だと `"Failed to parse switch trimming key: empty string"` を LOG_ERROR してエントリをスキップする。
 
 <!-- /cdb-exceptions -->
@@ -115,4 +131,4 @@ show switch-trimming
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b4c5898e0257 -->
+<!-- glossary-links-injected: ff319d2bdac9 -->

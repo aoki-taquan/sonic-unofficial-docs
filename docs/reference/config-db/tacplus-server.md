@@ -106,6 +106,31 @@ TACPLUS|global
 
 <!-- /topics-back-ref -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `auth_type` (auth_type_enumeration): `pap` (default) / `chap` / `mschap` / `login`
+
+### `vrf` (TACPLUS_SERVER): `mgmt` / `default`
+
+### `key_encrypt` (boolean): `false` (default) / `true`
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `auth_type` | `pap` | PAM pam_tacplus でパスワードを平文送信。最も広くサポートされる |
+| `auth_type` | `chap` | CHAP でネゴシエーション。TACACS+ サーバ側も CHAP 対応が必要 |
+| `auth_type` | `mschap` | MS-CHAP でネゴシエーション |
+| `auth_type` | `login` | ASCII ログインシーケンスで認証 |
+| `vrf` | `mgmt` | pam_tacplus が管理 [VRF](../../reference/glossary.md#term-vrf) デバイスに bind して接続 |
+| `vrf` | `default` | データプレーン [VRF](../../reference/glossary.md#term-vrf) を使用 |
+| `key_encrypt` | `true` | passkey は暗号化保存。[hostcfgd](../../reference/glossary.md#term-hostcfgd) が復号してテンプレートに展開 |
+| `key_encrypt` | `false` | passkey を平文保存（CONFIG_DB に平文で格納） |
+| `passkey` (per-server) | 設定あり | per-server の値が `TACPLUS|global.passkey` より優先 |
+| `passkey` (per-server) | 未設定 | `TACPLUS|global.passkey` にフォールバック |
+| `priority` | 大きい値 | [hostcfgd](../../reference/glossary.md#term-hostcfgd) がソートして PAM 設定に先に記載（高優先度） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -139,4 +164,4 @@ show tacacs
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: e0332a023fdb -->

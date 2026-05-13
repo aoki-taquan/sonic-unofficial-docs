@@ -94,6 +94,33 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 
 <!-- /topics-back-ref -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `user_auth` (string pattern): `password` / `jwt` / `cert` / `none`
+
+### `client_auth` (boolean): `true` / `false`
+
+### `save_on_set` (boolean): `true` / `false`
+
+### `enable_crl` (boolean): `true` / `false`
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `user_auth` | `password` | ユーザ名/パスワード認証 |
+| `user_auth` | `jwt` | JWT トークン認証 |
+| `user_auth` | `cert` | クライアント証明書認証 |
+| `user_auth` | `none` | 認証なし |
+| `client_auth` | `true` | `ca_crt` 未設定/ファイル不在だとサーバ起動失敗 |
+| `client_auth` | `false` | サーバ証明書のみで TLS 接続 |
+| `save_on_set` | `true` | gNMI Set RPC 完了時に `config save` を実行 |
+| `save_on_set` | `false` | Set は [CONFIG_DB](../../reference/glossary.md#term-config_db) のみに反映。永続化しない |
+| `enable_crl` | `true` | CRL チェック有効化。`crl_expire_duration` も設定が必要 |
+| `port` | 未設定 / `0` | `unix_socket` も未設定の場合サーバ起動失敗 |
+| 全フィールド | 起動後変更 | コンテナ再起動 (`systemctl restart telemetry`) まで反映されない |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -127,4 +154,4 @@ systemctl status telemetry
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 41d5238b3a97 -->
+<!-- glossary-links-injected: 896d391185a9 -->

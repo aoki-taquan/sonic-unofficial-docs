@@ -105,6 +105,28 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 [^1]: tunneldecaporch 実装: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L49-L50>
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+`tunnel_type` / `dscp_mode` / `ecn_mode` / `ttl_mode` は [YANG](../../reference/glossary.md#term-yang) 未定義 ([APPL_DB](../../reference/glossary.md#term-appl_db) テーブル) のため string 型。制約は `tunneldecaporch.cpp` のコード判定。
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `tunnel_type` | `IPINIP` | SAI tunnel + tunnel-term オブジェクトを作成 |
+| `tunnel_type` | `IPINIP` 以外 | LOG_ERROR してエントリをスキップ |
+| `dscp_mode` | `uniform` | 外側 DSCP を内側にコピー |
+| `dscp_mode` | `pipe` | 内側 DSCP を保持 |
+| `dscp_mode` | 上記以外 | LOG_ERROR してエントリをスキップ |
+| `ecn_mode` | `copy_from_outer` | 外側 ECN を内側にコピー |
+| `ecn_mode` | `standard` | RFC 6040 ECN 処理 |
+| `encap_ecn_mode` | `standard` 以外 | LOG_ERROR して拒否 |
+| `ecn_mode` | 作成後に変更 | SAI create-only 属性のため変更スキップ (WARN ログ) |
+| `ttl_mode` | `uniform` | 外側 TTL を内側にコピー |
+| `ttl_mode` | `pipe` | 内側 TTL を保持 |
+| `src_ip` | 作成後に変更 | LOG_ERROR して拒否。削除→再作成が必要 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -116,7 +138,7 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 - **存在しないトンネルの DEL**: 未作成のトンネルへの DEL は `"Tunnel <key> cannot be removed since it doesn't exist."` を LOG_ERROR する。
 - **subnet decap 制約**: subnet decap の decap term は `MP2MP` タイプのトンネルにのみ許可される。`src_ip` / `src_ip_v6` なしで subnet decap term を追加しようとするとそれぞれ `"no source IP is provided."` を LOG_ERROR。
 - **subnet decap 無効時の decap term**: `subnet_decap` が無効な状態で decap term を追加しようとすると `"subnet decap is disabled, ignored."` を LOG_ERROR してスキップ。
-- **ASIC_DB 操作失敗**: トンネルや decap term の ASIC_DB 追加/削除が失敗するとそれぞれエラーを LOG_ERROR する。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db) 操作失敗**: トンネルや decap term の [ASIC_DB](../../reference/glossary.md#term-asic_db) 追加/削除が失敗するとそれぞれエラーを LOG_ERROR する。
 
 <!-- /cdb-exceptions -->
 
@@ -139,4 +161,4 @@ sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b4c5898e0257 -->
+<!-- glossary-links-injected: 415c3a53ecc2 -->
