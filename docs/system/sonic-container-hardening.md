@@ -117,12 +117,6 @@ grep -iE 'AppArmor|seccomp' /var/log/syslog | tail
 -->
 
 <!-- topics-back-ref -->
-
-<!-- diff-admonition -->
-!!! diff "HLD と実装の差分"
-    本ページは discrepancy-found 区分（裏取りで HLD と実装の乖離が確認済）。具体的な差分点は本文中の運用注意・トラブルシューティング節および引用元 commit/PR を参照。今後の Verifier round で個別箇条書きへ整理予定。
-<!-- /diff-admonition -->
-
 ## 関連 Topics
 
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
