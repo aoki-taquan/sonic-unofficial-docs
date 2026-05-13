@@ -93,7 +93,11 @@ plugins:
   # 画像生成に cairosvg / Pillow を要するため requirements.txt は
   # `mkdocs-material[imaging]` を指定。MKDOCS_SOCIAL_CARDS=false で
   # cards 生成を抑止可（ローカルで imaging deps が無い場合等）。
+  # MKDOCS_SOCIAL_ENABLED=false で plugin 自体を無効化できる
+  # (環境依存の警告が `--strict` 時に build を abort させるケース回避用)。
+  # CI では default の true で動作する。
   - social:
+      enabled: !ENV [MKDOCS_SOCIAL_ENABLED, true]
       cards: !ENV [MKDOCS_SOCIAL_CARDS, true]
   # RSS/Atom feed: 最近更新されたページを購読可能にする。
   # date_from_meta は frontmatter の last_verified を created/updated として使う。
