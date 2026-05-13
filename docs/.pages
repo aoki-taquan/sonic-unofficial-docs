@@ -1,5 +1,6 @@
 nav:
   - index.md
+  - getting-started.md
   - about.md
   - guides
   - topics
