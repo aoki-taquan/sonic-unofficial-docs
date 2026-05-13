@@ -112,4 +112,39 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `enabled`
+
+| 値 | 挙動 |
+|----|------|
+| `true`（デフォルト） | このポートで LLDP フレームの送受信を有効化 |
+| `false` | LLDP 送受信を停止。`DEVICE_NEIGHBOR` 自動学習が発生せず minigraph との乖離リスク |
+
+### `mode`
+
+| 値 | 挙動 |
+|----|------|
+| `RECEIVE` | RX のみ。送信しないため自ノードが対向スイッチのトポロジーに映らない |
+| `TRANSMIT` | TX のみ。受信しないため対向の LLDP 情報を学習しない |
+| 未設定 | `lldpd` デフォルト（双方向）。`BOTH` 等の値は存在しない |
+| 不正値 | `lldpcli` がエラー。CONFIG_DB には書けるが `lldpd` に反映されない |
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-buildimage/dockers/docker-lldp/lldpmgrd -->
+
+| 条件 | 挙動 |
+|------|------|
+| `admin_status` に不正値 | `lldpcli configure ports ... lldp status <value>` が失敗。CONFIG_DB にはバリデーションなしで書けるが lldpd には反映されない |
+| `admin_status=disabled` | LLDP フレームの送受信停止。`DEVICE_NEIGHBOR` テーブルへの自動学習が発生せず minigraph との乖離が生じる |
+| 実在しないポート名でエントリ投入 | lldpd に対応ポートが存在しないため設定無視。エントリは CONFIG_DB に残存 |
+| `description` の反映タイミング | lldpmgrd のポーリング周期（数秒）に依存する非同期反映 |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->

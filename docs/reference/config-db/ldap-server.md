@@ -120,4 +120,63 @@ sudo cat /etc/nslcd.conf
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに strict な enum フィールドはない。数値・文字列フィールドの値で動作が決まる。
+
+### `priority`（LDAP_SERVER）
+
+| 値 | 挙動 |
+|----|------|
+| 1〜8 | サーバ選択優先度。大きいほど先に試行 |
+| 重複値 | CLI 上でチェックなし → nslcd 内部挿入順依存でフェイルオーバ順序が不定 |
+| 9 件目以降のサーバ登録 | YANG スキーマ最大数制約で `exit_with_error` 拒否 |
+
+### `port`（LDAP|global）
+
+| 値 | 挙動 |
+|----|------|
+| `389` | 平文 LDAP |
+| `636` | LDAPS（TLS）。`nslcd.conf` の `ssl on` と組み合わせて使用 |
+
+### `version`（LDAP|global）
+
+| 値 | 挙動 |
+|----|------|
+| `3`（デフォルト） | LDAPv3 を使用（推奨） |
+| `1`、`2` | 古い LDAP プロトコルバージョン |
+
+### `bind_password`（文字列制約）
+
+| 値 | 挙動 |
+|----|------|
+| SPACE / `#` / `,` を含む | YANG pattern 検証で `exit_with_error` → DB に書かれない |
+| 正常値 | `/etc/nslcd.conf` の `bindpw` ディレクティブに反映 |
+
+### `base_dn`
+
+| 値 | 挙動 |
+|----|------|
+| 設定あり | `nslcd.conf` に `base` ディレクティブを書き込み |
+| 未設定 | `base` ディレクティブなし → `nslcd` がユーザ検索失敗 → 認証不可 |
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-utilities/config/plugins/sonic-system-ldap_yang.py -->
+
+| 条件 | 挙動 |
+|------|------|
+| YANG スキーマ違反（`bind_password` に特殊文字等） | `exit_with_error(f"Error: {err}")` → 処理中断。DB には書かれない |
+| `priority` 重複 | CLI 上でチェックなし。重複した場合は nslcd の内部挿入順依存でフェイルオーバ順序が不定になる |
+| `base_dn` 未設定 | `nslcd.conf` に `base` ディレクティブが書かれずユーザ検索失敗 → 認証不可。DB には書ける |
+| 9 件目以降の `LDAP_SERVER` 追加 | YANG スキーマの最大数制約により `exit_with_error` で拒否 |
+| `hostname` に不正 IP / FQDN 形式 | YANG `pattern` 検証 → `exit_with_error` で拒否 |
+| `bind_timeout` 未設定 | YANG default `5` 秒が適用。nslcd.conf に `bind_timelimit 5` として反映 |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 32758c44ab11 -->

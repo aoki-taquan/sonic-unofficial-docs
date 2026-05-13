@@ -116,4 +116,54 @@ show ip interfaces | grep Loopback
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `admin_status`
+
+| 値 | 挙動 |
+|----|------|
+| `up`（デフォルト） | Linux dummy デバイスを UP 状態にする |
+| `down` | Linux dummy デバイスを DOWN 状態にする |
+| 設定コマンド失敗時 | `SWSS_LOG_WARN("Lo interface ip link set admin status %s failure. Runtime error: %s")` → warn のみで継続 |
+
+### `scope`（IP プレフィクスロウ）
+
+| 値 | 挙動 |
+|----|------|
+| `global` | グローバルスコープアドレス |
+| `local` | ローカルスコープアドレス |
+
+### `vrf_name`
+
+| 値 | 挙動 |
+|----|------|
+| 設定あり | 指定 VRF にバインド |
+| 未設定 | デフォルト VRF に属する |
+
+### L3 enable 行の有無（特殊条件）
+
+| 状態 | 挙動 |
+|------|------|
+| L3 enable 行なしで IP 行のみ投入 | dummy デバイス未作成のため `ip addr add` が失敗 |
+| L3 enable 行あり | `ip link add <name> mtu 65536 type dummy` で作成後 IP を付与 |
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+| 条件 | 挙動 |
+|------|------|
+| L3 enable 行なしで IP 行のみ投入 | dummy デバイス未作成のため `ip addr add` が失敗。L3 enable 行（フィールドなし）が先に必要 |
+| MTU 未設定 | `ip link add <name> mtu 65536 type dummy` で作成（intfmgr.cpp L28 `LOOPBACK_DEFAULT_MTU_STR "65536"`） |
+| `ip link set admin_status` 失敗 | `SWSS_LOG_WARN("Lo interface ip link set admin status %s failure. Runtime error: %s")` → warn のみで継続 |
+| `ip link del` 失敗 | `SWSS_LOG_ERROR` → dummy デバイスが OS に残存するが CONFIG_DB からはエントリが消える（不整合状態） |
+| 同名 Loopback への重複 SET | `m_loopbackIntfList` の `find` で既存確認後スキップ |
+| 削除済み Loopback への IP 追加 | L3 enable 行を再設定しないと反映されない |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: b5270404647a -->

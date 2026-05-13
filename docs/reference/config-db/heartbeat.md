@@ -94,4 +94,38 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに strict な enum フィールドはない。`interval` の特殊値で動作が分岐する。
+
+### `interval` (eventd 側の内部スキーマ、events_wrap.h / eventd.cpp 準拠)
+
+| 値 | 挙動 |
+|----|------|
+| `-1` | heartbeat を無効化（"A value of -1 implies no heartbeat"） |
+| `< -1`（-2 以下） | invalid 扱い。syslog 記録後処理中断 |
+| `0` | システムデフォルト 2 秒として動作（`HEARTBEAT_INTERVAL_SECS = 2`） |
+| 正値 | 内部 300ms 単位（`STATS_HEARTBEAT_MIN`）に切り上げ量子化。指定値と実周期がずれる場合がある |
+
+> **注意**: YANG では `heartbeat_interval` / `alert_interval` は uint32 [ms] 単位。
+> eventd.cpp 側の `interval` とはスキーマが別（秒単位）なので混同に注意。
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp, sonic-swss-common/common/events_wrap.h -->
+
+| 条件 | 挙動 |
+|------|------|
+| `interval = -1` | heartbeat を無効化（events_wrap.h L131「A value of -1 implies no heartbeat」） |
+| `interval < -1`（-2 以下） | invalid 扱い。syslog に詳細記録後処理中断（events_wrap.h L136） |
+| `interval = 0` | システムデフォルト 2 秒として動作（eventd.cpp L43 `HEARTBEAT_INTERVAL_SECS = 2`） |
+| 任意の正値 | 内部は 300ms 単位に切り上げ量子化。指定値と実周期がずれる場合がある（eventd.cpp L145） |
+| heartbeat publish 失敗 | `SWSS_LOG_ERROR("Failed to publish heartbeat rc=%d")` → ハートビート欠落するが eventd は継続 |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: d5320e852f7a -->

@@ -106,4 +106,52 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに enum フィールドはない。数値フィールドの値と dynamic buffer モードの有無で動作が決まる。
+
+### `mtu`（uint16 1..9216）
+
+| 値 | 挙動 |
+|----|------|
+| `1500` | 標準イーサネット MTU。ヘッドルーム計算の標準入力 |
+| `9216` | ジャンボフレーム。ヘッドルームが大きくなる |
+| 未設定 | `buffermgrdyn` がデフォルト mtu 値を使用（"if mtu isn't configured, take the default value"） |
+| 実 MTU と乖離した値 | headroom が過小（パケットロス）または過大（バッファ浪費）。バリデーションなし |
+
+### `small_packet_percentage`（uint8 0..100）
+
+| 値 | 挙動 |
+|----|------|
+| `0` | 小パケットなし。ヘッドルーム計算で最小のマージンを使用 |
+| `50` | 経験的な標準値 |
+| `100` | 全パケットが小パケット想定。ヘッドルームを最大化 |
+| 0〜100 範囲外 | コード上バリデーションなし → headroom 計算式が異常値を返す可能性 |
+
+### dynamic バッファモードの有無
+
+| 条件 | 挙動 |
+|------|------|
+| dynamic buffer モード | `buffermgrdyn` がこのテーブルを参照してヘッドルームを動的計算 |
+| 静的バッファモード | `buffermgr.cpp` はこのテーブルを参照しない。設定変更は headroom 計算に影響しない |
+
+<!-- /value-behavior -->
+
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp, sonic-utilities/scripts/db_migrator.py -->
+
+| 条件 | 挙動 |
+|------|------|
+| dynamic バッファモード以外 | `buffermgr.cpp`（静的モード）はこのテーブルを参照しない。設定変更は headroom 計算に影響しない |
+| `mtu` 未設定 | `buffermgrdyn` がデフォルト mtu 値を使用（buffermgrdyn.cpp L2263「if mtu isn't configured, take the default value」） |
+| `mtu` が実 MTU と乖離 | headroom が過小（パケットロス）または過大（バッファ浪費）になる。バリデーションなし |
+| `small_packet_percentage` が 0〜100 範囲外 | コード上でバリデーションなし。headroom 計算式が異常値を返す可能性。YANG スキーマ依存 |
+| DB migration 時（AZURE エントリ自動挿入） | `db_migrator.py` L414 が `mtu=1024, small_packet_percentage=100` を挿入。Mellanox 向け初期値で他プラットフォームには不適切な場合がある |
+| バッファプール未設定 | `SWSS_LOG_INFO("No shared buffer pool configured, skip calculating shared buffer pool size")` → サイレントスキップ |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
