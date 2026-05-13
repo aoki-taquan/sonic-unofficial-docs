@@ -21615,7 +21615,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例外条件・特殊挙動
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -21626,7 +21626,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -21635,6 +21635,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21656,7 +21667,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21668,7 +21679,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21679,7 +21690,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21690,7 +21701,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29730,7 +29741,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例外条件・特殊挙動
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -29741,7 +29752,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29750,6 +29761,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29771,7 +29793,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29783,7 +29805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29794,7 +29816,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29805,7 +29827,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30010,26 +30032,116 @@
 <li>関連 CLI: <code>config interface ip add/remove Vlan&lt;id&gt;</code>、<code>config vlan proxy_arp</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vlan</code></li>
 </ul>
-<h2 id="_5">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_5">値依存挙動マトリクス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>実挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mpls</code></td>
+<td><code>enable</code></td>
+<td><code>sysctl -w net.mpls.conf.&lt;IF&gt;.input=1</code> (intfmgr.cpp)</td>
+</tr>
+<tr>
+<td><code>mpls</code></td>
+<td><code>disable</code> または空</td>
+<td><code>sysctl -w net.mpls.conf.&lt;IF&gt;.input=0</code></td>
+</tr>
+<tr>
+<td><code>proxy_arp</code></td>
+<td><code>enabled</code></td>
+<td><code>/proc/sys/net/ipv4/conf/&lt;IF&gt;/proxy_arp</code> / <code>proxy_arp_pvlan</code> に <code>1</code></td>
+</tr>
+<tr>
+<td><code>proxy_arp</code></td>
+<td><code>disabled</code></td>
+<td>同ファイルに <code>0</code></td>
+</tr>
+<tr>
+<td><code>proxy_arp</code></td>
+<td>その他</td>
+<td><code>SWSS_LOG_ERROR("Proxy ARP state is invalid")</code> で処理中断</td>
+</tr>
+<tr>
+<td><code>grat_arp</code></td>
+<td><code>enabled</code></td>
+<td><code>/proc/sys/net/ipv4/conf/&lt;IF&gt;/arp_accept</code> に <code>1</code></td>
+</tr>
+<tr>
+<td><code>grat_arp</code></td>
+<td><code>disabled</code></td>
+<td>同ファイルに <code>0</code></td>
+</tr>
+<tr>
+<td><code>grat_arp</code></td>
+<td>その他</td>
+<td><code>SWSS_LOG_ERROR("GARP state is invalid")</code> で処理中断</td>
+</tr>
+<tr>
+<td><code>ipv6_use_link_local_only</code></td>
+<td><code>enable</code></td>
+<td>IPv6 link-local アドレスのみ付与。グローバル IPv6 アドレス付与不可</td>
+</tr>
+<tr>
+<td><code>ipv6_use_link_local_only</code></td>
+<td><code>disable</code></td>
+<td>通常の IPv6 アドレス割当（デフォルト）</td>
+</tr>
+<tr>
+<td><code>loopback_action</code></td>
+<td><code>drop</code></td>
+<td>同一 IF に ingress/egress するパケットをドロップ</td>
+</tr>
+<tr>
+<td><code>loopback_action</code></td>
+<td><code>forward</code></td>
+<td>同一 IF に ingress/egress するパケットを転送</td>
+</tr>
+<tr>
+<td><code>nat_zone</code></td>
+<td><code>0</code></td>
+<td><a href="../../glossary/#term-nat">NAT</a> zone なし（デフォルト）</td>
+</tr>
+<tr>
+<td><code>nat_zone</code></td>
+<td><code>1</code>〜<code>3</code></td>
+<td>該当 NAT zone へのバインド</td>
+</tr>
+<tr>
+<td><code>vrf_name</code></td>
+<td>変更 (既存 IF)</td>
+<td><code>isIntfChangeVrf()</code> で検出しエラー。削除後再 add が必要</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_6">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang -->
 
 <ul>
 <li><strong>VRF 変更禁止</strong>: <code>intfmgrd</code> は既存 IF の VRF 変更を <code>isIntfChangeVrf()</code> で検出し <code>SWSS_LOG_ERROR("%s can not change to %s directly, skipping")</code> を記録してエントリを破棄する<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>インタフェース未 ready</strong>: <code>isIntfStateOk()</code> が false の場合リトライ待ち（"Interface is not ready, skipping"）<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
-<li><strong>VRF 未 ready</strong>: VRF が STATE_DB に未登録の場合もリトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VRF 未 ready</strong>: VRF が <a href="../../glossary/#term-state_db">STATE_DB</a> に未登録の場合もリトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong><code>proxy_arp</code> / <code>grat_arp</code> / <code>mpls</code> 不正値</strong>: 不正値の場合 <code>SWSS_LOG_ERROR("... state is invalid")</code> を記録して処理を中断<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>デフォルト補完</strong>: <code>admin_status</code> 省略時は <code>"up"</code> が補完される<sup id="fnref5:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。YANG では <code>nat_zone</code> のデフォルト <code>0</code>、<code>ipv6_use_link_local_only</code> のデフォルト <code>disable</code><sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vlan/"><code>sonic-vlan</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -30038,24 +30150,24 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VLAN_INTERFACE|Vlan100</code> (L3 enable 行) と <code>VLAN_INTERFACE|Vlan100|10.0.0.1/24</code> (IP 行) の 2 段。</li>
 <li><code>vrf_name</code>: <code>Vrfdefault</code> または <code>Vrf&lt;name&gt;</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>L3 enable 行を作らずに IP 行だけ投入すると IntfMgr が IP を作らない。</li>
 <li><code>vrf_name</code> を後から変更しても既存 IP は古い VRF に残る。一旦 del してから再 add。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_INTERFACE|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c4023422f31d -->
+<!-- glossary-links-injected: b8bde3f9637a -->
 
 <div class="footnote">
 <hr />

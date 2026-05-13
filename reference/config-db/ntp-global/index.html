@@ -22937,6 +22937,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29975,6 +29997,79 @@
 <li><strong>dhcp のデフォルト = "enabled"</strong>: <code>default enabled</code>。DHCP 配布の NTP サーバが優先して使用される。</li>
 <li><strong>admin_state のデフォルト = "enabled"</strong>: <code>default enabled</code>。フィールドを省略してもエントリが存在する限り NTP クライアントは動作する。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-host-services/scripts/hostcfgd ntp_global_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vrf</code></td>
+<td><code>default</code></td>
+<td>NTP パケットをデータプレーン default VRF 経由で送受信</td>
+</tr>
+<tr>
+<td><code>vrf</code></td>
+<td><code>mgmt</code></td>
+<td>NTP パケットを mgmt VRF (eth0) 経由で送受信。<code>mgmtVrfEnabled=true</code> が YANG must で必要</td>
+</tr>
+<tr>
+<td><code>vrf</code></td>
+<td>未設定</td>
+<td>VRF 指定なし。OS デフォルトルーティングに従う</td>
+</tr>
+<tr>
+<td><code>authentication</code></td>
+<td><code>disabled</code> (default)</td>
+<td>NTP 認証なし。NTP_KEY が存在しても使用しない</td>
+</tr>
+<tr>
+<td><code>authentication</code></td>
+<td><code>enabled</code></td>
+<td>NTP 認証を有効化。NTP_SERVER.key と NTP_KEY で鍵検証</td>
+</tr>
+<tr>
+<td><code>dhcp</code></td>
+<td><code>enabled</code> (default)</td>
+<td>DHCP 配布の NTP サーバ情報を優先使用</td>
+</tr>
+<tr>
+<td><code>dhcp</code></td>
+<td><code>disabled</code></td>
+<td>DHCP NTP を無視。NTP_SERVER テーブルの設定のみ使用</td>
+</tr>
+<tr>
+<td><code>server_role</code></td>
+<td><code>enabled</code> (default)</td>
+<td>本機を NTP server として他ホストに応答</td>
+</tr>
+<tr>
+<td><code>server_role</code></td>
+<td><code>disabled</code></td>
+<td>NTP クライアント専用。問い合わせに応答しない</td>
+</tr>
+<tr>
+<td><code>admin_state</code></td>
+<td><code>enabled</code> (default)</td>
+<td>NTP 機能有効</td>
+</tr>
+<tr>
+<td><code>admin_state</code></td>
+<td><code>disabled</code></td>
+<td>NTP 機能無効化</td>
+</tr>
+</tbody>
+</table>
+<p>全グローバル変更で <code>systemctl restart chrony</code> が実行される。enum: <code>authentication</code>/<code>dhcp</code>/<code>server_role</code>/<code>admin_state</code> = enabled/disabled。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <div class="footnote">

@@ -24029,6 +24029,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29961,6 +29983,64 @@
 <li><strong>trusted のデフォルト = "no"</strong>: <code>default no</code>。NTP 認証モード有効時に当該キーが信頼済みとして使用されるには明示的に <code>trusted = yes</code> が必要。</li>
 <li><strong>NTP_SERVER から参照中の NTP_KEY は削除不可</strong>: <code>NTP_SERVER_LIST/key</code> は <code>leafref</code> で <code>NTP_KEY_LIST/id</code> を参照。参照中のキーを削除しようとすると YANG バリデーションで整合性エラーが発生する。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_14">値依存挙動マトリクス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP_KEY / sonic-host-services/scripts/hostcfgd -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>md5</code> (default)</td>
+<td>MD5 ハッシュで NTP パケット認証。セキュリティ強度低 (RFC 8573 で非推奨)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>sha1</code></td>
+<td>SHA-1 ハッシュで認証</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>sha256</code></td>
+<td>SHA-256 ハッシュで認証 (推奨最低ライン)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>sha384</code>/<code>sha512</code></td>
+<td>高強度 SHA 認証</td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td><code>no</code> (default)</td>
+<td>chrony の <code>trustedkey</code> 指定なし。認証有効時でも当該鍵での同期は行わない</td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td><code>yes</code></td>
+<td>chrony の <code>trustedkey</code> に追加。当該鍵のサーバのみで時刻同期を許可</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>1..64字</td>
+<td>chrony keyfile に鍵本体として書き込み</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>1..65535</td>
+<td>chrony keyfile の鍵 ID として使用。NTP_SERVER.key からの leafref 参照元</td>
+</tr>
+</tbody>
+</table>
+<p>enum: <code>type</code>=md5/sha1/sha256/sha384/sha512、<code>trusted</code>=yes/no。変更は <code>systemctl restart chrony</code> をトリガー。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">

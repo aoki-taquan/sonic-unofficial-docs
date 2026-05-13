@@ -21968,6 +21968,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -21987,7 +21998,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -21998,7 +22009,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22009,7 +22020,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22021,7 +22032,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22032,7 +22043,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22043,7 +22054,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29708,6 +29719,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -29727,7 +29749,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29738,7 +29760,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29893,7 +29915,57 @@
 <li><strong>vtysh 実行失敗 → syslog LOG_ERR のみ (再試行なし)</strong>: FRR bgpd への vtysh コマンド投入が失敗した場合、<code>frrcfgd</code> は syslog に LOG_ERR を出力するが再試行は行わない。FRR 側との設定乖離が生じる可能性がある。<!-- evidence: frrcfgd.py L47-60 g_run_command --></li>
 <li><strong>汎用例外 → catch + LOG_ERR + drop</strong>: ハンドラ内で <code>Exception</code> が発生した場合 <code>LOG_ERR</code> を出力して次のエントリへ進む。当該更新はドロップされる。<!-- evidence: frrcfgd.py L1533-1534 --></li>
 </ul>
-<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set_type</code></td>
+<td><code>STANDARD</code></td>
+<td>FRR へ <code>bgp community-list standard &lt;name&gt; permit &lt;value&gt;</code> を生成。数値 community（<code>AS:value</code> 形式）および well-known community に対して完全一致でマッチ。</td>
+</tr>
+<tr>
+<td><code>set_type</code></td>
+<td><code>EXPANDED</code></td>
+<td>FRR へ <code>bgp community-list expanded &lt;name&gt; permit &lt;pattern&gt;</code> を生成。正規表現マッチが可能（例: <code>.*:100</code>）。<code>STANDARD</code> と誤って指定した場合、正規表現が数値として解釈されすべてのルートが reject される。</td>
+</tr>
+<tr>
+<td><code>match_action</code></td>
+<td><code>ANY</code></td>
+<td>community_member のいずれか 1 つにマッチするルートを対象（OR 条件）。</td>
+</tr>
+<tr>
+<td><code>match_action</code></td>
+<td><code>ALL</code></td>
+<td>community_member すべてを同時に保持するルートのみを対象（AND 条件）。</td>
+</tr>
+<tr>
+<td><code>match_action</code></td>
+<td>その他の値</td>
+<td>Jinja2 テンプレートがどちらの分岐にも入らず FRR コマンドが生成されない（サイレント失敗）。</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>permit</code></td>
+<td>マッチしたルートを許可。</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>deny</code></td>
+<td>マッチしたルートを拒否。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>frr-mgmt-framework</code>: <a href="../../glossary/#term-bgp">BGP</a> コミュニティ・リストとして <a href="../../glossary/#term-frr">FRR</a> (<code>bgpd</code>) に反映</li>
 </ul>
@@ -29905,25 +29977,25 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-routing-policy-sets</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>COMMUNITY_SET|&lt;name&gt;</code>。</li>
 <li><code>set_type</code>: <code>standard</code> / <code>expanded</code>。<code>match_action</code>: <code>any</code> / <code>all</code>。<code>community_member</code>: CSV。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>expanded</code> で正規表現を書いたのに <code>standard</code> 指定のままで全件 reject される。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COMMUNITY_SET|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp community-list&#39;</span>
 </span></code></pre></div>

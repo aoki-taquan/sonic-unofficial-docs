@@ -22321,6 +22321,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30028,6 +30050,79 @@
 <li><strong>type のデフォルト = "ERSPAN"</strong>: YANG <code>default "ERSPAN"</code>。type を省略すると ERSPAN として処理される。SPAN セッションは明示的に <code>type = SPAN</code> を指定し <code>dst_port</code> も必須。</li>
 <li><strong>gre_type のデフォルト = 0x88be</strong>: YANG <code>default 0x88be</code>。ERSPAN over GRE のデフォルト EtherType。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorOrch / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>ERSPAN</code> (default)</td>
+<td>GRE/IP ヘッダ付きで dst_ip へ転送。routeOrch に dstIp を attach して nexthop 解決後に <code>active</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>SPAN</code></td>
+<td>ローカル物理ポート (dst_port) に転送。nexthop 解決不要</td>
+</tr>
+<tr>
+<td><code>direction</code></td>
+<td><code>RX</code></td>
+<td>受信パケットのみミラー</td>
+</tr>
+<tr>
+<td><code>direction</code></td>
+<td><code>TX</code></td>
+<td>送信パケットのみミラー</td>
+</tr>
+<tr>
+<td><code>direction</code></td>
+<td><code>BOTH</code> (default)</td>
+<td>送受信両方をミラー</td>
+</tr>
+<tr>
+<td><code>gre_type</code></td>
+<td><code>0x88be</code> (default)</td>
+<td>ERSPAN Type II (Cisco) GRE EtherType</td>
+</tr>
+<tr>
+<td><code>gre_type</code></td>
+<td><code>0x8949</code></td>
+<td>ERSPAN Type III (Broadcom) GRE EtherType</td>
+</tr>
+<tr>
+<td><code>queue</code></td>
+<td>0 (default)</td>
+<td>best-effort queue でミラーパケット送出</td>
+</tr>
+<tr>
+<td><code>queue</code></td>
+<td>≥ m_maxNumTC</td>
+<td>task_invalid_entry — HW TC 数超過</td>
+</tr>
+<tr>
+<td><code>policer</code></td>
+<td>指定あり</td>
+<td>ミラートラフィックにレート制限を適用</td>
+</tr>
+<tr>
+<td><code>policer</code></td>
+<td>未存在 leafref</td>
+<td>task_need_retry — policer 追加後に再処理</td>
+</tr>
+</tbody>
+</table>
+<p>セッション状態は <code>STATE_DB MIRROR_SESSION_TABLE.status</code> で "active"/"inactive" を確認可能。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: c326cbcc6490 -->
 
 <div class="footnote">

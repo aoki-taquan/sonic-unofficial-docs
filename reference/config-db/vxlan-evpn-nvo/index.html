@@ -24527,7 +24527,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例外条件・特殊挙動
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -24538,7 +24538,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -24549,7 +24549,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -24560,7 +24560,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -24569,6 +24569,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24580,7 +24591,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24591,7 +24602,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24602,7 +24613,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29730,7 +29741,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例外条件・特殊挙動
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -29741,7 +29752,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29752,7 +29763,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29763,7 +29774,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29772,6 +29783,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29783,7 +29805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29794,7 +29816,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29805,7 +29827,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29919,7 +29941,43 @@
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vxlan</code></li>
 <li>関連 CLI: <code>config vxlan evpn_nvo</code></li>
 </ul>
-<h2 id="_6">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>本テーブルは enum フィールドを持たない。フィールドは <code>source_vtep</code>（leafref）と <code>name</code>（string）のみ。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>実挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source_vtep</code></td>
+<td>有効な <code>VXLAN_TUNNEL</code> 名</td>
+<td>NVO 作成成功。<code>disableLearningForAllVxlanNetdevices()</code> でシステム全体の VXLAN MAC learning が無効化される (vxlanmgr.cpp)</td>
+</tr>
+<tr>
+<td><code>source_vtep</code></td>
+<td>存在しない / 未 active な <code>VXLAN_TUNNEL</code> 名</td>
+<td><code>"NVO %s creation failed. VTEP not present"</code> でリトライ待ち</td>
+</tr>
+<tr>
+<td>エントリ数</td>
+<td>1 件目</td>
+<td>正常作成</td>
+</tr>
+<tr>
+<td>エントリ数</td>
+<td>2 件目以降</td>
+<td>YANG <code>max-elements 1</code> で reject。vxlanmgrd も <code>"Only Single NVO object allowed"</code> でキャッシュ側防護</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_7">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
 
 <ul>
@@ -29927,41 +29985,41 @@
 <li><strong><code>vxlanmgrd</code> 重複チェック</strong>: キャッシュに既存 NVO エントリがある場合 <code>SWSS_LOG_ERROR("Only Single NVO object allowed")</code> を記録して破棄（YANG 検証バイパス時の二重防護）<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>VTEP 未 active</strong>: <code>source_vtep</code> が参照する <code>VXLAN_TUNNEL</code> が active でない場合 <code>SWSS_LOG_ERROR("NVO %s creation failed. VTEP not present")</code> を記録してリトライ待ち<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>NVO 削除時エントリ不在</strong>: <code>SWSS_LOG_ERROR("NVO deletion NVO: %s not found exception: %s")</code> を記録<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
-<li><strong>MAC learning 無効化</strong>: NVO 作成成功時にすべての VXLAN netdev の MAC learning が <code>disableLearningForAllVxlanNetdevices()</code> で無効化される（EVPN 前提の動作）<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>MAC learning 無効化</strong>: NVO 作成成功時にすべての <a href="../../glossary/#term-vxlan">VXLAN</a> netdev の MAC learning が <code>disableLearningForAllVxlanNetdevices()</code> で無効化される（EVPN 前提の動作）<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vxlan/"><code>sonic-vxlan</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
 <li><a href="../vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">典型値<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VXLAN_EVPN_NVO|&lt;nvo-name&gt;</code> (例 <code>nvo1</code>)。</li>
 <li><code>source_vtep</code>: <code>VXLAN_TUNNEL</code> 名を指す。</li>
 </ul>
-<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">よくある誤設定<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>source_vtep</code> が複数 NVO で重複指定されると最初の 1 つしか有効にならない。</li>
 </ul>
-<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VXLAN_EVPN_NVO|nvo1&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vxlan<span class="w"> </span>tunnel
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5d51c067a00b -->
+<!-- glossary-links-injected: 7e2e79cf3524 -->
 
 <div class="footnote">
 <hr />

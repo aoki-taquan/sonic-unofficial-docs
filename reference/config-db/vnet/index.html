@@ -24510,7 +24510,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例外条件・特殊挙動
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -24521,7 +24521,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -24532,7 +24532,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -24541,6 +24541,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24552,7 +24563,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24563,7 +24574,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24574,7 +24585,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29797,7 +29808,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        例外条件・特殊挙動
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -29808,7 +29819,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29819,7 +29830,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29828,6 +29839,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29839,7 +29861,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29850,7 +29872,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29861,7 +29883,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30076,31 +30098,86 @@
 <li>関連 CLI: <code>config vxlan</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vnet</code>、<code>sonic-vxlan</code></li>
 </ul>
-<h2 id="_6">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>実挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scope</code></td>
+<td><code>"default"</code></td>
+<td>YANG pattern で唯一許可される値。デフォルト VRF スコープ</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>その他</td>
+<td>YANG バリデーションで <code>"Invalid VRF name"</code> エラー (sonic-vnet.yang)</td>
+</tr>
+<tr>
+<td><code>advertise_prefix</code></td>
+<td><code>true</code></td>
+<td>VNET ルートプレフィクスを BGP に広告</td>
+</tr>
+<tr>
+<td><code>advertise_prefix</code></td>
+<td><code>false</code></td>
+<td>広告しない（デフォルト動作）</td>
+</tr>
+<tr>
+<td><code>vni</code></td>
+<td>任意 VNI</td>
+<td>VXLAN overlay header に使用する VNI。同一デバイス内で重複すると orchagent が後勝ちで上書き</td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE_TUNNEL.metric</code></td>
+<td>uint8</td>
+<td>経路選択に影響しない（YANG コメント: "not used for route selection, but for route classification"）</td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE_TUNNEL.consistent_hashing_buckets</code></td>
+<td>uint16</td>
+<td>複数 endpoint 時の ECMP consistent hashing バケット数を制御</td>
+</tr>
+<tr>
+<td><code>VNET_ROUTE.nexthop</code></td>
+<td>カンマ区切り IP リスト</td>
+<td>ECMP nexthop として複数 IP 指定可（<code>ipv4-address-list</code> 型）</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_7">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang; sonic-swss/orchagent/vnetorch.cpp -->
 
 <ul>
 <li><strong><code>vrf_name</code> パターン (YANG)</strong>: <code>pattern "default"</code> のみ許可。それ以外は YANG バリデーションで <code>"Invalid VRF name"</code> エラー<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
 <li><strong><code>vxlan_tunnel</code> + <code>vni</code> 必須</strong>: 両方が揃うまで <code>vxlanmgrd</code> はメッセージを破棄して再送待ち（"information is incomplete, just ignore this message"）<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>VXLAN トンネル未作成</strong>: 参照 <code>VXLAN_TUNNEL</code> がキャッシュに存在しない場合リトライ待ち<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
-<li><strong>VRF 未 ready</strong>: <code>isVrfStateOk()</code> が false の場合リトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong><a href="../../glossary/#term-vrf">VRF</a> 未 ready</strong>: <code>isVrfStateOk()</code> が false の場合リトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>MAC アドレス未設定</strong>: ルータ MAC が未取得の場合もリトライ<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>VxLAN デバイス作成失敗</strong>: <code>SWSS_LOG_ERROR("Cannot create vxlan %s")</code> を記録して <code>false</code> を返す<sup id="fnref5:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
-<li><strong>orchagent VR オブジェクト作成失敗</strong>: <code>std::runtime_error</code> を throw し、呼び出し元でキャッチして <code>SWSS_LOG_ERROR</code> を記録<sup id="fnref:exc3"><a class="footnote-ref" href="#fn:exc3">3</a></sup>。</li>
+<li><strong><a href="../../glossary/#term-orchagent">orchagent</a> VR オブジェクト作成失敗</strong>: <code>std::runtime_error</code> を throw し、呼び出し元でキャッチして <code>SWSS_LOG_ERROR</code> を記録<sup id="fnref:exc3"><a class="footnote-ref" href="#fn:exc3">3</a></sup>。</li>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-vnet/"><code>sonic-vnet</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VNET|Vnet_&lt;name&gt;</code>。</li>
 <li><code>vxlan_tunnel</code>: 紐付ける <code>VXLAN_TUNNEL</code> 名。</li>
@@ -30108,19 +30185,19 @@
 <li><code>peer_list</code>: peer VNet 名（マルチサイト）。</li>
 <li><code>scope</code>: <code>default</code> / <code>evpn</code>。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>vxlan_tunnel</code> が <code>VXLAN_TUNNEL</code> に未存在だと VNet が active にならない。</li>
 <li><code>vni</code> を同一 device 内で重複させると <a href="../../glossary/#term-orchagent">orchagent</a> が後勝ちで上書きし silent に壊れる。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VNET|Vnet_1000&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vnet<span class="w"> </span>brief
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>vnet<span class="w"> </span>routes<span class="w"> </span>all
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ef122063da90 -->
+<!-- glossary-links-injected: f94986e6b96c -->
 
 <div class="footnote">
 <hr />

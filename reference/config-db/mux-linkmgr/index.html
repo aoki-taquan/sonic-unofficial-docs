@@ -24023,6 +24023,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29920,6 +29931,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30157,6 +30179,94 @@
 <li><strong>oscillation_enabled のデフォルト = true</strong>: <code>default true</code>。TIMED_OSCILLATION コンテナが空でも <code>interval_sec = 300</code> で自動切替が有効になる。無効化する場合は明示的に <code>oscillation_enabled = false</code> を設定する必要がある。</li>
 <li><strong>kill_radv のデフォルト = True</strong>: <code>default True</code>。radv サービスは <a href="../../glossary/#term-mux">MUX</a> 切替時にデフォルトで強制終了される。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_14">値依存挙動マトリクス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mux-linkmgr.yang / sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveStandby -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>interval_v4</code></td>
+<td>100 (default) ms</td>
+<td>IPv4 ICMP heartbeat を 100ms 間隔で送信</td>
+</tr>
+<tr>
+<td><code>interval_v4</code></td>
+<td>0</td>
+<td>heartbeat 停止 (range 制約なし。実質 ICMP probe 無効化)</td>
+</tr>
+<tr>
+<td><code>negative_signal_count</code></td>
+<td>3 (default)</td>
+<td>3回連続で heartbeat 喪失したら standby 判定</td>
+</tr>
+<tr>
+<td><code>positive_signal_count</code></td>
+<td>1 (default)</td>
+<td>1回受信で active 判定</td>
+</tr>
+<tr>
+<td><code>oscillation_enabled</code></td>
+<td><code>true</code> (default)</td>
+<td>タイマー駆動で定期的に active/standby 切替を実施 (<code>interval_sec</code> 間隔)</td>
+</tr>
+<tr>
+<td><code>oscillation_enabled</code></td>
+<td><code>false</code></td>
+<td>タイマー切替を無効化。ICMP prober 結果のみで切替</td>
+</tr>
+<tr>
+<td><code>use_well_known_mac</code></td>
+<td><code>enabled</code></td>
+<td>既知 MAC を宛先 MAC として ICMP 送信</td>
+</tr>
+<tr>
+<td><code>use_well_known_mac</code></td>
+<td><code>disabled</code></td>
+<td>動的 MAC を使用</td>
+</tr>
+<tr>
+<td><code>src_mac</code></td>
+<td><code>ToRMac</code></td>
+<td>ToR デバイス MAC を送信元 MAC に使用</td>
+</tr>
+<tr>
+<td><code>src_mac</code></td>
+<td><code>VlanMac</code></td>
+<td>VLAN インターフェース MAC を送信元 MAC に使用</td>
+</tr>
+<tr>
+<td><code>log_verbosity</code></td>
+<td><code>info</code></td>
+<td>標準ログレベル</td>
+</tr>
+<tr>
+<td><code>log_verbosity</code></td>
+<td><code>debug</code>/<code>trace</code></td>
+<td>詳細デバッグログ出力</td>
+</tr>
+<tr>
+<td><code>kill_radv</code></td>
+<td><code>True</code> (default)</td>
+<td>MUX 切替時に radv を graceful でなく強制終了</td>
+</tr>
+<tr>
+<td><code>kill_radv</code></td>
+<td><code>False</code></td>
+<td>radv を graceful shutdown</td>
+</tr>
+</tbody>
+</table>
+<p>enum: <code>use_well_known_mac</code>=enabled/disabled、<code>src_mac</code>=ToRMac/VlanMac、<code>log_verbosity</code>=trace/debug/info/error/fatal、<code>kill_radv</code>=True/False。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: b1f2d0ff40fd -->
 
 <div class="footnote">

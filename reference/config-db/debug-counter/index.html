@@ -22203,6 +22203,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -22222,7 +22233,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22233,7 +22244,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22244,7 +22255,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22256,7 +22267,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22267,7 +22278,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22278,7 +22289,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29730,6 +29741,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29760,7 +29782,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29771,7 +29793,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29783,7 +29805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29794,7 +29816,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29805,7 +29827,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29956,7 +29978,57 @@
 <li><strong>最後の drop_reason の削除 → task_ignore</strong>: drop_reasons が 1 件のときに <code>removeDropReason()</code> を呼ぶと <code>SWSS_LOG_WARN("Attempted to remove all drop reasons from counter")</code> → <code>task_ignore</code>。drop counter は最低 1 つの理由が必要。<!-- evidence: debugcounterorch.cpp L476-479 --></li>
 <li><strong>更新はべき等・失敗は状態を変更しない</strong>: 失敗した更新はシステム状態を変更しない。同一リクエストの繰り返しは同一結果となる。<!-- evidence: debugcounterorch.cpp L128-130 --></li>
 </ul>
-<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>PORT_INGRESS_DROPS</code></td>
+<td><code>CounterType::PORT_DEBUG</code> として扱い、ポート単位に SAI debug counter を作成（<code>debugcounterorch.cpp:19</code>）。各ポートの ingress ドロップを個別に集計。ポート削除時にカウンタも削除される。</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>PORT_EGRESS_DROPS</code></td>
+<td><code>CounterType::PORT_DEBUG</code> として扱い、ポート単位に SAI debug counter を作成（<code>debugcounterorch.cpp:20</code>）。各ポートの egress ドロップを個別に集計。</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>SWITCH_INGRESS_DROPS</code></td>
+<td><code>CounterType::SWITCH_DEBUG</code> として扱い、スイッチ全体のグローバルカウンタを作成（<code>debugcounterorch.cpp:21</code>）。全ポート合算の ingress ドロップを集計。</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>SWITCH_EGRESS_DROPS</code></td>
+<td><code>CounterType::SWITCH_DEBUG</code> として扱い、スイッチ全体のグローバルカウンタを作成（<code>debugcounterorch.cpp:22</code>）。全ポート合算の egress ドロップを集計。</td>
+</tr>
+<tr>
+<td><code>drop_monitor_status</code></td>
+<td><code>enabled</code></td>
+<td><code>debug_monitor_enabled=true</code> をセット。ドロップ検知時に syslog アラートを発火する（<code>debugcounterorch.cpp:649, 708</code>）。</td>
+</tr>
+<tr>
+<td><code>drop_monitor_status</code></td>
+<td><code>disabled</code>（既定）</td>
+<td>アラート発生なし。カウンタの蓄積は継続するが通知は行わない。</td>
+</tr>
+<tr>
+<td><code>drop_monitor_status</code></td>
+<td>その他の値</td>
+<td><code>SWSS_LOG_ERROR</code> を出力して拒否。<code>enabled</code>/<code>disabled</code> 以外は無効（<code>debugcounterorch.cpp:257</code>）。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>debugcounterorch</code> (<a href="../../glossary/#term-orchagent">orchagent</a>): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映</li>
 </ul>
@@ -29968,26 +30040,26 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-debug-counter/"><code>sonic-debug-counter</code></a></li>
 <li>CLI: <code>config debug counter</code> / <code>show debug counter</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>DEBUG_COUNTER|&lt;name&gt;</code>。</li>
 <li><code>type</code>: <code>PORT_INGRESS_DROPS</code> / <code>PORT_EGRESS_DROPS</code> / <code>SWITCH_INGRESS_DROPS</code> 等。<code>reasons</code>: drop reason の CSV。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>プラットフォーム SAI が未対応の reason を指定すると CrmOrch がエラーを出してカウンタが作られない。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DEBUG_COUNTER|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>configuration
 </span></code></pre></div>

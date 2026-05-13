@@ -21778,6 +21778,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29966,6 +29988,78 @@
 <li><strong>server_ipv4 の形式不正 → YANG が拒否</strong>: <code>type inet:ipv4-prefix</code>。不正な IPv4 プレフィックスは YANG バリデーションで拒否される。</li>
 <li><strong>MUX_CABLE エントリが存在しない場合</strong>: <a href="../../glossary/#term-linkmgrd">linkmgrd</a> は当該インターフェースに対して mux 管理を行わない。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-linkmgrd/src/MuxPort.cpp / sonic-linkmgrd/src/MuxManager.cpp / sonic-swss/orchagent/muxorch.cpp -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td><code>auto</code> (default)</td>
+<td>ICMP prober の判断で active/standby を自動決定。フェイルオーバも自動</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>active</code></td>
+<td>当該 ToR を強制 active。linkmgrd が MUX を active 側に固定</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>standby</code></td>
+<td>当該 ToR を強制 standby。トラフィックをピア ToR 経由に迂回</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>manual</code></td>
+<td>自動フェイルオーバ無効。現在の active/standby 状態を維持</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td><code>detach</code></td>
+<td>active-active 専用。NIC から ToR を論理的に切り離し。active-standby では WARN + 無視</td>
+</tr>
+<tr>
+<td><code>cable_type</code></td>
+<td><code>active-standby</code> (default)</td>
+<td>ActiveStandby ステートマシン選択。ICMP prober で片系のみ active</td>
+</tr>
+<tr>
+<td><code>cable_type</code></td>
+<td><code>active-active</code></td>
+<td>ActiveActive ステートマシン選択。両 ToR が active。soc_ipv4 が必要</td>
+</tr>
+<tr>
+<td><code>prober_type</code></td>
+<td><code>software</code> (default)</td>
+<td>linkmgrd が ICMP パケットをソフトウェアで生成・送信</td>
+</tr>
+<tr>
+<td><code>prober_type</code></td>
+<td><code>hardware</code></td>
+<td>xcvrd 経由でハードウェア MUX に probe を委譲</td>
+</tr>
+<tr>
+<td><code>neighbor_mode</code></td>
+<td><code>host-route</code> (default)</td>
+<td>サーバ IP を /32 (/128) host route として処理</td>
+</tr>
+<tr>
+<td><code>neighbor_mode</code></td>
+<td><code>prefix-route</code></td>
+<td>サーバ IP を prefix-based route として処理。動的変更は muxorch で WARN (再起動が必要)</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: 68cc248286f2 -->
 
 <div class="footnote">

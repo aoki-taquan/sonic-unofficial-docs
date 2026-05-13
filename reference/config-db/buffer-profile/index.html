@@ -22321,6 +22321,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -22340,7 +22351,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22351,7 +22362,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22373,7 +22384,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22385,7 +22396,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22396,7 +22407,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22407,7 +22418,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29697,6 +29708,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -29716,7 +29738,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29727,7 +29749,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29941,7 +29963,42 @@
 <li><strong>trimming 禁止制約違反 → task_failed</strong>: <code>packet_discard_action=trim</code> のプロファイルが ingress profile list や PG に既に関連付けられている場合、<code>isTrimmingProhibited()</code> が true → <code>task_failed</code>。<!-- evidence: bufferorch.cpp L757-762 --></li>
 <li><strong>SAI が ATTR_NOT_IMPLEMENTED を返した場合 → task_ignore</strong>: 属性が未実装の場合、警告ログを出力して処理を継続 (ignore)。<!-- evidence: bufferorch.cpp L776 --></li>
 </ul>
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_5">値依存挙動マトリクス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>headroom_type</code></td>
+<td><code>static</code>（既定）</td>
+<td>ユーザが <code>size</code>/<code>xon</code>/<code>xoff</code> を明示指定。<code>buffermgrd</code> がそのまま APPL_DB へ転送。</td>
+</tr>
+<tr>
+<td><code>headroom_type</code></td>
+<td><code>dynamic</code></td>
+<td><code>buffermgrdyn</code> が <code>dynamic_calculated=true</code> をセットし、ポート速度・ケーブル長・MTU から headroom を自動計算（<code>buffermgrdyn.cpp:2788</code>）。static-buffer モード（<code>DEVICE_METADATA.buffer_model=static</code>）では無効。</td>
+</tr>
+<tr>
+<td><code>packet_discard_action</code></td>
+<td><code>drop</code>（既定）</td>
+<td><code>isTrimmingEligible=false</code>。ingress/egress いずれの profile list・PG にも制限なく適用可能（<code>bufferhelper.cpp:23</code>）。</td>
+</tr>
+<tr>
+<td><code>packet_discard_action</code></td>
+<td><code>trim</code></td>
+<td><code>isTrimmingEligible=true</code>（<code>bufferhelper.cpp:23</code>）。ingress PG（<code>bufferorch.cpp:1382</code>）・ingress profile list（<code>bufferorch.cpp:1725</code>）・egress profile list（<code>bufferorch.cpp:1915</code>）への適用が <strong>禁止</strong>（task_failed）。egress shared buffer への適用のみ有効。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>buffermgrd</code>: dynamic buffer model のとき、ポート速度・ケーブル長・MTU から <code>headroom_type=dynamic</code> のサイズを計算</li>
 <li><code>orchagent</code> <code>BufferOrch</code>: <a href="../../glossary/#term-sai">SAI</a> buffer profile を生成</li>
@@ -29955,13 +30012,13 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-buffer-profile/"><code>sonic-buffer-profile</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29970,20 +30027,20 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BUFFER_PROFILE|&lt;profile-name&gt;</code> (例 <code>pg_lossless_100000_5m_profile</code>)。</li>
 <li><code>pool</code>: <code>ingress_lossless_pool</code> 等。</li>
 <li><code>xon</code> / <code>xoff</code> / <code>size</code>: PFC 閾値（バイト）。</li>
 <li><code>dynamic_th</code>: <code>-3</code> 〜 <code>3</code> (α 値)。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>xoff</code> を <code>size</code> より大きく設定すると PFC が常時 ON。</li>
 <li><code>pool</code> のサイズを超える profile を多数バインドすると <code>bufferorch</code> がエラーログを吐き続ける。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BUFFER_PROFILE|pg_lossless_100000_5m_profile&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
 </span></code></pre></div>

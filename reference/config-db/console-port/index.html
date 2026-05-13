@@ -23452,7 +23452,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -23463,7 +23463,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        購読者
       
     </span>
   </a>
@@ -23474,7 +23474,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -23485,7 +23485,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -23494,6 +23494,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23505,7 +23516,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23516,7 +23527,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23527,7 +23538,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29708,7 +29719,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        購読者
+        値依存挙動マトリクス
       
     </span>
   </a>
@@ -29719,7 +29730,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        購読者
       
     </span>
   </a>
@@ -29730,7 +29741,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29741,7 +29752,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29750,6 +29761,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29912,36 +29934,81 @@
 <li><strong>未存在エントリへの del / update → 失敗</strong>: <code>config console del</code> / <code>remote_device</code> 更新で linenum が存在しない場合 <code>ctx.fail("Trying to delete/update console port setting, which is not present.")</code> で終了。<!-- evidence: config/console.py L145-148, L172-173 --></li>
 <li><strong>baud が既存値と同一 → no-op</strong>: <code>config console baud</code> で現在値と同じ値を指定した場合 DB 更新をスキップして正常終了。<!-- evidence: config/console.py L215-216 --></li>
 </ul>
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_4">値依存挙動マトリクス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONSOLE_SWITCH.enabled</code></td>
+<td><code>yes</code></td>
+<td>console switch サービスが起動し、<code>consutil</code> / <code>picocom</code> 経由でのシリアル接続が有効になる。</td>
+</tr>
+<tr>
+<td><code>CONSOLE_SWITCH.enabled</code></td>
+<td><code>no</code>（既定）</td>
+<td>console switch 機能が無効。<code>CONSOLE_PORT</code> の設定が存在しても接続不能。</td>
+</tr>
+<tr>
+<td><code>CONSOLE_PORT.flow_control</code></td>
+<td><code>"1"</code></td>
+<td>picocom 起動時にハードウェアフロー制御（RTS/CTS）を有効化。</td>
+</tr>
+<tr>
+<td><code>CONSOLE_PORT.flow_control</code></td>
+<td><code>"0"</code></td>
+<td>フロー制御なし（多くの console 接続でのデフォルト運用）。</td>
+</tr>
+<tr>
+<td><code>CONSOLE_PORT.escape_char</code></td>
+<td>設定あり</td>
+<td>ポート個別のエスケープ文字を使用。<code>CONSOLE_SWITCH.default_escape_char</code> を上書きする。</td>
+</tr>
+<tr>
+<td><code>CONSOLE_PORT.escape_char</code></td>
+<td>未設定</td>
+<td><code>CONSOLE_SWITCH.default_escape_char</code> のグローバル設定を使用。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
+<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>consutil</code> (CLI)</li>
 <li>console switch を有効化したときの host service</li>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-console</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>CONSOLE_PORT|&lt;line&gt;</code>。</li>
 <li><code>baud_rate</code>: <code>9600</code>、<code>flow_control</code>: <code>0</code>、<code>remote_device</code>: 接続先名。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>console switch ライセンス / consutil パッケージが入っていない環境で設定だけ入れても接続不能。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;CONSOLE_PORT|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>console
 </span></code></pre></div>

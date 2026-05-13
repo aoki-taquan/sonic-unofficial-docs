@@ -23945,6 +23945,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29876,6 +29887,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30036,6 +30058,54 @@
 <li><strong>マップ名の長さ・文字制約</strong>: <code>[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})</code> 計 1-32 文字を YANG で強制。違反は YANG バリデーションで拒否される。</li>
 <li><strong>デフォルト値なし</strong>: YANG に <code>default</code> 定義がないため、エントリが未設定の場合はマップが存在しない状態となり、<code>PORT_QOS_MAP</code> からの参照が解決できなくなる。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_14">値依存挙動マトリクス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp PfcToQueueHandler / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pfc_priority</code></td>
+<td><code>0</code>..<code>7</code></td>
+<td>対応 PFC priority の egress queue を pause 対象とするマッピングを SAI に設定</td>
+</tr>
+<tr>
+<td><code>pfc_priority</code></td>
+<td><code>""</code> (空)</td>
+<td>YANG pattern で許容されるが <code>stoi()</code> 変換失敗 → <code>task_invalid_entry</code></td>
+</tr>
+<tr>
+<td><code>qindex</code></td>
+<td><code>0</code>..<code>7</code></td>
+<td>SAI <code>SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE</code> として ASIC に反映</td>
+</tr>
+<tr>
+<td><code>qindex</code></td>
+<td><code>""</code> (空)</td>
+<td><code>stoi()</code> 変換失敗 → <code>task_invalid_entry</code></td>
+</tr>
+<tr>
+<td><code>name</code> (マップ名)</td>
+<td>有効名 (1-32字)</td>
+<td>orchagent が SAI qos_map object を作成し <code>PORT_QOS_MAP.pfc_to_queue_map</code> から参照可能に</td>
+</tr>
+<tr>
+<td><code>name</code> (マップ名)</td>
+<td>pattern/length 違反</td>
+<td>YANG バリデーション拒否</td>
+</tr>
+</tbody>
+</table>
+<p>enum なし — <code>pfc_priority</code>/<code>qindex</code> は数値文字列のみ。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: d2191ccfe0bd -->
 
 <div class="footnote">
