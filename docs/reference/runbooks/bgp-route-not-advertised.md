@@ -114,6 +114,8 @@ sonic-db-cli CONFIG_DB keys "PREFIX_LIST|*"
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-frr @ 799f47f — bgpd/bgp_route.c
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) で [zebra](../../reference/glossary.md#term-zebra) → APP_DB 反映
 

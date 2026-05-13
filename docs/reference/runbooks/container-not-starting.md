@@ -145,6 +145,8 @@ free -h
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-host-services @ c5bbbe8 — [hostcfgd](../../reference/glossary.md#term-hostcfgd)
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config feature state
 

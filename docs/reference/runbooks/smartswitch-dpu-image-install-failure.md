@@ -91,6 +91,8 @@ sudo dpuctl exec DPU0 df -h /
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — chassisd
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — sonic-installer
 

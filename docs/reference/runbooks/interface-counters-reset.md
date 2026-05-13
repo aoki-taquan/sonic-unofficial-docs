@@ -120,6 +120,8 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — scripts/portstat
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/flexcounterorch.cpp
 

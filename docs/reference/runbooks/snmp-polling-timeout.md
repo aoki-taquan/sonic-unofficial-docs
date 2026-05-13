@@ -101,6 +101,8 @@ show acl rule
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-snmpagent @ 4305596 — ax_impl
 [^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — docker-snmp config
 

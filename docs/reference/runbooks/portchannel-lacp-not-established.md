@@ -112,6 +112,8 @@ sudo grep -iE "teamd|portchannel" /var/log/syslog | tail -100
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — cfgmgr/teammgr.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show interfaces portchannel
 

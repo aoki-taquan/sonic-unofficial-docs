@@ -159,6 +159,8 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
 
 ## 引用元
 
+本ページの根拠は引用元 [^1] を参照。
+
 [^1]: `sonic-net/SONiC` `doc/error-handling/error_handling_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- next-action -->

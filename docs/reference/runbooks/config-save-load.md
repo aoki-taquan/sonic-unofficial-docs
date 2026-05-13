@@ -140,6 +140,8 @@ done
 
 ## 引用元
 
+本ページの根拠は引用元 [^1] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `config/main.py`, `scripts/db_migrator.py`
 
 <!-- glossary-links-injected: 250244b14646 -->

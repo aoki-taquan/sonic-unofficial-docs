@@ -89,6 +89,8 @@ related:
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb（`show/`, `scripts/` 配下の各種ツール）
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596（[orchagent](../../reference/glossary.md#term-orchagent), [syncd](../../reference/glossary.md#term-syncd) 連携）
 

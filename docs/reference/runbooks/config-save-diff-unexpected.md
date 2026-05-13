@@ -98,6 +98,8 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save
 [^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb get/set
 

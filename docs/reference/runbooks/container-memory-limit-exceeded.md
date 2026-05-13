@@ -109,6 +109,8 @@ sonic-db-cli CONFIG_DB hgetall "FEATURE|<feature>"
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — sonic_debian_extension
 [^2]: sonic-net/sonic-host-services @ 4305596 — [hostcfgd](../../reference/glossary.md#term-hostcfgd) feature mgr
 

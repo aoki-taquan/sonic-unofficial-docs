@@ -137,6 +137,8 @@ sonic-db-cli CONFIG_DB hgetall "CABLE_LENGTH|AZURE"
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bufferorch / pfcwdorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — pfcwd CLI
 

@@ -150,6 +150,8 @@ sonic-clear dhcp_relay ipv4 counters
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-dhcp-relay @ 7316417 — relay.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan dhcp_relay
 
