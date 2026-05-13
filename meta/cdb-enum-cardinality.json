@@ -3,49 +3,291 @@
     "high": 15,
     "mid": 6
   },
-  "tier_high": [],
-  "tier_mid": [],
-  "tier_low": [
+  "tier_high": [
     {
-      "slug": "aaa",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
-      "tier": "low",
-      "enum_fields": {},
-      "values": {}
-    },
+      "slug": "device-metadata",
+      "yang": "sonic-device_metadata.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 35,
+      "tier": "high",
+      "enum_fields": {
+        "default_bgp_status": 2,
+        "docker_routing_config_mode": 4,
+        "default_pfcwd_status": 2,
+        "type": 35,
+        "buffer_model": 2,
+        "synchronous_mode": 2,
+        "subtype": 5,
+        "switch_type": 6,
+        "suppress-fib-pending": 2,
+        "async_swss_rec": 2,
+        "nexthop_group": 2,
+        "zebra_nexthop": 2
+      },
+      "values": {
+        "default_bgp_status": [
+          "up",
+          "down"
+        ],
+        "docker_routing_config_mode": [
+          "separated",
+          "unified",
+          "split",
+          "split-unified"
+        ],
+        "default_pfcwd_status": [
+          "disable",
+          "enable"
+        ],
+        "type": [
+          "ToRRouter",
+          "LeafRouter",
+          "SpineChassisFrontendRouter",
+          "ChassisBackendRouter",
+          "ASIC",
+          "MgmtToRRouter",
+          "MgmtLeafRouter",
+          "MgmtSpineRouter",
+          "MgmtAccessRouter",
+          "LowerMgmtAggregator",
+          "UpperMgmtAggregator",
+          "SpineRouter",
+          "UpperSpineRouter",
+          "FabricSpineRouter",
+          "LowerSpineRouter",
+          "BackEndToRRouter",
+          "BackEndLeafRouter",
+          "EPMS",
+          "MgmtTsToR",
+          "BmcMgmtToRRouter",
+          "MiniTs",
+          "LeafTs",
+          "SpineTs",
+          "CoreTs",
+          "ConsoleServer",
+          "TerminalServer",
+          "SonicHost",
+          "SmartSwitchDPU",
+          "FilterLeaf",
+          "NetworkBmc",
+          "MseeRouter",
+          "not-provisioned",
+          "LowerRegionalHub",
+          "FabricRegionalHub",
+          "UpperRegionalHub"
+        ],
+        "buffer_model": [
+          "dynamic",
+          "traditional"
+        ],
+        "synchronous_mode": [
+          "enable",
+          "disable"
+        ],
+        "subtype": [
+          "DualToR",
+          "SmartSwitch",
+          "Supervisor",
+          "UpstreamLC",
+          "DownstreamLC"
+        ],
+        "switch_type": [
+          "chassis-packet",
+          "fabric",
+          "npu",
+          "voq",
+          "dpu",
+          "dummy-sup"
+        ],
+        "suppress-fib-pending": [
+          "enabled",
+          "disabled"
+        ],
+        "async_swss_rec": [
+          "enabled",
+          "disabled"
+        ],
+        "nexthop_group": [
+          "enabled",
+          "disabled"
+        ],
+        "zebra_nexthop": [
+          "enabled",
+          "disabled"
+        ]
+      }
+    }
+  ],
+  "tier_mid": [
     {
       "slug": "acl-rule",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
-      "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "yang": "sonic-acl.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-mgmt-common/models/yang/sonic",
+      "max_card": 7,
+      "tier": "mid",
+      "enum_fields": {
+        "stage": 2,
+        "type": 4,
+        "PACKET_ACTION": 3,
+        "IP_TYPE": 7,
+        "ETHER_TYPE": 7
+      },
+      "values": {
+        "stage": [
+          "INGRESS",
+          "EGRESS"
+        ],
+        "type": [
+          "MIRROR",
+          "MIRRORV6",
+          "L3",
+          "L3V6"
+        ],
+        "PACKET_ACTION": [
+          "FORWARD",
+          "DROP",
+          "REDIRECT"
+        ],
+        "IP_TYPE": [
+          "ANY",
+          "IP",
+          "IPV4",
+          "IPV4ANY",
+          "NON_IPV4",
+          "IPV6ANY",
+          "NON_IPV6"
+        ],
+        "ETHER_TYPE": [
+          "(0x88CC)",
+          "(0x8100)",
+          "(0x8915)",
+          "(0x0806)",
+          "(0x0800)",
+          "(0x86DD)",
+          "(0x8847)"
+        ]
+      }
     },
     {
       "slug": "acl-table",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-acl.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-mgmt-common/models/yang/sonic",
+      "max_card": 7,
+      "tier": "mid",
+      "enum_fields": {
+        "stage": 2,
+        "type": 4,
+        "PACKET_ACTION": 3,
+        "IP_TYPE": 7,
+        "ETHER_TYPE": 7
+      },
+      "values": {
+        "stage": [
+          "INGRESS",
+          "EGRESS"
+        ],
+        "type": [
+          "MIRROR",
+          "MIRRORV6",
+          "L3",
+          "L3V6"
+        ],
+        "PACKET_ACTION": [
+          "FORWARD",
+          "DROP",
+          "REDIRECT"
+        ],
+        "IP_TYPE": [
+          "ANY",
+          "IP",
+          "IPV4",
+          "IPV4ANY",
+          "NON_IPV4",
+          "IPV6ANY",
+          "NON_IPV6"
+        ],
+        "ETHER_TYPE": [
+          "(0x88CC)",
+          "(0x8100)",
+          "(0x8915)",
+          "(0x0806)",
+          "(0x0800)",
+          "(0x86DD)",
+          "(0x8847)"
+        ]
+      }
+    },
+    {
+      "slug": "wred-profile",
+      "yang": "sonic-wred-profile.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 8,
+      "tier": "mid",
+      "enum_fields": {
+        "ecn": 8
+      },
+      "values": {
+        "ecn": [
+          "ecn_none",
+          "ecn_green",
+          "ecn_yellow",
+          "ecn_red",
+          "ecn_green_yellow",
+          "ecn_green_red",
+          "ecn_yellow_red",
+          "ecn_all"
+        ]
+      }
+    }
+  ],
+  "tier_low": [
+    {
+      "slug": "aaa",
+      "yang": "sonic-system-aaa.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "type": 3
+      },
+      "values": {
+        "type": [
+          "authentication",
+          "authorization",
+          "accounting"
+        ]
+      }
     },
     {
       "slug": "as-path-set",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-routing-policy-sets.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 2,
+        "set_type": 2,
+        "match_action": 2
+      },
+      "values": {
+        "mode": [
+          "IPv4",
+          "IPv6"
+        ],
+        "set_type": [
+          "STANDARD",
+          "EXPANDED"
+        ],
+        "match_action": [
+          "ANY",
+          "ALL"
+        ]
+      }
     },
     {
       "slug": "auto-techsupport-feature",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-auto_techsupport.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -53,8 +295,8 @@
     },
     {
       "slug": "auto-techsupport",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-auto_techsupport.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -62,8 +304,8 @@
     },
     {
       "slug": "banner-message",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-banner.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -71,8 +313,8 @@
     },
     {
       "slug": "bgp-aggregate-address",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-aggregate-address.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -80,8 +322,8 @@
     },
     {
       "slug": "bgp-allowed-prefixes",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-allowed-prefix.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -89,17 +331,25 @@
     },
     {
       "slug": "bgp-device-global",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-bgp-device-global.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "idf_isolation_state": 3
+      },
+      "values": {
+        "idf_isolation_state": [
+          "isolated_no_export",
+          "isolated_withdraw_all",
+          "unisolated"
+        ]
+      }
     },
     {
       "slug": "bgp-globals-af-aggregate-addr",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-global.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -107,8 +357,8 @@
     },
     {
       "slug": "bgp-globals-af-network",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-global.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -116,8 +366,8 @@
     },
     {
       "slug": "bgp-globals-af",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-global.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -125,8 +375,8 @@
     },
     {
       "slug": "bgp-globals",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-global.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -134,8 +384,8 @@
     },
     {
       "slug": "bgp-monitors",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-monitor.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -143,8 +393,8 @@
     },
     {
       "slug": "bgp-neighbor-af",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-neighbor.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -152,8 +402,8 @@
     },
     {
       "slug": "bgp-neighbor",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-neighbor.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -161,8 +411,8 @@
     },
     {
       "slug": "bgp-peer-group-af",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-peergroup.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -170,8 +420,8 @@
     },
     {
       "slug": "bgp-peer-group",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-peergroup.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -179,8 +429,8 @@
     },
     {
       "slug": "bgp-peer-range",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-peerrange.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -188,8 +438,8 @@
     },
     {
       "slug": "bmp",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bmp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -197,8 +447,8 @@
     },
     {
       "slug": "breakout-cfg",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-breakout_cfg.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -206,8 +456,8 @@
     },
     {
       "slug": "buffer-pg",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-buffer-pg.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -215,17 +465,30 @@
     },
     {
       "slug": "buffer-pool",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-buffer-pool.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "type": 3,
+        "mode": 2
+      },
+      "values": {
+        "type": [
+          "ingress",
+          "egress",
+          "both"
+        ],
+        "mode": [
+          "static",
+          "dynamic"
+        ]
+      }
     },
     {
       "slug": "buffer-port-egress-profile-list",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-buffer-port-egress-profile-list.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -233,8 +496,8 @@
     },
     {
       "slug": "buffer-port-ingress-profile-list",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-buffer-port-ingress-profile-list.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -242,17 +505,29 @@
     },
     {
       "slug": "buffer-profile",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-buffer-profile.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "headroom_type": 2,
+        "packet_discard_action": 2
+      },
+      "values": {
+        "headroom_type": [
+          "static",
+          "dynamic"
+        ],
+        "packet_discard_action": [
+          "drop",
+          "trim"
+        ]
+      }
     },
     {
       "slug": "buffer-queue",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-buffer-queue.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -260,17 +535,34 @@
     },
     {
       "slug": "community-set",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-routing-policy-sets.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 2,
+        "set_type": 2,
+        "match_action": 2
+      },
+      "values": {
+        "mode": [
+          "IPv4",
+          "IPv6"
+        ],
+        "set_type": [
+          "STANDARD",
+          "EXPANDED"
+        ],
+        "match_action": [
+          "ANY",
+          "ALL"
+        ]
+      }
     },
     {
       "slug": "console-port",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-console.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -278,26 +570,42 @@
     },
     {
       "slug": "copp-group",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-copp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 3
+      },
+      "values": {
+        "mode": [
+          "sr_tcm",
+          "tr_tcm",
+          "storm"
+        ]
+      }
     },
     {
       "slug": "copp-trap",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-copp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 3
+      },
+      "values": {
+        "mode": [
+          "sr_tcm",
+          "tr_tcm",
+          "storm"
+        ]
+      }
     },
     {
       "slug": "crm",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-crm.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -305,8 +613,8 @@
     },
     {
       "slug": "debug-counter",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-debug-counter.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -314,17 +622,8 @@
     },
     {
       "slug": "default-lossless-buffer-parameter",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
-      "tier": "low",
-      "enum_fields": {},
-      "values": {}
-    },
-    {
-      "slug": "device-metadata",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-default-lossless-buffer-parameter.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -332,8 +631,8 @@
     },
     {
       "slug": "device-neighbor-metadata",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-device_neighbor_metadata.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -341,8 +640,8 @@
     },
     {
       "slug": "device-neighbor",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-device_neighbor.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -359,26 +658,48 @@
     },
     {
       "slug": "dhcp-relay",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-dhcpv6-relay.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "rfc6939_support": 2,
+        "interface_id": 2
+      },
+      "values": {
+        "rfc6939_support": [
+          "false",
+          "true"
+        ],
+        "interface_id": [
+          "false",
+          "true"
+        ]
+      }
     },
     {
       "slug": "dhcp-server-ipv4",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-dhcp-server-ipv4.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 5,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "type": 5
+      },
+      "values": {
+        "type": [
+          "string",
+          "ipv4-address",
+          "uint8",
+          "uint16",
+          "uint32"
+        ]
+      }
     },
     {
       "slug": "dhcpv4-relay",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-dhcpv4-relay.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -386,8 +707,8 @@
     },
     {
       "slug": "dot1p-to-tc-map",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-dot1p-tc-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -395,8 +716,8 @@
     },
     {
       "slug": "dscp-to-tc-map",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-dscp-tc-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -404,8 +725,8 @@
     },
     {
       "slug": "fabric-monitor",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-fabric-monitor.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -413,8 +734,8 @@
     },
     {
       "slug": "fabric-port",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-fabric-port.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -422,8 +743,8 @@
     },
     {
       "slug": "feature",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-feature.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -431,8 +752,8 @@
     },
     {
       "slug": "fg-nhg",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-fine-grained-ecmp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -440,8 +761,8 @@
     },
     {
       "slug": "fips",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-fips.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -449,8 +770,8 @@
     },
     {
       "slug": "flex-counter-table",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-flex_counter.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -458,8 +779,8 @@
     },
     {
       "slug": "heartbeat",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-heartbeat.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -467,17 +788,29 @@
     },
     {
       "slug": "interface",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-interface.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2,
+        "scope": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ],
+        "scope": [
+          "global",
+          "local"
+        ]
+      }
     },
     {
       "slug": "kdump",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-kdump.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -485,8 +818,8 @@
     },
     {
       "slug": "kubernetes-master",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-kubernetes_master.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -494,8 +827,8 @@
     },
     {
       "slug": "ldap-server",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-system-ldap.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -503,35 +836,56 @@
     },
     {
       "slug": "lldp-port",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-lldp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 2
+      },
+      "values": {
+        "mode": [
+          "RECEIVE",
+          "TRANSMIT"
+        ]
+      }
     },
     {
       "slug": "lldp",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-lldp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 2
+      },
+      "values": {
+        "mode": [
+          "RECEIVE",
+          "TRANSMIT"
+        ]
+      }
     },
     {
       "slug": "loopback-interface",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-loopback-interface.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "scope": 2
+      },
+      "values": {
+        "scope": [
+          "global",
+          "local"
+        ]
+      }
     },
     {
       "slug": "lossless-traffic-pattern",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-lossless-traffic-pattern.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -539,17 +893,31 @@
     },
     {
       "slug": "macsec-profile",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-macsec.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 4,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "cipher_suite": 4,
+        "policy": 2
+      },
+      "values": {
+        "cipher_suite": [
+          "GCM-AES-128",
+          "GCM-AES-256",
+          "GCM-AES-XPN-128",
+          "GCM-AES-XPN-256"
+        ],
+        "policy": [
+          "integrity_only",
+          "security"
+        ]
+      }
     },
     {
       "slug": "map-pfc-priority-to-queue",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-pfc-priority-queue-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -557,8 +925,8 @@
     },
     {
       "slug": "mclag-domain",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-mclag.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -566,8 +934,8 @@
     },
     {
       "slug": "mgmt-interface",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-mgmt_interface.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -575,17 +943,24 @@
     },
     {
       "slug": "mgmt-port",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-mgmt_port.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "autoneg": 2
+      },
+      "values": {
+        "autoneg": [
+          "on",
+          "off"
+        ]
+      }
     },
     {
       "slug": "mgmt-vrf-config",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-mgmt_vrf.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -593,8 +968,8 @@
     },
     {
       "slug": "mirror-session",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-mirror-session.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -602,26 +977,76 @@
     },
     {
       "slug": "mux-cable",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-mux-cable.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 5,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "cable_type": 2,
+        "prober_type": 2,
+        "neighbor_mode": 2,
+        "state": 5
+      },
+      "values": {
+        "cable_type": [
+          "active-active",
+          "active-standby"
+        ],
+        "prober_type": [
+          "hardware",
+          "software"
+        ],
+        "neighbor_mode": [
+          "prefix-route",
+          "host-route"
+        ],
+        "state": [
+          "auto",
+          "manual",
+          "detach",
+          "active",
+          "standby"
+        ]
+      }
     },
     {
       "slug": "mux-linkmgr",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-mux-linkmgr.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 5,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "use_well_known_mac": 2,
+        "src_mac": 2,
+        "log_verbosity": 5,
+        "kill_radv": 2
+      },
+      "values": {
+        "use_well_known_mac": [
+          "enabled",
+          "disabled"
+        ],
+        "src_mac": [
+          "ToRMac",
+          "VlanMac"
+        ],
+        "log_verbosity": [
+          "trace",
+          "debug",
+          "info",
+          "error",
+          "fatal"
+        ],
+        "kill_radv": [
+          "True",
+          "False"
+        ]
+      }
     },
     {
       "slug": "nat",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-nat.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -638,26 +1063,40 @@
     },
     {
       "slug": "ntp-key",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-ntp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "vrf": 2
+      },
+      "values": {
+        "vrf": [
+          "mgmt",
+          "default"
+        ]
+      }
     },
     {
       "slug": "ntp-server",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-ntp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "vrf": 2
+      },
+      "values": {
+        "vrf": [
+          "mgmt",
+          "default"
+        ]
+      }
     },
     {
       "slug": "nvgre-tunnel",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-nvgre-tunnel.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -665,8 +1104,8 @@
     },
     {
       "slug": "pbh",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-pbh.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -674,8 +1113,8 @@
     },
     {
       "slug": "peer-switch",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-peer-switch.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -683,8 +1122,8 @@
     },
     {
       "slug": "pfc-priority-to-priority-group-map",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-pfc-priority-priority-group-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -692,12 +1131,25 @@
     },
     {
       "slug": "pfc-wd",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-pfcwd.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "action": 3,
+        "pfc_stat_history": 2
+      },
+      "values": {
+        "action": [
+          "drop",
+          "forward",
+          "alert"
+        ],
+        "pfc_stat_history": [
+          "enable",
+          "disable"
+        ]
+      }
     },
     {
       "slug": "policer",
@@ -710,8 +1162,8 @@
     },
     {
       "slug": "port-qos-map",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-port-qos-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -719,53 +1171,114 @@
     },
     {
       "slug": "port-storm-control",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-storm-control.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "storm_type": 3
+      },
+      "values": {
+        "storm_type": [
+          "broadcast",
+          "unknown-unicast",
+          "unknown-multicast"
+        ]
+      }
     },
     {
       "slug": "port",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-port.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 5,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "link_training": 2,
+        "autoneg": 2,
+        "role": 5,
+        "fec": 4,
+        "pfc_asym": 2
+      },
+      "values": {
+        "link_training": [
+          "on",
+          "off"
+        ],
+        "autoneg": [
+          "on",
+          "off"
+        ],
+        "role": [
+          "Ext",
+          "Int",
+          "Inb",
+          "Rec",
+          "Dpc"
+        ],
+        "fec": [
+          "rs",
+          "fc",
+          "none",
+          "auto"
+        ],
+        "pfc_asym": [
+          "on",
+          "off"
+        ]
+      }
     },
     {
       "slug": "portchannel-interface",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-portchannel.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ]
+      }
     },
     {
       "slug": "portchannel-member",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-portchannel.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ]
+      }
     },
     {
       "slug": "portchannel",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-portchannel.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ]
+      }
     },
     {
       "slug": "prefix-list",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-bgp-prefix-list.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -773,17 +1286,34 @@
     },
     {
       "slug": "prefix-set",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-routing-policy-sets.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mode": 2,
+        "set_type": 2,
+        "match_action": 2
+      },
+      "values": {
+        "mode": [
+          "IPv4",
+          "IPv6"
+        ],
+        "set_type": [
+          "STANDARD",
+          "EXPANDED"
+        ],
+        "match_action": [
+          "ANY",
+          "ALL"
+        ]
+      }
     },
     {
       "slug": "queue",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-queue.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -791,26 +1321,40 @@
     },
     {
       "slug": "radius",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-system-radius.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "vrf": 2
+      },
+      "values": {
+        "vrf": [
+          "mgmt",
+          "default"
+        ]
+      }
     },
     {
       "slug": "restapi",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-restapi.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "log_level": 2
+      },
+      "values": {
+        "log_level": [
+          "trace",
+          "info"
+        ]
+      }
     },
     {
       "slug": "route-map",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-route-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -818,44 +1362,100 @@
     },
     {
       "slug": "scheduler",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-scheduler.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "type": 3,
+        "meter_type": 2
+      },
+      "values": {
+        "type": [
+          "DWRR",
+          "WRR",
+          "STRICT"
+        ],
+        "meter_type": [
+          "packets",
+          "bytes"
+        ]
+      }
     },
     {
       "slug": "sflow",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-sflow.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "collector_vrf": 2
+      },
+      "values": {
+        "collector_vrf": [
+          "mgmt",
+          "default"
+        ]
+      }
     },
     {
       "slug": "snmp-agent-address-config",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-snmp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "TYPE": 2,
+        "SNMP_USER_TYPE": 3,
+        "SNMP_USER_PERMISSION": 2
+      },
+      "values": {
+        "TYPE": [
+          "RO",
+          "RW"
+        ],
+        "SNMP_USER_TYPE": [
+          "noAuthNoPriv",
+          "AuthNoPriv",
+          "Priv"
+        ],
+        "SNMP_USER_PERMISSION": [
+          "RO",
+          "RW"
+        ]
+      }
     },
     {
       "slug": "snmp",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-snmp.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "TYPE": 2,
+        "SNMP_USER_TYPE": 3,
+        "SNMP_USER_PERMISSION": 2
+      },
+      "values": {
+        "TYPE": [
+          "RO",
+          "RW"
+        ],
+        "SNMP_USER_TYPE": [
+          "noAuthNoPriv",
+          "AuthNoPriv",
+          "Priv"
+        ],
+        "SNMP_USER_PERMISSION": [
+          "RO",
+          "RW"
+        ]
+      }
     },
     {
       "slug": "static-route",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-static-route.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -863,8 +1463,8 @@
     },
     {
       "slug": "subnet-decap",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-subnet-decap.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -872,17 +1472,25 @@
     },
     {
       "slug": "suppress-asic-sdk-health-event",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-suppress-asic-sdk-health-event.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 3,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "severity": 3
+      },
+      "values": {
+        "severity": [
+          "fatal",
+          "warning",
+          "notice"
+        ]
+      }
     },
     {
       "slug": "switch-hash",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-hash.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -890,8 +1498,8 @@
     },
     {
       "slug": "switch-trimming",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-trimming.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -899,8 +1507,8 @@
     },
     {
       "slug": "syslog-config-feature",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-syslog.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -908,8 +1516,8 @@
     },
     {
       "slug": "syslog-config",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-syslog.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -917,8 +1525,8 @@
     },
     {
       "slug": "syslog-server",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-syslog.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -926,8 +1534,8 @@
     },
     {
       "slug": "system-defaults",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-system-defaults.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -935,17 +1543,24 @@
     },
     {
       "slug": "tacplus-server",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-system-tacacs.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "vrf": 2
+      },
+      "values": {
+        "vrf": [
+          "mgmt",
+          "default"
+        ]
+      }
     },
     {
       "slug": "tc-to-queue-map",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-tc-queue-map.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -953,8 +1568,8 @@
     },
     {
       "slug": "telemetry-client",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-telemetry_client.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -962,8 +1577,8 @@
     },
     {
       "slug": "telemetry",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-telemetry.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -980,35 +1595,96 @@
     },
     {
       "slug": "tunnel",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-tunnel.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "dscp_mode": 2,
+        "ecn_mode": 2,
+        "ttl_mode": 2
+      },
+      "values": {
+        "dscp_mode": [
+          "uniform",
+          "pipe"
+        ],
+        "ecn_mode": [
+          "copy_from_outer",
+          "standard"
+        ],
+        "ttl_mode": [
+          "uniform",
+          "pipe"
+        ]
+      }
     },
     {
       "slug": "vlan-interface",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-vlan.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2,
+        "grat_arp": 2,
+        "proxy_arp": 2,
+        "scope": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ],
+        "grat_arp": [
+          "enabled",
+          "disabled"
+        ],
+        "proxy_arp": [
+          "enabled",
+          "disabled"
+        ],
+        "scope": [
+          "global",
+          "local"
+        ]
+      }
     },
     {
       "slug": "vlan-member",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-vlan.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2,
+        "grat_arp": 2,
+        "proxy_arp": 2,
+        "scope": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ],
+        "grat_arp": [
+          "enabled",
+          "disabled"
+        ],
+        "proxy_arp": [
+          "enabled",
+          "disabled"
+        ],
+        "scope": [
+          "global",
+          "local"
+        ]
+      }
     },
     {
       "slug": "vlan-sub-interface",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-vlan-sub-interface.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -1016,17 +1692,39 @@
     },
     {
       "slug": "vlan",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-vlan.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "mpls": 2,
+        "grat_arp": 2,
+        "proxy_arp": 2,
+        "scope": 2
+      },
+      "values": {
+        "mpls": [
+          "enable",
+          "disable"
+        ],
+        "grat_arp": [
+          "enabled",
+          "disabled"
+        ],
+        "proxy_arp": [
+          "enabled",
+          "disabled"
+        ],
+        "scope": [
+          "global",
+          "local"
+        ]
+      }
     },
     {
       "slug": "vnet",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-vnet.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -1034,17 +1732,24 @@
     },
     {
       "slug": "voq-inband-interface",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-voq-inband-interface.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "inband_type": 2
+      },
+      "values": {
+        "inband_type": [
+          "port",
+          "Port"
+        ]
+      }
     },
     {
       "slug": "vrf",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-vrf.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
@@ -1052,44 +1757,56 @@
     },
     {
       "slug": "vxlan-evpn-nvo",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-vxlan.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "ttl_mode": 2
+      },
+      "values": {
+        "ttl_mode": [
+          "uniform",
+          "pipe"
+        ]
+      }
     },
     {
       "slug": "vxlan-tunnel-map",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-vxlan.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "ttl_mode": 2
+      },
+      "values": {
+        "ttl_mode": [
+          "uniform",
+          "pipe"
+        ]
+      }
     },
     {
       "slug": "vxlan-tunnel",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
+      "yang": "sonic-vxlan.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
+      "max_card": 2,
       "tier": "low",
-      "enum_fields": {},
-      "values": {}
+      "enum_fields": {
+        "ttl_mode": 2
+      },
+      "values": {
+        "ttl_mode": [
+          "uniform",
+          "pipe"
+        ]
+      }
     },
     {
       "slug": "warm-restart",
-      "yang": null,
-      "yang_dir": null,
-      "max_card": 0,
-      "tier": "low",
-      "enum_fields": {},
-      "values": {}
-    },
-    {
-      "slug": "wred-profile",
-      "yang": null,
-      "yang_dir": null,
+      "yang": "sonic-warm-restart.yang",
+      "yang_dir": ".cache/sonic-sources/sonic-buildimage/src/sonic-yang-models/yang-models",
       "max_card": 0,
       "tier": "low",
       "enum_fields": {},
