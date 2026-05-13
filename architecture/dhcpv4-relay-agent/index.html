@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -7804,6 +7801,34 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-82-circuit-id-57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 82 の circuit-id に物理ポート名を記録できない（#57）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -7812,7 +7837,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -7823,7 +7848,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -7851,7 +7876,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29706,6 +29731,34 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-82-circuit-id-57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 82 の circuit-id に物理ポート名を記録できない（#57）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -29714,7 +29767,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -29725,7 +29778,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29753,7 +29806,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29893,21 +29946,31 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="m">10</span>.1.0.2
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4
 </span></code></pre></div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">既知の問題<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="option-82-circuit-id-57">Option 82 の circuit-id に物理ポート名を記録できない（#57）<a class="headerlink" href="#option-82-circuit-id-57" title="Permanent link">&para;</a></h3>
+<p>SONiC の DHCP relay は VLAN インターフェース上でパケットを受信するため、ISC <code>dhcrelay</code> の Option 82 circuit-id には <strong>VLAN インターフェース名が記録される</strong>（物理ポート名ではない）。</p>
+<p>isc-dhcp-relay では受信インターフェース名を circuit-id に利用するが、VLAN インターフェースに IP が割り当てられている場合、物理ポート（メンバーポート）を特定する手段がない。メンバーポートには IP アドレスがないため <code>dhcrelay</code> がパケットを破棄してしまう。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dhcrelay: Discarding packet received on EthernetX interface that has no IPv4 address assigned.
+</span></code></pre></div>
+<p>この制約は isc-dhcp-relay の実装上の制限であり、SONiC 固有の問題ではない。物理ポート名を circuit-id に含める要件がある場合は <code>dhcrelay</code> のパッチまたは代替 relay 実装が必要。</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/57">sonic-net/SONiC#57</a></li>
+</ul>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>broadcast 起点のみ</strong>: client が unicast で server を直叩きする経路は relay 対象外</li>
 <li>option-82 の circuit-id / remote-id 文字列フォーマットは platform / 実装で差がある</li>
 <li>dual-ToR 環境では client 側 single-link / dual-link で挙動が異なる（peer 側 relay の有無）</li>
 <li>ISC <code>dhcrelay</code> 自体の制約（<code>-pf</code> PID file、parallel server 数）は ISC 側に依存</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>dual ToR active-active / standby</strong>: lease 整合と repaire の挙動が ToR モードで変わる</li>
 <li><strong>VRF</strong>: server 到達経路の VRF 指定が必要。<code>mgmt</code> VRF か data VRF か明確化が要件</li>
 <li><strong>ipv4-port-based-dhcp-server</strong>: SONiC 側で local DHCP server を立てる場合との排他関係（用途が違う）</li>
 <li><strong>DHCP DoS mitigation / dhcp-mac-move-test</strong>: <a href="../../reference/glossary/#term-acl">ACL</a> / 監視系がパケットドロップの原因になり得る</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>client がアドレスを取れない → <code>show dhcp_relay ipv4</code> でカウンタ、<code>dhcrelay</code> プロセス起動状態、server 到達性を確認</li>
 <li>option-82 が想定と違う → <code>dhcrelay</code> 起動引数の circuit-id / remote-id 設定とプラットフォーム実装差を確認</li>
@@ -29916,14 +29979,14 @@
 <h3 id="dhcpv4-relay">コマンド例: DHCPv4 relay の確認<a class="headerlink" href="#dhcpv4-relay" title="Permanent link">&para;</a></h3>
 <p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># DHCP relay 設定と統計の確認</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>helper
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>counters
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DHCP_RELAY|*&#39;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># dhcrelay / dhcp-relay container のログ</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>docker<span class="w"> </span>logs<span class="w"> </span>dhcp_relay<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># DHCP relay 設定と統計の確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>helper
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>counters
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DHCP_RELAY|*&#39;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># dhcrelay / dhcp-relay container のログ</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>docker<span class="w"> </span>logs<span class="w"> </span>dhcp_relay<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - dhcrelay / dhcpmon の現行 docker-dhcp-relay 取り込み確認
 - CONFIG_DB DHCP_RELAY スキーマと VRF 指定方法の現行 sonic-yang-models 確認

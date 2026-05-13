@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -6239,6 +6236,78 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot の既知パターンと対処
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="warm reboot の既知パターンと対処">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dummy-sai-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dummy SAI objects の削除失敗（バージョン跨ぎアップグレード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_switch_attr_restart_warm-reconcile-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI_SWITCH_ATTR_RESTART_WARM を reconcile 後に false に戻す必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer-profile-zero-queue-reconcile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffer profile が zero の queue に対する reconcile 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-flexcounter-vid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot 後の FlexCounter による新 VID の処理失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-acl-counter-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot 後の ACL counter OID マッピングズレ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -29752,6 +29821,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#warm-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot の既知パターンと対処
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="warm reboot の既知パターンと対処">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dummy-sai-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dummy SAI objects の削除失敗（バージョン跨ぎアップグレード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_switch_attr_restart_warm-reconcile-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI_SWITCH_ATTR_RESTART_WARM を reconcile 後に false に戻す必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer-profile-zero-queue-reconcile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buffer profile が zero の queue に対する reconcile 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-flexcounter-vid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot 後の FlexCounter による新 VID の処理失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-reboot-acl-counter-oid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm reboot 後の ACL counter OID マッピングズレ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29893,6 +30034,33 @@
 <li><strong>redis OOM risk</strong>: ASIC_DB / <a href="../../../reference/glossary/#term-counters_db">COUNTERS_DB</a> の scale が大きいと memory swap が発生。<code>maxmemory-policy</code> を <code>noeviction</code> にしないと counter が消える。</li>
 <li><strong>FEATURE state の race</strong>: container 起動と FEATURE state 更新が非同期で、依存先を先に起動してしまう例がある。<code>delayed</code> と <code>auto_restart</code> を組み合わせる。</li>
 </ul>
+<h2 id="warm-reboot">warm reboot の既知パターンと対処<a class="headerlink" href="#warm-reboot" title="Permanent link">&para;</a></h2>
+<p>以下は実際に報告されている warm reboot 関連の落とし穴である。</p>
+<h3 id="dummy-sai-objects">dummy SAI objects の削除失敗（バージョン跨ぎアップグレード）<a class="headerlink" href="#dummy-sai-objects" title="Permanent link">&para;</a></h3>
+<p>古い image（例: 201811）から新 image（例: 202012）へ warm reboot でアップグレードした後、同 image での 2 回目 warm reboot で orchagent がクラッシュするケースがある（issue #1429）。</p>
+<p>原因: 最初の warm reboot アップグレードで syncd が作成した「dummy SAI objects」が ASIC_DB に残り、次回 warm reboot の reconcile 時に <code>SAI_STATUS_INVALID_PARAMETER</code> で削除できない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>syncd: remove of SAI object OID:xxx failed: SAI_STATUS_INVALID_PARAMETER
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>orchagent: FATAL syncd failed to remove dummy object
+</span></code></pre></div>
+<p>対処:
+1. バージョン跨ぎの warm reboot が必要な場合、中間バージョンを踏んで 2 段階で移行することを検討する。
+2. 問題が起きた場合は cold reboot で回復する（ASIC_DB / SAI state が初期化される）。</p>
+<h3 id="sai_switch_attr_restart_warm-reconcile-false">SAI_SWITCH_ATTR_RESTART_WARM を reconcile 後に false に戻す必要<a class="headerlink" href="#sai_switch_attr_restart_warm-reconcile-false" title="Permanent link">&para;</a></h3>
+<p>warm reboot 実行前に <code>setRestartWarmOnAllSwitches(true)</code> が呼ばれ、syncd が warm=true で起動する。しかし reconcile 完了後に <code>SAI_SWITCH_ATTR_RESTART_WARM = false</code> を SAI にセットしない実装だと、その後の通常 reboot（cold/fast）でも SAI が warm <code>remove_switch</code> を実行してしまうことがある（issue #1361）。</p>
+<p>対処: ベンダ SAI の実装によって挙動が異なる。連続 warm reboot が必要な環境では、reconcile 後の <code>RESTART_WARM = false</code> セットを SAI / syncd の実装が行っていることを確認する。</p>
+<h3 id="buffer-profile-zero-queue-reconcile">buffer profile が zero の queue に対する reconcile 失敗<a class="headerlink" href="#buffer-profile-zero-queue-reconcile" title="Permanent link">&para;</a></h3>
+<p>warm reboot 実行時、一部の queue に「zero buffer profile」が attach されている場合、temp asic view に余分な buffer profile が 2 件生成されることがある（issue #899）。これら余分な buffer profile は current asic view と VID は一致するが attribute リストが空になるため、<code>performObjectSetTransition</code> 内の比較で失敗する：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>performObjectSetTransition: object OID:xxx attribute list is empty in temp view
+</span></code></pre></div>
+<p>PR #906 で修正済み（sonic-sairedis master）。古い image でこの症状が出た場合は cold reboot で回復し、image を更新する。</p>
+<h3 id="warm-reboot-flexcounter-vid">warm reboot 後の FlexCounter による新 VID の処理失敗<a class="headerlink" href="#warm-reboot-flexcounter-vid" title="Permanent link">&para;</a></h3>
+<p>warm reboot の <code>init view</code> フェーズ（<code>apply_view</code> 前）では、FlexCounter がまだ ASIC state を完全に認識していない。buffer pool など新たに作成された VID を持つ object が FlexCounter の <code>processFlexCounterEvent</code> で処理されようとすると、VID→RID マッピングが未確立で counter 取得に失敗する（issue #862、sonic-swss PR #1987 で修正済）。</p>
+<p>現行 master では <code>apply_view</code> 完了後に FlexCounter の VID 再登録が行われるため通常は問題ない。古い image でこの症状が出た場合（syslog に <code>processFlexCounterEvent</code> のエラーが連続して現れる）は、image を更新する。</p>
+<h3 id="warm-reboot-acl-counter-oid">warm reboot 後の ACL counter OID マッピングズレ<a class="headerlink" href="#warm-reboot-acl-counter-oid" title="Permanent link">&para;</a></h3>
+<p>warm reboot 後、orchagent が ACL Entry の <code>SAI_ACL_ENTRY_ATTR_ACTION_COUNTER</code> に誤った ACL counter RID を SET するケースが報告された（issue #449）。同一 ACL Entry の RID と counter RID の対応が temp view 生成時にずれることが原因で、修正済み（closed as fixed）。症状：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>syncd: SET on ACL_ENTRY with counter RID that belongs to another entry
+</span></code></pre></div>
+<p>現行 master では解消しているが、reconcile 後に ACL counter の値が意図しない entry に集計されているように見える場合は、このパターンを疑って image バージョンを確認する。</p>
 <h2 id="_5">将来計画 / ロードマップ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>system ready</code> <a href="../../../reference/glossary/#term-hld">HLD</a> の最終形に向けて、closest UP status の整理と sysmonitor の集約ロジックが拡張中。</li>

@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -9657,6 +9654,45 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip-rif-729" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP アドレス削除・再追加後に RIF カウンターが機能しない（#729）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-dot1q-tagged-arp-109" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN サブインターフェース（dot1q tagged）での ARP 学習問題（#109）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29822,6 +29858,45 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip-rif-729" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IP アドレス削除・再追加後に RIF カウンターが機能しない（#729）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vlan-dot1q-tagged-arp-109" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VLAN サブインターフェース（dot1q tagged）での ARP 学習問題（#109）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -30084,7 +30159,30 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 <li>ASIC が per-RIF counter を持たない platform では本機能は no-op となり、<code>show interfaces counters rif</code> が常に 0 になる。</li>
 <li>multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">既知の問題<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="ip-rif-729">IP アドレス削除・再追加後に RIF カウンターが機能しない（#729）<a class="headerlink" href="#ip-rif-729" title="Permanent link">&para;</a></h3>
+<p>ルーターインターフェースの IP アドレスを削除してから再追加した場合、<code>show interfaces counters rif</code> の対象カウンターが正常に動作しなくなるケースが報告されている。</p>
+<p>原因: IP アドレス削除時に <code>FLEX_COUNTER_TABLE</code> と <code>COUNTERS</code> テーブルの ObjectId に不整合が生じる。</p>
+<p><strong>影響バージョン</strong>: 201911（master / 202012 では修正済み）</p>
+<p><strong>回避策（201911 限定）:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># RIF ポーリング間隔を 1 秒超に設定し、設定後インターバル経過後にクエリする</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>counterpoll<span class="w"> </span>rif<span class="w"> </span>interval<span class="w"> </span><span class="m">3000</span>
+</span></code></pre></div>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/729">sonic-net/SONiC#729</a></li>
+</ul>
+<h3 id="vlan-dot1q-tagged-arp-109">VLAN サブインターフェース（dot1q tagged）での ARP 学習問題（#109）<a class="headerlink" href="#vlan-dot1q-tagged-arp-109" title="Permanent link">&para;</a></h3>
+<p>Mellanox プラットフォームで VLAN サブインターフェース（dot1q tagged）を使用した場合、ARP が学習されないケースが報告されている。L3 VLAN インターフェースが ASIC に正しく同期されていないことが原因と考えられる。</p>
+<p><strong>デバッグ方法:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># VLAN と物理インターフェースの ASIC レベルマッピング確認（Broadcom）</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>bcmcmd<span class="w"> </span><span class="s1">&#39;l2 show&#39;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># orchagent ログのエラー確認</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>grep<span class="w"> </span>-i<span class="w"> </span>error<span class="w"> </span>/var/log/swss/sairedis.rec<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+</span></code></pre></div>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/109">sonic-net/SONiC#109</a></li>
+</ul>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

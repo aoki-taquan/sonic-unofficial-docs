@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -9184,6 +9181,34 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の制約
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の制約">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-1565" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR アップグレードの担当者制度と調整プロセス（#1565）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         干渉する機能
       
     </span>
@@ -9192,7 +9217,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -9204,7 +9229,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -9220,7 +9245,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -9231,7 +9256,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29583,6 +29608,34 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の制約
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の制約">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-1565" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR アップグレードの担当者制度と調整プロセス（#1565）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         干渉する機能
       
     </span>
@@ -29591,7 +29644,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29603,7 +29656,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -29619,7 +29672,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29630,7 +29683,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29712,32 +29765,46 @@
 <li><strong>graceful restart 互換</strong>: GR / GR-helper の動作が version で微妙に変わる。warm reboot との相性に直撃する</li>
 <li><strong>管理 VRF / unnumbered / bfd</strong>: SONiC でよく使われる feature の互換性確認は手厚く</li>
 </ul>
-<h2 id="_3">干渉する機能<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">既知の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="frr-1565">FRR アップグレードの担当者制度と調整プロセス（#1565）<a class="headerlink" href="#frr-1565" title="Permanent link">&para;</a></h3>
+<p>SONiC での FRR アップグレードには、以下の合意済みプロセスがある（<a href="https://github.com/sonic-net/SONiC/issues/1438">sonic-net/SONiC#1438</a> で規定）:</p>
+<ul>
+<li>FRR アップグレードは <strong>リリースサイクルごとに担当ベンダーが持ち回り</strong>で実施</li>
+<li>バージョン選定: SONiC の preferred バージョン (x.y.z) に合わせる</li>
+<li>担当外のベンダーが独自バージョンを提案する場合は、担当ベンダーと事前調整が必要</li>
+<li>
+<p><strong>C++ 標準</strong>: FRR 周辺のビルド（<code>sonic-swss-common</code>、<code>sonic-swss</code>、<code>sonic-sairedis</code>）は C++14 を維持。C++17/20 は依存ライブラリの強制が発生しない限り採用しない方針（#2169 での方針確認）</p>
+</li>
+<li>
+<p>参照: <a href="https://github.com/sonic-net/SONiC/issues/1565">sonic-net/SONiC#1565</a></p>
+</li>
+</ul>
+<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><a href="../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> / <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / frrcfgd / new-frr-sonic-communication-channel</strong>: FRR と SONiC を繋ぐ周辺コード</li>
 <li><strong>graceful restart / warm reboot</strong>: GR タイマと convergence の整合</li>
 <li><strong>management VRF / VRF design</strong>: VRF 周りは upstream 側変更の影響を受けやすい</li>
 <li><strong>BMP / FRR ext config</strong>: <code>sonic-frr-bgp-extended-unified-configuration-management-framework</code> 等の SONiC 拡張</li>
 </ul>
-<h2 id="_4">トラブルシューティング<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>新版 FRR で起動しない → patch 適用順、<code>vtysh</code> config 互換性、<code>config db</code> 由来 template との差分</li>
 <li><a href="../../reference/glossary/#term-bgp">BGP</a> routes がインストールされない → <code>fpmsyncd</code> の zebra route 解釈、新版 FRR の FPM 出力フォーマット差分</li>
 <li>GR 効かない → <code>bgpd</code> GR タイマ、SONiC 側の warm-restart 連動、log の <code>BGP gr</code> メッセージ</li>
 </ul>
-<h3 id="_5">コマンド例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_6">コマンド例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>FRR バージョンとデーモン状態を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show version&#39;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>supervisorctl<span class="w"> </span>status
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>dpkg<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>frr
 </span></code></pre></div>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>FRR のメジャーバージョン跨ぎでは vtysh コマンド体系・config 互換性が崩れる事があり、手順書のバージョンに固定して実施する必要がある。</li>
 <li>SONiC の bgpcfgd / templates と FRR バージョンには 1:1 の依存関係があり、FRR のみ単独差し替えは推奨されない。</li>
 <li>本ページは特定リリースに対する手順であり、master では Dockerfile 側で固定された FRR バージョンに依拠している点に注意。</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - src/sonic-frr/patches/ ディレクトリ構造と quilt-like 適用機構の現行実装確認
 - sonic-buildimage submodule pin の現行 frr version 確認

@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -13064,6 +13061,34 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fast-reboot-arp-linux-192" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast reboot 後に ARP エントリが Linux カーネルに復元されない（#192）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -13072,7 +13097,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -13083,7 +13108,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -13095,7 +13120,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -13111,7 +13136,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,6 +29774,34 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fast-reboot-arp-linux-192" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast reboot 後に ARP エントリが Linux カーネルに復元されない（#192）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -29757,7 +29810,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -29768,7 +29821,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29780,7 +29833,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -29796,7 +29849,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29920,31 +29973,37 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <p>dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC→SONiC と同じ flow。渡されなくても起動は完了するが、neighbor / FDB を slow path で再学習するため downtime が伸びる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p><code>fast-reboot</code> コマンドで起動。<code>--use-config &lt;path&gt;</code> などのオプションは HLD で個別言及なし。</p>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">既知の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="fast-reboot-arp-linux-192">fast reboot 後に ARP エントリが Linux カーネルに復元されない（#192）<a class="headerlink" href="#fast-reboot-arp-linux-192" title="Permanent link">&para;</a></h3>
+<p>fast reboot 完了後、以前学習していた ARP エントリが Linux カーネルに復元されないケースが報告されている。<code>neighsyncd</code> の <code>restore_neighbors.py</code> が ARP テーブルを Redis から復元するフローの問題と考えられる。restore 処理の完了を待たずに通信を試みた場合も同様の症状が出ることがある。</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/192">sonic-net/SONiC#192</a></li>
+</ul>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>dataplane &lt;30s / control plane &lt;90s</strong> はターゲット値。実測は platform 依存</li>
 <li>vendor NOS 由来 dump の提供は別途プラットフォーム実装側</li>
 <li>finalizer の flag を起点にする処理（flex counter 等）は HLD 例示。追加対象は要 case-by-case</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>system-wide warmboot</strong>: 同じスクリプト基盤と finalizer を共有</li>
 <li><strong>flex counter / enable_counters.py</strong>: finalizer flag 待ちで起動</li>
 <li><strong><a href="../../reference/glossary/#term-sai">SAI</a> Application Extension Infrastructure</strong>: HLD 末尾に integration 章あり<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>30s 超え → syncd の INIT/APPLY 比較が長い、neighbor restore が ARP burst で詰まる、ASIC 側の port 起動順</li>
 <li>finalizer が flag を外さない → 各 reconciliation サブシステムから finalizer への ack が来ているか確認</li>
 </ul>
-<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>Fast reboot 各段階の所要時間と warm-restart 状態を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>reboot-cause
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>warm-restart<span class="w"> </span>state
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sudo<span class="w"> </span>fast-reboot<span class="w"> </span>-v
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;fast-reboot&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - warmboot-finalizer を fast-reboot 兼用にする現行 sonic-buildimage / sonic-utilities 取り込み確認
 - restore_neighbors.py の現行 sonic-swss/neighsyncd 取り込み確認

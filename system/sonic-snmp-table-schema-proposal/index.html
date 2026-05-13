@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -14912,10 +14909,27 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#snmp-mibupdater-225-118" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP 起動時の初期化遅延による MIBUpdater 例外（#225, #118）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -14923,7 +14937,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -14934,7 +14948,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -14943,6 +14957,17 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29822,10 +29847,27 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#snmp-mibupdater-225-118" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SNMP 起動時の初期化遅延による MIBUpdater 例外（#225, #118）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -29833,7 +29875,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29844,7 +29886,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -29853,6 +29895,17 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30011,30 +30064,45 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 </span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="s1">  }</span>
 </span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="s1">}&#39;</span><span class="w"> </span>--write-to-db
 </span></code></pre></div>
-<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">既知の問題<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="snmp-mibupdater-225-118">SNMP 起動時の初期化遅延による <code>MIBUpdater</code> 例外（#225, #118）<a class="headerlink" href="#snmp-mibupdater-225-118" title="Permanent link">&para;</a></h3>
+<p>SNMP エージェントが <code>COUNTERS_QUEUE_NAME_MAP</code> または <code>COUNTERS_PORT_NAME_MAP</code> が Redis (COUNTERS_DB) に存在しない状態で起動すると、<code>MIBUpdater.start()</code> で例外が発生し、IF-MIB のデータが取得できなくなる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ERROR: MIBUpdater.start() caught an unexpected exception during update_data()
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Key &#39;b&#39;COUNTERS_PORT_NAME_MAP&#39;&#39; unavailable in database &#39;COUNTERS_DB&#39;
+</span></code></pre></div>
+<p>原因は初期化タイミングの競合（portsyncd の起動が SNMP より遅い場合に発生）。</p>
+<p><strong>回避策:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># SNMP Docker を再起動（portsyncd の初期化完了後）</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>snmp
+</span></code></pre></div>
+<p><strong>IP-MIB の制限</strong>: IP-MIB はデフォルトでは部分実装のみ（<code>IpMib</code>・<code>IpCidrRouteTable</code> クラス相当）。フル IP-MIB が必要な場合は SNMP エージェントへの貢献が必要。</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/225">sonic-net/SONiC#225</a>, <a href="https://github.com/sonic-net/SONiC/issues/118">sonic-net/SONiC#118</a></li>
+</ul>
+<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>SNMP_COMMUNITY.TYPE = RW</code> は HLD 時点で未実装（コードでは未使用、Read-only のみ有効）と明記されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>パスワードは平文格納。</li>
 <li><code>snmpd-config-updater</code> は caclmgrd への移行予定のため対象外と HLD で明言されている。</li>
 </ul>
-<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>SNMP_ACL（既存）</strong>: 本提案は ACL 部分を扱わない。引き続き既存の <code>SNMP_ACL</code> テーブルが ACL を表す。</li>
 <li><strong><code>docker-snmp</code> 起動順</strong>: CONFIG_DB が起動済みである必要がある（既存 SONiC 設計と同じ）。</li>
 <li><strong>caclmgrd</strong>: HLD は <code>snmpd-config-updater</code> の caclmgrd 置き換えを前提としているため、<a href="../../reference/glossary/#term-acl">ACL</a> 反映ルートが将来変わる可能性に注意。</li>
 </ul>
-<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>新スキーマを書いても snmpd.conf に反映されない → j2 テンプレートが新パスにフォールバックしているか、<code>SNMP</code> テーブル存在チェックが想定どおり動いているかを確認する。</li>
 <li>値が <code>redis-cli -n 4 hgetall SNMP|LOCATION</code> で見えるが community が効かない → <code>SNMP_COMMUNITY</code> のキーは小文字大文字を区別する点に注意。</li>
 </ul>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 新スキーマの反映と community 設定確認</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SNMP|LOCATION&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;SNMP_COMMUNITY|*&quot;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>cat<span class="w"> </span>/etc/snmp/snmpd.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;syslocation|com2sec&quot;</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span>snmpd
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 新スキーマの反映と community 設定確認</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SNMP|LOCATION&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;SNMP_COMMUNITY|*&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>cat<span class="w"> </span>/etc/snmp/snmpd.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;syslocation|com2sec&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span>snmpd
 </span></code></pre></div>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 601f13437a09 -->
 
 <div class="footnote">

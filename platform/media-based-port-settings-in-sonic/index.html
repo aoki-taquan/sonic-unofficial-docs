@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -17174,6 +17171,45 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#100g-fec-384" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100G ポートでリンクが上がらない場合の FEC 設定（#384）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fiber-tx-139" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fiber トランシーバー接続時の TX 信号が自動有効化されない（#139）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -17182,7 +17218,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -17193,7 +17229,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29754,6 +29790,45 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#100g-fec-384" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        100G ポートでリンクが上がらない場合の FEC 設定（#384）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fiber-tx-139" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fiber トランシーバー接続時の TX 信号が自動有効化されない（#139）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -29762,7 +29837,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -29773,7 +29848,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29947,21 +30022,45 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 
 <h2 id="cli-config_db-yang">CLI / CONFIG_DB / YANG<a class="headerlink" href="#cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <p>CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> への追加は無し<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>media_settings.json</code> は image build 時に platform tree に同梱される静的 file。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">既知の問題<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="100g-fec-384">100G ポートでリンクが上がらない場合の FEC 設定（#384）<a class="headerlink" href="#100g-fec-384" title="Permanent link">&para;</a></h3>
+<p>Celestica Seastone DX-010 等の一部プラットフォームで 100G ポートが接続されているにもかかわらずリンクが上がらないケースがある。FEC (Forward Error Correction) モードの不一致が原因の場合、RS FEC を明示指定することで解決することがある:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># FEC モードを RS に変更</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>portconfig<span class="w"> </span>-p<span class="w"> </span>Ethernet124<span class="w"> </span>-s<span class="w"> </span><span class="m">100000</span><span class="w"> </span>-f<span class="w"> </span>rs
+</span></code></pre></div>
+<p>対向 NIC によっては FC (Firecode) や FEC なしが必要な場合もある。自動ネゴシエーション状態の確認と <code>portconfig</code> でのモード調整を試みること。</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/384">sonic-net/SONiC#384</a></li>
+</ul>
+<h3 id="fiber-tx-139">Fiber トランシーバー接続時の TX 信号が自動有効化されない（#139）<a class="headerlink" href="#fiber-tx-139" title="Permanent link">&para;</a></h3>
+<p>一部のプラットフォーム（EdgeCore AS5712-54X 等）で 10GBase-SR 等の Fiber トランシーバーを接続しても TX 信号が自動的に有効化されず、リンクが上がらないケースがある。これはプラットフォーム固有のフックが未実装のため。</p>
+<p><strong>回避策（AS5712 系）:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># インターフェースタイプを SR に変更</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>bcmcmd<span class="w"> </span><span class="s2">&quot;port xe&lt;N&gt; interface=sr&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># TX 信号を有効化（0 = enable、ポート番号は 1 始まり）</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>accton_as5712_util.py<span class="w"> </span><span class="nb">set</span><span class="w"> </span>sfp<span class="w"> </span>&lt;port_number&gt;<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># または sysfs 経由</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="nb">echo</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/sys/bus/i2c/drivers/as5712_54x_cpld/*/module_tx_disable_*
+</span></code></pre></div>
+<p>将来的にはトランシーバー挿入時のフック機構で自動化される予定（現状は手動対応が必要）。</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/139">sonic-net/SONiC#139</a></li>
+</ul>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>media_settings.json</code> が無ければ機能しない（opt-in）</li>
 <li>breakout / dynamic port で port index と front panel の対応が変わる場合の整合は <code>port_config.ini</code> 側責任</li>
 <li>warm reboot 中は通知しないため、reboot を跨いだ media 交換のタイミングによっては再起動を要する</li>
 <li>vendor key は <strong>vendor name + PN の組</strong> が一意であることが前提</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>xcvrd</strong>（platform monitor / pmon enhancement <a href="../../reference/glossary/#term-hld">HLD</a> と密接連携）</li>
 <li><strong>PortsOrch</strong>（<code>SAI_PORT_SERDES_*</code> 属性 set）</li>
 <li><strong>Dynamic Port Breakout</strong>: 通常 reboot シーケンス相当として処理</li>
 <li><strong>gearbox / port-link-training</strong>: 同じく serdes 系設定との潜在競合</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-platform-daemons `sonic-xcvrd/xcvrd/xcvrd_utilities/media_settings_parser.py` 存在: `CUSTOM_SERDES_ATTR_PREFIX = 'CUSTOM:'` (l.175), `CUSTOM_SERDES_ATTRS_KEY_IN_DB = 'custom_serdes_attrs'` (l.177)
 - sonic-swss `orchagent/port/portschema.h` `PORT_CUSTOM_SERDES_ATTRS "custom_serdes_attrs"` (l.94)

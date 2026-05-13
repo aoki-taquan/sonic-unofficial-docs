@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -6370,6 +6367,39 @@
     <span class="md-ellipsis">
       
         syncd の処理モデル
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orchagent-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent が ASIC_DB に接続する仕組み
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#saidiscovery-applyviewtransition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SaiDiscovery と applyViewTransition の役割
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-sai_query_attribute_capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダ SAI と sai_query_attribute_capability
       
     </span>
   </a>
@@ -29786,6 +29816,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#orchagent-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent が ASIC_DB に接続する仕組み
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#saidiscovery-applyviewtransition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SaiDiscovery と applyViewTransition の役割
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-sai_query_attribute_capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ベンダ SAI と sai_query_attribute_capability
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30044,6 +30107,32 @@
 </tbody>
 </table>
 <p>sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用しています。sync モードは SAI 失敗の即時検知に有用ですが throughput が落ちます。</p>
+<h2 id="orchagent-asic_db">orchagent が ASIC_DB に接続する仕組み<a class="headerlink" href="#orchagent-asic_db" title="Permanent link">&para;</a></h2>
+<p>orchagent は <code>DBConnector</code> で APPL_DB を直接読むが、ASIC_DB には <strong>直接書かない</strong>。代わりに <code>sairedis</code> クライアントライブラリ（<code>libsairedis</code>）が間に入り、SAI API 呼び出しを ASIC_DB の <code>ASIC_STATE:*</code> key に変換してから publish する（issue #466 の解説より）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>orchagent
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  └─ sairedis API (create/set/remove/get)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>       └─ libsairedis (redis pipeline)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            └─ ASIC_DB (ASIC_STATE:*)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 └─ syncd (subscribe → SAI library → ASIC)
+</span></code></pre></div>
+<p>orchagent から見ると「SAI 関数を呼んでいる」が、実際は libsairedis が Redis にシリアライズして syncd に渡す非同期設計になっている。<a href="https://github.com/sonic-net/SONiC/wiki/Architecture">SONiC architecture</a> の sairedis の項を参照。</p>
+<h2 id="saidiscovery-applyviewtransition">SaiDiscovery と applyViewTransition の役割<a class="headerlink" href="#saidiscovery-applyviewtransition" title="Permanent link">&para;</a></h2>
+<p><strong>SaiDiscovery</strong> は syncd が warm reboot 復帰時に既存の ASIC 状態を Redis (ASIC_DB) に再構築するコンポーネントである（issue #745 の解説より）：</p>
+<ol>
+<li><code>switch</code> オブジェクトを起点に、port・neighbor・route などの全 SAI object を再帰的に walk する。</li>
+<li>各 object の <code>RID</code>（Real ID）と <code>VID</code>（Virtual ID）の対応を <code>VIDTORID</code> / <code>RIDTOVID</code> マップに登録する。</li>
+<li><code>applyViewTransition</code>（<code>applyView</code>）がこの RID セットを「current view」として用いる。</li>
+</ol>
+<p><strong>applyViewTransition</strong> は：
+- orchagent が送り込んだ再設定要求を「temporary view」として受け取り、
+- SaiDiscovery で作った「current view」との diff を計算し、
+- 差分（追加・削除・更新）だけを SAI に流す。</p>
+<p>SaiDiscovery で列挙した RID（switch/port）は削除対象から除外されるため、これらのオブジェクトは warm reboot を跨いで保持される。</p>
+<h2 id="sai-sai_query_attribute_capability">ベンダ SAI と sai_query_attribute_capability<a class="headerlink" href="#sai-sai_query_attribute_capability" title="Permanent link">&para;</a></h2>
+<p>syncd は起動時に <code>sai_query_attribute_capability</code> を呼び、各 SAI object の attribute がそのベンダ SAI でサポートされるかを確認する。ベンダが libsai.so でこの関数を公開していない場合、syncd-vs や thirdparty syncd のビルド時にリンクエラーになる（issue #780）：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>error: &#39;sai_query_attribute_capability&#39; method is missing from libsai.so
+</span></code></pre></div>
+<p>対処: ベンダ SAI のヘッダ・実装が最新 SAI spec に追従していることを確認する。VS ビルドでは <code>sai_query_attribute_capability</code> のスタブ実装が必要な場合がある。</p>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a></li>

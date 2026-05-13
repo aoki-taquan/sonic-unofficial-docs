@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -17808,10 +17805,27 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-mellanox-plugged-err-265" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox スイッチで非 Mellanox 光トランシーバーが PLUGGED-ERR 状態になる（#265）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -17819,7 +17833,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -17830,7 +17844,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        参考リンク
+        干渉する機能
       
     </span>
   </a>
@@ -17839,6 +17853,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考リンク
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29622,10 +29647,27 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mellanox-mellanox-plugged-err-265" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox スイッチで非 Mellanox 光トランシーバーが PLUGGED-ERR 状態になる（#265）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -29633,7 +29675,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29644,7 +29686,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        参考リンク
+        干渉する機能
       
     </span>
   </a>
@@ -29653,6 +29695,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考リンク
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29762,20 +29815,34 @@
 <li>それ以外のエラーは read/write 失敗として扱う</li>
 <li>RJ45 ポートは対象外<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">既知の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="mellanox-mellanox-plugged-err-265">Mellanox スイッチで非 Mellanox 光トランシーバーが PLUGGED-ERR 状態になる（#265）<a class="headerlink" href="#mellanox-mellanox-plugged-err-265" title="Permanent link">&para;</a></h3>
+<p>Mellanox スイッチに非 Mellanox ブランドの光トランシーバーを接続すると <code>PLUGGED-ERR</code> 状態になり、リンクが確立しない場合がある。<code>mlxlink</code> コマンドで確認すると以下のような出力が得られる:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Recommendation: The cable is not supported.
+</span></code></pre></div>
+<p>これは Mellanox スイッチのファームウェアがベンダーロック（特定ブランドの光モジュールのみ許可）を実装している場合に発生する。</p>
+<p><strong>解決策:</strong> Mellanox サポートに連絡し、ベンダー制限を解除したファームウェアを取得する（非公開ファームウェア。サポート契約が必要）。ONYX 時代は <code>fae cable-stamping-unlock</code> コマンドが存在したが、SONiC での同等コマンドは未実装。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># トランシーバーの状態確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>mlxlink<span class="w"> </span>-d<span class="w"> </span>/dev/mst/mt&lt;device&gt;_pci_cr0<span class="w"> </span>-p<span class="w"> </span>&lt;port_number&gt;
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span>Ethernet&lt;N&gt;
+</span></code></pre></div>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/265">sonic-net/SONiC#265</a></li>
+</ul>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>vendor の platform API 実装が前提。未実装 vendor では <code>NotImplementedError</code><sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>active cable の page 存在チェックは完全には行わない</li>
 <li>RJ45 不可</li>
 <li>warm/fast-boot 影響なし、メモリ消費影響なし<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>sfputil</code> 既存サブコマンド</strong>: 同じ CLI ツールに追加される</li>
 <li><strong><code>sonic_platform_base.sfp_base.SfpBase.read_eeprom</code> / <code>write_eeprom</code></strong>: 下位 API</li>
 <li><strong>xcvrd / pmon</strong>: EEPROM への書込はモジュール状態に影響するため運用注意</li>
 </ul>
-<h2 id="_6">参考リンク<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">参考リンク<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/config-db/port/">CONFIG_DB: PORT</a></li>
 <li><a href="../../reference/cli/show-platform/">CLI: show platform</a></li>
@@ -29784,7 +29851,7 @@
 <li><a href="../../reference/glossary/">Glossary</a></li>
 <li><a href="../../reference/">Reference 索引</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

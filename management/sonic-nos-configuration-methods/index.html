@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -15415,10 +15412,38 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-load_minigraph-configdb-145" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config load_minigraph 失敗後に ConfigDB がロックされる（#145）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#klish-sonic-cli-tmpklishfifo-781" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        klish ベース sonic-cli の /tmp/klish.fifo エラー（#781）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -15426,7 +15451,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -15437,7 +15462,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -15448,7 +15473,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フェーズ境界
+        トラブルシューティング
       
     </span>
   </a>
@@ -15459,7 +15484,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -15468,6 +15493,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -15489,7 +15525,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29881,10 +29917,38 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-load_minigraph-configdb-145" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config load_minigraph 失敗後に ConfigDB がロックされる（#145）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#klish-sonic-cli-tmpklishfifo-781" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        klish ベース sonic-cli の /tmp/klish.fifo エラー（#781）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -29892,7 +29956,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29903,7 +29967,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -29914,7 +29978,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フェーズ境界
+        トラブルシューティング
       
     </span>
   </a>
@@ -29925,7 +29989,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29934,6 +29998,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29955,7 +30030,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -30176,7 +30251,27 @@
 <p class="admonition-title">HLD と実装の差分</p>
 <p>本ページの monitor は <code>partially_implemented</code>。HLD は SONiC NOS の設定手段を 10 種類に整理する設計提案で、現行 master では中核となる <code>sonic-cfggen</code> / <code>config_db.json</code> / <code>redis-cli</code> / <code>vtysh</code> / RESTCONF / gNMI は実装されているが、<code>apply-patch</code> の checkpoint / rollback や ZTP boot failure リカバリ、入口横断の validation などは段階的取り込みで一部のみ。HLD の表は分類軸として有用だが、各入口の最新挙動は個別の <code>sonic-utilities</code> / <code>sonic-mgmt-framework</code> 実装で裏取りすること。</p>
 </div>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">既知の問題<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="config-load_minigraph-configdb-145"><code>config load_minigraph</code> 失敗後に ConfigDB がロックされる（#145）<a class="headerlink" href="#config-load_minigraph-configdb-145" title="Permanent link">&para;</a></h3>
+<p><code>config load_minigraph</code> の実行中に失敗（例: minigraph の hostname 不整合）すると、ConfigDB が空のままロック状態になり、その後の <code>config load_minigraph</code> が無限ハングするケースがある。</p>
+<p><strong>回避策:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># ConfigDB の初期化フラグを手動で設定</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>SET<span class="w"> </span>CONFIG_DB_INITIALIZED<span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># その後 config load_minigraph を再実行</span>
+</span></code></pre></div>
+<p><strong>根本原因の予防:</strong> minigraph.xml 内の hostname は <strong>全箇所で一致</strong>させる必要がある。1 箇所だけ変更するとパース時に <code>KeyError</code> が発生する。</p>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/145">sonic-net/SONiC#145</a></li>
+</ul>
+<h3 id="klish-sonic-cli-tmpklishfifo-781">klish ベース <code>sonic-cli</code> の <code>/tmp/klish.fifo</code> エラー（#781）<a class="headerlink" href="#klish-sonic-cli-tmpklishfifo-781" title="Permanent link">&para;</a></h3>
+<p>klish を使用する <code>sonic-cli</code> で設定コマンド実行時に <code>/tmp/klish.fifo</code> 関連のエラーが発生するケースがある。Python 2/3 混在環境でのスクリプトエンコーディング問題が原因の一つとして特定されている（buildimage#8506 で追跡中）。master でも未解決の場合あり。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-switch(conf-if-EthernetX)# description test
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>/tmp/klish.fifo.XXXXX: 1: /tmp/klish.fifo...: Syntax error
+</span></code></pre></div>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/781">sonic-net/SONiC#781</a></li>
+</ul>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>vtysh の変更は永続化されない（CONFIG_DB / FRR テンプレート転記が必要）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>redis-cli</code> 直接操作はバリデーション無し、不整合状態を作りうる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -30184,14 +30279,14 @@
 <li>RESTCONF / gNMI は有効化と認証を別途設定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>apply-patch</code> の checkpoint / rollback 実装の取り込みは要確認</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>CONFIG_DB</strong>: 全手段の収束先</li>
 <li><strong><code>hostcfgd</code></strong>: CONFIG_DB → OS 側設定（systemd / 各種 conf）に反映</li>
 <li><strong><code>bgpcfgd</code></strong> 等の orchestration daemon: CONFIG_DB → daemon 設定生成</li>
 <li><strong><code>vtysh</code> ↔ <code>frr.conf</code> の整合</strong>: 永続化は手作業</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>設定が再起動で消える → <code>config save -y</code> 忘れ、<code>config_db.json</code> の更新時刻を確認</li>
 <li>vtysh の変更が消える → CONFIG_DB / FRR テンプレートへの反映確認</li>
@@ -30200,13 +30295,13 @@
 <li>gNMI / RESTCONF 接続不可 → server 有効化と証明書/ユーザ設定確認</li>
 </ul>
 <p>確認コマンド例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># CLI / 設定パイプライン状態確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
 </span></code></pre></div>
 <!-- phase-boundary -->
-<h2 id="_8">実装フェーズ境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装フェーズ境界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
 <p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を 1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および <a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
@@ -30244,8 +30339,8 @@
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/02-bgp/">Topic: BGP</a></li>
 <li><a href="../../reference/cli/config-bgp/">CLI: config-bgp</a></li>
@@ -30266,7 +30361,7 @@
 <!-- glossary-links-injected: 32fbe70babcc -->
 
 <!-- ops-entry -->
-<h2 id="_11">運用入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">運用入口<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p>この <a href="../../reference/glossary/#term-hld">HLD</a> に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>

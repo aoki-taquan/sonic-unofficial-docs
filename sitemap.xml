@@ -533,6 +533,14 @@
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/swss-common-database-config/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/swss-common-db-link-ordering/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/internals/swss-schema/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
@@ -574,6 +582,14 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-master-arbitration-hld/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-streaming-telemetry-pitfalls/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnmi-translib-write-enable/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
@@ -678,6 +694,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/smart-switch-gnmi-feedback-design-omit-in-toc/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/management/snmp-interface-scope/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
@@ -925,6 +945,14 @@
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sfp-eeprom-parsing-gaps/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sfp-sff8472-rx-power-calibration/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
@@ -997,7 +1025,15 @@
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/thermalctld-speed-tolerance-api-change/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/voq-sonic/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/platform/xcvrd-cmis-mediainterface-crash/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>
@@ -2926,6 +2962,10 @@
     </url>
     <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-warm-reboot/</loc>
+         <lastmod>2026-05-13</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/system/ssh-authentication-failures/</loc>
          <lastmod>2026-05-13</lastmod>
     </url>
     <url>

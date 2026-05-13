@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
-      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -10776,6 +10773,45 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teamd-netdev-lag-40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamd が netdev 再作成後に LAG を再構築できない（#40）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portchannel-mac-arp-87" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -10784,7 +10820,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -10795,7 +10831,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -10807,7 +10843,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -10823,7 +10859,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -10845,7 +10881,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29704,6 +29740,45 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teamd-netdev-lag-40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamd が netdev 再作成後に LAG を再構築できない（#40）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portchannel-mac-arp-87" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         制限事項
       
     </span>
@@ -29712,7 +29787,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -29723,7 +29798,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29735,7 +29810,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -29751,7 +29826,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -29773,7 +29848,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29975,16 +30050,41 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># MTU</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>config<span class="w"> </span>interface<span class="w"> </span>PortChannel0001<span class="w"> </span>mtu<span class="w"> </span><span class="m">9216</span>
 </span></code></pre></div>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">既知の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="teamd-netdev-lag-40">teamd が netdev 再作成後に LAG を再構築できない（#40）<a class="headerlink" href="#teamd-netdev-lag-40" title="Permanent link">&para;</a></h3>
+<p><code>swss</code> / <code>teamd</code> Docker の再起動後、<code>teamd</code> が LAG (PortChannel) を再作成できないケースがある。<code>teamsyncd</code> が Docker 再起動時にクラッシュする別問題も報告されている。</p>
+<p><strong>回避策:</strong> <code>--no-ports</code> オプション（ポートなしで起動）を使用して teamd を起動し、後から <code>teamdctl</code> でポートを追加:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>teamd<span class="w"> </span>-d<span class="w"> </span>-r<span class="w"> </span>-f<span class="w"> </span>/etc/sonic/teamd/PortChannel1.conf<span class="w"> </span>--no-ports
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>teamdctl<span class="w"> </span>PortChannel1<span class="w"> </span>port<span class="w"> </span>add<span class="w"> </span>Ethernet0
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>teamdctl<span class="w"> </span>PortChannel1<span class="w"> </span>port<span class="w"> </span>add<span class="w"> </span>Ethernet4
+</span></code></pre></div>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/40">sonic-net/SONiC#40</a></li>
+</ul>
+<h3 id="portchannel-mac-arp-87">PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）<a class="headerlink" href="#portchannel-mac-arp-87" title="Permanent link">&para;</a></h3>
+<p>PortChannel のメンバーポートの一つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、ARP エントリが不完全状態（flags = 0x0）になり通信ができなくなる。</p>
+<p><strong>デバッグ方法:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 各 Ethernet ポートの MAC アドレスを確認（全て同一が正常）</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>Ethernet<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>link/ether
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># または</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>teamdctl<span class="w"> </span>PortChannel1<span class="w"> </span>state<span class="w"> </span>dump<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>dev_addr
+</span></code></pre></div>
+<p><strong>暫定回避策:</strong> 静的 ARP エントリを手動追加:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>arp<span class="w"> </span>-s<span class="w"> </span>&lt;peer_IP&gt;<span class="w"> </span>&lt;peer_MAC_addr&gt;
+</span></code></pre></div>
+<ul>
+<li>参照: <a href="https://github.com/sonic-net/SONiC/issues/87">sonic-net/SONiC#87</a></li>
+</ul>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>conflicting configuration は未対応（前項）</li>
 <li>既定値（admin UP / MTU 9100）以外を要する機器は明示設定が要る</li>
 <li>LAG member 単独の MTU は LAG 配下では無視される</li>
 <li>HLD は 2018 年時点。Phase 2 の現行実装範囲は別途裏取り対象</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>旧 <code>/etc/network/interfaces</code> 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（<a href="../../reference/glossary/#term-orchagent">orchagent</a> が追従）/ <a href="../../reference/glossary/#term-lacp">LACP</a> <code>fall_back</code> / <code>min_links</code>。</p>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>LAG member の MTU が変わらない → portchannel 側で MTU を変更（member 単独は無効）</li>
 <li>LAG 削除エラー → IP が残っていないか確認</li>
@@ -29992,14 +30092,14 @@
 <li>docker swss 再起動後に IP が消える → Phase 1 復元実装の現状を確認</li>
 <li><code>ip</code> コマンド直叩き等の別ルート操作 → theorem 違反、CONFIG_DB 経由のみ正規</li>
 </ul>
-<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>LAG / IP の差分更新が CONFIG_DB を経由しているか確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL|*&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_MEMBER|*&#39;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>teamdctl<span class="w"> </span>PortChannel1<span class="w"> </span>state
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL|*&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_MEMBER|*&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>teamdctl<span class="w"> </span>PortChannel1<span class="w"> </span>state
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
 </span></code></pre></div>
-<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>portmgrd</code> / <code>intfmgrd</code> / <code>teammgrd</code> は <code>sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp</code> に存在し HLD と一致</li>
 <li>CLI: <code>config portchannel add</code> は <code>--min_links</code> / <code>--fallback</code> / <code>--fast_rate</code> を受け付ける（<code>sonic-utilities/config/main.py:2835-2853</code>）</li>
@@ -30010,7 +30110,7 @@
 <li><a href="../../topics/06-l2-vlan-lag/">06-l2-vlan-lag</a>: L2 / VLAN / LAG の全体像</li>
 <li><a href="../../topics/11-reboot/">11-reboot</a>: warm/fast reboot との関係</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>

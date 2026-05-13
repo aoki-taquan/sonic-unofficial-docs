@@ -22,9 +22,6 @@
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../feed_rss_updated.xml">
-      
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -29523,12 +29520,12 @@
 <h2 id="_2">この章の趣旨<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>L2 / link layer の制御面を扱う。具体的には:</p>
 <ul>
-<li><strong>VLAN / Switchport モード</strong>: access / trunk / routed、VLAN range、OpenConfig <a href="../reference/glossary/#term-yang">YANG</a> 対応</li>
-<li><strong>LAG (<a href="../reference/glossary/#term-portchannel">PortChannel</a>)</strong>: teammgrd、<a href="../reference/glossary/#term-lacp">LACP</a>、warm-reboot 中の retry、分散 <a href="../reference/glossary/#term-voq">VOQ</a> シャシでの system LAG</li>
+<li><strong>VLAN / Switchport モード</strong>: access / trunk / routed、VLAN range、OpenConfig YANG 対応</li>
+<li><strong>LAG (PortChannel)</strong>: teammgrd、LACP、warm-reboot 中の retry、分散 VOQ シャシでの system LAG</li>
 <li><strong>MCLAG / ICCP</strong>: dynamic config、unique IP、isolation group</li>
 <li><strong>MSTP</strong>: Multiple Spanning Tree Protocol on SONiC</li>
 <li><strong>MACsec</strong>: wpa_supplicant 連携、Gearbox PHY 上の backend 選択、FIPS POST</li>
-<li><strong>L2 forwarding</strong>: <a href="../reference/glossary/#term-fdb">FDB</a> flush / aging、static MAC、リンクイベントダンピング、Wake-on-LAN</li>
+<li><strong>L2 forwarding</strong>: FDB flush / aging、static MAC、リンクイベントダンピング、Wake-on-LAN</li>
 </ul>
 <h2 id="_3">この章の読み方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は <a href="../reference/glossary/#term-hld">HLD</a> と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
@@ -29547,10 +29544,10 @@
 </ul>
 <h2 id="_5">扱わない範囲<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>L3 機能（IP routing / <a href="../reference/glossary/#term-bgp">BGP</a> / <a href="../reference/glossary/#term-vrf">VRF</a>）は <a href="../routing/">routing</a> 章</li>
-<li>L2 over IP (<a href="../reference/glossary/#term-vxlan">VXLAN</a> / NVGRE / VNet) は <a href="../overlay/">overlay</a> 章</li>
-<li><a href="../reference/glossary/#term-acl">ACL</a> / <a href="../reference/glossary/#term-qos">QoS</a> / buffer / scheduler は <a href="../acl-qos/">acl-qos</a> 章</li>
-<li>PortChannel / VLAN の <strong>CLI コマンド一覧</strong> や <strong><a href="../reference/glossary/#term-config_db">CONFIG_DB</a> テーブル定義</strong> は <a href="../reference/">reference</a> 章</li>
+<li>L3 機能（IP routing / BGP / VRF）は <a href="../routing/">routing</a> 章</li>
+<li>L2 over IP (VXLAN / NVGRE / VNet) は <a href="../overlay/">overlay</a> 章</li>
+<li>ACL / QoS / buffer / scheduler は <a href="../acl-qos/">acl-qos</a> 章</li>
+<li>PortChannel / VLAN の <strong>CLI コマンド一覧</strong> や <strong>CONFIG_DB テーブル定義</strong> は <a href="../reference/">reference</a> 章</li>
 </ul>
 <h2 id="_6">検証状況<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29657,7 +29654,7 @@
 </tr>
 </tbody>
 </table>
-<!-- glossary-links-injected: ced6bb784b29 -->
+<!-- glossary-links-injected: 95e3a922d639 -->
 
 
 
