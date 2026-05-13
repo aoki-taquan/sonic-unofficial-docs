@@ -30015,9 +30015,9 @@
 <p>最大累積効果で <strong>約 6.5×</strong> の高速化<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h4 id="-squash"><code>--squash</code> の不具合（既知）<a class="headerlink" href="#-squash" title="Permanent link">&para;</a></h4>
 <p>BuildKit の <code>--squash</code> は <strong>base image ごと squash</strong> する不具合があり、SONiC のような派生イメージで <strong>600 MB → 1.5 GB</strong> に膨張する<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。HLD はこの段階では <code>SONIC_USE_DOCKER_BUILDKIT</code> を <strong>opt-in</strong> とし、ユーザに警告メッセージを出す方針:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>warning: using docker buildkit will produce increase image size
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a> (more details: https://github.com/moby/moby/issues/38903)
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span>make<span class="w"> </span><span class="nv">SONIC_USE_DOCKER_BUILDKIT</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>warning:<span class="w"> </span>using<span class="w"> </span>docker<span class="w"> </span>buildkit<span class="w"> </span>will<span class="w"> </span>produce<span class="w"> </span>increase<span class="w"> </span>image<span class="w"> </span>size
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w"> </span><span class="o">(</span>more<span class="w"> </span>details:<span class="w"> </span>https://github.com/moby/moby/issues/38903<span class="o">)</span>
 </span></code></pre></div>
 <p>将来 upstream で修正されたら既定で有効化する想定<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="2-bind-mount-copy-debs">最適化 2 の発展形: bind mount で <code>COPY debs/</code> 自体を回避<a class="headerlink" href="#2-bind-mount-copy-debs" title="Permanent link">&para;</a></h3>

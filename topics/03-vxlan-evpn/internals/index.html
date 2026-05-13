@@ -29825,22 +29825,22 @@
 </table>
 <p>これら属性のうち <code>SAI_NEXT_HOP_ATTR_TUNNEL_MAC</code> は EVPN type-2 由来の inner DMAC を渡すために使われ、ベンダ実装で missing になりやすい点が discrepancy として上がりやすい箇所です。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  VXLAN_TUNNEL ─┬─&gt; VxlanTunnelOrch
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  VXLAN_TUNNEL_MAP ─&gt; VxlanTunnelMapOrch
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  VNET ─────────&gt; VNetOrch
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  VLAN_INTERFACE / VLAN  ─&gt; IntfsOrch (overlay SVI)
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  BGP_NEIGHBOR (l2vpn evpn AF)  ─&gt; bgpcfgd → FRR
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VXLAN_TUNNEL ─┬─&gt; VxlanTunnelOrch</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VXLAN_TUNNEL_MAP ─&gt; VxlanTunnelMapOrch</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VNET ─────────&gt; VNetOrch</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VLAN_INTERFACE / VLAN  ─&gt; IntfsOrch (overlay SVI)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">BGP_NEIGHBOR (l2vpn evpn AF)  ─&gt; bgpcfgd → FRR</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>APPL_DB:
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  VNET_TUNNEL_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─&gt; VNetOrch / VNetRouteOrch
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  EVPN_REMOTE_VNI_TABLE ─&gt; EvpnRemoteVnipOrch
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  NEIGH_TABLE (type-2) ─&gt; NeighOrch
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">APPL_DB</span><span class="p">:</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VNET_TUNNEL_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─&gt; VNetOrch / VNetRouteOrch</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">EVPN_REMOTE_VNI_TABLE ─&gt; EvpnRemoteVnipOrch</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEIGH_TABLE (type-2) ─&gt; NeighOrch</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>STATE_DB:
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>  VXLAN_TUNNEL_TABLE / EVPN_REMOTE_VNI_TABLE / BFD_SESSION_TABLE
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>ASIC_DB:
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  SAI_OBJECT_TYPE_TUNNEL / TUNNEL_MAP / TUNNEL_TERM_TABLE_ENTRY / NEXT_HOP / ROUTE_ENTRY
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nt">STATE_DB</span><span class="p">:</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VXLAN_TUNNEL_TABLE / EVPN_REMOTE_VNI_TABLE / BFD_SESSION_TABLE</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">SAI_OBJECT_TYPE_TUNNEL / TUNNEL_MAP / TUNNEL_TERM_TABLE_ENTRY / NEXT_HOP / ROUTE_ENTRY</span>
 </span></code></pre></div>
 <p>VNET monitoring / <a href="../../../reference/glossary/#term-bfd">BFD</a> は <code>BFD_SESSION_TABLE</code> 経由で <code>BfdOrch</code> に届き、<a href="../../../reference/glossary/#term-ecmp">ECMP</a> nexthop の up/down 判定にフィードバックされます。</p>
 <h2 id="zmq-pub-sub">ZMQ / pub-sub の使用<a class="headerlink" href="#zmq-pub-sub" title="Permanent link">&para;</a></h2>

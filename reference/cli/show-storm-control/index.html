@@ -29714,7 +29714,7 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="show-storm-control-default"><code>show storm-control</code> (default)<a class="headerlink" href="#show-storm-control-default" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show storm-control [-n|--namespace &lt;namespace&gt;] [-d|--display &lt;all|frontend&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>storm-control<span class="w"> </span><span class="o">[</span>-n<span class="p">|</span>--namespace<span class="w"> </span>&lt;namespace&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>-d<span class="p">|</span>--display<span class="w"> </span>&lt;all<span class="p">|</span>frontend&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
 サブコマンド未指定時:</p>
@@ -29725,7 +29725,7 @@
 <p>表示ヘッダ: <code>Interface Name | Storm Type | Rate (kbps)</code></p>
 <h3 id="show-storm-control-interface-interface"><code>show storm-control interface &lt;interface&gt;</code><a class="headerlink" href="#show-storm-control-interface-interface" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show storm-control interface &lt;interface&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>storm-control<span class="w"> </span>interface<span class="w"> </span>&lt;interface&gt;
 </span></code></pre></div>
 <p><strong>動作</strong>:
 multi-ASIC 環境では parent context から取得した <code>namespace</code> が有効か検証 (<code>multi_asic.get_namespace_list()</code> に含まれるか) し、不一致なら <code>-n/--namespace option required ...</code> でエラー終了。検証通過後 <code>display_storm_interface(interface)</code> を呼び出して該当 interface の全 storm type エントリを表示する。</p>

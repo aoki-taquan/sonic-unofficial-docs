@@ -29845,33 +29845,33 @@
 <p>CLI の各サブコマンドの引数と挙動は <a href="../../../reference/cli/sonic-package-manager/">sonic-package-manager CLI リファレンス</a> を参照する。manifest schema と依存解決のコア仕様は <a href="../../../architecture/sonic-application-extension-infrastructure/">Application Extension Infrastructure</a> にある。</p>
 <h2 id="_2">典型コマンドと出力例<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="list-show">list / show<a class="headerlink" href="#list-show" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ sonic-package-manager list
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Name                  Repository                              Description           Version          Status
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>--------------------  --------------------------------------  --------------------  ---------------  -----------
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>swss                  docker-swss                             SWSS                  master.0-dirty   Built-In
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>syncd                 docker-syncd-mlnx                       SyncD                 master.0-dirty   Built-In
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>my-ext                registry.example.com/sonic/my-ext       My Extension          1.2.0            Installed
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>sonic-package-manager<span class="w"> </span>list
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Name<span class="w">                  </span>Repository<span class="w">                              </span>Description<span class="w">           </span>Version<span class="w">          </span>Status
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>--------------------<span class="w">  </span>--------------------------------------<span class="w">  </span>--------------------<span class="w">  </span>---------------<span class="w">  </span>-----------
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>swss<span class="w">                  </span>docker-swss<span class="w">                             </span>SWSS<span class="w">                  </span>master.0-dirty<span class="w">   </span>Built-In
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>syncd<span class="w">                 </span>docker-syncd-mlnx<span class="w">                       </span>SyncD<span class="w">                 </span>master.0-dirty<span class="w">   </span>Built-In
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>my-ext<span class="w">                </span>registry.example.com/sonic/my-ext<span class="w">       </span>My<span class="w"> </span>Extension<span class="w">          </span><span class="m">1</span>.2.0<span class="w">            </span>Installed
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>admin@sonic:~$ sonic-package-manager show package versions my-ext
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>1.0.0
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>1.1.0
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>1.2.0
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>1.3.0-rc1
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>admin@sonic:~$<span class="w"> </span>sonic-package-manager<span class="w"> </span>show<span class="w"> </span>package<span class="w"> </span>versions<span class="w"> </span>my-ext
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="m">1</span>.0.0
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="m">1</span>.1.0
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="m">1</span>.2.0
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="m">1</span>.3.0-rc1
 </span></code></pre></div>
 <h3 id="install-upgrade-uninstall">install / upgrade / uninstall<a class="headerlink" href="#install-upgrade-uninstall" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ sudo sonic-package-manager install --from-repository \
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    registry.example.com/sonic/my-ext --default-reference 1.2.0
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@sonic:~$ sudo sonic-package-manager upgrade my-ext=1.3.0
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>admin@sonic:~$ sudo sonic-package-manager uninstall my-ext
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>install<span class="w"> </span>--from-repository<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>registry.example.com/sonic/my-ext<span class="w"> </span>--default-reference<span class="w"> </span><span class="m">1</span>.2.0
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>upgrade<span class="w"> </span>my-ext<span class="o">=</span><span class="m">1</span>.3.0
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>uninstall<span class="w"> </span>my-ext
 </span></code></pre></div>
 <p>install は manifest を引き出し、<code>FEATURE</code> テーブルへ登録し、systemd unit を生成する。enable は別操作。</p>
 <h3 id="enable-disable">enable / disable<a class="headerlink" href="#enable-disable" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ sudo config feature state my-ext enabled
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic:~$ show feature status my-ext
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Feature        State     AutoRestart    HighMemAlert
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>-------------  --------  -------------  --------------
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>my-ext         enabled   enabled        disabled
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>admin@sonic:~$ systemctl status my-ext.service
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>my-ext<span class="w"> </span>enabled
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>my-ext
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Feature<span class="w">        </span>State<span class="w">     </span>AutoRestart<span class="w">    </span>HighMemAlert
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>-------------<span class="w">  </span>--------<span class="w">  </span>-------------<span class="w">  </span>--------------
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>my-ext<span class="w">         </span>enabled<span class="w">   </span>enabled<span class="w">        </span>disabled
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>admin@sonic:~$<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>my-ext.service
 </span></code></pre></div>
 <h2 id="docker-extension">既存 docker を Extension に移植する<a class="headerlink" href="#docker-extension" title="Permanent link">&para;</a></h2>
 <p>inbox docker（例: dhcp_relay）を Extension 形式に変換する具体手順は、<a href="../../../management/sonic-application-extension-guide/">Application Extension 開発・移植ガイド</a> にコミット例つきでまとまっている。要点は次の 3 つ。</p>
@@ -29883,18 +29883,18 @@
 <h2 id="_3">バージョン互換と依存解決<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>extension の <code>manifest.json</code> には <code>version</code> / <code>depends</code> を書く。依存制約は semver で表現し、<a href="../../../reference/glossary/#term-redis">Redis</a> DB スキーマを互換境界として使う方針が <a href="../../../system/sonic-os-sonic-docker-images-versioning/">OS / docker semver</a> に詳しい。注意点として、<a href="../../../reference/glossary/#term-hld">HLD</a> で例示される <code>"^1.0.0,^2.0.0"</code> のような並列 OR 表記や <code>SWSS_VERSION</code> 環境変数注入は <strong>採用見送り</strong> であり、原文 HLD と実装で差がある（裏取り済み）。</p>
 <p>依存衝突は install / upgrade 時に SPM が解決を試み、解けない場合は次のように出る。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ sudo sonic-package-manager install my-ext=1.3.0
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Error: Package my-ext=1.3.0 conflicts with installed swss=master.0
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       (requires swss &gt;=2.0.0)
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>sonic-package-manager<span class="w"> </span>install<span class="w"> </span>my-ext<span class="o">=</span><span class="m">1</span>.3.0
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Error:<span class="w"> </span>Package<span class="w"> </span>my-ext<span class="o">=</span><span class="m">1</span>.3.0<span class="w"> </span>conflicts<span class="w"> </span>with<span class="w"> </span>installed<span class="w"> </span><span class="nv">swss</span><span class="o">=</span>master.0
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">       </span><span class="o">(</span>requires<span class="w"> </span>swss<span class="w"> </span>&gt;<span class="o">=</span><span class="m">2</span>.0.0<span class="o">)</span>
 </span></code></pre></div>
 <h2 id="_4">運用上よく見る場所<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ show feature status
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>admin@sonic:~$ docker ps --format &#39;table {{.Names}}\t{{.Image}}\t{{.Status}}&#39;
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>admin@sonic:~$ ls /var/lib/sonic-package-manager/
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>database  packages
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>admin@sonic:~$ cat /var/lib/sonic-package-manager/database
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>admin@sonic:~$ systemctl status my-ext.service
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>admin@sonic:~$ journalctl -u my-ext.service --since &quot;1 hour ago&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>feature<span class="w"> </span>status
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;table {{.Names}}\t{{.Image}}\t{{.Status}}&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>admin@sonic:~$<span class="w"> </span>ls<span class="w"> </span>/var/lib/sonic-package-manager/
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>database<span class="w">  </span>packages
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>admin@sonic:~$<span class="w"> </span>cat<span class="w"> </span>/var/lib/sonic-package-manager/database
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>admin@sonic:~$<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>my-ext.service
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>admin@sonic:~$<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>my-ext.service<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span>
 </span></code></pre></div>
 <ul>
 <li><code>show feature status</code>: 各 extension が <code>FEATURE</code> で enabled か。</li>
@@ -29979,10 +29979,10 @@
 </table>
 <h2 id="_7">ビルド側の出口（参考）<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>extension を作る側で <code>sonic-buildimage</code> を触る場合、ビルド失敗の入口は以下。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$ make NOSTRETCH=1 KEEP_SLAVE_ON=yes target/docker-my-ext.gz
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$ ls -lh target/docker-my-ext.gz
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>$ docker import target/docker-my-ext.gz registry.example.com/sonic/my-ext:1.3.0
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>$ docker push registry.example.com/sonic/my-ext:1.3.0
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span>make<span class="w"> </span><span class="nv">NOSTRETCH</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">KEEP_SLAVE_ON</span><span class="o">=</span>yes<span class="w"> </span>target/docker-my-ext.gz
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>ls<span class="w"> </span>-lh<span class="w"> </span>target/docker-my-ext.gz
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>$<span class="w"> </span>docker<span class="w"> </span>import<span class="w"> </span>target/docker-my-ext.gz<span class="w"> </span>registry.example.com/sonic/my-ext:1.3.0
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>$<span class="w"> </span>docker<span class="w"> </span>push<span class="w"> </span>registry.example.com/sonic/my-ext:1.3.0
 </span></code></pre></div>
 <p><code>KEEP_SLAVE_ON=yes</code> のままにしておけば失敗時に slave コンテナへ入って原因を追える。</p>
 <h2 id="warm-reboot-fast-reboot-extension">warm reboot / fast reboot と extension<a class="headerlink" href="#warm-reboot-fast-reboot-extension" title="Permanent link">&para;</a></h2>
@@ -30000,8 +30000,8 @@
 </span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>}
 </span></code></pre></div>
 <p>reboot 後、extension が期待どおり warm/fast を完了したかは syslog で確認する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ grep -E &quot;warm-?reboot|fast-?reboot&quot; /var/log/syslog | tail
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$ docker exec &lt;pkg&gt; cat /var/log/&lt;svc&gt;.log | grep -iE &quot;warm|fast&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;warm-?reboot|fast-?reboot&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pkg&gt;<span class="w"> </span>cat<span class="w"> </span>/var/log/&lt;svc&gt;.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;warm|fast&quot;</span>
 </span></code></pre></div>
 <p>完全な warm reboot の挙動と要件は <a href="../../11-reboot/">Reboot / Upgrade / Lifecycle 章</a> を参照する。</p>
 <h2 id="ci">CI / 開発時のチェックリスト<a class="headerlink" href="#ci" title="Permanent link">&para;</a></h2>

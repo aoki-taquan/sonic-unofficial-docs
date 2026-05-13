@@ -29787,27 +29787,27 @@
 </tr>
 </tbody>
 </table>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 4 KEYS &quot;*&quot; | wc -l
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:*&quot; | head
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$ redis-cli -n 6 KEYS &quot;PORT_TABLE|*&quot; | head
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;PORT_TABLE|*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <h2 id="sai">SAI 失敗を見るときの順番<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>syncd ログ</strong> で <code>handleSai*Status</code> の失敗判定を確認する。fatal なら syncd は abort し、stack trace と dump が残る。</li>
 </ol>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ docker exec syncd supervisorctl tail syncd \
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  | grep -E &quot;SAI_STATUS|handleSai&quot;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@sonic:~$ ls /var/log/syncd*.log
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>supervisorctl<span class="w"> </span>tail<span class="w"> </span>syncd<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;SAI_STATUS|handleSai&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>admin@sonic:~$<span class="w"> </span>ls<span class="w"> </span>/var/log/syncd*.log
 </span></code></pre></div>
 <ol>
 <li><strong>ERROR_DB</strong> に該当 object と SAI status code が出ているかを確認する。orchagent はここを購読して retry / 再構成の判断材料にする。</li>
 </ol>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 13 KEYS &quot;ERROR_*&quot;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic:~$ redis-cli -n 13 HGETALL &quot;ERROR_ROUTE_ENTRY|10.0.0.0/24&quot;
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>1) &quot;operation&quot;
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>2) &quot;create&quot;
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>3) &quot;rc&quot;
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>4) &quot;SAI_STATUS_TABLE_FULL&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">13</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ERROR_*&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">13</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ERROR_ROUTE_ENTRY|10.0.0.0/24&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;create&quot;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;rc&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SAI_STATUS_TABLE_FULL&quot;</span>
 </span></code></pre></div>
 <ol>
 <li><strong>上位 APP</strong> （例: AclOrch、RouteOrch）でその object がどの CONFIG_DB エントリに対応するかを照合する。<code>docker exec swss supervisorctl tail orchagent</code> で <code>&lt;Orch名&gt;</code> を grep。</li>
@@ -29854,9 +29854,9 @@
 <h2 id="syncd-dump-sai">syncd dump と SAI 失敗時の自動採取<a class="headerlink" href="#syncd-dump-sai" title="Permanent link">&para;</a></h2>
 <p>SAI 失敗は単発の状態ではなく、その時点の ASIC_DB と SAI 内部状態をセットで保全したいことが多い。syncd には <code>syncd_dump.sh</code> と SAI 通知（<code>SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP</code>）を組み合わせ、失敗時に dump を自動採取する仕組みがある。crash を待たずに状態を残せるため、再現が困難な間欠失敗の原因切り分けに使える。</p>
 <p>手動採取の例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ sudo docker exec syncd syncd_dump.sh
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$ ls /var/log/syncd/
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sairedis.rec.gz  asic_db.json  saidump.txt
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>syncd_dump.sh
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$<span class="w"> </span>ls<span class="w"> </span>/var/log/syncd/
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sairedis.rec.gz<span class="w">  </span>asic_db.json<span class="w">  </span>saidump.txt
 </span></code></pre></div>
 <p>採取の仕掛けと出力場所は <a href="../../../platform/dump-on-sai-failure/">SAI 失敗時の dump 取得</a> を読む。</p>
 <h2 id="dump-utility-db">dump utility による DB 横断調査<a class="headerlink" href="#dump-utility-db" title="Permanent link">&para;</a></h2>
@@ -29868,18 +29868,18 @@
 <p>使い方と拡張規約は <a href="../../../internals/dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a> を読む。</p>
 <h2 id="debug-framework">debug framework<a class="headerlink" href="#debug-framework" title="Permanent link">&para;</a></h2>
 <p>各 daemon は debug 情報の dump 関数を Debug Framework に登録し、<code>show techsupport</code> や障害時の自動採取から一括で取得できるようにする。assert 拡張により、想定外状態を「ログだけ残して動作継続」か「停止」かを切り替えやすくする。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ sudo show techsupport --since &quot;1 hour ago&quot;
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$ ls /var/dump/
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>show<span class="w"> </span>techsupport<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$<span class="w"> </span>ls<span class="w"> </span>/var/dump/
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic_dump_&lt;hostname&gt;_&lt;timestamp&gt;.tar.gz
 </span></code></pre></div>
 <p>techsupport を解凍すると、各 docker の <code>supervisor</code> ログ、redis 全 DB の snapshot、<code>syncd_dump.sh</code> の出力、syslog、journal、kernel dmesg がまとまっている。</p>
 <p>詳細は <a href="../../../architecture/debug-framework-in-sonic/">Debug Framework（コンポーネント dump 登録 / assert 拡張）</a> を読む。</p>
 <h2 id="health-check-system-ready">health-check と system ready<a class="headerlink" href="#health-check-system-ready" title="Permanent link">&para;</a></h2>
 <p><code>docker exec ... monit</code> ベースの単発 probe ではなく、container 内で複数の検査結果を 1 つの readiness に集約することで、k8s 上の SONiC で正確な readiness を得る。これは container 単位の運用観察。全体起動状態は別途 <code>system ready</code>（sysmonitor）が、per-app の closest UP status を event 集約して判定する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ show system-health summary
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>admin@sonic:~$ show system-health monitor-list
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>admin@sonic:~$ sudo systemctl status sonic.target
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>admin@sonic:~$ docker exec swss /usr/local/bin/container_checker
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>system-health<span class="w"> </span>summary
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>system-health<span class="w"> </span>monitor-list
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>sonic.target
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>/usr/local/bin/container_checker
 </span></code></pre></div>
 <p><code>system not ready</code> で長時間止まる場合の入口:</p>
 <ul>
@@ -29932,15 +29932,15 @@
 </table>
 <h2 id="sairedisrec">sairedis.rec の使い方<a class="headerlink" href="#sairedisrec" title="Permanent link">&para;</a></h2>
 <p><code>/var/log/syncd/sairedis.rec</code> は syncd が SAI に投げた全 op を時系列で記録するファイルで、原因不明の SAI 失敗を再現するうえで最強の手掛かりになる。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ docker exec syncd ls -lh /var/log/syncd/sairedis.rec*
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$ docker exec syncd tail -50 /var/log/syncd/sairedis.rec
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>ls<span class="w"> </span>-lh<span class="w"> </span>/var/log/syncd/sairedis.rec*
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>tail<span class="w"> </span>-50<span class="w"> </span>/var/log/syncd/sairedis.rec
 </span></code></pre></div>
 <p>行頭の <code>c|</code>（create）、<code>s|</code>（set）、<code>r|</code>（remove）、<code>g|</code>（get response）、<code>n|</code>（notification）を読めば、orchagent から SAI への呼び出しと、SAI が返した OID / status が辿れる。<code>saidump</code> と組み合わせて、失敗直前のオブジェクト群を再構築する用途にも使える。</p>
 <h2 id="orchagent-event-loop">orchagent の event loop が詰まったとき<a class="headerlink" href="#orchagent-event-loop" title="Permanent link">&para;</a></h2>
 <p>オペレーション全般が遅い・反映されないときは、orchagent の event queue が詰まっているケースを疑う。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$ docker exec swss top -bn1 -p $(pidof orchagent)
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i &quot;queue&quot;
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>admin@sonic:~$ redis-cli -n 0 LLEN &quot;_*&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>top<span class="w"> </span>-bn1<span class="w"> </span>-p<span class="w"> </span><span class="k">$(</span>pidof<span class="w"> </span>orchagent<span class="k">)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>supervisorctl<span class="w"> </span>tail<span class="w"> </span>orchagent<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;queue&quot;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>LLEN<span class="w"> </span><span class="s2">&quot;_*&quot;</span>
 </span></code></pre></div>
 <ul>
 <li>CPU が貼り付いている: 設定流入が多すぎる、無限 retry に陥っている可能性。<code>ERROR_DB</code> を見る。</li>

@@ -29923,12 +29923,12 @@
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>dom<span class="w"> </span>Ethernet0
 </span></code></pre></div>
 <p><code>show interfaces transceiver dom</code> 出力例:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Ethernet0:
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>        temperature: 43.5C
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>        voltage:     3.31V
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>        rx1power:    -2.1 dBm
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>        tx1power:     0.5 dBm
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>        tx1bias:     7.5 mA
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">Ethernet0</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">        </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">43.5C</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">        </span><span class="nt">voltage</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">3.31V</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">        </span><span class="nt">rx1power</span><span class="p">:</span><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">-2.1 dBm</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">        </span><span class="nt">tx1power</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">0.5 dBm</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="nt">tx1bias</span><span class="p">:</span><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">7.5 mA</span>
 </span></code></pre></div>
 <p>各値の Warning / Alarm 閾値は EEPROM の A0/A2 page から <code>xcvrd</code> が読み、<code>STATE_DB:TRANSCEIVER_STATUS_FLAG_*</code> に立てます。<code>COUNTERS_DB</code> に直接落ちないことに注意。<a href="../../../reference/glossary/#term-snmp">SNMP</a> / telemetry で監視する場合は <code>xcvrd</code> の <code>TRANSCEIVER_DOM_FLAG_TABLE</code> を subscribe します。</p>
 <h2 id="5-media_settingsjson-per-port-preemphasis">設定シナリオ 5: media_settings.json による per-port preemphasis<a class="headerlink" href="#5-media_settingsjson-per-port-preemphasis" title="Permanent link">&para;</a></h2>

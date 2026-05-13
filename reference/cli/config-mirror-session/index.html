@@ -30002,14 +30002,14 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config-mirror_session-add"><code>config mirror_session add</code> (レガシー)<a class="headerlink" href="#config-mirror_session-add" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config mirror_session add &lt;session_name&gt; &lt;src_ip&gt; &lt;dst_ip&gt; &lt;dscp&gt; &lt;ttl&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [&lt;gre_type&gt;] [&lt;queue&gt;] [--policer &lt;name&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>add<span class="w"> </span>&lt;session_name&gt;<span class="w"> </span>&lt;src_ip&gt;<span class="w"> </span>&lt;dst_ip&gt;<span class="w"> </span>&lt;dscp&gt;<span class="w"> </span>&lt;ttl&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="o">[</span>&lt;gre_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;queue&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--policer<span class="w"> </span>&lt;name&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>: 後述 <code>erspan add</code> の薄いラッパとして実装されており、<code>src_port</code> / <code>direction</code> を取らない。新規利用は <code>erspan add</code> を推奨。</p>
 <h3 id="config-mirror_session-erspan-add"><code>config mirror_session erspan add</code><a class="headerlink" href="#config-mirror_session-erspan-add" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config mirror_session erspan add &lt;session_name&gt; &lt;src_ip&gt; &lt;dst_ip&gt; &lt;dscp&gt; &lt;ttl&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    [&lt;gre_type&gt;] [&lt;queue&gt;] [&lt;src_port&gt;] [&lt;direction&gt;] [--policer &lt;name&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>erspan<span class="w"> </span>add<span class="w"> </span>&lt;session_name&gt;<span class="w"> </span>&lt;src_ip&gt;<span class="w"> </span>&lt;dst_ip&gt;<span class="w"> </span>&lt;dscp&gt;<span class="w"> </span>&lt;ttl&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="o">[</span>&lt;gre_type&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;queue&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;src_port&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;direction&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--policer<span class="w"> </span>&lt;name&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
@@ -30053,8 +30053,8 @@ excerpt: |
 
 <h3 id="config-mirror_session-span-add"><code>config mirror_session span add</code><a class="headerlink" href="#config-mirror_session-span-add" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config mirror_session span add &lt;session_name&gt; &lt;dst_port&gt;
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    [&lt;src_port&gt;] [&lt;direction&gt;] [&lt;queue&gt;] [--policer &lt;name&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>span<span class="w"> </span>add<span class="w"> </span>&lt;session_name&gt;<span class="w"> </span>&lt;dst_port&gt;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="o">[</span>&lt;src_port&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;direction&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;queue&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--policer<span class="w"> </span>&lt;name&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
@@ -30067,7 +30067,7 @@ excerpt: |
 <code>session_info = {"type": "SPAN", "dst_port": ..., ...}</code> を組み立て <code>MIRROR_SESSION</code> に書き込む。<code>dst_port</code> の <strong>元名</strong> から namespace を判定して該当 namespace に書く（multi-ASIC）。<code>validate_mirror_session_config</code> で同名セッションの重複や <code>dst_port</code> の妥当性を事前検証する。</p>
 <h3 id="config-mirror_session-remove-session_name"><code>config mirror_session remove &lt;session_name&gt;</code><a class="headerlink" href="#config-mirror_session-remove-session_name" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config mirror_session remove &lt;session_name&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>config<span class="w"> </span>mirror_session<span class="w"> </span>remove<span class="w"> </span>&lt;session_name&gt;
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>config_db.set_entry("MIRROR_SESSION", session_name, None)</code> で削除<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。multi-ASIC では front_ns を走査し、各 namespace に該当エントリが存在すれば削除。</p>

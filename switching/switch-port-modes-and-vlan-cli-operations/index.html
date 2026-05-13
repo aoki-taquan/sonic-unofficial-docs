@@ -29655,7 +29655,7 @@
 </div>
 <h2 id="switchport-clihld">Switchport CLI（HLD 仕様）<a class="headerlink" href="#switchport-clihld" title="Permanent link">&para;</a></h2>
 <p>HLD で定義された CLI は次の形<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config switchport mode &lt;routed|access|trunk&gt; &lt;Ethernet0|PortChannel1&gt; [&lt;vlan-list&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>&lt;routed<span class="p">|</span>access<span class="p">|</span>trunk&gt;<span class="w"> </span>&lt;Ethernet0<span class="p">|</span>PortChannel1&gt;<span class="w"> </span><span class="o">[</span>&lt;vlan-list&gt;<span class="o">]</span>
 </span></code></pre></div>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># routed → access (Vlan10 untagged)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">10</span>

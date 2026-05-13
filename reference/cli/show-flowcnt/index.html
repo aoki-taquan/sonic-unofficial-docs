@@ -29774,7 +29774,7 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="show-flowcnt-trap-stats"><code>show flowcnt-trap stats</code><a class="headerlink" href="#show-flowcnt-trap-stats" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show flowcnt-trap stats [--verbose] [-n|--namespace &lt;ns&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>flowcnt-trap<span class="w"> </span>stats<span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="p">|</span>--namespace<span class="w"> </span>&lt;ns&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>flow_counters_stat -t trap</code> を実行。namespace 指定があれば <code>-n &lt;ns&gt;</code> を追加。</p>
@@ -29807,15 +29807,15 @@ excerpt: |
 
 <h3 id="show-flowcnt-route-config"><code>show flowcnt-route config</code><a class="headerlink" href="#show-flowcnt-route-config" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show flowcnt-route config
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>flowcnt-route<span class="w"> </span>config
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FLOW_COUNTER_ROUTE_PATTERN</code> テーブルを <code>db.cfgdb.get_table</code> で取得し、key (<code>&lt;vrf&gt;|&lt;prefix&gt;</code>) を <code>extract_route_pattern</code> で分解、<code>max</code> フィールドとともに tabulate 表示する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <h3 id="show-flowcnt-route-stats-patternroute"><code>show flowcnt-route stats [pattern|route]</code><a class="headerlink" href="#show-flowcnt-route-stats-patternroute" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show flowcnt-route stats [--verbose] [-n|--namespace &lt;ns&gt;]
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show flowcnt-route stats pattern &lt;prefix-pattern&gt; [--vrf &lt;vrf&gt;] [-n ...]
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show flowcnt-route stats route &lt;prefix&gt; [--vrf &lt;vrf&gt;] [-n ...]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>flowcnt-route<span class="w"> </span>stats<span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="p">|</span>--namespace<span class="w"> </span>&lt;ns&gt;<span class="o">]</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>flowcnt-route<span class="w"> </span>stats<span class="w"> </span>pattern<span class="w"> </span>&lt;prefix-pattern&gt;<span class="w"> </span><span class="o">[</span>--vrf<span class="w"> </span>&lt;vrf&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="w"> </span>...<span class="o">]</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>flowcnt-route<span class="w"> </span>stats<span class="w"> </span>route<span class="w"> </span>&lt;prefix&gt;<span class="w"> </span><span class="o">[</span>--vrf<span class="w"> </span>&lt;vrf&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="w"> </span>...<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:</p>
 <ul>

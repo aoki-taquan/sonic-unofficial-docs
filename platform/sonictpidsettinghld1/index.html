@@ -29863,8 +29863,8 @@
 <li><code>0x88A8</code></li>
 </ul>
 <p>その他値は CLI で reject:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@SONiC:~$ sudo config interface tpid Ethernet64 0x0800
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>TPID 0x0800 is not allowed. Allowed: 0x8100, 0x9100, 0x9200, or 0x88A8.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@SONiC:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>tpid<span class="w"> </span>Ethernet64<span class="w"> </span>0x0800
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>TPID<span class="w"> </span>0x0800<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>allowed.<span class="w"> </span>Allowed:<span class="w"> </span>0x8100,<span class="w"> </span>0x9100,<span class="w"> </span>0x9200,<span class="w"> </span>or<span class="w"> </span>0x88A8.
 </span></code></pre></div>
 <h3 id="capability-query-state_db">Capability query と STATE_DB<a class="headerlink" href="#capability-query-state_db" title="Permanent link">&para;</a></h3>
 <p>ベンダ <a href="../../reference/glossary/#term-sai">SAI</a> が <code>SAI_PORT_ATTR_TPID</code> / <code>SAI_LAG_ATTR_TPID</code> を実装しているかを <strong>boot 時に問い合わせ</strong> て <code>STATE_DB</code> の <code>SWITCH_CAPABILITY|switch</code> に保存する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -29874,13 +29874,13 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ...
 </span></code></pre></div>
 <p>CLI / RESTful フロントエンドは設定前にこの値を見て <strong>拒否を行う</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a># capability チェック前
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@SONiC:~$ sudo config interface tpid Ethernet64 0x9200
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>System not ready to accept TPID config. Please try again later.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># capability チェック前</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>admin@SONiC:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>tpid<span class="w"> </span>Ethernet64<span class="w"> </span>0x9200
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>System<span class="w"> </span>not<span class="w"> </span>ready<span class="w"> </span>to<span class="w"> </span>accept<span class="w"> </span>TPID<span class="w"> </span>config.<span class="w"> </span>Please<span class="w"> </span>try<span class="w"> </span>again<span class="w"> </span>later.
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a># LAG が non-capable
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>admin@SONiC:~$ sudo config interface tpid PortChannel0002 0x9200
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>HW is not capable to support PortChannel TPID config.
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># LAG が non-capable</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>admin@SONiC:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>tpid<span class="w"> </span>PortChannel0002<span class="w"> </span>0x9200
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>HW<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>capable<span class="w"> </span>to<span class="w"> </span>support<span class="w"> </span>PortChannel<span class="w"> </span>TPID<span class="w"> </span>config.
 </span></code></pre></div>
 <p>これにより <a href="../../reference/glossary/#term-orchagent">orchagent</a> / SAI 層で fail させずに <strong>早期に拒否</strong> する設計。</p>
 <h3 id="config-flow">Config flow<a class="headerlink" href="#config-flow" title="Permanent link">&para;</a></h3>
@@ -29895,8 +29895,8 @@
   ASIC --&gt; SAI["SAI_PORT_ATTR_TPID&lt;br/&gt;SAI_LAG_ATTR_TPID"]</code></pre>
 <h3 id="lag">LAG メンバへの直接設定は禁止<a class="headerlink" href="#lag" title="Permanent link">&para;</a></h3>
 <p>ポートが既に <a href="../../reference/glossary/#term-lag">LAG</a> メンバである場合、port 単独への TPID 設定はできない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@SONiC:~$ sudo config interface tpid Ethernet4 0x9200
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Ethernet4 is already member of PortChannel0002. Set TPID NOT allowed.
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@SONiC:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>tpid<span class="w"> </span>Ethernet4<span class="w"> </span>0x9200
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Ethernet4<span class="w"> </span>is<span class="w"> </span>already<span class="w"> </span>member<span class="w"> </span>of<span class="w"> </span>PortChannel0002.<span class="w"> </span>Set<span class="w"> </span>TPID<span class="w"> </span>NOT<span class="w"> </span>allowed.
 </span></code></pre></div>
 <p>これは LAG として整合する TPID を保証するための制約。LAG 設定を経由する。</p>
 <h3 id="config_db-appl_db">CONFIG_DB / APPL_DB スキーマ<a class="headerlink" href="#config_db-appl_db" title="Permanent link">&para;</a></h3>

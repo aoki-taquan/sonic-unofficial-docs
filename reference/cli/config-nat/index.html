@@ -30063,9 +30063,9 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config-nat-add-static-basic-global_ip-local_ip"><code>config nat add static basic &lt;global_ip&gt; &lt;local_ip&gt;</code><a class="headerlink" href="#config-nat-add-static-basic-global_ip-local_ip" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config nat add static basic &lt;global_ip&gt; &lt;local_ip&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [-nat_type {snat|dnat}]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    [-twice_nat_id &lt;1-9999&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>static<span class="w"> </span>basic<span class="w"> </span>&lt;global_ip&gt;<span class="w"> </span>&lt;local_ip&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="o">[</span>-nat_type<span class="w"> </span><span class="o">{</span>snat<span class="p">|</span>dnat<span class="o">}]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="o">[</span>-twice_nat_id<span class="w"> </span>&lt;<span class="m">1</span>-9999&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>global_ip</code> / <code>local_ip</code> をそれぞれ <code>is_valid_ipv4_address</code> で検証 (reserved / multicast / loopback / 0.0.0.0 / 255.255.255.255 を除外) したうえで、<code>STATIC_NAT|&lt;global_ip&gt;</code> キーに <code>{local_ip, nat_type, twice_nat_id}</code> を書き込む。同一 <code>global_ip</code> がプール / NAPT と重複する場合はエラー終了する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>

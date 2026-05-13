@@ -29773,11 +29773,11 @@
 </table>
 <h2 id="spm-feature-table">SPM / FEATURE table<a class="headerlink" href="#spm-feature-table" title="Permanent link">&para;</a></h2>
 <p><code>FEATURE</code> テーブルが SPM とランタイムの接続点です。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:FEATURE|&lt;name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  state: &quot;enabled|disabled|always_enabled|always_disabled&quot;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  auto_restart: &quot;enabled|disabled&quot;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  high_mem_alert: &quot;enabled|disabled&quot;
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  set_owner: &quot;kube|local&quot;
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="l l-Scalar l-Scalar-Plain">CONFIG_DB:FEATURE|&lt;name&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">state</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled|always_enabled|always_disabled&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">auto_restart</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">high_mem_alert</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enabled|disabled&quot;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">set_owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;kube|local&quot;</span>
 </span></code></pre></div>
 <p><code>set_owner = kube</code> は Kubernetes 経由デプロイ（k8s based feature management）の hint で、<code>local</code> はホスト systemd 管理です。</p>
 <h2 id="sai-redis-pubsub">SAI / Redis pub/sub の使用<a class="headerlink" href="#sai-redis-pubsub" title="Permanent link">&para;</a></h2>
@@ -29787,10 +29787,10 @@
 <li><code>sonic-installer</code> は image partition の操作のみで Redis 不要。</li>
 </ul>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CONFIG_DB:
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  FEATURE, DEVICE_METADATA (image_type / hwsku)
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>STATE_DB:
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  FEATURE (state は CONFIG_DB、runtime state は STATE_DB)
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FEATURE, DEVICE_METADATA (image_type / hwsku)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nt">STATE_DB</span><span class="p">:</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FEATURE (state は CONFIG_DB、runtime state は STATE_DB)</span>
 </span></code></pre></div>
 <h2 id="_4">既知の実装上の制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

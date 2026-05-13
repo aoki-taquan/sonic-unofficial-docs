@@ -29875,42 +29875,42 @@
 <p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing の運用確認は、「設定が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> に正しく入ったか」「<a href="../../../reference/glossary/#term-frr">FRR</a> / netlink 経由で APP_DB に渡ったか」「<a href="../../../reference/glossary/#term-sai">SAI</a> / ASIC に programming されたか」の三段を順に追います。本ページは各機能の出口（show コマンド / DB / ログ）と、よく遭遇する異常パターン、その復旧手順を実例ベースで並べます。</p>
 <h2 id="srv6">SRv6<a class="headerlink" href="#srv6" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">設定が CONFIG_DB に入ったかの確認<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 4 KEYS &quot;SRV6_MY_LOCATORS|*&quot;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>1) &quot;SRV6_MY_LOCATORS|loc1&quot;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$ redis-cli -n 4 HGETALL &quot;SRV6_MY_LOCATORS|loc1&quot;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>1) &quot;prefix&quot;
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>2) &quot;fc00:0:1::/48&quot;
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>3) &quot;block_len&quot;
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>4) &quot;32&quot;
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>5) &quot;node_len&quot;
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>6) &quot;16&quot;
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>7) &quot;func_len&quot;
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>8) &quot;16&quot;
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>admin@sonic:~$ redis-cli -n 4 KEYS &quot;SRV6_MY_SIDS|*&quot;
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>1) &quot;SRV6_MY_SIDS|loc1|fc00:0:1:e000::|uN&quot;
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>2) &quot;SRV6_MY_SIDS|loc1|fc00:0:1:e001::|uA&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;SRV6_MY_LOCATORS|*&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_LOCATORS|loc1&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;SRV6_MY_LOCATORS|loc1&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;prefix&quot;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;fc00:0:1::/48&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;block_len&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;32&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="m">5</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;node_len&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="m">6</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;16&quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="m">7</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;func_len&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="m">8</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;16&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|*&quot;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e000::|uN&quot;</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e001::|uA&quot;</span>
 </span></code></pre></div>
 <p><code>uA</code> / <code>End.X</code> の SID は <code>nexthop</code> フィールドに紐づく nexthop IP が <strong>既知の neighbor</strong> でないと FRR / <code>srv6orch</code> は pending 扱いになります。</p>
 <h3 id="frr">FRR への配線確認<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ vtysh -c &quot;show segment-routing srv6 locator&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show segment-routing srv6 locator&quot;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Locator:
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Name                 ID      Prefix                   Status
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Name<span class="w">                 </span>ID<span class="w">      </span>Prefix<span class="w">                   </span>Status
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>--------------------------------------------------------------------------------
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>loc1                 1       fc00:0:1::/48            Up
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>loc1<span class="w">                 </span><span class="m">1</span><span class="w">       </span>fc00:0:1::/48<span class="w">            </span>Up
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>admin@sonic:~$ vtysh -c &quot;show segment-routing srv6 sid&quot;
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a> *... Selected SID
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>Function          Context                       Owner         Locator
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>admin@sonic:~$<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show segment-routing srv6 sid&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w"> </span>*...<span class="w"> </span>Selected<span class="w"> </span>SID
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>Function<span class="w">          </span>Context<span class="w">                       </span>Owner<span class="w">         </span>Locator
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>-------------------------------------------------------------------------------
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>fc00:0:1:e000::   uN                            zebra         loc1
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>fc00:0:1:e001::   uA (nh fe80::1)               bgp           loc1
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>fc00:0:1:e000::<span class="w">   </span>uN<span class="w">                            </span>zebra<span class="w">         </span>loc1
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>fc00:0:1:e001::<span class="w">   </span>uA<span class="w"> </span><span class="o">(</span>nh<span class="w"> </span>fe80::1<span class="o">)</span><span class="w">               </span>bgp<span class="w">           </span>loc1
 </span></code></pre></div>
 <p><a href="../../../reference/glossary/#term-bgpcfgd">bgpcfgd</a> 経由で <code>vtysh</code> に流れる経路は <a href="../architecture/">アーキテクチャ</a> を参照します。<code>vtysh</code> 側に出ない場合は bgpcfgd ログ（<code>/var/log/syslog</code> 内 <code>bgpcfgd</code> プレフィックス）を見ます。</p>
 <h3 id="app_db-asic_db-programming">APP_DB / ASIC_DB の programming 確認<a class="headerlink" href="#app_db-asic_db-programming" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;SRV6_MY_SID_TABLE:*&quot;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1) &quot;SRV6_MY_SID_TABLE:32:16:16:0:fc00:0:1:e000::&quot;
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_MY_SID_ENTRY:*&quot; | wc -l
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>2
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;SRV6_MY_SID_TABLE:*&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SID_TABLE:32:16:16:0:fc00:0:1:e000::&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_MY_SID_ENTRY:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="m">2</span>
 </span></code></pre></div>
 <p>APP_DB に乗っているのに <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に出ない場合、<code>srv6orch</code> の pending queue で止まっている可能性が高いです。<code>docker exec swss supervisorctl tail -f orchagent</code> で <code>SRv6Orch</code> のログを追います。次のいずれかが典型です。</p>
 <table>
@@ -29941,72 +29941,72 @@
 </table>
 <h3 id="_2">トラフィック観測<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>MySID 単位の counter は phase 機能で、現状の SONiC master では IPv6 forwarding 全体の <a href="../../../reference/glossary/#term-rif">RIF</a> counter で代用するのが現実的です。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ sonic-clear counters
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$ show interfaces counters rif
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    IFACE    RX_OK    RX_BPS    RX_PPS  ...
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>---------  -------  --------  --------  ...
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Ethernet0      120    9.6 KB        80  ...
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>sonic-clear<span class="w"> </span>counters
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>rif
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>IFACE<span class="w">    </span>RX_OK<span class="w">    </span>RX_BPS<span class="w">    </span>RX_PPS<span class="w">  </span>...
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>---------<span class="w">  </span>-------<span class="w">  </span>--------<span class="w">  </span>--------<span class="w">  </span>...
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Ethernet0<span class="w">      </span><span class="m">120</span><span class="w">    </span><span class="m">9</span>.6<span class="w"> </span>KB<span class="w">        </span><span class="m">80</span><span class="w">  </span>...
 </span></code></pre></div>
 <p>uA / End.X が forwarding しているかを概観するには十分です。ヘッダ単位の観察が必要なら <code>tcpdump -i &lt;intf&gt; -nn ip6 proto 43</code> で SRH を見ます。</p>
 <h2 id="mpls">MPLS<a class="headerlink" href="#mpls" title="Permanent link">&para;</a></h2>
 <h3 id="per-rif">per-RIF 有効化の確認<a class="headerlink" href="#per-rif" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ redis-cli -n 4 HGET &quot;INTERFACE|Ethernet0&quot; mpls
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>enable
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>admin@sonic:~$ redis-cli -n 0 HGETALL &quot;INTF_TABLE:Ethernet0&quot; | grep -A1 mpls
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGET<span class="w"> </span><span class="s2">&quot;INTERFACE|Ethernet0&quot;</span><span class="w"> </span>mpls
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">enable</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;INTF_TABLE:Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>mpls
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>mpls
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>enable
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">enable</span>
 </span></code></pre></div>
 <p><code>show interfaces mpls</code> 系 CLI の提供範囲は実装依存です。<code>show runningconfiguration</code> で <code>mpls</code> 行が出れば CONFIG_DB には入っています。</p>
 <h3 id="frr-lsp">FRR / LSP の確認<a class="headerlink" href="#frr-lsp" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ vtysh -c &quot;show mpls table&quot;
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a> Inbound Label  Type        Nexthop         Outbound Label
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a> -----------------------------------------------------------
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a> 16             SR (LDP)    10.0.0.1        17
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a> 17             SR (LDP)    10.0.0.2        Pop Label
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show mpls table&quot;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w"> </span>Inbound<span class="w"> </span>Label<span class="w">  </span>Type<span class="w">        </span>Nexthop<span class="w">         </span>Outbound<span class="w"> </span>Label
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w"> </span>-----------------------------------------------------------
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w"> </span><span class="m">16</span><span class="w">             </span>SR<span class="w"> </span><span class="o">(</span>LDP<span class="o">)</span><span class="w">    </span><span class="m">10</span>.0.0.1<span class="w">        </span><span class="m">17</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w"> </span><span class="m">17</span><span class="w">             </span>SR<span class="w"> </span><span class="o">(</span>LDP<span class="o">)</span><span class="w">    </span><span class="m">10</span>.0.0.2<span class="w">        </span>Pop<span class="w"> </span>Label
 </span></code></pre></div>
 <p>LSP が消えるパターンは多くが LDP / <a href="../../../reference/glossary/#term-bgp">BGP</a>-LU の neighbor down です。<code>vtysh -c "show mpls ldp neighbor"</code> / <code>vtysh -c "show bgp ipv4 labeled-unicast summary"</code> を最初に見ます。</p>
 <h3 id="app_db-asic_db">APP_DB と ASIC_DB<a class="headerlink" href="#app_db-asic_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;LABEL_ROUTE_TABLE:*&quot; | head
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>1) &quot;LABEL_ROUTE_TABLE:16&quot;
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>2) &quot;LABEL_ROUTE_TABLE:17&quot;
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_INSEG_ENTRY:*&quot; | wc -l
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>2
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;LABEL_ROUTE_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;LABEL_ROUTE_TABLE:16&quot;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;LABEL_ROUTE_TABLE:17&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_INSEG_ENTRY:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="m">2</span>
 </span></code></pre></div>
 <p>APP_DB と ASIC_DB の件数が乖離していれば <code>orchagent</code> 側で SAI install に失敗している可能性が高く、<code>ERROR_DB</code> を見ます（<a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a>）。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ redis-cli -n 13 KEYS &quot;ERROR_*&quot; | head
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$ redis-cli -n 13 HGETALL &quot;ERROR_INSEG_ENTRY|16&quot;
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>1) &quot;operation&quot;
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>2) &quot;create&quot;
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>3) &quot;rc&quot;
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>4) &quot;SAI_STATUS_TABLE_FULL&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">13</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ERROR_*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">13</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ERROR_INSEG_ENTRY|16&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;create&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;rc&quot;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SAI_STATUS_TABLE_FULL&quot;</span>
 </span></code></pre></div>
 <h3 id="crm-qos">CRM と QoS<a class="headerlink" href="#crm-qos" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$ crm show resources mpls_inseg
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Resource Name    Used Count    Available Count
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>---------------  ------------  ---------------
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>mpls_inseg       2             16382
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>admin@sonic:~$<span class="w"> </span>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>mpls_inseg
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Resource<span class="w"> </span>Name<span class="w">    </span>Used<span class="w"> </span>Count<span class="w">    </span>Available<span class="w"> </span>Count
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>---------------<span class="w">  </span>------------<span class="w">  </span>---------------
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>mpls_inseg<span class="w">       </span><span class="m">2</span><span class="w">             </span><span class="m">16382</span>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>admin@sonic:~$ crm show thresholds mpls_inseg
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>admin@sonic:~$ sudo config crm thresholds mpls inseg type percentage
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>admin@sonic:~$ sudo config crm thresholds mpls inseg high 85
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>admin@sonic:~$<span class="w"> </span>crm<span class="w"> </span>show<span class="w"> </span>thresholds<span class="w"> </span>mpls_inseg
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>crm<span class="w"> </span>thresholds<span class="w"> </span>mpls<span class="w"> </span>inseg<span class="w"> </span><span class="nb">type</span><span class="w"> </span>percentage
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>admin@sonic:~$<span class="w"> </span>sudo<span class="w"> </span>config<span class="w"> </span>crm<span class="w"> </span>thresholds<span class="w"> </span>mpls<span class="w"> </span>inseg<span class="w"> </span>high<span class="w"> </span><span class="m">85</span>
 </span></code></pre></div>
 <p>大規模静的 LSP では事前に threshold を設定すると、<code>/var/log/syslog</code> に <a href="../../../reference/glossary/#term-crm">CRM</a> の警告が出ます。<a href="../../../reference/glossary/#term-qos">QoS</a> が効かないときは <code>MPLS_TC_TO_TC_MAP</code> → <code>PORT_QOS_MAP</code> の参照を CONFIG_DB から辿ります。</p>
 <h2 id="path-tracing">Path Tracing<a class="headerlink" href="#path-tracing" title="Permanent link">&para;</a></h2>
 <h3 id="config_db-show">CONFIG_DB と show<a class="headerlink" href="#config_db-show" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>admin@sonic:~$ show interface path-tracing
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  Interface    PT Interface ID    PT Timestamp Template
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>-----------  -----------------  -----------------------
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Ethernet0    513                template3
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>admin@sonic:~$ redis-cli -n 4 HGETALL &quot;PORT|Ethernet0&quot; | grep -A1 pt_
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>interface<span class="w"> </span>path-tracing
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>Interface<span class="w">    </span>PT<span class="w"> </span>Interface<span class="w"> </span>ID<span class="w">    </span>PT<span class="w"> </span>Timestamp<span class="w"> </span>Template
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>-----------<span class="w">  </span>-----------------<span class="w">  </span>-----------------------
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Ethernet0<span class="w">    </span><span class="m">513</span><span class="w">                </span>template3
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;PORT|Ethernet0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>pt_
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>pt_interface_id
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>513
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="m">513</span>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>pt_timestamp_template
 </span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>template3
 </span></code></pre></div>
 <h3 id="asic-programming">ASIC programming<a class="headerlink" href="#asic-programming" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>admin@sonic:~$ redis-cli -n 1 HGETALL &quot;ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...&quot; | grep -A1 PATH_TRACING
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>PATH_TRACING
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>SAI_PORT_ATTR_PATH_TRACING_INTF
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>513
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="m">513</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>SAI_PORT_PATH_TRACING_TIMESTAMP_TYPE_TEMPLATE3
 </span></code></pre></div>

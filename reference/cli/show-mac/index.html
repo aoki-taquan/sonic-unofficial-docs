@@ -29823,14 +29823,14 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="show-mac-options"><code>show mac [options]</code><a class="headerlink" href="#show-mac-options" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show mac
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [-v|--vlan &lt;vlan&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    [-p|--port &lt;port&gt;]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    [-a|--address &lt;mac&gt;]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    [-t|--type &lt;static|dynamic&gt;]
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    [-c|--count]
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    [-n|--namespace &lt;ns&gt;]
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    [--verbose]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>mac
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="o">[</span>-v<span class="p">|</span>--vlan<span class="w"> </span>&lt;vlan&gt;<span class="o">]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="o">[</span>-p<span class="p">|</span>--port<span class="w"> </span>&lt;port&gt;<span class="o">]</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="o">[</span>-a<span class="p">|</span>--address<span class="w"> </span>&lt;mac&gt;<span class="o">]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="o">[</span>-t<span class="p">|</span>--type<span class="w"> </span>&lt;static<span class="p">|</span>dynamic&gt;<span class="o">]</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="o">[</span>-c<span class="p">|</span>--count<span class="o">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="o">[</span>-n<span class="p">|</span>--namespace<span class="w"> </span>&lt;ns&gt;<span class="o">]</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="o">[</span>--verbose<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>オプション</strong>:</p>
 <ul>
@@ -29884,7 +29884,7 @@ excerpt: |
 
 <h3 id="show-mac-aging-time"><code>show mac aging-time</code><a class="headerlink" href="#show-mac-aging-time" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show mac aging-time
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>mac<span class="w"> </span>aging-time
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <strong>FDB 表示とは別系統</strong> で、<code>SonicV2Connector</code> 経由で <strong><a href="../../glossary/#term-appl_db">APPL_DB</a></strong> の <code>SWITCH_TABLE*</code> を列挙し、各キーから <code>fdb_aging_time</code> を取得して表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。設定されていなければ <code>Aging time not configured for the switch</code> を出力。</p>

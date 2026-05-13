@@ -29807,16 +29807,16 @@
 <p><a href="../../../reference/glossary/#term-pins">PINS</a> の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。</p>
 <h2 id="write-asic">Write が ASIC に届いているかの確認<a class="headerlink" href="#write-asic" title="Permanent link">&para;</a></h2>
 <p>P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC <code>WriteResponse</code>）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> を直接見て切り分けます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$ redis-cli -n 0 KEYS &quot;P4RT_TABLE:*&quot; | head
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>1) &quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>2) &quot;P4RT_TABLE:FIXED_NEIGHBOR_TABLE:{...}&quot;
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>admin@sonic:~$ redis-cli -n 14 KEYS &quot;P4RT_TABLE:*&quot; | wc -l
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>12
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>admin@sonic:~$ redis-cli -n 14 HGETALL &quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>1) &quot;err_str&quot;
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>2) &quot;SWSS_RC_SUCCESS&quot;
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:*&quot; | wc -l
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>3
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;P4RT_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;P4RT_TABLE:FIXED_NEIGHBOR_TABLE:{...}&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">14</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;P4RT_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="m">12</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">14</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;err_str&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SWSS_RC_SUCCESS&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="m">3</span>
 </span></code></pre></div>
 <p>切り分けの目安は次のとおりです。</p>
 <table>
@@ -29856,24 +29856,24 @@
 </tbody>
 </table>
 <p>p4rt-app と P4Orch のログは次で。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$ docker logs p4rt 2&gt;&amp;1 | tail
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i p4orch
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>supervisorctl<span class="w"> </span>tail<span class="w"> </span>orchagent<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>p4orch
 </span></code></pre></div>
 <p>詳細な責務分担は <a href="../../../internals/p4-orchagent/">P4Orch HLD</a> と <a href="../../../management/p4rt-application-hld/">P4RT App HLD</a> を参照してください。</p>
 <h2 id="cpu-packet-pathpacketio-receive">CPU packet path（PacketIO Receive）の確認<a class="headerlink" href="#cpu-packet-pathpacketio-receive" title="Permanent link">&para;</a></h2>
 <p>PacketIO Receive は generic netlink + <a href="../../../reference/glossary/#term-copp">CoPP</a> trap group が両方そろわないと届きません。次の順で確認します。</p>
 <h3 id="1-copp-trap-group-genetlink">1. CoPP の trap group に genetlink が設定されているか<a class="headerlink" href="#1-copp-trap-group-genetlink" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$ redis-cli -n 4 HGETALL &quot;COPP_GROUP|queue2_group1&quot;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1) &quot;queue&quot;
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>2) &quot;2&quot;
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>3) &quot;genetlink_name&quot;
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>4) &quot;psample&quot;
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>5) &quot;genetlink_mcgrp_name&quot;
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>6) &quot;packets&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;COPP_GROUP|queue2_group1&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;queue&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;genetlink_name&quot;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="m">4</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;psample&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="m">5</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;genetlink_mcgrp_name&quot;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="m">6</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;packets&quot;</span>
 </span></code></pre></div>
 <h3 id="2-sai-hostif-genetlink">2. SAI hostif が genetlink チャネルで作られているか<a class="headerlink" href="#2-sai-hostif-genetlink" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&quot; | head
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$ redis-cli -n 1 HGETALL &quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:oid:0x...&quot; | grep -A1 CHANNEL_TYPE
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:oid:0x...&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>CHANNEL_TYPE
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>SAI_HOSTIF_ATTR_TYPE
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK
 </span></code></pre></div>
@@ -29883,9 +29883,9 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>psample
 </span></code></pre></div>
 <h3 id="4-controller-punt-flow-match-trap">4. controller の punt flow に match する trap が発火しているか<a class="headerlink" href="#4-controller-punt-flow-match-trap" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$ aclshow -a
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$ show ip access-lists
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$ redis-cli -n 6 KEYS &quot;USER_WATERMARKS|COPP_*&quot;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>aclshow<span class="w"> </span>-a
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>ip<span class="w"> </span>access-lists
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;USER_WATERMARKS|COPP_*&quot;</span>
 </span></code></pre></div>
 <p><code>aclshow</code> で punt 用 <a href="../../../reference/glossary/#term-acl">ACL</a> の counter が増えるか、CoPP queue の counter が増えるかを見ます。</p>
 <h3 id="_2">よくある罠<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -29901,18 +29901,18 @@
 <li><strong>使わない</strong>: 送信先 port がすでに決まっている。Direct transmit（対応 netdev のソケット）で十分。</li>
 </ul>
 <p>確認手順:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ ip link show send_to_ingress
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>42: send_to_ingress: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9100 qdisc noqueue state UNKNOWN
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>admin@sonic:~$ redis-cli -n 1 KEYS &quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&quot; \
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  | xargs -I{} redis-cli -n 1 HGET {} SAI_HOSTIF_ATTR_NAME 2&gt;/dev/null \
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  | grep -i send_to_ingress
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$<span class="w"> </span>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span>send_to_ingress
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="m">42</span>:<span class="w"> </span>send_to_ingress:<span class="w"> </span>&lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt;<span class="w"> </span>mtu<span class="w"> </span><span class="m">9100</span><span class="w"> </span>qdisc<span class="w"> </span>noqueue<span class="w"> </span>state<span class="w"> </span>UNKNOWN
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="o">{}</span><span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>HGET<span class="w"> </span><span class="o">{}</span><span class="w"> </span>SAI_HOSTIF_ATTR_NAME<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>send_to_ingress
 </span></code></pre></div>
 <p><code>PortsOrch::addSendToIngressHostIf()</code> がコールされた痕跡は orchagent ログにあります。netdev が見えない場合は <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の有効化、ASIC の対応、<a href="../../../reference/glossary/#term-syncd">syncd</a> ログ（<code>SAI_STATUS_NOT_SUPPORTED</code>）を順に見ます。</p>
 <p>詳細は <a href="../../../management/send-to-ingress-hld/">Send to Ingress HLD</a> を参照してください。</p>
 <h2 id="read">Read が遅いときの確認<a class="headerlink" href="#read" title="Permanent link">&para;</a></h2>
 <p>Read の遅さは AppDb への <code>HGETALL</code> 大量発行が支配的でした。entity_cache_（旧 table_entry_cache_）が効いていれば 16,000 フローでも約 40ms に収まる想定です。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$ docker logs p4rt 2&gt;&amp;1 | grep -i &quot;Read took&quot;
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$ docker logs p4rt 2&gt;&amp;1 | grep VerifyState
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;Read took&quot;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>admin@sonic:~$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>p4rt<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>VerifyState
 </span></code></pre></div>
 <ul>
 <li>p4rt-app のログで Read 時間が 1 秒オーダーで残っていれば、キャッシュが回避されている経路を疑う（直近の Write で AppDb 整合 mismatch、warm boot 直後でキャッシュ未充填、など）。</li>

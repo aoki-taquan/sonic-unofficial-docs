@@ -29854,11 +29854,11 @@
 </table>
 <h2 id="config-qos-reload"><code>config qos reload</code><a class="headerlink" href="#config-qos-reload" title="Permanent link">&para;</a></h2>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config qos reload [--ports &lt;port[,port...]&gt;]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                  [--no-dynamic-buffer]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                  [--dry_run &lt;file-prefix&gt;]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                  [--json-data &lt;json&gt;]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                  [--verbose]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>qos<span class="w"> </span>reload<span class="w"> </span><span class="o">[</span>--ports<span class="w"> </span>&lt;port<span class="o">[</span>,port...<span class="o">]</span>&gt;<span class="o">]</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                  </span><span class="o">[</span>--no-dynamic-buffer<span class="o">]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                  </span><span class="o">[</span>--dry_run<span class="w"> </span>&lt;file-prefix&gt;<span class="o">]</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                  </span><span class="o">[</span>--json-data<span class="w"> </span>&lt;json&gt;<span class="o">]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">                  </span><span class="o">[</span>--verbose<span class="o">]</span>
 </span></code></pre></div>
 <p><code>--ports</code> がある場合は、対象 port に関連する table だけを再計算する <code>_qos_update_ports()</code> に進む。対象 table は port 単独 key の <code>PORT_QOS_MAP</code>, <code>BUFFER_PORT_INGRESS_PROFILE_LIST</code>, <code>BUFFER_PORT_EGRESS_PROFILE_LIST</code> と、複合 key の <code>QUEUE</code>, <code>BUFFER_PG</code>, <code>BUFFER_QUEUE</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <p><code>--ports</code> がない場合、既存 QoS を clear してから HWSKU 配下の template を展開する。Mellanox/Barefoot で <code>--no-dynamic-buffer</code> が無い場合は <code>buffers_dynamic.json.j2</code> を使い、<code>DEVICE_METADATA|localhost</code> の <code>buffer_model</code> を <code>dynamic</code> に更新する。そうでない場合は <code>buffers.json.j2</code> を使い、対応 ASIC では <code>traditional</code> に更新する<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>

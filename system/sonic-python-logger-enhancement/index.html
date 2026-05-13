@@ -30091,10 +30091,10 @@
 <p>「redis が無いと壊れる」を避けるため、<strong>redis 未起動時は default level でそのまま動く</strong>。<code>swsscommon.Logger</code> のように初期化で接続を必須にしない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>swssloglevel</code> は <code>swsscommon.Logger</code> のスレッドに依存し、<strong>他コンテナの daemon にはシグナルを送れない</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD では新しい CLI を追加:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config syslog level -c &lt;component&gt; -l &lt;log_level&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                    [--service &lt;service_name&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                    [--program &lt;program_name&gt;]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                    [--pid &lt;pid&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-c<span class="w"> </span>&lt;component&gt;<span class="w"> </span>-l<span class="w"> </span>&lt;log_level&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                    </span><span class="o">[</span>--service<span class="w"> </span>&lt;service_name&gt;<span class="o">]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                    </span><span class="o">[</span>--program<span class="w"> </span>&lt;program_name&gt;<span class="o">]</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                    </span><span class="o">[</span>--pid<span class="w"> </span>&lt;pid&gt;<span class="o">]</span>
 </span></code></pre></div>
 <table>
 <thead>
@@ -30224,9 +30224,9 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 </tbody>
 </table>
 <h3 id="config_db_1">関連する CONFIG_DB<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>LOGGER|&lt;component&gt;
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    loglevel               : DEBUG | INFO | NOTICE | WARN | ERROR
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    require_manual_refresh : &quot;true&quot; | (未設定)
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="l l-Scalar l-Scalar-Plain">LOGGER|&lt;component&gt;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">loglevel</span><span class="w">               </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEBUG | INFO | NOTICE | WARN | ERROR</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">require_manual_refresh</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="err"> (未設定)</span>
 </span></code></pre></div>
 <h3 id="yang">関連する YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>HLD 自体は <a href="../../reference/glossary/#term-yang">YANG</a> 言及なし。<code>LOGGER</code> テーブルは <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-logger.yang</code> の <code>container LOGGER</code> で取り込まれており、<code>require_manual_refresh</code> leaf も定義済。syslog 系設定は <code>sonic-syslog.yang</code> を参照。</p>

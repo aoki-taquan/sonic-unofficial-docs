@@ -29872,11 +29872,11 @@
     end</code></pre>
 <p>設定経路（add/update/delete）は変えず、<code>aclorch</code> が <a href="../../reference/glossary/#term-sai">SAI</a> 戻り値で <a href="../../reference/glossary/#term-state_db">STATE_DB</a> を Active / Inactive に更新する。<code>show</code> 側は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> と STATE_DB を join する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="state_db">STATE_DB スキーマ<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ACL_TABLE_TABLE|&lt;acl_table_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    status : &quot;Active&quot; | &quot;Inactive&quot;
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="l l-Scalar l-Scalar-Plain">ACL_TABLE_TABLE|&lt;acl_table_name&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">status</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;Active&quot;</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="err"> &quot;Inactive&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>ACL_RULE_TABLE|&lt;acl_table_name&gt;|&lt;acl_rule_name&gt;
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    status : &quot;Active&quot; | &quot;Inactive&quot;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="l l-Scalar l-Scalar-Plain">ACL_RULE_TABLE|&lt;acl_table_name&gt;|&lt;acl_rule_name&gt;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">status</span><span class="w"> </span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;Active&quot;</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="err"> &quot;Inactive&quot;</span>
 </span></code></pre></div>
 <p><code>aclorch</code> の動作:</p>
 <ul>

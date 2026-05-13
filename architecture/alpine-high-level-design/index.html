@@ -29795,8 +29795,8 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>make target/sonic-alpinevs.img.gz
 </span></code></pre></div>
 <p>ランタイム時は <code>alpinevs-init</code> サービスが <code>config_db.json</code> の <code>DEVICE_METADATA.hwsku</code> を見て platform を選択する。<code>hwsku=alpine_vs</code> 指定で:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>HwSKU: alpine_vs
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ASIC: alpinevs
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">HwSKU</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpine_vs</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">ASIC</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpinevs</span>
 </span></code></pre></div>
 <p>無指定なら sonic_vs と同じ <code>Force10-S6000</code> がデフォルト。</p>
 <h3 id="ports">Ports<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h3>

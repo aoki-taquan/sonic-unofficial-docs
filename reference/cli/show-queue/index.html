@@ -29900,16 +29900,16 @@
 </table>
 <h2 id="counters">counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h2>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show queue counters [INTERFACE_NAME]
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [--namespace &lt;ns&gt;] [--all] [--trim] [--voq]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    [--nonzero] [--json] [--verbose]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>queue<span class="w"> </span>counters<span class="w"> </span><span class="o">[</span>INTERFACE_NAME<span class="o">]</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="o">[</span>--namespace<span class="w"> </span>&lt;ns&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--all<span class="o">]</span><span class="w"> </span><span class="o">[</span>--trim<span class="o">]</span><span class="w"> </span><span class="o">[</span>--voq<span class="o">]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="o">[</span>--nonzero<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span>
 </span></code></pre></div>
 <p>実行コマンドは <code>queuestat</code>。interface 指定時は <code>-p &lt;port&gt;</code>、namespace は <code>-n</code>、<code>--all</code> は <code>-a</code>、<code>--trim</code> は <code>-T</code>、<code>--voq</code> は <code>-V</code>、<code>--nonzero</code> は <code>-nz</code>、<code>--json</code> は <code>-j</code> に変換される。</p>
 <h2 id="wredcounters">wredcounters<a class="headerlink" href="#wredcounters" title="Permanent link">&para;</a></h2>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show queue wredcounters [INTERFACE_NAME]
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    [--namespace &lt;ns&gt;] [--json] [--voq]
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    [--nonzero] [--summary] [--verbose]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>queue<span class="w"> </span>wredcounters<span class="w"> </span><span class="o">[</span>INTERFACE_NAME<span class="o">]</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="o">[</span>--namespace<span class="w"> </span>&lt;ns&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--json<span class="o">]</span><span class="w"> </span><span class="o">[</span>--voq<span class="o">]</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="o">[</span>--nonzero<span class="o">]</span><span class="w"> </span><span class="o">[</span>--summary<span class="o">]</span><span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span>
 </span></code></pre></div>
 <p>実行コマンドは <code>wredstat</code>。<code>--summary</code> は <code>-s</code>、その他は counters と同じ変換。</p>
 <h2 id="watermark">watermark<a class="headerlink" href="#watermark" title="Permanent link">&para;</a></h2>

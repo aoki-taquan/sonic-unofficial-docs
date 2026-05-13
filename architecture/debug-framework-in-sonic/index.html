@@ -30044,10 +30044,10 @@
 </tbody>
 </table>
 <p>OrchAgent 例（<a href="../../reference/glossary/#term-hld">HLD</a> 抜粋）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show debug routeorch routes -v VrfRED -p 100.100.4.0/24
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show debug routeorch nhgrp
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show debug neighorch nhops
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show debug neighorch neigh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>debug<span class="w"> </span>routeorch<span class="w"> </span>routes<span class="w"> </span>-v<span class="w"> </span>VrfRED<span class="w"> </span>-p<span class="w"> </span><span class="m">100</span>.100.4.0/24
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>debug<span class="w"> </span>routeorch<span class="w"> </span>nhgrp
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>debug<span class="w"> </span>neighorch<span class="w"> </span>nhops
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show<span class="w"> </span>debug<span class="w"> </span>neighorch<span class="w"> </span>neigh
 </span></code></pre></div>
 <p>出力にはプレフィックス、ネクストホップ、<a href="../../reference/glossary/#term-sai">SAI</a> OID、<a href="../../reference/glossary/#term-ecmp">ECMP</a> グループ ref count などを含む（ASIC OID と app 構造体ポインタの紐付け確認に使う設計）。</p>
 <h3 id="configuration-defaults">Configuration Defaults<a class="headerlink" href="#configuration-defaults" title="Permanent link">&para;</a></h3>

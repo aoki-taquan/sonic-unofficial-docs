@@ -30012,7 +30012,7 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config-vlan-add-vid-m-multiple"><code>config vlan add &lt;vid&gt; [-m|--multiple]</code><a class="headerlink" href="#config-vlan-add-vid-m-multiple" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config vlan add &lt;vid&gt; [-m|--multiple]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>add<span class="w"> </span>&lt;vid&gt;<span class="w"> </span><span class="o">[</span>-m<span class="p">|</span>--multiple<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>引数</strong>:</p>
 <ul>
@@ -30052,7 +30052,7 @@ excerpt: |
 
 <h3 id="config-vlan-del-vid-m-multiple-no_restart_dhcp_relay"><code>config vlan del &lt;vid&gt; [-m|--multiple] [--no_restart_dhcp_relay]</code><a class="headerlink" href="#config-vlan-del-vid-m-multiple-no_restart_dhcp_relay" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config vlan del &lt;vid&gt; [-m|--multiple] [--no_restart_dhcp_relay]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>del<span class="w"> </span>&lt;vid&gt;<span class="w"> </span><span class="o">[</span>-m<span class="p">|</span>--multiple<span class="o">]</span><span class="w"> </span><span class="o">[</span>--no_restart_dhcp_relay<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>VLAN_MEMBER</code> 配下の関連エントリ、<code>VLAN_INTERFACE</code>、<code>STP_VLAN</code> / <code>STP_VLAN_PORT</code>、最後に <code>VLAN</code> 本体を順に削除する。<code>--no_restart_dhcp_relay</code> 指定時は <code>dhcp_relay</code> サービスの再起動を抑制（DHCPv6 Relay 設定が空であることが前提）。</p>

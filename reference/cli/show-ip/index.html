@@ -30199,7 +30199,7 @@ excerpt: |
 
 <h3 id="show-ip-route-args"><code>show ip route [&lt;args&gt;]</code><a class="headerlink" href="#show-ip-route-args" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show ip route [&lt;IPADDRESS&gt;] [vrf &lt;vrf_name&gt;] [...] [-d|--display all|frontend] [-n|--namespace &lt;ns&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span><span class="o">[</span>&lt;IPADDRESS&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>vrf<span class="w"> </span>&lt;vrf_name&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>...<span class="o">]</span><span class="w"> </span><span class="o">[</span>-d<span class="p">|</span>--display<span class="w"> </span>all<span class="p">|</span>frontend<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="p">|</span>--namespace<span class="w"> </span>&lt;ns&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>bgp_common.show_routes</code> が <code>vtysh -c 'show ip route ...'</code> を組み立てて実行する。<code>&lt;args&gt;</code> は <strong>そのまま vtysh コマンドラインに連結</strong>されるため、<code>show ip route 10.0.0.0/24 longer-prefixes</code> のような FRR ネイティブ書式を直接渡せる。multi-ASIC 時は対象 namespace のコンテナ内で vtysh を起動する。</p>

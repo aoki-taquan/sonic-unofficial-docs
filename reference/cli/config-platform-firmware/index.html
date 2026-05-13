@@ -29849,17 +29849,17 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config-platform-firmware-install"><code>config platform firmware install</code><a class="headerlink" href="#config-platform-firmware-install" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config platform firmware install [fwutil args...]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>install<span class="w"> </span><span class="o">[</span>fwutil<span class="w"> </span>args...<span class="o">]</span>
 </span></code></pre></div>
 <p>実装は <code>["fwutil", "install"] + args</code> を <code>subprocess.check_call()</code> で実行する。<code>fwutil</code> が非 0 で終了した場合、その return code で CLI も終了する。</p>
 <h3 id="config-platform-firmware-update"><code>config platform firmware update</code><a class="headerlink" href="#config-platform-firmware-update" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config platform firmware update [fwutil args...]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span>update<span class="w"> </span><span class="o">[</span>fwutil<span class="w"> </span>args...<span class="o">]</span>
 </span></code></pre></div>
 <p><code>install</code> と同じ構造で、実行コマンドだけが <code>fwutil update</code> になる。</p>
 <h3 id="show-platform-firmware"><code>show platform firmware</code><a class="headerlink" href="#show-platform-firmware" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show platform firmware [fwutil args...]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>platform<span class="w"> </span>firmware<span class="w"> </span><span class="o">[</span>fwutil<span class="w"> </span>args...<span class="o">]</span>
 </span></code></pre></div>
 <p>表示側は <code>sudo fwutil show</code> に委譲する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。サポートされる component 名・firmware target・追加オプションは platform plugin と <code>fwutil</code> 実装に依存する。</p>
 <h2 id="_4">注意<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

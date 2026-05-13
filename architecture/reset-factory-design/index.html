@@ -30022,13 +30022,13 @@
 <p>これに <strong>factory タイプパラメータ（<code>keep-basic</code>）</strong> を追加する。<code>config-setup</code> 配下の hook ディレクトリにスクリプトを置けばユーザが拡張・差し替え可能。</p>
 <p>新規 conf ファイル <code>/etc/config-setup/config-setup.conf</code> を導入し、変数（<code>KEEP_BASIC_TABLES</code>、<code>DEFAULT_PRESET</code> など）を集約する<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>reset-factory                       # default mode
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>reset-factory keep-all-config       # config 維持、logs/files 消去
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>reset-factory only-config           # config リセット、logs/files 維持
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>reset-factory keep-basic            # default + basic 設定保持、logs/files 消去（ホーム保持）
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>reset-factory<span class="w">                       </span><span class="c1"># default mode</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>reset-factory<span class="w"> </span>keep-all-config<span class="w">       </span><span class="c1"># config 維持、logs/files 消去</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>reset-factory<span class="w"> </span>only-config<span class="w">           </span><span class="c1"># config リセット、logs/files 維持</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>reset-factory<span class="w"> </span>keep-basic<span class="w">            </span><span class="c1"># default + basic 設定保持、logs/files 消去（ホーム保持）</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>config-setup factory                # 工場 default の config_db.json を生成
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>config-setup factory keep-basic     # 同 + basic 設定保持
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>config-setup<span class="w"> </span>factory<span class="w">                </span><span class="c1"># 工場 default の config_db.json を生成</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>config-setup<span class="w"> </span>factory<span class="w"> </span>keep-basic<span class="w">     </span><span class="c1"># 同 + basic 設定保持</span>
 </span></code></pre></div>
 <p><code>reset-factory --help</code> の usage 文は HLD に転載されている<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:

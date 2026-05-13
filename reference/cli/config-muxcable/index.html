@@ -30130,7 +30130,7 @@
 <h2 id="_3">各コマンドの詳細 (抜粋)<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config-muxcable-mode-state-port"><code>config muxcable mode &lt;state&gt; &lt;port&gt;</code><a class="headerlink" href="#config-muxcable-mode-state-port" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config muxcable mode {active|auto|manual|standby|detach} &lt;port_name|all&gt; [--json]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>muxcable<span class="w"> </span>mode<span class="w"> </span><span class="o">{</span>active<span class="p">|</span>auto<span class="p">|</span>manual<span class="p">|</span>standby<span class="p">|</span>detach<span class="o">}</span><span class="w"> </span>&lt;port_name<span class="p">|</span>all&gt;<span class="w"> </span><span class="o">[</span>--json<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>MUX_CABLE</code> テーブルから対象ポートの <a href="../../glossary/#term-state_db">STATE_DB</a> エントリを引いて遷移可能性を判断し、<code>MUX_CABLE|&lt;port&gt;</code> の <code>state</code> フィールドを書き換える。<code>port = "all"</code> の場合は <code>MUX_CABLE</code> に登録されている全ポートを順に処理する。<code>detach</code> は <a href="../../glossary/#term-mux">MUX</a> 制御から外す指示で、xcvrd / linkmgrd 双方が監視を停止する。出力は <code>--json</code> で JSON、無指定で表形式。</p>

@@ -29533,12 +29533,12 @@
 <p>SONiC の運用 CLI は <code>sonic-utilities</code> リポジトリの click ベースのコマンドツリーで定義される。本リファレンスは、master の固定 commit (<code>39732bc</code>) を一次情報として、コマンド単位ではなく <strong>「最初のサブグループ単位」</strong> でページを区切って整理する。</p>
 <h2 id="_1">トップレベルツリー<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>sonic-utilities</code> は複数の click エントリポイントを <code>setup.py</code> で同時にインストールする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本ページではそのうち主要な 3 系統 + パッケージ管理系を扱う。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config           # /usr/local/bin/config (= config/main.py:config)
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show             # /usr/local/bin/show   (= show/main.py:cli)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>clear            # /usr/local/bin/sonic-clear (= clear/main.py:cli)
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sonic-installer  # SONiC イメージ install / sonic_installer/main.py
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w">           </span><span class="c1"># /usr/local/bin/config (= config/main.py:config)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w">             </span><span class="c1"># /usr/local/bin/show   (= show/main.py:cli)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>clear<span class="w">            </span><span class="c1"># /usr/local/bin/sonic-clear (= clear/main.py:cli)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sonic-installer<span class="w">  </span><span class="c1"># SONiC イメージ install / sonic_installer/main.py</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sonic-package-manager
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                 # コンテナ化機能の追加 / sonic_package_manager/main.py
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">                 </span><span class="c1"># コンテナ化機能の追加 / sonic_package_manager/main.py</span>
 </span></code></pre></div>
 <p>このうち <code>config</code> <code>show</code> <code>clear</code> の 3 つは数百のサブコマンドを束ねており、それぞれ <code>&lt;group&gt;/main.py</code> から動的に register される構造を取っている。<strong>一部のサブグループは別ファイルに切り出されたあと <code>&lt;group&gt;.add_command(&lt;subgroup&gt;)</code> の形で登録される</strong>ため、cli.json の機械抽出だけでは全コマンドを補足できない。本リファレンスは個別ページで該当ファイルを直接参照する。</p>
 <h2 id="_2">ページ粒度ルール<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>

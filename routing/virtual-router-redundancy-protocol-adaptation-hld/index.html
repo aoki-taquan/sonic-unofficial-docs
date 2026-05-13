@@ -29957,12 +29957,12 @@ reasoning: 要件 (v2/v3, IF 種別, uplink tracking, VRF) の根拠。
 </tbody>
 </table>
 <h3 id="cli">CLI（追加想定）<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config interface vrrp add &lt;if&gt; &lt;vrid&gt; [--version 2|3] [--priority N] [--preempt enabled|disabled]
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config interface vrrp vip &lt;if&gt; &lt;vrid&gt; &lt;prefix&gt;
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config interface vrrp track &lt;if&gt; &lt;vrid&gt; &lt;tracked-if&gt; --weight N
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config<span class="w"> </span>interface<span class="w"> </span>vrrp<span class="w"> </span>add<span class="w"> </span>&lt;<span class="k">if</span>&gt;<span class="w"> </span>&lt;vrid&gt;<span class="w"> </span><span class="o">[</span>--version<span class="w"> </span><span class="m">2</span><span class="p">|</span><span class="m">3</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--priority<span class="w"> </span>N<span class="o">]</span><span class="w"> </span><span class="o">[</span>--preempt<span class="w"> </span>enabled<span class="p">|</span>disabled<span class="o">]</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>config<span class="w"> </span>interface<span class="w"> </span>vrrp<span class="w"> </span>vip<span class="w"> </span>&lt;<span class="k">if</span>&gt;<span class="w"> </span>&lt;vrid&gt;<span class="w"> </span>&lt;prefix&gt;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>config<span class="w"> </span>interface<span class="w"> </span>vrrp<span class="w"> </span>track<span class="w"> </span>&lt;<span class="k">if</span>&gt;<span class="w"> </span>&lt;vrid&gt;<span class="w"> </span>&lt;tracked-if&gt;<span class="w"> </span>--weight<span class="w"> </span>N
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>show vrrp
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>show vrrp &lt;if&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>show<span class="w"> </span>vrrp
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>show<span class="w"> </span>vrrp<span class="w"> </span>&lt;<span class="k">if</span>&gt;
 </span></code></pre></div>
 <p>具体名は HLD 文章ベース、実装側で確認のこと。</p>
 <h3 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>

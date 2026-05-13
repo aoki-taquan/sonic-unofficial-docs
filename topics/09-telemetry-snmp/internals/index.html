@@ -29894,17 +29894,17 @@
 </table>
 <p><code>sai_query_stats_capability</code> で「使える stat id」を起動時に問い合わせ、サポート外の id は group から除外する設計（→ 20 章）。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  FLEX_COUNTER_TABLE|&lt;group&gt;  (POLL_INTERVAL / FLEX_COUNTER_STATUS)
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  SYSLOG_SERVER, SYSLOG_CONFIG_FEATURE, AUTO_TECHSUPPORT, AUTO_TECHSUPPORT_FEATURE
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  SNMP_AGENT_ADDRESS_CONFIG, SNMP_COMMUNITY, SNMP_USER
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ASIC_DB:
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  FLEX_COUNTER_TABLE / FLEX_COUNTER_GROUP_TABLE (orchagent → syncd への指示)
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>COUNTERS_DB:
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  COUNTERS:&lt;oid&gt;, COUNTERS_PORT_NAME_MAP, COUNTERS_QUEUE_NAME_MAP,
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  COUNTERS_PG_NAME_MAP, COUNTERS_TRAP_NAME_MAP, RATES:*
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>STATE_DB:
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  PROCESS_STATS, SYSTEM_*, AUTO_TECHSUPPORT_DUMP_INFO
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FLEX_COUNTER_TABLE|&lt;group&gt;  (POLL_INTERVAL / FLEX_COUNTER_STATUS)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">SYSLOG_SERVER, SYSLOG_CONFIG_FEATURE, AUTO_TECHSUPPORT, AUTO_TECHSUPPORT_FEATURE</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">SNMP_AGENT_ADDRESS_CONFIG, SNMP_COMMUNITY, SNMP_USER</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">FLEX_COUNTER_TABLE / FLEX_COUNTER_GROUP_TABLE (orchagent → syncd への指示)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nt">COUNTERS_DB</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">COUNTERS:&lt;oid&gt;, COUNTERS_PORT_NAME_MAP, COUNTERS_QUEUE_NAME_MAP,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">COUNTERS_PG_NAME_MAP, COUNTERS_TRAP_NAME_MAP, RATES:*</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nt">STATE_DB</span><span class="p">:</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">PROCESS_STATS, SYSTEM_*, AUTO_TECHSUPPORT_DUMP_INFO</span>
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>

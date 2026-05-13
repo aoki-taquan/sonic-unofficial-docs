@@ -29800,8 +29800,8 @@
 <p><code>NAT_POOL</code> / <code>NAT_BINDINGS</code> テーブルに反映され、<code>natsyncd</code> が conntrack を作成して <code>APPL_DB:NAT_TABLE</code> 経由で <a href="../../../reference/glossary/#term-sai">SAI</a> へ流します。</p>
 <h2 id="3-tor-dhcp-relay-giaddr">設定シナリオ 3: ToR の DHCP relay と giaddr 固定<a class="headerlink" href="#3-tor-dhcp-relay-giaddr" title="Permanent link">&para;</a></h2>
 <p>VLAN 10 / 20 を持つ ToR で、外部 DHCP server に中継する最小構成は次の通りです。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config vlan dhcp_relay add 10 10.0.0.1
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config vlan dhcp_relay add 20 10.0.0.1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">10</span>.0.0.1
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>vlan<span class="w"> </span>dhcp_relay<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">10</span>.0.0.1
 </span></code></pre></div>
 <p>書き込まれる CONFIG_DB は <code>DHCP_RELAY|Vlan10</code> / <code>Vlan20</code> で、<code>dhcp_servers: ["10.0.0.1"]</code> です。v6 を併用するなら <code>dhcpv6_servers</code> を別途追加します。secondary subnet を運用する場合は VLAN_INTERFACE 側で <code>secondary: "true"</code> の付与を忘れずに。</p>
 <p>確認:</p>
@@ -29817,10 +29817,10 @@
 <p><code>show dhcp_relay ipv4 statistics</code> で <code>bootp_request_sent_to_server</code> / <code>bootp_reply_sent_to_client</code> のカウンタが進むことを確認します。giaddr を secondary IP に固定したい場合は <code>VLAN_INTERFACE|Vlan10|10.10.99.1/32</code> を <code>secondary: "true"</code> で追加し、<code>dhcrelay</code> の <code>-pg</code> でその IP が選ばれるようにします。</p>
 <h2 id="4-tor-dhcp-server">設定シナリオ 4: ToR ローカル DHCP server<a class="headerlink" href="#4-tor-dhcp-server" title="Permanent link">&para;</a></h2>
 <p><code>docker-dhcp-server</code> を有効化し、VLAN 10 で pool を払い出す例の輪郭は次の通りです。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>config feature state dhcp_server enabled
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>config dhcp_server ipv4 add Vlan10 --gw 10.10.0.1 --netmask 255.255.0.0 --lease-time 86400
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>config dhcp_server ipv4 range add pool1 10.10.0.100 10.10.0.200
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>config dhcp_server ipv4 ip bind Vlan10 Ethernet4 --range pool1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>config<span class="w"> </span>feature<span class="w"> </span>state<span class="w"> </span>dhcp_server<span class="w"> </span>enabled
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>add<span class="w"> </span>Vlan10<span class="w"> </span>--gw<span class="w"> </span><span class="m">10</span>.10.0.1<span class="w"> </span>--netmask<span class="w"> </span><span class="m">255</span>.255.0.0<span class="w"> </span>--lease-time<span class="w"> </span><span class="m">86400</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>range<span class="w"> </span>add<span class="w"> </span>pool1<span class="w"> </span><span class="m">10</span>.10.0.100<span class="w"> </span><span class="m">10</span>.10.0.200
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>config<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>ip<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>Vlan10<span class="w"> </span>Ethernet4<span class="w"> </span>--range<span class="w"> </span>pool1
 </span></code></pre></div>
 <p>各サブコマンドの正確な引数は <a href="../../../reference/cli/config-dhcp-relay/">config dhcp_server CLI</a> と各 <a href="../../../reference/config-db/dhcp-server-ipv4/">DHCP_SERVER_IPV4 系 CONFIG_DB ページ</a> を参照してください。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。</p>
 <p>CONFIG_DB は次のようになります。</p>

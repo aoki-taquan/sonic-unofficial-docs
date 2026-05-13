@@ -29819,13 +29819,13 @@
 <h2 id="_3">各コマンドの詳細<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="config-vnet-add"><code>config vnet add</code><a class="headerlink" href="#config-vnet-add" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config vnet add &lt;vnet_name&gt; &lt;vni&gt; &lt;vxlan_tunnel&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    [--peer_list &lt;list&gt;]
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    [--guid &lt;guid&gt;]
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    [--scope default|...]
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    [--advertise_prefix true|false]
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    [--overlay_dmac &lt;mac&gt;]
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    [--src_mac &lt;mac&gt;]
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>vnet<span class="w"> </span>add<span class="w"> </span>&lt;vnet_name&gt;<span class="w"> </span>&lt;vni&gt;<span class="w"> </span>&lt;vxlan_tunnel&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="o">[</span>--peer_list<span class="w"> </span>&lt;list&gt;<span class="o">]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="o">[</span>--guid<span class="w"> </span>&lt;guid&gt;<span class="o">]</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="o">[</span>--scope<span class="w"> </span>default<span class="p">|</span>...<span class="o">]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="o">[</span>--advertise_prefix<span class="w"> </span>true<span class="p">|</span>false<span class="o">]</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="o">[</span>--overlay_dmac<span class="w"> </span>&lt;mac&gt;<span class="o">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="o">[</span>--src_mac<span class="w"> </span>&lt;mac&gt;<span class="o">]</span>
 </span></code></pre></div>
 <p><code>&lt;vnet_name&gt;</code> は <code>Vnet</code> で始まり、最大 15 文字。<code>VNET|&lt;vnet_name&gt;</code> に <code>vni</code>, <code>vxlan_tunnel</code> と指定オプションを書き込む。<code>peer_list</code> の各 peer も同じ VNET 名検証を受ける<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h3 id="config-vnet-del"><code>config vnet del</code><a class="headerlink" href="#config-vnet-del" title="Permanent link">&para;</a></h3>

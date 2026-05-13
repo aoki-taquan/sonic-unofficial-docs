@@ -30012,8 +30012,8 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 
 <h2 id="_6">設定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config bgp error-handling enable
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config bgp error-handling disable
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>config<span class="w"> </span>bgp<span class="w"> </span>error-handling<span class="w"> </span><span class="nb">enable</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>config<span class="w"> </span>bgp<span class="w"> </span>error-handling<span class="w"> </span>disable
 </span></code></pre></div>
 <p><code>enabled→disabled</code> 切替時は HLD 上 <strong>BGP docker 再起動が推奨</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。disabled の間に投入された route には機能が効かないため、enable 後は session reset が現実的。</p>
 <h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>

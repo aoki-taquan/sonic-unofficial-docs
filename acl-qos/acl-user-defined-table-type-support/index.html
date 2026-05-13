@@ -30022,7 +30022,7 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 </table>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STATE_DB 公開 capability に含まれているかも検証する<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>DATAACL<span class="w"> </span>L3<span class="w"> </span>--ports<span class="w"> </span>Ethernet0,Ethernet4<span class="w"> </span>--stage<span class="w"> </span>ingress
 </span></code></pre></div>
 <p>新規 CLI（カスタムタイプ自体を作るコマンド）は <strong>本 <a href="../../reference/glossary/#term-hld">HLD</a> では追加しない</strong><sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。CONFIG_DB / <a href="../../reference/glossary/#term-config_db.json">config_db.json</a> 直接編集または <a href="../../reference/glossary/#term-gnmi">gNMI</a> から作る前提。</p>
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

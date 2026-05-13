@@ -30442,8 +30442,8 @@
 <h2 id="_5">主要コマンドの詳細<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <h3 id="config-interface-startup-interface_name-shutdown-interface_name"><code>config interface startup &lt;interface_name&gt;</code> / <code>shutdown &lt;interface_name&gt;</code><a class="headerlink" href="#config-interface-startup-interface_name-shutdown-interface_name" title="Permanent link">&para;</a></h3>
 <p><strong>用法</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config interface [-n &lt;namespace&gt;] startup &lt;interface_name&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config interface [-n &lt;namespace&gt;] shutdown &lt;interface_name&gt;
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>config<span class="w"> </span>interface<span class="w"> </span><span class="o">[</span>-n<span class="w"> </span>&lt;namespace&gt;<span class="o">]</span><span class="w"> </span>startup<span class="w"> </span>&lt;interface_name&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>config<span class="w"> </span>interface<span class="w"> </span><span class="o">[</span>-n<span class="w"> </span>&lt;namespace&gt;<span class="o">]</span><span class="w"> </span>shutdown<span class="w"> </span>&lt;interface_name&gt;
 </span></code></pre></div>
 <p><strong>動作</strong>:
 <code>&lt;interface_name&gt;</code> が <code>PORT</code> / <code>PORTCHANNEL</code> / <code>VLAN_SUB_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> のどれかにマッチしたエントリの <code>admin_status</code> を <code>up</code> / <code>down</code> に更新する。<strong>4 種類のテーブルを順に走査</strong>するので、Ethernet0, PortChannel1, Eth0.10, Loopback0 のいずれにも同じコマンドで使える。</p>

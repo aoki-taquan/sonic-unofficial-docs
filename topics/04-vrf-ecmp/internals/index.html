@@ -29802,23 +29802,23 @@
 </table>
 <p><code>FINE_GRAIN_ECMP</code> は FgNhgOrch のための拡張で、ベンダ差が出やすい SAI 属性です。PIC（Prefix Independent Convergence）では <a href="../../../reference/glossary/#term-bfd">BFD</a>-down 時に group member の <code>weight</code> を 0 化する path（<code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code> の動的更新）に頼るため、ASIC で WEIGHT のホットスワップが効くかが分かれ目になります。</p>
 <h2 id="redis">Redis テーブル参照関係<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB:
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  VRF             ─&gt; VRFOrch
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE (vrf_name)  ─&gt; IntfsOrch → VRFOrch
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  BGP_NEIGHBOR    ─&gt; bgpcfgd → FRR
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VRF             ─&gt; VRFOrch</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE (vrf_name)  ─&gt; IntfsOrch → VRFOrch</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">BGP_NEIGHBOR    ─&gt; bgpcfgd → FRR</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>APPL_DB:
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  ROUTE_TABLE     ─&gt; RouteOrch
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  NEIGH_TABLE     ─&gt; NeighOrch
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  NEXTHOP_GROUP_TABLE  ─&gt; NhgOrch
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  LABEL_ROUTE_TABLE    ─&gt; MplsRouteOrch (※17 章参照)
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nt">APPL_DB</span><span class="p">:</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ROUTE_TABLE     ─&gt; RouteOrch</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEIGH_TABLE     ─&gt; NeighOrch</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEXTHOP_GROUP_TABLE  ─&gt; NhgOrch</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">LABEL_ROUTE_TABLE    ─&gt; MplsRouteOrch (※17 章参照)</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>STATE_DB:
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  ROUTE_TABLE / NEIGH_RESOLVE_TABLE / FG_ROUTE_TABLE
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>  → offload feedback として FRR の suppress-fib-pending に効く
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nt">STATE_DB</span><span class="p">:</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ROUTE_TABLE / NEIGH_RESOLVE_TABLE / FG_ROUTE_TABLE</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">→ offload feedback として FRR の suppress-fib-pending に効く</span>
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>ASIC_DB:
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  VIRTUAL_ROUTER / ROUTE_ENTRY / NEXT_HOP / NEXT_HOP_GROUP / NEIGHBOR_ENTRY
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VIRTUAL_ROUTER / ROUTE_ENTRY / NEXT_HOP / NEXT_HOP_GROUP / NEIGHBOR_ENTRY</span>
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub の使用<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29864,9 +29864,9 @@
 <p>kernel side が遅延し orchagent 側が先に更新されると、<code>fpmsyncd</code> が「該当 VRF table が kernel に無い」エラーで route を skip するケースが報告されています（VRF 作成直後の race）。</p>
 <h2 id="ecmp-hash">ECMP hash の制御<a class="headerlink" href="#ecmp-hash" title="Permanent link">&para;</a></h2>
 <p>ECMP のハッシュフィールドは <code>SwitchOrch</code> が起動時に <code>SWITCH_HASH</code> テーブル（<code>CONFIG_DB</code>）を読み、SAI に投入します。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CONFIG_DB:SWITCH_HASH|GLOBAL
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ecmp_hash: &quot;SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*&quot;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  lag_hash:  &quot;...&quot;
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">CONFIG_DB:SWITCH_HASH|GLOBAL</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ecmp_hash</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">lag_hash</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;...&quot;</span>
 </span></code></pre></div>
 <p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> でしばしば問題になります（→ 03 章、17 章）。</p>
 <h2 id="nhg-resync">NHG 参照カウントと resync<a class="headerlink" href="#nhg-resync" title="Permanent link">&para;</a></h2>

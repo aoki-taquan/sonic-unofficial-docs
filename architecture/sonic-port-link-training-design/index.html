@@ -29814,9 +29814,9 @@
 </table>
 <p>ベンダ SAI 要件: 未対応属性アクセスはエラー返却で swss/<a href="../../reference/glossary/#term-syncd">syncd</a> を crash させない、デフォルトは disabled<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">スキーマ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB: PORT|&lt;port&gt;  link_training = &quot;on&quot;|&quot;off&quot;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>APPL_DB:   PORT_TABLE   link_training を伝搬
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>STATE_DB:  PORT_TABLE   link_training_status を 7 値で公開
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">CONFIG_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT|&lt;port&gt;  link_training = &quot;on&quot;|&quot;off&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">APPL_DB</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">PORT_TABLE   link_training を伝搬</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">STATE_DB</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">PORT_TABLE   link_training_status を 7 値で公開</span>
 </span></code></pre></div>
 <p><code>link_training_status</code> の値<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>

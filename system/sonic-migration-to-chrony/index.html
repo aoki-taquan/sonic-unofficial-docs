@@ -29857,8 +29857,8 @@
 <li><strong>port 123 listen</strong>: 不要（client mode）。NTP server として動かす場合のみ listen 設定</li>
 </ul>
 <h3 id="step-slew">Step / Slew の使い分け<a class="headerlink" href="#step-slew" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>通常: slew のみ
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>明示要求 (chronyc makestep / config maxchange) のときのみ step
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>通常:<span class="w"> </span>slew<span class="w"> </span>のみ
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>明示要求<span class="w"> </span><span class="o">(</span>chronyc<span class="w"> </span>makestep<span class="w"> </span>/<span class="w"> </span>config<span class="w"> </span>maxchange<span class="o">)</span><span class="w"> </span>のときのみ<span class="w"> </span>step
 </span></code></pre></div>
 <ul>
 <li>起動直後の <strong>初期同期</strong> で大きくズレている場合のみ step を許可するのが現実的（HLD には初期 step の取扱いが明示的議論される）</li>

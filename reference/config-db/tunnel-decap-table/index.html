@@ -29768,9 +29768,9 @@
 <!-- /cdb-mermaid -->
 
 <h2 id="db-key">DB / key<a class="headerlink" href="#db-key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>APPL_DB:   TUNNEL_DECAP_TABLE:&lt;tunnel_name&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>STATE_DB:  TUNNEL_DECAP_TABLE|&lt;tunnel_name&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>APPL_DB:   TUNNEL_DECAP_TERM_TABLE:&lt;tunnel_name&gt;:&lt;dst_ip&gt;   # 終端 IP の管理用 sub テーブル
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">APPL_DB</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">TUNNEL_DECAP_TABLE:&lt;tunnel_name&gt;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">STATE_DB</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">TUNNEL_DECAP_TABLE|&lt;tunnel_name&gt;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">APPL_DB</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">TUNNEL_DECAP_TERM_TABLE:&lt;tunnel_name&gt;:&lt;dst_ip&gt;</span><span class="w">   </span><span class="c1"># 終端 IP の管理用 sub テーブル</span>
 </span></code></pre></div>
 <p>テーブル名定数は <code>schema.h</code> の <code>APP_TUNNEL_DECAP_TABLE_NAME</code> / <code>APP_TUNNEL_DECAP_TERM_TABLE_NAME</code> / <code>STATE_TUNNEL_DECAP_TABLE_NAME</code> / <code>STATE_TUNNEL_DECAP_TERM_TABLE_NAME</code><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
