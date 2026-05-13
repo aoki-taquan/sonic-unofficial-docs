@@ -159,6 +159,8 @@ show copp configuration detailed --group queue1_group3
 - `SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS` の対応は **ベンダー依存**。未実装 ASIC では `hw_status=not-installed`
 - `default_supported_trap_ids` は古い SAI 向けフォールバック。新 trap を default に入れ忘れると未 install になる可能性
 - [HLD](../reference/glossary.md#term-hld) デフォルト（CIR/CBS=200、queue=1）はデバイス・トラフィックに合わせて調整余地あり
+- **DHCP_L2 / DHCPv6_L2 トラップが COPP マップに未対応** ([sonic-swss#1684](https://github.com/sonic-net/sonic-swss/issues/1684)): SAI では `SAI_HOSTIF_TRAP_TYPE_DHCP_L2` / `SAI_HOSTIF_TRAP_TYPE_DHCPV6_L2` が追加されているが（[opencomputeproject/SAI#1118](https://github.com/opencomputeproject/SAI/pull/1118)）、SONiC の COPP トラップ ID マップにはこれらの L2 DHCP トラップが追加されていない。DHCP relay が L2 ブロードキャスト（DHCP Discover 等）を正しくトラップできない場合はこの制限が原因である可能性がある。
+- **SAI mandatory trap が未実装の場合がある** ([sonic-swss#559](https://github.com/sonic-net/sonic-swss/issues/559)): SAI 仕様で mandatory とされているトラップ種別（例: `SAI_HOSTIF_TRAP_TYPE_STP`、`SAI_HOSTIF_TRAP_TYPE_OSPF`）でも、BCM SAI 等のベンダー実装で未サポートのものがある。`syncd` ログに `SAI_STATUS_NOT_IMPLEMENTED` が記録される場合はプラットフォームのベンダー SAI が該当トラップを実装していないことを意味する。SAI spec の mandatory は「標準上の要件」であり「全 ASIC ベンダーが実装済み」を保証しない。
 
 ## 干渉する機能
 

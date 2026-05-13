@@ -312,6 +312,7 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 - Warm restart 未対応[^1]
 - L3 VXLAN と L2 VXLAN は別トンネル
 - Kernel VRF programming は HLD スコープ外
+- **MP2P / MP2MP トンネルターム属性の必須化による orchagent 非対応** ([sonic-swss#2829](https://github.com/sonic-net/sonic-swss/issues/2829)): SAI のトンネルターミネーション属性において、`MP2P` / `MP2MP` タイプのトンネルターム作成時に `DST_IP` および `SRC_IP` が必須属性として要求されるよう変更された（`opencomputeproject/SAI#1255` 関連）。orchagent 側がこれらを必須として渡していない場合、トンネルターム作成が SAI エラーで失敗する。GRE / NVGRE トンネルを MP2MP または MP2P モードで使用している環境では注意が必要。
 
 ## 干渉する機能
 

@@ -137,6 +137,7 @@ sonic-db-cli STATE_DB keys "WARM_RESTART_TABLE|*"
 - **対応コンテナの限定**: warm restart は対応する docker (`bgp` / `swss` / `syncd` / `teamd` / `nat` / 一部 `lldp`) のみで有効化される。それ以外のコンテナは cold restart 相当となる。
 - **multi-ASIC / chassis**: 単体スイッチを想定した設計で、multi-ASIC や [VOQ](../reference/glossary.md#term-voq) chassis では追加の制約 (namespace 単位の順序、`multi-asic-warm-reboot` 補助 HLD) が必要。
 - **storage 要件**: `/host/warmboot/` 配下に `sai-warmboot.bin` などの状態ファイルが書き込めるディスク容量が必要。
+- **`orchagent_restart_check` が freeze 後も失敗し続ける問題** ([sonic-swss#827](https://github.com/sonic-net/sonic-swss/issues/827)): orchagent が warm reboot の freeze（pause）に成功した後も、`orchagent_restart_check` バイナリが継続して `restart check failed` を報告することがある。freeze 後の orchagent はリクエストを処理しなくなるため、デフォルト 1 秒タイムアウトで毎回失敗するように見える。ログに `RESTARTCHECK failed <n>` が多数出力されていても、その時点で orchagent がすでに freeze 済みである可能性がある。実際の orchagent の状態は syslog の `orchagent: Paused` メッセージや STATE_DB の warm restart 状態で確認すること。
 
 ## 引用元
 

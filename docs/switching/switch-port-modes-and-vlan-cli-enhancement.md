@@ -237,6 +237,7 @@ sudo config switchport mode routed Ethernet0
 - **truncate ポリシー**: 一括 CLI で 1 件失敗するとそこで停止する。前段は反映済みなので途中状態に注意[^1]。
 - **アーキテクチャ拡張なし**: [orchagent](../reference/glossary.md#term-orchagent) / [SAI](../reference/glossary.md#term-sai) / vlanmgr 等の改修は無く、CLI と CONFIG_DB の契約だけが変わる。新ベンダ依存・SAI 改修なし。
 - **詳細仕様は原文必読**: 本ページは概要のみ。state diagram・sequence diagram・コーナーケース例は原文 HLD §High-level Design / §Examples を参照[^1]。
+- **IP 設定済みポートの VLAN untagged メンバー追加と再起動後のリンクアップ不可** ([sonic-swss#961](https://github.com/sonic-net/sonic-swss/issues/961)): ポートに IP アドレスを設定した状態で当該ポートを VLAN の untagged メンバーとして追加すると、`PortsOrch` の実装（`portsorch.cpp`）により PVID の変更がブロックされる設計制限がある。この状態で再起動すると、untagged メンバーポートが PVID を正しく取得できず、リンクアップしない場合がある。回避策: IP インターフェースを先に削除してから VLAN untagged メンバーを追加するか、IP を持つポートは tagged メンバーとして VLAN に参加させること。
 
 ## 干渉する機能
 

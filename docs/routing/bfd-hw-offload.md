@@ -216,6 +216,7 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
 - Warm restart に関しては「特別な処理は不要」とされている[^1]。ただし HW オフロードセッションが warm reboot 中に保持されるかは ASIC 実装依存
 - 同一宛先 IP に control plane BFD（FRR）と HW オフロードを同時に張らないこと
 - HW 実装が underlay ECMP 解決を持っていることが前提。HW 側でこれが未実装の場合 multihop が成立しない
+- **`SAI_BFD_SESSION_ATTR_PORT` 未設定の問題** ([sonic-swss#3051](https://github.com/sonic-net/sonic-swss/issues/3051)): `SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID=False`（HW ルックアップを無効化）でセッションを作成する場合、SAI は `SAI_BFD_SESSION_ATTR_PORT` を必須属性として要求する。現行の `BfdOrch` はこの属性を設定前に照会せずにプログラミングするため、非デフォルトポート構成で BFD セッション作成が失敗することがある。この場合は [syncd](../reference/glossary.md#term-syncd) ログに SAI エラーが記録される。
 
 ## 干渉する機能
 
