@@ -80,6 +80,19 @@ VLAN_MEMBER|<vlan_name>|<port>
 - 関連 CLI: `config vlan member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `tagging_mode` | `untagged` | `bridge vlan add ... pvid untagged`。ポートの PVID として扱われる (vlanmgr.cpp:238) |
+| `tagging_mode` | `priority_tagged` | `bridge vlan add ... pvid untagged`（untagged と同一の bridge コマンド） (vlanmgr.cpp:238) |
+| `tagging_mode` | `tagged` | `bridge vlan add`（タグあり、pvid/untagged オプションなし） |
+| `tagging_mode` | 省略 | `"untagged"` が自動補完される (vlanmgr.cpp:873) |
+| `tagging_mode` | その他 | `SWSS_LOG_ERROR("Wrong tagging_mode")` で破棄 (vlanmgr.cpp:659) |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang -->
@@ -87,7 +100,7 @@ VLAN_MEMBER|<vlan_name>|<port>
 - **キー形式検証**: `Vlan<id>|<port>` 形式必須。`Vlan` プレフィクスがない、またはポート名が含まれない場合 `vlanmgrd` はエントリを破棄する[^exc1]。
 - **`tagging_mode` 検証**: `untagged` / `tagged` / `priority_tagged` 以外の値は `SWSS_LOG_ERROR("Wrong tagging_mode")` で破棄される[^exc1]。
 - **VLAN / ポート未 ready**: `isVlanStateOk()` または `isMemberStateOk()` が false の場合リトライ待ち（"not ready, delaying"）[^exc1]。
-- **重複エントリ**: STATE_DB に既存の場合は `m_vlanMemberReplay` から削除のみ（"already set"）[^exc1]。
+- **重複エントリ**: [STATE_DB](../../reference/glossary.md#term-state_db) に既存の場合は `m_vlanMemberReplay` から削除のみ（"already set"）[^exc1]。
 - **重複キー**: consumer pipe 内の重複キーは `SWSS_LOG_WARN("Duplicate key found")` でスキップ[^exc1]。
 - **デフォルト補完**: `tagging_mode` 省略時は `"untagged"` が補完される[^exc1]。
 
@@ -140,4 +153,4 @@ show vlan brief
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e1bfad0ce64c -->
+<!-- glossary-links-injected: 6981be1a469d -->

@@ -108,6 +108,22 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 - 関連 CLI: `config vxlan`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vnet`、`sonic-vxlan`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `scope` | `"default"` | YANG pattern で唯一許可される値。デフォルト VRF スコープ |
+| `scope` | その他 | YANG バリデーションで `"Invalid VRF name"` エラー (sonic-vnet.yang) |
+| `advertise_prefix` | `true` | VNET ルートプレフィクスを BGP に広告 |
+| `advertise_prefix` | `false` | 広告しない（デフォルト動作）|
+| `vni` | 任意 VNI | VXLAN overlay header に使用する VNI。同一デバイス内で重複すると orchagent が後勝ちで上書き |
+| `VNET_ROUTE_TUNNEL.metric` | uint8 | 経路選択に影響しない（YANG コメント: "not used for route selection, but for route classification"）|
+| `VNET_ROUTE_TUNNEL.consistent_hashing_buckets` | uint16 | 複数 endpoint 時の ECMP consistent hashing バケット数を制御 |
+| `VNET_ROUTE.nexthop` | カンマ区切り IP リスト | ECMP nexthop として複数 IP 指定可（`ipv4-address-list` 型）|
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang; sonic-swss/orchagent/vnetorch.cpp -->
@@ -115,10 +131,10 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 - **`vrf_name` パターン (YANG)**: `pattern "default"` のみ許可。それ以外は YANG バリデーションで `"Invalid VRF name"` エラー[^exc2]。
 - **`vxlan_tunnel` + `vni` 必須**: 両方が揃うまで `vxlanmgrd` はメッセージを破棄して再送待ち（"information is incomplete, just ignore this message"）[^exc1]。
 - **VXLAN トンネル未作成**: 参照 `VXLAN_TUNNEL` がキャッシュに存在しない場合リトライ待ち[^exc1]。
-- **VRF 未 ready**: `isVrfStateOk()` が false の場合リトライ待ち[^exc1]。
+- **[VRF](../../reference/glossary.md#term-vrf) 未 ready**: `isVrfStateOk()` が false の場合リトライ待ち[^exc1]。
 - **MAC アドレス未設定**: ルータ MAC が未取得の場合もリトライ[^exc1]。
 - **VxLAN デバイス作成失敗**: `SWSS_LOG_ERROR("Cannot create vxlan %s")` を記録して `false` を返す[^exc1]。
-- **orchagent VR オブジェクト作成失敗**: `std::runtime_error` を throw し、呼び出し元でキャッチして `SWSS_LOG_ERROR` を記録[^exc3]。
+- **[orchagent](../../reference/glossary.md#term-orchagent) VR オブジェクト作成失敗**: `std::runtime_error` を throw し、呼び出し元でキャッチして `SWSS_LOG_ERROR` を記録[^exc3]。
 
 [^exc1]: `sonic-swss/cfgmgr/vxlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vnet.yang>
@@ -163,4 +179,4 @@ show vnet routes all
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ef122063da90 -->
+<!-- glossary-links-injected: f94986e6b96c -->

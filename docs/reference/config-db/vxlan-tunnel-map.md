@@ -75,6 +75,20 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 - 関連 CLI: [`config vxlan`](../cli/config-vxlan.md) (`map add` / `map del`)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `vlan` | `Vlan<id>` 形式 | YANG pattern で検証。SAI tunnel-map に `SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` / `_TO_VLAN_ID` エントリを生成 |
+| `vlan` | `Vlan` プレフィクスなし | YANG pattern 違反で reject |
+| `vlan` | 既にマップ済みの VLAN | `vxlanmgr` が `"Vlan %s already mapped. Map Create failed"` でエラーして破棄 (vxlanmgr.cpp) |
+| `vni` | 有効な VNI | VLAN と VNI を紐付け。EVPN type-2/3 経路と紐付く |
+| `vni` | 既にマップ済みの VNI | `vxlanmgr` が重複エラーで破棄 |
+| `vni` | `0` | 予約済み値。使用不可（`vnid_type` 型は 1 以上が実質有効）|
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->

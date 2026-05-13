@@ -77,6 +77,20 @@ VXLAN_EVPN_NVO|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 - 関連 CLI: `config vxlan evpn_nvo`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+本テーブルは enum フィールドを持たない。フィールドは `source_vtep`（leafref）と `name`（string）のみ。
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `source_vtep` | 有効な `VXLAN_TUNNEL` 名 | NVO 作成成功。`disableLearningForAllVxlanNetdevices()` でシステム全体の VXLAN MAC learning が無効化される (vxlanmgr.cpp) |
+| `source_vtep` | 存在しない / 未 active な `VXLAN_TUNNEL` 名 | `"NVO %s creation failed. VTEP not present"` でリトライ待ち |
+| エントリ数 | 1 件目 | 正常作成 |
+| エントリ数 | 2 件目以降 | YANG `max-elements 1` で reject。vxlanmgrd も `"Only Single NVO object allowed"` でキャッシュ側防護 |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
@@ -85,7 +99,7 @@ VXLAN_EVPN_NVO|<name>
 - **`vxlanmgrd` 重複チェック**: キャッシュに既存 NVO エントリがある場合 `SWSS_LOG_ERROR("Only Single NVO object allowed")` を記録して破棄（YANG 検証バイパス時の二重防護）[^exc1]。
 - **VTEP 未 active**: `source_vtep` が参照する `VXLAN_TUNNEL` が active でない場合 `SWSS_LOG_ERROR("NVO %s creation failed. VTEP not present")` を記録してリトライ待ち[^exc1]。
 - **NVO 削除時エントリ不在**: `SWSS_LOG_ERROR("NVO deletion NVO: %s not found exception: %s")` を記録[^exc1]。
-- **MAC learning 無効化**: NVO 作成成功時にすべての VXLAN netdev の MAC learning が `disableLearningForAllVxlanNetdevices()` で無効化される（EVPN 前提の動作）[^exc1]。
+- **MAC learning 無効化**: NVO 作成成功時にすべての [VXLAN](../../reference/glossary.md#term-vxlan) netdev の MAC learning が `disableLearningForAllVxlanNetdevices()` で無効化される（EVPN 前提の動作）[^exc1]。
 
 [^exc1]: `sonic-swss/cfgmgr/vxlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
@@ -127,4 +141,4 @@ show vxlan tunnel
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 5d51c067a00b -->
+<!-- glossary-links-injected: 7e2e79cf3524 -->

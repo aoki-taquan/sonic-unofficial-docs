@@ -77,6 +77,19 @@ BUFFER_PORT_EGRESS_PROFILE_LIST|<port>
 - **trimming-eligible プロファイル禁止 → task_failed**: `packet_discard_action = trim` のプロファイルは egress profile list に設定不可。`SWSS_LOG_ERROR("Failed to configure egress buffer profile list(%s): buffer profile(%s) is trimming eligible")` が出力され処理失敗となる。<!-- evidence: bufferorch.cpp L1907-1921 -->
 - **ポート未存在 → task_invalid_entry**: 指定ポート名が PortsOrch のポートマップに存在しない場合 `task_invalid_entry` を返す。<!-- evidence: bufferorch.cpp L1950-1954 -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに enum フィールドはない。ただし参照する `BUFFER_PROFILE.packet_discard_action` の値によって挙動が変わる。
+
+| 参照プロファイルの `packet_discard_action` | 挙動 |
+|------------------------------------------|------|
+| `drop`（既定） | `profile_list` に含めて egress profile list として設定可能。`BufferOrch` が SAI `SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST` を更新する。 |
+| `trim` | `BufferOrch` が `isTrimmingEligible=true` を検出し `task_failed` を返す（`bufferorch.cpp:1915-1921`）。egress profile list への trim プロファイルの適用は **禁止**。 |
+
+`profile_list` の設定順（`ordered-by user`）は SAI へのバインド順と対応する。
+<!-- /value-behavior -->
+
 ## 購読者
 
 - `buffermgrd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`

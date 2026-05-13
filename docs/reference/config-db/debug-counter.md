@@ -86,6 +86,20 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 - **最後の drop_reason の削除 → task_ignore**: drop_reasons が 1 件のときに `removeDropReason()` を呼ぶと `SWSS_LOG_WARN("Attempted to remove all drop reasons from counter")` → `task_ignore`。drop counter は最低 1 つの理由が必要。<!-- evidence: debugcounterorch.cpp L476-479 -->
 - **更新はべき等・失敗は状態を変更しない**: 失敗した更新はシステム状態を変更しない。同一リクエストの繰り返しは同一結果となる。<!-- evidence: debugcounterorch.cpp L128-130 -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `type` | `PORT_INGRESS_DROPS` | `CounterType::PORT_DEBUG` として扱い、ポート単位に SAI debug counter を作成（`debugcounterorch.cpp:19`）。各ポートの ingress ドロップを個別に集計。ポート削除時にカウンタも削除される。 |
+| `type` | `PORT_EGRESS_DROPS` | `CounterType::PORT_DEBUG` として扱い、ポート単位に SAI debug counter を作成（`debugcounterorch.cpp:20`）。各ポートの egress ドロップを個別に集計。 |
+| `type` | `SWITCH_INGRESS_DROPS` | `CounterType::SWITCH_DEBUG` として扱い、スイッチ全体のグローバルカウンタを作成（`debugcounterorch.cpp:21`）。全ポート合算の ingress ドロップを集計。 |
+| `type` | `SWITCH_EGRESS_DROPS` | `CounterType::SWITCH_DEBUG` として扱い、スイッチ全体のグローバルカウンタを作成（`debugcounterorch.cpp:22`）。全ポート合算の egress ドロップを集計。 |
+| `drop_monitor_status` | `enabled` | `debug_monitor_enabled=true` をセット。ドロップ検知時に syslog アラートを発火する（`debugcounterorch.cpp:649, 708`）。 |
+| `drop_monitor_status` | `disabled`（既定） | アラート発生なし。カウンタの蓄積は継続するが通知は行わない。 |
+| `drop_monitor_status` | その他の値 | `SWSS_LOG_ERROR` を出力して拒否。`enabled`/`disabled` 以外は無効（`debugcounterorch.cpp:257`）。 |
+<!-- /value-behavior -->
+
 ## 購読者
 
 - `debugcounterorch` ([orchagent](../../reference/glossary.md#term-orchagent)): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映

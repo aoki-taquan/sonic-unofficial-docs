@@ -78,6 +78,30 @@ WARM_RESTART|<module>
 - 関連 CLI: `config warm_restart enable`, `config warm_restart bgp_timer`, `config warm_restart neighsyncd_timer`, `show warm_restart`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-warm-restart`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `module` | `bgp` | `bgp_eoiu` / `bgp_timer` が有効。`bgpcfgd` が vtysh の `bgp graceful-restart restart-time <val>` に変換 |
+| `module` | `teamd` | `teamsyncd_timer` が有効。`teamd` が LAG 再収束タイムアウトとして使用 |
+| `module` | `swss` | `neighsyncd_timer` が有効。`neighsyncd` が ARP/NDP reconciliation 待ちに使用 |
+| `module` | `system` | システム全体の warm-restart 制御。個別タイマフィールドなし |
+| `module` | その他 | YANG バリデーションで reject |
+| `bgp_eoiu` | `true` | BGP End-of-Initial-Update シグナルを待って再収束完了と判定 |
+| `bgp_eoiu` | `false` | EOIU なしで再収束完了と判定 |
+| `bgp_timer` | `1`〜`3600` (秒) | BGP graceful-restart のタイムアウト。典型値 300 秒 |
+| `bgp_timer` | module≠bgp | YANG `must` 違反で reject |
+| `teamsyncd_timer` | `1`〜`3600` (秒) | LAG 再収束タイムアウト |
+| `teamsyncd_timer` | module≠teamd | YANG `must` 違反で reject |
+| `neighsyncd_timer` | `1`〜`9999` (秒) | ARP/NDP reconciliation 待ちタイムアウト。典型値 110 秒 |
+| `neighsyncd_timer` | module≠swss | YANG `must` 違反で reject |
+
+!!! note "enable フィールドについて"
+    CONFIG_DB の WARM_RESTART テーブルに `enable` フィールドは存在しない。enable/disable は STATE_DB の `WARM_RESTART_ENABLE_TABLE` と `config warm_restart enable` コマンドで制御する。
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang; sonic-swss/cfgmgr/vlanmgr.cpp -->

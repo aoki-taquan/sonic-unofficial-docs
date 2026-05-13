@@ -83,6 +83,24 @@ VLAN|<name>
 - 関連 CLI: `config vlan` (add / del / member / dhcp_relay)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `admin_status` | `up` | `ip link set Vlan<id> up` (vlanmgr.cpp:168-170) |
+| `admin_status` | `down` | `ip link set Vlan<id> down` |
+| `admin_status` | 省略 | `"up"` が自動補完される (vlanmgr.cpp:424) |
+| `mtu` | 省略 | `DEFAULT_MTU_STR`（通常 `9100`）が使用される (vlanmgr.cpp:96) |
+| `mtu` | 明示指定 | 受け取るが netdev MTU は変更しない。`SWSS_LOG_DEBUG("Host VLAN mtu setting to be supported.")` のみ出力（TODO 状態）|
+| `mac` | 省略 | `gMacAddress`（スイッチ MAC）が自動補完 |
+| `mac` | 明示指定 | 指定 MAC が VLAN インタフェース MAC として設定される |
+| `dhcp_servers` | leaf-list | `dhcprelayd` がリストを読み DHCPv4 relay を構成 |
+| `dhcp_servers` | 単一文字列誤入力 | `dhcprelayd` が relay を起動しない（leaf-list 形式で入力必須）|
+| `vlanid` | `name` 末尾と不一致 | YANG `must` 違反で reject |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang -->
@@ -90,7 +108,7 @@ VLAN|<name>
 - **キー形式検証**: `Vlan<2..4094>` パターン。`Vlan` プレフィクスがない、または数値部が不正な場合 `vlanmgrd` はエントリを破棄する (`SWSS_LOG_ERROR("Invalid key format")`)[^exc1]。
 - **`vlanid` 整合性 (YANG)**: `must "substring-after(../name, 'Vlan') = current()"` — `name` 末尾と `vlanid` フィールドが不一致の場合 YANG バリデーションが reject する[^exc2]。
 - **MTU 無視**: `mtu` フィールドはホスト VLAN netdev への適用が TODO 扱いで、`vlanmgrd` は受け取っても `SWSS_LOG_DEBUG("Host VLAN mtu setting to be supported.")` のみ出力し実際には変更しない[^exc1]。
-- **warm-restart 重複スキップ**: STATE_DB に既存かつ `m_vlans` に登録済みの場合、再作成をスキップして replay エントリを削除する（"already created" デバッグログ）[^exc1]。
+- **warm-restart 重複スキップ**: [STATE_DB](../../reference/glossary.md#term-state_db) に既存かつ `m_vlans` に登録済みの場合、再作成をスキップして replay エントリを削除する（"already created" デバッグログ）[^exc1]。
 - **デフォルト補完**: `mtu` 省略時は `DEFAULT_MTU_STR`（通常 `9100`）、`mac` 省略時はスイッチ MAC が自動補完される[^exc1]。
 
 [^exc1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
@@ -147,4 +165,4 @@ show vlan brief
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7185f6aa75ab -->
+<!-- glossary-links-injected: 6981be1a469d -->
