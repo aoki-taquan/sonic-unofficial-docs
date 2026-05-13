@@ -14409,6 +14409,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29800,6 +29811,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29996,6 +30018,14 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 <li>DOM が更新されない → <code>TRANSCEIVER_STATUS</code> の error bitmap で I2C stuck / EEPROM 不能を確認</li>
 <li>plug 後すぐに info が出ない → vendor platform API のイベント通知遅延を確認</li>
 </ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># transceiver / sensor 状態確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-40
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>presence
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;TRANSCEIVER_STATUS|*&quot;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;TRANSCEIVER_STATUS|Ethernet0&quot;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>show<span class="w"> </span>platform<span class="w"> </span>fan
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>show<span class="w"> </span>platform<span class="w"> </span>temperature
+</span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics</a></li>
@@ -30022,6 +30052,13 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 </ul>
 <p>HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡張対応 + 3 テーブル + <code>show interface transceiver</code> CLI 連携）は実装と整合。CMIS 関連フィールドは継続追加中だが本ページの設計記述レベルでは齟齬なし。<code>code-verified</code> に昇格。</p>
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。</li>
+<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
+</ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics / PHY</a></li>

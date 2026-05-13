@@ -30321,6 +30321,12 @@
 <li>復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。</li>
 <li>詳細実装は HLD <code>doc/warm-reboot/code_implementation.md</code> を参照（このドキュメントは要点のみ）。</li>
 </ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># swss docker warm restart 復旧確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sonic-installer<span class="w"> </span>upgrade-docker<span class="w"> </span>swss<span class="w"> </span>&lt;new-tag&gt;<span class="w"> </span>&lt;url&gt;
+</span></code></pre></div>
 <!-- diff-admonition -->
 <div class="admonition diff">
 <p class="admonition-title">HLD と実装の差分</p>
@@ -30352,9 +30358,9 @@
 </ul>
 </li>
 <li>redis 上での確認:
-  <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
+  <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
 </span></code></pre></div></li>
 <li>詳細仕様は本 HLD（<code>code_implementation.md</code>）ではなく、<code>doc/warm-reboot/SONiC_Warmboot.md</code> および <code>sonic-swss-common</code> のヘッダコメントを優先で参照。</li>
 </ul>
@@ -30362,16 +30368,16 @@
 <!-- /diff-admonition -->
 
 <h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># warm-restart 状態</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>warm_restart<span class="w"> </span>show
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>warm_restart<span class="w"> </span>state
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># orchagent / portsyncd 等の warm-restart チェックポイント</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;WARM_RESTART_ENABLE_TABLE|*&#39;</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># swss コンテナの warm-boot 関連ログ</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;warm|restoration|reconcile&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-40
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># warm-restart 状態</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>warm_restart<span class="w"> </span>show
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>show<span class="w"> </span>warm_restart<span class="w"> </span>state
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1"># orchagent / portsyncd 等の warm-restart チェックポイント</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;WARM_RESTART_ENABLE_TABLE|*&#39;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1"># swss コンテナの warm-boot 関連ログ</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;warm|restoration|reconcile&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-40
 </span></code></pre></div>
 <h2 id="_9">トラブルシュート<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -30383,10 +30389,10 @@
 <h3 id="2026-05-11batch-q3-disc-detail">深掘り（2026-05-11、batch q3-disc-detail）<a class="headerlink" href="#2026-05-11batch-q3-disc-detail" title="Permanent link">&para;</a></h3>
 <h4 id="hld">HLD 記述と実装の差分（行番号 + コード抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h4>
 <p><code>sonic-swss-common/common/warm_restart.cpp</code> L56-L58:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">warmStart</span><span class="p">.</span><span class="n">m_stateWarmRestartTable</span><span class="w"> </span><span class="o">=</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">warmStart</span><span class="p">.</span><span class="n">m_stateDb</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">STATE_WARM_RESTART_TABLE_NAME</span><span class="p">));</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">warmStart</span><span class="p">.</span><span class="n">m_cfgWarmRestartTable</span><span class="w"> </span><span class="o">=</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">warmStart</span><span class="p">.</span><span class="n">m_cfgDb</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">CFG_WARM_RESTART_TABLE_NAME</span><span class="p">));</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">warmStart</span><span class="p">.</span><span class="n">m_stateWarmRestartTable</span><span class="w"> </span><span class="o">=</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">warmStart</span><span class="p">.</span><span class="n">m_stateDb</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">STATE_WARM_RESTART_TABLE_NAME</span><span class="p">));</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">warmStart</span><span class="p">.</span><span class="n">m_cfgWarmRestartTable</span><span class="w"> </span><span class="o">=</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">warmStart</span><span class="p">.</span><span class="n">m_cfgDb</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">CFG_WARM_RESTART_TABLE_NAME</span><span class="p">));</span>
 </span></code></pre></div>
 <p>同 L223 で <code>WarmStart::setWarmStartState()</code> が <code>STATE_WARM_RESTART_TABLE_NAME</code> 側に書き込み、CONFIG 側は <code>CFG_WARM_RESTART_TABLE_NAME</code> で別。HLD が <code>WARM_RESTART_TABLE</code> 1 系統で書いている記述は <strong>実装と異なる</strong>。</p>
 <h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
@@ -30396,25 +30402,25 @@
 <li><code>swss-flushdb</code> の名前で <code>sudo /usr/bin/swss-flushdb</code> を期待しても見つからない。</li>
 </ul>
 <h4 id="_12">回避策の実コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 1) CONFIG 側設定（enable/disable, timer 値）</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|bgp&#39;</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># 2) ランタイム状態（restart_count / state = freeze/checkpoint/restored/reconciled）</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># 3) warm-reboot 実行</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>sudo<span class="w"> </span>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swss
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>bgp
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>sudo<span class="w"> </span>warm-reboot
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="c1"># 4) 完了確認（reconciled が出ているか）</span>
-</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span><span class="w"> </span>state<span class="w">   </span><span class="c1"># -&gt; reconciled</span>
-</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|bgp&#39;</span><span class="w"> </span>state<span class="w">         </span><span class="c1"># -&gt; reconciled</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 1) CONFIG 側設定（enable/disable, timer 値）</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|bgp&#39;</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># 2) ランタイム状態（restart_count / state = freeze/checkpoint/restored/reconciled）</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|*&#39;</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># 3) warm-reboot 実行</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>sudo<span class="w"> </span>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>swss
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>sudo<span class="w"> </span>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>bgp
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>sudo<span class="w"> </span>warm-reboot
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="c1"># 4) 完了確認（reconciled が出ているか）</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|orchagent&#39;</span><span class="w"> </span>state<span class="w">   </span><span class="c1"># -&gt; reconciled</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;WARM_RESTART_TABLE|bgp&#39;</span><span class="w"> </span>state<span class="w">         </span><span class="c1"># -&gt; reconciled</span>
 </span></code></pre></div>
 <p><code>swss-flushdb</code> 相当（warm-restart 失敗からのリカバリ）は現行ではコンテナ再起動で対応:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>swss<span class="w">   </span><span class="c1"># warm restart 状態をクリアしてフル再起動</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>swss<span class="w">   </span><span class="c1"># warm restart 状態をクリアしてフル再起動</span>
 </span></code></pre></div>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>

@@ -16311,6 +16311,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29692,6 +29703,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -29873,7 +29895,13 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 <li><a href="../../topics/20-swss-sai-redis/">Topics: SWSS / SAI / Redis</a></li>
 <li><a href="../../reference/config-db-orch-map/">Reference: CONFIG_DB ↔ Orch map</a></li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- demoted-by:q52-az-b-demote -->
+<h2 id="_7">実装との乖離 / 補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。</li>
+<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
+</ul>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-mgmt-common/translib/db/ 配下への RCM 4 関数取り込み確認
 - 既存 redis.NewClient / Close 直叩きの撲滅状況確認

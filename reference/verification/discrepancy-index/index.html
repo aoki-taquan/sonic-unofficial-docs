@@ -27362,6 +27362,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#routing" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29657,6 +29668,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#routing" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29737,7 +29759,7 @@
 <li><code>not_implemented</code>: HLD 提案が現行 master に取り込まれていない</li>
 <li><code>evolved_beyond_hld</code>: 取り込まれたが HLD 記述と乖離した形で進化／置換された</li>
 </ul>
-<p>全 <strong>74</strong> ページ。</p>
+<p>全 <strong>102</strong> ページ。</p>
 <h2 id="area">area 別件数<a class="headerlink" href="#area" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -29753,15 +29775,15 @@
 </tr>
 <tr>
 <td><code>architecture</code></td>
-<td style="text-align: right;">16</td>
+<td style="text-align: right;">25</td>
 </tr>
 <tr>
 <td><code>internals</code></td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
 </tr>
 <tr>
 <td><code>management</code></td>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">16</td>
 </tr>
 <tr>
 <td><code>overlay</code></td>
@@ -29769,11 +29791,15 @@
 </tr>
 <tr>
 <td><code>platform</code></td>
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">12</td>
+</tr>
+<tr>
+<td><code>reference</code></td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr>
 <td><code>routing</code></td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">8</td>
 </tr>
 <tr>
 <td><code>switching</code></td>
@@ -29781,7 +29807,7 @@
 </tr>
 <tr>
 <td><code>system</code></td>
-<td style="text-align: right;">9</td>
+<td style="text-align: right;">19</td>
 </tr>
 </tbody>
 </table>
@@ -29800,7 +29826,7 @@
 </tr>
 <tr>
 <td><code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化）</td>
-<td style="text-align: right;">21</td>
+<td style="text-align: right;">29</td>
 </tr>
 <tr>
 <td><code>not_implemented</code>（未実装）</td>
@@ -29808,7 +29834,7 @@
 </tr>
 <tr>
 <td><code>partially_implemented</code>（partially_implemented）</td>
-<td style="text-align: right;">39</td>
+<td style="text-align: right;">59</td>
 </tr>
 </tbody>
 </table>
@@ -29847,8 +29873,29 @@
 </ul>
 <h3 id="architecture">architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-internals/">DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-limitations/">DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+</ul>
+<p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
+<ul>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-concepts/">DIP=SIP PTF 検証 概念（テストの目的とトポロジ）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design-operations/">DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証テスト</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05 時点でテスト実体は <strong>PTF スタンドアロンから pytest 配下へ移行済み</strong> で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。</p>
 <ul>
@@ -29885,8 +29932,29 @@
 </ul>
 <p>2026-05 時点で <strong>SAG コード / <a href="../../glossary/#term-yang">YANG</a> / CLI は community master に取り込まれておらず、HLD 提案段階</strong>。</p>
 <ul>
-<li><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-internals/">SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+</ul>
+<p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。さらに、HLD で示された <code>sonic_ssd/ssd_base.py</code> の配置は master では <code>sonic_storage/</code> 配下に再構成され、独立スクリプト <code>ssdhealth</code> も <code>ssdutil</code> Python パッケージに置き換わっている。</p>
+<ul>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-concepts/">SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
+<li>
+<p><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（<code>SsdBase</code> / <code>SsdUtil</code>）と CLI（<code>show platform ssdhealth</code>）は概ね素直に取り込まれているが、HLD で Open Question として残されていた <strong>常時監視デーモン <code>ssdmond</code> は現状実装が見当たらない</strong>。</p>
 <ul>
@@ -29925,6 +29993,15 @@
   monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05 時点で本機能は <strong>HLD は提案されたが master にコードが入っていない</strong>、純粋な未実装状態である。</p>
+<ul>
+<li>
+<p><a href="../../../architecture/port-illegal-packets-drop-design/">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。本ページは HLD 主体で書かれており、HLD 記載なしのドロップ理由（implementation 推測部分）に「未確認」と本文中で明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+</ul>
 <h3 id="internals">internals<a class="headerlink" href="#internals" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
@@ -29949,10 +30026,28 @@
 </li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。</p>
+<ul>
+<li>
+<p><a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+</ul>
 <h3 id="management">management<a class="headerlink" href="#management" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a><br />
-  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../management/aaa-improvements/">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。本 HLD は 2020 年 Rev 0.4 の <strong>設計討議文書</strong>。現行 master が本提案を全面採用しているかは本文に「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:</p>
 <ul>
@@ -29966,8 +30061,31 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / <a href="../../glossary/#term-config_db">CONFIG_DB</a> スキーマのいずれにも入っていない。</p>
 <ul>
-<li><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）</a><br />
-  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../management/redis-client-manager-rcm-hld/">Redis Client Manager（RCM: connection pool / transactional client）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../management/sonic-application-extension-guide/">SONiC Application Extension 開発・移植ガイド</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は Initial Proposal で、フィールド名・CLI が現行 master と一致するかは本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../management/sonic-nos-configuration-methods/">SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。checkpoint / rollback 実装の取り込みは本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../management/sonic-yang-model-guidelines/">SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、<strong><code>sonic-buildimage</code> 側の yang-models と <code>sonic-mgmt-common</code> 側で取り込み状況が分裂している</strong>点が最大の罠。</p>
 <ul>
@@ -30062,8 +30180,17 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
-<li><a href="../../../platform/enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../platform/everflow-support-on-voq-chassis/">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。公式 HLD（2020-12 Rev 1）のみを根拠としており、現行 master の VoQ 拡張・SAI 実装・recycle port セットアップは本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../platform/enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a><br />
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p><code>sonic-platform-common</code> を grep した結果、本 HLD が前提とする <code>CmisEnhancedLpoApi</code> / <code>CmisEnhancedLpoCodes</code> / <code>CmisEnhancedLpoMemMap</code> クラス、<code>xcvr_api_factory.py</code> での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、<code>LPOTxHostInputVMA*</code> / <code>LPORxInputOMA*</code> フィールドのいずれも HEAD に取り込まれていない（<code>grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/</code> でヒット 0）。…</p>
 <ul>
@@ -30071,6 +30198,16 @@
   monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
+<h3 id="reference">reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><a href="../../cli/config-muxcable/">config muxcable サブコマンド</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。<code>--namespace</code> 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+</ul>
 <h3 id="routing">routing<a class="headerlink" href="#routing" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../../routing/bgp-route-install-error-handling/">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）</a><br />
@@ -30099,8 +30236,24 @@
 </ul>
 <p>2026-05-10 時点の現行 master を裏取り。<strong>Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了</strong>。</p>
 <ul>
-<li><a href="../../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../routing/bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規 FRR コマンドの SONiC 同梱 FRR への取り込み状況は本文で「要追跡」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../routing/bgpcfgd-dynamic-peer-modification-support/">bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2025-07 Rev 1.0 で master 取り込み状況は本文で「要追跡」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p><code>sonic-swss/fpmsyncd/routesync.cpp</code> と <code>sonic-swss/fpmsyncd/routesync.h</code> を確認。HLD のコア部分は master に取り込み済み:</p>
 <h3 id="switching">switching<a class="headerlink" href="#switching" title="Permanent link">&para;</a></h3>
@@ -30144,8 +30297,45 @@
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <h3 id="system">system<a class="headerlink" href="#system" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../system/sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a><br />
-  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></li>
+<li>
+<p><a href="../../../system/event-driven-techsupport-invocation-coredump-mgmt/">Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/show-techsupport/">Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2019-10 Rev 0.1 で 6 年以上停滞。Management Framework 自身の進化との整合は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/multi-asic-warm-reboot/">Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。各 namespace の swss / syncd の協調 shutdown 順序が現行スクリプトでどうなっているかは本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/sonic-bmc-platform-management-monitoring/">SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/sonic-container-hardening/">SONiC Container Hardening（capability / read-only / privileged 削減）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a><br />
+  monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-09</code></p>
+</li>
 </ul>
 <p>CONFIG_DB の <code>FIPS|global</code> 表記は HLD どおりで問題なし。</p>
 <ul>
@@ -30174,18 +30364,59 @@
 </ul>
 <p><strong>読者への影響</strong>:</p>
 <ul>
-<li><a href="../../../system/warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a><br />
-  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../system/transceiver-and-sensor-monitoring-hld/">Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/warmboot-manager-hld/">Warmboot Manager（shutdown orchestration / reconciliation 統一）</a><br />
+  monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
 <ul>
-<li><a href="../../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a><br />
-  monitor: <code>deprecated</code> / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../system/sonic-configuration-setup-service/">config-setup サービス（first-boot config 生成 / 版間 migration）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。<code>config-setup</code> の実際の責務分担は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/kdump/">kdump（kexec ベース kernel crash dump / makedumpfile）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2019-12 v0.4。kdump-tools 後続バージョン差分・kernel バージョン更新の影響は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a><br />
+  monitor: <code>deprecated</code> / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-11 時点の現行 master を裏取り。</p>
 <ul>
-<li><a href="../../../system/reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a><br />
-  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../system/sonic-storage-monitoring-daemon-design/">storagemond（SSD / eMMC の health 監視）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-13</code></p>
+</li>
+<li>
+<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
+</li>
+<li>
+<p><a href="../../../system/reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a><br />
+  monitor: <code>partially_implemented</code> / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>per-page queue で既出の通り、<a href="../../glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
 <h2 id="_1">監査基準の取り扱い<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

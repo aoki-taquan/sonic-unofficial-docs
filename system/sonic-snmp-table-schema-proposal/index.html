@@ -29966,6 +29966,12 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <li>新スキーマを書いても snmpd.conf に反映されない → j2 テンプレートが新パスにフォールバックしているか、<code>SNMP</code> テーブル存在チェックが想定どおり動いているかを確認する。</li>
 <li>値が <code>redis-cli -n 4 hgetall SNMP|LOCATION</code> で見えるが community が効かない → <code>SNMP_COMMUNITY</code> のキーは小文字大文字を区別する点に注意。</li>
 </ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 新スキーマの反映と community 設定確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SNMP|LOCATION&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;SNMP_COMMUNITY|*&quot;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>cat<span class="w"> </span>/etc/snmp/snmpd.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;syslocation|com2sec&quot;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>snmp<span class="w"> </span>supervisorctl<span class="w"> </span>status<span class="w"> </span>snmpd
+</span></code></pre></div>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 601f13437a09 -->
 

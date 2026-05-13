@@ -29875,6 +29875,13 @@
 <li><strong>BGP convergence 不良</strong> → peer の GR-helper 対応、<code>config bgp graceful-restart</code> の値</li>
 <li><strong>orchagent reconcile が永遠</strong> → APP_DB と ASIC_DB の不一致、syncd ログ</li>
 </ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># warm reboot 前後の確認</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>warm_restart<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>system
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>warm-reboot
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>show<span class="w"> </span>warm_restart<span class="w"> </span>status
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>ls<span class="w"> </span>-la<span class="w"> </span>/host/warmboot/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sai-warmboot.bin
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;WARM_RESTART_TABLE|*&quot;</span>
+</span></code></pre></div>
 <h2 id="topics">関連 Topics 章<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/11-reboot/">11-reboot</a>: warm / fast / express / cold の比較と運用全体像</li>

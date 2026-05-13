@@ -13905,6 +13905,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29856,6 +29867,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30070,6 +30092,13 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 </ul>
 <p>HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。<code>code-verified</code> に昇格。</p>
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+<h2 id="_16">実装との乖離 / 補足<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<ul>
+<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。</li>
+<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
+</ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/09-telemetry-snmp/">Topics: Telemetry / SNMP / Observability</a></li>

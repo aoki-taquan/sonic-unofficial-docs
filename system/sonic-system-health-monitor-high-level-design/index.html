@@ -29861,6 +29861,12 @@ reasoning: critical service / process 判定の根拠。
 <li><strong>設定の動的編集</strong> → <code>system_health_monitoring_config.json</code> は platform 同梱で実機編集は想定外</li>
 </ul>
 <p>干渉する機能: Monit（情報源）、PMON / thermalctld / psud（周辺供給）、container hardening（critical_processes 定義変更）。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># system health の状態確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>system-health<span class="w"> </span>summary
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>system-health<span class="w"> </span>detail
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SYSTEM_HEALTH_INFO|summary&quot;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>pmon<span class="w"> </span>cat<span class="w"> </span>/usr/share/sonic/device/*/system_health_monitoring_config.json<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
 <h2 id="topics">関連 Topics 章<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/14-platform-port-optics/">14-platform-port-optics</a>: PMON / thermalctld / psud から周辺デバイス情報を取る経路</li>

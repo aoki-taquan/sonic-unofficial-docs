@@ -29833,6 +29833,12 @@
 <li>syslog が届かない → <code>/etc/rsyslog.conf</code> と rsyslogd ログで bind error 確認</li>
 <li>VRF 経由が出ない → <code>device</code> フィールドと VRF master device の存在確認</li>
 </ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># syslog source IP / VRF の確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;SYSLOG_SERVER|&lt;server-ip&gt;&quot;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syslog<span class="w"> </span>cat<span class="w"> </span>/etc/rsyslog.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Device|Address|Target&quot;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>rsyslog<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;bind|error&quot;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ip<span class="w"> </span>vrf<span class="w"> </span>list
+</span></code></pre></div>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/09-telemetry-snmp/">09-telemetry-snmp</a>: ログ / 監視周辺</li>

@@ -15804,6 +15804,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -15815,7 +15826,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29773,6 +29784,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29784,7 +29806,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -30007,6 +30029,13 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 </ul>
 <p>ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の <code>hostcfgd</code> 単体実装ではまだ統合されていない（<code>nss-mapper</code> という独立コンポーネントは検出できず、<code>remote_user</code> 共有は <code>tacplus_nss.conf</code> / <code>radius_nss.conf</code> 経由の素朴な実装）。本ページの主たる主張（PAM + NSS による AAA 統合の現状）は実コードと一致するため <code>code-verified</code> に昇格。</p>
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。本 HLD は 2020 年 Rev 0.4 の <strong>設計討議文書</strong>。現行 master が本提案を全面採用しているかは本文に「要確認」と明示している。</li>
+<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
+</ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA / FIPS / Hardening</a></li>
@@ -30016,7 +30045,7 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 <!-- glossary-links-injected: a9c18564f33f -->
 
 <!-- ops-entry -->
-<h2 id="_9">運用入口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / <a href="../../reference/glossary/#term-yang">YANG</a> / Runbook）を以下にまとめる。</p>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>

@@ -19159,6 +19159,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -19170,7 +19181,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -19182,7 +19193,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な利用シーン
@@ -19193,7 +19204,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -29922,6 +29933,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29933,7 +29955,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29945,7 +29967,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な利用シーン
@@ -29956,7 +29978,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある落とし穴
@@ -30200,6 +30222,13 @@
 <!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+<h2 id="_12">実装との乖離 / 補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。<code>--namespace</code> 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。</li>
+<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
+</ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../topics/05-dual-tor/">Topics: Dual-ToR と Mux 制御</a></li>
@@ -30207,13 +30236,13 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<h3 id="_13">典型的な利用シーン<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h2 id="_13">運用ヒント<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="_14">典型的な利用シーン<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Dual-ToR (Active-Standby) 環境での muxcable mode 切替。</li>
 <li>障害切替や計画切替の手順。</li>
 </ul>
-<h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">よくある落とし穴<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>config muxcable mode active all</code> は強制 active 化。両 ToR で同時実行すると split-brain になる。</li>
 <li>ycabled / linkmgrd が落ちていると CLI は成功表示でも実切替されない。</li>
