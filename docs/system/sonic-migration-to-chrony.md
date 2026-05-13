@@ -120,7 +120,25 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 
 <!-- evidence-rendered:end -->
 
-## 制限事項
+## 既知の問題・制限事項
+
+### DHCP 管理インタフェースで chrony sources が offline のまま固まる（202505+）
+
+**症状**: `eth0` が DHCP で IP を取得する環境（`CONFIG_DB` の `MGMT_INTERFACE` に static IP を設定していない場合）、reboot 後に chrony sources が `offline` のまま NTP 同期しない。
+
+**原因**: `chrony-config.sh` は `MGMT_INTERFACE` に IP が存在するときのみ `bindacqdevice` を設定する。DHCP により IP が付与される前に chronyd が起動すると、source が offline になり自動復帰しない race condition が発生する。
+
+**回避策**:
+```bash
+sudo chronyc online   # 手動で online に切替
+chronyc sources       # 同期確認
+```
+
+恒久的な修正は `chrony-config.sh` に DHCP 取得後に再設定するフックを追加するか、`networkd`/`dhclient` の post-up hook で `chronyc online` を呼ぶこと。
+
+**参照**: sonic-net/sonic-buildimage#25863（Triaged、202511 で再現確認）
+
+---
 
 - 既存 ntpd 互換 CLI を完全には保証できないため、運用スクリプトの書換が必要になる場合あり
 - chrony の `chrony.keys` 形式は ntpd の key 形式と互換でない（migration time に key 再生成）

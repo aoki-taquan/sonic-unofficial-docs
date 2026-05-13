@@ -123,6 +123,29 @@ TACACS+ で `config tacacs add --use-mgmt-vrf <ip>` を打つと `TACPLUS_SERVER
 - Buster 以降は mainline kernel の VRF サポートを使用するため、`udp_l3mdev_accept` 等の SONiC 専用カーネルパッチは段階的に不要化されている
 - 201911 由来の `cgexec` 接頭辞は **過去ドキュメント / ベンダー資料を読むときの参考** として残す価値はあるが、master では発火しない
 
+## 既知の問題
+
+### mgmt VRF と default VRF に同じ IP が存在する場合の ICMP reply 誤送出
+
+**症状**: mgmt VRF 有効かつ `eth0` と front panel インタフェース（例: Ethernet1）に **同じ IP アドレス**が設定されている場合、Ethernet1 宛ての ICMP echo request への reply が **eth0（mgmt VRF）経由で送出**される。
+
+**原因**: `interfaces.j2` が生成する ip rule（priority 32765）が mgmt IP と一致するすべての送信元を mgmt VRF テーブルに誘導する:
+
+```
+32765:  from 192.168.229.2 lookup mgmt
+```
+
+このルールが default VRF 側の Ethernet1 から届いた ICMP reply の送信元 IP にもマッチし、mgmt VRF 経由で egress してしまう。
+
+**回避策（一時的）**:
+```bash
+sudo ip rule del from <重複IP> lookup mgmt
+```
+
+ただしこのルールを削除すると mgmt VRF 発のトラフィックが正しく mgmt へルーティングされない場合がある。根本的には同一 IP を mgmt と data の双方に設定しないことが推奨される。
+
+**参照**: sonic-net/sonic-buildimage#26904（Bug, 202511 で再現確認）
+
 ## 6. 制限事項
 
 - 201911 リリース固定の HLD。Buster 以降は別 HLD で更新される予定（未公開）

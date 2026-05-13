@@ -178,6 +178,22 @@ show ip bgp vrf Vnet1 summary
 
 ## 制限事項
 
+### unnumbered（インタフェースベース）BGP neighbor は非対応
+
+**CONFIG_DB の `BGP_NEIGHBOR` テーブルは IP アドレスキーのみ受け付ける**。`neighbor PortChannel101 interface v6only remote-as 64001` のような unnumbered BGP neighbor は bgpcfgd 経由では設定できない。
+
+制約の全容（3 層）:
+
+1. **YANG スキーマ**: `sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_LIST` は `inet:ip-address` 型のキーを使用。`frrcfgd` が使う `BGP_NEIGHBOR_LIST` は union 型（Port / PortChannel / Vlan pattern を含む）だが `bgpcfgd` 側は未対応
+2. **bgpcfgd の `add_peer()`**: IP アドレス前提のコードパスのみ。インタフェース名が渡されても `neighbor <intf> interface` FRR 構文を生成しない
+3. **Jinja2 template**: `general/instance.conf.j2` 等が `| ipv4` / `| ipv6` フィルタで分岐するため、インタフェース名だと両方とも `False` になりアドレスファミリブロックがスキップされる
+
+**回避策**: `frrcfgd` 経由または `vtysh` で直接 FRR 設定を投入する（FRR 自体は unnumbered BGP をサポート済み）。
+
+**参照**: sonic-net/sonic-buildimage#26960（Bug, Triaged、修正 PR 検討中）
+
+---
+
 - **`update.conf.j2` / `delete.conf.j2` が peer_type の template directory に無いと機能しない**[^1]。dynamic peer の動的編集が peer_type 依存
 - update/delete 各 1 ファイルで instance/policies/peer-group を全部扱う粗粒度設計
 - diff 算出は vtysh の現行値を信頼するため、**vtysh と bgpcfgd の整合**が崩れると delete_ranges が誤算出され得る

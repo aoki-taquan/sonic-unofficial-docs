@@ -151,6 +151,25 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 
 vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または vendor SDK API が選択肢[^1]。
 
+## 既知の問題
+
+### CMIS Host Management 有効時の SFP 温度更新遅延（最大 8 分）
+
+**症状**: `show platform temperature` で光モジュールの温度値が reboot 後 8 分以上更新されないケースがある。
+
+**対象条件**: Nvidia プラットフォームなど **CMIS Host Management が有効な環境**、かつモジュールが **FAILED** CMIS 状態に遷移する場合。
+
+**原因（追跡済み）**:
+1. `sonic-platform-daemons` PR#760 で `thermalctld` が温度を `TRANSCEIVER_DOM_TEMPERATURE` か `TRANSCEIVER_DOM_SENSOR` テーブルから取得するよう変更された。
+2. Nvidia プラットフォームは `DomThermalInfoUpdateTask` を無効化しており、`TRANSCEIVER_DOM_SENSOR` を更新する `DomInfoUpdateTask` にフォールバックする。
+3. `DomInfoUpdateTask` は `is_port_in_cmis_initialization_process` フラグが True の間（CMIS 初期化中）は DOM 更新をスキップする。FAILED 状態に遷移したモジュールは初期化が完了しないためスキップが継続する。
+
+**修正方針（検討中）**:
+- PR#760 を 202511 から revert する
+- `DomInfoUpdateTask` から `is_port_in_cmis_initialization_process` チェックを除去する
+
+**参照**: sonic-net/sonic-buildimage#26355（Bug, Triaged, High severity、202511 で再現確認）
+
 ## 制限事項
 
 - HLD 提示の DOM フィールドは **当時の SFP/QSFP 想定**。CMIS（QSFP-DD / OSFP）導入後はフィールドが大幅増（VDM, page advertise 等）
