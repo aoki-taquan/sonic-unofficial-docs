@@ -136,6 +136,45 @@ Debug Framework と dump utility はオペレータ目線、SAI failure dump は
 
 sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用しています。sync モードは SAI 失敗の即時検知に有用ですが throughput が落ちます。
 
+## orchagent が ASIC_DB に接続する仕組み
+
+orchagent は `DBConnector` で APPL_DB を直接読むが、ASIC_DB には **直接書かない**。代わりに `sairedis` クライアントライブラリ（`libsairedis`）が間に入り、SAI API 呼び出しを ASIC_DB の `ASIC_STATE:*` key に変換してから publish する（issue #466 の解説より）。
+
+```
+orchagent
+  └─ sairedis API (create/set/remove/get)
+       └─ libsairedis (redis pipeline)
+            └─ ASIC_DB (ASIC_STATE:*)
+                 └─ syncd (subscribe → SAI library → ASIC)
+```
+
+orchagent から見ると「SAI 関数を呼んでいる」が、実際は libsairedis が Redis にシリアライズして syncd に渡す非同期設計になっている。[SONiC architecture](https://github.com/sonic-net/SONiC/wiki/Architecture) の sairedis の項を参照。
+
+## SaiDiscovery と applyViewTransition の役割
+
+**SaiDiscovery** は syncd が warm reboot 復帰時に既存の ASIC 状態を Redis (ASIC_DB) に再構築するコンポーネントである（issue #745 の解説より）：
+
+1. `switch` オブジェクトを起点に、port・neighbor・route などの全 SAI object を再帰的に walk する。
+2. 各 object の `RID`（Real ID）と `VID`（Virtual ID）の対応を `VIDTORID` / `RIDTOVID` マップに登録する。
+3. `applyViewTransition`（`applyView`）がこの RID セットを「current view」として用いる。
+
+**applyViewTransition** は：
+- orchagent が送り込んだ再設定要求を「temporary view」として受け取り、
+- SaiDiscovery で作った「current view」との diff を計算し、
+- 差分（追加・削除・更新）だけを SAI に流す。
+
+SaiDiscovery で列挙した RID（switch/port）は削除対象から除外されるため、これらのオブジェクトは warm reboot を跨いで保持される。
+
+## ベンダ SAI と sai_query_attribute_capability
+
+syncd は起動時に `sai_query_attribute_capability` を呼び、各 SAI object の attribute がそのベンダ SAI でサポートされるかを確認する。ベンダが libsai.so でこの関数を公開していない場合、syncd-vs や thirdparty syncd のビルド時にリンクエラーになる（issue #780）：
+
+```
+error: 'sai_query_attribute_capability' method is missing from libsai.so
+```
+
+対処: ベンダ SAI のヘッダ・実装が最新 SAI spec に追従していることを確認する。VS ビルドでは `sai_query_attribute_capability` のスタブ実装が必要な場合がある。
+
 ## 関連ページ
 
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)
