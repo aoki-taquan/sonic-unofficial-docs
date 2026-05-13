@@ -13107,10 +13107,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -13121,7 +13138,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29741,10 +29758,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29755,7 +29789,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29957,7 +29991,14 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 <li><code>cat /proc/cmdline | tr ' ' '\n' | grep crashkernel</code> — カーネル cmdline に <code>crashkernel=</code> が乗っているか確認</li>
 <li><code>kexec -l</code> の状態は <code>dmesg | grep -i kexec</code> で確認可能</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>kdump の有効状態と vmcore 出力先を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>kdump<span class="w"> </span>status
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>kdump<span class="w"> </span>memory
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ls<span class="w"> </span>/var/crash/
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>cat<span class="w"> </span>/proc/cmdline<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>crashkernel
+</span></code></pre></div>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - config kdump / show kdump CLI の sonic-utilities 取り込み確認
 - KDUMP CONFIG_DB スキーマと sonic-yang-models 反映確認
@@ -29968,7 +30009,7 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 - secure boot 環境での kexec 二段起動の整合確認
 -->
 
-<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-kdump/">CLI: config kdump</a></li>
 <li><a href="../../reference/config-db/kdump/">CONFIG_DB: KDUMP</a></li>

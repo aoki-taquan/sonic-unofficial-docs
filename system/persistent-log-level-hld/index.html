@@ -14507,10 +14507,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -14521,7 +14538,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -14532,7 +14549,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -14543,7 +14560,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29808,10 +29825,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29822,7 +29856,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29833,7 +29867,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29844,7 +29878,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30105,21 +30139,28 @@ reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除す�
 <li>warm upgrade 後にロスト: <code>db_migrator</code> が走っているか、<code>swss-common</code> のバージョンに <code>del</code> がエクスポートされているか確認。</li>
 <li><code>swssloglevel -p</code> の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。</li>
 </ul>
-<h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_10">コマンド例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>logger ごとの永続化された log level を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>show<span class="w"> </span>logging<span class="w"> </span>level
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;LOGGER|*&#39;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>config<span class="w"> </span>logging<span class="w"> </span>level<span class="w"> </span>swss<span class="w"> </span>INFO<span class="w"> </span>--persistent
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;log[_ ]level&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span></code></pre></div>
+<h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-syslog/">CLI: config syslog</a></li>
 <li><a href="../../reference/yang/sonic-syslog/">YANG: sonic-syslog</a></li>
 <li><a href="../../reference/config-db/syslog-config/">CONFIG_DB: SYSLOG_CONFIG</a></li>
 <li><a href="../sonic-python-logger-enhancement/">HLD: sonic-python-logger-enhancement</a></li>
 </ul>
-<h2 id="_11">制限事項<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>設定は CONFIG_DB の <code>LOGGER</code> テーブルに保存されるが、<code>config save</code> を実行しないとリブート後に消える。</li>
 <li>ベンダー追加デーモンが <code>sonic_py_common.logger</code> を使っていない場合、本機能で log level を変更できない。</li>
 <li>multi-asic 環境では namespace ごとに別 <code>LOGGER</code> テーブルとなるため、全 ASIC 一括変更には個別投入が必要。</li>
 </ul>
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<h2 id="_13">参考リンク<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">参考リンク<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../">system カテゴリ目次</a></li>

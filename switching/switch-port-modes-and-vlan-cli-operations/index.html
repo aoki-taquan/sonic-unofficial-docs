@@ -10529,10 +10529,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -10543,7 +10560,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -10554,7 +10571,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29553,10 +29570,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29567,7 +29601,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -29578,7 +29612,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29733,7 +29767,14 @@
 <li><strong>範囲指定 CLI が一部しか反映されない</strong>: truncate ポリシーで途中エラーで停止した可能性。エラーメッセージを確認し、不正 VID を除外して再実行</li>
 <li><strong><code>Error: Got unexpected extra argument</code></strong>: HLD の <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> 形を打った場合に出る。<code>&lt;vlan&gt;</code> は別コマンド (<code>config vlan member add</code>) に分離する</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_5">コマンド例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>switchport CLI 操作後の CONFIG_DB 状態を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>switchport<span class="w"> </span>status
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_MEMBER|Vlan100|*&#39;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
+</span></code></pre></div>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>親 HLD: <a href="../switch-port-modes-and-vlan-cli-enhancement/">switch-port-modes-and-vlan-cli-enhancement</a></li>
 <li>概念: <a href="../switch-port-modes-and-vlan-cli-concepts/">switch-port-modes-and-vlan-cli-concepts</a></li>
@@ -29743,7 +29784,7 @@
 <li>Topics 読み物: <a href="../../topics/06-l2-vlan-lag/">06 章: L2 / VLAN / LAG</a></li>
 </ul>
 <!-- phase-boundary -->
-<h2 id="_6">実装フェーズ境界<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装フェーズ境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
 <p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
@@ -29784,7 +29825,7 @@
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 33d01a0d37a4 -->
 
 <div class="footnote">

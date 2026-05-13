@@ -14009,10 +14009,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29742,10 +29759,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29950,7 +29984,14 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 <li><code>used</code> の値が実体とずれる: P4Orch の <code>inc/dec</code> 呼び出しが add/del の成功パスから外れている可能性。<a href="../../reference/glossary/#term-orchagent">orchagent</a> ログで該当 entry の操作結果を追う<sup id="fnref24:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>watermark アラートが上がらない: 既存 CRM の閾値設定（<code>crm config thresholds</code>）を本テーブル用にも適用しているか確認。HLD は <strong>既存設定の継承</strong> を前提にしている<sup id="fnref25:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>SAI 拡張 CRM 属性が取得できるか確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>saictl<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show crm&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CRM_TABLE:STATS&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>grep<span class="w"> </span>-i<span class="w"> </span>CRM<span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span></code></pre></div>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-swss `orchagent/crmorch.h` l.37 `CRM_EXT_TABLE,` enum, l.88 `void incCrmExtTableUsedCounter(CrmResourceType resource, std::string table_name);`, l.90 `decCrmExtTableUsedCounter(...)`
 - sonic-swss `orchagent/crmorch.cpp` l.51 `{ CrmResourceType::CRM_EXT_TABLE, "EXTENSION_TABLE" }` resource name registration

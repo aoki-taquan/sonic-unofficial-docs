@@ -13247,6 +13247,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -13261,7 +13278,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29786,6 +29803,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29800,7 +29834,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30060,13 +30094,20 @@ reasoning: 「-b と reboot.conf のいずれか」「timeout で deadloop か�
 <li><code>blocking_mode_timeout</code> 超過で抜けた場合、<code>systemctl reboot</code> 自体が失敗している可能性。<code>journalctl</code> で reboot ターゲットの遷移を確認</li>
 <li>dot が出ない場合、<code>-v</code> または <code>show_timer=true</code> が同時に有効か確認</li>
 </ul>
+<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>blocking-mode reboot の進捗とエラーを確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>reboot<span class="w"> </span>--wait
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>reboot-cause
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;reboot|blocking&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>show<span class="w"> </span>system-health<span class="w"> </span>summary
+</span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/11-reboot/">Topics: Reboot</a></li>
 <li><a href="../../reference/cli/reboot-fast-warm/">CLI: reboot / fast / warm</a></li>
 <li><a href="../../reference/runbooks/warm-reboot-failure/">Runbook: warm-reboot-failure</a></li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - reboot スクリプト (sonic-buildimage) の -b / -v 引数実装
 - /etc/sonic/reboot.conf パーサ実装

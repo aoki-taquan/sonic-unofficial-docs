@@ -14597,10 +14597,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -14611,7 +14628,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29798,10 +29815,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29812,7 +29846,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30038,13 +30072,20 @@
 <li>SVG が生成されているのに古いまま → <code>/run/log/bootchart-*.svg</code> の timestamp、最新 boot の SVG が tmpfs に存在するか</li>
 <li>設定を変えても反映されない → <code>config</code> 後に <strong>必ず reboot</strong> が必要、<code>/etc/systemd/bootchart.conf</code> の現在値を直接確認</li>
 </ul>
-<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_12">コマンド例<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>boot 所要時間の breakdown を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>systemd-analyze
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>systemd-analyze<span class="w"> </span>blame<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>systemd-analyze<span class="w"> </span>critical-chain
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>ls<span class="w"> </span>/host/boot-chart/
+</span></code></pre></div>
+<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../../reference/cli/show-version/">show version</a> / <a href="../../reference/cli/show-uptime/">show uptime</a> / <a href="../../reference/cli/show-services/">show services</a> / <a href="../../reference/cli/reboot-fast-warm/">reboot-fast-warm</a></li>
 <li>関連 HLD: <a href="../kdump/">kdump</a> / <a href="../sonic-debian-upgrade-cadence/">Debian upgrade cadence</a> / <a href="../analysis-of-disk-writers-in-sonic-devices/">analysis of disk writers</a></li>
 <li>Topic: <a href="../../topics/11-reboot/">Reboot / Upgrade</a></li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - INCLUDE_BOOTCHART / ENABLE_BOOTCHART build flag の sonic-buildimage への取り込み確認
 - sonic-bootchart CLI の sonic-utilities scripts/ への取り込み確認

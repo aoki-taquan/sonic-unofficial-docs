@@ -13561,10 +13561,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -13575,7 +13592,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29753,10 +29770,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29767,7 +29801,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30037,7 +30071,14 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <li>マルチライン: <code>\n</code> をシェル経由で渡す際にクォートを正しくしないと改行が消える。<code>config banner login "line1\nline2"</code> のようにダブルクォート + <code>\n</code> で渡す。</li>
 <li><code>show banner</code> でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。</li>
 </ul>
-<h2 id="_12">制限事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_12">コマンド例<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>Banner 設定の状態を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>banner
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BANNER_MESSAGE|global&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>cat<span class="w"> </span>/etc/issue<span class="w"> </span>/etc/issue.net<span class="w"> </span>/etc/motd
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w"> </span><span class="s1">&#39;WARNING: authorized only&#39;</span>
+</span></code></pre></div>
+<h2 id="_13">制限事項<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>state=disabled</code> のとき CONFIG_DB の値は無視</strong>: <code>BANNER_MESSAGE</code> テーブルに login/motd/logout が書かれていても、<code>state</code> が <code>disabled</code> だと反映されない。</li>
 <li><strong>永続化は別オペレーション</strong>: バナー設定は CONFIG_DB に書かれているだけでは再起動後に消える可能性がある。<code>config save</code> を別途実行しないと永続化されない。</li>
@@ -30046,7 +30087,7 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <li><strong>マルチラインのクォート扱い</strong>: <code>\n</code> をシェル経由で渡す場合のクォートに注意が必要 (<code>"line1\nline2"</code>)。HLD では escape 規約の厳密な仕様は未定義。</li>
 <li><strong>整形 / 幅調整なし</strong>: <code>show banner</code> は生の文字列をそのまま出力する。ターミナル幅やロゴアスキーアートの整形は行わない。</li>
 </ul>
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

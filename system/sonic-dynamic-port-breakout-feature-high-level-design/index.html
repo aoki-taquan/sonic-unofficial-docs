@@ -14570,6 +14570,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -14584,7 +14601,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -14595,7 +14612,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29598,6 +29615,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29612,7 +29646,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29623,7 +29657,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29775,18 +29809,25 @@
 <li><strong>一部 port だけ up しない</strong> → 物理 lane mapping、SI 設定、ASIC 側 lane 割当</li>
 <li><strong>関連設定が消えた</strong> → 依存解決で削除済み。再投入が必要</li>
 </ul>
+<h3 id="_2">コマンド例<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>dynamic port breakout の状態を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>breakout<span class="w"> </span>current-mode
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>interface<span class="w"> </span>breakout<span class="w"> </span>Ethernet0<span class="w"> </span><span class="s1">&#39;4x25G&#39;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BREAKOUT_CFG|Ethernet0&#39;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
+</span></code></pre></div>
 <h2 id="topics">関連 Topics 章<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/14-platform-port-optics/">14-platform-port-optics</a>: port profile / lane / media SI / CMIS との結線</li>
 <li><a href="../../topics/06-l2-vlan-lag/">06-l2-vlan-lag</a>: VLAN_MEMBER / PORT_CHANNEL_MEMBER の依存解決対象</li>
 </ul>
-<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>breakout 可能なポート組合せは platform.json の <code>BRKOUT_CFG</code> に定義された範囲に限られ、<a href="../../reference/glossary/#term-hld">HLD</a> 記述よりも実機サポート範囲が狭い場合がある。</li>
 <li>breakout 実行時は対象ポートが一時的に down し、隣接機器の <a href="../../reference/glossary/#term-lldp">LLDP</a> / LAG メンバーシップが flap する点を運用で考慮する。</li>
 <li>動的 breakout 中に CONFIG_DB が中間状態となるため、並行して <code>config save</code> を実行すると不整合な config が保存される。</li>
 </ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>

@@ -10931,6 +10931,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -10945,7 +10962,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -10967,7 +10984,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29808,6 +29825,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29822,7 +29856,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29844,7 +29878,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30069,13 +30103,20 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 <li><code>in-progress</code> で進まない場合、SAI から完了 callback が来ていない可能性。<code>syncd</code> ログで POST API 呼び出しと callback を確認</li>
 <li>FIPS 有効化したのに POST が走らない場合、<code>/proc/cmdline</code> の <code>sonic_fips=1</code> または <code>/etc/fips/fips_enable</code> を確認</li>
 </ul>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>MACsec FIPS POST の進捗と結果を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FIPS_MACSEC_POST_TABLE|sai&#39;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>syncd<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;macsec post&#39;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;Switch MACSec POST&#39;</span><span class="w"> </span>/var/log/syslog
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>cat<span class="w"> </span>/proc/cmdline<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>fips
+</span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/yang/sonic-macsec/">YANG: sonic-macsec</a></li>
 <li><a href="../../reference/runbooks/macsec-mka-not-established/">Runbook: macsec mka not established</a></li>
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA</a></li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - Orchagent / MACSecOrch / MACSecMgr の POST 対応コードが現行 master に取り込まれているか
 - STATE_DB FIPS_MACSEC_POST_TABLE のキー・status 値の最終形
@@ -30091,7 +30132,7 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_9">参考リンク<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/config-db/fips/"><code>FIPS</code> CONFIG_DB スキーマ</a></li>

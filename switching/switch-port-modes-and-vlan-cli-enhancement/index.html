@@ -10603,13 +10603,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -10620,7 +10631,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -10631,7 +10642,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -10666,7 +10677,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -10677,7 +10688,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -10699,7 +10710,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -10720,7 +10731,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29972,13 +29983,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -29989,7 +30011,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30000,7 +30022,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -30035,7 +30057,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -30046,7 +30068,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -30068,7 +30090,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -30089,7 +30111,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -30406,7 +30428,15 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <!-- /diff-admonition -->
 
 <!-- phase-boundary -->
-<h2 id="_9">実装フェーズ境界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+
+<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>switchport mode と VLAN_MEMBER の整合を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>switchport<span class="w"> </span>status
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_MEMBER|*&#39;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>Ethernet0
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
+</span></code></pre></div>
+<h2 id="_10">実装フェーズ境界<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
 <p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
@@ -30447,8 +30477,8 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/cli/config-vlan/">CLI: config vlan</a></li>
 <li><a href="../../reference/cli/show-vlan/">CLI: show vlan</a></li>
@@ -30459,43 +30489,43 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <h3 id="2026-05-11batch-q3-disc-detail">深掘り（2026-05-11、batch q3-disc-detail）<a class="headerlink" href="#2026-05-11batch-q3-disc-detail" title="Permanent link">&para;</a></h3>
 <h4 id="hld">HLD 記述と実装の差分（行番号 + コード抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h4>
 <p><code>sonic-utilities/config/switchport.py</code> L17-L22:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@switchport</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;mode_type&gt;&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;access&quot;</span><span class="p">,</span> <span class="s2">&quot;trunk&quot;</span><span class="p">,</span> <span class="s2">&quot;routed&quot;</span><span class="p">]))</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nd">@clicommon</span><span class="o">.</span><span class="n">pass_db</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">switchport_mode</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;switchport mode help commands.Mode_type can be access or trunk or routed&quot;&quot;&quot;</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@switchport</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;mode_type&gt;&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;access&quot;</span><span class="p">,</span> <span class="s2">&quot;trunk&quot;</span><span class="p">,</span> <span class="s2">&quot;routed&quot;</span><span class="p">]))</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="nd">@clicommon</span><span class="o">.</span><span class="n">pass_db</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">switchport_mode</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;switchport mode help commands.Mode_type can be access or trunk or routed&quot;&quot;&quot;</span>
 </span></code></pre></div>
 <ul>
 <li>引数は <code>&lt;mode_type&gt;</code> + <code>&lt;port&gt;</code> の 2 個のみ。HLD の <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> / <code>config switchport mode trunk &lt;port&gt; [&lt;native-vlan&gt;] [&lt;vlan-list&gt;]</code> のような第 3 引数（VLAN リスト）は <strong>無い</strong>。</li>
 <li>VLAN メンバ追加は別コマンド <code>config vlan member add &lt;vid&gt; &lt;port&gt; [--untagged]</code> (<code>sonic-utilities/config/vlan.py</code>)。</li>
 </ul>
-<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">読者への影響<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>sudo config switchport mode access Ethernet0 10</code> をそのまま打つと <code>Error: Got unexpected extra argument (10)</code> で失敗。</li>
 <li>HLD を読んで「モード切替 1 コマンドで VLAN メンバまで設定できる」と想定して runbook を作ると、本番投入時にすべて失敗する。特に大量ポートの自動化スクリプトで顕在化する。</li>
 <li>HLD の <code>trunk</code> 例（<code>native-vlan + vlan-list</code> を 1 コマンド指定）も同様に成立せず、native と tagged を別々に <code>--untagged</code> 有無で書き分ける必要がある。</li>
 </ul>
-<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<h4 id="_14">回避策の実コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>access ポート（VLAN 10 untagged）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>Ethernet0<span class="w"> </span>--untagged
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span>Ethernet0
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>Ethernet0<span class="w"> </span>--untagged
 </span></code></pre></div>
 <p>trunk ポート（native=10, tagged=20,21）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>PortChannel1
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1<span class="w"> </span>--untagged
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span>PortChannel1
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">21</span><span class="w"> </span>PortChannel1
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>PortChannel1
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">10</span><span class="w"> </span>PortChannel1<span class="w"> </span>--untagged
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">20</span><span class="w"> </span>PortChannel1
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">21</span><span class="w"> </span>PortChannel1
 </span></code></pre></div>
 <p>連続適用（同 VLAN を複数ポートに）:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span>Ethernet0<span class="w"> </span>Ethernet4<span class="w"> </span>Ethernet8<span class="p">;</span><span class="w"> </span><span class="k">do</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span><span class="nv">$p</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="nv">$p</span><span class="w"> </span>--untagged
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="k">done</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">for</span><span class="w"> </span>p<span class="w"> </span><span class="k">in</span><span class="w"> </span>Ethernet0<span class="w"> </span>Ethernet4<span class="w"> </span>Ethernet8<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>access<span class="w"> </span><span class="nv">$p</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>sudo<span class="w"> </span>config<span class="w"> </span>vlan<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="nv">$p</span><span class="w"> </span>--untagged
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="k">done</span>
 </span></code></pre></div>
 <p>確認:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w">  </span><span class="c1"># PR #3788 取込後は switchport mode 列が出る</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w">  </span><span class="c1"># PR #3788 取込後は switchport mode 列が出る</span>
 </span></code></pre></div>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
 <ul>
@@ -30503,10 +30533,10 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li><a href="https://github.com/sonic-net/sonic-utilities/pull/3788">sonic-utilities #3788: Switchport mode update for 'show interfaces status' (merged, 202505)</a> — <code>show interfaces status</code> で switchport mode を表示。</li>
 <li><a href="https://github.com/sonic-net/SONiC/issues/1136">SONiC #1136: Switchport Mode Hybrid Support (open)</a> — HLD で謳う追加機能（hybrid 等）の future work が未着手であることを示す。</li>
 </ul>
-<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<h4 id="_15">検証日<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_16">このページを読んだ後の次アクション<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

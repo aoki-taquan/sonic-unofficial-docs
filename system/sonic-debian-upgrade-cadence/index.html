@@ -13270,10 +13270,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29653,10 +29670,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29848,7 +29882,14 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 <li><code>show version</code> — SONiC build / Debian version / kernel を一括表示</li>
 <li><code>apt-cache policy &lt;pkg&gt;</code> — slave container 構築時の参照 suite を確認</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_6">コマンド例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>Debian ベース版数とパッケージ脆弱性を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>cat<span class="w"> </span>/etc/os-release
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cat<span class="w"> </span>/etc/debian_version
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>apt<span class="w"> </span>list<span class="w"> </span>--upgradable<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>show<span class="w"> </span>version
+</span></code></pre></div>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - 直近の Debian Bookworm / Trixie 取り込みコミットの sonic-buildimage / sonic-linux-kernel 確認
 - slave container の Azure pipeline 定義状況確認

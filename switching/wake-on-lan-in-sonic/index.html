@@ -11180,13 +11180,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -11197,7 +11208,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -11208,7 +11219,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -11219,7 +11230,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29928,13 +29939,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29945,7 +29967,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -29956,7 +29978,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29967,7 +29989,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -30227,14 +30249,21 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 </div>
 <!-- /diff-admonition -->
 
-<h2 id="_9">制限事項<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>Wake-on-LAN の magic packet 送信と CONFIG_DB を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>wol
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>wol<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">00</span>:11:22:33:44:55
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WAKE_ON_LAN|*&#39;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>tcpdump<span class="w"> </span>-i<span class="w"> </span>Ethernet0<span class="w"> </span>ether<span class="w"> </span>proto<span class="w"> </span>0x0842
+</span></code></pre></div>
+<h2 id="_10">制限事項<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li>WoL マジックパケット送出機能は SONiC ホスト側の utility として実装され、受信側 NIC / target 側 OS 設定 (BIOS, ethtool wol g) に依存する。</li>
 <li>ターゲット VLAN へのリレーには UDP/9 を許可する <a href="../../reference/glossary/#term-acl">ACL</a> / firewall 設定が必要で、デフォルト構成ではブロックされる場合がある。</li>
 <li>SecureOn (パスワード付 WoL) の対応は NIC によりまちまちで、SONiC 側の CLI からは未公開の場合がある。</li>
 </ul>
 <!-- phase-boundary -->
-<h2 id="_10">実装フェーズ境界<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装フェーズ境界<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
 <p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能
@@ -30275,9 +30304,9 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

@@ -14709,10 +14709,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29686,10 +29703,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29886,7 +29920,14 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 <li><code>show ntp</code> — <a href="../../reference/glossary/#term-sonic-utilities">sonic-utilities</a> 経由でユーザ向け要約を取得</li>
 <li><code>systemctl status chrony</code> — chrony デーモンの起動状態と直近ログ</li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="_6">コマンド例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>ntpd → chrony 移行後の同期状態を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>ntp
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>chronyc<span class="w"> </span>tracking
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>chronyc<span class="w"> </span>sources<span class="w"> </span>-v
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>systemctl<span class="w"> </span>status<span class="w"> </span>chrony
+</span></code></pre></div>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - chrony パッケージの sonic-buildimage 同梱と ntpd / ntpsec の削除確認
 - /etc/chrony/chrony.conf テンプレートの sonic-buildimage / sonic-host-services 取り込み確認

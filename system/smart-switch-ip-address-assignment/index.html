@@ -14429,10 +14429,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29686,10 +29703,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29876,7 +29910,14 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 <li><code>sonic-db-cli CONFIG_DB hgetall "MID_PLANE_BRIDGE|GLOBAL"</code> — bridge IP/subnet の宣言</li>
 <li><code>sonic-db-cli CONFIG_DB keys "DHCP_SERVER_IPV4_PORT|*"</code> — port-based static lease の DPU 割当</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>DPU 向け IP assignment 状態を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>midplane-status
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;MID_PLANE_BRIDGE|*&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DHCP_SERVER_IPV4|*&#39;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>ip<span class="w"> </span>-br<span class="w"> </span>addr<span class="w"> </span>show
+</span></code></pre></div>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - bridge-midplane の systemd-networkd 設定 (.netdev / .network) と systemd-sonic-generator 取り込み確認
 - midplane-network-npu.service / dpu.service の oneshot 起動と database.service Before= 連携確認

@@ -13734,10 +13734,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29752,10 +29769,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29917,7 +29951,14 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 <li><code>cat /proc/sys/crypto/fips_enabled</code> — kernel 側の FIPS モード（参考値）</li>
 <li><code>ssh -vvv ...</code> で SSH の crypto algorithm を観測し、disabled algo が出ていないか確認</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>OpenSSL FIPS 140-3 provider の有効化を確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>openssl<span class="w"> </span>list<span class="w"> </span>-providers
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>openssl<span class="w"> </span>fipsinstall<span class="w"> </span>-in<span class="w"> </span>/etc/ssl/fipsmodule.cnf<span class="w"> </span>-module<span class="w"> </span>/usr/lib/ssl/fips.so
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>cat<span class="w"> </span>/proc/sys/crypto/fips_enabled
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>show<span class="w"> </span>fips<span class="w"> </span>status
+</span></code></pre></div>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - symcrypt-openssl deb の sonic-buildimage 同梱と version 指定確認
 - /usr/lib/ssl/openssl-fips.cnf テンプレートの install 経路確認

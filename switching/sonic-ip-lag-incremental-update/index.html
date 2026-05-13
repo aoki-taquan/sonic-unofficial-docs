@@ -10741,10 +10741,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -10766,7 +10783,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29652,10 +29669,27 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="トラブルシューティング">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コマンド例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -29677,7 +29711,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29896,7 +29930,14 @@
 <li>docker swss 再起動後に IP が消える → Phase 1 復元実装の現状を確認</li>
 <li><code>ip</code> コマンド直叩き等の別ルート操作 → theorem 違反、CONFIG_DB 経由のみ正規</li>
 </ul>
-<h2 id="_7">実装との乖離 / 補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>LAG / IP の差分更新が CONFIG_DB を経由しているか確認する。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL|*&#39;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_MEMBER|*&#39;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>teamdctl<span class="w"> </span>PortChannel1<span class="w"> </span>state
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
+</span></code></pre></div>
+<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>portmgrd</code> / <code>intfmgrd</code> / <code>teammgrd</code> は <code>sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp</code> に存在し HLD と一致</li>
 <li>CLI: <code>config portchannel add</code> は <code>--min_links</code> / <code>--fallback</code> / <code>--fast_rate</code> を受け付ける（<code>sonic-utilities/config/main.py:2835-2853</code>）</li>
@@ -29907,7 +29948,7 @@
 <li><a href="../../topics/06-l2-vlan-lag/">06-l2-vlan-lag</a>: L2 / VLAN / LAG の全体像</li>
 <li><a href="../../topics/11-reboot/">11-reboot</a>: warm/fast reboot との関係</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>
