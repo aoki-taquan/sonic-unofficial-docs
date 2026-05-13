@@ -110,4 +110,15 @@ show ntp
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP_KEY container -->
+
+- **key ID が 1-65535 の範囲外 → YANG が拒否**: typedef `key-id` の `range 1..65535` / `error-message "Failed NTP key ID"`。ID 0 は YANG バリデーションで拒否される。
+- **key type が不正値 → YANG が拒否 (デフォルト md5)**: `enum { md5; sha1; sha256; sha384; sha512; }` のみ許可。`default md5`。省略時は MD5 が使用される。セキュリティ要件に応じて SHA256 以上への変更を推奨。
+- **value が空または 64 文字超 → YANG が拒否**: `length 1..64` 制約。空文字列や 65 文字以上のキー値は YANG バリデーションで拒否される。
+- **trusted のデフォルト = "no"**: `default no`。NTP 認証モード有効時に当該キーが信頼済みとして使用されるには明示的に `trusted = yes` が必要。
+- **NTP_SERVER から参照中の NTP_KEY は削除不可**: `NTP_SERVER_LIST/key` は `leafref` で `NTP_KEY_LIST/id` を参照。参照中のキーを削除しようとすると YANG バリデーションで整合性エラーが発生する。
+
 <!-- glossary-links-injected: 4b3b3fd0739b -->

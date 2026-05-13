@@ -145,4 +145,19 @@ show nat translations
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::doNatGlobalTableTask / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-nat.yang -->
+
+- **NAT 機能が無効状態でのエントリ追加 → SWSS_LOG_WARN + スキップ**: `admin_mode = disabled` 状態では `"NAT Feature is not yet enabled, skipped adding ..."` を WARN ログしてエントリをキューに保持。NAT 有効化 (`enableNatFeature()`) 後にキューが順次処理される (`natorch.cpp` L1791/L1909/L2011/L2139/L2296)。
+- **NAT_GLOBAL キーが "Values" 以外 → SWSS_LOG_ERROR + エントリ消費**: `"Invalid key format. No Values: %s"` をログし、エントリを `m_toSync` から消費して次へ進む (`natorch.cpp` L2924-2930)。
+- **STATIC_NAT / STATIC_NAPT のキーサイズ不正 → SWSS_LOG_ERROR + エントリ消費**: STATIC_NAT はキーサイズ 1 以外、STATIC_NAPT はキーサイズ 5 以外の場合にスキップ (`natorch.cpp` L2776/L2844)。
+- **twice_nat_id が 1-9999 の範囲外 → YANG が拒否**: `range "1..9999"` / `error-message "Invalid twice nat id for the static NAT."` / STATIC_NAT・STATIC_NAPT 共通。
+- **nat_timeout が 300-432000 の範囲外 → YANG が拒否 (デフォルト 600)**: `range "300..432000"` / `default "600"`。
+- **nat_tcp_timeout が 300-432000 の範囲外 → YANG が拒否**: `range "300..432000"`。
+- **nat_udp_timeout が 120-600 の範囲外 → YANG が拒否**: `range "120..600"`。
+- **nat_type のデフォルト = "dnat"**: YANG `default dnat`。省略時は DNAT エントリとして処理される。
+- **デフォルトルート / サブネットルートの更新は無視**: routeOrch からのルート更新イベントでデフォルトルートまたはサブネットベースのルートは `"Ignore default or subnet nexthop update event"` としてスキップ (`natorch.cpp` L185-189)。
+
 <!-- glossary-links-injected: a6fe2efe021a -->
