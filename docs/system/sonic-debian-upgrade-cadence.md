@@ -164,7 +164,6 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 - `show version` — SONiC build / Debian version / kernel を一括表示
 - `apt-cache policy <pkg>` — slave container 構築時の参照 suite を確認
 
-
 ### コマンド例
 
 Debian ベース版数とパッケージ脆弱性を確認する。

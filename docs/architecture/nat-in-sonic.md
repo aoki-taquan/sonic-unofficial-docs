@@ -127,7 +127,7 @@ config nat add static basic 10.0.0.1 100.64.1.1
 
 ### コマンド例: NAT 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -161,4 +161,4 @@ redis-cli -n 0 keys 'NAT_TABLE:*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1bfe3dfac583 -->
+<!-- glossary-links-injected: 881c373e11ef -->

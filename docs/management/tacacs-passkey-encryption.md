@@ -280,7 +280,6 @@ redis-cli -n 4 hgetall 'TACPLUS|global'
 journalctl -u hostcfgd | grep -i tacacs | tail
 ```
 
-
 ## 参考リンク
 
 - [CONFIG_DB: TACPLUS / TACPLUS_SERVER](../reference/config-db/aaa.md)

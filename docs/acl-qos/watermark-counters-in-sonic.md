@@ -195,7 +195,7 @@ Ethernet0           0  1092     0   380     0     0     0     0
 
 ### コマンド例: Watermark counter 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -204,7 +204,6 @@ counterpoll watermark show
 show queue persistent-watermark
 show priority-group persistent-watermark headroom
 ```
-
 
 ## 関連トピック
 
@@ -226,4 +225,4 @@ show priority-group persistent-watermark headroom
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3f79bdf7d31b -->
+<!-- glossary-links-injected: 6981be1a469d -->

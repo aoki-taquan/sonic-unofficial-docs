@@ -164,7 +164,7 @@ HLD が示すテスト計画[^1]:
 
 ### コマンド例: Port config refactor 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -185,8 +185,6 @@ show interfaces status
 redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
 sudo grep -E 'portsorch' /var/log/syslog | tail -50
 ```
-
-
 
 ## 参考リンク
 
@@ -228,4 +226,4 @@ sudo grep -E 'portsorch' /var/log/syslog | tail -50
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 54111b0e8f9b -->
+<!-- glossary-links-injected: 6981be1a469d -->

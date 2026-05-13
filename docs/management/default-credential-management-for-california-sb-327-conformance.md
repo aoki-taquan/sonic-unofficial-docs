@@ -170,7 +170,7 @@ CHANGE_DEFAULT_PASSWORD=true make target/sonic.bin
 
 ### コマンド例: デフォルト認証情報強制変更確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -211,4 +211,4 @@ sudo chage -l admin
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0ada85adabfc -->
+<!-- glossary-links-injected: 881c373e11ef -->

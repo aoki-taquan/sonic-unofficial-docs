@@ -3,7 +3,6 @@ title: DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）
 description: DIP=SIP PTF 検証テストの sonic-mgmt 配下ファイル構成と Ansible 前処理ワークフロー、実行コマンドを整理する。
 area: architecture
 verification: discrepancy-found
-_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
@@ -12,6 +11,7 @@ sources:
   path: doc/dip-sip/DIP=SIP_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
+  _no_yang: true
   config_db: []
   cli: []
   yang: []
@@ -19,7 +19,7 @@ related:
 
 # DIP=SIP PTF 検証 運用
 
-このページは [DIP=SIP PTF 検証（概要ハブ）](dip-sip-ptf-validation-high-level-design.md) の派生で、**ファイル構成・前処理ワークフロー・実行コマンド** に絞って整理する。テストの目的は [dip-sip-ptf-validation-high-level-design-concepts.md](dip-sip-ptf-validation-high-level-design-concepts.md)、パケット仕様は [dip-sip-ptf-validation-high-level-design-internals.md](dip-sip-ptf-validation-high-level-design-internals.md)、制限と HLD 乖離は [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) を参照。
+このページは [DIP=SIP PTF 検証（概要ハブ）](dip-sip-ptf-validation-high-level-design.md) の派生で、**ファイル構成・前処理ワークフロー・実行コマンド** に絞って整理する。テストの目的は [dip-sip-ptf-validation-high-level-design-concepts.md](dip-sip-ptf-validation-high-level-design-concepts.md)、パケット仕様は [dip-sip-ptf-validation-high-level-design-internals.md](dip-sip-ptf-validation-high-level-design-internals.md)、制限と [HLD](../reference/glossary.md#term-hld) 乖離は [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) を参照。
 
 ## 1. ファイル構成
 
@@ -98,7 +98,7 @@ sudo journalctl -u ptf -n 200 --no-pager
 
 ### 関連する CONFIG_DB
 
-該当エントリは無い。本機能は **テストインフラ** であり DUT 側の設定変更は伴わない（既存の RIF を使うのみ）。
+該当エントリは無い。本機能は **テストインフラ** であり DUT 側の設定変更は伴わない（既存の [RIF](../reference/glossary.md#term-rif) を使うのみ）。
 
 ### 関連する CLI
 
@@ -114,3 +114,23 @@ sudo journalctl -u ptf -n 200 --no-pager
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 0ffb8e51f432 -->
+
+## 制限事項
+
+!!! diff "HLD と実装の乖離"
+    - HLD と実装の差分は本ページの章本文で逐次注記している
+    - 追加の境界事項は本セクションで列挙する
+
+## 確認コマンド
+
+dip-sip-ptf operations の動作確認に使う代表コマンド:
+
+```bash
+# 基本動作確認
+show platform summary
+show version
+docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
+```
+

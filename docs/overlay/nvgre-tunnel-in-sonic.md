@@ -203,7 +203,7 @@ show nvgre-tunnel-map
 
 ### コマンド例
 
-トンネル DSCP マップと再書換ポリシーを確認する。
+トンネル [DSCP](../reference/glossary.md#term-dscp) マップと再書換ポリシーを確認する。
 
 ```bash
 # トンネル DSCP / マップ
@@ -229,4 +229,4 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 900cdc977a64 -->
+<!-- glossary-links-injected: e1fd4940b990 -->

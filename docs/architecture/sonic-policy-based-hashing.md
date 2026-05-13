@@ -156,8 +156,8 @@ show pbh table / rule / hash / hash-field
 
 ### コマンド例: Policy based hashing 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
+突き合わせ、[HLD](../reference/glossary.md#term-hld) 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
 # Policy hash table とルールの確認
@@ -177,8 +177,6 @@ show hash
 redis-cli -n 4 keys 'HASH|*'
 redis-cli -n 4 hgetall 'HASH|policy1'
 ```
-
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -201,4 +199,4 @@ redis-cli -n 4 hgetall 'HASH|policy1'
 - CRM の PBH FG hash 監視（out of scope）の補完ステータス確認
 -->
 
-<!-- glossary-links-injected: a95185444a35 -->
+<!-- glossary-links-injected: 10394a5e95a8 -->

@@ -146,7 +146,7 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 
 ### コマンド例
 
-VXLAN トンネルと EVPN ピアの状態を確認する。
+VXLAN トンネルと [EVPN](../reference/glossary.md#term-evpn) ピアの状態を確認する。
 
 ```bash
 # VXLAN tunnel / VNI / EVPN
@@ -171,4 +171,4 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f111235af114 -->
+<!-- glossary-links-injected: 23f2999cb556 -->

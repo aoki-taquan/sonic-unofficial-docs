@@ -161,7 +161,7 @@ reasoning: テストの目的（SAI 単体ではなく end-to-end 機能）の�
 
 ### コマンド例: Everflow / mirror 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -171,7 +171,6 @@ redis-cli -n 4 hgetall 'MIRROR_SESSION|everflow0'
 # ACL_RULE のヒットカウントで mirror trigger を確認
 show acl counters
 ```
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -202,4 +201,4 @@ show acl counters
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 61eb99dc6b8c -->
+<!-- glossary-links-injected: 881c373e11ef -->

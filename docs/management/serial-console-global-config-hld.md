@@ -227,7 +227,6 @@ redis-cli -n 4 hgetall 'CONSOLE_PORT|1'
 ls -l /dev/ttyUSB* /dev/ttyS*
 ```
 
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/console/serial-console-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

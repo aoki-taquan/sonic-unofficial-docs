@@ -181,7 +181,7 @@ LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"
 
 ### コマンド例: 動的 headroom の確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -192,7 +192,6 @@ redis-cli -n 4 hgetall 'BUFFER_PROFILE|pg_lossless_100000_5m_profile'
 # buffermgrd ログから dynamic 再計算イベントを抽出
 sudo grep -i 'buffermgrd' /var/log/syslog | tail -50
 ```
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -222,4 +221,4 @@ sudo grep -i 'buffermgrd' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ccd0ef97afd6 -->
+<!-- glossary-links-injected: 6981be1a469d -->

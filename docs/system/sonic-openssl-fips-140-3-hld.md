@@ -169,7 +169,6 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 - `cat /proc/sys/crypto/fips_enabled` — kernel 側の FIPS モード（参考値）
 - `ssh -vvv ...` で SSH の crypto algorithm を観測し、disabled algo が出ていないか確認
 
-
 ### コマンド例
 
 OpenSSL FIPS 140-3 provider の有効化を確認する。

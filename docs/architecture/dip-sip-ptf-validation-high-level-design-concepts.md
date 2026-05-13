@@ -3,7 +3,6 @@ title: DIP=SIP PTF 検証 概念（テストの目的とトポロジ）
 description: DIP=SIP PTF 検証テストの概念・目的・トポロジ・対応 testbed を整理する。SONiC が「SRC_IP = DST_IP」のパケットを正しく L3 ルーティングできるかを sonic-mgmt の PTF / pytest で検証するテストインフラ HLD。
 area: architecture
 verification: discrepancy-found
-_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
@@ -12,6 +11,7 @@ sources:
   path: doc/dip-sip/DIP=SIP_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
+  _no_yang: true
   config_db: []
   cli: []
   yang: []
@@ -60,3 +60,21 @@ router が複数メンバ（LAG など）を持つ場合は **すべてのメン
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+## 制限事項
+
+!!! diff "HLD と実装の乖離"
+    - HLD と実装の差分は本ページの章本文で逐次注記している
+    - 追加の境界事項は本セクションで列挙する
+
+## 確認コマンド
+
+dip-sip-ptf concepts の動作確認に使う代表コマンド:
+
+```bash
+# 基本動作確認
+show platform summary
+show version
+docker logs --tail 200 $(docker ps --format "{.Names}" | head -1)
+```
+

@@ -147,7 +147,7 @@ reasoning: 既定 60s と CLI バリデーション範囲（30s〜5m）の根拠
 
 ### コマンド例: Port buffer drop counter 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -157,7 +157,6 @@ show queue counters
 # COUNTERS_DB の BUFFER_DROP 系キー
 redis-cli -n 2 keys '*BUFFER_DROP*' | head
 ```
-
 
 ## 関連トピック
 
@@ -179,4 +178,4 @@ redis-cli -n 2 keys '*BUFFER_DROP*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f7696bbf835c -->
+<!-- glossary-links-injected: 881c373e11ef -->

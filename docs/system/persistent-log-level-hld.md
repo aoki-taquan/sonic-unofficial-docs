@@ -228,7 +228,6 @@ swssloglevel -d
 - warm upgrade 後にロスト: `db_migrator` が走っているか、`swss-common` のバージョンに `del` がエクスポートされているか確認。
 - `swssloglevel -p` の出力に出てこないコンポーネント: そのコンポーネントが Logger シングルトン経由でない、または listener thread が未対応。HLD 列挙コンポーネント以外は本機能の対象外。
 
-
 ### コマンド例
 
 logger ごとの永続化された log level を確認する。

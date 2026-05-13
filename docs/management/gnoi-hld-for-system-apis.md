@@ -230,7 +230,6 @@ docker logs gnmi 2>&1 | tail
 redis-cli -n 4 hgetall 'GNMI|certs'
 ```
 
-
 ## 参考リンク
 
 - [Topics: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)

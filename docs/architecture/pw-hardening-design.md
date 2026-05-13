@@ -109,7 +109,7 @@ PASSW_HARDENING|POLICIES
 
 ### コマンド例: Password hardening 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -153,4 +153,4 @@ redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a9c18564f33f -->
+<!-- glossary-links-injected: 6981be1a469d -->

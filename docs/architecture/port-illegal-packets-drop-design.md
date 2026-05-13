@@ -192,7 +192,7 @@ snmpwalk -v2c -c <community> <switch> ifInErrors
 
 ### コマンド例: Illegal packet drop 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -215,8 +215,6 @@ redis-cli -n 4 keys 'DEBUG_COUNTER|*'
 # orchagent の drop reason 反映ログ
 sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 ```
-
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -263,4 +261,4 @@ sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 21d98f8b47d2 -->
+<!-- glossary-links-injected: 6981be1a469d -->

@@ -200,7 +200,6 @@ redis-cli -n 2 HGETALL CRM:EXT_TABLE_STATS:EXT_VIPV4_TABLE
 - `used` の値が実体とずれる: P4Orch の `inc/dec` 呼び出しが add/del の成功パスから外れている可能性。[orchagent](../reference/glossary.md#term-orchagent) ログで該当 entry の操作結果を追う[^1]。
 - watermark アラートが上がらない: 既存 CRM の閾値設定（`crm config thresholds`）を本テーブル用にも適用しているか確認。HLD は **既存設定の継承** を前提にしている[^1]。
 
-
 ### コマンド例
 
 SAI 拡張 CRM 属性が取得できるか確認する。

@@ -218,7 +218,6 @@ config save -y
 diff /etc/sonic/config_db.json <(show runningconfiguration all)
 ```
 
-
 ## 制限事項
 
 - **Set ごとのディスク書き込み**: 1 Set ごとに ConfigDB を `/etc/sonic/config_db.json` に保存するため、大量の Set を高頻度で投入すると I/O コストが上がる。バルクで設定する運用ではこの機能を無効化したほうが望ましい場合がある。

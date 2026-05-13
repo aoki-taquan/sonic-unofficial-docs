@@ -131,7 +131,7 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 
 ### コマンド例: ポート動的追加/削除確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -147,4 +147,4 @@ sudo grep -E 'portsorch|PortConfigDone|PortInitDone' /var/log/syslog | tail -50
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 4bc2a4aae15e -->
+<!-- glossary-links-injected: 881c373e11ef -->

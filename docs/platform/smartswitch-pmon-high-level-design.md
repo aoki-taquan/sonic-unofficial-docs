@@ -102,7 +102,7 @@ flowchart LR
 
 ### コマンド例
 
-SmartSwitch DPU の ENI 転送状態と HA を確認する。
+SmartSwitch DPU の [ENI](../reference/glossary.md#term-eni) 転送状態と HA を確認する。
 
 ```bash
 # SmartSwitch DPU / ENI
@@ -132,4 +132,4 @@ docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d344f8b88dd9 -->
+<!-- glossary-links-injected: 9e37db60e0a1 -->

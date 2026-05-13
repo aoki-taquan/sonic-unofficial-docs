@@ -238,7 +238,7 @@ sudo reset-factory keep-basic
 
 ### コマンド例: Factory reset 動作確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -261,8 +261,6 @@ sudo journalctl -u reset-factory -n 100 --no-pager
 # 残存設定の差分
 sudo diff /etc/sonic/config_db.json /etc/sonic/golden_config_db.json | head
 ```
-
-
 
 ## 関連 reference
 
@@ -296,4 +294,4 @@ sudo diff /etc/sonic/config_db.json /etc/sonic/golden_config_db.json | head
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 04127c73f090 -->
+<!-- glossary-links-injected: 6981be1a469d -->

@@ -165,7 +165,7 @@ HLD 内で reclaim 専用の CLI 言及は無い。`config interface shutdown` /
 
 ### コマンド例: Reserved buffer reclaim 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -176,7 +176,6 @@ redis-cli -n 4 keys 'BUFFER_PG|Ethernet*' | head
 # buffermgrd ログ
 sudo grep -i 'buffermgrd' /var/log/syslog | tail -30
 ```
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -204,4 +203,4 @@ sudo grep -i 'buffermgrd' /var/log/syslog | tail -30
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: 6981be1a469d -->

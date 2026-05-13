@@ -195,13 +195,6 @@ ls -lh /var/dump/sonic_dump_*.tar.gz
 [^1]: `sonic-net/SONiC` `doc/mgmt/SONiC Management Framework Show Techsupport HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-
-<!-- demoted-by:q52-az-b-demote -->
-## 実装との乖離 / 補足
-
-- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-10 Rev 0.1 で 6 年以上停滞。Management Framework 自身の進化との整合は本文で「要確認」と明示している。
-- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)

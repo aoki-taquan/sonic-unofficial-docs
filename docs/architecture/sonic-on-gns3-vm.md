@@ -157,7 +157,7 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 
 ### コマンド例: GNS3 VM 上の SONiC 動作確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -181,8 +181,6 @@ show interfaces neighbor
 ip -br link | head
 ```
 
-
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-gns3/GNS3 VM for SONiC.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -201,4 +199,4 @@ ip -br link | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3f2b880c9935 -->
+<!-- glossary-links-injected: 881c373e11ef -->

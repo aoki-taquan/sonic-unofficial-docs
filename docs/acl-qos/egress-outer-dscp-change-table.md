@@ -170,7 +170,7 @@ CLI 文法は HLD 例示。実装側で `--stage` の解釈差異がある可能
 
 ### コマンド例: Egress DSCP 書き換え確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -180,7 +180,6 @@ show acl rule
 # STATE_DB の ACL アクション capability を確認
 redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' ACL_ACTIONS_EGRESS
 ```
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -210,4 +209,4 @@ redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' ACL_ACTIONS_EGRESS
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 881c373e11ef -->

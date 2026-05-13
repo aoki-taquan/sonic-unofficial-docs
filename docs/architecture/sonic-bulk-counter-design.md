@@ -165,7 +165,7 @@ CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) の **新規追加な
 
 ### コマンド例: Bulk counter polling 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -187,8 +187,6 @@ redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|PORT'
 redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|QUEUE'
 ```
 
-
-
 ## 裏取り済み実装位置 (2026-05-11)
 
 - `BulkStatsContext` 定義: `sonic-sairedis/syncd/FlexCounter.cpp` L208-L211
@@ -209,4 +207,4 @@ redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|QUEUE'
 - fallback 経路の単体テスト存在確認
 -->
 
-<!-- glossary-links-injected: 38f2af204989 -->
+<!-- glossary-links-injected: 6981be1a469d -->

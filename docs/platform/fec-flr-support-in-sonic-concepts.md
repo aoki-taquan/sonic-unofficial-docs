@@ -135,7 +135,7 @@ redis-cli -n 2 hkeys 'COUNTERS:oid:0x10000000000XX' | grep -E 'FEC_CODEWORD_ERRO
 docker exec swss head -50 /usr/share/swss/port_flr.lua
 ```
 
-`N/A` が出る場合は ASIC SDK が `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Sn` を
+`N/A` が出る場合は [ASIC SDK](../reference/glossary.md#term-asic-sdk) が `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Sn` を
 サポートしていない可能性が高い。S0..S16 のうち 1 つでも非ゼロが出ていれば
 概念ページの計算式が回っている。
 
@@ -157,4 +157,4 @@ docker exec swss head -50 /usr/share/swss/port_flr.lua
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 5440b86e15ed -->
+<!-- glossary-links-injected: ad4074e0b684 -->

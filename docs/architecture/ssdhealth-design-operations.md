@@ -3,7 +3,6 @@ title: SSD ヘルスチェック 運用（CLI / 表示モード）
 description: SONiC の SSD ヘルスチェック機能の CLI（show platform ssdhealth）の使い方と 3 表示モード（brief / verbose / vendor）、設定の有無を整理する。
 area: architecture
 verification: discrepancy-found
-_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
@@ -12,6 +11,7 @@ sources:
   path: doc/ssdhealth/ssdhealth_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
+  _no_yang: true
   config_db: []
   cli:
   - show platform ssdhealth
@@ -21,7 +21,7 @@ related:
 
 # SSD ヘルスチェック 運用
 
-このページは [SSD ヘルスチェック（概要ハブ）](ssdhealth-design.md) の派生で、**CLI と表示モード・設定（CONFIG_DB / YANG の有無）** に絞って整理する。アーキテクチャは [ssdhealth-design-concepts.md](ssdhealth-design-concepts.md)、API / デーモン内部は [ssdhealth-design-internals.md](ssdhealth-design-internals.md)、制限は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。
+このページは [SSD ヘルスチェック（概要ハブ）](ssdhealth-design.md) の派生で、**CLI と表示モード・設定（[CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) の有無）** に絞って整理する。アーキテクチャは [ssdhealth-design-concepts.md](ssdhealth-design-concepts.md)、API / デーモン内部は [ssdhealth-design-internals.md](ssdhealth-design-internals.md)、制限は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。
 
 ## 1. CLI
 
@@ -61,7 +61,7 @@ flowchart LR
     UTIL --> OUT[stdout]
 ```
 
-`show platform ssdhealth` は内部で `ssdhealth -d /dev/sdX [options]` を呼ぶだけのラッパ（HLD 仕様）。現行 master では `ssdutil` への置き換わりが起きている（詳細は [限定事項ページ](ssdhealth-design-limitations.md) 参照）[^1]。
+`show platform ssdhealth` は内部で `ssdhealth -d /dev/sdX [options]` を呼ぶだけのラッパ（[HLD](../reference/glossary.md#term-hld) 仕様）。現行 master では `ssdutil` への置き換わりが起きている（詳細は [限定事項ページ](ssdhealth-design-limitations.md) 参照）[^1]。
 
 ## 3. 設定
 
@@ -104,3 +104,23 @@ sudo smartctl -A /dev/sda
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 20dbc11976b6 -->
+
+## 制限事項
+
+!!! diff "HLD と実装の乖離"
+    - HLD と実装の差分は本ページの章本文で逐次注記している
+    - 追加の境界事項は本セクションで列挙する
+
+## 確認コマンド
+
+SSD health operations の動作確認に使う代表コマンド:
+
+```bash
+# 基本動作確認
+show platform summary
+show version
+docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
+```
+

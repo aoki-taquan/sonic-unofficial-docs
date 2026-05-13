@@ -172,12 +172,10 @@ redis-cli client list | head
 redis-cli info clients
 ```
 
-
 ## 関連 reference
 
 - [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
 - [Reference: CONFIG_DB ↔ Orch map](../reference/config-db-orch-map.md)
-
 
 <!-- demoted-by:q52-az-b-demote -->
 ## 実装との乖離 / 補足
