@@ -107,6 +107,23 @@ ACL_TABLE|<table_name>
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): なし（[YANG](../../reference/glossary.md#term-yang) 未定義）
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| 未知の属性名 | ERROR ログ後 erase、skip |
+| `type` 不正 | `processAclTableType()` 失敗、erase、skip |
+| `ports` に存在しないポート名 | `processAclTablePorts()` 失敗、erase、skip |
+| `ports` に物理 IF 以外（IN_PORTS/OUT_PORTS） | `return false`、erase |
+| `stage` が INGRESS/EGRESS 以外 | `processAclTableStage()` 失敗、erase |
+| `services` フィールド | `continue` で実質無視（コントロールプレーン ACL 専用） |
+| `TABLE_TYPE_UNDERLAY_SET_DSCP`/`V6` | 内部で `TABLE_TYPE_MARK_META`/`V6` に変換して SAI に投入 |
+| 既存 table_id への SET | `updateAclTable()` を呼んで再バインド |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5346L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -79,6 +79,21 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 - 関連 CLI: `config auto-techsupport global`、`config auto-techsupport-feature`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-auto_techsupport`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| `GLOBAL` エントリが存在しない | デフォルト値で動作 (`available_mem_threshold`=10%, `min_available_mem`=200MB) |
+| `available_mem_threshold` = 0 | システムメモリチェック全体をスキップし、feature 単位チェックのみ実行 |
+| `available_mem_threshold`/`min_available_mem` が float 変換不可 | `MemoryCheckerException` 発生、techsupport 起動せず `EXIT_FAILURE` |
+| 空きメモリ < `min_available_mem` | techsupport を起動しない（`EXIT_THRESHOLD_CROSSED` 返却） |
+| `state` フィールド | `memory_threshold_check.py` では直接参照しない（呼び出し元が確認） |
+| `rate_limit_interval` / `max_techsupport_limit` | memory_threshold_check では読まれない（coredump 監視デーモンが別途使用） |
+
+<!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

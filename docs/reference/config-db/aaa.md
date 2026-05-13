@@ -75,6 +75,20 @@ AAA|<type>
 - 関連 CLI: `config aaa authentication { login | failthrough | fallback | debug | trace }`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-system-aaa`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| `key` が `authentication`/`authorization`/`accounting` 以外 | 内部状態を更新せず実質 no-op |
+| `failthrough`/`debug` に `"true"/"yes"/"1"` 以外の文字列 | `is_true()` が False 扱い、型エラーなし |
+| `login` に `ldap` を含むが LDAP global 設定が不完全 | `nslcd` サービスを起動しない (silent skip) |
+| PAM 設定ファイル書き込み失敗 | syslog ERR のみ、クラッシュなし |
+| `login` に `tacacs+` を含むが `TACPLUS.global.passkey` が未設定 | YANG レベルで reject（hostcfgd は実行時再チェックなし） |
+
+<!-- evidence: sonic-net/sonic-host-services/scripts/hostcfgd:419L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -79,6 +79,22 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 - 関連 CLI: vtysh の `network <prefix>` (`frr-mgmt-framework` 経路では [CONFIG_DB](../../reference/glossary.md#term-config_db) 投入)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| key の IP prefix 形式不正 | `normalize_ip_prefix()` が None → syslog ERR & continue、FRR 未反映 |
+| AF_TYPE フォーマット不正（`_` 区切り不可） | ValueError が上位に伝播 |
+| FRR コマンド実行失敗 | syslog ERR & continue、再試行なし |
+| `policy`/`backdoor` フィールド欠如 | FRR コマンドの該当部分を空/省略で生成 |
+| 重複 `network <prefix>` 投入 | FRR は冪等に処理、frrcfgd 側での重複チェックなし |
+| `BGP_GLOBALS` が未設定（bgp_asn 不在） | 上位ハンドラで依存待機、または KeyError 伝播 |
+| DEL 操作 | FRR への `no network <prefix>` のみ、内部キャッシュなし |
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3169L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

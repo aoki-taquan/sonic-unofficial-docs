@@ -88,6 +88,24 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 - 関連 CLI: 専用 CLI なし。`sonic-cfggen` / minigraph 経由で投入されるのが通常
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-allowed-prefix`, `sonic-routing-policy-sets`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| 機能が constants で無効化 | SET/DEL 両方とも warn log 後 return True（消化） |
+| key が正規表現パターン不一致 | log_err 後 return False（消化されない、再試行の可能性） |
+| `data` が None | log_err 後 return False |
+| `prefixes_v4` に IPv6 アドレス | log_err 後 return False |
+| `prefixes_v6` に IPv4 アドレス | log_err 後 return False |
+| `prefixes_v4`/`prefixes_v6` が両方空 | log_err 後 return False |
+| `default_action` が `"permit"`/`"deny"` 以外 | log_err 後 return False |
+| `ge`/`le` サフィックス付き prefix | split して prefix 部分のみ IP 検証（サフィックスは FRR に委ねる） |
+| DEL の key パターン不一致 | log_err 後 return（値なし）、消化扱い |
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:75L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

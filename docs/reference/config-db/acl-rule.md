@@ -117,6 +117,26 @@ ACL_RULE|<table_name>|<rule_name>
 - 関連 CLI: [`config acl`](../cli/config-acl.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): なし
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| key の TABLE_ID が空文字 | WARN ログ後 erase、skip |
+| 対応する ACL_TABLE が未作成 | 待機 (`it++`)、テーブル作成後に再試行 |
+| コントロールプレーンテーブルのルール | INFO ログ後 erase、skip |
+| `AclRule::makeShared` が例外 | ERROR ログ後 erase & 関数 return（処理中断） |
+| 未知/不正な属性名 | rule INACTIVE、erase |
+| `MATCH_TCP_FLAGS` あり・IP_PROTOCOL 未指定 | IP_PROTOCOL=6 (TCP) を自動付与 |
+| IPv4 と IPv6 matchfield 混在（L3V4V6 テーブル） | `bAllAttributesOk=false`、rule INACTIVE |
+| SAI リソース枯渇 | retry キャッシュに退避、リソース解放後に再試行 |
+| IN_PORTS/OUT_PORTS に非物理 IF | `return false`、rule INACTIVE |
+| VLAN ID 範囲外 | `return false`、rule INACTIVE |
+| Range 形式不正 | `return false`、rule INACTIVE |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5520L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

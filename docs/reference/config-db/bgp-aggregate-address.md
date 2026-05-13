@@ -70,6 +70,23 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 - 関連 CLI: `vtysh -c "show ip bgp aggregate"`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-aggregate-address`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| prefix が不正な IP アドレス形式 | `validate_prefix()` が None → STATE_DB に `state=inactive`、FRR 未投入 |
+| `bbr-required=true` かつ BBR 状態が不明 | STATE_DB に `state=inactive`、skip |
+| `bbr-required=true` かつ BBR が disabled | STATE_DB に `state=inactive`、skip |
+| BBR が enabled に変化 | bbr-required=true の全アドレスを STATE_DB から読み出して FRR に再投入 |
+| BBR が disabled に変化 | bbr-required=true の全アドレスを FRR から削除、STATE_DB を inactive に更新 |
+| DEL 操作で STATE_DB が `inactive` | FRR への削除コマンドをスキップ |
+| `DEVICE_METADATA.localhost.bgp_asn` 未設定 | KeyError が上位に伝播 |
+| FRR push 失敗 | STATE_DB に `state=inactive`、再試行なし |
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:74L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

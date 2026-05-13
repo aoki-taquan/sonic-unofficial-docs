@@ -84,6 +84,22 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 - 関連 CLI: `config bgp` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities) 経由)、vtysh の `aggregate-address` (直接)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| key の IP prefix 形式不正 | `normalize_ip_prefix()` が None → syslog ERR & continue、FRR 未反映 |
+| AF_TYPE フォーマット不正（`_` 区切り不可） | ValueError が上位に伝播 |
+| FRR コマンド実行失敗 | syslog ERR & continue、内部キャッシュ更新なし |
+| `BGP_GLOBALS` が未設定（bgp_asn 不在） | 上位ハンドラで依存待機、または KeyError 伝播 |
+| DEL 操作で `af_aggr_list[vrf]` に存在しない prefix | `pop(None)` で KeyError なし |
+| `as_set`/`summary_only` フィールド欠如 | デフォルト `false` 扱い（`data.get(attr)` で None） |
+| 更新操作 | FRR に `aggregate-address` を再投入（既存エントリの削除と新規追加の組み合わせ） |
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3187L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
