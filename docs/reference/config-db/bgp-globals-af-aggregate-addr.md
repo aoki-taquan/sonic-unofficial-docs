@@ -100,6 +100,33 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3187L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### enum 型フィールド
+
+該当無し (key の `afi_safi` は string だが YANG enum ではなく任意文字列)
+
+### boolean フィールド
+
+| フィールド | `true` の効果 | `false` の効果 | evidence |
+|---|---|---|---|
+| `summary_only` | FRR `aggregate-address <prefix> summary-only` を生成。contributing route が BGP UPDATE から抑制される | キーワードなし。contributing route と aggregate を両方広告 | `sonic-bgp-global.yang; frrcfgd.py:3187` |
+| `as_set` | FRR `aggregate-address <prefix> as-set` を生成。集約経路に AS_SET path 属性を付与 | キーワードなし | `sonic-bgp-global.yang` |
+
+### `policy` (leafref → ROUTE_MAP_SET.name)
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| 文字列 (route-map 名) | `aggregate-address <prefix> route-map <name>` を生成。aggregate に route-map を適用して属性を加工 | `frrcfgd.py:3187` |
+| 空/未設定 | route-map 指定なし | — |
+
+### 複合条件
+
+- `summary_only=true` かつ contributing route が RIB に 0 本 → FRR で aggregate 生成されない (BGP 仕様)
+- frr-mgmt-framework 経路 (`DEVICE_METADATA.frr_mgmt_framework_config=true`) でのみ有効。bgpcfgd テンプレ経路では `BGP_AGGREGATE_ADDRESS` テーブルを使い、両者を混在させると干渉する可能性がある
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

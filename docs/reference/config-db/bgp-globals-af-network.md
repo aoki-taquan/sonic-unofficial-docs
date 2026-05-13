@@ -95,6 +95,32 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3169L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### enum 型フィールド
+
+該当無し (フィールドは boolean と freeform のみ)
+
+### boolean フィールド
+
+| フィールド | `true` の効果 | `false` の効果 | evidence |
+|---|---|---|---|
+| `backdoor` | FRR `network <prefix> backdoor` を生成。同一 prefix の IGP ルートを BGP より優先 | キーワードなし | `sonic-bgp-global.yang; frrcfgd.py:3169` |
+
+### `policy` (leafref → ROUTE_MAP_SET.name)
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| 文字列 (route-map 名) | `network <prefix> route-map <name>` を生成。注入する prefix の BGP 属性を加工 | `frrcfgd.py:3169` |
+| 空/未設定 | route-map 指定なし | — |
+
+### 複合条件
+
+- `backdoor=true` は `policy` と組み合わせて `network <prefix> route-map <name> backdoor` となる
+- `BGP_GLOBALS.network_import_check=true` (FRR デフォルト) の場合、対象 prefix が RIB に存在しないと FRR が BGP UPDATE への注入を拒否する (CONFIG_DB への書き込みは成功するが実際には広告されない)
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

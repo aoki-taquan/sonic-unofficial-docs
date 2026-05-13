@@ -76,6 +76,26 @@ BANNER_MESSAGE|global
 <!-- evidence: sonic-net/sonic-host-services/scripts/hostcfgd:2084L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `state` (enum `enabled`/`disabled`)
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| `enabled` | `banner-config.sh` が `login` / `motd` / `logout` を読み取り `/etc/issue.net`, `/etc/issue`, `/etc/motd`, `/etc/logout_message` を書き換える | `sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:8` |
+| `disabled` | `banner-config.sh` がファイルを一切書き換えない | `banner-config.sh:8` |
+
+### フリーフォームフィールド
+
+- `login` / `motd` / `logout` — freeform string。`state=enabled` の場合のみ評価される
+
+### 複合条件
+
+- `state=enabled` のときのみ `login`/`motd`/`logout` フィールドが評価される。`state=disabled` では他フィールドの値に関わらずファイル更新なし
+- `hostcfgd` はキャッシュと値が変化した場合のみ `systemctl restart banner-config` を発行 (重複再起動抑制) (`hostcfgd:2074`)
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
