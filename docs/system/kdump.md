@@ -156,7 +156,6 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 - `cat /proc/cmdline | tr ' ' '\n' | grep crashkernel` — カーネル cmdline に `crashkernel=` が乗っているか確認
 - `kexec -l` の状態は `dmesg | grep -i kexec` で確認可能
 
-
 ### コマンド例
 
 kdump の有効状態と vmcore 出力先を確認する。

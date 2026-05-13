@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-12
+last_verified: 2026-05-13
 tags:
   - changelog
   - meta
@@ -23,6 +23,30 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-13 #1155 Fix mermaid 11.x syntax errors across docs (129 blocks, 125 files)
+- 2026-05-13 #1154 Round 50 stratified milestone audit + guide §6 weighted random sampling
+- 2026-05-13 #1153 Demote 20 B-class pages to discrepancy-found (q52-az)
+- 2026-05-13 #1152 chore(troubleshoot): clear remaining thin troubleshoot sections (21 -> 0)
+- 2026-05-13 #1151 Backfill 40 more thin troubleshoot sections (wave-5)
+- 2026-05-13 #1150 Add quality audit round 49 (random, 12th odd cycle, avg 4.974)
+- 2026-05-13 #1149 Add triage script for verification self-consistency suspects
+- 2026-05-13 #1147 Fix discrepancy yang strict lint (split-children opt-out)
+- 2026-05-12 #1146 chore: add evolved_beyond_hld 6C lint and backfill 5 pages
+- 2026-05-12 #1148 chore(audit): round 48 stratified (5.00 saturation) + residual-tasks refresh
+- 2026-05-12 #1145 Backfill 40 more thin troubleshoot sections (q50 wave-4)
+- 2026-05-12 #1144 Add quality audit round 47 (random) + 47-discrepancy-mini
+- 2026-05-12 #1143 Split 2 large HLDs (ssdhealth-design + dip-sip-ptf-validation) into 8 child pages
+- 2026-05-12 #1142 Backfill 40 thin troubleshoot sections (wave-3)
+- 2026-05-12 #1139 Extend troubleshoot H2 lint + backfill 30 thin sections (q48 wave-2)
+- 2026-05-12 #1141 chore(audit): guide §4.6 snapshot eval spec + audit round 46
+- 2026-05-12 #1140 Add not_implemented workaround depth linter and enrich 5 pages
+- 2026-05-12 #1136 Expand thin troubleshoot sections with command examples (30 pages)
+- 2026-05-12 #1138 chore: enforce strict partial-boundary phase table + snapshot xref
+- 2026-05-12 #1137 Add quality audit round 45 (random sampling, 10th cycle)
+- 2026-05-12 #1135 Add quality audit round 44 (stratified, 9th cycle even, avg 4.993)
+- 2026-05-12 #1134 chore: strengthen troubleshoot lint and backfill 10 thin sections
+- 2026-05-12 #1133 Finalize audit guide §5.4 not_implemented + snapshot ref
+- 2026-05-12 #1132 chore: integrate inject/aggregate scripts into run_all wrappers
 - 2026-05-12 #1131 Add quality audit round 43 (random sampling, 9th cycle)
 - 2026-05-12 #1130 chore: strengthen partial-boundary lint with phase tables and link guide §5
 - 2026-05-12 #1129 chore: enrich snapshot.md with audit history, lint counts, freshness buckets
@@ -499,28 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #533 [platform] VLAN Subnet Decap
 - 2026-05-09 #531 [platform] 拡張 LPO デバッグレジスタ
 - 2026-05-09 #529 [platform] sfputil read-eeprom / write-eeprom
-- 2026-05-09 #527 [system] Dataplane Telemetry テストプラン
-- 2026-05-09 #525 [system] libsairedis API idempotence
-- 2026-05-09 #523 [system] Warm Reboot 開発フェーズと OID 復元戦略
-- 2026-05-09 #522 [verify] medium 優先度 12 ページの裏取り (batch9) [lgtm]
-- 2026-05-09 #520 [system] ローカルユーザパスワード init 時リセット
-- 2026-05-09 #518 [system] gNMI dial-out モード
-- 2026-05-09 #516 [system] SONiC Feature Quality 定義
-- 2026-05-09 #514 [switching] Basic L2 モードテストプラン
-- 2026-05-09 #512 [routing] DHCP Relay per-interface counter
-- 2026-05-09 #510 [routing] VRF Ansible テストプラン
-- 2026-05-09 #508 [verify] medium 優先度 12 ページの裏取り (batch8) [lgtm]
-- 2026-05-09 #507 [routing] Ordered ECMP（IP ソート順による nexthop 順序保持）
-- 2026-05-09 #505 [routing] VRF VS テストプラン
-- 2026-05-09 #503 [reference] CONFIG_DB 15 テーブル追記 (batch3) [area/reference, verification/code-verified, lgtm]
-- 2026-05-09 #502 [routing] ECMP inner packet hashing テストプラン
-- 2026-05-09 #500 [management] JSON Patch ordering (apply-patch のステップ分割)
-- 2026-05-09 #498 [management] SONiC CLI 自動生成ツール
-- 2026-05-09 #496 [management] TACACS+ コマンド authorization / accounting
-- 2026-05-09 #494 [management] SONiC gNMI Server インタフェース設計
-- 2026-05-09 #493 [reference] config save / load / reload / replace / qos reload
-- 2026-05-09 #491 [reference] debug / undebug コマンド群
-- 2026-05-09 #490 [verify] medium 優先度 11 ページの裏取り完了 (batch7)
-- 2026-05-09 #489 [reference] reboot / fast-reboot / warm-reboot コマンド
-- 2026-05-09 #488 [management] CMIS モジュール管理拡張
 

@@ -173,7 +173,7 @@ gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_ce
 
 ### コマンド例: gNOI File / FactoryReset 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -221,3 +221,5 @@ docker logs gnmi 2>&1 | tail -30
 - `gnoi_client`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 6981be1a469d -->

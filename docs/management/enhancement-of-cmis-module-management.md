@@ -119,8 +119,8 @@ m_portTable->set(port.m_alias, {{"host_tx_ready", attr.value.u32 ? "true" : "fal
 
 ### コマンド例: CMIS module 状態確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、[HLD](../reference/glossary.md#term-hld) 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
 # CMIS 対応 transceiver の状態と FW
@@ -171,4 +171,4 @@ redis-cli -n 6 hgetall 'TRANSCEIVER_INFO|Ethernet0'
 - [Glossary](../reference/glossary.md)
 - [Reference 索引](../reference/index.md)
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: c5a6ce567024 -->

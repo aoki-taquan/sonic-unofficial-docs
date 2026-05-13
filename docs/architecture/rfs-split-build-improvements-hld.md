@@ -149,7 +149,7 @@ make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
 
 ### コマンド例: RFS split build 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -170,8 +170,6 @@ docker images | grep sonic-slave
 ls -la target/sonic-broadcom.bin target/sonic-mellanox.bin 2>/dev/null
 make -n target/sonic-generic.bin 2>&1 | head -30
 ```
-
-
 
 ## 関連 reference
 
@@ -195,4 +193,4 @@ make -n target/sonic-generic.bin 2>&1 | head -30
 - ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
 -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 881c373e11ef -->

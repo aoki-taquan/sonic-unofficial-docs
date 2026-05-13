@@ -155,7 +155,6 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - `gnoi_client -target <dpu> -rpc System.RebootStatus` — gNOI Reboot ステータス
 - `gnoi_client -target <dpu> -rpc Containerz.ListImage` — DPU 内 container image を列挙
 
-
 ### コマンド例
 
 DPU 単独アップグレードの進捗を確認する。

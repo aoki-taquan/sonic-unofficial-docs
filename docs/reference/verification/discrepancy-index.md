@@ -201,8 +201,6 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本 HLD は 2020 年 Rev 0.4 の **設計討議文書**。現行 master が本提案を全面採用しているかは本文に「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [Console Switch（serial hub の reverse SSH 集約）](../../management/sonic-console-switch.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -231,8 +229,6 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../../management/sonic-nos-configuration-methods.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。checkpoint / rollback 実装の取り込みは本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -424,8 +420,6 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）](../../system/show-techsupport.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-10 Rev 0.1 で 6 年以上停滞。Management Framework 自身の進化との整合は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）](../../system/multi-asic-warm-reboot.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
@@ -439,8 +433,6 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [SONiC Container Hardening（capability / read-only / privileged 削減）](../../system/sonic-container-hardening.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）](../../system/sonic-fips-deployment.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`

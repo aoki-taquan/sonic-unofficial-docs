@@ -244,7 +244,7 @@ HLD で明示の制限事項は無い。実運用上の留意点としては:
 
 ### コマンド例: Build profile 適用状態の確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -265,8 +265,6 @@ make -n configure 2>&1 | grep -E 'SONIC_(BUILD|PROFILE)'
 # slave コンテナのキャッシュ状態
 docker images | grep sonic-slave
 ```
-
-
 
 ## 参考リンク
 
@@ -303,4 +301,4 @@ docker images | grep sonic-slave
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 5f2e4324e3ff -->
+<!-- glossary-links-injected: 6981be1a469d -->

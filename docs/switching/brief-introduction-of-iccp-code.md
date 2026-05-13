@@ -273,7 +273,7 @@ ICCPd 自身の設定キーは MC-LAG 系 CONFIG_DB（`MC_LAG_DOMAIN`, `MC_LAG_I
 
 ### コマンド例
 
-ICCP / MCLAG の peer 状態と sync を確認する。
+ICCP / [MCLAG](../reference/glossary.md#term-mclag) の peer 状態と sync を確認する。
 
 ```bash
 show mclag brief
@@ -309,4 +309,4 @@ ICCPd 内部構成マップは現行 master と整合。`code-verified` に昇�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b8de3bf6fffa -->
+<!-- glossary-links-injected: c187d8716cf1 -->

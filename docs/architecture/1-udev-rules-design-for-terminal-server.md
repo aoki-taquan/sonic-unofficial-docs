@@ -186,7 +186,7 @@ ls -l /dev/Mytty*
 
 ### コマンド例: Terminal server udev 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -229,4 +229,4 @@ sudo grep -Ei 'udev|console' /var/log/syslog | tail -30
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 881c373e11ef -->

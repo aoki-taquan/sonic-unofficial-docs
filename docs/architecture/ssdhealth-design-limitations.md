@@ -3,7 +3,6 @@ title: SSD ヘルスチェック 制限事項と HLD-実装乖離
 description: SONiC の SSD ヘルスチェック機能の制限事項・干渉する機能・トラブルシューティング、および現行 master と HLD 記述の乖離（ssdutil への移行、sonic_storage 再構成、ssdmond 未取り込み）を整理する。
 area: architecture
 verification: discrepancy-found
-_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
@@ -12,6 +11,7 @@ sources:
   path: doc/ssdhealth/ssdhealth_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
+  _no_yang: true
   config_db: []
   cli:
   - show platform ssdhealth
@@ -20,7 +20,7 @@ related:
 
 # SSD ヘルスチェック 制限事項と HLD-実装乖離
 
-このページは [SSD ヘルスチェック（概要ハブ）](ssdhealth-design.md) の派生で、**制限事項・干渉機能・トラブルシューティング・HLD と現行実装の乖離** に絞って整理する。概念・運用・実装の各ページは概要ハブから辿る。
+このページは [SSD ヘルスチェック（概要ハブ）](ssdhealth-design.md) の派生で、**制限事項・干渉機能・トラブルシューティング・[HLD](../reference/glossary.md#term-hld) と現行実装の乖離** に絞って整理する。概念・運用・実装の各ページは概要ハブから辿る。
 
 ## 1. 制限事項
 
@@ -34,7 +34,7 @@ related:
 - **pmon (Platform Monitor)**: `ssdmond` を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。
 - **smartmontools / smartctl パッケージ**: ビルドイメージに 1.9M 程度の追加。`sonic-buildimage` 側のパッケージ取り込みに依存[^1]。
 - **plugin 配置規約**: `device/{{vendor}}/platform/plugins/ssdutil.py` は **プラットフォームプラグインの一般則** に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。
-- **SNMP**: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外[^1]。
+- **[SNMP](../reference/glossary.md#term-snmp)**: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外[^1]。
 
 ## 3. トラブルシューティング
 
@@ -91,3 +91,5 @@ related:
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 1d579f83f1e2 -->

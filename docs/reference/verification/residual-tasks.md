@@ -35,7 +35,7 @@ related:
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
-| low-priority（v1.1 検討） | 10 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + PINS / chassis 2 件 + 第三者拡張 1 件 |
+| low-priority（v1.1 検討） | 10 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + [PINS](../../reference/glossary.md#term-pins) / chassis 2 件 + 第三者拡張 1 件 |
 | _archived（累計） | 349 | リリースノート + 章節断片 + ビルド系 + テンプレ + 重複 + defer + stub + indexer v2 除外（round 36 以前の 27 件 + 増分） |
 
 詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。`meta/_gen_backlog.py` への Indexer 除外フィルタ組込みは v1.1 サイクル開始時に対応する。
@@ -92,7 +92,7 @@ related:
 | 01-overview 〜 22-reference-index（全 22 章）| 5 | 0 | 0 |
 | **合計** | **110** | **0** | **0** |
 
-**round 48 update**: Topics 22 章 × 5 split-child = **110 サブページ全件 complete**。round 38 時点の 6 件残（01-overview 2 / 19-build-packaging 1 / 22-reference-index 3）が **wave-2 30 件補完バッチに合流して全件解消**、Topics 章は構造的に完成。直近 5 commit (`#841-#845`) で残章 (BGP / L2-VLAN-LAG / ACL-CoPP-Mirror / VRF-ECMP / VXLAN-EVPN-VNET) も full topic chapter として merge 済み。
+**round 48 update**: Topics 22 章 × 5 split-child = **110 サブページ全件 complete**。round 38 時点の 6 件残（01-overview 2 / 19-build-packaging 1 / 22-reference-index 3）が **wave-2 30 件補完バッチに合流して全件解消**、Topics 章は構造的に完成。直近 5 commit (`#841-#845`) で残章 ([BGP](../../reference/glossary.md#term-bgp) / L2-VLAN-[LAG](../../reference/glossary.md#term-lag) / ACL-[CoPP](../../reference/glossary.md#term-copp)-Mirror / [VRF](../../reference/glossary.md#term-vrf)-[ECMP](../../reference/glossary.md#term-ecmp) / [VXLAN](../../reference/glossary.md#term-vxlan)-[EVPN](../../reference/glossary.md#term-evpn)-[VNET](../../reference/glossary.md#term-vnet)) も full topic chapter として merge 済み。
 
 ## 5. 大型 HLD 未分割ページ Top 5
 
@@ -149,4 +149,4 @@ find docs -name '*.md' -not -path 'docs/_meta/*' -exec wc -l {} + \
 
 - [スナップショット](../../_meta/snapshot.md) — repo 全体の verification / coverage / lint 指標を 1 ページに集約した自動生成サマリ。本ページの残課題が全体指標のどの位置にあるか俯瞰する用途。
 
-<!-- glossary-links-injected: 130cca349dcf -->
+<!-- glossary-links-injected: c88af9cfd6d0 -->

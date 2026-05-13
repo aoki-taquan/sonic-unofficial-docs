@@ -224,7 +224,6 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 - `in-progress` で進まない場合、SAI から完了 callback が来ていない可能性。`syncd` ログで POST API 呼び出しと callback を確認
 - FIPS 有効化したのに POST が走らない場合、`/proc/cmdline` の `sonic_fips=1` または `/etc/fips/fips_enable` を確認
 
-
 ### コマンド例
 
 MACsec FIPS POST の進捗と結果を確認する。

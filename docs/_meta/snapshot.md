@@ -2,7 +2,7 @@
 title: スナップショット
 area: meta
 verification: meta
-last_verified: 2026-05-12
+last_verified: 2026-05-13
 sources: []
 ---
 
@@ -16,27 +16,27 @@ sources: []
 
 ## verification 分布
 
-全 **894** ページ。
+全 **902** ページ。
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 586 |
+| code-verified | 566 |
 | runbook-verified | 27 |
-| discrepancy-found | 74 |
+| discrepancy-found | 102 |
 | issue-confirmed | 0 |
 | hld-only | 0 |
 | meta | 198 |
 | stub | 9 |
-| **合計** | **894** |
+| **合計** | **902** |
 
 ## last_verified 鮮度
 
-基準日 **2026-05-12**。
+基準日 **2026-05-13**。
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 10 |
-| 7 日以内 (1-7d) | 873 |
+| 今日 (0d) | 21 |
+| 7 日以内 (1-7d) | 870 |
 | 30 日以内 (8-30d) | 0 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 11 |
@@ -79,19 +79,19 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 288 |
-| docs 内被リンク数 | 7325 |
+| docs 内被リンク数 | 7435 |
 
 ## 直近 5 round quality-audit
 
 | round | 総平均スコア / 5 |
 |---:|---:|
-| 45 | 4.986 |
-| 44 | 4.993 |
-| 43 | 4.986 |
-| 42 | 4.986 |
-| 41 | 4.972 |
+| 50 | 4.972 |
+| 49 | 4.974 |
+| 48 | 5.000 |
+| 47 | 4.986 |
+| 46 | 4.993 |
 
-- 最新詳細: `meta/quality-audit-45.md`
+- 最新詳細: `meta/quality-audit-50.md`
 
 ## Lint / informational 検出件数
 

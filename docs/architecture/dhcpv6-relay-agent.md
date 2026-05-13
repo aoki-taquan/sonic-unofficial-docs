@@ -159,7 +159,7 @@ reasoning: ISC 置換動機と Option 79 採用の根拠。
 
 ### コマンド例: DHCPv6 relay の確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -170,7 +170,6 @@ redis-cli -n 6 keys 'DHCPv6_COUNTER_TABLE|*'
 # dhcp-relay container のログ
 docker logs dhcp_relay 2>&1 | tail -50
 ```
-
 
 ## 引用元
 
@@ -195,4 +194,4 @@ docker logs dhcp_relay 2>&1 | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 076fff3e00eb -->
+<!-- glossary-links-injected: 6981be1a469d -->

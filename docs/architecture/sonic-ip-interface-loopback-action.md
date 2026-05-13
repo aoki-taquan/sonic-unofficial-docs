@@ -238,7 +238,7 @@ show ip interfaces loopback-action
 
 ### コマンド例: Loopback action 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -259,8 +259,6 @@ show ip interfaces
 redis-cli -n 4 keys 'INTERFACE|*' | head
 redis-cli -n 4 hgetall 'INTERFACE|Ethernet0'
 ```
-
-
 
 ## 関連 reference
 
@@ -285,4 +283,4 @@ redis-cli -n 4 hgetall 'INTERFACE|Ethernet0'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: b4f4dca39760 -->
+<!-- glossary-links-injected: 6981be1a469d -->

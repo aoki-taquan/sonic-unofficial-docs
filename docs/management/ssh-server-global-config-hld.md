@@ -219,7 +219,6 @@ sudo sshd -T | head
 redis-cli -n 4 hgetall 'SSH_SERVER|POLICIES'
 ```
 
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssh_config/ssh_config.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

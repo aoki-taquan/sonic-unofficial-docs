@@ -227,8 +227,6 @@ redis-cli -n 4 keys 'SFLOW_COLLECTOR|*'
 docker logs sflow 2>&1 | tail -50
 ```
 
-
-
 ## 確認コマンド
 
 ```bash

@@ -310,7 +310,6 @@ docker logs gnmi 2>&1 | tail
 redis-cli -n 4 hgetall 'GNMI|certs'
 ```
 
-
 ## 参考リンク
 
 - [Reference 索引](../reference/index.md)

@@ -217,7 +217,6 @@ sonic-cfggen -j /tmp/cfg.json --print-data | head
 yangcli --module=sonic-port -- 'xget /sonic-port:sonic-port'
 ```
 
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/config_yang_validation/config_db_yang_validation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

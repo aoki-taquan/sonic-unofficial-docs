@@ -130,7 +130,6 @@ dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC�
 - 30s 超え → syncd の INIT/APPLY 比較が長い、neighbor restore が ARP burst で詰まる、ASIC 側の port 起動順
 - finalizer が flag を外さない → 各 reconciliation サブシステムから finalizer への ack が来ているか確認
 
-
 ### コマンド例
 
 Fast reboot 各段階の所要時間と warm-restart 状態を確認する。

@@ -3,7 +3,6 @@ title: SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）
 description: SONiC の SSD ヘルスチェック機能の API 仕様（SsdBase / SsdUtil の public method）と Optional 常時監視デーモン ssdmond の設計を整理する。
 area: architecture
 verification: discrepancy-found
-_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
@@ -12,6 +11,7 @@ sources:
   path: doc/ssdhealth/ssdhealth_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
+  _no_yang: true
   config_db: []
   cli: []
   yang: []
@@ -72,7 +72,7 @@ usage: ssdhealth -d DEVICE [-h] [-v] [-e]
 
 ## 3. Optional: pmon `ssdmond`
 
-HLD は **オプション** として、pmon に常駐するデーモン `ssdmond` を提案している[^1]:
+[HLD](../reference/glossary.md#term-hld) は **オプション** として、pmon に常駐するデーモン `ssdmond` を提案している[^1]:
 
 - 周期的に `get_health()` を呼び出す。
 - 値が **クリティカルしきい値を割った時にアラート** を上げる。
@@ -98,3 +98,5 @@ flowchart LR
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 167700005048 -->

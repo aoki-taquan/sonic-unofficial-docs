@@ -217,7 +217,7 @@ gnoi_client healthz acknowledge \
 
 ### コマンド例: gNOI Healthz 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -238,8 +238,6 @@ gnoic -a 127.0.0.1:8080 --skip-verify healthz get --path '/components/component[
 redis-cli -n 6 hgetall 'PSU_INFO|PSU 1'
 docker logs gnmi 2>&1 | tail -30
 ```
-
-
 
 ## 参考リンク
 
@@ -282,3 +280,5 @@ docker logs gnmi 2>&1 | tail -30
 - `gnoi_client`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 6981be1a469d -->

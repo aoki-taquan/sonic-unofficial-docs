@@ -190,7 +190,6 @@ reasoning: midplane bridge + DHCP port-based + link-local subnet 採用の根拠
 - `sonic-db-cli CONFIG_DB hgetall "MID_PLANE_BRIDGE|GLOBAL"` — bridge IP/subnet の宣言
 - `sonic-db-cli CONFIG_DB keys "DHCP_SERVER_IPV4_PORT|*"` — port-based static lease の DPU 割当
 
-
 ### コマンド例
 
 DPU 向け IP assignment 状態を確認する。

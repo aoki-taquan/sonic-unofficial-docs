@@ -208,13 +208,6 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 -->
 
 <!-- topics-back-ref -->
-
-<!-- demoted-by:q52-az-b-demote -->
-## 実装との乖離 / 補足
-
-- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。checkpoint / rollback 実装の取り込みは本文で「要確認」と明示している。
-- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
 ## 関連 Topics
 
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)

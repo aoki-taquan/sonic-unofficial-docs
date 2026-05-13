@@ -154,7 +154,7 @@ show reboot-cause history
 
 ### コマンド例
 
-reboot-cause を gNMI 経由で取得できるか確認する。
+reboot-cause を [gNMI](../reference/glossary.md#term-gnmi) 経由で取得できるか確認する。
 
 ```bash
 show reboot-cause
@@ -174,4 +174,4 @@ cat /host/reboot-cause/reboot-cause.txt
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4e4b0dab1086 -->
+<!-- glossary-links-injected: 658dfbdca882 -->

@@ -199,7 +199,7 @@ config clock date 2024-01-01 12:00:00
 
 ### コマンド例: Clock management の確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -210,7 +210,6 @@ redis-cli -n 4 hgetall 'NTP_SERVER|<ip>'
 # chrony / ntpd ログ
 sudo journalctl -u chronyd -n 50
 ```
-
 
 ## 関連リファレンス
 
@@ -231,4 +230,4 @@ sudo journalctl -u chronyd -n 50
 - rsyslog 再起動の自動化フロー
 -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 6981be1a469d -->

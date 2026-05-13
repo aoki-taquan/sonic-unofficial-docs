@@ -221,7 +221,7 @@ KVM 自体には追加 [CONFIG_DB](../reference/glossary.md#term-config_db) ス�
 
 ### コマンド例
 
-DASH ENI / VNET 経路と DPU 上のデータパスを確認する。
+DASH ENI / [VNET](../reference/glossary.md#term-vnet) 経路と DPU 上のデータパスを確認する。
 
 ```bash
 # DASH / ENI の状態
@@ -248,4 +248,4 @@ docker exec swss orchagent_restart_check 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7d682f06bb41 -->
+<!-- glossary-links-injected: b4362d98698a -->

@@ -188,7 +188,7 @@ sudo config interface ip add Vlan1000 20.11.12.13/27 20.11.12.1 --secondary
 
 ### コマンド例: DHCPv4 relay giaddr 指定確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -209,8 +209,6 @@ show dhcp_relay ipv4 helper
 redis-cli -n 4 hgetall 'DHCP_RELAY|Vlan1000'
 docker logs dhcp_relay 2>&1 | tail -30
 ```
-
-
 
 ## 引用元
 
@@ -248,4 +246,4 @@ docker logs dhcp_relay 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 6981be1a469d -->
