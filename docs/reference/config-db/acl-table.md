@@ -127,37 +127,59 @@ ACL_TABLE|<table_name>
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
-### `type` (string enum — 事前定義型)
+### `type` 値別挙動
 
-| 値 | 効果 | evidence |
-|---|---|---|
-| `L3` | IPv4 L3 ACL。MIRROR_INGRESS_ACTION 有効 | `aclorch.h:200,454` |
-| `L3V6` | IPv6 L3 ACL。IPv6 match フィールド有効 | `aclorch.h:220,471` |
-| `L3V4V6` | IPv4/IPv6 デュアルスタック。ASIC capability 確認後のみ作成 | `aclorch.h:240; aclorch.cpp:2737` |
-| `MIRROR` | ミラーセッション転送専用。`SAI_ACL_ACTION_TYPE_MIRROR_INGRESS` を要求 | `aclorch.h:260; aclorch.cpp:3502` |
-| `MIRRORV6` | IPv6 ミラー。IPv4 MIRROR と個別に能力チェック | `aclorch.h:279; aclorch.cpp:3503,3510` |
-| `MIRROR_DSCP` | DSCP 値でミラー先を決定する特殊 mirror テーブル | `aclorch.h:298` |
-| `PFCWD` | PFC Watchdog 用。Ingress/Egress 両方に登録 | `aclorch.h:315-316,430-431` |
-| `MCLAG` | MCLAG 制御用専用テーブル | `aclorch.h:334` |
-| `MUX` | dual-ToR mux 用テーブル | `aclorch.h:352` |
-| `DROP` | drop 専用最適化テーブル。`IngressTableDrop`/`EgressTableDrop` | `aclorch.h:370,111-112` |
-| `MARK_META` | メタデータマーキング (IPv4) | `aclorch.h:388` |
-| `MARK_META_V6` | メタデータマーキング (IPv6) | `aclorch.h:400` |
-| `EGR_SET_DSCP` | egress DSCP 書き換え専用。Egress stage 固定 | `aclorch.h:412,489` |
-| `CTRLPLANE` | コントロールプレーン ACL。SAI テーブル作成なし、CoppOrch 経由 | `aclorch.cpp:2727` |
+YANG 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
+実装定義 (acltable.h:26-42): 14 種以上。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
 
-### `stage` (enum)
+| 値 | 動作 | ASIC 確認 | evidence |
+|---|---|---|---|
+| `L3` | IPv4 L3 [ACL](../../reference/glossary.md#term-acl)。INGRESS/EGRESS 両対応 | なし | `acltable.h:26`, `aclorch.cpp:200,454` |
+| `L3V6` | IPv6 L3 [ACL](../../reference/glossary.md#term-acl)。`IP_PROTOCOL` 使用は非推奨 (WARN ログ) | なし | `acltable.h:27`, `aclorch.cpp:220,1231` |
+| `L3V4V6` | IPv4/IPv6 デュアルスタック ACL | `isAclL3V4V6TableSupported()` 必須 (`aclorch.cpp:2737`) | `acltable.h:28`, `aclorch.cpp:240,3541-3543` |
+| `MIRROR` | INGRESS mirror セッション転送専用 | `m_mirrorTableCapabilities[MIRROR]` 必須 | `acltable.h:29`, `aclorch.cpp:260,3502,3671` |
+| `MIRRORV6` | IPv6 INGRESS mirror 専用。ASIC によっては MIRROR テーブルに統合 | `m_mirrorTableCapabilities[MIRRORV6]` 必須 | `acltable.h:30`, `aclorch.cpp:279,3503,3510-3511,5811` |
+| `MIRROR_DSCP` | [DSCP](../../reference/glossary.md#term-dscp) 値でミラー先決定 | なし | `acltable.h:31`, `aclorch.cpp:298` |
+| `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) 専用。BRCM DNX では `SAI_ACL_BIND_POINT_TYPE_SWITCH` | なし | `acltable.h:32`, `aclorch.cpp:316,3811-3825` |
+| `CTRLPLANE` | SAI テーブル作成なし。`copporch` 経由で制御 | なし (stage 無視) | `acltable.h:33`, `aclorch.cpp:2727` |
+| `MCLAG` | [MCLAG](../../reference/glossary.md#term-mclag) 制御専用テーブル | なし | `acltable.h:35`, `aclorch.cpp:334,3791` |
+| `MUX` | dual-ToR mux 専用テーブル | なし | `acltable.h:36`, `aclorch.cpp:352` |
+| `DROP` | drop 最適化テーブル (`IngressTableDrop`/`EgressTableDrop`) | なし | `acltable.h:37`, `aclorch.cpp:370` |
+| `MARK_META` | メタデータマーキング (IPv4) | なし | `acltable.h:38`, `aclorch.cpp:388` |
+| `MARK_METAV6` | メタデータマーキング (IPv6) | なし | `acltable.h:39`, `aclorch.cpp:400` |
+| `EGR_SET_DSCP` | egress [DSCP](../../reference/glossary.md#term-dscp) 書き換え専用。EGRESS stage 固定 | なし | `acltable.h:40`, `aclorch.cpp:412,489` |
+| `UNDERLAY_SET_DSCP` | 内部で `MARK_META` に変換して SAI 投入 | なし | `acltable.h:41`, `aclorch.cpp:121 相当` |
+| `UNDERLAY_SET_DSCPV6` | 内部で `MARK_METAV6` に変換して SAI 投入 | なし | `acltable.h:42` |
 
-| 値 | 効果 | evidence |
-|---|---|---|
-| `ingress` (既定) | `SAI_ACL_STAGE_INGRESS`。`MIRROR_INGRESS_ACTION` 有効 | `aclorch.cpp:164,543` |
-| `egress` | `SAI_ACL_STAGE_EGRESS`。`MIRROR_EGRESS_ACTION` のみ有効 | `aclorch.cpp:165` |
+### `stage` 値別挙動
+
+`aclStageLookUp` (aclorch.cpp:164-167) でパース。不正値は `processAclTableStage()` が false を返し erase。
+
+| 値 | SAI stage | 有効 MIRROR action | evidence |
+|---|---|---|---|
+| `INGRESS` (既定) | `SAI_ACL_STAGE_INGRESS` | `MIRROR_INGRESS_ACTION` 有効 | `aclorch.cpp:166,173,263-266` |
+| `EGRESS` | `SAI_ACL_STAGE_EGRESS` | `MIRROR_EGRESS_ACTION` のみ有効 | `aclorch.cpp:167,185,270-272` |
+
+### `ETHER_TYPE` / `IP_TYPE` / `PACKET_ACTION` — ACL_TABLE への直接影響なし
+
+これら 3 フィールドは ACL_TABLE テーブル自体には存在しない (hit 数 0)。`ACL_TABLE_TYPE` サブテーブルの `MATCHES` / `ACTIONS` フィールドで許可する match / action キー名として文字列で列挙することで間接的に参照される。
+
+### 値別 grep カバレッジ
+
+| フィールド | 値数 | 0 hit | 証跡ファイル |
+|---|---|---|---|
+| `type` | 4 (YANG) / 14+ (実装) | 0 | acltable.h, aclorch.cpp |
+| `stage` | 2 | 0 | aclorch.cpp |
+| `ETHER_TYPE` | N/A (非フィールド) | — | — |
+| `IP_TYPE` | N/A (非フィールド) | — | — |
+| `PACKET_ACTION` | N/A (非フィールド) | — | — |
 
 ### 複合条件
 
-- `type=CTRLPLANE` → `stage` フィールドは無視、SAI テーブルを作成しない (`aclorch.cpp:2727`)
-- `type=L3V4V6` かつ ASIC が L3V4V6 capability を未報告 → `isAclL3V4V6TableSupported()` が false、テーブル作成に失敗 (`aclorch.cpp:2737`)
-- `type=MIRROR` / `MIRRORV6` → 起動時に ASIC へ mirror capability query を行い結果を `m_mirrorTableCapabilities` に保持。capability がなければ reject (`aclorch.cpp:3502-3541`)
+1. `type=CTRLPLANE` → `stage` フィールドを無視し SAI テーブルを作成しない (`aclorch.cpp:2727`)
+2. `type=L3V4V6` + ASIC capability なし → `isAclL3V4V6TableSupported()` が false でテーブル作成失敗 (`aclorch.cpp:2737`)
+3. `type=MIRROR` / `MIRRORV6` → 起動時 ASIC capability query、capability なければ reject (`aclorch.cpp:3502-3541`)
+4. `type=EGR_SET_DSCP` → EGRESS stage 固定。`stage=INGRESS` を指定しても egress 動作になる (`aclorch.cpp:489`)
 <!-- /value-behavior -->
 
 <!-- ref-triangle:start -->
@@ -211,4 +233,4 @@ aclshow -a
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 9f69b0796e2c -->
