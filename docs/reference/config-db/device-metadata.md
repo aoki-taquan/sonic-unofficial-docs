@@ -203,4 +203,20 @@ show platform summary
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| consumer | 条件 | 挙動 |
+|---|---|---|
+| bgpcfgd | `bgp_asn` が `localhost` に存在しない | BGP ピア追加を `return False` で延期・再試行待ち（managers_bgp.py:192） |
+| bgpcfgd | `bgp_router_id` も未設定かつ Loopback IPv4 未取得 | ピア追加待機、`log_warn` を出力（managers_bgp.py:186-188） |
+| bgpcfgd | `type` (switch_role) が未設定 | `switch_role=None` のまま継続、デフォルト補完なし（managers_device_global.py:53-54） |
+| syncd | `switch_type` が `hget` で取得できない | 空文字のまま続行、例外なし（Syncd.cpp:167-169） |
+| dhcprelayd | `has_sonic_dhcpv4_relay = "True"` | 旧来 `dhcrelay` プロセスを起動しない（新 dhcpv4-relay サービスに委譲）（dhcprelayd.py:112-113） |
+| linkmgrd | `mac` フィールドのフォーマット不正 | `MUX_ERROR(ConfigNotFound)` 例外を throw し linkmgrd が起動失敗（DbInterface.cpp:576） |
+| db_migrator | `synchronous_mode` キーが存在しない | 移行元から取得して補完、既存値は上書きしない（db_migrator.py:676-677） |
+
+> **Evidence**: sonic-buildimage `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`, `managers_device_global.py`; sonic-sairedis `syncd/Syncd.cpp:167`; sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:112`; sonic-linkmgrd `src/DbInterface.cpp:576`; sonic-utilities `scripts/db_migrator.py:676`
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: aa8ce067a4a1 -->

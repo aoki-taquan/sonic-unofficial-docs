@@ -117,4 +117,17 @@ show dhcprelay_helper ipv4
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| consumer | 条件 | 挙動 |
+|---|---|---|
+| db_migrator | DHCPV4_RELAY に `dhcpv4_servers` が既存 | `"Skipping migration for {vlan_key}: dhcpv4_servers already present in DHCPV4_RELAY"` を出力してスキップ（べき等性）（db_migrator.py:928） |
+| config vlan | DHCPV4_RELAY 参照中の VLAN を削除しようとした | `ctx.fail("{vlan} cannot be removed as it is being used in DHCPV4_RELAY table.")` でエラー終了（config/vlan.py:243） |
+| config main | DHCPV4_RELAY 参照中の VRF を削除しようとした | 削除を拒否（config/main.py:1699-1706） |
+| dhcp_relay CLI | 同一サーバ IP を重複追加 | 既存エントリを get してマージするため重複エントリは発生しない（dhcp_relay.py:601-628） |
+
+> **Evidence**: sonic-utilities `scripts/db_migrator.py:928`; `config/vlan.py:242-243`; `config/main.py:1699-1706`; sonic-buildimage `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py:601-628`
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 46a21a7d2d5c -->

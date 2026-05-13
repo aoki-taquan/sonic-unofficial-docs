@@ -110,4 +110,15 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| consumer | 条件 | 挙動 |
+|---|---|---|
+| bgpcfgd | `DEVICE_NEIGHBOR_METADATA` が directory に未到達 | `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` を出力して `return False` で延期。依存関係登録済みのため到着後に再処理（managers_bgp.py:220-222） |
+| pfcwd | neighbor `name` フィールド欠落 | `KeyError` が発生し pfcwd の起動シーケンスが中断する（pfcwd/main.py:102） |
+
+> **Evidence**: sonic-buildimage `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:140,220-224`; sonic-utilities `pfcwd/main.py:102`
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 9bd4f7a3d366 -->
