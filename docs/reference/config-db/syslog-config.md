@@ -90,14 +90,32 @@ SYSLOG_CONFIG|GLOBAL
 - [CONFIG_DB: SYSLOG_CONFIG_FEATURE](syslog-config-feature.md)
 - [CONFIG_DB: SYSLOG_SERVER](syslog-server.md)
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `format` (log-format): `welf` / `standard` (default)
+
+### `severity` (rsyslog-severity): `none` / `debug` / `info` / `notice` (default) / `warn` / `error` / `crit`
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `format` | `standard` | 標準 rsyslog フォーマットで書き込み。`welf_firewall_name` は無視 |
+| `format` | `welf` | WELF フォーマット出力。`welf_firewall_name` の設定が必須（YANG must 制約） |
+| `welf_firewall_name` | 設定あり + `format=standard` | YANG must 制約違反で書き込み拒否 |
+| `rate_limit_interval` | `0` | rate-limit 無効化 |
+| `rate_limit_burst` | `0` | バースト上限 0 = 全ログドロップ |
+| `severity` | `none` | フィルタなし（全 severity を出力） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L1715-1743 -->
 
-- **rsyslog 再起動失敗時は設定不反映**: `systemctl restart rsyslog-config` が失敗すると `"RSyslogCfg: Failed to restart rsyslog service"` を LOG_ERR してキャッシュ更新せずに return する。CONFIG_DB の値は書き込まれているが rsyslog には反映されない（次回 hostcfgd 再起動またはテーブル変更時に再試行される）。
+- **rsyslog 再起動失敗時は設定不反映**: `systemctl restart rsyslog-config` が失敗すると `"RSyslogCfg: Failed to restart rsyslog service"` を LOG_ERR してキャッシュ更新せずに return する。CONFIG_DB の値は書き込まれているが rsyslog には反映されない（次回 [hostcfgd](../../reference/glossary.md#term-hostcfgd) 再起動またはテーブル変更時に再試行される）。
 - **変更なしはノーオペレーション**: `SYSLOG_CONFIG` と `SYSLOG_SERVER` をまとめてキャッシュと比較し、変更がなければ `systemctl restart` をスキップする。
-- **YANG must 制約**: `welf_firewall_name` は `format != 'standard'` の must 制約を持ち、`format = standard` のまま書き込もうとすると YANG バリデーション層で拒否される（hostcfgd レベルの追加チェックはなし）。
+- **YANG must 制約**: `welf_firewall_name` は `format != 'standard'` の must 制約を持ち、`format = standard` のまま書き込もうとすると YANG バリデーション層で拒否される（[hostcfgd](../../reference/glossary.md#term-hostcfgd) レベルの追加チェックはなし）。
 
 <!-- /cdb-exceptions -->
 
@@ -121,4 +139,4 @@ show syslog
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: f29534787f37 -->

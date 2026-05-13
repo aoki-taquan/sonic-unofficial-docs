@@ -85,6 +85,21 @@ TC_TO_QUEUE_MAP|<name>|<tc>
 
 <!-- /topics-back-ref -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+`tc` / `qindex` は enum 型ではなく数値 / 文字列型。
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `tc` | `0`..`7` | 有効な Traffic Class インデックス |
+| `qindex` | `"0"`..`"9"` | 対応する egress queue インデックスにマッピング |
+| `qindex` | 空文字列 / 数字以外 | `stoi()` 例外 → `task_invalid_entry`（エントリ破棄） |
+| マップ全体 | PORT_QOS_MAP から参照中に DEL | DEL 保留 (`m_pendingRemove=true`)。参照解放まで待機 |
+| マップ全体 | PORT_QOS_MAP 参照なし + DEL | SAI `remove_qos_map()` を即時呼び出し |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

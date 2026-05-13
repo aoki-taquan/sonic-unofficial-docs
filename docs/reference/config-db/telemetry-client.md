@@ -103,6 +103,30 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 ## 関連ページ
 - [CONFIG_DB: TELEMETRY](telemetry.md)
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `encoding` (encoding typedef): `JSON_IETF` / `ASCII` / `BYTES` / `PROTO`
+
+### `report_type` (report-type typedef): `periodic` / `stream` / `once`
+
+### `path_target` (path_target typedef): `APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` / `OTHERS`
+
+### `prefix` (string pattern): `Subscription` / `DestinationGroup`
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `report_type` | `periodic` | `report_interval` [ms] ごとに定期送信 (default 5000ms) |
+| `report_type` | `stream` | ON_CHANGE — データ変化時に即送信 |
+| `report_type` | `once` | 1 回取得して切断。`report_interval` は無視 |
+| `unidirectional` | `true` (default) | dial-out は一方向ストリーム |
+| `unidirectional` | `false` | 双方向 RPC (コレクタからの応答を期待) |
+| `dst_addr` | IPv6 リテラル | `ipv4-port` typedef の pattern で [YANG](../../reference/glossary.md#term-yang) 拒否 |
+| `dst_group` (Subscription) | 存在しない DestinationGroup 名 | `must` 制約違反で YANG バリデーション失敗 |
+| `TELEMETRY_CLIENT|Global` | DEL 操作 | 拒否 (`"Invalid delete operation"`) |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -139,4 +163,4 @@ docker logs gnmi | grep -i dial-out
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 4b3b3fd0739b -->
+<!-- glossary-links-injected: d5320e852f7a -->

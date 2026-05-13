@@ -77,14 +77,35 @@ SYSTEM_DEFAULTS|<name>
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-system-defaults.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-defaults.yang>
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `status` (admin_mode): `enabled` / `disabled`
+
+代表的な `<name>` エントリと各値の意味:
+
+| name | `enabled` 時 | `disabled` 時 |
+|------|-------------|--------------|
+| `tunnel_qos_remap` | [IPinIP](../../reference/glossary.md#term-ipinip) デカプセル時の [QoS](../../reference/glossary.md#term-qos) リマップを有効化 (muxorch 起動時のみ参照) | [QoS](../../reference/glossary.md#term-qos) リマップなし |
+| `synchronous_mode` | [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) 操作を同期実行 (P4RT 連携時に必要) | 非同期実行 |
+| `dhcp_server` | 組み込み DHCP サーバを有効化 | 無効 |
+| `mux_tunnel_egress_acl` | Dual-ToR mux [ACL](../../reference/glossary.md#term-acl) を適用 (Mellanox: enabled が init_cfg デフォルト) | [ACL](../../reference/glossary.md#term-acl) 未適用 |
+
+| 状態 | 挙動 |
+|------|-----|
+| エントリ不在 (DEL 後) | 各機能は不在を `disabled` として扱う |
+| `tunnel_qos_remap` 実行中変更 | muxorch は起動時のみ参照のため、サービス再起動まで反映されない |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-buildimage/src/sonic-config-engine/config_samples.py@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd L160-186; sonic-swss/orchagent/muxorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L1388 -->
 
 - **テーブル不在時の安全フォールバック**: `config_samples.py` はテーブルが存在しない場合に空 dict を補完する。各機能コードもエントリ不在を "disabled" として扱い KeyError を起こさない。
-- **`tunnel_qos_remap` は起動時のみ参照**: `muxorch` が起動時に `SYSTEM_DEFAULTS` を一回だけ読み取り QoS remap の有効/無効を決定する。実行中に CONFIG_DB を書き換えてもサービス再起動なしには反映されない。
-- **enum 制約違反は YANG 層でブロック**: `status` フィールドは `admin_mode` enum（`enabled`/`disabled`）で制約されており、不正値は CONFIG_DB への書き込み時に YANG バリデーション層で拒否される。
+- **`tunnel_qos_remap` は起動時のみ参照**: `muxorch` が起動時に `SYSTEM_DEFAULTS` を一回だけ読み取り [QoS](../../reference/glossary.md#term-qos) remap の有効/無効を決定する。実行中に [CONFIG_DB](../../reference/glossary.md#term-config_db) を書き換えてもサービス再起動なしには反映されない。
+- **enum 制約違反は YANG 層でブロック**: `status` フィールドは `admin_mode` enum（`enabled`/`disabled`）で制約されており、不正値は [CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込み時に YANG バリデーション層で拒否される。
 - **エントリ削除の副作用**: 機能コードがエントリ不在をデフォルト（通常 disabled）として扱うため、エントリを DEL すると機能が暗黙的に無効化される。
 
 <!-- /cdb-exceptions -->
@@ -108,4 +129,4 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 90fa20b1e615 -->

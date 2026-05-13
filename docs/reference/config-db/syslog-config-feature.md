@@ -88,6 +88,20 @@ SYSLOG_CONFIG_FEATURE|<service>
 - [CONFIG_DB: SYSLOG_CONFIG](syslog-config.md)
 - [CONFIG_DB: FEATURE](feature.md)
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+本テーブルは enum フィールドを持たない（rate-limit 専用）。
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|-----|
+| `rate_limit_interval` | `0` | rate-limit 無効化（interval=0 で rsyslog の rate limit off） |
+| `rate_limit_burst` | `0` | バースト上限 0 = 当該コンテナの全ログがドロップ |
+| `rate_limit_interval` / `rate_limit_burst` | 未設定 (エントリなし) | `SYSLOG_CONFIG|GLOBAL` のグローバル設定にフォールバック |
+| key (`service`) | `FEATURE` テーブルに未登録の名前 | [YANG](../../reference/glossary.md#term-yang) leafref 違反で [CONFIG_DB](../../reference/glossary.md#term-config_db) 書き込み拒否 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

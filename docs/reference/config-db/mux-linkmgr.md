@@ -144,6 +144,6 @@ show mux config
 - **src_mac が不正値 → YANG が拒否**: `enum { ToRMac; VlanMac; }` のみ許可。
 - **log_verbosity が不正値 → YANG が拒否**: `enum { trace; debug; info; error; fatal; }` のみ許可。
 - **oscillation_enabled のデフォルト = true**: `default true`。TIMED_OSCILLATION コンテナが空でも `interval_sec = 300` で自動切替が有効になる。無効化する場合は明示的に `oscillation_enabled = false` を設定する必要がある。
-- **kill_radv のデフォルト = True**: `default True`。radv サービスは MUX 切替時にデフォルトで強制終了される。
+- **kill_radv のデフォルト = True**: `default True`。radv サービスは [MUX](../../reference/glossary.md#term-mux) 切替時にデフォルトで強制終了される。
 
-<!-- glossary-links-injected: be53736dfd16 -->
+<!-- glossary-links-injected: b1f2d0ff40fd -->
