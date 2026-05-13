@@ -235,7 +235,72 @@ HLD 方針自体が廃止され、後発別機能に置き換えられた状態�
 [deprecated]            軸 6: 5.00 (deprecated: link-ok)
 ```
 
-## 6. 関連ドキュメント
+## 6. weighted random sampling 規約（round 51 から試行）
+
+### 6.0 背景
+
+奇偶交互運用（§3.1）で random サブシリーズは母集団 unbiased estimator として運用してきたが、`find docs -name '*.md' | shuf -n 12` 方式は **全件等確率抽出** のため、件数の多い `code-verified` (~586 件 / 66%) が常に 7-9 件を占め、件数の少ない `discrepancy-found` (~75-82 件 / ~9%) や `runbook-verified` (~27 件 / 3%) は **0 件抽出が頻発**する。round 47 では df 0 件抽出となり、同日付の `quality-audit-47-discrepancy-mini.md` で別途指名 audit を起こす二重運用が発生した。
+
+stratified（§3.1 偶数 round）は逆に固定比 (cv 6 / rv 2 / df 2 / ci 1 / meta 1) で再現性が高い反面、**母集団真値の unbiased estimator にはならない**（df をオーバーサンプリング、cv をアンダーサンプリング）。
+
+両者の良いとこ取りとして **weighted random sampling**（重み付き無作為抽出）を round 51 から random サブシリーズに導入する。母集団全体から抽出する点で random の unbiased 性を維持しつつ、verification 種別ごとに重みを変えて少数派サブセットの抽出機会を確保する。
+
+### 6.1 重み定義（formal）
+
+各ページ `p` の抽出重み `w(p)` を verification 種別ごとに固定する:
+
+| verification | 重み `w` | 理由 |
+|--------------|---------|------|
+| `code-verified` (cv) | **0.7** | 主力サブセット、ある程度の代表性は確保するが純等確率より圧縮 |
+| `runbook-verified` (rv) | **0.05** | 件数最少、過小評価で抽出 0 が常態化を防ぐため等確率より増 |
+| `discrepancy-found` (df) | **0.15** | df subtype 別評価のため毎 round 1-2 件抽出を期待 |
+| `meta` (chapter-index / split-child / snapshot 集計含む) | **0.05** | meta は site root / snapshot.md 等の構造評価対象 |
+| `meta` (chapter-index 単独カウント = ci) | **0.05** | 22 章の扉、毎 round 0-1 件期待 |
+
+`page_kind: chapter-index` のページは ci バケット、それ以外の `verification: meta` は meta バケット。`verification: stub` は監査対象外（§1.3）のため重み 0。
+
+### 6.2 抽出手順
+
+```python
+import random
+weights_per_bucket = {"cv": 0.7, "rv": 0.05, "df": 0.15, "ci": 0.05, "meta": 0.05}
+# 各ページ p の重み = weights_per_bucket[bucket(p)] / count(bucket(p))
+# → バケット全体に重み w が割り当てられ、バケット内は等確率
+random.seed(round_number)
+sample = random.choices(pages, weights=weights, k=12)
+# 重複は除外し、サンプル数が 12 に満たない場合は重複なしで再抽選
+```
+
+重みは **バケット全体に割り当て、バケット内ページは等確率**。具体的には個別ページ重み = `weights_per_bucket[bucket(p)] / count(bucket(p))`。
+
+### 6.3 期待される抽出分布（n=12）
+
+母集団 ~880 件、cv 586 / rv 27 / df 75 / ci 22 / meta 174 を仮定すると、期待値は cv 8.4 / rv 0.6 / df 1.8 / ci 0.6 / meta 0.6。**df は毎 round 1-2 件抽出が期待**でき、round 47 で発生した df 0 件抽出 → 別途指名 audit 起票という二重運用を解消できる。
+
+純等確率（`shuf -n 12`）の期待値 cv 8.0 / rv 0.37 / df 1.02 / ci 0.30 / meta 2.37 と比較すると、weighted random は **rv +0.23 / df +0.78 / ci +0.30** で少数派を底上げ、meta を -1.77 圧縮。
+
+### 6.4 平均算出時の重み補正
+
+weighted random で抽出した round 平均は **生サンプル平均** と **母集団重み補正後の期待値** を併記する。重み補正後期待値は各ページ評価を母集団内バケット比率で再重み付けして算出する:
+
+```
+weighted_mean = Σ (score_i × population_ratio[bucket_i] / sample_ratio[bucket_i]) / 12
+```
+
+`population_ratio` は母集団内のバケット比率、`sample_ratio` は本 round サンプル内のバケット比率。stratified の重み補正と同じ要領で、生サンプルは少数派を強調しているため生平均から母集団真値推定へ補正する。
+
+### 6.5 試行 round と mature 判定
+
+- **round 51 で初試行**（奇数 round = random サブシリーズに導入）
+- **round 53 / 55** で継続観測、**round 57** で random サブシリーズの真値帯域（4.98 ± 0.01）に **±0.005 以内で収束**すれば mature 判定
+- mature 判定後は **奇数 round = weighted random 12** を formal 運用（§3.1 を改訂）
+- mature 未達の場合は重み係数を再調整（cv 0.7 → 0.75 への押し戻し等）、round 59 で再判定
+
+### 6.6 stratified との関係
+
+stratified（偶数 round）は **固定比 sampling** として継続、weighted random（奇数 round 試行）は **可変比 sampling** として並走。両者の真値推定が一致することで母集団真値の信頼区間が縮小する。
+
+## 7. 関連ドキュメント
 
 - `meta/templates/SCHEMA.md`: frontmatter スキーマ全体および `page_kind` / `monitor` の定義
 - `meta/prompts/reviewer.md`: Reviewer ロールの自動チェック
