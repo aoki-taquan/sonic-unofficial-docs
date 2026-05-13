@@ -187,6 +187,63 @@ admin@sonic:~$ redis-cli -n 0 LLEN "_*"
 
 並列性の改善は orchagent 周辺の internals ドキュメント群を参照する。
 
+## saidump のスケール限界
+
+`saidump` は ASIC_DB の全 key を Redis の Lua スクリプト（`Table::dump()`）で一括取得するため、40K route 規模になると数分以上かかる場合がある。Lua スクリプトの実行は Redis のシングルスレッドをブロックするため、dump 中は他の redis 操作も遅延する（issue #918）。
+
+回避策:
+- dump 対象を絞る: `redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTE*" | wc -l` で規模を確認してから採取。
+- 規模が大きい環境では `sairedis.rec` を代替手段にし、dump は障害直後の最小状態で採取する。
+- `show techsupport` 内の saidump は `--no-saidump` オプション（利用できる版）で省略可能。
+
+## syncd 単体 restart の落とし穴
+
+`sudo systemctl restart syncd` を実行すると、syncd が再起動後に `applyView` でスイッチ数の不一致エラーを起こすことがある：
+
+```
+applyView: condition current view switches: 0 != temporary view switches: 1
+```
+
+これは orchagent が `INIT_VIEW` → `APPLY_VIEW` を通知する前に syncd が再起動完了してしまい、syncd 側の「current view」が空になるためである（issue #639）。
+
+現状の回避策:
+- `syncd` 単体を restart するのではなく、**`sudo config reload`** や **swss docker 全体の restart** を行う。
+- `syncd` restart は swss とセットで行わないと reconcile が成立しない設計になっている。
+
+## cold boot 中の FDB event による orchagent crash
+
+cold boot 時に、port が admin UP 状態でフォワーディングが始まる前に FDB エントリが学習されると、orchagent (portsorch) の初期化シーケンスで問題が発生する（issue #1267、SONiC 202205 で報告）：
+
+1. FDB 学習が default port bridge ID の参照カウントをインクリメント
+2. `removeDefaultBridgePorts` が参照カウント > 0 で `SAI_STATUS_OBJECT_IN_USE` を返す
+3. `portsorch` が異常終了（orchagent crash）
+
+診断ポイント:
+- `show interface status` で cold boot 直後に port が up になっていないか確認する。
+- syslog で `removeDefaultVlanMembers` / `removeDefaultBridgePorts` 付近の SAI_STATUS を確認する。
+- 理論上、cold boot では全 port が down 状態から始まるべきであり、port up notification が来ている場合は SAI または platform 側の問題を疑う。
+
+## saidump の JSON parse error（show techsupport 時）
+
+`show techsupport` または `saidump` 実行時に以下のようなエラーが出る場合がある（issue #1387）：
+
+```
+ERR syncd#saidump: :- dumpFromRedisRdbJson: JSON file /var/run/redis0/dump.json is invalid.
+ERR syncd#saidump: :- dumpFromRedisRdbJson: JSON parsing error: unexpected end of input
+```
+
+原因: Redis の RDB dump ファイルが truncate されているか、saidump 実行時点でまだ書き込み中である。
+
+対処:
+1. `redis-cli SAVE` を手動で実行してから再試行する。
+2. `dump.json` のサイズが 0 か極端に小さい場合は、Redis プロセスが正常稼働しているか確認する。
+3. `show techsupport` の出力は JSON parse error があっても他の情報を含むため、tar.gz 自体は採取できる。
+
+## VS（virtual switch）環境の既知動作差異
+
+- **oper status 更新遅延**: admin down しても VS では port の oper status がしばらく `up` のまま残る場合がある。これは VS の tap device 経由でのリンク状態反映が実機の netlink と異なるためである（issue #555、PR #603 で修正済）。現行 master では解消しているが、古い image では発生する。
+- **netlink message 受信の問題**: syncd-vs は起動直後の netlink dump は受け取れるが、その後の incremental link event を見失うことがある（issue #1357）。VS でのデータプレーン検証は制限付きと理解した上で使う。
+
 ## 関連ページ
 
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
