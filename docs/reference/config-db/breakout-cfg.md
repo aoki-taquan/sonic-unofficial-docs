@@ -110,6 +110,28 @@ show interfaces breakout
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルには YANG で定義された enum フィールドはない。
+
+### `brkout_mode` (string、platform.json 依存)
+
+`brkout_mode` の有効値はプラットフォームごとに `platform.json` で定義される。代表的なパターンと挙動:
+
+| 値の例 | 子ポート数 | PORT テーブル生成例 |
+|--------|-----------|-------------------|
+| `1x100G[40G]` | 1 | 親ポートのまま (分割なし) |
+| `2x50G` | 2 | `Ethernet0`, `Ethernet2` |
+| `4x25G` | 4 | `Ethernet0`, `Ethernet1`, `Ethernet2`, `Ethernet3` |
+| `1x400G` | 1 | 親ポートのまま |
+| `2x200G` | 2 | 速度変更 + 2 分割 |
+| `4x100G` | 4 | 4 分割 |
+
+> `brkout_mode` の妥当性は `platform.json` の `interfaces.<port>.breakout_modes` で検証される。プラットフォーム依存のため全値を網羅的に示すことはできない。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -115,6 +115,27 @@ vtysh -c 'show bgp summary'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `admin_status` (sonic-bgp-cmn-neigh 由来)
+
+| 値 | FRR コマンド | 備考 |
+|----|-------------|------|
+| `up` | `no neighbor <addr> shutdown` | `managers_bgp.py:334` |
+| `down` | `neighbor <addr> shutdown` | `managers_bgp.py:336` |
+
+### `name` (固定値制約)
+
+| 値 | 動作 |
+|----|------|
+| `BGPMonitor` | YANG `must` 制約で強制。monitors テンプレ (`bgpd/templates/monitors/`) を使用 |
+| それ以外 | YANG 検証段階で拒否 |
+
+> **注意**: `admin_status` のみがライブ更新可能。他フィールドの変更は `bgpcfgd` に到達しても drop される (例外条件参照)。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

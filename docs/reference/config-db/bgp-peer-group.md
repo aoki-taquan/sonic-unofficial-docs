@@ -107,6 +107,29 @@ vtysh -c 'show bgp peer-group'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+BGP_NEIGHBOR と同一の `sonic-bgp-cmn` grouping を uses する。
+
+### `peer_type` (`bgp_peer_type`)
+
+| 値 | テンプレディレクトリ | 主な差異 |
+|----|-------------------|---------|
+| `internal` | `bgpd/templates/internal/` | `send-community` 自動、timers 3/10、BackEnd で `next-hop-self force` |
+| `external` / `general` | `bgpd/templates/general/` | timers 60/180、ToRRouter で `allowas-in 1` |
+
+peer-group に設定した `peer_type` は、その peer-group に属する全 neighbor のテンプレ種別を決定する。
+
+### `admin_status`
+
+| 値 | FRR コマンド |
+|----|-------------|
+| `up` | `no neighbor <pg> shutdown` |
+| `down` | `neighbor <pg> shutdown` |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

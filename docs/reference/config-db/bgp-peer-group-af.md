@@ -135,6 +135,41 @@ vtysh -c "show running-config bgpd"
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため、enum 挙動は同一。
+
+### `send_community` (`bgp_community_type`)
+
+| 値 | FRR コマンド |
+|----|-------------|
+| `standard` | `neighbor <pg> send-community standard` |
+| `extended` | `neighbor <pg> send-community extended` |
+| `both` | `neighbor <pg> send-community both` |
+| `large` | `neighbor <pg> send-community large` |
+| `all` | `neighbor <pg> send-community all` |
+| `none` | send-community 無効 (コマンド追加なし) |
+
+### `tx_add_paths`
+
+| 値 | FRR コマンド |
+|----|-------------|
+| `tx_all_paths` | `neighbor <pg> addpath-tx-all-paths` |
+| `tx_best_path_per_as` | `neighbor <pg> addpath-tx-bestpath-per-AS` |
+
+### `cap_orf`
+
+| 値 | FRR コマンド |
+|----|-------------|
+| `send` | `neighbor <pg> capability orf prefix-list send` |
+| `receive` | `neighbor <pg> capability orf prefix-list receive` |
+| `both` | `neighbor <pg> capability orf prefix-list both` |
+
+> peer-group に設定した値は、その peer-group に属する全 neighbor に FRR が自動継承する。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

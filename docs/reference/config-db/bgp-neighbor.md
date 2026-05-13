@@ -150,6 +150,31 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `peer_type` (`bgp_peer_type`、最重要 enum)
+
+| 値 | bgpcfgd テンプレディレクトリ | 主な差異 |
+|----|----------------------------|---------|
+| `internal` | `bgpd/templates/internal/` | timers 3/10、`send-community` 自動付与、BackEnd/chassis-packet で `next-hop-self force` |
+| `external` / 未指定 (`general`) | `bgpd/templates/general/` | timers 60/180、ToRRouter で `allowas-in 1`、SpineRouter UpstreamLC で `table-map` |
+| `dynamic` | `bgpd/templates/dynamic/` | `bgp listen range` 生成、`ip_range` フィールドを展開 |
+| `monitors` | `bgpd/templates/monitors/` | BGP_MONITORS テーブル専用 |
+| `voq_chassis` | `bgpd/templates/voq_chassis/` | VoQ chassis 間 iBGP |
+| `sentinels` | `bgpd/templates/sentinels/` | sentinel ピア |
+
+### `admin_status`
+
+| 値 | bgpcfgd 動作 | FRR コマンド |
+|----|-------------|-------------|
+| `up` | `apply_admin_status("no shutdown")` | `no neighbor <addr> shutdown` |
+| `down` | `apply_admin_status("shutdown")` | `neighbor <addr> shutdown` |
+
+> **注意**: ライブ更新可能なのは `admin_status` のみ。他フィールドの変更は `managers_bgp.py:309` の制約でエラーログを出して drop。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
