@@ -76,6 +76,16 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 - `type` は **mandatory**（[YANG](../../reference/glossary.md#term-yang) `mandatory true`）
 - `DEBUG_COUNTER_DROP_REASON.name` は親 `DEBUG_COUNTER_LIST.name` に存在することが必須
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+- **allPortsReady 未到達 → 全更新ペンディング**: ポート初期化完了前は `DebugCounterOrch::doTask()` が即 return し全 DEBUG_COUNTER 更新を保留する。<!-- evidence: debugcounterorch.cpp L137-140 -->
+- **未サポートカウンタ種別 → task_failed**: `counter_type` が `supported_counter_types` に含まれない場合 `SWSS_LOG_ERROR("Specified counter type '%s' is not supported.")` → `task_failed`。<!-- evidence: debugcounterorch.cpp L389 -->
+- **無効 / 未サポートな drop_reason → task_failed**: `isDropReasonValid()` が false か `supported_*_drop_reasons` に含まれない場合 `SWSS_LOG_ERROR` → `task_failed`。<!-- evidence: debugcounterorch.cpp L445, L451-453 -->
+- **counter 未存在への drop_reason 追加 → free_drop_counters で保留**: DEBUG_COUNTER エントリより先に DROP_REASON 更新が来た場合、`free_drop_reasons` に保存し counter 作成時に `reconcileFreeDropCounters()` で適用 (順序非依存)。<!-- evidence: debugcounterorch.cpp L460-465 -->
+- **最後の drop_reason の削除 → task_ignore**: drop_reasons が 1 件のときに `removeDropReason()` を呼ぶと `SWSS_LOG_WARN("Attempted to remove all drop reasons from counter")` → `task_ignore`。drop counter は最低 1 つの理由が必要。<!-- evidence: debugcounterorch.cpp L476-479 -->
+- **更新はべき等・失敗は状態を変更しない**: 失敗した更新はシステム状態を変更しない。同一リクエストの繰り返しは同一結果となる。<!-- evidence: debugcounterorch.cpp L128-130 -->
+
 ## 購読者
 
 - `debugcounterorch` ([orchagent](../../reference/glossary.md#term-orchagent)): SAI debug counter (sai_debug_counter) を作成し、ドロップ理由のセットを反映
