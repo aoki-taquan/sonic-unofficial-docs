@@ -1,0 +1,279 @@
+# sonic-buildimage Batch 1 — Issue Decisions
+
+入力: `meta/_intermediate/issues/sonic-net_sonic-buildimage_b1.json`  
+件数: 255件 (CLOSED: 158, OPEN: 97)  
+実行日: 2026-05-13
+
+## サマリー
+
+| 判定 | 件数 |
+|------|------|
+| apply | 181 |
+| skip  | 74 |
+| **合計** | **255** |
+
+## Apply 判定 (反映対象)
+
+アーキテクチャ・コンポーネント動作・ビルドシステム・プラットフォーム・ネットワーキングに関する知見を含むイシュー。
+対象ディレクトリ: docs/system/, docs/internals/, docs/architecture/, docs/platform/, docs/routing/
+
+- **#6722** [CLOSED] [[DPB] | printed output for dependencies on a port is unclear](https://github.com/sonic-net/sonic-buildimage/issues/6722) — covers buildimage architecture / component behavior
+- **#6723** [CLOSED] [[warmboot] syncd warmstart error: Invalid sai_api_t passed to sai_api_query](https://github.com/sonic-net/sonic-buildimage/issues/6723) — covers buildimage architecture / component behavior
+- **#6726** [CLOSED] [syncd translateVidToRid failures for ingress and egress buffer pools](https://github.com/sonic-net/sonic-buildimage/issues/6726) — covers buildimage architecture / component behavior
+- **#6737** [CLOSED] [[snmp | lldp] table is no present in SNMP facts](https://github.com/sonic-net/sonic-buildimage/issues/6737) — covers buildimage architecture / component behavior
+- **#6773** [CLOSED] [Multiple LAG flaps are noticed after warm reboot](https://github.com/sonic-net/sonic-buildimage/issues/6773) — covers buildimage architecture / component behavior
+- **#6781** [CLOSED] [PortChannel creation with out of range(0-255) value of "min-links", leads to Exception during update_data()](https://github.com/sonic-net/sonic-buildimage/issues/6781) — covers buildimage architecture / component behavior
+- **#6793** [OPEN] [[sflow] system crashed once sflow is enabled and switch has 200G+ interfaces](https://github.com/sonic-net/sonic-buildimage/issues/6793) — covers buildimage architecture / component behavior
+- **#6804** [OPEN] [build failure when "make configure platform=p4" is executed](https://github.com/sonic-net/sonic-buildimage/issues/6804) — covers buildimage architecture / component behavior
+- **#6820** [CLOSED] [Fresh install on Dell S5248F-ON, no working SFP ports, pmon/pcied/xcvrd/psud dead ](https://github.com/sonic-net/sonic-buildimage/issues/6820) — covers buildimage architecture / component behavior
+- **#6866** [CLOSED] [Kernel crash observed during kexec](https://github.com/sonic-net/sonic-buildimage/issues/6866) — covers buildimage architecture / component behavior
+- **#6935** [CLOSED] [[DPB] redis (database) input/output errors](https://github.com/sonic-net/sonic-buildimage/issues/6935) — covers buildimage architecture / component behavior
+- **#6936** [CLOSED] [Error message displayed on deleting vlan member "Failed to get port by bridge port ID"](https://github.com/sonic-net/sonic-buildimage/issues/6936) — covers buildimage architecture / component behavior
+- **#6943** [CLOSED] [frr-mgmt-framework syntax for PREFIX_SET is impossible to use in a route-map](https://github.com/sonic-net/sonic-buildimage/issues/6943) — covers buildimage architecture / component behavior
+- **#7071** [CLOSED] [[warm-reboot] syncd APPLY_VIEW error: brcm_sai_remove_hostif_trap_group in use](https://github.com/sonic-net/sonic-buildimage/issues/7071) — covers buildimage architecture / component behavior
+- **#7076** [CLOSED] [[build] error: can't copy './yang-models/sonic_yang_tree': doesn't exist or not a regular file](https://github.com/sonic-net/sonic-buildimage/issues/7076) — covers buildimage architecture / component behavior
+- **#7094** [CLOSED] [warmboot  syncd pre shutdown fails in latest master and device hangs](https://github.com/sonic-net/sonic-buildimage/issues/7094) — covers buildimage architecture / component behavior
+- **#7124** [OPEN] [Failed to clear PortChannel on MSN4600c when swss service is stopped](https://github.com/sonic-net/sonic-buildimage/issues/7124) — covers buildimage architecture / component behavior
+- **#7127** [CLOSED] [[warm-reboot] warm-reboot breaks if ssh session in which it was started drops](https://github.com/sonic-net/sonic-buildimage/issues/7127) — covers buildimage architecture / component behavior
+- **#7139** [CLOSED] [201811 parallel build failure seen with Innovium platform](https://github.com/sonic-net/sonic-buildimage/issues/7139) — covers buildimage architecture / component behavior
+- **#7140** [CLOSED] [[fast-reboot] fast-reboot downtime period exceed 30 seconds on master/202012 branches](https://github.com/sonic-net/sonic-buildimage/issues/7140) — covers buildimage architecture / component behavior
+- **#7317** [OPEN] [ ERR swss#orchagent: :- removeLag: Failed to remove ref count 1 LAG PortChannel0001 is seen during config reload](https://github.com/sonic-net/sonic-buildimage/issues/7317) — covers buildimage architecture / component behavior
+- **#7354** [CLOSED] [Build fails with "chroot ./fsroot docker info"](https://github.com/sonic-net/sonic-buildimage/issues/7354) — covers buildimage architecture / component behavior
+- **#7372** [CLOSED] [Docker startup broken in master for aboot due to systemd upgrade](https://github.com/sonic-net/sonic-buildimage/issues/7372) — covers buildimage architecture / component behavior
+- **#7402** [CLOSED] [[DPB] config_db.json "BREAKOUT_CFG" update when upgrading](https://github.com/sonic-net/sonic-buildimage/issues/7402) — covers buildimage architecture / component behavior
+- **#7403** [CLOSED] [[DPB][VS][master]: SONiC fails to remove HOST IF](https://github.com/sonic-net/sonic-buildimage/issues/7403) — covers buildimage architecture / component behavior
+- **#7508** [CLOSED] [[services] Job for sonic.target canceled.](https://github.com/sonic-net/sonic-buildimage/issues/7508) — covers buildimage architecture / component behavior
+- **#7518** [CLOSED] [sonic image downgrade failure from latest public master image](https://github.com/sonic-net/sonic-buildimage/issues/7518) — covers buildimage architecture / component behavior
+- **#7538** [OPEN] [FDB entry not removed in case when remove port from VLAN](https://github.com/sonic-net/sonic-buildimage/issues/7538) — covers buildimage architecture / component behavior
+- **#7611** [OPEN] [[DPB] Failed to break out Port. Error: ConfigMgmtDPB Class creation failed](https://github.com/sonic-net/sonic-buildimage/issues/7611) — covers buildimage architecture / component behavior
+- **#7768** [CLOSED] [Orchagent exit after configuring incorrect advertised interface type value](https://github.com/sonic-net/sonic-buildimage/issues/7768) — covers buildimage architecture / component behavior
+- **#7782** [CLOSED] [[Functional] [DPB] | port with dependencies is unmapped after breakout with force](https://github.com/sonic-net/sonic-buildimage/issues/7782) — covers buildimage architecture / component behavior
+- **#7798** [CLOSED] [[fast-reboot] APPLY_VIEW failure in handleSaiCreateStatus causing orchagent crash](https://github.com/sonic-net/sonic-buildimage/issues/7798) — covers buildimage architecture / component behavior
+- **#7800** [CLOSED] [PLATFORM=broadcom fails arista "ReloadCauseManagerTest" first time](https://github.com/sonic-net/sonic-buildimage/issues/7800) — covers buildimage architecture / component behavior
+- **#7810** [OPEN] [[warmboot] LAG flaps seen after continous warmboots to same image](https://github.com/sonic-net/sonic-buildimage/issues/7810) — covers buildimage architecture / component behavior
+- **#7943** [CLOSED] [[mirroring] Incorrect validation for multiple source ports and direction](https://github.com/sonic-net/sonic-buildimage/issues/7943) — covers buildimage architecture / component behavior
+- **#7959** [CLOSED] [[DPB] BGP_NEIGHBOR yang model causing DPB errors](https://github.com/sonic-net/sonic-buildimage/issues/7959) — covers buildimage architecture / component behavior
+- **#7974** [CLOSED] [[warmboot] OA crash: INIT_VIEW failure "SELECT operation result: TIMEOUT on notify"](https://github.com/sonic-net/sonic-buildimage/issues/7974) — covers buildimage architecture / component behavior
+- **#7988** [OPEN] [[mirroring] Session on source portchannel is active when portchannel has no members](https://github.com/sonic-net/sonic-buildimage/issues/7988) — covers buildimage architecture / component behavior
+- **#7989** [OPEN] [[mirroring] Portchannel as destination rejected with errors by orchagent](https://github.com/sonic-net/sonic-buildimage/issues/7989) — covers buildimage architecture / component behavior
+- **#8020** [OPEN] [Orchagent exits is -i parameter gets exercised . Either via asic_id in config_db.json or via ORCHAGENT_ARGS](https://github.com/sonic-net/sonic-buildimage/issues/8020) — covers buildimage architecture / component behavior
+- **#8036** [OPEN] [[crm] error in logs querying for SAI_OBJECT_TYPE_INSEG_ENTRY](https://github.com/sonic-net/sonic-buildimage/issues/8036) — covers buildimage architecture / component behavior
+- **#8111** [CLOSED] [[vlan] multiple test cases fail](https://github.com/sonic-net/sonic-buildimage/issues/8111) — covers buildimage architecture / component behavior
+- **#8177** [CLOSED] [occasional syncd crash at initialization time](https://github.com/sonic-net/sonic-buildimage/issues/8177) — covers buildimage architecture / component behavior
+- **#8189** [CLOSED] [[mirroring] Missing per-vendor validation of mirror session queue parameter](https://github.com/sonic-net/sonic-buildimage/issues/8189) — covers buildimage architecture / component behavior
+- **#8301** [OPEN] [SWSS Orchagent crashed for "soft-reboot" command.](https://github.com/sonic-net/sonic-buildimage/issues/8301) — covers buildimage architecture / component behavior
+- **#8371** [OPEN] [VXLAN programming fails with `brcm_sai_create_tunnel_map_entry: Can't create brcm vxlan tunnel`](https://github.com/sonic-net/sonic-buildimage/issues/8371) — covers buildimage architecture / component behavior
+- **#8425** [CLOSED] [[bbr] test_bgp_bbr fails](https://github.com/sonic-net/sonic-buildimage/issues/8425) — covers buildimage architecture / component behavior
+- **#8428** [OPEN] [[fast-reboot] long downtime period possibly exceed 30 seconds 202012 on mlnx2700 (sync mode)  ](https://github.com/sonic-net/sonic-buildimage/issues/8428) — covers buildimage architecture / component behavior
+- **#8449** [CLOSED] [Portchannel doesn't take traffic after updated](https://github.com/sonic-net/sonic-buildimage/issues/8449) — covers buildimage architecture / component behavior
+- **#8511** [CLOSED] [[ACL][broadcom] L3 ACL_TABLE catches IPv6 packets on broadcom platform](https://github.com/sonic-net/sonic-buildimage/issues/8511) — covers buildimage architecture / component behavior
+- **#8512** [CLOSED] [eth0 failed to get an IP address via DHCP when install the image via ONIE](https://github.com/sonic-net/sonic-buildimage/issues/8512) — covers buildimage architecture / component behavior
+- **#8518** [CLOSED] [[dropcounter] drop counter doesn't increase for expired ttl or invalid vlan](https://github.com/sonic-net/sonic-buildimage/issues/8518) — covers buildimage architecture / component behavior
+- **#8569** [OPEN] [[fast-reboot] Long fast reboot downtime in asynchronous mode](https://github.com/sonic-net/sonic-buildimage/issues/8569) — covers buildimage architecture / component behavior
+- **#8722** [CLOSED] [[warmboot] Recovery path failed when syncd hits "Runtime error: :- translateVidToRid"](https://github.com/sonic-net/sonic-buildimage/issues/8722) — covers buildimage architecture / component behavior
+- **#8745** [CLOSED] [[Nokia][7215] TestSfpApi failed due to type_abbrv_name not exists in transceiver_info_dict](https://github.com/sonic-net/sonic-buildimage/issues/8745) — covers buildimage architecture / component behavior
+- **#8837** [CLOSED] [PortChannel table is not populated in STATE_DB leading to N/A field displayed as protocol in 'show interfaces portchannel'](https://github.com/sonic-net/sonic-buildimage/issues/8837) — covers buildimage architecture / component behavior
+- **#8898** [CLOSED] [[Bug] [Build] DOCKERD for march cmd fails when there are conflicting directives in /etc/docker/daemon.json](https://github.com/sonic-net/sonic-buildimage/issues/8898) — covers buildimage architecture / component behavior
+- **#8934** [CLOSED] [[reboot-cause] failed to get reboot cause](https://github.com/sonic-net/sonic-buildimage/issues/8934) — covers buildimage architecture / component behavior
+- **#8959** [OPEN] [[telemetry] telemetry.sh script fails to handle missing parameter in config DB and docker does not start](https://github.com/sonic-net/sonic-buildimage/issues/8959) — covers buildimage architecture / component behavior
+- **#9028** [OPEN] [VxLan tunnel information is not shown properly while configuring EVPN (tunnel destination remains blank)](https://github.com/sonic-net/sonic-buildimage/issues/9028) — covers buildimage architecture / component behavior
+- **#9033** [OPEN] [[voq][orchagent][fabric]"Failed to get port object for portid" error during line card boot up](https://github.com/sonic-net/sonic-buildimage/issues/9033) — covers buildimage architecture / component behavior
+- **#9147** [CLOSED] [Error:server certificate verification failed when build sonic bin](https://github.com/sonic-net/sonic-buildimage/issues/9147) — covers buildimage architecture / component behavior
+- **#9177** [OPEN] [[AS7326-56x] syncd does not start up after a clean install. switch creation failure.](https://github.com/sonic-net/sonic-buildimage/issues/9177) — covers buildimage architecture / component behavior
+- **#9187** [OPEN] [SAI errors installing tunnel entries in the l3vni case](https://github.com/sonic-net/sonic-buildimage/issues/9187) — covers buildimage architecture / component behavior
+- **#9242** [CLOSED] [[snmpd] message "Failed to open /proc/net/dev_snmp6/PortChannelXXX" randomly appears after LAG removing](https://github.com/sonic-net/sonic-buildimage/issues/9242) — covers buildimage architecture / component behavior
+- **#9261** [CLOSED] [[master] swss encounters error after clear_stats fail with SAI_STATUS_NOT_SUPPORTED ](https://github.com/sonic-net/sonic-buildimage/issues/9261) — covers buildimage architecture / component behavior
+- **#9312** [OPEN] [[yang-models] Importing other modules sometimes break libyang backlinks](https://github.com/sonic-net/sonic-buildimage/issues/9312) — covers buildimage architecture / component behavior
+- **#9321** [CLOSED] [no docker-ptf-saithrift after branch 202006 ](https://github.com/sonic-net/sonic-buildimage/issues/9321) — covers buildimage architecture / component behavior
+- **#9326** [CLOSED] [[DPB] DPB falls cause of invalid value in "has_global_scope" element](https://github.com/sonic-net/sonic-buildimage/issues/9326) — covers buildimage architecture / component behavior
+- **#9406** [CLOSED] [Fail on ACL table creation](https://github.com/sonic-net/sonic-buildimage/issues/9406) — covers buildimage architecture / component behavior
+- **#9407** [OPEN] ["show platform ssdhealth" command fails on certain platforms](https://github.com/sonic-net/sonic-buildimage/issues/9407) — covers buildimage architecture / component behavior
+- **#9434** [CLOSED] [Routeorch calls SAI API set attribute for a routing entry which was just removed from SAI in the same bulk operation. Should recreate it in such case.](https://github.com/sonic-net/sonic-buildimage/issues/9434) — covers buildimage architecture / component behavior
+- **#9470** [CLOSED] [Routing between VLANs does not work: no ARP request is sent](https://github.com/sonic-net/sonic-buildimage/issues/9470) — covers buildimage architecture / component behavior
+- **#9478** [CLOSED] [[DPB] Port Breakout issue on Mellanox SN2700](https://github.com/sonic-net/sonic-buildimage/issues/9478) — covers buildimage architecture / component behavior
+- **#9505** [CLOSED] [[voq][pmon]xcvrd process show the backtrace in the syslog file on VOQ linecard](https://github.com/sonic-net/sonic-buildimage/issues/9505) — covers buildimage architecture / component behavior
+- **#9532** [OPEN] [Order of ACL rule creation and port admin up](https://github.com/sonic-net/sonic-buildimage/issues/9532) — covers buildimage architecture / component behavior
+- **#9597** [CLOSED] [[Z9332][202012]: "FLEX_COUNTER_TABLE" is missing from config_db.json after fast-reboot](https://github.com/sonic-net/sonic-buildimage/issues/9597) — covers buildimage architecture / component behavior
+- **#9606** [CLOSED] [[DPB] DellEMC Z9332f Dynamic port breakout fails in verbose mode](https://github.com/sonic-net/sonic-buildimage/issues/9606) — covers buildimage architecture / component behavior
+- **#9611** [CLOSED] [[yang-models] sonic-scheduler.yang pattern issue](https://github.com/sonic-net/sonic-buildimage/issues/9611) — covers buildimage architecture / component behavior
+- **#9623** [OPEN] [[yang-models] Verify 'lanes' are unique per entry in 'PORT' table by yang validation extension](https://github.com/sonic-net/sonic-buildimage/issues/9623) — covers buildimage architecture / component behavior
+- **#9631** [OPEN] [[logs][swss] Logs show "Failed to start dhcp_relay.service: Unit dhcp_relay.service is masked."](https://github.com/sonic-net/sonic-buildimage/issues/9631) — covers buildimage architecture / component behavior
+- **#9633** [OPEN] [[logs][tunnel] Logs show "Could not get tunnel addresses from config DB"](https://github.com/sonic-net/sonic-buildimage/issues/9633) — covers buildimage architecture / component behavior
+- **#9634** [OPEN] [[logs][swss] Logs show "cannot stat /proc/sys/net/mpls/conf/Ethernet0/input"](https://github.com/sonic-net/sonic-buildimage/issues/9634) — covers buildimage architecture / component behavior
+- **#9638** [CLOSED] [[yang-models] missing ACCEPT in sonic-types.yang which used in ACL](https://github.com/sonic-net/sonic-buildimage/issues/9638) — covers buildimage architecture / component behavior
+- **#9643** [CLOSED] [config-setup factory failed to parse platform.json](https://github.com/sonic-net/sonic-buildimage/issues/9643) — covers buildimage architecture / component behavior
+- **#9653** [OPEN] [Orchagent crash after performing port breakout of 400G into 4x100G[50G]](https://github.com/sonic-net/sonic-buildimage/issues/9653) — covers buildimage architecture / component behavior
+- **#9663** [CLOSED] [[DPB] swss docker crashes when doing DPB in DellEMC Z9332f](https://github.com/sonic-net/sonic-buildimage/issues/9663) — covers buildimage architecture / component behavior
+- **#9679** [CLOSED] [[dhcpv6 relay] - DHCPv6 relay does not work after load json config with DHCPv6 relay configuration](https://github.com/sonic-net/sonic-buildimage/issues/9679) — covers buildimage architecture / component behavior
+- **#9690** [CLOSED] [[dhcpv6 relay] - DHCPv6 relay forwards request from client with malformed payload](https://github.com/sonic-net/sonic-buildimage/issues/9690) — covers buildimage architecture / component behavior
+- **#9694** [OPEN] [Learned EVPN routes are getting disappeared after we advertise IMET route](https://github.com/sonic-net/sonic-buildimage/issues/9694) — covers buildimage architecture / component behavior
+- **#9714** [OPEN] [[202012][teamd]: segmentation fault is observed during LAG members scale](https://github.com/sonic-net/sonic-buildimage/issues/9714) — covers buildimage architecture / component behavior
+- **#9765** [OPEN] [Insufficient sonic_platform support for as7315_27xb - no module named sonic_platform](https://github.com/sonic-net/sonic-buildimage/issues/9765) — covers buildimage architecture / component behavior
+- **#9767** [CLOSED] [[202012] warm-reboot from 201811 to 202012 with one LAG down results in recreation of multiple LAG_MEMBER objects during APPLY_VIEW](https://github.com/sonic-net/sonic-buildimage/issues/9767) — covers buildimage architecture / component behavior
+- **#9794** [CLOSED] [Need YANG for BGP_PEER_RANGE table](https://github.com/sonic-net/sonic-buildimage/issues/9794) — covers buildimage architecture / component behavior
+- **#9801** [OPEN] [[yang] DPB fails when BUFFER_PORT_EGRESS_PROFILE is configured](https://github.com/sonic-net/sonic-buildimage/issues/9801) — covers buildimage architecture / component behavior
+- **#9802** [OPEN] [[DPB] [lldp] LLDP does not have logic to gracefully handle port deletion](https://github.com/sonic-net/sonic-buildimage/issues/9802) — covers buildimage architecture / component behavior
+- **#9831** [OPEN] [[teamd] config portchannel del is resulting in an extra keyspace notification](https://github.com/sonic-net/sonic-buildimage/issues/9831) — covers buildimage architecture / component behavior
+- **#9855** [OPEN] [mclagdctl missing from Broadcom build](https://github.com/sonic-net/sonic-buildimage/issues/9855) — covers buildimage architecture / component behavior
+- **#9885** [OPEN] [VS image build failed when P4RT container is enabled](https://github.com/sonic-net/sonic-buildimage/issues/9885) — covers buildimage architecture / component behavior
+- **#9899** [OPEN] [[fast-reboot][202012] Orchagent timeout to notify syncd to begin INIT_VIEW](https://github.com/sonic-net/sonic-buildimage/issues/9899) — covers buildimage architecture / component behavior
+- **#9908** [OPEN] [System crashed if IPv6 link-local is enabled and user tried to add member to port-channel](https://github.com/sonic-net/sonic-buildimage/issues/9908) — covers buildimage architecture / component behavior
+- **#9919** [OPEN] [Docker in docker builds do not work in build container (Arch linux host)](https://github.com/sonic-net/sonic-buildimage/issues/9919) — covers buildimage architecture / component behavior
+- **#9929** [CLOSED] [[yang] missing MIRROR_INGRESS_ACTION and MIRROR_EGRESS_ACTION in sonic-acl.yang](https://github.com/sonic-net/sonic-buildimage/issues/9929) — covers buildimage architecture / component behavior
+- **#9945** [CLOSED] [[DHCP6RELAY] Error in logs "ERR dhcp_relay#dhcp6relay: bind: Failed to bind to socket"](https://github.com/sonic-net/sonic-buildimage/issues/9945) — covers buildimage architecture / component behavior
+- **#9984** [OPEN] [mclagsyncd crashing](https://github.com/sonic-net/sonic-buildimage/issues/9984) — covers buildimage architecture / component behavior
+- **#10004** [CLOSED] [VXLAN not coming up with error unexpected type: SAI_OBJECT_TYPE_TUNNEL](https://github.com/sonic-net/sonic-buildimage/issues/10004) — covers buildimage architecture / component behavior
+- **#10005** [OPEN] [[DPB] [portsorch] Orchagent missing DELETE update from CONFIG_DB during DPB](https://github.com/sonic-net/sonic-buildimage/issues/10005) — covers buildimage architecture / component behavior
+- **#10050** [CLOSED] [ARP traffic gets dropped in VXLAN-EVPN tunnels](https://github.com/sonic-net/sonic-buildimage/issues/10050) — covers buildimage architecture / component behavior
+- **#10135** [CLOSED] [On single-asic and multi-asic sonic devices, after sonic-installer install an image that does not exist, executing any commands generate backtrace ](https://github.com/sonic-net/sonic-buildimage/issues/10135) — covers buildimage architecture / component behavior
+- **#10138** [CLOSED] [VXLAN tunnel creation fails after P2MP support was added](https://github.com/sonic-net/sonic-buildimage/issues/10138) — covers buildimage architecture / component behavior
+- **#10284** [CLOSED] [[warm-upgrade] 3.5 to 4.3 fails at APPLY_VIEW due to unexpected BUFFER_POOL ASIC operations](https://github.com/sonic-net/sonic-buildimage/issues/10284) — covers buildimage architecture / component behavior
+- **#10336** [OPEN] [[20191130.82] intfmgrd failed to assign IPv4 address to PortChannel](https://github.com/sonic-net/sonic-buildimage/issues/10336) — covers buildimage architecture / component behavior
+- **#10376** [OPEN] [[yang] sonic-bgp-peerrange.yang same ip_range is not allowed - sonic yang extension ](https://github.com/sonic-net/sonic-buildimage/issues/10376) — covers buildimage architecture / component behavior
+- **#10386** [OPEN] [[YANG]sonic-dot1p-tc-map.yang would cause failed  deployment via mgmt-framework](https://github.com/sonic-net/sonic-buildimage/issues/10386) — covers buildimage architecture / component behavior
+- **#10388** [OPEN] [[vlanmgr] [swss] vlanmgrd might crash when a member is removed from vlan](https://github.com/sonic-net/sonic-buildimage/issues/10388) — covers buildimage architecture / component behavior
+- **#10390** [CLOSED] [[201811->202012][WARM] APPLY_VIEW failure and core seen in LAG member down scenario](https://github.com/sonic-net/sonic-buildimage/issues/10390) — covers buildimage architecture / component behavior
+- **#10419** [CLOSED] [[DHCPv6_RELAY] DHCPv6 relay does not forward DHCP6_RelayForward message](https://github.com/sonic-net/sonic-buildimage/issues/10419) — covers buildimage architecture / component behavior
+- **#10434** [CLOSED] [sonic-installer does not work when there is no database running](https://github.com/sonic-net/sonic-buildimage/issues/10434) — covers buildimage architecture / component behavior
+- **#10466** [CLOSED] [[Vxlanmgrd] vxlan tunnel map netdev creation fails when the dev name length crosses IFNAMSIZ  ](https://github.com/sonic-net/sonic-buildimage/issues/10466) — covers buildimage architecture / component behavior
+- **#10518** [OPEN] [Traffic issues on AS7726-32x Trident switch installed with SONiC.202106 image](https://github.com/sonic-net/sonic-buildimage/issues/10518) — covers buildimage architecture / component behavior
+- **#10569** [CLOSED] [[multiasic] Issue is shown on "sudo sfputil show presence" on a multiasic platform with minigraph generated config_db files](https://github.com/sonic-net/sonic-buildimage/issues/10569) — covers buildimage architecture / component behavior
+- **#10638** [CLOSED] [[DellEMC]Failed to set pre-emphasis settings ](https://github.com/sonic-net/sonic-buildimage/issues/10638) — covers buildimage architecture / component behavior
+- **#10668** [CLOSED] [[Yang] Failed to find the xDbSpecMap: xpath  for Annotation yang with field-name and table-name](https://github.com/sonic-net/sonic-buildimage/issues/10668) — covers buildimage architecture / component behavior
+- **#10785** [CLOSED] [[DHCPv6] dhcpv6 packets doesn't forwarded](https://github.com/sonic-net/sonic-buildimage/issues/10785) — covers buildimage architecture / component behavior
+- **#10845** [OPEN] [Accton-AS7726-32X Show Platform Commands Not Working](https://github.com/sonic-net/sonic-buildimage/issues/10845) — covers buildimage architecture / component behavior
+- **#10870** [CLOSED] [[chassis] Too many open files error and unable to connect to redis socket error](https://github.com/sonic-net/sonic-buildimage/issues/10870) — covers buildimage architecture / component behavior
+- **#10883** [CLOSED] [caclmgrd core dump file generated after loading scale ipv6 cacl rules](https://github.com/sonic-net/sonic-buildimage/issues/10883) — covers buildimage architecture / component behavior
+- **#10887** [CLOSED] [ [202012] [Dell S5248F] Platform modules missing for DellEMC-S5248f](https://github.com/sonic-net/sonic-buildimage/issues/10887) — covers buildimage architecture / component behavior
+- **#10942** [CLOSED] [[chassis][dnx] Ports don't come up after reboot/config load_minigraph if we have qos buffer profile/cfg files on a brcm dnx linecard in a T2 chassis](https://github.com/sonic-net/sonic-buildimage/issues/10942) — covers buildimage architecture / component behavior
+- **#11008** [CLOSED] [[LLDP] fails to replace default value for portID and PortDescr on neighbors](https://github.com/sonic-net/sonic-buildimage/issues/11008) — covers buildimage architecture / component behavior
+- **#11046** [CLOSED] [orchagent crashed when trying to delete fdb static entry with swssconfig](https://github.com/sonic-net/sonic-buildimage/issues/11046) — covers buildimage architecture / component behavior
+- **#11064** [CLOSED] [[master] orchagent exits in a multi-asic linecard in Chassis](https://github.com/sonic-net/sonic-buildimage/issues/11064) — covers buildimage architecture / component behavior
+- **#11167** [OPEN] [OA apply view failed if bridge_port type tunnel is configured](https://github.com/sonic-net/sonic-buildimage/issues/11167) — covers buildimage architecture / component behavior
+- **#11190** [OPEN] [[DPB] [Counters] Error logs related to Counters seen when a port is broken out](https://github.com/sonic-net/sonic-buildimage/issues/11190) — covers buildimage architecture / component behavior
+- **#11217** [CLOSED] [Does broadcom's sai support 56770(td3) chip?  IOCTL failed on /dev/linux_ngknet](https://github.com/sonic-net/sonic-buildimage/issues/11217) — covers buildimage architecture / component behavior
+- **#11255** [CLOSED] [DUT sent lldp frame with incorrect port ID to EOS neighbor](https://github.com/sonic-net/sonic-buildimage/issues/11255) — covers buildimage architecture / component behavior
+- **#11317** [CLOSED] [Celestica Seastone DX010-C32: show platform firmware updates](https://github.com/sonic-net/sonic-buildimage/issues/11317) — covers buildimage architecture / component behavior
+- **#11319** [CLOSED] [Celestica Seastone DX010-C32: show platform summary does not show the serial or model number ](https://github.com/sonic-net/sonic-buildimage/issues/11319) — covers buildimage architecture / component behavior
+- **#11322** [OPEN] [Celestica Seastone DX010-C32: show system-health detail fails with 'Chassis' object has no attribute 'initizalize_system_led'](https://github.com/sonic-net/sonic-buildimage/issues/11322) — covers buildimage architecture / component behavior
+- **#11328** [CLOSED] [[Generic Config Updater] Failed to replace interface speed via GCU when the interface is up](https://github.com/sonic-net/sonic-buildimage/issues/11328) — covers buildimage architecture / component behavior
+- **#11337** [OPEN] [Build failed. Marvell amd64.](https://github.com/sonic-net/sonic-buildimage/issues/11337) — covers buildimage architecture / component behavior
+- **#11431** [CLOSED] [[DHCP_RELAY] [IPv6] [202012] Failed to bind socket to link local ipv6 address](https://github.com/sonic-net/sonic-buildimage/issues/11431) — covers buildimage architecture / component behavior
+- **#11457** [CLOSED] [Everflow  mirror session is not active if the mirror destination is in remote asic & monitor_port is not always Ethernet-Rec port](https://github.com/sonic-net/sonic-buildimage/issues/11457) — covers buildimage architecture / component behavior
+- **#11473** [CLOSED] [[chassis]After sonic-db-cli C++ implementation, database.sh fails to start database-chassis on Supervisor card ](https://github.com/sonic-net/sonic-buildimage/issues/11473) — covers buildimage architecture / component behavior
+- **#11503** [CLOSED] [[EVPN] When MAC moves from remote end point to local, ASIC DB fields are not updated properly for the mac](https://github.com/sonic-net/sonic-buildimage/issues/11503) — covers buildimage architecture / component behavior
+- **#11521** [CLOSED] [dhcp-relay and macsec dockers are not tagged with the image version](https://github.com/sonic-net/sonic-buildimage/issues/11521) — covers buildimage architecture / component behavior
+- **#11551** [CLOSED] [[chassis][platform]Request enhancement to add output of serial number in "show chassis modules status"](https://github.com/sonic-net/sonic-buildimage/issues/11551) — covers buildimage architecture / component behavior
+- **#11597** [CLOSED] [[master] Errors in docker database supervisord init - flush_unused_database failed](https://github.com/sonic-net/sonic-buildimage/issues/11597) — covers buildimage architecture / component behavior
+- **#11621** [CLOSED] [[swss/syncd] race between orchagent removes RIF rate counters from DB and lua script fetching them](https://github.com/sonic-net/sonic-buildimage/issues/11621) — covers buildimage architecture / component behavior
+- **#11653** [CLOSED] [bgp service starts in default namespace on multi-asic platform](https://github.com/sonic-net/sonic-buildimage/issues/11653) — covers buildimage architecture / component behavior
+- **#11737** [CLOSED] [[202205][dualtor][active-active] orchagent failed to set route nexthop to `tun0` after shutdown port](https://github.com/sonic-net/sonic-buildimage/issues/11737) — covers buildimage architecture / component behavior
+- **#11769** [CLOSED] [sonic-net/sonic-buildimage: Build fails with only BULLSEYE enabled](https://github.com/sonic-net/sonic-buildimage/issues/11769) — covers buildimage architecture / component behavior
+- **#11811** [OPEN] [Build fails with "FAILED tests/ctrmgr_iptables_test.py::TestIPTableUpdate::test_table - assert"](https://github.com/sonic-net/sonic-buildimage/issues/11811) — covers buildimage architecture / component behavior
+- **#11892** [CLOSED] [[VOQ] syncd and swss didn't come up on sup](https://github.com/sonic-net/sonic-buildimage/issues/11892) — covers buildimage architecture / component behavior
+- **#11924** [CLOSED] [[202205][dualtor][active-standby] The routes to `tun0` are removed after shutdown all ports in a vlan](https://github.com/sonic-net/sonic-buildimage/issues/11924) — covers buildimage architecture / component behavior
+- **#11982** [OPEN] [[Inband ZTP] Router advertisement is not handled in DHCPv6 process](https://github.com/sonic-net/sonic-buildimage/issues/11982) — covers buildimage architecture / component behavior
+- **#11993** [CLOSED] [Reboot pattern "...Rebooting with /sbin/kexec -e..." is missing from syslog after fast-reboot](https://github.com/sonic-net/sonic-buildimage/issues/11993) — covers buildimage architecture / component behavior
+- **#12031** [CLOSED] [radv docker: jinja2.exceptions.UndefinedError: 'vlan_list' is undefined](https://github.com/sonic-net/sonic-buildimage/issues/12031) — covers buildimage architecture / component behavior
+- **#12042** [CLOSED] [[BGP-Unnumbered] Only one of parallel BGP-Unnumbered sessions is up](https://github.com/sonic-net/sonic-buildimage/issues/12042) — covers buildimage architecture / component behavior
+- **#12047** [CLOSED] [[multiasic][supervisor] sonic-db-cli crashes at boot up when execute sonic-db-cli PING command in database.sh on multiasic platform](https://github.com/sonic-net/sonic-buildimage/issues/12047) — covers buildimage architecture / component behavior
+- **#12050** [CLOSED] [swsscommon Error in docker database supervisord init - flush_unused_database failed](https://github.com/sonic-net/sonic-buildimage/issues/12050) — covers buildimage architecture / component behavior
+- **#12062** [CLOSED] [[202205][VOQ] pfcwd failed in SonicDBConfig::validateNamespace](https://github.com/sonic-net/sonic-buildimage/issues/12062) — covers buildimage architecture / component behavior
+- **#12063** [CLOSED] [[VxLAN] Removing the VxLAN tunnel through CLI doesn't delete the tunnel from hardware](https://github.com/sonic-net/sonic-buildimage/issues/12063) — covers buildimage architecture / component behavior
+- **#12170** [CLOSED] [[Sub-If|VRF] Unbind sub-interface from VRF is failed](https://github.com/sonic-net/sonic-buildimage/issues/12170) — covers buildimage architecture / component behavior
+- **#12256** [CLOSED] [[yang-models] Missing constraints in VLAN, VLAN_INTERFACE yang models](https://github.com/sonic-net/sonic-buildimage/issues/12256) — covers buildimage architecture / component behavior
+- **#12361** [OPEN] [Warmboot fails with OA not ready for warm restart - pending SET oper on VXLAN table](https://github.com/sonic-net/sonic-buildimage/issues/12361) — covers buildimage architecture / component behavior
+- **#12370** [CLOSED] [[EVPN][warm-reboot] EVPN vxlan traffic loss during warm-reboot ](https://github.com/sonic-net/sonic-buildimage/issues/12370) — covers buildimage architecture / component behavior
+- **#12380** [OPEN] [[FRR 8.2.2] BGP sessions are unable to establish due to interface IP not recognized](https://github.com/sonic-net/sonic-buildimage/issues/12380) — covers buildimage architecture / component behavior
+- **#12397** [CLOSED] [[yang] sonic-mirror-session.yang does not align with ConfigDb](https://github.com/sonic-net/sonic-buildimage/issues/12397) — covers buildimage architecture / component behavior
+- **#12442** [CLOSED] [Dynamically learned neighbors are not deleted from ASIC_DB when eBGP interfaces are shutdown and the neighbors are flushed](https://github.com/sonic-net/sonic-buildimage/issues/12442) — covers buildimage architecture / component behavior
+- **#12499** [CLOSED] [telemetry process can not start if SONiC is installed from ONIE in 202012](https://github.com/sonic-net/sonic-buildimage/issues/12499) — covers buildimage architecture / component behavior
+- **#12502** [CLOSED] [[FDB]All MACs are not synced to the kernel in scale scenario](https://github.com/sonic-net/sonic-buildimage/issues/12502) — covers buildimage architecture / component behavior
+- **#12512** [OPEN] [[202012][reboot-cause] Incorrect reboot reason after warm-reboot](https://github.com/sonic-net/sonic-buildimage/issues/12512) — covers buildimage architecture / component behavior
+- **#12524** [OPEN] [SWSS Error when shutting down interfaces in ECMP Fine Grain mode](https://github.com/sonic-net/sonic-buildimage/issues/12524) — covers buildimage architecture / component behavior
+- **#12528** [OPEN] [After warm-reboot device, lldp info shows incompletely.](https://github.com/sonic-net/sonic-buildimage/issues/12528) — covers buildimage architecture / component behavior
+- **#12587** [OPEN] [[sonic-swss] - Netlink messages can be lost inbound from kernel and STATE_DB PORT_TABLE 'admin_status' field is misleading](https://github.com/sonic-net/sonic-buildimage/issues/12587) — covers buildimage architecture / component behavior
+- **#12621** [CLOSED] [[Mellanox] [techsupport] LogAnalyzer report error at teardown of test_techsupport in some Mellanox platforms](https://github.com/sonic-net/sonic-buildimage/issues/12621) — covers buildimage architecture / component behavior
+- **#12810** [CLOSED] [SFLOW configuration causes swss docker to exit in Broadcom TD3-X2 platform in 202205 release.](https://github.com/sonic-net/sonic-buildimage/issues/12810) — covers buildimage architecture / component behavior
+- **#13046** [CLOSED] [Time sync issue between SONiC and FRR stack](https://github.com/sonic-net/sonic-buildimage/issues/13046) — covers buildimage architecture / component behavior
+- **#13077** [OPEN] [[Functional] [dhcp6relay] Relay Reply was sent on a different Vlan from where it was initated](https://github.com/sonic-net/sonic-buildimage/issues/13077) — covers buildimage architecture / component behavior
+- **#13109** [OPEN] [When configure route by frr mgmt-frmework,  there is a error log output of  frrcfgd.py when init switch](https://github.com/sonic-net/sonic-buildimage/issues/13109) — covers buildimage architecture / component behavior
+
+## Skip 判定 (除外)
+
+テスト失敗・特定ベンダー固有バグ・アーキテクチャ的知見が乏しいバグ報告を除外。
+
+- **#6795** [CLOSED] [[sflow] corrupted interfaces counters are exported to sflow collector](https://github.com/sonic-net/sonic-buildimage/issues/6795) — insufficient architectural relevance
+- **#6803** [CLOSED] [Vrf binding via cli is NOT working in 202012 version](https://github.com/sonic-net/sonic-buildimage/issues/6803) — insufficient architectural relevance
+- **#6841** [CLOSED] [[dualtor] Standby ToR re-encapsulate the encap traffic back to T1s](https://github.com/sonic-net/sonic-buildimage/issues/6841) — insufficient architectural relevance
+- **#6875** [CLOSED] [Load balancing fails when running test_fib on latest brcm-cache image](https://github.com/sonic-net/sonic-buildimage/issues/6875) — bug/error report without architectural insight
+- **#7023** [CLOSED] [ERR monit[480]: 'routeCheck' program timed out after 5.067 m. Killing program with pid 8480\](https://github.com/sonic-net/sonic-buildimage/issues/7023) — insufficient architectural relevance
+- **#7024** [OPEN] [Unix socket /var/run/monit.sock connection error -- No such file or directory](https://github.com/sonic-net/sonic-buildimage/issues/7024) — bug/error report without architectural insight
+- **#7161** [CLOSED] [multi-asic: sonic-cfggen fails to get right port_config file when -n option is provided](https://github.com/sonic-net/sonic-buildimage/issues/7161) — bug/error report without architectural insight
+- **#7192** [CLOSED] [DHCLIENT fails to renew lease on expiry](https://github.com/sonic-net/sonic-buildimage/issues/7192) — bug/error report without architectural insight
+- **#7282** [OPEN] [Move pcie-check service into sonic-host-services/sonic-host-services-data packages](https://github.com/sonic-net/sonic-buildimage/issues/7282) — insufficient architectural relevance
+- **#7349** [CLOSED] [Build is failing when using multiple jobs](https://github.com/sonic-net/sonic-buildimage/issues/7349) — bug/error report without architectural insight
+- **#7371** [CLOSED] [[port_config] Duplicate lanes for two ports in Arista-7050CX3-32S-C32/port_config.ini](https://github.com/sonic-net/sonic-buildimage/issues/7371) — insufficient architectural relevance
+- **#7433** [CLOSED] [command sudo config reload --load-sysinfo/-l fails ](https://github.com/sonic-net/sonic-buildimage/issues/7433) — bug/error report without architectural insight
+- **#7463** [CLOSED] [SONiC won't build on a fresh Debian 10 - No such file or directory: '/proc/modules'](https://github.com/sonic-net/sonic-buildimage/issues/7463) — insufficient architectural relevance
+- **#7465** [CLOSED] [[202012] Build failure: marvell-armhf](https://github.com/sonic-net/sonic-buildimage/issues/7465) — bug/error report without architectural insight
+- **#7644** [OPEN] [psud dies immediately on Dell S5248F-ON](https://github.com/sonic-net/sonic-buildimage/issues/7644) — insufficient architectural relevance
+- **#7734** [OPEN] [[Build] Second compilation of branch 201911 (after make clean) is failing](https://github.com/sonic-net/sonic-buildimage/issues/7734) — bug/error report without architectural insight
+- **#7745** [CLOSED] ["ip vrf exec" does not work](https://github.com/sonic-net/sonic-buildimage/issues/7745) — insufficient architectural relevance
+- **#7835** [CLOSED] [Build break: marvell-armhf builds on master branch appear to be broken](https://github.com/sonic-net/sonic-buildimage/issues/7835) — bug/error report without architectural insight
+- **#7895** [OPEN] [Errors during SAI discovery](https://github.com/sonic-net/sonic-buildimage/issues/7895) — bug/error report without architectural insight
+- **#8031** [CLOSED] [[202012] Fail to program configurable drop counters: "create status: SAI_STATUS_INSUFFICIENT_RESOURCES](https://github.com/sonic-net/sonic-buildimage/issues/8031) — bug/error report without architectural insight
+- **#8216** [OPEN] [[SAI] Is SONiC master branch support Broadcom TD4 chip?](https://github.com/sonic-net/sonic-buildimage/issues/8216) — insufficient architectural relevance
+- **#8484** [CLOSED] [State of mux feature is un-rendered in config_db.json](https://github.com/sonic-net/sonic-buildimage/issues/8484) — insufficient architectural relevance
+- **#8489** [OPEN] ['show interfaces status' not showing any information](https://github.com/sonic-net/sonic-buildimage/issues/8489) — insufficient architectural relevance
+- **#8571** [CLOSED] [IPv6 use-link-local-only disable is not working as expected](https://github.com/sonic-net/sonic-buildimage/issues/8571) — insufficient architectural relevance
+- **#8599** [OPEN] [Unable to override the auto generated IPv6 link local address.](https://github.com/sonic-net/sonic-buildimage/issues/8599) — insufficient architectural relevance
+- **#8657** [CLOSED] [Mellanox 2700 Unable to configure mgmt ip and hostname info](https://github.com/sonic-net/sonic-buildimage/issues/8657) — insufficient architectural relevance
+- **#8699** [CLOSED] [[Nokia][7215] SAI: ERROR HOST_INTERFACE](https://github.com/sonic-net/sonic-buildimage/issues/8699) — bug/error report without architectural insight
+- **#8703** [OPEN] [AS7326-56X: Change port speed on Ethernet0 will also change the port speed on Ethernet1,2,5](https://github.com/sonic-net/sonic-buildimage/issues/8703) — insufficient architectural relevance
+- **#8808** [OPEN] [loadData() modifies the input parameter configdbJson, which is surprise to the caller](https://github.com/sonic-net/sonic-buildimage/issues/8808) — insufficient architectural relevance
+- **#8850** [CLOSED] [show techsupport fail when /usr/core folder not existing](https://github.com/sonic-net/sonic-buildimage/issues/8850) — bug/error report without architectural insight
+- **#8878** [OPEN] [[202012][drop counter] Drop counter doesn't work on TH2 with counter type L3_EGRESS_LINK_DOWN ](https://github.com/sonic-net/sonic-buildimage/issues/8878) — insufficient architectural relevance
+- **#8980** [CLOSED] [Question regarding SAI_SWITCH_ATTR_UNINIT_DATA_PLANE_ON_REMOVAL](https://github.com/sonic-net/sonic-buildimage/issues/8980) — insufficient architectural relevance
+- **#9061** [OPEN] [What is the usage of "type" in DEVICE_METADATA?](https://github.com/sonic-net/sonic-buildimage/issues/9061) — insufficient architectural relevance
+- **#9181** [CLOSED] [sfpshow presence/eeprom can't show correctly, error message is :TypeError: 'NoneType' object is not iterable](https://github.com/sonic-net/sonic-buildimage/issues/9181) — bug/error report without architectural insight
+- **#9498** [CLOSED] [config apply-patch --dry-run affects config state](https://github.com/sonic-net/sonic-buildimage/issues/9498) — insufficient architectural relevance
+- **#9662** [CLOSED] [NAT Issue | Max limit is reached for NAT entries, skipping adding the entry.](https://github.com/sonic-net/sonic-buildimage/issues/9662) — insufficient architectural relevance
+- **#9716** [OPEN] [SONiC unusable on EdgeCore AS7726](https://github.com/sonic-net/sonic-buildimage/issues/9716) — vendor-specific platform bug with no general architectural value
+- **#9741** [OPEN] [Unable to fetch sonic-slave-stretch](https://github.com/sonic-net/sonic-buildimage/issues/9741) — insufficient architectural relevance
+- **#9746** [CLOSED] [[yang] validating TACPLUS with empty “global” fails, while non-empty “global” does not fail](https://github.com/sonic-net/sonic-buildimage/issues/9746) — bug/error report without architectural insight
+- **#9759** [CLOSED] [broadcom-dnx: warning message, "image you're trying to install is of a different ASIC type"](https://github.com/sonic-net/sonic-buildimage/issues/9759) — insufficient architectural relevance
+- **#9896** [CLOSED] [[sonic-restapi] ARM architecture not supported](https://github.com/sonic-net/sonic-buildimage/issues/9896) — insufficient architectural relevance
+- **#9998** [CLOSED] [/dev/sdaX: Can't open blockdev](https://github.com/sonic-net/sonic-buildimage/issues/9998) — insufficient architectural relevance
+- **#10019** [OPEN] [system-health hang, can't refresh db SYSTEM_HEALTH_INFO](https://github.com/sonic-net/sonic-buildimage/issues/10019) — insufficient architectural relevance
+- **#10048** [CLOSED] [PDDF debian package is not included in the build](https://github.com/sonic-net/sonic-buildimage/issues/10048) — insufficient architectural relevance
+- **#10052** [OPEN] [I2C error on sonic 202111 on AS5835-54X](https://github.com/sonic-net/sonic-buildimage/issues/10052) — bug/error report without architectural insight
+- **#10097** [CLOSED] [salsa.debian.org GitLab URLs not accessible](https://github.com/sonic-net/sonic-buildimage/issues/10097) — insufficient architectural relevance
+- **#10098** [CLOSED] [Slack request](https://github.com/sonic-net/sonic-buildimage/issues/10098) — insufficient architectural relevance
+- **#10101** [CLOSED] [Can we remove the cache directory before pack the image?](https://github.com/sonic-net/sonic-buildimage/issues/10101) — insufficient architectural relevance
+- **#10103** [OPEN] [Broadcom SAI 6.0.0.13 breaks Seastone2 port status on boot](https://github.com/sonic-net/sonic-buildimage/issues/10103) — insufficient architectural relevance
+- **#10217** [OPEN] [Any possibility to support AS4610-54P (Helix 4)?](https://github.com/sonic-net/sonic-buildimage/issues/10217) — insufficient architectural relevance
+- **#10218** [CLOSED] [sonic-db-cli high CPU usage on SONiC startup](https://github.com/sonic-net/sonic-buildimage/issues/10218) — insufficient architectural relevance
+- **#10310** [OPEN] [[sonic-snmpagent] AgentX TCP Connection is being terminated when blocking=True arg is set](https://github.com/sonic-net/sonic-buildimage/issues/10310) — insufficient architectural relevance
+- **#10339** [CLOSED] [Some DUTs crashed on memory exhaustion test case](https://github.com/sonic-net/sonic-buildimage/issues/10339) — bug/error report without architectural insight
+- **#10895** [OPEN] [Slack Workspace Request](https://github.com/sonic-net/sonic-buildimage/issues/10895) — insufficient architectural relevance
+- **#11007** [OPEN] [[sonic-kdump-config] erros during "config reload"/image install](https://github.com/sonic-net/sonic-buildimage/issues/11007) — insufficient architectural relevance
+- **#11028** [OPEN] [Serial console not working after building 2020 9b84294ff](https://github.com/sonic-net/sonic-buildimage/issues/11028) — insufficient architectural relevance
+- **#11292** [OPEN] [Builds now require password-less sudo access](https://github.com/sonic-net/sonic-buildimage/issues/11292) — insufficient architectural relevance
+- **#11352** [OPEN] [[Radius] Fail to login to switch when Radius is configured "shell /usr/bin/sonic-launch-shell does not exist"](https://github.com/sonic-net/sonic-buildimage/issues/11352) — bug/error report without architectural insight
+- **#11418** [OPEN] [Missing counter rate information for breakout ports](https://github.com/sonic-net/sonic-buildimage/issues/11418) — bug/error report without architectural insight
+- **#11437** [OPEN] [[SFLOW] [error log] ERR sflow#port_index_mapper: no interface with this name](https://github.com/sonic-net/sonic-buildimage/issues/11437) — bug/error report without architectural insight
+- **#11527** [CLOSED] [Unable to verify checksum when installing a new image from SONiC environment on Edgecore DCS800.](https://github.com/sonic-net/sonic-buildimage/issues/11527) — vendor-specific platform bug with no general architectural value
+- **#11576** [CLOSED] [[Generic Config Updater] apply-patch ignore-path path is not working](https://github.com/sonic-net/sonic-buildimage/issues/11576) — insufficient architectural relevance
+- **#11711** [OPEN] [[SFLOW] [error log] ERR sflow#port_index_mapper: <built-in function Select_select> returned a result with an error set](https://github.com/sonic-net/sonic-buildimage/issues/11711) — bug/error report without architectural insight
+- **#11798** [OPEN] [Try to get stats from removed counter](https://github.com/sonic-net/sonic-buildimage/issues/11798) — insufficient architectural relevance
+- **#11824** [OPEN] [[202111 -> 202205][warm-boot]: DB migration doesn't work](https://github.com/sonic-net/sonic-buildimage/issues/11824) — insufficient architectural relevance
+- **#11840** [OPEN] [Duplicate events on STATE_DB's port table while configuring the port](https://github.com/sonic-net/sonic-buildimage/issues/11840) — insufficient architectural relevance
+- **#12008** [CLOSED] [Error message during config reload due to by missing `eventd.timer`](https://github.com/sonic-net/sonic-buildimage/issues/12008) — bug/error report without architectural insight
+- **#12420** [OPEN] [no PTF is built with SAI Thrift for py3 env](https://github.com/sonic-net/sonic-buildimage/issues/12420) — insufficient architectural relevance
+- **#12573** [OPEN] [Need Yang for SNMP_AGENT_ADDRESS_CONFIG, SNMP_USER, SNMP_TRAP_CONFIG tables](https://github.com/sonic-net/sonic-buildimage/issues/12573) — insufficient architectural relevance
+- **#12727** [OPEN] [[Chassis] Many Errors are seen when a config reload or reboot is done on a J2C+ line card](https://github.com/sonic-net/sonic-buildimage/issues/12727) — bug/error report without architectural insight
+- **#12802** [OPEN] [Cannot start system-health daemon](https://github.com/sonic-net/sonic-buildimage/issues/12802) — insufficient architectural relevance
+- **#12817** [CLOSED] [[Chassis] Errors seen with a config reload or reboot](https://github.com/sonic-net/sonic-buildimage/issues/12817) — bug/error report without architectural insight
+- **#13047** [OPEN] [Accton-AS7726-32X Fans running on full speed / No fan throttling](https://github.com/sonic-net/sonic-buildimage/issues/13047) — vendor-specific platform bug with no general architectural value
+- **#13108** [OPEN] [Sflow Agent ID reconfiguration is not working upon deleting the agentID](https://github.com/sonic-net/sonic-buildimage/issues/13108) — insufficient architectural relevance
