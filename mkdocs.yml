@@ -95,6 +95,19 @@ plugins:
   # cards 生成を抑止可（ローカルで imaging deps が無い場合等）。
   - social:
       cards: !ENV [MKDOCS_SOCIAL_CARDS, true]
+  # RSS/Atom feed: 最近更新されたページを購読可能にする。
+  # date_from_meta は frontmatter の last_verified を created/updated として使う。
+  # 生成物: site/feed_rss_created.xml (作成順) / site/feed_rss_updated.xml (更新順)。
+  - rss:
+      # match_path は docs_dir 相対の正規表現。全 .md を対象にする。
+      match_path: ".*"
+      date_from_meta:
+        as_creation: last_verified
+        as_update: last_verified
+      categories:
+        - tags
+      length: 30
+      feed_ttl: 1440
 
 extra_css:
   - stylesheets/extra.css

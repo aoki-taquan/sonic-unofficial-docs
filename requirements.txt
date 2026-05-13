@@ -1,2 +1,3 @@
 mkdocs-material[imaging]
 mkdocs-awesome-pages-plugin
+mkdocs-rss-plugin>=1.13
