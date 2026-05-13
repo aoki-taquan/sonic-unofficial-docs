@@ -160,4 +160,24 @@ show nat translations
 - **nat_type のデフォルト = "dnat"**: YANG `default dnat`。省略時は DNAT エントリとして処理される。
 - **デフォルトルート / サブネットルートの更新は無視**: routeOrch からのルート更新イベントでデフォルトルートまたはサブネットベースのルートは `"Ignore default or subnet nexthop update event"` としてスキップ (`natorch.cpp` L185-189)。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-nat.yang -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `admin_mode` | `disabled` (default) | NAT 無効。pool/binding/static エントリを受け付けるがハードウェアに降ろさない (キュー保持) |
+| `admin_mode` | `enabled` | NAT 有効化。キュー内の全エントリを ASIC に反映。conntrack エントリの aging 開始 |
+| `nat_timeout` | 600 (default) | 非 TCP/UDP NAT セッションを 600秒でタイムアウト |
+| `nat_tcp_timeout` | 86400 (default) | TCP セッションを 24時間でタイムアウト |
+| `nat_udp_timeout` | 300 (default) | UDP セッションを 5分でタイムアウト |
+| `nat_type` (BINDINGS) | `snat` | 送信元 IP を変換 (内→外方向) |
+| `nat_type` (BINDINGS) | `dnat` (default) | 宛先 IP を変換 (外→内方向) |
+| `twice_nat_id` | 1..9999 | 同 ID の snat/dnat エントリをペアとして twice NAT 処理 |
+| NAT_POOL エントリ数 | 17件目以上 | YANG max-elements=16 でバリデーション拒否 |
+
+enum: `admin_mode`=enabled/disabled、`nat_type`=snat/dnat。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: a6fe2efe021a -->

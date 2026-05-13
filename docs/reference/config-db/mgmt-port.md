@@ -113,4 +113,23 @@ show management_interface address
 - **admin_status のデフォルト = "up"**: `default up`。省略時は管理ポートが有効状態として扱われる。
 - **インターフェース名の制約**: `pattern 'eth([1-3][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[0-9])'`。eth0 系のみ許可され、不正名は YANG バリデーションで拒否される。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_port.yang / sonic-host-services/scripts/hostcfgd -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `admin_status` | `up` (default) | eth0 を管理状態 UP に設定 |
+| `admin_status` | `down` | eth0 を管理状態 DOWN に設定。OOB 管理が切断される |
+| `speed` | `10`/`100`/`1000` | ethtool で該当速度を強制設定 |
+| `speed` | 未設定 | ethtool 速度設定なし (autoneg 任せ) |
+| `autoneg` | `on` | ethtool でオートネゴシエーション有効化 |
+| `autoneg` | `off` | ethtool でオートネゴシエーション無効化。speed 指定を推奨 |
+| `mtu` | 1500 (default) | eth0 MTU を 1500 に設定 |
+| `mtu` | 1501..9216 | eth0 MTU を指定値に設定 (Jumbo frame) |
+
+enum: `admin_status` = `up`/`down`。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
