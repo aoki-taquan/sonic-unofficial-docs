@@ -1,0 +1,1104 @@
+{
+  "tier_thresholds": {
+    "high": 15,
+    "mid": 6
+  },
+  "tier_high": [],
+  "tier_mid": [],
+  "tier_low": [
+    {
+      "slug": "aaa",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "acl-rule",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "acl-table",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "as-path-set",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "auto-techsupport-feature",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "auto-techsupport",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "banner-message",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-aggregate-address",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-allowed-prefixes",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-device-global",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-globals-af-aggregate-addr",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-globals-af-network",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-globals-af",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-globals",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-monitors",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-neighbor-af",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-neighbor",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-peer-group-af",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-peer-group",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bgp-peer-range",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "bmp",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "breakout-cfg",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "buffer-pg",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "buffer-pool",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "buffer-port-egress-profile-list",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "buffer-port-ingress-profile-list",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "buffer-profile",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "buffer-queue",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "community-set",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "console-port",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "copp-group",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "copp-trap",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "crm",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "debug-counter",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "default-lossless-buffer-parameter",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "device-metadata",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "device-neighbor-metadata",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "device-neighbor",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "device-runtime-metadata",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "dhcp-relay",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "dhcp-server-ipv4",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "dhcpv4-relay",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "dot1p-to-tc-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "dscp-to-tc-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "fabric-monitor",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "fabric-port",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "feature",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "fg-nhg",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "fips",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "flex-counter-table",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "heartbeat",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "kdump",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "kubernetes-master",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "ldap-server",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "lldp-port",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "lldp",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "loopback-interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "lossless-traffic-pattern",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "macsec-profile",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "map-pfc-priority-to-queue",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mclag-domain",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mgmt-interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mgmt-port",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mgmt-vrf-config",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mirror-session",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mux-cable",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "mux-linkmgr",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "nat",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "ntp-global",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "ntp-key",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "ntp-server",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "nvgre-tunnel",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "pbh",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "peer-switch",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "pfc-priority-to-priority-group-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "pfc-wd",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "policer",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "port-qos-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "port-storm-control",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "port",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "portchannel-interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "portchannel-member",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "portchannel",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "prefix-list",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "prefix-set",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "queue",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "radius",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "restapi",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "route-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "scheduler",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "sflow",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "snmp-agent-address-config",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "snmp",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "static-route",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "subnet-decap",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "suppress-asic-sdk-health-event",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "switch-hash",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "switch-trimming",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "syslog-config-feature",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "syslog-config",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "syslog-server",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "system-defaults",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "tacplus-server",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "tc-to-queue-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "telemetry-client",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "telemetry",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "tunnel-decap-table",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "tunnel",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vlan-interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vlan-member",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vlan-sub-interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vlan",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vnet",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "voq-inband-interface",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vrf",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vxlan-evpn-nvo",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vxlan-tunnel-map",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "vxlan-tunnel",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "warm-restart",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    },
+    {
+      "slug": "wred-profile",
+      "yang": null,
+      "yang_dir": null,
+      "max_card": 0,
+      "tier": "low",
+      "enum_fields": {},
+      "values": {}
+    }
+  ],
+  "recommended_batch_sizes": {
+    "high": 1,
+    "mid": 3,
+    "low": 12
+  }
+}
