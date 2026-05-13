@@ -112,4 +112,18 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-buildimage/dockers/docker-lldp/lldpmgrd -->
+
+| 条件 | 挙動 |
+|------|------|
+| `admin_status` に不正値 | `lldpcli configure ports ... lldp status <value>` が失敗。CONFIG_DB にはバリデーションなしで書けるが lldpd には反映されない |
+| `admin_status=disabled` | LLDP フレームの送受信停止。`DEVICE_NEIGHBOR` テーブルへの自動学習が発生せず minigraph との乖離が生じる |
+| 実在しないポート名でエントリ投入 | lldpd に対応ポートが存在しないため設定無視。エントリは CONFIG_DB に残存 |
+| `description` の反映タイミング | lldpmgrd のポーリング周期（数秒）に依存する非同期反映 |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 1c2f663967b9 -->

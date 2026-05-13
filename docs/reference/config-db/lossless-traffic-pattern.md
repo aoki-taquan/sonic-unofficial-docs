@@ -106,4 +106,20 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp, sonic-utilities/scripts/db_migrator.py -->
+
+| 条件 | 挙動 |
+|------|------|
+| dynamic バッファモード以外 | `buffermgr.cpp`（静的モード）はこのテーブルを参照しない。設定変更は headroom 計算に影響しない |
+| `mtu` 未設定 | `buffermgrdyn` がデフォルト mtu 値を使用（buffermgrdyn.cpp L2263「if mtu isn't configured, take the default value」） |
+| `mtu` が実 MTU と乖離 | headroom が過小（パケットロス）または過大（バッファ浪費）になる。バリデーションなし |
+| `small_packet_percentage` が 0〜100 範囲外 | コード上でバリデーションなし。headroom 計算式が異常値を返す可能性。YANG スキーマ依存 |
+| DB migration 時（AZURE エントリ自動挿入） | `db_migrator.py` L414 が `mtu=1024, small_packet_percentage=100` を挿入。Mellanox 向け初期値で他プラットフォームには不適切な場合がある |
+| バッファプール未設定 | `SWSS_LOG_INFO("No shared buffer pool configured, skip calculating shared buffer pool size")` → サイレントスキップ |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
