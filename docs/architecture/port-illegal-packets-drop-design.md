@@ -238,6 +238,16 @@ sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: カウンタ収集経路 | 実装済（HLD 記載どおりに SAI/MIB カウンタが SNMP / CLI に露出） | — |
+| Phase 2: ドロップ理由の網羅 | HLD 記載分は実装済 | HLD 記載外のドロップ理由（実装側の追加要因）は未確認・未実装相当 |
+| Phase 3: インタフェース種別判別 | HLD 範囲の IANA ifType マッピングは実装済 | 派生 IF（subport / breakout 各種）の扱いは未確認 / 未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本ページは HLD 主体で書かれており、HLD 記載なしのドロップ理由（implementation 推測部分）に「未確認」と本文中で明示している。実装側の確定は裏取り課題。

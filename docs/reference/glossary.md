@@ -1224,8 +1224,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）](../routing/reliable-tsa.md) (19)
 - [内部実装](../topics/02-bgp/internals.md) (17)
+- [bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）](../routing/bgpcfgd-dynamic-peer-modification-support.md) (16)
 - [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (16)
-- [bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）](../routing/bgpcfgd-dynamic-peer-modification-support.md) (15)
 - [概要](../topics/02-bgp/concept.md) (12)
 
 ### [Buffer Pool](#term-buffer-pool)
@@ -1268,7 +1268,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [config-setup](#term-config-setup)
 
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (38)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (39)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [内部実装](../topics/01-overview/internals.md) (5)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (4)
@@ -1293,7 +1293,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (43)
-- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (31)
+- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (32)
 - [アーキテクチャ](../topics/09-telemetry-snmp/architecture.md) (17)
 - [サイトマップ](../_meta/sitemap.md) (16)
 - [sonic-crm YANG](yang/sonic-crm.md) (14)
@@ -1364,7 +1364,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Fine Grained ECMP（FG_NHG / fgnhgorch）](../routing/sonic-fine-grained-ecmp.md) (28)
 - [ECMP Family](../topics/04-vrf-ecmp/ecmp.md) (28)
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (23)
-- [Ordered ECMP（IP ソート順で nexthop に sequence_id を付け同一フローを同 ToR/Appliance に固定）](../routing/high-level-design-document.md) (18)
+- [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../routing/bgp-setup-for-voq-chassis.md) (18)
 
 ### [ECN](#term-ecn)
 

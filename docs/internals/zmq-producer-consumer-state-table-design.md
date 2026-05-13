@@ -124,6 +124,16 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: Producer / Server / Consumer API | 実装済（HLD 記載の関数群が master に取り込み済） | — |
+| Phase 2: select イベントループ統合 | 基本フローは実装済 | バックプレッシャ・キュー溢れ時の挙動は未確認 / 未実装の可能性 |
+| Phase 3: メトリクス / 可観測性 | — | 通知欠落の検出・カウンタ整備は未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。

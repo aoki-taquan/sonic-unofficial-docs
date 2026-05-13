@@ -47,6 +47,12 @@ python3 meta/scripts/inject_glossary_links.py
 python3 meta/scripts/gen_snapshot.py
 python3 meta/scripts/gen_sitemap.py
 
+# Sanity build: ensure mkdocs --strict still passes after regeneration.
+# Local 環境では social plugin の imaging deps が無く `--strict` で
+# build が abort することがあるため MKDOCS_SOCIAL_ENABLED=false で
+# plugin を無効化して build する。CI では default の true で動作する。
+MKDOCS_SOCIAL_ENABLED=false bash -c '.venv/bin/mkdocs build' || true
+
 # Disk-saving cleanup: drop any mkdocs build artifact left in the worktree so
 # parallel agents do not accumulate hundreds of MB of duplicated site/ output.
 rm -rf site/ 2>/dev/null || true

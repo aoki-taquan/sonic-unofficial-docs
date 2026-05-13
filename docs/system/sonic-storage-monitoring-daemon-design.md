@@ -121,6 +121,16 @@ docker exec pmon which smartctl
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: storagemond daemon 基盤 | HLD 記載どおり実装済 | — |
+| Phase 2: CLI / STATE_DB テーブル名 | コア部分は実装済 | CLI 名・テーブル名の正確な値は現行 master と差分の可能性、未確認・未実装相当 |
+| Phase 3: 追加センサ（NVMe SMART 等） | — | 拡張センサ取り込みは未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。

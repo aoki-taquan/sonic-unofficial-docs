@@ -143,6 +143,16 @@ docker ps -a --format '{{.Names}}	{{.Status}}'
 
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: パッケージ manifest / install フロー | HLD 記載どおり実装済（`sonic-package-manager` が master 取り込み） | — |
+| Phase 2: CLI / フィールド名整合 | コア CLI は実装済 | Initial Proposal 時のフィールド名・サブコマンドは現行 master と差分がある可能性、未確認・未実装相当 |
+| Phase 3: マルチ ASIC / コンテナ間連携 | — | マルチ ASIC 向けの拡張パッケージ動作は未実装 / 未確認 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は Initial Proposal で、フィールド名・CLI が現行 master と一致するかは本文で「要確認」と明示している。
