@@ -19,6 +19,7 @@ SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
 
 [はじめての方は概要から :material-arrow-right:](topics/01-overview/index.md){ .md-button .md-button--primary }
 [直接トラブルシュート :material-rocket-launch:](reference/runbooks/index.md){ .md-button }
+<a href="feed_rss_created.xml" class="md-button" title="RSS feed (最近作成された 30 ページ)">更新を購読 (RSS)</a>
 
 ---
 
