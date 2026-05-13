@@ -134,6 +134,16 @@ redis-cli -n 4 hgetall 'AUTO_TECHSUPPORT|GLOBAL'
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: coredump イベントトリガ | 実装済（systemd coredump hook と event-driven dispatcher） | — |
+| Phase 2: rate-limit / quota 制御 | — | 既定値・現行 master 取り込みは未確認・未実装の可能性 |
+| Phase 3: techsupport_cleanup 連携 | — | 削除ポリシーの最新化は未実装 / 未確認 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は本文で「未確認」と明示している。

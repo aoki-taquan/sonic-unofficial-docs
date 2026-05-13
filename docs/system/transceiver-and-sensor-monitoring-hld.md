@@ -211,6 +211,16 @@ HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡�
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: xcvrd 基本ポーリング | 実装済（HLD 記載どおり TRANSCEIVER_INFO 等を更新） | — |
+| Phase 2: TRANSCEIVER_* スキーマ | HLD 記載フィールドは実装済 | CMIS 拡張による追加フィールドは未確認・未実装相当（HLD 範囲外） |
+| Phase 3: polling interval / 動的調整 | 60s 既定は実装済 | プラットフォーム別の動的 interval 調整は未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。
