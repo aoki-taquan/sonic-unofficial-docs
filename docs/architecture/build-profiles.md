@@ -173,6 +173,46 @@ make PROFILE=ztp.signed all
 
 新しいプロファイルを追加するには `rules/profiles/<name>.mk` を作成し、必要な `KEY=VALUE` を並べてコミットするだけ。
 
+## VS イメージサイズ削減（実運用 Tips）
+
+SONiC 202505 Bookworm では VS イメージが **約 6GB** になり、RAM が 8GB 前後の resource-constrained な環境でビルドが困難なケースが報告されている（sonic-net/sonic-buildimage#26636）。
+
+### 有効な削減手段
+
+**1. `BUILD_REDUCE_IMAGE_SIZE=y`**
+
+- docker ファイルの圧縮アルゴリズムを gzip から **zstd** に変更し `.bin` サイズを大幅削減
+- `build_debian.sh` が man pages 削除・重複ファイルの hardlink 化を実施するスクリプト `scripts/build-optimize-fs-size.py` を呼び出す
+
+```bash
+make BUILD_REDUCE_IMAGE_SIZE=y all
+```
+
+**2. オプション機能を無効化する（`rules/config` or コマンドライン）**
+
+コアコンテナ以外を外すと大幅縮小できる:
+
+```make
+INCLUDE_SFLOW = n
+INCLUDE_NAT = n
+INCLUDE_SNMP = n
+INCLUDE_MUX = n
+INCLUDE_MACSEC = n
+INCLUDE_DHCP_RELAY = n
+INCLUDE_SYSTEM_BMP = n
+INCLUDE_SYSTEM_OTEL = n
+INCLUDE_SYSTEM_EVENTD = n
+INCLUDE_SYSTEM_GNMI = n
+INCLUDE_MGMT_FRAMEWORK = n
+INCLUDE_DASH_HA = n
+INCLUDE_ROUTER_ADVERTISER = n
+INCLUDE_BOOTCHART = n
+INCLUDE_FIPS = n
+INCLUDE_VS_DASH_SAI = n
+```
+
+コア必須コンテナは `docker-database`, `docker-orchagent`, `docker-syncd`, `docker-fpm-frr`, `docker-platform-monitor`, `docker-teamd`（LAG 使用時）, `docker-lldp` 程度。
+
 ## 制限事項
 
 HLD で明示の制限事項は無い。実運用上の留意点としては:

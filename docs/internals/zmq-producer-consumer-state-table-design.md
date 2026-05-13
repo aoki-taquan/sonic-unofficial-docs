@@ -102,6 +102,44 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 
 ライブラリレベル API のため [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI による直接の制御点は HLD に無い。DB 更新 on/off は **コード側で `ZmqConsumerStateTable` 構築時に指定**。
 
+## 既知の問題
+
+### docker-sonic-vs: /zmq_swss ディレクトリ不在による orchagent crash
+
+**症状**: `docker-sonic-vs` で起動した orchagent が即座に crash し大半のサービスが起動しない。ログに以下が出る:
+```
+zmq_bind failed on endpoint: ipc:///zmq_swss/p4orch_zmq_swss_ep, zmqerrno: 2
+```
+
+**原因**: 実機では `/zmq_swss` が `docker-orchagent.mk` の `-v /zmq_swss:/zmq_swss:rw` bind-mount で提供されるが、VS docker はスタンドアロン起動のためホスト側マウントが存在しない。sonic-swss#4243（2026-04-01 merge）以降に顕在化。
+
+**回避策**:
+```bash
+docker exec <container> mkdir -p /zmq_swss
+```
+
+**参照**: sonic-net/sonic-buildimage#26776（Triaged）
+
+---
+
+### CrmOrch が reboot 時に ZMQ タイムアウトで crash する
+
+**症状**: reboot コマンドは syncd/SAI を先に shutdown するが orchagent は終了しない。CrmOrch が SAI に対して ZMQ 経由でカウンタ要求を送り続け、SAI 側キューが消滅していると ZMQ タイムアウトが発生して orchagent が crash する。
+
+**対象条件**: SmartSwitch など firmware update により reboot が 1 分超になるケースで特に問題になる。SmartSwitch のロングリブートは HA による redundancy でカバーされる設計のため、機能影響は限定的とされている。
+
+**参照**: sonic-net/sonic-buildimage#26300（Bug, Triaged, Medium severity）
+
+---
+
+### orchagent route download 性能劣化（ZMQ 有効時）
+
+**症状**: Northbound ZMQ を有効化した環境で 500k route の download が約 72 秒かかる。ZMQ 無効時は大幅に高速。
+
+**原因**: sonic-swss PR#3910 で `table->pops(entries)` のループが削除された。ZMQ 有効時はこの変更がボトルネックとなる。
+
+**参照**: sonic-net/sonic-buildimage#27098（Performance Regression, Triaged、Nokia・内部 Nokia チームで revert 効果確認済み）
+
 ## 制限事項
 
 - `ZmqClient::sendMsg` はリトライ失敗で **例外**。呼出し側で握る前提

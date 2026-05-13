@@ -131,6 +131,35 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 
 <!-- evidence-rendered:end -->
 
+## 既知の問題
+
+### Celestica DX010: 202511 + kernel 6.12 でブートループ
+
+**症状**: Celestica DX010 に 202511 イメージをロードすると `dx010_cpld` カーネルモジュールのロード時に kernel panic が発生しブートループする。
+
+```
+kernel BUG at lib/string_helpers.c:1040!
+__fortify_panic: dx010_cpld ...
+```
+
+**原因**: 202511 で採用した kernel 6.12 が `CONFIG_FORTIFY_SOURCE` を有効化しており、`dx010_cpld.c` 内の `strcpy` に off-by-one バグ（VLA サイズが `\0` 分不足）があると判定されパニックする。
+
+**回避策**: community の PR（DontBreakAlex 作）で VLA サイズを +1 することで修正済み。コンパイル済みイメージ待ちの場合は 202405 を継続使用する。
+
+**参照**: sonic-net/sonic-buildimage#26885（Bug, Triaged, Critical severity）
+
+---
+
+### sonic-installer: --dockerd-socket オプション位置変更（202511+）
+
+**症状**: `sonic-installer install` 内部で `sonic-package-manager --dockerd-socket /tmp/docker.sock migrate` を実行する際に `No such option: --dockerd-socket` エラーが発生しインストールが失敗する。
+
+**原因**: `sonic-package-manager` の CLI が変更され、グローバルオプションであった `--dockerd-socket` がサブコマンド固有オプションに移動した。古い `sonic-installer` スクリプトが `sonic-package-manager --dockerd-socket ... migrate` の順で呼ぶが、新 CLI では `sonic-package-manager migrate --dockerd-socket ...` が正しい。
+
+**影響バージョン**: 202511.22 以前のイメージから 202511.23 以降へのアップグレード。
+
+**参照**: sonic-net/sonic-buildimage#27047（Bug, High severity）
+
 ## 制限事項
 
 - Debian の公式 release schedule が無いため最終的にはタイムラインが流動的
