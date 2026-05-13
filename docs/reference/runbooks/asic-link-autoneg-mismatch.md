@@ -3,14 +3,14 @@ title: ASIC link が UP しない (autoneg / FEC / speed mismatch)
 description: "Runbook: ASIC port が UP しない (autoneg / speed / FEC 不整合) — : sonic-net/sonic-swss @ master — portsorch.cpp : sonic-net/sonic-platform-daemons @ master — xcvrd.py"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-platform-daemons
     path: sonic-xcvrd/xcvrd/xcvrd.py
-    ref: master
+    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
 related:
   config_db: [PORT, AUTONEG_PORT]
   cli: [show interface status, show interface transceiver eeprom, config interface autoneg]

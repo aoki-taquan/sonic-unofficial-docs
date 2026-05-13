@@ -3,14 +3,14 @@ title: T0/T1 リンクが flap し続ける
 description: "Runbook: T0/T1 リンクが flap し続ける — : sonic-net/sonic-swss @ 4305596 — portsorch.cpp port_state notification : sonic-net/sonic-platform-common @ 4305596 — sfp_base…"
 area: reference
 verification: runbook-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/portsorch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-platform-common
     path: sonic_platform_base/sfp_base.py
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 64beade8cddecdbc154531bc84bed2fa86581ea8
 related:
   config_db: [PORT]
   cli: [show interfaces status, show transceiver]

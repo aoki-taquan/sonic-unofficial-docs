@@ -3,11 +3,11 @@ title: MCLAG (mclagsyncd) の状態同期が止まる
 description: "Runbook: MCLAG peer 同期が確立しない / state inconsistent — : sonic-net/sonic-swss @ master — mclagsyncd.cpp : sonic-net/sonic-iccpd @ master — iccpd_main.c"
 area: reference
 verification: runbook-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclagsyncd.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-iccpd
     path: src/iccpd_main.c
     ref: master

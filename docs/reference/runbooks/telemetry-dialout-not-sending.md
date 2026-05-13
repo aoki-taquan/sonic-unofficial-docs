@@ -3,17 +3,17 @@ title: Telemetry が送信されない (gNMI dial-out)
 description: "Runbook: Telemetry dial-out が collector に届かない — : sonic-net/sonic-telemetry @ master — dialout_client.go : sonic-net/sonic-gnmi @ master — gNMI server"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-telemetry
     path: dialout/dialout_client/dialout_client.go
     ref: master
   - repo: sonic-net/sonic-gnmi
     path: gnmi_server/server.go
-    ref: master
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-sonic-telemetry
-    ref: master
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: [TELEMETRY_CLIENT, TELEMETRY]
   cli: [show feature status, show runningconfiguration telemetry]

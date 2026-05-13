@@ -3,14 +3,14 @@ title: Y-cable firmware 更新が失敗する
 description: "Runbook: Y-cable firmware download / activate が失敗 — : sonic-net/sonic-platform-common @ master — y_cable_base.py : sonic-net/sonic-platform-daemons @ master —…"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-platform-common
     path: sonic_y_cable/y_cable_base.py
-    ref: master
+    ref: 64beade8cddecdbc154531bc84bed2fa86581ea8
   - repo: sonic-net/sonic-platform-daemons
     path: sonic-ycabled/ycable/ycable.py
-    ref: master
+    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
 related:
   config_db: [MUX_CABLE, MUX_LINKMGR]
   cli: [show muxcable firmware, config muxcable firmware download, config muxcable firmware activate]

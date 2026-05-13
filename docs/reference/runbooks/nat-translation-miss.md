@@ -3,14 +3,14 @@ title: NAT translation が一部漏れる
 description: "Runbook: NAT translation が一部のフローで効かない — : sonic-net/sonic-swss @ master — natorch.cpp : sonic-net/sonic-swss @ master — natsyncd.cpp"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/natorch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: natsyncd/natsyncd.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db: [STATIC_NAT, STATIC_NAPT, NAT_POOL, NAT_BINDINGS, NAT_GLOBAL]
   cli: [show nat translations, show nat statistics, show nat config]

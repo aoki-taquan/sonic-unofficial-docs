@@ -3,14 +3,14 @@ title: gNMI Subscribe セッションが切れる
 description: "Runbook: gNMI Subscribe が頻繁に切断される — : sonic-net/sonic-gnmi @ master — client_subscribe.go : sonic-net/sonic-gnmi @ master — db_client.go"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-gnmi
     path: gnmi_server/client_subscribe.go
-    ref: master
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
   - repo: sonic-net/sonic-gnmi
     path: sonic_data_client/db_client.go
-    ref: master
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
 related:
   config_db: [TELEMETRY, GNMI]
   cli: [show feature status, show runningconfiguration telemetry]

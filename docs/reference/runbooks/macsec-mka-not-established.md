@@ -3,11 +3,11 @@ title: MACsec MKA セッションが確立しない
 description: "Runbook: MACsec が UP しない / MKA セッション確立失敗 — : sonic-net/sonic-swss @ master — macsecorch.cpp : sonic-net/wpa_supplicant @ master — ieee802_1x_kay.c"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/macsecorch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/wpa_supplicant
     path: src/pae/ieee802_1x_kay.c
     ref: master
