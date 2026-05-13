@@ -1516,9 +1516,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Headroom](#term-headroom)
 
+- [ACL & QoS](../acl-qos/index.md) (3)
 - [サイトマップ](../_meta/sitemap.md) (2)
 - [Dynamic Headroom Calculation（buffer_model = dynamic）](../acl-qos/dynamically-headroom-calculation.md) (2)
-- [ACL & QoS](../acl-qos/index.md) (2)
 - [変更履歴](../_meta/changelog.md) (1)
 - [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (1)
 
@@ -1930,15 +1930,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (5)
 - [サイトマップ](../_meta/sitemap.md) (2)
+- [ACL & QoS](../acl-qos/index.md) (2)
 - [sonic-queue YANG](yang/sonic-queue.md) (2)
 - [sonic-scheduler YANG](yang/sonic-scheduler.md) (2)
-- [変更履歴](../_meta/changelog.md) (1)
 
 ### [Shaper](#term-shaper)
 
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (3)
 - [サイトマップ](../_meta/sitemap.md) (2)
-- [ACL & QoS](../acl-qos/index.md) (1)
+- [ACL & QoS](../acl-qos/index.md) (2)
 
 ### [Shaping](#term-shaping)
 
@@ -2120,8 +2120,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SCHEDULER テーブル](config-db/scheduler.md) (9)
 - [サイトマップ](../_meta/sitemap.md) (8)
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (8)
+- [ACL & QoS](../acl-qos/index.md) (6)
 - [QoS / Buffer の概念地図](../topics/08-qos-buffer/concept.md) (4)
-- [QoS / Buffer の設定](../topics/08-qos-buffer/setup.md) (4)
 
 ### [YANG](#term-yang)
 
