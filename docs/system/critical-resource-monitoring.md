@@ -2,8 +2,9 @@
 title: クリティカルリソースモニタリング (CRM) 要件
 description: クリティカルリソースモニタリング (CRM) 要件 — SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった テーブル容量が有限なリソース を抱えている。
 area: system
-verification: code-verified
-last_verified: 2026-05-11
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/crm/CRM_requirements.md
@@ -209,6 +210,13 @@ CRM 要件 HLD の実装は `sonic-swss` の `orchagent` と `sonic-utilities` �
 HLD の主要要件（SAI 経由のポーリング・しきい値超過時の syslog 通知・CLI 表示）はすべて実装済み。`code-verified` に昇格。
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)

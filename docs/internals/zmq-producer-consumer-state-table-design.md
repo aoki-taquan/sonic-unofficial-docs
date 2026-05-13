@@ -3,8 +3,9 @@ title: ZMQ ProducerStateTable / ConsumerStateTable 設計
 description: ZMQ ProducerStateTable / ConsumerStateTable 設計 — 通常の ProducerStateTable
   / ConsumerStateTable は Redis 経由でメッセージを運ぶ。
 area: internals
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/sonic-swss-common/ZMQ producer-consumer state table design.md
@@ -120,6 +121,13 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 - Consumer に到達しない → `(db_name, table_name)` の register 漏れ。未登録メッセージは Server で行き場を失う
 - 期待値が Redis に無い → DB 更新が off の可能性。`ZmqConsumerStateTable` 構築時フラグを確認
 - 順序が乱れる → 複数 Producer が同じ Client を共有する場合、ネットワーク側キューと dispatch ループで Consumer 視点の順序が変わり得る
+
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ## 関連 Topics
 

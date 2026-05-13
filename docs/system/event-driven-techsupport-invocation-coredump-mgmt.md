@@ -2,8 +2,9 @@
 title: Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
 description: "Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota） — SONiC の docker 内プロセスが crash すると、core ファイルが生成される。"
 area: system
-verification: code-verified
-last_verified: 2026-05-10
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
   - repo: sonic-net/SONiC
     path: doc/auto-techsupport/auto_techsupport_and_coredump_mgmt.md
@@ -131,6 +132,13 @@ redis-cli -n 4 hgetall 'AUTO_TECHSUPPORT|GLOBAL'
 -->
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は本文で「未確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)

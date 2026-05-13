@@ -4,8 +4,9 @@ title: SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / R
 description: SONiC NOS の設定手段一覧 — SONiC は CONFIG_DB（Redis db 4）に 複数の入口 を提供し、最終的に /etc/sonic/config_db.json
   で永続化する。
 area: management
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/configuration/SONiC_NOS_Configuration_Methods.md
@@ -207,6 +208,13 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 -->
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。checkpoint / rollback 実装の取り込みは本文で「要確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)

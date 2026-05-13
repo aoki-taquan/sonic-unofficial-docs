@@ -14,30 +14,31 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - `not_implemented`: HLD 提案が現行 master に取り込まれていない
 - `evolved_beyond_hld`: 取り込まれたが HLD 記述と乖離した形で進化／置換された
 
-全 **74** ページ。
+全 **102** ページ。
 
 ## area 別件数
 
 | area | 件数 |
 |------|-----:|
 | `acl-qos` | 6 |
-| `architecture` | 16 |
-| `internals` | 5 |
-| `management` | 12 |
+| `architecture` | 25 |
+| `internals` | 6 |
+| `management` | 16 |
 | `overlay` | 1 |
-| `platform` | 11 |
-| `routing` | 6 |
+| `platform` | 12 |
+| `reference` | 1 |
+| `routing` | 8 |
 | `switching` | 8 |
-| `system` | 9 |
+| `system` | 19 |
 
 ## monitor タグ別件数
 
 | monitor | 件数 |
 |---------|-----:|
 | `deprecated`（deprecated） | 3 |
-| `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 21 |
+| `evolved_beyond_hld`（HLD と乖離した形で実装/進化） | 29 |
 | `not_implemented`（未実装） | 11 |
-| `partially_implemented`（partially_implemented） | 39 |
+| `partially_implemented`（partially_implemented） | 59 |
 
 ## エントリ一覧（area 別）
 
@@ -68,6 +69,20 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `partially_implemented` / last_verified: `2026-05-11`
 
 ### architecture
+
+- [DIP=SIP PTF 検証 内部実装（パケット仕様 / パラメータ）](../../architecture/dip-sip-ptf-validation-high-level-design-internals.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [DIP=SIP PTF 検証 制限事項と HLD-実装乖離（pytest 移行）](../../architecture/dip-sip-ptf-validation-high-level-design-limitations.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+  
+  2026-05 時点でテスト実体は **PTF スタンドアロンから pytest 配下へ移行済み** で、HLD の記述（ansible + ptftests）はファイル配置レベルで古い。
+
+- [DIP=SIP PTF 検証 概念（テストの目的とトポロジ）](../../architecture/dip-sip-ptf-validation-high-level-design-concepts.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）](../../architecture/dip-sip-ptf-validation-high-level-design-operations.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
 
 - [DIP=SIP PTF 検証テスト](../../architecture/dip-sip-ptf-validation-high-level-design.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -100,6 +115,20 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05 時点で **SAG コード / [YANG](../../reference/glossary.md#term-yang) / CLI は community master に取り込まれておらず、HLD 提案段階**。
+
+- [SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）](../../architecture/ssdhealth-design-internals.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [SSD ヘルスチェック 制限事項と HLD-実装乖離](../../architecture/ssdhealth-design-limitations.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+  
+  2026-05-09 時点の現行 master を裏取り。HLD の二段プラグイン構造（`SsdBase` / `SsdUtil`）と CLI（`show platform ssdhealth`）は概ね素直に取り込まれているが、HLD で Open Question として残されていた **常時監視デーモン `ssdmond` は現状実装が見当たらない**。さらに、HLD で示された `sonic_ssd/ssd_base.py` の配置は master では `sonic_storage/` 配下に再構成され、独立スクリプト `ssdhealth` も `ssdutil` Python パッケージに置き換わっている。
+
+- [SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）](../../architecture/ssdhealth-design-concepts.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+
+- [SSD ヘルスチェック 運用（CLI / 表示モード）](../../architecture/ssdhealth-design-operations.md)  
+  monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
 
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../../architecture/ssdhealth-design.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -139,6 +168,11 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   
   2026-05 時点で本機能は **HLD は提案されたが master にコードが入っていない**、純粋な未実装状態である。
 
+- [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../../architecture/port-illegal-packets-drop-design.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本ページは HLD 主体で書かれており、HLD 記載なしのドロップ理由（implementation 推測部分）に「未確認」と本文中で明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ### internals
 
 - [L3 Scaling と Performance 強化 内部実装（RouteOrch bulk / fpmsyncd / sairedis / show](../../internals/l3-scaling-and-performance-enhancements-internals.md)  
@@ -158,7 +192,17 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   
   2026-05-09 時点の現行 master を裏取り。
 
+- [ZMQ ProducerStateTable / ConsumerStateTable 設計](../../internals/zmq-producer-consumer-state-table-design.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ### management
+
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本 HLD は 2020 年 Rev 0.4 の **設計討議文書**。現行 master が本提案を全面採用しているかは本文に「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [Console Switch（serial hub の reverse SSH 集約）](../../management/sonic-console-switch.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -174,6 +218,21 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
+
+- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は Initial Proposal で、フィールド名・CLI が現行 master と一致するかは本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../../management/sonic-nos-configuration-methods.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。checkpoint / rollback 実装の取り込みは本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -260,6 +319,11 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
+- [VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）](../../platform/everflow-support-on-voq-chassis.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。公式 HLD（2020-12 Rev 1）のみを根拠としており、現行 master の VoQ 拡張・SAI 実装・recycle port セットアップは本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 - [拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）](../../platform/enhanced-lpo-debug-registers-hld.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
@@ -269,6 +333,13 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
+
+### reference
+
+- [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。`--namespace` 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ### routing
 
@@ -294,6 +365,16 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-10 時点の現行 master を裏取り。**Local ARS は HLD 提案のみで SONiC SWSS / utilities / yang への取り込みは未完了**。
+
+- [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../../routing/bgp-setup-for-voq-chassis.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規 FRR コマンドの SONiC 同梱 FRR への取り込み状況は本文で「要追跡」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）](../../routing/bgpcfgd-dynamic-peer-modification-support.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2025-07 Rev 1.0 で master 取り込み状況は本文で「要追跡」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -336,6 +417,31 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 ### system
 
+- [Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）](../../system/event-driven-techsupport-invocation-coredump-mgmt.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）](../../system/show-techsupport.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-10 Rev 0.1 で 6 年以上停滞。Management Framework 自身の進化との整合は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）](../../system/multi-asic-warm-reboot.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。各 namespace の swss / syncd の協調 shutdown 順序が現行スクリプトでどうなっているかは本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）](../../system/sonic-bmc-platform-management-monitoring.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [SONiC Container Hardening（capability / read-only / privileged 削減）](../../system/sonic-container-hardening.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 - [SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）](../../system/sonic-fips-deployment.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`
   
@@ -366,15 +472,40 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
   
   **読者への影響**:
 
+- [Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）](../../system/transceiver-and-sensor-monitoring-hld.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 - [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)  
   monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。`config-setup` の実際の責務分担は本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [kdump（kexec ベース kernel crash dump / makedumpfile）](../../system/kdump.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-12 v0.4。kdump-tools 後続バージョン差分・kernel バージョン更新の影響は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)  
   monitor: `deprecated` / last_verified: `2026-05-11`
   
   2026-05-11 時点の現行 master を裏取り。
+
+- [storagemond（SSD / eMMC の health 監視）](../../system/sonic-storage-monitoring-daemon-design.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [クリティカルリソースモニタリング (CRM) 要件](../../system/critical-resource-monitoring.md)  
+  monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](../../system/reset-local-users-passwords-during-init-hld.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`

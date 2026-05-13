@@ -3,8 +3,9 @@ title: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
 description: Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*） — PMON コンテナ内の
   xcvrd daemon が SFP / QSFP / QSFP-DD などの光モジュールから EEPROM 情報・DOM（Digital Optical Monitori…
 area: system
-verification: code-verified
-last_verified: 2026-05-11
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/xrcvd/transceiver-monitor-hld.md
@@ -208,6 +209,13 @@ show platform temperature
 HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡張対応 + 3 テーブル + `show interface transceiver` CLI 連携）は実装と整合。CMIS 関連フィールドは継続追加中だが本ページの設計記述レベルでは齟齬なし。`code-verified` に昇格。
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
