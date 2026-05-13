@@ -106,6 +106,19 @@ TACPLUS|global
 
 <!-- /topics-back-ref -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L473-492 L641-725 -->
+
+- **DEL 操作でエントリ削除**: `tacacs_server_update()` は `data == {}` のとき内部辞書からエントリを削除し `modify_conf_file()` で設定ファイルを再生成する。PAM / NSS 設定ファイルへの反映は同期的に行われる。
+- **`priority` の型変換失敗**: `modify_conf_file()` は `priority` を `int()` でソートする。`priority` に整数として解釈できない文字列が入ると `ValueError` が発生し設定ファイル生成が中断する。
+- **`src_ip` 未設定時**: `tacplus_global` に `src_ip` がない場合は送信元 IP なしでテンプレートを生成する（デバイス側のルーティングに依存）。
+- **audisp-tacplus SIGHUP 失敗**: accounting 連携の PID が見つからないか `os.kill()` が失敗した場合、`"Send SIGHUP to audisp-tacplus failed with exception: {}"` を LOG_WARNING して続行する（認証設定自体は更新される）。
+- **テンプレート展開失敗**: Jinja2 テンプレートや設定ファイル書き込みに失敗すると `"Failed generate_file_from_template error={e}"` を LOG_ERR し、設定は反映されない。
+
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 

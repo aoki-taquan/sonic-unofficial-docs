@@ -105,6 +105,21 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 [^1]: tunneldecaporch 実装: `tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L49-L50>
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L51-697 -->
+
+- **`src_ip` の変更不可**: 既存トンネルの `src_ip` を変更しようとすると `"cannot modify src ip for existing tunnel"` を LOG_ERROR して拒否する。変更するにはトンネルを削除して再作成する必要がある。
+- **無効な tunnel_type / dscp_mode / ecn_mode / ttl_mode**: 有効値以外の文字列が来ると `"Invalid tunnel type/dscp mode/ecn mode/ttl mode <value>"` を LOG_ERROR してエントリをスキップする。
+- **encap_ecn_mode は `standard` のみ対応**: `ecn_mode` が `standard` 以外の場合 `"Only standard encap ecn mode is supported currently"` を LOG_ERROR して拒否。
+- **存在しないトンネルの DEL**: 未作成のトンネルへの DEL は `"Tunnel <key> cannot be removed since it doesn't exist."` を LOG_ERROR する。
+- **subnet decap 制約**: subnet decap の decap term は `MP2MP` タイプのトンネルにのみ許可される。`src_ip` / `src_ip_v6` なしで subnet decap term を追加しようとするとそれぞれ `"no source IP is provided."` を LOG_ERROR。
+- **subnet decap 無効時の decap term**: `subnet_decap` が無効な状態で decap term を追加しようとすると `"subnet decap is disabled, ignored."` を LOG_ERROR してスキップ。
+- **ASIC_DB 操作失敗**: トンネルや decap term の ASIC_DB 追加/削除が失敗するとそれぞれエラーを LOG_ERROR する。
+
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
