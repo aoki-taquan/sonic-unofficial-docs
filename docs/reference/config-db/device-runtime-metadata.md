@@ -2,6 +2,7 @@
 title: DEVICE_RUNTIME_METADATA テーブル
 description: "DEVICE_RUNTIME_METADATA テーブル — CONFIG_DB に永続化されない、起動時に計算で組み立てられる 仮想テーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -72,6 +73,35 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 
 (`init_cfg.json.j2` の `FEATURE` テーブル展開で使用)[^2]。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `ETHERNET_PORTS_PRESENT` (True/False)
+
+| 値 | 挙動 |
+|----|------|
+| `True` | [port_config.ini](../../reference/glossary.md#term-port-config-ini) が存在。init_cfg.json.j2 が `has_per_asic_scope = "True"` を生成可能 |
+| `False` | [port_config.ini](../../reference/glossary.md#term-port-config-ini) なし（supervisor 等）。init_cfg.json.j2 が `has_per_asic_scope = "False"` を生成 |
+
+### `CHASSIS_METADATA.module_type` (supervisor/linecard)
+
+| 値 | 挙動 |
+|----|------|
+| `supervisor` | init_cfg.json.j2 の Jinja 条件式で per-asic インスタンスを False に設定 |
+| `linecard` | per-asic インスタンス有効として扱う |
+| キー自体が存在しない（非 chassis） | linecard 相当として扱われる（`'CHASSIS_METADATA' in DEVICE_RUNTIME_METADATA` が False） |
+
+### `MACSEC_SUPPORTED` (True/False)
+
+| 値 | 挙動 |
+|----|------|
+| `True` | init_cfg.json.j2 に MACsec 関連 FEATURE エントリが含まれる |
+| `False` / キーなし | MACsec FEATURE エントリは生成されない |
+
+> 明示的な enum 制約なし。[YANG](../../reference/glossary.md#term-yang) スキーマなし。CONFIG_DB に永続化されない仮想テーブル。
+
+<!-- /value-behavior -->
+
 ## 注意点
 
 - [YANG](../../reference/glossary.md#term-yang) モジュールは存在しない (`sonic-yang-models/yang-models/` 配下にスキーマなし)
@@ -127,7 +157,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 | init_cfg.json.j2 | `MACSEC_SUPPORTED = False` または platform_env.conf に `macsec_enabled=0` | device type が SpineRouter 系でも `macsec` feature を `disabled` に設定（j2:90） |
 | device_info.py | `platform_env.conf` が存在しない | `is_macsec_supported()` が 0 を返し `MACSEC_SUPPORTED=False` となる（device_info.py:720-721） |
 
-> **Evidence**: sonic-buildimage `files/build_templates/init_cfg.json.j2:67,75,90,106-107`; `src/sonic-py-common/sonic_py_common/device_info.py:720-747`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `files/build_templates/init_cfg.json.j2:67,75,90,106-107`; `src/sonic-py-common/sonic_py_common/device_info.py:720-747`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: a35f1b1cdfa7 -->
+<!-- glossary-links-injected: e33fec70e206 -->

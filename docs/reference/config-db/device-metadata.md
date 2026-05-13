@@ -2,6 +2,7 @@
 title: DEVICE_METADATA テーブル
 description: "DEVICE_METADATA テーブル — 装置全体のメタ情報を保持する CONFIG_DB テーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -118,6 +119,82 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `bmc_addr` | ipv4-address | BMC IP |
 | `bmc_net_mask` | ipv4-address | BMC ネットマスク |
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `default_bgp_status`
+
+| 値 | 挙動 |
+|----|------|
+| `up` (デフォルト) | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 起動時に BGP daemon を auto-start 状態にする |
+| `down` | BGP daemon を shutdown 状態で起動（メンテナンス用） |
+
+### `docker_routing_config_mode`
+
+| 値 | 挙動 |
+|----|------|
+| `separated` | minigraph デフォルト。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が J2 テンプレを展開して frr.conf を生成 |
+| `unified` | frrcfgd が起動時に全 BGP テーブルをリプレイしてから変更を監視 |
+| `split` / `split-unified` | frrcfgd が `separated` モードとして動作（frrcfgd.py:2170） |
+| 未設定 | frrcfgd が `separated` とみなす |
+
+### `frr_mgmt_framework_config`
+
+| 値 | 挙動 |
+|----|------|
+| `false` (デフォルト) | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が FRR 設定を担当 |
+| `true` | sonic-frr-mgmt-framework (frrcfgd) が BGP 設定を担当。BGP_NEIGHBOR 等を frrcfgd が受け付ける |
+
+### `default_pfcwd_status`
+
+| 値 | 挙動 |
+|----|------|
+| `disable` (デフォルト) | pfcwd は `config reload` 後に自動起動しない |
+| `enable` | `config reload` 後に `pfcwd start_default` が自動実行（config/main.py:2434） |
+| type が MgmtToRRouter 等 | pfcwd 呼び出し自体をスキップ（device_type チェック） |
+
+### `synchronous_mode`
+
+| 値 | 挙動 |
+|----|------|
+| `enable` (デフォルト) | orchagent を `-s` フラグで synchronous mode 起動（[SAI](../../reference/glossary.md#term-sai) 操作がブロッキング） |
+| `disable` | orchagent を非同期 SAI モードで起動 |
+| switch_type=`dpu` のとき | `enable` でも zmq_sync モードが優先（orchagent.sh:39-41） |
+
+### `suppress-fib-pending`
+
+| 値 | 挙動 |
+|----|------|
+| `disabled` (デフォルト) | suppress-fib-pending 無効 |
+| `enabled` | bgpcfgd が FRR に `bgp suppress-fib-pending` を適用（managers_bgp.py:502） |
+| `enabled` かつ `synchronous_mode ≠ enable` | YANG `must` 違反 → reject |
+
+### `buffer_model`
+
+| 値 | 挙動 |
+|----|------|
+| `dynamic` | buffermgr が BUFFER_POOL/PROFILE の CONFIG_DB 変更を無視。dynamic buffer mgr (Mellanox 等) が SAI 直接更新（buffermgr.cpp:476-478） |
+| `traditional` (またはその他) | buffermgr が CONFIG_DB の BUFFER_POOL/PROFILE を [APPL_DB](../../reference/glossary.md#term-appl_db) に転写 |
+
+### `switch_type`
+
+| 値 | 挙動 |
+|----|------|
+| `npu` / 未設定 | 通常スイッチとして起動 |
+| `voq` | orchagent が [VOQ](../../reference/glossary.md#term-voq) モードで起動、switch_id を SAI に渡す |
+| `fabric` | SAI_SWITCH_TYPE_FABRIC として作成、switch_id 必須（未設定で exit） |
+| `dpu` | orchagent.sh が zmq_sync + bulk limit 65536 で起動 |
+| 不正値 | orchagent がエラーログを出して `switch` に fallback（main.cpp:262） |
+
+### `async_swss_rec`
+
+| 値 | 挙動 |
+|----|------|
+| `disabled` (デフォルト) | swss.rec 同期書き込み |
+| `enabled` | swss.rec を非同期で書き込み（高トラフィック時の遅延軽減） |
+
+<!-- /value-behavior -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
@@ -211,12 +288,12 @@ show platform summary
 | bgpcfgd | `bgp_asn` が `localhost` に存在しない | BGP ピア追加を `return False` で延期・再試行待ち（managers_bgp.py:192） |
 | bgpcfgd | `bgp_router_id` も未設定かつ Loopback IPv4 未取得 | ピア追加待機、`log_warn` を出力（managers_bgp.py:186-188） |
 | bgpcfgd | `type` (switch_role) が未設定 | `switch_role=None` のまま継続、デフォルト補完なし（managers_device_global.py:53-54） |
-| syncd | `switch_type` が `hget` で取得できない | 空文字のまま続行、例外なし（Syncd.cpp:167-169） |
+| [syncd](../../reference/glossary.md#term-syncd) | `switch_type` が `hget` で取得できない | 空文字のまま続行、例外なし（Syncd.cpp:167-169） |
 | dhcprelayd | `has_sonic_dhcpv4_relay = "True"` | 旧来 `dhcrelay` プロセスを起動しない（新 dhcpv4-relay サービスに委譲）（dhcprelayd.py:112-113） |
-| linkmgrd | `mac` フィールドのフォーマット不正 | `MUX_ERROR(ConfigNotFound)` 例外を throw し linkmgrd が起動失敗（DbInterface.cpp:576） |
+| [linkmgrd](../../reference/glossary.md#term-linkmgrd) | `mac` フィールドのフォーマット不正 | `MUX_ERROR(ConfigNotFound)` 例外を throw し [linkmgrd](../../reference/glossary.md#term-linkmgrd) が起動失敗（DbInterface.cpp:576） |
 | db_migrator | `synchronous_mode` キーが存在しない | 移行元から取得して補完、既存値は上書きしない（db_migrator.py:676-677） |
 
-> **Evidence**: sonic-buildimage `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`, `managers_device_global.py`; sonic-sairedis `syncd/Syncd.cpp:167`; sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:112`; sonic-linkmgrd `src/DbInterface.cpp:576`; sonic-utilities `scripts/db_migrator.py:676`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`, `managers_device_global.py`; [sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) `syncd/Syncd.cpp:167`; [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:112`; sonic-[linkmgrd](../../reference/glossary.md#term-linkmgrd) `src/DbInterface.cpp:576`; [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/db_migrator.py:676`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: aa8ce067a4a1 -->
+<!-- glossary-links-injected: e22e287b939b -->

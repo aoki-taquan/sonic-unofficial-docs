@@ -2,6 +2,7 @@
 title: DHCP_SERVER_IPV4 テーブル
 description: "DHCP_SERVER_IPV4 テーブル — 組み込み DHCPv4 サーバ機能の VLAN/IF 単位設定を保持する。dhcpservd（sonic-dhcp-server パッケージ）が kea-dhcp4 の設定を生成、起動する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -68,6 +69,41 @@ DHCP_SERVER_IPV4|<name>
 
 詳細は [YANG](../../reference/glossary.md#term-yang) モジュール `sonic-dhcp-server-ipv4` を直参照。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `state` (admin_mode: enabled/disabled)
+
+| 値 | 挙動 |
+|----|------|
+| `enabled` | dhcpservd が kea-dhcp4 サーバを起動し DHCP DISCOVER に応答 |
+| `disabled` | kea-dhcp4 を停止。クライアントへの応答なし |
+
+### `mode` (enum: PORT)
+
+| 値 | 挙動 |
+|----|------|
+| `PORT` | ポート単位で IP を割り当て（DHCP_SERVER_IPV4_PORT テーブルで定義）。現在は PORT のみサポート |
+| その他 | YANG enum 違反で reject |
+
+### `lease_time` (uint32, 必須)
+
+| 値 | 挙動 |
+|----|------|
+| 1 以上 | kea-dhcp4 のリース有効期間（秒）として設定 |
+| 0 | YANG range 違反（1 以上必須）で reject |
+
+### `customized_options` (leaf-list leafref)
+
+| 値 | 挙動 |
+|----|------|
+| 存在する DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS.name | kea-dhcp4 設定にカスタムオプションを追加 |
+| 存在しない option 名 | YANG leafref 違反で reject |
+
+> DEVICE_METADATA.dhcp_server が未設定の場合、dhcpservd 自体が起動しないため state の設定は無効。
+
+<!-- /value-behavior -->
+
 ## 購読者
 
 - `dhcpservd` (`sonic-dhcp-server` 内)
@@ -132,7 +168,7 @@ show dhcp_server ipv4 info
 | dhcp_cfggen | `ranges` で指定した range 名が DHCP_SERVER_IPV4_RANGE に存在しない | `LOG_WARNING: "Range %s is not in range table, skip"` を出力してその range をスキップ（dhcp_cfggen.py:452-454） |
 | dhcprelayd | `state=enabled` でも VLAN が VLAN テーブルに存在しない | dhcrelay の起動対象から除外（dhcprelayd.py:97-98） |
 
-> **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:133-454`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:133-454`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 3d133254de43 -->
+<!-- glossary-links-injected: 75921d013977 -->

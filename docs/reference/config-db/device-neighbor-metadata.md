@@ -2,6 +2,7 @@
 title: DEVICE_NEIGHBOR_METADATA テーブル
 description: "DEVICE_NEIGHBOR_METADATA テーブル — 隣接機器（DEVICE_NEIGHBOR で参照されるホスト）のメタデータ（hwsku、loopback、管理 IP、deployment_id など）を保持するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -61,6 +62,29 @@ DEVICE_NEIGHBOR_METADATA|<name>
 | `slice_type` | string | デバイス用メタデータタグ |
 | `resource_type` | string | リソース種別（例: `Storage`、`Compute`） |
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `type` (string: 制約なし)
+
+| 値の例 | 挙動 |
+|-------|------|
+| `ToRRouter` / `LeafRouter` / `SpineRouter` | [BGP](../../reference/glossary.md#term-bgp) テンプレ生成（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)）で role を参照し、eBGP セッション設定を分岐させることがある |
+| `Server` | 末端ホスト扱い（BGP テンプレでは直接利用されないことが多い） |
+| 任意の文字列 | YANG 上 string 型で制約なし |
+
+### IP 系フィールド (`lo_addr` / `lo_addr_v6` / `mgmt_addr` / `mgmt_addr_v6`)
+
+| 形式 | 挙動 |
+|------|------|
+| ipv4-prefix / ipv6-prefix 形式 | prefix 長付きで受理 |
+| ipv4-address / ipv6-address 形式 | ホストアドレスとして受理 |
+| その他 | YANG union 型違反で reject |
+
+> 明示的な enum 制約なし。フィールド値はすべて自由文字列または union 型。
+
+<!-- /value-behavior -->
+
 ## 制約
 
 - 同名の `DEVICE_NEIGHBOR_LIST.name` と運用上揃える前提（[YANG](../../reference/glossary.md#term-yang) では leafref 化されていない）
@@ -115,10 +139,10 @@ show lldp table
 
 | consumer | 条件 | 挙動 |
 |---|---|---|
-| bgpcfgd | `DEVICE_NEIGHBOR_METADATA` が directory に未到達 | `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` を出力して `return False` で延期。依存関係登録済みのため到着後に再処理（managers_bgp.py:220-222） |
+| [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) | `DEVICE_NEIGHBOR_METADATA` が directory に未到達 | `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` を出力して `return False` で延期。依存関係登録済みのため到着後に再処理（managers_bgp.py:220-222） |
 | pfcwd | neighbor `name` フィールド欠落 | `KeyError` が発生し pfcwd の起動シーケンスが中断する（pfcwd/main.py:102） |
 
-> **Evidence**: sonic-buildimage `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:140,220-224`; sonic-utilities `pfcwd/main.py:102`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:140,220-224`; [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `pfcwd/main.py:102`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 9bd4f7a3d366 -->
+<!-- glossary-links-injected: 6a290c48f0ce -->

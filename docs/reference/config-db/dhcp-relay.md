@@ -2,6 +2,7 @@
 title: DHCP_RELAY テーブル
 description: "DHCP_RELAY テーブル — dhcpv6_servers は ordered-by user で 設定順を維持 する。dhcp6relay は順序通りに upstream をスキャンする。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -60,6 +61,33 @@ DHCP_RELAY|<name>
 `dhcpv6_servers` は `ordered-by user` で **設定順を維持** する。`dhcp6relay` は順序通りに upstream をスキャンする。
 
 `rfc6939_support` / `interface_id` は [YANG](../../reference/glossary.md#term-yang) 上 `pattern "false|true"` の string 型（boolean ではない）。[CONFIG_DB](../../reference/glossary.md#term-config_db) の慣習で文字列リテラル。
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `dhcpv6_servers` (leaf-list of ipv6-address, ordered-by user)
+
+| 値 | 挙動 |
+|----|------|
+| 1 件以上 | dhcp6relay が VLAN ごとの upstream サーバとして登録。設定順（ordered-by user）を維持してスキャン |
+| 0 件（空 leaf-list） | その VLAN のリレーは無効（config_interface.cpp: servers.empty() → skip） |
+
+### `rfc6939_support` (string pattern "false|true")
+
+| 値 | 挙動 |
+|----|------|
+| `"true"` (デフォルト) | dhcp6relay が RFC 6939 Client Link-Layer Address Option (option 79) をリレーメッセージに追加 |
+| `"false"` | option 79 を付与しない（config_interface.cpp:169） |
+
+### `interface_id` (string pattern "false|true")
+
+| 値 | 挙動 |
+|----|------|
+| `"true"` | Interface-ID オプション (OPTION_INTERFACE_ID) をリレーメッセージに挿入（config_interface.cpp:172-173） |
+| `"false"` / 未設定（非 DualToR） | Interface-ID なし（デフォルト off） |
+| 未設定（DualToR 環境） | dual_tor_sock が存在する場合はデフォルト on（config_interface.cpp:118-122） |
+
+<!-- /value-behavior -->
 
 ## 制約
 

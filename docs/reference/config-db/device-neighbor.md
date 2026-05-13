@@ -2,6 +2,7 @@
 title: DEVICE_NEIGHBOR テーブル
 description: "DEVICE_NEIGHBOR テーブル — 直接接続される隣接機器（cable 配線レベル）と自スイッチの port を紐付けるテーブル。LLDP の正解値 (expected neighbor) として lldp / lldpmgrd が利用するほか、minigraph 取り込み時にも生成される。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -57,6 +58,27 @@ DEVICE_NEIGHBOR|<peer_name>
 | `port` | string (1..255) | 隣接側ポート名 |
 | `type` | string (1..255) | 隣接機器タイプ（`ToRRouter`、`LeafRouter` 等の運用ロール文字列） |
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `local_port` (leafref → PORT.name)
+
+| 値 | 挙動 |
+|----|------|
+| 存在する PORT.name | lldpmgrd が期待 neighbor の照合に使用 |
+| 存在しない PORT.name | YANG leafref 違反で reject |
+
+### `type` (string: 制約なし)
+
+| 値の例 | 挙動 |
+|-------|------|
+| `ToRRouter` / `LeafRouter` 等 | lldpmgrd や [BGP](../../reference/glossary.md#term-bgp) テンプレが参照することがある |
+| 任意の文字列 | YANG 上 string 型で制約なし |
+
+> フィールドに明示的な enum 制約なし。`local_port` の leafref 違反のみ YANG レベルで reject。
+
+<!-- /value-behavior -->
+
 ## 制約
 
 - `local_port` は `PORT_LIST.name` への leafref。存在しないポートを指定するとバリデーションで弾かれる
@@ -111,11 +133,11 @@ show lldp neighbors
 
 | consumer | 条件 | 挙動 |
 |---|---|---|
-| minigraph.py | port_config.ini に存在しないインターフェイスがエントリに含まれる | `Warning: ignore interface '%s' in DEVICE_NEIGHBOR...` を stderr に出力してスキップ（minigraph.py:2635） |
+| minigraph.py | [port_config.ini](../../reference/glossary.md#term-port-config-ini) に存在しないインターフェイスがエントリに含まれる | `Warning: ignore interface '%s' in DEVICE_NEIGHBOR...` を stderr に出力してスキップ（minigraph.py:2635） |
 | show interfaces | DEVICE_NEIGHBOR テーブルが空 | `"DEVICE_NEIGHBOR information is not present."` を表示して継続。エラーにはならない（show/interfaces/__init__.py:318） |
 | pfcwd | DEVICE_NEIGHBOR テーブルが空 | 全ポートを内部ポートとして扱い、外部ポート判定を行わない（pfcwd/main.py:413） |
 
-> **Evidence**: sonic-buildimage `src/sonic-config-engine/minigraph.py:2635`; sonic-utilities `show/interfaces/__init__.py:318`, `pfcwd/main.py:413`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-config-engine/minigraph.py:2635`; [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `show/interfaces/__init__.py:318`, `pfcwd/main.py:413`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 86469dbd1da9 -->
+<!-- glossary-links-injected: 2c4f81fa98e5 -->

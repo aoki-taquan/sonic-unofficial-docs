@@ -2,6 +2,7 @@
 title: DSCP_TO_TC_MAP テーブル
 description: "DSCP_TO_TC_MAP テーブル — DSCP 値 (0..63) を Traffic Class へマップする ingress QoS 分類定義。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -56,6 +57,27 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 | `tc` | `tc_type` (0..7) | - | 対応 TC |
 
 [YANG](../../reference/glossary.md#term-yang) 上は親子 list 構造。[Redis](../../reference/glossary.md#term-redis) に展開すると `DSCP_TO_TC_MAP|<name>` の hash field として `<dscp>: <tc>` ペアが格納される。
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `dscp` (key: string 0..63)
+
+| 値 | 挙動 |
+|----|------|
+| `0`..`63` | qosorch が SAI_QOS_MAP_TYPE_DSCP_TO_TC エントリを生成 |
+| 範囲外 | YANG 違反で reject |
+
+### `tc` (tc_type: 0..7)
+
+| 値 | 挙動 |
+|----|------|
+| `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定 |
+| 8 以上 | ASIC が拒否（SAI エラー） |
+
+> 明示的な enum 制約なし（スパース定義可能）。PORT_QOS_MAP.dscp_to_tc_map から参照されない限り SAI に反映されない。未定義 [DSCP](../../reference/glossary.md#term-dscp) はデフォルト TC=0 になるのが一般的。
+
+<!-- /value-behavior -->
 
 ## 購読者
 
@@ -112,12 +134,12 @@ show qos map dscp-tc
 
 | consumer | 条件 | 挙動 |
 |---|---|---|
-| orchagent | DEL 時に PORT / TUNNEL から参照中 | `m_pendingRemove=true` を立てて `task_need_retry` を返す（qosorch.cpp:181-186） |
-| orchagent | スイッチに DSCP→TC map 適用前の capability 確認 | `querySwitchCapability(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` で未対応の場合はスイッチレベルへの適用をスキップ（qosorch.cpp:1956） |
-| orchagent | スイッチレベルで DSCP map 解除 (null 設定) | `SAI_NULL_OBJECT_ID` を渡して解除可能（qosorch.cpp:1993） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | DEL 時に PORT / TUNNEL から参照中 | `m_pendingRemove=true` を立てて `task_need_retry` を返す（qosorch.cpp:181-186） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | スイッチに DSCP→TC map 適用前の capability 確認 | `querySwitchCapability(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` で未対応の場合はスイッチレベルへの適用をスキップ（qosorch.cpp:1956） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | スイッチレベルで DSCP map 解除 (null 設定) | `SAI_NULL_OBJECT_ID` を渡して解除可能（qosorch.cpp:1993） |
 | orchagent | SAI 生成・変更・削除失敗 | `task_failed` を返す。DOT1P_TO_TC_MAP と同一の `QosMapHandler` を使用（qosorch.cpp:151-191） |
 
-> **Evidence**: sonic-swss `orchagent/qosorch.cpp:1956,1993`; `orchagent/tunneldecaporch.cpp:831-834`
+> **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/qosorch.cpp:1956,1993`; `orchagent/tunneldecaporch.cpp:831-834`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: eebb97ac8e67 -->
+<!-- glossary-links-injected: 9e94f614fc2c -->
