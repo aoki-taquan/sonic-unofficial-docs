@@ -15342,7 +15342,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -15353,7 +15353,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -15364,7 +15364,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -15375,7 +15375,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        トラブルシューティング
       
     </span>
   </a>
@@ -15384,6 +15384,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -15405,7 +15416,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29786,7 +29797,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -29797,7 +29808,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29808,7 +29819,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -29819,7 +29830,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        トラブルシューティング
       
     </span>
   </a>
@@ -29828,6 +29839,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29849,7 +29871,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -30065,7 +30087,12 @@
     DR --&gt;|no| C[checkpoint] --&gt; A[apply] --&gt; S{ok?}
     S --&gt;|yes| OK[完了]
     S --&gt;|no| RB[rollback]</code></pre>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">実装との乖離<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
+<p>本ページの monitor は <code>partially_implemented</code>。HLD は SONiC NOS の設定手段を 10 種類に整理する設計提案で、現行 master では中核となる <code>sonic-cfggen</code> / <code>config_db.json</code> / <code>redis-cli</code> / <code>vtysh</code> / RESTCONF / gNMI は実装されているが、<code>apply-patch</code> の checkpoint / rollback や ZTP boot failure リカバリ、入口横断の validation などは段階的取り込みで一部のみ。HLD の表は分類軸として有用だが、各入口の最新挙動は個別の <code>sonic-utilities</code> / <code>sonic-mgmt-framework</code> 実装で裏取りすること。</p>
+</div>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>vtysh の変更は永続化されない（CONFIG_DB / FRR テンプレート転記が必要）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>redis-cli</code> 直接操作はバリデーション無し、不整合状態を作りうる<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -30073,14 +30100,14 @@
 <li>RESTCONF / gNMI は有効化と認証を別途設定<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>apply-patch</code> の checkpoint / rollback 実装の取り込みは要確認</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>CONFIG_DB</strong>: 全手段の収束先</li>
 <li><strong><code>hostcfgd</code></strong>: CONFIG_DB → OS 側設定（systemd / 各種 conf）に反映</li>
 <li><strong><code>bgpcfgd</code></strong> 等の orchestration daemon: CONFIG_DB → daemon 設定生成</li>
 <li><strong><code>vtysh</code> ↔ <code>frr.conf</code> の整合</strong>: 永続化は手作業</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>設定が再起動で消える → <code>config save -y</code> 忘れ、<code>config_db.json</code> の更新時刻を確認</li>
 <li>vtysh の変更が消える → CONFIG_DB / FRR テンプレートへの反映確認</li>
@@ -30094,8 +30121,8 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/02-bgp/">Topic: BGP</a></li>
 <li><a href="../../reference/cli/config-bgp/">CLI: config-bgp</a></li>
@@ -30116,7 +30143,7 @@
 <!-- glossary-links-injected: 32fbe70babcc -->
 
 <!-- ops-entry -->
-<h2 id="_9">運用入口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この <a href="../../reference/glossary/#term-hld">HLD</a> に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>

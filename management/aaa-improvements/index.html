@@ -15724,7 +15724,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -15735,7 +15735,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -15744,6 +15744,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -15782,7 +15793,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -15815,7 +15826,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29693,7 +29704,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -29704,7 +29715,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29713,6 +29724,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29751,7 +29773,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29784,7 +29806,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29949,20 +29971,25 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 
 <h2 id="_4">設定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>HLD は提案中心のため、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI の最終形は具体化されていない。<code>AAA</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> 既存テーブルは前提として継続利用する想定。</p>
-<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_5">実装との乖離<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
+<p>本ページの monitor は <code>partially_implemented</code>。HLD は AAA を PAM / NSS / D-Bus / RBAC 多重ロールで再設計する提案だが、現行 master では既存 <code>AAA</code> / <code>RADIUS</code> / <code>TACPLUS</code> CONFIG_DB テーブルと従来の PAM スタックがそのまま使われており、D-Bus 経由の NSS / 多重 role / <code>sudoers</code> NOPASSWD 撤去などの中心要素は取り込まれていない。HLD は設計議論文書として参照し、実装の振る舞いは個別の AAA 関連ページと <code>.cache/sonic-sources/sonic-buildimage/files/image_config/</code> の PAM / NSS 設定で裏取りすること。</p>
+</div>
+<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>設計討議文書</strong>であり、SONiC が全面採用したか不明</li>
 <li>D-Bus 経由 NSS は実装コストが高い（host / container 共通基盤改修を伴う）</li>
 <li><code>sudoers</code> の NOPASSWD 撤去は運用変更を伴うため互換性に注意</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>RADIUS 管理 user 認証</strong>: 同 area で RADIUS 単独の HLD あり（<code>radius-management-user-authentication.md</code>）</li>
 <li><strong>TACACS+ 認証</strong>: TACACS 用 HLD は別ドキュメント（<code>doc/aaa/TACACS+ Authentication.md</code> 等）</li>
 <li><strong>Port Access Control（PAC）</strong>: AAA 設定の RADIUS_SERVER は PAC とも共有</li>
 <li><strong>Container Hardening</strong>: container 内認証の解決と関連</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>RADIUS で role が変わったのに反映されない → 2 回目ログインで反映される workaround を踏んでいる可能性。<code>/etc/passwd</code> の local account を確認</li>
 <li><code>sudo</code> で RADIUS 認証されない → <code>/etc/pam.d/sudo</code> の RADIUS module を確認</li>
@@ -29987,7 +30014,7 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># PAM 経路</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/common-auth-sonic
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - D-Bus 経由 NSS module の現行 sonic-buildimage 取り込み確認
 - supplementary groups による多重 role の現行 PAM module 実装確認
@@ -30016,7 +30043,7 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 <!-- glossary-links-injected: a9c18564f33f -->
 
 <!-- ops-entry -->
-<h2 id="_9">運用入口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / <a href="../../reference/glossary/#term-yang">YANG</a> / Runbook）を以下にまとめる。</p>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>

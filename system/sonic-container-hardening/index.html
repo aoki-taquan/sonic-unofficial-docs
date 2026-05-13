@@ -14504,7 +14504,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -14515,7 +14515,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -14524,6 +14524,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -14535,7 +14546,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -14551,7 +14562,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29544,7 +29555,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -29555,7 +29566,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29564,6 +29575,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29575,7 +29597,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -29591,7 +29613,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29684,34 +29706,39 @@
 <li>read-only / tmpfs 化を docker 単位で順次適用</li>
 <li><code>--privileged</code> を残す docker は justification を明文化</li>
 </ol>
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">実装との乖離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
+<p>本ページの monitor は <code>partially_implemented</code>。HLD は全 docker を <code>--cap-drop=all</code> の最小 capability + read-only / tmpfs ベースに移行する設計提案だが、現行 master の <code>sonic-buildimage/files/build_templates/docker_image_ctl.j2</code> では多くの docker が依然として <code>--privileged</code> または広めの capability で起動している。一部 docker（例: telemetry / mgmt 系の比較的新しいもの）から段階的に capability 縮小が進む途上で、全 docker 共通の matrix 化や read-only 化は未完。実装の最新状況は <code>.cache/sonic-sources/sonic-buildimage/</code> の docker テンプレート群を docker ごとに裏取りすること。</p>
+</div>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>vendor SAI / SDK</strong> が <code>--privileged</code> を要求する場合、syncd 単独で完全な脱 privileged は難しい</li>
 <li><strong>3rd-party container（application extension）</strong>: manifest 側で必要 capability を宣言する必要があり、未対応 package は緩い設定で動く</li>
 <li><strong>既存運用スクリプト</strong>: hardening 後に動かなくなる ad-hoc スクリプトが顕在化する</li>
 <li><strong>完全に root を捨てる</strong>: user namespace 化は kernel 設定とコンテナ内 user 全体の見直しが必要</li>
 </ul>
-<h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>application extension / 3rd-party container</strong>: 拡張側にも hardening 方針を波及させる</li>
 <li><strong>secure-boot / secure-upgrade</strong>: 端から root 権限を縮小する文脈で同時進行</li>
 <li><strong>show techsupport</strong>: 一部の log / dump 取得で privileged が必要だったコマンドを再評価</li>
 <li><strong>warm reboot</strong>: capability 不足で warm shutdown フックが失敗するパターンを警戒</li>
 </ul>
-<h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>docker が EPERM で死ぬ → <code>docker logs &lt;c&gt;</code> と auditd / dmesg を見て不足 capability を特定</li>
 <li>read-only で write できない → tmpfs / volume の bind 漏れ</li>
 <li>vendor 機能が動かない → syncd の cap-add リストと vendor の要件確認</li>
 </ul>
-<h3 id="_6">コマンド例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_7">コマンド例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>コンテナ起動時の権限制限を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>inspect<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.[0].HostConfig.Privileged&#39;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>inspect<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;.[0].HostConfig.CapAdd&#39;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>capsh<span class="w"> </span>--print
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;AppArmor|seccomp&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - docker_image_ctl.j2 の cap-add / cap-drop 制御の現行実装確認
 - 各 docker（swss / syncd / bgp / teamd / lldp / dhcp_relay 等）の必要 capability matrix の現行値確認

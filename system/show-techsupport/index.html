@@ -14038,7 +14038,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -14049,7 +14049,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -14060,7 +14060,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -14069,6 +14069,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29715,7 +29726,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        実装との乖離
       
     </span>
   </a>
@@ -29726,7 +29737,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29737,7 +29748,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -29746,6 +29757,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティング
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29915,14 +29937,19 @@ reasoning: --since の IETF date-time 形式制約と sonic-hostservices 依存�
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>https://&lt;switch&gt;/restconf/operations/sonic-show-techsupport:show-techsupport<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;input&quot;:{&quot;since&quot;:&quot;2026-05-09T13:00:00Z&quot;}}&#39;</span>
 </span></code></pre></div>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<div class="admonition diff">
+<p class="admonition-title">HLD と実装の差分</p>
+<p>本ページの monitor は <code>partially_implemented</code>。base feature の CLI <code>show techsupport</code> は実装されているが、HLD が中心的に提案する Management Framework (REST/gNMI) 経由の <code>show-techsupport</code> RPC ＋ IETF <code>since</code> パラメータの YANG モデル化は、現行 master の <code>sonic-mgmt-framework</code> で十分に取り込まれていない（HLD 自身が 2019 Rev 0.1 で停滞）。実運用では sonic-utilities 側の <code>show techsupport</code> / <code>AUTO_TECHSUPPORT</code> CONFIG_DB テーブル経由が主流で、RPC 経路を使う場合は <code>.cache/sonic-sources/sonic-mgmt-framework/</code> の RPC スタブ実装の最新状態を裏取りすること。</p>
+</div>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>--since</code> は IETF date-time 形式のみ</strong>。シェル CLI で慣れ親しんだ <code>-1 day</code> 等は Management Framework 経由では使えない<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>Management Framework に対する明示的な timeout 制御 / 中断 RPC は HLD で議論されていない</li>
 <li>出力 tarball の path / 受渡し方法は HLD で詳述されていない（base feature を踏襲）</li>
 <li>HLD は 2019-10 Rev 0.1 で 6 年以上停滞。Management Framework 自身の進化（特に gNMI / OpenConfig 化）と整合しているかは要確認</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>show techsupport</code> (sonic-utilities)</strong>: 採取本体。互換維持</li>
 <li><strong><code>sonic-hostservices</code></strong>: Management Framework から host へのブリッジ</li>
@@ -29930,7 +29957,7 @@ reasoning: --since の IETF date-time 形式制約と sonic-hostservices 依存�
 <li><strong>gNMI / REST / NETCONF</strong>: 標準管理プロトコル経由</li>
 <li><strong>dump 出力先 <code>/var/dump</code></strong>: 既存と同じ。disk 容量管理・rotation は別機能の領域</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 既存 script が動くか</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport<span class="w"> </span>--since<span class="w"> </span><span class="m">2026</span>-05-09T13:00:00Z
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -29944,7 +29971,7 @@ reasoning: --since の IETF date-time 形式制約と sonic-hostservices 依存�
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># 結果ファイル</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>ls<span class="w"> </span>-lh<span class="w"> </span>/var/dump/sonic_dump_*.tar.gz
 </span></code></pre></div>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
