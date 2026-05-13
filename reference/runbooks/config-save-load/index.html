@@ -29751,8 +29751,8 @@
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
-    A[config save/load が失敗] --&gt; B{write 権限 OK?}
-    B -- No --&gt; B1[/etc/sonic の権限を修正]
+    A["config save/load が失敗"] --&gt; B{write 権限 OK?}
+    B -- No --&gt; B1["/etc/sonic の権限を修正"]
     B -- Yes --&gt; C{JSON parse OK?}
     C -- No --&gt; C1[jq でフォーマット確認]
     C -- Yes --&gt; D{load 時に YANG エラー?}

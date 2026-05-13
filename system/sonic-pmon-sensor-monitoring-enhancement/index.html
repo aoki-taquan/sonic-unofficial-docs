@@ -29863,13 +29863,13 @@
 </ul>
 <h3 id="_4">コンポーネント関係<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  HW[voltage / current&lt;br/&gt;controller IC] --&gt; PA[platform API&lt;br/&gt;VoltageBase / CurrentBase]
-  PA --&gt; SM[SensorMon daemon&lt;br/&gt;(PMON 内)]
-  SM --&gt;|poll| SDB[STATE_DB&lt;br/&gt;VOLTAGE_INFO / CURRENT_INFO 等]
-  SM --&gt;|threshold 超過| SYS[syslog&lt;br/&gt;minor / major / critical]
-  SM --&gt; SH[system health&lt;br/&gt;aggregation]
-  SDB --&gt; CLI[show platform voltage / current]
-  SDB --&gt; SNMP[Entity MIB / Entity Sensor MIB]</code></pre>
+  HW["voltage / current&lt;br/&gt;controller IC"] --&gt; PA["platform API&lt;br/&gt;VoltageBase / CurrentBase"]
+  PA --&gt; SM["SensorMon daemon&lt;br/&gt;(PMON 内)"]
+  SM --&gt;|poll| SDB["STATE_DB&lt;br/&gt;VOLTAGE_INFO / CURRENT_INFO 等"]
+  SM --&gt;|threshold 超過| SYS["syslog&lt;br/&gt;minor / major / critical"]
+  SM --&gt; SH["system health&lt;br/&gt;aggregation"]
+  SDB --&gt; CLI["show platform voltage / current"]
+  SDB --&gt; SNMP["Entity MIB / Entity Sensor MIB"]</code></pre>
 <h3 id="platform-api">platform API<a class="headerlink" href="#platform-api" title="Permanent link">&para;</a></h3>
 <p>ベンダ提供 API は次を満たす<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

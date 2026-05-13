@@ -30012,12 +30012,12 @@
 </ul>
 <h2 id="config_db-hostcfgd-pamnss">全体構成（CONFIG_DB → hostcfgd → PAM/NSS）<a class="headerlink" href="#config_db-hostcfgd-pamnss" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  CLI[config aaa / tacacs] --&gt; CDB[(CONFIG_DB:&lt;br&gt;AAA / TACPLUS /&lt;br&gt;TACPLUS_SERVER)]
+  CLI["config aaa / tacacs"] --&gt; CDB[("CONFIG_DB:&lt;br&gt;AAA / TACPLUS /&lt;br&gt;TACPLUS_SERVER")]
   CDB --&gt; HC[hostcfgd AaaCfg]
-  HC --&gt; PAM[/etc/pam.d/common-auth-sonic/]
-  HC --&gt; NSS[/etc/tacplus_nss.conf]
-  HC --&gt; NSWITCH[/etc/nsswitch.conf]
-  SSH[SSH / Console] --&gt; PAMLIB[PAM]
+  HC --&gt; PAM[/"etc/pam.d/common-auth-sonic"/]
+  HC --&gt; NSS["/etc/tacplus_nss.conf"]
+  HC --&gt; NSWITCH["/etc/nsswitch.conf"]
+  SSH["SSH / Console"] --&gt; PAMLIB[PAM]
   PAMLIB --&gt; PAM --&gt; TAC[(TACACS+ server)]</code></pre>
 <p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を真実の相とし、<code>hostcfgd</code> の <a href="../../reference/glossary/#term-aaa">AAA</a> モジュールが PAM/NSS 設定ファイルを書き換える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="common-auth-sonic">なぜ <code>common-auth-sonic</code> を分離するか<a class="headerlink" href="#common-auth-sonic" title="Permanent link">&para;</a></h2>

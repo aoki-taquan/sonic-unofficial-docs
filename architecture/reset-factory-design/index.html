@@ -29978,19 +29978,19 @@
 <p>機能 PR がマージされ次第 <code>SSH_SERVER, USER_TABLE, ROLE_TABLE</code> を追加する計画<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">実行フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
-    A[reset-factory &lt;mode&gt;] --&gt; ST[sonic.target を停止]
+    A["reset-factory &lt;mode&gt;"] --&gt; ST[sonic.target を停止]
     ST --&gt; CFG{not keep-all-config?}
-    CFG --&gt;|Yes| GEN[config-setup factory &lt;mode 引数&gt;]
+    CFG --&gt;|Yes| GEN["config-setup factory &lt;mode 引数&gt;"]
     CFG --&gt;|No| SKIPC[config はそのまま]
-    GEN --&gt; USR{not only-config / keep-basic?}
-    USR --&gt;|Yes| U[非 default ユーザ削除\nhistory / dotfile 削除]
+    GEN --&gt; USR{"not only-config / keep-basic?"}
+    USR --&gt;|Yes| U["非 default ユーザ削除\nhistory / dotfile 削除"]
     USR --&gt;|No| SKIPU[ユーザ操作スキップ]
     U --&gt; FILES{not only-config?}
     SKIPU --&gt; FILES
     SKIPC --&gt; FILES
-    FILES --&gt;|Yes| F[docker 全削除\n/etc/sonic を factory に戻す\n/host/warmboot, /var/dump,\n /var/log, /host/reboot-cause クリア]
+    FILES --&gt;|Yes| F["docker 全削除\n/etc/sonic を factory に戻す\n/host/warmboot, /var/dump,\n /var/log, /host/reboot-cause クリア"]
     FILES --&gt;|No| SKIPF[ファイル保持]
-    F --&gt; LOG[/var/log/systemlog に\n操作ログを記録]
+    F --&gt; LOG["/var/log/systemlog に\n操作ログを記録"]
     SKIPF --&gt; LOG
     LOG --&gt; RB[reboot]</code></pre>
 <p>ステップごとの処理<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

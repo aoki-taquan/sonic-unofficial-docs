@@ -29751,12 +29751,12 @@
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
-    A[Type-2 (MAC/IP) 経路が広報されない] --&gt; B{ローカル MAC 学習済み?}
-    B -- No --&gt; B1[VLAN/PortChannel 設定 / FDB 確認]
+    A["Type-2 (MAC/IP) 経路が広報されない"] --&gt; B{ローカル MAC 学習済み?}
+    B -- No --&gt; B1["VLAN/PortChannel 設定 / FDB 確認"]
     B -- Yes --&gt; C{l2vpn evpn family activate?}
     C -- No --&gt; C1[address-family l2vpn evpn を有効化]
-    C -- Yes --&gt; D{advertise-all-vni / RD/RT 設定?}
-    D -- No --&gt; D1[EVPN_NVO / VRF RT 設定を投入]
+    C -- Yes --&gt; D{"advertise-all-vni / RD/RT 設定?"}
+    D -- No --&gt; D1["EVPN_NVO / VRF RT 設定を投入"]
     D -- Yes --&gt; E[bgp l2vpn evpn neighbor の send-community 確認]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-vxlan-vni">1. VXLAN / VNI<a class="headerlink" href="#1-vxlan-vni" title="Permanent link">&para;</a></h3>

@@ -29869,14 +29869,14 @@
 <pre class="mermaid"><code>flowchart LR
     SAI[SAI] --&gt;|enum capability query| CO[Copporch]
     CO --&gt; SUP[supported_trap_ids]
-    SUP --&gt; ST1[(STATE_DB\nCOPP_TRAP_CAPABILITY_TABLE|traps)]
+    SUP --&gt; ST1[("STATE_DB\nCOPP_TRAP_CAPABILITY_TABLE|traps")]
     APPL[(APPL_DB\nCoPP trap 設定)] --&gt; CO
     CO --&gt; CHK{supported?}
     CHK --&gt;|Yes| INS[create_hostif_trap\nhw_status=installed]
     CHK --&gt;|No| ERR[syslog ERR\nhw_status=not-installed]
-    INS --&gt; ST2[(STATE_DB\nCOPP_TRAP_TABLE|&lt;trap&gt;)]
+    INS --&gt; ST2[("STATE_DB\nCOPP_TRAP_TABLE|&lt;trap&gt;")]
     ERR --&gt; ST2
-    CLI[show copp configuration] --&gt; CFG[(CONFIG_DB / copp_cfg.json)]
+    CLI[show copp configuration] --&gt; CFG[("CONFIG_DB / copp_cfg.json")]
     CLI --&gt; ST2</code></pre>
 <h2 id="init-config">動作: Init と Config<a class="headerlink" href="#init-config" title="Permanent link">&para;</a></h2>
 <p><strong>Init</strong> 時の Copporch<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

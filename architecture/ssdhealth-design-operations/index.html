@@ -29699,12 +29699,12 @@
 <p>ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら <code>iSmart V3.9.41</code> の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2">2. コマンドのチェーン<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    USER[user] --&gt; SHOW[show platform ssdhealth\n(show/main.py)]
-    SHOW --&gt;|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
-    UTIL --&gt; BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
-    BASE --&gt; VENDOR[SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)]
+    USER[user] --&gt; SHOW["show platform ssdhealth\n(show/main.py)"]
+    SHOW --&gt;|exec| UTIL["ssdhealth -d /dev/sdX -v / -e"]
+    UTIL --&gt; BASE["SsdBase\n(sonic_platform_base/sonic_ssd)"]
+    BASE --&gt; VENDOR["SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)"]
     BASE -.fallback.-&gt; SCTL[smartctl]
-    VENDOR --&gt; ISMART[iSmart / SmartCmd 等\nベンダ純正]
+    VENDOR --&gt; ISMART["iSmart / SmartCmd 等\nベンダ純正"]
     UTIL --&gt; OUT[stdout]</code></pre>
 <p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ（HLD 仕様）。現行 master では <code>ssdutil</code> への置き換わりが起きている（詳細は <a href="../ssdhealth-design-limitations/">限定事項ページ</a> 参照）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="3">3. 設定<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>

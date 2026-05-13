@@ -29729,10 +29729,10 @@
 <p>このため <code>xcvrd</code>（pmon 内 transceiver daemon）と sonic-platform-common 側の <strong>CMIS state machine</strong> に C-CMIS 対応が要る<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    PORT[CONFIG_DB PORT\n(speed / autoneg / lanes)] --&gt; XC[xcvrd]
-    XC --&gt; SDK[sonic-platform / sfp_optoe driver]
-    SDK --&gt; EEP[transceiver EEPROM\n(CMIS pages + C-CMIS pages)]
-    XC --&gt; STATE[STATE_DB\nTRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS]
+    PORT["CONFIG_DB PORT\n(speed / autoneg / lanes)"] --&gt; XC[xcvrd]
+    XC --&gt; SDK["sonic-platform / sfp_optoe driver"]
+    SDK --&gt; EEP["transceiver EEPROM\n(CMIS pages + C-CMIS pages)"]
+    XC --&gt; STATE["STATE_DB\nTRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS"]
     XC -. CMIS state machine .-&gt; EEP
     USER[管理者] --&gt; CFG[config interface transceiver-frequency\nconfig interface transceiver-power]
     CFG --&gt; CDB[(CONFIG_DB)]

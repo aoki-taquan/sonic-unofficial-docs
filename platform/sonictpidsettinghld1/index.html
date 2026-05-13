@@ -29885,14 +29885,14 @@
 <p>これにより <a href="../../reference/glossary/#term-orchagent">orchagent</a> / SAI 層で fail させずに <strong>早期に拒否</strong> する設計。</p>
 <h3 id="config-flow">Config flow<a class="headerlink" href="#config-flow" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI[config interface tpid] --&gt; CHK{STATE_DB&lt;br/&gt;*_TPID_CAPABLE?}
-  CHK -- false --&gt; REJ[reject&lt;br/&gt;"HW not capable"]
-  CHK -- true --&gt; CDB[CONFIG_DB&lt;br/&gt;PORT.tpid / PORTCHANNEL.tpid]
-  CDB --&gt; SYNC[portsyncd/teamsyncd]
-  SYNC --&gt; APPL[APPL_DB&lt;br/&gt;PORT_TABLE.tpid&lt;br/&gt;LAG_TABLE.tpid]
+  CLI[config interface tpid] --&gt; CHK{"STATE_DB&lt;br/&gt;*_TPID_CAPABLE?"}
+  CHK -- false --&gt; REJ["reject&lt;br/&gt;\"HW not capable\""]
+  CHK -- true --&gt; CDB["CONFIG_DB&lt;br/&gt;PORT.tpid / PORTCHANNEL.tpid"]
+  CDB --&gt; SYNC["portsyncd/teamsyncd"]
+  SYNC --&gt; APPL["APPL_DB&lt;br/&gt;PORT_TABLE.tpid&lt;br/&gt;LAG_TABLE.tpid"]
   APPL --&gt; ORCH[PortsOrch]
   ORCH --&gt; ASIC[ASIC_DB → syncd]
-  ASIC --&gt; SAI[SAI_PORT_ATTR_TPID&lt;br/&gt;SAI_LAG_ATTR_TPID]</code></pre>
+  ASIC --&gt; SAI["SAI_PORT_ATTR_TPID&lt;br/&gt;SAI_LAG_ATTR_TPID"]</code></pre>
 <h3 id="lag">LAG メンバへの直接設定は禁止<a class="headerlink" href="#lag" title="Permanent link">&para;</a></h3>
 <p>ポートが既に <a href="../../reference/glossary/#term-lag">LAG</a> メンバである場合、port 単独への TPID 設定はできない<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@SONiC:~$ sudo config interface tpid Ethernet4 0x9200

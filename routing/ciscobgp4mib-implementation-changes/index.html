@@ -29755,14 +29755,14 @@
 <p><strong><code>bgpmon</code></strong> を各 BGP コンテナ（≒ ASIC ごとに 1 インスタンス）に置き、<code>STATE_DB.NEIGH_STATE_TABLE</code> に neighbor state を書く。<code>snmp_ax_impl</code> は STATE_DB を読むだけ。シングル ASIC とマルチ ASIC が共通化される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     subgraph host
-      SNMP[snmpd / snmp_ax_impl]
+      SNMP["snmpd / snmp_ax_impl"]
     end
-    subgraph asic0[BGP docker (asic0)]
+    subgraph asic0["BGP docker (asic0)"]
       BGPMON0[bgpmon] --&gt;|show bgp summary json| BGPD0[bgpd]
-      BGPD0 --&gt; LOG0[/var/log/frr/frr.log]
+      BGPD0 --&gt; LOG0["/var/log/frr/frr.log"]
       BGPMON0 --&gt;|HSET| ST0[(STATE_DB ns0)]
     end
-    subgraph asic1[BGP docker (asic1)]
+    subgraph asic1["BGP docker (asic1)"]
       BGPMON1[bgpmon] --&gt; ST1[(STATE_DB ns1)]
     end
     SNMP --&gt; ST0

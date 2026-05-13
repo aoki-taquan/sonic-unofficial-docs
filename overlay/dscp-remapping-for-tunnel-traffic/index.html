@@ -29976,9 +29976,9 @@
 <h3 id="_3">バウンスバックの経路分離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     T1 --&gt;|DSCP=3, TC3, PG3, Q3| StandbyToR
-    StandbyToR --&gt;|encap MuxTunnel&lt;br/&gt;outer DSCP=2, Q2| T1b[T1]
+    StandbyToR --&gt;|"encap MuxTunnel&lt;br/&gt;outer DSCP=2, Q2"| T1b[T1]
     T1b --&gt;|TC2, PG2| ActiveToR
-    ActiveToR --&gt;|decap; inner DSCP=3 維持&lt;br/&gt;AZURE_TUNNEL → TC3, PG2| Server</code></pre>
+    ActiveToR --&gt;|"decap; inner DSCP=3 維持&lt;br/&gt;AZURE_TUNNEL → TC3, PG2"| Server</code></pre>
 <p>Standby が受けた南向きパケットは MuxTunnel (<a href="../../reference/glossary/#term-ipinip">IPinIP</a>) で対向 Active ToR に encap される。元の TC/Queue をそのまま使うと往復が同一キューで連結し pause が解けない。<a href="../../reference/glossary/#term-hld">HLD</a> は <strong>encap 側で DSCP/Queue を書き換え</strong>、<strong>decap 側でポート単位 TC/PG を上書き</strong> する 2 段で経路を分ける。</p>
 <h3 id="qos-azure_tunnel">追加 QoS マップ（AZURE_TUNNEL 系）<a class="headerlink" href="#qos-azure_tunnel" title="Permanent link">&para;</a></h3>
 <p>Dual-ToR 限定 (<code>DEVICE_METADATA['localhost']['subtype'] = 'DualToR'</code>) で <code>qos_config.j2</code> がレンダリングする<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -30110,9 +30110,9 @@
     participant Active as Active ToR
     participant Server
     T1-&gt;&gt;Standby: DSCP=3, TC3, PG3, Q3 (port-level)
-    Standby-&gt;&gt;T1: encap; outer DSCP=2, Q2 (AZURE_TUNNEL)
+    Standby-&gt;&gt;T1: encap, outer DSCP=2, Q2 (AZURE_TUNNEL)
     T1-&gt;&gt;Active: port-level DSCP2 → TC2/PG2 (lossy 路)
-    Active-&gt;&gt;Server: decap (pipe, inner=3); AZURE_TUNNEL[3]→TC3/PG2</code></pre>
+    Active-&gt;&gt;Server: decap (pipe, inner=3), AZURE_TUNNEL[3]→TC3/PG2</code></pre>
 <!-- evidence:
 source: sonic-net/SONiC/doc/qos/tunnel_dscp_remapping.md#L283-L302 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |

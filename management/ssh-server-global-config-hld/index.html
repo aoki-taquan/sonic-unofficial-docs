@@ -29932,9 +29932,9 @@
 <pre class="mermaid"><code>flowchart LR
     User[CONFIG_DB 編集] --&gt; CDB[(CONFIG_DB\nSSH_SERVER.POLICIES)]
     CDB --&gt;|notify| HC[hostcfgd]
-    HC --&gt;|update| SSHD[/etc/ssh/sshd_config]
-    HC --&gt;|render limits.conf.j2| LIM[/etc/security/limits.conf]
-    HC --&gt;|系列共通の inactivity flow| TM[/etc/profile.d/* など]
+    HC --&gt;|update| SSHD["/etc/ssh/sshd_config"]
+    HC --&gt;|render limits.conf.j2| LIM["/etc/security/limits.conf"]
+    HC --&gt;|系列共通の inactivity flow| TM["/etc/profile.d/* など"]
     HC --&gt;|systemctl restart| SVC[ssh service]</code></pre>
 <p><code>hostcfgd</code> は <strong>ホスト直接動作（コンテナ内ではない）</strong> のデーモンで、これは「ホスト側の SSH 設定ファイルを書き換える必要があるため」と <a href="../../reference/glossary/#term-hld">HLD</a> で明示されている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">各ポリシーのマッピング先<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>

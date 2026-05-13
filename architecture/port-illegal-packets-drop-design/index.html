@@ -29914,10 +29914,10 @@
 <h3 id="_3">カウンタ収集経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>SONiC では <code>rifcounter</code> という flex counter グループが RIF の SAI カウンタを定期ポーリングして <code>COUNTERS_DB</code> に書き込む。SNMP エージェント (<code>sonic-snmpagent</code>) の <code>InterfacesUpdater</code> は <code>COUNTERS_DB</code> から値を読み出し、Interface MIB のレスポンスを構築する。RIF カウンタが当該プラットフォームで有効な場合は L2 値に L3 値を加算し、無効な場合は従来どおり L2 値のみを返す（ベンダーによっては L3 のドロップが L2 のドロップに既に含まれているとの前提）。</p>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI カウンタ\nport / RIF / VLAN] --&gt;|flex counter\n(rifcounter group)| CDB[(COUNTERS_DB)]
-    CDB --&gt; IU[InterfacesUpdater\n(sonic-snmpagent)]
+    SAI["SAI カウンタ\nport / RIF / VLAN"] --&gt;|"flex counter\n(rifcounter group)"| CDB[(COUNTERS_DB)]
+    CDB --&gt; IU["InterfacesUpdater\n(sonic-snmpagent)"]
     PYSDK[py-swsssdk\nrif↔port マップ\nvlan if 一覧] --&gt; IU
-    IU --&gt; SNMP[SNMP\nInterface MIB\n(RFC1213)]</code></pre>
+    IU --&gt; SNMP["SNMP\nInterface MIB\n(RFC1213)"]</code></pre>
 <!-- evidence:
 source: sonic-net/SONiC/doc/port-illegal-packets/Port_illegal_packets_drop_design.md#L37-L42 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |

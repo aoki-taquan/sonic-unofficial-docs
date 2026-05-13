@@ -29681,9 +29681,9 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     USER[管理者] --&gt; CLI[fwutil CLI]
-    CLI --&gt; PLAT[/usr/share/sonic/device/&lt;platform&gt;/\nplatform_components.json]
-    CLI --&gt; PLUG[plugin\n(platform/chassis/component の Python class)]
-    PLUG --&gt;|read version| HW[(BIOS / CPLD / FPGA / BMC / SSD)]
+    CLI --&gt; PLAT["/usr/share/sonic/device/&lt;platform&gt;/\nplatform_components.json"]
+    CLI --&gt; PLUG["plugin\n(platform/chassis/component の Python class)"]
+    PLUG --&gt;|read version| HW[("BIOS / CPLD / FPGA / BMC / SSD")]
     PLUG --&gt;|install| HW</code></pre>
 <p>主要要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

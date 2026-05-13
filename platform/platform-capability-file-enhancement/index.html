@@ -29958,10 +29958,10 @@
 <li>thermal は読み取り専用と分かるよう <code>controllable=false</code>。</li>
 </ul>
 <pre class="mermaid"><code>flowchart LR
-    PJ[platform.json\n(ベンダ提供)] --&gt; PAPI[Platform API\nsonic-platform-common]
+    PJ["platform.json\n(ベンダ提供)"] --&gt; PAPI[Platform API\nsonic-platform-common]
     PAPI --&gt; APP1[thermalctld]
-    PAPI --&gt; APP2[pmon / fan control]
-    PAPI --&gt; APP3[CLI / show platform *]
+    PAPI --&gt; APP2["pmon / fan control"]
+    PAPI --&gt; APP3["CLI / show platform *"]
     APP1 -.read capability.-&gt; PJ
     APP2 -.controllable check.-&gt; PJ</code></pre>
 <h3 id="_4">値が無いときの振る舞い<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>

@@ -29907,7 +29907,7 @@
     subgraph cluster["T1 cluster"]
       NPU --&gt; ACL[ENI_REDIRECT ACL]
       ACL --&gt;|case 1: local active ENI| LD[Local DPU]
-      ACL --&gt;|case 2: local standby ENI&lt;br/&gt;(remote が active)| RT[Remote NPU+DPU&lt;br/&gt;VxLAN]
+      ACL --&gt;|"case 2: local standby ENI&lt;br/&gt;(remote が active)"| RT["Remote NPU+DPU&lt;br/&gt;VxLAN"]
       ACL --&gt;|case 3: ENI 不在| RT
     end</code></pre>
 <ul>
@@ -29941,12 +29941,12 @@
 <h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     HA[HaMgrd] --&gt;|primary endpoint| EFT[(DASH_ENI_FORWARD_TABLE)]
-    DPU[(DPU / vDPU table)] --&gt; ORCH[DashEniFwdOrch]
+    DPU[("DPU / vDPU table")] --&gt; ORCH[DashEniFwdOrch]
     EFT --&gt; ORCH
-    ORCH --&gt;|Local| NO[NeighOrch&lt;br/&gt;APP_NEIGH_RESOLVE_TABLE]
-    ORCH --&gt;|Remote| VX[VxLanTunnOrch&lt;br/&gt;Tunnel NH]
+    ORCH --&gt;|Local| NO["NeighOrch&lt;br/&gt;APP_NEIGH_RESOLVE_TABLE"]
+    ORCH --&gt;|Remote| VX["VxLanTunnOrch&lt;br/&gt;Tunnel NH"]
     ORCH --&gt; AR[(ACL_RULE)]
-    AR --&gt; AO[AclOrch] --&gt; SAI[SAI/SDK]</code></pre>
+    AR --&gt; AO[AclOrch] --&gt; SAI["SAI/SDK"]</code></pre>
 <p><code>DashEniFwdOrch</code> は <code>DASH_ENI_FORWARD_TABLE</code> を購読、DPU テーブルで local / remote を判別し、Local なら <code>NeighOrch</code>、Remote なら <code>VxLanTunnOrch</code> で nexthop を作って <code>ACL_RULE</code> に書く。</p>
 <h3 id="acl-eni_redirect">ACL テーブル定義（<code>ENI_REDIRECT</code>）<a class="headerlink" href="#acl-eni_redirect" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>

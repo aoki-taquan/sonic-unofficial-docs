@@ -29995,7 +29995,7 @@
 <p><strong>CPU port に紐づく新 netdev port</strong> を作り、そこに書いたパケットを <strong>ASIC pipeline の入口</strong> に再注入する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>graph LR
     P4[P4Runtime] --&gt;|write socket| NDV[send_to_ingress netdev]
-    NDV --&gt; CPU[CPU port (ASIC)]
+    NDV --&gt; CPU["CPU port (ASIC)"]
     CPU --&gt; PIPE[forwarding pipeline]
     PIPE --&gt; EGR[egress port 自動選択]</code></pre>
 <p>設定は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>SEND_TO_INGRESS_PORT</code>:</p>

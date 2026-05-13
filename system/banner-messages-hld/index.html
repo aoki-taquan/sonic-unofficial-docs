@@ -29896,12 +29896,12 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CLI[config banner ...] --&gt; CDB[(CONFIG_DB\nBANNER_MESSAGE|MESSAGE)]
+    CLI[config banner ...] --&gt; CDB[("CONFIG_DB\nBANNER_MESSAGE|MESSAGE")]
     CDB --&gt;|notify| HC[hostcfgd]
     HC --&gt;|systemctl restart| BC[banner-config service]
     BC --&gt;|read CONFIG_DB| CDB
-    BC --&gt;|/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message| FS[Linux fs]
-    Login[SSH/local login] --&gt; FS</code></pre>
+    BC --&gt;|"/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message"| FS[Linux fs]
+    Login["SSH/local login"] --&gt; FS</code></pre>
 <p><code>banner-config</code> は <strong>SSH を受け付ける前段階で起動する単発サービス</strong> として設計されており、CONFIG_DB から現在の値を読んで対応するファイルに書き出す<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> は CONFIG_DB の <code>BANNER_MESSAGE</code> テーブルを購読しており、変更があれば <code>banner-config</code> を再実行する。</p>
 <h3 id="_4">状態遷移<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>stateDiagram-v2

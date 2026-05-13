@@ -29814,10 +29814,10 @@
 </span></code></pre></div>
 <h3 id="_3">移行プラン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
-    YAML[/etc/sonic/snmp.yml] --&gt; CV[Python conversion script]
+    YAML["/etc/sonic/snmp.yml"] --&gt; CV[Python conversion script]
     CV --&gt; CDB[(CONFIG_DB SNMP*)]
     CDB --&gt; J2[snmpd.conf.j2]
-    J2 --&gt; SCONF[/etc/snmp/snmpd.conf]</code></pre>
+    J2 --&gt; SCONF["/etc/snmp/snmpd.conf"]</code></pre>
 <ol>
 <li><code>docker-snmp</code> 起動時に Python コンバータが <code>snmp.yml</code> を読み、上記 3 テーブルに書き込む（毎回実行で冪等）。</li>
 <li><code>Dockerfile.j2</code> でコンバータを <code>/usr/bin/</code> に配置。</li>

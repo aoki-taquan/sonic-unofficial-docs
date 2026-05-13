@@ -29659,11 +29659,11 @@
 <pre class="mermaid"><code>flowchart LR
     BOOT[初回 boot\nconfig_db.json なし] --&gt; DHCP[DHCP discover\nmgmt interface]
     DHCP --&gt; SRV[(DHCP server)]
-    SRV --&gt;|option 67 / 239 / 225 等| ZTPCFG[ZTP JSON URL]
-    ZTPCFG --&gt; FETCH[ztp daemon\nfetch via HTTP/HTTPS/TFTP]
+    SRV --&gt;|"option 67 / 239 / 225 等"| ZTPCFG[ZTP JSON URL]
+    ZTPCFG --&gt; FETCH["ztp daemon\nfetch via HTTP/HTTPS/TFTP"]
     FETCH --&gt; EXEC[plugin runner\nsection 単位で順次実行]
-    EXEC --&gt; STATE[/var/lib/ztp/ztp_state\n state machine]
-    STATE --&gt; APPLY[config / firmware / image / scripts 適用]</code></pre>
+    EXEC --&gt; STATE["/var/lib/ztp/ztp_state\n state machine"]
+    STATE --&gt; APPLY["config / firmware / image / scripts 適用"]</code></pre>
 <p>主要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>トリガ</strong>: <code>/etc/sonic/config_db.json</code> が無い（または ztp 強制）状態で boot</li>

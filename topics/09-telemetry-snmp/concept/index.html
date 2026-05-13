@@ -29812,11 +29812,11 @@
 <p>同じ「ポートの利用率」を見るのでも、SNMP では IF-MIB の counter、telemetry では <code>COUNTERS:Ethernet*</code> の path、CLI では <code>show interfaces counters</code> と入口が変わります。元データは多くの場合 <code>COUNTERS_DB</code> の同じ entry で、上に何を被せるかの違いです。</p>
 <h2 id="_3">何を答えるか別の整理<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  Q1[いまの値?] --&gt; POLL[SNMP / show / CLI]
-  Q2[変化を受けたい] --&gt; STREAM[gNMI telemetry / sFlow / DTel]
-  Q3[障害時の状態は?] --&gt; EV[syslog / event / coredump / kdump]
+  Q1[いまの値?] --&gt; POLL["SNMP / show / CLI"]
+  Q2[変化を受けたい] --&gt; STREAM["gNMI telemetry / sFlow / DTel"]
+  Q3[障害時の状態は?] --&gt; EV["syslog / event / coredump / kdump"]
   Q4[resource は足りてる?] --&gt; CRM[CRM]
-  POLL --&gt; DB[(Redis&lt;br&gt;COUNTERS_DB&lt;br&gt;STATE_DB)]
+  POLL --&gt; DB[("Redis&lt;br&gt;COUNTERS_DB&lt;br&gt;STATE_DB")]
   STREAM --&gt; DB
   CRM --&gt; DB
   EV --&gt; TS[techsupport tarball]</code></pre>
@@ -29836,13 +29836,13 @@
 <h2 id="microburst">典型シーン: 早朝の microburst を後追いする<a class="headerlink" href="#microburst" title="Permanent link">&para;</a></h2>
 <p>03:14 に「BGP セッションが flapping した」アラートが NMS から来たとします。Telemetry / SNMP 系を使った典型的な切り分け順は次のようになります。</p>
 <pre class="mermaid"><code>flowchart TB
-  ALERT[NMS アラート&lt;br&gt;BGP flap 03:14] --&gt; Q1{何が見たい?}
-  Q1 --&gt;|直近の値| CLI[show interfaces counters&lt;br&gt;show bgp summary]
-  Q1 --&gt;|変化の履歴| GNMI[gNMI Subscribe 履歴&lt;br&gt;collector 側 TSDB]
-  Q1 --&gt;|その時刻のログ| SYSLOG[/var/log/syslog&lt;br&gt;+ event のタイムスタンプ]
-  Q1 --&gt;|その時刻の状態| TS[show techsupport tarball&lt;br&gt;+ dump utility]
+  ALERT["NMS アラート&lt;br&gt;BGP flap 03:14"] --&gt; Q1{何が見たい?}
+  Q1 --&gt;|直近の値| CLI["show interfaces counters&lt;br&gt;show bgp summary"]
+  Q1 --&gt;|変化の履歴| GNMI["gNMI Subscribe 履歴&lt;br&gt;collector 側 TSDB"]
+  Q1 --&gt;|その時刻のログ| SYSLOG["/var/log/syslog&lt;br&gt;+ event のタイムスタンプ"]
+  Q1 --&gt;|その時刻の状態| TS["show techsupport tarball&lt;br&gt;+ dump utility"]
   Q1 --&gt;|リソース残量| CRM[crm show resources all]
-  CLI --&gt; DB[(COUNTERS_DB&lt;br&gt;STATE_DB)]
+  CLI --&gt; DB[("COUNTERS_DB&lt;br&gt;STATE_DB")]
   GNMI --&gt; DB
   SYSLOG --&gt; FILE[(syslog files)]
   TS --&gt; FILE

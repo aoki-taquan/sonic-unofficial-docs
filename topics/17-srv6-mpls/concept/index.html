@@ -29997,16 +29997,16 @@
 </ul>
 <h2 id="sonic">SONiC 内での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  subgraph CP[制御プレーン]
-    FRR[FRR&lt;br/&gt;bgpd / staticd]
-    BGPCFGD[bgpcfgd&lt;br/&gt;SRv6Mgr / MplsMgr]
+  subgraph CP["制御プレーン"]
+    FRR["FRR&lt;br/&gt;bgpd / staticd"]
+    BGPCFGD["bgpcfgd&lt;br/&gt;SRv6Mgr / MplsMgr"]
     FPMSYNCD[fpmsyncd]
   end
-  subgraph DP[データプレーン橋渡し]
+  subgraph DP["データプレーン橋渡し"]
     SRV6ORCH[srv6orch]
     ROUTEORCH[routeorch]
-    PORTSORCH[portsorch&lt;br/&gt;PT 属性]
-    SYNCD[syncd / SAI]
+    PORTSORCH["portsorch&lt;br/&gt;PT 属性"]
+    SYNCD["syncd / SAI"]
   end
   FRR --&gt; FPMSYNCD --&gt; ROUTEORCH
   BGPCFGD --&gt; SRV6ORCH
@@ -30143,9 +30143,9 @@
 <h2 id="_6">三者の境界<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   PKT[packet] --&gt; CL{header}
-  CL --&gt;|IPv6 + SRH| SR[SRv6 endpoint&lt;br/&gt;srv6orch / MY_SID]
-  CL --&gt;|MPLS label| MP[MPLS LSP&lt;br/&gt;LABEL_ROUTE_TABLE]
-  CL --&gt;|IPv6 + HbH-PT| PT[Path Tracing Midpoint&lt;br/&gt;PORT attrs]
+  CL --&gt;|IPv6 + SRH| SR["SRv6 endpoint&lt;br/&gt;srv6orch / MY_SID"]
+  CL --&gt;|MPLS label| MP["MPLS LSP&lt;br/&gt;LABEL_ROUTE_TABLE"]
+  CL --&gt;|IPv6 + HbH-PT| PT["Path Tracing Midpoint&lt;br/&gt;PORT attrs"]
   SR --&gt; FWD[L3 forwarding]
   MP --&gt; FWD
   PT --&gt; FWD
@@ -30184,7 +30184,7 @@
 <p>純粋な BGP / <a href="../../../reference/glossary/#term-ecmp">ECMP</a> では表現できない「経路の制御」「経路の可観測性」を担うのがこの章です。</p>
 <h3 id="sonic_1">SONiC 内での位置<a class="headerlink" href="#sonic_1" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
-    subgraph CFG[(CONFIG_DB)]
+    subgraph CFG["CONFIG_DB"]
         IF[INTERFACE.mpls]
         LOC[SRV6_MY_LOCATORS]
         SID[SRV6_MY_SIDS]
@@ -30192,17 +30192,17 @@
         STR[SRV6_STEER]
         PT[PORT.pt_*]
     end
-    subgraph CTRL[制御面]
-        FRR[FRR&lt;br/&gt;bgpd / zebra / staticd]
-        BCFG[bgpcfgd / SRv6Mgr]
+    subgraph CTRL["制御面"]
+        FRR["FRR&lt;br/&gt;bgpd / zebra / staticd"]
+        BCFG["bgpcfgd / SRv6Mgr"]
         FPM[fpmsyncd]
     end
-    subgraph SWSS[swss]
+    subgraph SWSS["swss"]
         SRORC[srv6orch]
-        MORC[MplsOrch / RouteOrch]
+        MORC["MplsOrch / RouteOrch"]
         PORTORC[PortOrch]
     end
-    subgraph SAI[SAI / syncd]
+    subgraph SAI["SAI / syncd"]
         MYSID[MY_SID_ENTRY]
         SIDLIST[SRV6_SIDLIST]
         LBL[INSEG_ENTRY]

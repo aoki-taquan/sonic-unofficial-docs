@@ -29875,7 +29875,7 @@
 <pre class="mermaid"><code>flowchart LR
     YML[snmp.yml] -.-&gt;|legacy| J2[snmpd.conf.j2]
     CDB[(CONFIG_DB SNMP*)] --&gt;|new| J2
-    J2 --&gt; SCONF[/etc/snmp/snmpd.conf]</code></pre>
+    J2 --&gt; SCONF["/etc/snmp/snmpd.conf"]</code></pre>
 <p>j2 テンプレート側で <code>SNMP</code> テーブルの存在チェックを行い、存在すれば新スキーマ、未定義なら従来 yaml をそのまま使う設計のため、既存デプロイは即座に壊れない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <!-- evidence:
 source: sonic-net/SONiC/doc/snmp/snmp-schema-addition.md#L114-L120 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)

@@ -29921,13 +29921,13 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="vs">従来方式 vs プレフィックスルート方式<a class="headerlink" href="#vs" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
-  subgraph 従来 (host_route)
-    A1[Neighbor 作成] --&gt;|暗黙| H1[Host route 生成&lt;br&gt;= SDK 内部、SAI 制御不可]
-    H1 --&gt;|active→standby| RM[Neighbor 削除&lt;br&gt;+ Tunnel route 追加]
+  subgraph SG_1["従来 (host_route)"]
+    A1[Neighbor 作成] --&gt;|暗黙| H1["Host route 生成&lt;br&gt;= SDK 内部、SAI 制御不可"]
+    H1 --&gt;|active→standby| RM["Neighbor 削除&lt;br&gt;+ Tunnel route 追加"]
   end
-  subgraph 新方式 (prefix_route)
-    A2[Neighbor 作成&lt;br&gt;NO_HOST_ROUTE=true] --&gt; P[/32 or /128 prefix route&lt;br&gt;明示作成]
-    P --&gt;|active→standby| UP[prefix route の nexthop を&lt;br&gt;tunnel に置換するだけ]
+  subgraph SG_2["新方式 (prefix_route)"]
+    A2["Neighbor 作成&lt;br&gt;NO_HOST_ROUTE=true"] --&gt; P["/32 or /128 prefix route&lt;br&gt;明示作成"]
+    P --&gt;|active→standby| UP["prefix route の nexthop を&lt;br&gt;tunnel に置換するだけ"]
   end</code></pre>
 <p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

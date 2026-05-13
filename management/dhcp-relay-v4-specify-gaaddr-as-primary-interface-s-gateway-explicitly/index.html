@@ -30060,11 +30060,11 @@
 <p>ISC dhcrelay 側はこの <code>-pg</code> オプションをサポートする拡張が必要で、HLD は明示的に「<code>isc-dhcp/dhcrelay to support '-pg gateway' argument</code>」を要件として挙げている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    MG[Minigraph / config_db.json\nVLAN_INTERFACE.secondary] --&gt; CFG[(CONFIG_DB\nVLAN_INTERFACE)]
+    MG["Minigraph / config_db.json\nVLAN_INTERFACE.secondary"] --&gt; CFG[(CONFIG_DB\nVLAN_INTERFACE)]
     CFG --&gt; J2[docker-dhcp-relay の supervisord.conf 生成]
     J2 --&gt; SUP[supervisord]
-    SUP --&gt; RELAY[/usr/sbin/dhcrelay -pg &lt;primary&gt;]
-    Client[DHCP DISCOVER from VM/host] --&gt; RELAY
+    SUP --&gt; RELAY["/usr/sbin/dhcrelay -pg &lt;primary&gt;"]
+    Client["DHCP DISCOVER from VM/host"] --&gt; RELAY
     RELAY --&gt;|giaddr := primary| Server[DHCP server]</code></pre>
 <h3 id="yang">YANG 拡張<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p><code>sonic-vlan.yang</code> の <code>VLAN_INTERFACE_IPPREFIX_LIST</code> に boolean leaf <code>secondary</code> を追加<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

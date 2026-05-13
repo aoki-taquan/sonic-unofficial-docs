@@ -29899,19 +29899,19 @@
 </ul>
 <h3 id="daemon">Daemon 別の影響<a class="headerlink" href="#daemon" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph HOST[host]
-    PMON[PMON container&lt;br/&gt;(単一)]
+  subgraph HOST["host"]
+    PMON["PMON container&lt;br/&gt;(単一)"]
     GDB[global STATE_DB]
   end
-  subgraph N0[asic0 namespace]
-    DB0[ASIC0 STATE_DB / APPL_DB]
+  subgraph N0["asic0 namespace"]
+    DB0["ASIC0 STATE_DB / APPL_DB"]
   end
-  subgraph N1[asic1 namespace]
-    DB1[ASIC1 STATE_DB / APPL_DB]
+  subgraph N1["asic1 namespace"]
+    DB1["ASIC1 STATE_DB / APPL_DB"]
   end
-  PMON --&gt;|psud / thermalctld /&lt;br/&gt;syseepromd| GDB
-  PMON --&gt;|xcvrd / ledd&lt;br/&gt;(per-ASIC connect)| DB0
-  PMON --&gt;|xcvrd / ledd| DB1</code></pre>
+  PMON --&gt;|"psud / thermalctld /&lt;br/&gt;syseepromd"| GDB
+  PMON --&gt;|"xcvrd / ledd&lt;br/&gt;(per-ASIC connect)"| DB0
+  PMON --&gt;|"xcvrd / ledd"| DB1</code></pre>
 <p>要点<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>psud / syseepromd / thermalctld</strong> は <strong>変更不要</strong>（global DB のまま）</li>

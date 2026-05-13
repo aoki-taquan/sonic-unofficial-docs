@@ -30063,11 +30063,11 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    User1[admin SSH] --&gt; CLI[wol CLI\n(sonic-utilities)]
+    User1[admin SSH] --&gt; CLI["wol CLI\n(sonic-utilities)"]
     Client[gNOI Client] --&gt;|gRPC| GNMI[sonic-gnmi\nSonicWolService.Wol]
     GNMI --&gt;|D-Bus| HOST[sonic-host-service]
     HOST --&gt; CLI
-    CLI --&gt;|raw socket / UDP| NET[ターゲット (MAC)]</code></pre>
+    CLI --&gt;|"raw socket / UDP"| NET["ターゲット (MAC)"]</code></pre>
 <p>gNOI 側は最終的に同じ <code>wol</code> CLI を呼び出す形で実装される設計になっており、Magic Packet の組み立てと送信は CLI スクリプトに一本化される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="magic-packet-ethernet">Magic Packet 形式（Ethernet ペイロード版）<a class="headerlink" href="#magic-packet-ethernet" title="Permanent link">&para;</a></h3>
 <p>「Magic Pattern」自体は固定で、<strong>6 バイトの <code>0xff</code> + ターゲット MAC を 16 回連結 + 任意のパスワード (4 or 6 バイト)</strong> という構造を取る。Ethernet ペイロード版ではこれを EtherType <code>0x0842</code> のフレームの payload に詰めて送る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

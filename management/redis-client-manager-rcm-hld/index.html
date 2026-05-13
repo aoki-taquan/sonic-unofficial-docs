@@ -29781,11 +29781,11 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="4">4 つの関数<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CALLER[caller in sonic-mgmt-common] --&gt; RC[RedisClient(db)]
-    CALLER --&gt; TRC[TransactionalRedisClient(db)]
-    CALLER --&gt; TRCO[TransactionalRedisClientWithOpts(opts)]
-    CALLER --&gt; CL[CloseRedisClient(client)]
-    RC --&gt; CACHE[(client cache\nDBNum -&gt; *redis.Client\nPoolSize 20)]
+    CALLER[caller in sonic-mgmt-common] --&gt; RC["RedisClient(db)"]
+    CALLER --&gt; TRC["TransactionalRedisClient(db)"]
+    CALLER --&gt; TRCO["TransactionalRedisClientWithOpts(opts)"]
+    CALLER --&gt; CL["CloseRedisClient(client)"]
+    RC --&gt; CACHE[("client cache\nDBNum -&gt; *redis.Client\nPoolSize 20")]
     TRC --&gt; NEW[redis.NewClient\nPoolSize 1]
     TRCO --&gt; NEW
     CL --&gt; CHECK{PoolSize == 1?}

@@ -29966,12 +29966,12 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    HWSKU[HWSKU gearbox_config.json\nphys[].macsec_supported] --&gt;|起動時パース| GS[gearsyncd\nGearboxParser]
-    GS --&gt; APP[(APP_DB\n_GEARBOX_TABLE:phy:&lt;id&gt;\nmacsec_supported)]
+    HWSKU["HWSKU gearbox_config.json\nphys[].macsec_supported"] --&gt;|起動時パース| GS[gearsyncd\nGearboxParser]
+    GS --&gt; APP[("APP_DB\n_GEARBOX_TABLE:phy:&lt;id&gt;\nmacsec_supported")]
     APP --&gt; GU[GearboxUtils\nloadPhyMap]
     GU --&gt; MACO[MACsecOrch]
     MACO --&gt; Q{phy.macsec_supported}
-    Q --&gt;|true / 不在| PHY[PHY 側 SAI でMACsec object を作成]
+    Q --&gt;|"true / 不在"| PHY[PHY 側 SAI でMACsec object を作成]
     Q --&gt;|false| NPU[NPU 側 gSwitchId でMACsec object を作成]</code></pre>
 <h3 id="gearbox_configjson">gearbox_config.json への追加<a class="headerlink" href="#gearbox_configjson" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
@@ -30010,10 +30010,10 @@
 <pre class="mermaid"><code>flowchart TB
     P[ポートに MACsec を有効化] --&gt; M[GearboxUtils で\nマップされた PHY を取得]
     M --&gt; C{PHY 取得できた?}
-    C --&gt;|No| D[既定 PHY backend\n(後方互換)]
+    C --&gt;|No| D["既定 PHY backend\n(後方互換)"]
     C --&gt;|Yes| E{phy.macsec_supported}
-    E --&gt;|true / 不在| F[PHY backend]
-    E --&gt;|false| G[NPU backend\n(gSwitchId + 前面パネル port OID)]</code></pre>
+    E --&gt;|"true / 不在"| F[PHY backend]
+    E --&gt;|false| G["NPU backend\n(gSwitchId + 前面パネル port OID)"]</code></pre>
 <p>ルール（HLD まとめ）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>macsec_supported == false</code>: NPU backend</li>

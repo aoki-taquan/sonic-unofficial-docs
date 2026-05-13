@@ -29772,9 +29772,9 @@
 <p>既存 <code>ROUTE_TABLE</code> も SID list を保持できるよう拡張<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="orchagentsrv6orch">Orchagent（Srv6Orch）<a class="headerlink" href="#orchagentsrv6orch" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CFG[CONFIG_DB SRV6_*] --&gt; CFGD[swss script / Translib&lt;br/&gt;※ master に独立した srv6cfgd 等のプロセスは未実装]
+  CFG[CONFIG_DB SRV6_*] --&gt; CFGD["swss script / Translib&lt;br/&gt;※ master に独立した srv6cfgd 等のプロセスは未実装"]
   CFGD --&gt; APP[(APPL_DB SRV6_*)]
-  FRR[FRR srv6 (将来)] --&gt; FPM[fpmsyncd] --&gt; APP
+  FRR["FRR srv6 (将来)"] --&gt; FPM[fpmsyncd] --&gt; APP
   APP --&gt; ORCH[Srv6Orch]
   ORCH --&gt; ASIC[(ASIC_DB)]
   ASIC --&gt; SAI[SAI SRv6 attributes]</code></pre>

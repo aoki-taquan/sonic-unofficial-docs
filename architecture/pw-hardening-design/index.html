@@ -29719,11 +29719,11 @@
 <p>ローカルユーザのパスワードに対して <strong>エイジング</strong>（強制更新）、<strong>複雑度要件</strong>、<strong>履歴禁止</strong>、<strong>ロックアウト</strong> を Linux 標準の PAM スタックを通じて適用する仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SONiC 側は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PASSW_HARDENING</code> テーブルを単一の真実源として、<code>hostcfgd</code> が <code>/etc/login.defs</code>・<code>/etc/pam.d/common-password</code>・<code>/etc/security/pwquality.conf</code> 等を rendering する。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    CFG[CONFIG_DB\nPASSW_HARDENING|POLICIES] --&gt; HC[hostcfgd]
-    HC --&gt; LD[/etc/login.defs]
-    HC --&gt; PAM[/etc/pam.d/common-password]
-    HC --&gt; PWQ[/etc/security/pwquality.conf]
-    LD --&gt; LOGIN[login / passwd / chpasswd]
+    CFG["CONFIG_DB\nPASSW_HARDENING|POLICIES"] --&gt; HC[hostcfgd]
+    HC --&gt; LD["/etc/login.defs"]
+    HC --&gt; PAM["/etc/pam.d/common-password"]
+    HC --&gt; PWQ["/etc/security/pwquality.conf"]
+    LD --&gt; LOGIN["login / passwd / chpasswd"]
     PAM --&gt; LOGIN
     PWQ --&gt; LOGIN</code></pre>
 <p>主なポリシー項目<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

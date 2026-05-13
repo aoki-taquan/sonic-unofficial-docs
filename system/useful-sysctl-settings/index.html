@@ -29992,9 +29992,9 @@
 </span></code></pre></div>
 <p>ファイル名の <code>99</code> プレフィックスは sysctl ファイルの読み込み順を <strong>遅らせて、他の設定を上書きする</strong> ための慣習。</p>
 <pre class="mermaid"><code>flowchart LR
-    F[/etc/sysctl.d/99frr_defaults.conf/] --&gt;|boot or sysctl -p| K[Linux kernel\nsysctl values]
-    K --&gt; FRR[FRR\nbgpd / ospfd / zebra]
-    K --&gt; KERNEL[Forwarding plane\n(Linux netdev / RIB)]</code></pre>
+    F[/"etc/sysctl.d/99frr_defaults.conf"/] --&gt;|boot or sysctl -p| K[Linux kernel\nsysctl values]
+    K --&gt; FRR["FRR\nbgpd / ospfd / zebra"]
+    K --&gt; KERNEL["Forwarding plane\n(Linux netdev / RIB)"]</code></pre>
 <!-- evidence:
 source: sonic-net/sonic-frr/doc/user/Useful_Sysctl_Settings.md#L1-L60 (sha: 799f47f215e4266063c4ebde0041a0c7dd2d11d0)
 excerpt: |

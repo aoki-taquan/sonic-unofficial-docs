@@ -29743,12 +29743,12 @@
 <h2 id="_2">構成要素<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     REG[(コンテナレジストリ)] --&gt; PM[sonic-package-manager]
-    PM --&gt; PKGDB[/var/lib/sonic-package-manager/&lt;br/&gt;installed manifests]
+    PM --&gt; PKGDB["/var/lib/sonic-package-manager/&lt;br/&gt;installed manifests"]
     PM --&gt; DOCKER[(local docker images)]
-    PM --&gt; CFGDB[CONFIG_DB&lt;br/&gt;FEATURE エントリ追加]
+    PM --&gt; CFGDB["CONFIG_DB&lt;br/&gt;FEATURE エントリ追加"]
     CFGDB --&gt; HC[hostcfgd]
-    HC --&gt; SVC[/etc/systemd/system/&lt;feature&gt;.service]
-    SVC --&gt; CONT[docker run --name &lt;feature&gt;]</code></pre>
+    HC --&gt; SVC["/etc/systemd/system/&lt;feature&gt;.service"]
+    SVC --&gt; CONT["docker run --name &lt;feature&gt;"]</code></pre>
 <p>主要コンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>CLI <code>sonic-package-manager</code>（別名 SPM）</strong>: install / uninstall / upgrade / list / show / repository</li>
@@ -29758,13 +29758,13 @@
 </ul>
 <h2 id="_3">ライフサイクル<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    INST[install &lt;repo&gt;:&lt;tag&gt;] --&gt; PULL[image pull]
-    PULL --&gt; VERIFY[manifest 検証&lt;br/&gt;version / 依存 / SONiC ver]
-    VERIFY --&gt; REGISTER[FEATURE 追加&lt;br/&gt;CLI plugin / showtech plugin 登録]
-    REGISTER --&gt; ENABLE[config feature state &lt;pkg&gt; enabled]
+    INST["install &lt;repo&gt;:&lt;tag&gt;"] --&gt; PULL[image pull]
+    PULL --&gt; VERIFY["manifest 検証&lt;br/&gt;version / 依存 / SONiC ver"]
+    VERIFY --&gt; REGISTER["FEATURE 追加&lt;br/&gt;CLI plugin / showtech plugin 登録"]
+    REGISTER --&gt; ENABLE["config feature state &lt;pkg&gt; enabled"]
     ENABLE --&gt; RUN[hostcfgd → systemd → docker]
     RUN --&gt; UNINST[uninstall]
-    UNINST --&gt; CLEAN[disable → FEATURE 削除&lt;br/&gt;image / plugin 削除]</code></pre>
+    UNINST --&gt; CLEAN["disable → FEATURE 削除&lt;br/&gt;image / plugin 削除"]</code></pre>
 <p>manifest が必須宣言する項目<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>name</code> / <code>version</code></li>

@@ -29891,9 +29891,9 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    USER[管理者] --&gt;|config clock timezone Asia/Kolkata| CLI[sonic-utilities]
+    USER[管理者] --&gt;|"config clock timezone Asia/Kolkata"| CLI[sonic-utilities]
     CLI --&gt;|timedatectl set-timezone| TC[timedatectl]
-    CLI --&gt; CFG[(CONFIG_DB.DEVICE_METADATA|localhost\n.timezone)]
+    CLI --&gt; CFG[("CONFIG_DB.DEVICE_METADATA|localhost\n.timezone")]
     CFG --&gt; HC[hostcfgd]
     HC --&gt;|永続適用| TC
     USER --&gt;|config clock date 2024-01-01 12:00:00| CLI
@@ -29958,7 +29958,7 @@
     A[config clock date入力] --&gt; B{NTP 有効?}
     B --&gt;|Yes| ER[error: NTP 有効時は不可]
     B --&gt;|No| OK[timedatectl set-time 実行]
-    A2[config clock timezone] --&gt; OK2[常に許可\n(timedatectl set-timezone)]</code></pre>
+    A2[config clock timezone] --&gt; OK2["常に許可\n(timedatectl set-timezone)"]</code></pre>
 <p>NTP 有効でも timezone は変更可能、というのは「時刻同期」と「表示タイムゾーン」を分離する一般的な運用に沿う<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">反映と副作用<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>

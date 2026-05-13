@@ -30113,10 +30113,10 @@
 <h3 id="syncd-intercept">配置（SyncD で intercept）<a class="headerlink" href="#syncd-intercept" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   ASIC[ASIC] --&gt;|port state change| VSAI[Vendor SAI]
-  VSAI --&gt;|callback| SD[SyncD&lt;br&gt;(damping intercept)]
+  VSAI --&gt;|callback| SD["SyncD&lt;br&gt;(damping intercept)"]
   SD --&gt;|抑制 or 通知| ADB[(ASIC_DB)]
   ADB --&gt; PO[PortsOrch]
-  PO --&gt; APP[Apps / Routing]</code></pre>
+  PO --&gt; APP["Apps / Routing"]</code></pre>
 <ul>
 <li>既存: SAI から SyncD に来た state change がそのまま ASIC_DB に書かれる<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li>新方式: SyncD の <strong>selectable loop</strong> に link event damping ロジックを差し込み、抑制対象なら ASIC_DB 通知を <strong>送らない</strong>。</li>

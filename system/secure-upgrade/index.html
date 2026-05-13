@@ -29743,12 +29743,12 @@
 <h3 id="build-signing">Build 側 (Signing)<a class="headerlink" href="#build-signing" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   BUILD[build_image.sh] --&gt;|create image| IMG[sonic image]
-  IMG --&gt; MKDEMO[onie-mk-demo.sh&lt;br/&gt;sharch.sh prefix 付与&lt;br/&gt;+ sha1 / size 計算]
+  IMG --&gt; MKDEMO["onie-mk-demo.sh&lt;br/&gt;sharch.sh prefix 付与&lt;br/&gt;+ sha1 / size 計算"]
   MKDEMO --&gt; RAW[image + sharch prefix]
-  RAW --&gt;|SECURE_UPGRADE_MODE=dev| DEV[sign_image_dev.sh&lt;br/&gt;OpenSSL CMS]
-  RAW --&gt;|SECURE_UPGRADE_MODE=prod| PROD[sign_image_${platform}.sh&lt;br/&gt;vendor 提供]
+  RAW --&gt;|SECURE_UPGRADE_MODE=dev| DEV["sign_image_dev.sh&lt;br/&gt;OpenSSL CMS"]
+  RAW --&gt;|SECURE_UPGRADE_MODE=prod| PROD["sign_image_${platform}.sh&lt;br/&gt;vendor 提供"]
   RAW --&gt;|no_sign| NO[no change]
-  DEV --&gt; SIG[&lt;image&gt;.signature]
+  DEV --&gt; SIG["&lt;image&gt;.signature"]
   PROD --&gt; SIG
   SIG --&gt; CAT[concatenate to image]</code></pre>
 <p><code>SECURE_UPGRADE_MODE</code> のモード<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

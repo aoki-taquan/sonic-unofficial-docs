@@ -29832,11 +29832,11 @@
 <h3 id="2">2 段分割の構造<a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
   subgraph 並列実行可
-    S1[Stage 1&lt;br&gt;1) base image&lt;br&gt;2) 外部 packages&lt;br&gt;3) initramfs / kernel]
-    OTH[他のビルド成果物&lt;br&gt;(docker images, debs, 等)]
+    S1["Stage 1&lt;br&gt;1) base image&lt;br&gt;2) 外部 packages&lt;br&gt;3) initramfs / kernel"]
+    OTH["他のビルド成果物&lt;br&gt;(docker images, debs, 等)"]
   end
   S1 --&gt; SQ[(rootfs.squashfs)]
-  SQ --&gt; S2[Stage 2&lt;br&gt;4) artifact 配置&lt;br&gt;5) ONIE payload 生成]
+  SQ --&gt; S2["Stage 2&lt;br&gt;4) artifact 配置&lt;br&gt;5) ONIE payload 生成"]
   OTH --&gt; S2
   S2 --&gt; INST[SONIC_INSTALLERS]</code></pre>
 <p>Stage 1 は build artifacts に依存しないため、他のターゲットと <strong>同時に走らせられる</strong>。Stage 1 完了時の rootfs を <strong>squashfs ファイル</strong> として保存し、Stage 2 でそれを load して継続する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

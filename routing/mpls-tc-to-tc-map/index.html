@@ -29895,7 +29895,7 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CFG[(CONFIG_DB\nMPLS_TC_TO_TC_MAP|name)] --&gt; ORCH[QoS orch]
+    CFG[("CONFIG_DB\nMPLS_TC_TO_TC_MAP|name")] --&gt; ORCH[QoS orch]
     PQM[(CONFIG_DB\nPORT_QOS_MAP\n.mpls_tc_to_tc_map=name)] --&gt; ORCH
     ORCH --&gt; SAI[SAI qos_map\nSAI_QOS_MAP_MPLS_EXP_TO_TC]
     SAI --&gt; ASIC[ASIC]

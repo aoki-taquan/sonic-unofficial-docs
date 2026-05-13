@@ -29882,9 +29882,9 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">役割分担<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph dhcpmon (multi-thread)
-    Main[main thread:&lt;br&gt;socket recv + cache++]
-    DBu[DB update thread:&lt;br&gt;20s ごとに COUNTERS_DB sync]
+  subgraph SG_1["dhcpmon (multi-thread)"]
+    Main["main thread:&lt;br&gt;socket recv + cache++"]
+    DBu["DB update thread:&lt;br&gt;20s ごとに COUNTERS_DB sync"]
   end
   Sock4R[(socket DHCPv4 RX)] --&gt; Main
   Sock4T[(socket DHCPv4 TX)] --&gt; Main
@@ -29892,7 +29892,7 @@
   Sock6T[(socket DHCPv6 TX)] --&gt; Main
   Main --&gt; Cache[in-process counter cache]
   Cache --&gt; DBu
-  DBu --&gt; CDB[(COUNTERS_DB&lt;br&gt;DHCPV4_COUNTER_TABLE&lt;br&gt;DHCPV6_COUNTER_TABLE)]</code></pre>
+  DBu --&gt; CDB[("COUNTERS_DB&lt;br&gt;DHCPV4_COUNTER_TABLE&lt;br&gt;DHCPV6_COUNTER_TABLE")]</code></pre>
 <p>socket は BPF program (<code>tcpdump -dd</code>) でフィルタしている<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>

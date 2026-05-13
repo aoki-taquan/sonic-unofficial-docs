@@ -29784,9 +29784,9 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">判定フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
-  A[COPP_TRAP|name 受信] --&gt; B{always_enabled&lt;br&gt;= true?}
+  A["COPP_TRAP|name 受信"] --&gt; B{"always_enabled&lt;br&gt;= true?"}
   B -- yes --&gt; I[install]
-  B -- no --&gt; C{FEATURE|name&lt;br&gt;あり?}
+  B -- no --&gt; C{"FEATURE|name&lt;br&gt;あり?"}
   C -- no --&gt; U[install しない]
   C -- yes --&gt; D{state = enabled?}
   D -- yes --&gt; I

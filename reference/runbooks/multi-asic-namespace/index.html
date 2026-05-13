@@ -29730,12 +29730,12 @@
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     A[multi-ASIC で namespace 操作失敗] --&gt; B{namespace 列挙 OK?}
-    B -- No --&gt; B1[/etc/sonic/sonic_version.yml / asic.conf 確認]
+    B -- No --&gt; B1["/etc/sonic/sonic_version.yml / asic.conf 確認"]
     B -- Yes --&gt; C{対象 ns の database container up?}
-    C -- No --&gt; C1[database@&lt;id&gt; service を起動]
+    C -- No --&gt; C1["database@&lt;id&gt; service を起動"]
     C -- Yes --&gt; D{sonic-db-cli -n asicX 応答?}
-    D -- No --&gt; D1[netns / docker exec の経路を確認]
-    D -- Yes --&gt; E[swss@&lt;id&gt; / syncd@&lt;id&gt; の状態確認]</code></pre>
+    D -- No --&gt; D1["netns / docker exec の経路を確認"]
+    D -- Yes --&gt; E["swss@&lt;id&gt; / syncd@&lt;id&gt; の状態確認"]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-namespace-feature">1. namespace 一覧と feature 状態<a class="headerlink" href="#1-namespace-feature" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ip<span class="w"> </span>netns<span class="w"> </span>list

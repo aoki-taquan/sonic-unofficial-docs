@@ -29892,11 +29892,11 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    APP[App\n(P4RT / Controller / test)] --&gt;|sendmsg| ND[netdev\n"send_to_ingress"]
+    APP["App\n(P4RT / Controller / test)"] --&gt;|sendmsg| ND["netdev\nsend_to_ingress"]
     ND --&gt; SAIH[SAI hostif\nTYPE=NETDEV\nOBJ_ID=CPU port]
     SAIH --&gt; CPU[CPU port]
     CPU --&gt; ING[ASIC ingress pipeline]
-    ING --&gt; FWD[ECMP/WCMP / lookup\nに従って出力ポート選択]</code></pre>
+    ING --&gt; FWD["ECMP/WCMP / lookup\nに従って出力ポート選択"]</code></pre>
 <p>要点:</p>
 <ul>
 <li><strong>TX 専用</strong>。「Send to Ingress host interface is only for packet out」と明記、<strong>RX には使わない</strong><sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>

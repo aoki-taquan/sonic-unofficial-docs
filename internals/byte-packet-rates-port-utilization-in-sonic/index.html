@@ -29924,14 +29924,14 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI port/RIF stats] --&gt; FC1[Flex Counter\n(既存 port/rif counters, 1s)]
+    SAI["SAI port/RIF stats"] --&gt; FC1["Flex Counter\n(既存 port/rif counters, 1s)"]
     FC1 --&gt; CDB1[(COUNTERS_DB\nCOUNTERS:vid)]
-    CDB1 --&gt;|新 FC group| FC2[Flex Counter\n(PORT_RATES / RIF_RATES)]
-    FC2 --&gt;|Lua plugin| CALC[計算\n(diff/delta + EMA)]
-    SP[(CONFIG_DB\nPORT speed / RIF speed)] --&gt; CALC
+    CDB1 --&gt;|新 FC group| FC2["Flex Counter\n(PORT_RATES / RIF_RATES)"]
+    FC2 --&gt;|Lua plugin| CALC["計算\n(diff/delta + EMA)"]
+    SP[("CONFIG_DB\nPORT speed / RIF speed")] --&gt; CALC
     SCFG[(CONFIG_DB\nRATES.PORT_ALPHA, RIF_ALPHA)] --&gt; CALC
     CALC --&gt; CDB2[(COUNTERS_DB\nRATES:vid)]
-    CDB2 --&gt; CLI[portstat / intfstat]</code></pre>
+    CDB2 --&gt; CLI["portstat / intfstat"]</code></pre>
 <p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>既存の port / <a href="../../reference/glossary/#term-rif">RIF</a> 用 Flex Counter は元の <a href="../../reference/glossary/#term-sai">SAI</a> カウンタを <code>COUNTERS_DB:COUNTERS:vid</code> に書き続ける。</li>

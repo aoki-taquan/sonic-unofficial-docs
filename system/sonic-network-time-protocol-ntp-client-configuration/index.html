@@ -29967,12 +29967,12 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    CFG[CONFIG_DB\nNTP / NTP_SERVER / NTP_KEY / MGMT_VRF_CONFIG] --&gt; HC[hostcfgd]
-    HC --&gt; CONF[/etc/ntp.conf or\n/etc/chrony/chrony.conf]
-    HC --&gt; SVC[ntp / chronyd service]
+    CFG["CONFIG_DB\nNTP / NTP_SERVER / NTP_KEY / MGMT_VRF_CONFIG"] --&gt; HC[hostcfgd]
+    HC --&gt; CONF["/etc/ntp.conf or\n/etc/chrony/chrony.conf"]
+    HC --&gt; SVC["ntp / chronyd service"]
     SVC --&gt; SRV[(NTP servers)]
     SVC --&gt; CLOCK[Linux system clock]
-    CLOCK --&gt; APP[全 SONiC service\n(syslog / counters / cert valid 等)]</code></pre>
+    CLOCK --&gt; APP["全 SONiC service\n(syslog / counters / cert valid 等)"]</code></pre>
 <p><code>hostcfgd</code> は CONFIG_DB の変化に追従して config を再生成し、サービスを reload する。</p>
 <h3 id="config_db">関連 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <table>

@@ -30003,7 +30003,7 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">問題の所在<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SRC[ミラー対象パケット\n(LC0 ingress)] --&gt; M0[LC0 mirrororch]
+    SRC["ミラー対象パケット\n(LC0 ingress)"] --&gt; M0[LC0 mirrororch]
     M0 --&gt; Q{宛先 LC}
     Q --&gt;|local| LOCAL[同 LC で完結]
     Q --&gt;|remote LC1| RFAIL[× 通常パスでは MONITOR_PORT に\n他 LC のポートを指定できない]</code></pre>

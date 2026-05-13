@@ -29837,11 +29837,11 @@
 <p><code>STATE_DB</code> には <code>TunnelDecapOrch</code> が実際に作った tunnel / term を反映する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">動作フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
-  CFG[CONFIG_DB SUBNET_DECAP|...&lt;br&gt;status=enable] --&gt; SC[swssconfig service&lt;br&gt;テンプレート展開]
-  SC --&gt; APP[APPL_DB&lt;br&gt;TUNNEL_DECAP_TABLE / _TERM_TABLE]
+  CFG["CONFIG_DB SUBNET_DECAP|...&lt;br&gt;status=enable"] --&gt; SC["swssconfig service&lt;br&gt;テンプレート展開"]
+  SC --&gt; APP["APPL_DB&lt;br&gt;TUNNEL_DECAP_TABLE / _TERM_TABLE"]
   APP --&gt; ORCH[TunnelDecapOrch]
-  ORCH --&gt; SAI[(SAI tunnel decap term&lt;br&gt;MP2MP)]
-  Net[Netscan sender] --&gt;|IPinIP outer DIP=Loopback&lt;br&gt;inner DIP=VLAN subnet IP| T0[T0 SONiC]
+  ORCH --&gt; SAI[("SAI tunnel decap term&lt;br&gt;MP2MP")]
+  Net[Netscan sender] --&gt;|"IPinIP outer DIP=Loopback&lt;br&gt;inner DIP=VLAN subnet IP"| T0[T0 SONiC]
   T0 --&gt;|decap + route back| Net</code></pre>
 <p><code>TunnelDecapOrch</code> は <code>SUBNET_DECAP</code> の <strong>src_ip / src_ip_v6 変更</strong> に追従し、対応する decap term の source IP を更新する<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="dual-tor">Dual-ToR 考慮<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#dual-tor" title="Permanent link">&para;</a></h3>

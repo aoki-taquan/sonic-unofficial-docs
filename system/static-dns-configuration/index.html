@@ -29872,14 +29872,14 @@
     User[CLI: config dns nameserver] --&gt; CDB[(CONFIG_DB\nDNS_NAMESERVER)]
     MG[Minigraph\nDnsNameserverResources] --&gt;|sonic-cfggen| CDB
     CDB --&gt;|change notify| HC[hostcfgd]
-    HC --&gt;|systemctl restart| RS[resolv-config.service\n(oneshot)]
+    HC --&gt;|systemctl restart| RS["resolv-config.service\n(oneshot)"]
     RS --&gt; SH[resolv-config.sh]
     SH --&gt;|render| TPL[resolv.conf.j2]
-    SH --&gt;|disable dynamic / enable static| RC[resolvconf]
-    RC --&gt; RESOLV[/etc/resolv.conf]
+    SH --&gt;|"disable dynamic / enable static"| RC[resolvconf]
+    RC --&gt; RESOLV["/etc/resolv.conf"]
     RC --&gt;|plugin| UC[update-containers]
-    UC --&gt;|cp /etc/resolv.conf into| DOCKERS[各 Docker container]
-    DHCP[DHCP on mgmt intf] -.-&gt;|&lt;intf&gt;.dhclient| RC</code></pre>
+    UC --&gt;|"cp /etc/resolv.conf into"| DOCKERS[各 Docker container]
+    DHCP[DHCP on mgmt intf] -.-&gt;|"&lt;intf&gt;.dhclient"| RC</code></pre>
 <h3 id="_4">設定優先のロジック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><code>resolv-config.sh</code> は以下の単純な分岐で動く<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ol>

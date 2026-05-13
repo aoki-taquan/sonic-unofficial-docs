@@ -29943,13 +29943,13 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    User[CONFIG_DB 編集\n(現状は手動)] --&gt; CDB[(CONFIG_DB\nSERIAL_CONSOLE.POLICIES)]
+    User["CONFIG_DB 編集\n(現状は手動)"] --&gt; CDB[(CONFIG_DB\nSERIAL_CONSOLE.POLICIES)]
     CDB --&gt;|notify| HC[hostcfgd]
-    HC --&gt;|systemctl restart| SVC[serial-config.service\n(Before=getty-pre.target)]
+    HC --&gt;|systemctl restart| SVC["serial-config.service\n(Before=getty-pre.target)"]
     SVC --&gt; SH[serial-config.sh]
-    SH --&gt; P[/etc/profile.d/tmout-env.sh]
-    SH --&gt; SY[/proc/sys/kernel/sysrq]
-    SH --&gt; SC[/etc/sysctl.d/95-sysrq-sysctl.conf]
+    SH --&gt; P["/etc/profile.d/tmout-env.sh"]
+    SH --&gt; SY["/proc/sys/kernel/sysrq"]
+    SH --&gt; SC["/etc/sysctl.d/95-sysrq-sysctl.conf"]
     LOGIN[シリアルログイン] --&gt; P
     LOGIN --&gt; SY</code></pre>
 <p><code>serial-config.service</code> は <strong><code>getty-pre.target</code> より前</strong> に起動する設計で、シリアルコンソールが利用可能になる前に設定が適用される<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

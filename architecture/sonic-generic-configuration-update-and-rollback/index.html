@@ -29704,8 +29704,8 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    P[JSON Patch\n(RFC 6902)] --&gt; V[validate\n(YANG / ACL チェック)]
-    V --&gt; SORT[依存解決 / sort]
+    P["JSON Patch\n(RFC 6902)"] --&gt; V["validate\n(YANG / ACL チェック)"]
+    V --&gt; SORT["依存解決 / sort"]
     SORT --&gt; APPLY[increment apply\nto CONFIG_DB]
     APPLY --&gt;|fail| RB[auto rollback\nfrom snapshot]
     APPLY --&gt;|ok| CHK[(任意で checkpoint 保存)]</code></pre>

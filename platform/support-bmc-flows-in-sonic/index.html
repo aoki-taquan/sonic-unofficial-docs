@@ -29991,16 +29991,16 @@
 <h2 id="_2">全体像<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>BMC (Board Management Controller) は switch メインボード上の <strong>out-of-band 管理用マイコン</strong>。OpenBMC は Redfish (RESTful) API を提供し、SONiC はその client を <code>sonic-platform-common</code> に内蔵して CLI / techsupport から呼ぶ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-    BJSON[device/platform/bmc.json]
+    BJSON["device/platform/bmc.json"]
     GBD[device_info.get_bmc_data]
     CFG[sonic-cfggen]
     DM[CONFIG_DB.DEVICE_METADATA bmc]
     INT[interfaces.j2]
-    NET[/etc/network/interfaces]
+    NET["/etc/network/interfaces"]
     BJSON --&gt; GBD --&gt; CFG --&gt; DM --&gt; INT --&gt; NET
-    CLI[show platform bmc / config firmware install] --&gt; CB[ComponentBMC]
+    CLI["show platform bmc / config firmware install"] --&gt; CB[ComponentBMC]
     CB --&gt; RC[RedfishClient]
-    RC --&gt; BMC[(BMC / Redfish API)]</code></pre>
+    RC --&gt; BMC[("BMC / Redfish API")]</code></pre>
 <h2 id="_3">どこに何が書かれるか<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="deviceplatformbmcjson">入力: <code>device/platform/bmc.json</code><a class="headerlink" href="#deviceplatformbmcjson" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>

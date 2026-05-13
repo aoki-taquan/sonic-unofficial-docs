@@ -29738,14 +29738,14 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    PROC[docker 内 process crash] --&gt; CORE[/var/core/&lt;feature&gt;/&lt;pid&gt;.core.gz]
+    PROC[docker 内 process crash] --&gt; CORE["/var/core/&lt;feature&gt;/&lt;pid&gt;.core.gz"]
     CORE --&gt; HANDLER[coredump_gen_handler]
-    HANDLER --&gt; RL{rate-limit /\nfeature 抑制?}
+    HANDLER --&gt; RL{"rate-limit /\nfeature 抑制?"}
     RL -- skip --&gt; END[終了]
     RL -- ok --&gt; RUN[show techsupport を非同期起動]
-    RUN --&gt; AR[/var/dump/sonic_dump_&lt;host&gt;_&lt;ts&gt;.tar.gz]
-    AR --&gt; CLEAN[techsupport_cleanup\n(quota 超過なら古い物を削除)]
-    HANDLER --&gt; SDB[STATE_DB\nAUTO_TECHSUPPORT|*]</code></pre>
+    RUN --&gt; AR["/var/dump/sonic_dump_&lt;host&gt;_&lt;ts&gt;.tar.gz"]
+    AR --&gt; CLEAN["techsupport_cleanup\n(quota 超過なら古い物を削除)"]
+    HANDLER --&gt; SDB["STATE_DB\nAUTO_TECHSUPPORT|*"]</code></pre>
 <p>主要要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>trigger</strong>: kernel <code>core_pattern</code> が <code>coredump_gen_handler</code> を呼ぶ仕組み（<code>/proc/sys/kernel/core_pattern</code>）</li>

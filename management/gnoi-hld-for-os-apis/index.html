@@ -29892,11 +29892,11 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CL[gNOI client\n(gnoi_client / Go)] --&gt;|gRPC :9339| UMF[UMF/sonic-gnmi]
-    UMF --&gt;|InstallOS / ActivateOS / VerifyOS| FE[FE handlers]
+    CL["gNOI client\n(gnoi_client / Go)"] --&gt;|gRPC :9339| UMF["UMF/sonic-gnmi"]
+    UMF --&gt;|"InstallOS / ActivateOS / VerifyOS"| FE[FE handlers]
     FE --&gt;|HostQuery DBUS| HS[Host Service\nimage_service]
-    HS --&gt; SI[sonic-installer\n(host CLI)]
-    SI --&gt; FS[(/host/image-*\non-disk)]</code></pre>
+    HS --&gt; SI["sonic-installer\n(host CLI)"]
+    SI --&gt; FS[("/host/image-*\non-disk")]</code></pre>
 <p>DBUS エンドポイント<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-go highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// FE 側 (UMF)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">func</span><span class="w"> </span><span class="nx">InstallOS</span><span class="p">(</span><span class="nx">reqStr</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w">  </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">HostQuery</span><span class="p">(</span><span class="s">&quot;image_service.install&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">reqStr</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>

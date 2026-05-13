@@ -29697,9 +29697,9 @@
 <h2 id="going-down">動作仕様（going down 順序）<a class="headerlink" href="#going-down" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     BGP[host BGP + asicN BGP\nGR enable] --&gt; TEAM[teamd 全 namespace 停止]
-    TEAM --&gt; SWSS[swss@asicN 全停止\nMAC learn off / orchagent freeze]
+    TEAM --&gt; SWSS["swss@asicN 全停止\nMAC learn off / orchagent freeze"]
     SWSS --&gt; DUMP[per-namespace Redis dump]
-    DUMP --&gt; SYNCD[syncd@asicN 全 warm shutdown\nsai-warmboot.bin per-namespace]
+    DUMP --&gt; SYNCD["syncd@asicN 全 warm shutdown\nsai-warmboot.bin per-namespace"]
     SYNCD --&gt; DB[per-namespace database 停止]
     DB --&gt; KEXEC[kexec\nSONIC_BOOT_TYPE=warm]</code></pre>
 <p>going up は逆順を namespace ごとに走らせ、<a href="../../reference/glossary/#term-orchagent">orchagent</a> compare 完了後に bgp / <a href="../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> を起動する。</p>

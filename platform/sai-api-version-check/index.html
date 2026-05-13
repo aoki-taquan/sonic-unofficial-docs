@@ -29870,10 +29870,10 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">ビルドシステムの構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAIH[sonic-sairedis\nSAI headers (OCP SAI submodule)] --&gt; SYNCD[syncd 本体\n(コンパイル対象)]
-    VENDH[vendor SAI headers\n(Mellanox-SAI 等。一部ベンダーのみ)] --&gt; VLIB[vendor libsai.so\n(sonic-buildimage)]
+    SAIH["sonic-sairedis\nSAI headers (OCP SAI submodule)"] --&gt; SYNCD["syncd 本体\n(コンパイル対象)"]
+    VENDH["vendor SAI headers\n(Mellanox-SAI 等。一部ベンダーのみ)"] --&gt; VLIB["vendor libsai.so\n(sonic-buildimage)"]
     SYNCD --&gt;|link| VLIB
-    SYNCD --&gt;|sai_query_api_version()\nビルド時 AC_TRY_RUN| VLIB</code></pre>
+    SYNCD --&gt;|"sai_query_api_version()\nビルド時 AC_TRY_RUN"| VLIB</code></pre>
 <p>ベンダーによっては SAI ヘッダを公開しているところ（Mellanox-SAI など）と、<code>libsai.so</code> バイナリのみ配布するところがある。後者の場合「ヘッダだけ更新して libsai を放置」が容易に起こり得るため、本機能の効果が大きい<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="sai_api_version">既存の <code>SAI_API_VERSION</code> マクロ<a class="headerlink" href="#sai_api_version" title="Permanent link">&para;</a></h3>
 <p>OCP SAI の <code>saiversion.h</code> には次のマクロが既に定義されている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

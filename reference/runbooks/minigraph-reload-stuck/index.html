@@ -29730,7 +29730,7 @@
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     A[load_minigraph が終わらない] --&gt; B{updategraph 待ち?}
-    B -- Yes --&gt; B1[/etc/sonic/updategraph.conf を確認]
+    B -- Yes --&gt; B1["/etc/sonic/updategraph.conf を確認"]
     B -- No --&gt; C{sonic-cfggen で minigraph parse OK?}
     C -- No --&gt; C1[minigraph.xml の XML 妥当性確認]
     C -- Yes --&gt; D{config reload 内部で stuck?}

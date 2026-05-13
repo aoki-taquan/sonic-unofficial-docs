@@ -29895,14 +29895,14 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    USER[(CONFIG_DB\nAAA / RADIUS / RADIUS_SERVER)] --&gt; PAMC[pam-radius config\n/etc/pam.d/sshd, login]
-    USER --&gt; NSS[NSS module config\n/etc/nsswitch.conf]
-    SSH[sshd / login] --&gt; PAMC
+    USER[("CONFIG_DB\nAAA / RADIUS / RADIUS_SERVER")] --&gt; PAMC["pam-radius config\n/etc/pam.d/sshd, login"]
+    USER --&gt; NSS["NSS module config\n/etc/nsswitch.conf"]
+    SSH["sshd / login"] --&gt; PAMC
     SSH --&gt; NSS
-    PAMC --&gt;|UDP/RADIUS| RAD[RADIUS server (priority 1..8)]
-    NSS --&gt;|user lookup| MAPPER[nss-mapper / passwd]
-    RAD --&gt;|VLAN / Privilege / FilterID| PAMC
-    PAMC --&gt;|local account / role 反映| LOCAL[(/etc/passwd など)]</code></pre>
+    PAMC --&gt;|"UDP/RADIUS"| RAD["RADIUS server (priority 1..8)"]
+    NSS --&gt;|user lookup| MAPPER["nss-mapper / passwd"]
+    RAD --&gt;|"VLAN / Privilege / FilterID"| PAMC
+    PAMC --&gt;|"local account / role 反映"| LOCAL[("/etc/passwd など")]</code></pre>
 <h3 id="mapping-users">Mapping Users<a class="headerlink" href="#mapping-users" title="Permanent link">&para;</a></h3>
 <p>3 つの mapping モード<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>

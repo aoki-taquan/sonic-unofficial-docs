@@ -29874,8 +29874,8 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    EEPROM[EEPROM\n(sysfs / vendor API)] --&gt; XCVRD[xcvrd]
-    EVT[transceiver event\n(plug / error bitmap)] --&gt; XCVRD
+    EEPROM["EEPROM\n(sysfs / vendor API)"] --&gt; XCVRD[xcvrd]
+    EVT["transceiver event\n(plug / error bitmap)"] --&gt; XCVRD
     XCVRD --&gt; INFO[(STATE_DB\nTRANSCEIVER_INFO)]
     XCVRD --&gt; DOM[(STATE_DB\nTRANSCEIVER_DOM_SENSOR)]
     XCVRD --&gt; STAT[(STATE_DB\nTRANSCEIVER_STATUS)]

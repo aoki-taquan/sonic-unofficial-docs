@@ -29914,17 +29914,17 @@
 </ol>
 <h3 id="_2">サービス分類<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph Linux Host (global namespace)
-    GDB[(global DB&lt;br&gt;APPL_DB / CONFIG_DB)]
-    SNMP[snmp / pmon / telemetry]
+  subgraph SG_1["Linux Host (global namespace)"]
+    GDB[("global DB&lt;br&gt;APPL_DB / CONFIG_DB")]
+    SNMP["snmp / pmon / telemetry"]
   end
   subgraph asic0 namespace
-    DB0[(redis_asic0:&lt;br&gt;APPL/CONFIG/ASIC/&lt;br&gt;COUNTERS/...)]
-    SW0[swss / syncd / bgp / teamd / lldp]
+    DB0[("redis_asic0:&lt;br&gt;APPL/CONFIG/ASIC/&lt;br&gt;COUNTERS/...")]
+    SW0["swss / syncd / bgp / teamd / lldp"]
   end
   subgraph asic1 namespace
     DB1[(redis_asic1)]
-    SW1[swss / syncd / ...]
+    SW1["swss / syncd / ..."]
   end
   GDB -.-&gt; DB0
   GDB -.-&gt; DB1</code></pre>

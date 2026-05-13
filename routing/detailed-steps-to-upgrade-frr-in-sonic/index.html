@@ -29630,9 +29630,9 @@
 <h2 id="upgrade-hld">upgrade フロー（HLD ベース）<a class="headerlink" href="#upgrade-hld" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     PICK[upstream tag 選定\nfrr X.Y.Z] --&gt; FORK[sonic-frr リポジトリで\nbranch を up-rebase]
-    FORK --&gt; PATCH[patches/ ディレクトリの\n.patch 群を rebase]
+    FORK --&gt; PATCH["patches/ ディレクトリの\n.patch 群を rebase"]
     PATCH --&gt; BUILD[docker-fpm-frr 再ビルド]
-    BUILD --&gt; SMOKE[sonic-mgmt smoke\n(BGP / OSPF / GR / VRF / PIM)]
+    BUILD --&gt; SMOKE["sonic-mgmt smoke\n(BGP / OSPF / GR / VRF / PIM)"]
     SMOKE --&gt; PR[sonic-buildimage で\nsubmodule pin 更新 PR]
     PR --&gt; CI[community CI 全 platform]
     CI --&gt; MERGE[merge → release branch backport]</code></pre>

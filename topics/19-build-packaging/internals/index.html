@@ -29707,21 +29707,21 @@
 <p>build / packaging / application extension の内部実装は「<a href="../../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> は何を吐き出すか」「sonic-package-manager (SPM) はどう extension を載せるか」「image install 後にどう dockerize されるか」の三層で見ます。docker-base / sonic-slave / sonic-build-hooks の関係を押さえると、ビルド時間とイメージサイズの分析が楽になります。</p>
 <h2 id="_2">データフロー（ビルド）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
-  SRC[sonic-buildimage tree&lt;br/&gt;+ submodules] --&gt; SLAVE[sonic-slave-* docker&lt;br/&gt;build container]
-  SLAVE --&gt; DEBS[*.deb&lt;br/&gt;per-package build]
-  SLAVE --&gt; DOCKERS[docker images&lt;br/&gt;swss/syncd/bgp/...]
+  SRC["sonic-buildimage tree&lt;br/&gt;+ submodules"] --&gt; SLAVE["sonic-slave-* docker&lt;br/&gt;build container"]
+  SLAVE --&gt; DEBS["*.deb&lt;br/&gt;per-package build"]
+  SLAVE --&gt; DOCKERS["docker images&lt;br/&gt;swss/syncd/bgp/..."]
   DEBS --&gt; ROOTFS[rootfs squashfs]
   DOCKERS --&gt; ROOTFS
-  ROOTFS --&gt; ONIE[onie-installer.bin&lt;br/&gt;or *.bin / *.swi]
-  ONIE --&gt;|sonic-installer| HOST[/host/image-*/]
+  ROOTFS --&gt; ONIE["onie-installer.bin&lt;br/&gt;or *.bin / *.swi"]
+  ONIE --&gt;|sonic-installer| HOST[/"host/image-*"/]
   HOST --&gt; RUNTIME[runtime SONiC]</code></pre>
 <h2 id="spm">データフロー（ランタイム / SPM）<a class="headerlink" href="#spm" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  CLI[sonic-package-manager install] --&gt; MANIFEST[package manifest&lt;br/&gt;JSON]
+  CLI[sonic-package-manager install] --&gt; MANIFEST["package manifest&lt;br/&gt;JSON"]
   MANIFEST --&gt; REG[docker registry pull]
   REG --&gt; SPM[sonic-package-manager]
-  SPM --&gt; FEATURE[(CONFIG_DB&lt;br/&gt;FEATURE table)]
-  SPM --&gt; SVC[/etc/systemd/system/*.service&lt;br/&gt;render]
+  SPM --&gt; FEATURE[("CONFIG_DB&lt;br/&gt;FEATURE table")]
+  SPM --&gt; SVC["/etc/systemd/system/*.service&lt;br/&gt;render"]
   FEATURE --&gt; HOSTCFGD[hostcfgd]
   HOSTCFGD --&gt; SYSTEMD[systemd start docker]</code></pre>
 <h2 id="_3">主要コンポーネントの責務<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>

@@ -29774,12 +29774,12 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  BGPD[FRR bgpd&lt;br/&gt;-M bmp module&lt;br/&gt;v7.2+]
-  BMPD[openbmpd&lt;br/&gt;(fork)]
-  CFG[bmpcfgd&lt;br/&gt;CONFIG_DB watcher]
+  BGPD["FRR bgpd&lt;br/&gt;-M bmp module&lt;br/&gt;v7.2+"]
+  BMPD["openbmpd&lt;br/&gt;(fork)"]
+  CFG["bmpcfgd&lt;br/&gt;CONFIG_DB watcher"]
   BGPD -- BMP TCP :5000 --&gt; BMPD
   CFG --&gt; BMPD
-  BMPD --&gt; BSDB[(BMP_STATE_DB&lt;br/&gt;per-ASIC)]
+  BMPD --&gt; BSDB[("BMP_STATE_DB&lt;br/&gt;per-ASIC")]
   BSDB -- gNMI on-change --&gt; CTRL[External controller]</code></pre>
 <ul>
 <li><code>bmp</code> container には <strong>2 daemon</strong>: <code>bmpcfgd</code>（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> を監視し table の enable/disable を openbmpd に伝える）と <strong><code>openbmpd</code></strong>（FRR から BMP セッションを accept し、関連 BGP table を Redis に書く）<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>

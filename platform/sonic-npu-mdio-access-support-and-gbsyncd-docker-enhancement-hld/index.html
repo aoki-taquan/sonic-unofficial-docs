@@ -29730,19 +29730,19 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph syncd_docker[syncd docker]
-    SY[syncd&lt;br/&gt;VendorSai]
-    MS[MdioIpcServer&lt;br/&gt;Unix socket /tmp/...]
+  subgraph syncd_docker["syncd docker"]
+    SY["syncd&lt;br/&gt;VendorSai"]
+    MS["MdioIpcServer&lt;br/&gt;Unix socket /tmp/..."]
     SY --&gt; NPU[NPU SAI]
     SY --- MS
   end
-  subgraph gbsyncd_docker[gbsyncd docker (単一)]
-    GB[syncd instance&lt;br/&gt;--paiInstance N]
-    VP[VendorPai class&lt;br/&gt;VendorSai 継承]
+  subgraph gbsyncd_docker["gbsyncd docker (単一)"]
+    GB["syncd instance&lt;br/&gt;--paiInstance N"]
+    VP["VendorPai class&lt;br/&gt;VendorSai 継承"]
     GB --&gt; VP
-    VP -. dlopen .-&gt; PAI[PAI library&lt;br/&gt;vendor 別]
+    VP -. dlopen .-&gt; PAI["PAI library&lt;br/&gt;vendor 別"]
     VP -. dlopen .-&gt; MAL[MDIO access lib]
-    MAL -.-&gt;|sysfs or&lt;br/&gt;IPC client| EXT
+    MAL -.-&gt;|"sysfs or&lt;br/&gt;IPC client"| EXT
   end
   EXT[(External PHY)]
   MAL -- Unix socket --&gt; MS

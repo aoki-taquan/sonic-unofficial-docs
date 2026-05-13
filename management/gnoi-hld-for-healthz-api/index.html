@@ -29972,10 +29972,10 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CL[gNOI client\n(gnoi_client / Go)] --&gt;|gRPC :9339\nauthn/authz| UMF[gNMI/UMF server\n(telemetry)]
-    UMF --&gt;|HealthzServer\nGet/Artifact/Ack| FE[FE: Healthz handler]
-    FE --&gt;|HealthzCollect / HealthzCheck\nDBUS| HS[Host Service\n(debug_info module)]
-    HS --&gt;|collect logs / DB / show tech| FS[(host filesystem\n*.tar.gz artifact)]</code></pre>
+    CL["gNOI client\n(gnoi_client / Go)"] --&gt;|"gRPC :9339\nauthn/authz"| UMF["gNMI/UMF server\n(telemetry)"]
+    UMF --&gt;|"HealthzServer\nGet/Artifact/Ack"| FE[FE: Healthz handler]
+    FE --&gt;|"HealthzCollect / HealthzCheck\nDBUS"| HS["Host Service\n(debug_info module)"]
+    HS --&gt;|"collect logs / DB / show tech"| FS[(host filesystem\n*.tar.gz artifact)]</code></pre>
 <p>要点<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>gNOI と gNMI は <strong>同じ TCP 9339</strong> を共有</li>

@@ -29662,12 +29662,12 @@
 <h2 id="1">1. コンポーネント関係<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     SAI[SAI counters\nIF_IN_FEC_*] --&gt; COUNTERS[COUNTER_DB:COUNTERS]
-    COUNTERS --&gt; LUA[port_flr.lua\n(plugin under PORT_STAT)]
+    COUNTERS --&gt; LUA["port_flr.lua\n(plugin under PORT_STAT)"]
     CFG[CONFIG_DB\nFLEX_COUNTER_TABLE\nflr-interval-factor] --&gt; FCO[FlexCounterOrch]
     FCO --&gt; FCDB[FLEX_COUNTER_DB\nFLR_INTERVAL_FACTOR]
     FCDB --&gt; LUA
-    LUA --&gt; RATES[COUNTER_DB:RATES\nFEC_FLR / FEC_FLR_PREDICTED / *_last]
-    RATES --&gt; CLI[portstat -f / show fec-stats]
+    LUA --&gt; RATES["COUNTER_DB:RATES\nFEC_FLR / FEC_FLR_PREDICTED / *_last"]
+    RATES --&gt; CLI["portstat -f / show fec-stats"]
     RATES --&gt; TEL[telemetry]</code></pre>
 <h2 id="2-sai-counter">2. 利用する SAI counter<a class="headerlink" href="#2-sai-counter" title="Permanent link">&para;</a></h2>
 <p>すべて既存の <a href="../../reference/glossary/#term-sai">SAI</a> port counter<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -29681,7 +29681,7 @@
 <pre class="mermaid"><code>flowchart TD
     A[Δ uncorrectable_cw\n= NOT_CORR - NOT_CORR_last] --&gt; C
     B[Δ correctable_cw\n+ Δ S0\n= 全 cw - uncorrectable] --&gt; C
-    C[CER = Δ uncorrectable / Δ total]
+    C["CER = Δ uncorrectable / Δ total"]
     C --&gt; D{interleaving X}
     D --&gt;|X=1| E1[FLR = 1.125 * CER]
     D --&gt;|X=2| E2[FLR = 2.125 * CER]

@@ -29973,9 +29973,9 @@
 <p>複数の <code>-u</code> を指定することで <strong>複数の DHCPv6 サーバへ同時にリレー</strong> できる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_5">並列プロセス構成<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    subgraph DR[dhcp-relay docker]
-        V4[dhcrelay (IPv4 既存)]
-        V6[dhcrelay -6 (IPv6 新規)]
+    subgraph DR["dhcp-relay docker"]
+        V4["dhcrelay (IPv4 既存)"]
+        V6["dhcrelay -6 (IPv6 新規)"]
     end
     DOWN[Downstream VLAN\nGlobal IPv6 設定済] --&gt; V6
     V6 --&gt;|-u list| UP1[DHCPv6 Server 1]

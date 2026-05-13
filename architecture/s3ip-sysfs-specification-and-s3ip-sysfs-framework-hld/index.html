@@ -29859,21 +29859,21 @@
 </ul>
 <h3 id="framework">Framework のレイヤ構造<a class="headerlink" href="#framework" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
-    subgraph user[user space]
+    subgraph user["user space"]
       PA[platform API]
-      DBG[debug tool / monitor]
-      SVC[s3ip-sysfs.service&lt;br/&gt;config: /etc/s3ip/s3ip_sysfs_conf.json]
+      DBG["debug tool / monitor"]
+      SVC["s3ip-sysfs.service&lt;br/&gt;config: /etc/s3ip/s3ip_sysfs_conf.json"]
     end
     subgraph kernel
-      S3IP[s3ip_sysfs.ko&lt;br/&gt;共通フレームワーク]
-      VDRV[vendor driver&lt;br/&gt;fan / psu / temp / ...]
+      S3IP["s3ip_sysfs.ko&lt;br/&gt;共通フレームワーク"]
+      VDRV["vendor driver&lt;br/&gt;fan / psu / temp / ..."]
     end
-    SVC --&gt;|起動時| KMOD[lsmod / insmod]
+    SVC --&gt;|起動時| KMOD["lsmod / insmod"]
     KMOD --&gt; S3IP
     KMOD --&gt; VDRV
     VDRV --&gt;|register hooks| S3IP
-    S3IP --&gt; SYS[/sys/s3ip/...]
-    SVC --&gt;|symlink/string&lt;br/&gt;を生成| SW[/sys_switch/...]
+    S3IP --&gt; SYS["/sys/s3ip/..."]
+    SVC --&gt;|"symlink/string&lt;br/&gt;を生成"| SW["/sys_switch/..."]
     SW -.linkまたはfile.-&gt; SYS
     PA --&gt; SW
     DBG --&gt; SW</code></pre>

@@ -29840,20 +29840,20 @@
 </table>
 <h3 id="21">21 テストケース<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph ETH[Ethernet drop (1-4)]
+  subgraph ETH["Ethernet drop (1-4)"]
     E1[1: SMAC=DMAC]
     E2[2: 許可されない VLAN TAG]
     E3[3: Multicast SMAC]
     E4[4: Reserved DMAC]
   end
-  subgraph IP[IP drop (5-19, 21)]
+  subgraph IP["IP drop (5-19, 21)"]
     I5[5: Loop-back filter]
     I6[6: MTU 超過]
     I7[7: TTL=0]
     I8[8: non-routable @ RIF]
     I9[9: IP ヘッダ欠如]
-    I10[10: 壊れた IP ヘッダ checksum/ver/IHL]
-    I11[11: Unicast IP + MC/BC DMAC]
+    I10["10: 壊れた IP ヘッダ checksum/ver/IHL"]
+    I11["11: Unicast IP + MC/BC DMAC"]
     I12[12: DST IP=loopback]
     I13[13: SRC IP=loopback]
     I14[14: SRC IP=multicast]
@@ -29864,7 +29864,7 @@
     I19[19: DST IP=link-local]
     I21[21: ERIF disabled で drop なし]
   end
-  subgraph ACL[ACL drop (20)]
+  subgraph ACL["ACL drop (20)"]
     A20[20: ACL SRC IP DROP]
   end</code></pre>
 <p>ケース 21 は <strong>negative test</strong> 的意味合いで、ERIF（Egress RIF）を disable していると drop されない（= counter 増えない）ことを確認<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

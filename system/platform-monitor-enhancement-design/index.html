@@ -29711,20 +29711,20 @@
   subgraph pmon
     L[ledd]
     X[xcvrd]
-    P[psud (新)]
-    F[fand (新)]
+    P["psud (新)"]
+    F["fand (新)"]
     M[misc one-shot task]
   end
   P -- platform plugin / API --&gt; HW1[(PSU)]
   F -- platform plugin / API --&gt; HW2[(FAN)]
-  X -- platform plugin / API --&gt; HW3[(SFP / xcvr)]
+  X -- platform plugin / API --&gt; HW3[("SFP / xcvr")]
   M -- syseeprom decode --&gt; HW4[(syseeprom)]
   P --&gt; SDB[(STATE_DB)]
   F --&gt; SDB
   X --&gt; SDB
   M --&gt; SDB
-  CLI[show platform / SNMP] --&gt; SDB
-  CLI -. set led / fan speed .-&gt; CDB[(CONFIG_DB / STATE_DB)]
+  CLI["show platform / SNMP"] --&gt; SDB
+  CLI -. set led / fan speed .-&gt; CDB[("CONFIG_DB / STATE_DB")]
   CDB --&gt; P
   CDB --&gt; F</code></pre>
 <h3 id="daemon_1">Daemon 共通フロー<a class="headerlink" href="#daemon_1" title="Permanent link">&para;</a></h3>

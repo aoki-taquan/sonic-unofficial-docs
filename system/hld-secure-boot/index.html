@@ -30044,24 +30044,24 @@
 </table>
 <p>production スクリプトは <strong>ベンダ各社が自分のフローに合わせて実装</strong> する想定。<a href="../../reference/glossary/#term-hld">HLD</a> は dev 用スクリプトのみ供給する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-  subgraph BUILD[Build Process]
-    SRC[shim / grub / vmlinuz / KO]
+  subgraph BUILD["Build Process"]
+    SRC["shim / grub / vmlinuz / KO"]
     SCRIPT{SB_BUILD?}
     SRC --&gt; SCRIPT
   end
-  SCRIPT -- dev --&gt; DEV[signing_secure_boot_dev.py&lt;br/&gt;local keys]
-  SCRIPT -- production --&gt; PROD[signing_secure_boot_production.py&lt;br/&gt;send to vendor sign server]
+  SCRIPT -- dev --&gt; DEV["signing_secure_boot_dev.py&lt;br/&gt;local keys"]
+  SCRIPT -- production --&gt; PROD["signing_secure_boot_production.py&lt;br/&gt;send to vendor sign server"]
   PROD &lt;--&gt; SRV[Vendor Sign Server]
-  DEV --&gt; BIN[sonic-os.bin&lt;br/&gt;(署名済 boot components 同梱)]
+  DEV --&gt; BIN["sonic-os.bin&lt;br/&gt;(署名済 boot components 同梱)"]
   PROD --&gt; BIN</code></pre>
 <h3 id="runtime">Runtime 検証フロー<a class="headerlink" href="#runtime" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
-  HW[HW PK / KEK / DB / DBX&lt;br/&gt;UEFI 鍵階層] --&gt; SHIM[shim loader&lt;br/&gt;を UEFI が verify]
+  HW["HW PK / KEK / DB / DBX&lt;br/&gt;UEFI 鍵階層"] --&gt; SHIM["shim loader&lt;br/&gt;を UEFI が verify"]
   SHIM --&gt; GRUB[shim が grub を verify]
   GRUB --&gt; VM[grub が vmlinuz を verify]
   VM --&gt; KER[kernel 起動]
-  KER --&gt; KO[KO ロード時に&lt;br/&gt;kernel が KO を verify]
-  KO --&gt;|fail| HALT[ロード拒否 / panic]</code></pre>
+  KER --&gt; KO["KO ロード時に&lt;br/&gt;kernel が KO を verify"]
+  KO --&gt;|fail| HALT["ロード拒否 / panic"]</code></pre>
 <p>要点<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>chain の <strong>どこか 1 段でも検証失敗</strong> → 起動中断（または KO ロード拒否）</li>

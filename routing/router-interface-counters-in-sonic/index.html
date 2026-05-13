@@ -29821,10 +29821,10 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">データ経路<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    SAI[SAI\nsai_get_router_interface_stats] --&gt;|polling| FC[Flex Counter\n(RIF FC group, default 1s)]
+    SAI[SAI\nsai_get_router_interface_stats] --&gt;|polling| FC["Flex Counter\n(RIF FC group, default 1s)"]
     FC --&gt; CDB[(COUNTERS_DB)]
     CDB --&gt;|COUNTERS:rif_vid\nCOUNTERS_RIF_NAME_MAP\nCOUNTERS_RIF_TYPE_MAP| CLI[show interfaces counters rif]
-    SWSS[IntfsOrch] -.-&gt;|RIF 追加/削除を FC に登録\nMAP 更新| CDB</code></pre>
+    SWSS[IntfsOrch] -.-&gt;|"RIF 追加/削除を FC に登録\nMAP 更新"| CDB</code></pre>
 <p>要点は次の 3 点。</p>
 <ul>
 <li>取得元は SAI <code>sai_router_interface_api -&gt; sai_get_router_interface_stats()</code>。</li>

@@ -29687,8 +29687,8 @@
 </ul>
 <h2 id="_2">動作仕様（コンテナ起動時）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    UNIT[systemd unit\n(&lt;feature&gt;.service)] --&gt; CTL[docker_image_ctl.j2]
-    CTL --&gt; RUN[docker run\n--cap-add ... --cap-drop=all\n--read-only\n--tmpfs /run\n-v /var/log/&lt;f&gt;:/var/log\n-v /etc/sonic:/etc/sonic:ro\n...]
+    UNIT["systemd unit\n(&lt;feature&gt;.service)"] --&gt; CTL[docker_image_ctl.j2]
+    CTL --&gt; RUN["docker run\n--cap-add ... --cap-drop=all\n--read-only\n--tmpfs /run\n-v /var/log/&lt;f&gt;:/var/log\n-v /etc/sonic:/etc/sonic:ro\n..."]
     RUN --&gt; CONT[(docker container)]</code></pre>
 <p>各 docker は <strong>何が必要か</strong> を改修ごとに洗い出してテンプレート化する。たとえば<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

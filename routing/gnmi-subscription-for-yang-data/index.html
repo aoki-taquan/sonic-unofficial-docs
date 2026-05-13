@@ -29663,11 +29663,11 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    CLI[gnmi_cli\n(client)] --gNMI Subscribe--&gt; SRV[gNMI server\n(mgmt-framework)]
+    CLI["gnmi_cli\n(client)"] --gNMI Subscribe--&gt; SRV["gNMI server\n(mgmt-framework)"]
     SRV --&gt; TL[Translib]
-    TL --&gt; XLATE[Transformer / xpath → DB key]
-    XLATE --&gt; SUBSC[subscribe (Redis keyspace + table notif)]
-    SUBSC --&gt; STDB[(STATE_DB / COUNTERS_DB / APPL_DB)]
+    TL --&gt; XLATE["Transformer / xpath → DB key"]
+    XLATE --&gt; SUBSC["subscribe (Redis keyspace + table notif)"]
+    SUBSC --&gt; STDB[("STATE_DB / COUNTERS_DB / APPL_DB")]
     STDB -- changes --&gt; SUBSC
     SUBSC --&gt; SRV
     SRV -- gNMI Notification --&gt; CLI</code></pre>

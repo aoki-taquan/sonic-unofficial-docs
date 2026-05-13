@@ -29748,8 +29748,8 @@
     B -- No --&gt; C{ASIC リソース枯渇?}
     C -- Yes --&gt; C1[CRM 出力を確認]
     C -- No --&gt; D{特定 OID で再現?}
-    D -- Yes --&gt; D1[該当 object 削除 / 再投入]
-    D -- No --&gt; E[syncd 再起動 (warm 不可なら cold)]</code></pre>
+    D -- Yes --&gt; D1["該当 object 削除 / 再投入"]
+    D -- No --&gt; E["syncd 再起動 (warm 不可なら cold)"]</code></pre>
 <h3 id="1-syncd">1. syncd の異常終了情報<a class="headerlink" href="#1-syncd" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>syncd
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>syncd<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span>

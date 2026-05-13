@@ -29827,7 +29827,7 @@
     PKT[ingress packet] --&gt; HASH[既定 ECMP hash]
     HASH --&gt; CHK{ARS profile\n適用 nexthop?}
     CHK -- no --&gt; NORM[既定 next-hop]
-    CHK -- yes --&gt; ARS[ARS engine\n(出力 queue depth /\nport utilization 観測)]
+    CHK -- yes --&gt; ARS["ARS engine\n(出力 queue depth /\nport utilization 観測)"]
     ARS --&gt; SEL[next-hop 選択 reconsider]
     SEL --&gt; EGR[egress port]</code></pre>
 <p>主要な構成要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

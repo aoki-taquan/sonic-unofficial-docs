@@ -29703,13 +29703,13 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    NPU[NPU 側 pmon] --&gt; CHAS[ChassisBase / Module API]
-    CHAS --&gt; PLAT[platform plugin\n(get_dpus / get_dpu_status / ...)]
+    NPU[NPU 側 pmon] --&gt; CHAS["ChassisBase / Module API"]
+    CHAS --&gt; PLAT["platform plugin\n(get_dpus / get_dpu_status / ...)"]
     PLAT --&gt;|inband mgmt link| DPU0[(DPU 0)]
     PLAT --&gt; DPU1[(DPU 1)]
     PLAT --&gt; DPUN[(DPU N)]
-    NPU --&gt; STATE[(STATE_DB\nDPU_STATE / CHASSIS_MODULE_TABLE)]
-    NPU --&gt; SHOW[show platform dpu / module]</code></pre>
+    NPU --&gt; STATE[("STATE_DB\nDPU_STATE / CHASSIS_MODULE_TABLE")]
+    NPU --&gt; SHOW["show platform dpu / module"]</code></pre>
 <p>主要要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong><code>Chassis.get_module_list()</code> 拡張</strong>: DPU を Module subclass として返す</li>

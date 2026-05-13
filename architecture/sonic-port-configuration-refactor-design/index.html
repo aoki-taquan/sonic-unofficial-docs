@@ -29934,13 +29934,13 @@
 <p><code>sfputilhelper.py</code> と <code>sfputilbase.py</code> のロジックは似ているため、<strong>さらに共通箇所に切り出して再利用</strong> することも HLD で示唆されている<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>ベンダ固有コードにも同様のパース箇所がある。これらは <strong>各ベンダ責任</strong> でリファクタする<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-    PCI[port_config.ini\n(or platform.json)] --&gt; PC[sonic-config-engine/portconfig.py]
+    PCI["port_config.ini\n(or platform.json)"] --&gt; PC["sonic-config-engine/portconfig.py"]
     PC -.-&gt; A[daemon_base.py\nget_port_config_file_name]
     PC -.-&gt; B[sfputilbase.py\nget_port_config + adapter]
     PC -.-&gt; C[sfputilhelper.py\nget_port_config]
-    PC -.-&gt; D[sfputil/main.py\nget_port_config_file_name]
-    PC -.-&gt; E[utilities_common/util_base.py\nget_port_config_file_name]
-    PC -.-&gt; V[vendor 固有モジュール\n(各ベンダ責任)]</code></pre>
+    PC -.-&gt; D["sfputil/main.py\nget_port_config_file_name"]
+    PC -.-&gt; E["utilities_common/util_base.py\nget_port_config_file_name"]
+    PC -.-&gt; V["vendor 固有モジュール\n(各ベンダ責任)"]</code></pre>
 <h3 id="platformjson">platform.json への移行を見据えた構造<a class="headerlink" href="#platformjson" title="Permanent link">&para;</a></h3>
 <p><code>port_config.ini</code> から <code>platform.json</code> への置換は当時進行中の作業<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>パース層を 1 箇所に集約</strong> しておけば、ファイルフォーマットを切り替えるときも <code>portconfig.py</code> 内の実装を差し替えるだけで済み、呼び出し側 5 ファイル（および adapter）に手を入れずに後方互換が保てる、というのが副次的な狙い。</p>
 <!-- evidence:

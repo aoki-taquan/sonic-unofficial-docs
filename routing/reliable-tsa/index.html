@@ -29899,7 +29899,7 @@
       SUP1 --&gt;|SSH 順次| LC3A[LC3 bgpcfgd]
     end
     subgraph 新[新方式: CHASSIS_APP_DB pub/sub]
-      SUP2[Supervisor TSA cmd] --&gt; CDB[(CHASSIS_APP_DB\nBGP_DEVICE_GLOBAL|STATE\ntsa_enabled)]
+      SUP2[Supervisor TSA cmd] --&gt; CDB[("CHASSIS_APP_DB\nBGP_DEVICE_GLOBAL|STATE\ntsa_enabled")]
       CDB --&gt; LCB1[LC1 asic bgpcfgd]
       CDB --&gt; LCB2[LC2 asic bgpcfgd]
       CDB --&gt; LCB3[LC3 asic bgpcfgd]

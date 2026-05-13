@@ -29820,7 +29820,7 @@
 <h3 id="_3">コンポーネントとフロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     USER[管理者] --&gt;|config feature enable telemetry| CLI[sonic-utilities]
-    CLI --&gt; CFG[(CONFIG_DB.FEATURE\n|&lt;feature&gt;: status)]
+    CLI --&gt; CFG[("CONFIG_DB.FEATURE\n|&lt;feature&gt;: status")]
     CFG --&gt; HC[hostcfgd]
     HC --&gt;|systemctl enable + start| SVC[telemetry.service]
     HC --&gt;|systemctl stop + disable| SVC

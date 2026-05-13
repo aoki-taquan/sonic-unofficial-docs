@@ -29691,11 +29691,11 @@
 <pre class="mermaid"><code>flowchart LR
     PMON[NPU 側 pmon] --&gt; PA[sonic-platform-common\nplatform plugin]
     PA --&gt; XPORT{transport}
-    XPORT --&gt;|Redfish HTTPS| BMC[BMC stack\n(OpenBMC など)]
-    XPORT --&gt;|IPMI / OEM| BMC
+    XPORT --&gt;|Redfish HTTPS| BMC["BMC stack\n(OpenBMC など)"]
+    XPORT --&gt;|"IPMI / OEM"| BMC
     XPORT --&gt;|i2c proxy| BMC
-    BMC --&gt; SENS[(PSU / fan / thermal / FRU)]
-    PMON --&gt; STDB[(STATE_DB\nFAN_INFO / PSU_INFO / THERMAL_INFO)]</code></pre>
+    BMC --&gt; SENS[("PSU / fan / thermal / FRU")]
+    PMON --&gt; STDB[("STATE_DB\nFAN_INFO / PSU_INFO / THERMAL_INFO")]</code></pre>
 <p>要点<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>transport</strong>: Redfish HTTPS が第一選択。IPMI / vendor OEM をフォールバックとする platform もある</li>

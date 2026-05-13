@@ -29958,14 +29958,14 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構造<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    CLI["CLI: show debug &lt;comp&gt;"] --&gt; APP[(APPL_DB&lt;br/&gt;Dump table)]
+    CLI["CLI: show debug &lt;comp&gt;"] --&gt; APP[("APPL_DB&lt;br/&gt;Dump table")]
     ASSERT[custom_assert] --&gt; APP
-    APP -- pub/sub --&gt; FW[Debugframework&lt;br/&gt;singleton]
+    APP -- pub/sub --&gt; FW["Debugframework&lt;br/&gt;singleton"]
     FW --&gt; CB1[RouteOrch dump]
     FW --&gt; CB2[NeighborOrch dump]
-    CB1 --&gt; OUT[/var/log/&lt;comp&gt;_dump.log&lt;br/&gt;or syslog]
+    CB1 --&gt; OUT["/var/log/&lt;comp&gt;_dump.log&lt;br/&gt;or syslog"]
     CB2 --&gt; OUT
-    OUT --&gt; POST[Post-action&lt;br/&gt;compress-rotate / upload]</code></pre>
+    OUT --&gt; POST["Post-action&lt;br/&gt;compress-rotate / upload"]</code></pre>
 <h3 id="framework-api">Framework クラスと登録 API<a class="headerlink" href="#framework-api" title="Permanent link">&para;</a></h3>
 <p>C++ singleton として SwSS 名前空間に実装される<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Debugframework</span><span class="w"> </span><span class="p">{</span>

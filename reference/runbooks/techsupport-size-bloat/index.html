@@ -29730,11 +29730,11 @@
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     A[techsupport が巨大化] --&gt; B{core dump 多数?}
-    B -- Yes --&gt; B1[/var/core を整理 / クラッシュ原因を解消]
+    B -- Yes --&gt; B1["/var/core を整理 / クラッシュ原因を解消"]
     B -- No --&gt; C{log rotate 設定 OK?}
-    C -- No --&gt; C1[rsyslog / logrotate 設定を修正]
+    C -- No --&gt; C1["rsyslog / logrotate 設定を修正"]
     C -- Yes --&gt; D{特定 DB dump が巨大?}
-    D -- Yes --&gt; D1[CONFIG_DB / FRR running-config を確認]
+    D -- Yes --&gt; D1["CONFIG_DB / FRR running-config を確認"]
     D -- No --&gt; E[show techsupport の since オプションで範囲限定]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-dump">1. dump 構成<a class="headerlink" href="#1-dump" title="Permanent link">&para;</a></h3>

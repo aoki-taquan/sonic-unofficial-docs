@@ -29953,9 +29953,9 @@
 <pre class="mermaid"><code>flowchart LR
     User[swssloglevel CLI] --&gt; CDB[(CONFIG_DB\nLOGGER)]
     Save[config save] --&gt; CDB
-    Save --&gt;|copy| JSON[/etc/sonic/config_db.json]
-    CDB --&gt;|change event| LIS[各コンポーネントの settingThread\n(listener)]
-    LIS --&gt; COMP[Logger singleton\n(loglevel property)]
+    Save --&gt;|copy| JSON["/etc/sonic/config_db.json"]
+    CDB --&gt;|change event| LIS["各コンポーネントの settingThread\n(listener)"]
+    LIS --&gt; COMP["Logger singleton\n(loglevel property)"]
     Boot[再起動] --&gt; JSON
     JSON --&gt;|database container init| CDB</code></pre>
 <p>各 SONiC コンポーネントは <strong>Logger シングルトン + listener スレッド (<code>settingThread</code>)</strong> を持っており、購読対象 DB の変更を検知して loglevel プロパティを更新する。本機能はこの <code>settingThread</code> の購読先を LOGLEVEL_DB から CONFIG_DB に切り替える<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

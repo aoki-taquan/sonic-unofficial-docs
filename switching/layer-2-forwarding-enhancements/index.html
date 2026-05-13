@@ -29828,11 +29828,11 @@
 <p>warm boot 既存挙動は維持<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="fdb-flush">FDB Flush 仕様<a class="headerlink" href="#fdb-flush" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
-    EV{event} --&gt;|port oper down| F1[per-port flush&lt;br/&gt;dynamic のみ]
-    EV --&gt;|port を VLAN 抜去| F2[per-(port,VLAN)&lt;br/&gt;static + dynamic&lt;br/&gt;※CONFIG_DB の static は残す]
-    EV --&gt;|STP topo change| F3[per-port or&lt;br/&gt;per-(port,VLAN)&lt;br/&gt;dynamic のみ]
-    EV --&gt;|portchannel down| F4[per-portchannel&lt;br/&gt;dynamic のみ]
-    F1 &amp; F2 &amp; F3 &amp; F4 --&gt; SDB[STATE_DB / ASIC_DB / HW / m_entries]</code></pre>
+    EV{event} --&gt;|port oper down| F1["per-port flush&lt;br/&gt;dynamic のみ"]
+    EV --&gt;|port を VLAN 抜去| F2["per-(port,VLAN)&lt;br/&gt;static + dynamic&lt;br/&gt;※CONFIG_DB の static は残す"]
+    EV --&gt;|STP topo change| F3["per-port or&lt;br/&gt;per-(port,VLAN)&lt;br/&gt;dynamic のみ"]
+    EV --&gt;|portchannel down| F4["per-portchannel&lt;br/&gt;dynamic のみ"]
+    F1 &amp; F2 &amp; F3 &amp; F4 --&gt; SDB["STATE_DB / ASIC_DB / HW / m_entries"]</code></pre>
 <p>port が VLAN メンバでない / VLAN から外れた static は orchagent の <strong>「saved FDB」</strong> に保持され、port が VLAN に再追加された時に再 program される。<code>FdbOrch</code> のデータ構造は <code>set&lt;(MAC, bv_id)&gt;</code> → <code>map&lt;(MAC, bv_id), fdb_type&gt;</code> に変更され、type 情報をキャッシュ化。</p>
 <h2 id="config_db-clihld">CONFIG_DB / CLI（HLD 提案）<a class="headerlink" href="#config_db-clihld" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>FDB|&lt;vlan&gt;|&lt;mac&gt;    port=&lt;port&gt;

@@ -29725,18 +29725,18 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    REST[REST client\n(OpenAPI)] --&gt; RS[REST server]
-    GNMI[gNMI client] --&gt; GS[gNMI server\n(telemetry)]
-    KLISH[CLI / KLISH] --&gt; CLI[clish/klish]
+    REST["REST client\n(OpenAPI)"] --&gt; RS[REST server]
+    GNMI[gNMI client] --&gt; GS["gNMI server\n(telemetry)"]
+    KLISH["CLI / KLISH"] --&gt; CLI["clish/klish"]
 
     RS --&gt; TL[Translib]
     GS --&gt; TL
     CLI --&gt; TL
 
-    TL --&gt;|model based| TF[Transformer&lt;br&gt;(per-module)]
+    TL --&gt;|model based| TF["Transformer&lt;br&gt;(per-module)"]
     TF --&gt; CDB[(CONFIG_DB)]
-    TF --&gt; ADB[(APPL_DB / STATE_DB)]
-    TF --&gt; RPC[per-feature RPC&lt;br&gt;(openconfig actions)]</code></pre>
+    TF --&gt; ADB[("APPL_DB / STATE_DB")]
+    TF --&gt; RPC["per-feature RPC&lt;br&gt;(openconfig actions)"]</code></pre>
 <p>主要ポイント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>YANG が真実源</strong>: openconfig / IETF / sonic-* YANG 全体を <code>sonic-yang-mgmt</code> がパースし、URL / xpath マッピングと validation を提供</li>

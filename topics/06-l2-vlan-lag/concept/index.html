@@ -29897,10 +29897,10 @@
 <p>サーバ向けポートを <code>Vlan100</code> の untagged member にし、uplink を PortChannel として束ねる典型構成です。<code>Vlan100</code> を SVI 化（<code>VLAN_INTERFACE</code>）すればサーバの gateway になります。</p>
 <h3 id="2-trunk-sub-interface-mix">シーン 2: trunk + sub-interface mix<a class="headerlink" href="#2-trunk-sub-interface-mix" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  Peer((Router)) ==|trunk: Vlan10/20/30| Eth[Ethernet5]
+  Peer((Router)) ==&gt;|"trunk: Vlan10/20/30"| Eth[Ethernet5]
   Eth --- Br10[Vlan10 bridge]
   Eth --- Br20[Vlan20 bridge]
-  Eth -. dot1q .100 .- Sub[Ethernet5.100&lt;br/&gt;L3 sub-port]</code></pre>
+  Eth -.-&gt;|"dot1q .100"| Sub["Ethernet5.100&lt;br/&gt;L3 sub-port"]</code></pre>
 <p>同じ物理ポートで、ある VLAN は L2 bridge に入れ、別の VLAN は dot1q L3 sub-port として終端する、という構成も可能です。bridge と sub-port の使い分けは VLAN ごとに別になる点に注意します。</p>
 <h2 id="access-trunk-routed">Access / trunk / routed の見方<a class="headerlink" href="#access-trunk-routed" title="Permanent link">&para;</a></h2>
 <p>Switchport mode は、ポートや PortChannel をどう扱うかを運用者に明示するための概念です。</p>

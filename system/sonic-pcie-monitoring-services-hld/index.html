@@ -29629,10 +29629,10 @@
 </ul>
 <h2 id="_2">どう動くのか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    PD[pcied] --&gt; PLAT[/usr/share/sonic/device/&amp;lt;plat&amp;gt;/pcie.yaml]
-    PD --&gt; SYSFS[/sys/bus/pci/devices/...]
-    PD --&gt; AER[/sys/.../aer_dev_*]
-    PD --&gt; STATE[STATE_DB&lt;br/&gt;PCIE_DEVICE / PCIE_DETACH / PCIE_AER]
+    PD[pcied] --&gt; PLAT["/usr/share/sonic/device/&amp;lt;plat&amp;gt;/pcie.yaml"]
+    PD --&gt; SYSFS["/sys/bus/pci/devices/..."]
+    PD --&gt; AER["/sys/.../aer_dev_*"]
+    PD --&gt; STATE["STATE_DB&lt;br/&gt;PCIE_DEVICE / PCIE_DETACH / PCIE_AER"]
     SHOW[show platform pcieinfo] --&gt; STATE</code></pre>
 <p>主な観測項目<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

@@ -29942,13 +29942,13 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="cmis-state-machine">CMIS state machine への割り込み<a class="headerlink" href="#cmis-state-machine" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TD
-    DP_DEINIT[DP_DEINIT\nEC=0 で AppSel 適用] --&gt; AP_CFG[AP_CONFIG\nDataPathDeactivated/Disabled]
+    DP_DEINIT[DP_DEINIT\nEC=0 で AppSel 適用] --&gt; AP_CFG["AP_CONFIG\nDataPathDeactivated/Disabled"]
     AP_CFG --&gt; CHECK{optics_si_setting.json\nload OK?\nlane speed が SI 必要?}
     CHECK --&gt;|No| DP_INIT[DP_INIT\n標準フロー]
-    CHECK --&gt;|Yes| LOOKUP[module key で検索\n(2.1 - 2.6)]
+    CHECK --&gt;|Yes| LOOKUP["module key で検索\n(2.1 - 2.6)"]
     LOOKUP --&gt; EMPTY{attribute list\n空?}
     EMPTY --&gt;|空| DP_INIT
-    EMPTY --&gt;|あり| CACHE[active TX/RX SI を読み出してキャッシュ\nupper Page 10h 145-152, Page 11h 214-234]
+    EMPTY --&gt;|あり| CACHE["active TX/RX SI を読み出してキャッシュ\nupper Page 10h 145-152, Page 11h 214-234"]
     CACHE --&gt; MERGE[キャッシュ値に新値を上書き]
     MERGE --&gt; WRITE[Staged Control Set 0 へ書込\nupper Page 10h 153-173\nEC=1 で commit]
     WRITE --&gt; STAT{config_status OK?}

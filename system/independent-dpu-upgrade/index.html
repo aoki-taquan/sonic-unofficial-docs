@@ -29720,14 +29720,14 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI[External client&lt;br/&gt;gNOI client]
-  subgraph NPU[NPU]
+  CLI["External client&lt;br/&gt;gNOI client"]
+  subgraph NPU["NPU"]
     NGMI[NPU GNMI Server]
-    SPL[GNMI/GNOI Splitter]
-    OFFL[Offloader&lt;br/&gt;GNOI client]
-    CT[Offloaded containers&lt;br/&gt;(Database / GNMI / HA)]
+    SPL["GNMI/GNOI Splitter"]
+    OFFL["Offloader&lt;br/&gt;GNOI client"]
+    CT["Offloaded containers&lt;br/&gt;(Database / GNMI / HA)"]
   end
-  subgraph DPU[DPU]
+  subgraph DPU["DPU"]
     DGMI[DPU GNMI Server]
     DHOST[DPU Host Services]
   end

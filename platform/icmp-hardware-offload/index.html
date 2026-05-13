@@ -29975,13 +29975,13 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    LM[linkmgrd\n(MUX docker)] --&gt;|App DB に session 投入| ADB[(APP_DB\nICMP_ECHO_SESSION_TABLE)]
-    ADB --&gt;|consume| IO[IcmpOrch\n(orchagent)]
-    IO --&gt;|create_icmp_echo_session| SAI[SAI / NPU\n(SAI 1.12 saiicmpecho.h)]
+    LM["linkmgrd\n(MUX docker)"] --&gt;|App DB に session 投入| ADB[(APP_DB\nICMP_ECHO_SESSION_TABLE)]
+    ADB --&gt;|consume| IO["IcmpOrch\n(orchagent)"]
+    IO --&gt;|create_icmp_echo_session| SAI["SAI / NPU\n(SAI 1.12 saiicmpecho.h)"]
     SAI --&gt;|notification| IO
     IO --&gt;|publish state| SDB[(STATE_DB\nICMP_ECHO_SESSION_TABLE)]
     SDB --&gt;|consume| LM
-    LM --&gt;|TLV ICMP のみ\n(software cookie)| KSOCK[Linux raw socket]</code></pre>
+    LM --&gt;|"TLV ICMP のみ\n(software cookie)"| KSOCK[Linux raw socket]</code></pre>
 <p><code>IcmpOrch</code> は新規追加コンポーネント<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-sai">SAI</a> 1.12 で導入された <code>saiicmpecho.h</code> 系属性とスイッチ通知を扱う。</p>
 <h3 id="normal-rx">セッションタイプ（NORMAL / RX）<a class="headerlink" href="#normal-rx" title="Permanent link">&para;</a></h3>
 <p>各 mux ポートにつき <strong>2 セッション</strong> を作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

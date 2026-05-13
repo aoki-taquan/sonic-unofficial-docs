@@ -30023,9 +30023,9 @@
 </ul>
 <h3 id="sonic-provisiond">新デーモン: <code>sonic-provisiond</code><a class="headerlink" href="#sonic-provisiond" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    ST[(STATE_DB\nCHASSIS_MODULE_TABLE|*)] --&gt;|SUBSCRIBE| PD[sonic-provisiond]
+    ST[("STATE_DB\nCHASSIS_MODULE_TABLE|*")] --&gt;|SUBSCRIBE| PD[sonic-provisiond]
     PD --&gt; CHK{oper_status == ProvisionReady?}
-    CHK --&gt;|Yes| API[module.provision_module()]
+    CHK --&gt;|Yes| API["module.provision_module()"]
     CHK --&gt;|No| WAIT[継続購読]</code></pre>
 <p>責務<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

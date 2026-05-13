@@ -29789,14 +29789,14 @@
 </table>
 <h3 id="_5">全体フロー<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart TB
-    IN[JsonChange] --&gt; S1[Stage 1: target JSON / diff 算出]
-    S1 --&gt; S2[Stage 2: table を alphabetical 順に適用&lt;br/&gt;write → restart (or subscribe) → validate]
+    IN[JsonChange] --&gt; S1["Stage 1: target JSON / diff 算出"]
+    S1 --&gt; S2["Stage 2: table を alphabetical 順に適用&lt;br/&gt;write → restart (or subscribe) → validate"]
     S2 --&gt; S3[Stage 3: ConfigDB と target を再比較]
-    S3 --&gt;|diff あり| FAIL[エラー報告&lt;br/&gt;自動 rollback 無し]</code></pre>
+    S3 --&gt;|diff あり| FAIL["エラー報告&lt;br/&gt;自動 rollback 無し"]</code></pre>
 <h3 id="stage-2-per-table">Stage 2 の per-table<a class="headerlink" href="#stage-2-per-table" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     T[Table] --&gt; W[ConfigDBConnector で書込]
-    W --&gt; R{service が&lt;br/&gt;subscribe?}
+    W --&gt; R{"service が&lt;br/&gt;subscribe?"}
     R --&gt;|Yes| V[validate-commands]
     R --&gt;|No| RS[service restart] --&gt; V
     V --&gt; NEXT[次 table]</code></pre>

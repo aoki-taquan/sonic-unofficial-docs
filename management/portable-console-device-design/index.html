@@ -30027,9 +30027,9 @@
 <h3 id="_4">セットアップフロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     USB[USB plug-in] --&gt; UDEV[udev rules]
-    UDEV --&gt; MAP[/dev/ttyUSB&lt;id&gt; → /dev/console-&lt;line&gt;/]
-    BUILD[sonic-buildimage] --&gt; DEB[&lt;vendor&gt;-&lt;model&gt;.deb]
-    DEB --&gt;|install| RULES[/etc/udev/rules.d/50-&lt;vendor&gt;-&lt;model&gt;.rules]
+    UDEV --&gt; MAP[/"dev/ttyUSB&lt;id&gt; → /dev/console-&lt;line&gt;"/]
+    BUILD[sonic-buildimage] --&gt; DEB["&lt;vendor&gt;-&lt;model&gt;.deb"]
+    DEB --&gt;|install| RULES["/etc/udev/rules.d/50-&lt;vendor&gt;-&lt;model&gt;.rules"]
     POSTINST[postinst hook] --&gt;|udevadm trigger -c add| UDEV</code></pre>
 <p>ベンダー側 deb には <code>50-&lt;vendor&gt;-&lt;model&gt;.rules</code> を <code>/etc/udev/rules.d/</code> に配置し、postinst で <code>udevadm trigger -c add</code> を呼ぶ運用が標準とされる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。優先度番号 50 はベンダー間衝突を避ける慣例。</p>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>

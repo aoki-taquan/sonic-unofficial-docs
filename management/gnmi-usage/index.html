@@ -29976,10 +29976,10 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    A[client tool\n(gnmi_get / gnmi_set / gnmi_cli)] --&gt;|gRPC :8080\nuser/pass or cert| B[telemetry container\nsonic-gnmi server]
+    A["client tool\n(gnmi_get / gnmi_set / gnmi_cli)"] --&gt;|"gRPC :8080\nuser/pass or cert"| B[telemetry container\nsonic-gnmi server]
     B --&gt;|target=OC-YANG| C[transformer\n→ sonic-mgmt-common]
     B --&gt;|target=SONIC-YANG| D[sonic YANG → CONFIG_DB]
-    B --&gt;|target=CONFIG_DB / COUNTERS_DB| E[redis DB 直接アクセス]</code></pre>
+    B --&gt;|"target=CONFIG_DB / COUNTERS_DB"| E[redis DB 直接アクセス]</code></pre>
 <h3 id="_4">認証<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>例ではすべて <code>-insecure -username admin -password sonicadmin</code> で TLS 無し + Basic 認証を使っている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本番では証明書ベースの認証を使う想定で、<code>-insecure</code> は検証用フラグ。</p>
 <h3 id="get">Get<a class="headerlink" href="#get" title="Permanent link">&para;</a></h3>

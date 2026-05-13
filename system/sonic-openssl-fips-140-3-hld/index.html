@@ -29845,9 +29845,9 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント関係<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  APP[OpenSSL を使う app&lt;br/&gt;OpenSSH / Python / etc] --&gt; OSSL[OpenSSL libcrypto]
+  APP["OpenSSL を使う app&lt;br/&gt;OpenSSH / Python / etc"] --&gt; OSSL[OpenSSL libcrypto]
   OSSL -- engine load --&gt; SCOSSL[SymCrypt OpenSSL Engine]
-  SCOSSL --&gt; SCRY[SymCrypt&lt;br/&gt;(FIPS 140-3 module)]
+  SCOSSL --&gt; SCRY["SymCrypt&lt;br/&gt;(FIPS 140-3 module)"]
   KRB[Kerberos] --&gt; OSSL
   GO[Golang dev.boringcrypto + RedHat patch] --&gt; OSSL</code></pre>
 <p>OpenSSL の <strong>engine 機構</strong> を使い、<code>/usr/lib/ssl/openssl-fips.cnf</code> で <code>engine_id = symcrypt</code> / <code>dynamic_path = /usr/lib/x86_64-linux-gnu/libsymcryptengine.so</code> を指定する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

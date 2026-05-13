@@ -29910,7 +29910,7 @@
 <pre class="mermaid"><code>flowchart LR
     CLI["config chassis module shutdown DPUx"] --&gt; CD[chassisd]
     CD --&gt; MB[module_base.py]
-    MB --&gt;|set_admin_state(down) /&lt;br/&gt;graceful_shutdown_handler| ST[(STATE_DB&lt;br/&gt;CHASSIS_MODULE_INFO_TABLE)]
+    MB --&gt;|"set_admin_state(down) /&lt;br/&gt;graceful_shutdown_handler"| ST[("STATE_DB&lt;br/&gt;CHASSIS_MODULE_INFO_TABLE")]
     ST -- watch --&gt; GD[gnoi_reboot_daemon.py]
     GD --&gt;|gNOI Reboot HALT| DPU[DPUx sysmgr]
     DPU --&gt;|DBUS reboot -p| KERN[DPU kernel]

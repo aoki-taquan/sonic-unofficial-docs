@@ -29675,10 +29675,10 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    SD[storagemond\n(daemon loop)] --&gt; PLUG[platform plugin\n(SsdUtil / 該当 vendor 実装)]
-    PLUG --&gt;|smartctl / mmc-utils| DEV[(SSD / eMMC)]
+    SD["storagemond\n(daemon loop)"] --&gt; PLUG["platform plugin\n(SsdUtil / 該当 vendor 実装)"]
+    PLUG --&gt;|"smartctl / mmc-utils"| DEV[("SSD / eMMC")]
     SD --&gt; STATE[STATE_DB\nSTORAGE_INFO]
-    SD --&gt; SYS[syslog / system health monitor]
+    SD --&gt; SYS["syslog / system health monitor"]
     SHOW[show platform storage] --&gt; STATE</code></pre>
 <p>主な観測項目（<a href="../../reference/glossary/#term-hld">HLD</a> 概念）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

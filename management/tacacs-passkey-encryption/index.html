@@ -30066,13 +30066,13 @@
 <h3 id="_3">コンポーネント構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     USER[管理者] --&gt;|config tacacs passkey ... --encrypt| CLI[sonic-utilities CLI]
-    CLI --&gt;|master key 入力 (--encrypt 時のみ)| MK[Master Key Manager\nsecuritycipher]
-    MK --&gt;|root 専用 ro| FILE[/etc/cipher_pass]
-    CLI --&gt;|暗号化 passkey| CFG[(CONFIG_DB.TACPLUS|global)]
-    CFG --&gt; HCE[HostCfg Enforcer (hostcfgd)]
+    CLI --&gt;|"master key 入力 (--encrypt 時のみ)"| MK[Master Key Manager\nsecuritycipher]
+    MK --&gt;|root 専用 ro| FILE["/etc/cipher_pass"]
+    CLI --&gt;|暗号化 passkey| CFG[("CONFIG_DB.TACPLUS|global")]
+    CFG --&gt; HCE["HostCfg Enforcer (hostcfgd)"]
     FILE --&gt; HCE
-    HCE --&gt;|復号した平文 passkey| PAM[PAM config files\n(common-auth-sonic)]
-    SSH[SSH / Console] --&gt; PAM
+    HCE --&gt;|復号した平文 passkey| PAM["PAM config files\n(common-auth-sonic)"]
+    SSH["SSH / Console"] --&gt; PAM
     PAM --&gt; AUTH[TACACS+ サーバ認証]</code></pre>
 <p>主要要素<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>

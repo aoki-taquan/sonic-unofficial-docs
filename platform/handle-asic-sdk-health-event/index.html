@@ -29714,11 +29714,11 @@
 </ul>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    SDK[(ASIC SDK)] --&gt; SAI[SAI health notification\n(severity / category / data)]
-    SAI --&gt; SYNCD[syncd / SAI redis]
-    SYNCD --&gt; ORCH[Orch (SwitchOrch / 専用 handler)]
+    SDK[(ASIC SDK)] --&gt; SAI["SAI health notification\n(severity / category / data)"]
+    SAI --&gt; SYNCD["syncd / SAI redis"]
+    SYNCD --&gt; ORCH["Orch (SwitchOrch / 専用 handler)"]
     ORCH --&gt; STATE[STATE_DB\nASIC_SDK_HEALTH_EVENT_TABLE]
-    ORCH --&gt; SYS[syslog / counter]
+    ORCH --&gt; SYS["syslog / counter"]
     STATE --&gt; SHOW[show asic-sdk-health-event]
     STATE --&gt; TEL[gNMI telemetry]
     CFG[CONFIG_DB\nSUPPRESS_ASIC_SDK_HEALTH_EVENT] --&gt; ORCH</code></pre>

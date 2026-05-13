@@ -29866,11 +29866,11 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">コンポーネント階層<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI1[show platform pcieinfo] --&gt; SUB[show/main.py の platform サブコマンド]
+  CLI1[show platform pcieinfo] --&gt; SUB["show/main.py の platform サブコマンド"]
   SUB --&gt; PU[pcieutil CLI]
-  PU --&gt; PC[sonic_platform_base/sonic_pice/pcie_common.py]
-  PC --&gt; YAML[(device/&lt;platform&gt;/plugins/pcie.yaml)]
-  PC --&gt; KERNEL[/sys/bus/pci 等]</code></pre>
+  PU --&gt; PC["sonic_platform_base/sonic_pice/pcie_common.py"]
+  PC --&gt; YAML[("device/&lt;platform&gt;/plugins/pcie.yaml")]
+  PC --&gt; KERNEL["/sys/bus/pci 等"]</code></pre>
 <p><code>show/main.py</code> の <code>platform</code> メニューに <code>pcieinfo</code> 項目を追加し、内部的に <code>pcieutil [pcie_show|pcie_check]</code> を実行する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>

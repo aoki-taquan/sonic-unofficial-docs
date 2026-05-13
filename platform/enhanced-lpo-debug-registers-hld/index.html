@@ -29750,13 +29750,13 @@
 <p>VMA は 5 mV 刻みで 0〜1275 mV、OMA は 0.1 µW 刻みで 0〜6.5535 mW (≈ -40〜+8.2 dBm)<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="redis">Redis への公開<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  Mod[(LPO module&lt;br&gt;page C1h/C2h)] --&gt;|i2c| Xcvrd[xcvrd in PMON]
+  Mod[("LPO module&lt;br&gt;page C1h/C2h")] --&gt;|i2c| Xcvrd[xcvrd in PMON]
   Xcvrd --&gt;|CmisEnhancedLpoApi| State[(STATE_DB)]
   subgraph STATE_DB
-    TI[TRANSCEIVER_INFO|EthernetX]
-    TD[TRANSCEIVER_DOM_SENSOR|EthernetX]
-    TT[TRANSCEIVER_DOM_THRESHOLD|EthernetX]
-    TF[TRANSCEIVER_DOM_FLAG|EthernetX&lt;br&gt;+SET/CLEAR_TIME / CHANGE_COUNT]
+    TI["TRANSCEIVER_INFO|EthernetX"]
+    TD["TRANSCEIVER_DOM_SENSOR|EthernetX"]
+    TT["TRANSCEIVER_DOM_THRESHOLD|EthernetX"]
+    TF["TRANSCEIVER_DOM_FLAG|EthernetX&lt;br&gt;+SET/CLEAR_TIME / CHANGE_COUNT"]
   end
   State --&gt; TI
   State --&gt; TD

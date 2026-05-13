@@ -29897,23 +29897,23 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">構成要素<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph PMON[PMON container]
-    YC[ycabled / linkmgr]
+  subgraph PMON["PMON container"]
+    YC["ycabled / linkmgr"]
     GC[gRPC client daemon]
   end
-  subgraph HOST[Switch Host (NPU)]
+  subgraph HOST["Switch Host (NPU)"]
     PMON
-    SDB[STATE_DB&lt;br/&gt;gRPC channel state]
-    APPL[APPL_DB&lt;br/&gt;MUX_CABLE etc.]
+    SDB["STATE_DB&lt;br/&gt;gRPC channel state"]
+    APPL["APPL_DB&lt;br/&gt;MUX_CABLE etc."]
   end
-  subgraph FPGA[FPGA]
+  subgraph FPGA["FPGA"]
   end
-  subgraph SOC[SoC]
-    SRV[gRPC server&lt;br/&gt;(DualToRActive service)]
+  subgraph SOC["SoC"]
+    SRV["gRPC server&lt;br/&gt;(DualToRActive service)"]
   end
   YC --&gt; GC
-  GC --&gt;|TLS gRPC&lt;br/&gt;loopback IP として src| SRV
-  SRV --&gt;|async notification&lt;br/&gt;(maintenance/shutdown)| GC
+  GC --&gt;|"TLS gRPC&lt;br/&gt;loopback IP として src"| SRV
+  SRV --&gt;|"async notification&lt;br/&gt;(maintenance/shutdown)"| GC
   GC --&gt; SDB
   ORCH[orchagent] -.- APPL</code></pre>
 <h3 id="grpc-service-proto3">gRPC service 定義（proto3）<a class="headerlink" href="#grpc-service-proto3" title="Permanent link">&para;</a></h3>

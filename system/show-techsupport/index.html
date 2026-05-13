@@ -29836,18 +29836,18 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  subgraph CLIENTS[Clients]
-    CLICK[Click CLI&lt;br/&gt;sonic-utilities]
+  subgraph CLIENTS["Clients"]
+    CLICK["Click CLI&lt;br/&gt;sonic-utilities"]
     MFCLI[Management Framework CLI]
     REST[REST API client]
     GNMI[gNMI client]
   end
-  subgraph MGMT[mgmt-framework container]
-    TRANS[Transformer&lt;br/&gt;YANG ↔ host action]
+  subgraph MGMT["mgmt-framework container"]
+    TRANS["Transformer&lt;br/&gt;YANG ↔ host action"]
   end
-  subgraph HOST[Host]
-    HS[sonic-hostservices&lt;br/&gt;(D-Bus / privileged)]
-    SCRIPT[既存 show techsupport&lt;br/&gt;script]
+  subgraph HOST["Host"]
+    HS["sonic-hostservices&lt;br/&gt;(D-Bus / privileged)"]
+    SCRIPT["既存 show techsupport&lt;br/&gt;script"]
   end
   CLICK --&gt; SCRIPT
   MFCLI --&gt; TRANS
@@ -29855,7 +29855,7 @@
   GNMI --&gt; TRANS
   TRANS --&gt; HS
   HS --&gt; SCRIPT
-  SCRIPT --&gt; TAR[/var/dump/sonic_dump_*.tar.gz]</code></pre>
+  SCRIPT --&gt; TAR["/var/dump/sonic_dump_*.tar.gz"]</code></pre>
 <p>要点<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>Management Framework は <strong>container 化</strong> されており直接 host 上の root 権限処理を実行できない</li>

@@ -29858,8 +29858,8 @@
 <h3 id="techsupport">techsupport との連携<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h3>
 <p><code>techsupport</code> 起動時に本ディレクトリの dump を <strong>アーカイブに収納 → クリア</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <pre class="mermaid"><code>flowchart LR
-    SAIE[SAI 失敗] --&gt; DUMP[/var/log/sai_failure_dump/]
-    DUMP --&gt; ROTATE[rotation (10)]
+    SAIE[SAI 失敗] --&gt; DUMP[/"var/log/sai_failure_dump"/]
+    DUMP --&gt; ROTATE["rotation (10)"]
     ROTATE --&gt; TS[techsupport]
     TS --&gt; ARCHIVE[tarball 収納]
     TS --&gt; CLEAR[ディレクトリ clear]</code></pre>

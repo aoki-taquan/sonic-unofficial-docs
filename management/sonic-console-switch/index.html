@@ -29994,11 +29994,11 @@
 <h3 id="_3">全体像<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
     OPER[oper SSH] --&gt; SONIC[SONiC switch]
-    SONIC --&gt; SHUB[Serial hub / on-board UART\n(USB / PCIe)]
+    SONIC --&gt; SHUB["Serial hub / on-board UART\n(USB / PCIe)"]
     SHUB --&gt; LINES[各 console line]
-    LINES --&gt; DUT1[network device 1 (console)]
-    LINES --&gt; DUT2[network device 2 (console)]
-    SONIC --&gt;|reverse SSH\nport-based / IP-based| OPER</code></pre>
+    LINES --&gt; DUT1["network device 1 (console)"]
+    LINES --&gt; DUT2["network device 2 (console)"]
+    SONIC --&gt;|"reverse SSH\nport-based / IP-based"| OPER</code></pre>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONSOLE_SWITCH:
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  console_mgmt = enabled | disabled

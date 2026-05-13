@@ -29918,12 +29918,12 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">全体構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    Cl1[REST client\n(curl/Postman)] --&gt;|RESTCONF\nyang-data+json| MF[Management Framework\nREST server]
-    Cl2[gNMI client\n(gnmi_get/set)] --&gt;|gRPC :8080| GN[sonic-gnmi]
+    Cl1["REST client\n(curl/Postman)"] --&gt;|RESTCONF\nyang-data+json| MF[Management Framework\nREST server]
+    Cl2["gNMI client\n(gnmi_get/set)"] --&gt;|gRPC :8080| GN[sonic-gnmi]
     MF --&gt; TR[sonic-mgmt-common\ntransformer]
     GN --&gt; TR
-    TR --&gt;|attribute mapping| SY[sonic-port / sonic-interface YANG]
-    SY --&gt; CDB[(CONFIG_DB\nPORT / INTERFACE)]</code></pre>
+    TR --&gt;|attribute mapping| SY["sonic-port / sonic-interface YANG"]
+    SY --&gt; CDB[("CONFIG_DB\nPORT / INTERFACE")]</code></pre>
 <p>OpenConfig パスを受けた Management Framework / sonic-gnmi は、<code>sonic-mgmt-common</code> の <strong>transformer</strong> に流す。transformer が attribute mapping（次節）で SONiC YANG（<code>sonic-port</code> / <code>sonic-interface</code>）に変換し、最終的に CONFIG_DB に書く<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="openconfig-yang">対応する OpenConfig YANG<a class="headerlink" href="#openconfig-yang" title="Permanent link">&para;</a></h3>
 <p>スコープにある主要ノード<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

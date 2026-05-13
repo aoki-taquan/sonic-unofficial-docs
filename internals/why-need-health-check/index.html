@@ -29794,9 +29794,9 @@
 </ul>
 <p>probe の type は <strong>command</strong> を使う。コンテナ内のスクリプトを k8s が呼び、終了コードを記録する。<strong>非ゼロ終了コードを問題種別ごとに使い分けることで原因特定に使える</strong> という設計意図<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
-    K8S[kubelet] --&gt;|exec| RP[/usr/bin/readiness_probe.sh]
+    K8S[kubelet] --&gt;|exec| RP["/usr/bin/readiness_probe.sh"]
     RP --&gt; COMMON[common check]
-    RP --&gt; HOOK[/usr/bin/readiness_probe_hook]
+    RP --&gt; HOOK["/usr/bin/readiness_probe_hook"]
     COMMON --&gt; EXIT[exit code]
     HOOK --&gt; EXIT
     EXIT --&gt; CTRL[k8s controller post-check]

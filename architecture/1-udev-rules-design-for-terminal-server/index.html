@@ -29857,13 +29857,13 @@
 </ol>
 <p>これらが固定なら <strong><code>KERNELS</code> / <code>DRIVERS</code> / <code>ATTRS{bInterfaceNumber}</code></strong> をマッチ条件にできる。</p>
 <pre class="mermaid"><code>graph TD
-    HUB[USB hub&lt;br/&gt;(SMSC USB2517)]
+    HUB["USB hub&lt;br/&gt;(SMSC USB2517)"]
     HUB --&gt; P1[hub port 1]
     HUB --&gt; P2[hub port 2]
     HUB --&gt; P3[hub port 3]
     HUB --&gt; P4[hub port 4]
-    P1 --&gt; U1[cp210x A&lt;br/&gt;4 interfaces]
-    P2 --&gt; U2[cp210x B&lt;br/&gt;4 interfaces]
+    P1 --&gt; U1["cp210x A&lt;br/&gt;4 interfaces"]
+    P2 --&gt; U2["cp210x B&lt;br/&gt;4 interfaces"]
     U1 --&gt; FP[front-panel ports 1-4]
     U2 --&gt; FP2[front-panel ports 5-8]</code></pre>
 <h3 id="udevadm"><code>udevadm</code> で属性取得<a class="headerlink" href="#udevadm" title="Permanent link">&para;</a></h3>
@@ -29930,7 +29930,7 @@
     F2[FP 2] --- T1[ttyUSB1]
     F3[FP 3] --- T2[ttyUSB2]
     F4[FP 4] --- T3[ttyUSB3]
-    F5[FP 5 / hub port 2 故障] -.-x XX[ttyUSB なし]
+    F5["FP 5 / hub port 2 故障"] -.-x XX[ttyUSB なし]
     F9[FP 9] --- T4[ttyUSB4]</code></pre>
 <p><code>Mytty-N</code> 化していれば運用者は <strong><code>Mytty-1</code> 〜 <code>Mytty-12</code></strong> の名前で常に front-panel 番号通りにアクセスできる。<code>Mytty-5</code> 〜 <code>Mytty-8</code>（壊れた hub port 2 配下）は<strong>作成されない</strong>ため、欠損が分かる:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$ ls /dev/Mytty*
