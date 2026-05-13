@@ -32,7 +32,7 @@ SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
     - **code-verified ページ**: 566 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 102 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 51 集計中（`meta/quality-audit-51.md`）
+    - **監査平均評価**: round 52 集計中（`meta/quality-audit-52.md`）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 
