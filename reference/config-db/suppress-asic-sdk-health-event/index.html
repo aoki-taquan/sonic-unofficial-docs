@@ -24347,6 +24347,45 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#severity-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        severity (key) 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        categories 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29830,45 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#severity-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        severity (key) 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        categories 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29908,8 +29986,91 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="severity-key"><code>severity</code> (key) 値別挙動<a class="headerlink" href="#severity-key" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th><a href="../../glossary/#term-sai">SAI</a> 変換</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fatal</code></td>
+<td><code>SAI_SWITCH_ATTR_REG_FATAL_SWITCH_ASIC_SDK_HEALTH_CATEGORY</code></td>
+<td>fatal 重大度の health event カテゴリを登録。</td>
+</tr>
+<tr>
+<td><code>warning</code></td>
+<td><code>SAI_SWITCH_ATTR_REG_WARNING_SWITCH_ASIC_SDK_HEALTH_CATEGORY</code></td>
+<td>warning 重大度のカテゴリを登録。</td>
+</tr>
+<tr>
+<td><code>notice</code></td>
+<td><code>SAI_SWITCH_ATTR_REG_NOTICE_SWITCH_ASIC_SDK_HEALTH_CATEGORY</code></td>
+<td>notice 重大度のカテゴリを登録。</td>
+</tr>
+<tr>
+<td>空文字</td>
+<td>なし</td>
+<td><code>SWSS_LOG_ERROR("Failed to parse switch hash key: empty string")</code> → エントリ破棄。</td>
+</tr>
+<tr>
+<td>その他</td>
+<td>なし</td>
+<td><code>SWSS_LOG_ERROR("Unknown severity %s")</code> → エントリ破棄。</td>
+</tr>
+<tr>
+<td>プラットフォーム非対応 severity</td>
+<td>なし</td>
+<td><code>SWSS_LOG_NOTICE("Unsupport to register categories on severity %d")</code> → スキップ。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="categories"><code>categories</code> 値別挙動<a class="headerlink" href="#categories" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th><a href="../../glossary/#term-sai">SAI</a> 変換</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>software</code></td>
+<td><code>SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_SW</code></td>
+<td>ソフトウェア起因イベントを抑制。</td>
+</tr>
+<tr>
+<td><code>firmware</code></td>
+<td><code>SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_FW</code></td>
+<td>ファームウェア起因イベントを抑制。</td>
+</tr>
+<tr>
+<td><code>cpu_hw</code></td>
+<td><code>SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_CPU_HW</code></td>
+<td>CPU ハードウェア起因イベントを抑制。</td>
+</tr>
+<tr>
+<td><code>asic_hw</code></td>
+<td><code>SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW</code></td>
+<td>ASIC ハードウェア起因イベントを抑制。</td>
+</tr>
+<tr>
+<td>省略（未指定）</td>
+<td>なし</td>
+<td>全カテゴリが抑制対象として登録される。DEL 操作時も同様に全カテゴリの抑制を解除。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>key が空文字列</strong>: key が空の場合 <code>SWSS_LOG_ERROR("Failed to parse switch hash key: empty string")</code> → エントリ破棄。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>severity が未知の値</strong>: key に設定された severity が SAI の severity map に存在しない場合 <code>SWSS_LOG_ERROR("Unknown severity %s")</code> → エントリ破棄。有効値は SAI 定義の <code>fatal</code> / <code>warning</code> / <code>notice</code> 等のみ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -29917,7 +30078,7 @@
 <li><strong>categories フィールド未指定でデフォルト全カテゴリ</strong>: <code>categories</code> フィールドが存在しない場合は <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> が引数なしで呼ばれ、全カテゴリが抑制対象として登録される。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>DEL 操作は全カテゴリ抑制解除</strong>: DEL_COMMAND 受信時も <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> 引数なしが呼ばれ全カテゴリの抑制を解除する。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: d2191ccfe0bd -->
 
 <div class="footnote">
 <hr />

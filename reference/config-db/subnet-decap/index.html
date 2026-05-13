@@ -24319,6 +24319,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_ip フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_ip_v6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_ip_v6 フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29841,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_ip フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_ip_v6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_ip_v6 フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29934,8 +30034,73 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="status"><code>status</code> 値別挙動<a class="headerlink" href="#status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable</code></td>
+<td><code>subnetDecapConfig.enable = true</code>。MP2MP tunnel term が有効化され <a href="../../glossary/#term-sai">SAI</a> tunnel term entry が生成される。</td>
+</tr>
+<tr>
+<td><code>disable</code></td>
+<td><code>subnetDecapConfig.enable = false</code>（デフォルト）。MP2MP term から <code>"subnet decap is disabled, ignored."</code> ログでスキップ。データプレーンに反映されない。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="src_ip"><code>src_ip</code> フィールド挙動<a class="headerlink" href="#src_ip" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有効な IPv4 prefix</td>
+<td><code>isV4()</code> チェック通過。subnetDecapConfig に格納され tunnel term の送信元 IP として使用。</td>
+</tr>
+<tr>
+<td>IPv6 アドレスを誤指定</td>
+<td><code>isV4()</code> 失敗。<code>SWSS_LOG_ERROR("Invalid source IP prefix")</code> → 処理中断。</td>
+</tr>
+<tr>
+<td>形式不正</td>
+<td><code>swss::IpPrefix()</code> が <code>std::invalid_argument</code> → <code>SWSS_LOG_ERROR</code> → 処理中断。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="src_ip_v6"><code>src_ip_v6</code> フィールド挙動<a class="headerlink" href="#src_ip_v6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有効な IPv6 prefix</td>
+<td><code>!isV4()</code> チェック通過。subnetDecapConfig に格納。</td>
+</tr>
+<tr>
+<td>IPv4 アドレスを誤指定</td>
+<td><code>isV4()</code> チェックが成功してしまう → <code>SWSS_LOG_ERROR("Invalid source IPv6 prefix")</code> → 処理中断。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>src_ip と src_ip_v6 の両方が未設定</strong>: どちらも設定されていない場合 <code>SWSS_LOG_ERROR("Both src_ip and src_ip_v6 of subnet decap are not set.")</code> → エントリ破棄。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>src_ip に IPv4 以外を指定</strong>: <code>src_ip</code> フィールドに IPv6 アドレスを指定すると <code>isV4()</code> チェック失敗で <code>SWSS_LOG_ERROR("Invalid source IP prefix")</code> → 処理中断。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -29945,7 +30110,7 @@
 <li><strong>シングルトン制約</strong>: <code>subnetDecapConfig</code> はシングルトン構造体として保持されるため、テーブルに複数エントリを書いても最後の SET_COMMAND で上書きされる。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>MP2MP 以外のトンネル term は紐付け不可</strong>: subnet decap トンネルに <code>MP2MP</code> 以外の term を紐付けようとすると <code>SWSS_LOG_ERROR("only MP2MP tunnel decap term is allowed for subnet decap tunnel.")</code> → 拒否。<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 5bccf4824bce -->
+<!-- glossary-links-injected: f9445b5b4106 -->
 
 <div class="footnote">
 <hr />

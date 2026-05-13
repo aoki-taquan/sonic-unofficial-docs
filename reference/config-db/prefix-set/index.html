@@ -22118,6 +22118,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-prefix_list-prefix_noseq_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action 値別挙動（PREFIX_LIST / PREFIX_NOSEQ_LIST 共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masklength_range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        masklength_range 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29863,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-prefix_list-prefix_noseq_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action 値別挙動（PREFIX_LIST / PREFIX_NOSEQ_LIST 共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masklength_range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        masklength_range 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29938,15 +30038,76 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="mode"><code>mode</code> 値別挙動<a class="headerlink" href="#mode" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IPv4</code></td>
+<td>デフォルト。FRR の <code>ip prefix-list</code> に展開。IPv6 prefix を混在させると FRR が syntax エラー。</td>
+</tr>
+<tr>
+<td><code>IPv6</code></td>
+<td>FRR の <code>ipv6 prefix-list</code> に展開。IPv4 prefix との混在は FRR エラー。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="action-prefix_list-prefix_noseq_list"><code>action</code> 値別挙動（PREFIX_LIST / PREFIX_NOSEQ_LIST 共通）<a class="headerlink" href="#action-prefix_list-prefix_noseq_list" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>permit</code></td>
+<td>プレフィクスを許可。FRR に <code>permit</code> で展開。</td>
+</tr>
+<tr>
+<td><code>deny</code></td>
+<td>プレフィクスを拒否。FRR に <code>deny</code> で展開。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="masklength_range"><code>masklength_range</code> 値別挙動<a class="headerlink" href="#masklength_range" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>exact</code></td>
+<td>プレフィクス長を完全一致で評価。FRR に <code>ge</code> / <code>le</code> 修飾子なし。</td>
+</tr>
+<tr>
+<td><code>lo..hi</code> 形式</td>
+<td>範囲指定。FRR の <code>ge lo le hi</code> に変換。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>bgpcfgd は直接購読しない</strong>: <code>PREFIX_SET</code> には専用の consumer manager がなく、CONFIG_DB 変更はリアルタイムに FRR へプッシュされない。FRR テンプレート展開は <code>sonic-cfggen</code> が起動時に CONFIG_DB を読み込む形式で行われる。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong><a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> は直接購読しない</strong>: <code>PREFIX_SET</code> には専用の consumer manager がなく、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 変更はリアルタイムに FRR へプッシュされない。FRR テンプレート展開は <code>sonic-cfggen</code> が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み込む形式で行われる。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>YANG leafref 違反で保存拒否</strong>: <code>PREFIX</code> list の <code>set_name</code> が存在しない <code>PREFIX_SET.name</code> を参照している場合、sonic-yang バリデーション時に <code>leafref</code> エラーでロードが拒否される。ただし実行時の整合性検査はないため、実行中に <code>PREFIX_SET</code> エントリを削除しても参照中の <code>PREFIX</code> は残る。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>ip_prefix の型バリデーション</strong>: IPv4/IPv6 union 型の入力文字列が不正なとき YANG <code>pattern</code> 制約違反でロード拒否される。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>未定義 prefix-set を参照する policy</strong>: FRR 側では未定義の prefix-set を参照しているルーティングポリシは <code>inactive</code> 状態になり、BGP フィルタとして機能しない。</li>
+<li><strong>未定義 prefix-set を参照する policy</strong>: FRR 側では未定義の prefix-set を参照しているルーティングポリシは <code>inactive</code> 状態になり、<a href="../../glossary/#term-bgp">BGP</a> フィルタとして機能しない。</li>
 </ul>
-<!-- glossary-links-injected: 5e2adc70a663 -->
+<!-- glossary-links-injected: 88e792f23f63 -->
 
 <div class="footnote">
 <hr />

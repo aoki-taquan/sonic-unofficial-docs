@@ -24291,6 +24291,67 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#advertise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        advertise 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bfd 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blackhole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        blackhole 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29852,67 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#advertise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        advertise 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bfd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bfd 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blackhole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        blackhole 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29954,16 +30076,96 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="advertise"><code>advertise</code> 値別挙動<a class="headerlink" href="#advertise" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code></td>
+<td>BGP 広告なし（デフォルト）。<code>ROUTE_ADVERTISE_DISABLE_TAG</code> を付与して FRR に渡す。</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>BGP に経路広告。<code>ROUTE_ADVERTISE_ENABLE_TAG</code> を付与。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bfd"><code>bfd</code> 値別挙動<a class="headerlink" href="#bfd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td><code>staticroutebfd</code> が <a href="../../glossary/#term-bfd">BFD</a> セッションを監視。全セッション down で <a href="../../glossary/#term-appl_db">APPL_DB</a> から経路削除。<code>bgpcfgd</code> の StaticRouteMgr は処理をスキップ（staticroutebfd 側が担う）。</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>BFD 監視なし（デフォルト）。<code>bgpcfgd</code> が通常処理。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blackhole"><code>blackhole</code> 値別挙動<a class="headerlink" href="#blackhole" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td>blackhole route（パケット破棄）。nexthop / ifname 不要。FRR に <code>blackhole</code> で展開。</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>通常経路（デフォルト）。nexthop が必要。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="distance"><code>distance</code> 値別挙動<a class="headerlink" href="#distance" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>デフォルト AD（FRR は static デフォルト AD = 1 を使用）。</td>
+</tr>
+<tr>
+<td>1..255</td>
+<td>指定の AD で FRR 経路テーブルに挿入。値が小さいほど優先度高。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>IpNextHopSet 構築例外</strong>: ネクストホップ解析中に例外が発生した場合 <code>log_crit</code> を出して <code>return False</code> でスキップ。その静的経路は FRR に設定されない。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>APPL_DB の key フォーマット不正</strong>: APPL_DB の key で VRF を含む場合 <code>&lt;vrf&gt;:&lt;prefix&gt;</code> 形式を期待し、コロン区切りで 2 要素に分割できない場合は <code>ValueError</code> で処理中断。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>BFD 有効時の APPL_DB 削除スキップ</strong>: <code>bfd=true</code> の静的経路で APPL_DB から削除イベントが来ても、CONFIG_DB に経路が残っている場合は FRR からの削除をスキップする（staticroutebfd との race condition 防止）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong><a href="../../glossary/#term-appl_db">APPL_DB</a> の key フォーマット不正</strong>: APPL_DB の key で VRF を含む場合 <code>&lt;vrf&gt;:&lt;prefix&gt;</code> 形式を期待し、コロン区切りで 2 要素に分割できない場合は <code>ValueError</code> で処理中断。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>BFD 有効時の APPL_DB 削除スキップ</strong>: <code>bfd=true</code> の静的経路で APPL_DB から削除イベントが来ても、<a href="../../glossary/#term-config_db">CONFIG_DB</a> に経路が残っている場合は FRR からの削除をスキップする（staticroutebfd との race condition 防止）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>BGP ASN 未設定時の redistribute 保留</strong>: 最初の静的経路設定時に <code>bgp_asn</code> が DEVICE_METADATA に存在しない場合、redistribute static コマンドは <code>vrf_pending_redistribution</code> に保留されて後で適用される。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>BFD セッション全断時の自動削除</strong>: BFD が有効な nexthop のすべての BFD セッションが down になると APPL_DB から経路エントリが削除されて FRR からも経路が削除される。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 75289c2d3439 -->
+<!-- glossary-links-injected: 21a1d1474543 -->
 
 <div class="footnote">
 <hr />
@@ -29972,7 +30174,7 @@
 <p>YANG 定義: <code>sonic-static-route.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-static-route.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-static-route.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>bgpcfgd StaticRouteMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> StaticRouteMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -23165,6 +23165,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グローバル admin_state 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-port-admin_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        per-port admin_state 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample_direction-per-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sample_direction 値別挙動（グローバル / per-port 共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collector_vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        collector_vrf 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29835,6 +29896,67 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グローバル admin_state 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-port-admin_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        per-port admin_state 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample_direction-per-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sample_direction 値別挙動（グローバル / per-port 共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collector_vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        collector_vrf 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30045,17 +30167,101 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="admin_state">グローバル <code>admin_state</code> 値別挙動<a class="headerlink" href="#admin_state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up</code></td>
+<td>sFlow 全体有効化（<code>m_gEnable = true</code>）。per-port 設定と AND で各ポートのサンプリングを制御。</td>
+</tr>
+<tr>
+<td><code>down</code></td>
+<td>sFlow 全体無効化（デフォルト）。<code>isPortEnabled()</code> が常に <code>false</code> になり per-port <code>admin_state=up</code> でも全ポート停止。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-port-admin_state">per-port <code>admin_state</code> 値別挙動<a class="headerlink" href="#per-port-admin_state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up</code></td>
+<td>ポートごとの有効化。グローバル <code>admin_state=up</code> のときのみ実際に有効。</td>
+</tr>
+<tr>
+<td><code>down</code></td>
+<td>ポートごとの無効化。<code>admin == "up"</code> チェック失敗でサンプリング停止。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sample_direction-per-port"><code>sample_direction</code> 値別挙動（グローバル / per-port 共通）<a class="headerlink" href="#sample_direction-per-port" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rx</code></td>
+<td>受信パケットのみサンプリング（デフォルト <code>m_gDirection = "rx"</code>）。</td>
+</tr>
+<tr>
+<td><code>tx</code></td>
+<td>送信パケットのみサンプリング。</td>
+</tr>
+<tr>
+<td><code>both</code></td>
+<td>送受信両方サンプリング。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="collector_vrf"><code>collector_vrf</code> 値別挙動<a class="headerlink" href="#collector_vrf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mgmt</code></td>
+<td><code>MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled = 'true'</code> のときのみ YANG <code>must</code> 制約で許容。</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>デフォルト <a href="../../glossary/#term-vrf">VRF</a> 経由でコレクタに送信。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>PORT_TABLE consumer 未初期化</strong>: sflowmgr 起動時に PORT_TABLE の consumer が見つからない場合 <code>SWSS_LOG_ERROR("Consumer object for PORT_TABLE not found")</code> を出す。per-port サンプリングレートの解決ができなくなる。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>hsflowd サービス制御失敗</strong>: <code>service hsflowd restart/stop</code> が失敗した場合 <code>SWSS_LOG_ERROR("Command failed with rc %d")</code> を出す。CONFIG_DB の状態と実際のサービス状態がずれる。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>ポート名が map に未登録</strong>: per-port のサンプリングレート算出時に PORT_TABLE に存在しないポートを指定すると <code>SWSS_LOG_ERROR("%s not found in port configuration map")</code> → <code>ERROR_SPEED</code> を返す。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>SAI sample packet session 作成失敗</strong>: <code>sai_samplepacket_api-&gt;create_samplepacket()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create sample packet session")</code> → sFlow セッションが有効化されない。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong><a href="../../glossary/#term-sai">SAI</a> sample packet session 作成失敗</strong>: <code>sai_samplepacket_api-&gt;create_samplepacket()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create sample packet session")</code> → sFlow セッションが有効化されない。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>既存セッションのクリーンアップ失敗</strong>: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが ASIC に残留する可能性がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>グローバル無効はローカル設定を上書き</strong>: <code>isPortEnabled()</code> は <code>m_gEnable &amp;&amp; (m_intfAllConf || ...)</code> で判定するため、グローバル sflow が無効なら per-port 設定に関わらず全ポートで sFlow は停止する。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: 8e8594481100 -->
 
 <div class="footnote">
 <hr />

@@ -22566,6 +22566,45 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#meter_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        meter_type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29852,45 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#meter_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        meter_type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29994,16 +30072,74 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_11">値依存挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="type"><code>type</code> 値別挙動<a class="headerlink" href="#type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th><a href="../../glossary/#term-sai">SAI</a> 変換</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DWRR</code></td>
+<td><code>SAI_SCHEDULING_TYPE_DWRR</code></td>
+<td>重み付きデフキュー方式。<code>weight</code> フィールドを帯域比率として使用。</td>
+</tr>
+<tr>
+<td><code>WRR</code></td>
+<td><code>SAI_SCHEDULING_TYPE_WRR</code></td>
+<td>重み付きラウンドロビン。<code>weight</code> フィールドを使用。</td>
+</tr>
+<tr>
+<td><code>STRICT</code></td>
+<td><code>SAI_SCHEDULING_TYPE_STRICT</code></td>
+<td>厳格優先。weight は無視。上位優先度 queue が常に先処理。全 queue に設定すると低優先が starve。</td>
+</tr>
+<tr>
+<td>その他</td>
+<td>なし</td>
+<td><code>SWSS_LOG_ERROR("Unknown scheduler type value:%s")</code> → <code>task_invalid_entry</code>。エントリ破棄、SAI 非反映。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="meter_type"><code>meter_type</code> 値別挙動<a class="headerlink" href="#meter_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>SAI 変換</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>packets</code></td>
+<td><code>SAI_METER_TYPE_PACKETS</code></td>
+<td>CIR/PIR の単位をパケット数として解釈。</td>
+</tr>
+<tr>
+<td><code>bytes</code></td>
+<td><code>SAI_METER_TYPE_BYTES</code></td>
+<td>CIR/PIR の単位をバイト数として解釈（デフォルト）。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>type フィールドが未知の値</strong>: <code>type</code> が <code>DWRR</code> / <code>WRR</code> / <code>STRICT</code> 以外の場合 <code>SWSS_LOG_ERROR("Unknown scheduler type value:%s")</code> を出して <code>task_invalid_entry</code> を返す。エントリは破棄されて SAI には反映されない。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>SAI scheduler profile 作成失敗</strong>: <code>sai_scheduler_api-&gt;create_scheduler()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create scheduler profile")</code> で処理中断。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>SAI scheduler profile 削除失敗</strong>: QUEUE から参照されている SCHEDULER プロファイルを削除しようとすると SAI が EBUSY 等を返し <code>SWSS_LOG_ERROR("Failed to remove scheduler profile")</code> となる。CONFIG_DB からは削除されても ASIC には古いプロファイルが残留する。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SAI scheduler profile 削除失敗</strong>: QUEUE から参照されている SCHEDULER プロファイルを削除しようとすると SAI が EBUSY 等を返し <code>SWSS_LOG_ERROR("Failed to remove scheduler profile")</code> となる。<a href="../../glossary/#term-config_db">CONFIG_DB</a> からは削除されても ASIC には古いプロファイルが残留する。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>weight のオーバーフロー</strong>: <code>weight</code> フィールドは <code>uint8</code> にキャストされるため 0-255 の範囲外は暗黙に切り捨てられる（バリデーションなし）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>QUEUE 参照がある間は削除不可</strong>: QUEUE が参照している SCHEDULER を削除すると SAI レイヤで失敗する。QUEUE の参照を先に外してから削除する必要がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 3bdddda32f9d -->
+<!-- glossary-links-injected: 96667c52d98d -->
 
 <div class="footnote">
 <hr />

@@ -22079,6 +22079,45 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prefix_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prefix_type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        family 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29830,45 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prefix_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prefix_type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        family 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29913,8 +29991,54 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="prefix_type"><code>prefix_type</code> 値別挙動<a class="headerlink" href="#prefix_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ANCHOR_PREFIX</code></td>
+<td>SpineRouter/UpstreamLC または UpperSpineRouter のみ許可。他デバイスは <code>log_warn</code> してスキップ。<a href="../../glossary/#term-frr">FRR</a> の anchor prefix list に展開。</td>
+</tr>
+<tr>
+<td><code>SUPPRESS_PREFIX</code></td>
+<td>全デバイスタイプで許可。FRR の suppress prefix list に展開。</td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>log_warn("PrefixListMgr:: Prefix type '...' is not supported")</code> → スキップ。FRR への設定生成は行われない。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="family"><code>family</code> 値別挙動<a class="headerlink" href="#family" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IPv4</code></td>
+<td>YANG <code>must</code>: <code>ip-prefix</code> に <code>.</code> を含むこと。FRR の <code>ip prefix-list</code> に展開。</td>
+</tr>
+<tr>
+<td><code>IPv6</code></td>
+<td>YANG <code>must</code>: <code>ip-prefix</code> に <code>:</code> を含むこと。FRR の <code>ipv6 prefix-list</code> に展開。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>prefix_type が未サポート</strong>: <code>ANCHOR_PREFIX</code> / <code>SUPPRESS_PREFIX</code> 以外の type キーは <code>log_warn</code> を出してスキップされ、FRR への設定生成は行われない。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>DEVICE_METADATA 未準備</strong>: <code>DEVICE_METADATA|localhost</code> が未存在の場合はリトライ待ちになる。<code>type</code> / <code>bgp_asn</code> キーが欠けている場合も <code>KeyError</code> をキャッチしてスキップ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -29922,7 +30046,7 @@
 <li><strong>プレフィクス形式不正</strong>: <code>netaddr.IPNetwork()</code> がパース失敗した場合 (<code>NotRegisteredError</code> / <code>AddrFormatError</code> / <code>AddrConversionError</code>) は <code>log_warn</code> してエントリをスキップする（処理自体は <code>return True</code> で継続）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>constants オーバーライド</strong>: <code>bgp.prefix_list.&lt;type&gt;.ipv4_name</code> / <code>ipv6_name</code> が constants に定義されていれば、デフォルトの prefix list 名を上書きする。</li>
 </ul>
-<!-- glossary-links-injected: 830f3e5569ea -->
+<!-- glossary-links-injected: 62ecddfa9dc4 -->
 
 <div class="footnote">
 <hr />
@@ -29931,7 +30055,7 @@
 <p>YANG 定義: <code>sonic-bgp-prefix-list.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>bgpcfgd PrefixListMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> PrefixListMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -24246,6 +24246,56 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client_auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        client_auth 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log_level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_level 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow_insecure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allow_insecure 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29869,6 +29919,56 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client_auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        client_auth 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log_level" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_level 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allow_insecure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        allow_insecure 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30030,8 +30130,73 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="client_auth"><code>client_auth</code> 値別挙動<a class="headerlink" href="#client_auth" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td>クライアント証明書認証必須（mTLS）。デフォルト。<code>client_crt_cname</code> の CN 検証も実施。</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>クライアント証明書不要。サーバ証明書のみ検証。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="log_level"><code>log_level</code> 値別挙動<a class="headerlink" href="#log_level" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>trace</code></td>
+<td>詳細ログ出力（デバッグ用）。</td>
+</tr>
+<tr>
+<td><code>info</code></td>
+<td>通常ログ。</td>
+</tr>
+<tr>
+<td>その他</td>
+<td><a href="../../glossary/#term-yang">YANG</a> <code>pattern "trace|info"</code> 制約違反でバリデーション拒否。（enum 定義なし、文字列 pattern 制約）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="allow_insecure"><code>allow_insecure</code> 値別挙動<a class="headerlink" href="#allow_insecure" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code></td>
+<td>HTTP 平文接続不可（デフォルト）。HTTPS のみ許可。</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>HTTP 平文接続を許可。テスト環境向け。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>TLS パス pattern 制約</strong>: <code>ca_crt</code> / <code>server_crt</code> / <code>server_key</code> は YANG の <code>pattern</code> 制約でファイルパス形式のみ受け入れる。パターン違反は sonic-yang バリデーション時に拒否される。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>client_crt_cname のワイルドカード制約</strong>: ワイルドカード (<code>*.domain</code>) 表記は許可されるが、カンマ末尾や空白を含む場合は <code>Pattern</code> エラーで拒否される。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -30039,7 +30204,7 @@
 <li><strong>runtime 読み込みは起動時のみ</strong>: RESTAPI テーブルの変更は <code>docker-sonic-restapi</code> コンテナ再起動まで反映されない（hot reload 未対応）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>証明書ファイルの実在チェックなし</strong>: <code>server_crt</code> 等のパスが存在しないファイルを指していても CONFIG_DB レベルでは検知されない。サーバ起動時に失敗する。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 4b3b3fd0739b -->
+<!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">
 <hr />

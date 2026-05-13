@@ -24190,6 +24190,67 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auth_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        statistics 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        timeout 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retransmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retransmit 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29874,67 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auth_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_type 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        statistics 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        timeout 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retransmit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retransmit 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29967,8 +30089,92 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="auth_type"><code>auth_type</code> 値別挙動<a class="headerlink" href="#auth_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pap</code></td>
+<td>PAP 平文パスワード認証（デフォルト）。PAM に <code>pap</code> で展開。<code>RADIUS_SERVER_AUTH_TYPE_DEFAULT = "pap"</code>。</td>
+</tr>
+<tr>
+<td><code>chap</code></td>
+<td>CHAP チャレンジ認証。NAS 側も CHAP 対応が必要。</td>
+</tr>
+<tr>
+<td><code>mschapv2</code></td>
+<td>MS-CHAPv2 認証。Active Directory 連携で主に使用。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="statistics"><code>statistics</code> 値別挙動<a class="headerlink" href="#statistics" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code> / <code>True</code> / <code>yes</code> / <code>1</code></td>
+<td><code>is_true()</code> で True。<code>AAA.authentication.login</code> に <code>radius</code> が含まれる場合に統計サービス起動。</td>
+</tr>
+<tr>
+<td>その他すべて</td>
+<td>False 扱い。統計サービス起動しない。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="timeout"><code>timeout</code> 値別挙動<a class="headerlink" href="#timeout" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1..60</td>
+<td>有効範囲。pam_radius_auth.conf に反映。デフォルト <code>5</code>。</td>
+</tr>
+<tr>
+<td>0 または 61 以上</td>
+<td>YANG <code>range "1..60"</code> 制約違反。ロード拒否。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="retransmit"><code>retransmit</code> 値別挙動<a class="headerlink" href="#retransmit" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0..10</td>
+<td>有効範囲。再送回数として pam_radius_auth.conf に反映。デフォルト <code>3</code>。</td>
+</tr>
+<tr>
+<td>11 以上</td>
+<td>YANG <code>range "0..10"</code> 制約違反。ロード拒否。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>radius_global_update は key='global' のみ処理</strong>: <code>RADIUS|global</code> 以外の key は無視（サイレントスキップ）。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>データ空の場合は削除</strong>: <code>radius_server_update</code> で <code>data == {}</code> の場合は対象サーバエントリを削除して設定ファイルを再生成する。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -29976,7 +30182,7 @@
 <li><strong>modify_conf_file 失敗は syslog のみ</strong>: テンプレート展開やサービス SIGHUP 送信に失敗しても例外はキャッチされ <code>LOG_ERR</code> / <code>LOG_WARNING</code> に記録されるだけ。設定ファイルとメモリ内 radius_servers とのずれが生じる可能性がある。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>statistics / skip_msg_auth のブール変換</strong>: <code>is_true()</code> で変換され <code>True/true/yes/1</code> 以外はすべて False 扱い。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 213d79b8c3ff -->
+<!-- glossary-links-injected: 9bd150521228 -->
 
 <div class="footnote">
 <hr />
@@ -29985,7 +30191,7 @@
 <p><code>src/sonic-yang-models/yang-models/sonic-system-radius.yang</code> (container <code>RADIUS</code> / <code>global</code>、typedef <code>auth_type_enumeration</code>). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-radius.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-radius.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>hostcfgd 実装: <code>sonic-host-services/scripts/hostcfgd</code>. <a href="https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd">https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-hostcfgd">hostcfgd</a> 実装: <code>sonic-host-services/scripts/hostcfgd</code>. <a href="https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd">https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -22538,6 +22538,56 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ifname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ifname 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scheduler フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wred_profile フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29863,56 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ifname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ifname 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scheduler フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wred_profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wred_profile フィールド挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30003,8 +30103,81 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="ifname"><code>ifname</code> 値別挙動<a class="headerlink" href="#ifname" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT.name</code> に存在する値</td>
+<td>正常処理。<a href="../../glossary/#term-sai">SAI</a> queue scheduler / WRED 適用。</td>
+</tr>
+<tr>
+<td><code>CPU</code></td>
+<td>CPU queue 用の専用処理パス。</td>
+</tr>
+<tr>
+<td>存在しないポート名</td>
+<td><code>SWSS_LOG_ERROR("Port with alias:%s not found")</code> → <code>task_invalid_entry</code> でスキップ。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scheduler"><code>scheduler</code> フィールド挙動<a class="headerlink" href="#scheduler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>省略</td>
+<td>スケジューラなし。ASIC デフォルト動作。</td>
+</tr>
+<tr>
+<td>存在する SCHEDULER 名</td>
+<td><code>qosorch</code> が SAI scheduler を queue に適用。</td>
+</tr>
+<tr>
+<td>存在しない SCHEDULER 名</td>
+<td><code>task_need_retry</code>（後で再試行）。解決不可なら <code>task_failed</code>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="wred_profile"><code>wred_profile</code> フィールド挙動<a class="headerlink" href="#wred_profile" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>省略</td>
+<td>WRED なし。</td>
+</tr>
+<tr>
+<td>存在する WRED_PROFILE 名</td>
+<td>SAI WRED を queue に適用。</td>
+</tr>
+<tr>
+<td>存在しない WRED_PROFILE 名</td>
+<td><code>task_need_retry</code>。解決不可なら <code>task_failed</code>。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>key トークン数不正</strong>: 非 VOQ 環境では <code>&lt;ifname&gt;|&lt;qindex&gt;</code> の 2 トークン必須。VOQ 環境では <code>&lt;hostname&gt;|&lt;asic_name&gt;|&lt;ifname&gt;|&lt;qindex&gt;</code> の 4 トークン必須。違反時は <code>task_invalid_entry</code> で処理中断。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>queue index 範囲外</strong>: <code>&lt;qindex&gt;</code> が SAI の queue 数を超えた場合 <code>SWSS_LOG_ERROR("Invalid queue index specified")</code> でエントリがスキップされる。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -30013,7 +30186,7 @@
 <li><strong>port 未検出</strong>: <code>&lt;ifname&gt;</code> が PORT テーブルに存在しない場合 <code>SWSS_LOG_ERROR("Port with alias:%s not found")</code> でスキップ。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>scheduler group 未検出</strong>: ポートは存在しても queue index に対応する SAI scheduler group が見つからない場合 <code>task_failed</code>。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: eae0af312767 -->
+<!-- glossary-links-injected: f9445b5b4106 -->
 
 <div class="footnote">
 <hr />

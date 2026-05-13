@@ -22124,6 +22124,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route_operation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        route_operation 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_metric_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_metric_action 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgproutemapmgr-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGPRouteMapMgr が処理する key 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29769,6 +29819,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route_operation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        route_operation 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_metric_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_metric_action 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgproutemapmgr-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGPRouteMapMgr が処理する key 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29997,15 +30097,96 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_11">値依存挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="route_operation"><code>route_operation</code> 値別挙動<a class="headerlink" href="#route_operation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PERMIT</code></td>
+<td>match した経路を許可し、<code>set_*</code> アクションを適用。</td>
+</tr>
+<tr>
+<td><code>DENY</code></td>
+<td>match した経路を拒否（DROP）。<code>set_*</code> アクションは無視される。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="set_metric_action"><code>set_metric_action</code> 値別挙動<a class="headerlink" href="#set_metric_action" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>METRIC_SET_VALUE</code></td>
+<td>MED を <code>set_metric</code> の値に設定。</td>
+</tr>
+<tr>
+<td><code>METRIC_ADD_VALUE</code></td>
+<td>MED に <code>set_metric</code> を加算。</td>
+</tr>
+<tr>
+<td><code>METRIC_SUBTRACT_VALUE</code></td>
+<td>MED から <code>set_metric</code> を減算。</td>
+</tr>
+<tr>
+<td><code>METRIC_SET_RTT</code></td>
+<td>MED を RTT 値に設定。</td>
+</tr>
+<tr>
+<td><code>METRIC_ADD_RTT</code></td>
+<td>MED に RTT を加算。</td>
+</tr>
+<tr>
+<td><code>METRIC_SUBTRACT_RTT</code></td>
+<td>MED から RTT を減算。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgproutemapmgr-key">BGPRouteMapMgr が処理する key 値別挙動<a class="headerlink" href="#bgproutemapmgr-key" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>key 値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM_SDN_SLB_ROUTES</code></td>
+<td>有効（SDN SLB ユースケース専用）。</td>
+</tr>
+<tr>
+<td><code>FROM_SDN_APPLIANCE_ROUTES</code></td>
+<td>有効（SDN Appliance ユースケース専用）。</td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>log_err("BGPRouteMapMgr:: Invalid key for route-map %s")</code> → 拒否。汎用 route-map は <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> テンプレート経由で管理。</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>BGPRouteMapMgr は固定 2 キーのみ処理</strong>: <code>FROM_SDN_SLB_ROUTES</code> / <code>FROM_SDN_APPLIANCE_ROUTES</code> 以外の key は <code>log_err("BGPRouteMapMgr:: Invalid key for route-map %s")</code> で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は bgpcfgd の ROUTE_MAP テーブル consumer ではなく bgpcfgd テンプレートが担う。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>BGPRouteMapMgr は固定 2 キーのみ処理</strong>: <code>FROM_SDN_SLB_ROUTES</code> / <code>FROM_SDN_APPLIANCE_ROUTES</code> 以外の key は <code>log_err("BGPRouteMapMgr:: Invalid key for route-map %s")</code> で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> の ROUTE_MAP テーブル consumer ではなく <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> テンプレートが担う。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>community_id 形式不正</strong>: <code>&lt;0-65535&gt;:&lt;0-65535&gt;</code> 形式でない場合 <code>log_err</code> してスキップ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>BGP ASN 未設定 (constants)</strong>: <code>deployment_id_asn_map</code> が constants に存在しないか、<code>deployment_id=2</code> のエントリがない場合は route-map の更新をスキップする（既存 route-map は残る）。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>シーケンス番号枯渇</strong>: <code>managers_allow_list.py</code> との連携でシーケンス番号が不足した場合 <code>RuntimeError("No free sequence numbers")</code> で追加が失敗する。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
-<!-- glossary-links-injected: 4b960f6e2623 -->
+<!-- glossary-links-injected: 24dbb72211e3 -->
 
 <div class="footnote">
 <hr />
