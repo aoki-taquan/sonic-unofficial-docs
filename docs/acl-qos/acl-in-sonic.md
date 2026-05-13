@@ -201,6 +201,8 @@ PRIORITY 値が大きいほど**低優先度**（最後に評価）となるた�
 - **bind 対象の単位**: `ports` で port または LAG を指定する。VLAN / subinterface 単位の bind は type とプラットフォーム依存で、HLD は port / LAG を主とする。
 - **Flex Counter 連動**: counter 取得には `FLEX_COUNTER_TABLE` で `ACL` を `enable` にする必要がある。無効時は `aclshow` / `show acl rule` のカウンタが 0 のままになる。
 - **ACL_TABLE の再 bind タイミング**: LAG 解体 / 再構成や Mux active/standby 切替時の rebind 中は短時間 ASIC 上のルールが消える可能性があり、実時間保証はない。
+- **`SAI_STATUS_INSUFFICIENT_RESOURCES` 時のリトライ優先度** ([sonic-swss#4406](https://github.com/sonic-net/sonic-swss/issues/4406)): `handleSai` が SAI_STATUS_INSUFFICIENT_RESOURCES を受け取った際に ACL ACE のリトライキューが蓄積し、ルートプログラミングよりも優先されてしまう問題がある。高負荷時に ACL エントリの追加が失敗し続ける環境では、orchagent が本来のルート更新より ACL リトライを繰り返すことでルート収束が遅延する可能性がある。
+- **`TABLE_TYPE_MIRRORV6` の IN_PORTS 非サポート** ([sonic-swss#2204](https://github.com/sonic-net/sonic-swss/issues/2204)): `MIRRORV6` テーブルタイプでは `IN_PORTS` マッチフィールドが実装されていない。IPv6 ミラーセッションで入力ポートを限定したい場合は `MIRRORV6` が使えない制約がある。
 
 ## 引用元
 

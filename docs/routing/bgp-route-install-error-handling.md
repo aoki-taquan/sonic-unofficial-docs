@@ -163,6 +163,7 @@ config bgp error-handling disable
 - warm reboot / GR for BGP はスコープ外
 - 部分 NH 失敗の表現はない（route 単位）
 - enable/disable 切替時の挙動はやや不安定。container 再起動を推奨
+- **EntityBulker の SAI_STATUS_ITEM_NOT_FOUND** ([sonic-swss#3270](https://github.com/sonic-net/sonic-swss/issues/3270)): `EntityBulker.flush` がルート削除処理時に既に存在しないエントリを SAI に渡し `SAI_STATUS_ITEM_NOT_FOUND` で失敗するケースがある。syslog に `flush_removing_entries: EntityBulker.flush remove entries failed, number of entries to remove: 1, status: SAI_STATUS_ITEM_NOT_FOUND` が記録される。ECMP ネクストホップグループの更新中に発生しやすく、orchagent は警告を出した上で処理を継続するが、状態の一時的な不整合が生じることがある。
 
 ## 干渉する機能
 

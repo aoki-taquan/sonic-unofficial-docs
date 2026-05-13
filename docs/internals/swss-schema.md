@@ -134,6 +134,9 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 - **生きたドキュメント**であるため、master が更新されるたびにフィールドが追加・変更される。本ページに列挙した内容は執筆時点（commit `4305596145e57e15e4c6a1a3902c0bc6c44a09c5`）のスナップショット。
 - ABNF 表記はあくまで **人間とパーサ向けの参考形式** で、orchagent 等の実装はこのファイルを直接読まない。実装側の `swss-common/schema.h` が定数定義の正規ソース。
 - 全テーブルを網羅的にここで再掲はしない（54KB のうちの中心テーブルのみピックアップ）。**完全な定義は [HLD](../reference/glossary.md#term-hld) `sonic-net/sonic-swss/doc/swss-schema.md` を参照。**
+- **`ConsumerStateTable` の KEY_SET メソッドで DEL メッセージが欠落する問題** ([sonic-swss#1812](https://github.com/sonic-net/sonic-swss/issues/1812)): `ProducerStateTable` / `ConsumerStateTable` を使って swss / orchagent にメッセージを届ける際、KEY_SET メソッドを経由した場合 DEL メッセージが `ConsumerStateTable::pops` で取得できないことがある。インターフェースの高速 DEL/SET（削除後即再作成）を行う場合に発生しやすい。この問題は `ProducerTable` ではなく `ProducerStateTable` を使用している場合のみ該当する。
+- **APPLY_VIEW 前の buffer profile 属性照会** ([sonic-swss#2231](https://github.com/sonic-net/sonic-swss/issues/2231)): zero-buffer pool 構成で起動時 INIT_VIEW → APPLY_VIEW 切替前に buffer profile 属性を SAI に照会すると、プロファイルが存在しない状態での照会となり問題が発生する可能性がある。buffer 関連の設定は APPLY_VIEW 完了後に orchagent が実施することが前提であり、初期化シーケンスの実装には注意が必要。
+- **netlink NLE_DUMP_INTR (errno=-33)** ([sonic-swss#353](https://github.com/sonic-net/sonic-swss/issues/353)): netlink ソケット読み取り時に `error=-33` が記録される場合、これは `NLE_DUMP_INTR`（`NLM_F_DUMP_INTR` フラグ）を意味し、netlink dump が中断された（メッセージが不完全）ことを示す。`intfsyncd` / `neighsyncd` 等の netlink 監視デーモンが同エラーを無視すると、ネットワーク状態の一部が APP_DB に反映されない可能性がある。このエラーを受け取ったら dump をリトライする必要がある。
 
 ## 干渉する機能
 

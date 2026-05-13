@@ -137,6 +137,7 @@ DASH は OpenConfig 由来の API 設計を採るが、SONiC 内部の [YANG](..
 - DASH は DPU / SmartSwitch 専用機能で、通常の SONiC [NPU](../reference/glossary.md#term-npu) 上では動かない。
 - 各オブジェクトのフィールドは v2.0 以降頻繁に更新（v2.4 で `DASH_TUNNEL` / FNIC、v2.5 で PL redirect map、v2.6 で route rule priority のキー化、v2.6.1 で `trusted_vnis` → `trusted_vnis_list` 改名）[^1]。
 - SAI DASH API は OCP SAI とは別ツリーで開発されており、community SAI への取り込み状況は時期によって異なる。
+- **ACL 設定の順序依存性バグ** ([sonic-swss#3069](https://github.com/sonic-net/sonic-swss/issues/3069)): DASH の ACL 設定で複数のオブジェクト（ENI / VNet / ACL グループ等）を投入する順序が変わると、最終的な ACL 設定が誤った状態になることがある。設定の到着順にオーケストレーターが処理するため、依存関係のある設定が逆順で届いた場合に不整合が生じる。DASH 設定を一括投入する場合は、依存オブジェクトを先に作成する順序を保証すること。
 
 ## 干渉する機能
 
