@@ -13970,6 +13970,17 @@
   <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29932,6 +29943,17 @@
   <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -30156,7 +30178,35 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_16">実装との乖離 / 補足<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_16">実装フェーズ境界<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: HLD 記載のリソース監視</td>
+<td>実装済（CRM 既存テーブル群）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: 追加リソースカウンタ</td>
+<td>—</td>
+<td>HLD で名前が示されていない追加テーブル / フィールドは未確認・未実装相当</td>
+</tr>
+<tr>
+<td>Phase 3: しきい値超過時の通知 / アクション</td>
+<td>ログ通知は実装済</td>
+<td>syslog 以外の上位通知（telemetry/SNMP trap 等）は未実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_17">実装との乖離 / 補足<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>

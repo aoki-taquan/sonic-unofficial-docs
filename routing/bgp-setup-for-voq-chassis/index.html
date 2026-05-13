@@ -9205,6 +9205,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29866,6 +29877,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -30101,7 +30123,35 @@
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装フェーズ境界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: internal/external Peer の分離設定</td>
+<td>実装済（minigraph / CONFIG_DB 拡張が master 取り込み）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: ECMP 整合性 4 設定</td>
+<td>HLD 記載どおりに bgpcfgd で適用済</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 3: 新規 FRR コマンド</td>
+<td>一部は SONiC 同梱 FRR で実装済</td>
+<td>未マージの FRR コマンドは未実装（要追跡）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_10">実装との乖離 / 補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規 FRR コマンドの SONiC 同梱 FRR への取り込み状況は本文で「要追跡」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>

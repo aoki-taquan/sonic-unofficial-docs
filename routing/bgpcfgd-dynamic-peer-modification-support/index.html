@@ -9261,7 +9261,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離 / 補足
+        実装フェーズ境界
       
     </span>
   </a>
@@ -9270,6 +9270,17 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29866,7 +29877,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離 / 補足
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29875,6 +29886,17 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30096,12 +30118,40 @@
 <li><a href="../../topics/04-vrf-ecmp/concept/">04 VRF &amp; ECMP / concept</a></li>
 </ul>
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_10">実装との乖離 / 補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装フェーズ境界<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: STATE_DB BGP_PEER_STATE スキーマ</td>
+<td>HLD 記載どおり実装済</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: 動的 peer 追加 / 削除</td>
+<td>bgpcfgd への差分適用ロジックは実装済</td>
+<td>VRF 表示 CLI 等の派生機能は未確認・未実装の可能性</td>
+</tr>
+<tr>
+<td>Phase 3: 大規模 peer flap 時の安定性</td>
+<td>—</td>
+<td>競合ケースの保証は未実装 / 未確認</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_11">実装との乖離 / 補足<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2025-07 Rev 1.0 で master 取り込み状況は本文で「要追跡」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: f2b208f4ed9e -->
 
 <div class="footnote">

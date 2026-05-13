@@ -14548,6 +14548,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29688,6 +29699,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29865,7 +29887,35 @@
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装フェーズ境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: BMC 経由 pmon 基本フロー</td>
+<td>HLD 記載どおり実装済（IPMI 経路）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: Redfish トランスポート</td>
+<td>—</td>
+<td>Redfish 経路の現行 master 取り込みは未確認・未実装の可能性</td>
+</tr>
+<tr>
+<td>Phase 3: BMC firmware update / 高度監視</td>
+<td>—</td>
+<td>BMC ファーム更新フローは未実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は本文で「未確認」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>

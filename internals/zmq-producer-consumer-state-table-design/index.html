@@ -18243,6 +18243,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -18262,7 +18273,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29709,6 +29720,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29728,7 +29750,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29892,7 +29914,35 @@
 <li>順序が乱れる → 複数 Producer が同じ Client を共有する場合、ネットワーク側キューと dispatch ループで Consumer 視点の順序が変わり得る</li>
 </ul>
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_7">実装との乖離 / 補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装フェーズ境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: Producer / Server / Consumer API</td>
+<td>実装済（HLD 記載の関数群が master に取り込み済）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: select イベントループ統合</td>
+<td>基本フローは実装済</td>
+<td>バックプレッシャ・キュー溢れ時の挙動は未確認 / 未実装の可能性</td>
+</tr>
+<tr>
+<td>Phase 3: メトリクス / 可観測性</td>
+<td>—</td>
+<td>通知欠落の検出・カウンタ整備は未実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
@@ -29902,7 +29952,7 @@
 <li><a href="../../topics/20-swss-sai-redis/internals/">Topic 20 SWSS/SAI/Redis - internals</a></li>
 <li><a href="../../topics/20-swss-sai-redis/architecture/">Topic 20 SWSS/SAI/Redis - architecture</a></li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 7aa3a64b7a02 -->
 
 <div class="footnote">

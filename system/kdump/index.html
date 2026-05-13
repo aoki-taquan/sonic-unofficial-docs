@@ -13214,6 +13214,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29876,6 +29887,17 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -30107,7 +30129,35 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_12">実装との乖離 / 補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_12">実装フェーズ境界<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: kdump 有効化 / 設定保存</td>
+<td>実装済（CONFIG_DB <code>KDUMP</code> テーブルと <code>config kdump</code> CLI）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: kdump-tools / kernel 統合</td>
+<td>HLD 想定（kdump-tools 旧版）は実装済</td>
+<td>後続版 kdump-tools / 新 kernel への追従は未確認 / 未実装の可能性</td>
+</tr>
+<tr>
+<td>Phase 3: マルチ ASIC / プラットフォーム固有</td>
+<td>—</td>
+<td>BMC 連携や container-aware capture は未実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_13">実装との乖離 / 補足<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は 2019-12 v0.4。kdump-tools 後続バージョン差分・kernel バージョン更新の影響は本文で「未確認」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>

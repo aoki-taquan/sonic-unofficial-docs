@@ -7612,6 +7612,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -7631,7 +7642,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -29899,6 +29910,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実装との乖離 / 補足
       
     </span>
@@ -29918,7 +29940,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30197,7 +30219,35 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_11">実装との乖離 / 補足<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装フェーズ境界<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: カウンタ収集経路</td>
+<td>実装済（HLD 記載どおりに SAI/MIB カウンタが SNMP / CLI に露出）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: ドロップ理由の網羅</td>
+<td>HLD 記載分は実装済</td>
+<td>HLD 記載外のドロップ理由（実装側の追加要因）は未確認・未実装相当</td>
+</tr>
+<tr>
+<td>Phase 3: インタフェース種別判別</td>
+<td>HLD 範囲の IANA ifType マッピングは実装済</td>
+<td>派生 IF（subport / breakout 各種）の扱いは未確認 / 未実装</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_12">実装との乖離 / 補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。本ページは HLD 主体で書かれており、HLD 記載なしのドロップ理由（implementation 推測部分）に「未確認」と本文中で明示している。実装側の確定は裏取り課題。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
@@ -30208,7 +30258,7 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_12">参考リンク<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">参考リンク<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/cli/config-interface/"><code>config interface</code> CLI リファレンス</a></li>

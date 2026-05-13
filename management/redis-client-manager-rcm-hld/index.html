@@ -16373,7 +16373,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離 / 補足
+        実装フェーズ境界
       
     </span>
   </a>
@@ -16382,6 +16382,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29765,7 +29776,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離 / 補足
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29774,6 +29785,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離 / 補足
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29958,12 +29980,40 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 <li><a href="../../reference/config-db-orch-map/">Reference: CONFIG_DB ↔ Orch map</a></li>
 </ul>
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_7">実装との乖離 / 補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装フェーズ境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: 4 API（getClient / releaseClient / makeTransaction / makeMulti）</td>
+<td>HLD 記載どおりに実装済（master 取り込み確認）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: Init 段の事前 client cache 構築</td>
+<td>HLD 記載分は実装済</td>
+<td>実 master での起動順序・タイミングは未確認</td>
+</tr>
+<tr>
+<td>Phase 3: Counter / Metrics 統合</td>
+<td>—</td>
+<td>RCM カウンタの上位 daemon 露出は未実装 / 未確認</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
 </ul>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-mgmt-common/translib/db/ 配下への RCM 4 関数取り込み確認
 - 既存 redis.NewClient / Close 直叩きの撲滅状況確認

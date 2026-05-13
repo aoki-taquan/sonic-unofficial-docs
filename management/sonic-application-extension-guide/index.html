@@ -16418,7 +16418,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離 / 補足
+        実装フェーズ境界
       
     </span>
   </a>
@@ -16429,7 +16429,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離 / 補足
       
     </span>
   </a>
@@ -16438,6 +16438,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29816,7 +29827,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装との乖離 / 補足
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29827,7 +29838,7 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離 / 補足
       
     </span>
   </a>
@@ -29836,6 +29847,17 @@
       
         <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29993,16 +30015,44 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;{{.Names}}   {{.Status}}&#39;</span>
 </span></code></pre></div>
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装フェーズ境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>実装済</th>
+<th>未実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1: パッケージ manifest / install フロー</td>
+<td>HLD 記載どおり実装済（<code>sonic-package-manager</code> が master 取り込み）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Phase 2: CLI / フィールド名整合</td>
+<td>コア CLI は実装済</td>
+<td>Initial Proposal 時のフィールド名・サブコマンドは現行 master と差分がある可能性、未確認・未実装相当</td>
+</tr>
+<tr>
+<td>Phase 3: マルチ ASIC / コンテナ間連携</td>
+<td>—</td>
+<td>マルチ ASIC 向けの拡張パッケージ動作は未実装 / 未確認</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。HLD は Initial Proposal で、フィールド名・CLI が現行 master と一致するかは本文で「要確認」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 20dbc11976b6 -->
 
 <!-- ops-entry -->
-<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">運用入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli_1">関連 CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <ul>
