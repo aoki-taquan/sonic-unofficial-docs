@@ -115,6 +115,27 @@ show snmp community
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `Contact` / `Location` フィールド挙動
+| 状態 | 挙動 |
+|------|------|
+| 設定済み（1..255 chars） | snmpd.conf の `sysContact` / `sysLocation` 行に展開。`\n` は空白に置換。 |
+| 未定義（エントリなし） | テンプレートの `is defined` チェックで該当行を出力しない。snmpd は空の値を使用。 |
+| 改行文字を含む | [YANG](../../reference/glossary.md#term-yang) `pattern '[^\n]+'` 制約違反でロード拒否。 |
+| 256 chars 以上 | YANG `length "1..255"` 制約違反でロード拒否。 |
+
+### `SNMP_COMMUNITY` テーブルとの関係
+| 状態 | 挙動 |
+|------|------|
+| `SNMP_COMMUNITY` 定義済み | snmpd.conf にコミュニティ設定行を出力。 |
+| `SNMP_COMMUNITY` 未定義 | `{% if SNMP_COMMUNITY is defined %}` チェック失敗。コミュニティ行なし → 全 SNMP アクセスが拒否される。 |
+| `SNMP_COMMUNITY.TYPE = RO` | 読み取り専用コミュニティとして展開。 |
+| `SNMP_COMMUNITY.TYPE = RW` | 読み取り/書き込みコミュニティとして展開。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -125,4 +146,4 @@ show snmp community
 
 [^2]: snmpd.conf テンプレート: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
 
-<!-- glossary-links-injected: 1d5df4cb0a92 -->
+<!-- glossary-links-injected: d5320e852f7a -->

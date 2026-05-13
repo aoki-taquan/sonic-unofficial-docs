@@ -23,6 +23,30 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-13 #1201 feat(cdb-v2): add value-behavior matrix to CONFIG_DB batch 6 (12 pages)
+- 2026-05-13 #1200 feat(cdb): value-behavior matrices for cdb batch-1 (12 pages)
+- 2026-05-13 #1199 feat: sonic-buildimage batch 1 (255件) issue analysis
+- 2026-05-13 #1198 chore(q59-a): sonic-buildimage b0 issue triage → 16ページ既知の問題追記
+- 2026-05-13 #1197 chore: sonic-buildimage batch 3 AI judgments (255 issues)
+- 2026-05-13 #1196 chore(issues): AI decision log for sonic-buildimage batch 2 (255 issues)
+- 2026-05-13 #1195 feat(config-db): add exception/behavior sections to 12 CDB pages (batch 0)
+- 2026-05-13 #1192 docs(config-db): add 例外条件・特殊挙動 section to CDB batch-2 (11 pages)
+- 2026-05-13 #1190 chore(q58-b): add cdb-exceptions sections for CONFIG_DB batch 1 (12 pages)
+- 2026-05-13 #1194 feat(cdb-batch-7): add exception conditions for 13 CONFIG_DB pages
+- 2026-05-13 #1193 chore(q57-a): apply sonic-utilities issue findings to docs (26 issues)
+- 2026-05-13 #1188 feat(cdb-batch-5): add exception conditions for 12 CONFIG_DB pages
+- 2026-05-13 #1191 feat(config-db): add cdb-exceptions sections to batch 4 (13 pages)
+- 2026-05-13 #1189 docs(cdb-batch-6): add consumer exception-condition sections for 12 CONFIG_DB pages
+- 2026-05-13 #1187 feat(config-db): add cdb-exceptions sections for batch 8 (12 pages)
+- 2026-05-13 #1186 docs: apply sonic-buildimage open issues triage (q57-a)
+- 2026-05-13 #1185 docs(config-db): CDB batch 3 — exception conditions (12 pages)
+- 2026-05-13 #1184 docs(config-db): add exception-condition sections to cdb_batch_9 (12 pages)
+- 2026-05-13 #1183 chore(q57-a): apply sonic-swss issue findings to 10 docs pages
+- 2026-05-13 #1180 chore(q57-a): apply sonic-net/SONiC issue insights to 18 doc pages (24 issues)
+- 2026-05-13 #1182 chore(q57-a): apply sonic-sairedis issues to swss-sai-redis topic docs
+- 2026-05-13 #1181 chore(q57-a): 小規模6リポ26件 issue 判定・10ページ新規追加
+- 2026-05-13 #1179 chore(q56-bd): formalize maintenance phase transition
+- 2026-05-13 #1178 chore: add quality-audit round 52 (stratified, A+ / maintenance ready)
 - 2026-05-13 #1177 chore(q56-bd): regen generators + roadmap-v2 iteration BA-BD
 - 2026-05-13 #1176 Add quality audit round 51 (weighted random, guide §6 initial trial)
 - 2026-05-13 #1175 chore: resolve all partial-boundary phase-table violations (15 -> 0)
@@ -499,28 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #612 [architecture] Error Handling Framework（ERROR_DB / SAI 失敗の app 通知）
 - 2026-05-09 #613 verify(batch-17): promote 11 hld-only pages, mark fpmsyncd NHG as discrepancy-found
 - 2026-05-09 #610 [architecture] DHCPv6 Relay Agent
-- 2026-05-09 #608 [architecture] Debug Framework（コンポーネント dump 登録 / assert 拡張）
-- 2026-05-09 #606 [architecture] Alpine 仮想 SONiC（ALViS / KNE）
-- 2026-05-09 #603 verify(batch-16): promote 10 hld-only pages, mark 2 as discrepancy-found [lgtm]
-- 2026-05-09 #604 [meta] aggregate verification-queue (batch 8)
-- 2026-05-09 #602 [architecture] Sub-port Interface
-- 2026-05-09 #600 [architecture] Packet Trimming
-- 2026-05-09 #598 [architecture] Policy Based Hashing
-- 2026-05-09 #596 [architecture] Port Auto FEC
-- 2026-05-09 #594 verify(batch-15): promote 9 hld-only pages, mark 3 as discrepancy-found [lgtm]
-- 2026-05-09 #593 [architecture] Bulk Counter
-- 2026-05-09 #591 [management] Console Switch
-- 2026-05-09 #589 [management] RADIUS 管理 user 認証
-- 2026-05-09 #587 [management] Redis Client Manager (RCM)
-- 2026-05-09 #585 [management] AAA Improvements
-- 2026-05-09 #583 [verify-batch-14] hld-only 12 件裏取り: 11 件 code-verified 昇格 + 1 件 discrepancy-found [lgtm]
-- 2026-05-09 #582 [system] Syslog Source IP
-- 2026-05-09 #580 [system] System Health Monitor
-- 2026-05-09 #578 [system] Warmboot Manager
-- 2026-05-09 #576 [system] TWAMP Light
-- 2026-05-09 #574 [verify] batch HLD-only re-verification x12 (2026-05-09) [lgtm]
-- 2026-05-09 #573 [system] Transceiver / DOM Sensor Monitoring
-- 2026-05-09 #571 [system] Fast-reboot Flow Improvements
-- 2026-05-09 #569 [system] SWSS docker warm restart
-- 2026-05-09 #567 [verify] high 優先度 12 ページの裏取り (batch13) [lgtm]
 

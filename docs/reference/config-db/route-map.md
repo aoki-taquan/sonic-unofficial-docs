@@ -127,14 +127,42 @@ vtysh -c 'show route-map'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `route_operation` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `PERMIT` | match した経路を許可し、`set_*` アクションを適用。 |
+| `DENY` | match した経路を拒否（DROP）。`set_*` アクションは無視される。 |
+
+### `set_metric_action` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `METRIC_SET_VALUE` | MED を `set_metric` の値に設定。 |
+| `METRIC_ADD_VALUE` | MED に `set_metric` を加算。 |
+| `METRIC_SUBTRACT_VALUE` | MED から `set_metric` を減算。 |
+| `METRIC_SET_RTT` | MED を RTT 値に設定。 |
+| `METRIC_ADD_RTT` | MED に RTT を加算。 |
+| `METRIC_SUBTRACT_RTT` | MED から RTT を減算。 |
+
+### BGPRouteMapMgr が処理する key 値別挙動
+| key 値 | 挙動 |
+|--------|------|
+| `FROM_SDN_SLB_ROUTES` | 有効（SDN SLB ユースケース専用）。 |
+| `FROM_SDN_APPLIANCE_ROUTES` | 有効（SDN Appliance ユースケース専用）。 |
+| その他 | `log_err("BGPRouteMapMgr:: Invalid key for route-map %s")` → 拒否。汎用 route-map は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレート経由で管理。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **BGPRouteMapMgr は固定 2 キーのみ処理**: `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` 以外の key は `log_err("BGPRouteMapMgr:: Invalid key for route-map %s")` で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は bgpcfgd の ROUTE_MAP テーブル consumer ではなく bgpcfgd テンプレートが担う。[^2]
+- **BGPRouteMapMgr は固定 2 キーのみ処理**: `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` 以外の key は `log_err("BGPRouteMapMgr:: Invalid key for route-map %s")` で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の ROUTE_MAP テーブル consumer ではなく [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレートが担う。[^2]
 - **community_id 形式不正**: `<0-65535>:<0-65535>` 形式でない場合 `log_err` してスキップ。[^2]
 - **BGP ASN 未設定 (constants)**: `deployment_id_asn_map` が constants に存在しないか、`deployment_id=2` のエントリがない場合は route-map の更新をスキップする（既存 route-map は残る）。[^2]
 - **シーケンス番号枯渇**: `managers_allow_list.py` との連携でシーケンス番号が不足した場合 `RuntimeError("No free sequence numbers")` で追加が失敗する。[^2]
 
 [^2]: bgpcfgd RouteMapMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py>
 
-<!-- glossary-links-injected: 4b960f6e2623 -->
+<!-- glossary-links-injected: 24dbb72211e3 -->

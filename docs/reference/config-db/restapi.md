@@ -115,6 +115,30 @@ systemctl status restapi
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `client_auth` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `true` | クライアント証明書認証必須（mTLS）。デフォルト。`client_crt_cname` の CN 検証も実施。 |
+| `false` | クライアント証明書不要。サーバ証明書のみ検証。 |
+
+### `log_level` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `trace` | 詳細ログ出力（デバッグ用）。 |
+| `info` | 通常ログ。 |
+| その他 | [YANG](../../reference/glossary.md#term-yang) `pattern "trace|info"` 制約違反でバリデーション拒否。（enum 定義なし、文字列 pattern 制約） |
+
+### `allow_insecure` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `false` | HTTP 平文接続不可（デフォルト）。HTTPS のみ許可。 |
+| `true` | HTTP 平文接続を許可。テスト環境向け。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -126,4 +150,4 @@ systemctl status restapi
 
 [^2]: YANG 定義: `sonic-restapi.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-restapi.yang>
 
-<!-- glossary-links-injected: 4b3b3fd0739b -->
+<!-- glossary-links-injected: d5320e852f7a -->

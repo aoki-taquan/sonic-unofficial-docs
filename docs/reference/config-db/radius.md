@@ -112,6 +112,36 @@ show radius
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `auth_type` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `pap` | PAP 平文パスワード認証（デフォルト）。PAM に `pap` で展開。`RADIUS_SERVER_AUTH_TYPE_DEFAULT = "pap"`。 |
+| `chap` | CHAP チャレンジ認証。NAS 側も CHAP 対応が必要。 |
+| `mschapv2` | MS-CHAPv2 認証。Active Directory 連携で主に使用。 |
+
+### `statistics` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `true` / `True` / `yes` / `1` | `is_true()` で True。`AAA.authentication.login` に `radius` が含まれる場合に統計サービス起動。 |
+| その他すべて | False 扱い。統計サービス起動しない。 |
+
+### `timeout` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| 1..60 | 有効範囲。pam_radius_auth.conf に反映。デフォルト `5`。 |
+| 0 または 61 以上 | YANG `range "1..60"` 制約違反。ロード拒否。 |
+
+### `retransmit` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| 0..10 | 有効範囲。再送回数として pam_radius_auth.conf に反映。デフォルト `3`。 |
+| 11 以上 | YANG `range "0..10"` 制約違反。ロード拒否。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -121,6 +151,6 @@ show radius
 - **modify_conf_file 失敗は syslog のみ**: テンプレート展開やサービス SIGHUP 送信に失敗しても例外はキャッチされ `LOG_ERR` / `LOG_WARNING` に記録されるだけ。設定ファイルとメモリ内 radius_servers とのずれが生じる可能性がある。[^2]
 - **statistics / skip_msg_auth のブール変換**: `is_true()` で変換され `True/true/yes/1` 以外はすべて False 扱い。[^2]
 
-[^2]: hostcfgd 実装: `sonic-host-services/scripts/hostcfgd`. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
+[^2]: [hostcfgd](../../reference/glossary.md#term-hostcfgd) 実装: `sonic-host-services/scripts/hostcfgd`. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
-<!-- glossary-links-injected: 213d79b8c3ff -->
+<!-- glossary-links-injected: 9bd150521228 -->
