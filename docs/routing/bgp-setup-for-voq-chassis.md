@@ -3,8 +3,9 @@ title: VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / m
 description: VoQ シャーシでの BGP 構成 — VoQ（Virtual Output Queue）シャーシは複数 ASIC を 1 論理ルータに束ねる。転送決定は
   入口 ASIC で 1 回だけ 行われ、その後はファブリック経由で出口へ運ばれる。
 area: routing
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/voq/bgp_voq_chassis.md
@@ -199,6 +200,13 @@ redis-cli -n 4 keys 'BGP_NEIGHBOR|*'
 [^1]: `sonic-net/SONiC` `doc/voq/bgp_voq_chassis.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規 FRR コマンドの SONiC 同梱 FRR への取り込み状況は本文で「要追跡」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)

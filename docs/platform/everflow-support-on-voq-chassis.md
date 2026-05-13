@@ -3,8 +3,9 @@ title: VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）
 description: VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite） — Everflow は SONiC
   のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。
 area: platform
-verification: code-verified
-last_verified: 2026-05-11
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/voq/everflow.md
@@ -245,6 +246,13 @@ done
 HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC で rewrite) のうち、master が採用したのは Option 1 系 (recycle port + ingress 完結 rewrite) と判定。本ページの記述は実装と整合。
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。公式 HLD（2020-12 Rev 1）のみを根拠としており、現行 master の VoQ 拡張・SAI 実装・recycle port セットアップは本文で「未確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)

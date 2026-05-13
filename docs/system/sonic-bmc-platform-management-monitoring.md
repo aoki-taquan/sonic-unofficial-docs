@@ -3,8 +3,9 @@ title: SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
 description: SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携） — 「BMC 付き SONiC
   platform」では、PSU・fan・温度センサ・電圧などの physical inventory が BMC（OpenBMC 等）配下 にあり、CPU 直結ではない。
 area: system
-verification: code-verified
-last_verified: 2026-05-10
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/bmc/sonicBMC/pmon-bmc-design.md
@@ -132,6 +133,13 @@ redis-cli -n 6 keys 'BMC*'
 -->
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は本文で「未確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)

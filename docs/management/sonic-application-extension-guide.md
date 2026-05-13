@@ -3,8 +3,9 @@ title: SONiC Application Extension 開発・移植ガイド
 description: SONiC Application Extension 開発・移植ガイド — SONiC の docker 化された機能（DHCP relay
   等）を Application Extension 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録する…
 area: management
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/sonic-application-extension/sonic-application-extension-guide.md
@@ -139,6 +140,13 @@ sonic-package-manager show <pkg-name>
 docker ps -a --format '{{.Names}}	{{.Status}}'
 ```
 
+
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は Initial Proposal で、フィールド名・CLI が現行 master と一致するかは本文で「要確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ## 引用元
 

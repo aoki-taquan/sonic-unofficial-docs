@@ -3,8 +3,9 @@ title: ポート不正パケットドロップ設計（Interface MIB / L3 カウ
 description: ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張） — SNMP の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと
   L2 ポート単位のカウンタのみを対象としていた。
 area: architecture
-verification: code-verified
-last_verified: 2026-05-11
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/port-illegal-packets/Port_illegal_packets_drop_design.md
@@ -237,6 +238,13 @@ sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 [^1]: `sonic-net/SONiC` `doc/port-illegal-packets/Port_illegal_packets_drop_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本ページは HLD 主体で書かれており、HLD 記載なしのドロップ理由（implementation 推測部分）に「未確認」と本文中で明示している。実装側の確定は裏取り課題。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 ## 関連 Topics
 
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)

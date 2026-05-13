@@ -2,8 +2,9 @@
 title: config-setup サービス（first-boot config 生成 / 版間 migration）
 description: config-setup サービス（first-boot config 生成 / 版間 migration） — SONiC の起動時設定は /etc/sonic/config_db.json に保存され、boot で Config DB に流し込まれる。
 area: system
-verification: code-verified
-last_verified: 2026-05-10
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/ztp/SONiC-config-setup.md
@@ -177,6 +178,13 @@ systemctl is-enabled updategraph
 - [CLI: sonic-cfggen](../reference/cli/sonic-cfggen.md)
 - [Topics: Overview](../topics/01-overview/index.md)
 - [Runbook: config-reload-stuck](../reference/runbooks/config-reload-stuck.md)
+
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-07 Rev 0.2 で停滞。`config-setup` の実際の責務分担は本文で「要確認」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ## 引用元
 

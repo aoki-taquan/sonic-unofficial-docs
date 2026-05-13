@@ -3,8 +3,9 @@ title: bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.
 description: bgpcfgd の dynamic BGP peer 動的変更 — 従来 bgpcfgd は BGP_PEER_RANGE を create
   only で扱い、runtime での range 追加/削除や route-map / prefix-list / peer-group 等の付随設定変更を受け付けなかった。
 area: routing
-verification: code-verified
-last_verified: 2026-05-09
+verification: discrepancy-found
+last_verified: 2026-05-13
+monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/BGP/Bgpcfgd-dyn-peer-modification-support.md
@@ -212,6 +213,13 @@ docker exec bgp vtysh -c 'show bgp neighbors' | head
 - [02 BGP / internals](../topics/02-bgp/internals.md)
 - [02 BGP / operations](../topics/02-bgp/operations.md)
 - [04 VRF & ECMP / concept](../topics/04-vrf-ecmp/concept.md)
+
+
+<!-- demoted-by:q52-az-b-demote -->
+## 実装との乖離 / 補足
+
+- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2025-07 Rev 1.0 で master 取り込み状況は本文で「要追跡」と明示している。
+- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ## 引用元
 
