@@ -192,6 +192,8 @@ Restarting ntp-config service...
 
 - mgmt [VRF](../../reference/glossary.md#term-vrf) を使う環境で `config ntp add` に [VRF](../../reference/glossary.md#term-vrf) オプションを忘れると到達できない。
 - chronyc / ntpq の出力差で「同期済み」判定がズレる。
+- **`show ntp` が mgmt VRF + vrf=default 設定で空出力または "Invalid VRF name" になる** (issue [#4400](https://github.com/sonic-net/sonic-utilities/issues/4400)): mgmt VRF が有効で `NTP|global.vrf = "default"` を設定している場合、`chronyd-starter.sh` はデフォルト VRF で chrony を起動するが `show ntp` は常に mgmt VRF 経由で `chronyc` を呼ぶため VRF が食い違う。回避策: `ip vrf exec default chronyc tracking` / `ip vrf exec default chronyc sources` で直接確認する。
+- **tab 補完が機能しない環境がある** (issue [#4398](https://github.com/sonic-net/sonic-utilities/issues/4398)): `bash-completion` パッケージが `sonic-utilities-data` の `Suggests` (非 `Depends`) のため、deb バージョンピニングなしのビルドでは未インストールになりうる。確認: `dpkg -l bash-completion` が `un` の場合は `sudo apt-get install bash-completion && source /etc/bash_completion` で手動インストールする。
 
 ### 関連する show / debug
 

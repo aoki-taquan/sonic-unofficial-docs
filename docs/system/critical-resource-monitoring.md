@@ -187,6 +187,9 @@ redis-cli -n 2 hgetall 'CRM:STATS'
 
 ## 制限事項
 
+!!! note "route_check による false-positive アラート (issue [#4487](https://github.com/sonic-net/sonic-utilities/issues/4487))"
+    MACSec テスト中や interface flap などで BGP セッションが瞬断するタイミングに `route_check.py` が `missed_ROUTE_TABLE_routes` を誤検知し、monit が `ERR monit: routeCheck` を syslog に記録する。これは BGP 収束が完了するまでの一時的なミスマッチであり、数秒〜数十秒後に自然解消する。障害解析時は syslog の routeCheck ERR がリブートや設定変更の直後に発生しているかどうかを確認すること。
+
 - **ベンダー SAI からの取得値に依存**: CRM のリソース使用量は `sai_object_type_get_availability` 等の SAI API で取得する。ベンダー実装が値を返さない / 不正確な場合は CRM のしきい値判定そのものが信用できない。
 - **ポーリング間隔のトレードオフ**: `CRM.Config.polling_interval` を短くするとリアルタイム性は上がるが [orchagent](../reference/glossary.md#term-orchagent) / SAI への負荷が上がる。既定 300 秒は spike を捉えるには長い。
 - **しきい値の type 制約**: `high_threshold` / `low_threshold` は `type` (`percentage` / `used` / `free`) と整合する必要がある。整合しない設定は CRM が無視するか warn を吐くのみで運用ミスに気付きにくい。

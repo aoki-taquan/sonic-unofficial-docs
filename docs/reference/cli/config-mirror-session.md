@@ -175,6 +175,12 @@ excerpt: |
 - `src_port` は **該当ポートのある namespace にのみ** 書く（front-panel でなければ fail）
 - SPAN は `dst_port` の namespace を判定し、そこにのみ書く
 
+## 既知のバグ・制限
+
+!!! warning "IPv6 ERSPAN が CLI から設定できない (issue [#3747](https://github.com/sonic-net/sonic-utilities/issues/3747))"
+    `config mirror_session erspan add` の `<src_ip>` / `<dst_ip>` は `validate_ipv4_address` で検証されるため、IPv6 アドレスを渡すと `Error: fc00::1:1:1:1 is not a valid IPv4 address` で拒否される。sonic-swss 側では IPv6 ERSPAN セッション (両端 IPv6) を CONFIG_DB に書けばサポートされている。  
+    回避策: `sonic-db-cli CONFIG_DB HSET "MIRROR_SESSION|<name>" type ERSPAN src_ip <ipv6> dst_ip <ipv6> dscp <n> ttl <n> gre_type <hex> queue <n>` で直接 CONFIG_DB に書き込む。その後 `config save` を実行して永続化する。
+
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
 

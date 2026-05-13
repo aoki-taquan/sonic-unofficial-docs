@@ -120,6 +120,9 @@ show bfd peer <peer_ip> [-n|--namespace <ns>]
 - BFD セッションの **生成・削除** は `show bfd` のスコープ外。[BGP](../../reference/glossary.md#term-bgp)/static route 側の設定や `bfdsyncd` の動作による
 - `local_discriminator` は古い実装では存在しないため `NA` に置換するガードがある
 
+!!! warning "software-BFD ピアが `show bfd summary` に表示されない (issue [#4139](https://github.com/sonic-net/sonic-utilities/issues/4139))"
+    FRR の BGP neighbor で設定した software-BFD ピアはダイナミックに生成・削除されるが、`BFD_SESSION_TABLE` への書き込みは `bfdsyncd` が行う。実装の差異により、BGP 経由で生成した software-BFD セッションが `STATE_DB` に書かれないケースがある。`show bfd summary` が 0 件でも `vtysh -c "show bfd peer"` で確認できる場合は FRR 側のセッションであり正常。software-BFD の状態確認には `vtysh -c "show bfd peer"` を使うこと。
+
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
 

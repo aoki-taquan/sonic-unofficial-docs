@@ -173,6 +173,14 @@ flowchart LR
 
 [^2]: VRF 名のバリデータ `isInterfaceNameValid` と `IFACE_NAME_MAX_LEN` は `config/main.py` 上部のヘルパで定義される。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/main.py>
 
+## 既知の挙動・制限
+
+!!! warning "`show vrf <name>` の終了コードが誤動作する (issue [#4378](https://github.com/sonic-net/sonic-utilities/issues/4378))"
+    未設定の VRF 名を指定しても空のテーブルが表示されて exit code 0 で返る。スクリプトで VRF 存在確認に使うと誤判定する。回避策: `show vrf <name>` の出力行数で判定するか、`ip vrf show <name> 2>&1 | grep -q <name>` で確認する。
+
+!!! warning "`config reload` 後に YANG 検証が失敗する場合 (issue [#4307](https://github.com/sonic-net/sonic-utilities/issues/4307))"
+    `minigraph.xml` で `docker_routing_config_mode` 要素が空 (`None`) の場合、`config reload` 後に文字列 `"None"` として CONFIG_DB に書かれ YANG バリデーションが失敗する。回避策: `sonic-db-cli CONFIG_DB HDEL "DEVICE_METADATA|localhost" docker_routing_config_mode` でフィールドを削除してから再度 `config reload` を実行する。
+
 <!-- usage-example -->
 ## 実行例
 

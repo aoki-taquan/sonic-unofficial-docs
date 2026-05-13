@@ -107,6 +107,9 @@ excerpt: |
 
 `storm_type` は `broadcast` / `unknown-multicast` / `unknown-unicast` の 3 種。
 
+!!! note "CLI の `unknown-multicast` と SAI の定義の差異 (issue [#3897](https://github.com/sonic-net/sonic-utilities/issues/3897))"
+    SONiC CLI は `unknown-unicast` と `unknown-multicast` を別の storm type として受け付けるが、SAI では `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` が unknown-unicast と unknown-multicast を一括して「flood」として扱う。また `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` は registered multicast 専用であり、unknown-multicast とは異なる。CLI の `unknown-multicast` がどの SAI 属性にマップされるかはベンダー実装に依存する可能性があるため、ハードウェアの動作を実機で確認すること。
+
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
 
