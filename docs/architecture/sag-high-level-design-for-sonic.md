@@ -155,7 +155,7 @@ show static-anycast-gateway
 
 ### コマンド例: Static Anycast Gateway 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -274,4 +274,4 @@ arping -I Vlan100 10.0.100.1   # 自身に対する ARP 応答が安定するか
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 7335cacf02a5 -->
+<!-- glossary-links-injected: 6981be1a469d -->

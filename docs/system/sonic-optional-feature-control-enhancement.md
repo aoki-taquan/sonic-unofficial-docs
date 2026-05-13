@@ -162,7 +162,6 @@ config feature disable telemetry
 - 起動時に状態が再現しない場合、`hostcfgd` の起動時 reconcile が動いているかを確認
 - 現行 master の `show feature` 出力は本 HLD より列が多いので、フィールド差分を意識する
 
-
 ### コマンド例
 
 optional feature の enable/disable 状態を確認する。

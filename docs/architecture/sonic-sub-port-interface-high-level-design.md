@@ -168,8 +168,8 @@ show subinterface status
 
 ### コマンド例: Subport 動作確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
+突き合わせ、[HLD](../reference/glossary.md#term-hld) 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
 # Subport (VLAN tagged subinterface) の認識状況
@@ -189,8 +189,6 @@ show subinterface status
 redis-cli -n 4 keys 'VLAN_SUB_INTERFACE|*'
 ip -d link show Ethernet0.10
 ```
-
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -221,4 +219,4 @@ ip -d link show Ethernet0.10
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f9ab983695cb -->
+<!-- glossary-links-injected: 10394a5e95a8 -->

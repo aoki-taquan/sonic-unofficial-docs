@@ -21,7 +21,7 @@ related:
 
 # SSD ヘルスチェック 運用
 
-このページは [SSD ヘルスチェック（概要ハブ）](ssdhealth-design.md) の派生で、**CLI と表示モード・設定（CONFIG_DB / YANG の有無）** に絞って整理する。アーキテクチャは [ssdhealth-design-concepts.md](ssdhealth-design-concepts.md)、API / デーモン内部は [ssdhealth-design-internals.md](ssdhealth-design-internals.md)、制限は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。
+このページは [SSD ヘルスチェック（概要ハブ）](ssdhealth-design.md) の派生で、**CLI と表示モード・設定（[CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) の有無）** に絞って整理する。アーキテクチャは [ssdhealth-design-concepts.md](ssdhealth-design-concepts.md)、API / デーモン内部は [ssdhealth-design-internals.md](ssdhealth-design-internals.md)、制限は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。
 
 ## 1. CLI
 
@@ -61,7 +61,7 @@ flowchart LR
     UTIL --> OUT[stdout]
 ```
 
-`show platform ssdhealth` は内部で `ssdhealth -d /dev/sdX [options]` を呼ぶだけのラッパ（HLD 仕様）。現行 master では `ssdutil` への置き換わりが起きている（詳細は [限定事項ページ](ssdhealth-design-limitations.md) 参照）[^1]。
+`show platform ssdhealth` は内部で `ssdhealth -d /dev/sdX [options]` を呼ぶだけのラッパ（[HLD](../reference/glossary.md#term-hld) 仕様）。現行 master では `ssdutil` への置き換わりが起きている（詳細は [限定事項ページ](ssdhealth-design-limitations.md) 参照）[^1]。
 
 ## 3. 設定
 
@@ -104,3 +104,5 @@ sudo smartctl -A /dev/sda
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 20dbc11976b6 -->

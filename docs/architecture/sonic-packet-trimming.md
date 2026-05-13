@@ -170,8 +170,8 @@ show switch-trimming counters
 
 ### コマンド例: Packet trimming 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / STATE_DB と CLI 出力・syslog を
+突き合わせ、[HLD](../reference/glossary.md#term-hld) 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
 # Packet trimming 設定と適用状態
@@ -191,8 +191,6 @@ show switch-trimming global
 redis-cli -n 4 hgetall 'SWITCH_TRIMMING|GLOBAL'
 show queue counters | grep -i trim
 ```
-
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -224,4 +222,4 @@ show queue counters | grep -i trim
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: c5a6ce567024 -->

@@ -212,7 +212,6 @@ redis-cli -n 4 hgetall 'HOST_INTERFACE|<name>'
 docker logs swss 2>&1 | grep -i 'hostif' | tail
 ```
 
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/send_to_ingress_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -29,7 +29,7 @@ PTF テスト本体に渡す引数[^1]:
 |-----------|------|
 | `testbed_type` | Testbed 種別 |
 | `dst_host_mac` / `src_host_mac` | host 側 MAC |
-| `dst_router_mac` / `src_router_mac` | DUT 側 RIF MAC |
+| `dst_router_mac` / `src_router_mac` | DUT 側 [RIF](../reference/glossary.md#term-rif) MAC |
 | `dst_router_ipv4` / `src_router_ipv4` | DUT RIF IPv4 |
 | `dst_router_ipv6` / `src_router_ipv6` | DUT RIF IPv6 |
 | `dst_port_ids` / `src_port_ids` | PTF port index の配列（複数 member 用）|
@@ -101,8 +101,10 @@ DUT が **L3 ルーティング** していれば MAC は書き換わり、TTL/H
 - [dip-sip-ptf-validation-high-level-design.md](dip-sip-ptf-validation-high-level-design.md) — 概要ハブ
 - [dip-sip-ptf-validation-high-level-design-concepts.md](dip-sip-ptf-validation-high-level-design-concepts.md) — 概念
 - [dip-sip-ptf-validation-high-level-design-operations.md](dip-sip-ptf-validation-high-level-design-operations.md) — ファイル構成 / 実行
-- [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) — 制限・HLD 乖離
+- [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) — 制限・[HLD](../reference/glossary.md#term-hld) 乖離
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 0ffb8e51f432 -->

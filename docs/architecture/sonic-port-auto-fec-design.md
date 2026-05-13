@@ -151,7 +151,7 @@ PORT|<if>:
 
 ### コマンド例: Auto FEC ネゴ確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -174,8 +174,6 @@ redis-cli -n 6 hget 'PORT_TABLE|Ethernet0' fec
 # transceiver 側の FEC capability
 show interfaces transceiver eeprom Ethernet0 | grep -i fec
 ```
-
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -211,4 +209,4 @@ show interfaces transceiver eeprom Ethernet0 | grep -i fec
 - [YANG](../reference/glossary.md#term-yang): [sonic-port](../reference/yang/sonic-port.md)
 - 関連 [HLD](../reference/glossary.md#term-hld): [CMIS module management](../management/enhancement-of-cmis-module-management.md) / [pcieinfo design](../platform/pcieinfo-design.md)
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 6981be1a469d -->

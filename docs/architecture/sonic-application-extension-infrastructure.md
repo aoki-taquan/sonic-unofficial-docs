@@ -124,8 +124,8 @@ manifest が必須宣言する項目[^1]:
 
 ### コマンド例: Application extension 状態確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
+突き合わせ、[HLD](../reference/glossary.md#term-hld) 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
 # インストール済み拡張 Docker package 一覧
@@ -169,4 +169,4 @@ systemctl list-units '*.service' | grep -i package
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extention-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 0823a263c666 -->

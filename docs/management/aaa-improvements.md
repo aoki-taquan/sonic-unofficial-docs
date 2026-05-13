@@ -142,7 +142,7 @@ HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_
 
 ### コマンド例: AAA 設定確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -167,8 +167,6 @@ redis-cli -n 4 keys 'TACPLUS_SERVER|*'
 # PAM 経路
 sudo cat /etc/pam.d/common-auth-sonic
 ```
-
-
 
 ## 引用元
 
@@ -195,13 +193,6 @@ sudo cat /etc/pam.d/common-auth-sonic
 ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の `hostcfgd` 単体実装ではまだ統合されていない（`nss-mapper` という独立コンポーネントは検出できず、`remote_user` 共有は `tacplus_nss.conf` / `radius_nss.conf` 経由の素朴な実装）。本ページの主たる主張（PAM + NSS による AAA 統合の現状）は実コードと一致するため `code-verified` に昇格。
 
 <!-- topics-back-ref -->
-
-<!-- demoted-by:q52-az-b-demote -->
-## 実装との乖離 / 補足
-
-- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。本 HLD は 2020 年 Rev 0.4 の **設計討議文書**。現行 master が本提案を全面採用しているかは本文に「要確認」と明示している。
-- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
 ## 関連 Topics
 
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
@@ -231,4 +222,4 @@ sudo cat /etc/pam.d/common-auth-sonic
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 6981be1a469d -->

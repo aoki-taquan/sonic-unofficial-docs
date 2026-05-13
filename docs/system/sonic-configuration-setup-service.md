@@ -179,7 +179,6 @@ systemctl is-enabled updategraph
 - [Topics: Overview](../topics/01-overview/index.md)
 - [Runbook: config-reload-stuck](../reference/runbooks/config-reload-stuck.md)
 
-
 <!-- demoted-by:q52-az-b-demote -->
 ## 実装との乖離 / 補足
 

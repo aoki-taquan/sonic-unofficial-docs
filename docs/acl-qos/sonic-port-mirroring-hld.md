@@ -138,7 +138,7 @@ show mirror_session
 
 ### コマンド例: Port mirroring 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / STATE_DB のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -160,4 +160,4 @@ redis-cli -n 6 hgetall 'MIRROR_SESSION_TABLE|everflow0'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0ab6d4c40634 -->
+<!-- glossary-links-injected: 896d391185a9 -->

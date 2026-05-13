@@ -19,7 +19,7 @@ related:
 
 # DIP=SIP PTF 検証 運用
 
-このページは [DIP=SIP PTF 検証（概要ハブ）](dip-sip-ptf-validation-high-level-design.md) の派生で、**ファイル構成・前処理ワークフロー・実行コマンド** に絞って整理する。テストの目的は [dip-sip-ptf-validation-high-level-design-concepts.md](dip-sip-ptf-validation-high-level-design-concepts.md)、パケット仕様は [dip-sip-ptf-validation-high-level-design-internals.md](dip-sip-ptf-validation-high-level-design-internals.md)、制限と HLD 乖離は [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) を参照。
+このページは [DIP=SIP PTF 検証（概要ハブ）](dip-sip-ptf-validation-high-level-design.md) の派生で、**ファイル構成・前処理ワークフロー・実行コマンド** に絞って整理する。テストの目的は [dip-sip-ptf-validation-high-level-design-concepts.md](dip-sip-ptf-validation-high-level-design-concepts.md)、パケット仕様は [dip-sip-ptf-validation-high-level-design-internals.md](dip-sip-ptf-validation-high-level-design-internals.md)、制限と [HLD](../reference/glossary.md#term-hld) 乖離は [dip-sip-ptf-validation-high-level-design-limitations.md](dip-sip-ptf-validation-high-level-design-limitations.md) を参照。
 
 ## 1. ファイル構成
 
@@ -98,7 +98,7 @@ sudo journalctl -u ptf -n 200 --no-pager
 
 ### 関連する CONFIG_DB
 
-該当エントリは無い。本機能は **テストインフラ** であり DUT 側の設定変更は伴わない（既存の RIF を使うのみ）。
+該当エントリは無い。本機能は **テストインフラ** であり DUT 側の設定変更は伴わない（既存の [RIF](../reference/glossary.md#term-rif) を使うのみ）。
 
 ### 関連する CLI
 
@@ -114,3 +114,5 @@ sudo journalctl -u ptf -n 200 --no-pager
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
+
+<!-- glossary-links-injected: 0ffb8e51f432 -->

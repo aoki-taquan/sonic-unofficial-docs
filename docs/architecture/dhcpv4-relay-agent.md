@@ -113,7 +113,7 @@ show dhcp_relay ipv4
 
 ### コマンド例: DHCPv4 relay の確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -146,4 +146,4 @@ docker logs dhcp_relay 2>&1 | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a4ef6587dfc6 -->
+<!-- glossary-links-injected: 6981be1a469d -->

@@ -227,7 +227,7 @@ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 
 ### コマンド例: Build system 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -237,7 +237,6 @@ make -j SONIC_CONFIG_PRINT_DEPENDENCIES=y target/sonic-vs.img.gz | head
 # slave docker のキャッシュ状況
 docker images | grep sonic
 ```
-
 
 ## 参考リンク
 
@@ -274,4 +273,4 @@ docker images | grep sonic
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 1d579f83f1e2 -->
+<!-- glossary-links-injected: 881c373e11ef -->

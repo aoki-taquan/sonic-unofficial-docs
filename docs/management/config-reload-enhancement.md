@@ -227,7 +227,7 @@ sudo config reload -y
 
 ### コマンド例: config reload 動作確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -248,8 +248,6 @@ sudo config reload -y -f
 sudo journalctl -u config-setup -n 100 --no-pager
 show services
 ```
-
-
 
 ## 引用元
 
@@ -277,4 +275,4 @@ show services
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 6981be1a469d -->

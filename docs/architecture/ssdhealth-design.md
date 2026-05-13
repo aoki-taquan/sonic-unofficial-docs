@@ -289,7 +289,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 
 ### コマンド例: SSD health 確認
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
@@ -310,8 +310,6 @@ sudo show platform ssdhealth
 sudo smartctl -a /dev/sda | head -40
 redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
 ```
-
-
 
 ## 参考リンク
 
@@ -386,4 +384,4 @@ sudo smartctl -A /dev/sda
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 1d579f83f1e2 -->
+<!-- glossary-links-injected: 881c373e11ef -->

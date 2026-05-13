@@ -19,10 +19,10 @@ related:
 
 <!-- quality-banner-start -->
 !!! success "最新の品質状態"
-    - **code-verified ページ**: 586 件（HLD と実コードを照合済み）
+    - **code-verified ページ**: 566 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
-    - **discrepancy-found ページ**: 74 件（HLD と実装の乖離を明示）
-    - **監査平均評価**: round 43 集計中（`meta/quality-audit-43.md`）
+    - **discrepancy-found ページ**: 102 件（HLD と実装の乖離を明示）
+    - **監査平均評価**: round 50 集計中（`meta/quality-audit-50.md`）
     - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
 <!-- quality-banner-end -->
 

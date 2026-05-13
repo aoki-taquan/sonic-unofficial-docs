@@ -201,7 +201,7 @@ CLI 文法は HLD ベース。実装は v0.2 / v0.3 で見直されているた�
 
 ### コマンド例: Port Access Control 確認
 
-下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
@@ -212,7 +212,6 @@ redis-cli -n 4 hgetall 'PAC_PORT_CONFIG_TABLE|Ethernet0'
 # hostapd / pac-agent のログ
 sudo grep -Ei 'hostapd|pac' /var/log/syslog | tail -50
 ```
-
 
 ## 裏取り済み実装位置 (2026-05-11)
 
@@ -245,4 +244,4 @@ sudo grep -Ei 'hostapd|pac' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 095225652dd9 -->
+<!-- glossary-links-injected: 881c373e11ef -->

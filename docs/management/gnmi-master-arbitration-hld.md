@@ -292,7 +292,7 @@ docker exec telemetry cat /proc/$(docker exec telemetry pidof telemetry)/cmdline
 
 ## 確認コマンド
 
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の master の実挙動が一致しているか確認できる。
 特に **Role 拒否** と **CONFIG_DB 駆動 ON/OFF 未実装** の 2 点は実機で再現可能。
 
@@ -357,3 +357,5 @@ runtime ログと CONFIG_DB の状態から具体的に確認できる。
 - [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 6981be1a469d -->

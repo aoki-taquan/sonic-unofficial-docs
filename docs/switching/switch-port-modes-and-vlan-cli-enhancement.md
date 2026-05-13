@@ -289,7 +289,6 @@ sudo config switchport mode routed Ethernet0
 
 <!-- phase-boundary -->
 
-
 ### コマンド例
 
 switchport mode と VLAN_MEMBER の整合を確認する。
