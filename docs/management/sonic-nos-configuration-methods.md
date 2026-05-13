@@ -159,6 +159,12 @@ flowchart LR
     S -->|no| RB[rollback]
 ```
 
+## 実装との乖離
+
+!!! diff "HLD と実装の差分"
+
+    本ページの monitor は `partially_implemented`。HLD は SONiC NOS の設定手段を 10 種類に整理する設計提案で、現行 master では中核となる `sonic-cfggen` / `config_db.json` / `redis-cli` / `vtysh` / RESTCONF / gNMI は実装されているが、`apply-patch` の checkpoint / rollback や ZTP boot failure リカバリ、入口横断の validation などは段階的取り込みで一部のみ。HLD の表は分類軸として有用だが、各入口の最新挙動は個別の `sonic-utilities` / `sonic-mgmt-framework` 実装で裏取りすること。
+
 ## 制限事項
 
 - vtysh の変更は永続化されない（CONFIG_DB / FRR テンプレート転記が必要）[^1]

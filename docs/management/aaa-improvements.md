@@ -122,6 +122,12 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 
 HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_db) / CLI の最終形は具体化されていない。`AAA` / `RADIUS` / `RADIUS_SERVER` / `TACPLUS` / `TACPLUS_SERVER` 既存テーブルは前提として継続利用する想定。
 
+## 実装との乖離
+
+!!! diff "HLD と実装の差分"
+
+    本ページの monitor は `partially_implemented`。HLD は AAA を PAM / NSS / D-Bus / RBAC 多重ロールで再設計する提案だが、現行 master では既存 `AAA` / `RADIUS` / `TACPLUS` CONFIG_DB テーブルと従来の PAM スタックがそのまま使われており、D-Bus 経由の NSS / 多重 role / `sudoers` NOPASSWD 撤去などの中心要素は取り込まれていない。HLD は設計議論文書として参照し、実装の振る舞いは個別の AAA 関連ページと `.cache/sonic-sources/sonic-buildimage/files/image_config/` の PAM / NSS 設定で裏取りすること。
+
 ## 制限事項
 
 - **設計討議文書**であり、SONiC が全面採用したか不明

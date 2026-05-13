@@ -71,6 +71,12 @@ flowchart LR
 4. read-only / tmpfs 化を docker 単位で順次適用
 5. `--privileged` を残す docker は justification を明文化
 
+## 実装との乖離
+
+!!! diff "HLD と実装の差分"
+
+    本ページの monitor は `partially_implemented`。HLD は全 docker を `--cap-drop=all` の最小 capability + read-only / tmpfs ベースに移行する設計提案だが、現行 master の `sonic-buildimage/files/build_templates/docker_image_ctl.j2` では多くの docker が依然として `--privileged` または広めの capability で起動している。一部 docker（例: telemetry / mgmt 系の比較的新しいもの）から段階的に capability 縮小が進む途上で、全 docker 共通の matrix 化や read-only 化は未完。実装の最新状況は `.cache/sonic-sources/sonic-buildimage/` の docker テンプレート群を docker ごとに裏取りすること。
+
 ## 制限事項
 
 - **vendor SAI / SDK** が `--privileged` を要求する場合、syncd 単独で完全な脱 privileged は難しい
