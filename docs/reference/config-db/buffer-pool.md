@@ -123,6 +123,39 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `type` (enum: `ingress`/`egress`/`both`)
+
+| 値 | SAI 属性 | 備考 |
+|----|---------|------|
+| `ingress` | `SAI_BUFFER_POOL_TYPE_INGRESS` | ingress 方向のみ。`xoff` 設定は ingress pool でのみ有効 |
+| `egress` | `SAI_BUFFER_POOL_TYPE_EGRESS` | egress 方向のみ |
+| `both` | `SAI_BUFFER_POOL_TYPE_BOTH` | 双方向プール (一部 ASIC のみ) |
+
+`bufferorch.cpp:443-453` で SAI API に渡される。
+
+### `mode` (enum: `static`/`dynamic`)
+
+| 値 | SAI 属性 | 動作モード | `percentage` フィールド |
+|----|---------|-----------|----------------------|
+| `static` | `SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC` | `size` (bytes) で固定閾値 | 無効 |
+| `dynamic` | `SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` | Alpha 値で動的閾値 | 有効 (`DEVICE_METADATA.buffer_model=dynamic` のとき) |
+
+`bufferorch.cpp:474-480` で SAI API に渡される。
+
+### `type` × `mode` の組み合わせと `xoff`
+
+| type | mode | `xoff` | 典型 pool 名 |
+|------|------|--------|-------------|
+| `ingress` | `static` | 有効 (lossless 用) | `ingress_lossless_pool` |
+| `ingress` | `dynamic` | 無効 | `ingress_lossy_pool` |
+| `egress` | `static` | 無効 | `egress_lossless_pool` |
+| `egress` | `dynamic` | 無効 | `egress_lossy_pool` |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -146,6 +146,33 @@ vtysh -c 'show bgp l2vpn evpn summary'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `autort` (BGP_GLOBALS_AF)
+
+| 値 | FRR コマンド | 備考 |
+|----|-------------|------|
+| `rfc8365-compatible` | `autort rfc8365-compatible` | `frrcfgd` `hdl_enum_conversion` が `_` → `-` 変換して発行 |
+| *(未設定)* | コマンドなし | EVPN route-target は手動設定が必要 |
+
+### `afi_safi` (key フィールド、挙動分岐)
+
+| 値 | FRR address-family | `route_flap_dampen*` | `autort` / `advertise-all-vni` |
+|----|--------------------|----------------------|-------------------------------|
+| `ipv4_unicast` | `address-family ipv4 unicast` | 有効 | 無効 (YANG must で拒否) |
+| `ipv6_unicast` | `address-family ipv6 unicast` | 無効 (YANG must で拒否) | 無効 |
+| `l2vpn_evpn` | `address-family l2vpn evpn` | 無効 | 有効 |
+
+### `advertise-all-vni` (boolean、l2vpn_evpn AF 限定)
+
+| 値 | FRR コマンド |
+|----|-------------|
+| `true` | `advertise-all-vni` |
+| `false` | `no advertise-all-vni` |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

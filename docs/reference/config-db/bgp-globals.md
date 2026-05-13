@@ -160,6 +160,33 @@ vtysh -c 'show running-config bgpd'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルは boolean / uint / string フィールドのみで enum フィールドはない。
+
+### `vrf_name` (key、挙動分岐)
+
+| 値 | FRR コマンド形式 |
+|----|----------------|
+| `default` | `router bgp <local_asn>` |
+| 任意の VRF 名 | `router bgp <local_asn> vrf <vrf_name>` |
+
+### 代表的 boolean フィールドの FRR マッピング
+
+| フィールド | `true` 時の FRR コマンド |
+|------------|------------------------|
+| `graceful_restart_enable` | `bgp graceful-restart` |
+| `log_nbr_state_changes` | `bgp log-neighbor-changes` |
+| `fast_external_failover` | `bgp fast-external-failover` |
+| `graceful_shutdown` | `bgp graceful-shutdown` |
+| `load_balance_mp_relax` | `bgp bestpath as-path multipath-relax` |
+| `always_compare_med` | `bgp always-compare-med` |
+| `deterministic_med` | `bgp deterministic-med` |
+| `network_import_check` | `bgp network import-check` |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

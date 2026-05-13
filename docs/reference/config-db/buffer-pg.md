@@ -110,6 +110,27 @@ show buffer pg
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルには enum フィールドはない。
+
+### `profile` (leafref または `NULL`)
+
+| 値 | 挙動 |
+|----|------|
+| `[BUFFER_PROFILE\|<name>]` | `buffermgrd` が対応プロファイルの xon/xoff/dynamic_th で PG を設定し APPL_DB に書く |
+| `NULL` | PG の削除扱い。APPL_DB から該当エントリを削除し SAI が PG バッファを解放 |
+
+### `pg_num` (key、範囲対応)
+
+| 形式 | 挙動 |
+|------|------|
+| `0`〜`7` (単一値) | その PG 番号のみに適用 |
+| `0-3` (範囲) | `buffermgrd` が範囲をパースして各 PG (0, 1, 2, 3) に個別に適用 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

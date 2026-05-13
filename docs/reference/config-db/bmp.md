@@ -99,6 +99,23 @@ show bmp
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルには enum フィールドはない。全フィールドは boolean。
+
+### boolean フィールドの共通挙動 (`bmpcfgd.py`)
+
+| フィールド | `true` | `false` |
+|------------|--------|---------|
+| `bgp_neighbor_table` | openbmpd が BGP_NEIGHBOR テーブルダンプを BMP_STATE_DB に書く | ダンプを送らない |
+| `bgp_rib_in_table` | Adj-RIB-In テーブルダンプを送る | ダンプを送らない |
+| `bgp_rib_out_table` | Adj-RIB-Out テーブルダンプを送る | ダンプを送らない |
+
+> **副作用**: 任意のフィールドを変更すると `bmpcfgd` は常に `openbmpd` を stop → `BMP_STATE_DB` をクリア → start する。部分的な変更でも全テーブルが再構築される。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

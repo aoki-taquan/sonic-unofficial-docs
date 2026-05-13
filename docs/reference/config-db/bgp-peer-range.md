@@ -119,6 +119,26 @@ vtysh -c 'show bgp listen range'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルには enum フィールドはない。
+
+### `vrf_name` (key、VRF/VNET 分岐)
+
+| 型 | 動作 |
+|----|------|
+| `VRF.name` への leafref | VRF コンテキストで `bgp listen range <prefix> peer-group <name>` を生成 |
+| `VNET.name` への leafref | VNET 対応 VRF で同様のコマンドを生成 |
+
+### `ip_range` (leaf-list)
+
+- 複数プレフィックスを user-ordered で指定可能
+- `dynamic/update.conf.j2` が各プレフィックスに対して `bgp listen range <prefix> peer-group <name>` を展開
+- 削除時は既存 range との差分を計算して `no bgp listen range` を発行
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

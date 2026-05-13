@@ -122,6 +122,45 @@ vtysh -c 'show bgp neighbor <ip>'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `send_community` (`bgp_community_type`)
+
+| 値 | FRR コマンド | 備考 |
+|----|-------------|------|
+| `standard` | `neighbor <X> send-community standard` | `hdl_send_com`: まず all 削除、次に指定値を追加 |
+| `extended` | `neighbor <X> send-community extended` | 同上 |
+| `both` | `neighbor <X> send-community both` | 同上 |
+| `large` | `neighbor <X> send-community large` | 同上 |
+| `all` | `neighbor <X> send-community all` | 同上 |
+| `none` | コマンド追加なし (send-community 無効) | `frrcfgd.py:955` — `none` 判定で追加をスキップ |
+
+### `tx_add_paths` (`bgp_tx_add_paths_type`)
+
+| 値 | FRR コマンド |
+|----|-------------|
+| `tx_all_paths` | `neighbor <X> addpath-tx-all-paths` |
+| `tx_best_path_per_as` | `neighbor <X> addpath-tx-bestpath-per-AS` |
+
+### `cap_orf` (`sonic_bgp_orf`)
+
+| 値 | FRR コマンド | 備考 |
+|----|-------------|------|
+| `send` | `neighbor <X> capability orf prefix-list send` | 削除時は `both` を no で除去 |
+| `receive` | `neighbor <X> capability orf prefix-list receive` | 同上 |
+| `both` | `neighbor <X> capability orf prefix-list both` | 同上 |
+
+### `afi_safi` (key、AF ブロック選択)
+
+| 値 | FRR `address-family` |
+|----|---------------------|
+| `ipv4_unicast` | `address-family ipv4 unicast` |
+| `ipv6_unicast` | `address-family ipv6 unicast` |
+| `l2vpn_evpn` | `address-family l2vpn evpn` |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
