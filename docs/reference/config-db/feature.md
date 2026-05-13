@@ -2,6 +2,7 @@
 title: FEATURE テーブル
 description: "FEATURE テーブル — SONiC の機能 docker（bgp、teamd、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -63,6 +64,56 @@ FEATURE|<name>
 
 `state` / `auto_restart` / `delayed` / `has_*_scope` / `high_mem_alert` は [YANG](../../reference/glossary.md#term-yang) 上 `feature-state` または `feature-scope-status` という非制約な string 型で、運用上 `enabled`/`disabled` 等の文字列を入れる。厳密な enum 制約は実装側のチェックに依る。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `state` (string: enabled/disabled/always_enabled/always_disabled)
+
+| 値 | 挙動 |
+|----|------|
+| `enabled` | featured daemon が systemd unit を enable + start |
+| `disabled` | systemd unit を disable + stop |
+| `always_enabled` | featured が有効化を強制。ユーザーからの `disabled` への変更を無効化（featured:248-256） |
+| `always_disabled` | featured が無効化を強制。ユーザーからの `enabled` への変更を無効化 |
+| `None` / 未設定 | `always_enabled` と同等に扱う（featured:248） |
+
+### `auto_restart` (string: enabled/disabled)
+
+| 値 | 挙動 |
+|----|------|
+| `enabled` | docker が crash した場合に systemd が自動再起動 |
+| `disabled` | crash 時に手動復旧が必要 |
+
+### `delayed` (string: True/False)
+
+| 値 | 挙動 |
+|----|------|
+| `False` (デフォルト) | システム起動直後に起動 |
+| `True` | ポート初期化完了 / warm-fast boot 完了 / タイムアウトのいずれかを待ってから起動（featured:163-184） |
+
+### `set_owner` (string: kube/local)
+
+| 値 | 挙動 |
+|----|------|
+| `local` (デフォルト) | ローカル docker image でコンテナを管理 |
+| `kube` | KUBERNETES_MASTER テーブルの接続先 k8s cluster がコンテナイメージを管理 |
+
+### `check_up_status` (boolean_type)
+
+| 値 | 挙動 |
+|----|------|
+| `false` (デフォルト) | system_health の監視対象外 |
+| `true` | system_health が対象 feature の up 状態を監視 |
+
+### `support_syslog_rate_limit` (boolean_type)
+
+| 値 | 挙動 |
+|----|------|
+| `false` (デフォルト) | サービス単位の syslog rate limit なし |
+| `true` | SYSLOG_CONFIG_FEATURE テーブルでサービス単位の rate limit を設定可能 |
+
+<!-- /value-behavior -->
+
 ## 購読者
 
 - `hostcfgd` の `FeatureHandler`: systemd サービス制御、`SUPERVISORD` config 更新、Kubernetes container 切替え
@@ -115,14 +166,14 @@ show feature status
 
 | consumer | 条件 | 挙動 |
 |---|---|---|
-| FeatureRegistry | 新規登録時に CONFIG_DB に既存エントリが存在する | デフォルト値より既存 DB 値を優先。非設定可能項目 (`delayed` 等) のみ新値で上書き。ユーザ設定の `state`/`auto_restart` は保持（feature.py:72-78） |
+| FeatureRegistry | 新規登録時に [CONFIG_DB](../../reference/glossary.md#term-config_db) に既存エントリが存在する | デフォルト値より既存 DB 値を優先。非設定可能項目 (`delayed` 等) のみ新値で上書き。ユーザ設定の `state`/`auto_restart` は保持（feature.py:72-78） |
 | FeatureRegistry | `state` フィールドが欠落 | デフォルト `disabled` を使用（feature.py:13,35） |
 | FeatureRegistry | `auto_restart` / `high_mem_alert` / `set_owner` が欠落 | デフォルト値 (`enabled`, `disabled`, `local`) を使用（feature.py:14-16） |
 | containercfgd | syslog 設定値が変化しない | `"Syslog rate limit configuration does not change, ignore it"` を出力してスキップ（rsyslogd 再起動なし）（containercfgd.py:146-148） |
 | containercfgd | syslog 更新中に例外発生 | `log_error(...)` を出力して継続。デーモンは停止しない（containercfgd.py:124-125） |
 | dhcprelayd | `FEATURE.dhcp_server.state` フィールド欠落 | `dict.get("dhcp_server", {}).get("state", "disabled")` でデフォルト `disabled` として扱う（dhcprelayd.py:206-207） |
 
-> **Evidence**: sonic-utilities `sonic_package_manager/service_creator/feature.py:13-78`; sonic-buildimage `src/sonic-containercfgd/containercfgd/containercfgd.py:124-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:206-207`
+> **Evidence**: [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `sonic_package_manager/service_creator/feature.py:13-78`; [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-containercfgd/containercfgd/containercfgd.py:124-148`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:206-207`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 92d0997ed33c -->

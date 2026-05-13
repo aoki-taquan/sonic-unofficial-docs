@@ -2,6 +2,7 @@
 title: FABRIC_MONITOR テーブル
 description: "FABRIC_MONITOR テーブル — FABRIC_MONITOR テーブルは VOQ chassis のファブリックリンク監視 (FABRIC_PORT の自動 isolate/include) 用パラメータを CONFIG_DB に保持する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -60,6 +61,41 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 | `monPollThreshRecovery` | uint8 | 1..10 | 8 | 連続して閾値以下に戻った場合に include するポーリング回数 |
 | `monCapacityThreshWarn` | uint8 | 5..100 | 10 | up 状態ファブリックリンクの割合 (%) 警告閾値 |
 | `monState` | `mode-status` (enable/disable) | — | disable | 監視機能のオン/オフ |
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `monState` (mode-status: enable/disable)
+
+| 値 | 挙動 |
+|----|------|
+| `disable` (デフォルト) | 監視停止。不良ファブリックリンクが自動 isolate されない |
+| `enable` | fabricmgr が [APPL_DB](../../reference/glossary.md#term-appl_db) に monState=enable を書き込み、fabric 監視を開始（fabricmgr.cpp:70-74） |
+
+### `monPollThreshIsolation` (uint8: 1..10, デフォルト 1)
+
+| 値 | 挙動 |
+|----|------|
+| `1` | 閾値超過を 1 回検出で即時 isolate（CRC スパイクで誤 isolate のリスク） |
+| `2`..`10` | 値が大きいほど連続超過を待つ（安定性重視） |
+| 範囲外 (0 or >10) | YANG range 違反で reject |
+
+### `monPollThreshRecovery` (uint8: 1..10, デフォルト 8)
+
+| 値 | 挙動 |
+|----|------|
+| `1` | 閾値以下に戻った次のポーリングで即時 unisolate（不安定リンクが頻繁に切り替わるリスク） |
+| `2`..`10` | 値が大きいほど復帰判定を遅らせる（安定性重視） |
+| 範囲外 | YANG range 違反で reject |
+
+### `monCapacityThreshWarn` (uint8: 5..100, デフォルト 10)
+
+| 値 | 挙動 |
+|----|------|
+| `5`..`100` | up 状態ファブリックリンクが全体の N% を下回ったとき警告ログ |
+| 範囲外 | YANG range 違反で reject |
+
+<!-- /value-behavior -->
 
 ## 制約
 
@@ -120,11 +156,11 @@ show fabric isolation
 
 | consumer | 条件 | 挙動 |
 |---|---|---|
-| orchagent (fabricportsorch) | `FABRIC_MONITOR_DATA` エントリが APPL_DB に存在しない | `LOG_INFO: "default values not set"` を出力し、ハードコードされたコンパイル時定数 (`ERROR_RATE_CRC_CELLS_CFG` / `ERROR_RATE_RX_CELLS_CFG`) をデフォルトとして使用（fabricportsorch.cpp:139,447） |
-| orchagent | `monErrThreshCrcCells` / `monErrThreshRxCells` フィールドが欠落 | 欠落フィールドのみデフォルト定数を維持、取得できたフィールドのみ更新（fabricportsorch.cpp:459-465） |
+| [orchagent](../../reference/glossary.md#term-orchagent) (fabricportsorch) | `FABRIC_MONITOR_DATA` エントリが [APPL_DB](../../reference/glossary.md#term-appl_db) に存在しない | `LOG_INFO: "default values not set"` を出力し、ハードコードされたコンパイル時定数 (`ERROR_RATE_CRC_CELLS_CFG` / `ERROR_RATE_RX_CELLS_CFG`) をデフォルトとして使用（fabricportsorch.cpp:139,447） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | `monErrThreshCrcCells` / `monErrThreshRxCells` フィールドが欠落 | 欠落フィールドのみデフォルト定数を維持、取得できたフィールドのみ更新（fabricportsorch.cpp:459-465） |
 | orchagent | リンクアップ直後のエラーカウント | `skipCrcErrorsOnLinkupCount` が閾値未満の間はエラーカウントを無視。ブート時誤検知防止（fabricportsorch.cpp:548-561,770-772） |
 
-> **Evidence**: sonic-swss `orchagent/fabricportsorch.cpp:139,447-465,548-772`
+> **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/fabricportsorch.cpp:139,447-465,548-772`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: e1f3b8a6462d -->

@@ -2,6 +2,7 @@
 title: DOT1P_TO_TC_MAP テーブル
 description: "DOT1P_TO_TC_MAP テーブル — DOT1P_TO_TC_MAP テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -64,6 +65,27 @@ inner list で定義される各エントリ:
 | `dot1p` | string パターン `[0-7]?` | 802.1p PCP 値（0-7） |
 | `tc` | `sonic-types:tc_type` | マップ先 Traffic Class |
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `dot1p` (string pattern [0-7])
+
+| 値 | 挙動 |
+|----|------|
+| `0`..`7` | qosorch が SAI_QOS_MAP_TYPE_DOT1P_TO_TC エントリを生成 |
+| 範囲外（8 以上等） | YANG pattern 違反で reject |
+
+### `tc` (tc_type: 0..7)
+
+| 値 | 挙動 |
+|----|------|
+| `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定 |
+| 8 以上 | ASIC が拒否（SAI エラー） |
+
+> 明示的な enum 制約なし（任意の 0-7 ペアで構成可能）。PORT_QOS_MAP.dot1p_to_tc_map から参照されない限り SAI に反映されない。
+
+<!-- /value-behavior -->
+
 ## 制約
 
 - `dot1p` は 0-7 の単一文字
@@ -121,13 +143,13 @@ show qos map dot1p-tc
 
 | consumer | 条件 | 挙動 |
 |---|---|---|
-| orchagent | DEL 時に他テーブル (PORT 等) から参照中 | `m_pendingRemove=true` を立てて `task_need_retry` を返す。参照解放後に削除実行（qosorch.cpp:181-186） |
-| orchagent | pending remove 中に SET が到着 | `"Entry is pending remove, need retry"` を LOG_NOTICE して `task_need_retry` を返す（qosorch.cpp:136-139） |
-| orchagent | SAI オブジェクト生成 (`addQosItem`) 失敗 | `"Failed to create [DOT1P_TO_TC_MAP:...]"` を LOG_ERROR して `task_failed` を返す（qosorch.cpp:162-166） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | DEL 時に他テーブル (PORT 等) から参照中 | `m_pendingRemove=true` を立てて `task_need_retry` を返す。参照解放後に削除実行（qosorch.cpp:181-186） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | pending remove 中に SET が到着 | `"Entry is pending remove, need retry"` を LOG_NOTICE して `task_need_retry` を返す（qosorch.cpp:136-139） |
+| [orchagent](../../reference/glossary.md#term-orchagent) | SAI オブジェクト生成 (`addQosItem`) 失敗 | `"Failed to create [DOT1P_TO_TC_MAP:...]"` を LOG_ERROR して `task_failed` を返す（qosorch.cpp:162-166） |
 | orchagent | SAI オブジェクト変更 (`modifyQosItem`) 失敗 | `"Failed to set [DOT1P_TO_TC_MAP:...]"` を LOG_ERROR して `task_failed` を返す（qosorch.cpp:151-155） |
 | orchagent | DEL 対象が type map に存在しない | `"Object with name:%s not found."` を LOG_ERROR して `task_invalid_entry` を返す（qosorch.cpp:176-179） |
 
-> **Evidence**: sonic-swss `orchagent/qosorch.cpp:124-201`
+> **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/qosorch.cpp:124-201`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 05824a330e9e -->
+<!-- glossary-links-injected: b1003b21c66f -->

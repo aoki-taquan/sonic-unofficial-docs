@@ -2,6 +2,7 @@
 title: DHCPV4_RELAY テーブル
 description: "DHCPV4_RELAY テーブル — DHCPv4 relay agent の VLAN 単位設定を保持する。DEVICE_METADATA.has_sonic_dhcpv4_relay = true のとき sonic-dhcpv4-relay (新実装) が読み出し、relay agent を構成する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -60,6 +61,40 @@ DHCPV4_RELAY|<name>
 | `server_id_override` | `mode-status` | - | `disable` | RFC 5107 server-id override |
 | `vrf_selection` | `mode-status` | - | `disable` | RFC 6607 [VRF](../../reference/glossary.md#term-vrf) selection |
 | その他 | - | - | - | （詳細は [YANG](../../reference/glossary.md#term-yang) 直参照） |
+
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `link_selection` (mode-status: enable/disable)
+
+| 値 | 挙動 |
+|----|------|
+| `disable` (デフォルト) | Link Selection Sub-option なし |
+| `enable` | RFC 3527 Link Selection Sub-option をリレーパケットに付与（dhcp4relay.cpp:521） |
+| DualToR 環境（is_dualTor=true） | 設定値に関わらず Link Selection が自動 enable（dhcp4relay.cpp:265） |
+
+### `server_id_override` (mode-status: enable/disable)
+
+| 値 | 挙動 |
+|----|------|
+| `disable` (デフォルト) | Server-ID Override なし |
+| `enable` | RFC 5107 Server-ID Override sub-option を付与（dhcp4relay.cpp:530） |
+
+### `vrf_selection` (mode-status: enable/disable)
+
+| 値 | 挙動 |
+|----|------|
+| `disable` (デフォルト) | VRF Selection なし |
+| `enable` | RFC 6607 VRF Selection sub-option を付与（dhcp4relay.cpp:540）。`server_vrf` 必須（YANG must） |
+
+### `dhcpv4_servers` (leaf-list, min 1)
+
+| 値 | 挙動 |
+|----|------|
+| 1 件以上 | dhcp4relay_mgr がサーバリストを設定 |
+| 0 件 | YANG min-elements 違反で reject |
+
+<!-- /value-behavior -->
 
 ## 制約 (must)
 
@@ -127,7 +162,7 @@ show dhcprelay_helper ipv4
 | config main | DHCPV4_RELAY 参照中の VRF を削除しようとした | 削除を拒否（config/main.py:1699-1706） |
 | dhcp_relay CLI | 同一サーバ IP を重複追加 | 既存エントリを get してマージするため重複エントリは発生しない（dhcp_relay.py:601-628） |
 
-> **Evidence**: sonic-utilities `scripts/db_migrator.py:928`; `config/vlan.py:242-243`; `config/main.py:1699-1706`; sonic-buildimage `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py:601-628`
+> **Evidence**: [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/db_migrator.py:928`; `config/vlan.py:242-243`; `config/main.py:1699-1706`; [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py:601-628`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 46a21a7d2d5c -->
+<!-- glossary-links-injected: 9aad8bf0c717 -->
