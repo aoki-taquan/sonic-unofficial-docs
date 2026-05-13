@@ -29946,7 +29946,7 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 <li>ログイン拒否: パスワード <code>YourPaSsWoRd</code> の大文字小文字を厳密に。新しいビルドでは別パスワードのことがある。</li>
 </ul>
 <h3 id="sonic-vs-bringup">コマンド例: SONiC-VS bringup 確認<a class="headerlink" href="#sonic-vs-bringup" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># SONiC-VS コンテナの初期化と各 docker 起動状況</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s1">&#39;table {{.Names}}\t{{.Status}}&#39;</span>
@@ -29969,7 +29969,7 @@ reasoning: 起動コマンドとデフォルト認証情報の根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f09f0f2ecd9e -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

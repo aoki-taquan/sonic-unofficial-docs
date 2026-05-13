@@ -30166,7 +30166,7 @@ reasoning: ドロップ計上先が TX_ERR である根拠。
 <li>SAI 側未対応: ベンダー SAI 実装で <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> をサポートしていないと <code>set_router_interface_attribute</code> が失敗する。<code>syslog</code> の SWSS / SAI ログを確認。</li>
 </ul>
 <h3 id="loopback-action">コマンド例: Loopback action 確認<a class="headerlink" href="#loopback-action" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># loopback_action 設定の確認</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
@@ -30200,7 +30200,7 @@ reasoning: ドロップ計上先が TX_ERR である根拠。
 </ul>
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: b4f4dca39760 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

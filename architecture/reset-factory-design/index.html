@@ -30126,7 +30126,7 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 <li>パスワードがロックされた場合、<code>/etc/sonic/default_users.json</code> のハッシュとの整合を確認</li>
 </ul>
 <h3 id="factory-reset">コマンド例: Factory reset 動作確認<a class="headerlink" href="#factory-reset" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Reset factory のステータスとログ</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>show<span class="w"> </span>reboot-cause
@@ -30171,7 +30171,7 @@ reasoning: 4 モードの分岐が「ステップごとに skip 条件を変え�
 </ul>
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 04127c73f090 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

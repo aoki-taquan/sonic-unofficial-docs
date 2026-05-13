@@ -29980,7 +29980,7 @@
 <li>別ハードで rules を流用したら全滅 → <code>KERNELS</code> の bus 位置がハードに依存。新ハードで <code>udevadm info -a</code> で属性を改めて確認</li>
 </ul>
 <h3 id="terminal-server-udev">コマンド例: Terminal server udev 確認<a class="headerlink" href="#terminal-server-udev" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># udev rule の適用状態と /dev/console-* シンボリックリンクを確認</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ls<span class="w"> </span>-l<span class="w"> </span>/dev/console-*
@@ -30016,7 +30016,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

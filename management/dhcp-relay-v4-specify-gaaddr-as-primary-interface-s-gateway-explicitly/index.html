@@ -30184,7 +30184,7 @@ reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) �
 <li>大量の secondary を入れたが反映されない: <code>docker-dhcp-relay</code> のサプライザード設定再生成（<code>systemctl restart dhcp_relay</code> 等）が必要なケースがある。</li>
 </ul>
 <h3 id="dhcpv4-relay-giaddr">コマンド例: DHCPv4 relay giaddr 指定確認<a class="headerlink" href="#dhcpv4-relay-giaddr" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># DHCPv4 relay の giaddr 指定と counter</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>ipv4<span class="w"> </span>helper
@@ -30230,7 +30230,7 @@ reasoning: 4 つの要件 (CONFIG_DB / parsing / -pg 渡し / dhcrelay 拡張) �
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

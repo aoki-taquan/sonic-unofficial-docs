@@ -30155,7 +30155,7 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 <li><code>Acknowledge</code> が冪等にならない: host service 側の id 管理（GC 順序）を確認</li>
 </ul>
 <h3 id="gnoi-healthz">コマンド例: gNOI Healthz 確認<a class="headerlink" href="#gnoi-healthz" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Healthz API でサブシステム状態取得</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>--skip-verify<span class="w"> </span>healthz<span class="w"> </span>get<span class="w"> </span>--path<span class="w"> </span><span class="s1">&#39;/components/component[name=PSU1]&#39;</span>
@@ -30205,6 +30205,8 @@ reasoning: collect → poll → ready の DBUS 経路と persistent_storage フ�
 <li><code>gnoi_client</code></li>
 </ul>
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

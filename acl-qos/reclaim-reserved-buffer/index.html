@@ -29951,7 +29951,7 @@ reasoning: lossless PG は削除、それ以外は zero_profile という分担�
 <li>lossless トラフィックが落ちる → admin-down 後 admin-up した際の lossless PG 再作成順序を確認</li>
 </ul>
 <h3 id="reserved-buffer-reclaim">コマンド例: Reserved buffer reclaim 確認<a class="headerlink" href="#reserved-buffer-reclaim" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 各ポートの shutdown 状態と buffer profile 適用状況</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
@@ -29983,7 +29983,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

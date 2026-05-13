@@ -30022,8 +30022,8 @@ reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根
 <li>異 parent で同 vlan が混信したように見える → 仕様上 別 bridge domain。L2 broadcast は親 port 単位</li>
 </ul>
 <h3 id="subport">コマンド例: Subport 動作確認<a class="headerlink" href="#subport" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
+突き合わせ、<a href="../../reference/glossary/#term-hld">HLD</a> 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Subport (VLAN tagged subinterface) の認識状況</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>subinterface<span class="w"> </span>status
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_SUB_INTERFACE|*&#39;</span>
@@ -30063,7 +30063,7 @@ reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f9ab983695cb -->
+<!-- glossary-links-injected: 10394a5e95a8 -->
 
 <div class="footnote">
 <hr />

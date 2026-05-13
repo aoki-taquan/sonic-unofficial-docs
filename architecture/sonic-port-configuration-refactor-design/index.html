@@ -30007,7 +30007,7 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 <li>ベンダ固有 daemon で <code>port_config.ini</code> が見つからない: vendor 側 のリファクタが追従していない可能性<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h3 id="port-config-refactor">コマンド例: Port config refactor 確認<a class="headerlink" href="#port-config-refactor" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># PORT エントリ反映と orchagent ログ</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
@@ -30058,7 +30058,7 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 </ul>
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 54111b0e8f9b -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

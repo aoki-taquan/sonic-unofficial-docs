@@ -30071,7 +30071,7 @@
 <li><code>Capabilities</code> の応答にあるモデルバージョンと、クライアントが期待するバージョンが食い違う場合、telemetry コンテナのビルドバージョンを確認</li>
 </ul>
 <h3 id="gnmi">コマンド例: gNMI 動作確認<a class="headerlink" href="#gnmi" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># gNMI capabilities / get / subscribe をローカルから確認</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>gnmic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>--skip-verify<span class="w"> </span>capabilities
@@ -30119,7 +30119,7 @@
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

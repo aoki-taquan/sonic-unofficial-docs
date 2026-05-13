@@ -30099,7 +30099,7 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 <li>テストは <code>test_snmp_interfaces.py</code> でカバーされている旨が HLD に記載されており、回帰確認の起点として有用<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h3 id="illegal-packet-drop">コマンド例: Illegal packet drop 確認<a class="headerlink" href="#illegal-packet-drop" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Drop counter で illegal-packet 系を抽出</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>dropcounters<span class="w"> </span>counts
@@ -30157,7 +30157,7 @@ reasoning: RIF→ポート集約と VLAN インタフェースエントリ新設
 </ul>
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 21d98f8b47d2 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

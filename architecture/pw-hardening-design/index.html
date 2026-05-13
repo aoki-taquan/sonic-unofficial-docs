@@ -29818,7 +29818,7 @@
 <li>ロックアウト解除 → <code>pam_faillock --user &lt;u&gt; --reset</code> 等を root で実行（実装による）</li>
 </ul>
 <h3 id="password-hardening">コマンド例: Password hardening 確認<a class="headerlink" href="#password-hardening" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># password policy 設定と /etc/pam.d の現状を確認</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>passwd-hardening<span class="w"> </span>policies
@@ -29850,7 +29850,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a9c18564f33f -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

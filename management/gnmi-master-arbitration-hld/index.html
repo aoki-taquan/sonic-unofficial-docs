@@ -30209,7 +30209,7 @@ reasoning: 「extension は最後の MA を採用」「Set 前に reqFromMaster 
 <!-- /diff-admonition -->
 
 <h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の master の実挙動が一致しているか確認できる。
 特に <strong>Role 拒否</strong> と <strong>CONFIG_DB 駆動 ON/OFF 未実装</strong> の 2 点は実機で再現可能。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 1. telemetry プロセスの起動オプション確認 (--with-master-arbitration の有無)</span>
@@ -30272,6 +30272,8 @@ runtime ログと CONFIG_DB の状態から具体的に確認できる。</p>
 <li><a href="../../reference/runbooks/gnmi-subscribe-disconnect/">gnmi-subscribe-disconnect</a></li>
 </ul>
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

@@ -30036,7 +30036,7 @@ reasoning: 「NTP 有効時に timezone は OK / date は拒否」という分�
 <li>ログのタイムスタンプがおかしい場合、<code>rsyslog</code> 再起動が走ったかを <code>journalctl -u rsyslog</code> で確認</li>
 </ul>
 <h3 id="clock-management">コマンド例: Clock management の確認<a class="headerlink" href="#clock-management" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># システム時刻 / NTP / PTP の状態を確認</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>ntp
@@ -30061,7 +30061,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 - rsyslog 再起動の自動化フロー
 -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

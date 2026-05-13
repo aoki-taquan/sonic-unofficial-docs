@@ -29626,7 +29626,7 @@
 
 
 <h1 id="dipsip-ptf">DIP=SIP PTF 検証 運用<a class="headerlink" href="#dipsip-ptf" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証（概要ハブ）</a> の派生で、<strong>ファイル構成・前処理ワークフロー・実行コマンド</strong> に絞って整理する。テストの目的は <a href="../dip-sip-ptf-validation-high-level-design-concepts/">dip-sip-ptf-validation-high-level-design-concepts.md</a>、パケット仕様は <a href="../dip-sip-ptf-validation-high-level-design-internals/">dip-sip-ptf-validation-high-level-design-internals.md</a>、制限と HLD 乖離は <a href="../dip-sip-ptf-validation-high-level-design-limitations/">dip-sip-ptf-validation-high-level-design-limitations.md</a> を参照。</p>
+<p>このページは <a href="../dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証（概要ハブ）</a> の派生で、<strong>ファイル構成・前処理ワークフロー・実行コマンド</strong> に絞って整理する。テストの目的は <a href="../dip-sip-ptf-validation-high-level-design-concepts/">dip-sip-ptf-validation-high-level-design-concepts.md</a>、パケット仕様は <a href="../dip-sip-ptf-validation-high-level-design-internals/">dip-sip-ptf-validation-high-level-design-internals.md</a>、制限と <a href="../../reference/glossary/#term-hld">HLD</a> 乖離は <a href="../dip-sip-ptf-validation-high-level-design-limitations/">dip-sip-ptf-validation-high-level-design-limitations.md</a> を参照。</p>
 <h2 id="1">1. ファイル構成<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <p><code>sonic-mgmt</code> 配下の配置（HLD 当時）<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-mgmt/ansible/
@@ -29698,7 +29698,7 @@
 </span></code></pre></div>
 <h2 id="5">5. 設定<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>該当エントリは無い。本機能は <strong>テストインフラ</strong> であり DUT 側の設定変更は伴わない（既存の RIF を使うのみ）。</p>
+<p>該当エントリは無い。本機能は <strong>テストインフラ</strong> であり DUT 側の設定変更は伴わない（既存の <a href="../../reference/glossary/#term-rif">RIF</a> を使うのみ）。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p>該当 CLI は無い。実行は上記の Ansible / pytest 経由。</p>
 <h2 id="6">6. 関連ページへの導線<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
@@ -29709,6 +29709,8 @@
 <li><a href="../dip-sip-ptf-validation-high-level-design-limitations/">dip-sip-ptf-validation-high-level-design-limitations.md</a> — 制限・HLD 乖離</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 0ffb8e51f432 -->
+
 <div class="footnote">
 <hr />
 <ol>

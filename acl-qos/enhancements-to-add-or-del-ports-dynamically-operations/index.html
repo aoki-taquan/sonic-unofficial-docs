@@ -29749,7 +29749,7 @@
 <li>zero-port 起動で boot loop: SAI profile / hwsku.json / platform.json が port エントリを完全に排除しているか確認。</li>
 </ul>
 <h3 id="_1">コマンド例: ポート動的追加/削除確認<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># CONFIG_DB の PORT エントリ追加・削除と orchagent 反映状況</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
@@ -29758,7 +29758,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;portsorch|PortConfigDone|PortInitDone&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
 <h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 4bc2a4aae15e -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

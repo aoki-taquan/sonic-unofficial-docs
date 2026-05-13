@@ -29910,8 +29910,8 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 <li>双方向で別パスに行く → <code>sequence_id</code> の対称性確認（src/dst が同じ id か）</li>
 </ul>
 <h3 id="policy-based-hashing">コマンド例: Policy based hashing 確認<a class="headerlink" href="#policy-based-hashing" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
+突き合わせ、<a href="../../reference/glossary/#term-hld">HLD</a> 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Policy hash table とルールの確認</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span><span class="nb">hash</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;HASH|*&#39;</span>
@@ -29944,7 +29944,7 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 - CRM の PBH FG hash 監視（out of scope）の補完ステータス確認
 -->
 
-<!-- glossary-links-injected: a95185444a35 -->
+<!-- glossary-links-injected: 10394a5e95a8 -->
 
 <div class="footnote">
 <hr />

@@ -29951,7 +29951,7 @@ reasoning: 採用案 Option-C と SAI 要件の根拠。
 <li>DSCP が変わらない → encap が egress の本 ACL より前に走っているか確認、ingress 側の MARK_META rule が hit しているか aclshow で確認</li>
 </ul>
 <h3 id="egress-dscp">コマンド例: Egress DSCP 書き換え確認<a class="headerlink" href="#egress-dscp" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 対象 ACL テーブルとルール、ヒットカウンタを確認</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>acl<span class="w"> </span>table
@@ -29984,7 +29984,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

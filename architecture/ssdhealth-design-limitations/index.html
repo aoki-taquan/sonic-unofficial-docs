@@ -29582,7 +29582,7 @@
 
 
 <h1 id="ssd-hld-">SSD ヘルスチェック 制限事項と HLD-実装乖離<a class="headerlink" href="#ssd-hld-" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../ssdhealth-design/">SSD ヘルスチェック（概要ハブ）</a> の派生で、<strong>制限事項・干渉機能・トラブルシューティング・HLD と現行実装の乖離</strong> に絞って整理する。概念・運用・実装の各ページは概要ハブから辿る。</p>
+<p>このページは <a href="../ssdhealth-design/">SSD ヘルスチェック（概要ハブ）</a> の派生で、<strong>制限事項・干渉機能・トラブルシューティング・<a href="../../reference/glossary/#term-hld">HLD</a> と現行実装の乖離</strong> に絞って整理する。概念・運用・実装の各ページは概要ハブから辿る。</p>
 <h2 id="1">1. 制限事項<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>smartctl のデータベースに無い disk</strong> は health / 温度の取得が <strong>N/A</strong> になりうる。HLD 自身が「some information can be unavailable or incomplete」と明言している<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
@@ -29595,7 +29595,7 @@
 <li><strong>pmon (Platform Monitor)</strong>: <code>ssdmond</code> を入れると pmon docker 内に常駐デーモンが増える。閾値判定とアラート発火経路を pmon 側に統合できる。</li>
 <li><strong>smartmontools / smartctl パッケージ</strong>: ビルドイメージに 1.9M 程度の追加。<code>sonic-buildimage</code> 側のパッケージ取り込みに依存<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>plugin 配置規約</strong>: <code>device/{{vendor}}/platform/plugins/ssdutil.py</code> は <strong>プラットフォームプラグインの一般則</strong> に乗る。他のプラグイン（thermal, fan 等）と同じ取り込み方式の延長線上に位置づく。</li>
-<li><strong>SNMP</strong>: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-snmp">SNMP</a></strong>: HLD の Open Questions に「SNMP needed?」とあるとおり、SNMP MIB への露出は本 HLD のスコープ外<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="3">3. トラブルシューティング<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29689,6 +29689,8 @@
 <li><a href="../ssdhealth-design-internals/">ssdhealth-design-internals.md</a> — API / デーモン</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 1d579f83f1e2 -->
+
 <div class="footnote">
 <hr />
 <ol>

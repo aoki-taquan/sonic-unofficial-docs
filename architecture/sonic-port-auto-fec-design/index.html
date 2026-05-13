@@ -30024,7 +30024,7 @@ reasoning: 新 SAI 属性と FEC=auto 値の根拠。
 <li>show 表示と実態が違う → <code>OPER_PORT_FEC_MODE</code> 未対応の可能性</li>
 </ul>
 <h3 id="auto-fec">コマンド例: Auto FEC ネゴ確認<a class="headerlink" href="#auto-fec" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Port FEC 自動ネゴ結果と FEC mode を確認</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>fec<span class="w"> </span>status
@@ -30072,7 +30072,7 @@ reasoning: 新 SAI 属性と FEC=auto 値の根拠。
 <li><a href="../../reference/glossary/#term-yang">YANG</a>: <a href="../../reference/yang/sonic-port/">sonic-port</a></li>
 <li>関連 <a href="../../reference/glossary/#term-hld">HLD</a>: <a href="../../management/enhancement-of-cmis-module-management/">CMIS module management</a> / <a href="../../platform/pcieinfo-design/">pcieinfo design</a></li>
 </ul>
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

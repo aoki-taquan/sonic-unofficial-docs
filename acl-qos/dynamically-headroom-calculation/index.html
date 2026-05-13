@@ -29995,7 +29995,7 @@ reasoning: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / S
 <li>shared pool の sum が合わない → <code>xoff</code> の有無、independent vs shared headroom モデルを確認</li>
 </ul>
 <h3 id="headroom">コマンド例: 動的 headroom の確認<a class="headerlink" href="#headroom" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 各ポートで適用中の dynamic profile / headroom 値を確認</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool
@@ -30029,7 +30029,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ccd0ef97afd6 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

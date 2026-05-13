@@ -30178,7 +30178,7 @@ reasoning: has_timer→delayed のスキーマ変更と PortInitDone 駆動の�
 <li><a href="../../reference/glossary/#term-syncd">syncd</a> の SDK タイムアウトログ（30 秒超）が出る: 本 HLD はこのログ自体を <code>config reload</code> の同時起動による CPU 競合のせいと指摘している<sup id="fnref29:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本機構が有効なら起動順分散により解消が期待される。解消していないならクリティカルサービス自体（swss/syncd/bgp）の競合が残っている可能性。</li>
 </ul>
 <h3 id="config-reload">コマンド例: config reload 動作確認<a class="headerlink" href="#config-reload" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># config reload の実行ログとサービス再起動状況</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>reload<span class="w"> </span>-y<span class="w"> </span>-f
@@ -30214,7 +30214,7 @@ reasoning: has_timer→delayed のスキーマ変更と PortInitDone 駆動の�
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

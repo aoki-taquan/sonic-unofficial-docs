@@ -30158,7 +30158,7 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <li>並列ビルドで失敗: dh compat 10 以上または <code>dh --parallel</code> 設定、各 debian/rules で並列実行に対応しているか確認。</li>
 </ul>
 <h3 id="build-system">コマンド例: Build system 確認<a class="headerlink" href="#build-system" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># sonic-buildimage のビルドキャッシュとオプション確認</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>generic
@@ -30197,7 +30197,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 1d579f83f1e2 -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

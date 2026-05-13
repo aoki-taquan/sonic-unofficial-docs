@@ -29682,7 +29682,7 @@
 
 
 <h1 id="ssd">SSD ヘルスチェック 運用<a class="headerlink" href="#ssd" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../ssdhealth-design/">SSD ヘルスチェック（概要ハブ）</a> の派生で、<strong>CLI と表示モード・設定（CONFIG_DB / YANG の有無）</strong> に絞って整理する。アーキテクチャは <a href="../ssdhealth-design-concepts/">ssdhealth-design-concepts.md</a>、API / デーモン内部は <a href="../ssdhealth-design-internals/">ssdhealth-design-internals.md</a>、制限は <a href="../ssdhealth-design-limitations/">ssdhealth-design-limitations.md</a> を参照。</p>
+<p>このページは <a href="../ssdhealth-design/">SSD ヘルスチェック（概要ハブ）</a> の派生で、<strong>CLI と表示モード・設定（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> の有無）</strong> に絞って整理する。アーキテクチャは <a href="../ssdhealth-design-concepts/">ssdhealth-design-concepts.md</a>、API / デーモン内部は <a href="../ssdhealth-design-internals/">ssdhealth-design-internals.md</a>、制限は <a href="../ssdhealth-design-limitations/">ssdhealth-design-limitations.md</a> を参照。</p>
 <h2 id="1-cli">1. CLI<a class="headerlink" href="#1-cli" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>show platform ssdhealth [verbose|vendor]
 </span></code></pre></div>
@@ -29706,7 +29706,7 @@
     BASE -.fallback.-&gt; SCTL[smartctl]
     VENDOR --&gt; ISMART["iSmart / SmartCmd 等\nベンダ純正"]
     UTIL --&gt; OUT[stdout]</code></pre>
-<p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ（HLD 仕様）。現行 master では <code>ssdutil</code> への置き換わりが起きている（詳細は <a href="../ssdhealth-design-limitations/">限定事項ページ</a> 参照）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>show platform ssdhealth</code> は内部で <code>ssdhealth -d /dev/sdX [options]</code> を呼ぶだけのラッパ（<a href="../../reference/glossary/#term-hld">HLD</a> 仕様）。現行 master では <code>ssdutil</code> への置き換わりが起きている（詳細は <a href="../ssdhealth-design-limitations/">限定事項ページ</a> 参照）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="3">3. 設定<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p>該当エントリは HLD 内で定義されていない。CLI / プラグイン内で完結する読み出し専用の機能。</p>
@@ -29758,6 +29758,8 @@
 <li><a href="../ssdhealth-design-limitations/">ssdhealth-design-limitations.md</a> — 制限・HLD 乖離</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: 20dbc11976b6 -->
+
 <div class="footnote">
 <hr />
 <ol>

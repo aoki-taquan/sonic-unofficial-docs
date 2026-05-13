@@ -29922,7 +29922,7 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <li>フラグが効かない: <code>rules/config</code> での <code>ENABLE_RFS_SPLIT_BUILD</code> を確認。<code>y</code> でも <code>slave.mk</code> 側のターゲットが生成されているか <code>make -n</code> で確認。</li>
 </ul>
 <h3 id="rfs-split-build">コマンド例: RFS split build 確認<a class="headerlink" href="#rfs-split-build" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
+<p>下記コマンドで関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
@@ -29956,7 +29956,7 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 - ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
 -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

@@ -30013,7 +30013,7 @@ reasoning: 物理 IF 限定・802.1x/MAB 併用・3 種 port mode の根拠。
 <li>MAB が誤判定 → <code>mabd</code> ログで MAC 学習契機と RADIUS リクエスト送出を確認</li>
 </ul>
 <h3 id="port-access-control">コマンド例: Port Access Control 確認<a class="headerlink" href="#port-access-control" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する CONFIG_DB / APP_DB / STATE_DB のエントリと、
+<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
 CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># PAC 機能 (802.1X / MAB) の認証状態と CONFIG_DB を確認</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>authentication<span class="w"> </span>interface<span class="w"> </span>all
@@ -30051,7 +30051,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 095225652dd9 -->
+<!-- glossary-links-injected: 881c373e11ef -->
 
 <div class="footnote">
 <hr />

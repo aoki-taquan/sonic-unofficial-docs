@@ -29973,7 +29973,7 @@
 <li>直前の reboot 原因が <code>unknown</code> のまま → <code>determine-reboot-cause</code> が HW/SW 双方の情報を取れているかをログで確認。</li>
 </ul>
 <h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>reboot-cause を gNMI 経由で取得できるか確認する。</p>
+<p>reboot-cause を <a href="../../reference/glossary/#term-gnmi">gNMI</a> 経由で取得できるか確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>reboot-cause
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>reboot-cause<span class="w"> </span><span class="nb">history</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>gnmi_get<span class="w"> </span>-target_addr<span class="w"> </span>localhost:8080<span class="w"> </span>-xpath<span class="w"> </span><span class="s1">&#39;/reboot-cause&#39;</span>
@@ -29987,7 +29987,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4e4b0dab1086 -->
+<!-- glossary-links-injected: 658dfbdca882 -->
 
 <div class="footnote">
 <hr />

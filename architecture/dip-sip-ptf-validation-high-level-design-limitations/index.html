@@ -29670,12 +29670,12 @@
 
 
 <h1 id="dipsip-ptf-hld-">DIP=SIP PTF 検証 制限事項と HLD-実装乖離<a class="headerlink" href="#dipsip-ptf-hld-" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証（概要ハブ）</a> の派生で、<strong>制限事項・干渉機能・トラブルシューティング・pytest 移行に伴う HLD 乖離</strong> に絞って整理する。</p>
+<p>このページは <a href="../dip-sip-ptf-validation-high-level-design/">DIP=SIP PTF 検証（概要ハブ）</a> の派生で、<strong>制限事項・干渉機能・トラブルシューティング・pytest 移行に伴う <a href="../../reference/glossary/#term-hld">HLD</a> 乖離</strong> に絞って整理する。</p>
 <h2 id="1">1. 制限事項<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>対応 topology が固定リスト</strong>: <code>t0</code> 系と <code>t1</code> 系の特定型のみ。それ以外の topology では <code>dip_sip.yml</code> の前処理が想定外で動かない可能性がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>RIF 種別が PORT / LAG のみ</strong>: <a href="../../reference/glossary/#term-vlan">VLAN</a> RIF など他の RIF 種は HLD で言及されていない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>テスト対象は L3 ルーティングの可否のみ</strong>: ACL / RPF / uRPF など個別機能との相互作用までは本テストでカバーしない。「ルーティングが成立すること」が単一の合否条件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-rif">RIF</a> 種別が PORT / <a href="../../reference/glossary/#term-lag">LAG</a> のみ</strong>: <a href="../../reference/glossary/#term-vlan">VLAN</a> RIF など他の RIF 種は HLD で言及されていない<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>テスト対象は L3 ルーティングの可否のみ</strong>: <a href="../../reference/glossary/#term-acl">ACL</a> / RPF / uRPF など個別機能との相互作用までは本テストでカバーしない。「ルーティングが成立すること」が単一の合否条件<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="2">2. 干渉する機能<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29687,7 +29687,7 @@
 <ul>
 <li>テストが fail する: ログ <code>/tmp/dip_sip.DipSipTest.&lt;ts&gt;.log</code>（旧 ansible 経路）または pytest log (<code>logs/</code> 配下) の expected / received ダンプを比較<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。MAC が書き換わっていなければ L3 ルーティングが起きていない（L2 で落ちている可能性）。</li>
 <li>TTL が想定と違う: TTL/HL が 1 減っていない場合、DUT 側で L3 forwarding せず L2 で抜けている可能性。</li>
-<li>port index 不一致: <code>dst_port_ids</code> / <code>src_port_ids</code> の配列が空、または PTF port 番号と DUT 側の物理 port のマッピングがズレている。<code>dip_sip.yml</code> の前処理ログ（minigraph / LLDP gather）を確認。</li>
+<li>port index 不一致: <code>dst_port_ids</code> / <code>src_port_ids</code> の配列が空、または PTF port 番号と DUT 側の物理 port のマッピングがズレている。<code>dip_sip.yml</code> の前処理ログ（minigraph / <a href="../../reference/glossary/#term-lldp">LLDP</a> gather）を確認。</li>
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># PTF テスト失敗時の確認手順</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>cat<span class="w"> </span>/tmp/dip_sip.DipSipTest.*.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-200
@@ -29746,6 +29746,8 @@
 <li><a href="../dip-sip-ptf-validation-high-level-design-internals/">dip-sip-ptf-validation-high-level-design-internals.md</a> — パケット仕様</li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: e919cc931c5a -->
+
 <div class="footnote">
 <hr />
 <ol>
