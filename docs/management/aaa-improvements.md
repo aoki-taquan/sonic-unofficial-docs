@@ -36,6 +36,10 @@ related:
 !!! success "裏取りステータス: Code-verified / 採否不明な提案"
     本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の **設計討議文書**。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。`priority=high`。
 
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    本ページは設計討議文書（rev 0.4）であり、提案全体（多重ロール / NSS lookaside / RADIUS 1 回ログイン / sudo+PAM 統合 / console 判定の D-Bus 化）が現行 `sonic-buildimage` master の `hostcfgd` / PAM 設定テンプレートに **全面採用されていない**。q52-az triage で discrepancy-found に降格。個別項目の採否は `src/sonic-host-services` 配下のコードと `/etc/pam.d/` テンプレートを直接確認してください。
+
 # AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
 
 ## 概要

@@ -201,6 +201,8 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  本ページは設計討議文書（rev 0.4）であり、提案全体（多重ロール / NSS lookaside / RADIUS 1 回ログイン / sudo+PAM 統合 / console 判定の D-Bus 化）が現行 `sonic-buildimage` master の `hostcfgd` / PAM 設定テンプレートに **全面採用されていない**。q52-az triage で discrepancy-found に降格。個別項目の採否は `src/sonic-host-services` 配下のコードと `/etc/pam.d/` テンプレートを直接確認してください。
 
 - [Console Switch（serial hub の reverse SSH 集約）](../../management/sonic-console-switch.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -229,6 +231,8 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../../management/sonic-nos-configuration-methods.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  本ページは入口を 10 種類列挙する **概観文書** であり、個々の入口の細かい挙動・優先度・互換性については現行 master と細部で乖離が残っている可能性がある（q52-az triage で discrepancy-found に降格）。実コマンドの正確な動作は対応する個別 HLD（`generic_config_updater`、`sonic-cfggen`、`bgpcfgd` 等）と `sonic-utilities/config/main.py` の最新コードで確認してください。
 
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-11`
@@ -335,7 +339,7 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
   
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。`--namespace` 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。`--namespace` 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は [HLD](../../reference/glossary.md#term-hld) と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ### routing
 
@@ -420,6 +424,8 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）](../../system/show-techsupport.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  q52-az triage で discrepancy-found に降格。RPC 経路と tarball 採取本体は HLD どおりだが、HLD が前提とする `--since` の IETF YANG date-time 厳密パースや、Management Framework フロント側のエラーマッピング（partial failure / timeout 表現）が現行 master のコードと細部で齟齬があるため、自動化からの呼び出しでは `sonic-utilities/scripts/generate_dump` の戻り値とログを直接確認してください。
 
 - [Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）](../../system/multi-asic-warm-reboot.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
@@ -433,6 +439,8 @@ SONiC コミュニティ master の HLD には、(1) 設計提案のみで実装
 
 - [SONiC Container Hardening（capability / read-only / privileged 削減）](../../system/sonic-container-hardening.md)  
   monitor: `partially_implemented` / last_verified: `2026-05-13`
+  
+  q52-az triage で discrepancy-found に降格。HLD が示す「全 docker を non-privileged 化し最小 capability で動かす」終着点に対し、現行 master では一部 docker のみがテンプレ化を完了しており、残りの docker は依然 `--privileged` または広い cap-add で起動する。各 docker の実際の起動オプションは `sonic-buildimage/dockers/<name>/Dockerfile` と `start.sh` / `supervisord.conf` を直接確認してください。
 
 - [SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）](../../system/sonic-fips-deployment.md)  
   monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-09`

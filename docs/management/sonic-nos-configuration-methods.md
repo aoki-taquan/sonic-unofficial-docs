@@ -46,6 +46,10 @@ related:
 !!! info "裏取りステータス: code-verified / 概観文書"
     `sonic-utilities/config/main.py` で `apply-patch` / `replace` / `rollback` の 3 サブコマンドと `--dry-run` / `--ignore-non-yang-tables` / `--ignore-path` オプションを確認。`generic_config_updater/`、`sonic-buildimage/src/sonic-ztp`、`bgpcfgd` の存在も確認済み。本 HLD は概観文書で各機構の詳細は別 HLD に委ねる。
 
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    本ページは入口を 10 種類列挙する **概観文書** であり、個々の入口の細かい挙動・優先度・互換性については現行 master と細部で乖離が残っている可能性がある（q52-az triage で discrepancy-found に降格）。実コマンドの正確な動作は対応する個別 HLD（`generic_config_updater`、`sonic-cfggen`、`bgpcfgd` 等）と `sonic-utilities/config/main.py` の最新コードで確認してください。
+
 # SONiC NOS の設定手段一覧
 
 ## 読み手が知りたいこと

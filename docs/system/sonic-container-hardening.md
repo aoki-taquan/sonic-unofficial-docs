@@ -32,6 +32,10 @@ related:
 !!! note "Verifier 注記（2026-05-10）"
     実コード裏取り: `sonic-buildimage/files/build_templates/default_manifest` / `manifest.json.j2` に application extension 用 `privileged` フラグや capability 制御の宣言枠を確認。各 docker 個別の cap-add / cap-drop はテンプレ化 PR が進行中で、現行値は `sonic-buildimage/dockers/<name>/` 配下の Dockerfile / start script に分散している。
 
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    q52-az triage で discrepancy-found に降格。HLD が示す「全 docker を non-privileged 化し最小 capability で動かす」終着点に対し、現行 master では一部 docker のみがテンプレ化を完了しており、残りの docker は依然 `--privileged` または広い cap-add で起動する。各 docker の実際の起動オプションは `sonic-buildimage/dockers/<name>/Dockerfile` と `start.sh` / `supervisord.conf` を直接確認してください。
+
 # SONiC Container Hardening（capability / read-only / privileged 削減）
 
 ## 概要

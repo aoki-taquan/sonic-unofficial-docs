@@ -8,7 +8,7 @@ verification: stub
 [VXLAN](../reference/glossary.md#term-vxlan) / VNet、[DASH](../reference/glossary.md#term-dash)、Dual ToR、NVGRE など overlay と [SmartSwitch](../reference/glossary.md#term-smartswitch) 周辺を扱う章。
 
 ## この章の趣旨
-SONiC の overlay 機能は「アンダーレイ L3 fabric 上に異なるテナント／障害ドメインを乗せる」「上位の SDN 制御プレーン (DASH / VNet) からデータプレーン (VxLAN / NVGRE / IPinIP) を駆動する」という 2 軸に整理できる。本章ではトンネル種別ごとの実装ファイル分担 (`vxlanorch` / `nvgreorch` / `vnetorch` / `dashorch`)、Dual ToR の active-active / active-standby 切替、SmartSwitch ENI / DPU forwarding に絞った設計を、`sonic-swss` と `sonic-dash-api` の現行コードに合わせて再構成している。
+SONiC の overlay 機能は「アンダーレイ L3 fabric 上に異なるテナント／障害ドメインを乗せる」「上位の SDN 制御プレーン (DASH / VNet) からデータプレーン (VxLAN / NVGRE / [IPinIP](../reference/glossary.md#term-ipinip)) を駆動する」という 2 軸に整理できる。本章ではトンネル種別ごとの実装ファイル分担 (`vxlanorch` / `nvgreorch` / `vnetorch` / `dashorch`)、Dual ToR の active-active / active-standby 切替、SmartSwitch [ENI](../reference/glossary.md#term-eni) / [DPU](../reference/glossary.md#term-dpu) forwarding に絞った設計を、`sonic-swss` と `sonic-dash-api` の現行コードに合わせて再構成している。
 
 ## 主要ページ
 - 全体像から: [VXLAN / VNet 全体設計](vxlan-sonic.md) → [SONiC-DASH アーキテクチャ概観](sonic-dash-hld.md)
@@ -17,9 +17,9 @@ SONiC の overlay 機能は「アンダーレイ L3 fabric 上に異なるテナ
 - 既存トンネル: [NVGRE トンネル](nvgre-tunnel-in-sonic.md)
 
 ## 扱わない範囲
-- 純粋な L3 ルーティング / BGP / EVPN コントロールプレーンは「[ルーティング](../routing/index.md)」章。EVPN-VXLAN の FRR 連携や Type-2/Type-5 経路はそちらにある
-- MPLS / SRv6 などラベル / SID 系 underlay は「[ルーティング](../routing/index.md)」章
-- SAI / プラットフォームレイヤのトンネル能力 (recirculation port, fabric port) は「[プラットフォーム](../platform/index.md)」章
+- 純粋な L3 ルーティング / [BGP](../reference/glossary.md#term-bgp) / [EVPN](../reference/glossary.md#term-evpn) コントロールプレーンは「[ルーティング](../routing/index.md)」章。EVPN-VXLAN の [FRR](../reference/glossary.md#term-frr) 連携や Type-2/Type-5 経路はそちらにある
+- [MPLS](../reference/glossary.md#term-mpls) / [SRv6](../reference/glossary.md#term-srv6) などラベル / SID 系 underlay は「[ルーティング](../routing/index.md)」章
+- [SAI](../reference/glossary.md#term-sai) / プラットフォームレイヤのトンネル能力 (recirculation port, fabric port) は「[プラットフォーム](../platform/index.md)」章
 - DPU / DASH のシステム/起動シーケンス (Smart Switch reboot / DPU upgrade) は「[システム](../system/index.md)」章
 
 ## この章の読み方
@@ -45,4 +45,4 @@ SONiC の overlay 機能は「アンダーレイ L3 fabric 上に異なるテナ
 | [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](vxlan-sonic.md) | Code-verified |
 | [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md) | Discrepancy-found |
 
-<!-- glossary-links-injected: 9751825192ec -->
+<!-- glossary-links-injected: ce29fea4d246 -->

@@ -8,7 +8,7 @@ verification: stub
 [Redis](../reference/glossary.md#term-redis)、SwSS、[orchagent](../reference/glossary.md#term-orchagent)、counter、P4Orch など実装内部の構造を扱う章。
 
 ## この章の趣旨
-本章は機能ページから一段降りた「SONiC の中で何が起きているか」を扱う。具体的には Redis 多重 DB / namespace、SwSS の Producer/Consumer State Table、orchagent の bulk オペレーション、FlexCounter による統計収集、P4Orch / PINS 系の同期書き込み、debug / dump utility の内部、health-check の境界条件などを、当該の HLD と実コード (`sonic-swss-common`, `sonic-swss`, `sonic-sairedis`) を突き合わせて整理している。機能設計者が「この機能はどの SwSS 層に入るべきか」を決めるための足場としても使える。
+本章は機能ページから一段降りた「SONiC の中で何が起きているか」を扱う。具体的には Redis 多重 DB / namespace、SwSS の Producer/Consumer State Table、orchagent の bulk オペレーション、[FlexCounter](../reference/glossary.md#term-flexcounter) による統計収集、P4Orch / [PINS](../reference/glossary.md#term-pins) 系の同期書き込み、debug / dump utility の内部、health-check の境界条件などを、当該の HLD と実コード (`sonic-swss-common`, `sonic-swss`, `sonic-sairedis`) を突き合わせて整理している。機能設計者が「この機能はどの SwSS 層に入るべきか」を決めるための足場としても使える。
 
 ## 主要ページ
 - DB / スキーマ基礎: [swss-schema](swss-schema.md) / [複数 Redis インスタンスのユーザ定義](support-multiple-user-defined-redis-database-instances.md) / [Multi-ASIC 名前空間の Redis](support-redis-databases-in-multiple-namespaces.md)
@@ -18,7 +18,7 @@ verification: stub
 - 運用支援: [dump utility](dump-utility-for-easy-debugging.md) / [コンテナ health-check](why-need-health-check.md) / [L3 Scaling と Performance 強化](l3-scaling-and-performance-enhancements.md)
 
 ## 扱わない範囲
-- ConfigDB / STATE_DB テーブル定義のリファレンス (列挙) は「[リファレンス](../reference/index.md)」章
+- ConfigDB / [STATE_DB](../reference/glossary.md#term-state_db) テーブル定義のリファレンス (列挙) は「[リファレンス](../reference/index.md)」章
 - 機能単位の orchagent 仕様 (PortsOrch / RouteOrch など) は対応する機能章 (スイッチング / ルーティング / プラットフォーム)
 - platform_api / sonic_platform 配下の Python クラス階層は「[プラットフォーム](../platform/index.md)」章
 - ビルドシステム / docker レイヤ構成は「[アーキテクチャ](../architecture/index.md)」章
@@ -52,4 +52,4 @@ verification: stub
 | [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](byte-packet-rates-port-utilization-in-sonic.md) | Code-verified |
 | [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](support-multiple-user-defined-redis-database-instances.md) | Code-verified |
 
-<!-- glossary-links-injected: 90f82b1c14c0 -->
+<!-- glossary-links-injected: 4a83a5aeaa91 -->

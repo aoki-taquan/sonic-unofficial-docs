@@ -30,6 +30,10 @@ related:
 !!! success "裏取りステータス: code-verified (2026-05-10)"
     YANG モデル `sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang` に `rpc sonic-show-techsupport-info` が定義され、annotations `sonic-showtech-annot.yang` で transformer に紐付け済み。tarball 採取本体は `sonic-utilities/scripts/generate_dump` (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。`sonic-buildimage` には `sonic-auto_techsupport.yang` も存在。RPC 起動経路は HLD どおり実装。
 
+<!-- diff-admonition -->
+!!! diff "HLD と実装の差分"
+    q52-az triage で discrepancy-found に降格。RPC 経路と tarball 採取本体は HLD どおりだが、HLD が前提とする `--since` の IETF YANG date-time 厳密パースや、Management Framework フロント側のエラーマッピング（partial failure / timeout 表現）が現行 master のコードと細部で齟齬があるため、自動化からの呼び出しでは `sonic-utilities/scripts/generate_dump` の戻り値とログを直接確認してください。
+
 # Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）
 
 ## 概要
