@@ -150,3 +150,30 @@ v1.0 GA 後の継続改善として iteration BA〜BD を実施。累計 PR は 
 - **累計**: PR ~190、merge ページ ~500+
 
 次は v1.1 (運用フェーズ確立) の Indexer v3 設計および i18n PoC に正式着手する段階に入る。
+
+### 6.5 保守フェーズ移行 (2026-05-13)
+
+iteration BD 完走時点で品質スコアが新プラトーに乗ったことを確認したため、本日付で **保守フェーズ運用** へ正式移行する。これは「v1.1 / v1.2 / v2.0 への発展は roadmap §2-3 の通り継続するが、日々の運用は『劣化させない』ことを最優先とする運用モード」を意味する。
+
+#### 6.5.1 達成サマリ
+
+- **品質**: round 12 (4.79) → round 52 (**4.986 / 5 stratified A+**) まで連続改善
+- **構造的 lint**: 7/7 = **0 件**
+  - broken-link / fnref / mermaid syntax / thin-troubleshoot / phase-table partial-boundary / hld-only 残存 / runbook structure
+- **累計 PR**: ~200 (このセッションだけで 100+ を投入)
+- **Topics**: 22 章 100% 完成 (chapter-progress 表で未完 split-child = 0 確認)
+- **CI**: build / lint (13 strict) / deploy 全 green
+- **判定**: 真値帯域 **4.97+ 安定**、master ベース AI 再構成 wiki として **現実的に到達可能な最高品質** に到達
+
+#### 6.5.2 運用ルール
+
+詳細は `meta/maintenance-mode.md` を参照。要約:
+
+- **月次**: master HEAD 追従 (`sources[].ref` 更新) / stratified audit (偶数 round) / feedback 反映
+- **年次**: 大幅変化があれば再構成判断
+- **大型新機能** (master に新 area 追加 等) は別途 **新規イテレーション起票**
+- v1.1 / v1.2 / v2.0 への発展ロードマップは §2〜§3 の通り継続
+
+#### 6.5.3 これ以降のスコア改善方針
+
+保守フェーズ中の品質スコアは「4.97+ プラトー維持」を目標とし、4.99+ への押し上げを狙う集中バッチは原則行わない (機会費用が高い)。次に大きなジャンプを狙うのは **v1.2 の i18n 投入** または **v2.0 の構造改革** のタイミング。
