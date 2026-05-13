@@ -3,7 +3,6 @@ title: DIP=SIP PTF 検証 運用（ファイル構成 / 前処理 / 実行）
 description: DIP=SIP PTF 検証テストの sonic-mgmt 配下ファイル構成と Ansible 前処理ワークフロー、実行コマンドを整理する。
 area: architecture
 verification: discrepancy-found
-_no_yang: true
 last_verified: 2026-05-11
 page_kind: split-child
 monitor: evolved_beyond_hld
@@ -12,6 +11,7 @@ sources:
   path: doc/dip-sip/DIP=SIP_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
+  _no_yang: true
   config_db: []
   cli: []
   yang: []
