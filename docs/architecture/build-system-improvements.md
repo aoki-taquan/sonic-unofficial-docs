@@ -206,6 +206,44 @@ linux kernel をスクラッチビルドした条件での値。
 make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 ```
 
+## 既知の問題
+
+### `SONIC_BUILD_JOBS=N` 並列ビルドで最終ターゲット失敗（#1738）
+
+`SONIC_BUILD_JOBS=4` 等の並列ビルド設定で、複数の最終ターゲットが同時にビルドされる際に依存関係が解決されず失敗するケースがある。エラーの典型例:
+
+```
+couldn't find these debs: ...
+```
+
+**回避策:** `SONIC_BUILD_JOBS` を 1 に下げるか、省略して再試行する。または並列度を落として複数回実行する。
+
+- 参照: [sonic-net/SONiC#1738](https://github.com/sonic-net/SONiC/issues/1738)
+
+### ビルド成果物のダウンロード先変更（#865）
+
+旧 URL (`sonic-jenkins.westus2.cloudapp.azure.com`) は廃止されており、アクセス拒否になる。現在のビルド成果物は以下から取得する:
+
+- **新 URL**: https://sonic-build.azurewebsites.net/ui/sonic/pipelines
+- Platform → Branch → Build → Artifacts のツリーから目的のイメージを選択
+
+README の color badge をクリックして最新ビルドに直接ジャンプする方法もある。
+
+- 参照: [sonic-net/SONiC#865](https://github.com/sonic-net/SONiC/issues/865)
+
+### 低スペックスイッチ（2GB flash/RAM）でのインストール時 OOM（#1065）
+
+古い低スペックのスイッチ（例: SuperMicro SSE-G3648B、Arista 7050QX-32 等の 2GB flash モデル）では master ブランチのイメージサイズが増大しておりインストール時に OOM が発生する。
+
+**回避策:**
+- 古いイメージ (201811 等) を使用する: `https://sonic-build.azurewebsites.net/api/sonic/artifacts?branchName=201811&platform=broadcom&target=target%2Fsonic-broadcom.bin`
+- または SWAP 領域を作成してから再インストール
+- 最低 16GB の flash/DOM への換装を推奨
+
+master ブランチのイメージは機能追加に伴いサイズが増大しており、2GB flash 環境での動作は保証されない。
+
+- 参照: [sonic-net/SONiC#1065](https://github.com/sonic-net/SONiC/issues/1065)
+
 ## 制限事項
 
 - **BuildKit `--squash` の image size バグ**: 上流 fix まで opt-in に留める方針[^1]。

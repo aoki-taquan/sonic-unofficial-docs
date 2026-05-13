@@ -149,6 +149,32 @@ DEVICE_METADATA|localhost:
 - `vtysh` 直叩きと CONFIG_DB 経由の両方で同じものを設定すると不整合になり得る
 - transformer 機能差異（OpenConfig 標準にない SONiC 固有機能はカスタム YANG 拡張）
 
+## 既知の問題
+
+### vtysh での FRR 設定が再起動後に消える（#250, #442）
+
+デフォルト設定では、`vtysh` で直接変更した FRR の設定（BGP、OSPF、ISIS 等）は **再起動後にリセット**される。これは BGP コンテナ起動時に `config_db.json` から frr.conf が再生成されるためである。
+
+`vtysh` 内での `write` や `copy running-config startup-config` は動作するが、BGP コンテナが再起動されると `frr.conf` の内容が上書きされる。
+
+**恒久的な解決策 (`split` モード):**
+
+`config_db.json` の `DEVICE_METADATA.localhost` セクションに `"docker_routing_config_mode": "split"` を追加する:
+
+```json
+{
+    "DEVICE_METADATA": {
+        "localhost": {
+            "docker_routing_config_mode": "split"
+        }
+    }
+}
+```
+
+`split` モードでは、FRR の各デーモン設定ファイル（`bgpd.conf`、`zebra.conf` 等）が独立して管理され、vtysh での変更が永続化される。設定変更後は `sudo config reload` または BGP コンテナ再起動が必要。
+
+- 参照: [sonic-net/SONiC#250](https://github.com/sonic-net/SONiC/issues/250), [sonic-net/SONiC#442](https://github.com/sonic-net/SONiC/issues/442)
+
 ## 干渉する機能
 
 - **VRF**: BGP テーブルが `<vrf>|...` キーになるため、VRF サポートと密に絡む

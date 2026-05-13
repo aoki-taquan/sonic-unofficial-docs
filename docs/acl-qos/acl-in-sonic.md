@@ -155,6 +155,28 @@ CLI 一覧:
 | `aclshow [-a] [-t <table>] [-r <rule>]` | hit カウンタ |
 | `swssconfig <file.json>` | 静的 ACL ロード |
 
+## 既知の問題
+
+### ACL のデフォルト deny は自動で機能しない（#269）
+
+JSON 設定または `config acl` CLI で ACL ルールを定義した場合、**暗黙の default deny は存在しない**。明示的な forward ルールがある場合、それ以外のトラフィックは許可されてしまう。
+
+default deny を実現するには、**最低優先度（最大の PRIORITY 値）で catch-all の DROP ルール**を明示的に追加する必要がある。
+
+```json
+"ACL_RULE": {
+    "TABLE_NAME|CATCH_ALL": {
+        "PRIORITY": "10000",
+        "IP_TYPE": "ipv4any",
+        "PACKET_ACTION": "DROP"
+    }
+}
+```
+
+PRIORITY 値が大きいほど**低優先度**（最後に評価）となるため、catch-all を最大値に設定することで他のルールが先に評価される。IPv6 トラフィックに対しても別途 `IP_TYPE: ipv6any` のルールが必要。
+
+- 参照: [sonic-net/SONiC#269](https://github.com/sonic-net/SONiC/issues/269)
+
 ## 干渉する機能
 
 - **Mirror セッション**: Mirror table は `MIRROR_SESSION` と密結合

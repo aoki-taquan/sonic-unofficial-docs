@@ -1187,9 +1187,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）](../routing/vrf-vs-test-plan.md) (13)
 - [アーキテクチャ](../topics/20-swss-sai-redis/architecture.md) (11)
+- [内部実装](../topics/20-swss-sai-redis/internals.md) (11)
 - [概念と読み始め方](../topics/01-overview/concept.md) (9)
 - [内部実装](../topics/01-overview/internals.md) (9)
-- [概要](../topics/20-swss-sai-redis/concept.md) (9)
 
 ### [ASIC SDK](#term-asic-sdk)
 
@@ -1413,7 +1413,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [FDB](#term-fdb)
 
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (37)
-- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../switching/layer-2-forwarding-enhancements.md) (24)
+- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../switching/layer-2-forwarding-enhancements.md) (30)
 - [L2 運用確認](../topics/06-l2-vlan-lag/operations.md) (20)
 - [頻出 SAI 属性早見表](sai-attributes.md) (14)
 - [L2 のアーキテクチャ](../topics/06-l2-vlan-lag/architecture.md) (11)
@@ -1470,7 +1470,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [概要](../topics/02-bgp/concept.md) (51)
 - [サイトマップ](../_meta/sitemap.md) (35)
-- [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (23)
+- [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (26)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (22)
 - [SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）](../routing/static-configuration-of-srv6-in-sonic-hld.md) (22)
 
@@ -1577,7 +1577,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (2)
 - [Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）](../internals/support-redis-databases-in-multiple-namespaces.md) (2)
 - [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](../internals/support-multiple-user-defined-redis-database-instances.md) (1)
-- [システム](../system/index.md) (1)
+- [swss-common データベース設定（database_config.json）](../internals/swss-common-database-config.md) (1)
 
 ### [LACP](#term-lacp)
 
@@ -1593,7 +1593,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-mclag YANG](yang/sonic-mclag.md) (61)
 - [サイトマップ](../_meta/sitemap.md) (53)
 - [内部実装](../topics/06-l2-vlan-lag/internals.md) (50)
-- [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (33)
+- [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](../switching/mclag-enhancements.md) (35)
 
 ### [linkmgrd](#term-linkmgrd)
 
@@ -1706,8 +1706,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (29)
 - [サイトマップ](../_meta/sitemap.md) (22)
+- [運用](../topics/20-swss-sai-redis/operations.md) (22)
 - [CONFIG_DB ↔ orchagent クラス対応表](config-db-orch-map.md) (19)
-- [運用](../topics/20-swss-sai-redis/operations.md) (18)
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../acl-qos/enhancements-to-add-or-del-ports-dynamically.md) (17)
 
 ### [PFC](#term-pfc)
@@ -1773,10 +1773,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [PortChannel](#term-portchannel)
 
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (32)
+- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (23)
 - [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](../switching/openconfig-support-for-portchannel-aggregate-interface.md) (21)
 - [L2 運用確認](../topics/06-l2-vlan-lag/operations.md) (21)
 - [sonic-portchannel YANG](yang/sonic-portchannel.md) (15)
-- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (14)
 
 ### [Policer](#term-policer)
 
@@ -1820,7 +1820,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [RIF](#term-rif)
 
-- [ルータインタフェース (RIF) カウンタ](../routing/router-interface-counters-in-sonic.md) (44)
+- [ルータインタフェース (RIF) カウンタ](../routing/router-interface-counters-in-sonic.md) (46)
 - [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](../internals/byte-packet-rates-port-utilization-in-sonic.md) (34)
 - [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](../architecture/port-illegal-packets-drop-design.md) (29)
 - [Route / Interface / Counter の確認](../topics/04-vrf-ecmp/operations.md) (20)
@@ -1837,7 +1837,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [SNMP](#term-snmp)
 
 - [sonic-snmp YANG](yang/sonic-snmp.md) (73)
-- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (60)
+- [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../system/sonic-snmp-table-schema-proposal.md) (65)
 - [config snmp / snmpagentaddress / snmptrap サブコマンド](cli/config-snmp.md) (47)
 - [サイトマップ](../_meta/sitemap.md) (42)
 - [SNMP 設定の snmp.yml → CONFIG_DB 移行](../system/snmp-migration-from-snmp-yml-to-configdb.md) (34)
@@ -1856,7 +1856,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (84)
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (65)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../platform/hld-for-handling-sai-failures.md) (52)
-- [QoS / Buffer の内部実装](../topics/08-qos-buffer/internals.md) (42)
+- [内部実装](../topics/20-swss-sai-redis/internals.md) (49)
 
 ### [SerDes](#term-serdes)
 
@@ -1976,14 +1976,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）](../platform/subnet-decapsulation-with-sonic.md) (7)
 - [DPU の IP 割当・gNMI 連携・KVM 検証](../topics/13-dash-smartswitch/setup.md) (5)
 - [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](../acl-qos/acl-in-sonic.md) (3)
-- [Reboot / Upgrade の発展トピック](../topics/11-reboot/advanced.md) (2)
+- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](../switching/layer-2-forwarding-enhancements.md) (2)
 
 ### [syncd](#term-syncd)
 
+- [運用](../topics/20-swss-sai-redis/operations.md) (43)
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (38)
 - [サイトマップ](../_meta/sitemap.md) (36)
-- [運用](../topics/20-swss-sai-redis/operations.md) (33)
-- [内部実装](../topics/20-swss-sai-redis/internals.md) (30)
+- [内部実装](../topics/20-swss-sai-redis/internals.md) (36)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (28)
 
 ### [Syslog](#term-syslog)
@@ -2046,9 +2046,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [VLAN](#term-vlan)
 
 - [sonic-vlan YANG](yang/sonic-vlan.md) (114)
+- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (64)
 - [サイトマップ](../_meta/sitemap.md) (55)
 - [sonic-spanning-tree YANG](yang/sonic-spanning-tree.md) (55)
-- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](../switching/switch-port-modes-and-vlan-cli-enhancement.md) (55)
 - [L2 設定パターン](../topics/06-l2-vlan-lag/setup.md) (55)
 
 ### [vlanmgrd](#term-vlanmgrd)

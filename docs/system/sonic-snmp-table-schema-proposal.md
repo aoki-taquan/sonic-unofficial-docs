@@ -166,6 +166,30 @@ sonic-cfggen -a '{
 }' --write-to-db
 ```
 
+## 既知の問題
+
+### SNMP 起動時の初期化遅延による `MIBUpdater` 例外（#225, #118）
+
+SNMP エージェントが `COUNTERS_QUEUE_NAME_MAP` または `COUNTERS_PORT_NAME_MAP` が Redis (COUNTERS_DB) に存在しない状態で起動すると、`MIBUpdater.start()` で例外が発生し、IF-MIB のデータが取得できなくなる。
+
+```
+ERROR: MIBUpdater.start() caught an unexpected exception during update_data()
+Key 'b'COUNTERS_PORT_NAME_MAP'' unavailable in database 'COUNTERS_DB'
+```
+
+原因は初期化タイミングの競合（portsyncd の起動が SNMP より遅い場合に発生）。
+
+**回避策:**
+
+```bash
+# SNMP Docker を再起動（portsyncd の初期化完了後）
+sudo systemctl restart snmp
+```
+
+**IP-MIB の制限**: IP-MIB はデフォルトでは部分実装のみ（`IpMib`・`IpCidrRouteTable` クラス相当）。フル IP-MIB が必要な場合は SNMP エージェントへの貢献が必要。
+
+- 参照: [sonic-net/SONiC#225](https://github.com/sonic-net/SONiC/issues/225), [sonic-net/SONiC#118](https://github.com/sonic-net/SONiC/issues/118)
+
 ## 制限事項
 
 - `SNMP_COMMUNITY.TYPE = RW` は HLD 時点で未実装（コードでは未使用、Read-only のみ有効）と明記されている[^1]。

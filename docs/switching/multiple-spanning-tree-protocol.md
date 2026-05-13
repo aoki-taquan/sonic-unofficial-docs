@@ -178,6 +178,16 @@ show spanning-tree mst
 show spanning-tree mst-instance brief
 ```
 
+## 既知の問題
+
+### SONiC のデフォルト STP サポートについて（#184）
+
+**SONiC はデフォルトで STP (Spanning Tree Protocol) をサポートしない。** STP/RSTP/MSTP パケットは CPU にトラップされず、SONiC はスパニングツリーの状態機械を実行しない設計となっている。SONiC は主にデータセンターのスパイン・リーフ構成（L3 ルーティングが主体）を前提としており、アクセス層向けの STP は想定外のユースケースとなっている。
+
+MSTP が必要な場合は本 HLD（MSTP サポート）の実装を使用すること。MSTP コンテナが有効化されていない環境では STP パケットはフラッディングまたはドロップされる。
+
+- 参照: [sonic-net/SONiC#184](https://github.com/sonic-net/SONiC/issues/184)
+
 ## 制限事項
 
 - HLD は v0.2 (50KB) のため、ここでは中心テーブルとフローのみ抜粋。詳細は HLD `doc/MSTP/MSTP.md`

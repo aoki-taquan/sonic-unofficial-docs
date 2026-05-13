@@ -97,6 +97,57 @@ config vlan member range add 100 199 Ethernet0 -w
 sonic-clear fdb port Ethernet0
 ```
 
+## 既知の問題
+
+### FDB エイジングタイムの CLI 設定（#307）
+
+古いバージョンでは FDB エイジングタイムを CLI で設定する方法が提供されていなかった。現在も `config mac aging_time` コマンドは実装されていない（HLD 記載のみ）。
+
+**回避策（CLI 未実装の場合）:**
+
+```bash
+# CONFIG_DB 経由で直接設定（単位: 秒）
+sonic-db-cli CONFIG_DB HSET 'SWITCH|switch' fdb_aging_time 300
+# または redis-cli で
+redis-cli -n 4 HSET 'SWITCH_TABLE|switch' fdb_aging_time 300
+```
+
+値は orchagent の `switchorch.cpp` が `SAI_SWITCH_ATTR_FDB_AGING_TIME` に反映する。デフォルト値はプラットフォームのハードウェアデフォルト（0 または 300 秒）。
+
+- 参照: [sonic-net/SONiC#307](https://github.com/sonic-net/SONiC/issues/307)
+
+### 静的 FDB エントリの設定方法（#249）
+
+静的 FDB（MAC）エントリを設定する公式 CLI は古いバージョンでは存在しない。`swssconfig` ツールを使用した設定方法:
+
+1. `swss` コンテナ内で JSON ファイルを作成:
+
+```json
+[
+    {
+        "FDB_TABLE:Vlan1000:00-00-00-10-20-30": {
+            "port": "Ethernet16",
+            "type": "static"
+        },
+        "OP": "SET"
+    }
+]
+```
+
+2. `swss` コンテナ内で適用:
+
+```bash
+docker exec -it swss bash
+swssconfig /path/to/fdb.json
+```
+
+**重要な前提条件:**
+- 対象インターフェース（例: Ethernet16）が **UP** である必要がある
+- 対象インターフェースが **VLAN のメンバー**である必要がある
+- この設定は**再起動後に消える**（永続化には `config reload` 前に再適用が必要）
+
+- 参照: [sonic-net/SONiC#249](https://github.com/sonic-net/SONiC/issues/249)
+
 ## 制限事項
 
 - HLD は **2019 年改訂** で命名揺れあり（特に `SWITCH_TABLE` / `FDB` のキー区切り）

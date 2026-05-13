@@ -142,6 +142,23 @@ show mclag intf-list
 - unique IP では active/active 両方が L3 で見える。OSPF cost / [BGP](../reference/glossary.md#term-bgp) を peer 間で揃える必要
 - 大量 static MAC sync は ICCP メッセージ量増、scalability 影響あり
 
+## 既知の問題
+
+### L2 MC-LAG 環境での ICMPv6 RS/NS ループ（#1253）
+
+L2 MC-LAG 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。SONiC カーネルがこれらのパケットを処理する際に isolation group を迂回するためと考えられる。
+
+**回避策:**
+
+```bash
+# tagged VLAN 上の IPv6 パケットを bridge レベルで遮断する
+sudo ebtables -A FORWARD -p 802_1Q --vlan-encap IPv6 -j DROP
+```
+
+この ebtables ルールは再起動後に消えるため、永続化が必要な場合は startup スクリプトに追加すること。
+
+- 参照: [sonic-net/SONiC#1253](https://github.com/sonic-net/SONiC/issues/1253)
+
 ## 干渉する機能
 
 iccpd / FdbOrch / PortsOrch / VRRP / OSPF / BGP（unique IP）/ [VXLAN](../reference/glossary.md#term-vxlan)・[EVPN](../reference/glossary.md#term-evpn) MH（別冗長機構）/ L3 [PortChannel](../reference/glossary.md#term-portchannel)・sub-interface。

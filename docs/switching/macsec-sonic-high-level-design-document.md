@@ -180,6 +180,18 @@ redis-cli -n 4 keys 'MACSEC_PROFILE|*'
 - HLD は 60KB 超。詳細フロー（Init / Create SC / Create SA / Disable SA / Deinit Port）は HLD §4 参照
 - SAI MACsec オブジェクトはプラットフォーム依存。Virtual MACsec SAI は HLD §3.4.5
 - `wpa_supplicant` 側に SONiC 拡張パッチが必要。upstream バージョン互換に注意
+
+## 既知の問題
+
+### MACsec ポートと LAG の組み合わせ制約（#790）
+
+MACsec を LAG と組み合わせる場合には以下の制約がある。
+
+1. **ハイブリッド LAG 非サポート（初期フェーズ）**: MACsec 有効ポートと無効ポートを同一 LAG に混在させることは初期実装では未サポート
+2. **LAG インターフェースへの MACsec 適用**: `MACSEC_PROFILE` を LAG インターフェースに設定した場合、SONiC 内部でメンバーポートに変換する実装が必要。これは ACL の LAG 適用と同様のアプローチ（SAI が iterate しメンバーポートに適用）
+3. **MACsec セッション再ネゴシエーション**: LAG にポートを追加/削除する際、MACsec セッションの再ネゴシエーションが発生する可能性がある
+
+- 参照: [sonic-net/SONiC#790](https://github.com/sonic-net/SONiC/issues/790)
 - [YANG](../reference/glossary.md#term-yang) モデル名は HLD では未明示（実装側で追加予定の `sonic-macsec` 系を想定）
 
 ## 関連トピック

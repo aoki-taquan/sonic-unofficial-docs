@@ -172,6 +172,40 @@ reasoning: GLOBAL → PORT、各内で Vendor → Media → Default の検索順
 
 CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への追加は無し[^1]。`media_settings.json` は image build 時に platform tree に同梱される静的 file。
 
+## 既知の問題
+
+### 100G ポートでリンクが上がらない場合の FEC 設定（#384）
+
+Celestica Seastone DX-010 等の一部プラットフォームで 100G ポートが接続されているにもかかわらずリンクが上がらないケースがある。FEC (Forward Error Correction) モードの不一致が原因の場合、RS FEC を明示指定することで解決することがある:
+
+```bash
+# FEC モードを RS に変更
+sudo portconfig -p Ethernet124 -s 100000 -f rs
+```
+
+対向 NIC によっては FC (Firecode) や FEC なしが必要な場合もある。自動ネゴシエーション状態の確認と `portconfig` でのモード調整を試みること。
+
+- 参照: [sonic-net/SONiC#384](https://github.com/sonic-net/SONiC/issues/384)
+
+### Fiber トランシーバー接続時の TX 信号が自動有効化されない（#139）
+
+一部のプラットフォーム（EdgeCore AS5712-54X 等）で 10GBase-SR 等の Fiber トランシーバーを接続しても TX 信号が自動的に有効化されず、リンクが上がらないケースがある。これはプラットフォーム固有のフックが未実装のため。
+
+**回避策（AS5712 系）:**
+
+```bash
+# インターフェースタイプを SR に変更
+bcmcmd "port xe<N> interface=sr"
+# TX 信号を有効化（0 = enable、ポート番号は 1 始まり）
+accton_as5712_util.py set sfp <port_number> 0
+# または sysfs 経由
+echo 0 | sudo tee /sys/bus/i2c/drivers/as5712_54x_cpld/*/module_tx_disable_*
+```
+
+将来的にはトランシーバー挿入時のフック機構で自動化される予定（現状は手動対応が必要）。
+
+- 参照: [sonic-net/SONiC#139](https://github.com/sonic-net/SONiC/issues/139)
+
 ## 制限事項
 
 - `media_settings.json` が無ければ機能しない（opt-in）
