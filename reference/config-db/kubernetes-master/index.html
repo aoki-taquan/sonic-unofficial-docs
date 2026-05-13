@@ -21312,6 +21312,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#insecure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        insecure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip（型別挙動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29769,6 +29819,56 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        disable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#insecure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        insecure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip（型別挙動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29895,8 +29995,78 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_11">値依存挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>このテーブルに strict な enum フィールドはない。boolean の組み合わせと <code>ip</code> の型で動作が決まる。</p>
+<h3 id="disable"><code>disable</code><a class="headerlink" href="#disable" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code>（デフォルト）</td>
+<td>K8s 統合有効。<code>ctrmgrd</code> が kubelet 設定を実施</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>K8s 統合無効化。kubelet 接続を停止</td>
+</tr>
+</tbody>
+</table>
+<h3 id="insecure"><code>insecure</code><a class="headerlink" href="#insecure" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code>（デフォルト）</td>
+<td>CA 証明書取得時に HTTP を許可（TLS 検証なし）</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>TLS 証明書検証あり（セキュアモード）</td>
+</tr>
+<tr>
+<td>その他</td>
+<td>YANG バリデーションで reject</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ip"><code>ip</code>（型別挙動）<a class="headerlink" href="#ip" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>型</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv4 アドレス</td>
+<td>推奨。起動早期から安定して接続可能</td>
+</tr>
+<tr>
+<td>FQDN（ホスト名）</td>
+<td>DNS 解決失敗環境（起動早期）では kubelet 接続失敗リスク</td>
+</tr>
+<tr>
+<td>数値変換不可文字列</td>
+<td><code>ValueError</code> をキャッチしてデフォルト値を設定（kube.py L39, L47）</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-utilities/config/kube.py -->
 
 <table>

@@ -23759,6 +23759,34 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interval-eventd-events_wraph-eventdcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        interval (eventd 側の内部スキーマ、events_wrap.h / eventd.cpp 準拠)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29819,34 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interval-eventd-events_wraph-eventdcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        interval (eventd 側の内部スキーマ、events_wrap.h / eventd.cpp 準拠)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29905,8 +29961,44 @@ process monitor は登録された <code>name</code> のプロセスから <code
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>このテーブルに strict な enum フィールドはない。<code>interval</code> の特殊値で動作が分岐する。</p>
+<h3 id="interval-eventd-events_wraph-eventdcpp"><code>interval</code> (eventd 側の内部スキーマ、events_wrap.h / eventd.cpp 準拠)<a class="headerlink" href="#interval-eventd-events_wraph-eventdcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-1</code></td>
+<td>heartbeat を無効化（"A value of -1 implies no heartbeat"）</td>
+</tr>
+<tr>
+<td><code>&lt; -1</code>（-2 以下）</td>
+<td>invalid 扱い。syslog 記録後処理中断</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>システムデフォルト 2 秒として動作（<code>HEARTBEAT_INTERVAL_SECS = 2</code>）</td>
+</tr>
+<tr>
+<td>正値</td>
+<td>内部 300ms 単位（<code>STATS_HEARTBEAT_MIN</code>）に切り上げ量子化。指定値と実周期がずれる場合がある</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: YANG では <code>heartbeat_interval</code> / <code>alert_interval</code> は uint32 [ms] 単位。
+eventd.cpp 側の <code>interval</code> とはスキーマが別（秒単位）なので混同に注意。</p>
+</blockquote>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp, sonic-swss-common/common/events_wrap.h -->
 
 <table>

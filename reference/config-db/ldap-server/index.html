@@ -22902,6 +22902,78 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#priorityldap_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        priority（LDAP_SERVER）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portldapglobal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        port（LDAP|global）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#versionldapglobal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        version（LDAP|global）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bind_password" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bind_password（文字列制約）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base_dn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        base_dn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29885,78 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#priorityldap_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        priority（LDAP_SERVER）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portldapglobal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        port（LDAP|global）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#versionldapglobal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        version（LDAP|global）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bind_password" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bind_password（文字列制約）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base_dn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        base_dn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29987,8 +30131,112 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>このテーブルに strict な enum フィールドはない。数値・文字列フィールドの値で動作が決まる。</p>
+<h3 id="priorityldap_server"><code>priority</code>（LDAP_SERVER）<a class="headerlink" href="#priorityldap_server" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1〜8</td>
+<td>サーバ選択優先度。大きいほど先に試行</td>
+</tr>
+<tr>
+<td>重複値</td>
+<td>CLI 上でチェックなし → nslcd 内部挿入順依存でフェイルオーバ順序が不定</td>
+</tr>
+<tr>
+<td>9 件目以降のサーバ登録</td>
+<td>YANG スキーマ最大数制約で <code>exit_with_error</code> 拒否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="portldapglobal"><code>port</code>（LDAP|global）<a class="headerlink" href="#portldapglobal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>389</code></td>
+<td>平文 LDAP</td>
+</tr>
+<tr>
+<td><code>636</code></td>
+<td>LDAPS（TLS）。<code>nslcd.conf</code> の <code>ssl on</code> と組み合わせて使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="versionldapglobal"><code>version</code>（LDAP|global）<a class="headerlink" href="#versionldapglobal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>3</code>（デフォルト）</td>
+<td>LDAPv3 を使用（推奨）</td>
+</tr>
+<tr>
+<td><code>1</code>、<code>2</code></td>
+<td>古い LDAP プロトコルバージョン</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bind_password"><code>bind_password</code>（文字列制約）<a class="headerlink" href="#bind_password" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPACE / <code>#</code> / <code>,</code> を含む</td>
+<td>YANG pattern 検証で <code>exit_with_error</code> → DB に書かれない</td>
+</tr>
+<tr>
+<td>正常値</td>
+<td><code>/etc/nslcd.conf</code> の <code>bindpw</code> ディレクティブに反映</td>
+</tr>
+</tbody>
+</table>
+<h3 id="base_dn"><code>base_dn</code><a class="headerlink" href="#base_dn" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設定あり</td>
+<td><code>nslcd.conf</code> に <code>base</code> ディレクティブを書き込み</td>
+</tr>
+<tr>
+<td>未設定</td>
+<td><code>base</code> ディレクティブなし → <code>nslcd</code> がユーザ検索失敗 → 認証不可</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-utilities/config/plugins/sonic-system-ldap_yang.py -->
 
 <table>

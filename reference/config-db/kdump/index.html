@@ -22863,6 +22863,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remote
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        memory（文字列書式）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29841,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remote
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        memory（文字列書式）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29925,8 +30025,74 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>このテーブルに strict な enum フィールドはない。boolean と文字列フィールドで動作が決まる。</p>
+<h3 id="enabled"><code>enabled</code><a class="headerlink" href="#enabled" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td>kdump 有効化。grub パラメータ変更のため次回 reboot 後に有効化</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>kdump 無効化（デフォルト）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="remote"><code>remote</code><a class="headerlink" href="#remote" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td>SSH 経由リモートダンプ転送。<code>ssh_string</code> / <code>ssh_path</code> の設定が必要</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>ローカル保存のみ（デフォルト）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="memory"><code>memory</code>（文字列書式）<a class="headerlink" href="#memory" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書式</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>512M-2G:64M,2G-:128M</code>（範囲形式）</td>
+<td>実装メモリに応じて確保量を変える</td>
+</tr>
+<tr>
+<td><code>512M</code>（絶対値形式）</td>
+<td>固定サイズ確保</td>
+</tr>
+<tr>
+<td>小さすぎる値</td>
+<td>kdump kernel 起動失敗（DB には書けるが YANG 経由時のみ検証あり）</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-utilities/config/kdump.py -->
 
 <table>

@@ -23837,6 +23837,67 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelldpglobal-lldp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode（LLDP|GLOBAL および LLDP_PORT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello_timeuint8-5254" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hello_time（uint8 5..254）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tlv-boolean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLV 抑制 boolean フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29835,6 +29896,67 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelldpglobal-lldp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode（LLDP|GLOBAL および LLDP_PORT）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello_timeuint8-5254" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hello_time（uint8 5..254）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tlv-boolean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLV 抑制 boolean フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30043,8 +30165,99 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="modelldpglobal-lldp_port"><code>mode</code>（LLDP|GLOBAL および LLDP_PORT）<a class="headerlink" href="#modelldpglobal-lldp_port" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RECEIVE</code></td>
+<td>RX のみ。自ノードの LLDP TLV を送出しない。対向スイッチのトポロジービューに当該ノードが映らない</td>
+</tr>
+<tr>
+<td><code>TRANSMIT</code></td>
+<td>TX のみ。受信しないため対向の LLDP 情報を学習しない</td>
+</tr>
+<tr>
+<td>未設定</td>
+<td><code>lldpd</code> デフォルト（双方向 tx_and_rx）。<code>BOTH</code> 等の値は存在しない</td>
+</tr>
+<tr>
+<td>不正値</td>
+<td><code>lldpcli</code> がエラー → <code>lldpd</code> に反映されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="enabled"><code>enabled</code><a class="headerlink" href="#enabled" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code>（デフォルト）</td>
+<td>LLDP 有効</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>LLDP 無効</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hello_timeuint8-5254"><code>hello_time</code>（uint8 5..254）<a class="headerlink" href="#hello_timeuint8-5254" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5〜254 秒</td>
+<td>hold time = hello_time × multiplier で計算</td>
+</tr>
+<tr>
+<td>0 または負</td>
+<td><code>lldpd</code> がデフォルト 30 秒で動作。YANG バリデーション有効時は reject</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tlv-boolean">TLV 抑制 boolean フィールド<a class="headerlink" href="#tlv-boolean" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th><code>false</code>（デフォルト）</th>
+<th><code>true</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>supp_mgmt_address_tlv</code></td>
+<td>Management Address TLV を送信</td>
+<td>Management Address TLV を抑制</td>
+</tr>
+<tr>
+<td><code>supp_system_capabilities_tlv</code></td>
+<td>System Capabilities TLV を送信</td>
+<td>System Capabilities TLV を抑制</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/dockers/docker-lldp/lldpmgrd -->
 
 <table>

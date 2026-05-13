@@ -21435,6 +21435,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scopeip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scope（IP プレフィクスロウ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3-enable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L3 enable 行の有無（特殊条件）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29852,67 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scopeip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scope（IP プレフィクスロウ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3-enable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L3 enable 行の有無（特殊条件）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29967,8 +30089,92 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_11">値依存挙動マトリクス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="admin_status"><code>admin_status</code><a class="headerlink" href="#admin_status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>up</code>（デフォルト）</td>
+<td>Linux dummy デバイスを UP 状態にする</td>
+</tr>
+<tr>
+<td><code>down</code></td>
+<td>Linux dummy デバイスを DOWN 状態にする</td>
+</tr>
+<tr>
+<td>設定コマンド失敗時</td>
+<td><code>SWSS_LOG_WARN("Lo interface ip link set admin status %s failure. Runtime error: %s")</code> → warn のみで継続</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scopeip"><code>scope</code>（IP プレフィクスロウ）<a class="headerlink" href="#scopeip" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>global</code></td>
+<td>グローバルスコープアドレス</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td>ローカルスコープアドレス</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vrf_name"><code>vrf_name</code><a class="headerlink" href="#vrf_name" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設定あり</td>
+<td>指定 VRF にバインド</td>
+</tr>
+<tr>
+<td>未設定</td>
+<td>デフォルト VRF に属する</td>
+</tr>
+</tbody>
+</table>
+<h3 id="l3-enable">L3 enable 行の有無（特殊条件）<a class="headerlink" href="#l3-enable" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L3 enable 行なしで IP 行のみ投入</td>
+<td>dummy デバイス未作成のため <code>ip addr add</code> が失敗</td>
+</tr>
+<tr>
+<td>L3 enable 行あり</td>
+<td><code>ip link add &lt;name&gt; mtu 65536 type dummy</code> で作成後 IP を付与</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
 
 <table>

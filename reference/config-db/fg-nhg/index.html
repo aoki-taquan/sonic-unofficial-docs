@@ -23137,6 +23137,56 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#match_mode_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        match_mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bucket_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bucket_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max_next_hops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max_next_hops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29835,6 +29885,56 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#match_mode_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        match_mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bucket_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bucket_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max_next_hops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max_next_hops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30027,8 +30127,81 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="match_mode_1"><code>match_mode</code><a class="headerlink" href="#match_mode_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nexthop-based</code></td>
+<td>nexthop IP のみで FG 判定。FG_NHG_PREFIX 投入は SWSS_LOG_NOTICE で no-op</td>
+</tr>
+<tr>
+<td><code>route-based</code></td>
+<td>prefix + nexthop IP 両方で FG 判定。不正値時のフォールバック先</td>
+</tr>
+<tr>
+<td><code>prefix-based</code></td>
+<td>prefix のみで FG 判定。<code>FG_NHG_MEMBER</code> は不要（dynamic NHG）。シングルバンク強制。<code>max_next_hops</code> 必須</td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>SWSS_LOG_WARN</code> → <code>route-based</code> にフォールバック（エントリは処理継続）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bucket_size"><code>bucket_size</code><a class="headerlink" href="#bucket_size" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td><code>SWSS_LOG_ERROR</code> → <code>return true</code>（エントリ破棄・再試行なし）</td>
+</tr>
+<tr>
+<td>正値</td>
+<td>バケット数として使用。メンバ数の LCM 推奨</td>
+</tr>
+</tbody>
+</table>
+<h3 id="max_next_hops"><code>max_next_hops</code><a class="headerlink" href="#max_next_hops" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code> かつ <code>match_mode=prefix-based</code></td>
+<td><code>SWSS_LOG_ERROR</code>（処理は継続するが SAI 動作不定）</td>
+</tr>
+<tr>
+<td><code>0</code> かつ他モード</td>
+<td>無視</td>
+</tr>
+<tr>
+<td>超過した NH</td>
+<td><code>SWSS_LOG_WARN</code> → 超過分無視</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/fgnhgorch.cpp -->
 
 <table>

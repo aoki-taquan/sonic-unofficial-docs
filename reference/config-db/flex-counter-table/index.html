@@ -22857,6 +22857,34 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_STATUS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29835,6 +29863,34 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_STATUS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -30056,8 +30112,94 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="flex_counter_status"><code>FLEX_COUNTER_STATUS</code><a class="headerlink" href="#flex_counter_status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>グループ</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable</code></td>
+<td><code>PORT</code></td>
+<td><code>m_port_counter_enabled = true</code> → ポート統計 COUNTER_ID_LIST を投入</td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>PORT_BUFFER_DROP</code></td>
+<td><code>m_port_buffer_drop_counter_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>QUEUE</code></td>
+<td><code>m_queue_enabled = true</code> → キュー COUNTER_ID_LIST を投入</td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>QUEUE_WATERMARK</code></td>
+<td><code>m_queue_watermark_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>PG_DROP</code></td>
+<td><code>m_pg_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>PG_WATERMARK</code></td>
+<td><code>m_pg_watermark_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>WRED_ECN_PORT</code></td>
+<td><code>m_wred_port_counter_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>WRED_ECN_QUEUE</code></td>
+<td><code>m_wred_queue_counter_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>RIF</code></td>
+<td><code>gIntfsOrch</code> に COUNTER_ID_LIST を渡す</td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>BUFFER_POOL_WATERMARK</code></td>
+<td><code>gBufferOrch</code> に通知</td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>TUNNEL</code></td>
+<td><code>vxlan_tunnel_orch</code> に通知</td>
+</tr>
+<tr>
+<td><code>enable</code></td>
+<td><code>FLOW_CNT_ROUTE</code></td>
+<td><code>m_route_flow_counter_enabled = true</code></td>
+</tr>
+<tr>
+<td><code>disable</code></td>
+<td>全グループ</td>
+<td>対応カウンタを停止。<code>FLOW_CNT_ROUTE</code> は <code>m_route_flow_counter_enabled = false</code></td>
+</tr>
+<tr>
+<td>未設定</td>
+<td>全グループ</td>
+<td>デフォルト <code>disable</code>（"counters are disabled for polling by default"）</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp -->
 
 <table>

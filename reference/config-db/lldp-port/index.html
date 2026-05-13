@@ -23798,6 +23798,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29852,45 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29946,8 +30024,58 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="enabled"><code>enabled</code><a class="headerlink" href="#enabled" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code>（デフォルト）</td>
+<td>このポートで LLDP フレームの送受信を有効化</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>LLDP 送受信を停止。<code>DEVICE_NEIGHBOR</code> 自動学習が発生せず minigraph との乖離リスク</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mode"><code>mode</code><a class="headerlink" href="#mode" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RECEIVE</code></td>
+<td>RX のみ。送信しないため自ノードが対向スイッチのトポロジーに映らない</td>
+</tr>
+<tr>
+<td><code>TRANSMIT</code></td>
+<td>TX のみ。受信しないため対向の LLDP 情報を学習しない</td>
+</tr>
+<tr>
+<td>未設定</td>
+<td><code>lldpd</code> デフォルト（双方向）。<code>BOTH</code> 等の値は存在しない</td>
+</tr>
+<tr>
+<td>不正値</td>
+<td><code>lldpcli</code> がエラー。CONFIG_DB には書けるが <code>lldpd</code> に反映されない</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/dockers/docker-lldp/lldpmgrd -->
 
 <table>

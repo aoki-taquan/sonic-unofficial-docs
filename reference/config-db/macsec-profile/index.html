@@ -23882,6 +23882,78 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cipher_suitecak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cipher_suite（CAK 長と連動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rekey_period" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rekey_period
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable_replay_protect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable_replay_protect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_sci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send_sci
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29813,6 +29885,78 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cipher_suitecak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cipher_suite（CAK 長と連動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rekey_period" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rekey_period
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable_replay_protect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable_replay_protect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_sci" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send_sci
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29995,8 +30139,134 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="policy"><code>policy</code><a class="headerlink" href="#policy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>security</code>（デフォルト）</td>
+<td>MKA SA 確立 + データ暗号化</td>
+</tr>
+<tr>
+<td><code>integrity_only</code></td>
+<td>MKA SA 確立のみ。実データは平文（認証のみ）</td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>throw std::invalid_argument("Invalid policy : ...")</code> → <code>task_invalid_entry</code>（破棄）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cipher_suitecak"><code>cipher_suite</code>（CAK 長と連動）<a class="headerlink" href="#cipher_suitecak" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>CAK 長</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GCM-AES-128</code>（デフォルト）</td>
+<td>66 hex 文字</td>
+<td>128-bit AES 暗号化</td>
+</tr>
+<tr>
+<td><code>GCM-AES-256</code></td>
+<td>130 hex 文字</td>
+<td>256-bit AES 暗号化</td>
+</tr>
+<tr>
+<td><code>GCM-AES-XPN-128</code></td>
+<td>66 hex 文字</td>
+<td>Extended Packet Numbering 付き 128-bit AES</td>
+</tr>
+<tr>
+<td><code>GCM-AES-XPN-256</code></td>
+<td>130 hex 文字</td>
+<td>Extended Packet Numbering 付き 256-bit AES</td>
+</tr>
+<tr>
+<td>CAK 長不一致</td>
+<td>—</td>
+<td><code>throw std::invalid_argument("Invalid length for cipher_string : ...")</code> → <code>task_invalid_entry</code></td>
+</tr>
+<tr>
+<td>その他</td>
+<td>—</td>
+<td><code>throw std::invalid_argument("Invalid cipher_suite : ...")</code> → <code>task_invalid_entry</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="rekey_period"><code>rekey_period</code><a class="headerlink" href="#rekey_period" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code>（デフォルト）</td>
+<td>能動的 SAK 再生成なし（MKA 自然な鍵更新のみ）</td>
+</tr>
+<tr>
+<td>正値</td>
+<td>指定秒数ごとに SAK を再生成（<code>mka_rekey_period</code> として <code>wpa_supplicant</code> に設定）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="enable_replay_protect"><code>enable_replay_protect</code><a class="headerlink" href="#enable_replay_protect" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code>（デフォルト）</td>
+<td>リプレイ保護なし（<code>macsec_replay_protect = 0</code>）</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td>リプレイ保護有効。<code>replay_window</code> の値も <code>wpa_supplicant</code> に渡す（<code>macsec_replay_window = N</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="send_sci"><code>send_sci</code><a class="headerlink" href="#send_sci" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code>（デフォルト）</td>
+<td>送信フレームに SCI を含める</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>SCI を含めない（特定機器との相互接続で必要な場合がある）</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp -->
 
 <table>

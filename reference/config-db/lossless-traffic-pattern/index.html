@@ -23843,6 +23843,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mtuuint16-19216" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mtu（uint16 1..9216）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#small_packet_percentageuint8-0100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        small_packet_percentage（uint8 0..100）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dynamic バッファモードの有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29841,56 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mtuuint16-19216" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mtu（uint16 1..9216）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#small_packet_percentageuint8-0100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        small_packet_percentage（uint8 0..100）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dynamic バッファモードの有無
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29916,8 +30016,86 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>このテーブルに enum フィールドはない。数値フィールドの値と dynamic buffer モードの有無で動作が決まる。</p>
+<h3 id="mtuuint16-19216"><code>mtu</code>（uint16 1..9216）<a class="headerlink" href="#mtuuint16-19216" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1500</code></td>
+<td>標準イーサネット MTU。ヘッドルーム計算の標準入力</td>
+</tr>
+<tr>
+<td><code>9216</code></td>
+<td>ジャンボフレーム。ヘッドルームが大きくなる</td>
+</tr>
+<tr>
+<td>未設定</td>
+<td><code>buffermgrdyn</code> がデフォルト mtu 値を使用（"if mtu isn't configured, take the default value"）</td>
+</tr>
+<tr>
+<td>実 MTU と乖離した値</td>
+<td>headroom が過小（パケットロス）または過大（バッファ浪費）。バリデーションなし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="small_packet_percentageuint8-0100"><code>small_packet_percentage</code>（uint8 0..100）<a class="headerlink" href="#small_packet_percentageuint8-0100" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>小パケットなし。ヘッドルーム計算で最小のマージンを使用</td>
+</tr>
+<tr>
+<td><code>50</code></td>
+<td>経験的な標準値</td>
+</tr>
+<tr>
+<td><code>100</code></td>
+<td>全パケットが小パケット想定。ヘッドルームを最大化</td>
+</tr>
+<tr>
+<td>0〜100 範囲外</td>
+<td>コード上バリデーションなし → headroom 計算式が異常値を返す可能性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dynamic">dynamic バッファモードの有無<a class="headerlink" href="#dynamic" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dynamic buffer モード</td>
+<td><code>buffermgrdyn</code> がこのテーブルを参照してヘッドルームを動的計算</td>
+</tr>
+<tr>
+<td>静的バッファモード</td>
+<td><code>buffermgr.cpp</code> はこのテーブルを参照しない。設定変更は headroom 計算に影響しない</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp, sonic-utilities/scripts/db_migrator.py -->
 
 <table>

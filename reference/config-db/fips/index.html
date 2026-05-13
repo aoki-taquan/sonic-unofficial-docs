@@ -23731,6 +23731,34 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-enforce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable × enforce の組み合わせ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29791,6 +29819,34 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-enforce" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable × enforce の組み合わせ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29908,8 +29964,45 @@ OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞�
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>このテーブルに enum フィールドはない。boolean 値の組み合わせで動作が決まる。</p>
+<h3 id="enable-enforce"><code>enable</code> × <code>enforce</code> の組み合わせ<a class="headerlink" href="#enable-enforce" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><code>enable</code></th>
+<th><code>enforce</code></th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code></td>
+<td><code>false</code></td>
+<td>通常 OpenSSL モジュールを使用（デフォルト）</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td><code>false</code></td>
+<td>FIPS-validated module をロード。次回 reboot 後に有効化</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td>FIPS module ロード＋非 FIPS アルゴリズム使用をエラー化（最強制モード）</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td><code>true</code></td>
+<td><code>enable</code> なしで <code>enforce</code> のみ有効化は意味がない（実装で想定されていない組み合わせ）</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-utilities/sonic_installer/main.py -->
 
 <table>
