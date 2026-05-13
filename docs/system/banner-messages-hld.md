@@ -212,6 +212,18 @@ show banner
 - マルチライン: `\n` をシェル経由で渡す際にクォートを正しくしないと改行が消える。`config banner login "line1\nline2"` のようにダブルクォート + `\n` で渡す。
 - `show banner` でロゴが崩れる: ターミナル幅に合わせて整形しているわけではない。生の文字列を返している。
 
+
+### コマンド例
+
+Banner 設定の状態を確認する。
+
+```bash
+show banner
+redis-cli -n 4 hgetall 'BANNER_MESSAGE|global'
+cat /etc/issue /etc/issue.net /etc/motd
+config banner login 'WARNING: authorized only'
+```
+
 ## 制限事項
 
 - **`state=disabled` のとき CONFIG_DB の値は無視**: `BANNER_MESSAGE` テーブルに login/motd/logout が書かれていても、`state` が `disabled` だと反映されない。

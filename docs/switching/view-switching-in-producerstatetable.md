@@ -125,6 +125,18 @@ sequenceDiagram
 - 不要 `set` 大量発生 → アプリ側 field 正規化が抜けている可能性
 - 切替途中で producer クラッシュ → `m_tempViewState` はメモリ消失。apply 前なら Redis は旧 view のまま、再構築可能
 
+
+### コマンド例
+
+ProducerStateTable の view 切替挙動を確認する。
+
+```bash
+docker logs swss 2>&1 | grep -iE 'view|producer'
+redis-cli -n 1 keys '*_TABLE:*' | head
+redis-cli -n 0 monitor | grep -E 'PUBLISH|HSET' | head
+show platform summary
+```
+
 ## 関連 Topics
 
 - [11-reboot/architecture](../topics/11-reboot/architecture.md): warm reboot 全体像

@@ -116,6 +116,18 @@ show platform temperature
 - 一部 NULL → SAI 側 `AVERAGE_TEMP` / `MAX_TEMP` 未サポート
 - multi-ASIC で一部 ASIC 非表示 → 該当 ASIC の DB instance に `ASIC_SENSORS` が入っているか
 
+
+### コマンド例
+
+ASIC 温度監視データを確認する。
+
+```bash
+show platform temperature
+redis-cli -n 6 keys 'ASIC_TEMPERATURE_INFO|*'
+docker exec pmon thermalctld -v 2>&1 | head
+grep -i thermal /var/log/syslog | tail -20
+```
+
 ## 関連 Topics
 
 - [14-platform-port-optics](../topics/14-platform-port-optics/index.md): pmon / platform daemon 全体像

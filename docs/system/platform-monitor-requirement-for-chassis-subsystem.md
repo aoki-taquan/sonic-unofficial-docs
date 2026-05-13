@@ -173,6 +173,18 @@ reasoning: 主要な必須要件 (再起動、headless 禁止、chassisd フィ�
 - Supervisor 障害時に LC が headless で残る: 要件 #3 違反。SUP→LC 連動再起動経路（chassisd / heartbeat）を確認。
 - `show chassis module status` で LINECARD1 等のままになる: 要件 #21 の hostname 反映が未実装の可能性[^1]。
 
+
+### コマンド例
+
+chassis subsystem の platform monitor 状態を確認する。
+
+```bash
+show platform summary
+show platform fan
+show platform psustatus
+docker exec pmon supervisorctl status
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-chassis-requirements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

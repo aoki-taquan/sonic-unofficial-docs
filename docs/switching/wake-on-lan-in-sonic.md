@@ -254,6 +254,18 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
     - [GitHub Issue / PR の関連リンクは未確認] — `wol` CLI / `SonicWolService` gNOI 実装は [sonic-utilities](../reference/glossary.md#term-sonic-utilities) / sonic-gnmi の個別 PR で取り込まれており、HLD 単独のトラッキング Issue は確認できず。
 <!-- /diff-admonition -->
 
+
+### コマンド例
+
+Wake-on-LAN の magic packet 送信と CONFIG_DB を確認する。
+
+```bash
+show wol
+config wol Ethernet0 00:11:22:33:44:55
+redis-cli -n 4 keys 'WAKE_ON_LAN|*'
+tcpdump -i Ethernet0 ether proto 0x0842
+```
+
 ## 制限事項
 
 - WoL マジックパケット送出機能は SONiC ホスト側の utility として実装され、受信側 NIC / target 側 OS 設定 (BIOS, ethtool wol g) に依存する。

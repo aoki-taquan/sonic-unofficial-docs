@@ -165,6 +165,18 @@ reasoning: build 時 dev/prod/no_sign の 3 モード切替の根拠。
 - `dmesg | grep -i secure` / `mokutil --sb-state` — Secure Boot 有効/無効の確認
 - build フラグは `cat /etc/sonic/sonic_version.yml` で `build_metadata` から間接確認
 
+
+### コマンド例
+
+Secure upgrade 署名検証の状態を確認する。
+
+```bash
+show boot
+sudo sonic-installer verify-image /tmp/sonic.bin
+grep -iE 'secure[_-]boot|signature' /var/log/syslog | tail
+mokutil --sb-state
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/secure_upgrade/secure_upgrade.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -223,6 +223,18 @@ sudo sonic-bootchart show
 - SVG が生成されているのに古いまま → `/run/log/bootchart-*.svg` の timestamp、最新 boot の SVG が tmpfs に存在するか
 - 設定を変えても反映されない → `config` 後に **必ず reboot** が必要、`/etc/systemd/bootchart.conf` の現在値を直接確認
 
+
+### コマンド例
+
+boot 所要時間の breakdown を確認する。
+
+```bash
+systemd-analyze
+systemd-analyze blame | head -20
+systemd-analyze critical-chain
+ls /host/boot-chart/
+```
+
 ## 関連リファレンス
 
 - CLI: [show version](../reference/cli/show-version.md) / [show uptime](../reference/cli/show-uptime.md) / [show services](../reference/cli/show-services.md) / [reboot-fast-warm](../reference/cli/reboot-fast-warm.md)

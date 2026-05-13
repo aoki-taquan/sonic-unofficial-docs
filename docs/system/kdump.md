@@ -155,6 +155,18 @@ reasoning: kexec + capture kernel + makedumpfile という基本構造の根拠�
 - `cat /proc/cmdline | tr ' ' '\n' | grep crashkernel` — カーネル cmdline に `crashkernel=` が乗っているか確認
 - `kexec -l` の状態は `dmesg | grep -i kexec` で確認可能
 
+
+### コマンド例
+
+kdump の有効状態と vmcore 出力先を確認する。
+
+```bash
+show kdump status
+show kdump memory
+ls /var/crash/
+cat /proc/cmdline | tr ' ' '\n' | grep crashkernel
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/kdump/SONiC-kdump.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

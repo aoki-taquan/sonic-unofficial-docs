@@ -90,6 +90,18 @@ flowchart LR
 - read-only で write できない → tmpfs / volume の bind 漏れ
 - vendor 機能が動かない → syncd の cap-add リストと vendor の要件確認
 
+
+### コマンド例
+
+コンテナ起動時の権限制限を確認する。
+
+```bash
+docker inspect swss | jq '.[0].HostConfig.Privileged'
+docker inspect swss | jq '.[0].HostConfig.CapAdd'
+docker exec swss capsh --print
+grep -iE 'AppArmor|seccomp' /var/log/syslog | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/Container Hardening/SONiC_container_hardening_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

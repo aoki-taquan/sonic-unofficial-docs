@@ -162,6 +162,18 @@ config feature disable telemetry
 - 起動時に状態が再現しない場合、`hostcfgd` の起動時 reconcile が動いているかを確認
 - 現行 master の `show feature` 出力は本 HLD より列が多いので、フィールド差分を意識する
 
+
+### コマンド例
+
+optional feature の enable/disable 状態を確認する。
+
+```bash
+show feature status
+redis-cli -n 4 keys 'FEATURE|*'
+config feature state bgp enabled
+docker ps -a --format '{{.Names}}\t{{.Status}}'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/optional-feature-control/Optional-Feature-Control.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

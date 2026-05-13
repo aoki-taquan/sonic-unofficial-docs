@@ -106,6 +106,18 @@ flowchart LR
 - 値が古い → pmon キャッシュ TTL、BMC の応答性能、SEL の溢れを確認
 - センサ単位で欠損 → vendor 固有 OEM 属性のマッピングを確認
 
+
+### コマンド例
+
+BMC プラットフォーム監視データを確認する。
+
+```bash
+show platform bmc
+ipmitool sensor list
+docker exec pmon supervisorctl status
+redis-cli -n 6 keys 'BMC*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bmc/sonicBMC/pmon-bmc-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

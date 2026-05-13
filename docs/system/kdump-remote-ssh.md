@@ -108,6 +108,18 @@ show kdump config
 - 認証エラー → `ssh -i <ssh_path> <ssh_string>` を手動で疎通、リモート `~/.ssh/authorized_keys` 確認
 - `show kdump config` 反映されない → cold reboot 実施有無
 
+
+### コマンド例
+
+kdump の remote SSH 設定と動作を確認する。
+
+```bash
+show kdump status
+show kdump remote
+config kdump remote enable
+cat /etc/default/kdump-tools
+```
+
 ## 関連 Topics
 
 - [11-reboot](../topics/11-reboot/index.md): リブート / クラッシュ周辺

@@ -118,6 +118,18 @@ sudo config switchport mode routed PortChannel1
 - **範囲指定 CLI が一部しか反映されない**: truncate ポリシーで途中エラーで停止した可能性。エラーメッセージを確認し、不正 VID を除外して再実行
 - **`Error: Got unexpected extra argument`**: HLD の `config switchport mode access <port> <vlan>` 形を打った場合に出る。`<vlan>` は別コマンド (`config vlan member add`) に分離する
 
+
+### コマンド例
+
+switchport CLI 操作後の CONFIG_DB 状態を確認する。
+
+```bash
+show interfaces switchport status
+redis-cli -n 4 hgetall 'PORT|Ethernet0'
+redis-cli -n 4 keys 'VLAN_MEMBER|Vlan100|*'
+config switchport mode access Ethernet0
+```
+
 ## 関連ページ
 
 - 親 HLD: [switch-port-modes-and-vlan-cli-enhancement](switch-port-modes-and-vlan-cli-enhancement.md)

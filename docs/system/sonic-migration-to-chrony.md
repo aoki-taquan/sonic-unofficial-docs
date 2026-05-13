@@ -149,6 +149,18 @@ reasoning: ntpd の kernel time discipline 無効化と RTC 同期欠落の根�
 - `show ntp` — [sonic-utilities](../reference/glossary.md#term-sonic-utilities) 経由でユーザ向け要約を取得
 - `systemctl status chrony` — chrony デーモンの起動状態と直近ログ
 
+
+### コマンド例
+
+ntpd → chrony 移行後の同期状態を確認する。
+
+```bash
+show ntp
+chronyc tracking
+chronyc sources -v
+systemctl status chrony
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ntp/migration-to-chrony.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

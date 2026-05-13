@@ -162,6 +162,18 @@ reasoning: 共通 API と sonic-mgmt 経由運用の根拠。
 - 特定 daemon のログが取れない: その daemon が `libswss-common` の共通 API を使っているか確認。直接 syslog 等を叩いていると統合先が分散する。
 - sysdump が容量超過: アーカイブの上限とプラットフォーム側 hook の出力量を確認。
 
+
+### コマンド例
+
+logging / dumps の保管状況を確認する。
+
+```bash
+show logging
+ls -lh /var/log/syslog*
+ls /var/dump/ | tail
+df -h /var/log
+```
+
 ## 関連 reference
 
 - [CLI: show techsupport](../reference/cli/show-techsupport.md)

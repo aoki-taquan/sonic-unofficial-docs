@@ -140,6 +140,18 @@ sfputil show eeprom-hexdump --port Ethernet0 --page 1
 - techsupport に EEPROM が含まれない → `sfputil show eeprom-hexdump` を手動実行してエラーメッセージを確認。platform API 未実装の可能性。
 - 一部ポートだけ抜ける → ケーブル種別判定が失敗している可能性。`sfputil show presence` 等で接続確認。
 
+
+### コマンド例
+
+show techsupport で SFP EEPROM dump が含まれるか確認する。
+
+```bash
+show techsupport --since '1 hour ago'
+ls /var/dump/ | tail
+sfputil show eeprom -d -p Ethernet0
+tar tzf /var/dump/sonic_dump_*.tar.gz | grep -i sfp
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sfputil/dump_sfp_eeprom.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
