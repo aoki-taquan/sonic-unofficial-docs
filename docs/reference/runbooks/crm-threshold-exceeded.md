@@ -3,14 +3,14 @@ title: CRM threshold 越え (route / nexthop / FDB / ACL)
 description: "Runbook: CRM (Critical Resource Monitor) で threshold 越えアラートが出る — : sonic-net/sonic-swss @ master — crmorch.cpp : sonic-net/sonic-utilities @ master — crm/main.…"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/crmorch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-utilities
     path: crm/main.py
-    ref: master
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: [CRM]
   cli: [crm show resources all, crm show thresholds all, crm show summary]

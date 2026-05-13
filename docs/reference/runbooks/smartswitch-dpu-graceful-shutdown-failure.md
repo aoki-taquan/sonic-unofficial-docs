@@ -3,14 +3,14 @@ title: SmartSwitch DPU graceful shutdown が失敗する
 description: "Runbook: SmartSwitch DPU の graceful shutdown が完了しない — : sonic-net/sonic-platform-daemons @ master — chassisd : sonic-net/sonic-utilities @ master — chassis_mod…"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-platform-daemons
     path: sonic-chassisd/scripts/chassisd
-    ref: master
+    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
   - repo: sonic-net/sonic-utilities
     path: config/chassis_modules.py
-    ref: master
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
   config_db: [CHASSIS_MODULE, DPU]
   cli: [config chassis modules shutdown, show chassis modules status]

@@ -3,14 +3,14 @@ title: EVPN Type-2 route が広告されない
 description: "Runbook: EVPN Type-2 (MAC/IP) route が peer に広告されない — : sonic-net/sonic-frr @ master — bgp_evpn.c : sonic-net/sonic-swss @ master — vxlanorch.cpp"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-frr
     path: bgpd/bgp_evpn.c
-    ref: master
+    ref: 799f47f215e4266063c4ebde0041a0c7dd2d11d0
   - repo: sonic-net/sonic-swss
     path: orchagent/vxlanorch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db: [VXLAN_TUNNEL, VXLAN_EVPN_NVO, VLAN, BGP_GLOBALS]
   cli: [show bgp l2vpn evpn, show vxlan tunnel, show vxlan vlanvnimap]

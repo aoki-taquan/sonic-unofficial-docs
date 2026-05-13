@@ -3,7 +3,7 @@ title: Port が admin up なのに oper down のまま
 description: "Runbook: `config interface startup` 済みでも oper down が解けない場合の切り分け"
 area: reference
 verification: runbook-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 tags: [runbook, port, platform]
 sources:
   - repo: sonic-net/sonic-swss
@@ -11,7 +11,7 @@ sources:
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-platform-daemons
     path: sonic-xcvrd
-    ref: 4ba9612cb7
+    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
   - repo: sonic-net/sonic-utilities
     path: config/main.py
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
