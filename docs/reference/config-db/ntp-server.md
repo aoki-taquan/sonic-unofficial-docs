@@ -142,4 +142,27 @@ chronyc sources
 - **admin_state のデフォルト = "enabled"**: `default enabled`。フィールドを省略してもサーバは有効として ntpd/chrony に渡される。
 - **trusted のデフォルト = "no"**: `default no`。NTP 認証有効時にこのサーバのみを信頼する場合は `trusted = yes` を設定する。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `association_type` | `server` (default) | chrony.conf に `server <addr>` として追記 |
+| `association_type` | `pool` | chrony.conf に `pool <addr>` として追記。DNS ラウンドロビンで複数 IP を使用 |
+| `iburst` | `on` (default) | 起動直後に iburst パケットを送信して高速同期 |
+| `iburst` | `off` | 通常ポーリング間隔で同期開始 |
+| `admin_state` | `enabled` (default) | サーバを chrony.conf に含める |
+| `admin_state` | `disabled` | サーバを chrony.conf から除外 |
+| `trusted` | `no` (default) | chrony で通常の優先度 |
+| `trusted` | `yes` | chrony の `prefer` オプション相当。当該サーバを優先同期先に |
+| `version` | `4` (default) | NTPv4 を使用 |
+| `version` | `3` | NTPv3 を使用。古い NTP サーバとの互換向け |
+| `key` | NTP_KEY.id 参照 | chrony.conf に `key <id>` オプションを付与。`NTP.authentication=enabled` と組み合わせて認証 |
+| エントリ数 | 11件目以上 | YANG max-elements=10 でバリデーション拒否 |
+
+enum: `association_type`=server/pool、`iburst`=on/off、`admin_state`=enabled/disabled、`trusted`=yes/no。変更は `systemctl restart chrony` をトリガー。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->

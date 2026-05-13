@@ -153,4 +153,21 @@ show mclag brief
 - **存在しないドメインの DEL → SWSS_LOG_WARN + スキップ**: `"Domain [%d] deletion - domain not found"` を WARN ログして処理を終了。iccpd へは送信されない (`mclaglink.cpp` L836)。
 - **既存エントリへの SET 時の差分更新**: `source_ip`・`peer_ip`・`peer_link` は既存値との差分のみを iccpd へ通知。空文字列で上書きした場合は `MCLAG_CFG_OPER_ATTR_DEL` を発行する (`mclaglink.cpp` L749-L795)。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `keepalive_interval` | 1 (default) | 1秒ごとに ICCP keepalive 送信 |
+| `keepalive_interval` | N (1..60) | N 秒ごとに送信。`session_timeout >= N*3` が YANG must 制約で必須 |
+| `session_timeout` | 30 (default) | 30秒 ICCP 応答なしでセッション断 |
+| `session_timeout` | < keepalive_interval*3 | YANG must 制約違反 → バリデーション拒否 |
+| `unique_ip` | `enable` | 当該 VLAN IF に対してピア ToR 間で異なる IP アドレスを許可 |
+| `if_type` (MCLAG_INTERFACE) | 任意文字列 | プレースホルダ。実際の制御動作に影響なし (エントリ存在でメンバー登録) |
+
+enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: f50d4e92baed -->
