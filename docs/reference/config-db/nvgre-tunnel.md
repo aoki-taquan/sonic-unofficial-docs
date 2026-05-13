@@ -78,6 +78,31 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-nvgre-tunnel`
 - 関連 CLI: `config nvgre`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### NVGRE_TUNNEL フィールド
+
+| フィールド | 値 / 範囲 | orchagent 挙動 |
+|-----------|----------|---------------|
+| `src_ip` | 任意の有効 IP アドレス | SAI `sai_tunnel_api` でトンネル端点として設定 |
+| `src_ip` | フォーマット不正 / 未設定 | YANG validate 段階で reject |
+
+### NVGRE_TUNNEL_MAP フィールド
+
+| フィールド | 値 / 範囲 | orchagent 挙動 |
+|-----------|----------|---------------|
+| `vlan_id` | 1..4094 | VLAN ID として SAI トンネルマップに登録 |
+| `vlan_id` | 範囲外 | WARN ログ後スキップ: `VLAN ID doesn't exist: %d` |
+| `vsid` | 0..16777214 | NVGRE VSID として SAI に反映 |
+| `vsid` | 範囲外 | WARN ログ後スキップ: `VSID is invalid: %d` |
+| `tunnel_name` | 存在する NVGRE_TUNNEL を参照 | MAP エントリ作成 |
+| `tunnel_name` | 存在しない親トンネルを参照 | WARN ログ: `NVGRE tunnel '%s' doesn't exist` |
+
+*enum なし — src_ip は inet:ip-address 型、vlan_id / vsid は数値範囲のみ。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

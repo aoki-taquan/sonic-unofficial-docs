@@ -102,6 +102,35 @@ show kdump config
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに strict な enum フィールドはない。boolean と文字列フィールドで動作が決まる。
+
+### `enabled`
+
+| 値 | 挙動 |
+|----|------|
+| `true` | kdump 有効化。grub パラメータ変更のため次回 reboot 後に有効化 |
+| `false` | kdump 無効化（デフォルト） |
+
+### `remote`
+
+| 値 | 挙動 |
+|----|------|
+| `true` | SSH 経由リモートダンプ転送。`ssh_string` / `ssh_path` の設定が必要 |
+| `false` | ローカル保存のみ（デフォルト） |
+
+### `memory`（文字列書式）
+
+| 書式 | 挙動 |
+|------|------|
+| `512M-2G:64M,2G-:128M`（範囲形式） | 実装メモリに応じて確保量を変える |
+| `512M`（絶対値形式） | 固定サイズ確保 |
+| 小さすぎる値 | kdump kernel 起動失敗（DB には書けるが YANG 経由時のみ検証あり） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

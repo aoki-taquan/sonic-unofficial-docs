@@ -74,6 +74,22 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 - 関連 CLI: `config qos`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pfc-priority-priority-group-map`、`sonic-port-qos-map`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### pfc_priority / pg フィールド
+
+| フィールド | 値 | QosOrch 挙動 |
+|-----------|---|-------------|
+| `pfc_priority` | `0`..`7` (文字列) | SAI SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP に key として登録 |
+| `pfc_priority` | 空文字 | YANG pattern では許容するが QosOrch は数値変換失敗でエラー |
+| `pg` | `0`..`7` (文字列) | 対応する ingress priority group として SAI に反映 |
+| `pg` | 空文字 | 同上 (QosOrch で変換失敗) |
+
+*enum なし — pfc_priority / pg ともに pattern [0-7]? の string 型。name は 1..32 文字の任意文字列。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

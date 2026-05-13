@@ -70,6 +70,38 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 - 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PORT_STORM_CONTROL キー: storm_type
+
+| 値 | SAI 属性 | 挙動 |
+|----|---------|------|
+| `broadcast` | SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID | broadcast トラフィックをレート制限 |
+| `unknown-unicast` | SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID | unknown unicast をレート制限 |
+| `unknown-multicast` | SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID | unknown multicast をレート制限 |
+| その他 | - | `Unknown storm_type %s` SWSS_LOG_ERROR |
+
+### PORT_STORM_CONTROL.kbps
+
+| 値 | 挙動 |
+|----|------|
+| 0 | 実装依存 (SAI が 0 を無制限として扱うかはプラットフォーム依存) |
+| 1..100000000 | SAI policer CIR として設定 (BYTES / STORM_CONTROL モード固定) |
+| 範囲外 | YANG range 違反 reject |
+
+### PORT_STORM_CONTROL キー: ifname
+
+| 値 | 挙動 |
+|----|------|
+| 物理ポート (PORT.name) | 正常: storm control policer を attach |
+| LAG / VLAN など非物理 IF | `Unsupported / Invalid interface %s` SWSS_LOG_ERROR |
+| 存在しないポート | `Failed to apply storm-control %s to port %s. Port not found` SWSS_LOG_ERROR |
+
+*enum なし — storm_type はキーの一部として broadcast/unknown-unicast/unknown-multicast を pattern 制約。kbps は uint64。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

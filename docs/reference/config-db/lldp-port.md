@@ -112,6 +112,27 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `enabled`
+
+| 値 | 挙動 |
+|----|------|
+| `true`（デフォルト） | このポートで LLDP フレームの送受信を有効化 |
+| `false` | LLDP 送受信を停止。`DEVICE_NEIGHBOR` 自動学習が発生せず minigraph との乖離リスク |
+
+### `mode`
+
+| 値 | 挙動 |
+|----|------|
+| `RECEIVE` | RX のみ。送信しないため自ノードが対向スイッチのトポロジーに映らない |
+| `TRANSMIT` | TX のみ。受信しないため対向の LLDP 情報を学習しない |
+| 未設定 | `lldpd` デフォルト（双方向）。`BOTH` 等の値は存在しない |
+| 不正値 | `lldpcli` がエラー。CONFIG_DB には書けるが `lldpd` に反映されない |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

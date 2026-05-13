@@ -68,6 +68,23 @@ PEER_SWITCH|<peer_switch>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-peer-switch`、`sonic-tunnel`
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PEER_SWITCH フィールド
+
+| フィールド | 値 / 範囲 | 挙動 |
+|-----------|----------|------|
+| `address_ipv4` | 有効な IPv4 アドレス | linkmgrd が peer への到達確認 (ICMP) に使用 |
+| `address_ipv4` | 未設定 | linkmgrd は peer 到達確認不可、MUX 切り替え不可 |
+| エントリ数 | 0 件 | Dual-ToR 機能が無効扱い (linkmgrd 初期化警告) |
+| エントリ数 | 1 件 | 正常。Dual-ToR 構成として認識 |
+| エントリ数 | 2 件以上 | YANG max-elements 1 により reject |
+
+*enum なし — address_ipv4 は inet:ipv4-address 型、peer_switch (key) は hostname 型 (最大 63 文字)。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

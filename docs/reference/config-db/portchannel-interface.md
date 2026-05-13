@@ -85,6 +85,43 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 - 関連 CLI: `config interface ip add/remove`（[PortChannel](../../reference/glossary.md#term-portchannel) に対しても適用）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PORTCHANNEL_INTERFACE.loopback_action
+
+| 値 | 挙動 |
+|----|------|
+| `drop` | 同一 IF に ingress-routed されたパケットを破棄 |
+| `forward` | 同一 IF に ingress-routed されたパケットを通過 |
+
+### PORTCHANNEL_INTERFACE.mpls
+
+| 値 | intfmgrd 挙動 |
+|----|-------------|
+| `enable` | Linux netdev に MPLS routing を有効化 |
+| `disable` | MPLS routing を無効化 |
+| 未設定 | MPLS 設定を変更しない |
+
+### PORTCHANNEL_INTERFACE.ipv6_use_link_local_only
+
+| 値 | 挙動 |
+|----|------|
+| `enable` | IPv6 グローバルアドレスなしで link-local アドレスのみ設定 |
+| `disable` (デフォルト) | 通常の IPv6 動作 |
+
+### PORTCHANNEL_INTERFACE.nat_zone
+
+| 値 | natmgrd 挙動 |
+|----|------------|
+| `0` (デフォルト) | NAT ゾーン 0 (未設定相当) |
+| `1`..`3` | 対応 NAT ゾーンに所属 |
+| 範囲外 (> 3) | YANG range 違反: Invalid nat zone for the portchannel interface. |
+
+*vrf_name は VRF.name への leafref — 存在しない VRF は YANG validate で reject。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

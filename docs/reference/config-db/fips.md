@@ -98,6 +98,22 @@ show fips status
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに enum フィールドはない。boolean 値の組み合わせで動作が決まる。
+
+### `enable` × `enforce` の組み合わせ
+
+| `enable` | `enforce` | 挙動 |
+|----------|-----------|------|
+| `false` | `false` | 通常 OpenSSL モジュールを使用（デフォルト） |
+| `true` | `false` | FIPS-validated module をロード。次回 reboot 後に有効化 |
+| `true` | `true` | FIPS module ロード＋非 FIPS アルゴリズム使用をエラー化（最強制モード） |
+| `false` | `true` | `enable` なしで `enforce` のみ有効化は意味がない（実装で想定されていない組み合わせ） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -135,6 +135,49 @@ show ip interfaces
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `mpls`
+
+| 値 | 挙動 |
+|----|------|
+| `enable` | `ip link set mpls on` → Linux MPLS ルーティングを有効化 |
+| `disable`（または空） | MPLS 無効化 |
+| その他 | `SWSS_LOG_ERROR("MPLS state is invalid")` → 設定適用されない |
+
+### `ipv6_use_link_local_only`
+
+| 値 | 挙動 |
+|----|------|
+| `enable` | IPv6 link-local only モード有効化。`m_ipv6LinkLocalModeList` に追加 |
+| `disable`（デフォルト） | link-local only モード解除。グローバルアドレス割り当て可能 |
+
+### `admin_status`
+
+| 値 | 挙動 |
+|----|------|
+| `up` | インタフェース UP |
+| `down` | インタフェース DOWN |
+| その他 | `SWSS_LOG_WARN` → `up` にデフォルト（intfmgr.cpp L867） |
+
+### `loopback_action`
+
+| 値 | 挙動 |
+|----|------|
+| `drop` | `SAI_PACKET_ACTION_DROP`：ingress → 同 IF 宛パケットを破棄 |
+| `forward` | `SAI_PACKET_ACTION_FORWARD`：通常転送 |
+| 未設定 | SAI プラットフォームデフォルト動作 |
+
+### `scope`（IP プレフィクスロウ）
+
+| 値 | 挙動 |
+|----|------|
+| `global` | グローバルスコープアドレス（intfmgrd が APP_DB に `scope=global` を書く） |
+| `local` | ローカルスコープアドレス |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

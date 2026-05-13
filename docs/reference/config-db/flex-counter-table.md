@@ -141,6 +141,30 @@ counterpoll show
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `FLEX_COUNTER_STATUS`
+
+| 値 | グループ | 挙動 |
+|----|---------|------|
+| `enable` | `PORT` | `m_port_counter_enabled = true` → ポート統計 COUNTER_ID_LIST を投入 |
+| `enable` | `PORT_BUFFER_DROP` | `m_port_buffer_drop_counter_enabled = true` |
+| `enable` | `QUEUE` | `m_queue_enabled = true` → キュー COUNTER_ID_LIST を投入 |
+| `enable` | `QUEUE_WATERMARK` | `m_queue_watermark_enabled = true` |
+| `enable` | `PG_DROP` | `m_pg_enabled = true` |
+| `enable` | `PG_WATERMARK` | `m_pg_watermark_enabled = true` |
+| `enable` | `WRED_ECN_PORT` | `m_wred_port_counter_enabled = true` |
+| `enable` | `WRED_ECN_QUEUE` | `m_wred_queue_counter_enabled = true` |
+| `enable` | `RIF` | `gIntfsOrch` に COUNTER_ID_LIST を渡す |
+| `enable` | `BUFFER_POOL_WATERMARK` | `gBufferOrch` に通知 |
+| `enable` | `TUNNEL` | `vxlan_tunnel_orch` に通知 |
+| `enable` | `FLOW_CNT_ROUTE` | `m_route_flow_counter_enabled = true` |
+| `disable` | 全グループ | 対応カウンタを停止。`FLOW_CNT_ROUTE` は `m_route_flow_counter_enabled = false` |
+| 未設定 | 全グループ | デフォルト `disable`（"counters are disabled for polling by default"） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
