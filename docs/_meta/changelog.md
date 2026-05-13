@@ -23,6 +23,14 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-13 #1176 Add quality audit round 51 (weighted random, guide §6 initial trial)
+- 2026-05-13 #1175 chore: resolve all partial-boundary phase-table violations (15 -> 0)
+- 2026-05-13 #1174 chore(q55-bc): add MKDOCS_SOCIAL_ENABLED toggle for local --strict builds
+- 2026-05-13 #1170 docs: add getting-started essentials curation (top 10 pages for new readers)
+- 2026-05-13 #1173 chore(q54-bb): add RSS feed via mkdocs-rss-plugin
+- 2026-05-13 #1172 chore: refresh sources[].ref SHA for 19 pages (q54-bb)
+- 2026-05-13 #1171 chore: phase-tables + regen drift after q53-ba discrepancy-index polish
+- 2026-05-13 #1169 chore: regen coverage / sitemap / snapshot drift after #1168
 - 2026-05-13 #1168 chore: area landing cleanup + README polish + social plugin
 - 2026-05-13 #1167 chore: polish discrepancy-index with subtype sections and usage guide (q53-ba)
 - 2026-05-13 #1165 chore(lint): code-block language linter + auto-tag 624 fences
@@ -515,12 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #569 [system] SWSS docker warm restart
 - 2026-05-09 #566 [system] System-wide Warmboot
 - 2026-05-09 #567 [verify] high 優先度 12 ページの裏取り (batch13) [lgtm]
-- 2026-05-09 #564 [acl-qos] Dynamic Headroom Calculation
-- 2026-05-09 #562 [acl-qos] Port Access Control（PAC: 802.1x / MAB / RADIUS）
-- 2026-05-09 #560 [verify] medium 優先度 12 ページの裏取り (batch12) [lgtm]
-- 2026-05-09 #559 [acl-qos] Egress Outer DSCP 書換 ACL
-- 2026-05-09 #557 [acl-qos] Reclaim Reserved Buffer
-- 2026-05-09 #555 [acl-qos] Everflow テストプラン
-- 2026-05-09 #553 [routing] FRR-BGP Unified Mgmt Framework
-- 2026-05-09 #551 [routing] BGP Route Install Error Handling
 

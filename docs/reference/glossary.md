@@ -1519,8 +1519,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ACL & QoS](../acl-qos/index.md) (3)
 - [サイトマップ](../_meta/sitemap.md) (2)
 - [Dynamic Headroom Calculation（buffer_model = dynamic）](../acl-qos/dynamically-headroom-calculation.md) (2)
-- [変更履歴](../_meta/changelog.md) (1)
 - [QoS / Buffer の発展トピック](../topics/08-qos-buffer/advanced.md) (1)
+- [QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md) (1)
 
 ### [hostcfgd](#term-hostcfgd)
 
