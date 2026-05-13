@@ -155,6 +155,18 @@ reasoning: gNOI API 系列と各 phase の根拠。
 - `gnoi_client -target <dpu> -rpc System.RebootStatus` — gNOI Reboot ステータス
 - `gnoi_client -target <dpu> -rpc Containerz.ListImage` — DPU 内 container image を列挙
 
+
+### コマンド例
+
+DPU 単独アップグレードの進捗を確認する。
+
+```bash
+show chassis modules status
+sudo config chassis modules startup DPU0
+show platform inventory
+docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/upgrade/dpu-upgrade-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

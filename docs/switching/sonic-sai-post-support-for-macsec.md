@@ -224,6 +224,18 @@ reasoning: MACSecMgr が POST 完了確認を担当し、POST=pass までは MAC
 - `in-progress` で進まない場合、SAI から完了 callback が来ていない可能性。`syncd` ログで POST API 呼び出しと callback を確認
 - FIPS 有効化したのに POST が走らない場合、`/proc/cmdline` の `sonic_fips=1` または `/etc/fips/fips_enable` を確認
 
+
+### コマンド例
+
+MACsec FIPS POST の進捗と結果を確認する。
+
+```bash
+redis-cli -n 6 hgetall 'FIPS_MACSEC_POST_TABLE|sai'
+docker logs syncd 2>&1 | grep -i 'macsec post'
+grep -E 'Switch MACSec POST' /var/log/syslog
+cat /proc/cmdline | tr ' ' '\n' | grep fips
+```
+
 ## 関連 reference
 
 - [YANG: sonic-macsec](../reference/yang/sonic-macsec.md)

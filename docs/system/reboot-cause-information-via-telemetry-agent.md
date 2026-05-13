@@ -151,6 +151,18 @@ show reboot-cause history
 - `show reboot-cause history` が空 → `process-reboot-cause.service` の起動ログを確認、history ディレクトリに JSON ファイルがあるかを確認。
 - 直前の reboot 原因が `unknown` のまま → `determine-reboot-cause` が HW/SW 双方の情報を取れているかをログで確認。
 
+
+### コマンド例
+
+reboot-cause を gNMI 経由で取得できるか確認する。
+
+```bash
+show reboot-cause
+show reboot-cause history
+gnmi_get -target_addr localhost:8080 -xpath '/reboot-cause'
+cat /host/reboot-cause/reboot-cause.txt
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system-telemetry/reboot-cause.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

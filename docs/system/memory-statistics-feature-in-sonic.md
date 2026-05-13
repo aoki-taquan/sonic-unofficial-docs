@@ -133,6 +133,18 @@ show memory-stats config
 - 設定変更が反映されない → `hostcfgd` のログで SIGHUP 送信が走っているか確認。
 - データが断片化している → `retention_period` を超えた古いデータがローテートで消えている可能性。
 
+
+### コマンド例
+
+メモリ統計デーモンの動作を確認する。
+
+```bash
+show memory-stats
+show memory-stats config
+redis-cli -n 6 keys 'MEMORY_STATISTICS|*'
+docker ps | grep -i memory-stats
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/memory_statistics/memory_statistics_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

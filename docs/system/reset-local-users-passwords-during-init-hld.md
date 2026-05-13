@@ -121,6 +121,19 @@ enabled
 - vendor 実装の `should_trigger()` の実体 (例: GPIO 経由の long reset 判定) を vendor specific docker または `sonic_platform` 配下に確認
 
 <!-- phase-boundary -->
+
+
+### コマンド例
+
+初回起動時のパスワードリセット動作を確認する。
+
+```bash
+show users
+sudo chage -l admin
+grep -iE 'force[_-]password|first[_-]boot' /var/log/syslog
+cat /etc/sonic/init_cfg.json | jq '.PASSW_HARDENING'
+```
+
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"

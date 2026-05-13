@@ -166,6 +166,18 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 - 同じリソースの WARNING が一度出てから止まったように見える場合、**10 回で抑止** されている可能性が高い。一旦リソースを下げるか、process を再起動して抑止カウンタをリセットする運用を検討する。
 - 「使用数は増えているのに空き数が減らない」など整合が崩れて見える場合、`orchagent` 側の自己追跡（使用数）と SAI 側の available count の更新タイミングがズレている可能性がある。
 
+
+### コマンド例
+
+CRM 閾値超過時のログとカウンタを確認する。
+
+```bash
+crm show resources all
+crm show thresholds all
+grep -i 'CRM exceeded' /var/log/syslog
+redis-cli -n 2 hgetall 'CRM:STATS'
+```
+
 ## 参考リンク
 
 - [CONFIG_DB: CRM](../reference/config-db/crm.md)

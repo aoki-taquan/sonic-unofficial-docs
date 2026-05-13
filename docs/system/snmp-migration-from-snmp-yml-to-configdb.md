@@ -144,6 +144,18 @@ show run snmp community
 - `show run snmp community` が空 → `redis-cli -n 4 keys 'SNMP_COMMUNITY|*'` で実体を確認。
 - snmpd.conf に古い情報が残る → `snmpd.conf.j2` が CONFIG_DB のみ参照する版に更新されているか確認。
 
+
+### コマンド例
+
+SNMP CONFIG_DB と従来 snmp.yml の整合を確認する。
+
+```bash
+show runningconfiguration snmp
+redis-cli -n 4 keys 'SNMP*'
+diff /etc/sonic/snmp.yml.bak <(show runningconfiguration snmp)
+snmpwalk -v2c -c public localhost system
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-configdb-migration-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

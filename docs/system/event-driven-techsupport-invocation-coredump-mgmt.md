@@ -105,6 +105,18 @@ flowchart LR
 - 連続 crash で 1 回しか取れない → rate-limit interval を一時的に短く
 - disk full → `/var/dump/` の cleanup スクリプト動作、quota 設定
 
+
+### コマンド例
+
+coredump 起因の techsupport 起動とレートリミットを確認する。
+
+```bash
+show auto-techsupport global
+ls /var/core/
+ls /var/dump/
+redis-cli -n 4 hgetall 'AUTO_TECHSUPPORT|GLOBAL'
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/auto-techsupport/auto_techsupport_and_coredump_mgmt.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

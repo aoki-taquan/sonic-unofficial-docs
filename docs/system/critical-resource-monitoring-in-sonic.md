@@ -95,6 +95,18 @@ generic SAI extension CRM（新 resource 追加枠組み） / system health moni
 - 通知が来ない → `polling_interval`、syslog rate-limit、threshold mode 確認
 - counter が振動する → 周期と使用量変動の解像度差を再検討
 
+
+### コマンド例
+
+CRM カウンタの現在値と閾値を確認する。
+
+```bash
+crm show summary
+crm show thresholds all
+crm show resources all
+redis-cli -n 2 keys 'CRM:*'
+```
+
 ## 関連 Topics
 
 - [07-acl-copp-mirror](../topics/07-acl-copp-mirror/index.md): ACL リソース消費

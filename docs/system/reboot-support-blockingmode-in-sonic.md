@@ -227,6 +227,18 @@ sudo reboot -b -v
 - `blocking_mode_timeout` 超過で抜けた場合、`systemctl reboot` 自体が失敗している可能性。`journalctl` で reboot ターゲットの遷移を確認
 - dot が出ない場合、`-v` または `show_timer=true` が同時に有効か確認
 
+
+### コマンド例
+
+blocking-mode reboot の進捗とエラーを確認する。
+
+```bash
+sudo reboot --wait
+show reboot-cause
+grep -iE 'reboot|blocking' /var/log/syslog | tail
+show system-health summary
+```
+
 ## 関連 reference
 
 - [Topics: Reboot](../topics/11-reboot/index.md)

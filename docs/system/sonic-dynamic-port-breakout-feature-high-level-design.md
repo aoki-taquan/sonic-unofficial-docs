@@ -104,6 +104,18 @@ flowchart LR
 - **一部 port だけ up しない** → 物理 lane mapping、SI 設定、ASIC 側 lane 割当
 - **関連設定が消えた** → 依存解決で削除済み。再投入が必要
 
+
+### コマンド例
+
+dynamic port breakout の状態を確認する。
+
+```bash
+show interfaces breakout current-mode
+config interface breakout Ethernet0 '4x25G'
+redis-cli -n 4 hgetall 'BREAKOUT_CFG|Ethernet0'
+show platform summary
+```
+
 ## 関連 Topics 章
 
 - [14-platform-port-optics](../topics/14-platform-port-optics/index.md): port profile / lane / media SI / CMIS との結線

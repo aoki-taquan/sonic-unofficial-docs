@@ -164,6 +164,18 @@ reasoning: 11 月 release で base 取り込み目標の根拠。
 - `show version` — SONiC build / Debian version / kernel を一括表示
 - `apt-cache policy <pkg>` — slave container 構築時の参照 suite を確認
 
+
+### コマンド例
+
+Debian ベース版数とパッケージ脆弱性を確認する。
+
+```bash
+cat /etc/os-release
+cat /etc/debian_version
+apt list --upgradable 2>/dev/null | head
+show version
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/debian_upgrade/SONiC_Debian_Upgrade_Cadence.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

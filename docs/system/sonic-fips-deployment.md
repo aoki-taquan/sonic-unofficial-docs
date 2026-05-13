@@ -140,6 +140,19 @@ sonic-db-cli STATE_DB hgetall 'FIPS_STATS|state'
 <!-- /diff-admonition -->
 
 <!-- next-action -->
+
+
+### コマンド例
+
+FIPS モード有効状態と OpenSSL provider を確認する。
+
+```bash
+show fips status
+openssl list -providers
+cat /proc/sys/crypto/fips_enabled
+grep -i fips /var/log/syslog | tail
+```
+
 ## このページを読んだ後の次アクション
 
 !!! tip "読み手向け"

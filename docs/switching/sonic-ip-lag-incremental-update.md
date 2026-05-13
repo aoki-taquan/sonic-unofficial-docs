@@ -160,6 +160,18 @@ config interface PortChannel0001 mtu 9216
 - docker swss 再起動後に IP が消える → Phase 1 復元実装の現状を確認
 - `ip` コマンド直叩き等の別ルート操作 → theorem 違反、CONFIG_DB 経由のみ正規
 
+
+### コマンド例
+
+LAG / IP の差分更新が CONFIG_DB を経由しているか確認する。
+
+```bash
+redis-cli -n 4 keys 'PORTCHANNEL|*'
+redis-cli -n 4 keys 'PORTCHANNEL_MEMBER|*'
+teamdctl PortChannel1 state
+show interfaces portchannel
+```
+
 ## 実装との乖離 / 補足
 
 - `portmgrd` / `intfmgrd` / `teammgrd` は `sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp` に存在し HLD と一致

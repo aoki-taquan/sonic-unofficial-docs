@@ -169,6 +169,18 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 - `cat /proc/sys/crypto/fips_enabled` — kernel 側の FIPS モード（参考値）
 - `ssh -vvv ...` で SSH の crypto algorithm を観測し、disabled algo が出ていないか確認
 
+
+### コマンド例
+
+OpenSSL FIPS 140-3 provider の有効化を確認する。
+
+```bash
+openssl list -providers
+openssl fipsinstall -in /etc/ssl/fipsmodule.cnf -module /usr/lib/ssl/fips.so
+cat /proc/sys/crypto/fips_enabled
+show fips status
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fips/SONiC-OpenSSL-FIPS-140-3.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

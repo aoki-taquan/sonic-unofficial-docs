@@ -130,6 +130,18 @@ dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC�
 - 30s 超え → syncd の INIT/APPLY 比較が長い、neighbor restore が ARP burst で詰まる、ASIC 側の port 起動順
 - finalizer が flag を外さない → 各 reconciliation サブシステムから finalizer への ack が来ているか確認
 
+
+### コマンド例
+
+Fast reboot 各段階の所要時間と warm-restart 状態を確認する。
+
+```bash
+show reboot-cause
+show warm-restart state
+sudo fast-reboot -v
+grep -i 'fast-reboot' /var/log/syslog | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/fast-reboot/Fast-reboot_Flow_Improvements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

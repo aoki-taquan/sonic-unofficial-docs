@@ -158,6 +158,18 @@ sudo express-reboot
 - ブート後にデータプレーン断が長い場合、`SAI_SWITCH_ATTR_FAST_API_ENABLE = true` が pre-shutdown でセットされていたか syslog で確認する。
 - `show reboot-cause` で `unknown` になる場合、`sonic-host-services` 側の express ハンドリングが入っていない可能性。
 
+
+### コマンド例
+
+express-reboot のステータスと downtime を確認する。
+
+```bash
+show reboot-cause
+show warm-restart state
+sudo express-reboot -v
+grep -iE 'express[_-]reboot' /var/log/syslog | tail
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/express-reboot/Cisco_8000_Express_Reboot_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

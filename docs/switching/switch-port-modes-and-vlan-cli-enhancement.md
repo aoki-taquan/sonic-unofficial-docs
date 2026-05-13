@@ -288,6 +288,19 @@ sudo config switchport mode routed Ethernet0
 <!-- /diff-admonition -->
 
 <!-- phase-boundary -->
+
+
+### コマンド例
+
+switchport mode と VLAN_MEMBER の整合を確認する。
+
+```bash
+show interfaces switchport status
+redis-cli -n 4 keys 'VLAN_MEMBER|*'
+config switchport mode trunk Ethernet0
+show vlan brief
+```
+
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"

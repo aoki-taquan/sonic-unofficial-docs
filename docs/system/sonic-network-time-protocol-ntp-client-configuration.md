@@ -138,6 +138,18 @@ show ntp
     - mgmt VRF 経路は chrony 側で `bindcmdaddress` / `bindaddress` を mgmt VRF 内に固定する設定が必要（`chrony-config.sh` の VRF 分岐を参照）。
 <!-- /diff-admonition -->
 
+
+### コマンド例
+
+NTP クライアントの同期状態を確認する。
+
+```bash
+show ntp
+chronyc sources
+redis-cli -n 4 keys 'NTP*'
+config ntp add 10.0.0.1
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ntp/ntp-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

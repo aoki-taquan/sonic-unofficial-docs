@@ -142,6 +142,18 @@ gnmic -a <switch>:8080 subscribe \
 - 一部プロセスが見えない → CPU% 上位 1024 の絞り込みで漏れている可能性。
 - `DOCKER_STATS` のメモリ値がコンテナ内 cgroup 値と合わない → `docker stats` の集計対象に依存（HLD では特に注意書き無し）。
 
+
+### コマンド例
+
+gNMI 経由でプロセス/docker 統計を取得できるか確認する。
+
+```bash
+gnmi_get -target_addr localhost:8080 -xpath '/process-stats'
+gnmi_get -target_addr localhost:8080 -xpath '/docker-stats'
+show services
+docker stats --no-stream
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/system-telemetry/process-docker-stats.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

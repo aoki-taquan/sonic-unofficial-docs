@@ -83,6 +83,18 @@ going up は逆順を namespace ごとに走らせ、[orchagent](../reference/gl
 - internal BGP がフラップ → hold timer、GR negotiation の成功確認
 - 一部 ASIC だけ syncd 復元失敗 → per-namespace `sai-warmboot.bin` の有無と vendor SAI ログ
 
+
+### コマンド例
+
+multi-ASIC warm-reboot 状態を ASIC ごとに確認する。
+
+```bash
+show warm-restart state
+show platform summary
+for n in 0 1 2 3; do sonic-db-cli -n asic$n STATE_DB keys 'WARM_RESTART_TABLE|*'; done
+sudo warm-reboot -v
+```
+
 ## 制限事項
 
 - multi-asic 環境では namespace ごとに warm-restart timer が独立しており、最も遅い ASIC に律速される。
