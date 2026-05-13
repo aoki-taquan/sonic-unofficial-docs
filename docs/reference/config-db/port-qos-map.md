@@ -82,6 +82,23 @@ PORT_QOS_MAP|<PORT.name>
 - 関連 CLI: `config qos`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-port-qos-map`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map.md -->
+
+### YANG スキーマ検証
+- `sonic-port-qos-map.yang` に `must` / `mandatory` 制約なし。各 `*_map` フィールドは optional。
+
+### consumer (qosorch) 例外動作
+- 参照先 QoS map が存在しない: `Object with name:%s not found.` → SWSS_LOG_ERROR、設定適用中断。
+- SAI `sai_qos_map_api` SET 失敗: `Failed to set [%s:%s]` → SWSS_LOG_ERROR。
+- SAI `sai_qos_map_api` CREATE 失敗: `Failed to create [%s:%s]` → SWSS_LOG_ERROR。
+- ハンドラ未初期化: `Task %s handler is not initialized` → SWSS_LOG_ERROR。
+- 順序依存: PORT_QOS_MAP を先に DEL してから参照 QoS map を DEL しないと SAI 参照カウントで失敗する。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

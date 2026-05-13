@@ -85,6 +85,21 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 - 関連 CLI: `config interface ip add/remove`（[PortChannel](../../reference/glossary.md#term-portchannel) に対しても適用）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-interface.md -->
+
+### YANG スキーマ検証
+- `PORTCHANNEL_INTERFACE` の `nat_zone` は range 0..3: `error-message "Invalid nat zone for the portchannel interface."`。
+
+### consumer 例外動作
+- PORTCHANNEL が存在しない場合の IP アドレス追加: orchagent は PORTCHANNEL 存在確認後に IP 付与。存在しなければタスクを保留 (依存関係による遅延処理)。
+- VLAN に所属している LAG への操作: `Failed to remove LAG %s, it is still in VLAN` → SWSS_LOG_ERROR。
+- TPID 設定失敗: `Failed to set LAG %s TPID 0x%x` → SWSS_LOG_ERROR。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

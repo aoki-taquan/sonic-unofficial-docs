@@ -80,6 +80,28 @@ PORTCHANNEL|<name>
 - 関連 CLI: `config portchannel`、[`config portchannel`](../cli/config-portchannel.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel.md -->
+
+### YANG スキーマ検証
+- `name` pattern: `PortChannel[0-9]{1,4}` — 名前形式不正は reject。
+- `admin_status` は mandatory。`min_links` range: 1..1024。`mtu` range: 1..9216。
+- `lacp_key`: `auto` または uint16 (1..65535)。
+- `tpid`: `stypes:tpid_type` (0x8100 / 0x9100 / 0x9200 / 0x88a8 / 0x88A8) のみ許容。
+
+### consumer (portsorch / teammgr) 例外動作
+- LAG ID 払い出し失敗: `Failed to allocate unique LAG id for local lag %s rv:%d` → SWSS_LOG_ERROR。
+- SAI LAG create 失敗: `Failed to create LAG %s lid:` → SWSS_LOG_ERROR。
+- 非空 LAG の DEL: `Failed to remove non-empty LAG %s` → SWSS_LOG_ERROR。
+- VLAN 所属 LAG の DEL: `Failed to remove LAG %s, it is still in VLAN` → SWSS_LOG_ERROR。
+- `ref_count` > 0 の LAG DEL: `Failed to remove ref count %d LAG %s` → SWSS_LOG_ERROR。
+- TPID 設定失敗: `Failed to set TPID 0x%x to LAG pid:` → SWSS_LOG_ERROR。
+- teamd SIGTERM 送信失敗: `Failed to send SIGTERM to port channel %s pid %d` → SWSS_LOG_ERROR。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

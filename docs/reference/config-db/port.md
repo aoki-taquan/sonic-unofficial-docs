@@ -110,6 +110,28 @@ PORT|<name>
 - 関連 CLI: [`config interface`](../cli/config-interface.md)（speed / mtu / admin / fec / autoneg を変更）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-port`、`sonic-types`（`switchport_mode`、`admin_status`、`interface_type`、`tpid_type`）
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/port.md -->
+
+### YANG スキーマ検証
+- `lanes` は mandatory (chassis 以外)、length 1..128。
+- `speed` は mandatory、range 1..1600000 (Kbps)。
+- `mtu` range: 68..9216。`fec` pattern: `rs|fc|none|auto`。`autoneg` / `pfc_asym` pattern: `on|off`。
+- `adv_speeds`: `all` と他値の混在は `must` 制約で reject。`adv_interface_types` も同様。
+
+### consumer (portsorch / portmgr) 例外動作
+- 非サポート speed: SAI supported speed リストと照合; 不一致は SWSS_LOG_ERROR + 処理中断。
+- MTU 設定失敗: `Failed to set MTU %u to port pid` → SWSS_LOG_ERROR。
+- FEC モード不正: `Failed to set FEC mode` → SWSS_LOG_ERROR。
+- AutoNeg 設定失敗: `Failed to set AutoNeg %u to port %s` → SWSS_LOG_ERROR。
+- `autoneg` 非サポート: `autoneg is not supported (cap=%d)` → SWSS_LOG_ERROR。
+- portmgr MTU netdev 設定失敗: `Setting mtu to alias:%s netdev failed` → SWSS_LOG_WARN + `return false`。
+- portmgr admin_status netdev 設定失敗: `Setting admin_status to alias:%s netdev failed` → SWSS_LOG_WARN + `return false`。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
