@@ -60,15 +60,15 @@ production スクリプトは **ベンダ各社が自分のフローに合わせ
 
 ```mermaid
 flowchart LR
-  subgraph BUILD[Build Process]
-    SRC[shim / grub / vmlinuz / KO]
+  subgraph BUILD["Build Process"]
+    SRC["shim / grub / vmlinuz / KO"]
     SCRIPT{SB_BUILD?}
     SRC --> SCRIPT
   end
-  SCRIPT -- dev --> DEV[signing_secure_boot_dev.py<br/>local keys]
-  SCRIPT -- production --> PROD[signing_secure_boot_production.py<br/>send to vendor sign server]
+  SCRIPT -- dev --> DEV["signing_secure_boot_dev.py<br/>local keys"]
+  SCRIPT -- production --> PROD["signing_secure_boot_production.py<br/>send to vendor sign server"]
   PROD <--> SRV[Vendor Sign Server]
-  DEV --> BIN[sonic-os.bin<br/>(署名済 boot components 同梱)]
+  DEV --> BIN["sonic-os.bin<br/>(署名済 boot components 同梱)"]
   PROD --> BIN
 ```
 
@@ -76,12 +76,12 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-  HW[HW PK / KEK / DB / DBX<br/>UEFI 鍵階層] --> SHIM[shim loader<br/>を UEFI が verify]
+  HW["HW PK / KEK / DB / DBX<br/>UEFI 鍵階層"] --> SHIM["shim loader<br/>を UEFI が verify"]
   SHIM --> GRUB[shim が grub を verify]
   GRUB --> VM[grub が vmlinuz を verify]
   VM --> KER[kernel 起動]
-  KER --> KO[KO ロード時に<br/>kernel が KO を verify]
-  KO -->|fail| HALT[ロード拒否 / panic]
+  KER --> KO["KO ロード時に<br/>kernel が KO を verify"]
+  KO -->|fail| HALT["ロード拒否 / panic"]
 ```
 
 要点[^1]:

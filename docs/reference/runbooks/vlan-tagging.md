@@ -41,13 +41,13 @@ related:
 
 ```mermaid
 flowchart TD
-    A[VLAN tag が想定外 (tagged/untagged 違い)] --> B{VLAN_MEMBER の tagging_mode?}
-    B -- 誤 --> B1[tagging_mode を tagged/untagged に修正]
-    B -- 正 --> C{trunk/access port の対向設定一致?}
-    C -- No --> C1[対向側 trunk allow / pvid を揃える]
+    A["VLAN tag が想定外 (tagged/untagged 違い)"] --> B{VLAN_MEMBER の tagging_mode?}
+    B -- 誤 --> B1["tagging_mode を tagged/untagged に修正"]
+    B -- 正 --> C{"trunk/access port の対向設定一致?"}
+    C -- No --> C1["対向側 trunk allow / pvid を揃える"]
     C -- Yes --> D{native vlan 一致?}
     D -- No --> D1[両端 native vlan を統一]
-    D -- Yes --> E[ASIC ingress/egress VLAN translation を確認]
+    D -- Yes --> E["ASIC ingress/egress VLAN translation を確認"]
 ```
 
 ## 確認コマンド

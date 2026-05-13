@@ -53,11 +53,11 @@ related:
 flowchart LR
     PMON[NPU 側 pmon] --> PA[sonic-platform-common\nplatform plugin]
     PA --> XPORT{transport}
-    XPORT -->|Redfish HTTPS| BMC[BMC stack\n(OpenBMC など)]
-    XPORT -->|IPMI / OEM| BMC
+    XPORT -->|Redfish HTTPS| BMC["BMC stack\n(OpenBMC など)"]
+    XPORT -->|"IPMI / OEM"| BMC
     XPORT -->|i2c proxy| BMC
-    BMC --> SENS[(PSU / fan / thermal / FRU)]
-    PMON --> STDB[(STATE_DB\nFAN_INFO / PSU_INFO / THERMAL_INFO)]
+    BMC --> SENS[("PSU / fan / thermal / FRU")]
+    PMON --> STDB[("STATE_DB\nFAN_INFO / PSU_INFO / THERMAL_INFO")]
 ```
 
 要点[^1]:

@@ -115,28 +115,28 @@ TWAMP Light（RFC 5357）は data plane の測定プロトコルで、本来は 
 
 ```mermaid
 flowchart LR
-    subgraph CFG[(CONFIG_DB)]
+    subgraph CFG["CONFIG_DB"]
         NATC[NAT_*]
-        DHC[DHCP_RELAY / VLAN]
+        DHC["DHCP_RELAY / VLAN"]
         DHS[DHCP_SERVER_IPV4*]
-        NTP[NTP|*]
+        NTP["NTP|*"]
         DNS[DNS_NAMESERVER]
     end
-    subgraph NATD[docker-nat]
+    subgraph NATD["docker-nat"]
         NM[natmgrd]
         NS[natsyncd]
-        IPT[iptables / conntrack]
+        IPT["iptables / conntrack"]
     end
-    subgraph DRD[docker-dhcp-relay]
-        DR[dhcrelay v4/v6]
+    subgraph DRD["docker-dhcp-relay"]
+        DR["dhcrelay v4/v6"]
         DM[dhcpmon]
     end
-    subgraph DSD[docker-dhcp-server]
+    subgraph DSD["docker-dhcp-server"]
         DS[dhcpservd]
         KEA[kea-dhcp4]
         DRD2[dhcprelayd]
     end
-    subgraph HOST[host OS]
+    subgraph HOST["host OS"]
         CHR[chrony]
         RESV[resolv.conf]
         MGMT[mgmt VRF]

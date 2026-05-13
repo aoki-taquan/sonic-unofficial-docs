@@ -48,8 +48,8 @@ related:
 
 ```mermaid
 flowchart LR
-    P[JSON Patch\n(RFC 6902)] --> V[validate\n(YANG / ACL チェック)]
-    V --> SORT[依存解決 / sort]
+    P["JSON Patch\n(RFC 6902)"] --> V["validate\n(YANG / ACL チェック)"]
+    V --> SORT["依存解決 / sort"]
     SORT --> APPLY[increment apply\nto CONFIG_DB]
     APPLY -->|fail| RB[auto rollback\nfrom snapshot]
     APPLY -->|ok| CHK[(任意で checkpoint 保存)]

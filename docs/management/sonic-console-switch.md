@@ -50,11 +50,11 @@ SONiC スイッチを「**network 機器を console（serial）経由で管理�
 ```mermaid
 flowchart LR
     OPER[oper SSH] --> SONIC[SONiC switch]
-    SONIC --> SHUB[Serial hub / on-board UART\n(USB / PCIe)]
+    SONIC --> SHUB["Serial hub / on-board UART\n(USB / PCIe)"]
     SHUB --> LINES[各 console line]
-    LINES --> DUT1[network device 1 (console)]
-    LINES --> DUT2[network device 2 (console)]
-    SONIC -->|reverse SSH\nport-based / IP-based| OPER
+    LINES --> DUT1["network device 1 (console)"]
+    LINES --> DUT2["network device 2 (console)"]
+    SONIC -->|"reverse SSH\nport-based / IP-based"| OPER
 ```
 
 ### CONFIG_DB

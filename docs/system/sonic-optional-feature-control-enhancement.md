@@ -40,7 +40,7 @@ SONiC には telemetry agent 等、デバイスによっては不要な **オプ
 ```mermaid
 flowchart LR
     USER[管理者] -->|config feature enable telemetry| CLI[sonic-utilities]
-    CLI --> CFG[(CONFIG_DB.FEATURE\n|<feature>: status)]
+    CLI --> CFG[("CONFIG_DB.FEATURE\n|<feature>: status")]
     CFG --> HC[hostcfgd]
     HC -->|systemctl enable + start| SVC[telemetry.service]
     HC -->|systemctl stop + disable| SVC

@@ -72,13 +72,13 @@ SONiC のポート定義は伝統的に **`port_config.ini`**（プラットフ�
 
 ```mermaid
 flowchart LR
-    PCI[port_config.ini\n(or platform.json)] --> PC[sonic-config-engine/portconfig.py]
+    PCI["port_config.ini\n(or platform.json)"] --> PC["sonic-config-engine/portconfig.py"]
     PC -.-> A[daemon_base.py\nget_port_config_file_name]
     PC -.-> B[sfputilbase.py\nget_port_config + adapter]
     PC -.-> C[sfputilhelper.py\nget_port_config]
-    PC -.-> D[sfputil/main.py\nget_port_config_file_name]
-    PC -.-> E[utilities_common/util_base.py\nget_port_config_file_name]
-    PC -.-> V[vendor 固有モジュール\n(各ベンダ責任)]
+    PC -.-> D["sfputil/main.py\nget_port_config_file_name"]
+    PC -.-> E["utilities_common/util_base.py\nget_port_config_file_name"]
+    PC -.-> V["vendor 固有モジュール\n(各ベンダ責任)"]
 ```
 
 ### platform.json への移行を見据えた構造

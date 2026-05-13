@@ -70,14 +70,14 @@ MACsec 以外の AAA（TACACS+ / RADIUS / PAM / NSS / SSH）の制御パスも�
 
 ```mermaid
 flowchart LR
-  CFG[(CONFIG_DB<br/>TACPLUS/RADIUS/AAA/MGMT_USER)] --> HOSTCFGD[hostcfgd]
-  HOSTCFGD --> PAM[/etc/pam.d/*]
-  HOSTCFGD --> NSS[/etc/nsswitch.conf]
-  HOSTCFGD --> SSHD[/etc/ssh/sshd_config]
-  HOSTCFGD --> TACPLUS[/etc/tacplus_nss.conf]
+  CFG[("CONFIG_DB<br/>TACPLUS/RADIUS/AAA/MGMT_USER")] --> HOSTCFGD[hostcfgd]
+  HOSTCFGD --> PAM["/etc/pam.d/*"]
+  HOSTCFGD --> NSS["/etc/nsswitch.conf"]
+  HOSTCFGD --> SSHD["/etc/ssh/sshd_config"]
+  HOSTCFGD --> TACPLUS["/etc/tacplus_nss.conf"]
   USER[login] --> PAM
   PAM --> NSS
-  NSS --> SERVER[TACACS+ / RADIUS server]
+  NSS --> SERVER["TACACS+ / RADIUS server"]
 ```
 
 `hostcfgd` (`src/sonic-host-services/scripts/hostcfgd`) が CONFIG_DB の `TACPLUS`、`RADIUS`、`AAA`、`MGMT_USER` を読み、PAM / NSS / sshd_config を render する Jinja template を持ちます。
@@ -145,14 +145,14 @@ SONiC の AAA は **PAM + NSS** を起点に、TACACS+ / RADIUS / LDAP / local �
 
 ```mermaid
 flowchart LR
-  USER[ssh / CLI login] --> SSHD[sshd / login]
+  USER["ssh / CLI login"] --> SSHD["sshd / login"]
   SSHD --> PAM[PAM]
-  PAM --> AAACTL[hostcfgd 生成<br/>/etc/pam.d/* + /etc/nsswitch.conf]
+  PAM --> AAACTL["hostcfgd 生成<br/>/etc/pam.d/* + /etc/nsswitch.conf"]
   PAM -->|primary| TACACS[libpam-tacplus]
-  PAM -->|fallback| LOCAL[/etc/shadow]
+  PAM -->|fallback| LOCAL["/etc/shadow"]
   TACACS -->|fail| RADIUS[libpam-radius-auth]
   TACACS -->|authz| TACAUTHZ[command authorization]
-  TACAUTHZ --> AUDIT[(STATE_DB / journald)]
+  TACAUTHZ --> AUDIT[("STATE_DB / journald")]
 ```
 
 順序と authz policy は `CONFIG_DB:AAA` テーブルから `hostcfgd` が `/etc/pam.d/common-auth-sonic` 等を render することで反映されます。`gnmi` や REST API の認証は PAM を経由しない別経路（gNSI authz、token-based）であり、TACACS+ の `command` authorization は host CLI のみに効きます。

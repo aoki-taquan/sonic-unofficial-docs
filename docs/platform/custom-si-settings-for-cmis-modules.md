@@ -65,13 +65,13 @@ QSFP-DD / OSFP / QSFP の高速モジュールでは、**プラットフォー�
 
 ```mermaid
 flowchart TD
-    DP_DEINIT[DP_DEINIT\nEC=0 で AppSel 適用] --> AP_CFG[AP_CONFIG\nDataPathDeactivated/Disabled]
+    DP_DEINIT[DP_DEINIT\nEC=0 で AppSel 適用] --> AP_CFG["AP_CONFIG\nDataPathDeactivated/Disabled"]
     AP_CFG --> CHECK{optics_si_setting.json\nload OK?\nlane speed が SI 必要?}
     CHECK -->|No| DP_INIT[DP_INIT\n標準フロー]
-    CHECK -->|Yes| LOOKUP[module key で検索\n(2.1 - 2.6)]
+    CHECK -->|Yes| LOOKUP["module key で検索\n(2.1 - 2.6)"]
     LOOKUP --> EMPTY{attribute list\n空?}
     EMPTY -->|空| DP_INIT
-    EMPTY -->|あり| CACHE[active TX/RX SI を読み出してキャッシュ\nupper Page 10h 145-152, Page 11h 214-234]
+    EMPTY -->|あり| CACHE["active TX/RX SI を読み出してキャッシュ\nupper Page 10h 145-152, Page 11h 214-234"]
     CACHE --> MERGE[キャッシュ値に新値を上書き]
     MERGE --> WRITE[Staged Control Set 0 へ書込\nupper Page 10h 153-173\nEC=1 で commit]
     WRITE --> STAT{config_status OK?}

@@ -43,10 +43,10 @@ related:
 
 ```mermaid
 flowchart LR
-    SD[storagemond\n(daemon loop)] --> PLUG[platform plugin\n(SsdUtil / 該当 vendor 実装)]
-    PLUG -->|smartctl / mmc-utils| DEV[(SSD / eMMC)]
+    SD["storagemond\n(daemon loop)"] --> PLUG["platform plugin\n(SsdUtil / 該当 vendor 実装)"]
+    PLUG -->|"smartctl / mmc-utils"| DEV[("SSD / eMMC")]
     SD --> STATE[STATE_DB\nSTORAGE_INFO]
-    SD --> SYS[syslog / system health monitor]
+    SD --> SYS["syslog / system health monitor"]
     SHOW[show platform storage] --> STATE
 ```
 

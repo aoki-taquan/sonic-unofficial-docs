@@ -55,16 +55,16 @@ SONiC の MC-[LAG](../reference/glossary.md#term-lag)（Multi-Chassis LAG）は�
 ```mermaid
 flowchart TB
     subgraph 入口
-      MAIN[iccp_main.c\nmain()]
-      SCHED[scheduler.c\nscheduler_loop()]
+      MAIN["iccp_main.c\nmain()"]
+      SCHED["scheduler.c\nscheduler_loop()"]
     end
-    subgraph 設定/CLI
-      CONF[iccp_cmd.c\n/etc/iccpd/iccpd.conf 読み込み]
+    subgraph SG_1["設定/CLI"]
+      CONF["iccp_cmd.c\n/etc/iccpd/iccpd.conf 読み込み"]
       CLI[iccp_cli.c\nパラメータ設定]
       SHOW[iccp_cmd_show.c\nmclagdctl 表示応答]
     end
     subgraph 状態機械
-      ICCP_CSM[iccp_csm.c\nICCP CSM (RFC7275 4.2.1)]
+      ICCP_CSM["iccp_csm.c\nICCP CSM (RFC7275 4.2.1)"]
       APP_CSM[app_csm.c\nApp State Machine]
       MLACP[mlacp_fsm.c\nMLACP FSM]
     end
@@ -73,10 +73,10 @@ flowchart TB
       UPD[mlacp_sync_update.c\n受信処理]
     end
     subgraph 反映
-      LINK[mlacp_link_handler.c\nlink up/down/iso]
+      LINK["mlacp_link_handler.c\nlink up/down/iso"]
       NET[iccp_netlink.c\nnetlink 経由カーネル操作]
-      PORT[port.c\nlocal/peer port 事象]
-      IFM[iccp_ifm.c\nIF / ARP 取得]
+      PORT["port.c\nlocal/peer port 事象"]
+      IFM["iccp_ifm.c\nIF / ARP 取得"]
       CHECK[iccp_consistency_check.c\nピア整合性検査]
     end
     MAIN --> SCHED
@@ -127,10 +127,10 @@ stateDiagram-v2
 ```mermaid
 flowchart LR
     CFG[(CONFIG_DB)] --> CFGGEN[sonic-cfggen -d -t iccpd.j2]
-    CFGGEN --> ICCPCONF[/etc/iccpd/iccpd.conf]
+    CFGGEN --> ICCPCONF["/etc/iccpd/iccpd.conf"]
     ICCPCONF --> CMD[iccp_cmd.c]
     CMD --> SYS[ICCPd 内部構造]
-    CLI2[iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface] --> SYS
+    CLI2["iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface"] --> SYS
 ```
 
 ICCPd 起動時、[CONFIG_DB](../reference/glossary.md#term-config_db) から `iccpd.j2` テンプレートを通じて `/etc/iccpd/iccpd.conf` を生成し、`iccp_cmd.c` がそれを読む[^1]。`system-id` は `localhost.mac`（DEVICE_METADATA 配下）を使う **グローバル設定** であり、CLI で変えるものではない。

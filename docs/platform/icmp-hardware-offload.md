@@ -53,13 +53,13 @@ SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を **ICMP
 
 ```mermaid
 flowchart LR
-    LM[linkmgrd\n(MUX docker)] -->|App DB に session 投入| ADB[(APP_DB\nICMP_ECHO_SESSION_TABLE)]
-    ADB -->|consume| IO[IcmpOrch\n(orchagent)]
-    IO -->|create_icmp_echo_session| SAI[SAI / NPU\n(SAI 1.12 saiicmpecho.h)]
+    LM["linkmgrd\n(MUX docker)"] -->|App DB に session 投入| ADB[(APP_DB\nICMP_ECHO_SESSION_TABLE)]
+    ADB -->|consume| IO["IcmpOrch\n(orchagent)"]
+    IO -->|create_icmp_echo_session| SAI["SAI / NPU\n(SAI 1.12 saiicmpecho.h)"]
     SAI -->|notification| IO
     IO -->|publish state| SDB[(STATE_DB\nICMP_ECHO_SESSION_TABLE)]
     SDB -->|consume| LM
-    LM -->|TLV ICMP のみ\n(software cookie)| KSOCK[Linux raw socket]
+    LM -->|"TLV ICMP のみ\n(software cookie)"| KSOCK[Linux raw socket]
 ```
 
 `IcmpOrch` は新規追加コンポーネント[^1]。[SAI](../reference/glossary.md#term-sai) 1.12 で導入された `saiicmpecho.h` 系属性とスイッチ通知を扱う。

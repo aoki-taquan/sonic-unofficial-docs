@@ -58,13 +58,13 @@ Phase 1 では次の 2 ポリシーを対象とする[^1]。
 
 ```mermaid
 flowchart LR
-    User[CONFIG_DB 編集\n(現状は手動)] --> CDB[(CONFIG_DB\nSERIAL_CONSOLE.POLICIES)]
+    User["CONFIG_DB 編集\n(現状は手動)"] --> CDB[(CONFIG_DB\nSERIAL_CONSOLE.POLICIES)]
     CDB -->|notify| HC[hostcfgd]
-    HC -->|systemctl restart| SVC[serial-config.service\n(Before=getty-pre.target)]
+    HC -->|systemctl restart| SVC["serial-config.service\n(Before=getty-pre.target)"]
     SVC --> SH[serial-config.sh]
-    SH --> P[/etc/profile.d/tmout-env.sh]
-    SH --> SY[/proc/sys/kernel/sysrq]
-    SH --> SC[/etc/sysctl.d/95-sysrq-sysctl.conf]
+    SH --> P["/etc/profile.d/tmout-env.sh"]
+    SH --> SY["/proc/sys/kernel/sysrq"]
+    SH --> SC["/etc/sysctl.d/95-sysrq-sysctl.conf"]
     LOGIN[シリアルログイン] --> P
     LOGIN --> SY
 ```

@@ -51,12 +51,12 @@ Secure Upgrade (SU) は **SONiC image が build から install まで改竄さ�
 ```mermaid
 flowchart LR
   BUILD[build_image.sh] -->|create image| IMG[sonic image]
-  IMG --> MKDEMO[onie-mk-demo.sh<br/>sharch.sh prefix 付与<br/>+ sha1 / size 計算]
+  IMG --> MKDEMO["onie-mk-demo.sh<br/>sharch.sh prefix 付与<br/>+ sha1 / size 計算"]
   MKDEMO --> RAW[image + sharch prefix]
-  RAW -->|SECURE_UPGRADE_MODE=dev| DEV[sign_image_dev.sh<br/>OpenSSL CMS]
-  RAW -->|SECURE_UPGRADE_MODE=prod| PROD[sign_image_${platform}.sh<br/>vendor 提供]
+  RAW -->|SECURE_UPGRADE_MODE=dev| DEV["sign_image_dev.sh<br/>OpenSSL CMS"]
+  RAW -->|SECURE_UPGRADE_MODE=prod| PROD["sign_image_${platform}.sh<br/>vendor 提供"]
   RAW -->|no_sign| NO[no change]
-  DEV --> SIG[<image>.signature]
+  DEV --> SIG["<image>.signature"]
   PROD --> SIG
   SIG --> CAT[concatenate to image]
 ```

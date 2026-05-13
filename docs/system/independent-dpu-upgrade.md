@@ -49,14 +49,14 @@ related:
 
 ```mermaid
 flowchart LR
-  CLI[External client<br/>gNOI client]
-  subgraph NPU[NPU]
+  CLI["External client<br/>gNOI client"]
+  subgraph NPU["NPU"]
     NGMI[NPU GNMI Server]
-    SPL[GNMI/GNOI Splitter]
-    OFFL[Offloader<br/>GNOI client]
-    CT[Offloaded containers<br/>(Database / GNMI / HA)]
+    SPL["GNMI/GNOI Splitter"]
+    OFFL["Offloader<br/>GNOI client"]
+    CT["Offloaded containers<br/>(Database / GNMI / HA)"]
   end
-  subgraph DPU[DPU]
+  subgraph DPU["DPU"]
     DGMI[DPU GNMI Server]
     DHOST[DPU Host Services]
   end

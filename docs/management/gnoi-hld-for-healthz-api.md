@@ -49,10 +49,10 @@ SONiC では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ�
 
 ```mermaid
 flowchart LR
-    CL[gNOI client\n(gnoi_client / Go)] -->|gRPC :9339\nauthn/authz| UMF[gNMI/UMF server\n(telemetry)]
-    UMF -->|HealthzServer\nGet/Artifact/Ack| FE[FE: Healthz handler]
-    FE -->|HealthzCollect / HealthzCheck\nDBUS| HS[Host Service\n(debug_info module)]
-    HS -->|collect logs / DB / show tech| FS[(host filesystem\n*.tar.gz artifact)]
+    CL["gNOI client\n(gnoi_client / Go)"] -->|"gRPC :9339\nauthn/authz"| UMF["gNMI/UMF server\n(telemetry)"]
+    UMF -->|"HealthzServer\nGet/Artifact/Ack"| FE[FE: Healthz handler]
+    FE -->|"HealthzCollect / HealthzCheck\nDBUS"| HS["Host Service\n(debug_info module)"]
+    HS -->|"collect logs / DB / show tech"| FS[(host filesystem\n*.tar.gz artifact)]
 ```
 
 要点[^1]:

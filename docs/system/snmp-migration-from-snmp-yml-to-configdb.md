@@ -69,10 +69,10 @@ SNMP_USER|<user>
 
 ```mermaid
 flowchart TD
-    YAML[/etc/sonic/snmp.yml] --> CV[Python conversion script]
+    YAML["/etc/sonic/snmp.yml"] --> CV[Python conversion script]
     CV --> CDB[(CONFIG_DB SNMP*)]
     CDB --> J2[snmpd.conf.j2]
-    J2 --> SCONF[/etc/snmp/snmpd.conf]
+    J2 --> SCONF["/etc/snmp/snmpd.conf"]
 ```
 
 1. `docker-snmp` 起動時に Python コンバータが `snmp.yml` を読み、上記 3 テーブルに書き込む（毎回実行で冪等）。

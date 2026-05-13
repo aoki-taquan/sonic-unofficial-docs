@@ -152,9 +152,9 @@ def provision_module(self):
 
 ```mermaid
 flowchart LR
-    ST[(STATE_DB\nCHASSIS_MODULE_TABLE|*)] -->|SUBSCRIBE| PD[sonic-provisiond]
+    ST[("STATE_DB\nCHASSIS_MODULE_TABLE|*")] -->|SUBSCRIBE| PD[sonic-provisiond]
     PD --> CHK{oper_status == ProvisionReady?}
-    CHK -->|Yes| API[module.provision_module()]
+    CHK -->|Yes| API["module.provision_module()"]
     CHK -->|No| WAIT[継続購読]
 ```
 

@@ -41,10 +41,10 @@ related:
 
 ```mermaid
 flowchart LR
-    PD[pcied] --> PLAT[/usr/share/sonic/device/&lt;plat&gt;/pcie.yaml]
-    PD --> SYSFS[/sys/bus/pci/devices/...]
-    PD --> AER[/sys/.../aer_dev_*]
-    PD --> STATE[STATE_DB<br/>PCIE_DEVICE / PCIE_DETACH / PCIE_AER]
+    PD[pcied] --> PLAT["/usr/share/sonic/device/&lt;plat&gt;/pcie.yaml"]
+    PD --> SYSFS["/sys/bus/pci/devices/..."]
+    PD --> AER["/sys/.../aer_dev_*"]
+    PD --> STATE["STATE_DB<br/>PCIE_DEVICE / PCIE_DETACH / PCIE_AER"]
     SHOW[show platform pcieinfo] --> STATE
 ```
 

@@ -65,11 +65,11 @@ Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に
 
 ```mermaid
 flowchart LR
-    User1[admin SSH] --> CLI[wol CLI\n(sonic-utilities)]
+    User1[admin SSH] --> CLI["wol CLI\n(sonic-utilities)"]
     Client[gNOI Client] -->|gRPC| GNMI[sonic-gnmi\nSonicWolService.Wol]
     GNMI -->|D-Bus| HOST[sonic-host-service]
     HOST --> CLI
-    CLI -->|raw socket / UDP| NET[ターゲット (MAC)]
+    CLI -->|"raw socket / UDP"| NET["ターゲット (MAC)"]
 ```
 
 gNOI 側は最終的に同じ `wol` CLI を呼び出す形で実装される設計になっており、Magic Packet の組み立てと送信は CLI スクリプトに一本化される[^1]。

@@ -47,9 +47,9 @@ multi-ASIC platform では各 ASIC が **独自の swss / [syncd](../reference/g
 ```mermaid
 flowchart LR
     BGP[host BGP + asicN BGP\nGR enable] --> TEAM[teamd 全 namespace 停止]
-    TEAM --> SWSS[swss@asicN 全停止\nMAC learn off / orchagent freeze]
+    TEAM --> SWSS["swss@asicN 全停止\nMAC learn off / orchagent freeze"]
     SWSS --> DUMP[per-namespace Redis dump]
-    DUMP --> SYNCD[syncd@asicN 全 warm shutdown\nsai-warmboot.bin per-namespace]
+    DUMP --> SYNCD["syncd@asicN 全 warm shutdown\nsai-warmboot.bin per-namespace"]
     SYNCD --> DB[per-namespace database 停止]
     DB --> KEXEC[kexec\nSONIC_BOOT_TYPE=warm]
 ```

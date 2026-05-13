@@ -53,7 +53,7 @@ related:
 ```mermaid
 flowchart TD
     A[load_minigraph が終わらない] --> B{updategraph 待ち?}
-    B -- Yes --> B1[/etc/sonic/updategraph.conf を確認]
+    B -- Yes --> B1["/etc/sonic/updategraph.conf を確認"]
     B -- No --> C{sonic-cfggen で minigraph parse OK?}
     C -- No --> C1[minigraph.xml の XML 妥当性確認]
     C -- Yes --> D{config reload 内部で stuck?}

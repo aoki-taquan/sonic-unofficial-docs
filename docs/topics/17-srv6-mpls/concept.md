@@ -67,16 +67,16 @@ related:
 
 ```mermaid
 flowchart LR
-  subgraph CP[制御プレーン]
-    FRR[FRR<br/>bgpd / staticd]
-    BGPCFGD[bgpcfgd<br/>SRv6Mgr / MplsMgr]
+  subgraph CP["制御プレーン"]
+    FRR["FRR<br/>bgpd / staticd"]
+    BGPCFGD["bgpcfgd<br/>SRv6Mgr / MplsMgr"]
     FPMSYNCD[fpmsyncd]
   end
-  subgraph DP[データプレーン橋渡し]
+  subgraph DP["データプレーン橋渡し"]
     SRV6ORCH[srv6orch]
     ROUTEORCH[routeorch]
-    PORTSORCH[portsorch<br/>PT 属性]
-    SYNCD[syncd / SAI]
+    PORTSORCH["portsorch<br/>PT 属性"]
+    SYNCD["syncd / SAI"]
   end
   FRR --> FPMSYNCD --> ROUTEORCH
   BGPCFGD --> SRV6ORCH
@@ -168,9 +168,9 @@ SONiC は **Midpoint** を実装する側で、`PORT` テーブルの `pt_interf
 ```mermaid
 flowchart LR
   PKT[packet] --> CL{header}
-  CL -->|IPv6 + SRH| SR[SRv6 endpoint<br/>srv6orch / MY_SID]
-  CL -->|MPLS label| MP[MPLS LSP<br/>LABEL_ROUTE_TABLE]
-  CL -->|IPv6 + HbH-PT| PT[Path Tracing Midpoint<br/>PORT attrs]
+  CL -->|IPv6 + SRH| SR["SRv6 endpoint<br/>srv6orch / MY_SID"]
+  CL -->|MPLS label| MP["MPLS LSP<br/>LABEL_ROUTE_TABLE"]
+  CL -->|IPv6 + HbH-PT| PT["Path Tracing Midpoint<br/>PORT attrs"]
   SR --> FWD[L3 forwarding]
   MP --> FWD
   PT --> FWD
@@ -218,7 +218,7 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-    subgraph CFG[(CONFIG_DB)]
+    subgraph CFG["CONFIG_DB"]
         IF[INTERFACE.mpls]
         LOC[SRV6_MY_LOCATORS]
         SID[SRV6_MY_SIDS]
@@ -226,17 +226,17 @@ flowchart TB
         STR[SRV6_STEER]
         PT[PORT.pt_*]
     end
-    subgraph CTRL[制御面]
-        FRR[FRR<br/>bgpd / zebra / staticd]
-        BCFG[bgpcfgd / SRv6Mgr]
+    subgraph CTRL["制御面"]
+        FRR["FRR<br/>bgpd / zebra / staticd"]
+        BCFG["bgpcfgd / SRv6Mgr"]
         FPM[fpmsyncd]
     end
-    subgraph SWSS[swss]
+    subgraph SWSS["swss"]
         SRORC[srv6orch]
-        MORC[MplsOrch / RouteOrch]
+        MORC["MplsOrch / RouteOrch"]
         PORTORC[PortOrch]
     end
-    subgraph SAI[SAI / syncd]
+    subgraph SAI["SAI / syncd"]
         MYSID[MY_SID_ENTRY]
         SIDLIST[SRV6_SIDLIST]
         LBL[INSEG_ENTRY]

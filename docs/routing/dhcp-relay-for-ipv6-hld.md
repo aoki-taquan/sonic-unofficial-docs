@@ -108,9 +108,9 @@ SONiC の DHCPv4 リレーは `dhcp-relay` docker 内の `isc-dhcp` ベースの
 
 ```mermaid
 flowchart LR
-    subgraph DR[dhcp-relay docker]
-        V4[dhcrelay (IPv4 既存)]
-        V6[dhcrelay -6 (IPv6 新規)]
+    subgraph DR["dhcp-relay docker"]
+        V4["dhcrelay (IPv4 既存)"]
+        V6["dhcrelay -6 (IPv6 新規)"]
     end
     DOWN[Downstream VLAN\nGlobal IPv6 設定済] --> V6
     V6 -->|-u list| UP1[DHCPv6 Server 1]

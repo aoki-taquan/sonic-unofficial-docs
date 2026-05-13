@@ -59,13 +59,13 @@ related:
 
 ```mermaid
 flowchart LR
-  HW[voltage / current<br/>controller IC] --> PA[platform API<br/>VoltageBase / CurrentBase]
-  PA --> SM[SensorMon daemon<br/>(PMON 内)]
-  SM -->|poll| SDB[STATE_DB<br/>VOLTAGE_INFO / CURRENT_INFO 等]
-  SM -->|threshold 超過| SYS[syslog<br/>minor / major / critical]
-  SM --> SH[system health<br/>aggregation]
-  SDB --> CLI[show platform voltage / current]
-  SDB --> SNMP[Entity MIB / Entity Sensor MIB]
+  HW["voltage / current<br/>controller IC"] --> PA["platform API<br/>VoltageBase / CurrentBase"]
+  PA --> SM["SensorMon daemon<br/>(PMON 内)"]
+  SM -->|poll| SDB["STATE_DB<br/>VOLTAGE_INFO / CURRENT_INFO 等"]
+  SM -->|threshold 超過| SYS["syslog<br/>minor / major / critical"]
+  SM --> SH["system health<br/>aggregation"]
+  SDB --> CLI["show platform voltage / current"]
+  SDB --> SNMP["Entity MIB / Entity Sensor MIB"]
 ```
 
 ### platform API

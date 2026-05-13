@@ -56,14 +56,14 @@ related:
 
 ```mermaid
 flowchart LR
-    SAI[SAI port/RIF stats] --> FC1[Flex Counter\n(既存 port/rif counters, 1s)]
+    SAI["SAI port/RIF stats"] --> FC1["Flex Counter\n(既存 port/rif counters, 1s)"]
     FC1 --> CDB1[(COUNTERS_DB\nCOUNTERS:vid)]
-    CDB1 -->|新 FC group| FC2[Flex Counter\n(PORT_RATES / RIF_RATES)]
-    FC2 -->|Lua plugin| CALC[計算\n(diff/delta + EMA)]
-    SP[(CONFIG_DB\nPORT speed / RIF speed)] --> CALC
+    CDB1 -->|新 FC group| FC2["Flex Counter\n(PORT_RATES / RIF_RATES)"]
+    FC2 -->|Lua plugin| CALC["計算\n(diff/delta + EMA)"]
+    SP[("CONFIG_DB\nPORT speed / RIF speed")] --> CALC
     SCFG[(CONFIG_DB\nRATES.PORT_ALPHA, RIF_ALPHA)] --> CALC
     CALC --> CDB2[(COUNTERS_DB\nRATES:vid)]
-    CDB2 --> CLI[portstat / intfstat]
+    CDB2 --> CLI["portstat / intfstat"]
 ```
 
 要点[^1]:

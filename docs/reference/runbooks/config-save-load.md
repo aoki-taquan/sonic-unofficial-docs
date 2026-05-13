@@ -49,8 +49,8 @@ related:
 
 ```mermaid
 flowchart TD
-    A[config save/load が失敗] --> B{write 権限 OK?}
-    B -- No --> B1[/etc/sonic の権限を修正]
+    A["config save/load が失敗"] --> B{write 権限 OK?}
+    B -- No --> B1["/etc/sonic の権限を修正"]
     B -- Yes --> C{JSON parse OK?}
     C -- No --> C1[jq でフォーマット確認]
     C -- Yes --> D{load 時に YANG エラー?}

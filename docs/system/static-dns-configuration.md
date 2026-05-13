@@ -40,14 +40,14 @@ flowchart LR
     User[CLI: config dns nameserver] --> CDB[(CONFIG_DB\nDNS_NAMESERVER)]
     MG[Minigraph\nDnsNameserverResources] -->|sonic-cfggen| CDB
     CDB -->|change notify| HC[hostcfgd]
-    HC -->|systemctl restart| RS[resolv-config.service\n(oneshot)]
+    HC -->|systemctl restart| RS["resolv-config.service\n(oneshot)"]
     RS --> SH[resolv-config.sh]
     SH -->|render| TPL[resolv.conf.j2]
-    SH -->|disable dynamic / enable static| RC[resolvconf]
-    RC --> RESOLV[/etc/resolv.conf]
+    SH -->|"disable dynamic / enable static"| RC[resolvconf]
+    RC --> RESOLV["/etc/resolv.conf"]
     RC -->|plugin| UC[update-containers]
-    UC -->|cp /etc/resolv.conf into| DOCKERS[各 Docker container]
-    DHCP[DHCP on mgmt intf] -.->|<intf>.dhclient| RC
+    UC -->|"cp /etc/resolv.conf into"| DOCKERS[各 Docker container]
+    DHCP[DHCP on mgmt intf] -.->|"<intf>.dhclient"| RC
 ```
 
 ### 設定優先のロジック

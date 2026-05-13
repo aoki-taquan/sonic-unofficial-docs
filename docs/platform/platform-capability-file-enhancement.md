@@ -118,10 +118,10 @@ HLD のサンプル[^1]:
 
 ```mermaid
 flowchart LR
-    PJ[platform.json\n(ベンダ提供)] --> PAPI[Platform API\nsonic-platform-common]
+    PJ["platform.json\n(ベンダ提供)"] --> PAPI[Platform API\nsonic-platform-common]
     PAPI --> APP1[thermalctld]
-    PAPI --> APP2[pmon / fan control]
-    PAPI --> APP3[CLI / show platform *]
+    PAPI --> APP2["pmon / fan control"]
+    PAPI --> APP3["CLI / show platform *"]
     APP1 -.read capability.-> PJ
     APP2 -.controllable check.-> PJ
 ```

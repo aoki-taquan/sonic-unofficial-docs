@@ -73,12 +73,12 @@ FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
 ```mermaid
 flowchart LR
     SAI[SAI counters\nIF_IN_FEC_*] --> COUNTERS[COUNTER_DB:COUNTERS]
-    COUNTERS --> LUA[port_flr.lua\n(plugin under PORT_STAT)]
+    COUNTERS --> LUA["port_flr.lua\n(plugin under PORT_STAT)"]
     CFG[CONFIG_DB\nFLEX_COUNTER_TABLE\nflr-interval-factor] --> FCO[FlexCounterOrch]
     FCO --> FCDB[FLEX_COUNTER_DB\nFLR_INTERVAL_FACTOR]
     FCDB --> LUA
-    LUA --> RATES[COUNTER_DB:RATES\nFEC_FLR / FEC_FLR_PREDICTED / *_last]
-    RATES --> CLI[portstat -f / show fec-stats]
+    LUA --> RATES["COUNTER_DB:RATES\nFEC_FLR / FEC_FLR_PREDICTED / *_last"]
+    RATES --> CLI["portstat -f / show fec-stats"]
     RATES --> TEL[telemetry]
 ```
 
@@ -112,7 +112,7 @@ flowchart LR
 flowchart TD
     A[Δ uncorrectable_cw\n= NOT_CORR - NOT_CORR_last] --> C
     B[Δ correctable_cw\n+ Δ S0\n= 全 cw - uncorrectable] --> C
-    C[CER = Δ uncorrectable / Δ total]
+    C["CER = Δ uncorrectable / Δ total"]
     C --> D{interleaving X}
     D -->|X=1| E1[FLR = 1.125 * CER]
     D -->|X=2| E2[FLR = 2.125 * CER]

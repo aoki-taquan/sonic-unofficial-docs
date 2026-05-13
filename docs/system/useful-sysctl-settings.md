@@ -158,9 +158,9 @@ sysctl -p /etc/sysctl.d/99frr_defaults.conf
 
 ```mermaid
 flowchart LR
-    F[/etc/sysctl.d/99frr_defaults.conf/] -->|boot or sysctl -p| K[Linux kernel\nsysctl values]
-    K --> FRR[FRR\nbgpd / ospfd / zebra]
-    K --> KERNEL[Forwarding plane\n(Linux netdev / RIB)]
+    F[/"etc/sysctl.d/99frr_defaults.conf"/] -->|boot or sysctl -p| K[Linux kernel\nsysctl values]
+    K --> FRR["FRR\nbgpd / ospfd / zebra"]
+    K --> KERNEL["Forwarding plane\n(Linux netdev / RIB)"]
 ```
 
 <!-- evidence:

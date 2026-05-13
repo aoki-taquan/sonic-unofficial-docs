@@ -59,9 +59,9 @@ SONiC は upstream `frrouting/frr` を **branch スナップショット + per-r
 ```mermaid
 flowchart LR
     PICK[upstream tag 選定\nfrr X.Y.Z] --> FORK[sonic-frr リポジトリで\nbranch を up-rebase]
-    FORK --> PATCH[patches/ ディレクトリの\n.patch 群を rebase]
+    FORK --> PATCH["patches/ ディレクトリの\n.patch 群を rebase"]
     PATCH --> BUILD[docker-fpm-frr 再ビルド]
-    BUILD --> SMOKE[sonic-mgmt smoke\n(BGP / OSPF / GR / VRF / PIM)]
+    BUILD --> SMOKE["sonic-mgmt smoke\n(BGP / OSPF / GR / VRF / PIM)"]
     SMOKE --> PR[sonic-buildimage で\nsubmodule pin 更新 PR]
     PR --> CI[community CI 全 platform]
     CI --> MERGE[merge → release branch backport]

@@ -50,16 +50,16 @@ BMC (Board Management Controller) は switch メインボード上の **out-of-b
 
 ```mermaid
 flowchart LR
-    BJSON[device/platform/bmc.json]
+    BJSON["device/platform/bmc.json"]
     GBD[device_info.get_bmc_data]
     CFG[sonic-cfggen]
     DM[CONFIG_DB.DEVICE_METADATA bmc]
     INT[interfaces.j2]
-    NET[/etc/network/interfaces]
+    NET["/etc/network/interfaces"]
     BJSON --> GBD --> CFG --> DM --> INT --> NET
-    CLI[show platform bmc / config firmware install] --> CB[ComponentBMC]
+    CLI["show platform bmc / config firmware install"] --> CB[ComponentBMC]
     CB --> RC[RedfishClient]
-    RC --> BMC[(BMC / Redfish API)]
+    RC --> BMC[("BMC / Redfish API")]
 ```
 
 ## どこに何が書かれるか

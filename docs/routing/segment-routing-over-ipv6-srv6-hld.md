@@ -103,9 +103,9 @@ ROUTE_TABLE:<vrf>:<prefix>: {  ... + segment list  }
 
 ```mermaid
 flowchart LR
-  CFG[CONFIG_DB SRV6_*] --> CFGD[swss script / Translib<br/>※ master に独立した srv6cfgd 等のプロセスは未実装]
+  CFG[CONFIG_DB SRV6_*] --> CFGD["swss script / Translib<br/>※ master に独立した srv6cfgd 等のプロセスは未実装"]
   CFGD --> APP[(APPL_DB SRV6_*)]
-  FRR[FRR srv6 (将来)] --> FPM[fpmsyncd] --> APP
+  FRR["FRR srv6 (将来)"] --> FPM[fpmsyncd] --> APP
   APP --> ORCH[Srv6Orch]
   ORCH --> ASIC[(ASIC_DB)]
   ASIC --> SAI[SAI SRv6 attributes]

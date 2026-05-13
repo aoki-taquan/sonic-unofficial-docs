@@ -53,12 +53,12 @@ related:
 
 ```mermaid
 flowchart LR
-    CLI[config banner ...] --> CDB[(CONFIG_DB\nBANNER_MESSAGE|MESSAGE)]
+    CLI[config banner ...] --> CDB[("CONFIG_DB\nBANNER_MESSAGE|MESSAGE")]
     CDB -->|notify| HC[hostcfgd]
     HC -->|systemctl restart| BC[banner-config service]
     BC -->|read CONFIG_DB| CDB
-    BC -->|/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message| FS[Linux fs]
-    Login[SSH/local login] --> FS
+    BC -->|"/etc/issue, /etc/issue.net,\n/etc/motd, /etc/logout_message"| FS[Linux fs]
+    Login["SSH/local login"] --> FS
 ```
 
 `banner-config` は **SSH を受け付ける前段階で起動する単発サービス** として設計されており、CONFIG_DB から現在の値を読んで対応するファイルに書き出す[^1]。`hostcfgd` は CONFIG_DB の `BANNER_MESSAGE` テーブルを購読しており、変更があれば `banner-config` を再実行する。

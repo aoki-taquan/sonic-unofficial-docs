@@ -46,12 +46,12 @@ related:
 
 ```mermaid
 flowchart LR
-  CLI[config aaa / tacacs] --> CDB[(CONFIG_DB:<br>AAA / TACPLUS /<br>TACPLUS_SERVER)]
+  CLI["config aaa / tacacs"] --> CDB[("CONFIG_DB:<br>AAA / TACPLUS /<br>TACPLUS_SERVER")]
   CDB --> HC[hostcfgd AaaCfg]
-  HC --> PAM[/etc/pam.d/common-auth-sonic/]
-  HC --> NSS[/etc/tacplus_nss.conf]
-  HC --> NSWITCH[/etc/nsswitch.conf]
-  SSH[SSH / Console] --> PAMLIB[PAM]
+  HC --> PAM[/"etc/pam.d/common-auth-sonic"/]
+  HC --> NSS["/etc/tacplus_nss.conf"]
+  HC --> NSWITCH["/etc/nsswitch.conf"]
+  SSH["SSH / Console"] --> PAMLIB[PAM]
   PAMLIB --> PAM --> TAC[(TACACS+ server)]
 ```
 

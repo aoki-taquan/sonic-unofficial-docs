@@ -53,13 +53,13 @@ VMA は 5 mV 刻みで 0〜1275 mV、OMA は 0.1 µW 刻みで 0〜6.5535 mW (�
 
 ```mermaid
 flowchart LR
-  Mod[(LPO module<br>page C1h/C2h)] -->|i2c| Xcvrd[xcvrd in PMON]
+  Mod[("LPO module<br>page C1h/C2h")] -->|i2c| Xcvrd[xcvrd in PMON]
   Xcvrd -->|CmisEnhancedLpoApi| State[(STATE_DB)]
   subgraph STATE_DB
-    TI[TRANSCEIVER_INFO|EthernetX]
-    TD[TRANSCEIVER_DOM_SENSOR|EthernetX]
-    TT[TRANSCEIVER_DOM_THRESHOLD|EthernetX]
-    TF[TRANSCEIVER_DOM_FLAG|EthernetX<br>+SET/CLEAR_TIME / CHANGE_COUNT]
+    TI["TRANSCEIVER_INFO|EthernetX"]
+    TD["TRANSCEIVER_DOM_SENSOR|EthernetX"]
+    TT["TRANSCEIVER_DOM_THRESHOLD|EthernetX"]
+    TF["TRANSCEIVER_DOM_FLAG|EthernetX<br>+SET/CLEAR_TIME / CHANGE_COUNT"]
   end
   State --> TI
   State --> TD

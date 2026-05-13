@@ -60,11 +60,11 @@ ISC dhcrelay 側はこの `-pg` オプションをサポートする拡張が必
 
 ```mermaid
 flowchart LR
-    MG[Minigraph / config_db.json\nVLAN_INTERFACE.secondary] --> CFG[(CONFIG_DB\nVLAN_INTERFACE)]
+    MG["Minigraph / config_db.json\nVLAN_INTERFACE.secondary"] --> CFG[(CONFIG_DB\nVLAN_INTERFACE)]
     CFG --> J2[docker-dhcp-relay の supervisord.conf 生成]
     J2 --> SUP[supervisord]
-    SUP --> RELAY[/usr/sbin/dhcrelay -pg <primary>]
-    Client[DHCP DISCOVER from VM/host] --> RELAY
+    SUP --> RELAY["/usr/sbin/dhcrelay -pg <primary>"]
+    Client["DHCP DISCOVER from VM/host"] --> RELAY
     RELAY -->|giaddr := primary| Server[DHCP server]
 ```
 

@@ -69,8 +69,8 @@ IETF `draft-ietf-rtgwg-bgp-pic` を SONiC で実装するアーキテクチャ�
 
 ```mermaid
 flowchart LR
-  PFX[(prefix r1, r2, ..., rn)] --> NHGS[NHG-Service<br/>= remote nexthop list<br/>(PE1, PE2)]
-  NHGS --> NHGU[NHG-Underlay<br/>per remote PE]
+  PFX[(prefix r1, r2, ..., rn)] --> NHGS["NHG-Service<br/>= remote nexthop list<br/>(PE1, PE2)"]
+  NHGS --> NHGU["NHG-Underlay<br/>per remote PE"]
   NHGU --> IFA[Intf-A]
   NHGU --> IFB[Intf-B]
 ```

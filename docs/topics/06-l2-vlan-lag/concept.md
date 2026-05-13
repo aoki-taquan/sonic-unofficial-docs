@@ -107,10 +107,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  Peer((Router)) ==|trunk: Vlan10/20/30| Eth[Ethernet5]
+  Peer((Router)) ==>|"trunk: Vlan10/20/30"| Eth[Ethernet5]
   Eth --- Br10[Vlan10 bridge]
   Eth --- Br20[Vlan20 bridge]
-  Eth -. dot1q .100 .- Sub[Ethernet5.100<br/>L3 sub-port]
+  Eth -.->|"dot1q .100"| Sub["Ethernet5.100<br/>L3 sub-port"]
 ```
 
 同じ物理ポートで、ある VLAN は L2 bridge に入れ、別の VLAN は dot1q L3 sub-port として終端する、という構成も可能です。bridge と sub-port の使い分けは VLAN ごとに別になる点に注意します。

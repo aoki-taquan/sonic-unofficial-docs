@@ -51,11 +51,11 @@ SONiC の installer ビルドの最終ステップ（`SONIC_INSTALLERS` ター�
 ```mermaid
 flowchart TD
   subgraph 並列実行可
-    S1[Stage 1<br>1) base image<br>2) 外部 packages<br>3) initramfs / kernel]
-    OTH[他のビルド成果物<br>(docker images, debs, 等)]
+    S1["Stage 1<br>1) base image<br>2) 外部 packages<br>3) initramfs / kernel"]
+    OTH["他のビルド成果物<br>(docker images, debs, 等)"]
   end
   S1 --> SQ[(rootfs.squashfs)]
-  SQ --> S2[Stage 2<br>4) artifact 配置<br>5) ONIE payload 生成]
+  SQ --> S2["Stage 2<br>4) artifact 配置<br>5) ONIE payload 生成"]
   OTH --> S2
   S2 --> INST[SONIC_INSTALLERS]
 ```

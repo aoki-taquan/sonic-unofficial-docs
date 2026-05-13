@@ -53,14 +53,14 @@ SONiC コンポーネント（特に OrchAgent モジュール）が **内部状
 
 ```mermaid
 flowchart LR
-    CLI["CLI: show debug <comp>"] --> APP[(APPL_DB<br/>Dump table)]
+    CLI["CLI: show debug <comp>"] --> APP[("APPL_DB<br/>Dump table")]
     ASSERT[custom_assert] --> APP
-    APP -- pub/sub --> FW[Debugframework<br/>singleton]
+    APP -- pub/sub --> FW["Debugframework<br/>singleton"]
     FW --> CB1[RouteOrch dump]
     FW --> CB2[NeighborOrch dump]
-    CB1 --> OUT[/var/log/<comp>_dump.log<br/>or syslog]
+    CB1 --> OUT["/var/log/<comp>_dump.log<br/>or syslog"]
     CB2 --> OUT
-    OUT --> POST[Post-action<br/>compress-rotate / upload]
+    OUT --> POST["Post-action<br/>compress-rotate / upload"]
 ```
 
 ### Framework クラスと登録 API

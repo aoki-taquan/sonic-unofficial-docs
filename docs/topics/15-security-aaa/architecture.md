@@ -39,7 +39,7 @@ related:
 
 ```mermaid
 flowchart LR
-  U[User SSH/serial] --> SSHD[sshd / login]
+  U["User SSH/serial"] --> SSHD["sshd / login"]
   SSHD --> PAM[PAM stack]
   PAM -->|primary| TAC[pam_tacplus]
   PAM -->|fallback| LOCAL[pam_unix local]
@@ -47,7 +47,7 @@ flowchart LR
   PAM -->|alt| LDAP[pam_ldap]
   TAC --> NSS[NSS]
   LOCAL --> NSS
-  NSS -->|nss_tacplus / nss_ldap / files| ID[uid/gid resolution]
+  NSS -->|"nss_tacplus / nss_ldap / files"| ID["uid/gid resolution"]
   ID --> SHELL[shell + sudoers]
 ```
 
@@ -60,13 +60,13 @@ SSH の global config、serial console、banner、[AAA](../../reference/glossary
 ```mermaid
 flowchart LR
   CFG[(CONFIG_DB)] --> HOST[hostcfgd]
-  HOST -->|render| SSHCONF[/etc/ssh/sshd_config]
-  HOST -->|render| PAMCONF[/etc/pam.d/*]
-  HOST -->|render| NSSCONF[/etc/nsswitch.conf]
-  HOST -->|render| TACCONF[/etc/tacplus_*]
-  HOST -->|render| BANN[/etc/issue and /etc/motd]
+  HOST -->|render| SSHCONF["/etc/ssh/sshd_config"]
+  HOST -->|render| PAMCONF["/etc/pam.d/*"]
+  HOST -->|render| NSSCONF["/etc/nsswitch.conf"]
+  HOST -->|render| TACCONF["/etc/tacplus_*"]
+  HOST -->|render| BANN["/etc/issue and /etc/motd"]
   HOST -->|reload| SSHD[sshd]
-  HOST -->|reload| GETTY[serial-getty@]
+  HOST -->|reload| GETTY["serial-getty@"]
 ```
 
 SSH の global config テーブルと挙動の境界は [SSH server global config HLD](../../management/ssh-server-global-config-hld.md) に、serial console 側は [serial console global config HLD](../../management/serial-console-global-config-hld.md) にあります。

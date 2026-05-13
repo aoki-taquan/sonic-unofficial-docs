@@ -57,12 +57,12 @@ related:
 ```mermaid
 flowchart TD
     A[config save しても再起動後に消える] --> B{config_db.json に書き込まれた?}
-    B -- No --> B1[config save の戻り値 / 権限を確認]
+    B -- No --> B1["config save の戻り値 / 権限を確認"]
     B -- Yes --> C{minigraph.xml が優先されている?}
-    C -- Yes --> C1[/etc/sonic/updategraph.conf を disable]
+    C -- Yes --> C1["/etc/sonic/updategraph.conf を disable"]
     C -- No --> D{config_db.json の JSON 妥当?}
     D -- No --> D1[sonic-cfggen で syntax 確認]
-    D -- Yes --> E[load_minigraph / write_standby スクリプトを確認]
+    D -- Yes --> E["load_minigraph / write_standby スクリプトを確認"]
 ```
 
 ## 確認コマンド

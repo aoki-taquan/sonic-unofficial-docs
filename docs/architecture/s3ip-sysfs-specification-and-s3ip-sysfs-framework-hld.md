@@ -75,21 +75,21 @@ S3IP sysfs は 2 部構成[^1]:
 
 ```mermaid
 flowchart TB
-    subgraph user[user space]
+    subgraph user["user space"]
       PA[platform API]
-      DBG[debug tool / monitor]
-      SVC[s3ip-sysfs.service<br/>config: /etc/s3ip/s3ip_sysfs_conf.json]
+      DBG["debug tool / monitor"]
+      SVC["s3ip-sysfs.service<br/>config: /etc/s3ip/s3ip_sysfs_conf.json"]
     end
     subgraph kernel
-      S3IP[s3ip_sysfs.ko<br/>共通フレームワーク]
-      VDRV[vendor driver<br/>fan / psu / temp / ...]
+      S3IP["s3ip_sysfs.ko<br/>共通フレームワーク"]
+      VDRV["vendor driver<br/>fan / psu / temp / ..."]
     end
-    SVC -->|起動時| KMOD[lsmod / insmod]
+    SVC -->|起動時| KMOD["lsmod / insmod"]
     KMOD --> S3IP
     KMOD --> VDRV
     VDRV -->|register hooks| S3IP
-    S3IP --> SYS[/sys/s3ip/...]
-    SVC -->|symlink/string<br/>を生成| SW[/sys_switch/...]
+    S3IP --> SYS["/sys/s3ip/..."]
+    SVC -->|"symlink/string<br/>を生成"| SW["/sys_switch/..."]
     SW -.linkまたはfile.-> SYS
     PA --> SW
     DBG --> SW

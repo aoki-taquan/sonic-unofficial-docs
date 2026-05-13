@@ -44,10 +44,10 @@ SONiC の [syncd](../reference/glossary.md#term-syncd) は **OCP [SAI](../refere
 
 ```mermaid
 flowchart LR
-    SAIH[sonic-sairedis\nSAI headers (OCP SAI submodule)] --> SYNCD[syncd 本体\n(コンパイル対象)]
-    VENDH[vendor SAI headers\n(Mellanox-SAI 等。一部ベンダーのみ)] --> VLIB[vendor libsai.so\n(sonic-buildimage)]
+    SAIH["sonic-sairedis\nSAI headers (OCP SAI submodule)"] --> SYNCD["syncd 本体\n(コンパイル対象)"]
+    VENDH["vendor SAI headers\n(Mellanox-SAI 等。一部ベンダーのみ)"] --> VLIB["vendor libsai.so\n(sonic-buildimage)"]
     SYNCD -->|link| VLIB
-    SYNCD -->|sai_query_api_version()\nビルド時 AC_TRY_RUN| VLIB
+    SYNCD -->|"sai_query_api_version()\nビルド時 AC_TRY_RUN"| VLIB
 ```
 
 ベンダーによっては SAI ヘッダを公開しているところ（Mellanox-SAI など）と、`libsai.so` バイナリのみ配布するところがある。後者の場合「ヘッダだけ更新して libsai を放置」が容易に起こり得るため、本機能の効果が大きい[^1]。

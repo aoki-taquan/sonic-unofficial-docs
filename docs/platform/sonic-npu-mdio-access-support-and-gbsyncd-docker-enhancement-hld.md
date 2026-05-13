@@ -48,19 +48,19 @@ related:
 
 ```mermaid
 flowchart LR
-  subgraph syncd_docker[syncd docker]
-    SY[syncd<br/>VendorSai]
-    MS[MdioIpcServer<br/>Unix socket /tmp/...]
+  subgraph syncd_docker["syncd docker"]
+    SY["syncd<br/>VendorSai"]
+    MS["MdioIpcServer<br/>Unix socket /tmp/..."]
     SY --> NPU[NPU SAI]
     SY --- MS
   end
-  subgraph gbsyncd_docker[gbsyncd docker (単一)]
-    GB[syncd instance<br/>--paiInstance N]
-    VP[VendorPai class<br/>VendorSai 継承]
+  subgraph gbsyncd_docker["gbsyncd docker (単一)"]
+    GB["syncd instance<br/>--paiInstance N"]
+    VP["VendorPai class<br/>VendorSai 継承"]
     GB --> VP
-    VP -. dlopen .-> PAI[PAI library<br/>vendor 別]
+    VP -. dlopen .-> PAI["PAI library<br/>vendor 別"]
     VP -. dlopen .-> MAL[MDIO access lib]
-    MAL -.->|sysfs or<br/>IPC client| EXT
+    MAL -.->|"sysfs or<br/>IPC client"| EXT
   end
   EXT[(External PHY)]
   MAL -- Unix socket --> MS

@@ -54,9 +54,9 @@ SONiC の SSH サーバは Debian 標準 `sshd` をそのまま使う構成で�
 flowchart LR
     User[CONFIG_DB 編集] --> CDB[(CONFIG_DB\nSSH_SERVER.POLICIES)]
     CDB -->|notify| HC[hostcfgd]
-    HC -->|update| SSHD[/etc/ssh/sshd_config]
-    HC -->|render limits.conf.j2| LIM[/etc/security/limits.conf]
-    HC -->|系列共通の inactivity flow| TM[/etc/profile.d/* など]
+    HC -->|update| SSHD["/etc/ssh/sshd_config"]
+    HC -->|render limits.conf.j2| LIM["/etc/security/limits.conf"]
+    HC -->|系列共通の inactivity flow| TM["/etc/profile.d/* など"]
     HC -->|systemctl restart| SVC[ssh service]
 ```
 

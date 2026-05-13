@@ -68,7 +68,7 @@ flowchart TB
       SUP1 -->|SSH 順次| LC3A[LC3 bgpcfgd]
     end
     subgraph 新[新方式: CHASSIS_APP_DB pub/sub]
-      SUP2[Supervisor TSA cmd] --> CDB[(CHASSIS_APP_DB\nBGP_DEVICE_GLOBAL|STATE\ntsa_enabled)]
+      SUP2[Supervisor TSA cmd] --> CDB[("CHASSIS_APP_DB\nBGP_DEVICE_GLOBAL|STATE\ntsa_enabled")]
       CDB --> LCB1[LC1 asic bgpcfgd]
       CDB --> LCB2[LC2 asic bgpcfgd]
       CDB --> LCB3[LC3 asic bgpcfgd]

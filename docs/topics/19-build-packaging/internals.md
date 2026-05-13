@@ -34,13 +34,13 @@ build / packaging / application extension の内部実装は「[sonic-buildimage
 
 ```mermaid
 flowchart TB
-  SRC[sonic-buildimage tree<br/>+ submodules] --> SLAVE[sonic-slave-* docker<br/>build container]
-  SLAVE --> DEBS[*.deb<br/>per-package build]
-  SLAVE --> DOCKERS[docker images<br/>swss/syncd/bgp/...]
+  SRC["sonic-buildimage tree<br/>+ submodules"] --> SLAVE["sonic-slave-* docker<br/>build container"]
+  SLAVE --> DEBS["*.deb<br/>per-package build"]
+  SLAVE --> DOCKERS["docker images<br/>swss/syncd/bgp/..."]
   DEBS --> ROOTFS[rootfs squashfs]
   DOCKERS --> ROOTFS
-  ROOTFS --> ONIE[onie-installer.bin<br/>or *.bin / *.swi]
-  ONIE -->|sonic-installer| HOST[/host/image-*/]
+  ROOTFS --> ONIE["onie-installer.bin<br/>or *.bin / *.swi"]
+  ONIE -->|sonic-installer| HOST[/"host/image-*"/]
   HOST --> RUNTIME[runtime SONiC]
 ```
 
@@ -48,11 +48,11 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  CLI[sonic-package-manager install] --> MANIFEST[package manifest<br/>JSON]
+  CLI[sonic-package-manager install] --> MANIFEST["package manifest<br/>JSON"]
   MANIFEST --> REG[docker registry pull]
   REG --> SPM[sonic-package-manager]
-  SPM --> FEATURE[(CONFIG_DB<br/>FEATURE table)]
-  SPM --> SVC[/etc/systemd/system/*.service<br/>render]
+  SPM --> FEATURE[("CONFIG_DB<br/>FEATURE table")]
+  SPM --> SVC["/etc/systemd/system/*.service<br/>render"]
   FEATURE --> HOSTCFGD[hostcfgd]
   HOSTCFGD --> SYSTEMD[systemd start docker]
 ```

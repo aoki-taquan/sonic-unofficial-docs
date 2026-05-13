@@ -112,7 +112,7 @@ CoppOrch は **CPU queue ごとの新 trap group** を処理し、[ACL](../refer
 ```mermaid
 graph LR
     P4[P4Runtime] -->|write socket| NDV[send_to_ingress netdev]
-    NDV --> CPU[CPU port (ASIC)]
+    NDV --> CPU["CPU port (ASIC)"]
     CPU --> PIPE[forwarding pipeline]
     PIPE --> EGR[egress port 自動選択]
 ```

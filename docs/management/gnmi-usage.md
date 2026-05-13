@@ -54,10 +54,10 @@ SONiC の telemetry コンテナには **3 つの [gNMI](../reference/glossary.m
 
 ```mermaid
 flowchart LR
-    A[client tool\n(gnmi_get / gnmi_set / gnmi_cli)] -->|gRPC :8080\nuser/pass or cert| B[telemetry container\nsonic-gnmi server]
+    A["client tool\n(gnmi_get / gnmi_set / gnmi_cli)"] -->|"gRPC :8080\nuser/pass or cert"| B[telemetry container\nsonic-gnmi server]
     B -->|target=OC-YANG| C[transformer\n→ sonic-mgmt-common]
     B -->|target=SONIC-YANG| D[sonic YANG → CONFIG_DB]
-    B -->|target=CONFIG_DB / COUNTERS_DB| E[redis DB 直接アクセス]
+    B -->|"target=CONFIG_DB / COUNTERS_DB"| E[redis DB 直接アクセス]
 ```
 
 ### 認証

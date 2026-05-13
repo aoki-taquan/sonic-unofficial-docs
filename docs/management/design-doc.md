@@ -48,23 +48,23 @@ DualToR active-standby（mux-cable 系）とは別系列の active-active 用設
 
 ```mermaid
 flowchart LR
-  subgraph PMON[PMON container]
-    YC[ycabled / linkmgr]
+  subgraph PMON["PMON container"]
+    YC["ycabled / linkmgr"]
     GC[gRPC client daemon]
   end
-  subgraph HOST[Switch Host (NPU)]
+  subgraph HOST["Switch Host (NPU)"]
     PMON
-    SDB[STATE_DB<br/>gRPC channel state]
-    APPL[APPL_DB<br/>MUX_CABLE etc.]
+    SDB["STATE_DB<br/>gRPC channel state"]
+    APPL["APPL_DB<br/>MUX_CABLE etc."]
   end
-  subgraph FPGA[FPGA]
+  subgraph FPGA["FPGA"]
   end
-  subgraph SOC[SoC]
-    SRV[gRPC server<br/>(DualToRActive service)]
+  subgraph SOC["SoC"]
+    SRV["gRPC server<br/>(DualToRActive service)"]
   end
   YC --> GC
-  GC -->|TLS gRPC<br/>loopback IP として src| SRV
-  SRV -->|async notification<br/>(maintenance/shutdown)| GC
+  GC -->|"TLS gRPC<br/>loopback IP として src"| SRV
+  SRV -->|"async notification<br/>(maintenance/shutdown)"| GC
   GC --> SDB
   ORCH[orchagent] -.- APPL
 ```

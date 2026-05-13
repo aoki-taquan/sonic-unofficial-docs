@@ -45,12 +45,12 @@ SONiC のシステム時刻は外部 NTP サーバから同期する[^1]。本 [
 
 ```mermaid
 flowchart LR
-    CFG[CONFIG_DB\nNTP / NTP_SERVER / NTP_KEY / MGMT_VRF_CONFIG] --> HC[hostcfgd]
-    HC --> CONF[/etc/ntp.conf or\n/etc/chrony/chrony.conf]
-    HC --> SVC[ntp / chronyd service]
+    CFG["CONFIG_DB\nNTP / NTP_SERVER / NTP_KEY / MGMT_VRF_CONFIG"] --> HC[hostcfgd]
+    HC --> CONF["/etc/ntp.conf or\n/etc/chrony/chrony.conf"]
+    HC --> SVC["ntp / chronyd service"]
     SVC --> SRV[(NTP servers)]
     SVC --> CLOCK[Linux system clock]
-    CLOCK --> APP[全 SONiC service\n(syslog / counters / cert valid 等)]
+    CLOCK --> APP["全 SONiC service\n(syslog / counters / cert valid 等)"]
 ```
 
 `hostcfgd` は CONFIG_DB の変化に追従して config を再生成し、サービスを reload する。

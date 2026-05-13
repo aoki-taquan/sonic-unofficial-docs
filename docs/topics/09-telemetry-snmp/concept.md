@@ -97,11 +97,11 @@ Telemetry / SNMP 系は基本的に **management plane** に属しますが、�
 
 ```mermaid
 flowchart LR
-  Q1[いまの値?] --> POLL[SNMP / show / CLI]
-  Q2[変化を受けたい] --> STREAM[gNMI telemetry / sFlow / DTel]
-  Q3[障害時の状態は?] --> EV[syslog / event / coredump / kdump]
+  Q1[いまの値?] --> POLL["SNMP / show / CLI"]
+  Q2[変化を受けたい] --> STREAM["gNMI telemetry / sFlow / DTel"]
+  Q3[障害時の状態は?] --> EV["syslog / event / coredump / kdump"]
   Q4[resource は足りてる?] --> CRM[CRM]
-  POLL --> DB[(Redis<br>COUNTERS_DB<br>STATE_DB)]
+  POLL --> DB[("Redis<br>COUNTERS_DB<br>STATE_DB")]
   STREAM --> DB
   CRM --> DB
   EV --> TS[techsupport tarball]
@@ -131,13 +131,13 @@ CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を STATE
 
 ```mermaid
 flowchart TB
-  ALERT[NMS アラート<br>BGP flap 03:14] --> Q1{何が見たい?}
-  Q1 -->|直近の値| CLI[show interfaces counters<br>show bgp summary]
-  Q1 -->|変化の履歴| GNMI[gNMI Subscribe 履歴<br>collector 側 TSDB]
-  Q1 -->|その時刻のログ| SYSLOG[/var/log/syslog<br>+ event のタイムスタンプ]
-  Q1 -->|その時刻の状態| TS[show techsupport tarball<br>+ dump utility]
+  ALERT["NMS アラート<br>BGP flap 03:14"] --> Q1{何が見たい?}
+  Q1 -->|直近の値| CLI["show interfaces counters<br>show bgp summary"]
+  Q1 -->|変化の履歴| GNMI["gNMI Subscribe 履歴<br>collector 側 TSDB"]
+  Q1 -->|その時刻のログ| SYSLOG["/var/log/syslog<br>+ event のタイムスタンプ"]
+  Q1 -->|その時刻の状態| TS["show techsupport tarball<br>+ dump utility"]
   Q1 -->|リソース残量| CRM[crm show resources all]
-  CLI --> DB[(COUNTERS_DB<br>STATE_DB)]
+  CLI --> DB[("COUNTERS_DB<br>STATE_DB")]
   GNMI --> DB
   SYSLOG --> FILE[(syslog files)]
   TS --> FILE

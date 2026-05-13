@@ -44,13 +44,13 @@ related:
 
 ```mermaid
 flowchart TD
-    A[FEC corrected/uncorrected が増える] --> B{FEC モードが対向と一致?}
-    B -- No --> B1[両端で同じ FEC (RS/FC) を設定]
-    B -- Yes --> C{DOM 値 (Rx power / temp) 正常?}
-    C -- No --> C1[光学パワー / 温度 / SFP 交換]
+    A["FEC corrected/uncorrected が増える"] --> B{FEC モードが対向と一致?}
+    B -- No --> B1["両端で同じ FEC (RS/FC) を設定"]
+    B -- Yes --> C{"DOM 値 (Rx power / temp) 正常?"}
+    C -- No --> C1["光学パワー / 温度 / SFP 交換"]
     C -- Yes --> D{特定 lane 偏在?}
-    D -- Yes --> D1[ケーブル / コネクタを交換]
-    D -- No --> E[SDK driver ログ / platform.json 速度設定確認]
+    D -- Yes --> D1["ケーブル / コネクタを交換"]
+    D -- No --> E["SDK driver ログ / platform.json 速度設定確認"]
 ```
 
 ## 確認コマンド

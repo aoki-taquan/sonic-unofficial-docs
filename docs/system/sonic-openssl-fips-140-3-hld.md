@@ -35,9 +35,9 @@ FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を�
 
 ```mermaid
 flowchart LR
-  APP[OpenSSL を使う app<br/>OpenSSH / Python / etc] --> OSSL[OpenSSL libcrypto]
+  APP["OpenSSL を使う app<br/>OpenSSH / Python / etc"] --> OSSL[OpenSSL libcrypto]
   OSSL -- engine load --> SCOSSL[SymCrypt OpenSSL Engine]
-  SCOSSL --> SCRY[SymCrypt<br/>(FIPS 140-3 module)]
+  SCOSSL --> SCRY["SymCrypt<br/>(FIPS 140-3 module)"]
   KRB[Kerberos] --> OSSL
   GO[Golang dev.boringcrypto + RedHat patch] --> OSSL
 ```

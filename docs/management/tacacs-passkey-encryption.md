@@ -42,13 +42,13 @@ TACACS+ は SONiC のリモート認証で広く使われるが、**TACACS+ pass
 ```mermaid
 flowchart LR
     USER[管理者] -->|config tacacs passkey ... --encrypt| CLI[sonic-utilities CLI]
-    CLI -->|master key 入力 (--encrypt 時のみ)| MK[Master Key Manager\nsecuritycipher]
-    MK -->|root 専用 ro| FILE[/etc/cipher_pass]
-    CLI -->|暗号化 passkey| CFG[(CONFIG_DB.TACPLUS|global)]
-    CFG --> HCE[HostCfg Enforcer (hostcfgd)]
+    CLI -->|"master key 入力 (--encrypt 時のみ)"| MK[Master Key Manager\nsecuritycipher]
+    MK -->|root 専用 ro| FILE["/etc/cipher_pass"]
+    CLI -->|暗号化 passkey| CFG[("CONFIG_DB.TACPLUS|global")]
+    CFG --> HCE["HostCfg Enforcer (hostcfgd)"]
     FILE --> HCE
-    HCE -->|復号した平文 passkey| PAM[PAM config files\n(common-auth-sonic)]
-    SSH[SSH / Console] --> PAM
+    HCE -->|復号した平文 passkey| PAM["PAM config files\n(common-auth-sonic)"]
+    SSH["SSH / Console"] --> PAM
     PAM --> AUTH[TACACS+ サーバ認証]
 ```
 

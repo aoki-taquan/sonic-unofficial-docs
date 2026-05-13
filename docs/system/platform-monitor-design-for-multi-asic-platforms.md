@@ -92,19 +92,19 @@ PMON はすべての ASIC の `port_config.ini` を **マージして 1 つの p
 
 ```mermaid
 flowchart LR
-  subgraph HOST[host]
-    PMON[PMON container<br/>(単一)]
+  subgraph HOST["host"]
+    PMON["PMON container<br/>(単一)"]
     GDB[global STATE_DB]
   end
-  subgraph N0[asic0 namespace]
-    DB0[ASIC0 STATE_DB / APPL_DB]
+  subgraph N0["asic0 namespace"]
+    DB0["ASIC0 STATE_DB / APPL_DB"]
   end
-  subgraph N1[asic1 namespace]
-    DB1[ASIC1 STATE_DB / APPL_DB]
+  subgraph N1["asic1 namespace"]
+    DB1["ASIC1 STATE_DB / APPL_DB"]
   end
-  PMON -->|psud / thermalctld /<br/>syseepromd| GDB
-  PMON -->|xcvrd / ledd<br/>(per-ASIC connect)| DB0
-  PMON -->|xcvrd / ledd| DB1
+  PMON -->|"psud / thermalctld /<br/>syseepromd"| GDB
+  PMON -->|"xcvrd / ledd<br/>(per-ASIC connect)"| DB0
+  PMON -->|"xcvrd / ledd"| DB1
 ```
 
 要点[^1]:

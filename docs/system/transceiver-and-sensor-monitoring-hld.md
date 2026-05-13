@@ -50,8 +50,8 @@ PMON コンテナ内の **`xcvrd` daemon** が SFP / QSFP / QSFP-DD などの光
 
 ```mermaid
 flowchart LR
-    EEPROM[EEPROM\n(sysfs / vendor API)] --> XCVRD[xcvrd]
-    EVT[transceiver event\n(plug / error bitmap)] --> XCVRD
+    EEPROM["EEPROM\n(sysfs / vendor API)"] --> XCVRD[xcvrd]
+    EVT["transceiver event\n(plug / error bitmap)"] --> XCVRD
     XCVRD --> INFO[(STATE_DB\nTRANSCEIVER_INFO)]
     XCVRD --> DOM[(STATE_DB\nTRANSCEIVER_DOM_SENSOR)]
     XCVRD --> STAT[(STATE_DB\nTRANSCEIVER_STATUS)]
