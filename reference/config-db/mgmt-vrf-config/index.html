@@ -21515,6 +21515,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29881,6 +29903,17 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp VrfMgr::doTask / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang -->
+
+<ul>
+<li><strong>mgmtVrfEnabled=false または in_band_mgmt_enabled=false → SET が DEL として処理</strong>: <code>vrfmgr.cpp</code> L257 — 両条件のいずれかが false の場合、SET コマンドが受信されても op を <code>DEL_COMMAND</code> に上書きして管理 VRF を削除する。</li>
+<li><strong>既に VRF が存在する状態での SET → スキップ</strong>: <code>m_vrfTableMap</code> に "mgmt" が既に存在する場合、エントリを消費してスキップ（重複 SET 無効化）。</li>
+<li><strong>存在しない VRF への DEL → スキップ</strong>: <code>m_vrfTableMap</code> に "mgmt" が存在しない状態での DEL もスキップ。</li>
+<li><strong>VRF netdev 作成失敗 → SWSS_LOG_ERROR</strong>: <code>setLink()</code> 失敗時に <code>"Failed to create vrf netdev %s"</code> をログ。処理は継続されるが netdev が未作成の状態になる。</li>
+<li><strong>mgmtVrfEnabled のデフォルト = false</strong>: YANG <code>default false</code>。エントリが存在しない場合は管理 VRF 無効として扱われる。NTP で <code>vrf = "mgmt"</code> を使う場合は先に <code>true</code> に設定する必要がある。</li>
+</ul>
 <!-- glossary-links-injected: ca16c59f26d9 -->
 
 <div class="footnote">

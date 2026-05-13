@@ -22394,6 +22394,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29944,6 +29966,61 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xoff</code> フィールドが <code>ingress_lossless_pool</code> 以外のプールに設定</td>
+<td><code>Field xoff is supported for %s only</code> を LOG_ERROR → xoff は ignored、他フィールドは処理</td>
+<td><code>buffermgrdyn.cpp</code> L2625</td>
+</tr>
+<tr>
+<td><code>xoff</code> 値が MMU サイズを超過</td>
+<td><code>Invalid xoff %s, exceeding the mmu size</code> を LOG_ERROR → xoff 無視、pool size は更新</td>
+<td><code>buffermgrdyn.cpp</code> L757</td>
+</tr>
+<tr>
+<td>SHP 設定が変化なし</td>
+<td><code>updated without change, skipped</code> → APPL_DB への書き込みをスキップ</td>
+<td><code>buffermgrdyn.cpp</code> L2614</td>
+</tr>
+<tr>
+<td>同一 pool に複数の zero profile 登録</td>
+<td><code>Multiple zero profiles detected for pool %s, takes the former and ignores the latter</code> を LOG_ERROR</td>
+<td><code>buffermgrdyn.cpp</code> L338</td>
+</tr>
+<tr>
+<td>Buffer pools が未準備の状態でプロファイル設定</td>
+<td><code>pending</code> → プロファイル適用を遅延</td>
+<td><code>buffermgrdyn.cpp</code> L894</td>
+</tr>
+<tr>
+<td>共有バッファプールが未設定</td>
+<td>headroom 計算をスキップ (<code>No shared buffer pool configured</code>)</td>
+<td><code>buffermgrdyn.cpp</code> L684</td>
+</tr>
+<tr>
+<td><code>task_invalid_entry</code> (static モード main loop)</td>
+<td><code>Failed to process invalid entry, drop it</code> → エントリを破棄</td>
+<td><code>buffermgr.cpp</code> L585</td>
+</tr>
+<tr>
+<td>既存プロファイルが存在する場合の pool 作成</td>
+<td><code>// check if profile already exists - if yes - skip creation</code></td>
+<td><code>buffermgr.cpp</code> L246</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 44ea702536a5 -->
 

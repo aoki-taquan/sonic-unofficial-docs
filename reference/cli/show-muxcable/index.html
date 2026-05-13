@@ -19597,6 +19597,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知のバグ・制限
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実行例
       
     </span>
@@ -19606,7 +19617,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -19617,7 +19628,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -19628,7 +19639,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -19639,7 +19650,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (自動生成)
@@ -29857,6 +29868,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        既知のバグ・制限
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         実行例
       
     </span>
@@ -29866,7 +29888,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -29877,7 +29899,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -29888,7 +29910,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -29899,7 +29921,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (自動生成)
@@ -30130,18 +30152,23 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">既知のバグ・制限<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title"><code>show mux config</code> のカラムヘッダがズレる (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/3978">#3978</a>)</p>
+<p><code>show mux config</code> の出力でヘッダ行（<code>port</code>, <code>state</code>, <code>ipv4</code>, <code>ipv6</code> 等）が本来の列位置から大きくズレて表示される。Ansible の <code>show_and_parse()</code> がこの出力を parse すると <code>port</code> カラムが空文字列となり、自動化スクリプトで <code>KeyError: ''</code> が発生する。PR#3884 で混入した問題（master で open）。回避策: <code>show mux config --json</code> で JSON 形式で取得する。</p>
+</div>
 <!-- usage-example -->
-<h2 id="_7">実行例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型的な使い方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">実行例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型的な使い方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># 例 1: mux 状態サマリ</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>show<span class="w"> </span>muxcable<span class="w"> </span>status
 </span></code></pre></div>
-<h3 id="_9">よくある引数の組み合わせ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>muxcable<span class="w"> </span>config
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>muxcable<span class="w"> </span>hwmode<span class="w"> </span>muxdirection
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>muxcable<span class="w"> </span>firmware<span class="w"> </span>version<span class="w"> </span>Ethernet0
 </span></code></pre></div>
-<h3 id="_10">期待される出力 (抜粋)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PORT         STATUS    HEALTH
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>-----------  --------  --------
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0    active    HEALTHY
@@ -30150,7 +30177,7 @@
 <!-- /usage-example -->
 
 <!-- cli-mermaid -->
-<h3 id="_11">データフロー (自動生成)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">データフロー (自動生成)<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["show muxcable"]
   CDB0[("CONFIG_DB&lt;br/&gt;MUX_CABLE")]

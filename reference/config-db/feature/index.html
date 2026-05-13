@@ -21280,6 +21280,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29754,6 +29765,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29930,6 +29952,54 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>feature<span class="w"> </span>status
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FeatureRegistry</td>
+<td>新規登録時に CONFIG_DB に既存エントリが存在する</td>
+<td>デフォルト値より既存 DB 値を優先。非設定可能項目 (<code>delayed</code> 等) のみ新値で上書き。ユーザ設定の <code>state</code>/<code>auto_restart</code> は保持（feature.py:72-78）</td>
+</tr>
+<tr>
+<td>FeatureRegistry</td>
+<td><code>state</code> フィールドが欠落</td>
+<td>デフォルト <code>disabled</code> を使用（feature.py:13,35）</td>
+</tr>
+<tr>
+<td>FeatureRegistry</td>
+<td><code>auto_restart</code> / <code>high_mem_alert</code> / <code>set_owner</code> が欠落</td>
+<td>デフォルト値 (<code>enabled</code>, <code>disabled</code>, <code>local</code>) を使用（feature.py:14-16）</td>
+</tr>
+<tr>
+<td>containercfgd</td>
+<td>syslog 設定値が変化しない</td>
+<td><code>"Syslog rate limit configuration does not change, ignore it"</code> を出力してスキップ（rsyslogd 再起動なし）（containercfgd.py:146-148）</td>
+</tr>
+<tr>
+<td>containercfgd</td>
+<td>syslog 更新中に例外発生</td>
+<td><code>log_error(...)</code> を出力して継続。デーモンは停止しない（containercfgd.py:124-125）</td>
+</tr>
+<tr>
+<td>dhcprelayd</td>
+<td><code>FEATURE.dhcp_server.state</code> フィールド欠落</td>
+<td><code>dict.get("dhcp_server", {}).get("state", "disabled")</code> でデフォルト <code>disabled</code> として扱う（dhcprelayd.py:206-207）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-utilities <code>sonic_package_manager/service_creator/feature.py:13-78</code>; sonic-buildimage <code>src/sonic-containercfgd/containercfgd/containercfgd.py:124-148</code>; <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:206-207</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

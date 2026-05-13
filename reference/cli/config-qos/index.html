@@ -30028,6 +30028,7 @@
 <ul>
 <li><code>config qos reload</code> は既存 buffer profile を一旦消すため、瞬断・パケロスが出る可能性。</li>
 <li><code>--no-dynamic-buffer</code> 機種で dynamic buffer 設定を投入しても無視される。</li>
+<li><strong><code>config reload &lt;file&gt;</code> でパイプ文字を含む QoS マップ参照が YANG 検証エラーになる</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4107">#4107</a>): <code>PORT_QOS_MAP</code> の <code>dot1p_to_tc_map</code> / <code>dscp_to_tc_map</code> 等に <code>"DOT1P_TO_TC_MAP|ROCE"</code> のようにパイプ文字 (<code>|</code>) を含む参照値があると、<code>config reload -y &lt;explicit-file&gt;</code> の YANG 検証で <code>Value does not satisfy the constraint</code> エラーが出て中断する。ファイル指定なしの <code>config reload -y</code> は検証コードパスが異なり発生しない。回避策: (1) <code>config reload -y</code> (引数なし) を使う、または (2) 参照値をパイプなしの名称に変更する。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>qos

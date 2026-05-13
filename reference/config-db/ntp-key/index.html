@@ -24018,6 +24018,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29928,6 +29950,17 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP_KEY container -->
+
+<ul>
+<li><strong>key ID が 1-65535 の範囲外 → YANG が拒否</strong>: typedef <code>key-id</code> の <code>range 1..65535</code> / <code>error-message "Failed NTP key ID"</code>。ID 0 は YANG バリデーションで拒否される。</li>
+<li><strong>key type が不正値 → YANG が拒否 (デフォルト md5)</strong>: <code>enum { md5; sha1; sha256; sha384; sha512; }</code> のみ許可。<code>default md5</code>。省略時は MD5 が使用される。セキュリティ要件に応じて SHA256 以上への変更を推奨。</li>
+<li><strong>value が空または 64 文字超 → YANG が拒否</strong>: <code>length 1..64</code> 制約。空文字列や 65 文字以上のキー値は YANG バリデーションで拒否される。</li>
+<li><strong>trusted のデフォルト = "no"</strong>: <code>default no</code>。NTP 認証モード有効時に当該キーが信頼済みとして使用されるには明示的に <code>trusted = yes</code> が必要。</li>
+<li><strong>NTP_SERVER から参照中の NTP_KEY は削除不可</strong>: <code>NTP_SERVER_LIST/key</code> は <code>leafref</code> で <code>NTP_KEY_LIST/id</code> を参照。参照中のキーを削除しようとすると YANG バリデーションで整合性エラーが発生する。</li>
+</ul>
 <!-- glossary-links-injected: 4b3b3fd0739b -->
 
 <div class="footnote">

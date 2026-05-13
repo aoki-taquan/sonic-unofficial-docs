@@ -22539,7 +22539,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -22548,6 +22548,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22569,7 +22580,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22581,7 +22592,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22592,7 +22603,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22603,7 +22614,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29719,7 +29730,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29728,6 +29739,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29825,7 +29847,7 @@
 
 <h1 id="wred_profile">WRED_PROFILE テーブル<a class="headerlink" href="#wred_profile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>Weighted Random Early Detection (<a href="../../glossary/#term-wred">WRED</a>) と ECN マーキングの設定プロファイルを定義する。<code>QUEUE</code> テーブルの <code>wred_profile</code> から名前で参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-orchagent">orchagent</a> の <code>QosOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-wred">WRED</a> オブジェクトに変換する。</p>
+<p>Weighted Random Early Detection (<a href="../../glossary/#term-wred">WRED</a>) と ECN マーキングの設定プロファイルを定義する。<code>QUEUE</code> テーブルの <code>wred_profile</code> から名前で参照される<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">3</a></sup>。<a href="../../glossary/#term-orchagent">orchagent</a> の <code>QosOrch</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> <a href="../../glossary/#term-wred">WRED</a> オブジェクトに変換する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29902,16 +29924,29 @@
 <li>関連 CLI: <code>config qos clear</code>、テンプレート起点の生成 (<code>buffers.json.j2</code>)</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-wred-profile</code></li>
 </ul>
+<h2 id="_6">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp (WredMapHandler); sonic-buildimage/src/sonic-yang-models/yang-models/sonic-wred-profile.yang -->
+
+<ul>
+<li><strong>名前パターン (YANG)</strong>: <code>pattern '[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})'</code>、長さ 1〜32 文字 — 違反は <code>"Invalid length for wred profile name."</code> エラー<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><strong>max &gt;= min 制約 (YANG)</strong>: 各色の max threshold が min 以上である <code>must</code> 制約 — 違反は <code>"Yellow/Green/Red max threshold must be &gt;= min threshold"</code> エラーで reject<sup id="fnref2:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><strong><code>convertBool</code> エラー</strong>: <code>wred_green_enable</code> 等に <code>"true"</code> / <code>"false"</code> 以外の文字列が来た場合 <code>SWSS_LOG_ERROR("Invalid input specified")</code> を記録してエントリを破棄する<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>threshold 2 フェーズ適用 (旧 SAI 互換)</strong>: <code>WredMapHandler</code> は閾値変更時に「現在 min &gt; 新 max」または「現在 max &lt; 新 min」となる属性を deferred リストに後回しにし、残りを先に SAI に適用してから deferred を適用する。一部ベンダー SAI での順序エラーを回避するための特殊処理<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>デフォルト補完 (YANG)</strong>:</li>
+<li><code>ecn</code>: <code>default ecn_none</code><sup id="fnref3:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><code>wred_*_enable</code>: <code>default false</code><sup id="fnref4:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><code>*_drop_probability</code>: <code>default 100</code>（100%）<sup id="fnref5:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+</ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-wred-profile/"><code>sonic-wred-profile</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29920,18 +29955,18 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>WRED_PROFILE|&lt;name&gt;</code>。</li>
 <li><code>ecn</code>: <code>ecn_all</code> / <code>ecn_green</code> / <code>ecn_none</code>。</li>
 <li><code>*_min_threshold</code> / <code>*_max_threshold</code> / <code>*_drop_probability</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>min &gt; max に設定すると <a href="../../glossary/#term-sai">SAI</a> がエラーを返し、profile が hardware に下りない。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WRED_PROFILE|AZURE_LOSSY&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>wred
 </span></code></pre></div>
@@ -29942,8 +29977,14 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:exc1">
+<p><code>sonic-swss/orchagent/qosorch.cpp</code> (WredMapHandler) <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exc2">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-wred-profile.yang</code> <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-wred-profile.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-wred-profile.yang</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-wred-profile.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-wred-profile.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-wred-profile.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

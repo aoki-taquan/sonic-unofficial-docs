@@ -19911,11 +19911,22 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="CONFIG_DB との接点">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の動作・今後の変更予定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の動作・今後の変更予定">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (手動作成)
@@ -19931,7 +19942,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -19942,7 +19953,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29657,11 +29668,22 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="CONFIG_DB との接点">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の動作・今後の変更予定
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の動作・今後の変更予定">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (手動作成)
@@ -29677,7 +29699,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29688,7 +29710,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29815,8 +29837,13 @@
 <p>詳細は <a href="../clear/">clear (sonic-clear) コマンド</a> のコマンドツリー節を参照。</p>
 <h2 id="config_db">CONFIG_DB との接点<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p>なし。COUNTERS_DB を直接書き換えるのではなく、<code>/tmp</code> 配下のスナップショットファイルだけが書き換わる。</p>
+<h2 id="_4">既知の動作・今後の変更予定<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">switch ingress drop monitoring はデフォルト無効 (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/3923">#3923</a>)</p>
+<p>switch ingress drop のモニタリング（<code>sonic-clear dropcounters</code> で管理する drop counter のデフォルト有効化）は HLD PR#1912 で「デフォルト有効にすべき」と提案されているが、2026年5月時点では実装されていない。現在はユーザーが明示的に drop counter を設定・有効化する必要がある。</p>
+</div>
 <!-- cli-mermaid -->
-<h3 id="_4">データフロー (手動作成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_5">データフロー (手動作成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["sonic-clear counters / *counters"]
   UT["portstat / queuestat / pfcstat&lt;br/&gt;dropstat / tunnelstat / etc. (-c)"]
@@ -29831,13 +29858,13 @@
 
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>(関連リンクなし)</li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: c463a977c0b8 -->
 
 <div class="footnote">

@@ -21548,6 +21548,45 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-portsorch-teammgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (portsorch / teammgr) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -21556,7 +21595,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21578,7 +21617,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21590,7 +21629,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21601,7 +21640,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21612,7 +21651,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29697,6 +29736,45 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-portsorch-teammgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (portsorch / teammgr) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -29705,7 +29783,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29727,7 +29805,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29739,7 +29817,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29828,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29839,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29866,16 +29944,35 @@
 <li>関連 CLI: <code>config portchannel member add/del</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-portchannel</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member.md -->
+
+<h3 id="yang">YANG スキーマ検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li>key <code>(name, port)</code> は PORTCHANNEL と PORT への leafref。参照先が存在しない場合は YANG validate で reject。</li>
+</ul>
+<h3 id="consumer-portsorch-teammgr">consumer (portsorch / teammgr) 例外動作<a class="headerlink" href="#consumer-portsorch-teammgr" title="Permanent link">&para;</a></h3>
+<ul>
+<li>メンバーポートが PHY/SYSTEM 型以外: <code>LAG member port has to be of type PHY or SYSTEM</code> → SWSS_LOG_ERROR。</li>
+<li>chassis 環境で switch id ミスマッチ: <code>System lag switch id mismatch. Lag %s switch id: %d, Member %s switch id: %d</code> → SWSS_LOG_ERROR。</li>
+<li>DEL で存在しないメンバー: <code>Member %s not found in LAG %s</code> → SWSS_LOG_WARN。</li>
+<li>SAI LAG member add 失敗: <code>Failed to add member %s to LAG %s</code> → SWSS_LOG_ERROR。</li>
+<li>SAI LAG member remove 失敗: <code>Failed to remove member %s from LAG %s</code> → SWSS_LOG_ERROR。</li>
+<li>teamd でポート未発見: <code>Unable to find port %s</code> → SWSS_LOG_WARN。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-portchannel/"><code>sonic-portchannel</code></a></li>
 <li>CLI: <a href="../../cli/config-portchannel/"><code>config portchannel member</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29884,18 +29981,18 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PORTCHANNEL_MEMBER|PortChannel0001|Ethernet0</code>。</li>
 <li>値は空 hash（メンバ関係の存在自体が意味を持つ）。</li>
 </ul>
-<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VLAN_MEMBER に同じ Ethernet が残ったまま PORTCHANNEL_MEMBER に追加すると <a href="../../glossary/#term-orchagent">orchagent</a> エラー。</li>
 <li>L3 IP を持つポートを <a href="../../glossary/#term-lag">LAG</a> メンバに入れると INTERFACE 側が孤立。</li>
 </ul>
-<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORTCHANNEL_MEMBER|PortChannel0001|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>portchannel
 </span></code></pre></div>

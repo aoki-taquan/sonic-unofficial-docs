@@ -24186,6 +24186,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29945,6 +29967,15 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>radius_global_update は key='global' のみ処理</strong>: <code>RADIUS|global</code> 以外の key は無視（サイレントスキップ）。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>データ空の場合は削除</strong>: <code>radius_server_update</code> で <code>data == {}</code> の場合は対象サーバエントリを削除して設定ファイルを再生成する。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>src_intf 変更時の再設定</strong>: グローバルまたは per-server <code>src_intf</code> が参照するインタフェースの IP が変わると <code>modify_conf_file()</code> が再呼び出しされる。インタフェースが存在しない場合は pam_radius_auth.conf の <code>src_ip</code> 行が省略される。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>modify_conf_file 失敗は syslog のみ</strong>: テンプレート展開やサービス SIGHUP 送信に失敗しても例外はキャッチされ <code>LOG_ERR</code> / <code>LOG_WARNING</code> に記録されるだけ。設定ファイルとメモリ内 radius_servers とのずれが生じる可能性がある。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>statistics / skip_msg_auth のブール変換</strong>: <code>is_true()</code> で変換され <code>True/true/yes/1</code> 以外はすべて False 扱い。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: 213d79b8c3ff -->
 
 <div class="footnote">
@@ -29952,6 +29983,9 @@
 <ol>
 <li id="fn:1">
 <p><code>src/sonic-yang-models/yang-models/sonic-system-radius.yang</code> (container <code>RADIUS</code> / <code>global</code>、typedef <code>auth_type_enumeration</code>). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-radius.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-radius.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>hostcfgd 実装: <code>sonic-host-services/scripts/hostcfgd</code>. <a href="https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd">https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

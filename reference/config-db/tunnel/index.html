@@ -22589,6 +22589,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -22598,7 +22609,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22609,7 +22620,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22620,7 +22631,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29730,6 +29741,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29739,7 +29761,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29772,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29920,19 +29942,33 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- cdb-exceptions -->
+<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/tunnelmgr.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L160-315 -->
+
+<ul>
+<li><strong>Peer IP 未設定時はトンネル未作成</strong>: <code>PEER_SWITCH</code> テーブルから <code>m_peerIp</code> が取得できない場合、<code>"Peer/Remote IP not configured"</code> を LOG_NOTICE して APPL_DB への書き込みをスキップする。Peer IP 設定後に再処理される。</li>
+<li><strong>存在しないトンネルの DEL</strong>: キャッシュに存在しないトンネルへの DEL は <code>"Tunnel &lt;name&gt; not found"</code> を LOG_ERROR し <code>return true</code>（タスクは消費され再試行なし）。</li>
+<li><strong>IPINIP 以外は APPL_DB 不通知</strong>: <code>tunnel_type</code> が <code>IPINIP</code> 以外の場合、キャッシュには追加されるが orchagent への APPL_DB 通知は行われない。</li>
+<li><strong>Warm reboot 時の重複防止</strong>: <code>m_tunnelReplay</code> にエントリが存在する場合（ウォームリブート時）は APPL_DB への書き込みをスキップして orchagent クラッシュを防ぐ。</li>
+<li><strong><code>src_ip</code> 未設定で P2MP decap</strong>: <code>src_ip</code> が空のまま SET すると <code>P2MP</code>（ワイルドカード）タイプの decap term が作成される。意図せず全 IPinIP トンネルパケットを受け入れる設定になる点に注意。</li>
+<li><strong>カーネル <code>ip tunnel add</code> 失敗</strong>: コマンド実行失敗で <code>configIpTunnel()</code> が <code>false</code> を返すとタスクがキューに戻されリトライされる。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>TUNNEL|&lt;tunnel-name&gt;</code>。</li>
 <li><code>tunnel_type</code>: <code>IPINIP</code> 等。</li>
 <li><code>src_ip</code> / <code>dst_ip</code>、<code>encap_ecn_mode</code>、<code>ttl_mode</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>dual-ToR で <code>tunnel_type</code> を両 ToR で揃えないと MUX_CABLE 経由のトラフィックが片方向 drop。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TUNNEL|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>tunnel
 </span></code></pre></div>

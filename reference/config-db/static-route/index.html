@@ -24287,6 +24287,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29932,6 +29954,15 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>IpNextHopSet 構築例外</strong>: ネクストホップ解析中に例外が発生した場合 <code>log_crit</code> を出して <code>return False</code> でスキップ。その静的経路は FRR に設定されない。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>APPL_DB の key フォーマット不正</strong>: APPL_DB の key で VRF を含む場合 <code>&lt;vrf&gt;:&lt;prefix&gt;</code> 形式を期待し、コロン区切りで 2 要素に分割できない場合は <code>ValueError</code> で処理中断。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>BFD 有効時の APPL_DB 削除スキップ</strong>: <code>bfd=true</code> の静的経路で APPL_DB から削除イベントが来ても、CONFIG_DB に経路が残っている場合は FRR からの削除をスキップする（staticroutebfd との race condition 防止）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>BGP ASN 未設定時の redistribute 保留</strong>: 最初の静的経路設定時に <code>bgp_asn</code> が DEVICE_METADATA に存在しない場合、redistribute static コマンドは <code>vrf_pending_redistribution</code> に保留されて後で適用される。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>BFD セッション全断時の自動削除</strong>: BFD が有効な nexthop のすべての BFD セッションが down になると APPL_DB から経路エントリが削除されて FRR からも経路が削除される。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: 75289c2d3439 -->
 
 <div class="footnote">
@@ -29941,7 +29972,7 @@
 <p>YANG 定義: <code>sonic-static-route.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-static-route.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-static-route.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>テーブル名定数参照: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>bgpcfgd StaticRouteMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

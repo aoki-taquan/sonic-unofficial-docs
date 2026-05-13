@@ -24029,6 +24029,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29876,6 +29887,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30076,6 +30098,21 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::doNatGlobalTableTask / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-nat.yang -->
+
+<ul>
+<li><strong>NAT 機能が無効状態でのエントリ追加 → SWSS_LOG_WARN + スキップ</strong>: <code>admin_mode = disabled</code> 状態では <code>"NAT Feature is not yet enabled, skipped adding ..."</code> を WARN ログしてエントリをキューに保持。NAT 有効化 (<code>enableNatFeature()</code>) 後にキューが順次処理される (<code>natorch.cpp</code> L1791/L1909/L2011/L2139/L2296)。</li>
+<li><strong>NAT_GLOBAL キーが "Values" 以外 → SWSS_LOG_ERROR + エントリ消費</strong>: <code>"Invalid key format. No Values: %s"</code> をログし、エントリを <code>m_toSync</code> から消費して次へ進む (<code>natorch.cpp</code> L2924-2930)。</li>
+<li><strong>STATIC_NAT / STATIC_NAPT のキーサイズ不正 → SWSS_LOG_ERROR + エントリ消費</strong>: STATIC_NAT はキーサイズ 1 以外、STATIC_NAPT はキーサイズ 5 以外の場合にスキップ (<code>natorch.cpp</code> L2776/L2844)。</li>
+<li><strong>twice_nat_id が 1-9999 の範囲外 → YANG が拒否</strong>: <code>range "1..9999"</code> / <code>error-message "Invalid twice nat id for the static NAT."</code> / STATIC_NAT・STATIC_NAPT 共通。</li>
+<li><strong>nat_timeout が 300-432000 の範囲外 → YANG が拒否 (デフォルト 600)</strong>: <code>range "300..432000"</code> / <code>default "600"</code>。</li>
+<li><strong>nat_tcp_timeout が 300-432000 の範囲外 → YANG が拒否</strong>: <code>range "300..432000"</code>。</li>
+<li><strong>nat_udp_timeout が 120-600 の範囲外 → YANG が拒否</strong>: <code>range "120..600"</code>。</li>
+<li><strong>nat_type のデフォルト = "dnat"</strong>: YANG <code>default dnat</code>。省略時は DNAT エントリとして処理される。</li>
+<li><strong>デフォルトルート / サブネットルートの更新は無視</strong>: routeOrch からのルート更新イベントでデフォルトルートまたはサブネットベースのルートは <code>"Ignore default or subnet nexthop update event"</code> としてスキップ (<code>natorch.cpp</code> L185-189)。</li>
+</ul>
 <!-- glossary-links-injected: a6fe2efe021a -->
 
 <div class="footnote">

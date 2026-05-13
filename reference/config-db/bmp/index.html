@@ -23419,6 +23419,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29891,6 +29913,41 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>bmp
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>不明なフィールドが設定される</td>
+<td><code>common_config.get('bgp_neighbor_table', 'false')</code> 等のデフォルト補完で <code>false</code> 扱い。スキーマ外フィールドは silently ignored</td>
+<td><code>bmpcfgd.py</code> L41-43</td>
+</tr>
+<tr>
+<td><code>"True"</code> / <code>"TRUE"</code> / <code>"1"</code> 等の値</td>
+<td><code>is_true()</code> は <code>str(val).lower() == 'true'</code> のみ受理。<code>"true"</code> 小文字のみ有効</td>
+<td><code>bmpcfgd.py</code> L28</td>
+</tr>
+<tr>
+<td>設定変更ごとに openbmpd を再起動</td>
+<td>stop → BMP_STATE_DB クリア → start の順序。<code>supervisorctl</code> 失敗時は例外 catch なし → bmpcfgd クラッシュの可能性</td>
+<td><code>bmpcfgd.py</code> L46-49</td>
+</tr>
+<tr>
+<td>CONFIG_DB 接続不可</td>
+<td><code>retry_on=True</code> で無限リトライ (CONFIG_DB 起動まで待機)</td>
+<td><code>bmpcfgd.py</code> L78</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 9e5a57a09d49 -->
 

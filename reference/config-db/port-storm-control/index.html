@@ -24079,10 +24079,27 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer-policerorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (policerorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -24090,7 +24107,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -24101,7 +24118,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -24110,6 +24127,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24121,7 +24149,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24132,7 +24160,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24143,7 +24171,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29719,10 +29747,27 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer-policerorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (policerorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -29730,7 +29775,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29741,7 +29786,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29750,6 +29795,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29817,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29828,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29839,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29881,32 +29937,49 @@
 <li>関連 CLI: <code>config interface storm-control &lt;type&gt; &lt;ifname&gt; &lt;kbps&gt;</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-storm-control</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control.md -->
+
+<h3 id="consumer-policerorch">consumer (policerorch) 例外動作<a class="headerlink" href="#consumer-policerorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li>不正/非サポートインターフェース: <code>Unsupported / Invalid interface %s</code> → SWSS_LOG_ERROR。</li>
+<li>ポート未発見: <code>Failed to apply storm-control %s to port %s. Port not found</code> → SWSS_LOG_ERROR。</li>
+<li>不明な storm_type: <code>Unknown storm_type %s</code> → SWSS_LOG_ERROR。</li>
+<li>不明な storm control attribute: <code>Unknown storm control attribute %s specified</code> → SWSS_LOG_ERROR。</li>
+<li>SAI policer create 失敗: <code>Failed to create storm control policer %s</code> → SWSS_LOG_ERROR。</li>
+<li>SAI attribute update 失敗: <code>Failed to update policer %s attribute, rv:%d</code> → SWSS_LOG_ERROR。</li>
+<li>SAI remove storm-control 失敗: <code>Failed to remove storm-control %s from port %s, rv:%d</code> → SWSS_LOG_ERROR。</li>
+<li>未設定 storm policer の参照: <code>Policer %s not configured</code> → SWSS_LOG_ERROR。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-storm-control/"><code>sonic-storm-control</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../port/">CONFIG_DB: PORT</a></li>
 <li><a href="../policer/">CONFIG_DB: POLICER</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PORT_STORM_CONTROL|&lt;Ethernet&gt;|&lt;traffic-type&gt;</code> (broadcast/unknown-unicast/unknown-multicast)`。</li>
 <li><code>kbps</code>: 帯域上限。サーバ向けは 1000〜10000kbps、uplink は無効化することが多い。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>uplink にも storm-control を当てて BUM トラフィックを誤遮断する。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT_STORM_CONTROL|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>storm-control<span class="w"> </span>all
 </span></code></pre></div>

@@ -24353,6 +24353,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -24362,7 +24373,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24373,7 +24384,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24384,7 +24395,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29730,6 +29741,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29739,7 +29761,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29772,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29877,20 +29899,33 @@
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L1093-1359 -->
+
+<ul>
+<li><strong>フィールド削除不可</strong>: <code>size</code>・<code>dscp.mode</code> はいずれも DEL 操作をサポートしない。削除を試みると <code>"Failed to remove switch trimming size/DSCP configuration: operation is not supported"</code> を LOG_ERROR して <code>return false</code>。</li>
+<li><strong>ASIC capability 未サポート</strong>: DSCP mode / queue_index の capability チェック失敗時、<code>"Failed to validate switch trimming DSCP mode/queue index: capability is not supported"</code> を LOG_ERROR して SET を拒否する。</li>
+<li><strong>SAI set 失敗</strong>: SAI API 呼び出し失敗時は対応するエラーを LOG_ERROR して <code>return false</code>。</li>
+<li><strong>ASIC/CONFIG_DB 乖離</strong>: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っていると SET/DEL どちらの操作も <code>"Failed to set/remove switch trimming: ASIC and CONFIG DB are diverged"</code> を LOG_ERROR して拒否。</li>
+<li><strong>空キー</strong>: key が空文字列だと <code>"Failed to parse switch trimming key: empty string"</code> を LOG_ERROR してエントリをスキップする。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key: <code>SWITCH_TRIMMING|GLOBAL</code> (シングルトン)。</li>
 <li><code>size</code>: 128〜256 bytes 程度。<code>dscp_value</code>: <code>from-tc</code> または明示 <a href="../../glossary/#term-dscp">DSCP</a>。</li>
 <li><code>queue_index</code>: <code>dynamic</code> または特定 queue。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>dscp_value=from-tc</code> と <code>queue_index=dynamic</code> を同時指定して導出元が曖昧になる。</li>
 <li>packet trimming 非対応 ASIC に投入して <a href="../../glossary/#term-sai">SAI</a> でエラーになる。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_TRIMMING|GLOBAL&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>switch-trimming
 </span></code></pre></div>

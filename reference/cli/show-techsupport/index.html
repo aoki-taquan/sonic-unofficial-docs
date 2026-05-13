@@ -19682,7 +19682,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        既知の制限
       
     </span>
   </a>
@@ -19693,7 +19693,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -19702,6 +19702,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -19713,7 +19724,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -19724,7 +19735,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -19735,7 +19746,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -19746,7 +19757,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (手動作成)
@@ -29713,7 +29724,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        既知の制限
       
     </span>
   </a>
@@ -29724,7 +29735,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29733,6 +29744,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         実行例
@@ -29744,7 +29766,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型的な使い方
@@ -29755,7 +29777,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある引数の組み合わせ
@@ -29766,7 +29788,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         期待される出力 (抜粋)
@@ -29777,7 +29799,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (手動作成)
@@ -29966,9 +29988,13 @@ excerpt: |
 <li>大規模ダンプ（数百 MB）になるため、<strong><code>/var/dump/</code> の空き容量</strong> が事前に必要。</li>
 <li><code>--global-timeout</code> でカット された場合、dump は不完全な状態で残る可能性がある。</li>
 </ul>
+<h2 id="_7">既知の制限<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>カスタムファイル名は未サポート</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4503">#4503</a>): 出力は常に <code>/var/dump/sonic_dump_&lt;hostname&gt;_&lt;timestamp&gt;.tar.gz</code> に固定される。スクリプトから決定論的なファイル名でアクセスするには、ダンプ後にディレクトリ内の最新ファイルをタイムスタンプで特定する必要がある。カスタムファイル名オプション (<code>--filename</code>) の実装は enhancement request として open になっている。</li>
+</ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../show-system-health/">show system-health</a> / <a href="../show-services/">show services</a> / <a href="../show-feature/">show feature</a></li>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/auto-techsupport/">AUTO_TECHSUPPORT</a> / <a href="../../config-db/auto-techsupport-feature/">AUTO_TECHSUPPORT_FEATURE</a></li>
@@ -29977,28 +30003,28 @@ excerpt: |
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- usage-example -->
-<h2 id="_9">実行例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型的な使い方<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">実行例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型的な使い方<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 例 1: techsupport bundle を採取</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport
 </span></code></pre></div>
-<h3 id="_11">よくある引数の組み合わせ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある引数の組み合わせ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 直近 1 時間分のログのみ、tarball サイズを抑える</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># 詳細 (BGP/Memory/Routing 等の追加診断)</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sudo<span class="w"> </span>show<span class="w"> </span>techsupport<span class="w"> </span>--allow-process-stop<span class="w"> </span>--verbose
 </span></code></pre></div>
-<h3 id="_12">期待される出力 (抜粋)<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">期待される出力 (抜粋)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Collecting all the data ......
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Tar file: /var/dump/sonic_dump_&lt;host&gt;_&lt;timestamp&gt;.tar.gz
 </span></code></pre></div>
 <!-- /usage-example -->
 
 <!-- cli-mermaid -->
-<h3 id="_13">データフロー (手動作成)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_14">データフロー (手動作成)<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["show techsupport"]
   GD["sudo generate_dump -v"]

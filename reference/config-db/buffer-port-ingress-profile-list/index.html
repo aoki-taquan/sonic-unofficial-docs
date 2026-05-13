@@ -23413,6 +23413,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -23432,7 +23443,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23443,7 +23454,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23454,7 +23465,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23465,7 +23476,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23477,7 +23488,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23488,7 +23499,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23499,7 +23510,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29697,6 +29708,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -29716,7 +29738,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29727,7 +29749,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29738,7 +29760,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29879,7 +29901,15 @@
 <li><code>port</code> は <code>PORT_LIST.name</code> への leafref で、対象ポートが存在しないと validation エラー。</li>
 <li>各 <code>profile_list</code> 要素も <code>BUFFER_PROFILE_LIST.name</code> への leafref。</li>
 </ul>
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- cdb-exceptions -->
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>プロファイル参照未解決 → retry</strong>: <code>profile_list</code> に参照する <code>BUFFER_PROFILE</code> が未存在の場合、<code>orchagent</code> は <code>task_need_retry</code> を返しエントリを保留する。<!-- evidence: bufferorch.cpp L1679-1686 processIngressBufferProfileList --></li>
+<li><strong>リスト変更なし → SAI 呼び出しスキップ</strong>: プロファイルリストが既存キャッシュと同一の場合は SAI を呼ばずにスキップする。<!-- evidence: bufferorch.cpp L1692-1696 --></li>
+<li><strong>trimming-eligible プロファイル禁止 → task_failed</strong>: <code>packet_discard_action = trim</code> のプロファイルは ingress profile list に設定不可。SAI 仕様上 ingress 側でのパケットトリミングは禁止されており <code>task_failed</code> となる。<!-- evidence: bufferorch.cpp L1717-1731 --></li>
+<li><strong>ポート未存在 → task_invalid_entry</strong>: 指定ポート名が PortsOrch のポートマップに存在しない場合 <code>task_invalid_entry</code> を返す。<!-- evidence: bufferorch.cpp L1760-1764 --></li>
+</ul>
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>buffermgrd</code> (<code>docker-swss</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> → <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE</code></li>
 <li><code>orchagent</code> (BufferOrch): <a href="../../glossary/#term-appl_db">APPL_DB</a> → <a href="../../glossary/#term-sai">SAI</a> の port ingress buffer profile list 設定</li>
@@ -29892,34 +29922,34 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-port-ingress-profile-list</code></li>
 <li>CLI: <a href="../../cli/config-buffer/"><code>config buffer</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../buffer-profile/">CONFIG_DB: BUFFER_PROFILE</a></li>
 <li><a href="../buffer-pool/">CONFIG_DB: BUFFER_POOL</a></li>
 <li><a href="../buffer-pg/">CONFIG_DB: BUFFER_PG</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BUFFER_PORT_INGRESS_PROFILE_LIST|&lt;port&gt;</code> (例 <code>BUFFER_PORT_INGRESS_PROFILE_LIST|Ethernet0</code>)。</li>
 <li><code>profile_list</code>: <code>","</code> 区切り (例 <code>"ingress_lossless_profile,ingress_lossy_profile"</code>)。</li>
 <li>static-buffer モードでの利用が中心。dynamic-buffer モードでは通常不要。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>BUFFER_PROFILE</code> に存在しないプロファイル名を入れて leafref 検証エラー。</li>
 <li>dynamic-buffer モードで設定したが反映されず混乱する (dynamic では buffermgrd が自動生成)。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BUFFER_PORT_INGRESS_PROFILE_LIST|Ethernet0&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE:Ethernet0&#39;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>buffer<span class="w"> </span>pool

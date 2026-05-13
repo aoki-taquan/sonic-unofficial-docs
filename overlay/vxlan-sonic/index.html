@@ -30369,6 +30369,7 @@
 <li>Warm restart 未対応<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>L3 VXLAN と L2 VXLAN は別トンネル</li>
 <li>Kernel VRF programming は HLD スコープ外</li>
+<li><strong>MP2P / MP2MP トンネルターム属性の必須化による orchagent 非対応</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/2829">sonic-swss#2829</a>): SAI のトンネルターミネーション属性において、<code>MP2P</code> / <code>MP2MP</code> タイプのトンネルターム作成時に <code>DST_IP</code> および <code>SRC_IP</code> が必須属性として要求されるよう変更された（<code>opencomputeproject/SAI#1255</code> 関連）。orchagent 側がこれらを必須として渡していない場合、トンネルターム作成が SAI エラーで失敗する。GRE / NVGRE トンネルを MP2MP または MP2P モードで使用している環境では注意が必要。</li>
 </ul>
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

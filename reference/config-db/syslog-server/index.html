@@ -22947,6 +22947,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -22956,7 +22967,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22967,7 +22978,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22978,7 +22989,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29774,6 +29785,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29783,7 +29805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29794,7 +29816,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29805,7 +29827,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29966,20 +29988,32 @@
 </ul>
 <!-- /topics-back-ref -->
 
+<!-- cdb-exceptions -->
+<h2 id="_9">例外条件・特殊挙動<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L2417-2415 -->
+
+<ul>
+<li><strong>SYSLOG_CONFIG と合算で再評価</strong>: <code>rsyslog_server_handler()</code> はエントリの追加/削除/変更のいずれでも <code>SYSLOG_CONFIG</code> と <code>SYSLOG_SERVER</code> 両テーブルを再取得し <code>rsyslog-config</code> サービスを再起動する。サーバー 1 台の変更でも全設定が再生成される点に注意。</li>
+<li><strong>全エントリ削除時の挙動</strong>: <code>SYSLOG_SERVER</code> エントリが 0 件になるとリモート転送設定が空のテンプレートが生成される。ローカルログは継続されるが rsyslog のリモート転送は停止する。</li>
+<li><strong>rsyslog 再起動失敗時は設定不反映</strong>: <code>systemctl restart rsyslog-config</code> が失敗すると <code>"RSyslogCfg: Failed to restart rsyslog service"</code> を LOG_ERR してキャッシュを更新せずに return する（次回テーブル変更時に再試行）。</li>
+<li><strong>IP バリデーションは YANG 層</strong>: key（サーバー IP / ホスト名）の構文チェックは <code>sonic-syslog.yang</code> の <code>inet:ip-address</code> / <code>inet:host</code> 型制約で行われ、<code>hostcfgd</code> 層での追加チェックはない。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>SYSLOG_SERVER|&lt;ip&gt;</code>。</li>
 <li><code>source</code>: <code>Loopback0</code> 等。</li>
 <li><code>vrf</code>: <code>default</code> / <code>mgmt</code>。</li>
 <li><code>port</code>: 514。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>vrf: mgmt</code> で <code>source</code> を data-plane IP にすると syslog が出ない。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SYSLOG_SERVER|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>syslog
 </span></code></pre></div>

@@ -24325,6 +24325,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -24334,7 +24345,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24345,7 +24356,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24356,7 +24367,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29730,6 +29741,17 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29739,7 +29761,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29772,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29882,18 +29904,31 @@
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L797-989 -->
+
+<ul>
+<li><strong>ASIC capability 未サポート</strong>: <code>SwitchOrch</code> が SAI から取得した capability に設定値が含まれない場合、<code>"Failed to validate switch ECMP/LAG hash: capability is not supported"</code> を LOG_ERROR して SET を拒否する（<code>return false</code>）。適用されず CONFIG_DB の値は保留状態のまま。</li>
+<li><strong>SAI set 失敗</strong>: SAI API 呼び出しが <code>SAI_STATUS_SUCCESS</code> 以外を返すと <code>"Failed to set switch ECMP/LAG hash in SAI"</code> を LOG_ERROR して処理を中断する。</li>
+<li><strong>DEL 操作不可</strong>: <code>ecmp_hash</code> / <code>lag_hash</code> / <code>ecmp_hash_algorithm</code> / <code>lag_hash_algorithm</code> はいずれも DEL 操作をサポートしない。削除を試みると <code>"Failed to remove switch ECMP/LAG hash configuration: operation is not supported"</code> を LOG_ERROR して <code>return false</code>。</li>
+<li><strong>ASIC/CONFIG_DB 乖離</strong>: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に <code>"Failed to set switch hash: ASIC and CONFIG DB are diverged"</code>、DEL 時に <code>"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"</code> を LOG_ERROR。</li>
+<li><strong>空キー</strong>: key が空文字列だと <code>"Failed to parse switch hash key: empty string"</code> を LOG_ERROR してエントリをスキップする。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>SWITCH_HASH|GLOBAL</code>。</li>
 <li><code>ecmp_hash</code>: <code>DST_MAC,SRC_MAC,ETHERTYPE,IP_PROTOCOL,SRC_IP,DST_IP,L4_SRC_PORT,L4_DST_PORT</code>。LAG hash も同類。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>hash 設定変更後 <code>config save</code> を忘れて reboot 後に既定値へ戻る。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_HASH|GLOBAL&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>switch-hash<span class="w"> </span>global
 </span></code></pre></div>

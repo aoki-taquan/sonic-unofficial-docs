@@ -7868,7 +7868,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        既知の問題
       
     </span>
   </a>
@@ -7877,6 +7877,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -7904,7 +7915,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29714,7 +29725,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        既知の問題
       
     </span>
   </a>
@@ -29723,6 +29734,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        干渉する機能
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -29750,7 +29772,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29926,14 +29948,20 @@
 <li>IPv6 NAT（NAT66 / NAT64）は本 <a href="../../reference/glossary/#term-hld">HLD</a> の主対象外</li>
 <li>ALG（FTP 等の payload 書き換え）は kernel 側に依存</li>
 </ul>
-<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">既知の問題<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>DNAT_POOL 未作成時の DNAT_MISS trap 未発火</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/1234">sonic-swss#1234</a>): NatOrch は DNAT_POOL オブジェクトが存在しない状態で DNAT_MISS trap のプログラミングを試みると失敗する。Dynamic DNAT 設定で <code>config nat add pool</code> の前に binding を作成した場合などに発生する。正しい手順は pool → binding の順で設定すること。</li>
+<li><strong>ICMP dynamic NAPT での Identifier 追跡</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/1351">sonic-swss#1351</a>): Dynamic NAPT では ICMP パケットの送信元 IP + ICMP Identifier フィールドを用いて NAT テーブルを構築する。TCP ハンドシェイクは不要だが、ICMP echo request 送信前に conntrack エントリが存在しない場合、reply パケットが転送されないことがある。ICMP での動作を確認する場合は事前に <code>conntrack -L</code> でエントリが作成されているか確認すること。</li>
+<li><strong><code>snat_entry_threshold_type</code> 属性エラー</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/1574">sonic-swss#1574</a>): CRM で snat/dnat entry のしきい値監視機能が追加された際、一時的に <code>Unknown attribute snat_entry_threshold_type</code> エラーが orchagent に記録される問題があった。現行 master では修正済みだが、古いイメージを使用している環境では同様のエラーが出ることがある。</li>
+</ul>
+<h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><a href="../../reference/glossary/#term-vrf">VRF</a> / interface zone 設定</strong>: zone を間違えると一切翻訳されない</li>
 <li><strong>ACL / mirror</strong>: ACL マッチ条件と NAT の評価順序を意識する</li>
 <li><strong>CRM</strong>: NAT entry 上限とアラーム閾値を運用で監視</li>
 <li><strong>conntrack timeout</strong>: kernel の TCP/UDP idle timeout に追従して ASIC からも eviction される</li>
 </ul>
-<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>翻訳が起こらない → zone 設定、<code>show nat translations</code>、kernel <code>conntrack -L</code> を確認</li>
 <li>ASIC が full → CRM <code>nat_entry</code> / <code>napt_entry</code> で残量を確認、aging timeout 短縮を検討</li>
@@ -29950,7 +29978,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NAT_*&#39;</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NAT_TABLE:*&#39;</span>
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - natmgrd / natsyncd / NatOrch の現行 master 取り込みと daemon 起動経路の確認
 - SAI NAT API（SAI_NAT_TYPE_*, SAI_NAT_ENTRY_ATTR_*）の community SAI 取り込み確認

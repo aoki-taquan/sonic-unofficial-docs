@@ -24023,6 +24023,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-pbhorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (pbhorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -24031,7 +24070,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24042,7 +24081,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24054,7 +24093,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24065,7 +24104,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24076,7 +24115,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29764,6 +29803,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-pbhorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (pbhorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -29772,7 +29850,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29783,7 +29861,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29795,7 +29873,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29806,7 +29884,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29817,7 +29895,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29998,31 +30076,52 @@
 <li>関連 CLI: <code>config pbh</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-pbh</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pbh.md -->
+
+<h3 id="yang">YANG スキーマ検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PBH_HASH_FIELD.hash_field</code>、<code>sequence_id</code>、<code>PBH_RULE.priority</code>、<code>PBH_RULE.hash</code>、<code>PBH_TABLE.description</code> は mandatory。</li>
+<li><code>ip_mask</code> は <code>when</code> + <code>must</code> 条件: IPv4 フィールドに <code>:</code> を含む address や IPv6 フィールドに <code>.</code> を含む address は reject。</li>
+<li><code>PBH_HASH.hash_field_list</code> は <code>min-elements 1</code>。<code>PBH_TABLE.interface_list</code> は <code>min-elements 1</code>。</li>
+<li><code>PBH_RULE.table_name</code> / <code>hash</code> は leafref 参照整合性チェックあり。</li>
+</ul>
+<h3 id="consumer-pbhorch">consumer (pbhorch) 例外動作<a class="headerlink" href="#consumer-pbhorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li>重複 SET: <code>Failed to create PBH table(%s) in SAI: object already exists</code> → <code>return false</code>。</li>
+<li>type / stage / ports / validate 失敗: 各 <code>SWSS_LOG_ERROR</code> + <code>return false</code>。</li>
+<li>SAI 能力チェック失敗 (ADD/UPDATE/REMOVE 不対応): <code>unsupported capabilities</code> → <code>return false</code>。</li>
+<li>DEL で存在しない table: <code>object doesn't exist</code> → <code>return false</code>。</li>
+<li><code>packet_action</code> 未指定時 default: <code>SET_ECMP_HASH</code>。<code>flow_counter</code> 未指定時 default: <code>DISABLED</code>。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-pbh/"><code>sonic-pbh</code></a></li>
 <li>CLI: <code>config pbh</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PBH_TABLE|&lt;name&gt;</code>、<code>PBH_RULE|&lt;table&gt;|&lt;rule&gt;</code>、<code>PBH_HASH|&lt;hash&gt;</code>、<code>PBH_HASH_FIELD|&lt;field&gt;</code>。</li>
 <li>match field は <code>0x...</code> / <code>0x.../0x...</code> (mask 付) の hex 文字列。</li>
 <li><code>packet_action=SET_ECMP_HASH</code> が一般的。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>priority</code> が他 rule と衝突して評価順序が予測不能。</li>
 <li><code>hash</code> フィールドに未定義の <code>PBH_HASH</code> を指定し leafref エラー。</li>
 <li><code>interface_list</code> に未登録の <code>PORTCHANNEL</code> を入れる。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PBH_*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>pbh<span class="w"> </span>table
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>pbh<span class="w"> </span>rule

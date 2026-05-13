@@ -23833,6 +23833,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30020,6 +30042,38 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>table
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/dockers/docker-lldp/lldpmgrd -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code> に不正値</td>
+<td><code>lldpcli</code> が不正コマンドエラー。CONFIG_DB には書けるが lldpd に反映されない</td>
+</tr>
+<tr>
+<td><code>hello_timer</code> が 0 または負</td>
+<td>lldpd がデフォルト 30 秒で動作。YANG バリデーション有効時は mgmt-framework 経由で拒否</td>
+</tr>
+<tr>
+<td><code>mode=rx_only</code> / <code>receive</code> 設定</td>
+<td>自ノードの LLDP TLV を送出しない。対向スイッチのトポロジービューに当該ノードが映らなくなる</td>
+</tr>
+<tr>
+<td><code>LLDP\|GLOBAL</code> エントリが存在しない</td>
+<td>lldpd がデフォルト設定（hello=30s, mode=tx_and_rx）で起動。エントリ削除後は再起動後にデフォルトへ戻る</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 9d2a20a8f03b -->
 

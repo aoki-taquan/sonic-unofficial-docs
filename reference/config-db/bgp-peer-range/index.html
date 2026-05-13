@@ -23402,6 +23402,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29947,6 +29969,46 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp listen range&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deployment_id</code> が DEVICE_METADATA に未設定で <code>peer_asn</code> も未設定</td>
+<td>Jinja2 で <code>UndefinedError</code> / <code>KeyError</code> → <code>log_err</code> + <code>return True</code> (drop)</td>
+<td><code>dynamic/instance.conf.j2</code>, <code>managers_bgp.py</code></td>
+</tr>
+<tr>
+<td><code>ip_range</code> が空または未設定</td>
+<td><code>bgp listen range &lt;empty&gt;</code> が vtysh に送られ FRR エラー</td>
+<td><code>dynamic/instance.conf.j2</code></td>
+</tr>
+<tr>
+<td><code>ip_range</code> 更新時の既存 range 取得失敗</td>
+<td><code>LOG_ERR</code> して空リスト返却 → 全 range を新規追加として処理</td>
+<td><code>managers_bgp.py</code> <code>get_existing_ip_ranges()</code></td>
+</tr>
+<tr>
+<td><code>src_address</code> 未設定</td>
+<td>Loopback1 の IPv4 アドレスで補完。Loopback1 が未設定の場合 Jinja2 エラー → drop</td>
+<td><code>dynamic/instance.conf.j2</code></td>
+</tr>
+<tr>
+<td>FRR 10.1 以降: listen range 削除失敗後も peer-group 削除を続行</td>
+<td>range 削除の <code>log_err</code> 後、peer-group 削除を試みる → FRR 側エラーの可能性</td>
+<td><code>managers_bgp.py</code> <code>del_handler()</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 9543a3643673 -->
 

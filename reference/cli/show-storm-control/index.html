@@ -29839,6 +29839,10 @@ excerpt: |
 </tbody>
 </table>
 <p><code>storm_type</code> は <code>broadcast</code> / <code>unknown-multicast</code> / <code>unknown-unicast</code> の 3 種。</p>
+<div class="admonition note">
+<p class="admonition-title">CLI の <code>unknown-multicast</code> と SAI の定義の差異 (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/3897">#3897</a>)</p>
+<p>SONiC CLI は <code>unknown-unicast</code> と <code>unknown-multicast</code> を別の storm type として受け付けるが、SAI では <code>SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID</code> が unknown-unicast と unknown-multicast を一括して「flood」として扱う。また <code>SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID</code> は registered multicast 専用であり、unknown-multicast とは異なる。CLI の <code>unknown-multicast</code> がどの SAI 属性にマップされるかはベンダー実装に依存する可能性があるため、ハードウェアの動作を実機で確認すること。</p>
+</div>
 <!-- cli-mermaid -->
 <h3 id="_4">データフロー (自動生成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR

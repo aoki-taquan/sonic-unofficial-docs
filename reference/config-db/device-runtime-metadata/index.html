@@ -23587,6 +23587,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29897,6 +29919,49 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-cfggen<span class="w"> </span>-d<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;DEVICE_RUNTIME_METADATA[&#39;ETHERNET_PORTS_PRESENT&#39;]&quot;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>init_cfg.json.j2</td>
+<td><code>ETHERNET_PORTS_PRESENT = False</code></td>
+<td><code>bgp</code> / <code>teamd</code> feature の初期 state を <code>disabled</code> に設定（j2:67,75）</td>
+</tr>
+<tr>
+<td>init_cfg.json.j2</td>
+<td><code>CHASSIS_METADATA.module_type = supervisor</code></td>
+<td><code>bgp</code> feature を <code>disabled</code>、<code>has_per_asic_scope=False</code> に設定（j2:67,107）</td>
+</tr>
+<tr>
+<td>init_cfg.json.j2</td>
+<td><code>CHASSIS_METADATA.module_type = linecard</code></td>
+<td><code>has_global_scope=False</code> に設定（j2:106）</td>
+</tr>
+<tr>
+<td>init_cfg.json.j2</td>
+<td><code>MACSEC_SUPPORTED = False</code> または platform_env.conf に <code>macsec_enabled=0</code></td>
+<td>device type が SpineRouter 系でも <code>macsec</code> feature を <code>disabled</code> に設定（j2:90）</td>
+</tr>
+<tr>
+<td>device_info.py</td>
+<td><code>platform_env.conf</code> が存在しない</td>
+<td><code>is_macsec_supported()</code> が 0 を返し <code>MACSEC_SUPPORTED=False</code> となる（device_info.py:720-721）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-buildimage <code>files/build_templates/init_cfg.json.j2:67,75,90,106-107</code>; <code>src/sonic-py-common/sonic_py_common/device_info.py:720-747</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: a35f1b1cdfa7 -->
 

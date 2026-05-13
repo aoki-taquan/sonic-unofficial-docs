@@ -18207,10 +18207,49 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-sonic-vs-zmq_swss-orchagent-crash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docker-sonic-vs: /zmq_swss ディレクトリ不在による orchagent crash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crmorch-reboot-zmq-crash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CrmOrch が reboot 時に ZMQ タイムアウトで crash する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-route-download-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent route download 性能劣化（ZMQ 有効時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -18218,7 +18257,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -18229,7 +18268,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -18240,7 +18279,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フェーズ境界
+        トラブルシューティング
       
     </span>
   </a>
@@ -18249,6 +18288,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -18270,7 +18320,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29684,10 +29734,49 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
+        既知の問題
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-sonic-vs-zmq_swss-orchagent-crash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        docker-sonic-vs: /zmq_swss ディレクトリ不在による orchagent crash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crmorch-reboot-zmq-crash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CrmOrch が reboot 時に ZMQ タイムアウトで crash する
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-route-download-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent route download 性能劣化（ZMQ 有効時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -29695,7 +29784,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        干渉する機能
+        制限事項
       
     </span>
   </a>
@@ -29706,7 +29795,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシューティング
+        干渉する機能
       
     </span>
   </a>
@@ -29717,7 +29806,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        実装フェーズ境界
+        トラブルシューティング
       
     </span>
   </a>
@@ -29726,6 +29815,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装フェーズ境界
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -29747,7 +29847,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29890,20 +29990,40 @@
 <p>DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Redis を完全に外せるため最速。</p>
 <h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>ライブラリレベル API のため <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / CLI による直接の制御点は HLD に無い。DB 更新 on/off は <strong>コード側で <code>ZmqConsumerStateTable</code> 構築時に指定</strong>。</p>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_4">既知の問題<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="docker-sonic-vs-zmq_swss-orchagent-crash">docker-sonic-vs: /zmq_swss ディレクトリ不在による orchagent crash<a class="headerlink" href="#docker-sonic-vs-zmq_swss-orchagent-crash" title="Permanent link">&para;</a></h3>
+<p><strong>症状</strong>: <code>docker-sonic-vs</code> で起動した orchagent が即座に crash し大半のサービスが起動しない。ログに以下が出る:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>zmq_bind failed on endpoint: ipc:///zmq_swss/p4orch_zmq_swss_ep, zmqerrno: 2
+</span></code></pre></div></p>
+<p><strong>原因</strong>: 実機では <code>/zmq_swss</code> が <code>docker-orchagent.mk</code> の <code>-v /zmq_swss:/zmq_swss:rw</code> bind-mount で提供されるが、VS docker はスタンドアロン起動のためホスト側マウントが存在しない。sonic-swss#4243（2026-04-01 merge）以降に顕在化。</p>
+<p><strong>回避策</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;container&gt;<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/zmq_swss
+</span></code></pre></div></p>
+<p><strong>参照</strong>: sonic-net/sonic-buildimage#26776（Triaged）</p>
+<hr />
+<h3 id="crmorch-reboot-zmq-crash">CrmOrch が reboot 時に ZMQ タイムアウトで crash する<a class="headerlink" href="#crmorch-reboot-zmq-crash" title="Permanent link">&para;</a></h3>
+<p><strong>症状</strong>: reboot コマンドは syncd/SAI を先に shutdown するが orchagent は終了しない。CrmOrch が SAI に対して ZMQ 経由でカウンタ要求を送り続け、SAI 側キューが消滅していると ZMQ タイムアウトが発生して orchagent が crash する。</p>
+<p><strong>対象条件</strong>: SmartSwitch など firmware update により reboot が 1 分超になるケースで特に問題になる。SmartSwitch のロングリブートは HA による redundancy でカバーされる設計のため、機能影響は限定的とされている。</p>
+<p><strong>参照</strong>: sonic-net/sonic-buildimage#26300（Bug, Triaged, Medium severity）</p>
+<hr />
+<h3 id="orchagent-route-download-zmq">orchagent route download 性能劣化（ZMQ 有効時）<a class="headerlink" href="#orchagent-route-download-zmq" title="Permanent link">&para;</a></h3>
+<p><strong>症状</strong>: Northbound ZMQ を有効化した環境で 500k route の download が約 72 秒かかる。ZMQ 無効時は大幅に高速。</p>
+<p><strong>原因</strong>: sonic-swss PR#3910 で <code>table-&gt;pops(entries)</code> のループが削除された。ZMQ 有効時はこの変更がボトルネックとなる。</p>
+<p><strong>参照</strong>: sonic-net/sonic-buildimage#27098（Performance Regression, Triaged、Nokia・内部 Nokia チームで revert 効果確認済み）</p>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>ZmqClient::sendMsg</code> はリトライ失敗で <strong>例外</strong>。呼出し側で握る前提</li>
 <li>ZMQ は <strong>永続化・観測性が無い</strong>。DB 更新 off では <code>redis-cli</code> でも覗けない</li>
 <li>HA / failover や複数 ZmqServer のロードバランシングは HLD 範囲外（1:1 ないし 1:多の単純トポロジ）</li>
 <li>select 通知と DB 書き込みの <strong>順序保証</strong> は HLD で明示されていない</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存 <code>ProducerStateTable</code> / <code>ConsumerStateTable</code></strong>: API 互換だが、DB 更新 off で Redis に乗らないテーブルが混ざると他コンポーネントとの食い違いが起き得る</li>
 <li><strong>orchagent 起動順序</strong>: ZMQ は永続化されないため、Producer 起動前に Consumer が立っていないとメッセージ落ち</li>
 <li><strong>select イベントループ</strong>: <code>m_receivedQueue</code> / <code>m_DbUpdateDataQueue</code> のバックプレッシャ挙動は要確認</li>
 </ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Producer 例外 → Server <code>m_mqPollThread</code> の停止 / 対向プロセス生存を確認</li>
 <li>Consumer に到達しない → <code>(db_name, table_name)</code> の register 漏れ。未登録メッセージは Server で行き場を失う</li>
@@ -29911,7 +30031,7 @@
 <li>順序が乱れる → 複数 Producer が同じ Client を共有する場合、ネットワーク側キューと dispatch ループで Consumer 視点の順序が変わり得る</li>
 </ul>
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_7">実装フェーズ境界<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">実装フェーズ境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
 <table>
 <thead>
@@ -29939,7 +30059,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_8">実装との乖離 / 補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離 / 補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。select イベントループのバックプレッシャ挙動など、HLD で詳細が省略されている部分を本文で「要確認」と明示している。実装側の確定は裏取り課題。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
@@ -29949,7 +30069,7 @@
 <li><a href="../../topics/20-swss-sai-redis/internals/">Topic 20 SWSS/SAI/Redis - internals</a></li>
 <li><a href="../../topics/20-swss-sai-redis/architecture/">Topic 20 SWSS/SAI/Redis - architecture</a></li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 7aa3a64b7a02 -->
 
 <div class="footnote">

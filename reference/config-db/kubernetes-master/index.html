@@ -21308,6 +21308,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29754,6 +29765,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29872,6 +29894,38 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>kube<span class="w"> </span>server<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-utilities/config/kube.py -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip</code> フィールドが数値変換できない文字列</td>
+<td><code>ValueError</code> をキャッチしてデフォルト値を設定（kube.py L39, L47）</td>
+</tr>
+<tr>
+<td><code>ip</code> に FQDN（ホスト名）を使用</td>
+<td>DNS 解決失敗環境（起動早期）では kubelet 接続失敗。IP アドレス指定を推奨</td>
+</tr>
+<tr>
+<td><code>disable</code> 未設定</td>
+<td>デフォルト <code>false</code>（kubelet 接続有効）</td>
+</tr>
+<tr>
+<td><code>insecure=true</code> 設定</td>
+<td>TLS 証明書検証を無効化。<code>true</code>/<code>false</code> 以外の値は YANG バリデーションで reject</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 

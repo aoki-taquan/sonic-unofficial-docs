@@ -22859,6 +22859,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29902,6 +29924,46 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>kdump<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-utilities/config/kdump.py -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code> 変更は即時反映されない</td>
+<td>grub エントリ変更のため次回 reboot 後に有効化。現行カーネルへの影響なし</td>
+</tr>
+<tr>
+<td><code>memory</code> の値が小さすぎる</td>
+<td>DB には書けるが kdump kernel 起動失敗（コード上のバリデーションなし、YANG 経由時のみ検証）</td>
+</tr>
+<tr>
+<td><code>num_dumps</code> が 0 以下</td>
+<td>CLI は <code>int</code> として受け取るが下限チェックなし。hostcfgd が <code>kdump-config</code> にそのまま渡すため動作は実装依存</td>
+</tr>
+<tr>
+<td>SSH key の不正フォーマット</td>
+<td><code>is_valid_ssh_key()</code> で検証 → エラーメッセージ出力して DB 書き込み中断</td>
+</tr>
+<tr>
+<td>remote 未 enable 状態で remote サーバ設定</td>
+<td><code>"Remote feature is not enabled. Please enable the remote feature first."</code> を表示して中断</td>
+</tr>
+<tr>
+<td>SSH path の不正フォーマット</td>
+<td><code>is_valid_ssh_path()</code> で検証 → エラーメッセージ出力して DB 書き込み中断</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

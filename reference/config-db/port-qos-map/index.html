@@ -24051,6 +24051,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-qosorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (qosorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -24059,7 +24098,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24081,7 +24120,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24093,7 +24132,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24104,7 +24143,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24115,7 +24154,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29719,6 +29758,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-qosorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (qosorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -29727,7 +29805,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29839,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29850,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29923,16 +30001,34 @@
 <li>関連 CLI: <code>config qos</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-port-qos-map</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map.md -->
+
+<h3 id="yang">YANG スキーマ検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sonic-port-qos-map.yang</code> に <code>must</code> / <code>mandatory</code> 制約なし。各 <code>*_map</code> フィールドは optional。</li>
+</ul>
+<h3 id="consumer-qosorch">consumer (qosorch) 例外動作<a class="headerlink" href="#consumer-qosorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li>参照先 QoS map が存在しない: <code>Object with name:%s not found.</code> → SWSS_LOG_ERROR、設定適用中断。</li>
+<li>SAI <code>sai_qos_map_api</code> SET 失敗: <code>Failed to set [%s:%s]</code> → SWSS_LOG_ERROR。</li>
+<li>SAI <code>sai_qos_map_api</code> CREATE 失敗: <code>Failed to create [%s:%s]</code> → SWSS_LOG_ERROR。</li>
+<li>ハンドラ未初期化: <code>Task %s handler is not initialized</code> → SWSS_LOG_ERROR。</li>
+<li>順序依存: PORT_QOS_MAP を先に DEL してから参照 QoS map を DEL しないと SAI 参照カウントで失敗する。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-port-qos-map/"><code>sonic-port-qos-map</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29941,18 +30037,18 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PORT_QOS_MAP|&lt;port&gt;</code>。</li>
 <li><code>dscp_to_tc_map</code>、<code>tc_to_queue_map</code>、<code>tc_to_pg_map</code>、<code>pfc_to_queue_map</code>、<code>pfc_enable: 3,4</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>pfc_enable</code> で指定した priority と <code>BUFFER_PG</code> の lossless 範囲が不一致だと PFC が機能しない。</li>
 <li>map 名を <code>AZURE</code> 以外に変えると初期 SKU 設定との整合が崩れる。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT_QOS_MAP|Ethernet0&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map
 </span></code></pre></div>

@@ -22657,6 +22657,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -22676,7 +22687,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22687,7 +22698,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22709,7 +22720,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22721,7 +22732,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22732,7 +22743,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22743,7 +22754,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29697,6 +29708,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -29716,7 +29738,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29727,7 +29749,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29911,7 +29933,16 @@
 <li>すべての three-tuple について <code>high_threshold &gt; low_threshold</code> を <code>must</code> で強制</li>
 <li><a href="../../glossary/#term-dash">DASH</a> 系列は <code>DEVICE_METADATA.localhost.switch_type = 'dpu'</code> のときのみ有効 (<code>when</code>)</li>
 </ul>
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- cdb-exceptions -->
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>percentage 閾値が 100 超 → runtime_error → エラーログ + return</strong>: <code>threshold_type = percentage</code> のとき <code>low_threshold &gt; 100</code> または <code>high_threshold &gt; 100</code> の場合 <code>runtime_error("CRM percentage threshold value must be &lt;= 100%%")</code> が発生し、catch → <code>SWSS_LOG_ERROR</code> + <code>return</code>。残りフィールドも適用されない。<!-- evidence: crmorch.cpp L429-431, L529-531 --></li>
+<li><strong>low &gt;= high → runtime_error</strong>: <code>low_threshold &gt;= high_threshold</code> の場合も同様に <code>runtime_error("CRM low threshold must be less then high threshold")</code> → エラーログ + return。<!-- evidence: crmorch.cpp L433-435 --></li>
+<li><strong>DEL コマンド → 非対応エラーログのみ</strong>: <code>op == DEL_COMMAND</code> が来ると <code>SWSS_LOG_ERROR("Unsupported operation type")</code> を出力するが閾値は変更されない。CRM 設定の削除は未サポート。<!-- evidence: crmorch.cpp L465-466 --></li>
+<li><strong>不明属性フィールド → エラーログ + return (残フィールドも適用されない)</strong>: <code>polling_interval</code> / 各 threshold_type / threshold_low / threshold_high 以外のフィールドが来ると <code>SWSS_LOG_ERROR("Failed to parse CRM ... Unknown attribute %s.")</code> して <code>return</code>。<!-- evidence: crmorch.cpp L526 --></li>
+<li><strong>未対応 SAI リソース → ignore</strong>: タイマー処理で取得できないリソースは <code>// ignore unsupported resources</code> としてスキップ。<!-- evidence: crmorch.cpp L884 --></li>
+</ul>
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>orchagent</code> の <code>CrmOrch</code>: ポーリング、<a href="../../glossary/#term-sai">SAI</a> から使用量取得、<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 更新、syslog アラート</li>
 </ul>
@@ -29923,14 +29954,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-crm/"><code>sonic-crm</code></a></li>
 <li>CLI: <code>crm config</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29939,19 +29970,19 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>CRM|Config</code>。</li>
 <li><code>acl_table_threshold_type</code>: <code>percentage</code> / <code>used</code> / <code>free</code>。</li>
 <li><code>*_high_threshold</code> / <code>*_low_threshold</code>: 70 / 60 など。</li>
 <li><code>polling_interval</code>: 300（秒）。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>閾値を 100% に近く設定すると alert が遅れ、<a href="../../glossary/#term-acl">ACL</a> 追加で <a href="../../glossary/#term-sai">SAI</a> エラーが先に起きる。70%/80% 程度で運用するのが定石。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CRM|Config&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>crm<span class="w"> </span>show<span class="w"> </span>summary
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all

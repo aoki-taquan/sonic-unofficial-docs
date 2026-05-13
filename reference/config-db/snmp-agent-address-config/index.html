@@ -24242,6 +24242,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29915,6 +29937,14 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>エントリが空の場合はデフォルトリッスンアドレス</strong>: <code>SNMP_AGENT_ADDRESS_CONFIG</code> にエントリが 1 件もない場合、snmpd.conf テンプレートは <code>agentAddress udp:161</code> / <code>agentAddress udp6:161</code> をデフォルトとして出力する。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>VRF が実際に存在しない場合</strong>: <code>vrf</code> フィールドを指定しても VRF が実際に存在しない場合、snmpd は起動後そのアドレスでのリッスンに失敗するが CONFIG_DB レベルでは検知されない。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>設定変更の反映はコンテナ再起動時のみ</strong>: テーブル変更は <code>docker-snmp</code> コンテナの再起動 / snmpd プロセスリロードまで snmpd.conf に反映されない。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>key フォーマット</strong>: key は <code>&lt;ip&gt;|&lt;port&gt;|&lt;vrf&gt;</code> または <code>&lt;ip&gt;|&lt;port&gt;</code> 形式。区切りが正しくない場合はテンプレートレンダリングエラーになる。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: f02106101ebd -->
 
 <div class="footnote">
@@ -29922,6 +29952,9 @@
 <ol>
 <li id="fn:1">
 <p><code>src/sonic-yang-models/yang-models/sonic-snmp.yang</code> (container <code>SNMP_AGENT_ADDRESS_CONFIG</code> / list <code>SNMP_AGENT_ADDRESS_CONFIG_LIST</code>、key と unique 制約). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-snmp.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>snmpd.conf テンプレート: <code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

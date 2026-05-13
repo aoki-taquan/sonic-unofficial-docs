@@ -30538,6 +30538,7 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <li><strong>truncate ポリシー</strong>: 一括 CLI で 1 件失敗するとそこで停止する。前段は反映済みなので途中状態に注意<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>アーキテクチャ拡張なし</strong>: <a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-sai">SAI</a> / vlanmgr 等の改修は無く、CLI と CONFIG_DB の契約だけが変わる。新ベンダ依存・SAI 改修なし。</li>
 <li><strong>詳細仕様は原文必読</strong>: 本ページは概要のみ。state diagram・sequence diagram・コーナーケース例は原文 HLD §High-level Design / §Examples を参照<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>IP 設定済みポートの VLAN untagged メンバー追加と再起動後のリンクアップ不可</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/961">sonic-swss#961</a>): ポートに IP アドレスを設定した状態で当該ポートを VLAN の untagged メンバーとして追加すると、<code>PortsOrch</code> の実装（<code>portsorch.cpp</code>）により PVID の変更がブロックされる設計制限がある。この状態で再起動すると、untagged メンバーポートが PVID を正しく取得できず、リンクアップしない場合がある。回避策: IP インターフェースを先に削除してから VLAN untagged メンバーを追加するか、IP を持つポートは tagged メンバーとして VLAN に参加させること。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>

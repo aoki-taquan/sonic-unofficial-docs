@@ -22075,6 +22075,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29891,6 +29913,15 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>prefix_type が未サポート</strong>: <code>ANCHOR_PREFIX</code> / <code>SUPPRESS_PREFIX</code> 以外の type キーは <code>log_warn</code> を出してスキップされ、FRR への設定生成は行われない。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>DEVICE_METADATA 未準備</strong>: <code>DEVICE_METADATA|localhost</code> が未存在の場合はリトライ待ちになる。<code>type</code> / <code>bgp_asn</code> キーが欠けている場合も <code>KeyError</code> をキャッチしてスキップ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>デバイスタイプ制限 (ANCHOR_PREFIX)</strong>: <code>ANCHOR_PREFIX</code> は <code>SpineRouter/UpstreamLC</code> または <code>UpperSpineRouter</code> デバイスのみ許可される。他デバイスでは <code>log_warn</code> してスキップ。<code>SUPPRESS_PREFIX</code> は全デバイスで有効。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>プレフィクス形式不正</strong>: <code>netaddr.IPNetwork()</code> がパース失敗した場合 (<code>NotRegisteredError</code> / <code>AddrFormatError</code> / <code>AddrConversionError</code>) は <code>log_warn</code> してエントリをスキップする（処理自体は <code>return True</code> で継続）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>constants オーバーライド</strong>: <code>bgp.prefix_list.&lt;type&gt;.ipv4_name</code> / <code>ipv6_name</code> が constants に定義されていれば、デフォルトの prefix list 名を上書きする。</li>
+</ul>
 <!-- glossary-links-injected: 830f3e5569ea -->
 
 <div class="footnote">
@@ -29898,6 +29929,9 @@
 <ol>
 <li id="fn:1">
 <p>YANG 定義: <code>sonic-bgp-prefix-list.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>bgpcfgd PrefixListMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

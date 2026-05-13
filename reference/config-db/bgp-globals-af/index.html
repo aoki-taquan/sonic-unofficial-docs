@@ -23374,6 +23374,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29854,6 +29865,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30120,6 +30142,56 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp l2vpn evpn summary&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>local_asn</code> が未設定の VRF で更新が到達</td>
+<td><code>frrcfgd</code> が <code>ignore table {} update because local_asn for VRF {} was not configured</code> を LOG_DEBUG して skip</td>
+<td><code>frrcfgd.py</code> L2660</td>
+</tr>
+<tr>
+<td>BGP_GLOBALS_AF 更新コマンドが vtysh で失敗</td>
+<td><code>failed running BGP global AF config command</code> を LOG_ERR → continue (drop)</td>
+<td><code>frrcfgd.py</code> L2780</td>
+</tr>
+<tr>
+<td><code>route_flap_dampen</code> を IPv4 unicast 以外の AFI に設定</td>
+<td>YANG <code>must</code> 制約により事前拒否 (<code>afi_safi = 'ipv4_unicast'</code> のみ許可)</td>
+<td><code>sonic-bgp-global.yang</code></td>
+</tr>
+<tr>
+<td><code>import_vrf</code> に未設定 VRF を指定</td>
+<td>frrcfgd は存在チェックなし → FRR 側でエラー (ログなし)</td>
+<td><code>frrcfgd.py</code></td>
+</tr>
+<tr>
+<td>BGP_GLOBALS_AF_AGGREGATE_ADDR の IP プレフィックスが不正形式</td>
+<td><code>invalid IP prefix format %s for af %s</code> を LOG_ERR → skip</td>
+<td><code>frrcfgd.py</code> L3174</td>
+</tr>
+<tr>
+<td>ホスト bit が立ったプレフィックス</td>
+<td>frrcfgd が正規化してから処理 (例: <code>192.168.1.1/24</code> → <code>192.168.1.0/24</code>)</td>
+<td><code>frrcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>max_ebgp_paths</code> / <code>max_ibgp_paths</code> 未設定</td>
+<td>YANG default=1 が適用される</td>
+<td><code>sonic-bgp-global.yang</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 803f36c2634d -->
 

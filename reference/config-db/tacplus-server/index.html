@@ -22975,6 +22975,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -22984,7 +22995,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22995,7 +23006,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23006,7 +23017,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29774,6 +29785,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29783,7 +29805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29794,7 +29816,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29805,7 +29827,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29997,18 +30019,31 @@
 </ul>
 <!-- /topics-back-ref -->
 
+<!-- cdb-exceptions -->
+<h2 id="_7">例外条件・特殊挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L473-492 L641-725 -->
+
+<ul>
+<li><strong>DEL 操作でエントリ削除</strong>: <code>tacacs_server_update()</code> は <code>data == {}</code> のとき内部辞書からエントリを削除し <code>modify_conf_file()</code> で設定ファイルを再生成する。PAM / NSS 設定ファイルへの反映は同期的に行われる。</li>
+<li><strong><code>priority</code> の型変換失敗</strong>: <code>modify_conf_file()</code> は <code>priority</code> を <code>int()</code> でソートする。<code>priority</code> に整数として解釈できない文字列が入ると <code>ValueError</code> が発生し設定ファイル生成が中断する。</li>
+<li><strong><code>src_ip</code> 未設定時</strong>: <code>tacplus_global</code> に <code>src_ip</code> がない場合は送信元 IP なしでテンプレートを生成する（デバイス側のルーティングに依存）。</li>
+<li><strong>audisp-tacplus SIGHUP 失敗</strong>: accounting 連携の PID が見つからないか <code>os.kill()</code> が失敗した場合、<code>"Send SIGHUP to audisp-tacplus failed with exception: {}"</code> を LOG_WARNING して続行する（認証設定自体は更新される）。</li>
+<li><strong>テンプレート展開失敗</strong>: Jinja2 テンプレートや設定ファイル書き込みに失敗すると <code>"Failed generate_file_from_template error={e}"</code> を LOG_ERR し、設定は反映されない。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>TACPLUS_SERVER|&lt;ip&gt;</code>。</li>
 <li><code>priority</code>: 1〜、<code>tcp_port</code>: <code>49</code>、<code>timeout</code>: <code>5</code>、<code>auth_type</code>: <code>pap</code>、<code>vrf</code>: <code>mgmt</code>。</li>
 </ul>
-<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>passkey を平文で複数台にバラつかせて一部サーバだけ 401 になる。</li>
 </ul>
-<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TACPLUS_SERVER|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>tacacs
 </span></code></pre></div>

@@ -22853,6 +22853,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30033,6 +30055,42 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>counterpoll<span class="w"> </span>show
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/flexcounterorch.cpp -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_QUEUE</code> / <code>BUFFER_PG</code> key 形式不正</td>
+<td><code>SWSS_LOG_ERROR("Invalid BUFFER_QUEUE key: [%s]")</code> → エントリスキップ</td>
+</tr>
+<tr>
+<td>queue / PG インデックスが非整数</td>
+<td><code>std::invalid_argument</code> をキャッチし <code>SWSS_LOG_ERROR</code> → そのポートのカウンタ設定は適用されない</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_STATUS</code> 未設定</td>
+<td>デフォルト <code>disable</code>。エントリがなければカウンタ収集は行われない</td>
+</tr>
+<tr>
+<td><code>create_only_config_db_buffers</code> フラグ読み取りエラー</td>
+<td><code>SWSS_LOG_ERROR</code> → バッファカウンタ関連設定がデフォルト動作になる可能性</td>
+</tr>
+<tr>
+<td><code>POLL_INTERVAL</code> の極端な短縮</td>
+<td>コード上バリデーションなし。100ms 等ではカウンタ集計で orchagent / syncd CPU が貼り付くリスク</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 6ca28e02d7fb -->
 

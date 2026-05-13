@@ -29985,6 +29985,10 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <li>vendor NOS 由来 dump の提供は別途プラットフォーム実装側</li>
 <li>finalizer の flag を起点にする処理（flex counter 等）は HLD 例示。追加対象は要 case-by-case</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">fast-reboot / warm-reboot を root ユーザーから直接実行しない (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4371">#4371</a>)</p>
+<p><code>root</code> シェルから直接 <code>fast-reboot</code> や <code>warm-reboot</code> を実行すると <code>SUDO_USER</code> / <code>XDG_SESSION_CLASS</code> が未設定のため、<code>warmboot/dump.rdb</code> の生成や最終リブートアクションが誤動作する（無限ループになる場合や BIOS/GRUB を経由したフルリセットになる場合がある）。必ず <code>admin</code> ユーザーから <code>sudo fast-reboot</code> / <code>sudo warm-reboot</code> を実行すること。</p>
+</div>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>system-wide warmboot</strong>: 同じスクリプト基盤と finalizer を共有</li>

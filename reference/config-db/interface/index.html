@@ -21425,6 +21425,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30031,6 +30053,54 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv6 有効化失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to enable IPv6 on interface %s")</code> → 処理継続・再試行あり</td>
+</tr>
+<tr>
+<td><code>admin_status</code> に <code>up</code>/<code>down</code> 以外の値</td>
+<td><code>SWSS_LOG_WARN</code> → <code>up</code> にデフォルト（intfmgr.cpp L867）</td>
+</tr>
+<tr>
+<td><code>mpls</code> に <code>enable</code>/<code>disable</code> 以外の値</td>
+<td><code>SWSS_LOG_ERROR("MPLS state is invalid")</code> → MPLS 設定適用されない</td>
+</tr>
+<tr>
+<td>別 VRF への直接変更</td>
+<td><code>SWSS_LOG_ERROR("%s can not change to %s directly, skipping")</code> → VRF 除去 → 再設定の 2 ステップが必要</td>
+</tr>
+<tr>
+<td>interface / VRF が未 ready</td>
+<td><code>SWSS_LOG_DEBUG("Interface is not ready, skipping %s")</code> → Consumer キューに残り再試行</td>
+</tr>
+<tr>
+<td><code>grat_arp</code> / <code>proxy_arp</code> に不正値</td>
+<td><code>SWSS_LOG_ERROR("GARP state is invalid")</code> / <code>"Proxy ARP state is invalid"</code> → 設定適用されない</td>
+</tr>
+<tr>
+<td>サブインターフェース名が不正</td>
+<td><code>SWSS_LOG_ERROR("Invalid subnitf: %s")</code> → エントリスキップ</td>
+</tr>
+<tr>
+<td>MTU 設定コマンド失敗</td>
+<td><code>SWSS_LOG_WARN("Setting mtu to %s netdev failed")</code> → warn のみ、旧 MTU のまま継続</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 8c01908c2492 -->
 

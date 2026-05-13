@@ -23934,6 +23934,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29854,6 +29865,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30001,6 +30023,19 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp PfcToQueueHandler::processWorkItem / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang -->
+
+<ul>
+<li><strong>pfc_priority / qindex が 0-7 の範囲外</strong>: YANG <code>pattern "[0-7]?"</code> 制約により CONFIG_DB への書き込みが拒否される。</li>
+<li><strong>フィールド変換失敗 → task_invalid_entry</strong>: <code>convertFieldValuesToAttributes()</code> が false を返すか <code>stoi()</code> 例外が発生した場合、エントリを無効として処理を中止する (<code>qosorch.cpp</code> L147/L179/L199)。</li>
+<li><strong>削除時に他オブジェクトから参照中 → task_need_retry</strong>: <code>isObjectBeingReferenced()</code> が true の場合、<code>m_pendingRemove = true</code> を設定して <code>task_need_retry</code> を返す。参照が解除されるまで削除は保留される (<code>qosorch.cpp</code> L180-186)。</li>
+<li><strong>削除対象エントリが存在しない → task_invalid_entry</strong>: SAI オブジェクト ID が NULL の場合 <code>"Object with name not found"</code> をログし中止する。</li>
+<li><strong>SAI create/modify 失敗 → task_failed</strong>: <code>sai_qos_map_api-&gt;create_qos_map()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返した場合 (<code>qosorch.cpp</code> L977/L1032)。</li>
+<li><strong>マップ名の長さ・文字制約</strong>: <code>[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})</code> 計 1-32 文字を YANG で強制。違反は YANG バリデーションで拒否される。</li>
+<li><strong>デフォルト値なし</strong>: YANG に <code>default</code> 定義がないため、エントリが未設定の場合はマップが存在しない状態となり、<code>PORT_QOS_MAP</code> からの参照が解決できなくなる。</li>
+</ul>
 <!-- glossary-links-injected: 08955b0b376e -->
 
 <div class="footnote">

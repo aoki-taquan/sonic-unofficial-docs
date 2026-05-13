@@ -23794,6 +23794,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29923,6 +29945,38 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>table
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/dockers/docker-lldp/lldpmgrd -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin_status</code> に不正値</td>
+<td><code>lldpcli configure ports ... lldp status &lt;value&gt;</code> が失敗。CONFIG_DB にはバリデーションなしで書けるが lldpd には反映されない</td>
+</tr>
+<tr>
+<td><code>admin_status=disabled</code></td>
+<td>LLDP フレームの送受信停止。<code>DEVICE_NEIGHBOR</code> テーブルへの自動学習が発生せず minigraph との乖離が生じる</td>
+</tr>
+<tr>
+<td>実在しないポート名でエントリ投入</td>
+<td>lldpd に対応ポートが存在しないため設定無視。エントリは CONFIG_DB に残存</td>
+</tr>
+<tr>
+<td><code>description</code> の反映タイミング</td>
+<td>lldpmgrd のポーリング周期（数秒）に依存する非同期反映</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 1c2f663967b9 -->
 

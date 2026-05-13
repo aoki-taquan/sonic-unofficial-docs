@@ -22114,6 +22114,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29916,6 +29938,14 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>bgpcfgd は直接購読しない</strong>: <code>PREFIX_SET</code> には専用の consumer manager がなく、CONFIG_DB 変更はリアルタイムに FRR へプッシュされない。FRR テンプレート展開は <code>sonic-cfggen</code> が起動時に CONFIG_DB を読み込む形式で行われる。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>YANG leafref 違反で保存拒否</strong>: <code>PREFIX</code> list の <code>set_name</code> が存在しない <code>PREFIX_SET.name</code> を参照している場合、sonic-yang バリデーション時に <code>leafref</code> エラーでロードが拒否される。ただし実行時の整合性検査はないため、実行中に <code>PREFIX_SET</code> エントリを削除しても参照中の <code>PREFIX</code> は残る。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>ip_prefix の型バリデーション</strong>: IPv4/IPv6 union 型の入力文字列が不正なとき YANG <code>pattern</code> 制約違反でロード拒否される。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>未定義 prefix-set を参照する policy</strong>: FRR 側では未定義の prefix-set を参照しているルーティングポリシは <code>inactive</code> 状態になり、BGP フィルタとして機能しない。</li>
+</ul>
 <!-- glossary-links-injected: 5e2adc70a663 -->
 
 <div class="footnote">
@@ -29923,6 +29953,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-routing-policy-sets.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>YANG 定義: <code>sonic-routing-policy-sets.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -23839,6 +23839,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29893,6 +29915,46 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>profile
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp, sonic-utilities/scripts/db_migrator.py -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dynamic バッファモード以外</td>
+<td><code>buffermgr.cpp</code>（静的モード）はこのテーブルを参照しない。設定変更は headroom 計算に影響しない</td>
+</tr>
+<tr>
+<td><code>mtu</code> 未設定</td>
+<td><code>buffermgrdyn</code> がデフォルト mtu 値を使用（buffermgrdyn.cpp L2263「if mtu isn't configured, take the default value」）</td>
+</tr>
+<tr>
+<td><code>mtu</code> が実 MTU と乖離</td>
+<td>headroom が過小（パケットロス）または過大（バッファ浪費）になる。バリデーションなし</td>
+</tr>
+<tr>
+<td><code>small_packet_percentage</code> が 0〜100 範囲外</td>
+<td>コード上でバリデーションなし。headroom 計算式が異常値を返す可能性。YANG スキーマ依存</td>
+</tr>
+<tr>
+<td>DB migration 時（AZURE エントリ自動挿入）</td>
+<td><code>db_migrator.py</code> L414 が <code>mtu=1024, small_packet_percentage=100</code> を挿入。Mellanox 向け初期値で他プラットフォームには不適切な場合がある</td>
+</tr>
+<tr>
+<td>バッファプール未設定</td>
+<td><code>SWSS_LOG_INFO("No shared buffer pool configured, skip calculating shared buffer pool size")</code> → サイレントスキップ</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

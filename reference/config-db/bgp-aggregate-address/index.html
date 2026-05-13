@@ -21772,7 +21772,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -21783,7 +21783,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -21792,6 +21792,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21803,7 +21814,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21814,7 +21825,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21825,7 +21836,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29686,7 +29697,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29697,7 +29708,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29706,6 +29717,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29717,7 +29739,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29728,7 +29750,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29739,7 +29761,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29855,28 +29877,75 @@
 <li>関連 CLI: <code>vtysh -c "show ip bgp aggregate"</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-aggregate-address</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prefix が不正な IP アドレス形式</td>
+<td><code>validate_prefix()</code> が None → STATE_DB に <code>state=inactive</code>、FRR 未投入</td>
+</tr>
+<tr>
+<td><code>bbr-required=true</code> かつ BBR 状態が不明</td>
+<td>STATE_DB に <code>state=inactive</code>、skip</td>
+</tr>
+<tr>
+<td><code>bbr-required=true</code> かつ BBR が disabled</td>
+<td>STATE_DB に <code>state=inactive</code>、skip</td>
+</tr>
+<tr>
+<td>BBR が enabled に変化</td>
+<td>bbr-required=true の全アドレスを STATE_DB から読み出して FRR に再投入</td>
+</tr>
+<tr>
+<td>BBR が disabled に変化</td>
+<td>bbr-required=true の全アドレスを FRR から削除、STATE_DB を inactive に更新</td>
+</tr>
+<tr>
+<td>DEL 操作で STATE_DB が <code>inactive</code></td>
+<td>FRR への削除コマンドをスキップ</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost.bgp_asn</code> 未設定</td>
+<td>KeyError が上位に伝播</td>
+</tr>
+<tr>
+<td>FRR push 失敗</td>
+<td>STATE_DB に <code>state=inactive</code>、再試行なし</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:74L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-aggregate-address/"><code>sonic-bgp-aggregate-address</code></a></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BGP_GLOBALS_AF_AGGREGATE_ADDR|&lt;vrf&gt;|&lt;af&gt;|&lt;prefix&gt;</code>。</li>
 <li><code>as_set</code>: <code>false</code>、<code>summary_only</code>: <code>true</code>（詳細経路を抑制して集約のみ広告）。</li>
 </ul>
-<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>summary_only=true</code> のまま contributing route が無い状態で参照経路を期待しても集約広告されない。</li>
 </ul>
-<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_GLOBALS_AF_AGGREGATE_ADDR|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp ipv4 unicast&#39;</span>
 </span></code></pre></div>

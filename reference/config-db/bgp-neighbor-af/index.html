@@ -21963,6 +21963,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29884,6 +29906,46 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp neighbor &lt;ip&gt;&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key の <code>\|</code> パース失敗 (不正フォーマット)</td>
+<td><code>ValueError</code> を catch → continue (skip)</td>
+<td><code>frrcfgd.py</code> L2665, L2246</td>
+</tr>
+<tr>
+<td><code>local_asn</code> が未設定の VRF</td>
+<td><code>ignore table {} update because local_asn for VRF {} was not configured</code> を LOG_DEBUG → skip</td>
+<td><code>frrcfgd.py</code> L2660</td>
+</tr>
+<tr>
+<td><code>peer_group_name</code> が未存在の peer-group を参照</td>
+<td><code>invalid peer-group %s was referenced</code> を LOG_ERR → continue</td>
+<td><code>frrcfgd.py</code> L2828</td>
+</tr>
+<tr>
+<td><code>send_default_route=true</code> だが <code>default_rmap</code> が同時に未設定</td>
+<td><code>default-originate</code> のみ発行、route-map は付与されない (key_map の複合条件)</td>
+<td><code>frrcfgd.py</code> <code>nbr_af_key_map</code></td>
+</tr>
+<tr>
+<td><code>max_prefix_limit</code> 欠如で他の max_prefix フィールドのみ設定</td>
+<td><code>++</code> / <code>+</code> プレフィックスルールにより <code>max_prefix_limit</code> 依存フィールドは無視</td>
+<td><code>frrcfgd.py</code> <code>nbr_af_key_map</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

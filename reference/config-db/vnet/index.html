@@ -24510,7 +24510,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -24521,7 +24521,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -24530,6 +24530,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24541,7 +24552,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24552,7 +24563,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24563,7 +24574,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29786,7 +29797,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29797,7 +29808,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29806,6 +29817,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29817,7 +29839,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29828,7 +29850,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29839,7 +29861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29881,7 +29903,7 @@
 
 <h1 id="vnet-vnet_route">VNET / VNET_ROUTE テーブル<a class="headerlink" href="#vnet-vnet_route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-vnet">VNET</a> は <a href="../../glossary/#term-vxlan">VXLAN</a> overlay 上の仮想ネットワークを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義するテーブル群。<code>VNET</code> が VNI と <a href="../../glossary/#term-vxlan">VXLAN</a> tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が <a href="../../glossary/#term-vnet">VNET</a> スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><a href="../../glossary/#term-vnet">VNET</a> は <a href="../../glossary/#term-vxlan">VXLAN</a> overlay 上の仮想ネットワークを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義するテーブル群。<code>VNET</code> が VNI と <a href="../../glossary/#term-vxlan">VXLAN</a> tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が <a href="../../glossary/#term-vnet">VNET</a> スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">4</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">5</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -30054,19 +30076,31 @@
 <li>関連 CLI: <code>config vxlan</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vnet</code>、<code>sonic-vxlan</code></li>
 </ul>
+<h2 id="_6">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang; sonic-swss/orchagent/vnetorch.cpp -->
+
+<ul>
+<li><strong><code>vrf_name</code> パターン (YANG)</strong>: <code>pattern "default"</code> のみ許可。それ以外は YANG バリデーションで <code>"Invalid VRF name"</code> エラー<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><strong><code>vxlan_tunnel</code> + <code>vni</code> 必須</strong>: 両方が揃うまで <code>vxlanmgrd</code> はメッセージを破棄して再送待ち（"information is incomplete, just ignore this message"）<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VXLAN トンネル未作成</strong>: 参照 <code>VXLAN_TUNNEL</code> がキャッシュに存在しない場合リトライ待ち<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VRF 未 ready</strong>: <code>isVrfStateOk()</code> が false の場合リトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>MAC アドレス未設定</strong>: ルータ MAC が未取得の場合もリトライ<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VxLAN デバイス作成失敗</strong>: <code>SWSS_LOG_ERROR("Cannot create vxlan %s")</code> を記録して <code>false</code> を返す<sup id="fnref5:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>orchagent VR オブジェクト作成失敗</strong>: <code>std::runtime_error</code> を throw し、呼び出し元でキャッチして <code>SWSS_LOG_ERROR</code> を記録<sup id="fnref:exc3"><a class="footnote-ref" href="#fn:exc3">3</a></sup>。</li>
+</ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <a href="../../yang/sonic-vnet/"><code>sonic-vnet</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VNET|Vnet_&lt;name&gt;</code>。</li>
 <li><code>vxlan_tunnel</code>: 紐付ける <code>VXLAN_TUNNEL</code> 名。</li>
@@ -30074,12 +30108,12 @@
 <li><code>peer_list</code>: peer VNet 名（マルチサイト）。</li>
 <li><code>scope</code>: <code>default</code> / <code>evpn</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>vxlan_tunnel</code> が <code>VXLAN_TUNNEL</code> に未存在だと VNet が active にならない。</li>
 <li><code>vni</code> を同一 device 内で重複させると <a href="../../glossary/#term-orchagent">orchagent</a> が後勝ちで上書きし silent に壊れる。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VNET|Vnet_1000&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vnet<span class="w"> </span>brief
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>vnet<span class="w"> </span>routes<span class="w"> </span>all
@@ -30091,11 +30125,20 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:exc1">
+<p><code>sonic-swss/cfgmgr/vxlanmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:exc1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exc2">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vnet.yang</code> <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vnet.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vnet.yang</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exc3">
+<p><code>sonic-swss/orchagent/vnetorch.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vnetorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vnetorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p>YANG 定義: <code>sonic-vnet.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>YANG 定義: <code>sonic-vnet.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -22534,6 +22534,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29981,6 +30003,16 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>key トークン数不正</strong>: 非 VOQ 環境では <code>&lt;ifname&gt;|&lt;qindex&gt;</code> の 2 トークン必須。VOQ 環境では <code>&lt;hostname&gt;|&lt;asic_name&gt;|&lt;ifname&gt;|&lt;qindex&gt;</code> の 4 トークン必須。違反時は <code>task_invalid_entry</code> で処理中断。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>queue index 範囲外</strong>: <code>&lt;qindex&gt;</code> が SAI の queue 数を超えた場合 <code>SWSS_LOG_ERROR("Invalid queue index specified")</code> でエントリがスキップされる。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SCHEDULER 参照未解決 (リトライ)</strong>: <code>scheduler</code> フィールドの参照先 SCHEDULER エントリがまだ存在しない場合は <code>task_need_retry</code> で後で再試行される。解決できない恒久エラーの場合は <code>task_failed</code>。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>WRED_PROFILE 参照未解決 (リトライ)</strong>: <code>wred_profile</code> も同様に未解決なら <code>task_need_retry</code>、恒久エラーは <code>task_failed</code>。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>port 未検出</strong>: <code>&lt;ifname&gt;</code> が PORT テーブルに存在しない場合 <code>SWSS_LOG_ERROR("Port with alias:%s not found")</code> でスキップ。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>scheduler group 未検出</strong>: ポートは存在しても queue index に対応する SAI scheduler group が見つからない場合 <code>task_failed</code>。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: eae0af312767 -->
 
 <div class="footnote">
@@ -29988,6 +30020,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-queue.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-queue.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>qosorch 実装: <code>sonic-swss/orchagent/qosorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

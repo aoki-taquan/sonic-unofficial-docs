@@ -22355,6 +22355,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29904,6 +29926,66 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>buffer<span class="w"> </span>pg
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profile</code> フィールドの参照形式が <code>[BUFFER_PROFILE\|name]</code> でない</td>
+<td><code>BUFFER_PG: Invalid format of reference to profile</code> → <code>task_invalid_entry</code> (drop)</td>
+<td><code>buffermgrdyn.cpp</code> L3133</td>
+</tr>
+<tr>
+<td>参照プロファイルが未設定</td>
+<td><code>Profile %s hasn't been configured yet, skip</code> → <code>task_need_retry</code> (再試行)</td>
+<td><code>buffermgrdyn.cpp</code> L3150</td>
+</tr>
+<tr>
+<td><code>profile</code> 以外の不正フィールドが SET で到達</td>
+<td><code>BUFFER_PG: Invalid field %s</code> → <code>task_invalid_entry</code> (drop)</td>
+<td><code>buffermgrdyn.cpp</code> L3180</td>
+</tr>
+<tr>
+<td>PG ID が <code>uint8_t</code> に変換不可 (std::invalid_argument)</td>
+<td>その PG ID を silently skip</td>
+<td><code>buffermgr.cpp</code> L197</td>
+</tr>
+<tr>
+<td>speed / cable_length 組み合わせが lookup table に未定義</td>
+<td><code>Unable to create/update PG profile</code> → <code>task_invalid_entry</code></td>
+<td><code>buffermgr.cpp</code> L238</td>
+</tr>
+<tr>
+<td>admin down ポートでデフォルト以外のプロファイル設定時</td>
+<td>BUFFER_PG エントリを削除しない (<code>won't reclaim buffer</code>)</td>
+<td><code>buffermgr.cpp</code> L228</td>
+</tr>
+<tr>
+<td>ポートの <code>admin_status</code> が取得不可</td>
+<td><code>assuming default down</code> として扱う</td>
+<td><code>buffermgr.cpp</code> L565</td>
+</tr>
+<tr>
+<td>zero buffer profile が pool に未設定でバッファ回収不可</td>
+<td><code>Zero profile is not provided for pool %s</code> を LOG_ERROR</td>
+<td><code>buffermgrdyn.cpp</code> L381</td>
+</tr>
+<tr>
+<td>admin down ポートへの SET</td>
+<td>APPL_DB 書き込みをスキップし内部状態のみ保持。ポート up 時に APPL_DB に反映</td>
+<td><code>buffermgrdyn.cpp</code> L3202</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 566f959873ea -->
 

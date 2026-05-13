@@ -22786,6 +22786,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29949,6 +29971,59 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcp_server<span class="w"> </span>ipv4<span class="w"> </span>info
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dhcp_cfggen</td>
+<td>standard option の <code>type</code> が期待型と不一致</td>
+<td><code>LOG_WARNING</code> を出力して<strong>期待型を優先</strong>して処理継続（dhcp_cfggen.py:133-137）</td>
+</tr>
+<tr>
+<td>dhcp_cfggen</td>
+<td><code>type</code> が <code>SUPPORT_DHCP_OPTION_TYPE</code> 外</td>
+<td><code>LOG_ERR</code> を出力してそのオプションエントリをスキップ、他は継続（dhcp_cfggen.py:140-143）</td>
+</tr>
+<tr>
+<td>dhcp_cfggen</td>
+<td><code>validate_str_type(option_type, value)</code> 失敗</td>
+<td><code>LOG_ERR</code> を出力してそのオプションをスキップ（dhcp_cfggen.py:144-147）</td>
+</tr>
+<tr>
+<td>dhcp_cfggen</td>
+<td><code>type=string</code> かつ <code>value</code> が 253 文字超</td>
+<td><code>LOG_ERR</code> を出力してそのオプションをスキップ（dhcp_cfggen.py:148-150）</td>
+</tr>
+<tr>
+<td>dhcp_cfggen</td>
+<td><code>ips</code> と <code>ranges</code> の両方を同時指定</td>
+<td><code>LOG_WARNING: "...contains both ips and ranges, skip"</code> を出力してそのポートをスキップ（dhcp_cfggen.py:418-421）</td>
+</tr>
+<tr>
+<td>dhcp_cfggen</td>
+<td><code>ranges</code> で指定した range 名が DHCP_SERVER_IPV4_RANGE に存在しない</td>
+<td><code>LOG_WARNING: "Range %s is not in range table, skip"</code> を出力してその range をスキップ（dhcp_cfggen.py:452-454）</td>
+</tr>
+<tr>
+<td>dhcprelayd</td>
+<td><code>state=enabled</code> でも VLAN が VLAN テーブルに存在しない</td>
+<td>dhcrelay の起動対象から除外（dhcprelayd.py:97-98）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-buildimage <code>src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:133-454</code>; <code>dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 3d133254de43 -->
 

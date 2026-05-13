@@ -22102,7 +22102,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -22113,7 +22113,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -22122,6 +22122,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -22143,7 +22154,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22155,7 +22166,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22166,7 +22177,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22177,7 +22188,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29752,7 +29763,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29763,7 +29774,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29772,6 +29783,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29793,7 +29815,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29805,7 +29827,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29816,7 +29838,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29827,7 +29849,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30065,16 +30087,75 @@
 <li>関連 CLI: <a href="../../cli/config-acl/"><code>config acl</code></a></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: なし</li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>key の TABLE_ID が空文字</td>
+<td>WARN ログ後 erase、skip</td>
+</tr>
+<tr>
+<td>対応する ACL_TABLE が未作成</td>
+<td>待機 (<code>it++</code>)、テーブル作成後に再試行</td>
+</tr>
+<tr>
+<td>コントロールプレーンテーブルのルール</td>
+<td>INFO ログ後 erase、skip</td>
+</tr>
+<tr>
+<td><code>AclRule::makeShared</code> が例外</td>
+<td>ERROR ログ後 erase &amp; 関数 return（処理中断）</td>
+</tr>
+<tr>
+<td>未知/不正な属性名</td>
+<td>rule INACTIVE、erase</td>
+</tr>
+<tr>
+<td><code>MATCH_TCP_FLAGS</code> あり・IP_PROTOCOL 未指定</td>
+<td>IP_PROTOCOL=6 (TCP) を自動付与</td>
+</tr>
+<tr>
+<td>IPv4 と IPv6 matchfield 混在（L3V4V6 テーブル）</td>
+<td><code>bAllAttributesOk=false</code>、rule INACTIVE</td>
+</tr>
+<tr>
+<td>SAI リソース枯渇</td>
+<td>retry キャッシュに退避、リソース解放後に再試行</td>
+</tr>
+<tr>
+<td>IN_PORTS/OUT_PORTS に非物理 IF</td>
+<td><code>return false</code>、rule INACTIVE</td>
+</tr>
+<tr>
+<td>VLAN ID 範囲外</td>
+<td><code>return false</code>、rule INACTIVE</td>
+</tr>
+<tr>
+<td>Range 形式不正</td>
+<td><code>return false</code>、rule INACTIVE</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5520L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CLI: <a href="../../cli/config-acl/"><code>config acl</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../acl-qos/acl-support-in-sonic/">HLD: ACL の基本設計</a></li>
 <li><a href="../../cli/config-acl/">CLI: config acl</a></li>
@@ -30089,21 +30170,21 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>ACL_RULE|&lt;table-name&gt;|&lt;rule-name&gt;</code>。</li>
 <li><code>priority</code>: 0..65535（大きいほど優先）。9999 等の値を運用で使う。</li>
 <li><code>packet_action</code>: <code>FORWARD</code> / <code>DROP</code> / <code>REDIRECT:&lt;nh&gt;</code>。</li>
 <li>match: <code>src_ip</code> / <code>dst_ip</code> / <code>l4_src_port</code> / <code>ip_protocol</code> 等。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>同じ <code>priority</code> を複数 rule で使うと適用順が ASIC 依存で予測不能。</li>
 <li><code>SRC_IP</code> を V6 テーブルに入れると無視され、rule が hit せず原因不明になる。<code>SRC_IPV6</code> を使う。</li>
 <li><code>packet_action: REDIRECT:</code> の nexthop 解決が失敗すると rule が install されない（syslog 確認）。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE|EVERFLOW|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>aclshow<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span>EVERFLOW
 </span></code></pre></div>

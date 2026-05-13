@@ -30081,6 +30081,7 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 <li>warm reboot / GR for BGP はスコープ外</li>
 <li>部分 NH 失敗の表現はない（route 単位）</li>
 <li>enable/disable 切替時の挙動はやや不安定。container 再起動を推奨</li>
+<li><strong>EntityBulker の SAI_STATUS_ITEM_NOT_FOUND</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/3270">sonic-swss#3270</a>): <code>EntityBulker.flush</code> がルート削除処理時に既に存在しないエントリを SAI に渡し <code>SAI_STATUS_ITEM_NOT_FOUND</code> で失敗するケースがある。syslog に <code>flush_removing_entries: EntityBulker.flush remove entries failed, number of entries to remove: 1, status: SAI_STATUS_ITEM_NOT_FOUND</code> が記録される。ECMP ネクストホップグループの更新中に発生しやすく、orchagent は警告を出した上で処理を継続するが、状態の一時的な不整合が生じることがある。</li>
 </ul>
 <h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>

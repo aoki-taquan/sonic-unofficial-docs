@@ -7366,7 +7366,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vs-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS イメージサイズ削減（実運用 Tips）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VS イメージサイズ削減（実運用 Tips）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        有効な削減手段
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -7377,7 +7405,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -7388,7 +7416,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -7499,7 +7527,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -7521,7 +7549,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -7532,7 +7560,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -29893,7 +29921,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vs-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS イメージサイズ削減（実運用 Tips）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VS イメージサイズ削減（実運用 Tips）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        有効な削減手段
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29904,7 +29960,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         干渉する機能
@@ -29915,7 +29971,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         トラブルシューティング
@@ -30026,7 +30082,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         参考リンク
@@ -30048,7 +30104,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -30059,7 +30115,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -30232,21 +30288,51 @@ reasoning: 取り込み順位と後方互換性の根拠。
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1">#  実装は make の変数代入順序に依存。）</span>
 </span></code></pre></div>
 <p>新しいプロファイルを追加するには <code>rules/profiles/&lt;name&gt;.mk</code> を作成し、必要な <code>KEY=VALUE</code> を並べてコミットするだけ。</p>
-<h2 id="_7">制限事項<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="vs-tips">VS イメージサイズ削減（実運用 Tips）<a class="headerlink" href="#vs-tips" title="Permanent link">&para;</a></h2>
+<p>SONiC 202505 Bookworm では VS イメージが <strong>約 6GB</strong> になり、RAM が 8GB 前後の resource-constrained な環境でビルドが困難なケースが報告されている（sonic-net/sonic-buildimage#26636）。</p>
+<h3 id="_7">有効な削減手段<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p><strong>1. <code>BUILD_REDUCE_IMAGE_SIZE=y</code></strong></p>
+<ul>
+<li>docker ファイルの圧縮アルゴリズムを gzip から <strong>zstd</strong> に変更し <code>.bin</code> サイズを大幅削減</li>
+<li><code>build_debian.sh</code> が man pages 削除・重複ファイルの hardlink 化を実施するスクリプト <code>scripts/build-optimize-fs-size.py</code> を呼び出す</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>make<span class="w"> </span><span class="nv">BUILD_REDUCE_IMAGE_SIZE</span><span class="o">=</span>y<span class="w"> </span>all
+</span></code></pre></div>
+<p><strong>2. オプション機能を無効化する（<code>rules/config</code> or コマンドライン）</strong></p>
+<p>コアコンテナ以外を外すと大幅縮小できる:</p>
+<div class="language-make highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nv">INCLUDE_SFLOW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nv">INCLUDE_NAT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nv">INCLUDE_SNMP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nv">INCLUDE_MUX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nv">INCLUDE_MACSEC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nv">INCLUDE_DHCP_RELAY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nv">INCLUDE_SYSTEM_BMP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="nv">INCLUDE_SYSTEM_OTEL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="nv">INCLUDE_SYSTEM_EVENTD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nv">INCLUDE_SYSTEM_GNMI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nv">INCLUDE_MGMT_FRAMEWORK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="nv">INCLUDE_DASH_HA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="nv">INCLUDE_ROUTER_ADVERTISER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="nv">INCLUDE_BOOTCHART</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="nv">INCLUDE_FIPS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="nv">INCLUDE_VS_DASH_SAI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>n
+</span></code></pre></div>
+<p>コア必須コンテナは <code>docker-database</code>, <code>docker-orchagent</code>, <code>docker-syncd</code>, <code>docker-fpm-frr</code>, <code>docker-platform-monitor</code>, <code>docker-teamd</code>（LAG 使用時）, <code>docker-lldp</code> 程度。</p>
+<h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>HLD で明示の制限事項は無い。実運用上の留意点としては:</p>
 <ul>
 <li>プロファイル名のネームスペースが平坦（<code>rules/profiles/&lt;name&gt;.mk</code>）。多数のチームが大量にプロファイルを置くと衝突しうるが、HLD では命名規約に触れていない。</li>
 <li>値の型チェックは無い。誤った値が混入してもビルドエラーで気付く以上の保護は無い。</li>
 <li><code>rules/config.user</code> がコミットされないため、CI とローカルでの組み合わせを誤ると挙動が分岐する可能性がある。プロファイルを使えばこの問題自体を回避できる、という設計意図<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
-<h2 id="_8">干渉する機能<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存の <code>make ENABLE_*=y all</code> 形</strong> : そのまま動く。<code>PROFILE</code> を併用しても、make の変数解決ルールに従う。</li>
 <li><strong>secure upgrade 系（<code>SECURE_UPGRADE_*</code>）</strong>: HLD の例で挙げられる典型ユースケース。署名証明書とビルドフラグを 1 ファイルにまとめておけるのが直接の旨味<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><a href="../../reference/glossary/#term-ztp">ZTP</a>（<code>ENABLE_ZTP</code>, <code>USERNAME</code>, <code>PASSWORD</code> 等）</strong> : 同様にプロファイル化しやすい代表例<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>CI/CD パイプライン</strong>: CI 側で個別フラグを並べていた箇所をプロファイル指定に置き換えられる。手元ビルドとの <strong>再現性</strong> が揃うのが効果。</li>
 </ul>
-<h2 id="_9">トラブルシューティング<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">トラブルシューティング<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>PROFILE=foo</code> を指定したのにフラグが効かない: <code>rules/profiles/foo.mk</code> が存在するか確認。HLD の優先順位どおりだと、ファイルが無ければ単に何も足されない。</li>
 <li>値が <code>rules/config</code> で上書きされる: 優先順位は <code>config &lt; config.user &lt; profiles/$PROFILE.mk</code>。プロファイルで指定したのに効いていない場合は、コマンドラインの個別指定や make の override 挙動を疑う。</li>
@@ -30260,10 +30346,10 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <ul>
 <li><code>sonic-buildimage/rules/profiles/</code> ディレクトリが存在しない（<code>ls .cache/sonic-sources/sonic-buildimage/rules/</code> で <code>config</code> 系 mk のみで <code>profiles/</code> サブディレクトリは無し）。</li>
 <li><code>sonic-buildimage/Makefile.work:150-156</code> に該当する include はわずか:
-  <div class="language-make highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nf">rules/config.user</span><span class="o">:</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="err">...</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="cp">include rules/config</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="cp">-include rules/config.user</span>
+  <div class="language-make highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nf">rules/config.user</span><span class="o">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="err">...</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="cp">include rules/config</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="cp">-include rules/config.user</span>
 </span></code></pre></div>
   HLD が要求する <code>-include rules/profiles/$(PROFILE).mk</code> の行は <strong>存在しない</strong>。</li>
 <li>結果として <code>PROFILE=foo</code> を渡しても make は <code>$(PROFILE)</code> を解釈する箇所が無く、フラグは一切読み込まれない。</li>
@@ -30302,20 +30388,20 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <h3 id="build-profile">コマンド例: Build profile 適用状態の確認<a class="headerlink" href="#build-profile" title="Permanent link">&para;</a></h3>
 <p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
 </span></code></pre></div>
 <h3 id="build-profile_1">コマンド例: Build profile 適用状態の確認<a class="headerlink" href="#build-profile_1" title="Permanent link">&para;</a></h3>
 <p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
 </span></code></pre></div>
-<h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/">Reference 索引</a></li>
 <li><a href="../../topics/19-build-packaging/">Topics: Build / Packaging</a></li>
@@ -30326,7 +30412,7 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <li><a href="../rfs-split-build-improvements-hld/">HLD: rfs-split-build-improvements</a></li>
 <li><a href="../../reference/">Reference index</a></li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-buildimage/rules/profiles/ ディレクトリは存在しない (find で確認)
 - sonic-buildimage/Makefile.work:155 include rules/config; :156 -include rules/config.user のみで profiles/$(PROFILE).mk を取り込むロジックは未実装
@@ -30334,7 +30420,7 @@ reasoning: 取り込み順位と後方互換性の根拠。
 -->
 
 <!-- next-action -->
-<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

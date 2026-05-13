@@ -23458,6 +23458,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29923,6 +29945,61 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>breakout
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platform.json</code> が存在しない / <code>.json</code> 拡張子でない</td>
+<td><code>Breakout feature is not available without platform.json file</code> → Abort</td>
+<td><code>config/main.py</code> L5469</td>
+</tr>
+<tr>
+<td>BREAKOUT_CFG テーブル自体が CONFIG_DB に存在しない</td>
+<td><code>BREAKOUT_CFG table is NOT present in CONFIG DB</code> → Abort</td>
+<td><code>config/main.py</code> L5481</td>
+</tr>
+<tr>
+<td>対象 interface が BREAKOUT_CFG に未登録</td>
+<td><code>{} interface is NOT present in BREAKOUT_CFG table of CONFIG DB</code> → Abort</td>
+<td><code>config/main.py</code> L5485</td>
+</tr>
+<tr>
+<td>target mode が <code>platform.json</code> の interfaces に未定義</td>
+<td><code>_validate_interface_mode()</code> 失敗 → Abort</td>
+<td><code>config/main.py</code> L5491</td>
+</tr>
+<tr>
+<td><code>del_intf_dict</code> が空 (削除対象ポートなし)</td>
+<td><code>del_intf_dict is None! No interfaces are there to be deleted</code> → Abort</td>
+<td><code>config/main.py</code> L5504</td>
+</tr>
+<tr>
+<td>Yang モデルなしテーブルに削除対象ポートの依存がある</td>
+<td><code>breakout_warnUser_extraTables()</code> がユーザーへの警告・確認を要求</td>
+<td><code>config/main.py</code> L239</td>
+</tr>
+<tr>
+<td>BREAKOUT_CFG への <code>set_entry</code> で <code>ValueError</code></td>
+<td><code>Invalid ConfigDB. Error: {}</code> → <code>ctx.fail()</code></td>
+<td><code>config/main.py</code> L5553</td>
+</tr>
+<tr>
+<td><code>show interfaces breakout</code> で対象ポートが未登録</td>
+<td>対象ポートを skip (エラーなし)</td>
+<td><code>show/interfaces/__init__.py</code> L228</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 17ab2ab6ed91 -->
 

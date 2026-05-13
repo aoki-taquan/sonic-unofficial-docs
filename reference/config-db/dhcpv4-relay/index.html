@@ -22814,6 +22814,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29961,6 +29983,44 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcprelay_helper<span class="w"> </span>ipv4
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>db_migrator</td>
+<td>DHCPV4_RELAY に <code>dhcpv4_servers</code> が既存</td>
+<td><code>"Skipping migration for {vlan_key}: dhcpv4_servers already present in DHCPV4_RELAY"</code> を出力してスキップ（べき等性）（db_migrator.py:928）</td>
+</tr>
+<tr>
+<td>config vlan</td>
+<td>DHCPV4_RELAY 参照中の VLAN を削除しようとした</td>
+<td><code>ctx.fail("{vlan} cannot be removed as it is being used in DHCPV4_RELAY table.")</code> でエラー終了（config/vlan.py:243）</td>
+</tr>
+<tr>
+<td>config main</td>
+<td>DHCPV4_RELAY 参照中の VRF を削除しようとした</td>
+<td>削除を拒否（config/main.py:1699-1706）</td>
+</tr>
+<tr>
+<td>dhcp_relay CLI</td>
+<td>同一サーバ IP を重複追加</td>
+<td>既存エントリを get してマージするため重複エントリは発生しない（dhcp_relay.py:601-628）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-utilities <code>scripts/db_migrator.py:928</code>; <code>config/vlan.py:242-243</code>; <code>config/main.py:1699-1706</code>; sonic-buildimage <code>dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py:601-628</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 46a21a7d2d5c -->
 

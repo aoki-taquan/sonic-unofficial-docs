@@ -22992,6 +22992,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -23001,7 +23012,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23012,7 +23023,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23023,7 +23034,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29752,6 +29763,17 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29943,18 +29965,31 @@
 </ul>
 <!-- /topics-back-ref -->
 
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-gnmi/gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L381-643 -->
+
+<ul>
+<li><strong>起動時のみ参照</strong>: <code>telemetry</code> コンテナは起動時に CONFIG_DB を一回読み込む。実行中の変更はコンテナ再起動（<code>systemctl restart telemetry</code>）なしには反映されない。</li>
+<li><strong>ポート未設定でサーバ不起動</strong>: <code>port</code> が 0 以下かつ <code>unix_socket</code> も未設定の場合、<code>"no listener configured: port must be &gt; 0 or unix_socket must be set"</code> を返してサーバが起動しない。</li>
+<li><strong>TCP / UDS リスナー失敗時の縮退動作</strong>: TCP listen 失敗時は <code>"Failed to open listener port &lt;port&gt;: disabling TCP listener"</code> を Warningf し UDS のみで継続（その逆も同様）。両方失敗した場合はサーバ起動エラーになる。</li>
+<li><strong>TLS 証明書の不整合</strong>: <code>server_crt</code> / <code>server_key</code> のいずれか一方のみ設定されていると <code>"server certificate or key file path is empty"</code> を返す。証明書ファイルが存在しない場合も stat エラーを返してサーバが起動しない。</li>
+<li><strong>CA 証明書ファイル不在</strong>: mTLS 設定時に <code>ca_crt</code> パスが存在しない場合 <code>"CA certificate file not found"</code> を返す。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="_7">典型値<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>TELEMETRY|&lt;key&gt;</code> (<code>gnmi</code>, <code>certs</code> 等)`。</li>
 <li><code>port</code>: <code>8080</code>/<code>50051</code>、<code>client_auth</code>: <code>true</code>、<code>log_level</code>: <code>2</code>。</li>
 </ul>
-<h3 id="_8">よくある誤設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>client_auth=true なのに CA bundle 設定漏れで gNMI client が TLS handshake に失敗する。</li>
 </ul>
-<h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TELEMETRY|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>systemctl<span class="w"> </span>status<span class="w"> </span>telemetry
 </span></code></pre></div>

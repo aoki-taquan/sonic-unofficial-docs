@@ -21660,7 +21660,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -21671,7 +21671,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -21682,7 +21682,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -21691,6 +21691,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21702,7 +21713,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21713,7 +21724,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21724,7 +21735,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29697,7 +29708,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29708,7 +29719,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29719,7 +29730,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29728,6 +29739,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29739,7 +29761,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29772,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29803,7 +29825,7 @@
 
 <h1 id="vrf">VRF テーブル<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>L3 トラフィック分離のための Virtual Routing and Forwarding インスタンスを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>vrfmgrd</code> がこのテーブルを購読し、Linux <a href="../../glossary/#term-vrf">VRF</a> (<code>ip vrf</code> / <code>cgroup</code>) を作成する。各種 <code>*_INTERFACE</code> テーブルから <code>vrf_name</code> で leafref 参照される。<a href="../../glossary/#term-evpn">EVPN</a> <a href="../../glossary/#term-vxlan">VXLAN</a> では <code>vni</code> を介して L3 VNI と紐付く。</p>
+<p>L3 トラフィック分離のための Virtual Routing and Forwarding インスタンスを定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">3</a></sup>。<code>vrfmgrd</code> がこのテーブルを購読し、Linux <a href="../../glossary/#term-vrf">VRF</a> (<code>ip vrf</code> / <code>cgroup</code>) を作成する。各種 <code>*_INTERFACE</code> テーブルから <code>vrf_name</code> で leafref 参照される。<a href="../../glossary/#term-evpn">EVPN</a> <a href="../../glossary/#term-vxlan">VXLAN</a> では <code>vni</code> を介して L3 VNI と紐付く。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29874,17 +29896,29 @@
 <li>関連 CLI: <code>config vrf add/del</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vrf</code></li>
 </ul>
+<h2 id="_5">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang -->
+
+<ul>
+<li><strong>名前パターン (YANG)</strong>: <code>pattern "Vrf[a-zA-Z0-9_-]+"</code> — 違反は <code>"Invalid VRF name"</code> エラーで reject される<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><strong>VNI 重複禁止</strong>: 同じ VNI が別 VRF にマップ済みの場合 <code>vrfmgrd</code> は <code>SWSS_LOG_ERROR("vni %d is already mapped to vrf %s")</code> を記録してエントリを破棄する<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VRF への VNI 再マップ禁止</strong>: 既に VNI が設定されている VRF に別の VNI を設定しようとすると <code>SWSS_LOG_ERROR("vrf %s is already mapped to vni %d")</code> でエラー<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>削除遅延</strong>: VRF 削除時に orchagent の VRF オブジェクトが残存している場合 <code>vrfmgrd</code> は削除をリトライ待ち（<code>isVrfObjExist()</code> チェック）<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>Linux netdev 作成失敗</strong>: <code>SWSS_LOG_ERROR("Failed to create vrf netdev")</code> を記録<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VNI マップ設定失敗</strong>: <code>SWSS_LOG_ERROR("VRF VNI Map Config Failed")</code> を記録してエントリを破棄<sup id="fnref5:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>デフォルト補完</strong>: <code>fallback</code> のデフォルト <code>false</code>、<code>vni</code> のデフォルト <code>0</code>（マッピングなし）<sup id="fnref2:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+</ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vrf/"><code>sonic-vrf</code></a></li>
 <li>CLI: <a href="../../cli/config-vrf/"><code>config vrf</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../routing/sonic-vrf-support-design-spec-draft/">HLD: VRF サポート</a></li>
 <li><a href="../../cli/config-vrf/">CLI: config vrf</a></li>
@@ -29892,19 +29926,19 @@
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VRF|Vrf&lt;name&gt;</code> (例 <code>VRF|VrfRed</code>)。</li>
 <li><code>vni</code>: L3 VNI（<a href="../../glossary/#term-vxlan">VXLAN</a> <a href="../../glossary/#term-evpn">EVPN</a> tenant L3）。</li>
 <li><code>fallback</code>: <code>true</code> で default VRF にフォールバック。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>VRF 名が <code>Vrf</code> で始まらないと <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> / <a href="../../glossary/#term-orchagent">orchagent</a> が認識しない。</li>
 <li><code>vni</code> を tenant 間で重複させると <a href="../../glossary/#term-evpn">EVPN</a> route が混線する。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VRF|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>vrf
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ip<span class="w"> </span>vrf<span class="w"> </span>show
@@ -29916,8 +29950,14 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:exc1">
+<p><code>sonic-swss/cfgmgr/vrfmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vrfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vrfmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:exc1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exc2">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang</code> <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vrf.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vrf.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vrf.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

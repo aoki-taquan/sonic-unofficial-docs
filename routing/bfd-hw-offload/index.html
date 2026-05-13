@@ -30187,6 +30187,7 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 <li>Warm restart に関しては「特別な処理は不要」とされている<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。ただし HW オフロードセッションが warm reboot 中に保持されるかは ASIC 実装依存</li>
 <li>同一宛先 IP に control plane BFD（FRR）と HW オフロードを同時に張らないこと</li>
 <li>HW 実装が underlay ECMP 解決を持っていることが前提。HW 側でこれが未実装の場合 multihop が成立しない</li>
+<li><strong><code>SAI_BFD_SESSION_ATTR_PORT</code> 未設定の問題</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/3051">sonic-swss#3051</a>): <code>SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID=False</code>（HW ルックアップを無効化）でセッションを作成する場合、SAI は <code>SAI_BFD_SESSION_ATTR_PORT</code> を必須属性として要求する。現行の <code>BfdOrch</code> はこの属性を設定前に照会せずにプログラミングするため、非デフォルトポート構成で BFD セッション作成が失敗することがある。この場合は <a href="../../reference/glossary/#term-syncd">syncd</a> ログに SAI エラーが記録される。</li>
 </ul>
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>

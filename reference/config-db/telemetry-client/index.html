@@ -24476,6 +24476,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -24485,7 +24496,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24496,7 +24507,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24507,7 +24518,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29808,6 +29819,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         運用ヒント
       
     </span>
@@ -29817,7 +29839,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29828,7 +29850,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29839,7 +29861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30028,20 +30050,34 @@
 <ul>
 <li><a href="../telemetry/">CONFIG_DB: TELEMETRY</a></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_9">例外条件・特殊挙動<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-gnmi/dialout/dialout_client/dialout_client.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L464-580 -->
+
+<ul>
+<li><strong><code>Global</code> キーの DEL 不可</strong>: <code>TELEMETRY_CLIENT|Global</code> は DEL 操作をサポートしない。<code>"Invalid delete operation for TELEMETRY_CLIENT|Global"</code> を返す。</li>
+<li><strong><code>retry_interval</code> 型変換失敗は無視</strong>: <code>retry_interval</code> が <code>uint64</code> として解釈できない場合、<code>"Invalid retry_interval &lt;value&gt;"</code> をログして当該フィールドをスキップし旧設定を維持する。</li>
+<li><strong>使用中の DestinationGroup は DEL 不可</strong>: Subscription から参照されている DestinationGroup を DEL しようとすると <code>"&lt;name&gt; is being used"</code> を返す。先に Subscription を削除する必要がある。</li>
+<li><strong>空の <code>dst_addr</code></strong>: DestinationGroup の <code>dst_addr</code> が空のアドレスを含む場合、<code>"Destination.Addrs is empty"</code> を返してエントリを拒否する。</li>
+<li><strong>DestinationGroup / Subscription の空名</strong>: <code>DestinationGroup_</code> または <code>Subscription_</code> プレフィックス後が空文字列の場合はエラーを返す。</li>
+<li><strong>DestinationGroup 参照エラー</strong>: Subscription が参照する DestinationGroup が未作成または削除済みの場合、<code>"Destination group &lt;name&gt; doesn't exist"</code> を返す。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>TELEMETRY_CLIENT|Global</code> / <code>TELEMETRY_CLIENT|Subscription|&lt;n&gt;</code> / <code>TELEMETRY_CLIENT|DestinationGroup|&lt;n&gt;</code>。</li>
 <li><code>encoding=JSON_IETF</code>、<code>report_type=stream</code>、<code>report_interval=5000</code> (ms)。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>dst_addr</code> に IPv6 リテラルを入れて pattern で reject される (<code>ipv4-port</code> typedef のみ)。</li>
 <li><code>Subscription</code> の <code>dst_group</code> が <code>DestinationGroup</code> のいずれの <code>name</code> にも一致せず must 制約で失敗。</li>
 <li><code>paths</code> を空にして購読が成立しない。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TELEMETRY_CLIENT|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>dial-out
 </span></code></pre></div>

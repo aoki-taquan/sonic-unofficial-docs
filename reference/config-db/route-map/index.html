@@ -22120,6 +22120,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29754,6 +29765,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29975,6 +29997,14 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>BGPRouteMapMgr は固定 2 キーのみ処理</strong>: <code>FROM_SDN_SLB_ROUTES</code> / <code>FROM_SDN_APPLIANCE_ROUTES</code> 以外の key は <code>log_err("BGPRouteMapMgr:: Invalid key for route-map %s")</code> で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は bgpcfgd の ROUTE_MAP テーブル consumer ではなく bgpcfgd テンプレートが担う。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>community_id 形式不正</strong>: <code>&lt;0-65535&gt;:&lt;0-65535&gt;</code> 形式でない場合 <code>log_err</code> してスキップ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>BGP ASN 未設定 (constants)</strong>: <code>deployment_id_asn_map</code> が constants に存在しないか、<code>deployment_id=2</code> のエントリがない場合は route-map の更新をスキップする（既存 route-map は残る）。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>シーケンス番号枯渇</strong>: <code>managers_allow_list.py</code> との連携でシーケンス番号が不足した場合 <code>RuntimeError("No free sequence numbers")</code> で追加が失敗する。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: 4b960f6e2623 -->
 
 <div class="footnote">
@@ -29982,6 +30012,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-route-map.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-map.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-map.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>bgpcfgd RouteMapMgr 実装: <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

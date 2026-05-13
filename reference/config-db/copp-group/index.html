@@ -22125,6 +22125,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -22144,7 +22155,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22155,7 +22166,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22177,7 +22188,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22189,7 +22200,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22200,7 +22211,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22211,7 +22222,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29697,6 +29708,17 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         購読者
       
     </span>
@@ -29716,7 +29738,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29727,7 +29749,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29945,7 +29967,16 @@
 <li><code>pbs</code> は <code>mode = 'sr_tcm'</code> または <code>'tr_tcm'</code> のときのみ有効</li>
 <li><code>yellow_action</code> は <code>sr_tcm</code>/<code>tr_tcm</code> モードのみ</li>
 </ul>
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- cdb-exceptions -->
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>NULL cfg → デフォルト設定のマージをスキップ</strong>: ユーザー設定エントリのフィールドが <code>"NULL"</code> の場合、<code>coppmgr</code> の <code>mergeConfig()</code> はそのキー全体を init (デフォルト <code>copp.json</code>) からも除外する。<!-- evidence: coppmgr.cpp L222-224 mergeConfig --></li>
+<li><strong>重複エントリ → APPL_DB 更新スキップ</strong>: <code>isDupEntry()</code> で APPL_DB の既存値と全フィールドが一致する場合、<code>m_appCoppTable.set()</code> を呼ばない。SAI の不要な呼び出しを回避。<!-- evidence: coppmgr.cpp L263-284 isDupEntry --></li>
+<li><strong>policer の meter / mode / color は変更不可</strong>: 既存ポリサーへの <code>meter_type</code> / <code>mode</code> / <code>color_source</code> 変更を試みた場合 <code>SWSS_LOG_ERROR</code> を出力し当該属性の変更は<strong>スキップ</strong>される。他の属性の更新は続行。<!-- evidence: copporch.cpp L1331-1347 trapGroupUpdatePolicer --></li>
+<li><strong>未知フィールド → task_failed</strong>: <code>parseTrapGroupAttribute()</code> で認識できないフィールドが来た場合 <code>SWSS_LOG_ERROR("Unknown copp field specified:%s")</code> を出力し処理失敗となる。<!-- evidence: copporch.cpp L1290-1292 --></li>
+<li><strong>task_failed → プロセス終了</strong>: <code>CoppOrch</code> は <code>task_failed</code> が返った場合 syslog にエラーを出力してプロセス (<code>orchagent</code>) を終了する。<!-- evidence: copporch.cpp L922 --></li>
+</ul>
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>coppmgr</code> (<code>docker-swss</code> 内): <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>COPP_GROUP</code> / <code>COPP_TRAP</code> を結合し <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>COPP_TABLE</code> に書き込む</li>
 <li><code>orchagent</code> の <code>CoppOrch</code>: <a href="../../glossary/#term-sai">SAI</a> hostif trap group / policer を生成</li>
@@ -29958,14 +29989,14 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-copp/"><code>sonic-copp</code></a></li>
 <li>CLI: <code>config copp</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29974,19 +30005,19 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>COPP_GROUP|&lt;group-name&gt;</code> (<code>queue4_group1</code> 等)。</li>
 <li><code>queue</code>: CPU queue 番号。</li>
 <li><code>cir</code>: 例 <code>6000</code> (pps)。</li>
 <li><code>trap_action</code>: <code>trap</code> / <code>forward</code> / <code>copy</code> / <code>drop</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>cir</code> を過小に設定すると <a href="../../glossary/#term-bgp">BGP</a> keepalive がドロップされて peer が落ちる。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_GROUP|queue4_group1&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>copp<span class="w"> </span>config
 </span></code></pre></div>

@@ -23183,7 +23183,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -23194,7 +23194,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -23203,6 +23203,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23214,7 +23225,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23225,7 +23236,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23236,7 +23247,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29708,7 +29719,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29719,7 +29730,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29728,6 +29739,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29739,7 +29761,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29772,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29882,27 +29904,78 @@
 <li>関連 CLI: 専用 CLI なし。<code>sonic-cfggen</code> / minigraph 経由で投入されるのが通常</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-allowed-prefix</code>, <code>sonic-routing-policy-sets</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>機能が constants で無効化</td>
+<td>SET/DEL 両方とも warn log 後 return True（消化）</td>
+</tr>
+<tr>
+<td>key が正規表現パターン不一致</td>
+<td>log_err 後 return False（消化されない、再試行の可能性）</td>
+</tr>
+<tr>
+<td><code>data</code> が None</td>
+<td>log_err 後 return False</td>
+</tr>
+<tr>
+<td><code>prefixes_v4</code> に IPv6 アドレス</td>
+<td>log_err 後 return False</td>
+</tr>
+<tr>
+<td><code>prefixes_v6</code> に IPv4 アドレス</td>
+<td>log_err 後 return False</td>
+</tr>
+<tr>
+<td><code>prefixes_v4</code>/<code>prefixes_v6</code> が両方空</td>
+<td>log_err 後 return False</td>
+</tr>
+<tr>
+<td><code>default_action</code> が <code>"permit"</code>/<code>"deny"</code> 以外</td>
+<td>log_err 後 return False</td>
+</tr>
+<tr>
+<td><code>ge</code>/<code>le</code> サフィックス付き prefix</td>
+<td>split して prefix 部分のみ IP 検証（サフィックスは FRR に委ねる）</td>
+</tr>
+<tr>
+<td>DEL の key パターン不一致</td>
+<td>log_err 後 return（値なし）、消化扱い</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:75L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>YANG: <code>sonic-bgp-allowed-prefix</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BGP_ALLOWED_PREFIXES|&lt;vrf&gt;|&lt;peer&gt;|&lt;af&gt;</code>。</li>
 <li>ToR 配下の特定 prefix 集合のみを許可する利用が多い。<code>prefixes</code> は CSV または list。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>prefix-list 名と表記揺れがあると <a href="../../glossary/#term-frr">FRR</a> 側に反映されず広告フィルタが効かない。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_ALLOWED_PREFIXES|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config bgp&#39;</span>
 </span></code></pre></div>

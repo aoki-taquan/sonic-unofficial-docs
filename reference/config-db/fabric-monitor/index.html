@@ -23682,6 +23682,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29950,6 +29972,39 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>fabric<span class="w"> </span>isolation
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent (fabricportsorch)</td>
+<td><code>FABRIC_MONITOR_DATA</code> エントリが APPL_DB に存在しない</td>
+<td><code>LOG_INFO: "default values not set"</code> を出力し、ハードコードされたコンパイル時定数 (<code>ERROR_RATE_CRC_CELLS_CFG</code> / <code>ERROR_RATE_RX_CELLS_CFG</code>) をデフォルトとして使用（fabricportsorch.cpp:139,447）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td><code>monErrThreshCrcCells</code> / <code>monErrThreshRxCells</code> フィールドが欠落</td>
+<td>欠落フィールドのみデフォルト定数を維持、取得できたフィールドのみ更新（fabricportsorch.cpp:459-465）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>リンクアップ直後のエラーカウント</td>
+<td><code>skipCrcErrorsOnLinkupCount</code> が閾値未満の間はエラーカウントを無視。ブート時誤検知防止（fabricportsorch.cpp:548-561,770-772）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-swss <code>orchagent/fabricportsorch.cpp:139,447-465,548-772</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 32758c44ab11 -->
 

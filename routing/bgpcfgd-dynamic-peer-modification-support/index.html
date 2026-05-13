@@ -9202,6 +9202,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="制限事項">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unnumberedbgp-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unnumbered（インタフェースベース）BGP neighbor は非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -29818,6 +29835,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="制限事項">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unnumberedbgp-neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unnumbered（インタフェースベース）BGP neighbor は非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -30081,6 +30115,17 @@
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>show<span class="w"> </span>ip<span class="w"> </span>bgp<span class="w"> </span>vrf<span class="w"> </span>Vnet1<span class="w"> </span>summary
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="unnumberedbgp-neighbor">unnumbered（インタフェースベース）BGP neighbor は非対応<a class="headerlink" href="#unnumberedbgp-neighbor" title="Permanent link">&para;</a></h3>
+<p><strong>CONFIG_DB の <code>BGP_NEIGHBOR</code> テーブルは IP アドレスキーのみ受け付ける</strong>。<code>neighbor PortChannel101 interface v6only remote-as 64001</code> のような unnumbered BGP neighbor は bgpcfgd 経由では設定できない。</p>
+<p>制約の全容（3 層）:</p>
+<ol>
+<li><strong>YANG スキーマ</strong>: <code>sonic-bgp-neighbor.yang</code> の <code>BGP_NEIGHBOR_LIST</code> は <code>inet:ip-address</code> 型のキーを使用。<code>frrcfgd</code> が使う <code>BGP_NEIGHBOR_LIST</code> は union 型（Port / PortChannel / Vlan pattern を含む）だが <code>bgpcfgd</code> 側は未対応</li>
+<li><strong>bgpcfgd の <code>add_peer()</code></strong>: IP アドレス前提のコードパスのみ。インタフェース名が渡されても <code>neighbor &lt;intf&gt; interface</code> FRR 構文を生成しない</li>
+<li><strong>Jinja2 template</strong>: <code>general/instance.conf.j2</code> 等が <code>| ipv4</code> / <code>| ipv6</code> フィルタで分岐するため、インタフェース名だと両方とも <code>False</code> になりアドレスファミリブロックがスキップされる</li>
+</ol>
+<p><strong>回避策</strong>: <code>frrcfgd</code> 経由または <code>vtysh</code> で直接 FRR 設定を投入する（FRR 自体は unnumbered BGP をサポート済み）。</p>
+<p><strong>参照</strong>: sonic-net/sonic-buildimage#26960（Bug, Triaged、修正 PR 検討中）</p>
+<hr />
 <ul>
 <li><strong><code>update.conf.j2</code> / <code>delete.conf.j2</code> が peer_type の template directory に無いと機能しない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dynamic peer の動的編集が peer_type 依存</li>
 <li>update/delete 各 1 ファイルで instance/policies/peer-group を全部扱う粗粒度設計</li>

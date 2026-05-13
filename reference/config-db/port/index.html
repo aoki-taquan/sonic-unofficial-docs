@@ -21475,6 +21475,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-portsorch-portmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (portsorch / portmgr) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -21483,7 +21522,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21505,7 +21544,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21517,7 +21556,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21528,7 +21567,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21539,7 +21578,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29719,6 +29758,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-portsorch-portmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (portsorch / portmgr) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -29727,7 +29805,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29839,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29850,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30092,16 +30170,39 @@
 <li>関連 CLI: <a href="../../cli/config-interface/"><code>config interface</code></a>（speed / mtu / admin / fec / autoneg を変更）</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-port</code>、<code>sonic-types</code>（<code>switchport_mode</code>、<code>admin_status</code>、<code>interface_type</code>、<code>tpid_type</code>）</li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/port.md -->
+
+<h3 id="yang">YANG スキーマ検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>lanes</code> は mandatory (chassis 以外)、length 1..128。</li>
+<li><code>speed</code> は mandatory、range 1..1600000 (Kbps)。</li>
+<li><code>mtu</code> range: 68..9216。<code>fec</code> pattern: <code>rs|fc|none|auto</code>。<code>autoneg</code> / <code>pfc_asym</code> pattern: <code>on|off</code>。</li>
+<li><code>adv_speeds</code>: <code>all</code> と他値の混在は <code>must</code> 制約で reject。<code>adv_interface_types</code> も同様。</li>
+</ul>
+<h3 id="consumer-portsorch-portmgr">consumer (portsorch / portmgr) 例外動作<a class="headerlink" href="#consumer-portsorch-portmgr" title="Permanent link">&para;</a></h3>
+<ul>
+<li>非サポート speed: SAI supported speed リストと照合; 不一致は SWSS_LOG_ERROR + 処理中断。</li>
+<li>MTU 設定失敗: <code>Failed to set MTU %u to port pid</code> → SWSS_LOG_ERROR。</li>
+<li>FEC モード不正: <code>Failed to set FEC mode</code> → SWSS_LOG_ERROR。</li>
+<li>AutoNeg 設定失敗: <code>Failed to set AutoNeg %u to port %s</code> → SWSS_LOG_ERROR。</li>
+<li><code>autoneg</code> 非サポート: <code>autoneg is not supported (cap=%d)</code> → SWSS_LOG_ERROR。</li>
+<li>portmgr MTU netdev 設定失敗: <code>Setting mtu to alias:%s netdev failed</code> → SWSS_LOG_WARN + <code>return false</code>。</li>
+<li>portmgr admin_status netdev 設定失敗: <code>Setting admin_status to alias:%s netdev failed</code> → SWSS_LOG_WARN + <code>return false</code>。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-port/"><code>sonic-port</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -30110,8 +30211,8 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>Ethernet0</code> 等の <code>EthernetN</code> 形式キー。<code>N</code> は <a href="../../glossary/#term-port-config-ini">port_config.ini</a> 由来の lane base。</li>
 <li><code>speed</code>: 10000 / 25000 / 40000 / 100000 / 400000 (Mbps)。</li>
@@ -30120,14 +30221,14 @@
 <li><code>fec</code>: <code>rs</code> (100G+) / <code>fc</code> (25G) / <code>none</code>。</li>
 <li><code>autoneg</code>: <code>on</code>/<code>off</code>（25G/100G の対向と合わせる）。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>speed</code> を <code>lanes</code> 数と不整合な値にすると <a href="../../glossary/#term-sai">SAI</a> が <code>SAI_STATUS_INVALID_PARAMETER</code> を返してポートが down のまま。</li>
 <li>対向と <code>fec</code> が不一致だと PHY は up しても link 不安定。両端を同じ FEC モードに揃える。</li>
 <li><code>mtu</code> を <a href="../../glossary/#term-vlan">VLAN</a>/<a href="../../glossary/#term-portchannel">PortChannel</a> メンバ間で揃えないと L2 で巨大フレームがドロップされる。</li>
 <li>Breakout 中の親ポートに <code>admin_status: up</code> を残すと subport と二重設定で <a href="../../glossary/#term-orchagent">orchagent</a> エラー。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>eeprom<span class="w"> </span>Ethernet0

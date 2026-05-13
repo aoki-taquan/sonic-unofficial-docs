@@ -24510,7 +24510,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -24521,7 +24521,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -24532,7 +24532,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -24541,6 +24541,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24552,7 +24563,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24563,7 +24574,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24574,7 +24585,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29741,7 +29752,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29752,7 +29763,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29763,7 +29774,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29772,6 +29783,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29783,7 +29805,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29794,7 +29816,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29805,7 +29827,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29847,7 +29869,7 @@
 
 <h1 id="voq_inband_interface">VOQ_INBAND_INTERFACE テーブル<a class="headerlink" href="#voq_inband_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VOQ_INBAND_INTERFACE</code> テーブルは <a href="../../glossary/#term-voq">VOQ</a> chassis におけるラインカード間のインバンド通信用論理インターフェース (<code>Ethernet-IB&lt;n&gt;</code>) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-bgp">BGP</a> internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:</p>
+<p><code>VOQ_INBAND_INTERFACE</code> テーブルは <a href="../../glossary/#term-voq">VOQ</a> chassis におけるラインカード間のインバンド通信用論理インターフェース (<code>Ethernet-IB&lt;n&gt;</code>) を <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">3</a></sup>。<a href="../../glossary/#term-bgp">BGP</a> internal-neighbor などのコントロールプレーン通信に使われる。テーブルは 2 段構造:</p>
 <ul>
 <li><code>VOQ_INBAND_INTERFACE_LIST</code> (key: name)</li>
 <li><code>VOQ_INBAND_INTERFACE_IPPREFIX_LIST</code> (key: name, ip-prefix)</li>
@@ -29935,33 +29957,43 @@
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-voq-inband-interface</code>、<code>sonic-bgp-internal-neighbor</code>、<code>sonic-bgp-voq-chassis-neighbor</code></li>
 <li>関連 CLI: <code>config interface</code></li>
 </ul>
+<h2 id="_5">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang; sonic-swss/cfgmgr/intfmgr.cpp -->
+
+<ul>
+<li><strong>名前パターン (YANG)</strong>: <code>pattern "Ethernet-IB[0-9]+"</code> — パターン違反は YANG バリデーションで reject される<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong><code>inband_type</code> パターン (YANG)</strong>: <code>pattern "port|Port"</code> のみ許可<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>IP プレフィクス leafref (YANG)</strong>: <code>VOQ_INBAND_INTERFACE_IPPREFIX_LIST</code> の <code>name</code> は <code>VOQ_INBAND_INTERFACE_LIST/name</code> への leafref — 対応エントリが存在しない場合 YANG バリデーションで reject<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>デフォルト補完</strong>: <code>inband_type</code> 省略時は YANG <code>default "port"</code> が補完される<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>インタフェース未 ready</strong>: 親インタフェースが STATE_DB に未登録の場合 <code>intfmgrd</code> はリトライ待ちとなる（通常の <code>VLAN_INTERFACE</code> と同動作）<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+</ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-voq-inband-interface</code></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../interface/">CONFIG_DB: INTERFACE</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VOQ_INBAND_INTERFACE|&lt;name&gt;</code> (例 <code>VOQ_INBAND_INTERFACE|Ethernet-IB0</code>)、<code>VOQ_INBAND_INTERFACE|&lt;name&gt;|&lt;ip-prefix&gt;</code>。</li>
 <li><code>inband_type=port</code> が一般的。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>name</code> が <code>Ethernet-IB&lt;n&gt;</code> パターンに一致しない命名で YANG validation エラー。</li>
 <li><a href="../../glossary/#term-voq">VOQ</a> chassis 以外の単体スイッチで設定して効果が無い (<a href="../../glossary/#term-voq">VOQ</a> 専用)。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VOQ_INBAND_INTERFACE|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status<span class="w"> </span>Ethernet-IB0
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>ip<span class="w"> </span>interface<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Ethernet-IB
@@ -29973,8 +30005,14 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:exc1">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</code> <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:exc1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exc2">
+<p><code>sonic-swss/cfgmgr/intfmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-voq-inband-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-voq-inband-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

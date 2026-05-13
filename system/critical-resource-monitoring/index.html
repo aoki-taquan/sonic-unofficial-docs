@@ -30155,6 +30155,10 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <li><a href="../../topics/20-swss-sai-redis/">Topics: SWSS / SAI / Redis</a></li>
 </ul>
 <h2 id="_14">制限事項<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">route_check による false-positive アラート (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4487">#4487</a>)</p>
+<p>MACSec テスト中や interface flap などで BGP セッションが瞬断するタイミングに <code>route_check.py</code> が <code>missed_ROUTE_TABLE_routes</code> を誤検知し、monit が <code>ERR monit: routeCheck</code> を syslog に記録する。これは BGP 収束が完了するまでの一時的なミスマッチであり、数秒〜数十秒後に自然解消する。障害解析時は syslog の routeCheck ERR がリブートや設定変更の直後に発生しているかどうかを確認すること。</p>
+</div>
 <ul>
 <li><strong>ベンダー SAI からの取得値に依存</strong>: CRM のリソース使用量は <code>sai_object_type_get_availability</code> 等の SAI API で取得する。ベンダー実装が値を返さない / 不正確な場合は CRM のしきい値判定そのものが信用できない。</li>
 <li><strong>ポーリング間隔のトレードオフ</strong>: <code>CRM.Config.polling_interval</code> を短くするとリアルタイム性は上がるが <a href="../../reference/glossary/#term-orchagent">orchagent</a> / SAI への負荷が上がる。既定 300 秒は spike を捉えるには長い。</li>

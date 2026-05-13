@@ -30145,6 +30145,8 @@ excerpt: |
 <ul>
 <li>mgmt <a href="../../glossary/#term-vrf">VRF</a> を使う環境で <code>config ntp add</code> に <a href="../../glossary/#term-vrf">VRF</a> オプションを忘れると到達できない。</li>
 <li>chronyc / ntpq の出力差で「同期済み」判定がズレる。</li>
+<li><strong><code>show ntp</code> が mgmt VRF + vrf=default 設定で空出力または "Invalid VRF name" になる</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4400">#4400</a>): mgmt VRF が有効で <code>NTP|global.vrf = "default"</code> を設定している場合、<code>chronyd-starter.sh</code> はデフォルト VRF で chrony を起動するが <code>show ntp</code> は常に mgmt VRF 経由で <code>chronyc</code> を呼ぶため VRF が食い違う。回避策: <code>ip vrf exec default chronyc tracking</code> / <code>ip vrf exec default chronyc sources</code> で直接確認する。</li>
+<li><strong>tab 補完が機能しない環境がある</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4398">#4398</a>): <code>bash-completion</code> パッケージが <code>sonic-utilities-data</code> の <code>Suggests</code> (非 <code>Depends</code>) のため、deb バージョンピニングなしのビルドでは未インストールになりうる。確認: <code>dpkg -l bash-completion</code> が <code>un</code> の場合は <code>sudo apt-get install bash-completion &amp;&amp; source /etc/bash_completion</code> で手動インストールする。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>show<span class="w"> </span>ntp

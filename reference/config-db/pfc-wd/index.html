@@ -22455,6 +22455,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-pfcwdorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (pfcwdorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -22463,7 +22502,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22485,7 +22524,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22497,7 +22536,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22508,7 +22547,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22519,7 +22558,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29775,6 +29814,45 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ検証
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer-pfcwdorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        consumer (pfcwdorch) 例外動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         関連リファレンス
       
     </span>
@@ -29783,7 +29861,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29805,7 +29883,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29817,7 +29895,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29828,7 +29906,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29839,7 +29917,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29975,16 +30053,40 @@
 <li>関連 CLI: <code>pfcwd start/stop/show_config/counter_poll</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-pfcwd</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd.md -->
+
+<h3 id="yang">YANG スキーマ検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ifname</code> = <code>GLOBAL</code> の場合: <code>action</code> / <code>detection_time</code> / <code>restoration_time</code> は禁止 (<code>must "../ifname != 'GLOBAL'"</code>)。違反は YANG validate で reject。</li>
+<li><code>POLL_INTERVAL</code> はグローバルエントリ専用 (<code>must "../ifname = 'GLOBAL'"</code>)。</li>
+<li><code>detection_time</code> および <code>restoration_time</code> は <code>POLL_INTERVAL</code> 以上必須: <code>error-message "detection_time must be greater than or equal to POLL_INTERVAL"</code>。</li>
+<li>range: <code>detection_time</code> 100..5000 ms、<code>restoration_time</code> 100..60000 ms、<code>POLL_INTERVAL</code> 100..1000 ms。</li>
+<li><code>pfc_stat_history</code>: <code>enable</code> または <code>disable</code> のみ (それ以外は <code>error-message "pfc_stat_history must be either enable or disable"</code>)。</li>
+</ul>
+<h3 id="consumer-pfcwdorch">consumer (pfcwdorch) 例外動作<a class="headerlink" href="#consumer-pfcwdorch" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PLATFORM</code> 環境変数未設定: <code>Platform environment variable is not defined</code> → SWSS_LOG_ERROR。</li>
+<li>非物理ポートへの適用: <code>Interface %s is not physical port</code> → SWSS_LOG_ERROR。</li>
+<li>platform 非対応 action: <code>Unsupported action %s for platform %s</code> → SWSS_LOG_ERROR。</li>
+<li>switch-level PFC DLR との競合: <code>Invalid PFC Watchdog action %s as switch level action %s is set</code> → SWSS_LOG_ERROR。</li>
+<li><code>detection_time</code> 欠如: <code>PFC_WD_DETECTION_TIME missing</code> → SWSS_LOG_ERROR。</li>
+<li>queue index 範囲外/不正: <code>Invalid argument</code> / <code>Out of range argument</code> → SWSS_LOG_ERROR。</li>
+<li>Lua スクリプトやポーリング間隔の設定失敗: SWSS_LOG_WARN (継続動作するが watch 精度が低下)。</li>
+</ul>
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-pfcwd/"><code>sonic-pfcwd</code></a></li>
 <li>CLI: <code>pfcwd</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29993,19 +30095,19 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>PFC_WD|GLOBAL</code> と <code>PFC_WD|&lt;port&gt;</code>。</li>
 <li><code>POLL_INTERVAL</code>: 200 (ms)。</li>
 <li>port 行: <code>action: drop</code>、<code>detection_time: 200</code>、<code>restoration_time: 200</code>。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>action: forward</code> のまま PFC storm を放置すると HOL ブロック。<code>drop</code> 推奨。</li>
 <li><code>detection_time</code> を小さすぎる値にすると正常 PFC でも誤検知。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PFC_WD|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>config
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>stats

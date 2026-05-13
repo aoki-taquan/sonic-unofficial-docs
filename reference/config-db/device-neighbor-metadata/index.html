@@ -23083,6 +23083,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29931,6 +29953,34 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>table
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bgpcfgd</td>
+<td><code>DEVICE_NEIGHBOR_METADATA</code> が directory に未到達</td>
+<td><code>log_info("DEVICE_NEIGHBOR_METADATA is not ready...")</code> を出力して <code>return False</code> で延期。依存関係登録済みのため到着後に再処理（managers_bgp.py:220-222）</td>
+</tr>
+<tr>
+<td>pfcwd</td>
+<td>neighbor <code>name</code> フィールド欠落</td>
+<td><code>KeyError</code> が発生し pfcwd の起動シーケンスが中断する（pfcwd/main.py:102）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-buildimage <code>src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:140,220-224</code>; sonic-utilities <code>pfcwd/main.py:102</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 9bd4f7a3d366 -->
 

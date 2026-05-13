@@ -23727,6 +23727,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29885,6 +29907,34 @@ OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞�
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>fips<span class="w"> </span>status
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-utilities/sonic_installer/main.py -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable</code> 変更は即時反映されない</td>
+<td>bootloader（grub）パラメータ変更のため次回再起動後に有効化。現行カーネルへの影響なし</td>
+</tr>
+<tr>
+<td>非 FIPS 認証イメージで <code>enable=true</code></td>
+<td>一部 OpenSSL crypto モジュールが不在のため SSH / TLS が起動しない可能性がある</td>
+</tr>
+<tr>
+<td><code>enable</code> に <code>true</code>/<code>false</code> 以外の文字列</td>
+<td>YANG バリデーション（mgmt-framework 経由時）で reject。CLI 直書きは受け付けるが動作は不定</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

@@ -21431,6 +21431,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29944,6 +29966,46 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>ip<span class="w"> </span>interfaces<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Loopback
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L3 enable 行なしで IP 行のみ投入</td>
+<td>dummy デバイス未作成のため <code>ip addr add</code> が失敗。L3 enable 行（フィールドなし）が先に必要</td>
+</tr>
+<tr>
+<td>MTU 未設定</td>
+<td><code>ip link add &lt;name&gt; mtu 65536 type dummy</code> で作成（intfmgr.cpp L28 <code>LOOPBACK_DEFAULT_MTU_STR "65536"</code>）</td>
+</tr>
+<tr>
+<td><code>ip link set admin_status</code> 失敗</td>
+<td><code>SWSS_LOG_WARN("Lo interface ip link set admin status %s failure. Runtime error: %s")</code> → warn のみで継続</td>
+</tr>
+<tr>
+<td><code>ip link del</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR</code> → dummy デバイスが OS に残存するが CONFIG_DB からはエントリが消える（不整合状態）</td>
+</tr>
+<tr>
+<td>同名 Loopback への重複 SET</td>
+<td><code>m_loopbackIntfList</code> の <code>find</code> で既存確認後スキップ</td>
+</tr>
+<tr>
+<td>削除済み Loopback への IP 追加</td>
+<td>L3 enable 行を再設定しないと反映されない</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5270404647a -->
 

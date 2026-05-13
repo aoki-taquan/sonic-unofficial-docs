@@ -24315,6 +24315,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29912,6 +29934,17 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>src_ip と src_ip_v6 の両方が未設定</strong>: どちらも設定されていない場合 <code>SWSS_LOG_ERROR("Both src_ip and src_ip_v6 of subnet decap are not set.")</code> → エントリ破棄。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>src_ip に IPv4 以外を指定</strong>: <code>src_ip</code> フィールドに IPv6 アドレスを指定すると <code>isV4()</code> チェック失敗で <code>SWSS_LOG_ERROR("Invalid source IP prefix")</code> → 処理中断。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>src_ip_v6 に IPv4 アドレスを指定</strong>: <code>src_ip_v6</code> に IPv4 を指定すると <code>SWSS_LOG_ERROR("Invalid source IPv6 prefix")</code> → 処理中断。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>IP プレフィクス形式不正</strong>: <code>swss::IpPrefix()</code> が <code>std::invalid_argument</code> を投げた場合も <code>SWSS_LOG_ERROR("Invalid source IP prefix")</code> → 処理中断。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>未知フィールド</strong>: <code>src_ip</code> / <code>src_ip_v6</code> / <code>status</code> 以外のフィールドは <code>SWSS_LOG_ERROR("unknown subnet decap table attribute")</code> → エントリ破棄。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>シングルトン制約</strong>: <code>subnetDecapConfig</code> はシングルトン構造体として保持されるため、テーブルに複数エントリを書いても最後の SET_COMMAND で上書きされる。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>MP2MP 以外のトンネル term は紐付け不可</strong>: subnet decap トンネルに <code>MP2MP</code> 以外の term を紐付けようとすると <code>SWSS_LOG_ERROR("only MP2MP tunnel decap term is allowed for subnet decap tunnel.")</code> → 拒否。<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: 5bccf4824bce -->
 
 <div class="footnote">
@@ -29919,6 +29952,9 @@
 <ol>
 <li id="fn:1">
 <p>YANG 定義: <code>sonic-subnet-decap.yang</code> (revision 2024-12-19). <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-subnet-decap.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-subnet-decap.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>tunneldecaporch 実装: <code>sonic-swss/orchagent/tunneldecaporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/tunneldecaporch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/tunneldecaporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

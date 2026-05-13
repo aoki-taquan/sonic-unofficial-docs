@@ -21991,6 +21991,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29865,6 +29887,51 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp peer-group&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>peer-group が FRR に未存在のまま SET が到達</td>
+<td>frrcfgd が <code>neighbor {} peer-group</code> を vtysh 実行。失敗時 <code>failed to create peer-group %s for VRF %s</code> を LOG_ERR → continue</td>
+<td><code>frrcfgd.py</code> L2799</td>
+</tr>
+<tr>
+<td><code>local_asn</code> 未設定 VRF</td>
+<td>LOG_DEBUG して skip</td>
+<td><code>frrcfgd.py</code> L2660</td>
+</tr>
+<tr>
+<td><code>BGPPeerGroupMgr.update_policy()</code> の Jinja2 エラー</td>
+<td><code>log_err</code> して <code>return False</code></td>
+<td><code>managers_bgp.py</code> <code>update_policy()</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerGroupMgr.update_pg()</code> の Jinja2 エラー</td>
+<td><code>log_err</code> して <code>return False</code></td>
+<td><code>managers_bgp.py</code> <code>update_pg()</code></td>
+</tr>
+<tr>
+<td>TSA 有効時の peer-group 設定</td>
+<td><code>check_state_and_get_tsa_routemaps()</code> が TSA route-map を自動付与。エラー時は peer-group 全体が skip</td>
+<td><code>managers_device_global.py</code></td>
+</tr>
+<tr>
+<td>FRR 10.1 以降: listen range がある peer-group の削除</td>
+<td>先に <code>no bgp listen range</code> を実行してから peer-group 削除。range 削除失敗でも peer-group 削除を試みる</td>
+<td><code>managers_bgp.py</code> <code>del_handler()</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: d4d0b1f9b453 -->
 

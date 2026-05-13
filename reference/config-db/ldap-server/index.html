@@ -22898,6 +22898,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29964,6 +29986,46 @@
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/nslcd.conf
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-utilities/config/plugins/sonic-system-ldap_yang.py -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG スキーマ違反（<code>bind_password</code> に特殊文字等）</td>
+<td><code>exit_with_error(f"Error: {err}")</code> → 処理中断。DB には書かれない</td>
+</tr>
+<tr>
+<td><code>priority</code> 重複</td>
+<td>CLI 上でチェックなし。重複した場合は nslcd の内部挿入順依存でフェイルオーバ順序が不定になる</td>
+</tr>
+<tr>
+<td><code>base_dn</code> 未設定</td>
+<td><code>nslcd.conf</code> に <code>base</code> ディレクティブが書かれずユーザ検索失敗 → 認証不可。DB には書ける</td>
+</tr>
+<tr>
+<td>9 件目以降の <code>LDAP_SERVER</code> 追加</td>
+<td>YANG スキーマの最大数制約により <code>exit_with_error</code> で拒否</td>
+</tr>
+<tr>
+<td><code>hostname</code> に不正 IP / FQDN 形式</td>
+<td>YANG <code>pattern</code> 検証 → <code>exit_with_error</code> で拒否</td>
+</tr>
+<tr>
+<td><code>bind_timeout</code> 未設定</td>
+<td>YANG default <code>5</code> 秒が適用。nslcd.conf に <code>bind_timelimit 5</code> として反映</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 32758c44ab11 -->
 

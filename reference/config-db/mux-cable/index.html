@@ -21767,6 +21767,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29932,6 +29954,18 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mux-cable.yang -->
+
+<ul>
+<li><strong>cable_type が不正値 → YANG が拒否</strong>: <code>enum { active-active; active-standby; }</code> のみ許可。デフォルト <code>active-standby</code>。</li>
+<li><strong>prober_type が不正値 → YANG が拒否</strong>: <code>enum { hardware; software; }</code> のみ許可。デフォルト <code>software</code>。</li>
+<li><strong>neighbor_mode が不正値 → YANG が拒否</strong>: <code>enum { prefix-route; host-route; }</code> のみ許可。デフォルト <code>host-route</code>。</li>
+<li><strong>state が不正値 → YANG が拒否</strong>: <code>enum { auto; manual; detach; active; standby; }</code> のみ許可。デフォルト <code>auto</code>。<code>auto</code> モードではリンクプローバの判断で自動切替、<code>manual</code> は手動固定。</li>
+<li><strong>server_ipv4 の形式不正 → YANG が拒否</strong>: <code>type inet:ipv4-prefix</code>。不正な IPv4 プレフィックスは YANG バリデーションで拒否される。</li>
+<li><strong>MUX_CABLE エントリが存在しない場合</strong>: linkmgrd は当該インターフェースに対して mux 管理を行わない。</li>
+</ul>
 <!-- glossary-links-injected: b8a755597333 -->
 
 <div class="footnote">

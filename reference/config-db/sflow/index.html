@@ -23161,6 +23161,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30023,6 +30045,16 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>PORT_TABLE consumer 未初期化</strong>: sflowmgr 起動時に PORT_TABLE の consumer が見つからない場合 <code>SWSS_LOG_ERROR("Consumer object for PORT_TABLE not found")</code> を出す。per-port サンプリングレートの解決ができなくなる。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>hsflowd サービス制御失敗</strong>: <code>service hsflowd restart/stop</code> が失敗した場合 <code>SWSS_LOG_ERROR("Command failed with rc %d")</code> を出す。CONFIG_DB の状態と実際のサービス状態がずれる。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>ポート名が map に未登録</strong>: per-port のサンプリングレート算出時に PORT_TABLE に存在しないポートを指定すると <code>SWSS_LOG_ERROR("%s not found in port configuration map")</code> → <code>ERROR_SPEED</code> を返す。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SAI sample packet session 作成失敗</strong>: <code>sai_samplepacket_api-&gt;create_samplepacket()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create sample packet session")</code> → sFlow セッションが有効化されない。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>既存セッションのクリーンアップ失敗</strong>: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが ASIC に残留する可能性がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>グローバル無効はローカル設定を上書き</strong>: <code>isPortEnabled()</code> は <code>m_gEnable &amp;&amp; (m_intfAllConf || ...)</code> で判定するため、グローバル sflow が無効なら per-port 設定に関わらず全ポートで sFlow は停止する。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: 32758c44ab11 -->
 
 <div class="footnote">
@@ -30030,6 +30062,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-sflow.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>sflowmgr / sfloworch 実装: <code>sonic-swss/cfgmgr/sflowmgr.cpp</code>, <code>sonic-swss/orchagent/sfloworch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

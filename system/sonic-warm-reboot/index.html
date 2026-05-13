@@ -29954,6 +29954,7 @@
 <li><strong>対応コンテナの限定</strong>: warm restart は対応する docker (<code>bgp</code> / <code>swss</code> / <code>syncd</code> / <code>teamd</code> / <code>nat</code> / 一部 <code>lldp</code>) のみで有効化される。それ以外のコンテナは cold restart 相当となる。</li>
 <li><strong>multi-ASIC / chassis</strong>: 単体スイッチを想定した設計で、multi-ASIC や <a href="../../reference/glossary/#term-voq">VOQ</a> chassis では追加の制約 (namespace 単位の順序、<code>multi-asic-warm-reboot</code> 補助 HLD) が必要。</li>
 <li><strong>storage 要件</strong>: <code>/host/warmboot/</code> 配下に <code>sai-warmboot.bin</code> などの状態ファイルが書き込めるディスク容量が必要。</li>
+<li><strong><code>orchagent_restart_check</code> が freeze 後も失敗し続ける問題</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/827">sonic-swss#827</a>): orchagent が warm reboot の freeze（pause）に成功した後も、<code>orchagent_restart_check</code> バイナリが継続して <code>restart check failed</code> を報告することがある。freeze 後の orchagent はリクエストを処理しなくなるため、デフォルト 1 秒タイムアウトで毎回失敗するように見える。ログに <code>RESTARTCHECK failed &lt;n&gt;</code> が多数出力されていても、その時点で orchagent がすでに freeze 済みである可能性がある。実際の orchagent の状態は syslog の <code>orchagent: Paused</code> メッセージや STATE_DB の warm restart 状態で確認すること。</li>
 </ul>
 <h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->

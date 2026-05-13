@@ -21811,7 +21811,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -21822,7 +21822,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -21831,6 +21831,17 @@
       
         <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21842,7 +21853,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21853,7 +21864,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21864,7 +21875,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29708,7 +29719,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29719,7 +29730,7 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        関連リファレンス
       
     </span>
   </a>
@@ -29728,6 +29739,17 @@
       
         <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29739,7 +29761,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29750,7 +29772,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29761,7 +29783,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29888,30 +29910,77 @@
 <li>関連 CLI: <a href="../../cli/config-bgp/"><code>config bgp device-global tsa</code></a>、<code>config bgp device-global w-ecmp</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-bgp-device-global</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code> が None</td>
+<td>log_err 後 return False</td>
+</tr>
+<tr>
+<td><code>tsa_enabled</code> が <code>"true"</code>/<code>"false"</code> 以外</td>
+<td>log_err 後 FRR push しない（return False）</td>
+</tr>
+<tr>
+<td><code>wcmp_enabled</code> が <code>"true"</code>/<code>"false"</code> 以外</td>
+<td>log_err 後 FRR push しない（return False）</td>
+</tr>
+<tr>
+<td>chassis_tsa が <code>"true"</code></td>
+<td>個別デバイスの TSA 操作をスキップ（シャーシ全体 TSA が優先）</td>
+</tr>
+<tr>
+<td>キャッシュと同一値</td>
+<td><code>is_update_required()</code> が False → FRR push スキップ</td>
+</tr>
+<tr>
+<td>Jinja2 テンプレートレンダリング失敗</td>
+<td>log_err 後 return False、FRR 未反映</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost.type</code> 未設定</td>
+<td>switch_role が空文字列のまま処理継続（テンプレート条件分岐依存）</td>
+</tr>
+<tr>
+<td><code>idf_isolation_state</code> の不正値</td>
+<td>idf handler 側での検証に委ねる（DeviceGlobalCfgMgr では未検証）</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:67L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-bgp-device-global/"><code>sonic-bgp-device-global</code></a></li>
 <li>CLI: <a href="../../cli/config-bgp/"><code>config bgp</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="_7">典型値<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key: <code>BGP_DEVICE_GLOBAL|STATE</code> / <code>BGP_DEVICE_GLOBAL|CONFED</code>。</li>
 <li><code>STATE</code>: <code>tsa_enabled=false</code> / <code>wcmp_enabled=false</code> / <code>idf_isolation_state=unisolated</code> が通常運用。</li>
 <li>TSA メンテ時のみ <code>tsa_enabled=true</code>。</li>
 </ul>
-<h3 id="_8">よくある誤設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>TSA を有効にしたまま戻し忘れて外部広告が長時間停止する。</li>
 <li><code>wcmp_enabled=true</code> を W-ECMP 非対応のプラットフォームで設定し、効果が出ず混乱する。</li>
 </ul>
-<h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BGP_DEVICE_GLOBAL|STATE&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>TSA<span class="w"> </span>-s<span class="w">   </span><span class="c1"># TSA 状態確認</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show running-config bgpd&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ecmp

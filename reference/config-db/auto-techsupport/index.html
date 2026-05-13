@@ -21307,7 +21307,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -21316,6 +21316,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21337,7 +21348,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21349,7 +21360,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21360,7 +21371,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21371,7 +21382,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29719,7 +29730,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29728,6 +29739,17 @@
       
         <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29749,7 +29771,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29783,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29794,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29805,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29940,16 +29962,55 @@
 <li>関連 CLI: <code>config auto-techsupport global</code>、<code>config auto-techsupport-feature</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-auto_techsupport</code></li>
 </ul>
+<!-- cdb-exceptions -->
+<h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GLOBAL</code> エントリが存在しない</td>
+<td>デフォルト値で動作 (<code>available_mem_threshold</code>=10%, <code>min_available_mem</code>=200MB)</td>
+</tr>
+<tr>
+<td><code>available_mem_threshold</code> = 0</td>
+<td>システムメモリチェック全体をスキップし、feature 単位チェックのみ実行</td>
+</tr>
+<tr>
+<td><code>available_mem_threshold</code>/<code>min_available_mem</code> が float 変換不可</td>
+<td><code>MemoryCheckerException</code> 発生、techsupport 起動せず <code>EXIT_FAILURE</code></td>
+</tr>
+<tr>
+<td>空きメモリ &lt; <code>min_available_mem</code></td>
+<td>techsupport を起動しない（<code>EXIT_THRESHOLD_CROSSED</code> 返却）</td>
+</tr>
+<tr>
+<td><code>state</code> フィールド</td>
+<td><code>memory_threshold_check.py</code> では直接参照しない（呼び出し元が確認）</td>
+</tr>
+<tr>
+<td><code>rate_limit_interval</code> / <code>max_techsupport_limit</code></td>
+<td>memory_threshold_check では読まれない（coredump 監視デーモンが別途使用）</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_4">関連リファレンス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-auto_techsupport</code></li>
 <li>CLI: <code>config auto-techsupport</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29958,18 +30019,18 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="_7">典型値<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">典型値<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>AUTO_TECHSUPPORT|GLOBAL</code>。</li>
 <li><code>state</code>: <code>enabled</code>。</li>
 <li><code>rate_limit_interval</code>: <code>180</code> 秒。<code>max_techsupport_limit</code>: <code>10</code>%。</li>
 </ul>
-<h3 id="_8">よくある誤設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<h3 id="_9">よくある誤設定<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>max_core_limit</code> を 0 にすると core 自動収集が抑制され障害解析が困難になる。</li>
 </ul>
-<h3 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;AUTO_TECHSUPPORT|GLOBAL&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>auto-techsupport<span class="w"> </span>global
 </span></code></pre></div>

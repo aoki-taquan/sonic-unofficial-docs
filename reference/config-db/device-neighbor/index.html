@@ -23055,6 +23055,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29906,6 +29928,39 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>lldp<span class="w"> </span>neighbors
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph.py</td>
+<td>port_config.ini に存在しないインターフェイスがエントリに含まれる</td>
+<td><code>Warning: ignore interface '%s' in DEVICE_NEIGHBOR...</code> を stderr に出力してスキップ（minigraph.py:2635）</td>
+</tr>
+<tr>
+<td>show interfaces</td>
+<td>DEVICE_NEIGHBOR テーブルが空</td>
+<td><code>"DEVICE_NEIGHBOR information is not present."</code> を表示して継続。エラーにはならない（show/interfaces/<strong>init</strong>.py:318）</td>
+</tr>
+<tr>
+<td>pfcwd</td>
+<td>DEVICE_NEIGHBOR テーブルが空</td>
+<td>全ポートを内部ポートとして扱い、外部ポート判定を行わない（pfcwd/main.py:413）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-buildimage <code>src/sonic-config-engine/minigraph.py:2635</code>; sonic-utilities <code>show/interfaces/__init__.py:318</code>, <code>pfcwd/main.py:413</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 86469dbd1da9 -->
 

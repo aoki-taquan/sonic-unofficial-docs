@@ -23755,6 +23755,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29882,6 +29904,42 @@ process monitor は登録された <code>name</code> のプロセスから <code
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;HEARTBEAT|*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp, sonic-swss-common/common/events_wrap.h -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>interval = -1</code></td>
+<td>heartbeat を無効化（events_wrap.h L131「A value of -1 implies no heartbeat」）</td>
+</tr>
+<tr>
+<td><code>interval &lt; -1</code>（-2 以下）</td>
+<td>invalid 扱い。syslog に詳細記録後処理中断（events_wrap.h L136）</td>
+</tr>
+<tr>
+<td><code>interval = 0</code></td>
+<td>システムデフォルト 2 秒として動作（eventd.cpp L43 <code>HEARTBEAT_INTERVAL_SECS = 2</code>）</td>
+</tr>
+<tr>
+<td>任意の正値</td>
+<td>内部は 300ms 単位に切り上げ量子化。指定値と実周期がずれる場合がある（eventd.cpp L145）</td>
+</tr>
+<tr>
+<td>heartbeat publish 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to publish heartbeat rc=%d")</code> → ハートビート欠落するが eventd は継続</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 

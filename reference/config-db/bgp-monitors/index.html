@@ -23374,6 +23374,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29940,6 +29962,56 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp summary&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loopback0 IPv4 未設定 かつ <code>bgp_router_id</code> 未設定</td>
+<td><code>log_warn</code> して <code>return False</code> (再試行待ち)</td>
+<td><code>managers_bgp.py</code> <code>add_peer()</code></td>
+</tr>
+<tr>
+<td><code>local_addr</code> フィールドが欠如</td>
+<td><code>Missing attribute 'local_addr'</code> を warn ログ、処理は続行 (interface 紐付けなし)</td>
+<td><code>managers_bgp.py</code></td>
+</tr>
+<tr>
+<td>local address に対応する interface が未登録</td>
+<td><code>wait for the corresponding interface to be set</code> → return False (再試行)</td>
+<td><code>managers_bgp.py</code> <code>get_local_interface()</code></td>
+</tr>
+<tr>
+<td>既存ピアへの <code>admin_status</code> 以外のフィールド更新</td>
+<td><code>Can't update the peer. Only 'admin_status' attribute is supported</code> を LOG_ERR → drop</td>
+<td><code>managers_bgp.py</code> <code>update_peer()</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code> が <code>'up'</code>/<code>'down'</code> 以外</td>
+<td><code>wrong attribute value</code> を LOG_ERR → drop</td>
+<td><code>managers_bgp.py</code> <code>change_admin_status()</code></td>
+</tr>
+<tr>
+<td>Jinja2 テンプレートレンダリング失敗</td>
+<td><code>log_err</code> して <code>return True</code> (再試行なし、drop)</td>
+<td><code>managers_bgp.py</code> <code>add_peer()</code></td>
+</tr>
+<tr>
+<td><code>check_neig_meta=False</code></td>
+<td>BGP_MONITORS は DEVICE_NEIGHBOR_METADATA への依存なし (monitors peer_type で固定)</td>
+<td><code>managers_bgp.py</code> <code>main.py</code> L89</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: a1dd9e34d62e -->
 

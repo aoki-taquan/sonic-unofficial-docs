@@ -30339,6 +30339,10 @@ excerpt: |
 </table>
 <h2 id="_4">副作用<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>ほぼすべてのコマンドが完了直前に <code>systemctl reset-failed snmp.service</code> + <code>systemctl restart snmp.service</code> を実行する。即座に snmpd 再起動が走るため、本番ではバッチ的にまとめて発行する運用が望ましい。</p>
+<div class="admonition warning">
+<p class="admonition-title">連続操作で SNMP コンテナが落ちる (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4514">#4514</a>)</p>
+<p><code>config snmptrap del</code> に続けてすぐ <code>config snmptrap modify</code> を実行すると、systemd の start rate limit に達して snmp サービスが起動失敗する。操作の間に少なくとも 5 秒の待機を入れること。コンテナが停止した場合は <code>systemctl reset-failed snmp.service &amp;&amp; systemctl start snmp.service</code> で回復できる。</p>
+</div>
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

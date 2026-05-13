@@ -23615,6 +23615,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29901,6 +29923,44 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcprelay_helper<span class="w"> </span>ipv4
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dhcp6relay</td>
+<td>登録 VLAN が VLAN_INTERFACE テーブルに存在しない</td>
+<td><code>LOG_WARNING: "%s doesn't exist in VLAN_INTERFACE table, skip it"</code> を出力してスキップ（config_interface.cpp:135）</td>
+</tr>
+<tr>
+<td>dhcp6relay</td>
+<td>VLAN に IPv6 アドレス未設定</td>
+<td><code>LOG_WARNING: "%s doesn't have IPv6 address configured, skip it"</code> を出力してスキップ（config_interface.cpp:146）</td>
+</tr>
+<tr>
+<td>dhcp6relay</td>
+<td>VLAN にサーバアドレスが 0 件</td>
+<td><code>LOG_WARNING: "No servers found for VLAN %s, skipping configuration."</code> を出力（config_interface.cpp:177）</td>
+</tr>
+<tr>
+<td>dhcp6relay</td>
+<td><code>dhcpv6_option\|interface_id</code> フィールド未設定</td>
+<td>非 Dual-ToR 環境では <code>false</code>、Dual-ToR 環境では <code>true</code> をデフォルト使用（config_interface.cpp:117-121）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-dhcp-relay <code>dhcp6relay/src/config_interface.cpp:117-177</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 11715e560dc6 -->
 

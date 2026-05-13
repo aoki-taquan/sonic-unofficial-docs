@@ -9295,6 +9295,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-vrf-default-vrf-ip-icmp-reply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt VRF と default VRF に同じ IP が存在する場合の ICMP reply 誤送出
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -9329,7 +9357,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -9356,7 +9384,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -9367,7 +9395,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29665,6 +29693,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="既知の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-vrf-default-vrf-ip-icmp-reply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt VRF と default VRF に同じ IP が存在する場合の ICMP reply 誤送出
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29699,7 +29755,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         コマンド例
@@ -29726,7 +29782,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         制限事項
@@ -29737,7 +29793,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29910,6 +29966,18 @@
 <li>Buster 以降は mainline kernel の VRF サポートを使用するため、<code>udp_l3mdev_accept</code> 等の SONiC 専用カーネルパッチは段階的に不要化されている</li>
 <li>201911 由来の <code>cgexec</code> 接頭辞は <strong>過去ドキュメント / ベンダー資料を読むときの参考</strong> として残す価値はあるが、master では発火しない</li>
 </ul>
+<h2 id="_2">既知の問題<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="mgmt-vrf-default-vrf-ip-icmp-reply">mgmt VRF と default VRF に同じ IP が存在する場合の ICMP reply 誤送出<a class="headerlink" href="#mgmt-vrf-default-vrf-ip-icmp-reply" title="Permanent link">&para;</a></h3>
+<p><strong>症状</strong>: mgmt VRF 有効かつ <code>eth0</code> と front panel インタフェース（例: Ethernet1）に <strong>同じ IP アドレス</strong>が設定されている場合、Ethernet1 宛ての ICMP echo request への reply が <strong>eth0（mgmt VRF）経由で送出</strong>される。</p>
+<p><strong>原因</strong>: <code>interfaces.j2</code> が生成する ip rule（priority 32765）が mgmt IP と一致するすべての送信元を mgmt VRF テーブルに誘導する:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>32765:  from 192.168.229.2 lookup mgmt
+</span></code></pre></div>
+<p>このルールが default VRF 側の Ethernet1 から届いた ICMP reply の送信元 IP にもマッチし、mgmt VRF 経由で egress してしまう。</p>
+<p><strong>回避策（一時的）</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>ip<span class="w"> </span>rule<span class="w"> </span>del<span class="w"> </span>from<span class="w"> </span>&lt;重複IP&gt;<span class="w"> </span>lookup<span class="w"> </span>mgmt
+</span></code></pre></div></p>
+<p>ただしこのルールを削除すると mgmt VRF 発のトラフィックが正しく mgmt へルーティングされない場合がある。根本的には同一 IP を mgmt と data の双方に設定しないことが推奨される。</p>
+<p><strong>参照</strong>: sonic-net/sonic-buildimage#26904（Bug, 202511 で再現確認）</p>
 <h2 id="6">6. 制限事項<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
 <li>201911 リリース固定の HLD。Buster 以降は別 HLD で更新される予定（未公開）</li>
@@ -29931,24 +29999,24 @@
 <li>NTP 同期しない → <code>ps -ef | grep ntpd</code> で <code>cgexec</code> 起動か確認</li>
 <li>TACACS+ が default VRF 経由になる → <code>show tacacs</code> で <code>vrf mgmt</code> が出ているか確認</li>
 </ul>
-<h3 id="_2">コマンド例<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<h3 id="_3">コマンド例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>management VRF (mgmt) の状態と route table を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>show<span class="w"> </span>mgmt-vrf
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ip<span class="w"> </span>-d<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="nb">type</span><span class="w"> </span>vrf
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>mgmt
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>mgmt-vrf
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>ip<span class="w"> </span>-d<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="nb">type</span><span class="w"> </span>vrf
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ip<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>mgmt
 </span></code></pre></div>
 <h2 id="9">9. 次に読む<a class="headerlink" href="#9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Topics: <a href="../../topics/04-vrf-ecmp/concept/">VRF / ECMP 概念</a>, <a href="../../topics/04-vrf-ecmp/setup/">VRF / ECMP 構築</a>, <a href="../../topics/04-vrf-ecmp/operations/">VRF / ECMP 運用</a></li>
 <li>関連 HLD: <a href="../sonic-vrf-support-design-spec-draft/">SONiC VRF Support Design Spec</a></li>
 </ul>
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (<code>mgmt</code>) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる。</li>
 <li>non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある。</li>
 <li>snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で <code>ip vrf exec</code> ラップを行う必要がある。</li>
 </ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 3b086e661688 -->
 
 <div class="footnote">

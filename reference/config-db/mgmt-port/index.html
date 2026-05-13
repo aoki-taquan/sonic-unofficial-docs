@@ -21476,6 +21476,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29754,6 +29765,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29899,6 +29921,17 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_port.yang -->
+
+<ul>
+<li><strong>speed が 10/100/1000 以外 → YANG が拒否</strong>: <code>range "10|100|1000"</code> で管理ポートの速度を制約。Mbps 単位で指定し、それ以外の値は YANG バリデーションで拒否される。</li>
+<li><strong>autoneg が "on"/"off" 以外 → YANG が拒否</strong>: <code>pattern "on|off"</code> による制約。</li>
+<li><strong>MTU が 1500-9216 の範囲外 → YANG が拒否 (デフォルト 1500)</strong>: <code>range "1500..9216"</code> / <code>default 1500</code>。フィールド省略時は 1500 バイトとして扱われる。</li>
+<li><strong>admin_status のデフォルト = "up"</strong>: <code>default up</code>。省略時は管理ポートが有効状態として扱われる。</li>
+<li><strong>インターフェース名の制約</strong>: <code>pattern 'eth([1-3][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[0-9])'</code>。eth0 系のみ許可され、不正名は YANG バリデーションで拒否される。</li>
+</ul>
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">

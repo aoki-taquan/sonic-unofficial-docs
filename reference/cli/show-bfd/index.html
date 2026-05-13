@@ -29980,6 +29980,10 @@ excerpt: |
 <li>BFD セッションの <strong>生成・削除</strong> は <code>show bfd</code> のスコープ外。<a href="../../glossary/#term-bgp">BGP</a>/static route 側の設定や <code>bfdsyncd</code> の動作による</li>
 <li><code>local_discriminator</code> は古い実装では存在しないため <code>NA</code> に置換するガードがある</li>
 </ul>
+<div class="admonition warning">
+<p class="admonition-title">software-BFD ピアが <code>show bfd summary</code> に表示されない (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4139">#4139</a>)</p>
+<p>FRR の BGP neighbor で設定した software-BFD ピアはダイナミックに生成・削除されるが、<code>BFD_SESSION_TABLE</code> への書き込みは <code>bfdsyncd</code> が行う。実装の差異により、BGP 経由で生成した software-BFD セッションが <code>STATE_DB</code> に書かれないケースがある。<code>show bfd summary</code> が 0 件でも <code>vtysh -c "show bfd peer"</code> で確認できる場合は FRR 側のセッションであり正常。software-BFD の状態確認には <code>vtysh -c "show bfd peer"</code> を使うこと。</p>
+</div>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR

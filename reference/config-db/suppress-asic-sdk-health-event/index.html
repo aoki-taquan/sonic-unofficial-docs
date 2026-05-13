@@ -24343,6 +24343,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29886,6 +29908,15 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>key が空文字列</strong>: key が空の場合 <code>SWSS_LOG_ERROR("Failed to parse switch hash key: empty string")</code> → エントリ破棄。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>severity が未知の値</strong>: key に設定された severity が SAI の severity map に存在しない場合 <code>SWSS_LOG_ERROR("Unknown severity %s")</code> → エントリ破棄。有効値は SAI 定義の <code>fatal</code> / <code>warning</code> / <code>notice</code> 等のみ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SAI 非対応 severity</strong>: <code>m_supportedAsicSdkHealthEventAttributes</code> に存在しない severity は <code>SWSS_LOG_NOTICE("Unsupport to register categories on severity %d")</code> → スキップ。プラットフォームによって対応 severity が異なる。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>categories フィールド未指定でデフォルト全カテゴリ</strong>: <code>categories</code> フィールドが存在しない場合は <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> が引数なしで呼ばれ、全カテゴリが抑制対象として登録される。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>DEL 操作は全カテゴリ抑制解除</strong>: DEL_COMMAND 受信時も <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> 引数なしが呼ばれ全カテゴリの抑制を解除する。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: d5320e852f7a -->
 
 <div class="footnote">
@@ -29893,6 +29924,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-suppress-asic-sdk-health-event.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-suppress-asic-sdk-health-event.yang</a>; schema 定義は <code>sonic-swss-common/common/schema.h</code> の <code>CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME = "SUPPRESS_ASIC_SDK_HEALTH_EVENT"</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>switchorch 実装: <code>sonic-swss/orchagent/switchorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/switchorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/switchorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

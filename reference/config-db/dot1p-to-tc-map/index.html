@@ -23654,6 +23654,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29930,6 +29952,49 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map<span class="w"> </span>dot1p-tc
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent</td>
+<td>DEL 時に他テーブル (PORT 等) から参照中</td>
+<td><code>m_pendingRemove=true</code> を立てて <code>task_need_retry</code> を返す。参照解放後に削除実行（qosorch.cpp:181-186）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>pending remove 中に SET が到着</td>
+<td><code>"Entry is pending remove, need retry"</code> を LOG_NOTICE して <code>task_need_retry</code> を返す（qosorch.cpp:136-139）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>SAI オブジェクト生成 (<code>addQosItem</code>) 失敗</td>
+<td><code>"Failed to create [DOT1P_TO_TC_MAP:...]"</code> を LOG_ERROR して <code>task_failed</code> を返す（qosorch.cpp:162-166）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>SAI オブジェクト変更 (<code>modifyQosItem</code>) 失敗</td>
+<td><code>"Failed to set [DOT1P_TO_TC_MAP:...]"</code> を LOG_ERROR して <code>task_failed</code> を返す（qosorch.cpp:151-155）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>DEL 対象が type map に存在しない</td>
+<td><code>"Object with name:%s not found."</code> を LOG_ERROR して <code>task_invalid_entry</code> を返す（qosorch.cpp:176-179）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-swss <code>orchagent/qosorch.cpp:124-201</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: 05824a330e9e -->
 

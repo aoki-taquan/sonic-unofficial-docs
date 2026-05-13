@@ -24471,7 +24471,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -24480,6 +24480,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -24501,7 +24512,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24513,7 +24524,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24524,7 +24535,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24535,7 +24546,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29775,7 +29786,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        例外条件・特殊挙動
       
     </span>
   </a>
@@ -29784,6 +29795,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29805,7 +29827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29817,7 +29839,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29828,7 +29850,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29839,7 +29861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29881,7 +29903,7 @@
 
 <h1 id="vlan_sub_interface">VLAN_SUB_INTERFACE テーブル<a class="headerlink" href="#vlan_sub_interface" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>VLAN_SUB_INTERFACE</code> は物理 port または <a href="../../glossary/#term-portchannel">PortChannel</a> 上の 802.1Q sub-interface を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + <a href="../../glossary/#term-vlan">VLAN</a> ID 形式をキーに、admin state、<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、loopback action、encapsulation <a href="../../glossary/#term-vlan">VLAN</a>、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>VLAN_SUB_INTERFACE</code> は物理 port または <a href="../../glossary/#term-portchannel">PortChannel</a> 上の 802.1Q sub-interface を定義する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル。<code>Ethernet0.100</code> や <code>PortChannel10.100</code> のような親 interface + <a href="../../glossary/#term-vlan">VLAN</a> ID 形式をキーに、admin state、<a href="../../glossary/#term-vrf">VRF</a> / <a href="../../glossary/#term-vnet">VNET</a> binding、loopback action、encapsulation <a href="../../glossary/#term-vlan">VLAN</a>、IP prefix を持つ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">3</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル名として <code>CFG_VLAN_SUB_INTF_TABLE_NAME</code> が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">4</a></sup>。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -29979,16 +30001,28 @@
 <li>関連 CLI: <code>config interface</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-vlan-sub-interface</code>、<code>sonic-port</code>、<code>sonic-portchannel</code>、<code>sonic-vrf</code>、<code>sonic-vnet</code></li>
 </ul>
+<h2 id="_6">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang -->
+
+<ul>
+<li><strong>名前長制限 (YANG)</strong>: 15 文字超の場合 YANG <code>must</code> 制約で <code>"please follow vlan sub interface naming convention"</code> エラー<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><strong>親インタフェース存在 (YANG)</strong>: ドット前部分が <code>PORT_LIST</code> または <code>PORTCHANNEL_LIST</code> に存在しない場合 YANG が reject<sup id="fnref2:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
+<li><strong>VLAN ID 範囲 (YANG)</strong>: ドット後 ID は 1〜4094 の範囲が必要<sup id="fnref3:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。short-name 形式では <code>vlan</code> フィールドも必須。</li>
+<li><strong><code>isValid()</code> チェック</strong>: <code>intfmgrd</code> が <code>subIntf::isValid()</code> で不正と判定した場合 <code>SWSS_LOG_ERROR("Invalid subnitf")</code> を記録してスキップ<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>VLAN ID 未設定スキップ</strong>: short-name 形式で <code>vlan</code> が <code>"0"</code> または空の場合リトライ待ち<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>netdev コマンド失敗</strong>: ip link add / MTU / admin_status 設定で <code>runtime_error</code> 発生時は <code>SWSS_LOG_NOTICE</code> を記録してリトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong>デフォルト補完</strong>: <code>mtu</code> 省略時は <code>MTU_INHERITANCE</code>（親継承）、<code>admin_status</code> 省略時は <code>"up"</code>（親の admin status で実効値が決定）<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+</ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-vlan-sub-interface/"><code>sonic-vlan-sub-interface</code></a></li>
 <li>CLI: <a href="../../cli/config-interface/"><code>config interface</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29997,17 +30031,17 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_8">運用ヒント<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h3 id="_9">典型値<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>VLAN_SUB_INTERFACE|&lt;Ethernet|PortChannel&gt;.&lt;vid&gt;</code>。</li>
 <li><code>admin_status</code>: <code>up</code>、<code>vlan</code>: <code>&lt;vid&gt;</code>。物理 IF の sub-interface として L3 を運ぶ。</li>
 </ul>
-<h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>親 IF を <code>switchport</code> 設定にしたまま sub-interface を生やすと L3 が立ち上がらない。</li>
 </ul>
-<h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_SUB_INTERFACE|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>subinterface<span class="w"> </span>status
 </span></code></pre></div>
@@ -30018,11 +30052,17 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:exc1">
+<p><code>sonic-swss/cfgmgr/intfmgr.cpp</code> <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:exc1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:exc2">
+<p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang</code> <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vlan-sub-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-vlan-sub-interface.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>テーブル名定数: <code>schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

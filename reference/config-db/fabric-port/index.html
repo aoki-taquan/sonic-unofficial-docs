@@ -23710,6 +23710,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29944,6 +29966,54 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>fabric<span class="w"> </span>counters<span class="w"> </span>port
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent</td>
+<td><code>SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS</code> 取得失敗</td>
+<td><code>FABRIC_PORT_ERROR (0)</code> を返し初期化失敗（fabricportsorch.cpp:179）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td><code>SAI_SWITCH_ATTR_FABRIC_PORT_LIST</code> 取得失敗</td>
+<td><code>throw runtime_error("FabricPortsOrch get port list failure")</code> を送出、orchagent 異常終了（fabricportsorch.cpp:196）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>ポートのレーン番号取得失敗</td>
+<td><code>throw runtime_error("FabricPortsOrch get port lane failure")</code> を送出（fabricportsorch.cpp:212）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>キュー数・キューリスト取得失敗</td>
+<td><code>throw runtime_error(...)</code> を送出（fabricportsorch.cpp:280,296）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>remote fabric port ID / remote port index 取得失敗</td>
+<td><code>throw runtime_error(...)</code> を送出（fabricportsorch.cpp:384,396）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>CRC エラー率比較時に <code>rxCells = 0</code></td>
+<td>整数乗算比較でゼロ除算を回避し、エラーなしと判断（fabricportsorch.cpp:534-536）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-swss <code>orchagent/fabricportsorch.cpp:179-396,534-536</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: e6a80f23a9fa -->
 

@@ -22467,6 +22467,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29776,6 +29787,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29897,6 +29919,44 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>qos<span class="w"> </span>map<span class="w"> </span>dscp-tc
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orchagent</td>
+<td>DEL 時に PORT / TUNNEL から参照中</td>
+<td><code>m_pendingRemove=true</code> を立てて <code>task_need_retry</code> を返す（qosorch.cpp:181-186）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>スイッチに DSCP→TC map 適用前の capability 確認</td>
+<td><code>querySwitchCapability(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)</code> で未対応の場合はスイッチレベルへの適用をスキップ（qosorch.cpp:1956）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>スイッチレベルで DSCP map 解除 (null 設定)</td>
+<td><code>SAI_NULL_OBJECT_ID</code> を渡して解除可能（qosorch.cpp:1993）</td>
+</tr>
+<tr>
+<td>orchagent</td>
+<td>SAI 生成・変更・削除失敗</td>
+<td><code>task_failed</code> を返す。DOT1P_TO_TC_MAP と同一の <code>QosMapHandler</code> を使用（qosorch.cpp:151-191）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: sonic-swss <code>orchagent/qosorch.cpp:1956,1993</code>; <code>orchagent/tunneldecaporch.cpp:831-834</code></p>
+</blockquote>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: eebb97ac8e67 -->
 

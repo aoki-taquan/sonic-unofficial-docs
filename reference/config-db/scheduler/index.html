@@ -22562,6 +22562,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29972,6 +29994,15 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>type フィールドが未知の値</strong>: <code>type</code> が <code>DWRR</code> / <code>WRR</code> / <code>STRICT</code> 以外の場合 <code>SWSS_LOG_ERROR("Unknown scheduler type value:%s")</code> を出して <code>task_invalid_entry</code> を返す。エントリは破棄されて SAI には反映されない。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SAI scheduler profile 作成失敗</strong>: <code>sai_scheduler_api-&gt;create_scheduler()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create scheduler profile")</code> で処理中断。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>SAI scheduler profile 削除失敗</strong>: QUEUE から参照されている SCHEDULER プロファイルを削除しようとすると SAI が EBUSY 等を返し <code>SWSS_LOG_ERROR("Failed to remove scheduler profile")</code> となる。CONFIG_DB からは削除されても ASIC には古いプロファイルが残留する。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>weight のオーバーフロー</strong>: <code>weight</code> フィールドは <code>uint8</code> にキャストされるため 0-255 の範囲外は暗黙に切り捨てられる（バリデーションなし）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>QUEUE 参照がある間は削除不可</strong>: QUEUE が参照している SCHEDULER を削除すると SAI レイヤで失敗する。QUEUE の参照を先に外してから削除する必要がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
 <!-- glossary-links-injected: 3bdddda32f9d -->
 
 <div class="footnote">
@@ -29979,6 +30010,9 @@
 <ol>
 <li id="fn:1">
 <p><a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-scheduler.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-scheduler.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-scheduler.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>qosorch 実装: <code>sonic-swss/orchagent/qosorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

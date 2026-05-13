@@ -24012,6 +24012,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29898,6 +29909,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30123,6 +30145,18 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mux-linkmgr.yang -->
+
+<ul>
+<li><strong>interval_v4 / interval_v6 / signal_count が 0 → YANG は許可するが動作上問題</strong>: これらは <code>type uint32</code> で range 制約なし。0 を設定するとハートビートが送信されず冗長性保護が機能しなくなる。デフォルト: <code>interval_v4 = 100ms</code>、<code>interval_v6 = 1000ms</code>、<code>positive_signal_count = 1</code>、<code>negative_signal_count = 3</code>。</li>
+<li><strong>use_well_known_mac が不正値 → YANG が拒否</strong>: <code>enum { enabled; disabled; }</code> のみ許可。</li>
+<li><strong>src_mac が不正値 → YANG が拒否</strong>: <code>enum { ToRMac; VlanMac; }</code> のみ許可。</li>
+<li><strong>log_verbosity が不正値 → YANG が拒否</strong>: <code>enum { trace; debug; info; error; fatal; }</code> のみ許可。</li>
+<li><strong>oscillation_enabled のデフォルト = true</strong>: <code>default true</code>。TIMED_OSCILLATION コンテナが空でも <code>interval_sec = 300</code> で自動切替が有効になる。無効化する場合は明示的に <code>oscillation_enabled = false</code> を設定する必要がある。</li>
+<li><strong>kill_radv のデフォルト = True</strong>: <code>default True</code>。radv サービスは MUX 切替時にデフォルトで強制終了される。</li>
+</ul>
 <!-- glossary-links-injected: be53736dfd16 -->
 
 <div class="footnote">

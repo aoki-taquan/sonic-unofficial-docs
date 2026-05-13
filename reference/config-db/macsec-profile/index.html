@@ -23878,6 +23878,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29972,6 +29994,50 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>macsec
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp -->
+
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>policy</code> に不正値</td>
+<td><code>throw std::invalid_argument("Invalid policy : ...")</code> → <code>SWSS_LOG_WARN</code> → <code>task_invalid_entry</code>（破棄・再試行なし）</td>
+</tr>
+<tr>
+<td><code>cipher_suite</code> に不正値または CAK 長不正</td>
+<td><code>throw std::invalid_argument("Invalid length for cipher_string : ...")</code> → task_invalid_entry</td>
+</tr>
+<tr>
+<td><code>fallback_cak</code> 設定時に <code>fallback_ckn</code> なし</td>
+<td><code>GetValue(ta, fallback_ckn)</code> が false → フォールバックキー設定スキップ。MKA フォールバック機能が動作しない</td>
+</tr>
+<tr>
+<td><code>wpa_supplicant</code> 起動失敗</td>
+<td><code>SWSS_LOG_WARN("Cannot start the wpa_supplicant of the port '%s' : %s")</code> → MACsec 無効のままポート継続動作</td>
+</tr>
+<tr>
+<td>フィールド値の型変換失敗</td>
+<td><code>SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")</code> → デフォルト / 前回値を使用</td>
+</tr>
+<tr>
+<td>MACsec 有効化で例外発生</td>
+<td><code>SWSS_LOG_WARN("Enable MACsec fail : %s")</code> → ポートは非暗号化のまま継続</td>
+</tr>
+<tr>
+<td>MACsec 無効化失敗</td>
+<td><code>SWSS_LOG_WARN("Disable MACsec fail : %s")</code> → wpa_supplicant プロセスが残留する可能性</td>
+</tr>
+</tbody>
+</table>
+<!-- /cdb-exceptions -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

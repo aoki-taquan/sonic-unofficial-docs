@@ -29964,6 +29964,8 @@
 <ul>
 <li>PFC が有効でない queue に対して PFCWD を設定しても検知されない。</li>
 <li><code>forward</code> action を選ぶと PFC 自体が無効化されるため、輻輳の影響範囲が広がる。</li>
+<li><strong><code>config pfcwd interval</code> が TypeError でクラッシュする</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4535">#4535</a>): <code>pfc_stat_history</code> 系コマンドが <code>detection_time</code> / <code>restoration_time</code> を持たない <code>PFC_WD</code> エントリを生成した場合、<code>int(None)</code> で例外が発生して polling interval を更新できなくなる。回避策: <code>redis-cli -n 4 DEL "PFC_WD|EthernetX"</code> で問題エントリを削除してから再試行する。</li>
+<li><strong>polling interval &gt; detection time が無検証で受け付けられる</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4520">#4520</a>): polling interval を先に大きな値に設定した後、detection time が小さいポートで pfcwd を有効化しても CLI はエラーを返さない。interval ≤ 最小 detection time となるよう手動で整合性を確認すること。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>pfcwd<span class="w"> </span>config

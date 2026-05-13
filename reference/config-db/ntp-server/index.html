@@ -22954,6 +22954,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29976,6 +29998,20 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP_SERVER container -->
+
+<ul>
+<li><strong>NTP_SERVER エントリは最大 10 件 → YANG が制限</strong>: <code>max-elements 10</code>。11 件目以降は YANG バリデーションで拒否される。</li>
+<li><strong>server_address が不正形式 → YANG が拒否</strong>: <code>type inet:host</code>。ホスト名または IP アドレス (IPv4/IPv6) のみ許可。</li>
+<li><strong>version が 3-4 以外 → YANG が拒否 (デフォルト 4)</strong>: <code>range "3..4"</code> / <code>error-message "Failed NTP version"</code> / <code>default 4</code>。NTPv1・v2 は明示的に禁止されている。</li>
+<li><strong>association_type のデフォルト = "server"</strong>: <code>default server</code>。NTP プール (pool) を使用する場合は明示的に <code>association_type = pool</code> を設定する必要がある。</li>
+<li><strong>iburst のデフォルト = "on"</strong>: <code>default on</code>。起動直後に iburst パケットを送信して同期を高速化。無効化は明示的に <code>iburst = off</code> を設定する。</li>
+<li><strong>key が存在しない ID を参照 → YANG leafref 違反</strong>: <code>leaf key</code> は <code>leafref</code> で <code>NTP_KEY_LIST/id</code> を参照。存在しない key ID を指定すると YANG バリデーションで拒否される。</li>
+<li><strong>admin_state のデフォルト = "enabled"</strong>: <code>default enabled</code>。フィールドを省略してもサーバは有効として ntpd/chrony に渡される。</li>
+<li><strong>trusted のデフォルト = "no"</strong>: <code>default no</code>。NTP 認証有効時にこのサーバのみを信頼する場合は <code>trusted = yes</code> を設定する。</li>
+</ul>
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">

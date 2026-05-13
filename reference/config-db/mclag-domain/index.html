@@ -23945,6 +23945,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30021,6 +30043,19 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp MclagLink::processCfgMclagDomainTableUpdates / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
+
+<ul>
+<li><strong>domain_id が 1-4095 の範囲外</strong>: YANG <code>range "1..4095"</code> / <code>error-message "MCLAG Domain ID out of range"</code> により拒否される。</li>
+<li><strong>keepalive_interval が 1-60 の範囲外 (デフォルト 1)</strong>: YANG <code>range "1..60"</code> で制約。</li>
+<li><strong>session_timeout が 1-3600 の範囲外 (デフォルト 30)</strong>: YANG <code>range "1..3600"</code> で制約。</li>
+<li><strong>keepalive_interval × 3 &gt; session_timeout → YANG must 制約違反</strong>: YANG <code>must "(keepalive_interval * 3) &lt;= session_timeout"</code> に違反するとバリデーション段階で拒否される。</li>
+<li><strong>変更差分なし → 重複更新を無視</strong>: <code>!attrBmap &amp;&amp; !attrDelBmap</code> の場合 <code>"no change - duplicate update"</code> を SWSS_LOG_NOTICE してリターン。iccpd への送信は行われない (<code>mclaglink.cpp</code> L812)。</li>
+<li><strong>存在しないドメインの DEL → SWSS_LOG_WARN + スキップ</strong>: <code>"Domain [%d] deletion - domain not found"</code> を WARN ログして処理を終了。iccpd へは送信されない (<code>mclaglink.cpp</code> L836)。</li>
+<li><strong>既存エントリへの SET 時の差分更新</strong>: <code>source_ip</code>・<code>peer_ip</code>・<code>peer_link</code> は既存値との差分のみを iccpd へ通知。空文字列で上書きした場合は <code>MCLAG_CFG_OPER_ATTR_DEL</code> を発行する (<code>mclaglink.cpp</code> L749-L795)。</li>
+</ul>
 <!-- glossary-links-injected: f50d4e92baed -->
 
 <div class="footnote">

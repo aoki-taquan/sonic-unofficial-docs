@@ -22310,6 +22310,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29991,6 +30013,21 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorOrch::createEntry / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang -->
+
+<ul>
+<li><strong>セッション名が不正形式 → YANG が拒否</strong>: <code>pattern '[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})'</code> / 長さ 1-32 文字。違反は YANG バリデーションで拒否される。</li>
+<li><strong>src_ip と dst_ip のアドレスファミリ不一致 → YANG must + orchagent が task_invalid_entry</strong>: YANG の <code>must</code> 制約でファミリ一致を強制。<code>mirrororch.cpp</code> L495-499 でも address family チェックを行い <code>task_invalid_entry</code> を返す。</li>
+<li><strong>dscp が 0-63 の範囲外 → YANG 拒否 / orchagent が例外キャッチ</strong>: YANG <code>range "0..63"</code> で制約。<code>to_uint</code> 変換例外を catch して <code>task_invalid_entry</code> (<code>mirrororch.cpp</code> L484-490)。</li>
+<li><strong>queue がハードウェア最大 TC 数以上 → task_invalid_entry</strong>: <code>entry.queue &gt;= m_maxNumTC</code> の場合 <code>"Failed to get valid queue"</code> をログし中止 (<code>mirrororch.cpp</code> L427-430)。</li>
+<li><strong>参照する policer が存在しない → task_need_retry</strong>: <code>m_policerOrch-&gt;policerExists()</code> が false の場合 <code>task_need_retry</code>。policer が後から追加されると再処理される (<code>mirrororch.cpp</code> L437-444)。</li>
+<li><strong>HW リソース不足 → task_failed</strong>: <code>isHwResourcesAvailable()</code> が false の場合 <code>"HW resources are not available"</code> をログし <code>task_failed</code> (<code>mirrororch.cpp</code> L501-505)。</li>
+<li><strong>参照カウンタが正の状態での削除 → 例外スロー</strong>: <code>session.refCount &gt; 0</code> の場合 <code>runtime_error</code> をスロー。ACL 等で参照中のセッションは削除できない (<code>mirrororch.cpp</code> L266)。</li>
+<li><strong>type のデフォルト = "ERSPAN"</strong>: YANG <code>default "ERSPAN"</code>。type を省略すると ERSPAN として処理される。SPAN セッションは明示的に <code>type = SPAN</code> を指定し <code>dst_port</code> も必須。</li>
+<li><strong>gre_type のデフォルト = 0x88be</strong>: YANG <code>default 0x88be</code>。ERSPAN over GRE のデフォルト EtherType。</li>
+</ul>
 <!-- glossary-links-injected: e1fd4940b990 -->
 
 <div class="footnote">

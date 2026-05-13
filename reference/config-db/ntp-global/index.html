@@ -22926,6 +22926,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        例外条件・特殊挙動
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29941,6 +29963,18 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang NTP container global -->
+
+<ul>
+<li><strong>vrf = "mgmt" かつ mgmtVrfEnabled が false → YANG must 制約違反</strong>: YANG <code>must "(current() != 'mgmt') or (/mvrf:sonic-mgmt_vrf/mvrf:MGMT_VRF_CONFIG/mvrf:vrf_global/mvrf:mgmtVrfEnabled = 'true')"</code> / <code>error-message "Must condition not satisfied. Try enable Management VRF."</code> — MGMT_VRF_CONFIG を先に有効化しないと <code>vrf = mgmt</code> は拒否される。</li>
+<li><strong>vrf は "mgmt" または "default" のみ許可</strong>: <code>pattern "mgmt|default"</code> で制約。それ以外の VRF 名は YANG バリデーションで拒否される。</li>
+<li><strong>src_intf が存在しないインターフェースを参照 → YANG leafref 違反</strong>: <code>src_intf</code> は PORT / PORTCHANNEL / LOOPBACK_INTERFACE / MGMT_PORT への leafref または "eth0" パターンのみ許可。</li>
+<li><strong>authentication のデフォルト = "disabled"</strong>: <code>default disabled</code>。省略時は NTP 認証なしで動作する。認証を有効化するには明示的に <code>enabled</code> を設定する必要がある。</li>
+<li><strong>dhcp のデフォルト = "enabled"</strong>: <code>default enabled</code>。DHCP 配布の NTP サーバが優先して使用される。</li>
+<li><strong>admin_state のデフォルト = "enabled"</strong>: <code>default enabled</code>。フィールドを省略してもエントリが存在する限り NTP クライアントは動作する。</li>
+</ul>
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 
 <div class="footnote">
