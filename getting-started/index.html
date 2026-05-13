@@ -29855,14 +29855,14 @@
 
 
 <h1 id="10-essentials">初めての方の必読 10 (Essentials)<a class="headerlink" href="#10-essentials" title="Permanent link">&para;</a></h1>
-<p>SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から <strong>「最初に読めば SONiC の全体像が掴める」10 ページ</strong> を順序立てて紹介します。HLD 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。</p>
+<p>SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から <strong>「最初に読めば SONiC の全体像が掴める」10 ページ</strong> を順序立てて紹介します。<a href="../reference/glossary/#term-hld">HLD</a> 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。</p>
 <p>900 ページ全体を俯瞰したい方は <a href="../">トップ index</a> と <a href="../guides/">読み手別ガイド (guides/)</a> を、症状逆引きで Runbook を探したい方は <a href="../reference/runbooks/">Runbooks 索引</a> を参照してください。</p>
 <hr />
 <h2 id="10-entries">推奨読破順 (10 entries)<a class="headerlink" href="#10-entries" title="Permanent link">&para;</a></h2>
 <h3 id="1-sonic">1. <a href="../topics/01-overview/">SONiC 全体像と設定基盤</a><a class="headerlink" href="#1-sonic" title="Permanent link">&para;</a></h3>
-<p>「SONiC は Linux 上の Docker コンテナ群 + Redis DB + SAI で構成される NOS」という基本骨格を、設定がどこから入りどう ASIC に届くかという読み手目線で再構成した章扉。<strong>最初の 10 分でここを読むと残り 9 ページの位置付けがすべて掴めます。</strong></p>
+<p>「SONiC は Linux 上の Docker コンテナ群 + <a href="../reference/glossary/#term-redis">Redis</a> DB + <a href="../reference/glossary/#term-sai">SAI</a> で構成される NOS」という基本骨格を、設定がどこから入りどう ASIC に届くかという読み手目線で再構成した章扉。<strong>最初の 10 分でここを読むと残り 9 ページの位置付けがすべて掴めます。</strong></p>
 <h3 id="2">2. <a href="../topics/01-overview/concept/">概念と読み始め方</a><a class="headerlink" href="#2" title="Permanent link">&para;</a></h3>
-<p>「Redis DB は何のためにあるのか」「CONFIG_DB と APPL_DB と ASIC_DB の違い」「orchagent と syncd の役割分担」など、SONiC を読むときに最初の数時間でつまずきやすいポイントを整理。<strong>用語の壁を一気に下げるページ。</strong></p>
+<p>「Redis DB は何のためにあるのか」「<a href="../reference/glossary/#term-config_db">CONFIG_DB</a> と <a href="../reference/glossary/#term-appl_db">APPL_DB</a> と <a href="../reference/glossary/#term-asic_db">ASIC_DB</a> の違い」「<a href="../reference/glossary/#term-orchagent">orchagent</a> と <a href="../reference/glossary/#term-syncd">syncd</a> の役割分担」など、SONiC を読むときに最初の数時間でつまずきやすいポイントを整理。<strong>用語の壁を一気に下げるページ。</strong></p>
 <h3 id="3">3. <a href="../topics/01-overview/architecture/">設定データフロー</a><a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
 <p>CONFIG_DB から APPL_DB → ASIC_DB → SAI → ASIC までのデータフローを 1 枚で示す解説。<strong>SONiC の心臓部の動きを「設定 1 行が ASIC に届くまで」の流れで理解できる。</strong></p>
 <h3 id="4-swss-sai-redis">4. <a href="../topics/20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a><a class="headerlink" href="#4-swss-sai-redis" title="Permanent link">&para;</a></h3>
@@ -29870,11 +29870,11 @@
 <h3 id="5-glossary">5. <a href="../reference/glossary/">用語集 (Glossary)</a><a class="headerlink" href="#5-glossary" title="Permanent link">&para;</a></h3>
 <p>SONiC で頻出する固有用語・略語・コンポーネント名・データベース名・デーモン名を一覧化した日本語用語集。<strong>読みながら詰まった用語を逐次引くためにブックマーク推奨。</strong></p>
 <h3 id="6-bgp-frr">6. <a href="../topics/02-bgp/">BGP と FRR 制御プレーン</a><a class="headerlink" href="#6-bgp-frr" title="Permanent link">&para;</a></h3>
-<p>SONiC で最もよく使われる L3 制御プレーンである BGP / FRR の章扉。<strong>「FRR が Linux カーネル経由で ASIC に経路を載せる」モデルは SONiC 独自で、L3 機能の基礎モデルになります。</strong></p>
+<p>SONiC で最もよく使われる L3 制御プレーンである <a href="../reference/glossary/#term-bgp">BGP</a> / <a href="../reference/glossary/#term-frr">FRR</a> の章扉。<strong>「FRR が Linux カーネル経由で ASIC に経路を載せる」モデルは SONiC 独自で、L3 機能の基礎モデルになります。</strong></p>
 <h3 id="7-l2-vlan-lag">7. <a href="../topics/06-l2-vlan-lag/">L2 / VLAN / LAG</a><a class="headerlink" href="#7-l2-vlan-lag" title="Permanent link">&para;</a></h3>
-<p>L2 スイッチング・VLAN・LAG（ポートチャネル）の章扉。<strong>ToR / リーフを SONiC で組むなら必読。BGP と並んで L2 機能は触る頻度が最高位です。</strong></p>
+<p>L2 スイッチング・<a href="../reference/glossary/#term-vlan">VLAN</a>・<a href="../reference/glossary/#term-lag">LAG</a>（ポートチャネル）の章扉。<strong>ToR / リーフを SONiC で組むなら必読。BGP と並んで L2 機能は触る頻度が最高位です。</strong></p>
 <h3 id="8-telemetry-snmp-observability">8. <a href="../topics/09-telemetry-snmp/">Telemetry / SNMP / Observability</a><a class="headerlink" href="#8-telemetry-snmp-observability" title="Permanent link">&para;</a></h3>
-<p>「いまスイッチで何が起きているか」を可視化する telemetry / gNMI / SNMP / syslog の章扉。<strong>運用に入った瞬間「監視どうする？」に必ず直面するため、概念だけでも先に押さえておくと安心。</strong></p>
+<p>「いまスイッチで何が起きているか」を可視化する telemetry / <a href="../reference/glossary/#term-gnmi">gNMI</a> / <a href="../reference/glossary/#term-snmp">SNMP</a> / syslog の章扉。<strong>運用に入った瞬間「監視どうする？」に必ず直面するため、概念だけでも先に押さえておくと安心。</strong></p>
 <h3 id="9-reboot-upgrade-lifecycle">9. <a href="../topics/11-reboot/">Reboot / Upgrade / Lifecycle</a><a class="headerlink" href="#9-reboot-upgrade-lifecycle" title="Permanent link">&para;</a></h3>
 <p>cold/warm/fast/soft reboot の違い、image install、config の保持境界をまとめた章扉。<strong>運用で最初にやらかしがちな「再起動したら設定が消えた」「warm reboot で経路断が出た」を避けるために事前に読んでおきたい。</strong></p>
 <h3 id="10-runbooks">10. <a href="../reference/runbooks/">Runbooks (症状逆引き)</a><a class="headerlink" href="#10-runbooks" title="Permanent link">&para;</a></h3>
@@ -29890,7 +29890,7 @@
 <li><a href="../topics/07-acl-copp-mirror/">ACL / CoPP / Mirror</a> → <a href="../topics/08-qos-buffer/">QoS / Buffer</a></li>
 <li><a href="../guides/operator/">読み手別: 運用者ガイド</a></li>
 </ol>
-<p>要するに「L3 → L2 → オーバーレイ → ACL/QoS」の順に降りていけば、ネットワーク設計者として SONiC で構築できる機能の全体像が掴めます。</p>
+<p>要するに「L3 → L2 → オーバーレイ → <a href="../reference/glossary/#term-acl">ACL</a>/<a href="../reference/glossary/#term-qos">QoS</a>」の順に降りていけば、ネットワーク設計者として SONiC で構築できる機能の全体像が掴めます。</p>
 <h3 id="sonic">ソフトウェアエンジニア向け (SONiC の内部実装 / 拡張開発)<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h3>
 <ol>
 <li><a href="../topics/20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a> → <a href="../topics/20-swss-sai-redis/internals/">SWSS / SAI / Redis 内部</a></li>
@@ -29899,7 +29899,7 @@
 <li><a href="../reference/sai-attributes/">SAI 属性リファレンス</a> → <a href="../reference/config-db-orch-map/">CONFIG_DB ↔ orch 対応表</a></li>
 <li><a href="../guides/developer/">読み手別: 開発者ガイド</a></li>
 </ol>
-<p>「内部 daemon の責務 → ビルド / 実験環境 → 先端機能 (P4/DASH) → リファレンス」の順で読むと、SONiC へ機能を足す or 既存機能を改造する立場での全体像が見えます。</p>
+<p>「内部 daemon の責務 → ビルド / 実験環境 → 先端機能 (P4/<a href="../reference/glossary/#term-dash">DASH</a>) → リファレンス」の順で読むと、SONiC へ機能を足す or 既存機能を改造する立場での全体像が見えます。</p>
 <h3 id="_2">運用エンジニア向け (障害対応 / 監視 / 安定運用)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ol>
 <li><a href="../topics/09-telemetry-snmp/">Telemetry / SNMP / Observability</a> → <a href="../topics/10-gnmi-openconfig/">gNMI / OpenConfig</a></li>
@@ -29918,6 +29918,7 @@
 <li>このドキュメントの方針・スコープ: <a href="../about/">About</a></li>
 </ul>
 <p>本ページは curation ページであり、各機能の挙動や設定の正確性は <strong>リンク先のページに引用元 commit SHA 付きで記載</strong> されています。本ページ自体は <code>verification: meta</code> で SONiC 仕様の検証対象外です。</p>
+<!-- glossary-links-injected: 13cd7656bd68 -->
 
 
 
