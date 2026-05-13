@@ -140,4 +140,17 @@ show mclag brief
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp MclagLink::processCfgMclagDomainTableUpdates / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
+
+- **domain_id が 1-4095 の範囲外**: YANG `range "1..4095"` / `error-message "MCLAG Domain ID out of range"` により拒否される。
+- **keepalive_interval が 1-60 の範囲外 (デフォルト 1)**: YANG `range "1..60"` で制約。
+- **session_timeout が 1-3600 の範囲外 (デフォルト 30)**: YANG `range "1..3600"` で制約。
+- **keepalive_interval × 3 > session_timeout → YANG must 制約違反**: YANG `must "(keepalive_interval * 3) <= session_timeout"` に違反するとバリデーション段階で拒否される。
+- **変更差分なし → 重複更新を無視**: `!attrBmap && !attrDelBmap` の場合 `"no change - duplicate update"` を SWSS_LOG_NOTICE してリターン。iccpd への送信は行われない (`mclaglink.cpp` L812)。
+- **存在しないドメインの DEL → SWSS_LOG_WARN + スキップ**: `"Domain [%d] deletion - domain not found"` を WARN ログして処理を終了。iccpd へは送信されない (`mclaglink.cpp` L836)。
+- **既存エントリへの SET 時の差分更新**: `source_ip`・`peer_ip`・`peer_link` は既存値との差分のみを iccpd へ通知。空文字列で上書きした場合は `MCLAG_CFG_OPER_ATTR_DEL` を発行する (`mclaglink.cpp` L749-L795)。
+
 <!-- glossary-links-injected: f50d4e92baed -->
