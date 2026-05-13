@@ -138,3 +138,15 @@ v1.0 GA (2026-05-11、監査 9.79/10) 後に v1.1 着手前の品質固めとし
 | 28 | 4.94 | random | 奇偶交互運用確立 |
 | 29 | 4.944 | stratified 2 周目 | scheme mature 確認 |
 | **30** | **4.944** | random 2 周目 | **母集団真値 4.94 ± 0.005 確定** |
+
+### 6.4 iteration BA-BD (2026-05-13) 追記
+
+v1.0 GA 後の継続改善として iteration BA〜BD を実施。累計 PR は ~190 に到達し、品質スコアは 4.97+ のプラトーで安定。
+
+- **BA (読み手体験)**: 死リンク 0 維持、a11y 強化、landing page hero、search に ja デフォルト適用、area v2 構成、404 ページ polish、code-block 言語タグ補完 624 件、`meta/prompts/*` 最新化、discrepancy-index polish、RSS feed 追加、getting-started essentials キュレーション (top 10 ページ)
+- **BB (内容深掘り)**: essentials 整備、RSS 配信、`sources[].ref` SHA を 19 ページで cache HEAD (2026-05-13) に refresh、phase-table 残課題消化
+- **BC (残課題解消)**: partial-boundary phase-table 違反 15 → 0、social plugin の `MKDOCS_SOCIAL_ENABLED` toggle で local --strict build を高速化、audit51 weighted scheme 導入
+- **品質**: quality plateau **4.97+**（round 30 の 4.944 から +0.03 改善し、新たな安定帯へ）
+- **累計**: PR ~190、merge ページ ~500+
+
+次は v1.1 (運用フェーズ確立) の Indexer v3 設計および i18n PoC に正式着手する段階に入る。
