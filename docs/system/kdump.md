@@ -200,7 +200,7 @@ cat /proc/cmdline | tr ' ' '\n' | grep crashkernel
 
 | Phase | 実装済 | 未実装 |
 |-------|--------|--------|
-| Phase 1: kdump 有効化 / 設定保存 | 実装済（CONFIG_DB `KDUMP` テーブルと `config kdump` CLI） | — |
+| Phase 1: kdump 有効化 / 設定保存 | 実装済（[CONFIG_DB](../reference/glossary.md#term-config_db) `KDUMP` テーブルと `config kdump` CLI） | — |
 | Phase 2: kdump-tools / kernel 統合 | HLD 想定（kdump-tools 旧版）は実装済 | 後続版 kdump-tools / 新 kernel への追従は未確認 / 未実装の可能性 |
 | Phase 3: マルチ ASIC / プラットフォーム固有 | — | BMC 連携や container-aware capture は未実装 |
 
@@ -215,4 +215,4 @@ cat /proc/cmdline | tr ' ' '\n' | grep crashkernel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 896d391185a9 -->

@@ -16,7 +16,7 @@ related:
 
 # 初めての方の必読 10 (Essentials)
 
-SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から **「最初に読めば SONiC の全体像が掴める」10 ページ** を順序立てて紹介します。HLD 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。
+SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から **「最初に読めば SONiC の全体像が掴める」10 ページ** を順序立てて紹介します。[HLD](./reference/glossary.md#term-hld) 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。
 
 900 ページ全体を俯瞰したい方は [トップ index](index.md) と [読み手別ガイド (guides/)](guides/index.md) を、症状逆引きで Runbook を探したい方は [Runbooks 索引](reference/runbooks/index.md) を参照してください。
 
@@ -26,11 +26,11 @@ SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向け�
 
 ### 1. [SONiC 全体像と設定基盤](topics/01-overview/index.md)
 
-「SONiC は Linux 上の Docker コンテナ群 + Redis DB + SAI で構成される NOS」という基本骨格を、設定がどこから入りどう ASIC に届くかという読み手目線で再構成した章扉。**最初の 10 分でここを読むと残り 9 ページの位置付けがすべて掴めます。**
+「SONiC は Linux 上の Docker コンテナ群 + [Redis](./reference/glossary.md#term-redis) DB + [SAI](./reference/glossary.md#term-sai) で構成される NOS」という基本骨格を、設定がどこから入りどう ASIC に届くかという読み手目線で再構成した章扉。**最初の 10 分でここを読むと残り 9 ページの位置付けがすべて掴めます。**
 
 ### 2. [概念と読み始め方](topics/01-overview/concept.md)
 
-「Redis DB は何のためにあるのか」「CONFIG_DB と APPL_DB と ASIC_DB の違い」「orchagent と syncd の役割分担」など、SONiC を読むときに最初の数時間でつまずきやすいポイントを整理。**用語の壁を一気に下げるページ。**
+「Redis DB は何のためにあるのか」「[CONFIG_DB](./reference/glossary.md#term-config_db) と [APPL_DB](./reference/glossary.md#term-appl_db) と [ASIC_DB](./reference/glossary.md#term-asic_db) の違い」「[orchagent](./reference/glossary.md#term-orchagent) と [syncd](./reference/glossary.md#term-syncd) の役割分担」など、SONiC を読むときに最初の数時間でつまずきやすいポイントを整理。**用語の壁を一気に下げるページ。**
 
 ### 3. [設定データフロー](topics/01-overview/architecture.md)
 
@@ -46,15 +46,15 @@ SONiC で頻出する固有用語・略語・コンポーネント名・デー�
 
 ### 6. [BGP と FRR 制御プレーン](topics/02-bgp/index.md)
 
-SONiC で最もよく使われる L3 制御プレーンである BGP / FRR の章扉。**「FRR が Linux カーネル経由で ASIC に経路を載せる」モデルは SONiC 独自で、L3 機能の基礎モデルになります。**
+SONiC で最もよく使われる L3 制御プレーンである [BGP](./reference/glossary.md#term-bgp) / [FRR](./reference/glossary.md#term-frr) の章扉。**「FRR が Linux カーネル経由で ASIC に経路を載せる」モデルは SONiC 独自で、L3 機能の基礎モデルになります。**
 
 ### 7. [L2 / VLAN / LAG](topics/06-l2-vlan-lag/index.md)
 
-L2 スイッチング・VLAN・LAG（ポートチャネル）の章扉。**ToR / リーフを SONiC で組むなら必読。BGP と並んで L2 機能は触る頻度が最高位です。**
+L2 スイッチング・[VLAN](./reference/glossary.md#term-vlan)・[LAG](./reference/glossary.md#term-lag)（ポートチャネル）の章扉。**ToR / リーフを SONiC で組むなら必読。BGP と並んで L2 機能は触る頻度が最高位です。**
 
 ### 8. [Telemetry / SNMP / Observability](topics/09-telemetry-snmp/index.md)
 
-「いまスイッチで何が起きているか」を可視化する telemetry / gNMI / SNMP / syslog の章扉。**運用に入った瞬間「監視どうする？」に必ず直面するため、概念だけでも先に押さえておくと安心。**
+「いまスイッチで何が起きているか」を可視化する telemetry / [gNMI](./reference/glossary.md#term-gnmi) / [SNMP](./reference/glossary.md#term-snmp) / syslog の章扉。**運用に入った瞬間「監視どうする？」に必ず直面するため、概念だけでも先に押さえておくと安心。**
 
 ### 9. [Reboot / Upgrade / Lifecycle](topics/11-reboot/index.md)
 
@@ -78,7 +78,7 @@ cold/warm/fast/soft reboot の違い、image install、config の保持境界を
 4. [ACL / CoPP / Mirror](topics/07-acl-copp-mirror/index.md) → [QoS / Buffer](topics/08-qos-buffer/index.md)
 5. [読み手別: 運用者ガイド](guides/operator.md)
 
-要するに「L3 → L2 → オーバーレイ → ACL/QoS」の順に降りていけば、ネットワーク設計者として SONiC で構築できる機能の全体像が掴めます。
+要するに「L3 → L2 → オーバーレイ → [ACL](./reference/glossary.md#term-acl)/[QoS](./reference/glossary.md#term-qos)」の順に降りていけば、ネットワーク設計者として SONiC で構築できる機能の全体像が掴めます。
 
 ### ソフトウェアエンジニア向け (SONiC の内部実装 / 拡張開発)
 
@@ -88,7 +88,7 @@ cold/warm/fast/soft reboot の違い、image install、config の保持境界を
 4. [SAI 属性リファレンス](reference/sai-attributes.md) → [CONFIG_DB ↔ orch 対応表](reference/config-db-orch-map.md)
 5. [読み手別: 開発者ガイド](guides/developer.md)
 
-「内部 daemon の責務 → ビルド / 実験環境 → 先端機能 (P4/DASH) → リファレンス」の順で読むと、SONiC へ機能を足す or 既存機能を改造する立場での全体像が見えます。
+「内部 daemon の責務 → ビルド / 実験環境 → 先端機能 (P4/[DASH](./reference/glossary.md#term-dash)) → リファレンス」の順で読むと、SONiC へ機能を足す or 既存機能を改造する立場での全体像が見えます。
 
 ### 運用エンジニア向け (障害対応 / 監視 / 安定運用)
 
@@ -110,3 +110,5 @@ cold/warm/fast/soft reboot の違い、image install、config の保持境界を
 - このドキュメントの方針・スコープ: [About](about.md)
 
 本ページは curation ページであり、各機能の挙動や設定の正確性は **リンク先のページに引用元 commit SHA 付きで記載** されています。本ページ自体は `verification: meta` で SONiC 仕様の検証対象外です。
+
+<!-- glossary-links-injected: 13cd7656bd68 -->

@@ -187,7 +187,7 @@ systemctl is-enabled updategraph
 | Phase | 実装済 | 未実装 |
 |-------|--------|--------|
 | Phase 1: `config-setup` 起動時ロジック | 実装済（init フロー） | — |
-| Phase 2: 責務分担（hostcfgd / configd 等との境界） | HLD 記載の基本分担は実装済 | HLD 2019-07 以降の責務移譲は未確認・未実装相当 |
+| Phase 2: 責務分担（[hostcfgd](../reference/glossary.md#term-hostcfgd) / configd 等との境界） | HLD 記載の基本分担は実装済 | HLD 2019-07 以降の責務移譲は未確認・未実装相当 |
 | Phase 3: factory reset / migration フロー | 基本ケースは実装済 | 派生ケース（部分 migration、ロールバック）は未実装 |
 
 ## 実装との乖離 / 補足
@@ -199,4 +199,4 @@ systemctl is-enabled updategraph
 
 [^1]: `sonic-net/SONiC` `doc/ztp/SONiC-config-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 944345ff21b0 -->
+<!-- glossary-links-injected: 9bd150521228 -->
