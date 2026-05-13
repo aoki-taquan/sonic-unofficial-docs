@@ -158,6 +158,12 @@ curl -X POST -H "Content-Type: application/yang-data+json" \
   -d '{"input":{"since":"2026-05-09T13:00:00Z"}}'
 ```
 
+## 実装との乖離
+
+!!! diff "HLD と実装の差分"
+
+    本ページの monitor は `partially_implemented`。base feature の CLI `show techsupport` は実装されているが、HLD が中心的に提案する Management Framework (REST/gNMI) 経由の `show-techsupport` RPC ＋ IETF `since` パラメータの YANG モデル化は、現行 master の `sonic-mgmt-framework` で十分に取り込まれていない（HLD 自身が 2019 Rev 0.1 で停滞）。実運用では sonic-utilities 側の `show techsupport` / `AUTO_TECHSUPPORT` CONFIG_DB テーブル経由が主流で、RPC 経路を使う場合は `.cache/sonic-sources/sonic-mgmt-framework/` の RPC スタブ実装の最新状態を裏取りすること。
+
 ## 制限事項
 
 - **`--since` は IETF date-time 形式のみ**。シェル CLI で慣れ親しんだ `-1 day` 等は Management Framework 経由では使えない[^1]

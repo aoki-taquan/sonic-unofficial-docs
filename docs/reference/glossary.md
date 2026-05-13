@@ -1148,7 +1148,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [AAA](#term-aaa)
 
-- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (24)
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (27)
 - [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (24)
 - [運用](../topics/15-security-aaa/operations.md) (19)
 - [config aaa / tacacs / radius サブコマンド](cli/config-aaa.md) (17)
@@ -1264,15 +1264,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (12)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (11)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (9)
-- [minigraph 適用後に reload が完了しない / 起動が固まる](runbooks/minigraph-reload-stuck.md) (8)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (8)
 
 ### [config-setup](#term-config-setup)
 
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (38)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (25)
 - [内部実装](../topics/01-overview/internals.md) (5)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (4)
 - [サイトマップ](../_meta/sitemap.md) (2)
-- [config reload の event-driven 化（FEATURE.delayed + PortInitDone）](../management/config-reload-enhancement.md) (2)
 
 ### [COUNTERS_DB](#term-counters_db)
 
@@ -1508,7 +1508,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (107)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (240)
 - [サイトマップ](../_meta/sitemap.md) (36)
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (34)
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show](../internals/l3-scaling-and-performance-enhancements.md) (34)
@@ -1883,8 +1883,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-cfggen コマンド](cli/sonic-cfggen.md) (13)
 - [show runningconfiguration / startupconfiguration サブコマンド](cli/show-running-config.md) (7)
 - [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (7)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (6)
 - [CONFIG_DB save / load が反映されない](runbooks/config-save-load.md) (6)
-- [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](../switching/control-sonic-behaviors-with-system-defaults-table.md) (6)
 
 ### [sonic-mgmt](#term-sonic-mgmt)
 
@@ -2142,8 +2142,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ZTP](#term-ztp)
 
 - [Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）](../system/zero-touch-provisioning-ztp.md) (23)
+- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (7)
 - [ビルドプロファイル（rules/profiles/*.mk）](../architecture/build-profiles.md) (6)
-- [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (6)
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
 
