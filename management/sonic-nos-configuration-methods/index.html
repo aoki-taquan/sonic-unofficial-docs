@@ -15399,7 +15399,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -15408,6 +15408,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -15429,7 +15440,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -29854,7 +29865,7 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装フェーズ境界
       
     </span>
   </a>
@@ -29863,6 +29874,17 @@
       
         <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29884,7 +29906,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -30134,8 +30156,47 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>config<span class="w"> </span>save<span class="w"> </span>-y
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>diff<span class="w"> </span>/etc/sonic/config_db.json<span class="w"> </span>&lt;<span class="o">(</span>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all<span class="o">)</span>
 </span></code></pre></div>
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<!-- phase-boundary -->
+<h2 id="_8">実装フェーズ境界<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<div class="admonition info">
+<p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>
+<p>本ページは <code>monitor: partially_implemented</code> で、HLD で示された一連の機能が <strong>段階的に取り込まれている</strong> 状態を扱う。フェーズ毎の実装境界を 1 枚の表に集約する (詳細は本ページ上部の <code>diff</code> admonition および <a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照)。</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>範囲 (機能 / 段階)</th>
+<th>実装済 (master 取り込み済)</th>
+<th>未実装 (HLD 提案のみ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 — 基本機能</td>
+<td>HLD §概要 / §設計の中核ユースケース</td>
+<td>取り込み済 — 本ページの「動作仕様」節および <code>diff</code> admonition の現状側を参照</td>
+<td>— (Phase 1 は実装済)</td>
+</tr>
+<tr>
+<td>Phase 2 — 拡張機能</td>
+<td>HLD §拡張 / §追加要件 / §周辺統合</td>
+<td>一部のみ取り込み済 — 本ページ「動作仕様」の補足参照</td>
+<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+</tr>
+<tr>
+<td>Phase 3 — 将来拡張</td>
+<td>HLD §Future Work / §将来課題</td>
+<td>—</td>
+<td>未実装 — HLD 提案段階。対応 PR は確認されていない (last_verified 時点)</td>
+</tr>
+</tbody>
+</table>
+<p>凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。</p>
+</div>
+<!-- /phase-boundary -->
+
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/02-bgp/">Topic: BGP</a></li>
 <li><a href="../../reference/cli/config-bgp/">CLI: config-bgp</a></li>
@@ -30156,7 +30217,7 @@
 <!-- glossary-links-injected: 32fbe70babcc -->
 
 <!-- ops-entry -->
-<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">運用入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p>この <a href="../../reference/glossary/#term-hld">HLD</a> に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
