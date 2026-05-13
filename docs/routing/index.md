@@ -1,7 +1,9 @@
 ---
 title: ルーティング
 description: "ルーティング — BGP、VRF、ECMP、SRv6、MPLS、DHCP relay など L3 制御面を扱う章。"
-verification: stub
+area: routing
+verification: meta
+last_verified: 2026-05-13
 ---
 
 # ルーティング

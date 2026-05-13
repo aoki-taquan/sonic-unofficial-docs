@@ -2,7 +2,24 @@
 
 [SONiC NOS](https://github.com/sonic-net/SONiC) の日本語非公式ドキュメント。
 
-公式ドキュメントは品質と分散の問題があり、HLD はリポジトリごとに散らばり、HLD にも書かれていない仕様が実コードや issue にしか存在しない、という状況がある。本プロジェクトはそれを AI 駆動で再構成して読みやすい形に整え直すことを目的とする。
+**公開サイト**: <https://aoki-taquan.github.io/sonic-unofficial-docs/>
+
+## これは何
+
+コミュニティ版 SONiC (`sonic-net/SONiC` の `master`) について、リポジトリごとに分散している公式 HLD・実コード・issue を横断して、AI が**再構成**して書き直した日本語ドキュメント。公式 HLD の翻訳ではなく、読み手が探す単位で章立てし、各ページに一次情報の引用と裏取りステータス（`code-verified` / `discrepancy-found` / `hld-only` 等）のバッジを付けている。
+
+## 誰のため
+
+- SONiC を**運用 / 評価 / 検証**したいネットワーク技術者で、英語の HLD を 1 から追うのが重い人
+- SONiC に**機能追加 / バグ修正**を入れたい開発者で、どこに何があるかの全体地図がほしい人
+- 公式 HLD と実装の**差分**（HLD では未定義 / HLD と実コードが乖離している箇所）を素早く把握したい人
+
+## どう使う
+
+- 公開サイト <https://aoki-taquan.github.io/sonic-unofficial-docs/> をブラウザで読む
+- 目的の機能が分かっていれば左ナビから章（routing / switching / overlay / acl-qos / platform / system / management / architecture / internals / reference）を選ぶ
+- 設定名・CLI 名から逆引きしたければ `reference/` 配下の CLI / CONFIG_DB / YANG リファレンスを参照
+- 各ページのバッジで裏取り状況が見える（`code-verified` は実装を読んで一致確認済み、`discrepancy-found` は HLD と実装に差分がある旨を本文で注記）
 
 ## スコープ
 
@@ -40,25 +57,6 @@ v1.0 RC として、自動化可能なチェック項目は全て [x]。残ブ�
 
 詳細は [`meta/release-checklist-v1.md`](./meta/release-checklist-v1.md) と [`CHANGELOG.md`](./CHANGELOG.md) を参照。
 
-## ローカルでのプレビュー
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-mkdocs serve
-```
-
-`http://127.0.0.1:8000/` でプレビューできます。
-
-## ビルド
-
-```bash
-mkdocs build
-```
-
-`site/` ディレクトリに静的ファイルが出力されます。
-
 ## フィードバック歓迎
 
 本ドキュメントは AI が再構成して書いている非公式資料です。誤情報・記述漏れ・改善要望はぜひお寄せください。
@@ -83,3 +81,19 @@ mkdocs build
 - 本ドキュメントが引用する SONiC 上流リポジトリのコード断片・図・HLD 抜粋などは、各上流リポジトリのライセンス（多くは Apache License 2.0）に従います。本リポジトリの CC BY 4.0 は、本ドキュメントとして再構成した日本語解説テキストに対して適用されます。
 
 プロジェクトの目的・スコープ・フィードバック窓口を含む全体像は [`docs/about.md`](./docs/about.md) にまとめています。
+
+## ローカルでのプレビュー / ビルド
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# プレビュー (http://127.0.0.1:8000/)
+mkdocs serve
+
+# 静的ビルド (site/ に出力)
+mkdocs build --strict
+```
+
+`mkdocs build --strict` は CI と同じ条件でビルドする。`--strict` を付けると warning も failure 扱いになるため、PR を出す前に必ず通しておく。
