@@ -177,6 +177,33 @@ PRIORITY 値が大きいほど**低優先度**（最後に評価）となるた�
 
 - 参照: [sonic-net/SONiC#269](https://github.com/sonic-net/SONiC/issues/269)
 
+### MIRRORV6 ACL では `IPV6_NEXT_HEADER` キーがサポートされていない制約（sonic-buildimage#4570）
+
+MIRRORV6 ACL では `IPV6_NEXT_HEADER` キーがサポートされていない制約。IPv6 ミラーリング ACL の設定時は対応フィールドを事前確認すること
+
+- 参照: [sonic-net/sonic-buildimage#4570](https://github.com/sonic-net/sonic-buildimage/issues/4570)
+
+
+### aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約（sonic-buildimage#5015）
+
+aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約。iptables ベースの COPP ACL は `iptables -L -n -v` で確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5015](https://github.com/sonic-net/sonic-buildimage/issues/5015)
+
+
+### COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約（sonic-buildimage#5275）
+
+COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約。大量の COPP ルールは起動時間に大きく影響するため、ルール数を最小化すること
+
+- 参照: [sonic-net/sonic-buildimage#5275](https://github.com/sonic-net/sonic-buildimage/issues/5275)
+
+
+### warm reboot 後にミラーリングルールの適用が失敗する問題（sonic-buildimage#5497）
+
+warm reboot 後にミラーリングルールの適用が失敗する問題。ミラー宛先ポートの再設定が warm reboot 後に正しく実行されない場合がある
+
+- 参照: [sonic-net/sonic-buildimage#5497](https://github.com/sonic-net/sonic-buildimage/issues/5497)
+
 ## 干渉する機能
 
 - **Mirror セッション**: Mirror table は `MIRROR_SESSION` と密結合

@@ -184,6 +184,22 @@ sudo systemctl restart database
 - DB が想定と違うインスタンスに接続される: アプリが正しい SDK API（`SonicV2Connector`）を使っているか、JSON の `instance` フィールドが意図どおりか。
 - `ping_pong_db_insts` が fail: redis の `unix_socket_path` パーミッション、port 重複を確認。
 
+## 既知の問題
+
+### SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）
+
+SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること
+
+- 参照: [sonic-net/sonic-buildimage#2125](https://github.com/sonic-net/sonic-buildimage/issues/2125)
+
+
+### ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題（sonic-buildimage#5031）
+
+ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題。`net.ipv4.neigh.default.gc_thresh3` を確認し必要に応じて拡張すること
+
+- 参照: [sonic-net/sonic-buildimage#5031](https://github.com/sonic-net/sonic-buildimage/issues/5031)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/database/multi_database_instances.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

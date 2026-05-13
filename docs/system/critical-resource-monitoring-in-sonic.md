@@ -112,6 +112,85 @@ redis-cli -n 2 keys 'CRM:*'
 - [07-acl-copp-mirror](../topics/07-acl-copp-mirror/index.md): ACL リソース消費
 - [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): [orchagent](../reference/glossary.md#term-orchagent) と SAI の関係
 
+## 既知の問題
+
+### monit サービスが設定した閾値を超えるとプロセスを強制終了するため、回帰テストで失敗が多発する問題（sonic-buildimage#4019）
+
+monit サービスが設定した閾値を超えるとプロセスを強制終了するため、回帰テストで失敗が多発する問題。テスト環境では monit の閾値設定を緩和するか、テスト中は monit を一時停止することを推奨
+
+- 参照: [sonic-net/sonic-buildimage#4019](https://github.com/sonic-net/sonic-buildimage/issues/4019)
+
+
+### SNMP subagent の MIBUpdater が `loc_chassis_data not subscript（sonic-buildimage#4230）
+
+SNMP subagent の MIBUpdater が `loc_chassis_data not subscriptable` 例外でクラッシュする問題。LLDP データが未取得の状態で MIB アップデートが実行されると発生
+
+- 参照: [sonic-net/sonic-buildimage#4230](https://github.com/sonic-net/sonic-buildimage/issues/4230)
+
+
+### monit/snmp テストが master イメージで失敗する問題（sonic-buildimage#5502）
+
+monit/snmp テストが master イメージで失敗する問題。monit が snmp_subagent を監視対象として設定しており、起動タイムアウトで kill している場合がある
+
+- 参照: [sonic-net/sonic-buildimage#5502](https://github.com/sonic-net/sonic-buildimage/issues/5502)
+
+
+### lldpmgrd が `test_iface_namingmode` テスト中にクラッシュする問題（sonic-buildimage#5697）
+
+lldpmgrd が `test_iface_namingmode` テスト中にクラッシュする問題。インターフェース名前空間の切り替え中に lldpmgrd が不正なインターフェース名を受け取る
+
+- 参照: [sonic-net/sonic-buildimage#5697](https://github.com/sonic-net/sonic-buildimage/issues/5697)
+
+
+### monit が bgpcfgd/bgpmon/lldpmgrd のステータスエラーを報告する問題（sonic-buildimage#5864）
+
+monit が bgpcfgd/bgpmon/lldpmgrd のステータスエラーを報告する問題。サービスが動作していても monit の監視設定と実際の状態が一致しないことがある
+
+- 参照: [sonic-net/sonic-buildimage#5864](https://github.com/sonic-net/sonic-buildimage/issues/5864)
+
+
+### teamd 再起動後に orchagent がエラーログを大量出力する問題（sonic-buildimage#5971）
+
+teamd 再起動後に orchagent がエラーログを大量出力する問題。teamd が再起動されると PortChannel メンバーの状態が一時的に不定になる
+
+- 参照: [sonic-net/sonic-buildimage#5971](https://github.com/sonic-net/sonic-buildimage/issues/5971)
+
+
+### `supervisorctl status` コマンドが exit code 3 を返す問題（sonic-buildimage#6028）
+
+`supervisorctl status` コマンドが exit code 3 を返す問題。すべてのサービスが RUNNING 状態であっても exit code 3 を返すことがある。スクリプトでは出力テキストを解析すること
+
+- 参照: [sonic-net/sonic-buildimage#6028](https://github.com/sonic-net/sonic-buildimage/issues/6028)
+
+
+### Platform system health において ASIC キーが適切に処理されない問題（sonic-buildimage#6343）
+
+Platform system health において ASIC キーが適切に処理されない問題。`show system-health detail` の ASIC エントリを確認すること
+
+- 参照: [sonic-net/sonic-buildimage#6343](https://github.com/sonic-net/sonic-buildimage/issues/6343)
+
+
+### BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システ（sonic-buildimage#6392）
+
+BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システムが正しく動作しない問題。ECC エラー監視の設定を確認すること
+
+- 参照: [sonic-net/sonic-buildimage#6392](https://github.com/sonic-net/sonic-buildimage/issues/6392)
+
+
+### `show system-health detail` コマンドが動作しない問題（sonic-buildimage#6463）
+
+`show system-health detail` コマンドが動作しない問題。`sudo systemctl status system-health` で状態確認すること
+
+- 参照: [sonic-net/sonic-buildimage#6463](https://github.com/sonic-net/sonic-buildimage/issues/6463)
+
+
+### `show system-health` コマンドが動作しない問題（sonic-buildimage#6641）
+
+`show system-health` コマンドが動作しない問題。`sudo systemctl status system-health` で確認し、必要に応じて再起動すること
+
+- 参照: [sonic-net/sonic-buildimage#6641](https://github.com/sonic-net/sonic-buildimage/issues/6641)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/crm/Critical-Resource-Monitoring-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

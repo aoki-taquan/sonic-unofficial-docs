@@ -150,6 +150,15 @@ redis-cli -n 4 keys 'NTP*'
 config ntp add 10.0.0.1
 ```
 
+## 既知の問題
+
+### management VRF が有効な時に rsyslogd が "sendto() error: Network is（sonic-buildimage#5880）
+
+management VRF が有効な時に rsyslogd が "sendto() error: Network is unreachable" を出力する問題。rsyslog のバインドアドレスを management VRF に合わせて設定する必要がある
+
+- 参照: [sonic-net/sonic-buildimage#5880](https://github.com/sonic-net/sonic-buildimage/issues/5880)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ntp/ntp-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -361,6 +361,15 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../reference/config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../reference/yang/sonic-vxlan.md)
 
+## 既知の問題
+
+### 201911 の vnet コマンド (`show vnet neighbors/routes`) がクラッシュする問題（sonic-buildimage#5795）
+
+201911 の vnet コマンド (`show vnet neighbors/routes`) がクラッシュする問題。vnet テーブルが空の場合に None 参照が発生する
+
+- 参照: [sonic-net/sonic-buildimage#5795](https://github.com/sonic-net/sonic-buildimage/issues/5795)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

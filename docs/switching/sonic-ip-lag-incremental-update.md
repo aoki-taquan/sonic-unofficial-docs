@@ -178,6 +178,47 @@ sudo arp -s <peer_IP> <peer_MAC_addr>
 
 - 参照: [sonic-net/SONiC#87](https://github.com/sonic-net/SONiC/issues/87)
 
+### Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題（sonic-buildimage#1981）
+
+Kernel 4.9 においてポートチャネル作成時に race condition が発生する既知の問題。並行してポートチャネルを作成・削除するとカーネルクラッシュが起きる可能性
+
+- 参照: [sonic-net/sonic-buildimage#1981](https://github.com/sonic-net/sonic-buildimage/issues/1981)
+
+
+### PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題（sonic-buildimage#5051）
+
+PortChannel を削除後もインターフェースが PortChannel メンバーとして表示される問題。`config portchannel member del` コマンドを実行してから PortChannel を削除する必要がある
+
+- 参照: [sonic-net/sonic-buildimage#5051](https://github.com/sonic-net/sonic-buildimage/issues/5051)
+
+
+### 1000 個の PortChannel を設定すると orchagent がクラッシュする制約（sonic-buildimage#5054）
+
+1000 個の PortChannel を設定すると orchagent がクラッシュする制約。プラットフォームごとの PortChannel 数上限を事前確認すること。一般的には 256 または 512 が上限
+
+- 参照: [sonic-net/sonic-buildimage#5054](https://github.com/sonic-net/sonic-buildimage/issues/5054)
+
+
+### インターフェースを追加・削除した後にインターフェース状態が down のままになる問題（sonic-buildimage#5347）
+
+インターフェースを追加・削除した後にインターフェース状態が down のままになる問題。`config interface startup <ifname>` を実行してインターフェースを明示的に有効化すること
+
+- 参照: [sonic-net/sonic-buildimage#5347](https://github.com/sonic-net/sonic-buildimage/issues/5347)
+
+
+### warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）
+
+warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバーとカーネルバージョンの互換性を確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5761](https://github.com/sonic-net/sonic-buildimage/issues/5761)
+
+
+### PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約（sonic-buildimage#6630）
+
+PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約。DPB 実行前に PortChannel メンバーを削除すること
+
+- 参照: [sonic-net/sonic-buildimage#6630](https://github.com/sonic-net/sonic-buildimage/issues/6630)
+
 ## 制限事項
 
 - conflicting configuration は未対応（前項）
