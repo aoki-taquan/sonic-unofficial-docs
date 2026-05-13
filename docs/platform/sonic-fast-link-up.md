@@ -72,7 +72,7 @@ flowchart LR
 
 結果は `STATE_DB:SWITCH_CAPABILITY|switch` に公開[^1]:
 
-```
+```text
 FAST_LINKUP_CAPABLE             = "true"/"false"
 FAST_LINKUP_POLLING_TIMER_RANGE = "<min>,<max>"
 FAST_LINKUP_GUARD_TIMER_RANGE   = "<min>,<max>"
@@ -149,7 +149,7 @@ sequenceDiagram
 
 ### CLI
 
-```
+```bash
 config switch-fast-linkup global [--polling-time <sec>] [--guard-time <sec>] [--ber <E>]
 config interface fast-linkup <ifname> {enabled|disabled}
 show switch-fast-linkup global [--json]

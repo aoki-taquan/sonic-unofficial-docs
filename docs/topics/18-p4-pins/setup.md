@@ -53,7 +53,7 @@ PINS は「運用者が `config p4rt ...` で 1 ルートずつ [ACL](../../refe
 
 典型的な投入フローは次の形になります。
 
-```
+```text
 P4 Controller
   └─ SetForwardingPipelineConfig (P4Info + p4_device_config)
        └─ p4rt-app (P4Runtime server on SONiC)
@@ -103,7 +103,7 @@ CLI で「読むだけ」したいときは `show feature status p4rt` / `docker
 
 ## 全体フロー
 
-```
+```text
 1. FEATURE.p4rt.state = enabled で p4rt container を起動
 2. P4RT_TABLE で gRPC port / TLS / 認証パラメータを設定
 3. (任意) APPL_DB に SEND_TO_INGRESS_PORT を投入し再注入 hostif を作成

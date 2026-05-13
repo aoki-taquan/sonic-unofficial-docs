@@ -62,7 +62,7 @@ flowchart LR
 
 ## ツリー（概略）
 
-```
+```text
 module: sonic-flex_counter
   +--rw sonic-flex_counter
      +--rw FLEX_COUNTER_TABLE

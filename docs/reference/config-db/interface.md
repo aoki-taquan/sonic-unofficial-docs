@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 INTERFACE|<name>                       # 属性ロウ
 INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 ```

@@ -38,7 +38,7 @@ SONiC では NTP daemon として `chrony` を採用しており、`config ntp` 
 
 **用法**:
 
-```
+```bash
 config ntp add <ntp_ip_address>
     [--association-type server|pool]
     [--iburst]
@@ -103,7 +103,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config ntp del <ntp_ip_address>
 ```
 
@@ -175,7 +175,7 @@ sudo config ntp add 10.0.0.10 --association-type pool
 
 ### 期待される出力 (抜粋)
 
-```
+```bash
 Restarting ntp-config service...
 ```
 <!-- /usage-example -->

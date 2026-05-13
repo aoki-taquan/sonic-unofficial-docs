@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-hash
   +--rw sonic-hash
      +--rw SWITCH_HASH

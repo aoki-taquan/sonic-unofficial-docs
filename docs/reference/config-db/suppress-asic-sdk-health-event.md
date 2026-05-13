@@ -43,7 +43,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 SUPPRESS_ASIC_SDK_HEALTH_EVENT|<severity>
 ```
 

@@ -27,7 +27,7 @@ related:
 
 ## 用法
 
-```
+```bash
 show techsupport [--since <date>] [-g|--global-timeout MIN] [-c|--cmd-timeout MIN]
                  [--verbose] [--allow-process-stop] [--silent] [--debug-dump]
                  [-r|--redirect-stderr]
@@ -154,7 +154,7 @@ sudo show techsupport --allow-process-stop --verbose
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Collecting all the data ......
 Tar file: /var/dump/sonic_dump_<host>_<timestamp>.tar.gz
 ```

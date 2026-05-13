@@ -44,7 +44,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_MONITORS|<addr>
 ```
 

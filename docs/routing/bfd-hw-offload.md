@@ -74,7 +74,7 @@ flowchart LR
 
 セッションキーは [VRF](../reference/glossary.md#term-vrf)・インタフェース・宛先 IP の 3 つで一意化する[^1]。
 
-```
+```text
 BFD_SESSION:{vrf}:{ifname}:{ipaddr}
     tx_interval   : interval ms (OPTIONAL)
     rx_interval   : interval ms (OPTIONAL)
@@ -201,7 +201,7 @@ HLD で [YANG](../reference/glossary.md#term-yang) モジュールへの言及�
 
 `APPL_DB` 直接書き込みの例（Phase 1 想定の peer monitor 等から）:
 
-```
+```text
 HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
     multihop true \
     local_addr 10.1.0.32 \

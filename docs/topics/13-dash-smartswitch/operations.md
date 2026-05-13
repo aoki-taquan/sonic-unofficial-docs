@@ -37,7 +37,7 @@ related:
 
 最初に NPU 側で全 DPU の存在と up/down を一覧します。
 
-```
+```bash
 admin@smartswitch:~$ show chassis modules status
        Name      Description    Physical-Slot   Oper-Status     Admin-Status
 -----------  --------------  ---------------  ------------  ---------------
@@ -73,7 +73,7 @@ DPU3           169.254.200.4            True
 
 ### HA 状態の確認
 
-```
+```bash
 admin@smartswitch:~$ redis-cli -n 6 hgetall 'DASH_HA_SET_TABLE:hasetA'
 1) "version"
 2) "1"
@@ -129,7 +129,7 @@ SmartSwitch の `pmon` は NPU 側で動き、DPU を含むハードウェア全
 
 ### DPU 個別の確認コマンド
 
-```
+```bash
 admin@smartswitch:~$ show system-health dpu
    DPU      State    PCI       Midplane    Boot   ASIC-Temp    Power
 ------  -----------  --------  --------  ------  ----------  --------
@@ -175,7 +175,7 @@ SmartSwitch 全体を reboot する際は、**NPU と DPU を別々に・正し�
 
 ### Reboot コマンド例
 
-```
+```bash
 admin@smartswitch:~$ sudo config chassis modules shutdown DPU2
 admin@smartswitch:~$ show chassis modules status DPU2
        Name      Description    Physical-Slot   Oper-Status     Admin-Status
@@ -187,7 +187,7 @@ admin@smartswitch:~$ sudo config chassis modules startup DPU2
 
 直接 gNOI 経由で操作する場合（外部 controller から）:
 
-```
+```bash
 $ gnoi_cli -target smartswitch:8080 -rpc Reboot \
     -jsonin '{"method":"COLD","subcomponents":[{"name":"DPU2"}]}'
 ```
@@ -206,7 +206,7 @@ DPU 単体のソフトウェアアップグレードは「NPU を止めずに DP
 
 ### Upgrade 中の典型ログ
 
-```
+```yaml
 hamgrd[hasetA]: switching local=active -> standby for upgrade of DPU2
 gnoi_reboot_daemon[DPU2]: received HALT, draining flows
 chassisd: DPU2 PCI detach successful

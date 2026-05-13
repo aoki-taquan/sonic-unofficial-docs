@@ -194,7 +194,7 @@ sudo config snmp user add snmpadmin priv RW AES MD5 authpass privpass
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 SNMP community public added to configuration
 Restarting SNMP service...
 ```

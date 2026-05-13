@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_PEER_RANGE|<vrf_name>|<peer_range_name>      # generic
 BGP_PEER_RANGE_TEMPLATE|<peer_range_name>        # template
 ```

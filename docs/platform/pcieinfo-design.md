@@ -96,7 +96,7 @@ flowchart LR
 
 各プラットフォーム配下に置く[^1]:
 
-```
+```text
 device/<Platform>/plugins/pcie.yaml
 ```
 
@@ -145,7 +145,7 @@ reasoning: API シグネチャと設定ファイル配置の根拠。
 
 ### 出力例
 
-```
+```bash
 $ show platform pcieinfo
 ==============================Display PCIe Device===============================
 bus:dev.fn 01:00.0 - dev_id=0xb960, Ethernet controller: Broadcom Limited Device b960

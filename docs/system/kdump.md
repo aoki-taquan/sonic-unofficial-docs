@@ -105,7 +105,7 @@ kdump 自体は **cold reboot 必要** で warm boot に対応しない。crash 
 
 `/usr/lib/debug/boot/vmlinux-*` (debug kernel) と `crash` ツールで読む。switch 上 / Linux host 上どちらでも可能。host で読む場合 `.deb` を `ar x` + `tar` で extract（install せず）して vmlinux を取り出す[^1]。
 
-```
+```text
 crash usr/lib/debug/boot/vmlinux-4.9.0-9-2-amd64 kdump.201910281849
 ```
 

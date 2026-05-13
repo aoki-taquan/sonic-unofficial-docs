@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-dot1p-tc-map
   +--rw sonic-dot1p-tc-map
      +--rw DOT1P_TO_TC_MAP

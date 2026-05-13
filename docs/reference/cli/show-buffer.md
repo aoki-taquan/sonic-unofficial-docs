@@ -35,13 +35,13 @@ related:
 
 **用法**:
 
-```
+```bash
 show buffer configuration [--namespace <ns>|--namespace all] [--verbose]
 ```
 
 実行コマンドは次の通り。
 
-```
+```text
 mmuconfig -l [-n <namespace>] [-vv]
 ```
 

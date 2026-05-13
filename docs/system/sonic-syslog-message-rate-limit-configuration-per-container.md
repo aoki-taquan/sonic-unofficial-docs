@@ -36,7 +36,7 @@ related:
 
 SONiC の syslog は **コンテナ毎の rsyslogd** + **host の rsyslogd** で構成され、コンテナ rsyslog は従来 ハードコード で[^1]:
 
-```
+```text
 $SystemLogRateLimitInterval 300
 $SystemLogRateLimitBurst 20000
 ```

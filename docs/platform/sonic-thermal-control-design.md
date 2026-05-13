@@ -56,7 +56,7 @@ switch を適温に保つために cooling device（主に fan）を制御する
 
 ## どこに値が出るか（STATE_DB）
 
-```
+```text
 TEMPERATURE_INFO|<object_name>
   temperature             = float
   timestamp               = string
@@ -93,7 +93,7 @@ FAN_INFO|<fan_name>
 
 ### Syslog 出力例
 
-```
+```text
 High temperature warning: PSU 1 current temperature 85C, high threshold 80C
 High temperature warning cleared, PSU 1 temperature restore to 75C, high threshold 80C
 Fan removed warning: Fan 1 was removed from the system, potential overheat hazard!

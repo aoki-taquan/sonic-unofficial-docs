@@ -61,7 +61,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-route-common
   +--rw sonic-route-common
      +--rw ROUTE_REDISTRIBUTE

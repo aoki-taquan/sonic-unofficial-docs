@@ -46,7 +46,7 @@ related:
 - ASIC 依存の挙動（buffer、[PFC](../../reference/glossary.md#term-pfc)、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。
 - 毎回 image を作り直すのが手間なら、`docker save` で SONiC-VS image を tar で保存して再 import すると 1 分以内で復旧できる。
 
-```
+```bash
 host$ docker save docker-sonic-vs:latest | gzip > sonic-vs.tar.gz
 host$ docker load -i sonic-vs.tar.gz
 ```
@@ -59,7 +59,7 @@ host$ docker load -i sonic-vs.tar.gz
 
 最初に触ると概観が掴める典型コマンド:
 
-```
+```bash
 admin@sonic:~$ docker ps
 admin@sonic:~$ show version
 admin@sonic:~$ show interfaces status
@@ -77,7 +77,7 @@ admin@sonic:~$ docker exec syncd supervisorctl status
 - console / terminal server の構成は本章 [設定](setup.md) の物理 lab セクションを使う。
 - 本番投入予定の image は事前に lab で `show techsupport` を 1 回取り、ベースラインの dump を残しておくと、現地で「ふだんと違うログ」が一目で分かる。
 
-```
+```bash
 admin@sonic:~$ sudo show techsupport
 admin@sonic:~$ ls /var/dump/
 sonic_dump_<host>_<ts>.tar.gz
@@ -90,7 +90,7 @@ sonic_dump_<host>_<ts>.tar.gz
 - ASIC 依存の改修は HW lab を別途確保し、[SAI](../../reference/glossary.md#term-sai) / syncd / platform 章と組で読む。
 - VS 内の orchagent / syncd は gdb / strace でアタッチ可能。
 
-```
+```bash
 admin@sonic:~$ docker exec -it swss bash
 root@sonic:/# gdb -p $(pidof orchagent)
 root@sonic:/# strace -fp $(pidof portsyncd) 2>&1 | head
@@ -111,7 +111,7 @@ test plan ページは「何を検証するか」「どの topology / PTF を使
 
 ### VS test の最小回し方
 
-```
+```text
 host$ git clone https://github.com/sonic-net/sonic-buildimage
 host$ cd sonic-buildimage/platform/vs
 host$ make sonic-vs-image
@@ -137,7 +137,7 @@ host$ ./run_tests.sh -n vms-kvm-t0 -t bgp/test_bgp_fact.py
 
 ただし「再現に時間がかかる障害を掴んだ瞬間」は別で、そのときは下記を取ってから何もせず保全します。
 
-```
+```bash
 admin@sonic:~$ sudo show techsupport
 admin@sonic:~$ sudo docker exec syncd syncd_dump.sh
 admin@sonic:~$ for n in 0 1 4 6 13 14; do
@@ -152,7 +152,7 @@ admin@sonic:~$ tar czf /tmp/lab-snapshot.tgz /var/dump /var/log /tmp/dump-db-*.r
 
 頻出する VS / KVM 操作をまとめておくと、毎回検索する手間が省けます。
 
-```
+```text
 host$ virsh list --all
 host$ virsh start sonic-vs-01
 host$ virsh console sonic-vs-01
@@ -164,7 +164,7 @@ host$ virsh snapshot-revert sonic-vs-01 baseline
 
 snapshot を 1 つ作っておくと「設定を試す → 戻す」を秒で回せます。docker ベースの VS（`docker run docker-sonic-vs`）なら commit / restore でも同じことが可能。
 
-```
+```bash
 host$ docker commit sonic-vs-01 sonic-vs-baseline:latest
 host$ docker rm -f sonic-vs-01
 host$ docker run -d --name sonic-vs-01 sonic-vs-baseline:latest
@@ -174,7 +174,7 @@ host$ docker run -d --name sonic-vs-01 sonic-vs-baseline:latest
 
 lab では `config_db.json` をテンプレ化しておき、用途別に差し替えると章ごとの検証が速い。
 
-```
+```bash
 admin@sonic:~$ sudo cp /etc/sonic/config_db.json /etc/sonic/config_db.bgp-t0.json
 admin@sonic:~$ sudo cp /tmp/config_db.vlan-only.json /etc/sonic/config_db.json
 admin@sonic:~$ sudo config reload -y
@@ -188,7 +188,7 @@ minigraph 経由派なら `minigraph.xml` を差し替えて `config load_minigr
 
 CI で落ちた test を手元 VS で再現する場合、PTF と DUT の port mapping が一致しないと PTF テストが空振りする。
 
-```
+```bash
 host$ cat sonic-mgmt/ansible/inventory
 host$ cat sonic-mgmt/ansible/testbed.yaml | grep -A5 vms-kvm-t0
 host$ docker exec ptf_vms-kvm-t0 ip link show | grep eth

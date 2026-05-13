@@ -70,7 +70,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-system-tacacs
   +--rw sonic-system-tacacs
      +--rw TACPLUS_SERVER

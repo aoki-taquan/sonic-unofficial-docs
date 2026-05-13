@@ -156,7 +156,7 @@ reasoning: 入力 → 再計算 → APPL_DB の流れと CONFIG_DB / APPL_DB / S
 | `config qos reload --no-dynamic-mode` | traditional に戻す |
 | `config interface {speed\|cable-length\|mtu}` | 動的再計算の trigger |
 
-```
+```yaml
 DEVICE_METADATA|localhost:    buffer_model = dynamic | traditional
 LOSSLESS_TRAFFIC_PATTERN:     mtu, small_packet_percentage, default_dynamic_th
 LOSSLESS_BUFFER_PARAM:        default_lossless_pgs   # 例 "3,4"

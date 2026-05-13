@@ -67,7 +67,7 @@ flowchart LR
 
 `/etc/frr/bgpd.conf`:
 
-```
+```text
 bmp mirror buffer-limit 4294967214
 bmp targets sonic-bmp
   bmp stats interval 1000
@@ -92,7 +92,7 @@ bmp targets sonic-bmp
 
 ### CONFIG_DB
 
-```
+```text
 BMP|table
 FEATURE|bmp:
   bgp_rib_in_table   = true | false

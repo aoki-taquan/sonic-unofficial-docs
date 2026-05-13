@@ -31,7 +31,7 @@ related:
 
 ## シグネチャ
 
-```
+```bash
 show ndp [<ip6address>] [-if <iface>] [-n <namespace>] [-d <display>] [--verbose]
 ```
 

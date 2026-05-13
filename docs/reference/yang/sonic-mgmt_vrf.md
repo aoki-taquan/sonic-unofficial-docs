@@ -66,7 +66,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-mgmt_vrf
   +--rw sonic-mgmt_vrf
      +--rw MGMT_VRF_CONFIG

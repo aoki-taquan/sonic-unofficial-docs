@@ -61,7 +61,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config nat add static basic <global_ip> <local_ip>
     [-nat_type {snat|dnat}]
     [-twice_nat_id <1-9999>]
@@ -172,7 +172,7 @@ sudo config nat add binding MyBinding MyPool
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 NAT feature enabled.
 ```
 <!-- /usage-example -->

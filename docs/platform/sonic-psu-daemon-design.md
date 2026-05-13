@@ -54,7 +54,7 @@ flowchart LR
 
 ### Power threshold ヒステリシス
 
-```
+```text
         critical ─────── alarm raise
                          (power が critical を上方向に横切る)
         ............
@@ -120,7 +120,7 @@ Volatile 注記が重要: 閾値が温度等で動的に変化する platform �
 
 `show platform psustatus` の出力（HLD 抜粋）:
 
-```
+```text
 PSU    Model          Serial        HW Rev  Voltage(V) Current(A) Power(W) Status  LED
 PSU 1  MTEF-PSF-AC-A  MT1629X14911  A3        12.08      5.19      62.62   WARNING green
 PSU 2  MTEF-PSF-AC-A  MT1629X14913  A3        12.01      4.38      52.50   OK      green

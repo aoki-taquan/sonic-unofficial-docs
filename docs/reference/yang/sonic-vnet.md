@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-vnet
   +--rw sonic-vnet
      +--rw VNET

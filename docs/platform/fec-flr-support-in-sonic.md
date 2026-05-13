@@ -53,7 +53,7 @@ related:
 
 `Frame Loss Ratio (FLR)` は **送信フレームに対する欠落フレームの割合** で、リンク品質の代表指標[^1]:
 
-```
+```text
 FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
 ```
 
@@ -121,7 +121,7 @@ flowchart TD
 
 公式（IEEE 802.3df Logic Ad Hoc 由来）[^1]:
 
-```
+```text
 FEC_FLR = CER * (1 + X * MFC) / MFC
 RS-544: MFC = 8
   X=1 → FLR = 1.125 * CER
@@ -165,7 +165,7 @@ X（interleaving factor）は理想的には **新 SAI 属性** で取得した�
 
 実行間隔[^1]:
 
-```
+```text
 interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 ```
 
@@ -239,7 +239,7 @@ show interfaces counters fec-stats
 
 期待表示[^1]:
 
-```
+```text
 IFACE         STATE FEC_CORR FEC_UNCORR FEC_SYMBOL_ERR ... FLR(O)  FLR(P) (Accuracy)
 Ethernet72    U     28,531   0          31                 0       2.68e-09 (79%)
 Ethernet80    U     25,890   0          25                 0       6.03e-09 (79%)

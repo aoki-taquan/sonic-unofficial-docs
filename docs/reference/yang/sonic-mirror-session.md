@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-mirror-session
   +--rw sonic-mirror-session
      +--rw MIRROR_SESSION

@@ -202,7 +202,7 @@ show runningconfiguration syslog
 
 ### 期待される出力 (抜粋)
 
-```
+```json
 {
     "BGP_NEIGHBOR": {
         "10.0.0.1": {

@@ -40,7 +40,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 TELEMETRY_CLIENT|Global
 TELEMETRY_CLIENT|Subscription|<name>
 TELEMETRY_CLIENT|DestinationGroup|<name>

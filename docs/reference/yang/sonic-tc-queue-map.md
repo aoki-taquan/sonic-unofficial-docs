@@ -65,7 +65,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-tc-queue-map
   +--rw sonic-tc-queue-map
      +--rw TC_TO_QUEUE_MAP

@@ -68,7 +68,7 @@ flowchart TB
 
 `STATE_DB` の `WARM_RESTART_TABLE` と `WARM_RESTART_ENABLE_TABLE` がこの機能の心臓部です。
 
-```
+```yaml
 STATE_DB:WARM_RESTART_ENABLE_TABLE|<comp>
   enable: "true|false"
 STATE_DB:WARM_RESTART_TABLE|<comp>

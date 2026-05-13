@@ -48,7 +48,7 @@ S3IP sysfs は 2 部構成[^1]:
 
 ルートは **`/sys_switch`** 固定。サブディレクトリ名はカテゴリで決まる[^1]:
 
-```
+```text
 /sys_switch
 ├── cpld/{number, cpld1/{alias, type, ...}}
 ├── psu/

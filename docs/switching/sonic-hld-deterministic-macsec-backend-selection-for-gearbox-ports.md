@@ -196,7 +196,7 @@ CONFIG_DB スキーマには変更を加えない。設定の入口は HWSKU の
 
 ### APP_DB
 
-```
+```text
 _GEARBOX_TABLE:phy:<phy_id>
     macsec_supported : "true" | "false"
 ```

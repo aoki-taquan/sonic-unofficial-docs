@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bmp
   +--rw sonic-bmp
      +--rw BMP

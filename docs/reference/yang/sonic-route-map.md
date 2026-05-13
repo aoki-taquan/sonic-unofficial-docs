@@ -65,7 +65,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-route-map
   +--rw sonic-route-map
      +--rw ROUTE_MAP_SET

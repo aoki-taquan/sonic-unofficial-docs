@@ -116,7 +116,7 @@ filter は `fan.speed`, `<fan_name>.direction` のようなドット区切り[^1
 
 ユーザ提供スクリプトを Monit に登録、決まった出力形式で結果を返すと healthd が吸い上げる[^1]:
 
-```
+```text
 <category_name>
 <item_name>:<item_status>
 ```

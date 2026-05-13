@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-mgmt_interface
   +--rw sonic-mgmt_interface
      +--rw MGMT_INTERFACE

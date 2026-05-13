@@ -44,7 +44,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 FABRIC_MONITOR|FABRIC_MONITOR_DATA
 ```
 

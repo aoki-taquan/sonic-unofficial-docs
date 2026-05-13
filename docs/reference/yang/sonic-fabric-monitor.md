@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-fabric-monitor
   +--rw sonic-fabric-monitor
      +--rw FABRIC_MONITOR

@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 SNMP|CONTACT
 SNMP|LOCATION
 ```

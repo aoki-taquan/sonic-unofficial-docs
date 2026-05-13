@@ -102,7 +102,7 @@ struct BulkStatsContext {
 
 ### Bulk chunk size（v0.2）
 
-```
+```text
 <COUNTER_NAME_PREFIX>:<bulk_chunk_size>{,<COUNTER_NAME_PREFIX_I>:<bulk_chunk_size_i>}
 ```
 

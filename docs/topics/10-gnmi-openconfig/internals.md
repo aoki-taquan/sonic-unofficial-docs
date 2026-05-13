@@ -65,7 +65,7 @@ gNMI server は [SAI](../../reference/glossary.md#term-sai) 属性を直接触�
 
 ## Redis テーブル参照関係
 
-```
+```text
 gNMI Path                                Redis target
 /sonic-port:sonic-port/PORT/...     ─>  CONFIG_DB:PORT
 /sonic-port:sonic-port/PORT_TABLE/  ─>  APPL_DB:PORT_TABLE

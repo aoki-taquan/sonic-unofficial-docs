@@ -61,7 +61,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-breakout_cfg
   +--rw sonic-breakout_cfg
      +--rw BREAKOUT_CFG

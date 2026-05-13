@@ -36,7 +36,7 @@ related:
 
 ## 現状確認の入口
 
-```
+```bash
 admin@sonic:~$ show aaa
 AAA authentication login         : tacacs+,local
 AAA authentication failthrough   : True
@@ -71,7 +71,7 @@ local user のパスワードに対する最低長、強度、履歴、有効期
 
 ### password policy / lockout 確認
 
-```
+```bash
 admin@sonic:~$ show passw policy
 Lockout: enabled
 Lockout threshold: 5
@@ -106,7 +106,7 @@ Number of days of warning before password expires       : 7
 
 ### 初回ログインの典型シーケンス
 
-```
+```bash
 $ ssh admin@new-switch
 admin@new-switch's password:
 You are required to change your password immediately (administrator enforced)
@@ -156,7 +156,7 @@ ZTP / image install 直後にこの flow を踏まずに password 変更を済�
 
 ### 典型ログとその意味
 
-```
+```text
 sshd[12345]: pam_tacplus: 1 servers defined
 sshd[12345]: pam_tacplus: connecting to 10.0.0.10:49
 sshd[12345]: pam_tacplus: error sending auth message: Connection refused
@@ -167,7 +167,7 @@ sshd[12345]: Failed password for admin from 192.0.2.5 port 51234 ssh2
 
 `pam_tacplus: Connection refused` → TACACS server に届いたが service 不稼働。`no route to host` → routing / management VRF 問題。`Connection timed out` → ファイアウォール遮断や server overload を疑います。
 
-```
+```text
 sshd[12345]: pam_faillock(sshd:auth): Consecutive login failures for user admin account temporarily locked
 ```
 

@@ -43,7 +43,7 @@ multi-ASIC 対応として `-n / --namespace` を持ち、対象 namespace の [
 
 `add` / `del` 共通の引数構造（`cli_sroute_to_config` の解析対象）:
 
-```
+```text
 prefix [vrf <vrf_name>] <A.B.C.D/M>
        nexthop [vrf <vrf_name>] <A.B.C.D>
        nexthop [vrf <vrf_name>] dev <dev_name>

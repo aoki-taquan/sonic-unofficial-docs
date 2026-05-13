@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-macsec
   +--rw sonic-macsec
      +--rw MACSEC_PROFILE

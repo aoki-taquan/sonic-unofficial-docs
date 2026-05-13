@@ -104,13 +104,13 @@ class LiquidCoolingUpdater():
 
 漏洩検出時は STATE_DB 更新と syslog `ERROR` を出す[^1]:
 
-```
+```text
 Liquid cooling leakge has been detected on sensor{}
 ```
 
 ### STATE_DB スキーマ
 
-```
+```text
 LIQUID_COOLING_DEVICE|leakage_sensors{X}
   name    = <センサ名>
   leaking = "Yes" | "No"
@@ -178,7 +178,7 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 
 新規 `show platform leakage status`[^1]:
 
-```
+```text
 Name              Leak
 ------------------------
 leak_sensors1     NO
@@ -189,7 +189,7 @@ leak_sensorsX     Yes
 
 `show system-health detail` の出力に Liquid Cooling 行が追加される[^1]:
 
-```
+```text
 Name              Status    Type
 leak_sensors1     OK        LiquidCooling
 leak_sensors2     OK        LiquidCooling

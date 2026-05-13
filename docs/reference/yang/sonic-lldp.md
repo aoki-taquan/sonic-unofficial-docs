@@ -64,7 +64,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-lldp
   +--rw sonic-lldp
      +--rw LLDP

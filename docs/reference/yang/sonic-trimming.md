@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-trimming
   +--rw sonic-trimming
      +--rw SWITCH_TRIMMING

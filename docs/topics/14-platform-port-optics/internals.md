@@ -123,7 +123,7 @@ flowchart LR
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   PORT, BREAKOUT_CFG, INTERFACE,
   CABLE_LENGTH, MEDIA_SETTINGS (一部は file)

@@ -44,7 +44,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-bbr
   +--rw sonic-bgp-bbr
      +--rw BGP_BBR

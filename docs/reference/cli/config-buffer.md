@@ -42,7 +42,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config buffer profile add <profile>
     [--xon <bytes>]
     [--xoff <bytes>]
@@ -59,7 +59,7 @@ config buffer profile add <profile>
 
 **用法**:
 
-```
+```bash
 config buffer profile set <profile>
     [--xon <bytes>]
     [--xoff <bytes>]

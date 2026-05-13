@@ -80,7 +80,7 @@ SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TEMPLATE // template1..4 enum
 
 ### CONFIG_DB / APPL_DB スキーマ
 
-```
+```text
 CONFIG_DB PORT|<port_name>
   pt_interface_id        = <0..65535>
   pt_timestamp_template  = "template1" | "template2" | "template3" | "template4"

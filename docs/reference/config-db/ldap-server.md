@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 LDAP_SERVER|<hostname>      # サーバ別エントリ
 LDAP|global                 # グローバル設定
 ```

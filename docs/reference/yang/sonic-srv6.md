@@ -47,7 +47,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-srv6
   +--rw sonic-srv6
      +--rw SRV6_MY_LOCATORS

@@ -46,7 +46,7 @@ flowchart LR
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル形式の慣習に従うが、実体は `sonic-cfggen` のテンプレ変数辞書である。論理的には:
 
-```
+```text
 DEVICE_RUNTIME_METADATA|CHASSIS_METADATA
 DEVICE_RUNTIME_METADATA|ETHERNET_PORTS_PRESENT
 DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED

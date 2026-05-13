@@ -137,7 +137,7 @@ ICCPd 起動時、[CONFIG_DB](../reference/glossary.md#term-config_db) から `i
 
 ### CLI / 表示経路
 
-```
+```text
 mclagdctl -i <MC-LAG-id> dump arp
    │
    ▼ TCP 接続

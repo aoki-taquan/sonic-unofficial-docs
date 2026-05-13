@@ -55,7 +55,7 @@ CLI 上は `show platform inventory` / `show chassis modules` などが supervis
 
 ### supervisor からの典型 show 出力
 
-```
+```bash
 admin@sup0:~$ show chassis modules status
        Name         Description    Physical-Slot   Oper-Status     Admin-Status
 -----------  ------------------  ---------------  ------------  ---------------
@@ -79,7 +79,7 @@ LINE-CARD1|asic1|Ethernet0                512          2      0          1     4
 
 ### line card からの典型 show 出力
 
-```
+```bash
 admin@lc0:~$ show interfaces status --namespace asic0 | head -5
 Interface       Lanes        Speed   MTU  FEC   Alias    Vlan    Oper    Admin    Type
 -----------  ------------  -------  ----  ----  -------  ------  ------  -------  ------
@@ -110,7 +110,7 @@ Neighbor        V    AS  MsgRcvd  MsgSent  Up/Down   State/PfxRcd
 
 ### VOQ counter の確認コマンド
 
-```
+```bash
 admin@sup0:~$ show queue counters system_port LINE-CARD1|asic0|Ethernet0
 For system port LINE-CARD1|asic0|Ethernet0:
    Queue    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
@@ -158,7 +158,7 @@ DB スキーマは原典の [Aggregate VOQ Counters HLD](../../internals/aggrega
 
 ### PMON / chassis 状態の確認コマンド
 
-```
+```bash
 admin@sup0:~$ show platform inventory
 Name          Product ID         Serial Number       Part Number    Software Version
 ------------  -----------------  ------------------  -------------  -----------------
@@ -179,7 +179,7 @@ Optics Module 1                    52.0       75.0       N/A            85.0    
 
 ### Entity MIB の SNMP walk 例
 
-```
+```bash
 $ snmpwalk -v2c -c public sup0 entPhysicalDescr | head
 SNMPv2-SMI::mib-2.47.1.1.1.1.2.1 = STRING: "Cisco 8808 Chassis"
 SNMPv2-SMI::mib-2.47.1.1.1.1.2.2 = STRING: "Linecard slot 1: 8800-LC-48H"

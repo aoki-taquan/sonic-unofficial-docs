@@ -46,7 +46,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config qos reload [--ports <port[,port...]>]
                   [--no-dynamic-buffer]
                   [--dry_run <file-prefix>]
@@ -109,7 +109,7 @@ sudo config qos reload --ports Ethernet0,Ethernet4
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Running command: /usr/local/bin/sonic-cfggen ...
 QoS reload completed.
 ```

@@ -39,7 +39,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config banner state {enabled|disabled}
 ```
 

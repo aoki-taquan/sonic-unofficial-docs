@@ -68,7 +68,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-system-defaults
   +--rw sonic-system-defaults
      +--rw SYSTEM_DEFAULTS

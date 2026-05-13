@@ -55,7 +55,7 @@ VRRP advertisement は multicast 224.0.0.18 (IPv4) / ff02::12 (IPv6)。これを
 
 ### CONFIG_DB スキーマ
 
-```
+```text
 VRRP|<interface>|<vrid>
   vip          = "<v4 prefix>,..."
   priority     = 1..254               # 既定 100
@@ -149,7 +149,7 @@ reasoning: 要件 (v2/v3, IF 種別, uplink tracking, VRF) の根拠。
 
 ### CLI（追加想定）
 
-```
+```bash
 config interface vrrp add <if> <vrid> [--version 2|3] [--priority N] [--preempt enabled|disabled]
 config interface vrrp vip <if> <vrid> <prefix>
 config interface vrrp track <if> <vrid> <tracked-if> --weight N

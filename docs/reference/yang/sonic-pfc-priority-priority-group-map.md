@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-pfc-priority-priority-group-map
   +--rw sonic-pfc-priority-priority-group-map
      +--rw PFC_PRIORITY_TO_PRIORITY_GROUP_MAP

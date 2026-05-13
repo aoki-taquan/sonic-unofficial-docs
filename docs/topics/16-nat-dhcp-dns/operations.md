@@ -41,7 +41,7 @@ related:
 
 ## サービス全体の入口
 
-```
+```bash
 admin@sonic:~$ docker ps --format 'table {{.Names}}\t{{.Status}}' | grep -E 'nat|dhcp'
 docker-nat               Up 5 days
 docker-dhcp-relay        Up 5 days
@@ -67,7 +67,7 @@ CLI は [show nat ページ](../../reference/cli/show-nat.md) に詳細があり
 
 ### NAT の典型 show 出力
 
-```
+```bash
 admin@sonic:~$ show nat config global
 Admin Mode    : enabled
 Global Timeout: 600 secs
@@ -111,7 +111,7 @@ admin@sonic:~$ redis-cli -n 4 hgetall 'NAT_GLOBAL|Values'
 
 ### DHCP relay の典型 show 出力
 
-```
+```bash
 admin@sonic:~$ show dhcp_relay ipv4 helper Vlan1000
 -------  -------------
 Vlan1000  192.0.2.10
@@ -150,7 +150,7 @@ Reply                       0           1815
 
 ### DHCP server (kea) の確認
 
-```
+```bash
 admin@sonic:~$ show dhcp_server ipv4
 Interface    Mode    Lease    Default Router   Subnet         Pool                          Status
 -----------  ------  -------  ---------------  -------------  ----------------------------  --------
@@ -170,7 +170,7 @@ admin@sonic:~$ docker logs docker-dhcp-server 2>&1 | tail -10
 
 ポートごとの `dhcp_rate_limit` は CONFIG_DB の `PORT` に書き込まれます。ただし master では [portmgrd](../../reference/glossary.md#term-portmgrd) の tc 投入実装が未取り込みで、`tc qdisc show dev <port>` で確認しても rate limiter は入っていない可能性が高いです。[CoPP](../../reference/glossary.md#term-copp) 側の `dhcp_relay` trap は従来通り残っているため、システム全体での DHCP rate 制限はそちらで効きます。詳細は [DHCP DoS 緩和ページ](../../acl-qos/dhcp-dos-mitigation-in-sonic.md) を参照してください。
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 4 hget 'PORT|Ethernet0' dhcp_rate_limit
 "300"
 

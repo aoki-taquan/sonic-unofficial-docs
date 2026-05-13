@@ -110,7 +110,7 @@ sequenceDiagram
 
 ### Build フラグまとめ
 
-```
+```text
 SECURE_UPGRADE_MODE          = no_sign | dev | prod
 SECURE_UPGRADE_DEV_SIGNING_KEY  = <path>
 SECURE_UPGRADE_DEV_SIGNING_CERT = <path>

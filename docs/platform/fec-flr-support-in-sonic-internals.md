@@ -98,7 +98,7 @@ flowchart TD
 
 実行間隔[^1]:
 
-```
+```text
 interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 ```
 

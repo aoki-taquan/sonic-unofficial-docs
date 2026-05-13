@@ -51,7 +51,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-dns
   +--rw sonic-dns
      +--rw DNS_NAMESERVER

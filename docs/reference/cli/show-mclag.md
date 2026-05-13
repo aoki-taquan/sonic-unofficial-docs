@@ -110,7 +110,7 @@ show mclag interface 4095 PortChannel0002
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Domain ID    : 4095
 Role         : active
 Session State: up

@@ -48,7 +48,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-sentinel
   +--rw sonic-bgp-sentinel
      +--rw BGP_SENTINELS

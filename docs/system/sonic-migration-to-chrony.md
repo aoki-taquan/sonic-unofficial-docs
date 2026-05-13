@@ -80,7 +80,7 @@ flowchart LR
 
 ### Step / Slew の使い分け
 
-```
+```bash
 通常: slew のみ
 明示要求 (chronyc makestep / config maxchange) のときのみ step
 ```

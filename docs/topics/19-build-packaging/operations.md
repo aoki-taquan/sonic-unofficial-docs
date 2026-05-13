@@ -37,7 +37,7 @@ CLI の各サブコマンドの引数と挙動は [sonic-package-manager CLI リ
 
 ### list / show
 
-```
+```bash
 admin@sonic:~$ sonic-package-manager list
 Name                  Repository                              Description           Version          Status
 --------------------  --------------------------------------  --------------------  ---------------  -----------
@@ -54,7 +54,7 @@ admin@sonic:~$ sonic-package-manager show package versions my-ext
 
 ### install / upgrade / uninstall
 
-```
+```bash
 admin@sonic:~$ sudo sonic-package-manager install --from-repository \
     registry.example.com/sonic/my-ext --default-reference 1.2.0
 admin@sonic:~$ sudo sonic-package-manager upgrade my-ext=1.3.0
@@ -65,7 +65,7 @@ install は manifest を引き出し、`FEATURE` テーブルへ登録し、syst
 
 ### enable / disable
 
-```
+```bash
 admin@sonic:~$ sudo config feature state my-ext enabled
 admin@sonic:~$ show feature status my-ext
 Feature        State     AutoRestart    HighMemAlert
@@ -88,7 +88,7 @@ extension の `manifest.json` には `version` / `depends` を書く。依存制
 
 依存衝突は install / upgrade 時に SPM が解決を試み、解けない場合は次のように出る。
 
-```
+```bash
 admin@sonic:~$ sudo sonic-package-manager install my-ext=1.3.0
 Error: Package my-ext=1.3.0 conflicts with installed swss=master.0
        (requires swss >=2.0.0)
@@ -96,7 +96,7 @@ Error: Package my-ext=1.3.0 conflicts with installed swss=master.0
 
 ## 運用上よく見る場所
 
-```
+```bash
 admin@sonic:~$ show feature status
 admin@sonic:~$ docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}'
 admin@sonic:~$ ls /var/lib/sonic-package-manager/
@@ -137,7 +137,7 @@ inbox 機能と extension の境界は **同じ管理面** に揃っているの
 
 extension を作る側で `sonic-buildimage` を触る場合、ビルド失敗の入口は以下。
 
-```
+```bash
 $ make NOSTRETCH=1 KEEP_SLAVE_ON=yes target/docker-my-ext.gz
 $ ls -lh target/docker-my-ext.gz
 $ docker import target/docker-my-ext.gz registry.example.com/sonic/my-ext:1.3.0
@@ -150,7 +150,7 @@ $ docker push registry.example.com/sonic/my-ext:1.3.0
 
 extension は inbox 同様、warm reboot / fast reboot のフックを `manifest.json` から宣言する。フックが欠けていると、reboot のたびに extension がコールドスタートになり、データプレーン継続性が失われる。
 
-```
+```text
 admin@sonic:~$ jq '.service' /var/lib/sonic-package-manager/packages/my-ext/manifest.json
 {
   "name": "my-ext",
@@ -166,7 +166,7 @@ admin@sonic:~$ jq '.service' /var/lib/sonic-package-manager/packages/my-ext/mani
 
 reboot 後、extension が期待どおり warm/fast を完了したかは syslog で確認する。
 
-```
+```bash
 admin@sonic:~$ grep -E "warm-?reboot|fast-?reboot" /var/log/syslog | tail
 admin@sonic:~$ docker exec <pkg> cat /var/log/<svc>.log | grep -iE "warm|fast"
 ```

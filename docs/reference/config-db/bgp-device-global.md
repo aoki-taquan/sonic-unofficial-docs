@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_DEVICE_GLOBAL|STATE
 BGP_DEVICE_GLOBAL|CONFED
 ```

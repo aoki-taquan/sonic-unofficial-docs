@@ -46,7 +46,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 LOOPBACK_INTERFACE|<name>                       # 属性ロウ
 LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 ```

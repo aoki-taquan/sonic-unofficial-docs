@@ -43,7 +43,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 PFC_WD|<port-name>      # 通常ポート用エントリ
 PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 ```

@@ -65,7 +65,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-system-ldap
   +--rw sonic-system-ldap
      +--rw LDAP_SERVER

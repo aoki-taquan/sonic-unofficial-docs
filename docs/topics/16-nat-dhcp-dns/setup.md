@@ -117,7 +117,7 @@ show nat statistics
 
 `show nat translations` の典型出力:
 
-```
+```text
 Protocol    Source            Destination        Translated Source    Translated Destination
 ----------  ----------------  -----------------  -------------------  -----------------------
 tcp         198.51.100.4:53245  203.0.113.10:80   198.51.100.4:53245   10.10.0.5:80
@@ -142,7 +142,7 @@ sudo config nat add binding BIND1 --pool POOL1 --acl-name NAT_ACL --nat-type dna
 
 VLAN 10 / 20 を持つ ToR で、外部 DHCP server に中継する最小構成は次の通りです。
 
-```
+```bash
 config vlan dhcp_relay add 10 10.0.0.1
 config vlan dhcp_relay add 20 10.0.0.1
 ```
@@ -158,7 +158,7 @@ show dhcp_relay ipv4 statistics
 
 `show dhcp_relay ipv4 interfaces` 例:
 
-```
+```text
 Interface    DHCP Helper Address
 -----------  ---------------------
 Vlan10       10.0.0.1
@@ -171,7 +171,7 @@ Vlan20       10.0.0.1
 
 `docker-dhcp-server` を有効化し、VLAN 10 で pool を払い出す例の輪郭は次の通りです。
 
-```
+```bash
 config feature state dhcp_server enabled
 config dhcp_server ipv4 add Vlan10 --gw 10.10.0.1 --netmask 255.255.0.0 --lease-time 86400
 config dhcp_server ipv4 range add pool1 10.10.0.100 10.10.0.200
@@ -206,7 +206,7 @@ show dhcp_server ipv4 lease
 
 `show dhcp_server ipv4 lease` 出力例:
 
-```
+```text
 VLAN       MAC                IP             Lease Start          Lease End
 ---------  -----------------  -------------  -------------------  -------------------
 Vlan10     52:54:00:aa:bb:cc  10.10.0.100    2026-05-11 09:12:30  2026-05-12 09:12:30

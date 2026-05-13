@@ -43,7 +43,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 ```
 

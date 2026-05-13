@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-buffer-pool
   +--rw sonic-buffer-pool
      +--rw BUFFER_POOL

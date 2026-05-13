@@ -103,7 +103,7 @@ Active-Standby の Y-cable 制御では I2C / xcvrd / ycabled の役割が前面
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   MUX_CABLE, DEVICE_METADATA (peer_switch / subtype)
 APPL_DB:

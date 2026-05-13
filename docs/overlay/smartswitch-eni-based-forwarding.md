@@ -143,7 +143,7 @@ HA failover の過渡期に「旧 active が standby に降格、旧 standby は
 
 既存 `ACL_RULE.REDIRECT` は `Ethernet10` / `PortChannel5` / `10.0.0.1` / `10.0.0.2@Vrf2` / `10.0.0.3@Ethernet1` / nexthop group などを取れる。本 HLD は **tunnel nexthop 表記** を追加[^1]:
 
-```
+```text
 "<remote PA>@<tunnel_name>,<vni>"
 例: "2.2.2.1@tunnel_name,100"
 ```

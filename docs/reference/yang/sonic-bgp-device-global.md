@@ -61,7 +61,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-device-global
   +--rw sonic-bgp-device-global
      +--rw BGP_DEVICE_GLOBAL

@@ -48,7 +48,7 @@ SONiC の再起動コマンドは Click ベースではなく **bash スクリ�
 
 ### 用法
 
-```
+```text
 reboot [-h|-?] [-v] [-f] [-d <DPU>] [-p] [-b]
 ```
 
@@ -77,7 +77,7 @@ reboot [-h|-?] [-v] [-f] [-d <DPU>] [-p] [-b]
 
 ### 用法
 
-```
+```text
 fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-u] [-n|-N] [-m <asic_list>]
 ```
 
@@ -182,7 +182,7 @@ sudo config warm_restart enable
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Stopping bgp ...
 Backing up database ...
 Warm reboot ...

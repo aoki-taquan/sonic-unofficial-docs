@@ -77,7 +77,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-snmp
   +--rw sonic-snmp
      +--rw SNMP

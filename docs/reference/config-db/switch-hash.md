@@ -45,7 +45,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 SWITCH_HASH|GLOBAL
 ```
 

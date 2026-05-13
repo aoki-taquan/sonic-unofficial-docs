@@ -160,7 +160,7 @@ reasoning: 「CHASSIS_APP_DB 追加 + bgpcfgd 双方参照」という本設計�
 
 ### 関連する CHASSIS_APP_DB
 
-```
+```text
 BGP_DEVICE_GLOBAL|STATE
     tsa_enabled : "true" | "false"
 ```
@@ -171,7 +171,7 @@ BGP_DEVICE_GLOBAL|STATE
 
 LC asic 側の CONFIG_DB（既存）:
 
-```
+```text
 BGP_DEVICE_GLOBAL|STATE
     tsa_enabled : "true" | "false"
 ```

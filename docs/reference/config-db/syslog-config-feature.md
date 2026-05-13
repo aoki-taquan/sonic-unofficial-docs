@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 SYSLOG_CONFIG_FEATURE|<service>
 ```
 

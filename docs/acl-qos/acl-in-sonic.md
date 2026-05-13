@@ -45,7 +45,7 @@ SONiC の ACL は **table（型を持つ）+ rule** の二層構造。table の 
 
 [CONFIG_DB](../reference/glossary.md#term-config_db) のキーは次の 2 つだけ。
 
-```
+```text
 ACL_TABLE|<table_name>
   type   = "L3" | "L3v6" | "MIRROR" | ...
   ports  = "Ethernet0,PortChannel001,..."   # bind 対象

@@ -69,7 +69,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-system-radius
   +--rw sonic-system-radius
      +--rw RADIUS

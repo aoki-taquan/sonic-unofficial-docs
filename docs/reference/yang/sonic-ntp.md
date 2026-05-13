@@ -77,7 +77,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-ntp
   +--rw sonic-ntp
      +--rw NTP

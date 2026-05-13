@@ -61,7 +61,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-scheduler
   +--rw sonic-scheduler
      +--rw SCHEDULER

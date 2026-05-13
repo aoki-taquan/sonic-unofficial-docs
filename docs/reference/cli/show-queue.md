@@ -42,7 +42,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show queue counters [INTERFACE_NAME]
     [--namespace <ns>] [--all] [--trim] [--voq]
     [--nonzero] [--json] [--verbose]
@@ -54,7 +54,7 @@ show queue counters [INTERFACE_NAME]
 
 **用法**:
 
-```
+```bash
 show queue wredcounters [INTERFACE_NAME]
     [--namespace <ns>] [--json] [--voq]
     [--nonzero] [--summary] [--verbose]
@@ -98,7 +98,7 @@ show queue persistent-watermark multicast
 
 ### 期待される出力 (抜粋)
 
-```
+```text
        Port    TxQ    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
 -----------  -----  --------------  ---------------  -----------  ------------
   Ethernet0   UC0          123,456       12,345,678            0             0

@@ -89,7 +89,7 @@ gantt
 
 ### Container アップグレード
 
-```
+```text
 [release N]   base = Debian X
 [release N+1] container を順次 X 化
 ```

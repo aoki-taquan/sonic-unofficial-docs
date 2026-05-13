@@ -127,7 +127,7 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 
 128bit IPv6 アドレスは次のレイアウトで uSID を詰める[^1]。
 
-```
+```text
 <uSID-Block><Active-uSID><Next-uSID>...<Last-uSID><End-of-Carrier>[<End-of-Carrier>...]
 ```
 
@@ -141,7 +141,7 @@ reasoning: APPL_DB スキーマ無変更・マップ追加だけ、という最�
 
 例（HLD 抜粋）:
 
-```
+```text
 uSID block:    2001:41f0::
 Active uSID:   0100
 Next uSID:     0200

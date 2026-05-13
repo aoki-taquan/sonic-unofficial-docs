@@ -73,7 +73,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-syslog
   +--rw sonic-syslog
      +--rw SYSLOG_SERVER

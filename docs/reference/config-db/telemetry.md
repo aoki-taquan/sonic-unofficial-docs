@@ -39,7 +39,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 TELEMETRY|certs        # TLS 証明書
 TELEMETRY|gnmi         # gNMI サーバオプション
 ```

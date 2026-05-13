@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-monitor
   +--rw sonic-bgp-monitor
      +--rw BGP_MONITORS

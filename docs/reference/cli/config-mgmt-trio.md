@@ -44,7 +44,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config save [-y|--yes] [<filename>]
 ```
 
@@ -63,7 +63,7 @@ CONFIG_DB を **クリアせずに**、指定ファイル (またはデフォル
 
 **用法**:
 
-```
+```bash
 config reload [-y] [-l|--load-sysinfo] [-n|--no_service_restart] [-f|--force]
               [-t|--file_format <config_db|config_yang>] [-b|--bypass-lock] [<filename>]
 ```
@@ -81,7 +81,7 @@ config reload [-y] [-l|--load-sysinfo] [-n|--no_service_restart] [-f|--force]
 
 **用法**:
 
-```
+```bash
 config replace <target-file-path>
     [-f|--format CONFIGDB|SONICYANG]
     [-d|--dry-run]

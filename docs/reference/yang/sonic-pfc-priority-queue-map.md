@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-pfc-priority-queue-map
   +--rw sonic-pfc-priority-queue-map
      +--rw MAP_PFC_PRIORITY_TO_QUEUE

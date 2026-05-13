@@ -69,7 +69,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-feature
   +--rw sonic-feature
      +--rw FEATURE

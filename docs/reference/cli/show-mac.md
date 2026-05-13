@@ -37,7 +37,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show mac
     [-v|--vlan <vlan>]
     [-p|--port <port>]
@@ -107,7 +107,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 show mac aging-time
 ```
 
@@ -203,7 +203,7 @@ show mac count
 
 ### 期待される出力 (抜粋)
 
-```
+```text
   No.    Vlan  MacAddress         Port           Type
 -----  ------  -----------------  -------------  ---------
     1     100  00:11:22:33:44:55  Ethernet0      Dynamic

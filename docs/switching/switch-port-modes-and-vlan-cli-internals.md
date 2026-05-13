@@ -49,7 +49,7 @@ leaf switchport_mode { type switchport-mode-type; }
 
 CONFIG_DB:
 
-```
+```text
 PORT|<name>
   switchport_mode = "routed" | "access" | "trunk"
 

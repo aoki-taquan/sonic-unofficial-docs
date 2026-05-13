@@ -49,7 +49,7 @@ related:
 | 13 | ERROR_DB | SAI 失敗の app 通知 |
 | 14 | APPL_STATE_DB | APPL_DB に書いた結果（成功 / 失敗） |
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 4 KEYS "*" | wc -l
 admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:*" | head
 admin@sonic:~$ redis-cli -n 6 KEYS "PORT_TABLE|*" | head
@@ -59,7 +59,7 @@ admin@sonic:~$ redis-cli -n 6 KEYS "PORT_TABLE|*" | head
 
 1. **syncd ログ** で `handleSai*Status` の失敗判定を確認する。fatal なら syncd は abort し、stack trace と dump が残る。
 
-   ```
+   ```bash
    admin@sonic:~$ docker exec syncd supervisorctl tail syncd \
      | grep -E "SAI_STATUS|handleSai"
    admin@sonic:~$ ls /var/log/syncd*.log
@@ -67,7 +67,7 @@ admin@sonic:~$ redis-cli -n 6 KEYS "PORT_TABLE|*" | head
 
 2. **ERROR_DB** に該当 object と SAI status code が出ているかを確認する。orchagent はここを購読して retry / 再構成の判断材料にする。
 
-   ```
+   ```bash
    admin@sonic:~$ redis-cli -n 13 KEYS "ERROR_*"
    admin@sonic:~$ redis-cli -n 13 HGETALL "ERROR_ROUTE_ENTRY|10.0.0.0/24"
    1) "operation"
@@ -97,7 +97,7 @@ SAI 失敗は単発の状態ではなく、その時点の ASIC_DB と SAI 内�
 
 手動採取の例:
 
-```
+```bash
 admin@sonic:~$ sudo docker exec syncd syncd_dump.sh
 admin@sonic:~$ ls /var/log/syncd/
 sairedis.rec.gz  asic_db.json  saidump.txt
@@ -109,7 +109,7 @@ sairedis.rec.gz  asic_db.json  saidump.txt
 
 機能の不具合切り分けでは、ある port や [VRF](../../reference/glossary.md#term-vrf) に紐づく key が `CONFIG_DB`、`APPL_DB`、`STATE_DB`、`ASIC_DB` に同時に存在することを確認したい。dump utility は「モジュール（例: port、vrf）」を起点に複数 DB から関連 key を集約する CLI で、内部実装の経路を辿る作業を簡略化する。
 
-```
+```text
 admin@sonic:~$ sonic-db-dump -n CONFIG_DB -k "PORT|Ethernet0" -y
 admin@sonic:~$ dump state port Ethernet0
 admin@sonic:~$ dump state vlan Vlan1000
@@ -121,7 +121,7 @@ admin@sonic:~$ dump state vlan Vlan1000
 
 各 daemon は debug 情報の dump 関数を Debug Framework に登録し、`show techsupport` や障害時の自動採取から一括で取得できるようにする。assert 拡張により、想定外状態を「ログだけ残して動作継続」か「停止」かを切り替えやすくする。
 
-```
+```bash
 admin@sonic:~$ sudo show techsupport --since "1 hour ago"
 admin@sonic:~$ ls /var/dump/
 sonic_dump_<hostname>_<timestamp>.tar.gz
@@ -135,7 +135,7 @@ techsupport を解凍すると、各 docker の `supervisor` ログ、redis 全 
 
 `docker exec ... monit` ベースの単発 probe ではなく、container 内で複数の検査結果を 1 つの readiness に集約することで、k8s 上の SONiC で正確な readiness を得る。これは container 単位の運用観察。全体起動状態は別途 `system ready`（sysmonitor）が、per-app の closest UP status を event 集約して判定する。
 
-```
+```bash
 admin@sonic:~$ show system-health summary
 admin@sonic:~$ show system-health monitor-list
 admin@sonic:~$ sudo systemctl status sonic.target
@@ -165,7 +165,7 @@ admin@sonic:~$ docker exec swss /usr/local/bin/container_checker
 
 `/var/log/syncd/sairedis.rec` は syncd が SAI に投げた全 op を時系列で記録するファイルで、原因不明の SAI 失敗を再現するうえで最強の手掛かりになる。
 
-```
+```bash
 admin@sonic:~$ docker exec syncd ls -lh /var/log/syncd/sairedis.rec*
 admin@sonic:~$ docker exec syncd tail -50 /var/log/syncd/sairedis.rec
 ```
@@ -176,7 +176,7 @@ admin@sonic:~$ docker exec syncd tail -50 /var/log/syncd/sairedis.rec
 
 オペレーション全般が遅い・反映されないときは、orchagent の event queue が詰まっているケースを疑う。
 
-```
+```bash
 admin@sonic:~$ docker exec swss top -bn1 -p $(pidof orchagent)
 admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i "queue"
 admin@sonic:~$ redis-cli -n 0 LLEN "_*"

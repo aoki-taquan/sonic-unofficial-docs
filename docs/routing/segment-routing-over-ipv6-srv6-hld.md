@@ -62,7 +62,7 @@ Later phase: `H.Encaps`, `END.B6.Encaps[.Red]`（Binding SID）, `END.X`（Adj S
 
 ### CONFIG_DB
 
-```
+```text
 SRV6_SID_LIST|<segment_name>:
   path = [<sid>, <sid>, ...]
 
@@ -89,7 +89,7 @@ SRV6_STEER|<vrf>:<prefix>:
 
 ### APPL_DB
 
-```
+```text
 SRV6_SID_LIST_TABLE:<segment_name>: { path = [...] }
 SRV6_MY_SID_TABLE:<block>:<node>:<func>:<arg>:<ipv6>: {
   action, vrf, adj, segment, source

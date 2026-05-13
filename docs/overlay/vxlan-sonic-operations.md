@@ -42,7 +42,7 @@ related:
 
 ## 1. CONFIG_DB スキーマ
 
-```
+```text
 VXLAN_TUNNEL|<tunnel_name>
     src_ip : <ipv4>
     dst_ip : <ipv4>  (OPTIONAL, P2P 用)
@@ -77,7 +77,7 @@ NEIGH_TABLE|<intf>|<ip>
 
 ## 2. APP_DB スキーマ
 
-```
+```yaml
 VNET_ROUTE_TABLE:<vnet>:<prefix>
     nexthop : <ip>      (OPTIONAL)
     ifname  : <intf>

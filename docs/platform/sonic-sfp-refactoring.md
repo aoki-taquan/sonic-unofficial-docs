@@ -79,7 +79,7 @@ vendor 固有 identifier も同様に拡張可。**1 port = 1 xcvr** が前提�
 
 ### Vendor 拡張のディレクトリ
 
-```
+```text
 api/public/<spec>.py            # public spec 用 XcvrApi 実装
 api/<vendorA>/custom_qsfp.py    # vendor 固有派生
 mem_maps/public/<spec>.py

@@ -37,7 +37,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show bfd summary [-n|--namespace <ns>]
 ```
 
@@ -50,7 +50,7 @@ multi-ASIC 環境では `multi_asic.get_namespace_list()` を全走査、それ�
 
 **表示カラム**:
 
-```
+```text
 Peer Addr | Interface | Vrf | State | Type | Local Addr |
 TX Interval | RX Interval | Multiplier | Multihop | Local Discriminator
 ```
@@ -98,7 +98,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 show bfd peer <peer_ip> [-n|--namespace <ns>]
 ```
 

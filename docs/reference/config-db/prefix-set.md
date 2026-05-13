@@ -40,7 +40,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 PREFIX_SET|<name>
 ```
 

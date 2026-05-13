@@ -223,7 +223,7 @@ reasoning: SAIREDIS で port 単位の damping 設定を伝搬する API の根�
 
 `PORT` テーブルに 6 フィールド追加[^1]:
 
-```
+```text
 PORT|<port>
   link_event_damping_algorithm = "disabled" | "aied"
   max_suppress_time            = uint32 (sec)
@@ -252,7 +252,7 @@ PORT|<port>
 
 `sonic-port` YANG にも leaf を追加（既定値 0 / `"disabled"`）[^1]。
 
-```
+```bash
 config interface link_event_damping_algorithm <if> aied <max_suppress> <decay_half> <suppress_thr> <reuse_thr> <flap_penalty>
 config interface link_event_damping_algorithm <if> disabled
 ```

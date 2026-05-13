@@ -59,7 +59,7 @@ sudo config route add prefix 0.0.0.0/0 nexthop dev null
 
 書き込まれる CONFIG_DB エントリ例:
 
-```
+```yaml
 STATIC_ROUTE|0.0.0.0/0
   nexthop:      10.0.0.1
   nexthop-vrf:  ""
@@ -74,7 +74,7 @@ STATIC_ROUTE|0.0.0.0/0
 
 eth0 (mgmt) のデフォルトゲートウェイは `MGMT_INTERFACE` テーブルの `gwaddr` フィールドで設定する。`config mgmt-interface` 系コマンドまたは `config_db.json` 直編集で扱う。
 
-```
+```text
 MGMT_INTERFACE|eth0|10.0.0.0/24
   gwaddr: 10.0.0.1
 ```

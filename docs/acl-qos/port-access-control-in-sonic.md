@@ -87,7 +87,7 @@ flowchart TB
 
 ### CONFIG_DB
 
-```
+```yaml
 PAC_PORT_CONFIG_TABLE|<port>:
   pac_enabled  = true | false
   port_control = auto | force-authorized | force-unauthorized

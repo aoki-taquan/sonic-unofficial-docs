@@ -36,7 +36,7 @@ related:
 
 P4Orch は同期書き込みなので、コントローラの RPC レスポンス（gRPC `WriteResponse`）がそのまま成否を表します。レスポンスが OK にも関わらず ASIC に効いていないと感じる場合は、APPL_STATE_DB と [ASIC_DB](../../reference/glossary.md#term-asic_db) を直接見て切り分けます。
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 0 KEYS "P4RT_TABLE:*" | head
 1) "P4RT_TABLE:FIXED_ROUTER_INTERFACE_TABLE:{...}"
 2) "P4RT_TABLE:FIXED_NEIGHBOR_TABLE:{...}"
@@ -60,7 +60,7 @@ admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:
 
 p4rt-app と P4Orch のログは次で。
 
-```
+```bash
 admin@sonic:~$ docker logs p4rt 2>&1 | tail
 admin@sonic:~$ docker exec swss supervisorctl tail orchagent | grep -i p4orch
 ```
@@ -73,7 +73,7 @@ PacketIO Receive は generic netlink + [CoPP](../../reference/glossary.md#term-c
 
 ### 1. CoPP の trap group に genetlink が設定されているか
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 4 HGETALL "COPP_GROUP|queue2_group1"
 1) "queue"
 2) "2"
@@ -85,7 +85,7 @@ admin@sonic:~$ redis-cli -n 4 HGETALL "COPP_GROUP|queue2_group1"
 
 ### 2. SAI hostif が genetlink チャネルで作られているか
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*" | head
 admin@sonic:~$ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:oid:0x..." | grep -A1 CHANNEL_TYPE
 SAI_HOSTIF_ATTR_TYPE
@@ -96,14 +96,14 @@ SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK
 
 ### 3. generic netlink family が kernel に登録されているか
 
-```
+```text
 admin@sonic:~$ genl-ctrl-list | grep -i psample
 psample
 ```
 
 ### 4. controller の punt flow に match する trap が発火しているか
 
-```
+```bash
 admin@sonic:~$ aclshow -a
 admin@sonic:~$ show ip access-lists
 admin@sonic:~$ redis-cli -n 6 KEYS "USER_WATERMARKS|COPP_*"
@@ -127,7 +127,7 @@ Send to Ingress は **ASIC の ingress pipeline にパケットを再注入す�
 
 確認手順:
 
-```
+```bash
 admin@sonic:~$ ip link show send_to_ingress
 42: send_to_ingress: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9100 qdisc noqueue state UNKNOWN
 admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*" \
@@ -143,7 +143,7 @@ admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_HOSTIF:*" \
 
 Read の遅さは AppDb への `HGETALL` 大量発行が支配的でした。entity_cache_（旧 table_entry_cache_）が効いていれば 16,000 フローでも約 40ms に収まる想定です。
 
-```
+```bash
 admin@sonic:~$ docker logs p4rt 2>&1 | grep -i "Read took"
 admin@sonic:~$ docker logs p4rt 2>&1 | grep VerifyState
 ```

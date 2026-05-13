@@ -116,7 +116,7 @@ flowchart LR
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   SRV6_MY_LOCATORS, SRV6_MY_SIDS,
   MPLS_TC_TO_TC_MAP, TC_TO_DSCP_MAP_MPLS,

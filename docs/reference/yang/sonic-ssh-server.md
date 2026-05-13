@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-ssh-server
   +--rw sonic-ssh-server
      +--rw SSH_SERVER

@@ -63,13 +63,13 @@ show interfaces neighbor expected
 
     HLD 当時の構造:
 
-    ```
+    ```text
     ansible playbook → dip_sip.yml (前処理) → ptf_runner → dip_sip.py (PTF テスト)
     ```
 
     現行:
 
-    ```
+    ```text
     ansible playbook → dip_sip.yml (ラッパ) → pytest_runner.yml → pytest tests/ipfwd/test_dip_sip.py
     ```
 

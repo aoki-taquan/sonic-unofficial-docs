@@ -66,7 +66,7 @@ flowchart LR
 
 ### daemon の起動確認
 
-```
+```bash
 admin@sonic:~$ docker exec pmon supervisorctl status
 xcvrd                            RUNNING   pid 42, uptime 5 days, 02:13:41
 thermalctld                      RUNNING   pid 45, uptime 5 days, 02:13:41
@@ -93,7 +93,7 @@ xcvrd は SFP 系の EEPROM 読出しと state machine を担当します。CMIS
 
 ### show / DB 確認の典型
 
-```
+```bash
 admin@sonic:~$ show interfaces transceiver presence Ethernet0
 Port         Presence
 -----------  ----------
@@ -126,7 +126,7 @@ admin@sonic:~$ redis-cli -n 6 hgetall 'TRANSCEIVER_STATUS|Ethernet0'
 
 CMIS の場合、`cmis_state` が `DP_ACTIVATED` まで進まないとデータパスが上がりません。`DP_INIT` で止まる、`MODULE_LOW_PWR` のままなどは、xcvrd ログで state machine 遷移を追います。
 
-```
+```bash
 admin@sonic:~$ docker exec pmon tail -n 50 /var/log/syslog | grep xcvrd
 xcvrd[42]: Ethernet0: CMIS state INACTIVE -> MODULE_HW_INIT
 xcvrd[42]: Ethernet0: CMIS state MODULE_HW_INIT -> DP_DEINIT
@@ -146,7 +146,7 @@ thermal shutdown が走ると port は強制 down します。port down の原�
 
 ### thermal / fan 確認の典型
 
-```
+```bash
 admin@sonic:~$ show platform temperature
         Sensor          Temperature    High TH    Crit High TH    Warning
 ------------------  -------------  ---------  --------------  ---------
@@ -174,7 +174,7 @@ thermalctld[45]: thermal warning: ASIC temperature 92.0C exceeds 85.0C
 
 電源冗長の片系障害は `show platform psustatus` 等で確認できます。
 
-```
+```bash
 admin@sonic:~$ show platform psustatus
     PSU    Model         Serial     HW Rev    Voltage (V)    Current (A)    Power (W)    Status    LED
 -------  -----------  ------------ --------  -------------  -------------  -----------  --------  -------
@@ -201,7 +201,7 @@ SONiC は装置の SSD 寿命を継続監視します。
 
 書込み量や bad block 増加は装置交換判断につながるため、定期確認の対象です。
 
-```
+```bash
 admin@sonic:~$ show platform ssdhealth
 Device Model       :  Innodisk SATADOM-SH 3SE3 V2 16GB
 Serial            :  20150818AAAA0000019
@@ -222,7 +222,7 @@ Reallocated Sectors: 0
 
 PCIe error は ASIC との通信不能や [syncd](../../reference/glossary.md#term-syncd) 落ちにつながるため、syslog と STATE_DB を併せて確認します。
 
-```
+```bash
 admin@sonic:~$ show platform pcieinfo -c
 PCIe Device Checking All Test
 PCI Device:  ASIC 0000:03:00.0 ........ Passed

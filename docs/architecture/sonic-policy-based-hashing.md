@@ -59,7 +59,7 @@ PBH は **ACL の上に乗る**。ACL rule が match した packet にだけ、P
 
 ### CONFIG_DB
 
-```
+```text
 PBH_TABLE|<name>:
   interface_list   = <ports>
   description
@@ -128,7 +128,7 @@ reasoning: スコープと field-only 更新（v0.3）の根拠。
 
 ### CLI
 
-```
+```bash
 config pbh table add <name> --interface-list "Ethernet0,Ethernet4"
 config pbh hash-field add <field> --hash-field INNER_SRC_IPV4 --ip-mask /32 --sequence-id 1
 config pbh hash-field add <field2> --hash-field INNER_DST_IPV4 --ip-mask /32 --sequence-id 1   # 対称

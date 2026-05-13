@@ -39,7 +39,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show storm-control [-n|--namespace <namespace>] [-d|--display <all|frontend>]
 ```
 
@@ -55,7 +55,7 @@ show storm-control [-n|--namespace <namespace>] [-d|--display <all|frontend>]
 
 **用法**:
 
-```
+```bash
 show storm-control interface <interface>
 ```
 

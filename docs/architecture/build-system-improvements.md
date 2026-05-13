@@ -85,7 +85,7 @@ COPY debs/libnl-3-200_3.2.27-2_amd64.deb \
 
 `dockers/dockerfile-macros.j2` に共通マクロを用意し、新規 `Dockerfile.j2` 作成者が個別 `COPY`/`RUN` を書かないよう誘導する[^1]:
 
-```
+```text
 copy_files
 install_debian_packages
 install_python_wheels
@@ -106,7 +106,7 @@ install_python_wheels
 
 BuildKit の `--squash` は **base image ごと squash** する不具合があり、SONiC のような派生イメージで **600 MB → 1.5 GB** に膨張する[^1]。HLD はこの段階では `SONIC_USE_DOCKER_BUILDKIT` を **opt-in** とし、ユーザに警告メッセージを出す方針:
 
-```
+```bash
 $ make SONIC_USE_DOCKER_BUILDKIT=y target/sonic-mellanox.bin
 warning: using docker buildkit will produce increase image size
  (more details: https://github.com/moby/moby/issues/38903)

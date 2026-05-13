@@ -72,14 +72,14 @@ flowchart LR
 
 `sonic-buildimage` に新プラットフォーム `alpinevs` が追加される[^1]:
 
-```
+```text
 PLATFORM=alpinevs make configure
 make target/sonic-alpinevs.img.gz
 ```
 
 ランタイム時は `alpinevs-init` サービスが `config_db.json` の `DEVICE_METADATA.hwsku` を見て platform を選択する。`hwsku=alpine_vs` 指定で:
 
-```
+```yaml
 HwSKU: alpine_vs
 ASIC: alpinevs
 ```
@@ -98,7 +98,7 @@ ASIC: alpinevs
 
 KNE のノード type `ALPINE`（[openconfig/kne の topo/node/alpine](https://github.com/openconfig/kne/tree/main)）を使う[^1]。topology 例:
 
-```
+```text
 nodes: {
   name: "alpine-dut"
   vendor: ALPINE

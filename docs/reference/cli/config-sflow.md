@@ -165,7 +165,7 @@ sudo config sflow interface sample-rate Ethernet0 8192
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Enabling sFlow ...
 ```
 <!-- /usage-example -->

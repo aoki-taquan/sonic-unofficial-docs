@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DSCP_TO_TC_MAP|<name>|<dscp>
 ```
 

@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-wred-profile
   +--rw sonic-wred-profile
      +--rw WRED_PROFILE

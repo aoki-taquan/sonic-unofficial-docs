@@ -104,7 +104,7 @@ gRPC channel の keepalive を設定し、無音でも周期的に PING を送�
 
 gRPC client / channel の状態を [STATE_DB](../reference/glossary.md#term-state_db) に publish する[^1]:
 
-```
+```text
 GRPC_CLIENT_TABLE|<peer>
   channel_state = "READY" | "CONNECTING" | "TRANSIENT_FAILURE" | "SHUTDOWN"
   last_error = "..."

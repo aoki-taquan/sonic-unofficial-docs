@@ -112,7 +112,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | trim | detailed]
     [-p|--period <sec>] [-i|--interface <list>] [-a|--printall] [-j|--json] [-n|--namespace]
 ```
@@ -215,7 +215,7 @@ show interfaces description
 
 ### 期待される出力 (抜粋)
 
-```
+```text
   Interface            Lanes    Speed    MTU    FEC    Alias    Vlan    Oper    Admin
 -----------  ---------------  -------  -----  -----  -------  ------  ------  -------
   Ethernet0  25,26,27,28        100G   9100     rs   etp1     trunk      up       up

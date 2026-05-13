@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-nvgre-tunnel
   +--rw sonic-nvgre-tunnel
      +--rw NVGRE_TUNNEL

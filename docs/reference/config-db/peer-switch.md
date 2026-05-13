@@ -40,7 +40,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 PEER_SWITCH|<peer_switch>
 ```
 

@@ -63,7 +63,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-mclag
   +--rw sonic-mclag
      +--rw MCLAG_DOMAIN

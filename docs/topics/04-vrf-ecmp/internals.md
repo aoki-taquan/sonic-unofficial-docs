@@ -79,7 +79,7 @@ flowchart LR
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   VRF             ─> VRFOrch
   INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE (vrf_name)  ─> IntfsOrch → VRFOrch
@@ -128,7 +128,7 @@ kernel side が遅延し orchagent 側が先に更新されると、`fpmsyncd` �
 
 ECMP のハッシュフィールドは `SwitchOrch` が起動時に `SWITCH_HASH` テーブル（`CONFIG_DB`）を読み、SAI に投入します。
 
-```
+```yaml
 CONFIG_DB:SWITCH_HASH|GLOBAL
   ecmp_hash: "SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*"
   lag_hash:  "..."

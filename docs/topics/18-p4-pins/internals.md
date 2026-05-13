@@ -123,7 +123,7 @@ P4 program は `tables_definition_manager` を介して動的に accept され�
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   なし（P4RT は controller 直結が主）
 APPL_DB:

@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-pfcwd
   +--rw sonic-pfcwd
      +--rw PFC_WD

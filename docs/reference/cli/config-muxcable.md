@@ -59,7 +59,7 @@ CLI が触る先は [CONFIG_DB](../../reference/glossary.md#term-config_db) の 
 
 **用法**:
 
-```
+```bash
 config muxcable mode {active|auto|manual|standby|detach} <port_name|all> [--json]
 ```
 
@@ -141,7 +141,7 @@ sudo config muxcable hwmode state active Ethernet0
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Success in toggling port Ethernet0 to active
 ```
 <!-- /usage-example -->

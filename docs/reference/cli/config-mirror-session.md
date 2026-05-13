@@ -43,7 +43,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config mirror_session add <session_name> <src_ip> <dst_ip> <dscp> <ttl>
     [<gre_type>] [<queue>] [--policer <name>]
 ```
@@ -54,7 +54,7 @@ config mirror_session add <session_name> <src_ip> <dst_ip> <dscp> <ttl>
 
 **用法**:
 
-```
+```bash
 config mirror_session erspan add <session_name> <src_ip> <dst_ip> <dscp> <ttl>
     [<gre_type>] [<queue>] [<src_port>] [<direction>] [--policer <name>]
 ```
@@ -108,7 +108,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config mirror_session span add <session_name> <dst_port>
     [<src_port>] [<direction>] [<queue>] [--policer <name>]
 ```
@@ -127,7 +127,7 @@ config mirror_session span add <session_name> <dst_port>
 
 **用法**:
 
-```
+```bash
 config mirror_session remove <session_name>
 ```
 
@@ -231,7 +231,7 @@ sudo config mirror_session remove mirror1
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Mirror session mirror1 added.
 ```
 <!-- /usage-example -->

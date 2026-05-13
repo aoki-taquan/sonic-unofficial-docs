@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 PORTCHANNEL_INTERFACE|<name>                      # 属性ロウ
 PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 ```

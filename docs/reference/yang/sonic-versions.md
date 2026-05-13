@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-versions
   +--rw sonic-versions
      +--rw VERSIONS

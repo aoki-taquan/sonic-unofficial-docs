@@ -77,7 +77,7 @@ flowchart TB
 
 ## STATE_DB スキーマ
 
-```
+```yaml
 ACL_TABLE_TABLE|<acl_table_name>
     status : "Active" | "Inactive"
 

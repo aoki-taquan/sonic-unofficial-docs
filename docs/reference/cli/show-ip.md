@@ -113,7 +113,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 show ip route [<IPADDRESS>] [vrf <vrf_name>] [...] [-d|--display all|frontend] [-n|--namespace <ns>]
 ```
 
@@ -225,7 +225,7 @@ show ip bgp summary
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Codes: K - kernel route, C - connected, S - static, R - RIP,
        O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
        T - Table, v - VNC, V - VNC-Direct, A - Babel, D - SHARP,

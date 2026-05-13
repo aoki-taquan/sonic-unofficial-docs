@@ -71,7 +71,7 @@ flowchart LR
 
 ### CONFIG_DB スキーマ
 
-```
+```text
 DEVICE_METADATA|localhost
     timezone : string  # 例: "Etc/UTC"（default）, "Asia/Kolkata"
 ```

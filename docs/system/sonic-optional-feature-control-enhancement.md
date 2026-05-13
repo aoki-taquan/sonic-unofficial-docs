@@ -49,7 +49,7 @@ flowchart LR
 
 ### CONFIG_DB スキーマ（初版）
 
-```
+```text
 FEATURE|<feature_name>
     status : "enabled" | "disabled"
 ```

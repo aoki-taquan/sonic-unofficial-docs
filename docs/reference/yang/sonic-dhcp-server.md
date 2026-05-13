@@ -48,7 +48,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-dhcp-server
   +--rw sonic-dhcp-server
      +--rw DHCP_SERVER

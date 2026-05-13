@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_PEER_GROUP|<vrf_name>|<peer_group_name>
 ```
 

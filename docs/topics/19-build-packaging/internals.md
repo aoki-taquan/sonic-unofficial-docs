@@ -73,7 +73,7 @@ flowchart LR
 
 `FEATURE` テーブルが SPM とランタイムの接続点です。
 
-```
+```yaml
 CONFIG_DB:FEATURE|<name>
   state: "enabled|disabled|always_enabled|always_disabled"
   auto_restart: "enabled|disabled"
@@ -92,7 +92,7 @@ CONFIG_DB:FEATURE|<name>
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   FEATURE, DEVICE_METADATA (image_type / hwsku)
 STATE_DB:
@@ -125,7 +125,7 @@ STATE_DB:
 
 ランタイムの SONiC docker image は階層を持ちます。
 
-```
+```text
 docker-base-<bullseye/bookworm>
   └─ docker-config-engine
        └─ docker-swss

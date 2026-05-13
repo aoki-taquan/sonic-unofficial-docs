@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 MGMT_INTERFACE|<name>|<ip_prefix>
 ```
 

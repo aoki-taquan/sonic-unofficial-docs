@@ -27,7 +27,7 @@ related:
 
 ## シグネチャ
 
-```
+```bash
 show services
 ```
 

@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー（概略）
 
-```
+```text
 module: sonic-crm
   +--rw sonic-crm
      +--rw CRM

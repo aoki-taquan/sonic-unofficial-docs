@@ -111,7 +111,7 @@ CONFIG_DB の差分（ブレイクアウト直後）はおおよそ次の形に�
 
 確認は `show interfaces status` / `show interfaces transceiver eeprom` です。
 
-```
+```text
 Interface    Lanes        Speed    MTU    FEC    Alias    Vlan    Oper    Admin    Type        Asym PFC
 -----------  -----------  -------  -----  -----  -------  ------  ------  -------  ----------  ----------
 Ethernet0    65           25G      9100   rs     etp1a    routed  up      up       SFP28       N/A
@@ -154,7 +154,7 @@ sudo reboot
 
 `show platform firmware status` の典型出力:
 
-```
+```text
 Chassis    Module    Component    Version       Description
 ---------  --------  -----------  ------------  --------------------
 Chassis1   N/A       BIOS         1.5.0         BIOS firmware
@@ -194,7 +194,7 @@ show interfaces transceiver dom Ethernet0
 
 `show interfaces transceiver dom` 出力例:
 
-```
+```yaml
 Ethernet0:
         temperature: 43.5C
         voltage:     3.31V

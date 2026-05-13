@@ -45,7 +45,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_NEIGHBOR_AF|<vrf_name>|<neighbor>|<afi_safi>
 ```
 

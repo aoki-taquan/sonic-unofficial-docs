@@ -118,7 +118,7 @@ sequenceDiagram
 
 ### NEIGH_STATE_TABLE スキーマ
 
-```
+```text
 NEIGH_STATE_TABLE {
     "<neigh_ip>" {
         "State" : "Idle | Idle (Admin) | Connect | Active | OpenSent | OpenConfirm | Established | Clearing"
@@ -139,7 +139,7 @@ CiscoBgp4MIB が必要とする「neighbor IP + state」だけを切り出した
 
 新規 [CONFIG_DB](../reference/glossary.md#term-config_db) スキーマも CLI も**提案されていない**。`bgpmon` は BGP コンテナの supervisor で起動し、ユーザ設定は不要。検証は既存 `snmpwalk`:
 
-```
+```text
 snmpwalk -v2c -c <community> 127.0.0.1 iso.3.6.1.4.1.9.9.187
 ```
 

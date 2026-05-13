@@ -151,7 +151,7 @@ ASIC が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` をサポートしない場合�
 
 `show muxcable config` の出力末尾に `neighbor_mode` 列が追加される[^1]:
 
-```
+```text
 port         state   ipv4             cable_type     prober_type   neighbor_mode
 -----------  ------  ---------------  -------------  ------------  -------------
 Ethernet0    auto    192.168.0.2/32   active-active  software      host-route
@@ -160,7 +160,7 @@ Ethernet8    auto    192.168.0.4/32   active-active  software      prefix-route
 
 `dualtor_neighbor_check` ユーティリティは prefix route 方式向けに新フォーマットを出す[^1]:
 
-```
+```text
 NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_ROUTE  NEXTHOP_TYPE  HWSTATUS
 192.168.0.3  e2:67:e4:05:9a:ec  Ethernet0  standby    yes               yes           TUNNEL        consistent
 192.168.0.7  9a:41:63:4f:86:7c  Ethernet16 active     yes               yes           NEIGHBOR      consistent

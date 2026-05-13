@@ -104,7 +104,7 @@ flowchart LR
 
 ## CONFIG_DB / APPL_DB / STATE_DB
 
-```
+```yaml
 CONFIG_DB:
   MCLAG_DOMAIN|<domain_id>
     source_ip, peer_ip, peer_link, keepalive_interval, session_timeout

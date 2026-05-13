@@ -42,7 +42,7 @@ related:
 
 [FRR](../../reference/glossary.md#term-frr) の SRv6 制御プレーンは master 時点で限定的なため、Static SID / Locator を CONFIG_DB に直接書く構成が現実的です。`SRV6_MY_LOCATORS` と `SRV6_MY_SIDS` は `sonic-srv6` [YANG](../../reference/glossary.md#term-yang) に定義され、`bgpcfgd` の `SRv6Mgr` が `vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid ... locator ... behavior ... vrf ..."` の形で FRR に流し込みます。
 
-```
+```text
 SRV6_MY_LOCATORS|<locator_name>:
   prefix = <ipv6_prefix>
   block_len = 40
@@ -62,7 +62,7 @@ SRV6_MY_SIDS|<sid>:
 
 base [HLD](../../reference/glossary.md#term-hld) では Static SID とは別に、`srv6orch` が直接消費する次のテーブルが定義されています。
 
-```
+```text
 SRV6_SID_LIST|<segment_name>:
   path = [<sid>, <sid>, ...]
 
@@ -90,7 +90,7 @@ SRV6_STEER|<key>:
 
 MPLS は **per-[RIF](../../reference/glossary.md#term-rif) で明示的に enable** が前提です。`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` の `mpls` フィールドを `enable` に設定します。
 
-```
+```text
 INTERFACE|Ethernet0:
   mpls = enable
 
@@ -104,7 +104,7 @@ CLI ラッパとしては `config interface mpls enable <intf>` / `config interf
 
 MPLS パケットの TC を SONiC 内部 TC にマップするには、`MPLS_TC_TO_TC_MAP` を定義し、`PORT_QOS_MAP` の `mpls_tc_to_tc_map` フィールドで参照します。
 
-```
+```text
 MPLS_TC_TO_TC_MAP|AZURE:
   0 = 0
   1 = 1
@@ -120,7 +120,7 @@ PORT_QOS_MAP|Ethernet0:
 
 Path Tracing は per-port 設定です。`PORT|<port>` に 2 つのフィールドを足します。
 
-```
+```text
 PORT|Ethernet0:
   pt_interface_id        = 1234
   pt_timestamp_template  = template_3
@@ -162,7 +162,7 @@ show ipv6 route fcbb:bbbb:1::/64
 
 `vtysh` 期待出力:
 
-```
+```text
 Locator:
 Name                 ID      Prefix                   Status
 -------------------- ------- ------------------------ --------
@@ -188,7 +188,7 @@ CONFIG_DB:
 
 `show mpls interface` の典型出力:
 
-```
+```text
 Interface       MPLS State
 --------------  ------------
 Ethernet0       enable
@@ -197,7 +197,7 @@ PortChannel10   enable
 
 FRR 側で静的 LSP を引いて確認します。
 
-```
+```text
 configure terminal
 mpls label local-pool min-label 1000 max-label 1999
 mpls lsp 1001 10.0.0.2 Ethernet0 nexthop-label 2001
@@ -233,7 +233,7 @@ CONFIG_DB:
 
 `show interface path-tracing` 期待出力:
 
-```
+```text
 Interface     PT Interface ID    Timestamp Template
 ------------  ----------------  --------------------
 Ethernet0     1234              template_3

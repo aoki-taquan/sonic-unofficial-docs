@@ -43,7 +43,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 NVGRE_TUNNEL|<tunnel_name>
 NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 ```

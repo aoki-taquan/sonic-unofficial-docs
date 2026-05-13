@@ -93,7 +93,7 @@ flowchart LR
 
 gearbox port では PORT_TABLE に line-side / system-side のチューニング値が並列に並ぶ[^1]:
 
-```
+```text
 PORT_TABLE:Ethernet48
   speed = 400000
   lanes = 56,57,58,59

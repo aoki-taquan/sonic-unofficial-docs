@@ -62,7 +62,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config dhcp_relay ipv4 helper add <vid> <server_ip> [<server_ip> ...]
     [--source-interface <ifname>]
     [--link-selection {enable|disable}]
