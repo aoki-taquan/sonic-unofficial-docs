@@ -37,6 +37,21 @@ jobs:
 
       - run: mkdocs build --strict
 
+      # built HTML 品質チェック (informational)。`site/` 配下を走査し
+      # `<h1>` 重複・空 `<a>`/`<img>`・空コードブロック・mermaid placeholder
+      # 残骸などを `meta/built-html-report.md` に出す。高優先 (h1 重複/空 a/img)
+      # は 0 件キープが目標。CI では `|| true` で落とさず report を artifact 化。
+      - name: built HTML quality (informational)
+        run: python3 meta/scripts/check_built_html.py || true
+
+      - name: Upload built-html report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-html-report
+          path: meta/built-html-report.md
+          if-no-files-found: ignore
+
   # frontmatter linter (strict) + 全 drift / 各種 informational check。
   # 元は job を細かく分けて並走させていたが、setup-python の起動オーバヘッド
   # の方が大きく、step は ~10 秒 / job 並走による並列効果は小さいため、
