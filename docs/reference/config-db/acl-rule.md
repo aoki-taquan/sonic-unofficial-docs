@@ -129,9 +129,9 @@ ACL_RULE|<table_name>|<rule_name>
 | 未知/不正な属性名 | rule INACTIVE、erase |
 | `MATCH_TCP_FLAGS` あり・IP_PROTOCOL 未指定 | IP_PROTOCOL=6 (TCP) を自動付与 |
 | IPv4 と IPv6 matchfield 混在（L3V4V6 テーブル） | `bAllAttributesOk=false`、rule INACTIVE |
-| SAI リソース枯渇 | retry キャッシュに退避、リソース解放後に再試行 |
+| [SAI](../../reference/glossary.md#term-sai) リソース枯渇 | retry キャッシュに退避、リソース解放後に再試行 |
 | IN_PORTS/OUT_PORTS に非物理 IF | `return false`、rule INACTIVE |
-| VLAN ID 範囲外 | `return false`、rule INACTIVE |
+| [VLAN](../../reference/glossary.md#term-vlan) ID 範囲外 | `return false`、rule INACTIVE |
 | Range 形式不正 | `return false`、rule INACTIVE |
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5520L -->
@@ -140,37 +140,94 @@ ACL_RULE|<table_name>|<rule_name>
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
-### `PACKET_ACTION` (enum)
+### `PACKET_ACTION` 値別挙動
+
+YANG 定義値: `FORWARD` / `DROP` / `REDIRECT` (sonic-acl.yang:114-116)。
+実装 lookup: `aclPacketActionLookup` (aclorch.cpp:145-147)。
 
 | 値 | SAI マッピング | 効果 | evidence |
 |---|---|---|---|
-| `FORWARD` | `SAI_PACKET_ACTION_FORWARD` | パケットを通過させる | `aclorch.h:83,145` |
-| `DROP` | `SAI_PACKET_ACTION_DROP` | パケットをドロップ | `aclorch.h:84,146` |
-| `COPY` | `SAI_PACKET_ACTION_COPY` | パケットを CPU コピー後に続行 | `aclorch.h:85,147` |
-| `REDIRECT` | `SAI_PACKET_ACTION_REDIRECT` | 指定 next-hop / port へリダイレクト | `aclorch.h:86` |
-| `DO_NOT_NAT` | — | NAT 処理をバイパス | `aclorch.h:87` |
-| `DISABLE_TRIM` | — | バッファ trim を無効化 | `aclorch.h:88` |
+| `FORWARD` | `SAI_PACKET_ACTION_FORWARD` | パケットを通過させる | `aclorch.h:83`, `aclorch.cpp:145` |
+| `DROP` | `SAI_PACKET_ACTION_DROP` | パケットをドロップ | `aclorch.h:84`, `aclorch.cpp:146` |
+| `COPY` | `SAI_PACKET_ACTION_COPY` | パケットを CPU コピー後に続行 (YANG 外) | `aclorch.h:85`, `aclorch.cpp:147` |
+| `REDIRECT` | oid 解決後に redirect | `REDIRECT:<target>` 形式。コロンなし / ターゲット空は `return false` → rule INACTIVE | `aclorch.h:86`, `aclorch.cpp:2013-2040` |
+| `DO_NOT_NAT` | — | [NAT](../../reference/glossary.md#term-nat) 処理をバイパス (YANG 外) | `aclorch.h:87` |
+| `DISABLE_TRIM` | — | バッファ trim を無効化 (YANG 外) | `aclorch.h:88` |
 
-### `IP_TYPE` (match enum)
+!!! note "REDIRECT 後方互換"
+    `ACTION_PACKET_ACTION` フィールドに `REDIRECT:<target>` を書く旧形式が後方互換として残る。新形式は `REDIRECT_ACTION` フィールドを使う (`aclorch.cpp:2013`)。
+
+### `IP_TYPE` 値別挙動
+
+YANG 定義値 7 種 (sonic-acl.yang:122-130)。実装 lookup table (aclorch.cpp:503-512)。
+YANG は `mandatory true` のため省略不可。
 
 | 値 | SAI マッピング | 意味 | evidence |
 |---|---|---|---|
-| `ANY` | `SAI_ACL_IP_TYPE_ANY` | IP/非IP 問わず全パケット | `aclorch.cpp:503` |
-| `IP` | `SAI_ACL_IP_TYPE_IP` | IPv4/IPv6 どちらかのパケット | `aclorch.cpp:504` |
-| `NON_IP` | `SAI_ACL_IP_TYPE_NON_IP` | 非 IP パケット | `aclorch.cpp:505` |
-| `IPV4ANY` | `SAI_ACL_IP_TYPE_IPV4ANY` | IPv4 パケット | `aclorch.cpp:506` |
-| `NON_IPV4` | `SAI_ACL_IP_TYPE_NON_IPV4` | 非 IPv4 パケット | `aclorch.cpp:507` |
-| `IPV6ANY` | `SAI_ACL_IP_TYPE_IPV6ANY` | IPv6 パケット | `aclorch.cpp:508` |
-| `NON_IPV6` | `SAI_ACL_IP_TYPE_NON_IPV6` | 非 IPv6 パケット | `aclorch.cpp:509` |
-| `ARP` | — | ARP パケット | `aclorch.h:105` |
-| `ARP_REQUEST` | — | ARP Request | `aclorch.h:106` |
-| `ARP_REPLY` | — | ARP Reply | `aclorch.h:107` |
+| `ANY` | `SAI_ACL_IP_TYPE_ANY` | IP/非IP 問わず全パケット | `aclorch.h:100`, `aclorch.cpp:503` |
+| `IP` | `SAI_ACL_IP_TYPE_IP` | IPv4 または IPv6 パケット | `aclorch.h:99`, `aclorch.cpp:504` |
+| `IPV4` | `SAI_ACL_IP_TYPE_IPV4ANY` | IPv4 パケット (YANG のみ、実装上 IPV4ANY と同義) | `sonic-acl.yang:125` |
+| `IPV4ANY` | `SAI_ACL_IP_TYPE_IPV4ANY` | IPv4 パケット | `aclorch.h:101`, `aclorch.cpp:506` |
+| `NON_IPV4` | `SAI_ACL_IP_TYPE_NON_IPV4` | 非 IPv4 パケット | `aclorch.h:102`, `aclorch.cpp:507` |
+| `IPV6ANY` | `SAI_ACL_IP_TYPE_IPV6ANY` | IPv6 パケット | `aclorch.h:103`, `aclorch.cpp:508` |
+| `NON_IPV6` | `SAI_ACL_IP_TYPE_NON_IPV6` | 非 IPv6 パケット | `aclorch.h:104`, `aclorch.cpp:509` |
+| `ARP` | `SAI_ACL_IP_TYPE_ARP` | [ARP](../../reference/glossary.md#term-arp) パケット (実装のみ、YANG 外) | `aclorch.h:105`, `aclorch.cpp:510` |
+| `ARP_REQUEST` | `SAI_ACL_IP_TYPE_ARP_REQUEST` | [ARP](../../reference/glossary.md#term-arp) Request (実装のみ) | `aclorch.h:106`, `aclorch.cpp:511` |
+| `ARP_REPLY` | `SAI_ACL_IP_TYPE_ARP_REPLY` | [ARP](../../reference/glossary.md#term-arp) Reply (実装のみ) | `aclorch.h:107`, `aclorch.cpp:512` |
+
+### `ETHER_TYPE` 値別挙動
+
+YANG pattern で 7 値に制限 (sonic-acl.yang:142)。実装では任意 uint16 を受理 (aclorch.cpp:1066)。
+格納値は `0x` プレフィックス付き hex 文字列。`stoul(str, &idx, 0)` で auto 判定 (converter.h:18)。
+マスク: `0xFFFF` (完全一致) で SAI に投入 (aclorch.cpp:1067)。
+
+| 値 | プロトコル | 意味 | evidence |
+|---|---|---|---|
+| `0x88CC` | LLDP | Link Layer Discovery Protocol | `sonic-acl.yang:142` |
+| `0x8100` | IEEE 802.1Q | VLAN タグ付きフレーム | `sonic-acl.yang:142` |
+| `0x8915` | [RoCE](../../reference/glossary.md#term-roce) | RDMA over Converged Ethernet | `sonic-acl.yang:142` |
+| `0x0806` | [ARP](../../reference/glossary.md#term-arp) | Address Resolution Protocol | `sonic-acl.yang:142` |
+| `0x0800` | IPv4 | Internet Protocol version 4 | `sonic-acl.yang:142` |
+| `0x86DD` | IPv6 | Internet Protocol version 6 | `sonic-acl.yang:142` |
+| `0x8847` | [MPLS](../../reference/glossary.md#term-mpls) | MPLS ユニキャスト | `sonic-acl.yang:142` |
+
+### `stage` 値別挙動 (ACL_TABLE から継承)
+
+ACL_RULE 自体に `stage` フィールドはないが、所属 ACL_TABLE の stage により使用可能な action が変わる。
+
+| 値 | SAI stage | MIRROR action | evidence |
+|---|---|---|---|
+| `INGRESS` (既定) | `SAI_ACL_STAGE_INGRESS` | `MIRROR_INGRESS_ACTION` 有効 | `aclorch.cpp:166,173,263-266` |
+| `EGRESS` | `SAI_ACL_STAGE_EGRESS` | `MIRROR_EGRESS_ACTION` のみ有効 | `aclorch.cpp:167,185,270-272` |
+
+### `type` 値別挙動 (ACL_TABLE から継承)
+
+ACL_RULE で使用可能な match / action は ACL_TABLE の `type` によって決まる。
+
+| 値 | 使用可能な主 action | 備考 | evidence |
+|---|---|---|---|
+| `L3` | `PACKET_ACTION`, `REDIRECT_ACTION` | 通常 IPv4 ACL | `acltable.h:26`, `aclorch.cpp:200,454` |
+| `L3V6` | `PACKET_ACTION`, `REDIRECT_ACTION` | IPv6 ACL。`IP_PROTOCOL` は非推奨 | `acltable.h:27`, `aclorch.cpp:220,1231` |
+| `MIRROR` | `MIRROR_INGRESS_ACTION` | ASIC capability 必須 | `acltable.h:29`, `aclorch.cpp:260,3502` |
+| `MIRRORV6` | `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` | ASIC capability 照会、一部統合 | `acltable.h:30`, `aclorch.cpp:279,3503,5811` |
+
+### 値別 grep カバレッジ
+
+| フィールド | 値数 | 0 hit | 証跡ファイル |
+|---|---|---|---|
+| `PACKET_ACTION` | 3 (YANG) / 6 (実装) | 0 | aclorch.h, aclorch.cpp |
+| `IP_TYPE` | 7 (YANG) / 10 (実装) | 0 | aclorch.h, aclorch.cpp, sonic-acl.yang |
+| `ETHER_TYPE` | 7 | 0 | sonic-acl.yang, aclorch.cpp |
+| `stage` (継承) | 2 | 0 | aclorch.cpp |
+| `type` (継承) | 4 (YANG) | 0 | acltable.h, aclorch.cpp |
 
 ### 複合条件
 
-- `MATCH_TCP_FLAGS` あり、かつ `IP_PROTOCOL` 未指定 → `AclOrch` が自動的に `IP_PROTOCOL=6 (TCP)` を付与 (`aclorch.cpp`)
-- `IP_TYPE=IPV4ANY` と `SRC_IPV6` を同一ルールに混在させると `bAllAttributesOk=false`、rule が INACTIVE になる
-- `stage=INGRESS` テーブルでは `MIRROR_INGRESS_ACTION` が有効、`stage=EGRESS` テーブルでは `MIRROR_EGRESS_ACTION` のみ有効 (`aclorch.cpp:263-291`)
+1. `MATCH_TCP_FLAGS` あり + `IP_PROTOCOL` 未指定 → `IP_PROTOCOL=6 (TCP)` 自動付与 (`aclorch.cpp:5640-5660`)
+2. `IP_TYPE=IPV4ANY` / `IPV4` + `SRC_IPV6` 同一ルール混在 → `bAllAttributesOk=false` → rule INACTIVE (`aclorch.cpp:5636-5658`)
+3. YANG `choice ip_src_dst` — `IP_TYPE` が IPv4 系なら `SRC_IP`/`DST_IP` のみ有効、IPv6 系なら `SRC_IPV6`/`DST_IPV6` のみ有効 (`sonic-acl.yang:150-168`)
+4. `type=MIRROR`/`MIRRORV6` + stage=EGRESS → `MIRROR_EGRESS_ACTION` のみ有効 (`aclorch.cpp:270-272`)
+5. `PACKET_ACTION=REDIRECT:` のコロン後ターゲット欠如 → `return false` → rule INACTIVE (`aclorch.cpp:2020-2028`)
 <!-- /value-behavior -->
 
 <!-- ref-triangle:start -->
@@ -222,4 +279,4 @@ aclshow -a -t EVERFLOW
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b4c5898e0257 -->
+<!-- glossary-links-injected: a78cb4c857bd -->

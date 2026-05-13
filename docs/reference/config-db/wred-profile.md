@@ -116,6 +116,50 @@ WRED_PROFILE|<name>
 [^exc1]: `sonic-swss/orchagent/qosorch.cpp` (WredMapHandler) <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-wred-profile.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-wred-profile.yang>
 
+<!-- value-behavior -->
+## `ecn` 値別挙動
+
+YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
+実装 `ecn_map` (qosorch.cpp:36-44) → `SAI_WRED_ATTR_ECN_MARK_MODE` (qosorch.cpp:743)。
+不正値 (`ecn_map.at()` が `std::out_of_range`) → エントリ破棄。
+
+| 値 | SAI マッピング | マーキング対象色 | evidence |
+|---|---|---|---|
+| `ecn_none` (**既定**) | `SAI_ECN_MARK_MODE_NONE` | なし。ECN マーキング全無効 | `qosorch.cpp:37`, YANG:128 |
+| `ecn_green` | `SAI_ECN_MARK_MODE_GREEN` | Green のみ。Yellow/Red は WRED drop のみ | `qosorch.cpp:38`, YANG |
+| `ecn_yellow` | `SAI_ECN_MARK_MODE_YELLOW` | Yellow のみ。Green/Red は WRED drop のみ | `qosorch.cpp:39`, YANG |
+| `ecn_red` | `SAI_ECN_MARK_MODE_RED` | Red のみ。Green/Yellow は WRED drop のみ | `qosorch.cpp:40`, YANG |
+| `ecn_green_yellow` | `SAI_ECN_MARK_MODE_GREEN_YELLOW` | Green + Yellow。Red は WRED drop のみ | `qosorch.cpp:41`, YANG |
+| `ecn_green_red` | `SAI_ECN_MARK_MODE_GREEN_RED` | Green + Red。Yellow は WRED drop のみ | `qosorch.cpp:42`, YANG |
+| `ecn_yellow_red` | `SAI_ECN_MARK_MODE_YELLOW_RED` | Yellow + Red。Green は WRED drop のみ | `qosorch.cpp:43`, YANG |
+| `ecn_all` | `SAI_ECN_MARK_MODE_ALL` | 全色 (Green + Yellow + Red) ECN マーキング有効 | `qosorch.cpp:44`, YANG:123 |
+
+!!! note "ロスレス運用"
+    RoCE / ロスレストラフィックでは `ecn_all` + `wred_*_enable=true` が典型設定。`ecn_none` では ECN 通知が発生しないためロスレス保証ができない。
+
+### 複合条件
+
+1. `ecn_none` + `wred_*_enable=true` — WRED drop は発生するが ECN マーキングなし。ベストエフォートの確率的 drop のみ。
+2. `ecn_all` + `wred_*_enable=false` — ECN モードは設定されるが WRED 閾値に到達しない。実質 ECN 無効と同じ。
+3. `ecn_green` + `wred_yellow_enable=true` — Yellow パケットは確率的に drop されるが ECN マーキングなし。Green パケットのみ ECN 通知。
+4. **threshold 2 フェーズ適用**: 閾値変更時に「現在 min > 新 max」または「現在 max < 新 min」の属性は deferred リストに退避して後回し。`ecn` 変更と閾値変更が同時の場合、適用順序が通常と異なる (`qosorch.cpp:WredMapHandler`)。
+
+### 値別 grep カバレッジ
+
+| 値 | hit 数 | 証跡 |
+|---|---|---|
+| ecn_none | 3 | qosorch.cpp:37, yang(enum), yang(default) |
+| ecn_green | 2 | qosorch.cpp:38, yang |
+| ecn_yellow | 2 | qosorch.cpp:39, yang |
+| ecn_red | 2 | qosorch.cpp:40, yang |
+| ecn_green_yellow | 2 | qosorch.cpp:41, yang |
+| ecn_green_red | 2 | qosorch.cpp:42, yang |
+| ecn_yellow_red | 2 | qosorch.cpp:43, yang |
+| ecn_all | 2 | qosorch.cpp:44, yang:123 |
+
+全 8 値 hit。0 hit なし。
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
