@@ -32,12 +32,56 @@ issue のラベルにより、以下のサブタイプに分岐する。
      - `deprecated`: 本 HLD の方針は採用されず、後発の別機能（後継 HLD / FRR 機能等）に置き換えられた
      - 判定優先度: `deprecated` > `not_implemented` > `partially_implemented` > `evolved_beyond_hld`。詳細は `meta/templates/SCHEMA.md` の "monitor の意味" 節を参照
 5. 関連する CONFIG_DB テーブル / CLI コマンド / YANG モジュールを `related.*` に列挙
+   - **opt-out マーカー 4 種** (`_no_related` / `_no_related_yang` / `_no_related_cli` / `_no_related_config_db`) を `related:` 配下に置くと該当 lint が抑止される。**設計として埋まる余地が無いページに限定**して使うこと（Reference index / glossary / 404 / SAI 内部レイヤなど）。詳細は `meta/templates/SCHEMA.md` の「related の opt-out マーカー」節を参照
 6. 図は **mermaid**。スクリーンショット・PNG は使わない
    - HLD 側に PNG 参照（例: `images/foo.png`）が含まれる場合、画像をそのままコピー・参照しない。図の意味を読み取り **mermaid（フローチャート / シーケンス / 状態遷移）で再描画**する
    - mermaid 化が冗長になる場合（テキストと表だけで十分な場合）は無理に図を作らない。**読み手の理解に貢献する場合のみ**作図する
+   - **mermaid 構文ルール**（`meta/scripts/check_mermaid_syntax.py` で機械検査）:
+     - flowchart のラベル `[label]` 内に裸の `(`, `)`, `|`, `/`, `<`, `>`, `&` を入れない（必要なら `["label (note)"]` のように quote する）
+     - `subgraph TITLE` の TITLE に特殊文字を含めない
+     - 方向指定は `LR` / `RL` / `TB` / `TD` / `BT` のみ。typo すると build が落ちる
+     - 自動修正は `meta/scripts/fix_mermaid_syntax.py` で可能（ただし最終的に PR には人の目で確認した結果のみ含める）
 7. 文体はである調・敬体禁止。専門用語は原語のまま（必要なら括弧で日本語訳）
 8. **タイトル二段運用**: frontmatter の `title` は日本語で短く意味重視（例: 「BGP unnumbered ピアリング」）。一方ファイル slug は backlog 由来で英語のままで良い（例: `bgp-unnumbered.md`）。両者は無理に揃えなくて良い
    - **slug が backlog 由来で意味不明・冗長な場合（例: `smart-switch-gnmi-feedback-design-omit-in-toc`）、`title` は Writer が自由にリネームしてよい**
+
+## 必須 H2 セクション（lint で機械検査）
+
+ページ種別に応じて以下の H2 が必須。`mkdocs build --strict` の前に該当 lint を走らせて確認すること。
+
+### HLD 系（`docs/<area>/*.md` の area が `routing` / `switching` / `overlay` / `acl-qos` / `system` / `management` / `platform` / `architecture`、100 行以上、`verification` が `code-verified` または `discrepancy-found`）
+
+- `## 制限事項` （または `## Limitations` / `## 制限` / `## 既知の制限`）
+  - 検査: `meta/scripts/check_limitations_section.py --check`
+- `## 確認コマンド` （または `## トラブルシュート` / `## トラブルシューティング` / `## Troubleshooting` / `## 動作確認`）
+  - セクション本文に **3 行以上の非空行 + 1 個以上のコードブロック** を含むこと（内容充実度）
+  - 検査: `meta/scripts/check_troubleshoot_section.py --check`
+
+### Runbook 系（`docs/reference/runbooks/*.md`、`verification: runbook-verified`）
+
+以下 **5 節** がすべて必須:
+
+1. `## 症状`
+2. `## 切り分け` / `## 切り分けフロー` / `## 切り分け手順` のいずれか
+3. `## 確認コマンド` / `## コマンド` / `## 確認` のいずれか（または切り分け節配下に bash 系コードブロックが 1 つ以上）
+4. `## よくある原因` / `## 原因` / `## 想定原因` / `## 想定原因（優先度順）` のいずれか
+5. `## 関連` / `## 関連ページ` / `## 関連 reference` / `## 関連 reference / topics` のいずれか
+
+検査: `meta/scripts/check_runbook_structure.py --check`
+
+### `discrepancy-found` 系の追加要件
+
+- `monitor: evolved_beyond_hld` のページは **`!!! diff "HLD と実装の差分"` admonition** で「実装との乖離」セクションを包む（`meta/scripts/inject_diff_admonition.py` で自動 wrap 可能）。または `## 制限事項` で差分を扱う。検査: `meta/scripts/check_evolved_6c.py`
+- `monitor: partially_implemented` のページは本文に「実装済 / 未実装 境界明示」が必要（推奨形はフェーズ別境界表 `| Phase | 実装済 | 未実装 |`）。検査: `meta/scripts/check_partial_boundary.py`
+- `monitor: not_implemented` は「未実装である旨の明示」+「代替手段の有無の明示」が前提条件。詳細は `meta/quality-audit-guide.md` §5.4
+- `monitor: deprecated` は代替機能への内部リンクが本文必須
+
+## last_verified の更新ポリシー
+
+- 新規 Writer: ページを書いた **当日** の日付（`YYYY-MM-DD`）
+- 更新（既存ページの追記・修正）: 編集を行った **当日** の日付に更新
+- Verifier の昇格 PR では Verifier が当日に更新する（Writer は触らない）
+- 90 日以上経過した `last_verified` は `meta/scripts/check_stale_verified.py` で informational に検出される（Verifier の再裏取りトリガ）
 
 ## PR 本文に書くこと
 

@@ -23,9 +23,18 @@ merge 済みのページについて、実コードを読んで裏取りを行�
    - 完全に一致: ページ frontmatter の `verification: code-verified`、`last_verified` を更新。対応する `meta/queue/<area>-<slug>.json` を **削除**（裏取り済みのため）するか、`verified_concerns` に確認済み懸念を移して `concerns` を空にする
    - 齟齬あり: `verification: discrepancy-found`、本文に注記、必要なら別 issue を起票。per-page ファイルの `concerns` を更新
    - **`discrepancy-found` を付ける場合は frontmatter に `monitor:` タグを必ず追加する**（`not_implemented` / `evolved_beyond_hld` / `partially_implemented` / `deprecated` のいずれか、SCHEMA.md 参照）。判定優先度は `deprecated` > `not_implemented` > `partially_implemented` > `evolved_beyond_hld`
-   - **`monitor` の subtype 別評価基準** は [`meta/quality-audit-guide.md` §5](../quality-audit-guide.md#5-discrepancy-found-subtype-別評価基準) に従う。とくに `partially_implemented` は本文に「実装済 / 未実装 境界明示」（推奨形はフェーズ別境界表 `| Phase | 実装済 | 未実装 |`）が必要で `meta/scripts/check_partial_boundary.py` で機械検査される。`evolved_beyond_hld` は HLD と実装の差分（旧 → 新 rename 表など）が必要
-5. `.venv/bin/python3 meta/scripts/aggregate_queue.py` を実行して集約ビューを再生成し、PR に含める
-6. `.venv/bin/python3 meta/scripts/frontmatter_lint.py` を走らせて enum 違反が出ないことを確認する
+   - **`monitor` の subtype 別評価基準** は [`meta/quality-audit-guide.md` §5](../quality-audit-guide.md#5-discrepancy-found-subtype-別評価基準) に従う。とくに次の機械検査が PR 通過の前提:
+     - `partially_implemented`: 本文に「実装済 / 未実装 境界明示」（推奨形はフェーズ別境界表 `| Phase | 実装済 | 未実装 |`）が必要 → `meta/scripts/check_partial_boundary.py`
+     - `evolved_beyond_hld`: 「実装との乖離」セクションが `!!! diff "HLD と実装の差分"` admonition で包まれていること（自動化: `meta/scripts/inject_diff_admonition.py`）、または `## 制限事項` + `!!! diff` で差分を扱うこと → `meta/scripts/check_evolved_6c.py`
+     - `not_implemented`: 「未実装である旨の明示」+「代替手段の有無の明示」の 2 点が本文に含まれること（§5.4 確定ルール）
+     - `deprecated`: 代替機能への内部リンクが本文必須
+5. **`last_verified` を当日の日付に更新する**。状態に変化なし（再裏取りで同じ結論）の場合でも `last_verified` だけは必ず更新する。`sources[].ref` も最新の master HEAD SHA に取り直す
+6. `.venv/bin/python3 meta/scripts/aggregate_queue.py` を実行して集約ビューを再生成し、PR に含める
+7. 以下の lint を順に走らせて pass を確認する:
+   - `.venv/bin/python3 meta/scripts/frontmatter_lint.py`（enum 違反 / opt-out マーカーの誤用）
+   - `.venv/bin/python3 meta/scripts/check_mermaid_syntax.py --check`（mermaid 構文）
+   - 該当する場合: `check_partial_boundary.py` / `check_evolved_6c.py` / `check_limitations_section.py` / `check_troubleshoot_section.py` / `check_runbook_structure.py`
+   - `cd "$WT" && ./.venv/bin/mkdocs build --strict`
 
 ## 出力
 
