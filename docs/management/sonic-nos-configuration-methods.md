@@ -165,6 +165,35 @@ flowchart LR
 
     本ページの monitor は `partially_implemented`。HLD は SONiC NOS の設定手段を 10 種類に整理する設計提案で、現行 master では中核となる `sonic-cfggen` / `config_db.json` / `redis-cli` / `vtysh` / RESTCONF / gNMI は実装されているが、`apply-patch` の checkpoint / rollback や ZTP boot failure リカバリ、入口横断の validation などは段階的取り込みで一部のみ。HLD の表は分類軸として有用だが、各入口の最新挙動は個別の `sonic-utilities` / `sonic-mgmt-framework` 実装で裏取りすること。
 
+## 既知の問題
+
+### `config load_minigraph` 失敗後に ConfigDB がロックされる（#145）
+
+`config load_minigraph` の実行中に失敗（例: minigraph の hostname 不整合）すると、ConfigDB が空のままロック状態になり、その後の `config load_minigraph` が無限ハングするケースがある。
+
+**回避策:**
+
+```bash
+# ConfigDB の初期化フラグを手動で設定
+redis-cli -n 4 SET CONFIG_DB_INITIALIZED true
+# その後 config load_minigraph を再実行
+```
+
+**根本原因の予防:** minigraph.xml 内の hostname は **全箇所で一致**させる必要がある。1 箇所だけ変更するとパース時に `KeyError` が発生する。
+
+- 参照: [sonic-net/SONiC#145](https://github.com/sonic-net/SONiC/issues/145)
+
+### klish ベース `sonic-cli` の `/tmp/klish.fifo` エラー（#781）
+
+klish を使用する `sonic-cli` で設定コマンド実行時に `/tmp/klish.fifo` 関連のエラーが発生するケースがある。Python 2/3 混在環境でのスクリプトエンコーディング問題が原因の一つとして特定されている（buildimage#8506 で追跡中）。master でも未解決の場合あり。
+
+```
+sonic-switch(conf-if-EthernetX)# description test
+/tmp/klish.fifo.XXXXX: 1: /tmp/klish.fifo...: Syntax error
+```
+
+- 参照: [sonic-net/SONiC#781](https://github.com/sonic-net/SONiC/issues/781)
+
 ## 制限事項
 
 - vtysh の変更は永続化されない（CONFIG_DB / FRR テンプレート転記が必要）[^1]

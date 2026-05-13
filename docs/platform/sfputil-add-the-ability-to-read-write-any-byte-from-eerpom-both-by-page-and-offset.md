@@ -89,6 +89,28 @@ sfputil read-eeprom -p Ethernet0 -n 1 -o 0   -s 1  # invalid (page 1 では offs
 - それ以外のエラーは read/write 失敗として扱う
 - RJ45 ポートは対象外[^1]
 
+## 既知の問題
+
+### Mellanox スイッチで非 Mellanox 光トランシーバーが PLUGGED-ERR 状態になる（#265）
+
+Mellanox スイッチに非 Mellanox ブランドの光トランシーバーを接続すると `PLUGGED-ERR` 状態になり、リンクが確立しない場合がある。`mlxlink` コマンドで確認すると以下のような出力が得られる:
+
+```
+Recommendation: The cable is not supported.
+```
+
+これは Mellanox スイッチのファームウェアがベンダーロック（特定ブランドの光モジュールのみ許可）を実装している場合に発生する。
+
+**解決策:** Mellanox サポートに連絡し、ベンダー制限を解除したファームウェアを取得する（非公開ファームウェア。サポート契約が必要）。ONYX 時代は `fae cable-stamping-unlock` コマンドが存在したが、SONiC での同等コマンドは未実装。
+
+```bash
+# トランシーバーの状態確認
+mlxlink -d /dev/mst/mt<device>_pci_cr0 -p <port_number>
+show interfaces transceiver eeprom Ethernet<N>
+```
+
+- 参照: [sonic-net/SONiC#265](https://github.com/sonic-net/SONiC/issues/265)
+
 ## 制限事項
 
 - vendor の platform API 実装が前提。未実装 vendor では `NotImplementedError`[^1]

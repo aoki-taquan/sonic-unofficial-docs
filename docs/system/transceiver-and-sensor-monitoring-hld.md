@@ -157,6 +157,16 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - polling interval 60s は妥当性検証済みではない
 - error bitmap は high temperature / bad cable などで「block を意味するか単なる warning か」は HLD では明記されない
 
+## 既知の問題
+
+### thermalctld のトランシーバー温度二重ポーリング（修正済み）
+
+`thermalctld` が xcvrd 経由で Redis (`TRANSCEIVER_DOM_SENSOR`) に公開済みのトランシーバー温度・閾値データを、さらに I2C 経由で直接読み直す二重ポーリングが実装されていた。これにより不要な I2C アクセスが発生しパフォーマンスを低下させていた。
+
+- `sonic-platform-daemons` PR#808 にて `TemperatureUpdater` から SFP 列挙と Redis 経由トランシーバー温度読み取りを削除し修正済み
+- `show platform temperature` コマンドへの影響はなし（xcvrd 側が引き続きデータを公開するため）
+- 参照: [sonic-net/SONiC#2240](https://github.com/sonic-net/SONiC/issues/2240)
+
 ## 干渉する機能
 
 - **Port auto FEC / Port link training**: speed / lane と DOM フィールド構成の対応

@@ -91,6 +91,22 @@ config vlan dhcp_relay add 1000 10.1.0.2
 show dhcp_relay ipv4
 ```
 
+## 既知の問題
+
+### Option 82 の circuit-id に物理ポート名を記録できない（#57）
+
+SONiC の DHCP relay は VLAN インターフェース上でパケットを受信するため、ISC `dhcrelay` の Option 82 circuit-id には **VLAN インターフェース名が記録される**（物理ポート名ではない）。
+
+isc-dhcp-relay では受信インターフェース名を circuit-id に利用するが、VLAN インターフェースに IP が割り当てられている場合、物理ポート（メンバーポート）を特定する手段がない。メンバーポートには IP アドレスがないため `dhcrelay` がパケットを破棄してしまう。
+
+```
+dhcrelay: Discarding packet received on EthernetX interface that has no IPv4 address assigned.
+```
+
+この制約は isc-dhcp-relay の実装上の制限であり、SONiC 固有の問題ではない。物理ポート名を circuit-id に含める要件がある場合は `dhcrelay` のパッチまたは代替 relay 実装が必要。
+
+- 参照: [sonic-net/SONiC#57](https://github.com/sonic-net/SONiC/issues/57)
+
 ## 制限事項
 
 - **broadcast 起点のみ**: client が unicast で server を直叩きする経路は relay 対象外

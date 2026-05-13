@@ -113,6 +113,14 @@ dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC�
 
 `fast-reboot` コマンドで起動。`--use-config <path>` などのオプションは HLD で個別言及なし。
 
+## 既知の問題
+
+### fast reboot 後に ARP エントリが Linux カーネルに復元されない（#192）
+
+fast reboot 完了後、以前学習していた ARP エントリが Linux カーネルに復元されないケースが報告されている。`neighsyncd` の `restore_neighbors.py` が ARP テーブルを Redis から復元するフローの問題と考えられる。restore 処理の完了を待たずに通信を試みた場合も同様の症状が出ることがある。
+
+- 参照: [sonic-net/SONiC#192](https://github.com/sonic-net/SONiC/issues/192)
+
 ## 制限事項
 
 - **dataplane <30s / control plane <90s** はターゲット値。実測は platform 依存

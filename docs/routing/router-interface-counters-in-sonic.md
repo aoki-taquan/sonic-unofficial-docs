@@ -215,6 +215,40 @@ redis-cli -n 2 keys 'COUNTERS:oid:0x6*' | head
 - ASIC が per-RIF counter を持たない platform では本機能は no-op となり、`show interfaces counters rif` が常に 0 になる。
 - multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。
 
+## 既知の問題
+
+### IP アドレス削除・再追加後に RIF カウンターが機能しない（#729）
+
+ルーターインターフェースの IP アドレスを削除してから再追加した場合、`show interfaces counters rif` の対象カウンターが正常に動作しなくなるケースが報告されている。
+
+原因: IP アドレス削除時に `FLEX_COUNTER_TABLE` と `COUNTERS` テーブルの ObjectId に不整合が生じる。
+
+**影響バージョン**: 201911（master / 202012 では修正済み）
+
+**回避策（201911 限定）:**
+
+```bash
+# RIF ポーリング間隔を 1 秒超に設定し、設定後インターバル経過後にクエリする
+counterpoll rif interval 3000
+```
+
+- 参照: [sonic-net/SONiC#729](https://github.com/sonic-net/SONiC/issues/729)
+
+### VLAN サブインターフェース（dot1q tagged）での ARP 学習問題（#109）
+
+Mellanox プラットフォームで VLAN サブインターフェース（dot1q tagged）を使用した場合、ARP が学習されないケースが報告されている。L3 VLAN インターフェースが ASIC に正しく同期されていないことが原因と考えられる。
+
+**デバッグ方法:**
+
+```bash
+# VLAN と物理インターフェースの ASIC レベルマッピング確認（Broadcom）
+bcmcmd 'l2 show'
+# orchagent ログのエラー確認
+grep -i error /var/log/swss/sairedis.rec | tail -20
+```
+
+- 参照: [sonic-net/SONiC#109](https://github.com/sonic-net/SONiC/issues/109)
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/rif-counters/RIF_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

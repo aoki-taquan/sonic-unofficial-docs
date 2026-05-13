@@ -81,6 +81,19 @@ flowchart LR
 - **graceful restart 互換**: GR / GR-helper の動作が version で微妙に変わる。warm reboot との相性に直撃する
 - **管理 VRF / unnumbered / bfd**: SONiC でよく使われる feature の互換性確認は手厚く
 
+## 既知の制約
+
+### FRR アップグレードの担当者制度と調整プロセス（#1565）
+
+SONiC での FRR アップグレードには、以下の合意済みプロセスがある（[sonic-net/SONiC#1438](https://github.com/sonic-net/SONiC/issues/1438) で規定）:
+
+- FRR アップグレードは **リリースサイクルごとに担当ベンダーが持ち回り**で実施
+- バージョン選定: SONiC の preferred バージョン (x.y.z) に合わせる
+- 担当外のベンダーが独自バージョンを提案する場合は、担当ベンダーと事前調整が必要
+- **C++ 標準**: FRR 周辺のビルド（`sonic-swss-common`、`sonic-swss`、`sonic-sairedis`）は C++14 を維持。C++17/20 は依存ライブラリの強制が発生しない限り採用しない方針（#2169 での方針確認）
+
+- 参照: [sonic-net/SONiC#1565](https://github.com/sonic-net/SONiC/issues/1565)
+
 ## 干渉する機能
 
 - **[bgpcfgd](../reference/glossary.md#term-bgpcfgd) / [fpmsyncd](../reference/glossary.md#term-fpmsyncd) / frrcfgd / new-frr-sonic-communication-channel**: FRR と SONiC を繋ぐ周辺コード

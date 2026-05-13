@@ -231,6 +231,28 @@ sudo config switchport mode trunk PortChannel1 10 20-22
 sudo config switchport mode routed Ethernet0
 ```
 
+## 既知の問題
+
+### PortChannel を VLAN メンバーに追加する際のコマンド（#340）
+
+PortChannel を VLAN のメンバーに追加する場合、PortChannel のメンバーポートを個別に VLAN に追加しようとしてはならない。メンバーポートは PortChannel から切り離されてしまう。正しい手順は PortChannel 自体を VLAN メンバーとして追加する:
+
+```bash
+# 正しい: PortChannel 自体を VLAN に追加（大文字小文字に注意）
+sudo config vlan member add 100 PortChannel001
+
+# 誤り: メンバーポートを直接 VLAN に追加（PortChannel から切り離される）
+# sudo config vlan member add 100 Ethernet0  # ← NG（Ethernet0 が PortChannel001 のメンバーの場合）
+```
+
+- 参照: [sonic-net/SONiC#340](https://github.com/sonic-net/SONiC/issues/340)
+
+### `config vlan member add` が `VLAN_TABLE|members` にも書き込む（#323）
+
+`config vlan member add` コマンドは `VLAN_MEMBER_TABLE`（正規のテーブル）に加えて、後方互換用の `VLAN_TABLE|members@` フィールドにも書き込む。タグ付きメンバーとして追加したつもりでも、このフィールドには影響する。sonic-utilities PR#768 で修正済み（古いバージョンではバグが残存する可能性あり）。
+
+- 参照: [sonic-net/SONiC#323](https://github.com/sonic-net/SONiC/issues/323)
+
 ## 制限事項
 
 - **モード切替は VLAN 整合が前提**: `routed` に戻すには既存 VLAN メンバを先に外す必要がある（[HLD](../reference/glossary.md#term-hld) 例参照）[^1]。

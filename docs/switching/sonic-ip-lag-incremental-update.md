@@ -141,6 +141,43 @@ config interface PortChannel0001 add ip 10.0.0.2/31
 config interface PortChannel0001 mtu 9216
 ```
 
+## 既知の問題
+
+### teamd が netdev 再作成後に LAG を再構築できない（#40）
+
+`swss` / `teamd` Docker の再起動後、`teamd` が LAG (PortChannel) を再作成できないケースがある。`teamsyncd` が Docker 再起動時にクラッシュする別問題も報告されている。
+
+**回避策:** `--no-ports` オプション（ポートなしで起動）を使用して teamd を起動し、後から `teamdctl` でポートを追加:
+
+```bash
+teamd -d -r -f /etc/sonic/teamd/PortChannel1.conf --no-ports
+teamdctl PortChannel1 port add Ethernet0
+teamdctl PortChannel1 port add Ethernet4
+```
+
+- 参照: [sonic-net/SONiC#40](https://github.com/sonic-net/SONiC/issues/40)
+
+### PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）
+
+PortChannel のメンバーポートの一つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、ARP エントリが不完全状態（flags = 0x0）になり通信ができなくなる。
+
+**デバッグ方法:**
+
+```bash
+# 各 Ethernet ポートの MAC アドレスを確認（全て同一が正常）
+ip link show | grep -A1 Ethernet | grep link/ether
+# または
+teamdctl PortChannel1 state dump | grep dev_addr
+```
+
+**暫定回避策:** 静的 ARP エントリを手動追加:
+
+```bash
+sudo arp -s <peer_IP> <peer_MAC_addr>
+```
+
+- 参照: [sonic-net/SONiC#87](https://github.com/sonic-net/SONiC/issues/87)
+
 ## 制限事項
 
 - conflicting configuration は未対応（前項）
