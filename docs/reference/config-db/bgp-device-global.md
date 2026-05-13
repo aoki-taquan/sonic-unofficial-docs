@@ -93,6 +93,37 @@ BGP_DEVICE_GLOBAL|CONFED
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:67L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `idf_isolation_state` (enum) — `BGP_DEVICE_GLOBAL|STATE`
+
+| 値 | FRR ルートマップ効果 | evidence |
+|---|---|---|
+| `unisolated` (既定) | `idf_unisolate.conf.j2` を適用。`CHECK_IDF_ISOLATION` ルートマップは標準状態 | `managers_device_global.py:IDF_DEFAULTS; idf_unisolate.conf.j2` |
+| `isolated_no_export` | `idf_isolate.conf.j2` 適用。`route-map CHECK_IDF_ISOLATION permit 10` に `set community no-export additive` を追加 | `idf_isolate.conf.j2:17` |
+| `isolated_withdraw_all` | `idf_isolate.conf.j2` 適用。`route-map CHECK_IDF_ISOLATION deny 4` を追加し残 prefix をすべてドロップ | `idf_isolate.conf.j2:11` |
+
+### `tsa_enabled` (boolean) — `BGP_DEVICE_GLOBAL|STATE`
+
+| 値 | FRR ルートマップ効果 | evidence |
+|---|---|---|
+| `false` (既定) | `bgpd.tsa.unisolate.conf.j2` を適用。TSB 状態 (通常広告) | `managers_device_global.py:TSA_DEFAULTS` |
+| `true` | `bgpd.tsa.isolate.conf.j2` を適用。外部 BGP 隣接への route-map に `deny 40` を挿入し経路広告を停止 | `managers_device_global.py:isolate_unisolate_device` |
+
+### `wcmp_enabled` (boolean) — `BGP_DEVICE_GLOBAL|STATE`
+
+| 値 | FRR ルートマップ効果 | evidence |
+|---|---|---|
+| `false` (既定) | `TO_BGP_PEER_V4`/`V6` permit 100 に `no set extcommunity bandwidth` | `bgpd.wcmp.conf.j2:6` |
+| `true` | `TO_BGP_PEER_V4`/`V6` permit 100 に `set extcommunity bandwidth num-multipaths` | `bgpd.wcmp.conf.j2:5` |
+
+### 複合条件
+
+- `tsa_enabled=true` かつ chassis_tsa が `"true"` (chassis-level TSA) → 個別デバイスの TSA 操作をスキップ (chassis TSA 優先) (`managers_device_global.py:105-106`)
+- `idf_isolation_state=isolated_no_export` と `isolated_withdraw_all` の違い: `no_export` は AS 外への再広告のみ抑制、`withdraw_all` は deny 4 で隣接への送信そのものを遮断
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

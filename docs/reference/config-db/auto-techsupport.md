@@ -94,6 +94,35 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `state` (enum `enabled`/`disabled`) — `GLOBAL` キー
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| `enabled` | コアダンプ発生時に techsupport 起動パイプラインを実行する | `sonic-utilities/scripts/coredump_gen_handler.py:17` |
+| `disabled` | coredump_cleanup および auto_invoke_ts の両方をスキップ。syslog NOTICE を出力 | `coredump_gen_handler.py:17-18,47-48` |
+
+### `state` (enum `enabled`/`disabled`) — `AUTO_TECHSUPPORT_FEATURE` サブエントリ
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| `enabled` | 対象 feature (docker) のコアダンプで techsupport を起動 | `coredump_gen_handler.py:55` |
+| `disabled` | 対象 feature のコアダンプで techsupport 起動をスキップ | `coredump_gen_handler.py:55-56` |
+
+### フリーフォームフィールド
+
+- `rate_limit_interval` (uint16): `0` で rate-limit 無効、`>0` で N 秒以内の重複起動を抑制
+- `max_techsupport_limit` / `max_core_limit` (decimal64 0.0..99.99): 数値型。`techsupport_cleanup.py` が使用
+- `since` (string): 収集期間指定。freeform
+
+### 複合条件
+
+- `GLOBAL.state=disabled` → `AUTO_TECHSUPPORT_FEATURE` 各エントリの state に関係なくすべてスキップ (`coredump_gen_handler.py:17`)
+- `GLOBAL.state=enabled` かつ feature エントリ `state=disabled` → その feature のコアダンプのみスキップ
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

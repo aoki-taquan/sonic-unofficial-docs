@@ -137,6 +137,42 @@ ACL_RULE|<table_name>|<rule_name>
 <!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5520L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `PACKET_ACTION` (enum)
+
+| 値 | SAI マッピング | 効果 | evidence |
+|---|---|---|---|
+| `FORWARD` | `SAI_PACKET_ACTION_FORWARD` | パケットを通過させる | `aclorch.h:83,145` |
+| `DROP` | `SAI_PACKET_ACTION_DROP` | パケットをドロップ | `aclorch.h:84,146` |
+| `COPY` | `SAI_PACKET_ACTION_COPY` | パケットを CPU コピー後に続行 | `aclorch.h:85,147` |
+| `REDIRECT` | `SAI_PACKET_ACTION_REDIRECT` | 指定 next-hop / port へリダイレクト | `aclorch.h:86` |
+| `DO_NOT_NAT` | — | NAT 処理をバイパス | `aclorch.h:87` |
+| `DISABLE_TRIM` | — | バッファ trim を無効化 | `aclorch.h:88` |
+
+### `IP_TYPE` (match enum)
+
+| 値 | SAI マッピング | 意味 | evidence |
+|---|---|---|---|
+| `ANY` | `SAI_ACL_IP_TYPE_ANY` | IP/非IP 問わず全パケット | `aclorch.cpp:503` |
+| `IP` | `SAI_ACL_IP_TYPE_IP` | IPv4/IPv6 どちらかのパケット | `aclorch.cpp:504` |
+| `NON_IP` | `SAI_ACL_IP_TYPE_NON_IP` | 非 IP パケット | `aclorch.cpp:505` |
+| `IPV4ANY` | `SAI_ACL_IP_TYPE_IPV4ANY` | IPv4 パケット | `aclorch.cpp:506` |
+| `NON_IPV4` | `SAI_ACL_IP_TYPE_NON_IPV4` | 非 IPv4 パケット | `aclorch.cpp:507` |
+| `IPV6ANY` | `SAI_ACL_IP_TYPE_IPV6ANY` | IPv6 パケット | `aclorch.cpp:508` |
+| `NON_IPV6` | `SAI_ACL_IP_TYPE_NON_IPV6` | 非 IPv6 パケット | `aclorch.cpp:509` |
+| `ARP` | — | ARP パケット | `aclorch.h:105` |
+| `ARP_REQUEST` | — | ARP Request | `aclorch.h:106` |
+| `ARP_REPLY` | — | ARP Reply | `aclorch.h:107` |
+
+### 複合条件
+
+- `MATCH_TCP_FLAGS` あり、かつ `IP_PROTOCOL` 未指定 → `AclOrch` が自動的に `IP_PROTOCOL=6 (TCP)` を付与 (`aclorch.cpp`)
+- `IP_TYPE=IPV4ANY` と `SRC_IPV6` を同一ルールに混在させると `bAllAttributesOk=false`、rule が INACTIVE になる
+- `stage=INGRESS` テーブルでは `MIRROR_INGRESS_ACTION` が有効、`stage=EGRESS` テーブルでは `MIRROR_EGRESS_ACTION` のみ有効 (`aclorch.cpp:263-291`)
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

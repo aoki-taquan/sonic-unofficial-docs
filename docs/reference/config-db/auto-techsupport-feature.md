@@ -86,6 +86,27 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 <!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:118L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `state` (enum `enabled`/`disabled`)
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| `enabled` | この feature のコアダンプ発生時に `invoke_ts_command_rate_limited` を呼び出し techsupport を起動 | `sonic-utilities/scripts/coredump_gen_handler.py:55` |
+| `disabled` | techsupport 起動をスキップ。syslog NOTICE を出力して終了 | `sonic-utilities/scripts/coredump_gen_handler.py:55-56` |
+
+### フリーフォームフィールド
+
+- `rate_limit_interval` (uint16): `0` で無効化、`>0` で連続起動を抑制 (秒数)
+- `available_mem_threshold` (decimal 0.0..99.99): `0.0` でメモリチェック無効
+
+### 複合条件
+
+- `AUTO_TECHSUPPORT|GLOBAL` の `state=disabled` の場合、本 feature エントリの `state` に関わらず全機能停止 (`coredump_gen_handler.py:17`)
+- `state=enabled` でも、`AUTO_TECHSUPPORT|GLOBAL.available_mem_threshold` と本エントリの `available_mem_threshold` が両方評価される
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

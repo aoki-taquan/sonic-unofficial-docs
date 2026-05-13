@@ -89,6 +89,55 @@ AAA|<type>
 <!-- evidence: sonic-net/sonic-host-services/scripts/hostcfgd:419L -->
 <!-- /cdb-exceptions -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `type` (enum — key フィールド)
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| `authentication` | PAM `common-auth-sonic.j2` を再生成して `/etc/pam.d/common-auth`, `/etc/issue` 等を更新。YANG must 制約で `login` に `tacacs+` を含む場合 `TACPLUS.global.passkey` が必須 | `sonic-system-aaa.yang:must` |
+| `authorization` | `tacplus_nss.conf.j2` を生成して `nss` 設定を更新。`login` は `tacacs+` / `local` のみ有効 | `sonic-host-services/scripts/hostcfgd:2443` |
+| `accounting` | アカウンティング設定を `tacplus_nss.conf.j2` に反映。`login` の `local_accounting` / `tacacs_accounting` で個別有効化 | `sonic-host-services/data/templates/tacplus_nss.conf.j2:13` |
+
+### `login` (string — 実質的な複合 enum)
+
+PAM テンプレート `common-auth-sonic.j2` が `login` 文字列に完全一致で分岐する:
+
+| 値 | PAM 生成挙動 | evidence |
+|---|---|---|
+| `local` | `pam_unix.so` のみ | `common-auth-sonic.j2:12` |
+| `tacacs+` | TACACS+ サーバ全台 → root は local 強制 | `common-auth-sonic.j2:29` |
+| `tacacs+,local` | TACACS+ サーバ全台 → `pam_unix.so` | `common-auth-sonic.j2:29` |
+| `local,tacacs+` | `pam_unix.so` 先行 → TACACS+ サーバ残台数 | `common-auth-sonic.j2:15` |
+| `radius` | root を local 強制スキップ → RADIUS chain → deny → cache → local | `common-auth-sonic.j2:56` |
+| `radius,local` | root local skip → RADIUS chain → local | `common-auth-sonic.j2:44` |
+| `local,radius` | local → RADIUS chain → deny → cache | `common-auth-sonic.j2:32` |
+| `ldap` | `pam_ldap.so minimum_uid=1000` のみ | `common-auth-sonic.j2:84` |
+| `ldap,local` | `pam_ldap.so` → `pam_unix.so` | `common-auth-sonic.j2:82` |
+| `local,ldap` | `pam_unix.so` → `pam_ldap.so` | `common-auth-sonic.j2:83` |
+| (その他) | `pam_unix.so` にフォールバック | `common-auth-sonic.j2:87` |
+
+### `failthrough` (boolean)
+
+| 値 | 効果 | evidence |
+|---|---|---|
+| `false` (既定) | 各 PAM stanza に `auth_err=die` を付与。メソッドが REJECT すると即ログイン失敗 | `common-auth-sonic.j2:16` |
+| `true` | `auth_err=die` を付与しない。メソッドが REJECT しても次メソッドへ継続 | `common-auth-sonic.j2:16` |
+
+### `debug` / `trace` (boolean — RADIUS 専用)
+
+| フィールド | 値 | 効果 | evidence |
+|---|---|---|---|
+| `debug` | `true` | `pam_radius_auth.so` 引数に `debug` を追加 | `common-auth-sonic.j2:35` |
+| `trace` | `true` | `pam_radius_auth.so` 引数に `trace` を追加 | `common-auth-sonic.j2:35` |
+
+### 複合条件
+
+- `type=authentication` かつ `login` に `tacacs+` を含む → YANG must 制約が `TACPLUS.global.passkey` の存在を必須とする (`sonic-system-aaa.yang:must`)
+- `failthrough` は `login` のすべてのメソッドに横断適用される (TACACS+/RADIUS/LDAP 問わず同一フラグ)
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
