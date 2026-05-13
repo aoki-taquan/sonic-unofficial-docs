@@ -84,6 +84,17 @@ plugins:
       separator: '[\s\-、。・]+'
   - awesome-pages
   - tags
+  # SNS シェア時の OG image を自動生成する mkdocs-material の標準プラグイン。
+  # 既定では `enabled: false` にしている。理由:
+  #   * 実カード生成には `Pillow` と `cairosvg` (+ システム cairo) が必要で、
+  #     ローカル `mkdocs build --strict` 環境にこれらが無いと build が落ちる
+  #   * CI / deploy で社会的に出したいときは `SOCIAL=true mkdocs build` で
+  #     有効化する。GitHub Actions Ubuntu には libcairo がプリインストール
+  #     済みなので、`pip install "mkdocs-material[imaging]"` を追加するだけで動く
+  # site_url が設定済みなので、有効時は自動で <meta property="og:image"> が
+  # 各ページに挿入される。
+  - social:
+      enabled: !ENV [SOCIAL, false]
 
 extra_css:
   - stylesheets/extra.css
@@ -97,6 +108,13 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/aoki-taquan/sonic-unofficial-docs
+      name: GitHub リポジトリ
+    - icon: fontawesome/solid/bug
+      link: https://github.com/aoki-taquan/sonic-unofficial-docs/issues
+      name: Issue Tracker
+    - icon: fontawesome/solid/comments
+      link: https://github.com/aoki-taquan/sonic-unofficial-docs/discussions
+      name: Discussions
 
 # nav は awesome-pages プラグインが各ディレクトリの `.pages` を読んで自動生成する。
 # Writer は mkdocs.yml の nav を編集してはならない。並び順を変えたい場合は

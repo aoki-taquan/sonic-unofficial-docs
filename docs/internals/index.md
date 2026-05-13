@@ -6,6 +6,23 @@ verification: stub
 
 # 内部実装
 [Redis](../reference/glossary.md#term-redis)、SwSS、[orchagent](../reference/glossary.md#term-orchagent)、counter、P4Orch など実装内部の構造を扱う章。
+
+## この章の趣旨
+本章は機能ページから一段降りた「SONiC の中で何が起きているか」を扱う。具体的には Redis 多重 DB / namespace、SwSS の Producer/Consumer State Table、orchagent の bulk オペレーション、FlexCounter による統計収集、P4Orch / PINS 系の同期書き込み、debug / dump utility の内部、health-check の境界条件などを、当該の HLD と実コード (`sonic-swss-common`, `sonic-swss`, `sonic-sairedis`) を突き合わせて整理している。機能設計者が「この機能はどの SwSS 層に入るべきか」を決めるための足場としても使える。
+
+## 主要ページ
+- DB / スキーマ基礎: [swss-schema](swss-schema.md) / [複数 Redis インスタンスのユーザ定義](support-multiple-user-defined-redis-database-instances.md) / [Multi-ASIC 名前空間の Redis](support-redis-databases-in-multiple-namespaces.md)
+- SwSS の同期パイプライン: [ZMQ ProducerStateTable / ConsumerStateTable 設計](zmq-producer-consumer-state-table-design.md)
+- カウンタ / 統計基盤: [FlexCounter リファクタ](sonic-flexcounter-refactor.md) / [flex counter 初期化最適化](sonic-counter-initialization-optimization.md) / [VOQ カウンタ集約](aggregate-voq-counters-in-sonic.md) / [バイト/パケットレートとポート使用率](byte-packet-rates-port-utilization-in-sonic.md)
+- 制御プレーン拡張: [P4Orch](p4-orchagent.md)
+- 運用支援: [dump utility](dump-utility-for-easy-debugging.md) / [コンテナ health-check](why-need-health-check.md) / [L3 Scaling と Performance 強化](l3-scaling-and-performance-enhancements.md)
+
+## 扱わない範囲
+- ConfigDB / STATE_DB テーブル定義のリファレンス (列挙) は「[リファレンス](../reference/index.md)」章
+- 機能単位の orchagent 仕様 (PortsOrch / RouteOrch など) は対応する機能章 (スイッチング / ルーティング / プラットフォーム)
+- platform_api / sonic_platform 配下の Python クラス階層は「[プラットフォーム](../platform/index.md)」章
+- ビルドシステム / docker レイヤ構成は「[アーキテクチャ](../architecture/index.md)」章
+
 ## この章の読み方
 まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。
 ## 検証状況

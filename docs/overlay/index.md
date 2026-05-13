@@ -6,6 +6,22 @@ verification: stub
 
 # オーバーレイ
 [VXLAN](../reference/glossary.md#term-vxlan) / VNet、[DASH](../reference/glossary.md#term-dash)、Dual ToR、NVGRE など overlay と [SmartSwitch](../reference/glossary.md#term-smartswitch) 周辺を扱う章。
+
+## この章の趣旨
+SONiC の overlay 機能は「アンダーレイ L3 fabric 上に異なるテナント／障害ドメインを乗せる」「上位の SDN 制御プレーン (DASH / VNet) からデータプレーン (VxLAN / NVGRE / IPinIP) を駆動する」という 2 軸に整理できる。本章ではトンネル種別ごとの実装ファイル分担 (`vxlanorch` / `nvgreorch` / `vnetorch` / `dashorch`)、Dual ToR の active-active / active-standby 切替、SmartSwitch ENI / DPU forwarding に絞った設計を、`sonic-swss` と `sonic-dash-api` の現行コードに合わせて再構成している。
+
+## 主要ページ
+- 全体像から: [VXLAN / VNet 全体設計](vxlan-sonic.md) → [SONiC-DASH アーキテクチャ概観](sonic-dash-hld.md)
+- Dual ToR 系: [Active-Active Dual ToR](active-active-dual-tor.md) / [Active-Standby Dual ToR](active-standby-dual-tor.md) / [トンネルトラフィックの DSCP / TC リマップ](dscp-remapping-for-tunnel-traffic.md)
+- SmartSwitch / DPU 系: [SmartSwitch ENI Based Forwarding](smartswitch-eni-based-forwarding.md) / [VNET の Local Endpoint Forwarding](vnet-local-endpoint-forwarding.md) / [DASH SONiC KVM](dash-sonic-kvm.md)
+- 既存トンネル: [NVGRE トンネル](nvgre-tunnel-in-sonic.md)
+
+## 扱わない範囲
+- 純粋な L3 ルーティング / BGP / EVPN コントロールプレーンは「[ルーティング](../routing/index.md)」章。EVPN-VXLAN の FRR 連携や Type-2/Type-5 経路はそちらにある
+- MPLS / SRv6 などラベル / SID 系 underlay は「[ルーティング](../routing/index.md)」章
+- SAI / プラットフォームレイヤのトンネル能力 (recirculation port, fabric port) は「[プラットフォーム](../platform/index.md)」章
+- DPU / DASH のシステム/起動シーケンス (Smart Switch reboot / DPU upgrade) は「[システム](../system/index.md)」章
+
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
