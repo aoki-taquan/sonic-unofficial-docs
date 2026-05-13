@@ -160,6 +160,85 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 - [Glossary](../reference/glossary.md)
 - [Reference 索引](../reference/index.md)
 
+## 既知の問題
+
+### BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）
+
+BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォームでは、platform API で BMC インターフェースを使う設計が必要
+
+- 参照: [sonic-net/sonic-buildimage#633](https://github.com/sonic-net/sonic-buildimage/issues/633)
+
+
+### LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
+
+LLDP の portidsubtype が "locally assigned" ではなく "mac address" にセットされる問題。lldpd の設定で `configure lldp portidsubtype local` を明示指定することで回避可能
+
+- 参照: [sonic-net/sonic-buildimage#1457](https://github.com/sonic-net/sonic-buildimage/issues/1457)
+
+
+### ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
+
+ポートのステータス変更が SONiC に反映されない問題。xcvrd または portsyncd がポートの物理状態変更を正しく検知できていない場合に発生。`sudo systemctl restart pmon` で回復できることがある
+
+- 参照: [sonic-net/sonic-buildimage#4646](https://github.com/sonic-net/sonic-buildimage/issues/4646)
+
+
+### 最新ビルドで `show interface transceiver` コマンドが壊れている問題（sonic-buildimage#5001）
+
+最新ビルドで `show interface transceiver` コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5001](https://github.com/sonic-net/sonic-buildimage/issues/5001)
+
+
+### SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
+
+SNMP の ifMIB ifName が間違った値を返す問題。`show interfaces status` の表示名と SNMP の ifName が一致しない場合、インターフェース名のマッピングを確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5592](https://github.com/sonic-net/sonic-buildimage/issues/5592)
+
+
+### 最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
+
+最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバーと pmon の Python 3 互換性を確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5759](https://github.com/sonic-net/sonic-buildimage/issues/5759)
+
+
+### 最新 SONiC イメージで PMON コンテナがクラッシュする問題（sonic-buildimage#5986）
+
+最新 SONiC イメージで PMON コンテナがクラッシュする問題。プラットフォーム固有の Python プラグインが Python 3 に対応していない場合に発生
+
+- 参照: [sonic-net/sonic-buildimage#5986](https://github.com/sonic-net/sonic-buildimage/issues/5986)
+
+
+### multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）
+
+multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題。xcvrd は FrontEnd ASIC の存在を前提としており、全 BackEnd 構成では初期化に失敗する
+
+- 参照: [sonic-net/sonic-buildimage#6097](https://github.com/sonic-net/sonic-buildimage/issues/6097)
+
+
+### hwsku.json から FEC パラメータがデフォルト設定できない問題（sonic-buildimage#6495）
+
+hwsku.json から FEC パラメータがデフォルト設定できない問題。FEC の設定は `config interface fec` コマンドで明示的に行う必要がある
+
+- 参照: [sonic-net/sonic-buildimage#6495](https://github.com/sonic-net/sonic-buildimage/issues/6495)
+
+
+### DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題（sonic-buildimage#6499）
+
+DPB 実行後に xcvrd が新しいポートの SFP 情報を取得できない問題。DPB 実行後に xcvrd の再起動が必要な場合がある
+
+- 参照: [sonic-net/sonic-buildimage#6499](https://github.com/sonic-net/sonic-buildimage/issues/6499)
+
+
+### CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題（sonic-buildimage#6516）
+
+CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題。CMIS 4.0 対応の xcvrd バージョンが必要
+
+- 参照: [sonic-net/sonic-buildimage#6516](https://github.com/sonic-net/sonic-buildimage/issues/6516)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-enhancement-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

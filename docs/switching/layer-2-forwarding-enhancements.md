@@ -148,6 +148,12 @@ swssconfig /path/to/fdb.json
 
 - 参照: [sonic-net/SONiC#249](https://github.com/sonic-net/SONiC/issues/249)
 
+### FDB エントリのエージング設定が反映されない問題（sonic-buildimage#6002）
+
+FDB エントリのエージング設定が反映されない問題。`config mac aging_time` で設定した値が SAI レベルで正しく適用されていない場合がある
+
+- 参照: [sonic-net/sonic-buildimage#6002](https://github.com/sonic-net/sonic-buildimage/issues/6002)
+
 ## 制限事項
 
 - HLD は **2019 年改訂** で命名揺れあり（特に `SWITCH_TABLE` / `FDB` のキー区切り）

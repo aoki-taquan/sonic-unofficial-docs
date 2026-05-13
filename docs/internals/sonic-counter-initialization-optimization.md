@@ -146,6 +146,15 @@ sequenceDiagram
 - [Topic 20 SWSS/SAI/Redis - internals](../topics/20-swss-sai-redis/internals.md)
 - [Topic 09 Telemetry/SNMP - internals](../topics/09-telemetry-snmp/internals.md)
 
+## 既知の問題
+
+### PFC とキューカウンターが負の値を示す問題（sonic-buildimage#5206）
+
+PFC とキューカウンターが負の値を示す問題。カウンターのオーバーフローまたは初期化前の読み取りが原因。`sonic-clear` で初期化してから再度確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5206](https://github.com/sonic-net/sonic-buildimage/issues/5206)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/flex_counter/optimize-counter-initialization.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

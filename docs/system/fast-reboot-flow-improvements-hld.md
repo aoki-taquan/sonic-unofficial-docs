@@ -121,6 +121,208 @@ fast reboot 完了後、以前学習していた ARP エントリが Linux カ�
 
 - 参照: [sonic-net/SONiC#192](https://github.com/sonic-net/SONiC/issues/192)
 
+### ホストから `reboot` コマンドを実行するとスイッチがクラッシュする既知の問題（sonic-buildimage#389）
+
+ホストから `reboot` コマンドを実行するとスイッチがクラッシュする既知の問題。SONiC では `sudo reboot` または `sudo sonic-installer` 経由での再起動を使用すること
+
+- 参照: [sonic-net/sonic-buildimage#389](https://github.com/sonic-net/sonic-buildimage/issues/389)
+
+
+### supervisord の AssertionError: start.sh が RUNNING 状態でないと判断される（sonic-buildimage#762）
+
+supervisord の AssertionError: start.sh が RUNNING 状態でないと判断される問題。サービスの起動タイムアウト設定を確認し、supervisord.conf の startretries と startsecs を適切に設定すること
+
+- 参照: [sonic-net/sonic-buildimage#762](https://github.com/sonic-net/sonic-buildimage/issues/762)
+
+
+### dhcp_relay サービスが `systemctl stop swss` で停止するが、swss 再起動時に dhc（sonic-buildimage#2752）
+
+dhcp_relay サービスが `systemctl stop swss` で停止するが、swss 再起動時に dhcp_relay が自動的に再起動されない問題。手動で `systemctl restart dhcp_relay` が必要
+
+- 参照: [sonic-net/sonic-buildimage#2752](https://github.com/sonic-net/sonic-buildimage/issues/2752)
+
+
+### warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題（sonic-buildimage#3008）
+
+warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題。warm-reboot 前に Redis のビジー状態を確認すること
+
+- 参照: [sonic-net/sonic-buildimage#3008](https://github.com/sonic-net/sonic-buildimage/issues/3008)
+
+
+### config load 中に swss を複数回再起動するとサービス起動に失敗する問題（sonic-buildimage#3244）
+
+config load 中に swss を複数回再起動するとサービス起動に失敗する問題。手動での複数回 swss 再起動は避けること
+
+- 参照: [sonic-net/sonic-buildimage#3244](https://github.com/sonic-net/sonic-buildimage/issues/3244)
+
+
+### fast-reboot 高速化のため SNMP サービスの起動を遅延させる変更がある（sonic-buildimage#3453）
+
+fast-reboot 高速化のため SNMP サービスの起動を遅延させる変更がある。fast-reboot 直後の SNMP ポーリングが失敗する場合があるため、モニタリングシステムで再試行を実装すること
+
+- 参照: [sonic-net/sonic-buildimage#3453](https://github.com/sonic-net/sonic-buildimage/issues/3453)
+
+
+### config reload 時に teamd が 2 回再起動される問題（sonic-buildimage#3822）
+
+config reload 時に teamd が 2 回再起動される問題。PortChannel が一時的に Down 状態になる。config reload 実行中はトラフィックが中断されることを考慮すること
+
+- 参照: [sonic-net/sonic-buildimage#3822](https://github.com/sonic-net/sonic-buildimage/issues/3822)
+
+
+### warm-reboot と fast-reboot で syncd がクラッシュまたはハングする問題（sonic-buildimage#3934）
+
+warm-reboot と fast-reboot で syncd がクラッシュまたはハングする問題。T0 トポロジでの継続的なリブートテストで再現。syncd の warm-reboot ハンドラーのタイムアウト値を確認すること
+
+- 参照: [sonic-net/sonic-buildimage#3934](https://github.com/sonic-net/sonic-buildimage/issues/3934)
+
+
+### mgmt-framework サービスが 201911 ブランチで起動失敗する問題（sonic-buildimage#4291）
+
+mgmt-framework サービスが 201911 ブランチで起動失敗する問題。Python 3 移行後の依存パッケージ不足が原因の場合がある
+
+- 参照: [sonic-net/sonic-buildimage#4291](https://github.com/sonic-net/sonic-buildimage/issues/4291)
+
+
+### 201811 から 201911 への warm reboot が失敗する問題（sonic-buildimage#4399）
+
+201811 から 201911 への warm reboot が失敗する問題。直接接続ルートの処理に互換性のない変更があるため、バージョン間の warm reboot サポート状況を事前確認すること
+
+- 参照: [sonic-net/sonic-buildimage#4399](https://github.com/sonic-net/sonic-buildimage/issues/4399)
+
+
+### S6100 の T0/T1 トポロジで継続的 cold reboot 中に zebra がクラッシュする問題（sonic-buildimage#4429）
+
+S6100 の T0/T1 トポロジで継続的 cold reboot 中に zebra がクラッシュする問題。FRR の warm-restart との組み合わせで発生することが多い
+
+- 参照: [sonic-net/sonic-buildimage#4429](https://github.com/sonic-net/sonic-buildimage/issues/4429)
+
+
+### swss の warm-restart 後に CRM カウンターが異常値を示す問題（sonic-buildimage#4736）
+
+swss の warm-restart 後に CRM カウンターが異常値を示す問題。次の定期更新サイクルまで不正確な値を返すことがある
+
+- 参照: [sonic-net/sonic-buildimage#4736](https://github.com/sonic-net/sonic-buildimage/issues/4736)
+
+
+### fast-reboot 後に FDB エントリが復元されない問題（sonic-buildimage#5216）
+
+fast-reboot 後に FDB エントリが復元されない問題。FDB の再学習に時間がかかる場合がある。`show mac` で FDB 学習状況を監視すること
+
+- 参照: [sonic-net/sonic-buildimage#5216](https://github.com/sonic-net/sonic-buildimage/issues/5216)
+
+
+### fast-reboot 後に ARP エントリが復元されない問題（sonic-buildimage#5217）
+
+fast-reboot 後に ARP エントリが復元されない問題。ARP エントリの再学習はデフォルト ARP タイムアウトに依存する
+
+- 参照: [sonic-net/sonic-buildimage#5217](https://github.com/sonic-net/sonic-buildimage/issues/5217)
+
+
+### iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題（sonic-buildimage#5310）
+
+iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題。iccpd は MC-LAG 機能に必要なサービスで、docker-teamd コンテナ内で動作する
+
+- 参照: [sonic-net/sonic-buildimage#5310](https://github.com/sonic-net/sonic-buildimage/issues/5310)
+
+
+### warm-boot 実行中に断続的なエラーが発生する問題（sonic-buildimage#5439）
+
+warm-boot 実行中に断続的なエラーが発生する問題。`/var/log/warm-reboot` で確認し、失敗箇所を特定すること
+
+- 参照: [sonic-net/sonic-buildimage#5439](https://github.com/sonic-net/sonic-buildimage/issues/5439)
+
+
+### warm-reboot がコード 1 で中断される問題（sonic-buildimage#5487）
+
+warm-reboot がコード 1 で中断される問題。warm-reboot スクリプトの各ステージで `set -e` が有効なため、いずれかのサービス確認に失敗すると全体が中断する
+
+- 参照: [sonic-net/sonic-buildimage#5487](https://github.com/sonic-net/sonic-buildimage/issues/5487)
+
+
+### config reload が断続的に失敗する問題: `Job for swss.service canceled`（sonic-buildimage#5663）
+
+config reload が断続的に失敗する問題: `Job for swss.service canceled`。`journalctl -u swss` で詳細エラーを確認すること
+
+- 参照: [sonic-net/sonic-buildimage#5663](https://github.com/sonic-net/sonic-buildimage/issues/5663)
+
+
+### In-band ポートに DHCP アドレスを割り当てられない問題（sonic-buildimage#5732）
+
+In-band ポートに DHCP アドレスを割り当てられない問題。dhcp_relay が In-band インターフェースをサポートしていない制約
+
+- 参照: [sonic-net/sonic-buildimage#5732](https://github.com/sonic-net/sonic-buildimage/issues/5732)
+
+
+### config reload -y でカーネル Oops が発生する問題（sonic-buildimage#5857）
+
+config reload -y でカーネル Oops が発生する問題。特定のカーネルバージョンと config reload の組み合わせで、ネットワークドライバーが不正アクセスを起こす
+
+- 参照: [sonic-net/sonic-buildimage#5857](https://github.com/sonic-net/sonic-buildimage/issues/5857)
+
+
+### ブート時に `determine-reboot-cause` スクリプトが TypeError で失敗する問題（sonic-buildimage#6009）
+
+ブート時に `determine-reboot-cause` スクリプトが TypeError で失敗する問題。reboot-cause ファイルのフォーマットが新バージョンで変更された場合に発生
+
+- 参照: [sonic-net/sonic-buildimage#6009](https://github.com/sonic-net/sonic-buildimage/issues/6009)
+
+
+### DHCP relay が不正な DHCP クライアントパケットを DHCP サーバーに転送する問題（sonic-buildimage#6052）
+
+DHCP relay が不正な DHCP クライアントパケットを DHCP サーバーに転送する問題。クライアントの MAC アドレスと giaddr の整合性チェックが必要
+
+- 参照: [sonic-net/sonic-buildimage#6052](https://github.com/sonic-net/sonic-buildimage/issues/6052)
+
+
+### warm reboot 後の syncd APPLY_VIEW 失敗が orchagent クラッシュを引き起こす問題（sonic-buildimage#6069）
+
+warm reboot 後の syncd APPLY_VIEW 失敗が orchagent クラッシュを引き起こす問題。syncd の warm-reboot ビュー適用に失敗すると orchagent が接続できなくなる
+
+- 参照: [sonic-net/sonic-buildimage#6069](https://github.com/sonic-net/sonic-buildimage/issues/6069)
+
+
+### reboot 時に Arista の早期プラットフォーム初期化スクリプト起動が失敗する問題（sonic-buildimage#6138）
+
+reboot 時に Arista の早期プラットフォーム初期化スクリプト起動が失敗する問題。プラットフォーム固有の初期化スクリプトは `/etc/sonic/platform_env.conf` で設定すること
+
+- 参照: [sonic-net/sonic-buildimage#6138](https://github.com/sonic-net/sonic-buildimage/issues/6138)
+
+
+### 継続的な warm reboot 後に gearsyncd がクラッシュしコアが生成される問題（sonic-buildimage#6172）
+
+継続的な warm reboot 後に gearsyncd がクラッシュしコアが生成される問題
+
+- 参照: [sonic-net/sonic-buildimage#6172](https://github.com/sonic-net/sonic-buildimage/issues/6172)
+
+
+### warm reboot 中に IO エラーが発生しサーバーからのトラフィックドロップが発生する問題（sonic-buildimage#6240）
+
+warm reboot 中に IO エラーが発生しサーバーからのトラフィックドロップが発生する問題。warm reboot の移行時間を最小化し、サーバー側でも再送機構を有効化すること
+
+- 参照: [sonic-net/sonic-buildimage#6240](https://github.com/sonic-net/sonic-buildimage/issues/6240)
+
+
+### KVM での warm reboot 中に syncd が double-free-corruption でクラッシュす（sonic-buildimage#6466）
+
+KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題。仮想環境では warm-reboot の動作が物理環境と異なる場合がある
+
+- 参照: [sonic-net/sonic-buildimage#6466](https://github.com/sonic-net/sonic-buildimage/issues/6466)
+
+
+### KVM での warm reboot 中に syncd が仮想ルーター ID 取得時にクラッシュする問題（sonic-buildimage#6509）
+
+KVM での warm reboot 中に syncd が仮想ルーター ID 取得時にクラッシュする問題
+
+- 参照: [sonic-net/sonic-buildimage#6509](https://github.com/sonic-net/sonic-buildimage/issues/6509)
+
+
+### master→master warm reboot が pending tasks キューのため失敗する問題（sonic-buildimage#6569）
+
+master→master warm reboot が pending tasks キューのため失敗する問題。warm-reboot 前にキューのタスクが完了するのを待つか、タイムアウトを延長すること
+
+- 参照: [sonic-net/sonic-buildimage#6569](https://github.com/sonic-net/sonic-buildimage/issues/6569)
+
 ## 制限事項
 
 - **dataplane <30s / control plane <90s** はターゲット値。実測は platform 依存

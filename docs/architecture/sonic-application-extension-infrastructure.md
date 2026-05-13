@@ -165,6 +165,22 @@ systemctl list-units '*.service' | grep -i package
 - [Glossary](../reference/glossary.md)
 - [Reference 索引](../reference/index.md)
 
+## 既知の問題
+
+### テレメトリサービスが SONiC バージョンアップグレード後に停止する問題（sonic-buildimage#5955）
+
+テレメトリサービスが SONiC バージョンアップグレード後に停止する問題。gNMI サーバーの証明書やポート設定が新バージョンで変更されている場合がある
+
+- 参照: [sonic-net/sonic-buildimage#5955](https://github.com/sonic-net/sonic-buildimage/issues/5955)
+
+
+### yang-models ディレクトリからの YANG モデル取得のリクエスト（sonic-buildimage#6025）
+
+yang-models ディレクトリからの YANG モデル取得のリクエスト。sonic-mgmt-common の YANG モデルは `/usr/models/yang/` からも参照可能
+
+- 参照: [sonic-net/sonic-buildimage#6025](https://github.com/sonic-net/sonic-buildimage/issues/6025)
+
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extention-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

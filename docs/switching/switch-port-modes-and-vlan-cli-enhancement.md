@@ -253,6 +253,26 @@ sudo config vlan member add 100 PortChannel001
 
 - 参照: [sonic-net/SONiC#323](https://github.com/sonic-net/SONiC/issues/323)
 
+### VLAN からポートを削除すると、ポートがデフォルト VLAN に残る動作は設計上の制約（sonic-buildimage#2658）
+
+VLAN からポートを削除すると、ポートがデフォルト VLAN に残る動作は設計上の制約。ポートを完全に VLAN から切り離す場合は `config vlan member del` の後に適切なモード設定が必要
+
+- 参照: [sonic-net/sonic-buildimage#2658](https://github.com/sonic-net/sonic-buildimage/issues/2658)
+
+
+### VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent （sonic-buildimage#2684）
+
+VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent がコアダンプする既知の問題。VLAN メンバーから削除してからルーターIF設定を行うこと
+
+- 参照: [sonic-net/sonic-buildimage#2684](https://github.com/sonic-net/sonic-buildimage/issues/2684)
+
+
+### タグ付き VLAN メンバーに対して PVID が誤って設定される問題（sonic-buildimage#5928）
+
+タグ付き VLAN メンバーに対して PVID が誤って設定される問題。タグ付きポートに PVID を設定してはいけない。アクセスポートとトランクポートの設定を正しく区別すること
+
+- 参照: [sonic-net/sonic-buildimage#5928](https://github.com/sonic-net/sonic-buildimage/issues/5928)
+
 ## 制限事項
 
 - **モード切替は VLAN 整合が前提**: `routed` に戻すには既存 VLAN メンバを先に外す必要がある（[HLD](../reference/glossary.md#term-hld) 例参照）[^1]。
