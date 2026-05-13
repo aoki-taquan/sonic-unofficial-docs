@@ -109,3 +109,15 @@ show interfaces neighbor expected
 [^1]: `sonic-net/SONiC` `doc/dip-sip/DIP=SIP_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- glossary-links-injected: e919cc931c5a -->
+
+## 確認コマンド
+
+dip-sip-ptf limitations の動作確認に使う代表コマンド:
+
+```bash
+# 基本動作確認
+show platform summary
+show version
+docker logs --tail 200 $(docker ps --format "{.Names}" | head -1)
+```
+

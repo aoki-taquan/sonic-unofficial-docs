@@ -128,6 +128,8 @@ config vlan member add -u 100 Ethernet8
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [vlanmgrd](../../reference/glossary.md#term-vlanmgrd)
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config vlan member
 

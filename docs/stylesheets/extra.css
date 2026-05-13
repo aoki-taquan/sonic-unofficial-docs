@@ -34,3 +34,110 @@
 [data-md-color-scheme="slate"] .md-typeset .diff > summary {
   background-color: rgba(245, 124, 0, 0.18);
 }
+
+/* ----------------------------------------------------------------------
+ * Reading polish
+ * 本文の行間・コードブロックの字サイズ・table の zebra striping ・
+ * admonition のアイコンサイズを微調整する。読みやすさ向上のための最小限の上書き。
+ * ---------------------------------------------------------------------- */
+
+/* 本文の行間を少し広げる (default 1.6 → 1.7) */
+.md-typeset {
+  line-height: 1.7;
+}
+
+/* コードブロックの font-size を +1px (default 0.85em 程度 → 読みやすく) */
+.md-typeset code,
+.md-typeset pre > code,
+.md-typeset .highlight code {
+  font-size: 0.78rem; /* ~ 12.5px @16px base → ~13.5px 相当 */
+}
+
+/* table の zebra striping (subtle) */
+.md-typeset table:not([class]) tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.025);
+}
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* admonition のアイコンサイズ調整 (default 20px → 18px で詰まらせない) */
+.md-typeset .admonition > .admonition-title::before,
+.md-typeset details > summary::before {
+  height: 1.1rem;
+  width: 1.1rem;
+}
+
+/* ----------------------------------------------------------------------
+ * Print friendly (@media print)
+ * A4 印刷時にナビ・サイドバー・検索・ヘッダーを非表示にし、
+ * リンク URL を脚注として visible にする。
+ * ---------------------------------------------------------------------- */
+@media print {
+  /* ナビゲーション・サイドバー・ヘッダー・フッター・検索を非表示 */
+  .md-header,
+  .md-tabs,
+  .md-sidebar,
+  .md-sidebar--primary,
+  .md-sidebar--secondary,
+  .md-footer,
+  .md-search,
+  .md-top,
+  .md-source,
+  .md-nav,
+  nav.md-nav {
+    display: none !important;
+  }
+
+  /* 本文を full-width に */
+  .md-main__inner,
+  .md-content,
+  .md-content__inner,
+  .md-grid {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* A4 ページ余白 */
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  /* リンク URL を脚注として表示 (内部リンク・anchor は除外) */
+  .md-typeset a[href^="http"]::after,
+  .md-typeset a[href^="https"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #555;
+    word-break: break-all;
+  }
+
+  /* コードブロックは枠線で印刷時の境界を明示 */
+  .md-typeset pre {
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+
+  /* 見出しの直後の改ページを避ける */
+  .md-typeset h1,
+  .md-typeset h2,
+  .md-typeset h3 {
+    page-break-after: avoid;
+  }
+
+  /* admonition の塗りは紙では薄めに */
+  .md-typeset .admonition,
+  .md-typeset details {
+    background: transparent !important;
+    border: 1px solid #888;
+    page-break-inside: avoid;
+  }
+
+  /* 本文色を黒に */
+  body,
+  .md-typeset {
+    color: #000 !important;
+    background: #fff !important;
+  }
+}

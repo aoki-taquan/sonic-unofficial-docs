@@ -942,6 +942,12 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: ASIC 同期デーモン
 - **説明**: SAI を直接コールする唯一のプロセス。`docker-syncd-<vendor>` コンテナ内で動く。ASIC_DB を購読して SAI 呼び出しに変換する。
 
+### Syslog {#term-syslog}
+
+- **略称**: Syslog (RFC 5424)
+- **日本語訳**: システムログ
+- **説明**: SONiC の各デーモン / コンテナが出力する標準ログ収集機構。ホスト側 `rsyslog` がコンテナログを集約し、デフォルトでは `/var/log/syslog` に出力する。Runbook では障害切り分けの一次資料として参照される。`config syslog server add <ip>` で外部コレクタへの転送設定が可能。
+
 ## T
 
 ### TAM {#term-tam}
@@ -1311,9 +1317,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [DHCP Relay](#term-dhcp-relay)
 
 - [サイトマップ](../_meta/sitemap.md) (6)
-- [変更履歴](../_meta/changelog.md) (2)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
 - [NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md) (2)
+- [変更履歴](../_meta/changelog.md) (1)
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (1)
 
 ### [DPU](#term-dpu)
@@ -1502,11 +1508,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (113)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (107)
+- [サイトマップ](../_meta/sitemap.md) (36)
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../architecture/ssdhealth-design.md) (34)
 - [L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show](../internals/l3-scaling-and-performance-enhancements.md) (34)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (34)
-- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](../switching/wake-on-lan-in-sonic.md) (34)
 
 ### [Headroom](#term-headroom)
 
@@ -1885,7 +1891,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [sonic-mgmt_interface YANG](yang/sonic-mgmt_interface.md) (20)
 - [sonic-mgmt_port YANG](yang/sonic-mgmt_port.md) (19)
 - [DIP=SIP PTF 検証テスト](../architecture/dip-sip-ptf-validation-high-level-design.md) (18)
-- [サイトマップ](../_meta/sitemap.md) (15)
+- [サイトマップ](../_meta/sitemap.md) (17)
 - [sonic-mgmt_vrf YANG](yang/sonic-mgmt_vrf.md) (13)
 
 ### [sonic-swss](#term-sonic-swss)
@@ -1979,6 +1985,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [運用](../topics/20-swss-sai-redis/operations.md) (33)
 - [内部実装](../topics/20-swss-sai-redis/internals.md) (30)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../platform/dump-on-sai-failure.md) (28)
+
+### [Syslog](#term-syslog)
+
+- [sonic-syslog YANG](yang/sonic-syslog.md) (5)
+- [サイトマップ](../_meta/sitemap.md) (3)
+- [SYSLOG_SERVER テーブル](config-db/syslog-server.md) (3)
+- [システム](../system/index.md) (2)
+- [概念](../topics/09-telemetry-snmp/concept.md) (2)
 
 ### [TAM](#term-tam)
 
@@ -2090,8 +2104,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (6)
 - [Warm-Reboot / Fast-Reboot 関連](../categories/reboot.md) (3)
 - [Warm path の内部構造](../topics/11-reboot/architecture.md) (3)
-- [変更履歴](../_meta/changelog.md) (2)
 - [システム](../system/index.md) (2)
+- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../system/sonic-express-reboot-hld-spec.md) (2)
 
 ### [WRED](#term-wred)
 

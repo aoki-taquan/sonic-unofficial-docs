@@ -112,6 +112,8 @@ docker logs syncd 2>&1 | grep -iE "ERR|SAI_STATUS" | tail -50
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config/main.py
 [^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — sonic-config-engine/minigraph.py
 

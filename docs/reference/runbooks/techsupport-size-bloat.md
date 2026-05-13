@@ -124,6 +124,8 @@ sudo logrotate -d /etc/logrotate.conf 2>&1 | head -50
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — generate_dump
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — show/main.py
 

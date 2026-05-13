@@ -106,6 +106,8 @@ gnmic -a <switch>:8080 --tls-ca ca.pem --tls-cert client.pem --tls-key client.ke
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-gnmi @ master — client_subscribe.go
 [^2]: sonic-net/sonic-gnmi @ master — db_client.go
 

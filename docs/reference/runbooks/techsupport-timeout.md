@@ -122,6 +122,8 @@ sonic-db-cli CONFIG_DB keys "AUTO_TECHSUPPORT_FEATURE|*"
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `scripts/generate_dump`
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `show/main.py`
 

@@ -103,6 +103,8 @@ docker exec pmon i2cdetect -y <bus>
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-platform-common @ master — y_cable_base.py
 [^2]: sonic-net/sonic-platform-daemons @ master — ycable.py
 

@@ -137,6 +137,8 @@ docker logs swss 2>&1 | grep -iE "flexcounter|FLEX_COUNTER" | tail -50
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — flexcounterorch
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — counterpoll CLI
 

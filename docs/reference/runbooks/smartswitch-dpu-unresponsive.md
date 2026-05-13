@@ -129,6 +129,8 @@ dmesg | grep -iE "pcie|dpu" | tail
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — chassisd
 [^2]: sonic-net/sonic-host-services @ c5bbbe8 — DPU state スクリプト
 

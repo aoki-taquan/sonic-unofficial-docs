@@ -64,3 +64,17 @@
 
 - 完璧を目指さない。最初は SONiC リポと sonic-utilities, sonic-buildimage の 3 つだけでも棚卸しが立ち上がれば十分
 - API レート制限に注意。`gh` CLI 経由を優先
+
+## 既知のノイズ slug 除外（v2 で導入）
+
+backlog 生成段階で以下の slug パターンは除外してよい（v1.0 GA 後の運用知見）:
+
+- `introduction-N` / `revision` / `change-log` / `table-of-contents` などの HLD 内部メタ slug
+- `images` / `_images` などの asset ディレクトリ由来 slug
+- `generic-name` で実体がほぼ無いものは `priority: low` を付けるかスキップ
+
+詳細は `meta/cleanup_backlog.py` の実装と CLAUDE.md §10 の「残作業」節を参照。
+
+## sources の SHA リフレッシュ
+
+`refresh_sources_sha.py` で対象 SHA を一括更新できる。Verifier が再裏取り PR を出す際に同 SHA に固定するため、定期的に走らせる運用。Indexer は単発の棚卸しに加えてこの定期更新のトリガも兼ねる。
