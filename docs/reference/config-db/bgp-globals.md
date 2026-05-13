@@ -160,4 +160,15 @@ vtysh -c 'show running-config bgpd'
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 | ソース |
+|------|------|--------|
+| `local_asn` が未設定の VRF で BGP_GLOBALS 以外のテーブル更新が到達 | frrcfgd が LOG_DEBUG して skip。BGP_GLOBALS 自体に `local_asn` が含まれる場合のみ続行 | `frrcfgd.py` L2660 |
+| 非 default VRF が未設定のまま参照 | `non-default VRF {} was not configured` を LOG_ERR → skip | `frrcfgd.py` L2451 |
+| Jinja2 テンプレートレンダリング失敗 (bgpcfgd) | `log_err` して `return True` (処理済み扱い = 再試行なし) | `managers_bgp.py` |
+| `frr-mgmt-framework` と `bgpcfgd` の並存 | 両方が同テーブルを購読する環境では二重処理に注意 (通常はどちらか一方のみ稼働) | `main.py` L87 |
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->

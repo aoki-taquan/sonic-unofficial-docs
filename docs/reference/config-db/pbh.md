@@ -98,6 +98,26 @@ PBH_HASH_FIELD|<hash_field_name>
 - 関連 CLI: `config pbh`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pbh`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh.md -->
+
+### YANG スキーマ検証
+- `PBH_HASH_FIELD.hash_field`、`sequence_id`、`PBH_RULE.priority`、`PBH_RULE.hash`、`PBH_TABLE.description` は mandatory。
+- `ip_mask` は `when` + `must` 条件: IPv4 フィールドに `:` を含む address や IPv6 フィールドに `.` を含む address は reject。
+- `PBH_HASH.hash_field_list` は `min-elements 1`。`PBH_TABLE.interface_list` は `min-elements 1`。
+- `PBH_RULE.table_name` / `hash` は leafref 参照整合性チェックあり。
+
+### consumer (pbhorch) 例外動作
+- 重複 SET: `Failed to create PBH table(%s) in SAI: object already exists` → `return false`。
+- type / stage / ports / validate 失敗: 各 `SWSS_LOG_ERROR` + `return false`。
+- SAI 能力チェック失敗 (ADD/UPDATE/REMOVE 不対応): `unsupported capabilities` → `return false`。
+- DEL で存在しない table: `object doesn't exist` → `return false`。
+- `packet_action` 未指定時 default: `SET_ECMP_HASH`。`flow_counter` 未指定時 default: `DISABLED`。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

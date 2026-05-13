@@ -73,6 +73,24 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 - 関連 CLI: `config portchannel member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member.md -->
+
+### YANG スキーマ検証
+- key `(name, port)` は PORTCHANNEL と PORT への leafref。参照先が存在しない場合は YANG validate で reject。
+
+### consumer (portsorch / teammgr) 例外動作
+- メンバーポートが PHY/SYSTEM 型以外: `LAG member port has to be of type PHY or SYSTEM` → SWSS_LOG_ERROR。
+- chassis 環境で switch id ミスマッチ: `System lag switch id mismatch. Lag %s switch id: %d, Member %s switch id: %d` → SWSS_LOG_ERROR。
+- DEL で存在しないメンバー: `Member %s not found in LAG %s` → SWSS_LOG_WARN。
+- SAI LAG member add 失敗: `Failed to add member %s to LAG %s` → SWSS_LOG_ERROR。
+- SAI LAG member remove 失敗: `Failed to remove member %s from LAG %s` → SWSS_LOG_ERROR。
+- teamd でポート未発見: `Unable to find port %s` → SWSS_LOG_WARN。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
