@@ -23956,6 +23956,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29842,6 +29853,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30056,6 +30078,54 @@
 <li><strong>存在しないドメインの DEL → SWSS_LOG_WARN + スキップ</strong>: <code>"Domain [%d] deletion - domain not found"</code> を WARN ログして処理を終了。iccpd へは送信されない (<code>mclaglink.cpp</code> L836)。</li>
 <li><strong>既存エントリへの SET 時の差分更新</strong>: <code>source_ip</code>・<code>peer_ip</code>・<code>peer_link</code> は既存値との差分のみを iccpd へ通知。空文字列で上書きした場合は <code>MCLAG_CFG_OPER_ATTR_DEL</code> を発行する (<code>mclaglink.cpp</code> L749-L795)。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_12">値依存挙動マトリクス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>keepalive_interval</code></td>
+<td>1 (default)</td>
+<td>1秒ごとに ICCP keepalive 送信</td>
+</tr>
+<tr>
+<td><code>keepalive_interval</code></td>
+<td>N (1..60)</td>
+<td>N 秒ごとに送信。<code>session_timeout &gt;= N*3</code> が YANG must 制約で必須</td>
+</tr>
+<tr>
+<td><code>session_timeout</code></td>
+<td>30 (default)</td>
+<td>30秒 ICCP 応答なしでセッション断</td>
+</tr>
+<tr>
+<td><code>session_timeout</code></td>
+<td>&lt; keepalive_interval*3</td>
+<td>YANG must 制約違反 → バリデーション拒否</td>
+</tr>
+<tr>
+<td><code>unique_ip</code></td>
+<td><code>enable</code></td>
+<td>当該 VLAN IF に対してピア ToR 間で異なる IP アドレスを許可</td>
+</tr>
+<tr>
+<td><code>if_type</code> (MCLAG_INTERFACE)</td>
+<td>任意文字列</td>
+<td>プレースホルダ。実際の制御動作に影響なし (エントリ存在でメンバー登録)</td>
+</tr>
+</tbody>
+</table>
+<p>enum: <code>unique_ip</code> = <code>enable</code> のみ (無効化はエントリ削除)。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: f50d4e92baed -->
 
 <div class="footnote">

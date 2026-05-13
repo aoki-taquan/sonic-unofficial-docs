@@ -24040,6 +24040,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29898,6 +29909,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30113,6 +30135,69 @@
 <li><strong>nat_type のデフォルト = "dnat"</strong>: YANG <code>default dnat</code>。省略時は DNAT エントリとして処理される。</li>
 <li><strong>デフォルトルート / サブネットルートの更新は無視</strong>: routeOrch からのルート更新イベントでデフォルトルートまたはサブネットベースのルートは <code>"Ignore default or subnet nexthop update event"</code> としてスキップ (<code>natorch.cpp</code> L185-189)。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-nat.yang -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin_mode</code></td>
+<td><code>disabled</code> (default)</td>
+<td>NAT 無効。pool/binding/static エントリを受け付けるがハードウェアに降ろさない (キュー保持)</td>
+</tr>
+<tr>
+<td><code>admin_mode</code></td>
+<td><code>enabled</code></td>
+<td>NAT 有効化。キュー内の全エントリを ASIC に反映。conntrack エントリの aging 開始</td>
+</tr>
+<tr>
+<td><code>nat_timeout</code></td>
+<td>600 (default)</td>
+<td>非 TCP/UDP NAT セッションを 600秒でタイムアウト</td>
+</tr>
+<tr>
+<td><code>nat_tcp_timeout</code></td>
+<td>86400 (default)</td>
+<td>TCP セッションを 24時間でタイムアウト</td>
+</tr>
+<tr>
+<td><code>nat_udp_timeout</code></td>
+<td>300 (default)</td>
+<td>UDP セッションを 5分でタイムアウト</td>
+</tr>
+<tr>
+<td><code>nat_type</code> (BINDINGS)</td>
+<td><code>snat</code></td>
+<td>送信元 IP を変換 (内→外方向)</td>
+</tr>
+<tr>
+<td><code>nat_type</code> (BINDINGS)</td>
+<td><code>dnat</code> (default)</td>
+<td>宛先 IP を変換 (外→内方向)</td>
+</tr>
+<tr>
+<td><code>twice_nat_id</code></td>
+<td>1..9999</td>
+<td>同 ID の snat/dnat エントリをペアとして twice NAT 処理</td>
+</tr>
+<tr>
+<td>NAT_POOL エントリ数</td>
+<td>17件目以上</td>
+<td>YANG max-elements=16 でバリデーション拒否</td>
+</tr>
+</tbody>
+</table>
+<p>enum: <code>admin_mode</code>=enabled/disabled、<code>nat_type</code>=snat/dnat。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: a6fe2efe021a -->
 
 <div class="footnote">

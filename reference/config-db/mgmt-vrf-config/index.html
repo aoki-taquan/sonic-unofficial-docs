@@ -21526,6 +21526,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29798,6 +29809,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29914,6 +29936,44 @@
 <li><strong>VRF netdev 作成失敗 → SWSS_LOG_ERROR</strong>: <code>setLink()</code> 失敗時に <code>"Failed to create vrf netdev %s"</code> をログ。処理は継続されるが netdev が未作成の状態になる。</li>
 <li><strong>mgmtVrfEnabled のデフォルト = false</strong>: YANG <code>default false</code>。エントリが存在しない場合は管理 VRF 無効として扱われる。NTP で <code>vrf = "mgmt"</code> を使う場合は先に <code>true</code> に設定する必要がある。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp / sonic-host-services/scripts/hostcfgd update_mgmt_vrf() -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mgmtVrfEnabled</code></td>
+<td><code>false</code> (default)</td>
+<td>mgmt VRF を作成しない。eth0 はデフォルト VRF に所属</td>
+</tr>
+<tr>
+<td><code>mgmtVrfEnabled</code></td>
+<td><code>true</code></td>
+<td>Linux カーネルに <code>mgmt</code> VRF (table ID 6000) を作成。eth0 を mgmt VRF に所属させる</td>
+</tr>
+<tr>
+<td><code>mgmtVrfEnabled</code></td>
+<td><code>false</code> → <code>true</code> 変更</td>
+<td>vrfmgr が VRF netdev 作成 + hostcfgd が <code>stop chrony</code> → <code>restart interfaces-config</code> → <code>start chrony</code> を実行</td>
+</tr>
+<tr>
+<td><code>mgmtVrfEnabled</code></td>
+<td><code>true</code> → <code>false</code> 変更</td>
+<td>vrfmgr.cpp が SET を DEL_COMMAND に変換して VRF netdev 削除 + サービス再起動</td>
+</tr>
+</tbody>
+</table>
+<p>enum なし (boolean)。<code>NTP.vrf=mgmt</code> は本フィールドが <code>true</code> の場合のみ YANG バリデーション通過。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: ca16c59f26d9 -->
 
 <div class="footnote">

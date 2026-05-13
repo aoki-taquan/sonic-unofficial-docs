@@ -24325,6 +24325,45 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash-lag_hash-hash-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash / lag_hash — hash-field 全列挙
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash_algorithm-lag_hash_algorithm-hash-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash_algorithm / lag_hash_algorithm — hash-algorithm 全列挙
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -24333,7 +24372,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -24345,7 +24384,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -24356,7 +24395,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -24367,7 +24406,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29741,6 +29780,45 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash-lag_hash-hash-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash / lag_hash — hash-field 全列挙
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp_hash_algorithm-lag_hash_algorithm-hash-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecmp_hash_algorithm / lag_hash_algorithm — hash-algorithm 全列挙
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29749,7 +29827,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29839,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29850,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29861,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29904,37 +29982,71 @@
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_8">値依存挙動マトリクス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="ecmp_hash-lag_hash-hash-field"><code>ecmp_hash</code> / <code>lag_hash</code> — hash-field 全列挙<a class="headerlink" href="#ecmp_hash-lag_hash-hash-field" title="Permanent link">&para;</a></h3>
+<p><code>IN_PORT</code> / <code>DST_MAC</code> / <code>SRC_MAC</code> / <code>ETHERTYPE</code> / <code>VLAN_ID</code> / <code>IP_PROTOCOL</code> / <code>DST_IP</code> / <code>SRC_IP</code> / <code>L4_DST_PORT</code> / <code>L4_SRC_PORT</code> / <code>INNER_DST_MAC</code> / <code>INNER_SRC_MAC</code> / <code>INNER_ETHERTYPE</code> / <code>INNER_IP_PROTOCOL</code> / <code>INNER_DST_IP</code> / <code>INNER_SRC_IP</code> / <code>INNER_L4_DST_PORT</code> / <code>INNER_L4_SRC_PORT</code> / <code>IPV6_FLOW_LABEL</code></p>
+<h3 id="ecmp_hash_algorithm-lag_hash_algorithm-hash-algorithm"><code>ecmp_hash_algorithm</code> / <code>lag_hash_algorithm</code> — hash-algorithm 全列挙<a class="headerlink" href="#ecmp_hash_algorithm-lag_hash_algorithm-hash-algorithm" title="Permanent link">&para;</a></h3>
+<p><code>CRC</code> / <code>XOR</code> / <code>RANDOM</code> / <code>CRC_32LO</code> / <code>CRC_32HI</code> / <code>CRC_CCITT</code> / <code>CRC_XOR</code></p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th style="text-align: right;"><a href="../../glossary/#term-sai">SAI</a> 挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ecmp_hash</code> / <code>lag_hash</code></td>
+<td>ASIC 非サポートフィールドを含む</td>
+<td style="text-align: right;">SET 拒否 (<code>capability is not supported</code>)</td>
+</tr>
+<tr>
+<td><code>ecmp_hash_algorithm</code></td>
+<td>ASIC 非サポートアルゴリズム</td>
+<td style="text-align: right;">SET 拒否 (同上)</td>
+</tr>
+<tr>
+<td>任意フィールド</td>
+<td>DEL</td>
+<td style="text-align: right;">拒否 (<code>operation is not supported</code>)</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">例外条件・特殊挙動<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L797-989 -->
 
 <ul>
-<li><strong>ASIC capability 未サポート</strong>: <code>SwitchOrch</code> が SAI から取得した capability に設定値が含まれない場合、<code>"Failed to validate switch ECMP/LAG hash: capability is not supported"</code> を LOG_ERROR して SET を拒否する（<code>return false</code>）。適用されず CONFIG_DB の値は保留状態のまま。</li>
+<li><strong>ASIC capability 未サポート</strong>: <code>SwitchOrch</code> が SAI から取得した capability に設定値が含まれない場合、<code>"Failed to validate switch ECMP/LAG hash: capability is not supported"</code> を LOG_ERROR して SET を拒否する（<code>return false</code>）。適用されず <a href="../../glossary/#term-config_db">CONFIG_DB</a> の値は保留状態のまま。</li>
 <li><strong>SAI set 失敗</strong>: SAI API 呼び出しが <code>SAI_STATUS_SUCCESS</code> 以外を返すと <code>"Failed to set switch ECMP/LAG hash in SAI"</code> を LOG_ERROR して処理を中断する。</li>
 <li><strong>DEL 操作不可</strong>: <code>ecmp_hash</code> / <code>lag_hash</code> / <code>ecmp_hash_algorithm</code> / <code>lag_hash_algorithm</code> はいずれも DEL 操作をサポートしない。削除を試みると <code>"Failed to remove switch ECMP/LAG hash configuration: operation is not supported"</code> を LOG_ERROR して <code>return false</code>。</li>
-<li><strong>ASIC/CONFIG_DB 乖離</strong>: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に <code>"Failed to set switch hash: ASIC and CONFIG DB are diverged"</code>、DEL 時に <code>"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"</code> を LOG_ERROR。</li>
+<li><strong>ASIC/<a href="../../glossary/#term-config_db">CONFIG_DB</a> 乖離</strong>: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に <code>"Failed to set switch hash: ASIC and CONFIG DB are diverged"</code>、DEL 時に <code>"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"</code> を LOG_ERROR。</li>
 <li><strong>空キー</strong>: key が空文字列だと <code>"Failed to parse switch hash key: empty string"</code> を LOG_ERROR してエントリをスキップする。</li>
 </ul>
 <!-- /cdb-exceptions -->
 
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>SWITCH_HASH|GLOBAL</code>。</li>
 <li><code>ecmp_hash</code>: <code>DST_MAC,SRC_MAC,ETHERTYPE,IP_PROTOCOL,SRC_IP,DST_IP,L4_SRC_PORT,L4_DST_PORT</code>。LAG hash も同類。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>hash 設定変更後 <code>config save</code> を忘れて reboot 後に既定値へ戻る。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_HASH|GLOBAL&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>switch-hash<span class="w"> </span>global
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 37a4890848e2 -->
+<!-- glossary-links-injected: a26ef253c175 -->
 
 <div class="footnote">
 <hr />

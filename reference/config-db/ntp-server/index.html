@@ -22965,6 +22965,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -29820,6 +29831,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30012,6 +30034,84 @@
 <li><strong>admin_state のデフォルト = "enabled"</strong>: <code>default enabled</code>。フィールドを省略してもサーバは有効として ntpd/chrony に渡される。</li>
 <li><strong>trusted のデフォルト = "no"</strong>: <code>default no</code>。NTP 認証有効時にこのサーバのみを信頼する場合は <code>trusted = yes</code> を設定する。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="_13">値依存挙動マトリクス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-host-services/scripts/hostcfgd ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
+
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>association_type</code></td>
+<td><code>server</code> (default)</td>
+<td>chrony.conf に <code>server &lt;addr&gt;</code> として追記</td>
+</tr>
+<tr>
+<td><code>association_type</code></td>
+<td><code>pool</code></td>
+<td>chrony.conf に <code>pool &lt;addr&gt;</code> として追記。DNS ラウンドロビンで複数 IP を使用</td>
+</tr>
+<tr>
+<td><code>iburst</code></td>
+<td><code>on</code> (default)</td>
+<td>起動直後に iburst パケットを送信して高速同期</td>
+</tr>
+<tr>
+<td><code>iburst</code></td>
+<td><code>off</code></td>
+<td>通常ポーリング間隔で同期開始</td>
+</tr>
+<tr>
+<td><code>admin_state</code></td>
+<td><code>enabled</code> (default)</td>
+<td>サーバを chrony.conf に含める</td>
+</tr>
+<tr>
+<td><code>admin_state</code></td>
+<td><code>disabled</code></td>
+<td>サーバを chrony.conf から除外</td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td><code>no</code> (default)</td>
+<td>chrony で通常の優先度</td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td><code>yes</code></td>
+<td>chrony の <code>prefer</code> オプション相当。当該サーバを優先同期先に</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td><code>4</code> (default)</td>
+<td>NTPv4 を使用</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td><code>3</code></td>
+<td>NTPv3 を使用。古い NTP サーバとの互換向け</td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td>NTP_KEY.id 参照</td>
+<td>chrony.conf に <code>key &lt;id&gt;</code> オプションを付与。<code>NTP.authentication=enabled</code> と組み合わせて認証</td>
+</tr>
+<tr>
+<td>エントリ数</td>
+<td>11件目以上</td>
+<td>YANG max-elements=10 でバリデーション拒否</td>
+</tr>
+</tbody>
+</table>
+<p>enum: <code>association_type</code>=server/pool、<code>iburst</code>=on/off、<code>admin_state</code>=enabled/disabled、<code>trusted</code>=yes/no。変更は <code>systemctl restart chrony</code> をトリガー。</p>
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">

@@ -21301,6 +21301,34 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#status-admin_mode-enabled-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status (admin_mode): enabled / disabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -21309,7 +21337,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21321,7 +21349,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21332,7 +21360,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21343,7 +21371,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29741,6 +29769,34 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
+        値依存挙動マトリクス
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="値依存挙動マトリクス">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#status-admin_mode-enabled-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status (admin_mode): enabled / disabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -29749,7 +29805,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29761,7 +29817,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29772,7 +29828,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29783,7 +29839,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29882,35 +29938,90 @@
 <!-- ref-triangle:end -->
 
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- value-behavior -->
+<h2 id="_8">値依存挙動マトリクス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h3 id="status-admin_mode-enabled-disabled"><code>status</code> (admin_mode): <code>enabled</code> / <code>disabled</code><a class="headerlink" href="#status-admin_mode-enabled-disabled" title="Permanent link">&para;</a></h3>
+<p>代表的な <code>&lt;name&gt;</code> エントリと各値の意味:</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th><code>enabled</code> 時</th>
+<th><code>disabled</code> 時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_qos_remap</code></td>
+<td><a href="../../glossary/#term-ipinip">IPinIP</a> デカプセル時の <a href="../../glossary/#term-qos">QoS</a> リマップを有効化 (muxorch 起動時のみ参照)</td>
+<td><a href="../../glossary/#term-qos">QoS</a> リマップなし</td>
+</tr>
+<tr>
+<td><code>synchronous_mode</code></td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> が <a href="../../glossary/#term-sai">SAI</a> 操作を同期実行 (P4RT 連携時に必要)</td>
+<td>非同期実行</td>
+</tr>
+<tr>
+<td><code>dhcp_server</code></td>
+<td>組み込み DHCP サーバを有効化</td>
+<td>無効</td>
+</tr>
+<tr>
+<td><code>mux_tunnel_egress_acl</code></td>
+<td>Dual-ToR mux <a href="../../glossary/#term-acl">ACL</a> を適用 (Mellanox: enabled が init_cfg デフォルト)</td>
+<td><a href="../../glossary/#term-acl">ACL</a> 未適用</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>エントリ不在 (DEL 後)</td>
+<td>各機能は不在を <code>disabled</code> として扱う</td>
+</tr>
+<tr>
+<td><code>tunnel_qos_remap</code> 実行中変更</td>
+<td>muxorch は起動時のみ参照のため、サービス再起動まで反映されない</td>
+</tr>
+</tbody>
+</table>
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
-<h2 id="_8">例外条件・特殊挙動<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">例外条件・特殊挙動<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/src/sonic-config-engine/config_samples.py@9ea932ec2e18f35e58268ec2e4456b1d4afd65cd L160-186; sonic-swss/orchagent/muxorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L1388 -->
 
 <ul>
 <li><strong>テーブル不在時の安全フォールバック</strong>: <code>config_samples.py</code> はテーブルが存在しない場合に空 dict を補完する。各機能コードもエントリ不在を "disabled" として扱い KeyError を起こさない。</li>
-<li><strong><code>tunnel_qos_remap</code> は起動時のみ参照</strong>: <code>muxorch</code> が起動時に <code>SYSTEM_DEFAULTS</code> を一回だけ読み取り QoS remap の有効/無効を決定する。実行中に CONFIG_DB を書き換えてもサービス再起動なしには反映されない。</li>
-<li><strong>enum 制約違反は YANG 層でブロック</strong>: <code>status</code> フィールドは <code>admin_mode</code> enum（<code>enabled</code>/<code>disabled</code>）で制約されており、不正値は CONFIG_DB への書き込み時に YANG バリデーション層で拒否される。</li>
+<li><strong><code>tunnel_qos_remap</code> は起動時のみ参照</strong>: <code>muxorch</code> が起動時に <code>SYSTEM_DEFAULTS</code> を一回だけ読み取り <a href="../../glossary/#term-qos">QoS</a> remap の有効/無効を決定する。実行中に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を書き換えてもサービス再起動なしには反映されない。</li>
+<li><strong>enum 制約違反は YANG 層でブロック</strong>: <code>status</code> フィールドは <code>admin_mode</code> enum（<code>enabled</code>/<code>disabled</code>）で制約されており、不正値は <a href="../../glossary/#term-config_db">CONFIG_DB</a> への書き込み時に YANG バリデーション層で拒否される。</li>
 <li><strong>エントリ削除の副作用</strong>: 機能コードがエントリ不在をデフォルト（通常 disabled）として扱うため、エントリを DEL すると機能が暗黙的に無効化される。</li>
 </ul>
 <!-- /cdb-exceptions -->
 
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>SYSTEM_DEFAULTS|&lt;feature&gt;</code>。</li>
 <li><code>tunnel_qos_remap</code> / <code>synchronous_mode</code> 等のフラグを <code>enabled</code>/<code>disabled</code> で制御。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>synchronous_mode=enabled のままで遅い <a href="../../glossary/#term-orchagent">orchagent</a> と組み合わせると config push 全体が詰まる。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;SYSTEM_DEFAULTS|*&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 90fa20b1e615 -->
 
 <div class="footnote">
 <hr />
