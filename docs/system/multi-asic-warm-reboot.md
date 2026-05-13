@@ -118,6 +118,16 @@ sudo warm-reboot -v
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: 単一 namespace warm-reboot | 実装済（既存 warm-reboot フロー流用） | — |
+| Phase 2: namespace 間 shutdown 順序 | — | swss / syncd の協調 shutdown 順序の現行スクリプト挙動は未確認・未実装の可能性 |
+| Phase 3: BGP graceful restart 跨 ASIC 連動 | single ASIC 相当は実装済 | クロス ASIC の TLV 同期は未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。各 namespace の swss / syncd の協調 shutdown 順序が現行スクリプトでどうなっているかは本文で「未確認」と明示している。

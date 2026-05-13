@@ -284,7 +284,7 @@ last_verified: 2026-05-13
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [Switchport モードと VLAN CLI 拡張 — 内部実装](../../switching/switch-port-modes-and-vlan-cli-internals.md)  
-  area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
+  area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
 
 - [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -895,7 +895,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [Switchport モードと VLAN CLI 拡張 — 内部実装](../../switching/switch-port-modes-and-vlan-cli-internals.md)  
-  area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
+  area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
 
 - [Switchport モードと VLAN CLI 拡張 — 概念](../../switching/switch-port-modes-and-vlan-cli-concepts.md)  
   area: `switching` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`

@@ -178,6 +178,16 @@ redis-cli info clients
 - [Reference: CONFIG_DB ↔ Orch map](../reference/config-db-orch-map.md)
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: 4 API（getClient / releaseClient / makeTransaction / makeMulti） | HLD 記載どおりに実装済（master 取り込み確認） | — |
+| Phase 2: Init 段の事前 client cache 構築 | HLD 記載分は実装済 | 実 master での起動順序・タイミングは未確認 |
+| Phase 3: Counter / Metrics 統合 | — | RCM カウンタの上位 daemon 露出は未実装 / 未確認 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。

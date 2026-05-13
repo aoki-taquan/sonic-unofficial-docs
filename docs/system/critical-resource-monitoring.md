@@ -211,6 +211,16 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: HLD 記載のリソース監視 | 実装済（CRM 既存テーブル群） | — |
+| Phase 2: 追加リソースカウンタ | — | HLD で名前が示されていない追加テーブル / フィールドは未確認・未実装相当 |
+| Phase 3: しきい値超過時の通知 / アクション | ログ通知は実装済 | syslog 以外の上位通知（telemetry/SNMP trap 等）は未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。

@@ -248,6 +248,16 @@ HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC �
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: 単一 ASIC Everflow | 実装済（既存 Everflow の挙動が VoQ シャーシ単一 LC でも有効） | — |
+| Phase 2: VoQ シャーシ向け SAI 拡張 | HLD 記載の `SAI_MIRROR_SESSION_ATTR_*` 拡張は実装済 | recycle port 経由のヘッダ書換え経路は実装版が未確認・未実装の可能性 |
+| Phase 3: クロス LC ミラーリング | — | リモート LC への ERSPAN 配信は未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。公式 HLD（2020-12 Rev 1）のみを根拠としており、現行 master の VoQ 拡張・SAI 実装・recycle port セットアップは本文で「未確認」と明示している。

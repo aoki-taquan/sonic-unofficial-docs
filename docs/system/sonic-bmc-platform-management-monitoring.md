@@ -135,6 +135,16 @@ redis-cli -n 6 keys 'BMC*'
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
+## 実装フェーズ境界
+
+本ページは `monitor: partially_implemented` のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。
+
+| Phase | 実装済 | 未実装 |
+|-------|--------|--------|
+| Phase 1: BMC 経由 pmon 基本フロー | HLD 記載どおり実装済（IPMI 経路） | — |
+| Phase 2: Redfish トランスポート | — | Redfish 経路の現行 master 取り込みは未確認・未実装の可能性 |
+| Phase 3: BMC firmware update / 高度監視 | — | BMC ファーム更新フローは未実装 |
+
 ## 実装との乖離 / 補足
 
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。BMC 経由 pmon の現行 master 実装、Redfish / IPMI トランスポート差は本文で「未確認」と明示している。
