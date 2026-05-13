@@ -21,7 +21,7 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **903** ページ。
+全 **902** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
@@ -30,7 +30,7 @@ last_verified: 2026-05-11
 | discrepancy-found | 102 |
 | issue-confirmed | 0 |
 | hld-only | 0 |
-| meta | 208 |
+| meta | 207 |
 | stub | 0 |
 
 ## area 別マトリクス
@@ -38,7 +38,7 @@ last_verified: 2026-05-11
 | area | code-verified | runbook-verified | discrepancy-found | issue-confirmed | hld-only | meta | stub | 合計 |
 |------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
 | `_meta` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
-| `_root` | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 4 |
+| `_root` | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 3 |
 | `acl-qos` | 29 | 0 | 6 | 0 | 0 | 1 | 0 | 36 |
 | `architecture` | 32 | 0 | 25 | 0 | 0 | 1 | 0 | 58 |
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |

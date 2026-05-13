@@ -3,14 +3,14 @@ title: コンテナ memory limit 超過 / OOM kill
 description: "Runbook: コンテナ memory limit 超過 / OOM kill — : sonic-net/sonic-buildimage @ 4305596 — sonic_debian_extension : sonic-net/sonic-host-services @ 4305596 — hostcfgd…"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-buildimage
     path: files/build_templates/sonic_debian_extension.j2
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-host-services
     path: scripts/hostcfgd
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: c5bbbe8b07b96f078fa4b761316627404b01bd04
 related:
   config_db: [FEATURE]
   cli: [docker stats, show feature status]

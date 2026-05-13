@@ -3,11 +3,11 @@ title: SmartSwitch DPU image インストールが失敗する
 description: "Runbook: SmartSwitch DPU image インストールが失敗する — : sonic-net/sonic-platform-daemons @ 4305596 — chassisd : sonic-net/sonic-utilities @ 39732bceb — sonic-installer"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-platform-daemons
     path: sonic-chassisd/scripts/chassisd
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
   - repo: sonic-net/sonic-utilities
     path: scripts/sonic-installer
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9

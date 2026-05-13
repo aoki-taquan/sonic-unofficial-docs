@@ -3,11 +3,11 @@ title: FEC エラーが多発する
 description: "Runbook: FEC エラーが多発する — : sonic-net/sonic-platform-daemons @ 4305596 — xcvrd / DOM 監視 : sonic-net/sonic-swss @ 4305596 — portsorch"
 area: reference
 verification: runbook-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-platform-daemons
     path: sonic-xcvrd/xcvrd/xcvrd.py
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 4ba9612cb7756651062d37f977e3df17d57f740d
   - repo: sonic-net/sonic-utilities
     path: show/interfaces/__init__.py
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9

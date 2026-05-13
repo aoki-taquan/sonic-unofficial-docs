@@ -1,17 +1,11 @@
 ---
 title: ソース pinned SHA の新鮮度（sources-freshness）
-description: ソース pinned SHA の新鮮度（sources-freshness） — meta/index/repos.json で固定している
-  commit SHA と各リポの upstream HEAD を突き合わせ、本サイトのスナップショットがどれだけ master から遅れているかを一覧化する。
+description: "ソース pinned SHA の新鮮度（sources-freshness） — meta/index/repos.json で固定している commit SHA と各リポの upstream HEAD を突き合わせ、本サイトのスナップショットがどれだけ master から遅れているかを一覧化する。"
 verification: meta
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 tags:
-- verification
-- sources
-related:
-  cli: []
-  config_db: []
-  yang: []
-  _no_related: true
+  - verification
+  - sources
 ---
 
 # ソース pinned SHA の新鮮度（sources-freshness）
@@ -56,11 +50,3 @@ related:
 - 定期的に **Indexer を再走させて `meta/index/repos.json` を更新する**（四半期サイクル目安）。更新後は本ページを `python3 meta/scripts/check_sources_freshness.py --write` で再生成する。
 - 個別ページの `sources[].ref` は当該ページの裏取り時点で固定する設計であり、サイト全体で一斉に SHA を bump する必要はない。本ページはあくまで「サイト全体としてどの時点の master を見ているか」の俯瞰指標。
 - 詳細手順は `meta/discrepancy-operations.md` の「定期実行」節を参照。
-
-## 関連リファレンス
-
-- [Verification index](index.md)
-- [Discrepancy reports](../../_meta/discrepancies.md)
-- [Coverage](../../_meta/coverage.md)
-- [Changelog](../../_meta/changelog.md)
-- [サイト方針 / README](../../index.md)

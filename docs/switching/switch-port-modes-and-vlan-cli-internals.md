@@ -4,7 +4,7 @@ description: Switchport モードの YANG / CONFIG_DB スキーマと db_migrato
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 page_kind: split-child
 hub: switch-port-modes-and-vlan-cli-enhancement
 sources:
@@ -13,7 +13,7 @@ sources:
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-port.yang
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
     - PORT

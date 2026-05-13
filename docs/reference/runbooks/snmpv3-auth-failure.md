@@ -3,14 +3,14 @@ title: SNMPv3 ユーザー認証が失敗する
 description: "Runbook: SNMPv3 user 認証 / 暗号化が失敗する — : sonic-net/sonic-snmpagent @ master — main.py : sonic-net/sonic-buildimage @ master — docker-snmp"
 area: reference
 verification: code-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-snmpagent
     path: src/sonic_ax_impl/main.py
-    ref: master
+    ref: 329f1cca300b28cd7297e69db423cadf8c60ddb9
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-snmp
-    ref: master
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: [SNMP_USER, SNMP_COMMUNITY]
   cli: [show snmp user, config snmp user add]

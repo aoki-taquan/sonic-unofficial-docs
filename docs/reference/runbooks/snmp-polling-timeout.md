@@ -3,14 +3,14 @@ title: SNMP polling が timeout する
 description: "Runbook: SNMP polling が timeout する — : sonic-net/sonic-snmpagent @ 4305596 — ax_impl : sonic-net/sonic-buildimage @ 4305596 — docker-snmp config"
 area: reference
 verification: runbook-verified
-last_verified: 2026-05-11
+last_verified: 2026-05-13
 sources:
   - repo: sonic-net/sonic-snmpagent
     path: src/sonic_ax_impl/main.py
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 329f1cca300b28cd7297e69db423cadf8c60ddb9
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-snmp/snmpd.conf.j2
-    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: [SNMP_AGENT_ADDRESS_CONFIG, SNMP_COMMUNITY]
   cli: [show snmpagentaddress, show runningconfiguration snmp]

@@ -29,7 +29,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DOCS_ROOT = REPO_ROOT / "docs"
-TODAY = date(2026, 5, 11).isoformat()
+TODAY = date(2026, 5, 13).isoformat()
 
 
 def _resolve_cache_root() -> Path:
