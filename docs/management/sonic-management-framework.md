@@ -49,18 +49,18 @@ related:
 
 ```mermaid
 flowchart LR
-    REST[REST client\n(OpenAPI)] --> RS[REST server]
-    GNMI[gNMI client] --> GS[gNMI server\n(telemetry)]
-    KLISH[CLI / KLISH] --> CLI[clish/klish]
+    REST["REST client\n(OpenAPI)"] --> RS[REST server]
+    GNMI[gNMI client] --> GS["gNMI server\n(telemetry)"]
+    KLISH["CLI / KLISH"] --> CLI["clish/klish"]
 
     RS --> TL[Translib]
     GS --> TL
     CLI --> TL
 
-    TL -->|model based| TF[Transformer<br>(per-module)]
+    TL -->|model based| TF["Transformer<br>(per-module)"]
     TF --> CDB[(CONFIG_DB)]
-    TF --> ADB[(APPL_DB / STATE_DB)]
-    TF --> RPC[per-feature RPC<br>(openconfig actions)]
+    TF --> ADB[("APPL_DB / STATE_DB")]
+    TF --> RPC["per-feature RPC<br>(openconfig actions)"]
 ```
 
 主要ポイント[^1]:

@@ -45,13 +45,13 @@ related:
 
 ```mermaid
 flowchart LR
-    NPU[NPU 側 pmon] --> CHAS[ChassisBase / Module API]
-    CHAS --> PLAT[platform plugin\n(get_dpus / get_dpu_status / ...)]
+    NPU[NPU 側 pmon] --> CHAS["ChassisBase / Module API"]
+    CHAS --> PLAT["platform plugin\n(get_dpus / get_dpu_status / ...)"]
     PLAT -->|inband mgmt link| DPU0[(DPU 0)]
     PLAT --> DPU1[(DPU 1)]
     PLAT --> DPUN[(DPU N)]
-    NPU --> STATE[(STATE_DB\nDPU_STATE / CHASSIS_MODULE_TABLE)]
-    NPU --> SHOW[show platform dpu / module]
+    NPU --> STATE[("STATE_DB\nDPU_STATE / CHASSIS_MODULE_TABLE")]
+    NPU --> SHOW["show platform dpu / module"]
 ```
 
 主要要素[^1]:

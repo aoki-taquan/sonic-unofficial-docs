@@ -46,9 +46,9 @@ probe の type は **command** を使う。コンテナ内のスクリプトを 
 
 ```mermaid
 flowchart LR
-    K8S[kubelet] -->|exec| RP[/usr/bin/readiness_probe.sh]
+    K8S[kubelet] -->|exec| RP["/usr/bin/readiness_probe.sh"]
     RP --> COMMON[common check]
-    RP --> HOOK[/usr/bin/readiness_probe_hook]
+    RP --> HOOK["/usr/bin/readiness_probe_hook"]
     COMMON --> EXIT[exit code]
     HOOK --> EXIT
     EXIT --> CTRL[k8s controller post-check]

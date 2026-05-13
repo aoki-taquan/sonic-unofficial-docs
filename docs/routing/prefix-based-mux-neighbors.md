@@ -50,13 +50,13 @@ Dual-ToR トポロジでは ToR 切替（mux state transition）の度にサー�
 
 ```mermaid
 flowchart TD
-  subgraph 従来 (host_route)
-    A1[Neighbor 作成] -->|暗黙| H1[Host route 生成<br>= SDK 内部、SAI 制御不可]
-    H1 -->|active→standby| RM[Neighbor 削除<br>+ Tunnel route 追加]
+  subgraph SG_1["従来 (host_route)"]
+    A1[Neighbor 作成] -->|暗黙| H1["Host route 生成<br>= SDK 内部、SAI 制御不可"]
+    H1 -->|active→standby| RM["Neighbor 削除<br>+ Tunnel route 追加"]
   end
-  subgraph 新方式 (prefix_route)
-    A2[Neighbor 作成<br>NO_HOST_ROUTE=true] --> P[/32 or /128 prefix route<br>明示作成]
-    P -->|active→standby| UP[prefix route の nexthop を<br>tunnel に置換するだけ]
+  subgraph SG_2["新方式 (prefix_route)"]
+    A2["Neighbor 作成<br>NO_HOST_ROUTE=true"] --> P["/32 or /128 prefix route<br>明示作成"]
+    P -->|active→standby| UP["prefix route の nexthop を<br>tunnel に置換するだけ"]
   end
 ```
 

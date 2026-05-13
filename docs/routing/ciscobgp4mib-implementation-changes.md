@@ -69,14 +69,14 @@ flowchart LR
 ```mermaid
 flowchart LR
     subgraph host
-      SNMP[snmpd / snmp_ax_impl]
+      SNMP["snmpd / snmp_ax_impl"]
     end
-    subgraph asic0[BGP docker (asic0)]
+    subgraph asic0["BGP docker (asic0)"]
       BGPMON0[bgpmon] -->|show bgp summary json| BGPD0[bgpd]
-      BGPD0 --> LOG0[/var/log/frr/frr.log]
+      BGPD0 --> LOG0["/var/log/frr/frr.log"]
       BGPMON0 -->|HSET| ST0[(STATE_DB ns0)]
     end
-    subgraph asic1[BGP docker (asic1)]
+    subgraph asic1["BGP docker (asic1)"]
       BGPMON1[bgpmon] --> ST1[(STATE_DB ns1)]
     end
     SNMP --> ST0

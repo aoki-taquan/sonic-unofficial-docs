@@ -64,9 +64,9 @@ related:
 
 ```mermaid
 flowchart TD
-  A[COPP_TRAP|name 受信] --> B{always_enabled<br>= true?}
+  A["COPP_TRAP|name 受信"] --> B{"always_enabled<br>= true?"}
   B -- yes --> I[install]
-  B -- no --> C{FEATURE|name<br>あり?}
+  B -- no --> C{"FEATURE|name<br>あり?"}
   C -- no --> U[install しない]
   C -- yes --> D{state = enabled?}
   D -- yes --> I

@@ -46,10 +46,10 @@ QSFP-DD ZR / ZR+ のような **coherent optics** は従来の grey optics と�
 
 ```mermaid
 flowchart LR
-    PORT[CONFIG_DB PORT\n(speed / autoneg / lanes)] --> XC[xcvrd]
-    XC --> SDK[sonic-platform / sfp_optoe driver]
-    SDK --> EEP[transceiver EEPROM\n(CMIS pages + C-CMIS pages)]
-    XC --> STATE[STATE_DB\nTRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS]
+    PORT["CONFIG_DB PORT\n(speed / autoneg / lanes)"] --> XC[xcvrd]
+    XC --> SDK["sonic-platform / sfp_optoe driver"]
+    SDK --> EEP["transceiver EEPROM\n(CMIS pages + C-CMIS pages)"]
+    XC --> STATE["STATE_DB\nTRANSCEIVER_INFO / TRANSCEIVER_DOM_SENSOR / TRANSCEIVER_STATUS"]
     XC -. CMIS state machine .-> EEP
     USER[管理者] --> CFG[config interface transceiver-frequency\nconfig interface transceiver-power]
     CFG --> CDB[(CONFIG_DB)]

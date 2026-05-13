@@ -40,11 +40,11 @@ ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory err
 
 ```mermaid
 flowchart LR
-    SDK[(ASIC SDK)] --> SAI[SAI health notification\n(severity / category / data)]
-    SAI --> SYNCD[syncd / SAI redis]
-    SYNCD --> ORCH[Orch (SwitchOrch / 専用 handler)]
+    SDK[(ASIC SDK)] --> SAI["SAI health notification\n(severity / category / data)"]
+    SAI --> SYNCD["syncd / SAI redis"]
+    SYNCD --> ORCH["Orch (SwitchOrch / 専用 handler)"]
     ORCH --> STATE[STATE_DB\nASIC_SDK_HEALTH_EVENT_TABLE]
-    ORCH --> SYS[syslog / counter]
+    ORCH --> SYS["syslog / counter"]
     STATE --> SHOW[show asic-sdk-health-event]
     STATE --> TEL[gNMI telemetry]
     CFG[CONFIG_DB\nSUPPRESS_ASIC_SDK_HEALTH_EVENT] --> ORCH

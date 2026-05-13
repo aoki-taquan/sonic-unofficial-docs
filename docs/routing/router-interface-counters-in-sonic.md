@@ -57,10 +57,10 @@ SONiC のポート単位カウンタ（`portstat` 系）は L2 のフレーム�
 
 ```mermaid
 flowchart LR
-    SAI[SAI\nsai_get_router_interface_stats] -->|polling| FC[Flex Counter\n(RIF FC group, default 1s)]
+    SAI[SAI\nsai_get_router_interface_stats] -->|polling| FC["Flex Counter\n(RIF FC group, default 1s)"]
     FC --> CDB[(COUNTERS_DB)]
     CDB -->|COUNTERS:rif_vid\nCOUNTERS_RIF_NAME_MAP\nCOUNTERS_RIF_TYPE_MAP| CLI[show interfaces counters rif]
-    SWSS[IntfsOrch] -.->|RIF 追加/削除を FC に登録\nMAP 更新| CDB
+    SWSS[IntfsOrch] -.->|"RIF 追加/削除を FC に登録\nMAP 更新"| CDB
 ```
 
 要点は次の 3 点。

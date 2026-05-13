@@ -64,12 +64,12 @@ related:
 
 ```mermaid
 flowchart LR
-    Cl1[REST client\n(curl/Postman)] -->|RESTCONF\nyang-data+json| MF[Management Framework\nREST server]
-    Cl2[gNMI client\n(gnmi_get/set)] -->|gRPC :8080| GN[sonic-gnmi]
+    Cl1["REST client\n(curl/Postman)"] -->|RESTCONF\nyang-data+json| MF[Management Framework\nREST server]
+    Cl2["gNMI client\n(gnmi_get/set)"] -->|gRPC :8080| GN[sonic-gnmi]
     MF --> TR[sonic-mgmt-common\ntransformer]
     GN --> TR
-    TR -->|attribute mapping| SY[sonic-port / sonic-interface YANG]
-    SY --> CDB[(CONFIG_DB\nPORT / INTERFACE)]
+    TR -->|attribute mapping| SY["sonic-port / sonic-interface YANG"]
+    SY --> CDB[("CONFIG_DB\nPORT / INTERFACE")]
 ```
 
 OpenConfig パスを受けた Management Framework / sonic-gnmi は、`sonic-mgmt-common` の **transformer** に流す。transformer が attribute mapping（次節）で SONiC YANG（`sonic-port` / `sonic-interface`）に変換し、最終的に CONFIG_DB に書く[^1]。

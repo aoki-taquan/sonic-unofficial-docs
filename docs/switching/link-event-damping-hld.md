@@ -80,10 +80,10 @@ related:
 ```mermaid
 flowchart LR
   ASIC[ASIC] -->|port state change| VSAI[Vendor SAI]
-  VSAI -->|callback| SD[SyncD<br>(damping intercept)]
+  VSAI -->|callback| SD["SyncD<br>(damping intercept)"]
   SD -->|抑制 or 通知| ADB[(ASIC_DB)]
   ADB --> PO[PortsOrch]
-  PO --> APP[Apps / Routing]
+  PO --> APP["Apps / Routing"]
 ```
 
 - 既存: SAI から SyncD に来た state change がそのまま ASIC_DB に書かれる[^1]。

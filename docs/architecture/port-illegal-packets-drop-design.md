@@ -60,10 +60,10 @@ SONiC では `rifcounter` という flex counter グループが RIF の SAI カ
 
 ```mermaid
 flowchart LR
-    SAI[SAI カウンタ\nport / RIF / VLAN] -->|flex counter\n(rifcounter group)| CDB[(COUNTERS_DB)]
-    CDB --> IU[InterfacesUpdater\n(sonic-snmpagent)]
+    SAI["SAI カウンタ\nport / RIF / VLAN"] -->|"flex counter\n(rifcounter group)"| CDB[(COUNTERS_DB)]
+    CDB --> IU["InterfacesUpdater\n(sonic-snmpagent)"]
     PYSDK[py-swsssdk\nrif↔port マップ\nvlan if 一覧] --> IU
-    IU --> SNMP[SNMP\nInterface MIB\n(RFC1213)]
+    IU --> SNMP["SNMP\nInterface MIB\n(RFC1213)"]
 ```
 
 <!-- evidence:

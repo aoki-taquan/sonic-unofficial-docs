@@ -63,11 +63,11 @@ SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が 
 
 ```mermaid
 flowchart LR
-  CLI1[show platform pcieinfo] --> SUB[show/main.py の platform サブコマンド]
+  CLI1[show platform pcieinfo] --> SUB["show/main.py の platform サブコマンド"]
   SUB --> PU[pcieutil CLI]
-  PU --> PC[sonic_platform_base/sonic_pice/pcie_common.py]
-  PC --> YAML[(device/<platform>/plugins/pcie.yaml)]
-  PC --> KERNEL[/sys/bus/pci 等]
+  PU --> PC["sonic_platform_base/sonic_pice/pcie_common.py"]
+  PC --> YAML[("device/<platform>/plugins/pcie.yaml")]
+  PC --> KERNEL["/sys/bus/pci 等"]
 ```
 
 `show/main.py` の `platform` メニューに `pcieinfo` 項目を追加し、内部的に `pcieutil [pcie_show|pcie_check]` を実行する[^1]:

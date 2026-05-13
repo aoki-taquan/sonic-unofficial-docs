@@ -54,7 +54,7 @@ flowchart LR
     L1 -. Type-4 .- L2
     L1 --- SP[(Spine)]
     L2 --- SP
-    SP --- L3[Leaf 3\n(remote)]
+    SP --- L3["Leaf 3\n(remote)"]
     L1 -.Type-2 (MAC) ＋ Aliasing Type-1.-> L3
 ```
 

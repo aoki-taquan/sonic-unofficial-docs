@@ -36,11 +36,11 @@ related:
 
 ```mermaid
 flowchart LR
-    CFG[CONFIG_DB\nPASSW_HARDENING|POLICIES] --> HC[hostcfgd]
-    HC --> LD[/etc/login.defs]
-    HC --> PAM[/etc/pam.d/common-password]
-    HC --> PWQ[/etc/security/pwquality.conf]
-    LD --> LOGIN[login / passwd / chpasswd]
+    CFG["CONFIG_DB\nPASSW_HARDENING|POLICIES"] --> HC[hostcfgd]
+    HC --> LD["/etc/login.defs"]
+    HC --> PAM["/etc/pam.d/common-password"]
+    HC --> PWQ["/etc/security/pwquality.conf"]
+    LD --> LOGIN["login / passwd / chpasswd"]
     PAM --> LOGIN
     PWQ --> LOGIN
 ```

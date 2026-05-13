@@ -58,10 +58,10 @@ void apply_change(JsonChange jsonChange)  # エラーは例外
 
 ```mermaid
 flowchart TB
-    IN[JsonChange] --> S1[Stage 1: target JSON / diff 算出]
-    S1 --> S2[Stage 2: table を alphabetical 順に適用<br/>write → restart (or subscribe) → validate]
+    IN[JsonChange] --> S1["Stage 1: target JSON / diff 算出"]
+    S1 --> S2["Stage 2: table を alphabetical 順に適用<br/>write → restart (or subscribe) → validate"]
     S2 --> S3[Stage 3: ConfigDB と target を再比較]
-    S3 -->|diff あり| FAIL[エラー報告<br/>自動 rollback 無し]
+    S3 -->|diff あり| FAIL["エラー報告<br/>自動 rollback 無し"]
 ```
 
 ### Stage 2 の per-table
@@ -69,7 +69,7 @@ flowchart TB
 ```mermaid
 flowchart LR
     T[Table] --> W[ConfigDBConnector で書込]
-    W --> R{service が<br/>subscribe?}
+    W --> R{"service が<br/>subscribe?"}
     R -->|Yes| V[validate-commands]
     R -->|No| RS[service restart] --> V
     V --> NEXT[次 table]

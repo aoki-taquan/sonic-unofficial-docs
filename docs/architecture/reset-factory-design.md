@@ -70,19 +70,19 @@ KEEP_BASIC_TABLES=MGMT_PORT,MGMT_INTERFACE,PASSW_HARDENING
 
 ```mermaid
 flowchart TB
-    A[reset-factory <mode>] --> ST[sonic.target を停止]
+    A["reset-factory <mode>"] --> ST[sonic.target を停止]
     ST --> CFG{not keep-all-config?}
-    CFG -->|Yes| GEN[config-setup factory <mode 引数>]
+    CFG -->|Yes| GEN["config-setup factory <mode 引数>"]
     CFG -->|No| SKIPC[config はそのまま]
-    GEN --> USR{not only-config / keep-basic?}
-    USR -->|Yes| U[非 default ユーザ削除\nhistory / dotfile 削除]
+    GEN --> USR{"not only-config / keep-basic?"}
+    USR -->|Yes| U["非 default ユーザ削除\nhistory / dotfile 削除"]
     USR -->|No| SKIPU[ユーザ操作スキップ]
     U --> FILES{not only-config?}
     SKIPU --> FILES
     SKIPC --> FILES
-    FILES -->|Yes| F[docker 全削除\n/etc/sonic を factory に戻す\n/host/warmboot, /var/dump,\n /var/log, /host/reboot-cause クリア]
+    FILES -->|Yes| F["docker 全削除\n/etc/sonic を factory に戻す\n/host/warmboot, /var/dump,\n /var/log, /host/reboot-cause クリア"]
     FILES -->|No| SKIPF[ファイル保持]
-    F --> LOG[/var/log/systemlog に\n操作ログを記録]
+    F --> LOG["/var/log/systemlog に\n操作ログを記録"]
     SKIPF --> LOG
     LOG --> RB[reboot]
 ```

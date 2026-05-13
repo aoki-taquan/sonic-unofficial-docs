@@ -81,8 +81,8 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    SAIE[SAI 失敗] --> DUMP[/var/log/sai_failure_dump/]
-    DUMP --> ROTATE[rotation (10)]
+    SAIE[SAI 失敗] --> DUMP[/"var/log/sai_failure_dump"/]
+    DUMP --> ROTATE["rotation (10)"]
     ROTATE --> TS[techsupport]
     TS --> ARCHIVE[tarball 収納]
     TS --> CLEAR[ディレクトリ clear]

@@ -61,11 +61,11 @@ warm boot 既存挙動は維持[^1]。
 
 ```mermaid
 flowchart TD
-    EV{event} -->|port oper down| F1[per-port flush<br/>dynamic のみ]
-    EV -->|port を VLAN 抜去| F2[per-(port,VLAN)<br/>static + dynamic<br/>※CONFIG_DB の static は残す]
-    EV -->|STP topo change| F3[per-port or<br/>per-(port,VLAN)<br/>dynamic のみ]
-    EV -->|portchannel down| F4[per-portchannel<br/>dynamic のみ]
-    F1 & F2 & F3 & F4 --> SDB[STATE_DB / ASIC_DB / HW / m_entries]
+    EV{event} -->|port oper down| F1["per-port flush<br/>dynamic のみ"]
+    EV -->|port を VLAN 抜去| F2["per-(port,VLAN)<br/>static + dynamic<br/>※CONFIG_DB の static は残す"]
+    EV -->|STP topo change| F3["per-port or<br/>per-(port,VLAN)<br/>dynamic のみ"]
+    EV -->|portchannel down| F4["per-portchannel<br/>dynamic のみ"]
+    F1 & F2 & F3 & F4 --> SDB["STATE_DB / ASIC_DB / HW / m_entries"]
 ```
 
 port が VLAN メンバでない / VLAN から外れた static は orchagent の **「saved FDB」** に保持され、port が VLAN に再追加された時に再 program される。`FdbOrch` のデータ構造は `set<(MAC, bv_id)>` → `map<(MAC, bv_id), fdb_type>` に変更され、type 情報をキャッシュ化。

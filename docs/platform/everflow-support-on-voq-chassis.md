@@ -56,7 +56,7 @@ VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で�
 
 ```mermaid
 flowchart LR
-    SRC[ミラー対象パケット\n(LC0 ingress)] --> M0[LC0 mirrororch]
+    SRC["ミラー対象パケット\n(LC0 ingress)"] --> M0[LC0 mirrororch]
     M0 --> Q{宛先 LC}
     Q -->|local| LOCAL[同 LC で完結]
     Q -->|remote LC1| RFAIL[× 通常パスでは MONITOR_PORT に\n他 LC のポートを指定できない]

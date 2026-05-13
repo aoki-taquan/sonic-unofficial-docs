@@ -64,9 +64,9 @@ related:
 
 ```mermaid
 flowchart LR
-  subgraph dhcpmon (multi-thread)
-    Main[main thread:<br>socket recv + cache++]
-    DBu[DB update thread:<br>20s ごとに COUNTERS_DB sync]
+  subgraph SG_1["dhcpmon (multi-thread)"]
+    Main["main thread:<br>socket recv + cache++"]
+    DBu["DB update thread:<br>20s ごとに COUNTERS_DB sync"]
   end
   Sock4R[(socket DHCPv4 RX)] --> Main
   Sock4T[(socket DHCPv4 TX)] --> Main
@@ -74,7 +74,7 @@ flowchart LR
   Sock6T[(socket DHCPv6 TX)] --> Main
   Main --> Cache[in-process counter cache]
   Cache --> DBu
-  DBu --> CDB[(COUNTERS_DB<br>DHCPV4_COUNTER_TABLE<br>DHCPV6_COUNTER_TABLE)]
+  DBu --> CDB[("COUNTERS_DB<br>DHCPV4_COUNTER_TABLE<br>DHCPV6_COUNTER_TABLE")]
 ```
 
 socket は BPF program (`tcpdump -dd`) でフィルタしている[^1]:

@@ -44,9 +44,9 @@ NTP との関係は明確に切られている[^1]:
 
 ```mermaid
 flowchart LR
-    USER[管理者] -->|config clock timezone Asia/Kolkata| CLI[sonic-utilities]
+    USER[管理者] -->|"config clock timezone Asia/Kolkata"| CLI[sonic-utilities]
     CLI -->|timedatectl set-timezone| TC[timedatectl]
-    CLI --> CFG[(CONFIG_DB.DEVICE_METADATA|localhost\n.timezone)]
+    CLI --> CFG[("CONFIG_DB.DEVICE_METADATA|localhost\n.timezone")]
     CFG --> HC[hostcfgd]
     HC -->|永続適用| TC
     USER -->|config clock date 2024-01-01 12:00:00| CLI
@@ -100,7 +100,7 @@ flowchart TB
     A[config clock date入力] --> B{NTP 有効?}
     B -->|Yes| ER[error: NTP 有効時は不可]
     B -->|No| OK[timedatectl set-time 実行]
-    A2[config clock timezone] --> OK2[常に許可\n(timedatectl set-timezone)]
+    A2[config clock timezone] --> OK2["常に許可\n(timedatectl set-timezone)"]
 ```
 
 NTP 有効でも timezone は変更可能、というのは「時刻同期」と「表示タイムゾーン」を分離する一般的な運用に沿う[^1]。

@@ -45,11 +45,11 @@ ZTP は **箱出し直後の SONiC を、DHCP オプションで指示された 
 flowchart LR
     BOOT[初回 boot\nconfig_db.json なし] --> DHCP[DHCP discover\nmgmt interface]
     DHCP --> SRV[(DHCP server)]
-    SRV -->|option 67 / 239 / 225 等| ZTPCFG[ZTP JSON URL]
-    ZTPCFG --> FETCH[ztp daemon\nfetch via HTTP/HTTPS/TFTP]
+    SRV -->|"option 67 / 239 / 225 等"| ZTPCFG[ZTP JSON URL]
+    ZTPCFG --> FETCH["ztp daemon\nfetch via HTTP/HTTPS/TFTP"]
     FETCH --> EXEC[plugin runner\nsection 単位で順次実行]
-    EXEC --> STATE[/var/lib/ztp/ztp_state\n state machine]
-    STATE --> APPLY[config / firmware / image / scripts 適用]
+    EXEC --> STATE["/var/lib/ztp/ztp_state\n state machine"]
+    STATE --> APPLY["config / firmware / image / scripts 適用"]
 ```
 
 主要点[^1]:

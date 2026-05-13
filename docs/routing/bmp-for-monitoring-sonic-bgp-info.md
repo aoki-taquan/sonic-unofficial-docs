@@ -51,12 +51,12 @@ SONiC の [Redis](../reference/glossary.md#term-redis) [ROUTE_TABLE](../referenc
 
 ```mermaid
 flowchart LR
-  BGPD[FRR bgpd<br/>-M bmp module<br/>v7.2+]
-  BMPD[openbmpd<br/>(fork)]
-  CFG[bmpcfgd<br/>CONFIG_DB watcher]
+  BGPD["FRR bgpd<br/>-M bmp module<br/>v7.2+"]
+  BMPD["openbmpd<br/>(fork)"]
+  CFG["bmpcfgd<br/>CONFIG_DB watcher"]
   BGPD -- BMP TCP :5000 --> BMPD
   CFG --> BMPD
-  BMPD --> BSDB[(BMP_STATE_DB<br/>per-ASIC)]
+  BMPD --> BSDB[("BMP_STATE_DB<br/>per-ASIC")]
   BSDB -- gNMI on-change --> CTRL[External controller]
 ```
 

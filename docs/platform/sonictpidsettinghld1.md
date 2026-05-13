@@ -98,14 +98,14 @@ HW is not capable to support PortChannel TPID config.
 
 ```mermaid
 flowchart LR
-  CLI[config interface tpid] --> CHK{STATE_DB<br/>*_TPID_CAPABLE?}
-  CHK -- false --> REJ[reject<br/>"HW not capable"]
-  CHK -- true --> CDB[CONFIG_DB<br/>PORT.tpid / PORTCHANNEL.tpid]
-  CDB --> SYNC[portsyncd/teamsyncd]
-  SYNC --> APPL[APPL_DB<br/>PORT_TABLE.tpid<br/>LAG_TABLE.tpid]
+  CLI[config interface tpid] --> CHK{"STATE_DB<br/>*_TPID_CAPABLE?"}
+  CHK -- false --> REJ["reject<br/>\"HW not capable\""]
+  CHK -- true --> CDB["CONFIG_DB<br/>PORT.tpid / PORTCHANNEL.tpid"]
+  CDB --> SYNC["portsyncd/teamsyncd"]
+  SYNC --> APPL["APPL_DB<br/>PORT_TABLE.tpid<br/>LAG_TABLE.tpid"]
   APPL --> ORCH[PortsOrch]
   ORCH --> ASIC[ASIC_DB → syncd]
-  ASIC --> SAI[SAI_PORT_ATTR_TPID<br/>SAI_LAG_ATTR_TPID]
+  ASIC --> SAI["SAI_PORT_ATTR_TPID<br/>SAI_LAG_ATTR_TPID"]
 ```
 
 ### LAG メンバへの直接設定は禁止

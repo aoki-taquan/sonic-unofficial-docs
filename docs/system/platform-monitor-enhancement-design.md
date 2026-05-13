@@ -51,20 +51,20 @@ flowchart LR
   subgraph pmon
     L[ledd]
     X[xcvrd]
-    P[psud (新)]
-    F[fand (新)]
+    P["psud (新)"]
+    F["fand (新)"]
     M[misc one-shot task]
   end
   P -- platform plugin / API --> HW1[(PSU)]
   F -- platform plugin / API --> HW2[(FAN)]
-  X -- platform plugin / API --> HW3[(SFP / xcvr)]
+  X -- platform plugin / API --> HW3[("SFP / xcvr")]
   M -- syseeprom decode --> HW4[(syseeprom)]
   P --> SDB[(STATE_DB)]
   F --> SDB
   X --> SDB
   M --> SDB
-  CLI[show platform / SNMP] --> SDB
-  CLI -. set led / fan speed .-> CDB[(CONFIG_DB / STATE_DB)]
+  CLI["show platform / SNMP"] --> SDB
+  CLI -. set led / fan speed .-> CDB[("CONFIG_DB / STATE_DB")]
   CDB --> P
   CDB --> F
 ```

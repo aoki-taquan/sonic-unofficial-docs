@@ -44,20 +44,20 @@ related:
 
 ```mermaid
 flowchart LR
-    subgraph host[host namespace]
-      CLI[sonic-utilities<br/>(host)]
-      DB_HOST[(database (host)<br/>CONFIG_DB shared)]
+    subgraph host["host namespace"]
+      CLI["sonic-utilities<br/>(host)"]
+      DB_HOST[("database (host)<br/>CONFIG_DB shared")]
     end
-    subgraph asic0[asic0 namespace]
+    subgraph asic0["asic0 namespace"]
       SW0[swss0]
       SY0[syncd0]
-      FR0[FRR / bgp0]
+      FR0["FRR / bgp0"]
       DB0[(database0)]
     end
-    subgraph asic1[asic1 namespace]
+    subgraph asic1["asic1 namespace"]
       SW1[swss1]
       SY1[syncd1]
-      FR1[FRR / bgp1]
+      FR1["FRR / bgp1"]
       DB1[(database1)]
     end
     CLI -.aggregate.-> DB0

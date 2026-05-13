@@ -59,11 +59,11 @@ related:
 
 ```mermaid
 flowchart LR
-    CALLER[caller in sonic-mgmt-common] --> RC[RedisClient(db)]
-    CALLER --> TRC[TransactionalRedisClient(db)]
-    CALLER --> TRCO[TransactionalRedisClientWithOpts(opts)]
-    CALLER --> CL[CloseRedisClient(client)]
-    RC --> CACHE[(client cache\nDBNum -> *redis.Client\nPoolSize 20)]
+    CALLER[caller in sonic-mgmt-common] --> RC["RedisClient(db)"]
+    CALLER --> TRC["TransactionalRedisClient(db)"]
+    CALLER --> TRCO["TransactionalRedisClientWithOpts(opts)"]
+    CALLER --> CL["CloseRedisClient(client)"]
+    RC --> CACHE[("client cache\nDBNum -> *redis.Client\nPoolSize 20")]
     TRC --> NEW[redis.NewClient\nPoolSize 1]
     TRCO --> NEW
     CL --> CHECK{PoolSize == 1?}

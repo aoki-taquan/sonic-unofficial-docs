@@ -56,7 +56,7 @@ SONiC の [QoS](../reference/glossary.md#term-qos) は [DSCP](../reference/gloss
 
 ```mermaid
 flowchart LR
-    CFG[(CONFIG_DB\nMPLS_TC_TO_TC_MAP|name)] --> ORCH[QoS orch]
+    CFG[("CONFIG_DB\nMPLS_TC_TO_TC_MAP|name")] --> ORCH[QoS orch]
     PQM[(CONFIG_DB\nPORT_QOS_MAP\n.mpls_tc_to_tc_map=name)] --> ORCH
     ORCH --> SAI[SAI qos_map\nSAI_QOS_MAP_MPLS_EXP_TO_TC]
     SAI --> ASIC[ASIC]

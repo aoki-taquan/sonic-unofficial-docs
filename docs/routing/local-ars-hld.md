@@ -47,7 +47,7 @@ flowchart LR
     PKT[ingress packet] --> HASH[既定 ECMP hash]
     HASH --> CHK{ARS profile\n適用 nexthop?}
     CHK -- no --> NORM[既定 next-hop]
-    CHK -- yes --> ARS[ARS engine\n(出力 queue depth /\nport utilization 観測)]
+    CHK -- yes --> ARS["ARS engine\n(出力 queue depth /\nport utilization 観測)"]
     ARS --> SEL[next-hop 選択 reconsider]
     SEL --> EGR[egress port]
 ```

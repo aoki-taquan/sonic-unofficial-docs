@@ -102,11 +102,11 @@ TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>
 
 ```mermaid
 flowchart TD
-  CFG[CONFIG_DB SUBNET_DECAP|...<br>status=enable] --> SC[swssconfig service<br>テンプレート展開]
-  SC --> APP[APPL_DB<br>TUNNEL_DECAP_TABLE / _TERM_TABLE]
+  CFG["CONFIG_DB SUBNET_DECAP|...<br>status=enable"] --> SC["swssconfig service<br>テンプレート展開"]
+  SC --> APP["APPL_DB<br>TUNNEL_DECAP_TABLE / _TERM_TABLE"]
   APP --> ORCH[TunnelDecapOrch]
-  ORCH --> SAI[(SAI tunnel decap term<br>MP2MP)]
-  Net[Netscan sender] -->|IPinIP outer DIP=Loopback<br>inner DIP=VLAN subnet IP| T0[T0 SONiC]
+  ORCH --> SAI[("SAI tunnel decap term<br>MP2MP")]
+  Net[Netscan sender] -->|"IPinIP outer DIP=Loopback<br>inner DIP=VLAN subnet IP"| T0[T0 SONiC]
   T0 -->|decap + route back| Net
 ```
 

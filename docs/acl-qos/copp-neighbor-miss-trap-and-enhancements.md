@@ -44,14 +44,14 @@ related:
 flowchart LR
     SAI[SAI] -->|enum capability query| CO[Copporch]
     CO --> SUP[supported_trap_ids]
-    SUP --> ST1[(STATE_DB\nCOPP_TRAP_CAPABILITY_TABLE|traps)]
+    SUP --> ST1[("STATE_DB\nCOPP_TRAP_CAPABILITY_TABLE|traps")]
     APPL[(APPL_DB\nCoPP trap 設定)] --> CO
     CO --> CHK{supported?}
     CHK -->|Yes| INS[create_hostif_trap\nhw_status=installed]
     CHK -->|No| ERR[syslog ERR\nhw_status=not-installed]
-    INS --> ST2[(STATE_DB\nCOPP_TRAP_TABLE|<trap>)]
+    INS --> ST2[("STATE_DB\nCOPP_TRAP_TABLE|<trap>")]
     ERR --> ST2
-    CLI[show copp configuration] --> CFG[(CONFIG_DB / copp_cfg.json)]
+    CLI[show copp configuration] --> CFG[("CONFIG_DB / copp_cfg.json")]
     CLI --> ST2
 ```
 

@@ -50,8 +50,8 @@ SONiC の docker は歴史的に多くが **`--privileged`** で動いていた�
 
 ```mermaid
 flowchart LR
-    UNIT[systemd unit\n(<feature>.service)] --> CTL[docker_image_ctl.j2]
-    CTL --> RUN[docker run\n--cap-add ... --cap-drop=all\n--read-only\n--tmpfs /run\n-v /var/log/<f>:/var/log\n-v /etc/sonic:/etc/sonic:ro\n...]
+    UNIT["systemd unit\n(<feature>.service)"] --> CTL[docker_image_ctl.j2]
+    CTL --> RUN["docker run\n--cap-add ... --cap-drop=all\n--read-only\n--tmpfs /run\n-v /var/log/<f>:/var/log\n-v /etc/sonic:/etc/sonic:ro\n..."]
     RUN --> CONT[(docker container)]
 ```
 

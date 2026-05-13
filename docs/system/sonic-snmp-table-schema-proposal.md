@@ -91,7 +91,7 @@ HLD は次のファイル変更を要求している[^1]：
 flowchart LR
     YML[snmp.yml] -.->|legacy| J2[snmpd.conf.j2]
     CDB[(CONFIG_DB SNMP*)] -->|new| J2
-    J2 --> SCONF[/etc/snmp/snmpd.conf]
+    J2 --> SCONF["/etc/snmp/snmpd.conf"]
 ```
 
 j2 テンプレート側で `SNMP` テーブルの存在チェックを行い、存在すれば新スキーマ、未定義なら従来 yaml をそのまま使う設計のため、既存デプロイは即座に壊れない[^1]。

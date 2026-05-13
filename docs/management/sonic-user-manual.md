@@ -43,9 +43,9 @@ SONiC は歴史的に 2 系統の CLI が共存する:
 ```mermaid
 flowchart LR
     USER[管理者] --> SH[bash shell]
-    SH --> CLICK[sonic-utilities\n(click ベース)\nshow / config / sudo systemctl ...]
-    SH --> KLISH[sonic-cli\n(KLISH ベース\nmgmt-framework 経由)]
-    CLICK --> CDB[(CONFIG_DB / 直接)]
+    SH --> CLICK["sonic-utilities\n(click ベース)\nshow / config / sudo systemctl ..."]
+    SH --> KLISH["sonic-cli\n(KLISH ベース\nmgmt-framework 経由)"]
+    CLICK --> CDB[("CONFIG_DB / 直接")]
     KLISH --> MF[mgmt-framework]
     MF --> CDB
 ```
@@ -59,11 +59,11 @@ User Manual は両者の併用前提で書かれており、機能によって�
 
 ```mermaid
 flowchart LR
-    INIT[初期構成\nminigraph / config_db.json] --> RELOAD[config reload]
+    INIT["初期構成\nminigraph / config_db.json"] --> RELOAD[config reload]
     RELOAD --> SHOW[show running-configuration]
     SHOW --> EDIT[個別 config command]
     EDIT --> SAVE[config save]
-    SAVE --> REB[warm/cold reboot]
+    SAVE --> REB["warm/cold reboot"]
     REB --> SHOW
 ```
 

@@ -59,13 +59,13 @@ SYMLINK+="myttypl2303"
 
 ```mermaid
 graph TD
-    HUB[USB hub<br/>(SMSC USB2517)]
+    HUB["USB hub<br/>(SMSC USB2517)"]
     HUB --> P1[hub port 1]
     HUB --> P2[hub port 2]
     HUB --> P3[hub port 3]
     HUB --> P4[hub port 4]
-    P1 --> U1[cp210x A<br/>4 interfaces]
-    P2 --> U2[cp210x B<br/>4 interfaces]
+    P1 --> U1["cp210x A<br/>4 interfaces"]
+    P2 --> U2["cp210x B<br/>4 interfaces"]
     U1 --> FP[front-panel ports 1-4]
     U2 --> FP2[front-panel ports 5-8]
 ```
@@ -122,7 +122,7 @@ flowchart LR
     F2[FP 2] --- T1[ttyUSB1]
     F3[FP 3] --- T2[ttyUSB2]
     F4[FP 4] --- T3[ttyUSB3]
-    F5[FP 5 / hub port 2 故障] -.-x XX[ttyUSB なし]
+    F5["FP 5 / hub port 2 故障"] -.-x XX[ttyUSB なし]
     F9[FP 9] --- T4[ttyUSB4]
 ```
 

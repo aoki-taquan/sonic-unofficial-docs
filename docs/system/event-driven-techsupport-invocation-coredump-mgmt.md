@@ -45,14 +45,14 @@ SONiC の docker 内プロセスが crash すると、core ファイルが生成
 
 ```mermaid
 flowchart LR
-    PROC[docker 内 process crash] --> CORE[/var/core/<feature>/<pid>.core.gz]
+    PROC[docker 内 process crash] --> CORE["/var/core/<feature>/<pid>.core.gz"]
     CORE --> HANDLER[coredump_gen_handler]
-    HANDLER --> RL{rate-limit /\nfeature 抑制?}
+    HANDLER --> RL{"rate-limit /\nfeature 抑制?"}
     RL -- skip --> END[終了]
     RL -- ok --> RUN[show techsupport を非同期起動]
-    RUN --> AR[/var/dump/sonic_dump_<host>_<ts>.tar.gz]
-    AR --> CLEAN[techsupport_cleanup\n(quota 超過なら古い物を削除)]
-    HANDLER --> SDB[STATE_DB\nAUTO_TECHSUPPORT|*]
+    RUN --> AR["/var/dump/sonic_dump_<host>_<ts>.tar.gz"]
+    AR --> CLEAN["techsupport_cleanup\n(quota 超過なら古い物を削除)"]
+    HANDLER --> SDB["STATE_DB\nAUTO_TECHSUPPORT|*"]
 ```
 
 主要要素[^1]:

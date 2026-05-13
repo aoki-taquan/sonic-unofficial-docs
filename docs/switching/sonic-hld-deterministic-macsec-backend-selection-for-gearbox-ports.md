@@ -54,12 +54,12 @@ related:
 
 ```mermaid
 flowchart LR
-    HWSKU[HWSKU gearbox_config.json\nphys[].macsec_supported] -->|起動時パース| GS[gearsyncd\nGearboxParser]
-    GS --> APP[(APP_DB\n_GEARBOX_TABLE:phy:<id>\nmacsec_supported)]
+    HWSKU["HWSKU gearbox_config.json\nphys[].macsec_supported"] -->|起動時パース| GS[gearsyncd\nGearboxParser]
+    GS --> APP[("APP_DB\n_GEARBOX_TABLE:phy:<id>\nmacsec_supported")]
     APP --> GU[GearboxUtils\nloadPhyMap]
     GU --> MACO[MACsecOrch]
     MACO --> Q{phy.macsec_supported}
-    Q -->|true / 不在| PHY[PHY 側 SAI でMACsec object を作成]
+    Q -->|"true / 不在"| PHY[PHY 側 SAI でMACsec object を作成]
     Q -->|false| NPU[NPU 側 gSwitchId でMACsec object を作成]
 ```
 
@@ -91,10 +91,10 @@ flowchart LR
 flowchart TB
     P[ポートに MACsec を有効化] --> M[GearboxUtils で\nマップされた PHY を取得]
     M --> C{PHY 取得できた?}
-    C -->|No| D[既定 PHY backend\n(後方互換)]
+    C -->|No| D["既定 PHY backend\n(後方互換)"]
     C -->|Yes| E{phy.macsec_supported}
-    E -->|true / 不在| F[PHY backend]
-    E -->|false| G[NPU backend\n(gSwitchId + 前面パネル port OID)]
+    E -->|"true / 不在"| F[PHY backend]
+    E -->|false| G["NPU backend\n(gSwitchId + 前面パネル port OID)"]
 ```
 
 ルール（HLD まとめ）[^1]:

@@ -48,18 +48,18 @@ related:
 
 ```mermaid
 flowchart LR
-  subgraph CLIENTS[Clients]
-    CLICK[Click CLI<br/>sonic-utilities]
+  subgraph CLIENTS["Clients"]
+    CLICK["Click CLI<br/>sonic-utilities"]
     MFCLI[Management Framework CLI]
     REST[REST API client]
     GNMI[gNMI client]
   end
-  subgraph MGMT[mgmt-framework container]
-    TRANS[Transformer<br/>YANG ↔ host action]
+  subgraph MGMT["mgmt-framework container"]
+    TRANS["Transformer<br/>YANG ↔ host action"]
   end
-  subgraph HOST[Host]
-    HS[sonic-hostservices<br/>(D-Bus / privileged)]
-    SCRIPT[既存 show techsupport<br/>script]
+  subgraph HOST["Host"]
+    HS["sonic-hostservices<br/>(D-Bus / privileged)"]
+    SCRIPT["既存 show techsupport<br/>script"]
   end
   CLICK --> SCRIPT
   MFCLI --> TRANS
@@ -67,7 +67,7 @@ flowchart LR
   GNMI --> TRANS
   TRANS --> HS
   HS --> SCRIPT
-  SCRIPT --> TAR[/var/dump/sonic_dump_*.tar.gz]
+  SCRIPT --> TAR["/var/dump/sonic_dump_*.tar.gz"]
 ```
 
 要点[^1]:

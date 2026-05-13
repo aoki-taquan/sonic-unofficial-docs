@@ -53,11 +53,11 @@ SONiC では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ�
 
 ```mermaid
 flowchart LR
-    CL[gNOI client\n(gnoi_client / Go)] -->|gRPC :9339| UMF[UMF/sonic-gnmi]
-    UMF -->|InstallOS / ActivateOS / VerifyOS| FE[FE handlers]
+    CL["gNOI client\n(gnoi_client / Go)"] -->|gRPC :9339| UMF["UMF/sonic-gnmi"]
+    UMF -->|"InstallOS / ActivateOS / VerifyOS"| FE[FE handlers]
     FE -->|HostQuery DBUS| HS[Host Service\nimage_service]
-    HS --> SI[sonic-installer\n(host CLI)]
-    SI --> FS[(/host/image-*\non-disk)]
+    HS --> SI["sonic-installer\n(host CLI)"]
+    SI --> FS[("/host/image-*\non-disk")]
 ```
 
 DBUS エンドポイント[^1]:

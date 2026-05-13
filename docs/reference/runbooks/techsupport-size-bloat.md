@@ -61,11 +61,11 @@ related:
 ```mermaid
 flowchart TD
     A[techsupport が巨大化] --> B{core dump 多数?}
-    B -- Yes --> B1[/var/core を整理 / クラッシュ原因を解消]
+    B -- Yes --> B1["/var/core を整理 / クラッシュ原因を解消"]
     B -- No --> C{log rotate 設定 OK?}
-    C -- No --> C1[rsyslog / logrotate 設定を修正]
+    C -- No --> C1["rsyslog / logrotate 設定を修正"]
     C -- Yes --> D{特定 DB dump が巨大?}
-    D -- Yes --> D1[CONFIG_DB / FRR running-config を確認]
+    D -- Yes --> D1["CONFIG_DB / FRR running-config を確認"]
     D -- No --> E[show techsupport の since オプションで範囲限定]
 ```
 

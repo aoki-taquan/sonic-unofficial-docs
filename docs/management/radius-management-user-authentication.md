@@ -57,14 +57,14 @@ SONiC 管理ユーザの SSH / console ログインを RADIUS で認証する仕
 
 ```mermaid
 flowchart LR
-    USER[(CONFIG_DB\nAAA / RADIUS / RADIUS_SERVER)] --> PAMC[pam-radius config\n/etc/pam.d/sshd, login]
-    USER --> NSS[NSS module config\n/etc/nsswitch.conf]
-    SSH[sshd / login] --> PAMC
+    USER[("CONFIG_DB\nAAA / RADIUS / RADIUS_SERVER")] --> PAMC["pam-radius config\n/etc/pam.d/sshd, login"]
+    USER --> NSS["NSS module config\n/etc/nsswitch.conf"]
+    SSH["sshd / login"] --> PAMC
     SSH --> NSS
-    PAMC -->|UDP/RADIUS| RAD[RADIUS server (priority 1..8)]
-    NSS -->|user lookup| MAPPER[nss-mapper / passwd]
-    RAD -->|VLAN / Privilege / FilterID| PAMC
-    PAMC -->|local account / role 反映| LOCAL[(/etc/passwd など)]
+    PAMC -->|"UDP/RADIUS"| RAD["RADIUS server (priority 1..8)"]
+    NSS -->|user lookup| MAPPER["nss-mapper / passwd"]
+    RAD -->|"VLAN / Privilege / FilterID"| PAMC
+    PAMC -->|"local account / role 反映"| LOCAL[("/etc/passwd など")]
 ```
 
 ### Mapping Users

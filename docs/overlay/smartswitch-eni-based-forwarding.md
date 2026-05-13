@@ -55,7 +55,7 @@ flowchart LR
     subgraph cluster["T1 cluster"]
       NPU --> ACL[ENI_REDIRECT ACL]
       ACL -->|case 1: local active ENI| LD[Local DPU]
-      ACL -->|case 2: local standby ENI<br/>(remote が active)| RT[Remote NPU+DPU<br/>VxLAN]
+      ACL -->|"case 2: local standby ENI<br/>(remote が active)"| RT["Remote NPU+DPU<br/>VxLAN"]
       ACL -->|case 3: ENI 不在| RT
     end
 ```
@@ -79,12 +79,12 @@ flowchart LR
 ```mermaid
 flowchart LR
     HA[HaMgrd] -->|primary endpoint| EFT[(DASH_ENI_FORWARD_TABLE)]
-    DPU[(DPU / vDPU table)] --> ORCH[DashEniFwdOrch]
+    DPU[("DPU / vDPU table")] --> ORCH[DashEniFwdOrch]
     EFT --> ORCH
-    ORCH -->|Local| NO[NeighOrch<br/>APP_NEIGH_RESOLVE_TABLE]
-    ORCH -->|Remote| VX[VxLanTunnOrch<br/>Tunnel NH]
+    ORCH -->|Local| NO["NeighOrch<br/>APP_NEIGH_RESOLVE_TABLE"]
+    ORCH -->|Remote| VX["VxLanTunnOrch<br/>Tunnel NH"]
     ORCH --> AR[(ACL_RULE)]
-    AR --> AO[AclOrch] --> SAI[SAI/SDK]
+    AR --> AO[AclOrch] --> SAI["SAI/SDK"]
 ```
 
 `DashEniFwdOrch` は `DASH_ENI_FORWARD_TABLE` を購読、DPU テーブルで local / remote を判別し、Local なら `NeighOrch`、Remote なら `VxLanTunnOrch` で nexthop を作って `ACL_RULE` に書く。

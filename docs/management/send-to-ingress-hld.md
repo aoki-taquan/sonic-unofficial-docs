@@ -58,11 +58,11 @@ SDN コントローラがネットワーク全体を見てフローを書く構�
 
 ```mermaid
 flowchart LR
-    APP[App\n(P4RT / Controller / test)] -->|sendmsg| ND[netdev\n"send_to_ingress"]
+    APP["App\n(P4RT / Controller / test)"] -->|sendmsg| ND["netdev\nsend_to_ingress"]
     ND --> SAIH[SAI hostif\nTYPE=NETDEV\nOBJ_ID=CPU port]
     SAIH --> CPU[CPU port]
     CPU --> ING[ASIC ingress pipeline]
-    ING --> FWD[ECMP/WCMP / lookup\nに従って出力ポート選択]
+    ING --> FWD["ECMP/WCMP / lookup\nに従って出力ポート選択"]
 ```
 
 要点:

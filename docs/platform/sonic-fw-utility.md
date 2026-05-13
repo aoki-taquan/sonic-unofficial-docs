@@ -45,9 +45,9 @@ BIOS、CPLD、[FPGA](../reference/glossary.md#term-fpga)、BMC、SSD などの�
 ```mermaid
 flowchart LR
     USER[管理者] --> CLI[fwutil CLI]
-    CLI --> PLAT[/usr/share/sonic/device/<platform>/\nplatform_components.json]
-    CLI --> PLUG[plugin\n(platform/chassis/component の Python class)]
-    PLUG -->|read version| HW[(BIOS / CPLD / FPGA / BMC / SSD)]
+    CLI --> PLAT["/usr/share/sonic/device/<platform>/\nplatform_components.json"]
+    CLI --> PLUG["plugin\n(platform/chassis/component の Python class)"]
+    PLUG -->|read version| HW[("BIOS / CPLD / FPGA / BMC / SSD")]
     PLUG -->|install| HW
 ```
 

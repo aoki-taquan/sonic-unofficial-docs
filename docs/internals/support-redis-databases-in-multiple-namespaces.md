@@ -51,17 +51,17 @@ Multi-ASIC SONiC（複数 [NPU](../reference/glossary.md#term-npu) を持つデ�
 
 ```mermaid
 flowchart LR
-  subgraph Linux Host (global namespace)
-    GDB[(global DB<br>APPL_DB / CONFIG_DB)]
-    SNMP[snmp / pmon / telemetry]
+  subgraph SG_1["Linux Host (global namespace)"]
+    GDB[("global DB<br>APPL_DB / CONFIG_DB")]
+    SNMP["snmp / pmon / telemetry"]
   end
   subgraph asic0 namespace
-    DB0[(redis_asic0:<br>APPL/CONFIG/ASIC/<br>COUNTERS/...)]
-    SW0[swss / syncd / bgp / teamd / lldp]
+    DB0[("redis_asic0:<br>APPL/CONFIG/ASIC/<br>COUNTERS/...")]
+    SW0["swss / syncd / bgp / teamd / lldp"]
   end
   subgraph asic1 namespace
     DB1[(redis_asic1)]
-    SW1[swss / syncd / ...]
+    SW1["swss / syncd / ..."]
   end
   GDB -.-> DB0
   GDB -.-> DB1

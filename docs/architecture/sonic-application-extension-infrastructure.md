@@ -51,12 +51,12 @@ related:
 ```mermaid
 flowchart LR
     REG[(コンテナレジストリ)] --> PM[sonic-package-manager]
-    PM --> PKGDB[/var/lib/sonic-package-manager/<br/>installed manifests]
+    PM --> PKGDB["/var/lib/sonic-package-manager/<br/>installed manifests"]
     PM --> DOCKER[(local docker images)]
-    PM --> CFGDB[CONFIG_DB<br/>FEATURE エントリ追加]
+    PM --> CFGDB["CONFIG_DB<br/>FEATURE エントリ追加"]
     CFGDB --> HC[hostcfgd]
-    HC --> SVC[/etc/systemd/system/<feature>.service]
-    SVC --> CONT[docker run --name <feature>]
+    HC --> SVC["/etc/systemd/system/<feature>.service"]
+    SVC --> CONT["docker run --name <feature>"]
 ```
 
 主要コンポーネント[^1]:
@@ -70,13 +70,13 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    INST[install <repo>:<tag>] --> PULL[image pull]
-    PULL --> VERIFY[manifest 検証<br/>version / 依存 / SONiC ver]
-    VERIFY --> REGISTER[FEATURE 追加<br/>CLI plugin / showtech plugin 登録]
-    REGISTER --> ENABLE[config feature state <pkg> enabled]
+    INST["install <repo>:<tag>"] --> PULL[image pull]
+    PULL --> VERIFY["manifest 検証<br/>version / 依存 / SONiC ver"]
+    VERIFY --> REGISTER["FEATURE 追加<br/>CLI plugin / showtech plugin 登録"]
+    REGISTER --> ENABLE["config feature state <pkg> enabled"]
     ENABLE --> RUN[hostcfgd → systemd → docker]
     RUN --> UNINST[uninstall]
-    UNINST --> CLEAN[disable → FEATURE 削除<br/>image / plugin 削除]
+    UNINST --> CLEAN["disable → FEATURE 削除<br/>image / plugin 削除"]
 ```
 
 manifest が必須宣言する項目[^1]:

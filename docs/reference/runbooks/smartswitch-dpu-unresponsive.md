@@ -55,13 +55,13 @@ related:
 
 ```mermaid
 flowchart TD
-    A[DPU が無応答] --> B{NPU から PCIe / mgmt link OK?}
-    B -- No --> B1[PCIe link / 電源を確認]
-    B -- Yes --> C{ping / gNMI 応答?}
-    C -- No --> C1[DPU agent / dhcp_server を確認]
+    A[DPU が無応答] --> B{"NPU から PCIe / mgmt link OK?"}
+    B -- No --> B1["PCIe link / 電源を確認"]
+    B -- Yes --> C{"ping / gNMI 応答?"}
+    C -- No --> C1["DPU agent / dhcp_server を確認"]
     C -- Yes --> D{DPU 側 dataplane 動作?}
-    D -- No --> D1[DPU 内 syslog / dataplane プロセス確認]
-    D -- Yes --> E[DPU reset (graceful → force)]
+    D -- No --> D1["DPU 内 syslog / dataplane プロセス確認"]
+    D -- Yes --> E["DPU reset (graceful → force)"]
 ```
 
 ## 確認コマンド

@@ -57,9 +57,9 @@ SONiC のホストにプラグインされる **USB 接続のポータブル con
 ```mermaid
 flowchart LR
     USB[USB plug-in] --> UDEV[udev rules]
-    UDEV --> MAP[/dev/ttyUSB<id> → /dev/console-<line>/]
-    BUILD[sonic-buildimage] --> DEB[<vendor>-<model>.deb]
-    DEB -->|install| RULES[/etc/udev/rules.d/50-<vendor>-<model>.rules]
+    UDEV --> MAP[/"dev/ttyUSB<id> → /dev/console-<line>"/]
+    BUILD[sonic-buildimage] --> DEB["<vendor>-<model>.deb"]
+    DEB -->|install| RULES["/etc/udev/rules.d/50-<vendor>-<model>.rules"]
     POSTINST[postinst hook] -->|udevadm trigger -c add| UDEV
 ```
 

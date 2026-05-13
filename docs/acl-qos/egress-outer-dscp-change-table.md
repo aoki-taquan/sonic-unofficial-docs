@@ -67,7 +67,7 @@ encapsulated 後の **outer header の [DSCP](../reference/glossary.md#term-dscp
 
 ```mermaid
 flowchart LR
-    USER[ユーザ ACL\nUNDERLAY_SET_DSCP rule\n(SRC_IP, ..., DSCP=v)] --> AO[AclOrch]
+    USER["ユーザ ACL\nUNDERLAY_SET_DSCP rule\n(SRC_IP, ..., DSCP=v)"] --> AO[AclOrch]
     AO -->|内部展開| ING[(MARK_META rule\nfield: SRC_IP\naction: SET_METADATA=N)]
     AO -->|内部展開| EGR[(EGR_SET_DSCP rule\nfield: ACL_USER_META=N\naction: SET_DSCP=v)]
     PKT[ingress pkt] --> ING

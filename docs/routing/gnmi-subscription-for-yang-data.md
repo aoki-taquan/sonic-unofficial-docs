@@ -48,11 +48,11 @@ related:
 
 ```mermaid
 flowchart LR
-    CLI[gnmi_cli\n(client)] --gNMI Subscribe--> SRV[gNMI server\n(mgmt-framework)]
+    CLI["gnmi_cli\n(client)"] --gNMI Subscribe--> SRV["gNMI server\n(mgmt-framework)"]
     SRV --> TL[Translib]
-    TL --> XLATE[Transformer / xpath → DB key]
-    XLATE --> SUBSC[subscribe (Redis keyspace + table notif)]
-    SUBSC --> STDB[(STATE_DB / COUNTERS_DB / APPL_DB)]
+    TL --> XLATE["Transformer / xpath → DB key"]
+    XLATE --> SUBSC["subscribe (Redis keyspace + table notif)"]
+    SUBSC --> STDB[("STATE_DB / COUNTERS_DB / APPL_DB")]
     STDB -- changes --> SUBSC
     SUBSC --> SRV
     SRV -- gNMI Notification --> CLI

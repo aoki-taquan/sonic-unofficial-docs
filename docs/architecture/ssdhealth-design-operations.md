@@ -52,12 +52,12 @@ Temperature: N/A
 
 ```mermaid
 flowchart LR
-    USER[user] --> SHOW[show platform ssdhealth\n(show/main.py)]
-    SHOW -->|exec| UTIL[ssdhealth -d /dev/sdX -v / -e]
-    UTIL --> BASE[SsdBase\n(sonic_platform_base/sonic_ssd)]
-    BASE --> VENDOR[SsdUtil\n(device/<vendor>/platform/plugins/ssdutil.py)]
+    USER[user] --> SHOW["show platform ssdhealth\n(show/main.py)"]
+    SHOW -->|exec| UTIL["ssdhealth -d /dev/sdX -v / -e"]
+    UTIL --> BASE["SsdBase\n(sonic_platform_base/sonic_ssd)"]
+    BASE --> VENDOR["SsdUtil\n(device/<vendor>/platform/plugins/ssdutil.py)"]
     BASE -.fallback.-> SCTL[smartctl]
-    VENDOR --> ISMART[iSmart / SmartCmd 等\nベンダ純正]
+    VENDOR --> ISMART["iSmart / SmartCmd 等\nベンダ純正"]
     UTIL --> OUT[stdout]
 ```
 

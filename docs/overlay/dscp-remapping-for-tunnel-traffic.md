@@ -54,9 +54,9 @@ Dual-ToR（Active / Standby）でサーバ側輻輳が起きると **upper / low
 ```mermaid
 flowchart LR
     T1 -->|DSCP=3, TC3, PG3, Q3| StandbyToR
-    StandbyToR -->|encap MuxTunnel<br/>outer DSCP=2, Q2| T1b[T1]
+    StandbyToR -->|"encap MuxTunnel<br/>outer DSCP=2, Q2"| T1b[T1]
     T1b -->|TC2, PG2| ActiveToR
-    ActiveToR -->|decap; inner DSCP=3 維持<br/>AZURE_TUNNEL → TC3, PG2| Server
+    ActiveToR -->|"decap; inner DSCP=3 維持<br/>AZURE_TUNNEL → TC3, PG2"| Server
 ```
 
 Standby が受けた南向きパケットは MuxTunnel ([IPinIP](../reference/glossary.md#term-ipinip)) で対向 Active ToR に encap される。元の TC/Queue をそのまま使うと往復が同一キューで連結し pause が解けない。[HLD](../reference/glossary.md#term-hld) は **encap 側で DSCP/Queue を書き換え**、**decap 側でポート単位 TC/PG を上書き** する 2 段で経路を分ける。
@@ -134,9 +134,9 @@ sequenceDiagram
     participant Active as Active ToR
     participant Server
     T1->>Standby: DSCP=3, TC3, PG3, Q3 (port-level)
-    Standby->>T1: encap; outer DSCP=2, Q2 (AZURE_TUNNEL)
+    Standby->>T1: encap, outer DSCP=2, Q2 (AZURE_TUNNEL)
     T1->>Active: port-level DSCP2 → TC2/PG2 (lossy 路)
-    Active->>Server: decap (pipe, inner=3); AZURE_TUNNEL[3]→TC3/PG2
+    Active->>Server: decap (pipe, inner=3), AZURE_TUNNEL[3]→TC3/PG2
 ```
 
 <!-- evidence:

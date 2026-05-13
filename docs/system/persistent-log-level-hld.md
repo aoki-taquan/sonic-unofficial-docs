@@ -70,9 +70,9 @@ LOGLEVEL_DB (旧)
 flowchart LR
     User[swssloglevel CLI] --> CDB[(CONFIG_DB\nLOGGER)]
     Save[config save] --> CDB
-    Save -->|copy| JSON[/etc/sonic/config_db.json]
-    CDB -->|change event| LIS[各コンポーネントの settingThread\n(listener)]
-    LIS --> COMP[Logger singleton\n(loglevel property)]
+    Save -->|copy| JSON["/etc/sonic/config_db.json"]
+    CDB -->|change event| LIS["各コンポーネントの settingThread\n(listener)"]
+    LIS --> COMP["Logger singleton\n(loglevel property)"]
     Boot[再起動] --> JSON
     JSON -->|database container init| CDB
 ```
