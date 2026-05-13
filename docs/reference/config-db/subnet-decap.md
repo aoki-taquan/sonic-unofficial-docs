@@ -113,6 +113,30 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `status` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `enable` | `subnetDecapConfig.enable = true`。MP2MP tunnel term が有効化され [SAI](../../reference/glossary.md#term-sai) tunnel term entry が生成される。 |
+| `disable` | `subnetDecapConfig.enable = false`（デフォルト）。MP2MP term から `"subnet decap is disabled, ignored."` ログでスキップ。データプレーンに反映されない。 |
+
+### `src_ip` フィールド挙動
+| 状態 | 挙動 |
+|------|------|
+| 有効な IPv4 prefix | `isV4()` チェック通過。subnetDecapConfig に格納され tunnel term の送信元 IP として使用。 |
+| IPv6 アドレスを誤指定 | `isV4()` 失敗。`SWSS_LOG_ERROR("Invalid source IP prefix")` → 処理中断。 |
+| 形式不正 | `swss::IpPrefix()` が `std::invalid_argument` → `SWSS_LOG_ERROR` → 処理中断。 |
+
+### `src_ip_v6` フィールド挙動
+| 状態 | 挙動 |
+|------|------|
+| 有効な IPv6 prefix | `!isV4()` チェック通過。subnetDecapConfig に格納。 |
+| IPv4 アドレスを誤指定 | `isV4()` チェックが成功してしまう → `SWSS_LOG_ERROR("Invalid source IPv6 prefix")` → 処理中断。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -126,4 +150,4 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 
 [^2]: tunneldecaporch 実装: `sonic-swss/orchagent/tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/tunneldecaporch.cpp>
 
-<!-- glossary-links-injected: 5bccf4824bce -->
+<!-- glossary-links-injected: f9445b5b4106 -->

@@ -16,18 +16,18 @@ sources: []
 
 ## verification 分布
 
-全 **903** ページ。
+全 **917** ページ。
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 566 |
+| code-verified | 570 |
 | runbook-verified | 27 |
 | discrepancy-found | 102 |
 | issue-confirmed | 0 |
 | hld-only | 0 |
 | meta | 208 |
-| stub | 0 |
-| **合計** | **903** |
+| stub | 10 |
+| **合計** | **917** |
 
 ## last_verified 鮮度
 
@@ -35,11 +35,11 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 54 |
+| 今日 (0d) | 58 |
 | 7 日以内 (1-7d) | 847 |
 | 30 日以内 (8-30d) | 0 |
 | 30 日超 / 古い | 0 |
-| 不明 / パース不可 | 2 |
+| 不明 / パース不可 | 12 |
 
 ## Topics 22 章 sub-page 完成度
 
@@ -47,8 +47,8 @@ sources: []
 
 | 状態 | 件数 |
 |---|---:|
-| 完成 | 68 |
-| placeholder | 42 |
+| 完成 | 69 |
+| placeholder | 41 |
 | 欠落 | 0 |
 | **合計** | **110** |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 290 |
-| docs 内被リンク数 | 7500 |
+| docs 内被リンク数 | 7792 |
 
 ## 直近 5 round quality-audit
 
@@ -100,7 +100,7 @@ sources: []
 | 項目 | 件数 |
 |---|---:|
 | frontmatter-lint (hard) | 0 |
-| frontmatter-lint (warn) | 0 |
+| frontmatter-lint (warn) | 1 |
 | link-density low (<2.0/1k) | 68 |
 | link-density high (>30.0/1k) | 0 |
 | discrepancy-related-yang violations | 0 |

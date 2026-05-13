@@ -107,6 +107,30 @@ show runningconfiguration snmp
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `port` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| 空文字 `""` | [YANG](../../reference/glossary.md#term-yang) `pattern ''` 許容。snmpd.conf ではデフォルトポート 161 として処理される。 |
+| `161` | 標準 [SNMP](../../reference/glossary.md#term-snmp) ポート。 |
+| その他の port-number | 非標準ポートで snmpd がリッスン。ファイアウォール設定の調整が必要。 |
+
+### `vrf_name` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| 空文字 `""` | default VRF（全インタフェース）でリッスン。 |
+| `mgmt` | 管理 VRF でリッスン。snmpd.conf の `agentaddress` に `@mgmt` が付与。 |
+| `Vrf<name>` | 指定 VRF でリッスン。VRF が実際に存在しない場合は snmpd 起動後にリッスン失敗（CONFIG_DB レベルでは検知不可）。 |
+
+### エントリなしの場合
+| 条件 | 挙動 |
+|------|------|
+| テーブルにエントリが 1 件もない | テンプレートが `agentAddress udp:161` / `agentAddress udp6:161` をデフォルト出力。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -117,4 +141,4 @@ show runningconfiguration snmp
 
 [^2]: snmpd.conf テンプレート: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
 
-<!-- glossary-links-injected: f02106101ebd -->
+<!-- glossary-links-injected: 59acbdd0f2b6 -->

@@ -102,6 +102,24 @@ vtysh -c 'show ip prefix-list'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `prefix_type` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `ANCHOR_PREFIX` | SpineRouter/UpstreamLC または UpperSpineRouter のみ許可。他デバイスは `log_warn` してスキップ。[FRR](../../reference/glossary.md#term-frr) の anchor prefix list に展開。 |
+| `SUPPRESS_PREFIX` | 全デバイスタイプで許可。FRR の suppress prefix list に展開。 |
+| その他 | `log_warn("PrefixListMgr:: Prefix type '...' is not supported")` → スキップ。FRR への設定生成は行われない。 |
+
+### `family` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `IPv4` | YANG `must`: `ip-prefix` に `.` を含むこと。FRR の `ip prefix-list` に展開。 |
+| `IPv6` | YANG `must`: `ip-prefix` に `:` を含むこと。FRR の `ipv6 prefix-list` に展開。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -111,6 +129,6 @@ vtysh -c 'show ip prefix-list'
 - **プレフィクス形式不正**: `netaddr.IPNetwork()` がパース失敗した場合 (`NotRegisteredError` / `AddrFormatError` / `AddrConversionError`) は `log_warn` してエントリをスキップする（処理自体は `return True` で継続）。[^2]
 - **constants オーバーライド**: `bgp.prefix_list.<type>.ipv4_name` / `ipv6_name` が constants に定義されていれば、デフォルトの prefix list 名を上書きする。
 
-[^2]: bgpcfgd PrefixListMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py`
+[^2]: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) PrefixListMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py`
 
-<!-- glossary-links-injected: 830f3e5569ea -->
+<!-- glossary-links-injected: 62ecddfa9dc4 -->

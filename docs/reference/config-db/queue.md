@@ -130,6 +130,32 @@ show queue counters
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `ifname` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `PORT.name` に存在する値 | 正常処理。[SAI](../../reference/glossary.md#term-sai) queue scheduler / WRED 適用。 |
+| `CPU` | CPU queue 用の専用処理パス。 |
+| 存在しないポート名 | `SWSS_LOG_ERROR("Port with alias:%s not found")` → `task_invalid_entry` でスキップ。 |
+
+### `scheduler` フィールド挙動
+| 状態 | 挙動 |
+|------|------|
+| 省略 | スケジューラなし。ASIC デフォルト動作。 |
+| 存在する SCHEDULER 名 | `qosorch` が SAI scheduler を queue に適用。 |
+| 存在しない SCHEDULER 名 | `task_need_retry`（後で再試行）。解決不可なら `task_failed`。 |
+
+### `wred_profile` フィールド挙動
+| 状態 | 挙動 |
+|------|------|
+| 省略 | WRED なし。 |
+| 存在する WRED_PROFILE 名 | SAI WRED を queue に適用。 |
+| 存在しない WRED_PROFILE 名 | `task_need_retry`。解決不可なら `task_failed`。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -142,4 +168,4 @@ show queue counters
 
 [^2]: qosorch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 
-<!-- glossary-links-injected: eae0af312767 -->
+<!-- glossary-links-injected: f9445b5b4106 -->

@@ -112,14 +112,37 @@ vtysh -c 'show ip prefix-list'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `mode` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `IPv4` | デフォルト。FRR の `ip prefix-list` に展開。IPv6 prefix を混在させると FRR が syntax エラー。 |
+| `IPv6` | FRR の `ipv6 prefix-list` に展開。IPv4 prefix との混在は FRR エラー。 |
+
+### `action` 値別挙動（PREFIX_LIST / PREFIX_NOSEQ_LIST 共通）
+| 値 | 挙動 |
+|----|------|
+| `permit` | プレフィクスを許可。FRR に `permit` で展開。 |
+| `deny` | プレフィクスを拒否。FRR に `deny` で展開。 |
+
+### `masklength_range` 値別挙動
+| 値 | 挙動 |
+|----|------|
+| `exact` | プレフィクス長を完全一致で評価。FRR に `ge` / `le` 修飾子なし。 |
+| `lo..hi` 形式 | 範囲指定。FRR の `ge lo le hi` に変換。 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **bgpcfgd は直接購読しない**: `PREFIX_SET` には専用の consumer manager がなく、CONFIG_DB 変更はリアルタイムに FRR へプッシュされない。FRR テンプレート展開は `sonic-cfggen` が起動時に CONFIG_DB を読み込む形式で行われる。[^2]
+- **[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は直接購読しない**: `PREFIX_SET` には専用の consumer manager がなく、[CONFIG_DB](../../reference/glossary.md#term-config_db) 変更はリアルタイムに FRR へプッシュされない。FRR テンプレート展開は `sonic-cfggen` が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む形式で行われる。[^2]
 - **YANG leafref 違反で保存拒否**: `PREFIX` list の `set_name` が存在しない `PREFIX_SET.name` を参照している場合、sonic-yang バリデーション時に `leafref` エラーでロードが拒否される。ただし実行時の整合性検査はないため、実行中に `PREFIX_SET` エントリを削除しても参照中の `PREFIX` は残る。[^2]
 - **ip_prefix の型バリデーション**: IPv4/IPv6 union 型の入力文字列が不正なとき YANG `pattern` 制約違反でロード拒否される。[^2]
-- **未定義 prefix-set を参照する policy**: FRR 側では未定義の prefix-set を参照しているルーティングポリシは `inactive` 状態になり、BGP フィルタとして機能しない。
+- **未定義 prefix-set を参照する policy**: FRR 側では未定義の prefix-set を参照しているルーティングポリシは `inactive` 状態になり、[BGP](../../reference/glossary.md#term-bgp) フィルタとして機能しない。
 
 [^2]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
 
-<!-- glossary-links-injected: 5e2adc70a663 -->
+<!-- glossary-links-injected: 88e792f23f63 -->
