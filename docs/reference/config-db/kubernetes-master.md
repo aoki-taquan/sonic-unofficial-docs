@@ -99,4 +99,18 @@ show kube server config
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-utilities/config/kube.py -->
+
+| 条件 | 挙動 |
+|------|------|
+| `ip` フィールドが数値変換できない文字列 | `ValueError` をキャッチしてデフォルト値を設定（kube.py L39, L47） |
+| `ip` に FQDN（ホスト名）を使用 | DNS 解決失敗環境（起動早期）では kubelet 接続失敗。IP アドレス指定を推奨 |
+| `disable` 未設定 | デフォルト `false`（kubelet 接続有効） |
+| `insecure=true` 設定 | TLS 証明書検証を無効化。`true`/`false` 以外の値は YANG バリデーションで reject |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->

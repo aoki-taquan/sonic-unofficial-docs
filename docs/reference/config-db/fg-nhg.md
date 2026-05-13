@@ -122,4 +122,23 @@ show fgnhg active-hops
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: sonic-swss/orchagent/fgnhgorch.cpp -->
+
+| 条件 | 挙動 |
+|------|------|
+| `match_mode` が不正値 | `SWSS_LOG_WARN` → `route-based` にフォールバック（エントリは処理継続） |
+| `match_mode==prefix-based` かつ `max_next_hops==0` | `SWSS_LOG_ERROR` を出力するが処理は継続（SAI 動作が不定になるリスクあり） |
+| `bucket_size==0` | `SWSS_LOG_ERROR` → `return true`（エントリ破棄・再試行なし） |
+| `FG_NHG` エントリ重複 SET | `SWSS_LOG_WARN("FG_NHG %s already exists, ignoring")` → 更新されない |
+| `FG_NHG_PREFIX` DEL で prefix 未存在 | `SWSS_LOG_INFO("FG_NHG prefix doesn't exists, ignore")` → 正常終了 |
+| `FG_NHG_MEMBER` を prefix-based グループに投入 | `SWSS_LOG_ERROR` → `return true`（破棄） |
+| 親 `FG_NHG` 未受信時に `FG_NHG_MEMBER` 投入 | `return false`（Consumer キューに残り再試行） |
+| `max_next_hops` 超過 NH | `SWSS_LOG_WARN("Next-hop %s exceeds max_next_hops %d for prefix %s, skipping")` → 超過分無視 |
+| FG nh と非 FG nh が同一ルートに混在 | `SWSS_LOG_WARN` → ルート全体を通常 ECMP にデグレード |
+
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 0a0e619e9fbc -->
