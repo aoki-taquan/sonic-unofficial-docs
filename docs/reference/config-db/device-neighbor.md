@@ -106,4 +106,16 @@ show lldp neighbors
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| consumer | 条件 | 挙動 |
+|---|---|---|
+| minigraph.py | port_config.ini に存在しないインターフェイスがエントリに含まれる | `Warning: ignore interface '%s' in DEVICE_NEIGHBOR...` を stderr に出力してスキップ（minigraph.py:2635） |
+| show interfaces | DEVICE_NEIGHBOR テーブルが空 | `"DEVICE_NEIGHBOR information is not present."` を表示して継続。エラーにはならない（show/interfaces/__init__.py:318） |
+| pfcwd | DEVICE_NEIGHBOR テーブルが空 | 全ポートを内部ポートとして扱い、外部ポート判定を行わない（pfcwd/main.py:413） |
+
+> **Evidence**: sonic-buildimage `src/sonic-config-engine/minigraph.py:2635`; sonic-utilities `show/interfaces/__init__.py:318`, `pfcwd/main.py:413`
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 86469dbd1da9 -->
