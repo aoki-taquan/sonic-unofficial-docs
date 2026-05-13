@@ -39,6 +39,15 @@ related:
 - TTL が想定と違う: TTL/HL が 1 減っていない場合、DUT 側で L3 forwarding せず L2 で抜けている可能性。
 - port index 不一致: `dst_port_ids` / `src_port_ids` の配列が空、または PTF port 番号と DUT 側の物理 port のマッピングがズレている。`dip_sip.yml` の前処理ログ（minigraph / LLDP gather）を確認。
 
+```bash
+# PTF テスト失敗時の確認手順
+cat /tmp/dip_sip.DipSipTest.*.log | tail -200
+ls -la logs/ | grep -i dip_sip
+# DUT 側で L3 forwarding が動いているか
+show ip route <dst-prefix>
+show interfaces neighbor expected
+```
+
 ## 4. HLD と実装の差分（pytest 移行）
 
 !!! diff "HLD と実装の差分"

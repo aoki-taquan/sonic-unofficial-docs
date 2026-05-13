@@ -145,6 +145,14 @@ sudo sonic-package-manager show foo
 - `^X.Y.Z,^A.B.C` 不正解釈 → 実装は AND 解釈、`||` 表記を検討
 - 新 swss で docker 不動作 → major bump 起きている可能性、docker manifest 更新
 
+```bash
+# version 制約と docker image の照合
+dpkg -l | grep -E "swss|syncd"
+apt-cache show swss | grep -E "Version|Depends"
+docker images | grep -E "swss|syncd"
+sonic-installer list
+```
+
 ## 関連 Topics
 
 - [19-build-packaging](../topics/19-build-packaging/index.md): build / package manager 全体像

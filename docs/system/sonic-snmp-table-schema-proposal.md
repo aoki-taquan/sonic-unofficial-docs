@@ -183,6 +183,14 @@ sonic-cfggen -a '{
 - 新スキーマを書いても snmpd.conf に反映されない → j2 テンプレートが新パスにフォールバックしているか、`SNMP` テーブル存在チェックが想定どおり動いているかを確認する。
 - 値が `redis-cli -n 4 hgetall SNMP|LOCATION` で見えるが community が効かない → `SNMP_COMMUNITY` のキーは小文字大文字を区別する点に注意。
 
+```bash
+# 新スキーマの反映と community 設定確認
+sonic-db-cli CONFIG_DB hgetall "SNMP|LOCATION"
+sonic-db-cli CONFIG_DB keys "SNMP_COMMUNITY|*"
+docker exec snmp cat /etc/snmp/snmpd.conf | grep -E "syslocation|com2sec"
+docker exec snmp supervisorctl status snmpd
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-schema-addition.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

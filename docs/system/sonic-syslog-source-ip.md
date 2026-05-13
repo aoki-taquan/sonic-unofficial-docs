@@ -133,6 +133,14 @@ VRF / Mgmt VRF（`device` と組み合わせ）/ rsyslog テンプレート（`f
 - syslog が届かない → `/etc/rsyslog.conf` と rsyslogd ログで bind error 確認
 - VRF 経由が出ない → `device` フィールドと VRF master device の存在確認
 
+```bash
+# syslog source IP / VRF の確認
+sonic-db-cli CONFIG_DB hgetall "SYSLOG_SERVER|<server-ip>"
+docker exec syslog cat /etc/rsyslog.conf | grep -E "Device|Address|Target"
+journalctl -u rsyslog -n 100 | grep -iE "bind|error"
+ip vrf list
+```
+
 ## 関連 Topics
 
 - [09-telemetry-snmp](../topics/09-telemetry-snmp/index.md): ログ / 監視周辺

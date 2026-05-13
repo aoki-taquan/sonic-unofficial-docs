@@ -120,6 +120,15 @@ warm start が失敗したら **automatic fallback to system cold restart**（�
 - 起動時に init view が完了しない → syncd の OID 取得が遅い、`m_toSync` 残留を疑う
 - restart window 中の ROUTE 不整合 → fpmsyncd / bgp の sync up 経路を確認
 
+```bash
+# swss docker warm restart 状態確認
+config warm_restart enable swss
+show warm_restart status
+sonic-db-cli STATE_DB keys "WARM_RESTART_TABLE|*"
+sonic-db-cli STATE_DB hgetall "WARM_RESTART_TABLE|orchagent"
+docker logs swss 2>&1 | grep -iE "warm|bake|reconcile" | tail -50
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/swss_warm_restart.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

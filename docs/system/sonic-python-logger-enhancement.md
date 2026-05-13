@@ -217,6 +217,15 @@ HLD 自体は [YANG](../reference/glossary.md#term-yang) 言及なし。`LOGGER`
 - redis 未起動で例外になる場合、`enable_runtime_config=False` のまま使われていないか・初期化順序を確認
 - C++ logger と混在する component で動作が不一致な場合、`require_manual_refresh` の値が想定どおりか確認
 
+```bash
+# syslog level の動的変更と確認
+config syslog level --container swss --program orchagent --level DEBUG
+sonic-db-cli CONFIG_DB hgetall "LOGGER|orchagent"
+# SIGHUP 配送確認
+ps -ef | grep orchagent
+docker exec swss kill -HUP $(docker exec swss pidof orchagent)
+```
+
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
     2026-05-11 時点の現行 master を裏取り。

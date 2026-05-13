@@ -196,6 +196,14 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
 - Write が ASIC に反映されない: `APPL_STATE_DB` に成功が書かれているか確認。書かれていなければ `P4Orch` 側で失敗してロールバックされている可能性[^1]。
 - P4Info push が reject される: PacketIO メタデータと SAI フィールド型の互換性を確認。
 
+```bash
+# P4RT App / P4Orch の状態確認
+docker exec swss supervisorctl status | grep -i p4rt
+sonic-db-cli APPL_STATE_DB keys "P4RT_*" | head
+sonic-db-cli APPL_DB keys "P4RT_TABLE:*" | head
+docker logs p4rt 2>&1 | tail -100
+```
+
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
     実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:

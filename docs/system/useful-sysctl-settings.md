@@ -242,6 +242,15 @@ sysctl net.ipv4.tcp_l3mdev_accept
 - traceroute の "から" の IP が想定と違う: `icmp_errors_use_inbound_ifaddr=1` の有無を確認[^1]。
 - mgmt VRF 上のアプリで bind 失敗: `tcp_l3mdev_accept=1` の有無を確認[^1]。
 
+```bash
+# 主要 sysctl の現行値確認
+sysctl -a 2>/dev/null | grep -E "rp_filter|arp_(announce|ignore|filter)|keep_addr_on_down"
+sysctl net.ipv6.route.max_size
+sysctl -a 2>/dev/null | grep -E "gc_thresh[123]"
+sysctl net.ipv4.icmp_errors_use_inbound_ifaddr
+sysctl net.ipv4.tcp_l3mdev_accept
+```
+
 ## 参考リンク
 
 - [Reference 索引](../reference/index.md)

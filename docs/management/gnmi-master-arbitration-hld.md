@@ -245,6 +245,14 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 - 一度大きな EID を使うと巻き戻せない: 設計上 EID は単調増加。再採番したい時はサーバ再起動で `masterEID` をリセットするしかない（HLD 仕様）[^1]
 - `Get` は通るのに `Set` だけ落ちる: 仕様通り。Master Arbitration は `Set` のみ対象[^1]
 
+```bash
+# Master Arbitration の状態確認
+docker exec telemetry pgrep -af telemetry | grep -i master-arbitration
+docker logs telemetry 2>&1 | grep -iE "MasterArbitration|masterEID|PermissionDenied"
+# 起動フラグ確認
+docker exec telemetry cat /proc/$(docker exec telemetry pidof telemetry)/cmdline | tr '\0' ' '
+```
+
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
     実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ `eb635b7679b260c3fd0786a6d0734fc8e82c9a22`）:
