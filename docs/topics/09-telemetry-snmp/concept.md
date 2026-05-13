@@ -81,7 +81,7 @@ Telemetry / SNMP 系は基本的に **management plane** に属しますが、�
 - **CRM (Critical Resource Monitoring)**: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。
 - **sFlow**: パケットサンプリング + interface counter を `sFlow datagram` として外部 collector に UDP 送信するプロトコル。SONiC では `hsflowd` が担当。
 - **DTel (Data plane Telemetry)**: [INT](../../reference/glossary.md#term-int) (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。
-- **Syslog / Event**: テキストログと構造化イベント。`syslog-ng` で集約し、外部 collector に転送。
+- **[Syslog](../../reference/glossary.md#term-syslog) / Event**: テキストログと構造化イベント。`syslog-ng` で集約し、外部 collector に転送。
 - **Techsupport**: `show techsupport` が作る tarball。CLI 出力、Redis dump、syslog、journal、core などをまとめる。
 - **Dump utility**: `sonic-dump` がオブジェクト単位（PORT / [VLAN](../../reference/glossary.md#term-vlan) / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。
 
@@ -183,4 +183,4 @@ flowchart TB
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: bcf0ee3d3334 -->
+<!-- glossary-links-injected: ae40922103ac -->
