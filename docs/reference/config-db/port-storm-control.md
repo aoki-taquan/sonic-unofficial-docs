@@ -70,6 +70,23 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 - 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control.md -->
+
+### consumer (policerorch) 例外動作
+- 不正/非サポートインターフェース: `Unsupported / Invalid interface %s` → SWSS_LOG_ERROR。
+- ポート未発見: `Failed to apply storm-control %s to port %s. Port not found` → SWSS_LOG_ERROR。
+- 不明な storm_type: `Unknown storm_type %s` → SWSS_LOG_ERROR。
+- 不明な storm control attribute: `Unknown storm control attribute %s specified` → SWSS_LOG_ERROR。
+- SAI policer create 失敗: `Failed to create storm control policer %s` → SWSS_LOG_ERROR。
+- SAI attribute update 失敗: `Failed to update policer %s attribute, rv:%d` → SWSS_LOG_ERROR。
+- SAI remove storm-control 失敗: `Failed to remove storm-control %s from port %s, rv:%d` → SWSS_LOG_ERROR。
+- 未設定 storm policer の参照: `Policer %s not configured` → SWSS_LOG_ERROR。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

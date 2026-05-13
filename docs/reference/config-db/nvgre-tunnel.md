@@ -78,6 +78,26 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-nvgre-tunnel`
 - 関連 CLI: `config nvgre`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel.md -->
+
+### YANG スキーマ検証
+- `src_ip` は mandatory (`inet:ip-address`)。未設定またはフォーマット不正は YANG validate で reject。
+- `vlan_id` は uint16 (1..4094)、`vsid` は uint32 (0..16777214)。範囲外は YANG 段階で拒否。
+- `NVGRE_TUNNEL_MAP.tunnel_name` は `NVGRE_TUNNEL` への leafref。親トンネルが存在しない場合は reject。
+
+### consumer (nvgreorch) 例外動作
+- 重複 SET: `NVGRE tunnel '%s' already exists` → WARN ログ、処理スキップ。
+- 存在しない親トンネルへの MAP 追加: `NVGRE tunnel '%s' doesn't exist` → WARN。
+- `vlan_id` 未登録: `VLAN ID doesn't exist: %d` → WARN。
+- `vsid` 範囲外: `VSID is invalid: %d` → WARN。
+- SAI オブジェクト生成失敗: `std::runtime_error` throw → orchagent クラッシュ扱い。
+- DEL で存在しない tunnel/map: WARN ログ、処理スキップ。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

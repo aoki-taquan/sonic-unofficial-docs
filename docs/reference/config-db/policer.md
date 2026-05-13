@@ -98,6 +98,24 @@ POLICER|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): 直接の [YANG](../../reference/glossary.md#term-yang) モジュールは無し（参照側 [YANG](../../reference/glossary.md#term-yang) が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/policer.md -->
+
+### consumer (policerorch) 例外動作
+- 重複 SET: 既存 policer は update パスへ分岐 (`policerExists()` チェック)。
+- DEL で存在しない policer: `Policer %s does not exist` → SWSS_LOG_WARN + `return false`。
+- 不明な attribute: `Unknown policer attribute %s specified` → SWSS_LOG_ERROR。
+- SAI policer create 失敗: `Failed to create policer %s, rv:%d` → SWSS_LOG_ERROR。
+- SAI attribute update 失敗: `Failed to update policer %s attribute, rv:%d` → SWSS_LOG_ERROR。
+- DEL 時 SAI remove 失敗: `Failed to remove policer %s, rv:%d` → SWSS_LOG_ERROR。
+- 不正インターフェース (storm-control 経由): `Unsupported / Invalid interface %s` → SWSS_LOG_ERROR。
+- ポート未発見 (storm-control 経由): `Failed to apply storm-control %s to port %s. Port not found` → SWSS_LOG_ERROR。
+- 不明な storm_type: `Unknown storm_type %s` → SWSS_LOG_ERROR。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

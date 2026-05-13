@@ -74,6 +74,22 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 - 関連 CLI: `config qos`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pfc-priority-priority-group-map`、`sonic-port-qos-map`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map.md -->
+
+### YANG スキーマ検証
+- `pfc_priority` / `pg` は pattern `[0-7]?`。空文字も YANG 上は許容するが、orch は数値として処理するため実質 0..7 必須。
+
+### consumer (qosorch) 例外動作
+- SAI `sai_qos_map_api` create 失敗: `Failed to create pfc_priority_to_queue map. status:%d` → SWSS_LOG_ERROR。
+- 参照先 map が存在しない名前で PORT_QOS_MAP から参照された場合: `Object with name:%s not found.` → SWSS_LOG_ERROR + 処理中断。
+- DEL 時 SAI remove 失敗: `Failed to remove map, status:%d` → `return false` で再試行。
+- `PORT_QOS_MAP` の参照が解除される前にマップを DEL すると、SAI 参照カウントエラーが発生する可能性がある。
+
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
