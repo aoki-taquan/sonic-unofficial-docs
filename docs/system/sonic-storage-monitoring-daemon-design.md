@@ -91,6 +91,14 @@ flowchart LR
 - 値が古い → daemon ループ周期、I/O 負荷、device の応答時間
 - critical 通知が来ない → system health monitor の subscribe 経路を確認
 
+```bash
+# storagemond と STORAGE_INFO の状態確認
+docker exec pmon supervisorctl status storagemond
+sonic-db-cli STATE_DB keys "STORAGE_INFO|*"
+sonic-db-cli STATE_DB hgetall "STORAGE_INFO|sda"
+docker exec pmon which smartctl
+```
+
 ## 関連リファレンス
 
 - CLI: [show platform](../reference/cli/show-platform.md) / [show system-health](../reference/cli/show-system-health.md) / [show techsupport](../reference/cli/show-techsupport.md)

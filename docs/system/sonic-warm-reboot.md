@@ -115,6 +115,15 @@ stateDiagram-v2
 - **BGP convergence 不良** → peer の GR-helper 対応、`config bgp graceful-restart` の値
 - **orchagent reconcile が永遠** → APP_DB と ASIC_DB の不一致、syncd ログ
 
+```bash
+# warm reboot 前後の確認
+config warm_restart enable system
+warm-reboot
+show warm_restart status
+ls -la /host/warmboot/ | grep sai-warmboot.bin
+sonic-db-cli STATE_DB keys "WARM_RESTART_TABLE|*"
+```
+
 ## 関連 Topics 章
 
 - [11-reboot](../topics/11-reboot/index.md): warm / fast / express / cold の比較と運用全体像

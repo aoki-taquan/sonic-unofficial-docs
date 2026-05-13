@@ -147,6 +147,14 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 - warm reboot 後にデータプレーン断 > 30s → syncd の SAI state 復元失敗。`sai-warmboot.bin` の有無
 - orchagent が永遠に compare 中 → SAI 側 init view 完了通知未着の可能性、syncd ログ
 
+```bash
+# system-wide warmboot 状態確認
+warm-reboot
+show warm_restart status
+ls -la /host/warmboot/ | grep -E "sai-warmboot|warmboot"
+docker logs syncd 2>&1 | grep -iE "warm|init view" | tail -50
+```
+
 ## 関連 Topics 章
 
 - [11-reboot](../topics/11-reboot/index.md): cold / fast / warm / express の比較と運用フロー

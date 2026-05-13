@@ -167,6 +167,16 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - DOM が更新されない → `TRANSCEIVER_STATUS` の error bitmap で I2C stuck / EEPROM 不能を確認
 - plug 後すぐに info が出ない → vendor platform API のイベント通知遅延を確認
 
+```bash
+# transceiver / sensor 状態確認
+show interfaces transceiver eeprom | head -40
+show interfaces transceiver presence
+sonic-db-cli STATE_DB keys "TRANSCEIVER_STATUS|*"
+sonic-db-cli STATE_DB hgetall "TRANSCEIVER_STATUS|Ethernet0"
+show platform fan
+show platform temperature
+```
+
 ## 関連 reference
 
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)

@@ -140,6 +140,14 @@ HLD で具体の CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) は�
 - Phase 2 が timeout する → Quiescence Timer 値、freeze に応答しない component の特定
 - Phase 4 後にデータプレーン断 → Phase 3 で checkpoint が完了したか State_DB で確認
 
+```bash
+# warmboot manager の Phase 進行確認
+show warm_restart status
+sonic-db-cli STATE_DB hgetall "WARM_RESTART_ENABLE_TABLE|system"
+sonic-db-cli STATE_DB keys "WARM_RESTART_TABLE|*"
+docker logs swss 2>&1 | grep -iE "Phase|freeze|checkpoint" | tail -50
+```
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/Warmboot_Manager_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

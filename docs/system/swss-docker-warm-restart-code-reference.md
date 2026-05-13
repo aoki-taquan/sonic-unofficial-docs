@@ -160,6 +160,14 @@ sonic-installer upgrade_docker swss test_v03 docker-orchagent-brcm_v03.gz --clea
 - 復元後に同一エントリが二重登録される → libsairedis 冪等性パッチが効いていない可能性。
 - 詳細実装は HLD `doc/warm-reboot/code_implementation.md` を参照（このドキュメントは要点のみ）。
 
+```bash
+# swss docker warm restart 復旧確認
+sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
+sonic-db-cli STATE_DB hgetall 'WARM_RESTART_TABLE|orchagent'
+sonic-db-cli CONFIG_DB hgetall 'WARM_RESTART|swss'
+sonic-installer upgrade-docker swss <new-tag> <url>
+```
+
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
     2026-05-11 時点の現行 master を裏取り。

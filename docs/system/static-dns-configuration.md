@@ -208,6 +208,15 @@ CONFIG_DB JSON:
 - コンテナ内だけ古い DNS が残る: `update-containers` プラグインの動作不良が疑われる。各コンテナに `docker exec ... cat /etc/resolv.conf` で照合する。
 - IPv6 link-local DNS: `fe80::` 系は zone id が必要なケースがある。CONFIG_DB / CLI 側でゾーン記法を受けるかどうかは HLD では明記されていないため、実装裏取りが必要。
 
+```bash
+# 静的 DNS の確認
+show dns nameserver
+sonic-db-cli CONFIG_DB keys "DNS_NAMESERVER|*"
+cat /etc/resolv.conf
+systemctl status resolv-config.service
+docker exec bgp cat /etc/resolv.conf
+```
+
 ## 関連 reference
 
 - [YANG: sonic-dns](../reference/yang/sonic-dns.md)

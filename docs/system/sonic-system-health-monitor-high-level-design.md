@@ -141,6 +141,14 @@ v0.2 で "Check service status without monit" が追加[^1]。Monit が使えな
 
 干渉する機能: Monit（情報源）、PMON / thermalctld / psud（周辺供給）、container hardening（critical_processes 定義変更）。
 
+```bash
+# system health の状態確認
+show system-health summary
+show system-health detail
+sonic-db-cli STATE_DB hgetall "SYSTEM_HEALTH_INFO|summary"
+docker exec pmon cat /usr/share/sonic/device/*/system_health_monitoring_config.json 2>/dev/null | head
+```
+
 ## 関連 Topics 章
 
 - [14-platform-port-optics](../topics/14-platform-port-optics/index.md): PMON / thermalctld / psud から周辺デバイス情報を取る経路

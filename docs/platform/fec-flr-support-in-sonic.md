@@ -270,6 +270,15 @@ Ethernet104   U     21,141   0          7                  0       7.08e-09 (79%
 - `N/A` 表示: SAI counter が当該 platform で未対応
 - 値が想定の半分/倍: interleaving factor X の取り違え。port speed と lane 数を再確認
 
+```bash
+# FEC FLR 表示と counter の確認
+show interfaces counters fec-stats
+show interfaces counters | grep -E "FLR|fec_flr"
+sonic-db-cli COUNTERS_DB hgetall "RATES:oid:<port-oid>" | grep -i FLR
+# poll 周期確認 (lua ハードコード値)
+docker exec swss grep FEC_FLR_POLL_INTERVAL /usr/share/swss/port_flr.lua
+```
+
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
     2026-05-09 時点の現行 master を裏取り。本機能の **コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み**だが、**[HLD](../reference/glossary.md#term-hld) で示唆された動的設定 CLI（`counterpoll port flr-interval-factor`）は未実装**であり、poll 周期は lua スクリプト内のハードコード値に固定されている。

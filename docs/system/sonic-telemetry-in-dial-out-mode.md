@@ -170,6 +170,14 @@ OpenConfig の [telemetry yang model](https://github.com/openconfig/public/blob/
 - `docker exec telemetry supervisorctl status dialout_client` — dialout クライアント状態
 - `docker logs telemetry 2>&1 | grep -i dialout` — 接続再試行・publish エラーを確認
 
+```bash
+# dial-out telemetry の状態確認
+sonic-db-cli CONFIG_DB hgetall "TELEMETRY_CLIENT|Global"
+sonic-db-cli CONFIG_DB keys "TELEMETRY_CLIENT|DestinationGroup_*"
+docker exec telemetry supervisorctl status dialout_client
+docker logs telemetry 2>&1 | grep -i dialout | tail -50
+```
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/system-telemetry/dialout.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/system-telemetry/dialout.md)

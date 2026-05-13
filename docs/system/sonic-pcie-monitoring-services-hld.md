@@ -85,6 +85,14 @@ system health monitor（PCIe AER fatal を critical へ昇格） / pcieinfo 既�
 - link speed 劣化 → cable / connector、`lnkSta` current vs max を比較
 - AER カウンタ増加 → `dmesg` の `pcieport` メッセージ、device firmware
 
+```bash
+# PCIe device / link 状態確認
+lspci -vvv | grep -E "LnkSta|LnkCap"
+dmesg | grep -iE "pcieport|AER"
+docker exec pmon pcieutil show all
+sonic-db-cli STATE_DB keys "PCIE_DEVICE|*"
+```
+
 ## 関連 Topics
 
 - [14-platform-port-optics](../topics/14-platform-port-optics/index.md): pmon 全体像

@@ -103,6 +103,15 @@ flowchart LR
 - **JSON 取得失敗** → DHCP option / URL 解決、firewall、HTTPS 証明書
 - **section が常に失敗** → 該当 plugin のログ（`/var/log/ztp/`）、state ファイルの error 詳細
 
+```bash
+# ZTP の状態とログ確認
+show ztp status
+systemctl status ztp.service
+ls -la /var/log/ztp/
+cat /var/lib/ztp/ztp_data.json 2>/dev/null | head
+ip -d link show eth0
+```
+
 ## 関連 Topics 章
 
 - [16-nat-dhcp-dns](../topics/16-nat-dhcp-dns/index.md): DHCP option / relay のスタックと ZTP の依存
