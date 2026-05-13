@@ -105,5 +105,7 @@ sudo python3 -c "from sonic_platform.chassis import Chassis; c=Chassis(); [print
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — thermalctld
 [^2]: sonic-net/sonic-platform-common @ 4305596 — fan_base / psu_base

@@ -102,6 +102,8 @@ sudo cat /sys/class/pci_bus/.../power/control
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-platform-daemons @ master — chassisd
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — chassis_modules.py
 

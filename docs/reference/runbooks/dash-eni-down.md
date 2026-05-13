@@ -127,6 +127,8 @@ show dash counter eni <eni>
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-dash-api @ master — dash_eni.proto
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — dashorch.cpp
 

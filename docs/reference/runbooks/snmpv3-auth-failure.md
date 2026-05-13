@@ -103,6 +103,8 @@ sonic-db-cli CONFIG_DB keys "ACL_TABLE|*"
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-snmpagent @ master — main.py
 [^2]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ master — docker-snmp
 

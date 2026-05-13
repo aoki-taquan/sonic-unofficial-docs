@@ -115,6 +115,8 @@ docker exec telemetry gnmi_cli -a 127.0.0.1:8080 -insecure \
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-telemetry @ master — dialout_client.go
 [^2]: sonic-net/sonic-gnmi @ master — [gNMI](../../reference/glossary.md#term-gnmi) server
 

@@ -126,6 +126,8 @@ sonic-db-cli APPL_DB info clients | head
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — orchdaemon.cpp
 [^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ master — Syncd.cpp
 

@@ -114,6 +114,8 @@ sudo dmesg | grep -iE "phy|link" | tail -50
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — portsorch.cpp
 [^2]: sonic-net/sonic-platform-daemons @ master — xcvrd.py
 

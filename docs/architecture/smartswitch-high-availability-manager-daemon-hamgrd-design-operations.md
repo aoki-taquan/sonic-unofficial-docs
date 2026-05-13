@@ -120,6 +120,8 @@ redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'
 
 ## 引用元
 
+本ページの根拠は引用元 [^1] を参照。
+
 [^1]: `sonic-net/SONiC` `doc/smart-switch/high-availability/smart-switch-ha-hamgrd.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- next-action -->

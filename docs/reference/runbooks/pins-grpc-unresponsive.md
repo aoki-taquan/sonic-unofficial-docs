@@ -128,6 +128,8 @@ openssl x509 -in /etc/sonic/credentials/ca.crt -noout -dates
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/sonic-pins @ master — p4runtime_impl.cc
 [^2]: sonic-net/sonic-pins @ master — app_db_manager.cc
 

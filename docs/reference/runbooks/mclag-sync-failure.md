@@ -114,6 +114,8 @@ sonic-db-cli CONFIG_DB hgetall "DEVICE_METADATA|localhost" | grep -i mac
 
 ## 引用元
 
+本ページの根拠は引用元 [^1][^2] を参照。
+
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — mclagsyncd.cpp
 [^2]: sonic-net/sonic-iccpd @ master — iccpd_main.c
 
