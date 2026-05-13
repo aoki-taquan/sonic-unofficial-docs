@@ -150,4 +150,19 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 | ソース |
+|------|------|--------|
+| Loopback0 IPv4 未設定 かつ `bgp_router_id` 未設定 | `log_warn` して `return False` (再試行待ち) | `managers_bgp.py` `add_peer()` |
+| `local_addr` フィールドが欠如 | `Missing attribute 'local_addr'` を warn ログ、peer 追加は続行 | `managers_bgp.py` |
+| `check_neig_meta=true` かつ `name` が DEVICE_NEIGHBOR_METADATA に未登録 | `DEVICE_NEIGHBOR_METADATA is not ready for neighbor` を log_info → return False (再試行) | `managers_bgp.py` `add_peer()` |
+| `peer_group_name` に未存在 peer-group を参照 (frrcfgd) | `invalid peer-group %s was referenced` を LOG_ERR → continue | `frrcfgd.py` L2828 |
+| interface 型 neighbor の作成失敗 | `failed to create neighbor of interface %s for VRF %s` を LOG_ERR → continue | `frrcfgd.py` L2810 |
+| `admin_status` が `'up'`/`'down'` 以外 | `wrong attribute value` を LOG_ERR → drop | `managers_bgp.py` `change_admin_status()` |
+| `local_asn` が未設定の VRF | frrcfgd が LOG_DEBUG して skip | `frrcfgd.py` L2660 |
+| Jinja2 テンプレートレンダリング失敗 | `log_err` して `return True` (再試行なし) | `managers_bgp.py` `add_peer()` |
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 9133f44230c2 -->

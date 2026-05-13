@@ -146,4 +146,18 @@ vtysh -c 'show bgp l2vpn evpn summary'
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 | ソース |
+|------|------|--------|
+| `local_asn` が未設定の VRF で更新が到達 | `frrcfgd` が `ignore table {} update because local_asn for VRF {} was not configured` を LOG_DEBUG して skip | `frrcfgd.py` L2660 |
+| BGP_GLOBALS_AF 更新コマンドが vtysh で失敗 | `failed running BGP global AF config command` を LOG_ERR → continue (drop) | `frrcfgd.py` L2780 |
+| `route_flap_dampen` を IPv4 unicast 以外の AFI に設定 | YANG `must` 制約により事前拒否 (`afi_safi = 'ipv4_unicast'` のみ許可) | `sonic-bgp-global.yang` |
+| `import_vrf` に未設定 VRF を指定 | frrcfgd は存在チェックなし → FRR 側でエラー (ログなし) | `frrcfgd.py` |
+| BGP_GLOBALS_AF_AGGREGATE_ADDR の IP プレフィックスが不正形式 | `invalid IP prefix format %s for af %s` を LOG_ERR → skip | `frrcfgd.py` L3174 |
+| ホスト bit が立ったプレフィックス | frrcfgd が正規化してから処理 (例: `192.168.1.1/24` → `192.168.1.0/24`) | `frrcfgd.py` |
+| `max_ebgp_paths` / `max_ibgp_paths` 未設定 | YANG default=1 が適用される | `sonic-bgp-global.yang` |
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
