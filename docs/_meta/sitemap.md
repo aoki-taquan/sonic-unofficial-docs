@@ -1,6 +1,6 @@
 ---
 title: サイトマップ
-description: "サイトマップ — docs/**/*.md を mkdocs nav 順で階層列挙したインデックス（全 896 ページ）。meta/scripts/gen_sitemap.py で自動生成。"
+description: "サイトマップ — docs/**/*.md を mkdocs nav 順で階層列挙したインデックス（全 897 ページ）。meta/scripts/gen_sitemap.py で自動生成。"
 verification: meta
 last_verified: 2026-05-11
 hide:
@@ -14,7 +14,7 @@ tags:
 
 このページは `docs/**/*.md` を mkdocs nav 順 (`.pages` 準拠) で階層列挙したインデックスです。`meta/scripts/gen_sitemap.py` で自動生成されます。
 
-全 **896** ページ。各エントリは `タイトル — [verification badge] description (短縮)` の形式で並びます。
+全 **897** ページ。各エントリは `タイトル — [verification badge] description (短縮)` の形式で並びます。
 
 - ページ数の状態別内訳は [カバレッジ](coverage.md) を参照。
 - 実装との乖離が確認されたページは [discrepancy index](../reference/verification/discrepancy-index.md) を参照。
@@ -22,6 +22,7 @@ tags:
 ## 全ページ（nav 順）
 
 - [SONiC 非公式ドキュメント](../index.md) — [meta] SONiC NOS (community master) を AI が日本語で再構成した非公式ドキュメント。学ぶ / 設定する / 修理する の 3 つの入り…
+- [初めての方の必読 10 (Essentials)](../getting-started.md) — [meta] 初めての方の必読 10 (Essentials) — SONiC をこれから学ぶ読者が「全体像を最短で掴む」ために最初に読むべき 10 ページを順序立てて紹介…
 - [このドキュメントについて](../about.md) — [meta] このドキュメントについて — 本ページは sonic-unofficial-docs プロジェクトの目的・スコープ・ライセンス・フィードバック窓口・貢献方法を…
 - **読み手別ガイド** (`guides/`)
   - [読み手別ガイド](../guides/index.md) — [meta] 読み手別ガイド — SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページ…
