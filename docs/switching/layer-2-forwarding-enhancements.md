@@ -168,7 +168,7 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 - [06-l2-vlan-lag/internals](../topics/06-l2-vlan-lag/internals.md): FdbOrch 内部
 - [11-reboot/operations](../topics/11-reboot/operations.md): warm boot と FDB
 
-#### 関連 GitHub Issue / PR
+### 関連 GitHub Issue / PR
 
 - [GitHub Issue / PR の関連リンクは未確認] — FDB flush / aging / static MAC / VLAN range 拡張は L2 系の小粒 PR が継続的に追加されており、HLD 全体を束ねるトラッキング Issue / PR は確認できず。
 
