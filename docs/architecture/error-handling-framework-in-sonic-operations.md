@@ -34,7 +34,7 @@ related:
 
 ### ERROR_ROUTE_TABLE
 
-```
+```text
 ERROR_ROUTE_TABLE|<prefix>
   operation = CREATE | SET | DELETE
   nexthop   = <ip>[, <ip>...]
@@ -44,7 +44,7 @@ ERROR_ROUTE_TABLE|<prefix>
 
 ### ERROR_NEIGH_TABLE
 
-```
+```text
 ERROR_NEIGH_TABLE|(INTF_TABLE|VLAN_INTF_TABLE|LAG_INTF_TABLE).name|<prefix>
   operation = CREATE | SET | DELETE
   neigh     = <mac>
@@ -73,7 +73,7 @@ ERROR_NEIGH_TABLE|(INTF_TABLE|VLAN_INTF_TABLE|LAG_INTF_TABLE).name|<prefix>
 | `show error-database [TableName]` | 現在の失敗エントリ表示 |
 | `sonic-clear error-database [TableName]` | エントリ全削除（OrchAgent は同期削除のみ実施し app 通知はしない）|
 
-```
+```bash
 Router# show error-database route
 Route             Nexthop                Operation  Failure
 2.2.2.0/24        10.10.10.2             Create     TABLE FULL

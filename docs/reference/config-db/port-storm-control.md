@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 PORT_STORM_CONTROL|<ifname>|<storm_type>
 ```
 

@@ -84,7 +84,7 @@ flowchart LR
 
 ### CONFIG_DB 設定
 
-```
+```text
 CFG_FLEX_COUNTER_TABLE|FLOW_CNT_TRAP
   FLEX_COUNTER_STATUS = "enable" | "disable"
   POLL_INTERVAL       = <ms>

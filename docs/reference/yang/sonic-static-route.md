@@ -69,7 +69,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-static-route
   +--rw sonic-static-route
      +--rw STATIC_ROUTE

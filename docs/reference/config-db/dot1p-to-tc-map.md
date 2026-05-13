@@ -45,7 +45,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DOT1P_TO_TC_MAP|<name>             # マップ全体（hash で dot1p→tc の dict）
 ```
 

@@ -207,7 +207,7 @@ show ip bgp neighbors 10.0.0.1 advertised-routes
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Neighbor        V     AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd
 10.0.0.1        4  65100      1023      1019        0    0    0 01:25:34            128
 10.0.0.5        4  65100       980       982        0    0    0 01:25:30            128

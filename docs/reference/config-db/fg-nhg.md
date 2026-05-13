@@ -41,7 +41,7 @@ flowchart LR
 
 ## 関連 3 テーブル
 
-```
+```text
 FG_NHG|<name>                    # グループ定義
 FG_NHG_PREFIX|<ip_prefix>        # prefix → group
 FG_NHG_MEMBER|<next_hop_ip>      # next-hop → group + bank

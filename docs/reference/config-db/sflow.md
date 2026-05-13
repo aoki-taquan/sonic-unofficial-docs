@@ -49,7 +49,7 @@ flowchart LR
 
 ## key / 構造
 
-```
+```text
 SFLOW|global               # グローバル
 SFLOW_SESSION|<port>       # per-port 設定 (port = 'all' でグローバル既定)
 SFLOW_COLLECTOR|<name>     # コレクタ

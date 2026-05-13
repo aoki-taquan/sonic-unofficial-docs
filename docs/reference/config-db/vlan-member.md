@@ -48,7 +48,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 VLAN_MEMBER|<vlan_name>|<port>
 ```
 

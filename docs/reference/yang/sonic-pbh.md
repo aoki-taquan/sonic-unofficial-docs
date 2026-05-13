@@ -53,7 +53,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-pbh
   +--rw sonic-pbh
      +--rw PBH_HASH_FIELD

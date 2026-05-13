@@ -79,7 +79,7 @@ flowchart LR
 
 ### CONFIG_DB
 
-```
+```text
 INTERFACE|<intf>           mpls = "enable" | "disable"
 VLAN_INTERFACE|<intf>      mpls = ...
 PORTCHANNEL_INTERFACE|<>   mpls = ...
@@ -92,7 +92,7 @@ per-RIF で MPLS 許否を切り替える単純フラグ[^1]。
 
 既存 `INTF_TABLE` / `ROUTE_TABLE` に加えて新規:
 
-```
+```text
 LABEL_ROUTE_TABLE:<incoming_label>
   nexthop  = "<ip1>,<ip2>,..."
   ifname   = "<intf1>,<intf2>,..."
@@ -119,7 +119,7 @@ CRM の追加監視対象[^1]:
 
 ## CLI
 
-```
+```bash
 config interface mpls add <intf>     # enable
 config interface mpls remove <intf>  # disable
 show mpls

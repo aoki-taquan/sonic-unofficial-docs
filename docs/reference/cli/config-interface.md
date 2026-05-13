@@ -98,7 +98,7 @@ def interface(ctx, namespace):
 
 **用法**:
 
-```
+```bash
 config interface [-n <namespace>] startup <interface_name>
 config interface [-n <namespace>] shutdown <interface_name>
 ```
@@ -341,7 +341,7 @@ sudo config interface vrf bind Ethernet0 Vrf_Red
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Ethernet0 admin status set to up.
 ```
 <!-- /usage-example -->

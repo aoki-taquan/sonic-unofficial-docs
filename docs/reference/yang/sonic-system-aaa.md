@@ -86,7 +86,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-system-aaa
   +--rw sonic-system-aaa
      +--rw AAA

@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 FLEX_COUNTER_TABLE|<group>
 ```
 

@@ -49,7 +49,7 @@ related:
 
 ### CONFIG_DB（switch global と session 系）
 
-```
+```text
 DTEL|SWITCH_ID                  SWITCH_ID            = <int>
 DTEL|FLOW_STATE_CLEAR_CYCLE     FLOW_STATE_CLEAR_CYCLE = <int>
 DTEL|LATENCY_SENSITIVITY        LATENCY_SENSITIVITY  = <int>

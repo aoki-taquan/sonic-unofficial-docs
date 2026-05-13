@@ -26,7 +26,7 @@ related:
 
 ## シグネチャ
 
-```
+```bash
 show version [--brief]
 ```
 
@@ -115,7 +115,7 @@ show version --verbose
 
 ### 期待される出力 (抜粋)
 
-```
+```yaml
 SONiC Software Version: SONiC.master.0-dirty-20260501.012345
 Distribution: Debian 12.5
 Kernel: 6.1.0-18-2-amd64

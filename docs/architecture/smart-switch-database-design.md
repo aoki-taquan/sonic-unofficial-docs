@@ -82,7 +82,7 @@ DPU からの接続先 port は **`6381 + DPU_ID`** の決定論的割当[^1]。
 
 `featured` daemon が `has_per_dpu_scope=True` の feature について systemctl 経由で per-DPU container を起動する。DPU 数は本来 platform API から取るべきだが、暫定で `platform_env.conf` の `NUM_DPU=N` を直読み（Open Items）[^1]:
 
-```
+```text
 /usr/share/sonic/device/$PLATFORM/platform_env.conf
 NUM_DPU=2
 ```
@@ -175,7 +175,7 @@ DASH スケーリング要件で見積もると、**DPU_APPL_DB だけで card �
 |-------|------------|------|
 | `FEATURE` | `has_per_dpu_scope` | `True` / `False`（既定 `False`） |
 
-```
+```text
 NUM_DPU=2   # /usr/share/sonic/device/$PLATFORM/platform_env.conf
 ```
 

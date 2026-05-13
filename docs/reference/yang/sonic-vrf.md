@@ -71,7 +71,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-vrf
   +--rw sonic-vrf
      +--rw VRF

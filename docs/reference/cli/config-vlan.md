@@ -51,7 +51,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config vlan add <vid> [-m|--multiple]
 ```
 
@@ -99,7 +99,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config vlan del <vid> [-m|--multiple] [--no_restart_dhcp_relay]
 ```
 
@@ -222,7 +222,7 @@ sudo config vlan proxy_arp 100 enabled
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Restarting DHCP relay service ...
 ```
 <!-- /usage-example -->

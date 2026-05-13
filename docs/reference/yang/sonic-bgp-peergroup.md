@@ -65,7 +65,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-peergroup
   +--rw sonic-bgp-peergroup
      +--rw BGP_PEER_GROUP

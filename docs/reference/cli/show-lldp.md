@@ -36,7 +36,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show lldp neighbors [<interfacename>] [--verbose]
 ```
 
@@ -88,7 +88,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 show lldp table [--verbose]
 ```
 
@@ -148,7 +148,7 @@ show lldp neighbors Ethernet0
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Capability codes: (R) Router, (B) Bridge, (O) Other
 LocalPort    RemoteDevice    RemotePortID    Capability    RemotePortDescr
 -----------  --------------  --------------  ------------  -----------------

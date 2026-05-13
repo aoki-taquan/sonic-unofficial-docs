@@ -107,7 +107,7 @@ flowchart LR
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   MACSEC_PROFILE, MACSEC_INTERFACE,
   TACPLUS, TACPLUS_SERVER, RADIUS, RADIUS_SERVER,

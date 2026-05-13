@@ -75,7 +75,7 @@ flowchart TB
 
 `swssloglevel` は `swsscommon.Logger` のスレッドに依存し、**他コンテナの daemon にはシグナルを送れない**[^1]。本 HLD では新しい CLI を追加:
 
-```
+```bash
 config syslog level -c <component> -l <log_level>
                     [--service <service_name>]
                     [--program <program_name>]
@@ -187,7 +187,7 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 
 ### 関連する CONFIG_DB
 
-```
+```yaml
 LOGGER|<component>
     loglevel               : DEBUG | INFO | NOTICE | WARN | ERROR
     require_manual_refresh : "true" | (未設定)

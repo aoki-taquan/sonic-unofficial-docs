@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-queue
   +--rw sonic-queue
      +--rw QUEUE

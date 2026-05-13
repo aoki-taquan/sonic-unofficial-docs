@@ -44,7 +44,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-tc-priority-group-map
   +--rw sonic-tc-priority-group-map
      +--rw TC_TO_PRIORITY_GROUP_MAP

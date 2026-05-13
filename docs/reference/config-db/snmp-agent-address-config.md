@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 SNMP_AGENT_ADDRESS_CONFIG|<agent_ip>|<port>|<vrf_name>
 ```
 

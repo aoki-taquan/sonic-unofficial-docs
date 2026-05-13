@@ -140,7 +140,7 @@ DASH SAI は `sai/experimental/saiexperimentaldash*.h` 系で定義される DAS
 
 ## Redis テーブル参照関係（per-DPU）
 
-```
+```text
 APPL_DB (per-DPU redisdpuN):
   APP_DASH_APPLIANCE_TABLE, APP_DASH_ENI_TABLE,
   APP_DASH_VNET_TABLE, APP_DASH_VNET_MAPPING_TABLE,

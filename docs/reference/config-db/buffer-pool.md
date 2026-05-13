@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BUFFER_POOL|<name>
 ```
 

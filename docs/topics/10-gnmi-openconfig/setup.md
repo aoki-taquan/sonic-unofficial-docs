@@ -63,7 +63,7 @@ gnmi_capabilities -target_addr dut.example.com:50051 \
 
 期待出力（一部）。
 
-```
+```yaml
 supported_models: <
   name: "openconfig-interfaces"
   organization: "OpenConfig working group"

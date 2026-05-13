@@ -40,7 +40,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DEVICE_NEIGHBOR|<peer_name>
 ```
 

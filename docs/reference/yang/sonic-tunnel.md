@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-tunnel
   +--rw sonic-tunnel
      +--rw TUNNEL

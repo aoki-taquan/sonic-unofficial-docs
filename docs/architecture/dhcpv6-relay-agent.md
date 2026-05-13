@@ -72,7 +72,7 @@ hop-count > `HOP_COUNT_LIMIT` のメッセージは破棄。`link-address` に�
 
 ### CONFIG_DB / YANG
 
-```
+```text
 DHCP|<intf>
   dhcpv6_servers                 = ["<server-ipv6>", ...]
   dhcpv6_option|rfc6939_support  = "true" | "false"   ; default true
@@ -101,7 +101,7 @@ active/standby dual ToR で active が送った Relay-Forward の返答が **sta
 
 ### CLI / Counter
 
-```
+```bash
 show dhcp6relay_counters
 sonic-clear dhcprelay_counters
 config dhcp6relay option79          enable|disable

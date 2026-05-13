@@ -66,7 +66,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-aggregate-address
   +--rw sonic-bgp-aggregate-address
      +--rw BGP_AGGREGATE_ADDRESS

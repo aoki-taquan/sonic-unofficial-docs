@@ -109,7 +109,7 @@ show acl rule DATA_ACL
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Name      Type    Binding              Description              Stage
 --------  ------  -------------------  -----------------------  -------
 DATA_ACL  L3      Ethernet0,Ethernet4  Data plane ingress ACL   ingress

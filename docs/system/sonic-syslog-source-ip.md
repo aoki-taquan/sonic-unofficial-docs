@@ -47,7 +47,7 @@ flowchart LR
 
 ## CONFIG_DB
 
-```
+```text
 SYSLOG_CONFIG|GLOBAL:
   format             = standard | welf
   severity           = notice | info | warning | ...

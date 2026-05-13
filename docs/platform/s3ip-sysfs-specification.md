@@ -81,7 +81,7 @@ S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電�
 
 ### Status enum（FAN 例）
 
-```
+```text
 0: not present
 1: present and normal
 2: present and abnormal

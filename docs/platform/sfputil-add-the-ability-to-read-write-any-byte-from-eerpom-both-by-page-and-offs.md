@@ -45,7 +45,7 @@ related:
 
 `sfputil read-eeprom`[^1]:
 
-```
+```text
 Options:
   -p, --port <logical_port_name>   Logical port name        [required]
   -n, --page <page>                EEPROM page number       [required]
@@ -57,7 +57,7 @@ Options:
 
 `sfputil write-eeprom`[^1]:
 
-```
+```text
 Options:
   -p, --port <logical_port_name>   [required]
   -n, --page <page>                [required]
@@ -77,7 +77,7 @@ Options:
 
 `size > (page サイズ − offset)` は invalid。例:
 
-```
+```text
 sfputil read-eeprom -p Ethernet0 -n 0 -o 255 -s 2     # invalid: 255+2=257 で page 0 範囲外
 sfputil read-eeprom -p Ethernet0 -n 1 -o 0   -s 1     # invalid: page 1 は offset >=128
 ```
@@ -106,7 +106,7 @@ flowchart TB
 
 write 直後に同 page+offset+size を read して **書いた値と一致** するかを確認。一致しなければエラー[^1]:
 
-```
+```text
 sfputil write-eeprom -p Ethernet0 -n 0 -o 100 -d 4a44 --verify
 Error: Write data failed! Write: 4a44, read: 0000.
 ```

@@ -48,7 +48,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_NEIGHBOR|<neighbor>                  # template 形式
 BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 ```

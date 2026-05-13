@@ -109,7 +109,7 @@ sudo config vlan member add 10-12 Ethernet0 -u     # 連続 VLAN を一括メン
 
 新規[^1]:
 
-```
+```bash
 config switchport mode <routed|access|trunk> <Ethernet0|PortChannel1> [<vlan-list>]
 ```
 
@@ -145,7 +145,7 @@ leaf switchport_mode { type switchport-mode-type; }
 
 CONFIG_DB:
 
-```
+```text
 PORT|<name>
   switchport_mode = "routed" | "access" | "trunk"
 

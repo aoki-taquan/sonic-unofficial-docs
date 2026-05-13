@@ -53,7 +53,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-spanning-tree
   +--rw sonic-spanning-tree
      +--rw STP

@@ -34,7 +34,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show snmpagentaddress
 ```
 

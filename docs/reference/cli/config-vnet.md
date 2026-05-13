@@ -42,7 +42,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config vnet add <vnet_name> <vni> <vxlan_tunnel>
     [--peer_list <list>]
     [--guid <guid>]

@@ -115,7 +115,7 @@ Mirror:
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   ACL_TABLE, ACL_RULE, ACL_TABLE_TYPE,
   COPP_TABLE, COPP_GROUP, COPP_TRAP,

@@ -74,7 +74,7 @@ IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / int
 
 `PORT` テーブルに 4 フィールド追加[^1]:
 
-```
+```text
 key = PORT|<port_name>
   autoneg              = "on" | "off"
   adv_speeds           = "<csv list of Mbps>" | "all"

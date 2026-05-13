@@ -50,7 +50,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BUFFER_PORT_INGRESS_PROFILE_LIST|<port>
 ```
 

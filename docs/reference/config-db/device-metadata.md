@@ -44,7 +44,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DEVICE_METADATA|localhost
 DEVICE_METADATA|bmc
 ```

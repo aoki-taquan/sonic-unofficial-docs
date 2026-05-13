@@ -52,7 +52,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 ACL_RULE|<table_name>|<rule_name>
 ```
 

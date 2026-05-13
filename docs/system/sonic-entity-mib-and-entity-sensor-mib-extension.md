@@ -51,7 +51,7 @@ SONiC の [SNMP](../reference/glossary.md#term-snmp) Entity MIB（RFC 2737）実
 
 既存実装は次のサブセットのみだった[^1]:
 
-```
+```text
 entPhysicalDescr / Class / Name /
   HardwareRev / FirmwareRev / SoftwareRev /
   SerialNum / MfgName / ModelName
@@ -61,7 +61,7 @@ entPhysicalDescr / Class / Name /
 
 ### Chassis hierarchy（HLD で示される構造）
 
-```
+```text
 Chassis
 ├── MGMT (Chassis)
 │   ├── CPU package Sensor/T(x)            (Temperature sensor)
@@ -104,7 +104,7 @@ Chassis
 
 Entity MIB に追加した sensor 系エンティティそれぞれに、**Entity Sensor MIB**（RFC 3433）の `entPhySensorTable` エントリ（`Type / Scale / Precision / Value / OperStatus / UnitsDisplay` 等）を生やす[^1]。
 
-```
+```text
 SNMPv2-SMI::mib-2.99.1.1.1.4.<idx> = INTEGER: <value>
 SNMPv2-SMI::mib-2.99.1.1.1.5.<idx> = INTEGER: <oper-status>
 ```
@@ -113,7 +113,7 @@ SNMPv2-SMI::mib-2.99.1.1.1.5.<idx> = INTEGER: <oper-status>
 
 既存実装で見える DOM sensor:
 
-```
+```text
 mib-2.47.1.1.1.1.2.1000 = "SFP/SFP+/SFP28 for Ethernet0"
 mib-2.47.1.1.1.1.2.1001 = "DOM Temperature Sensor for Ethernet0"
 mib-2.47.1.1.1.1.2.1011 = "DOM RX Power Sensor for Ethernet0/1"

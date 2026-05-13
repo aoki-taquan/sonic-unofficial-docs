@@ -28,7 +28,7 @@ related:
 
 ## シグネチャ
 
-```
+```bash
 show aaa
 ```
 
@@ -59,7 +59,7 @@ show aaa
 
 例:
 
-```
+```text
 AAA authentication login tacacs+,local
 AAA authentication failthrough True
 AAA authorization login tacacs+

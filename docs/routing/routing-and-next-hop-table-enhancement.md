@@ -56,7 +56,7 @@ related:
 
 新規 `NEXT_HOP_GROUP_TABLE`[^1]:
 
-```
+```text
 NEXT_HOP_GROUP_TABLE
   key     = NEXT_HOP_GROUP_TABLE:<arbitrary string>
   nexthop = *prefix       ; カンマ区切り IP（空ならゲートウェイなし）
@@ -65,7 +65,7 @@ NEXT_HOP_GROUP_TABLE
 
 `ROUTE_TABLE` に `nexthop_group` フィールドを追加（既存フィールドは残す）[^1]:
 
-```
+```text
 ROUTE_TABLE
   key            = ROUTE_TABLE:<prefix>
   nexthop_group  = NEXT_HOP_GROUP_TABLE:key   ; 新規。指定時は nexthop/ifname の代替
@@ -134,7 +134,7 @@ APP_DB スキーマ拡張のため **[CONFIG_DB](../reference/glossary.md#term-c
 
 ### 設定例
 
-```
+```text
 NEXT_HOP_GROUP_TABLE:NHG1
   nexthop = 10.0.0.1,10.0.0.2
   ifname  = Ethernet0,Ethernet4

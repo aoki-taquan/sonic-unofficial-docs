@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 SYSLOG_SERVER|<server_address>
 ```
 

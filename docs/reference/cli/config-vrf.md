@@ -196,7 +196,7 @@ sudo config vrf add mgmt
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 VRF Vrf_Red added.
 ```
 <!-- /usage-example -->

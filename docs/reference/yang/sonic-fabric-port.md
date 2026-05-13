@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-fabric-port
   +--rw sonic-fabric-port
      +--rw FABRIC_PORT

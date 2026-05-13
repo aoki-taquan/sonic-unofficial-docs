@@ -56,7 +56,7 @@ flowchart LR
 
 ### 設定例 (CONFIG_DB)
 
-```
+```text
 PASSW_HARDENING|POLICIES
     state             enabled
     expiration        180          # days

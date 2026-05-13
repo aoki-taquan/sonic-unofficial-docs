@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```yaml
 module: sonic-copp
   +--rw sonic-copp
      +--rw COPP_GROUP

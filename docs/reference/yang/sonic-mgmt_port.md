@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-mgmt_port
   +--rw sonic-mgmt_port
      +--rw MGMT_PORT

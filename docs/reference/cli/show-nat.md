@@ -111,7 +111,7 @@ show nat config bindings
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Static NAT Entries  ............ 1
 Dynamic NAT Entries ............ 0
 Total NAT Entries   ............ 1

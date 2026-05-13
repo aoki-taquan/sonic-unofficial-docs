@@ -105,7 +105,7 @@ PIC は member weight の hot update に依存するため、ベンダ SAI 側�
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   BGP_NEIGHBOR, BGP_PEER_RANGE, BGP_INTERNAL_NEIGHBOR,
   BGP_AGGREGATE_ADDRESS, BGP_MONITORS, DEVICE_METADATA (suppress-fib-pending flag)

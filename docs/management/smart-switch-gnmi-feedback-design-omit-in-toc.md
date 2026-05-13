@@ -168,14 +168,14 @@ APPL_STATE_DB の各エントリは [APPL_DB](../reference/glossary.md#term-appl
 
 例 1: `DASH_ROUTE_TABLE`（子オブジェクト）
 
-```
+```text
 DASH_ROUTE_TABLE:{group_id}:{prefix}
   result = <uint32>
 ```
 
 例 2: `DASH_ROUTE_GROUP_TABLE`（親オブジェクト）
 
-```
+```text
 DASH_ROUTE_GROUP_TABLE:{group_id}
   result     = <uint32>
   version_id = "1"   ; "1.1" など、controller が決めた一意のバージョン文字列

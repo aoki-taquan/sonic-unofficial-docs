@@ -57,7 +57,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 ACL_TABLE|<table_name>
 ```
 

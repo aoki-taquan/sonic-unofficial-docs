@@ -128,6 +128,9 @@ jobs:
       - name: image alt-text a11y (informational)
         run: python3 meta/scripts/check_image_alt.py --check || true
 
+      - name: untagged code-block language (informational)
+        run: python3 meta/scripts/check_code_lang.py --check || true
+
       - name: stale-verified pages (informational)
         run: python3 meta/scripts/check_stale_verified.py --check || true
 

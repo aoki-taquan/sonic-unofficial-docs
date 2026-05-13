@@ -115,7 +115,7 @@ HLD の現状版（`TODO` 多数）で記述されている主要対応[^1]:
 
 orchagent から上位プロセスへのエスカレーション用 DB として ERROR_DB を新設する[^1]:
 
-```
+```text
 ERROR_{{DB_TYPE}}_{{TABLE_TYPE}}_TABLE|entry
   failed_orch  = <type>          ; どの Orch で発生したか
   failed_SAI   = <type>          ; どの SAI で発生したか

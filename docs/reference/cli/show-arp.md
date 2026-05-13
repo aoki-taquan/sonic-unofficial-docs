@@ -30,7 +30,7 @@ related:
 
 ## シグネチャ
 
-```
+```bash
 show arp [<ipaddress>] [-if <iface>] [-n <namespace>] [-d <display>] [--verbose]
 ```
 
@@ -112,7 +112,7 @@ show arp -vrf Vrf_Red
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Address         MacAddress         Iface         Vlan
 --------------  -----------------  ------------  ----
 10.0.0.1        00:11:22:33:44:55  Ethernet0     -

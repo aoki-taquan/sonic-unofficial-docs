@@ -39,7 +39,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 AS_PATH_SET|<name>
 ```
 

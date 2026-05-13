@@ -84,7 +84,7 @@ flowchart LR
 
 ### L3（ipv4 unicast）
 
-```
+```text
 route-map wcmp-map permit 100
   set extcommunity bandwidth num-multipaths
 exit
@@ -97,7 +97,7 @@ router bgp 65100
 
 ### EVPN Type-5（参考、scope 外）
 
-```
+```text
 address-family l2vpn evpn
   advertise ipv4 unicast route-map wcmp-map
   neighbor SPINE activate
@@ -108,7 +108,7 @@ EVPN 経路は `docker_routing_config_mode` が `split` / `split-unified` のと
 
 ## CONFIG_DB と bgpcfgd
 
-```
+```text
 BGP_DEVICE_GLOBAL|STATE:
   wcmp_enabled = "true" | "false"
 ```
@@ -127,12 +127,12 @@ BGP_DEVICE_GLOBAL|STATE:
 
 ## CLI
 
-```
+```bash
 config bgp device-global wcmp <enabled|disabled>
 show bgp device-global [-j|--json]
 ```
 
-```
+```bash
 $ show bgp device-global
 TSA        WCMP
 ---------  --------

@@ -38,7 +38,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BANNER_MESSAGE|global
 ```
 

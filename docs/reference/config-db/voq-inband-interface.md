@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 VOQ_INBAND_INTERFACE|<name>
 VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 ```

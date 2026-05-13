@@ -66,7 +66,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-neighbor
   +--rw sonic-bgp-neighbor
      +--rw BGP_NEIGHBOR

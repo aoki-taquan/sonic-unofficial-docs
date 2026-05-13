@@ -63,7 +63,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-device_metadata
   +--rw sonic-device_metadata
      +--rw DEVICE_METADATA

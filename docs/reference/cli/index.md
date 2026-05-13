@@ -23,7 +23,7 @@ SONiC の運用 CLI は `sonic-utilities` リポジトリの click ベースの�
 
 `sonic-utilities` は複数の click エントリポイントを `setup.py` で同時にインストールする[^1]。本ページではそのうち主要な 3 系統 + パッケージ管理系を扱う。
 
-```
+```bash
 config           # /usr/local/bin/config (= config/main.py:config)
 show             # /usr/local/bin/show   (= show/main.py:cli)
 clear            # /usr/local/bin/sonic-clear (= clear/main.py:cli)

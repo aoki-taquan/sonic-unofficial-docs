@@ -92,7 +92,7 @@ DHCP / DNS には SAI 属性は使われません（kernel で完結）。
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   NAT_POOL, NAT_BINDINGS, STATIC_NAT, STATIC_NAPT, NAT_GLOBAL,
   DHCP_RELAY, DHCP_SERVER_IPV4, DHCP_SERVER_IPV4_*,

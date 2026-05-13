@@ -120,7 +120,7 @@ stateDiagram-v2
 
 既存 `CHASSIS_MODULE_TABLE|LINE-CARD<x>` の `oper_status` フィールドに新値が乗る。
 
-```
+```yaml
 CHASSIS_MODULE_TABLE|LINE-CARD0
     desc        : 7800R3AK-36DM2-LC
     slot        : 3

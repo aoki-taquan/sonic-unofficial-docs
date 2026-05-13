@@ -43,7 +43,7 @@ related:
 
 ### 設定が CONFIG_DB に入ったかの確認
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 4 KEYS "SRV6_MY_LOCATORS|*"
 1) "SRV6_MY_LOCATORS|loc1"
 admin@sonic:~$ redis-cli -n 4 HGETALL "SRV6_MY_LOCATORS|loc1"
@@ -64,7 +64,7 @@ admin@sonic:~$ redis-cli -n 4 KEYS "SRV6_MY_SIDS|*"
 
 ### FRR への配線確認
 
-```
+```bash
 admin@sonic:~$ vtysh -c "show segment-routing srv6 locator"
 Locator:
 Name                 ID      Prefix                   Status
@@ -83,7 +83,7 @@ fc00:0:1:e001::   uA (nh fe80::1)               bgp           loc1
 
 ### APP_DB / ASIC_DB の programming 確認
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 0 KEYS "SRV6_MY_SID_TABLE:*"
 1) "SRV6_MY_SID_TABLE:32:16:16:0:fc00:0:1:e000::"
 admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_MY_SID_ENTRY:*" | wc -l
@@ -102,7 +102,7 @@ APP_DB に乗っているのに [ASIC_DB](../../reference/glossary.md#term-asic_
 
 MySID 単位の counter は phase 機能で、現状の SONiC master では IPv6 forwarding 全体の [RIF](../../reference/glossary.md#term-rif) counter で代用するのが現実的です。
 
-```
+```bash
 admin@sonic:~$ sonic-clear counters
 admin@sonic:~$ show interfaces counters rif
     IFACE    RX_OK    RX_BPS    RX_PPS  ...
@@ -116,7 +116,7 @@ uA / End.X が forwarding しているかを概観するには十分です。ヘ
 
 ### per-RIF 有効化の確認
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 4 HGET "INTERFACE|Ethernet0" mpls
 enable
 admin@sonic:~$ redis-cli -n 0 HGETALL "INTF_TABLE:Ethernet0" | grep -A1 mpls
@@ -128,7 +128,7 @@ enable
 
 ### FRR / LSP の確認
 
-```
+```bash
 admin@sonic:~$ vtysh -c "show mpls table"
  Inbound Label  Type        Nexthop         Outbound Label
  -----------------------------------------------------------
@@ -140,7 +140,7 @@ LSP が消えるパターンは多くが LDP / [BGP](../../reference/glossary.md
 
 ### APP_DB と ASIC_DB
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 0 KEYS "LABEL_ROUTE_TABLE:*" | head
 1) "LABEL_ROUTE_TABLE:16"
 2) "LABEL_ROUTE_TABLE:17"
@@ -150,7 +150,7 @@ admin@sonic:~$ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_INSEG_ENTRY:*" | 
 
 APP_DB と ASIC_DB の件数が乖離していれば `orchagent` 側で SAI install に失敗している可能性が高く、`ERROR_DB` を見ます（[SAI 失敗ハンドリング](../../platform/hld-for-handling-sai-failures.md)）。
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 13 KEYS "ERROR_*" | head
 admin@sonic:~$ redis-cli -n 13 HGETALL "ERROR_INSEG_ENTRY|16"
 1) "operation"
@@ -161,7 +161,7 @@ admin@sonic:~$ redis-cli -n 13 HGETALL "ERROR_INSEG_ENTRY|16"
 
 ### CRM と QoS
 
-```
+```bash
 admin@sonic:~$ crm show resources mpls_inseg
 Resource Name    Used Count    Available Count
 ---------------  ------------  ---------------
@@ -178,7 +178,7 @@ admin@sonic:~$ sudo config crm thresholds mpls inseg high 85
 
 ### CONFIG_DB と show
 
-```
+```bash
 admin@sonic:~$ show interface path-tracing
   Interface    PT Interface ID    PT Timestamp Template
 -----------  -----------------  -----------------------
@@ -192,7 +192,7 @@ template3
 
 ### ASIC programming
 
-```
+```bash
 admin@sonic:~$ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x..." | grep -A1 PATH_TRACING
 SAI_PORT_ATTR_PATH_TRACING_INTF
 513

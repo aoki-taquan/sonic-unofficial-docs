@@ -40,7 +40,7 @@ related:
 
 HLD で定義された CLI は次の形[^1]:
 
-```
+```bash
 config switchport mode <routed|access|trunk> <Ethernet0|PortChannel1> [<vlan-list>]
 ```
 

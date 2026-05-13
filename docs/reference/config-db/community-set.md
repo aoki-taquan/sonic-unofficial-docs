@@ -40,7 +40,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 COMMUNITY_SET|<name>
 EXTENDED_COMMUNITY_SET|<name>
 ```

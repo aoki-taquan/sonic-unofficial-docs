@@ -73,7 +73,7 @@ flowchart LR
 
 ### CONFIG_DB
 
-```
+```text
 VLAN_SUB_INTERFACE|<subif>:
   admin_status = up | down
   vrf_name     = <vrf>
@@ -140,7 +140,7 @@ reasoning: 物理 port / PortChannel + VRF RIF というスコープ限定の根
 
 ### CLI
 
-```
+```bash
 config subinterface add Eth0.10 10 --vrf Vrf-Red
 config interface ip add Eth0.10 192.0.2.1/24
 config subinterface admin-status Eth0.10 up

@@ -44,12 +44,12 @@ flowchart LR
 ## key 構造
 
 非 [VOQ](../../reference/glossary.md#term-voq):
-```
+```text
 QUEUE|<ifname>|<qindex>
 ```
 
 [VOQ](../../reference/glossary.md#term-voq) chassis:
-```
+```text
 QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 ```
 

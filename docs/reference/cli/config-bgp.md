@@ -60,7 +60,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config bgp shutdown all [-v|--verbose]
 ```
 
@@ -106,7 +106,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config bgp shutdown neighbor <ipaddr_or_hostname> [-v|--verbose]
 ```
 
@@ -125,7 +125,7 @@ config bgp shutdown neighbor <ipaddr_or_hostname> [-v|--verbose]
 
 **用法**:
 
-```
+```bash
 config bgp remove neighbor <neighbor_ip_or_hostname>
 ```
 
@@ -165,7 +165,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config bgp device-global tsa enabled
 config bgp device-global tsa disabled
 ```
@@ -182,7 +182,7 @@ config bgp device-global tsa disabled
 
 **用法**:
 
-```
+```bash
 config bgp aggregate-address add <address>
     [--bbr-required]
     [--summary-only]
@@ -337,7 +337,7 @@ sudo config bgp device-global tsa enabled
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Starting up BGP session with neighbor 10.0.0.1 .....
 ```
 <!-- /usage-example -->

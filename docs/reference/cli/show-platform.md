@@ -140,7 +140,7 @@ show platform ssdhealth
 
 ### 期待される出力 (抜粋)
 
-```
+```yaml
 Platform: x86_64-cel_seastone-r0
 HwSKU: Celestica-DX010-C32
 ASIC: broadcom

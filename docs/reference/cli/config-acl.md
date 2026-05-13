@@ -42,7 +42,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config acl add table <table_name> <table_type>
     [-d|--description <desc>]
     [-p|--ports <port_list>]
@@ -201,7 +201,7 @@ sudo config acl add table SNMP_ACL CTRLPLANE -s ingress --services SNMP
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Successfully loaded ACL rules from /etc/sonic/acl_rules.json
 ```
 <!-- /usage-example -->

@@ -89,14 +89,14 @@ flowchart LR
 
 SSI 側:
 
-```
+```text
 start_chassis_db=1
 chassis_db_address=<redis_chassis IP>
 ```
 
 FSI 側:
 
-```
+```text
 chassis_db_address=<redis_chassis IP>
 ```
 
@@ -203,7 +203,7 @@ reasoning: Chassis DB 切断時の防御的シャットダウン動作の根拠�
 
 ### 設定例（SSI 上）
 
-```
+```text
 # /usr/share/sonic/device/<platform>/chassisdb.conf
 start_chassis_db=1
 chassis_db_address=127.100.0.1
@@ -211,7 +211,7 @@ chassis_db_address=127.100.0.1
 
 ### 設定例（FSI 上）
 
-```
+```text
 # /usr/share/sonic/device/<platform>/chassisdb.conf
 chassis_db_address=127.100.0.1
 ```

@@ -83,7 +83,7 @@ RADIUS Accept に含まれる privilege（admin / operator / user 等）を Linu
 
 ### CONFIG_DB
 
-```
+```text
 AAA|authentication:
   login = local | radius | radius,local | tacacs | ...
   failthrough = true | false

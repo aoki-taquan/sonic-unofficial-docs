@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 LLDP|GLOBAL
 LLDP_PORT|<ifname>
 ```

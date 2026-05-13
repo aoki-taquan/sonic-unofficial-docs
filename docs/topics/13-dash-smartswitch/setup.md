@@ -48,7 +48,7 @@ DASH / SmartSwitch は「運用者が CLI を叩いて 1 件ずつ [ENI](../../r
 
 典型的な投入フローは次の形になります。
 
-```
+```text
 DASH Controller
   └─ gNMI Set (version_id 付き)
        └─ NPU 側 gNMI server
@@ -155,7 +155,7 @@ sudo redis-cli -h redisdpu0 -n 0 PING
 
 期待される出力イメージ:
 
-```
+```text
 Name      Description     Physical-Slot   Oper-Status    Admin-Status
 --------  --------------  --------------  -------------  --------------
 DPU0      Pensando DPU    N/A             Online         up

@@ -75,7 +75,7 @@ flowchart LR
 
 ### STATE_DB スキーマ
 
-```
+```text
 FIPS_MACSEC_POST_TABLE
 
 key    = FIPS_MACSEC_POST_TABLE|sai

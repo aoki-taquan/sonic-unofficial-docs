@@ -45,7 +45,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DEFAULT_LOSSLESS_BUFFER_PARAMETER|<name>
 ```
 

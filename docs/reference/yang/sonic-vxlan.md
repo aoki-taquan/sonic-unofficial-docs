@@ -72,7 +72,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-vxlan
   +--rw sonic-vxlan
      +--rw VXLAN_TUNNEL

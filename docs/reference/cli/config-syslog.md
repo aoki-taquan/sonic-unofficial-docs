@@ -164,7 +164,7 @@ sudo config syslog del 10.0.0.100
 
 ### 期待される出力 (抜粋)
 
-```
+```bash
 Restarting rsyslog-config service ...
 ```
 <!-- /usage-example -->

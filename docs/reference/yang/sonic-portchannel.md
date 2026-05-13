@@ -73,7 +73,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-portchannel
   +--rw sonic-portchannel
      +--rw PORTCHANNEL

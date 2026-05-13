@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DHCP_SERVER_IPV4|<name>
 ```
 

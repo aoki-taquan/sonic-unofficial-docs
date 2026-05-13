@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 AUTO_TECHSUPPORT|GLOBAL
 AUTO_TECHSUPPORT_FEATURE|<feature_name>
 ```

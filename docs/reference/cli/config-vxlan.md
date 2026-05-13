@@ -215,7 +215,7 @@ sudo config vxlan remove vtep1
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 VxLAN tunnel vtep1 added.
 ```
 <!-- /usage-example -->

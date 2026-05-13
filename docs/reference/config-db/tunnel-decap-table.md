@@ -52,7 +52,7 @@ flowchart LR
 
 ## DB / key
 
-```
+```yaml
 APPL_DB:   TUNNEL_DECAP_TABLE:<tunnel_name>
 STATE_DB:  TUNNEL_DECAP_TABLE|<tunnel_name>
 APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管理用 sub テーブル

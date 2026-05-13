@@ -80,7 +80,7 @@ show pfc asymmetric
 
 ### 期待される出力 (抜粋)
 
-```
+```text
        Port    PFC0    PFC1    PFC2    PFC3    PFC4    PFC5    PFC6    PFC7
 -----------  ------  ------  ------  ------  ------  ------  ------  ------
   Ethernet0       0       0       0    1234       0       0       0       0

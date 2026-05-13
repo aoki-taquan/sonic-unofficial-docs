@@ -126,7 +126,7 @@ show feature config
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Feature        State     AutoRestart    SystemState
 -------------  --------  -------------  -------------
 bgp            enabled   enabled        up

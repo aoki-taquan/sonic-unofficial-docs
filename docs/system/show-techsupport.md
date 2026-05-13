@@ -80,7 +80,7 @@ flowchart LR
 
 CLI / REST 経由では **IETF YANG `date-and-time` 形式** のみ受理される[^1]。例:
 
-```
+```text
 2024-05-09T12:34:56Z
 2024-05-09T12:34:56+09:00
 ```

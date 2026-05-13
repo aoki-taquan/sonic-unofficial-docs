@@ -78,7 +78,7 @@ OpenConfig パスを受けた Management Framework / sonic-gnmi は、`sonic-mgm
 
 スコープにある主要ノード[^1]:
 
-```
+```text
 module: openconfig-interfaces
 +--rw interfaces
    +--rw interface* [name]

@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-buffer-pg
   +--rw sonic-buffer-pg
      +--rw BUFFER_PG

@@ -68,7 +68,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-banner
   +--rw sonic-banner
      +--rw BANNER_MESSAGE

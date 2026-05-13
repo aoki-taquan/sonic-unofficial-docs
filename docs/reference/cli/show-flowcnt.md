@@ -49,7 +49,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show flowcnt-trap stats [--verbose] [-n|--namespace <ns>]
 ```
 
@@ -91,7 +91,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 show flowcnt-route config
 ```
 
@@ -102,7 +102,7 @@ show flowcnt-route config
 
 **用法**:
 
-```
+```bash
 show flowcnt-route stats [--verbose] [-n|--namespace <ns>]
 show flowcnt-route stats pattern <prefix-pattern> [--vrf <vrf>] [-n ...]
 show flowcnt-route stats route <prefix> [--vrf <vrf>] [-n ...]

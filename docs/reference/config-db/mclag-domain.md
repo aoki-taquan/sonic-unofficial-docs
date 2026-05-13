@@ -48,7 +48,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 MCLAG_DOMAIN|<domain_id>
 MCLAG_INTERFACE|<domain_id>|<if_name>
 MCLAG_UNIQUE_IP|<if_name>

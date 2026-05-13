@@ -71,7 +71,7 @@ flowchart LR
 
 旧（NHG 拡張なし）:
 
-```
+```text
 ROUTE_TABLE:10.1.1.4/32
   nexthop = "10.0.0.1,10.0.0.3"
   ifname  = "Ethernet0,Ethernet4"
@@ -80,7 +80,7 @@ ROUTE_TABLE:10.1.1.4/32
 
 新（NHG 拡張あり）:
 
-```
+```text
 NEXTHOP_GROUP_TABLE:<id>
   nexthop = "10.0.0.1,10.0.0.3"
   ifname  = "Ethernet0,Ethernet4"
@@ -143,7 +143,7 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 
 ### CONFIG_DB
 
-```
+```text
 DEVICE_METADATA|localhost:
   fpm_use_nexthop_groups = enabled | disabled   # default disabled
 ```

@@ -45,7 +45,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-neigh
   +--rw sonic-neigh
      +--rw NEIGH

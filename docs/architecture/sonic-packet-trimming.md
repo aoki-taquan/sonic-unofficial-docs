@@ -67,7 +67,7 @@ flowchart LR
 
 ### CONFIG_DB
 
-```
+```text
 SWITCH_TRIMMING|GLOBAL:
   size           = <bytes>           # 残す size
   dscp_value     = <0..63>           # asymmetric の上書き値
@@ -140,7 +140,7 @@ reasoning: スコープと per-buffer + ACL disable の根拠。
 
 ### CLI
 
-```
+```bash
 config switch-trimming size 128
 config switch-trimming dscp-value 32 --mode asymmetric
 config switch-trimming queue 0

@@ -61,7 +61,7 @@ SONiC は伝統的に `Ethernet0` / `Ethernet4` / ... のような **`Ethernet` 
 
 ### 現行の命名
 
-```
+```text
 Ethernet0, Ethernet1, ..., Ethernet(N-1)        # N=32 or 64
 Ethernet0, Ethernet4, Ethernet8, ...            # 4 lane 単位 / breakout 想定
 ```
@@ -74,7 +74,7 @@ Ethernet0, Ethernet4, Ethernet8, ...            # 4 lane 単位 / breakout 想�
 
 ### 新提案: `et[sX]pY[abcd]`
 
-```
+```text
 et   sX        pY        [abcd]
 ↑    ↑         ↑          ↑
 prefix slot番号  front panel   breakout
@@ -198,7 +198,7 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 
     - **HLD 記述**: Stage 1 として alias 列を `etsXpY[abcd]` 系の新命名に切替える。
     - **実装位置**: `sonic-buildimage/device/<vendor>/<sku>/port_config.ini` を代表例で確認:
-      ```
+      ```text
       # sonic-buildimage/device/arista/x86_64-arista_7050cx3_32s/Arista-7050CX3-32S/port_config.ini
       # name          lanes             alias         index  speed
       Ethernet0       1,2,3,4           Ethernet1/1    1     100000

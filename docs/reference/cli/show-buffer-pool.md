@@ -42,7 +42,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show buffer_pool watermark [-n|--namespace <ns>]
 ```
 

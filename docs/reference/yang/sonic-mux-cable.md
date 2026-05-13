@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-mux-cable
   +--rw sonic-mux-cable
      +--rw MUX_CABLE

@@ -60,7 +60,7 @@ SONiC スイッチの **工場出荷状態への復元** を 1 コマンド `res
 
 「basic 設定」とは `MGMT_PORT`, `MGMT_INTERFACE`, `PASSW_HARDENING` 等。`config-setup.conf` の `KEEP_BASIC_TABLES` で定義する[^1]:
 
-```
+```text
 KEEP_BASIC_TABLES=MGMT_PORT,MGMT_INTERFACE,PASSW_HARDENING
 ```
 
@@ -127,7 +127,7 @@ sonic-cfggen -H -k ${HW_KEY} --preset ${DEFAULT_PRESET}
 
 ### CLI
 
-```
+```bash
 reset-factory                       # default mode
 reset-factory keep-all-config       # config 維持、logs/files 消去
 reset-factory only-config           # config リセット、logs/files 維持

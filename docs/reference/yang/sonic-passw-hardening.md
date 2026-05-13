@@ -48,7 +48,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-passwh
   +--rw sonic-passwh
      +--rw PASSW_HARDENING

@@ -98,7 +98,7 @@ sequenceDiagram
 
 ### CONFIG_DB
 
-```
+```text
 BGP_ERROR_CFG_TABLE|config:
   enable = "true" | "false"   # default false
 ```
@@ -107,7 +107,7 @@ BGP_ERROR_CFG_TABLE|config:
 
 `show bgp ipv4 unicast` の status code に `#`（FIB-install pending）が増える。`show ip route` でも `#`（Not installed in hardware）が出る[^1]。
 
-```
+```text
 Status codes: ... # FIB install pending.
 *># 21.21.21.21/32   4.1.1.2   ...
 ```
@@ -150,7 +150,7 @@ reasoning: ERROR_ROUTE_TABLE 経由 + 既存 FPM socket 双方向の根拠。
 
 ### CLI
 
-```
+```bash
 config bgp error-handling enable
 config bgp error-handling disable
 ```
@@ -198,7 +198,7 @@ config bgp error-handling disable
     ### 3. 後発機能 BGP Suppress FIB Pending が代替
 
     - **実装位置**: `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:107`
-      ```
+      ```text
       bgp suppress-fib-pending
       ```
       デフォルトで `bgpd` の起動 config に挿入される。[FRR](../reference/glossary.md#term-frr) 側は `dplane_fpm_nl` と zebra の RTM_F_OFFLOAD/RTM_F_TRAP フラグを利用し、ASIC への install 完了通知を受けるまで BGP advertise を保留する。

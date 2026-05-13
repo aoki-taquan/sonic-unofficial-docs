@@ -44,7 +44,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config portchannel [-n <ns>] add <portchannel_name>
     [--min-links <1-1024>]
     [--fallback true|false]
@@ -200,7 +200,7 @@ sudo config portchannel add PortChannel0003 --fallback true --min-links 2
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 Ethernet0 added to PortChannel0001
 ```
 <!-- /usage-example -->

@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DHCPV4_RELAY|<name>
 ```
 

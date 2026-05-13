@@ -84,7 +84,7 @@ flowchart LR
 
 HLD は ABNF レベルの schema を網羅的に定義する。代表例:
 
-```
+```text
 BGP_GLOBALS|<vrf>:
   router_id, local_asn, ebgp_requires_policy, ...
 BGP_NEIGHBOR|<vrf>|<peer-ip>:
@@ -131,7 +131,7 @@ reasoning: bgpcfgd / frrcfgd の切替フィールドと warm boot スコープ�
 
 ### CONFIG_DB の有効化フラグ
 
-```
+```text
 DEVICE_METADATA|localhost:
   frr_mgmt_framework_config = "true"
 ```

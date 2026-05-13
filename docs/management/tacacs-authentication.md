@@ -67,7 +67,7 @@ TACACS+ ユーザは `/etc/passwd` に存在しない。`getpwnam` が失敗す�
 
 `/etc/nsswitch.conf` の `passwd` 行に `tacplus` を追記:
 
-```
+```text
 passwd: compat tacplus
 ```
 
@@ -84,7 +84,7 @@ passwd: compat tacplus
 
 ### パターン 1: 2 サーバ + `source_ip` + fail_through 無効
 
-```
+```text
 auth [success=done ... auth_err=die] pam_unix.so nullok try_first_pass
 auth [success=done ... auth_err=die] pam_tacplus.so server=A:49 secret=X source_ip=Y try_first_pass
 auth [success=1 default=ignore]      pam_tacplus.so server=B:49 secret=X source_ip=Y try_first_pass
@@ -101,7 +101,7 @@ auth requisite pam_deny.so
 
 冒頭に `pam_succeed_if user=root` を置いて root だけ TACACS+ をスキップさせる構造[^1]:
 
-```
+```text
 auth [success=1 ...] pam_succeed_if.so user = root debug
 auth [success=done ...] pam_tacplus.so ... try_first_pass
 auth [success=1 default=ignore] pam_unix.so nullok try_first_pass
@@ -117,7 +117,7 @@ auth [success=1 default=ignore] pam_unix.so nullok try_first_pass
 
 ### `AAA`
 
-```
+```text
 key = "authentication"
 protocol    = LIST(local, tacacs+)
 fallback    = "True"|"False"
@@ -126,7 +126,7 @@ failthrough = "True"|"False"
 
 ### `TACPLUS`（global）
 
-```
+```text
 key = "global"
 passkey   = 1*32VCHAR
 auth_type = pap|chap|mschap
@@ -136,7 +136,7 @@ timeout   = 1-99
 
 ### `TACPLUS_SERVER`
 
-```
+```text
 key = <server IP>
 tcp_port  = 1-65535
 passkey   = 1*32VCHAR
@@ -159,7 +159,7 @@ config aaa authentication failthrough enable
 
 CLI 一覧:
 
-```
+```bash
 config aaa authentication login {local | tacacs+}
 config aaa authentication failthrough enable|disable
 config tacacs {src_ip|timeout|authtype|passkey|add|delete} ...

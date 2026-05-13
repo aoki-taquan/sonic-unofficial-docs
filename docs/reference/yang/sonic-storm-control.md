@@ -64,7 +64,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-storm-control
   +--rw sonic-storm-control
      +--rw PORT_STORM_CONTROL

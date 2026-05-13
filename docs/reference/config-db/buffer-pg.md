@@ -46,7 +46,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BUFFER_PG|<port>|<pg_num>
 ```
 

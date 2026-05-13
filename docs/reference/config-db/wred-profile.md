@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 WRED_PROFILE|<name>
 ```
 

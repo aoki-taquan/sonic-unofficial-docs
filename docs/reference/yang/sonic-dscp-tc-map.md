@@ -64,7 +64,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-dscp-tc-map
   +--rw sonic-dscp-tc-map
      +--rw DSCP_TO_TC_MAP

@@ -36,7 +36,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show mgmt-vrf [routes]
 ```
 

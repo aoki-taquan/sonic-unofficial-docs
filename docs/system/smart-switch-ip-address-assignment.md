@@ -96,7 +96,7 @@ DPU の PCIe netdev 名は **`dpu0`, `dpu1`, ...** prefix で始める命名規�
 
 ### CONFIG_DB（sonic-cfggen 生成）
 
-```
+```text
 DEVICE_METADATA|localhost:
   switch_type = switch
   type        = LeafRouter

@@ -61,7 +61,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-fips
   +--rw sonic-fips
      +--rw FIPS

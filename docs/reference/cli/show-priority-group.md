@@ -38,7 +38,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show priority-group watermark headroom [--namespace <ns>|all] [--json]
 show priority-group watermark shared [--namespace <ns>|all] [--json]
 ```

@@ -55,7 +55,7 @@ LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わ�
 
 ### スキーマ
 
-```
+```yaml
 CONFIG_DB: PORT|<port>  link_training = "on"|"off"
 APPL_DB:   PORT_TABLE   link_training を伝搬
 STATE_DB:  PORT_TABLE   link_training_status を 7 値で公開
@@ -144,7 +144,7 @@ show interfaces link-training status Ethernet0
 
 出力例:
 
-```
+```text
 Interface      LT Oper      LT Admin    Oper    Admin
 -----------  -----------    ----------  ------  -------
 Ethernet0      trained          on      up      up

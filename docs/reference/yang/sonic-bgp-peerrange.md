@@ -56,7 +56,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-bgp-peerrange
   +--rw sonic-bgp-peerrange
      +--rw BGP_PEER_RANGE

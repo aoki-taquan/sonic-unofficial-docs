@@ -42,7 +42,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config pfcwd start [--action drop|forward|alert]
                    [--restoration-time <100-60000>]
                    [--pfc-stat-history]

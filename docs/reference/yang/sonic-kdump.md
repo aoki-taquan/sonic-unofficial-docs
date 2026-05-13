@@ -63,7 +63,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-kdump
   +--rw sonic-kdump
      +--rw KDUMP

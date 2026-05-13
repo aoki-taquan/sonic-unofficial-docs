@@ -64,7 +64,7 @@ TPID（Tag Protocol Identifier）は [VLAN](../reference/glossary.md#term-vlan) 
 
 その他値は CLI で reject:
 
-```
+```bash
 admin@SONiC:~$ sudo config interface tpid Ethernet64 0x0800
 TPID 0x0800 is not allowed. Allowed: 0x8100, 0x9100, 0x9200, or 0x88A8.
 ```
@@ -73,7 +73,7 @@ TPID 0x0800 is not allowed. Allowed: 0x8100, 0x9100, 0x9200, or 0x88A8.
 
 ベンダ [SAI](../reference/glossary.md#term-sai) が `SAI_PORT_ATTR_TPID` / `SAI_LAG_ATTR_TPID` を実装しているかを **boot 時に問い合わせ** て `STATE_DB` の `SWITCH_CAPABILITY|switch` に保存する[^1]:
 
-```
+```text
 SWITCH_CAPABILITY|switch
   PORT_TPID_CAPABLE = "true" | "false"
   LAG_TPID_CAPABLE  = "true" | "false"
@@ -82,7 +82,7 @@ SWITCH_CAPABILITY|switch
 
 CLI / RESTful フロントエンドは設定前にこの値を見て **拒否を行う**:
 
-```
+```bash
 # capability チェック前
 admin@SONiC:~$ sudo config interface tpid Ethernet64 0x9200
 System not ready to accept TPID config. Please try again later.
@@ -112,7 +112,7 @@ flowchart LR
 
 ポートが既に [LAG](../reference/glossary.md#term-lag) メンバである場合、port 単独への TPID 設定はできない[^1]:
 
-```
+```bash
 admin@SONiC:~$ sudo config interface tpid Ethernet4 0x9200
 Ethernet4 is already member of PortChannel0002. Set TPID NOT allowed.
 ```
@@ -121,7 +121,7 @@ Ethernet4 is already member of PortChannel0002. Set TPID NOT allowed.
 
 ### CONFIG_DB / APPL_DB スキーマ
 
-```
+```text
 PORT|<port>:        tpid = "0x8100" | "0x9100" | "0x9200" | "0x88A8"
 PORTCHANNEL|<lag>:  tpid = "0x8100" | "0x9100" | "0x9200" | "0x88A8"
 PORT_TABLE:<port>:  tpid = ...

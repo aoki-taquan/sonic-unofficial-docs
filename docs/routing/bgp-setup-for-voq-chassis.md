@@ -147,7 +147,7 @@ VoQ シャーシでは `BGP_VOQ_CHASSIS_NEIGHBOR` のピアを **internal** と�
 
 ### FRR 設定生成例
 
-```
+```text
 neighbor 10.10.1.17 remote-as <chassis-as>
 neighbor 10.10.1.17 peer-group VOQ_CHASSIS_PG
 !

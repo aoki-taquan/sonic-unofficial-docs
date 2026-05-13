@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-sflow
   +--rw sonic-sflow
      +--rw SFLOW_COLLECTOR

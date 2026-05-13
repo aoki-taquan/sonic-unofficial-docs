@@ -61,7 +61,7 @@ show interfaces counters fec-stats
 
 期待表示[^1]:
 
-```
+```text
 IFACE         STATE FEC_CORR FEC_UNCORR FEC_SYMBOL_ERR ... FLR(O)  FLR(P) (Accuracy)
 Ethernet72    U     28,531   0          31                 0       2.68e-09 (79%)
 Ethernet80    U     25,890   0          25                 0       6.03e-09 (79%)

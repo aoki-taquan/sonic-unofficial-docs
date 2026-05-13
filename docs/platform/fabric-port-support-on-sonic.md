@@ -60,7 +60,7 @@ forwarding ASIC と同じく fabric ASIC ごとに `database` / `swss` / `syncd`
 
 ### `DEVICE_METADATA` で identify
 
-```
+```text
 DEVICE_METADATA|localhost
   switch_type = "fabric"
   switch_id   = <一意の番号>
@@ -98,7 +98,7 @@ flowchart LR
 
 fabric port は chip 上の fabric port 番号で識別。周期 poll で書き込まれる[^1]:
 
-```
+```text
 STATE_DB:FABRIC_PORT_TABLE:<fabric_port_name>
   lane    = <number>
   status  = "up" | "down"
@@ -110,7 +110,7 @@ STATE_DB:FABRIC_PORT_TABLE:<fabric_port_name>
 
 forwarding 用 port counter とは別に[^1]:
 
-```
+```text
 SAI_PORT_STAT_IF_IN_OCTETS / IN_ERRORS / IN_FABRIC_DATA_UNITS
 SAI_PORT_STAT_IF_IN_FEC_{CORRECTABLE,NOT_CORRECTABLE,SYMBOL}_ERRORS
 SAI_PORT_STAT_IF_OUT_OCTETS / OUT_FABRIC_DATA_UNITS

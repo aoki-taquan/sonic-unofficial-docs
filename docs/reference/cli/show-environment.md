@@ -28,7 +28,7 @@ related:
 
 ## シグネチャ
 
-```
+```bash
 show environment [--verbose]
 ```
 

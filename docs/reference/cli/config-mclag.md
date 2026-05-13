@@ -155,7 +155,7 @@ sudo config mclag session-timeout 4095 30
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 MCLAG domain 4095 added.
 ```
 <!-- /usage-example -->

@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-fine-grained-ecmp
   +--rw sonic-fine-grained-ecmp
      +--rw FG_NHG

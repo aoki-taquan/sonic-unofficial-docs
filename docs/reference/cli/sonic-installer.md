@@ -105,7 +105,7 @@ current image は削除不可。`bootloader.remove_image(image)` で物理削除
 
 **`<container_name>`**: `DOCKER_CONTAINER_LIST` の Choice。
 
-```
+```text
 bgp, dhcp_relay, lldp, macsec, nat, pmon, radv, restapi, sflow,
 stp, snmp, swss, syncd, teamd, telemetry, mgmt-framework
 ```
@@ -199,7 +199,7 @@ sudo sonic-installer cleanup
 
 ### 期待される出力 (抜粋)
 
-```
+```yaml
 Available:
 SONiC-OS-202311
 SONiC-OS-202205

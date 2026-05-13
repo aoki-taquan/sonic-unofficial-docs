@@ -59,7 +59,7 @@ flowchart LR
 
 ### CONFIG_DB
 
-```
+```text
 CONSOLE_SWITCH:
   console_mgmt = enabled | disabled
 
@@ -72,7 +72,7 @@ CONSOLE_PORT|<line>:
 
 ### STATE_DB
 
-```
+```text
 CONSOLE_PORT|<line>:
   state           # idle | busy
   current_session # 現在誰が使っているか
@@ -83,7 +83,7 @@ CONSOLE_PORT|<line>:
 
 vendor / serial hub ドライバ依存で `/dev/ttyXXX` の番号と line number の対応が変わる。[HLD](../reference/glossary.md#term-hld) は **mapping 定義 sample** を別表で示す[^1]:
 
-```
+```text
 line 1  -> /dev/ttyUSB0
 line 2  -> /dev/ttyUSB1
 ...

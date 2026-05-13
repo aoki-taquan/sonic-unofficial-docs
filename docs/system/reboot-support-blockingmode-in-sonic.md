@@ -104,7 +104,7 @@ sequenceDiagram
 
 blocking mode 中、生存表示として **10 秒ごとに `.` を出力、50 個ごとに改行** する[^1]。出力例:
 
-```
+```text
 Fri 20 Oct 2023 06:03:33 AM UTC Issuing OS-level reboot ...
 ..................................................
 ..................................................
@@ -131,7 +131,7 @@ dot 出力の有効化には **blocking mode が前提**。その上で次のい
 
 例:
 
-```
+```text
 blocking_mode=true
 blocking_mode_timeout=10
 show_timer=true

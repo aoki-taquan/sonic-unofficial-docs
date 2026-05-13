@@ -61,7 +61,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-loopback-interface
   +--rw sonic-loopback-interface
      +--rw LOOPBACK_INTERFACE

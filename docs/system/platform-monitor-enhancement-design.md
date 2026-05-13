@@ -81,7 +81,7 @@ boot up 時に platform hwsku / ASIC 名 / reboot cause / syseeprom decode（mod
 
 ### STATE_DB Schema
 
-```
+```text
 PLATFORM_INFO|<platform_name>:
   chassis_list = <STRING>
 

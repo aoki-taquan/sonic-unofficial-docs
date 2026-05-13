@@ -95,7 +95,7 @@ OrchAgent では既存の Redis event ループに乗せるため `linkWithFrame
 
 ### APP_DB スキーマ
 
-```
+```text
 DAEMON:<daemon_name>:
   DUMP_TYPE     = short | full
   DUMP_TARGET   = default | syslog
@@ -116,7 +116,7 @@ DAEMON:<daemon_name>:           ; 完了応答
 
 OrchAgent 例（[HLD](../reference/glossary.md#term-hld) 抜粋）[^1]:
 
-```
+```bash
 show debug routeorch routes -v VrfRED -p 100.100.4.0/24
 show debug routeorch nhgrp
 show debug neighorch nhops

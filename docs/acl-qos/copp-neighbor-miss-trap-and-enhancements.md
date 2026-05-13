@@ -94,7 +94,7 @@ flowchart LR
 
 ## STATE_DB スキーマ
 
-```
+```yaml
 COPP_TRAP_CAPABILITY_TABLE|traps
     trap_ids : "stp,lacp,eapol,lldp,...,neighbor_miss,...,bgp,bgpv6,bfd,..."
 
@@ -118,7 +118,7 @@ COPP_TRAP_TABLE|<trap_name>
 
 新設 `show copp configuration`:
 
-```
+```bash
 show copp configuration
         └── detailed [--trapid <trapid> | --group <group>]
 ```

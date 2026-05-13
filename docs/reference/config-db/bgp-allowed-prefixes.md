@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>]
 ```
 

@@ -70,7 +70,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-warm-restart
   +--rw sonic-warm-restart
      +--rw WARM_RESTART

@@ -89,7 +89,7 @@ Multi-ASIC（pizza-box の packet mode 含む）では `SAI_SWITCH_ATTR_TYPE = S
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 Per-ASIC namespace:
   APPL_DB / CONFIG_DB / ASIC_DB / STATE_DB / COUNTERS_DB
 Chassis global:

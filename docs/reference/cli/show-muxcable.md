@@ -131,7 +131,7 @@ show muxcable firmware version Ethernet0
 
 ### 期待される出力 (抜粋)
 
-```
+```text
 PORT         STATUS    HEALTH
 -----------  --------  --------
 Ethernet0    active    HEALTHY

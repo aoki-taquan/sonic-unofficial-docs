@@ -43,7 +43,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config platform firmware install [fwutil args...]
 ```
 
@@ -53,7 +53,7 @@ config platform firmware install [fwutil args...]
 
 **用法**:
 
-```
+```bash
 config platform firmware update [fwutil args...]
 ```
 
@@ -63,7 +63,7 @@ config platform firmware update [fwutil args...]
 
 **用法**:
 
-```
+```bash
 show platform firmware [fwutil args...]
 ```
 

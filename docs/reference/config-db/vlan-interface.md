@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 VLAN_INTERFACE|<name>                       # 属性ロウ
 VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 ```

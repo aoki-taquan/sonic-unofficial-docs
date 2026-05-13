@@ -42,7 +42,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 TC_TO_QUEUE_MAP|<name>|<tc>
 ```
 

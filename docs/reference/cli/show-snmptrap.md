@@ -34,7 +34,7 @@ related:
 
 **用法**:
 
-```
+```bash
 show snmptrap
 ```
 
@@ -46,7 +46,7 @@ show snmptrap
 
 表示ヘッダ:
 
-```
+```text
 Version | TrapReceiverIP | Port | VRF | Community
 ```
 

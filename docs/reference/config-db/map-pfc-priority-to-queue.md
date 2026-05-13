@@ -47,7 +47,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 MAP_PFC_PRIORITY_TO_QUEUE|<name>
 ```
 
@@ -55,7 +55,7 @@ MAP_PFC_PRIORITY_TO_QUEUE|<name>
 
 内側エントリ:
 
-```
+```text
 MAP_PFC_PRIORITY_TO_QUEUE|<name>|<pfc_priority>
 ```
 

@@ -44,7 +44,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 DEBUG_COUNTER|<name>
 DEBUG_COUNTER_DROP_REASON|<name>|<reason>
 DEBUG_DROP_MONITOR|CONFIG          # global setting (container)

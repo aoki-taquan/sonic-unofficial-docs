@@ -62,7 +62,7 @@ flowchart LR
 
 ### TRANSCEIVER_INFO
 
-```
+```text
 TRANSCEIVER_INFO|<ifname>:
   type, hardwarerev, serialnum, manufacturename, modelname, vendor_oui,
   vendor_date, Connector, encoding, ext_identifier, ext_rateselect_compliance,
@@ -71,7 +71,7 @@ TRANSCEIVER_INFO|<ifname>:
 
 ### TRANSCEIVER_DOM_SENSOR
 
-```
+```text
 TRANSCEIVER_DOM_SENSOR|<ifname>:
   temperature, voltage,
   rx1power..rx4power, tx1bias..tx4bias,

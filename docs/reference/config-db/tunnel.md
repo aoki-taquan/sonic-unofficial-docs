@@ -50,7 +50,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 TUNNEL|<mux_tunnel>
 ```
 

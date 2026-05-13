@@ -43,7 +43,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 CONSOLE_PORT|<line-no>
 CONSOLE_SWITCH|console_mgmt
 ```

@@ -101,7 +101,7 @@ container ACL_TABLE_TYPE {
 
 `AclOrch` 起動時に [SAI](../reference/glossary.md#term-sai) から取得した capability を [STATE_DB](../reference/glossary.md#term-state_db) に書く[^1]:
 
-```
+```text
 ACL_STAGE_CAPABILITY|<INGRESS|EGRESS>
   is_action_list_mandatory = true|false
   action_list = "PACKET_ACTION,MIRROR_INGRESS_ACTION,REDIRECT_ACTION"
@@ -214,7 +214,7 @@ reasoning: 公開 API と更新セマンティクスの根拠。
 
 CLI は ACL_TABLE_TYPE 名を CONFIG_DB に対して検証し、actions が STATE_DB 公開 capability に含まれているかも検証する[^1]:
 
-```
+```bash
 sudo config acl add table DATAACL L3 --ports Ethernet0,Ethernet4 --stage ingress
 ```
 

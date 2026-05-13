@@ -43,7 +43,7 @@ related:
 
 ### SAI 属性
 
-```
+```text
 SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE   (CREATE_AND_SET, default false)
   → true: SAI_PORT_ATTR_FEC_MODE が autoneg 結果より優先
   → false: autoneg 結果が優先
@@ -125,7 +125,7 @@ reasoning: 新 SAI 属性と FEC=auto 値の根拠。
 
 ### CONFIG_DB
 
-```
+```text
 PORT|<if>:
   fec      = auto | rs | fc | none
   autoneg  = on | off

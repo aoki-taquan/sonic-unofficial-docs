@@ -37,7 +37,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config clock timezone <timezone_name>
 ```
 
@@ -87,7 +87,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config clock date <YYYY-MM-DD> <HH:MM:SS>
 ```
 

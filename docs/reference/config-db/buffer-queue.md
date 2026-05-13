@@ -47,12 +47,12 @@ flowchart LR
 ## key 構造
 
 非 [VOQ](../../reference/glossary.md#term-voq):
-```
+```text
 BUFFER_QUEUE|<port>|<qindex>
 ```
 
 VOQ chassis:
-```
+```text
 BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 ```
 

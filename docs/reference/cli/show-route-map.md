@@ -29,7 +29,7 @@ related:
 
 ## 用法
 
-```
+```bash
 show route-map [<route_map_name>] [--verbose]
 ```
 

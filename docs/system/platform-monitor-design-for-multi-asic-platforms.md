@@ -73,7 +73,7 @@ PMON は **front panel port にしか興味が無い** ので、namespace のう
 
 multi-ASIC では `port_config.ini` が **ASIC 単位** で別ディレクトリに置かれる[^1]:
 
-```
+```text
 device/<platform>/<hwsku>/<asic_index>/port_config.ini
 ```
 

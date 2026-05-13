@@ -87,7 +87,7 @@ sequenceDiagram
 
 ### CONFIG_DB
 
-```
+```text
 DEVICE_METADATA|localhost:
   suppress-fib-pending = enabled | disabled   # default disabled
 ```

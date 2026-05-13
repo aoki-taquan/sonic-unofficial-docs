@@ -63,7 +63,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-debug-counter
   +--rw sonic-debug-counter
      +--rw DEBUG_COUNTER

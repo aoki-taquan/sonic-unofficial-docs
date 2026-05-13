@@ -38,7 +38,7 @@ related:
 
 ## コマンドツリー
 
-```
+```text
 sonic-clear (= clear)
 ├── arp [<ip>] [-n <ns>]              # IP ARP テーブル全消し or 1 件
 ├── ndp [<ip>] [-n <ns>]              # IPv6 NDP テーブル

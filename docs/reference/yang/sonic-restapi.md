@@ -58,7 +58,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-restapi
   +--rw sonic-restapi
      +--rw RESTAPI

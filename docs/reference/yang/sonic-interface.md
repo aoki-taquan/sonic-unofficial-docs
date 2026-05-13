@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-interface
   +--rw sonic-interface
      +--rw INTERFACE

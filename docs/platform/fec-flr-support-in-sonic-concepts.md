@@ -40,7 +40,7 @@ related:
 
 `Frame Loss Ratio (FLR)` は **送信フレームに対する欠落フレームの割合** で、リンク品質の代表指標[^1]:
 
-```
+```text
 FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
 ```
 
@@ -50,13 +50,13 @@ FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
 
 物理層で観測可能なのは Codeword Error Ratio (CER):
 
-```
+```text
 CER = (uncorrectable codeword 数) / (全 codeword 数)
 ```
 
 RS-544 系 FEC の場合、1 codeword あたりの最大フレーム数 MFC = 8 と、interleaving factor X から FLR を導出できる[^1]:
 
-```
+```text
 FEC_FLR = CER * (1 + X * MFC) / MFC
 RS-544: MFC = 8
   X=1 → FLR = 1.125 * CER
@@ -92,7 +92,7 @@ Predicted は **外挿** に過ぎず、低 BER 域での実測 FLR と乖離す
 
 `port_flr.lua` は既存 `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` のプラグインとして動作し、計算周期は HLD 上は次式で決まる[^1]:
 
-```
+```text
 interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 ```
 

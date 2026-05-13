@@ -128,7 +128,7 @@ show aaa
 
 `show aaa` の典型出力:
 
-```
+```text
 AAA authentication login          : tacacs+ local
 AAA authentication failthrough    : True
 AAA authorization login           : tacacs+ local

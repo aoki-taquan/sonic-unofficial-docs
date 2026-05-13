@@ -76,7 +76,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-nat
   +--rw sonic-nat
      +--rw STATIC_NAPT

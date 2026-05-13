@@ -55,7 +55,7 @@ OpenSSL の **engine 機構** を使い、`/usr/lib/ssl/openssl-fips.cnf` で `e
 
 ### Application 単位 enable
 
-```
+```text
 export ENABLE_FIPS=1
 # Golang only:
 export GOLANG_FIPS=1
@@ -67,7 +67,7 @@ export OPENSSL_CONFIG=/usr/lib/ssl/openssl-fips.cnf
 
 ### SymCrypt OpenSSL Debian パッケージ
 
-```
+```text
 パッケージ名: symcrypt-openssl (例: symcrypt-openssl_0.1_amd64.deb)
 収録ファイル:
   /usr/lib/ssl/openssl.cnf       (デフォルト)
@@ -88,7 +88,7 @@ Golang stdlib `crypto/*` は FIPS に未対応。Google の `dev.boringcrypto` b
 
 ### Build flag
 
-```
+```text
 rules/config:
   INCLUDE_FIPS ?= y     # FIPS 機構を image に同梱（default ON）
   ENABLE_FIPS  ?= n     # default で FIPS を有効化（default OFF）
@@ -98,7 +98,7 @@ rules/config:
 
 ### CLI
 
-```
+```text
 sonic-installer set-fips <image> [--enable-fips | --disable-fips]
 sonic-installer get-fips <image>     # FIPS is enabled / disabled
 ```

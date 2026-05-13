@@ -37,7 +37,7 @@ related:
 
 **用法**:
 
-```
+```bash
 config ssh inactivity-timeout <timeout>
 ```
 
@@ -81,7 +81,7 @@ excerpt: |
 
 **用法**:
 
-```
+```bash
 config ssh max-sessions <max-sessions>
 ```
 

@@ -41,7 +41,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 MGMT_VRF_CONFIG|vrf_global
 ```
 

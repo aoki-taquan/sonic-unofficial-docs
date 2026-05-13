@@ -94,7 +94,7 @@ EVPN 学習経路と VNET API 経路は orchagent の中で同じ tunnel / encap
 
 ## Redis テーブル参照関係
 
-```
+```yaml
 CONFIG_DB:
   VXLAN_TUNNEL ─┬─> VxlanTunnelOrch
   VXLAN_TUNNEL_MAP ─> VxlanTunnelMapOrch

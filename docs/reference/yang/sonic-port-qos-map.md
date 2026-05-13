@@ -65,7 +65,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-port-qos-map
   +--rw sonic-port-qos-map
      +--rw PORT_QOS_MAP

@@ -46,7 +46,7 @@ flowchart LR
 
 ## key 構造
 
-```
+```text
 LOSSLESS_TRAFFIC_PATTERN|<name>
 ```
 

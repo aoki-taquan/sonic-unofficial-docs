@@ -60,7 +60,7 @@ flowchart LR
 
 ## ツリー
 
-```
+```text
 module: sonic-vlan-sub-interface
   +--rw sonic-vlan-sub-interface
      +--rw VLAN_SUB_INTERFACE
