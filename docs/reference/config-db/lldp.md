@@ -128,6 +128,41 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `mode`（LLDP|GLOBAL および LLDP_PORT）
+
+| 値 | 挙動 |
+|----|------|
+| `RECEIVE` | RX のみ。自ノードの LLDP TLV を送出しない。対向スイッチのトポロジービューに当該ノードが映らない |
+| `TRANSMIT` | TX のみ。受信しないため対向の LLDP 情報を学習しない |
+| 未設定 | `lldpd` デフォルト（双方向 tx_and_rx）。`BOTH` 等の値は存在しない |
+| 不正値 | `lldpcli` がエラー → `lldpd` に反映されない |
+
+### `enabled`
+
+| 値 | 挙動 |
+|----|------|
+| `true`（デフォルト） | LLDP 有効 |
+| `false` | LLDP 無効 |
+
+### `hello_time`（uint8 5..254）
+
+| 値 | 挙動 |
+|----|------|
+| 5〜254 秒 | hold time = hello_time × multiplier で計算 |
+| 0 または負 | `lldpd` がデフォルト 30 秒で動作。YANG バリデーション有効時は reject |
+
+### TLV 抑制 boolean フィールド
+
+| フィールド | `false`（デフォルト） | `true` |
+|-----------|----------------------|--------|
+| `supp_mgmt_address_tlv` | Management Address TLV を送信 | Management Address TLV を抑制 |
+| `supp_system_capabilities_tlv` | System Capabilities TLV を送信 | System Capabilities TLV を抑制 |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

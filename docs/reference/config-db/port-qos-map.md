@@ -82,6 +82,38 @@ PORT_QOS_MAP|<PORT.name>
 - 関連 CLI: `config qos`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-port-qos-map`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PORT_QOS_MAP.pfc_enable / pfcwd_sw_enable
+
+| 値 | QosOrch 挙動 |
+|----|-------------|
+| `3,4` (典型) | PFC priority 3 と 4 を有効化 (RoCEv2 lossless 設定) |
+| `0,1,2,3,4,5,6,7` | 全 8 priority を有効化 |
+| 空文字 | PFC 全無効 |
+| YANG pattern 違反 (例: `8`) | YANG validate で reject |
+
+### PORT_QOS_MAP.ifname
+
+| 値 | QosOrch 挙動 |
+|----|-------------|
+| `global` | グローバルデフォルト設定として全ポートに適用 |
+| PORT.name (例: Ethernet0) | 指定ポートのみに binding |
+| 存在しない PORT 名 | YANG leafref 違反 reject |
+
+### MAP 系フィールド (dscp_to_tc_map / tc_to_queue_map 等)
+
+| 値 | QosOrch 挙動 |
+|----|-------------|
+| 存在する map 名 | SAI port QoS 属性として binding |
+| 存在しない map 名 | `Object with name:%s not found.` SWSS_LOG_ERROR、適用中断 |
+| 未設定 (optional) | その map は binding しない |
+
+*enum なし — pfc_enable / pfcwd_sw_enable は ([0-7](,[0-7])*)? の string pattern。map 系は leafref。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -118,6 +118,51 @@ show macsec
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### `policy`
+
+| 値 | 挙動 |
+|----|------|
+| `security`（デフォルト） | MKA SA 確立 + データ暗号化 |
+| `integrity_only` | MKA SA 確立のみ。実データは平文（認証のみ） |
+| その他 | `throw std::invalid_argument("Invalid policy : ...")` → `task_invalid_entry`（破棄） |
+
+### `cipher_suite`（CAK 長と連動）
+
+| 値 | CAK 長 | 挙動 |
+|----|--------|------|
+| `GCM-AES-128`（デフォルト） | 66 hex 文字 | 128-bit AES 暗号化 |
+| `GCM-AES-256` | 130 hex 文字 | 256-bit AES 暗号化 |
+| `GCM-AES-XPN-128` | 66 hex 文字 | Extended Packet Numbering 付き 128-bit AES |
+| `GCM-AES-XPN-256` | 130 hex 文字 | Extended Packet Numbering 付き 256-bit AES |
+| CAK 長不一致 | — | `throw std::invalid_argument("Invalid length for cipher_string : ...")` → `task_invalid_entry` |
+| その他 | — | `throw std::invalid_argument("Invalid cipher_suite : ...")` → `task_invalid_entry` |
+
+### `rekey_period`
+
+| 値 | 挙動 |
+|----|------|
+| `0`（デフォルト） | 能動的 SAK 再生成なし（MKA 自然な鍵更新のみ） |
+| 正値 | 指定秒数ごとに SAK を再生成（`mka_rekey_period` として `wpa_supplicant` に設定） |
+
+### `enable_replay_protect`
+
+| 値 | 挙動 |
+|----|------|
+| `false`（デフォルト） | リプレイ保護なし（`macsec_replay_protect = 0`） |
+| `true` | リプレイ保護有効。`replay_window` の値も `wpa_supplicant` に渡す（`macsec_replay_window = N`） |
+
+### `send_sci`
+
+| 値 | 挙動 |
+|----|------|
+| `true`（デフォルト） | 送信フレームに SCI を含める |
+| `false` | SCI を含めない（特定機器との相互接続で必要な場合がある） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

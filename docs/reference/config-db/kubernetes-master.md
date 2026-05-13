@@ -99,6 +99,36 @@ show kube server config
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに strict な enum フィールドはない。boolean の組み合わせと `ip` の型で動作が決まる。
+
+### `disable`
+
+| 値 | 挙動 |
+|----|------|
+| `false`（デフォルト） | K8s 統合有効。`ctrmgrd` が kubelet 設定を実施 |
+| `true` | K8s 統合無効化。kubelet 接続を停止 |
+
+### `insecure`
+
+| 値 | 挙動 |
+|----|------|
+| `true`（デフォルト） | CA 証明書取得時に HTTP を許可（TLS 検証なし） |
+| `false` | TLS 証明書検証あり（セキュアモード） |
+| その他 | YANG バリデーションで reject |
+
+### `ip`（型別挙動）
+
+| 型 | 挙動 |
+|----|------|
+| IPv4 アドレス | 推奨。起動早期から安定して接続可能 |
+| FQDN（ホスト名） | DNS 解決失敗環境（起動早期）では kubelet 接続失敗リスク |
+| 数値変換不可文字列 | `ValueError` をキャッチしてデフォルト値を設定（kube.py L39, L47） |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

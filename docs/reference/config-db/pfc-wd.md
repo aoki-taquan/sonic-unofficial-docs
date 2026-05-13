@@ -85,6 +85,52 @@ PFC_WD|GLOBAL           # グローバル設定 (POLL_INTERVAL のみ)
 - 関連 CLI: `pfcwd start/stop/show_config/counter_poll`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pfcwd`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PFC_WD.action (per-port エントリのみ)
+
+| 値 | PfcWdOrch 挙動 |
+|----|---------------|
+| `drop` (デフォルト) | storm 検出時、対象 queue への ingress/egress を drop |
+| `forward` | storm 中もパケットを通過させる (HOL ブロッキングリスクあり) |
+| `alert` | カウンタ更新のみ、実際のドロップなし |
+| `forward` (Cisco 8000) | プラットフォーム非サポート: `Unsupported action forward for platform cisco-8000` |
+
+### PFC_WD.detection_time (per-port、単位 ms)
+
+| 値 / 条件 | 挙動 |
+|----------|------|
+| 100..5000 かつ >= POLL_INTERVAL | 正常: storm 検出インターバルとして設定 |
+| < POLL_INTERVAL | YANG must 違反: detection_time must be greater than or equal to POLL_INTERVAL |
+| 範囲外 | YANG range 違反 reject |
+| 未設定 | `PFC_WD_DETECTION_TIME missing` SWSS_LOG_ERROR |
+
+### PFC_WD.restoration_time (per-port、単位 ms)
+
+| 値 / 条件 | 挙動 |
+|----------|------|
+| 100..60000 かつ >= POLL_INTERVAL | 正常: storm 復帰までの待機時間として設定 |
+| < POLL_INTERVAL | YANG must 違反 reject |
+| 範囲外 | YANG range 違反 reject |
+
+### PFC_WD.pfc_stat_history (per-port)
+
+| 値 | 挙動 |
+|----|------|
+| `enable` | PFC 履歴統計の収集を開始 |
+| `disable` | 履歴統計収集を停止 |
+| その他 | YANG pattern 違反 reject |
+
+### PFC_WD.POLL_INTERVAL (GLOBAL エントリのみ、単位 ms)
+
+| 値 | 挙動 |
+|----|------|
+| 100..1000 | システム共通の PFC WD ポーリング周期として設定 |
+| 範囲外 | YANG range 違反 reject |
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

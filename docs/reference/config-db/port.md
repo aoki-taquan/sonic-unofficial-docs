@@ -110,6 +110,64 @@ PORT|<name>
 - 関連 CLI: [`config interface`](../cli/config-interface.md)（speed / mtu / admin / fec / autoneg を変更）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-port`、`sonic-types`（`switchport_mode`、`admin_status`、`interface_type`、`tpid_type`）
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PORT.admin_status
+
+| 値 | PortsOrch / portmgrd 挙動 |
+|----|--------------------------|
+| `up` | SAI SAI_PORT_ATTR_ADMIN_STATE=true、Linux netdev も up |
+| `down` (デフォルト) | SAI SAI_PORT_ATTR_ADMIN_STATE=false、netdev down |
+
+### PORT.fec
+
+| 値 | SAI 属性 | 挙動 |
+|----|---------|------|
+| `rs` | SAI_PORT_FEC_MODE_RS | Reed-Solomon FEC (100G+ 向け) |
+| `fc` | SAI_PORT_FEC_MODE_FC | FireCode FEC (25G 向け) |
+| `none` | SAI_PORT_FEC_MODE_NONE | FEC 無効 |
+| `auto` | SAI_PORT_FEC_MODE_AUTO | 対向とネゴシエーションで決定 |
+| 不正 | - | `Failed to set FEC mode` SWSS_LOG_ERROR |
+
+### PORT.autoneg / link_training
+
+| 値 | 挙動 |
+|----|------|
+| `on` | オートネゴ / リンクトレーニングを有効化 |
+| `off` | 無効化 |
+| `on` (非サポート HW) | `autoneg is not supported (cap=%d)` SWSS_LOG_ERROR |
+
+### PORT.mode (switchport_mode)
+
+| 値 | 挙動 |
+|----|------|
+| `routed` (デフォルト) | L3 ルーテッドポートとして扱う |
+| `access` | L2 access ポート (single VLAN) |
+| `trunk` | L2 trunk ポート (複数 VLAN) |
+
+### PORT.role (multi-ASIC / SmartSwitch)
+
+| 値 | 意味 |
+|----|------|
+| `Ext` (デフォルト) | 外部向けポート |
+| `Int` | 内部 ASIC 間接続 |
+| `Inb` | inband 管理ポート |
+| `Rec` | recirculation ポート |
+| `Dpc` | DPC (Data Plane CPU) ポート |
+
+### PORT.tpid
+
+| 値 | SAI 属性 | 備考 |
+|----|---------|------|
+| `0x8100` | 標準 802.1Q | デフォルト TPID |
+| `0x9100` / `0x9200` | Q-in-Q / VLAN Stacking | HW 対応が必要 |
+| `0x88a8` / `0x88A8` | 802.1ad (Provider Bridging) | HW 対応が必要 |
+
+*speed は uint32 (1..1600000 Mbps)、mtu は uint16 (68..9216 byte)。adv_speeds/adv_interface_types で all と他値の混在は must 制約で reject。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -94,6 +94,25 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 ```
 <!-- /ops-hint -->
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+このテーブルに strict な enum フィールドはない。`interval` の特殊値で動作が分岐する。
+
+### `interval` (eventd 側の内部スキーマ、events_wrap.h / eventd.cpp 準拠)
+
+| 値 | 挙動 |
+|----|------|
+| `-1` | heartbeat を無効化（"A value of -1 implies no heartbeat"） |
+| `< -1`（-2 以下） | invalid 扱い。syslog 記録後処理中断 |
+| `0` | システムデフォルト 2 秒として動作（`HEARTBEAT_INTERVAL_SECS = 2`） |
+| 正値 | 内部 300ms 単位（`STATS_HEARTBEAT_MIN`）に切り上げ量子化。指定値と実周期がずれる場合がある |
+
+> **注意**: YANG では `heartbeat_interval` / `alert_interval` は uint32 [ms] 単位。
+> eventd.cpp 側の `interval` とはスキーマが別（秒単位）なので混同に注意。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

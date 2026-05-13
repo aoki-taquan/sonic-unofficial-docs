@@ -98,6 +98,39 @@ PBH_HASH_FIELD|<hash_field_name>
 - 関連 CLI: `config pbh`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-pbh`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PBH_RULE.packet_action
+
+| 値 | SAI 挙動 |
+|----|---------|
+| `SET_ECMP_HASH` (デフォルト) | マッチパケットに ECMP hash profile を適用 |
+| `SET_LAG_HASH` | マッチパケットに LAG hash profile を適用 |
+
+### PBH_RULE.flow_counter
+
+| 値 | 挙動 |
+|----|------|
+| `DISABLED` (デフォルト) | カウンタ無効 |
+| `ENABLED` | ACL の packet / byte カウンタを有効化 |
+
+### PBH_HASH_FIELD.hash_field
+
+| 値 | 抽出フィールド |
+|----|-------------|
+| `INNER_IP_PROTOCOL` | inner IP プロトコル番号 |
+| `INNER_L4_DST_PORT` | inner L4 宛先ポート |
+| `INNER_L4_SRC_PORT` | inner L4 送信元ポート |
+| `INNER_DST_IPV4` | inner 宛先 IPv4 アドレス |
+| `INNER_SRC_IPV4` | inner 送信元 IPv4 アドレス |
+| `INNER_DST_IPV6` | inner 宛先 IPv6 アドレス |
+| `INNER_SRC_IPV6` | inner 送信元 IPv6 アドレス |
+
+ip_mask は IPv4 フィールドの場合 `.` 含む、IPv6 フィールドの場合 `:` 含むアドレスのみ受理 (must 条件)。
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

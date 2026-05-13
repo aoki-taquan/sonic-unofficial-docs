@@ -80,6 +80,57 @@ PORTCHANNEL|<name>
 - 関連 CLI: `config portchannel`、[`config portchannel`](../cli/config-portchannel.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PORTCHANNEL.admin_status
+
+| 値 | intfmgrd / LagOrch 挙動 |
+|----|------------------------|
+| `up` | LAG を admin up として SAI / Linux netdev に反映 |
+| `down` | LAG を admin down に設定 |
+
+### PORTCHANNEL.mode (switchport_mode)
+
+| 値 | 挙動 |
+|----|------|
+| `routed` (デフォルト) | L3 ルーテッド LAG として扱う |
+| `access` | L2 access LAG (single VLAN) |
+| `trunk` | L2 trunk LAG (複数 VLAN) |
+
+### PORTCHANNEL.lacp_key
+
+| 値 | teamd / LagOrch 挙動 |
+|----|---------------------|
+| `auto` | PortChannel 名末尾の数字から LACP key を自動生成 |
+| `1`..`65535` (uint16) | 指定値を LACP key として使用 |
+
+### PORTCHANNEL.fallback
+
+| 値 | teamd 挙動 |
+|----|-----------|
+| `true` | LACP 対向未応答時に fallback (単独メンバで up) |
+| `false` / 未設定 | LACP ネゴシエーション完了まで LAG が down のまま |
+
+### PORTCHANNEL.fast_rate
+
+| 値 | LACP 挙動 |
+|----|----------|
+| `true` | LACP PDU を 1 秒間隔 (fast) で送受信 |
+| `false` / 未設定 | 30 秒間隔 (slow) で送受信 |
+
+### PORTCHANNEL.tpid
+
+| 値 | SAI 挙動 |
+|----|---------|
+| `0x8100` | 802.1Q TPID |
+| `0x9100` / `0x9200` / `0x88a8` / `0x88A8` | Q-in-Q / 802.1ad (HW 対応必須) |
+| 不正 / 非対応値 | `Failed to set TPID 0x%x to LAG pid:` SWSS_LOG_ERROR |
+
+*min_links は uint16 (1..1024)。メンバ数以上に設定すると LAG が常時 down。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -98,6 +98,46 @@ POLICER|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): 直接の [YANG](../../reference/glossary.md#term-yang) モジュールは無し（参照側 [YANG](../../reference/glossary.md#term-yang) が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### POLICER.METER_TYPE
+
+| 値 | SAI 属性 | 挙動 |
+|----|---------|------|
+| `PACKETS` | SAI_METER_TYPE_PACKETS | パケット数でレート計算 |
+| `BYTES` | SAI_METER_TYPE_BYTES | バイト数でレート計算 |
+| 未設定 / 不正 | - | `if (!meter_type)` 判定で create 失敗 |
+
+### POLICER.MODE
+
+| 値 | SAI 属性 | 挙動 |
+|----|---------|------|
+| `SR_TCM` | SAI_POLICER_MODE_SR_TCM | Single Rate Three Color Marker (CIR/CBS/PBS) |
+| `TR_TCM` | SAI_POLICER_MODE_TR_TCM | Two Rate Three Color Marker (CIR/CBS/PIR/PBS) |
+| `STORM_CONTROL` | SAI_POLICER_MODE_STORM_CONTROL | ストーム制御モード (CIR/CBS のみ有効) |
+| 未設定 / 不正 | - | `if (!mode)` 判定で create 失敗 |
+| (storm-control 経由) | STORM_CONTROL 固定 | METER_TYPE も BYTES に自動設定、RED_PACKET_ACTION を DROP に固定 |
+
+### POLICER.COLOR_SOURCE
+
+| 値 | SAI 属性 | 挙動 |
+|----|---------|------|
+| `AWARE` | SAI_POLICER_COLOR_SOURCE_AWARE | 入力パケットの color を引き継いでポリシング |
+| `BLIND` | SAI_POLICER_COLOR_SOURCE_BLIND | 入力 color を無視して green 扱いで処理 |
+
+### POLICER.*_PACKET_ACTION
+
+| 値 | SAI 属性 | 挙動 |
+|----|---------|------|
+| `FORWARD` | SAI_PACKET_ACTION_FORWARD | そのトラフィックカラーのパケットを通過 |
+| `DROP` | SAI_PACKET_ACTION_DROP | そのトラフィックカラーのパケットを破棄 |
+| (不明な値) | - | `Unknown policer attribute %s` SWSS_LOG_ERROR |
+
+*_PACKET_ACTION / METER_TYPE / MODE / COLOR_SOURCE は create-only。作成後の変更は反映されない（再作成が必要）。CIR / CBS / PIR / PBS は SET による更新可能。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

@@ -73,6 +73,24 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 - 関連 CLI: `config portchannel member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+### PORTCHANNEL_MEMBER キー: name / port
+
+| フィールド | 値 | 挙動 |
+|-----------|---|------|
+| `name` | 存在する PORTCHANNEL 名 | teammgrd が teamd に enslave 要求、LagOrch が SAI LAG member 追加 |
+| `name` | 存在しない PORTCHANNEL 名 | YANG leafref 違反 reject |
+| `port` | 存在する PORT 名 | 物理ポートを LAG に bind |
+| `port` | 存在しない PORT 名 | YANG leafref 違反 reject |
+| `port` | PHY / SYSTEM 型以外 | `LAG member port has to be of type PHY or SYSTEM` SWSS_LOG_ERROR |
+| `port` | 異なる ASIC の switch_id (chassis) | `System lag switch id mismatch` SWSS_LOG_ERROR |
+
+*このテーブルはキー (name, port) のみで付加フィールドを持たない。enum なし。*
+
+<!-- /value-behavior -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
