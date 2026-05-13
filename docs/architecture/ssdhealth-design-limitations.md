@@ -93,3 +93,15 @@ related:
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- glossary-links-injected: 1d579f83f1e2 -->
+
+## 確認コマンド
+
+SSD health limitations の動作確認に使う代表コマンド:
+
+```bash
+# 基本動作確認
+show platform summary
+show version
+docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
+```
+
