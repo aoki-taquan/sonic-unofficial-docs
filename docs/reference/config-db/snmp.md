@@ -115,4 +115,14 @@ show snmp community
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+- **sysContact / sysLocation 未定義時**: テンプレートの `is defined` チェックで未定義の場合は該当行を出力しない。snmpd は空の sysContact / sysLocation を使用する。[^2]
+- **SNMP_COMMUNITY が未定義の場合は全アクセス拒否**: snmpd.conf テンプレートは `{% if SNMP_COMMUNITY is defined %}` で SNMP_COMMUNITY の有無を確認し、存在しない場合はコミュニティ設定行を出力しない。community なしでは全 SNMP アクセスが拒否される。[^2]
+- **設定変更の反映はコンテナ再起動時のみ**: テーブル変更は `docker-snmp` コンテナの再起動 / snmpd リロードまで反映されない。[^2]
+- **key の大文字/小文字**: `SNMP|LOCATION` / `SNMP|CONTACT` の key 名の大文字/小文字が YANG 定義と実装の間で一致しない場合、テンプレートがその値を参照できずサイレントスキップが発生する可能性がある。[^2]
+
+[^2]: snmpd.conf テンプレート: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
+
 <!-- glossary-links-injected: 1d5df4cb0a92 -->
