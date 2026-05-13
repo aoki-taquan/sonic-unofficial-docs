@@ -46,7 +46,12 @@ AVG_5_PATTERNS = [
     re.compile(r"round\s*\d+\s*全体平均[:：]\s*([0-9]+\.[0-9]+)\s*/\s*5\.0"),
     re.compile(r"\*\*平均[:：]\s*([0-9]+\.[0-9]+)\s*/\s*5\.0\*\*"),
     re.compile(r"平均[:：]\s*([0-9]+\.[0-9]+)\s*/\s*5\.0"),
+    # weighted/stratified テーブル形式: `| **総平均** | **4.986 / 5** | ...`
+    re.compile(r"\*\*総平均\*\*\s*\|\s*\*\*([0-9]+\.[0-9]+)\s*/\s*5"),
 ]
+
+# 保守フェーズ移行フラグ。`meta/maintenance-mode.md` が存在すれば運用中とみなす
+MAINTENANCE_FLAG = REPO_ROOT / "meta" / "maintenance-mode.md"
 
 
 def collect_verification_counts() -> Counter:
@@ -120,19 +125,24 @@ def build_banner() -> str:
         else f"- **hld-only ページ**: {hld} 件（裏取り待ち）"
     )
 
-    body = "\n".join(
-        [
-            MARK_START,
-            "!!! success \"最新の品質状態\"",
-            f"    - **code-verified ページ**: {cv} 件（HLD と実コードを照合済み）",
-            f"    - **runbook-verified ページ**: {rv} 件（Runbook 専用。実運用で症状再現性が確認済み）",
-            f"    - **discrepancy-found ページ**: {dn} 件（HLD と実装の乖離を明示）",
-            f"    {audit_line}",
-            f"    {hld_line}",
-            MARK_END,
-        ]
-    )
-    return body
+    lines = [
+        MARK_START,
+        "!!! success \"最新の品質状態\"",
+        f"    - **code-verified ページ**: {cv} 件（HLD と実コードを照合済み）",
+        f"    - **runbook-verified ページ**: {rv} 件（Runbook 専用。実運用で症状再現性が確認済み）",
+        f"    - **discrepancy-found ページ**: {dn} 件（HLD と実装の乖離を明示）",
+        f"    {audit_line}",
+        f"    {hld_line}",
+    ]
+    if MAINTENANCE_FLAG.exists():
+        lines.append(
+            "    - **保守フェーズ運用中** "
+            "(2026-05-13〜): 月次 master 追従 / 偶数 round stratified audit / "
+            "feedback 反映で 4.97+ プラトーを維持 "
+            "(`meta/maintenance-mode.md`)"
+        )
+    lines.append(MARK_END)
+    return "\n".join(lines)
 
 
 def replace_banner(original: str, new_banner: str) -> str:
