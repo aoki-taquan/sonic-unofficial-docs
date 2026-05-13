@@ -104,9 +104,9 @@ module: sonic-syslog
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `server_address` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/server_address` | `inet:host` | yes |  |  | Syslog server IP address |
-| `source` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/source` | `inet:ip-address` |  |  |  | Syslog source IP address |
-| `port` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/port` | `inet:port-number` |  |  |  | Syslog server UDP port |
+| `server_address` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/server_address` | `inet:host` | yes |  |  | [Syslog](../../reference/glossary.md#term-syslog) server IP address |
+| `source` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/source` | `inet:ip-address` |  |  |  | [Syslog](../../reference/glossary.md#term-syslog) source IP address |
+| `port` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/port` | `inet:port-number` |  |  |  | [Syslog](../../reference/glossary.md#term-syslog) server UDP port |
 | `vrf` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/vrf` | `union` |  |  | union(leafref, vrf-device) | Syslog [VRF](../../reference/glossary.md#term-vrf) device |
 | `filter` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/filter` | `syslog-filter-type` |  |  |  | Syslog filter type |
 | `filter_regex` | `sonic-syslog/SYSLOG_SERVER/SYSLOG_SERVER_LIST/filter_regex` | `string` |  |  | pattern `[^\n\r]+` | Filter regex |
@@ -187,4 +187,4 @@ show syslog
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8e75ff55dc28 -->

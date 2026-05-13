@@ -23,6 +23,18 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-13 #1168 chore: area landing cleanup + README polish + social plugin
+- 2026-05-13 #1167 chore: polish discrepancy-index with subtype sections and usage guide (q53-ba)
+- 2026-05-13 #1165 chore(lint): code-block language linter + auto-tag 624 fences
+- 2026-05-13 #1166 chore: update meta/prompts to reflect quality-iteration ops
+- 2026-05-13 #1164 chore: polish 404 page and add print/reading CSS (q53-ba)
+- 2026-05-13 #1163 chore: add built HTML quality check (q53-ba)
+- 2026-05-13 #1162 chore: eliminate all broken links and orphan footnotes
+- 2026-05-13 #1161 Fix evolved_6c lint: add diff/verify sections to split-children
+- 2026-05-13 #1158 chore(a11y): heading hierarchy + image alt lints
+- 2026-05-13 #1159 docs(index): refresh landing as hero with 3 reader-paths
+- 2026-05-13 #1157 chore: optimize search plugin for ja/en multi-lang
+- 2026-05-13 #1156 Fix _no_yang placement: move into related block
 - 2026-05-13 #1155 Fix mermaid 11.x syntax errors across docs (129 blocks, 125 files)
 - 2026-05-13 #1154 Round 50 stratified milestone audit + guide §6 weighted random sampling
 - 2026-05-13 #1153 Demote 20 B-class pages to discrepancy-found (q52-az)
@@ -511,16 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #555 [acl-qos] Everflow テストプラン
 - 2026-05-09 #553 [routing] FRR-BGP Unified Mgmt Framework
 - 2026-05-09 #551 [routing] BGP Route Install Error Handling
-- 2026-05-09 #549 [routing] BGP Suppress FIB Pending
-- 2026-05-09 #547 [verify] medium 優先度 12 ページの裏取り (batch11) [lgtm]
-- 2026-05-09 #546 [routing] BGP Loading Optimization
-- 2026-05-09 #544 [routing] fpmsyncd NextHop Group 拡張
-- 2026-05-09 #542 [routing] VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）
-- 2026-05-09 #540 [routing] Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）
-- 2026-05-09 #538 [routing] Fine Grained ECMP（FG_NHG / fgnhgorch）
-- 2026-05-09 #536 [verify] medium 優先度 12 ページの裏取り (batch10) [lgtm]
-- 2026-05-09 #535 [architecture] sFlow テストプラン
-- 2026-05-09 #533 [platform] VLAN Subnet Decap
-- 2026-05-09 #531 [platform] 拡張 LPO デバッグレジスタ
-- 2026-05-09 #529 [platform] sfputil read-eeprom / write-eeprom
 
