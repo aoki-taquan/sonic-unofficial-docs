@@ -80,6 +80,57 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 - **redis OOM risk**: ASIC_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の scale が大きいと memory swap が発生。`maxmemory-policy` を `noeviction` にしないと counter が消える。
 - **FEATURE state の race**: container 起動と FEATURE state 更新が非同期で、依存先を先に起動してしまう例がある。`delayed` と `auto_restart` を組み合わせる。
 
+## warm reboot の既知パターンと対処
+
+以下は実際に報告されている warm reboot 関連の落とし穴である。
+
+### dummy SAI objects の削除失敗（バージョン跨ぎアップグレード）
+
+古い image（例: 201811）から新 image（例: 202012）へ warm reboot でアップグレードした後、同 image での 2 回目 warm reboot で orchagent がクラッシュするケースがある（issue #1429）。
+
+原因: 最初の warm reboot アップグレードで syncd が作成した「dummy SAI objects」が ASIC_DB に残り、次回 warm reboot の reconcile 時に `SAI_STATUS_INVALID_PARAMETER` で削除できない。
+
+```
+syncd: remove of SAI object OID:xxx failed: SAI_STATUS_INVALID_PARAMETER
+orchagent: FATAL syncd failed to remove dummy object
+```
+
+対処:
+1. バージョン跨ぎの warm reboot が必要な場合、中間バージョンを踏んで 2 段階で移行することを検討する。
+2. 問題が起きた場合は cold reboot で回復する（ASIC_DB / SAI state が初期化される）。
+
+### SAI_SWITCH_ATTR_RESTART_WARM を reconcile 後に false に戻す必要
+
+warm reboot 実行前に `setRestartWarmOnAllSwitches(true)` が呼ばれ、syncd が warm=true で起動する。しかし reconcile 完了後に `SAI_SWITCH_ATTR_RESTART_WARM = false` を SAI にセットしない実装だと、その後の通常 reboot（cold/fast）でも SAI が warm `remove_switch` を実行してしまうことがある（issue #1361）。
+
+対処: ベンダ SAI の実装によって挙動が異なる。連続 warm reboot が必要な環境では、reconcile 後の `RESTART_WARM = false` セットを SAI / syncd の実装が行っていることを確認する。
+
+### buffer profile が zero の queue に対する reconcile 失敗
+
+warm reboot 実行時、一部の queue に「zero buffer profile」が attach されている場合、temp asic view に余分な buffer profile が 2 件生成されることがある（issue #899）。これら余分な buffer profile は current asic view と VID は一致するが attribute リストが空になるため、`performObjectSetTransition` 内の比較で失敗する：
+
+```
+performObjectSetTransition: object OID:xxx attribute list is empty in temp view
+```
+
+PR #906 で修正済み（sonic-sairedis master）。古い image でこの症状が出た場合は cold reboot で回復し、image を更新する。
+
+### warm reboot 後の FlexCounter による新 VID の処理失敗
+
+warm reboot の `init view` フェーズ（`apply_view` 前）では、FlexCounter がまだ ASIC state を完全に認識していない。buffer pool など新たに作成された VID を持つ object が FlexCounter の `processFlexCounterEvent` で処理されようとすると、VID→RID マッピングが未確立で counter 取得に失敗する（issue #862、sonic-swss PR #1987 で修正済）。
+
+現行 master では `apply_view` 完了後に FlexCounter の VID 再登録が行われるため通常は問題ない。古い image でこの症状が出た場合（syslog に `processFlexCounterEvent` のエラーが連続して現れる）は、image を更新する。
+
+### warm reboot 後の ACL counter OID マッピングズレ
+
+warm reboot 後、orchagent が ACL Entry の `SAI_ACL_ENTRY_ATTR_ACTION_COUNTER` に誤った ACL counter RID を SET するケースが報告された（issue #449）。同一 ACL Entry の RID と counter RID の対応が temp view 生成時にずれることが原因で、修正済み（closed as fixed）。症状：
+
+```
+syncd: SET on ACL_ENTRY with counter RID that belongs to another entry
+```
+
+現行 master では解消しているが、reconcile 後に ACL counter の値が意図しない entry に集計されているように見える場合は、このパターンを疑って image バージョンを確認する。
+
 ## 将来計画 / ロードマップ
 
 - `system ready` [HLD](../../reference/glossary.md#term-hld) の最終形に向けて、closest UP status の整理と sysmonitor の集約ロジックが拡張中。
