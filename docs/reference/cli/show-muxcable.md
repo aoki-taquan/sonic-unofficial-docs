@@ -111,6 +111,11 @@ xcvrd 経由で Y-Cable の HW state を直接読む。CONFIG_DB の `MUX_CABLE.
 
 [^2]: `config` サブコマンドの実装は `show/muxcable.py` L837-L970。Active-Active / Active-Standby の場合分けは `create_active_active_mux_direction_result` / `create_active_standby_mux_direction_result` (同 L1353-L1387)。
 
+## 既知のバグ・制限
+
+!!! warning "`show mux config` のカラムヘッダがズレる (issue [#3978](https://github.com/sonic-net/sonic-utilities/issues/3978))"
+    `show mux config` の出力でヘッダ行（`port`, `state`, `ipv4`, `ipv6` 等）が本来の列位置から大きくズレて表示される。Ansible の `show_and_parse()` がこの出力を parse すると `port` カラムが空文字列となり、自動化スクリプトで `KeyError: ''` が発生する。PR#3884 で混入した問題（master で open）。回避策: `show mux config --json` で JSON 形式で取得する。
+
 <!-- usage-example -->
 ## 実行例
 

@@ -117,6 +117,10 @@ excerpt: |
 - 大規模ダンプ（数百 MB）になるため、**`/var/dump/` の空き容量** が事前に必要。
 - `--global-timeout` でカット された場合、dump は不完全な状態で残る可能性がある。
 
+## 既知の制限
+
+- **カスタムファイル名は未サポート** (issue [#4503](https://github.com/sonic-net/sonic-utilities/issues/4503)): 出力は常に `/var/dump/sonic_dump_<hostname>_<timestamp>.tar.gz` に固定される。スクリプトから決定論的なファイル名でアクセスするには、ダンプ後にディレクトリ内の最新ファイルをタイムスタンプで特定する必要がある。カスタムファイル名オプション (`--filename`) の実装は enhancement request として open になっている。
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

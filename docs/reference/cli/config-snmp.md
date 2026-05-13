@@ -157,6 +157,9 @@ excerpt: |
 
 ほぼすべてのコマンドが完了直前に `systemctl reset-failed snmp.service` + `systemctl restart snmp.service` を実行する。即座に snmpd 再起動が走るため、本番ではバッチ的にまとめて発行する運用が望ましい。
 
+!!! warning "連続操作で SNMP コンテナが落ちる (issue [#4514](https://github.com/sonic-net/sonic-utilities/issues/4514))"
+    `config snmptrap del` に続けてすぐ `config snmptrap modify` を実行すると、systemd の start rate limit に達して snmp サービスが起動失敗する。操作の間に少なくとも 5 秒の待機を入れること。コンテナが停止した場合は `systemctl reset-failed snmp.service && systemctl start snmp.service` で回復できる。
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

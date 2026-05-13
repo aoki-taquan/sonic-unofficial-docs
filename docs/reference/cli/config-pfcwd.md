@@ -115,6 +115,8 @@ flowchart LR
 
 - PFC が有効でない queue に対して PFCWD を設定しても検知されない。
 - `forward` action を選ぶと PFC 自体が無効化されるため、輻輳の影響範囲が広がる。
+- **`config pfcwd interval` が TypeError でクラッシュする** (issue [#4535](https://github.com/sonic-net/sonic-utilities/issues/4535)): `pfc_stat_history` 系コマンドが `detection_time` / `restoration_time` を持たない `PFC_WD` エントリを生成した場合、`int(None)` で例外が発生して polling interval を更新できなくなる。回避策: `redis-cli -n 4 DEL "PFC_WD|EthernetX"` で問題エントリを削除してから再試行する。
+- **polling interval > detection time が無検証で受け付けられる** (issue [#4520](https://github.com/sonic-net/sonic-utilities/issues/4520)): polling interval を先に大きな値に設定した後、detection time が小さいポートで pfcwd を有効化しても CLI はエラーを返さない。interval ≤ 最小 detection time となるよう手動で整合性を確認すること。
 
 ### 関連する show / debug
 

@@ -119,6 +119,9 @@ dump file（gateway / neighbor / FDB）が SONiC 形式で渡されれば SONiC�
 - vendor NOS 由来 dump の提供は別途プラットフォーム実装側
 - finalizer の flag を起点にする処理（flex counter 等）は HLD 例示。追加対象は要 case-by-case
 
+!!! warning "fast-reboot / warm-reboot を root ユーザーから直接実行しない (issue [#4371](https://github.com/sonic-net/sonic-utilities/issues/4371))"
+    `root` シェルから直接 `fast-reboot` や `warm-reboot` を実行すると `SUDO_USER` / `XDG_SESSION_CLASS` が未設定のため、`warmboot/dump.rdb` の生成や最終リブートアクションが誤動作する（無限ループになる場合や BIOS/GRUB を経由したフルリセットになる場合がある）。必ず `admin` ユーザーから `sudo fast-reboot` / `sudo warm-reboot` を実行すること。
+
 ## 干渉する機能
 
 - **system-wide warmboot**: 同じスクリプト基盤と finalizer を共有

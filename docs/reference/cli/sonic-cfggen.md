@@ -140,6 +140,14 @@ flowchart LR
 
 <!-- ref-triangle:end -->
 
+## 既知のバグ・制限
+
+!!! warning "generic_config_updater の PatchSorter が数値文字列キーを int に変換する (issue [#4221](https://github.com/sonic-net/sonic-utilities/issues/4221))"
+    `generic_config_updater` の `PatchSorter._get_value()` は数値に見えるパストークン（例: `"8"`, `"7"`）を自動的に `int` に変換する。`TC_TO_QUEUE_MAP` など文字列キーを持つテーブルでは `config["8"]` は存在するが `config[8]` は存在しないため KeyError が発生し、patch 適用が失敗する。回避策: `generic_config_updater` 経由ではなく `sonic-db-cli` で直接値を更新する。
+
+!!! warning "sonic-cli-gen が多行 YANG description を含む Python ファイルを生成するとクラッシュする (issue [#4056](https://github.com/sonic-net/sonic-utilities/issues/4056))"
+    `sonic-cli-gen generate config <yang>` の生成 Python ファイルで、YANG フィールドの `description` が複数行の場合、click の help 文字列に改行が含まれて `SyntaxError: unterminated string literal` が発生する。該当コマンドグループ全体が import 失敗する。回避策: YANG モデルの description を 1 行に収める。または生成ファイルを手動で triple-quote に修正する。
+
 ## 引用元
 
 [^1]: 例: `show runningconfiguration ports` は `sonic-cfggen -d --var-json PORT [--key NAME]` を呼ぶ（`show/main.py` L1868）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1868>
