@@ -91,6 +91,19 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - 関連 CLI: `config interface ip add/remove Vlan<id>`、`config vlan proxy_arp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+## 例外条件・特殊挙動 <!-- cdb-exceptions -->
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang -->
+
+- **VRF 変更禁止**: `intfmgrd` は既存 IF の VRF 変更を `isIntfChangeVrf()` で検出し `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` を記録してエントリを破棄する[^exc1]。
+- **インタフェース未 ready**: `isIntfStateOk()` が false の場合リトライ待ち（"Interface is not ready, skipping"）[^exc1]。
+- **VRF 未 ready**: VRF が STATE_DB に未登録の場合もリトライ待ち[^exc1]。
+- **`proxy_arp` / `grat_arp` / `mpls` 不正値**: 不正値の場合 `SWSS_LOG_ERROR("... state is invalid")` を記録して処理を中断[^exc1]。
+- **デフォルト補完**: `admin_status` 省略時は `"up"` が補完される[^exc1]。YANG では `nat_zone` のデフォルト `0`、`ipv6_use_link_local_only` のデフォルト `disable`[^exc2]。
+
+[^exc1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vlan.yang>
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

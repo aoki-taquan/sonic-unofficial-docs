@@ -78,6 +78,24 @@ WARM_RESTART|<module>
 - 関連 CLI: `config warm_restart enable`, `config warm_restart bgp_timer`, `config warm_restart neighsyncd_timer`, `show warm_restart`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-warm-restart`
 
+## 例外条件・特殊挙動 <!-- cdb-exceptions -->
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang; sonic-swss/cfgmgr/vlanmgr.cpp -->
+
+- **`module` 列挙値 (YANG)**: `bgp` / `teamd` / `swss` / `system` のみ許可。それ以外は YANG バリデーションで reject される[^exc1]。
+- **フィールドとモジュールの対応 (YANG `must`)**:
+  - `bgp_eoiu` / `bgp_timer`: `must "current()/../module = 'bgp'"` — bgp 以外のモジュールで設定すると `"bgp_timer is only supported for module bgp."` エラー[^exc1]。
+  - `teamsyncd_timer`: `must "current()/../module = 'teamd'"`[^exc1]。
+  - `neighsyncd_timer`: `must "current()/../module = 'swss'"`[^exc1]。
+- **タイマー範囲 (YANG)**:
+  - `bgp_timer` / `teamsyncd_timer`: `1..3600` — 範囲外は `"Timer must be 1..3600"` エラー[^exc1]。
+  - `neighsyncd_timer`: `1..9999`[^exc1]。
+- **YANG 制約違反**: `sonic-cfggen` / `config load` の段階でエラーが発生し DB には書き込まれない。
+- **warm-restart 有効化ログ**: `enable` が `true` の場合、各 mgr が起動後に `SWSS_LOG_NOTICE("warmstart state set to REPLAYED/RECONCILED")` を記録する[^exc2]。
+
+[^exc1]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-warm-restart.yang>
+[^exc2]: `sonic-swss/cfgmgr/vlanmgr.cpp` (warmstart ロジック参照) <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

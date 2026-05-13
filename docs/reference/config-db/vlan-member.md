@@ -80,6 +80,19 @@ VLAN_MEMBER|<vlan_name>|<port>
 - 関連 CLI: `config vlan member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+## 例外条件・特殊挙動 <!-- cdb-exceptions -->
+
+<!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang -->
+
+- **キー形式検証**: `Vlan<id>|<port>` 形式必須。`Vlan` プレフィクスがない、またはポート名が含まれない場合 `vlanmgrd` はエントリを破棄する[^exc1]。
+- **`tagging_mode` 検証**: `untagged` / `tagged` / `priority_tagged` 以外の値は `SWSS_LOG_ERROR("Wrong tagging_mode")` で破棄される[^exc1]。
+- **VLAN / ポート未 ready**: `isVlanStateOk()` または `isMemberStateOk()` が false の場合リトライ待ち（"not ready, delaying"）[^exc1]。
+- **重複エントリ**: STATE_DB に既存の場合は `m_vlanMemberReplay` から削除のみ（"already set"）[^exc1]。
+- **重複キー**: consumer pipe 内の重複キーは `SWSS_LOG_WARN("Duplicate key found")` でスキップ[^exc1]。
+- **デフォルト補完**: `tagging_mode` 省略時は `"untagged"` が補完される[^exc1]。
+
+[^exc1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
