@@ -146,4 +146,29 @@ show mux config
 - **oscillation_enabled のデフォルト = true**: `default true`。TIMED_OSCILLATION コンテナが空でも `interval_sec = 300` で自動切替が有効になる。無効化する場合は明示的に `oscillation_enabled = false` を設定する必要がある。
 - **kill_radv のデフォルト = True**: `default True`。radv サービスは [MUX](../../reference/glossary.md#term-mux) 切替時にデフォルトで強制終了される。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mux-linkmgr.yang / sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveStandby -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `interval_v4` | 100 (default) ms | IPv4 ICMP heartbeat を 100ms 間隔で送信 |
+| `interval_v4` | 0 | heartbeat 停止 (range 制約なし。実質 ICMP probe 無効化) |
+| `negative_signal_count` | 3 (default) | 3回連続で heartbeat 喪失したら standby 判定 |
+| `positive_signal_count` | 1 (default) | 1回受信で active 判定 |
+| `oscillation_enabled` | `true` (default) | タイマー駆動で定期的に active/standby 切替を実施 (`interval_sec` 間隔) |
+| `oscillation_enabled` | `false` | タイマー切替を無効化。ICMP prober 結果のみで切替 |
+| `use_well_known_mac` | `enabled` | 既知 MAC を宛先 MAC として ICMP 送信 |
+| `use_well_known_mac` | `disabled` | 動的 MAC を使用 |
+| `src_mac` | `ToRMac` | ToR デバイス MAC を送信元 MAC に使用 |
+| `src_mac` | `VlanMac` | VLAN インターフェース MAC を送信元 MAC に使用 |
+| `log_verbosity` | `info` | 標準ログレベル |
+| `log_verbosity` | `debug`/`trace` | 詳細デバッグログ出力 |
+| `kill_radv` | `True` (default) | MUX 切替時に radv を graceful でなく強制終了 |
+| `kill_radv` | `False` | radv を graceful shutdown |
+
+enum: `use_well_known_mac`=enabled/disabled、`src_mac`=ToRMac/VlanMac、`log_verbosity`=trace/debug/info/error/fatal、`kill_radv`=True/False。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: b1f2d0ff40fd -->

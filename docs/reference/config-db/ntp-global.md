@@ -128,4 +128,26 @@ show ntp
 - **dhcp のデフォルト = "enabled"**: `default enabled`。DHCP 配布の NTP サーバが優先して使用される。
 - **admin_state のデフォルト = "enabled"**: `default enabled`。フィールドを省略してもエントリが存在する限り NTP クライアントは動作する。
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd ntp_global_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
+
+| フィールド | 値 | 挙動 |
+|-----------|-----|------|
+| `vrf` | `default` | NTP パケットをデータプレーン default VRF 経由で送受信 |
+| `vrf` | `mgmt` | NTP パケットを mgmt VRF (eth0) 経由で送受信。`mgmtVrfEnabled=true` が YANG must で必要 |
+| `vrf` | 未設定 | VRF 指定なし。OS デフォルトルーティングに従う |
+| `authentication` | `disabled` (default) | NTP 認証なし。NTP_KEY が存在しても使用しない |
+| `authentication` | `enabled` | NTP 認証を有効化。NTP_SERVER.key と NTP_KEY で鍵検証 |
+| `dhcp` | `enabled` (default) | DHCP 配布の NTP サーバ情報を優先使用 |
+| `dhcp` | `disabled` | DHCP NTP を無視。NTP_SERVER テーブルの設定のみ使用 |
+| `server_role` | `enabled` (default) | 本機を NTP server として他ホストに応答 |
+| `server_role` | `disabled` | NTP クライアント専用。問い合わせに応答しない |
+| `admin_state` | `enabled` (default) | NTP 機能有効 |
+| `admin_state` | `disabled` | NTP 機能無効化 |
+
+全グローバル変更で `systemctl restart chrony` が実行される。enum: `authentication`/`dhcp`/`server_role`/`admin_state` = enabled/disabled。
+<!-- /value-behavior -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
