@@ -72,6 +72,20 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 - 関連 CLI: `config auto-techsupport-feature update <feature> --state ... --rate-limit-interval ...`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-auto_techsupport`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| feature エントリが存在しない | `available_mem_threshold` を 0% (デフォルト) とみなし、コンテナメモリチェックをスキップ |
+| `available_mem_threshold` が float 変換不可 | `MemoryCheckerException` 発生、techsupport 起動せず `EXIT_FAILURE` |
+| feature 名がコンテナ名と不一致 | `startswith` で前方一致のため、完全一致不要。ただし誤 feature 名だとチェックがスキップされる |
+| `AUTO_TECHSUPPORT\|GLOBAL` が不在 | パッケージインストール時に AUTO_TECHSUPPORT_FEATURE エントリが自動作成されない |
+| `state` フィールド未設定 | パッケージインストール時はデフォルト `disabled` で登録 |
+
+<!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:118L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

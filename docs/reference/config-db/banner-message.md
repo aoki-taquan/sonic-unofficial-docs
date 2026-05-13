@@ -62,6 +62,20 @@ BANNER_MESSAGE|global
 - 関連 CLI: `config banner state` / `config banner login` / `config banner motd` / `config banner logout`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-banner`
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| `data` が dict 型以外 | silent return（ログなし） |
+| キャッシュと同一の値 | `banner-config` 再起動をスキップ |
+| `systemctl restart banner-config` 失敗 | syslog ERR のみ、キャッシュ更新なし（次回変更時に再試行） |
+| CONFIG_DB が空 / エントリなし | 全 key を空 dict として処理、再起動不要なら no-op |
+| `state`/`login`/`motd`/`logout` 以外のフィールド | `load()` では読まれない（`get()` に固定 key しか渡さない） |
+
+<!-- evidence: sonic-net/sonic-host-services/scripts/hostcfgd:2084L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

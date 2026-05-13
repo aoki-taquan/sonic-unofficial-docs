@@ -66,6 +66,21 @@ AS_PATH_SET|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-routing-policy-sets`
 - 関連 CLI: なし（`config_db.json` 投入）
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 |
+|------|------|
+| `as_path_set_member` が空リストまたは DEL | 既存の `bgp as-path access-list <name>` を全削除してから再作成 |
+| `args` 不足（内部チェック） | None を返し FRR push をスキップ |
+| FRR コマンド実行失敗 | syslog ERR & continue、再試行なし |
+| 存在しないセット名への DEL | `pop(name, None)` で KeyError なし |
+| `as_path_set_member` の正規表現値不正 | frrcfgd 側では未検証、FRR 側がエラーを返す |
+| 更新操作 | 差分追加ではなく常に全置換（先に既存全削除） |
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1009L -->
+<!-- /cdb-exceptions -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
