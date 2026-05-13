@@ -22122,10 +22122,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#packet_action-enum" class="md-nav__link">
+  <a href="#packet_action" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PACKET_ACTION (enum)
+        PACKET_ACTION 値別挙動
       
     </span>
   </a>
@@ -22133,10 +22133,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ip_type-match-enum" class="md-nav__link">
+  <a href="#ip_type" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IP_TYPE (match enum)
+        IP_TYPE 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ether_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ETHER_TYPE 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage 値別挙動 (ACL_TABLE から継承)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 値別挙動 (ACL_TABLE から継承)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値別 grep カバレッジ
       
     </span>
   </a>
@@ -29833,10 +29877,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#packet_action-enum" class="md-nav__link">
+  <a href="#packet_action" class="md-nav__link">
     <span class="md-ellipsis">
       
-        PACKET_ACTION (enum)
+        PACKET_ACTION 値別挙動
       
     </span>
   </a>
@@ -29844,10 +29888,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#ip_type-match-enum" class="md-nav__link">
+  <a href="#ip_type" class="md-nav__link">
     <span class="md-ellipsis">
       
-        IP_TYPE (match enum)
+        IP_TYPE 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ether_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ETHER_TYPE 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage 値別挙動 (ACL_TABLE から継承)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 値別挙動 (ACL_TABLE から継承)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値別 grep カバレッジ
       
     </span>
   </a>
@@ -30226,7 +30314,7 @@
 <td><code>bAllAttributesOk=false</code>、rule INACTIVE</td>
 </tr>
 <tr>
-<td>SAI リソース枯渇</td>
+<td><a href="../../glossary/#term-sai">SAI</a> リソース枯渇</td>
 <td>retry キャッシュに退避、リソース解放後に再試行</td>
 </tr>
 <tr>
@@ -30234,7 +30322,7 @@
 <td><code>return false</code>、rule INACTIVE</td>
 </tr>
 <tr>
-<td>VLAN ID 範囲外</td>
+<td><a href="../../glossary/#term-vlan">VLAN</a> ID 範囲外</td>
 <td><code>return false</code>、rule INACTIVE</td>
 </tr>
 <tr>
@@ -30248,7 +30336,9 @@
 
 <!-- value-behavior -->
 <h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<h3 id="packet_action-enum"><code>PACKET_ACTION</code> (enum)<a class="headerlink" href="#packet_action-enum" title="Permanent link">&para;</a></h3>
+<h3 id="packet_action"><code>PACKET_ACTION</code> 値別挙動<a class="headerlink" href="#packet_action" title="Permanent link">&para;</a></h3>
+<p>YANG 定義値: <code>FORWARD</code> / <code>DROP</code> / <code>REDIRECT</code> (sonic-acl.yang:114-116)。
+実装 lookup: <code>aclPacketActionLookup</code> (aclorch.cpp:145-147)。</p>
 <table>
 <thead>
 <tr>
@@ -30263,41 +30353,47 @@
 <td><code>FORWARD</code></td>
 <td><code>SAI_PACKET_ACTION_FORWARD</code></td>
 <td>パケットを通過させる</td>
-<td><code>aclorch.h:83,145</code></td>
+<td><code>aclorch.h:83</code>, <code>aclorch.cpp:145</code></td>
 </tr>
 <tr>
 <td><code>DROP</code></td>
 <td><code>SAI_PACKET_ACTION_DROP</code></td>
 <td>パケットをドロップ</td>
-<td><code>aclorch.h:84,146</code></td>
+<td><code>aclorch.h:84</code>, <code>aclorch.cpp:146</code></td>
 </tr>
 <tr>
 <td><code>COPY</code></td>
 <td><code>SAI_PACKET_ACTION_COPY</code></td>
-<td>パケットを CPU コピー後に続行</td>
-<td><code>aclorch.h:85,147</code></td>
+<td>パケットを CPU コピー後に続行 (YANG 外)</td>
+<td><code>aclorch.h:85</code>, <code>aclorch.cpp:147</code></td>
 </tr>
 <tr>
 <td><code>REDIRECT</code></td>
-<td><code>SAI_PACKET_ACTION_REDIRECT</code></td>
-<td>指定 next-hop / port へリダイレクト</td>
-<td><code>aclorch.h:86</code></td>
+<td>oid 解決後に redirect</td>
+<td><code>REDIRECT:&lt;target&gt;</code> 形式。コロンなし / ターゲット空は <code>return false</code> → rule INACTIVE</td>
+<td><code>aclorch.h:86</code>, <code>aclorch.cpp:2013-2040</code></td>
 </tr>
 <tr>
 <td><code>DO_NOT_NAT</code></td>
 <td>—</td>
-<td>NAT 処理をバイパス</td>
+<td><a href="../../glossary/#term-nat">NAT</a> 処理をバイパス (YANG 外)</td>
 <td><code>aclorch.h:87</code></td>
 </tr>
 <tr>
 <td><code>DISABLE_TRIM</code></td>
 <td>—</td>
-<td>バッファ trim を無効化</td>
+<td>バッファ trim を無効化 (YANG 外)</td>
 <td><code>aclorch.h:88</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="ip_type-match-enum"><code>IP_TYPE</code> (match enum)<a class="headerlink" href="#ip_type-match-enum" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">REDIRECT 後方互換</p>
+<p><code>ACTION_PACKET_ACTION</code> フィールドに <code>REDIRECT:&lt;target&gt;</code> を書く旧形式が後方互換として残る。新形式は <code>REDIRECT_ACTION</code> フィールドを使う (<code>aclorch.cpp:2013</code>)。</p>
+</div>
+<h3 id="ip_type"><code>IP_TYPE</code> 値別挙動<a class="headerlink" href="#ip_type" title="Permanent link">&para;</a></h3>
+<p>YANG 定義値 7 種 (sonic-acl.yang:122-130)。実装 lookup table (aclorch.cpp:503-512)。
+YANG は <code>mandatory true</code> のため省略不可。</p>
 <table>
 <thead>
 <tr>
@@ -30312,70 +30408,237 @@
 <td><code>ANY</code></td>
 <td><code>SAI_ACL_IP_TYPE_ANY</code></td>
 <td>IP/非IP 問わず全パケット</td>
-<td><code>aclorch.cpp:503</code></td>
+<td><code>aclorch.h:100</code>, <code>aclorch.cpp:503</code></td>
 </tr>
 <tr>
 <td><code>IP</code></td>
 <td><code>SAI_ACL_IP_TYPE_IP</code></td>
-<td>IPv4/IPv6 どちらかのパケット</td>
-<td><code>aclorch.cpp:504</code></td>
+<td>IPv4 または IPv6 パケット</td>
+<td><code>aclorch.h:99</code>, <code>aclorch.cpp:504</code></td>
 </tr>
 <tr>
-<td><code>NON_IP</code></td>
-<td><code>SAI_ACL_IP_TYPE_NON_IP</code></td>
-<td>非 IP パケット</td>
-<td><code>aclorch.cpp:505</code></td>
+<td><code>IPV4</code></td>
+<td><code>SAI_ACL_IP_TYPE_IPV4ANY</code></td>
+<td>IPv4 パケット (YANG のみ、実装上 IPV4ANY と同義)</td>
+<td><code>sonic-acl.yang:125</code></td>
 </tr>
 <tr>
 <td><code>IPV4ANY</code></td>
 <td><code>SAI_ACL_IP_TYPE_IPV4ANY</code></td>
 <td>IPv4 パケット</td>
-<td><code>aclorch.cpp:506</code></td>
+<td><code>aclorch.h:101</code>, <code>aclorch.cpp:506</code></td>
 </tr>
 <tr>
 <td><code>NON_IPV4</code></td>
 <td><code>SAI_ACL_IP_TYPE_NON_IPV4</code></td>
 <td>非 IPv4 パケット</td>
-<td><code>aclorch.cpp:507</code></td>
+<td><code>aclorch.h:102</code>, <code>aclorch.cpp:507</code></td>
 </tr>
 <tr>
 <td><code>IPV6ANY</code></td>
 <td><code>SAI_ACL_IP_TYPE_IPV6ANY</code></td>
 <td>IPv6 パケット</td>
-<td><code>aclorch.cpp:508</code></td>
+<td><code>aclorch.h:103</code>, <code>aclorch.cpp:508</code></td>
 </tr>
 <tr>
 <td><code>NON_IPV6</code></td>
 <td><code>SAI_ACL_IP_TYPE_NON_IPV6</code></td>
 <td>非 IPv6 パケット</td>
-<td><code>aclorch.cpp:509</code></td>
+<td><code>aclorch.h:104</code>, <code>aclorch.cpp:509</code></td>
 </tr>
 <tr>
 <td><code>ARP</code></td>
-<td>—</td>
-<td>ARP パケット</td>
-<td><code>aclorch.h:105</code></td>
+<td><code>SAI_ACL_IP_TYPE_ARP</code></td>
+<td><a href="../../glossary/#term-arp">ARP</a> パケット (実装のみ、YANG 外)</td>
+<td><code>aclorch.h:105</code>, <code>aclorch.cpp:510</code></td>
 </tr>
 <tr>
 <td><code>ARP_REQUEST</code></td>
-<td>—</td>
-<td>ARP Request</td>
-<td><code>aclorch.h:106</code></td>
+<td><code>SAI_ACL_IP_TYPE_ARP_REQUEST</code></td>
+<td><a href="../../glossary/#term-arp">ARP</a> Request (実装のみ)</td>
+<td><code>aclorch.h:106</code>, <code>aclorch.cpp:511</code></td>
 </tr>
 <tr>
 <td><code>ARP_REPLY</code></td>
-<td>—</td>
-<td>ARP Reply</td>
-<td><code>aclorch.h:107</code></td>
+<td><code>SAI_ACL_IP_TYPE_ARP_REPLY</code></td>
+<td><a href="../../glossary/#term-arp">ARP</a> Reply (実装のみ)</td>
+<td><code>aclorch.h:107</code>, <code>aclorch.cpp:512</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ether_type"><code>ETHER_TYPE</code> 値別挙動<a class="headerlink" href="#ether_type" title="Permanent link">&para;</a></h3>
+<p>YANG pattern で 7 値に制限 (sonic-acl.yang:142)。実装では任意 uint16 を受理 (aclorch.cpp:1066)。
+格納値は <code>0x</code> プレフィックス付き hex 文字列。<code>stoul(str, &amp;idx, 0)</code> で auto 判定 (converter.h:18)。
+マスク: <code>0xFFFF</code> (完全一致) で SAI に投入 (aclorch.cpp:1067)。</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>プロトコル</th>
+<th>意味</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x88CC</code></td>
+<td>LLDP</td>
+<td>Link Layer Discovery Protocol</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+<tr>
+<td><code>0x8100</code></td>
+<td>IEEE 802.1Q</td>
+<td>VLAN タグ付きフレーム</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+<tr>
+<td><code>0x8915</code></td>
+<td><a href="../../glossary/#term-roce">RoCE</a></td>
+<td>RDMA over Converged Ethernet</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+<tr>
+<td><code>0x0806</code></td>
+<td><a href="../../glossary/#term-arp">ARP</a></td>
+<td>Address Resolution Protocol</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+<tr>
+<td><code>0x0800</code></td>
+<td>IPv4</td>
+<td>Internet Protocol version 4</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+<tr>
+<td><code>0x86DD</code></td>
+<td>IPv6</td>
+<td>Internet Protocol version 6</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+<tr>
+<td><code>0x8847</code></td>
+<td><a href="../../glossary/#term-mpls">MPLS</a></td>
+<td>MPLS ユニキャスト</td>
+<td><code>sonic-acl.yang:142</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="stage-acl_table"><code>stage</code> 値別挙動 (ACL_TABLE から継承)<a class="headerlink" href="#stage-acl_table" title="Permanent link">&para;</a></h3>
+<p>ACL_RULE 自体に <code>stage</code> フィールドはないが、所属 ACL_TABLE の stage により使用可能な action が変わる。</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>SAI stage</th>
+<th>MIRROR action</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INGRESS</code> (既定)</td>
+<td><code>SAI_ACL_STAGE_INGRESS</code></td>
+<td><code>MIRROR_INGRESS_ACTION</code> 有効</td>
+<td><code>aclorch.cpp:166,173,263-266</code></td>
+</tr>
+<tr>
+<td><code>EGRESS</code></td>
+<td><code>SAI_ACL_STAGE_EGRESS</code></td>
+<td><code>MIRROR_EGRESS_ACTION</code> のみ有効</td>
+<td><code>aclorch.cpp:167,185,270-272</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="type-acl_table"><code>type</code> 値別挙動 (ACL_TABLE から継承)<a class="headerlink" href="#type-acl_table" title="Permanent link">&para;</a></h3>
+<p>ACL_RULE で使用可能な match / action は ACL_TABLE の <code>type</code> によって決まる。</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>使用可能な主 action</th>
+<th>備考</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>L3</code></td>
+<td><code>PACKET_ACTION</code>, <code>REDIRECT_ACTION</code></td>
+<td>通常 IPv4 ACL</td>
+<td><code>acltable.h:26</code>, <code>aclorch.cpp:200,454</code></td>
+</tr>
+<tr>
+<td><code>L3V6</code></td>
+<td><code>PACKET_ACTION</code>, <code>REDIRECT_ACTION</code></td>
+<td>IPv6 ACL。<code>IP_PROTOCOL</code> は非推奨</td>
+<td><code>acltable.h:27</code>, <code>aclorch.cpp:220,1231</code></td>
+</tr>
+<tr>
+<td><code>MIRROR</code></td>
+<td><code>MIRROR_INGRESS_ACTION</code></td>
+<td>ASIC capability 必須</td>
+<td><code>acltable.h:29</code>, <code>aclorch.cpp:260,3502</code></td>
+</tr>
+<tr>
+<td><code>MIRRORV6</code></td>
+<td><code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code></td>
+<td>ASIC capability 照会、一部統合</td>
+<td><code>acltable.h:30</code>, <code>aclorch.cpp:279,3503,5811</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">値別 grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値数</th>
+<th>0 hit</th>
+<th>証跡ファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PACKET_ACTION</code></td>
+<td>3 (YANG) / 6 (実装)</td>
+<td>0</td>
+<td>aclorch.h, aclorch.cpp</td>
+</tr>
+<tr>
+<td><code>IP_TYPE</code></td>
+<td>7 (YANG) / 10 (実装)</td>
+<td>0</td>
+<td>aclorch.h, aclorch.cpp, sonic-acl.yang</td>
+</tr>
+<tr>
+<td><code>ETHER_TYPE</code></td>
+<td>7</td>
+<td>0</td>
+<td>sonic-acl.yang, aclorch.cpp</td>
+</tr>
+<tr>
+<td><code>stage</code> (継承)</td>
+<td>2</td>
+<td>0</td>
+<td>aclorch.cpp</td>
+</tr>
+<tr>
+<td><code>type</code> (継承)</td>
+<td>4 (YANG)</td>
+<td>0</td>
+<td>acltable.h, aclorch.cpp</td>
 </tr>
 </tbody>
 </table>
 <h3 id="_7">複合条件<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>MATCH_TCP_FLAGS</code> あり、かつ <code>IP_PROTOCOL</code> 未指定 → <code>AclOrch</code> が自動的に <code>IP_PROTOCOL=6 (TCP)</code> を付与 (<code>aclorch.cpp</code>)</li>
-<li><code>IP_TYPE=IPV4ANY</code> と <code>SRC_IPV6</code> を同一ルールに混在させると <code>bAllAttributesOk=false</code>、rule が INACTIVE になる</li>
-<li><code>stage=INGRESS</code> テーブルでは <code>MIRROR_INGRESS_ACTION</code> が有効、<code>stage=EGRESS</code> テーブルでは <code>MIRROR_EGRESS_ACTION</code> のみ有効 (<code>aclorch.cpp:263-291</code>)</li>
-</ul>
+<ol>
+<li><code>MATCH_TCP_FLAGS</code> あり + <code>IP_PROTOCOL</code> 未指定 → <code>IP_PROTOCOL=6 (TCP)</code> 自動付与 (<code>aclorch.cpp:5640-5660</code>)</li>
+<li><code>IP_TYPE=IPV4ANY</code> / <code>IPV4</code> + <code>SRC_IPV6</code> 同一ルール混在 → <code>bAllAttributesOk=false</code> → rule INACTIVE (<code>aclorch.cpp:5636-5658</code>)</li>
+<li>YANG <code>choice ip_src_dst</code> — <code>IP_TYPE</code> が IPv4 系なら <code>SRC_IP</code>/<code>DST_IP</code> のみ有効、IPv6 系なら <code>SRC_IPV6</code>/<code>DST_IPV6</code> のみ有効 (<code>sonic-acl.yang:150-168</code>)</li>
+<li><code>type=MIRROR</code>/<code>MIRRORV6</code> + stage=EGRESS → <code>MIRROR_EGRESS_ACTION</code> のみ有効 (<code>aclorch.cpp:270-272</code>)</li>
+<li><code>PACKET_ACTION=REDIRECT:</code> のコロン後ターゲット欠如 → <code>return false</code> → rule INACTIVE (<code>aclorch.cpp:2020-2028</code>)</li>
+</ol>
 <!-- /value-behavior -->
 
 <!-- ref-triangle:start -->
@@ -30422,7 +30685,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b4c5898e0257 -->
+<!-- glossary-links-injected: a78cb4c857bd -->
 
 <div class="footnote">
 <hr />

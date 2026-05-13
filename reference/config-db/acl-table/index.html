@@ -22150,10 +22150,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#type-string-enum" class="md-nav__link">
+  <a href="#type_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        type (string enum — 事前定義型)
+        type 値別挙動
       
     </span>
   </a>
@@ -22161,10 +22161,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#stage-enum" class="md-nav__link">
+  <a href="#stage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        stage (enum)
+        stage 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ether_type-ip_type-packet_action-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ETHER_TYPE / IP_TYPE / PACKET_ACTION — ACL_TABLE への直接影響なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値別 grep カバレッジ
       
     </span>
   </a>
@@ -29833,10 +29855,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#type-string-enum" class="md-nav__link">
+  <a href="#type_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        type (string enum — 事前定義型)
+        type 値別挙動
       
     </span>
   </a>
@@ -29844,10 +29866,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#stage-enum" class="md-nav__link">
+  <a href="#stage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        stage (enum)
+        stage 値別挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ether_type-ip_type-packet_action-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ETHER_TYPE / IP_TYPE / PACKET_ACTION — ACL_TABLE への直接影響なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値別 grep カバレッジ
       
     </span>
   </a>
@@ -30144,116 +30188,195 @@
 
 <!-- value-behavior -->
 <h2 id="_7">値依存挙動マトリクス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h3 id="type-string-enum"><code>type</code> (string enum — 事前定義型)<a class="headerlink" href="#type-string-enum" title="Permanent link">&para;</a></h3>
+<h3 id="type_1"><code>type</code> 値別挙動<a class="headerlink" href="#type_1" title="Permanent link">&para;</a></h3>
+<p>YANG 定義 4 値 (sonic-acl.yang:59-65): <code>MIRROR/MIRRORV6/L3/L3V6</code>。
+実装定義 (acltable.h:26-42): 14 種以上。<code>processAclTableType()</code> は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。</p>
 <table>
 <thead>
 <tr>
 <th>値</th>
-<th>効果</th>
+<th>動作</th>
+<th>ASIC 確認</th>
 <th>evidence</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>L3</code></td>
-<td>IPv4 L3 ACL。MIRROR_INGRESS_ACTION 有効</td>
-<td><code>aclorch.h:200,454</code></td>
+<td>IPv4 L3 <a href="../../glossary/#term-acl">ACL</a>。INGRESS/EGRESS 両対応</td>
+<td>なし</td>
+<td><code>acltable.h:26</code>, <code>aclorch.cpp:200,454</code></td>
 </tr>
 <tr>
 <td><code>L3V6</code></td>
-<td>IPv6 L3 ACL。IPv6 match フィールド有効</td>
-<td><code>aclorch.h:220,471</code></td>
+<td>IPv6 L3 <a href="../../glossary/#term-acl">ACL</a>。<code>IP_PROTOCOL</code> 使用は非推奨 (WARN ログ)</td>
+<td>なし</td>
+<td><code>acltable.h:27</code>, <code>aclorch.cpp:220,1231</code></td>
 </tr>
 <tr>
 <td><code>L3V4V6</code></td>
-<td>IPv4/IPv6 デュアルスタック。ASIC capability 確認後のみ作成</td>
-<td><code>aclorch.h:240; aclorch.cpp:2737</code></td>
+<td>IPv4/IPv6 デュアルスタック ACL</td>
+<td><code>isAclL3V4V6TableSupported()</code> 必須 (<code>aclorch.cpp:2737</code>)</td>
+<td><code>acltable.h:28</code>, <code>aclorch.cpp:240,3541-3543</code></td>
 </tr>
 <tr>
 <td><code>MIRROR</code></td>
-<td>ミラーセッション転送専用。<code>SAI_ACL_ACTION_TYPE_MIRROR_INGRESS</code> を要求</td>
-<td><code>aclorch.h:260; aclorch.cpp:3502</code></td>
+<td>INGRESS mirror セッション転送専用</td>
+<td><code>m_mirrorTableCapabilities[MIRROR]</code> 必須</td>
+<td><code>acltable.h:29</code>, <code>aclorch.cpp:260,3502,3671</code></td>
 </tr>
 <tr>
 <td><code>MIRRORV6</code></td>
-<td>IPv6 ミラー。IPv4 MIRROR と個別に能力チェック</td>
-<td><code>aclorch.h:279; aclorch.cpp:3503,3510</code></td>
+<td>IPv6 INGRESS mirror 専用。ASIC によっては MIRROR テーブルに統合</td>
+<td><code>m_mirrorTableCapabilities[MIRRORV6]</code> 必須</td>
+<td><code>acltable.h:30</code>, <code>aclorch.cpp:279,3503,3510-3511,5811</code></td>
 </tr>
 <tr>
 <td><code>MIRROR_DSCP</code></td>
-<td>DSCP 値でミラー先を決定する特殊 mirror テーブル</td>
-<td><code>aclorch.h:298</code></td>
+<td><a href="../../glossary/#term-dscp">DSCP</a> 値でミラー先決定</td>
+<td>なし</td>
+<td><code>acltable.h:31</code>, <code>aclorch.cpp:298</code></td>
 </tr>
 <tr>
 <td><code>PFCWD</code></td>
-<td>PFC Watchdog 用。Ingress/Egress 両方に登録</td>
-<td><code>aclorch.h:315-316,430-431</code></td>
+<td><a href="../../glossary/#term-pfc-watchdog">PFC Watchdog</a> 専用。BRCM DNX では <code>SAI_ACL_BIND_POINT_TYPE_SWITCH</code></td>
+<td>なし</td>
+<td><code>acltable.h:32</code>, <code>aclorch.cpp:316,3811-3825</code></td>
+</tr>
+<tr>
+<td><code>CTRLPLANE</code></td>
+<td>SAI テーブル作成なし。<code>copporch</code> 経由で制御</td>
+<td>なし (stage 無視)</td>
+<td><code>acltable.h:33</code>, <code>aclorch.cpp:2727</code></td>
 </tr>
 <tr>
 <td><code>MCLAG</code></td>
-<td>MCLAG 制御用専用テーブル</td>
-<td><code>aclorch.h:334</code></td>
+<td><a href="../../glossary/#term-mclag">MCLAG</a> 制御専用テーブル</td>
+<td>なし</td>
+<td><code>acltable.h:35</code>, <code>aclorch.cpp:334,3791</code></td>
 </tr>
 <tr>
 <td><code>MUX</code></td>
-<td>dual-ToR mux 用テーブル</td>
-<td><code>aclorch.h:352</code></td>
+<td>dual-ToR mux 専用テーブル</td>
+<td>なし</td>
+<td><code>acltable.h:36</code>, <code>aclorch.cpp:352</code></td>
 </tr>
 <tr>
 <td><code>DROP</code></td>
-<td>drop 専用最適化テーブル。<code>IngressTableDrop</code>/<code>EgressTableDrop</code></td>
-<td><code>aclorch.h:370,111-112</code></td>
+<td>drop 最適化テーブル (<code>IngressTableDrop</code>/<code>EgressTableDrop</code>)</td>
+<td>なし</td>
+<td><code>acltable.h:37</code>, <code>aclorch.cpp:370</code></td>
 </tr>
 <tr>
 <td><code>MARK_META</code></td>
 <td>メタデータマーキング (IPv4)</td>
-<td><code>aclorch.h:388</code></td>
+<td>なし</td>
+<td><code>acltable.h:38</code>, <code>aclorch.cpp:388</code></td>
 </tr>
 <tr>
-<td><code>MARK_META_V6</code></td>
+<td><code>MARK_METAV6</code></td>
 <td>メタデータマーキング (IPv6)</td>
-<td><code>aclorch.h:400</code></td>
+<td>なし</td>
+<td><code>acltable.h:39</code>, <code>aclorch.cpp:400</code></td>
 </tr>
 <tr>
 <td><code>EGR_SET_DSCP</code></td>
-<td>egress DSCP 書き換え専用。Egress stage 固定</td>
-<td><code>aclorch.h:412,489</code></td>
+<td>egress <a href="../../glossary/#term-dscp">DSCP</a> 書き換え専用。EGRESS stage 固定</td>
+<td>なし</td>
+<td><code>acltable.h:40</code>, <code>aclorch.cpp:412,489</code></td>
 </tr>
 <tr>
-<td><code>CTRLPLANE</code></td>
-<td>コントロールプレーン ACL。SAI テーブル作成なし、CoppOrch 経由</td>
-<td><code>aclorch.cpp:2727</code></td>
+<td><code>UNDERLAY_SET_DSCP</code></td>
+<td>内部で <code>MARK_META</code> に変換して SAI 投入</td>
+<td>なし</td>
+<td><code>acltable.h:41</code>, <code>aclorch.cpp:121 相当</code></td>
+</tr>
+<tr>
+<td><code>UNDERLAY_SET_DSCPV6</code></td>
+<td>内部で <code>MARK_METAV6</code> に変換して SAI 投入</td>
+<td>なし</td>
+<td><code>acltable.h:42</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="stage-enum"><code>stage</code> (enum)<a class="headerlink" href="#stage-enum" title="Permanent link">&para;</a></h3>
+<h3 id="stage"><code>stage</code> 値別挙動<a class="headerlink" href="#stage" title="Permanent link">&para;</a></h3>
+<p><code>aclStageLookUp</code> (aclorch.cpp:164-167) でパース。不正値は <code>processAclTableStage()</code> が false を返し erase。</p>
 <table>
 <thead>
 <tr>
 <th>値</th>
-<th>効果</th>
+<th>SAI stage</th>
+<th>有効 MIRROR action</th>
 <th>evidence</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>ingress</code> (既定)</td>
-<td><code>SAI_ACL_STAGE_INGRESS</code>。<code>MIRROR_INGRESS_ACTION</code> 有効</td>
-<td><code>aclorch.cpp:164,543</code></td>
+<td><code>INGRESS</code> (既定)</td>
+<td><code>SAI_ACL_STAGE_INGRESS</code></td>
+<td><code>MIRROR_INGRESS_ACTION</code> 有効</td>
+<td><code>aclorch.cpp:166,173,263-266</code></td>
 </tr>
 <tr>
-<td><code>egress</code></td>
-<td><code>SAI_ACL_STAGE_EGRESS</code>。<code>MIRROR_EGRESS_ACTION</code> のみ有効</td>
-<td><code>aclorch.cpp:165</code></td>
+<td><code>EGRESS</code></td>
+<td><code>SAI_ACL_STAGE_EGRESS</code></td>
+<td><code>MIRROR_EGRESS_ACTION</code> のみ有効</td>
+<td><code>aclorch.cpp:167,185,270-272</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ether_type-ip_type-packet_action-acl_table"><code>ETHER_TYPE</code> / <code>IP_TYPE</code> / <code>PACKET_ACTION</code> — ACL_TABLE への直接影響なし<a class="headerlink" href="#ether_type-ip_type-packet_action-acl_table" title="Permanent link">&para;</a></h3>
+<p>これら 3 フィールドは ACL_TABLE テーブル自体には存在しない (hit 数 0)。<code>ACL_TABLE_TYPE</code> サブテーブルの <code>MATCHES</code> / <code>ACTIONS</code> フィールドで許可する match / action キー名として文字列で列挙することで間接的に参照される。</p>
+<h3 id="grep">値別 grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>値数</th>
+<th>0 hit</th>
+<th>証跡ファイル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>4 (YANG) / 14+ (実装)</td>
+<td>0</td>
+<td>acltable.h, aclorch.cpp</td>
+</tr>
+<tr>
+<td><code>stage</code></td>
+<td>2</td>
+<td>0</td>
+<td>aclorch.cpp</td>
+</tr>
+<tr>
+<td><code>ETHER_TYPE</code></td>
+<td>N/A (非フィールド)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>IP_TYPE</code></td>
+<td>N/A (非フィールド)</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>PACKET_ACTION</code></td>
+<td>N/A (非フィールド)</td>
+<td>—</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
 <h3 id="_8">複合条件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>type=CTRLPLANE</code> → <code>stage</code> フィールドは無視、SAI テーブルを作成しない (<code>aclorch.cpp:2727</code>)</li>
-<li><code>type=L3V4V6</code> かつ ASIC が L3V4V6 capability を未報告 → <code>isAclL3V4V6TableSupported()</code> が false、テーブル作成に失敗 (<code>aclorch.cpp:2737</code>)</li>
-<li><code>type=MIRROR</code> / <code>MIRRORV6</code> → 起動時に ASIC へ mirror capability query を行い結果を <code>m_mirrorTableCapabilities</code> に保持。capability がなければ reject (<code>aclorch.cpp:3502-3541</code>)</li>
-</ul>
+<ol>
+<li><code>type=CTRLPLANE</code> → <code>stage</code> フィールドを無視し SAI テーブルを作成しない (<code>aclorch.cpp:2727</code>)</li>
+<li><code>type=L3V4V6</code> + ASIC capability なし → <code>isAclL3V4V6TableSupported()</code> が false でテーブル作成失敗 (<code>aclorch.cpp:2737</code>)</li>
+<li><code>type=MIRROR</code> / <code>MIRRORV6</code> → 起動時 ASIC capability query、capability なければ reject (<code>aclorch.cpp:3502-3541</code>)</li>
+<li><code>type=EGR_SET_DSCP</code> → EGRESS stage 固定。<code>stage=INGRESS</code> を指定しても egress 動作になる (<code>aclorch.cpp:489</code>)</li>
+</ol>
 <!-- /value-behavior -->
 
 <!-- ref-triangle:start -->
@@ -30302,7 +30425,7 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 9f69b0796e2c -->
 
 <div class="footnote">
 <hr />

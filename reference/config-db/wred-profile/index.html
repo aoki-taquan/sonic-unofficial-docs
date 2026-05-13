@@ -22558,7 +22558,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ecn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecn 値別挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ecn 値別挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複合条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値別 grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22569,7 +22608,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -22591,7 +22630,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -22603,7 +22642,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -22614,7 +22653,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -22625,7 +22664,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -29760,7 +29799,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ecn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ecn 値別挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ecn 値別挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複合条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        値別 grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29771,7 +29849,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29793,7 +29871,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29805,7 +29883,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29816,7 +29894,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29827,7 +29905,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30058,16 +30136,147 @@
 <li><code>wred_*_enable</code>: <code>default false</code><sup id="fnref4:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
 <li><code>*_drop_probability</code>: <code>default 100</code>（100%）<sup id="fnref5:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
 </ul>
+<!-- value-behavior -->
+<h2 id="ecn"><code>ecn</code> 値別挙動<a class="headerlink" href="#ecn" title="Permanent link">&para;</a></h2>
+<p>YANG 定義 8 値 (sonic-wred-profile.yang)、default <code>ecn_none</code>。
+実装 <code>ecn_map</code> (qosorch.cpp:36-44) → <code>SAI_WRED_ATTR_ECN_MARK_MODE</code> (qosorch.cpp:743)。
+不正値 (<code>ecn_map.at()</code> が <code>std::out_of_range</code>) → エントリ破棄。</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>SAI マッピング</th>
+<th>マーキング対象色</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ecn_none</code> (<strong>既定</strong>)</td>
+<td><code>SAI_ECN_MARK_MODE_NONE</code></td>
+<td>なし。ECN マーキング全無効</td>
+<td><code>qosorch.cpp:37</code>, YANG:128</td>
+</tr>
+<tr>
+<td><code>ecn_green</code></td>
+<td><code>SAI_ECN_MARK_MODE_GREEN</code></td>
+<td>Green のみ。Yellow/Red は WRED drop のみ</td>
+<td><code>qosorch.cpp:38</code>, YANG</td>
+</tr>
+<tr>
+<td><code>ecn_yellow</code></td>
+<td><code>SAI_ECN_MARK_MODE_YELLOW</code></td>
+<td>Yellow のみ。Green/Red は WRED drop のみ</td>
+<td><code>qosorch.cpp:39</code>, YANG</td>
+</tr>
+<tr>
+<td><code>ecn_red</code></td>
+<td><code>SAI_ECN_MARK_MODE_RED</code></td>
+<td>Red のみ。Green/Yellow は WRED drop のみ</td>
+<td><code>qosorch.cpp:40</code>, YANG</td>
+</tr>
+<tr>
+<td><code>ecn_green_yellow</code></td>
+<td><code>SAI_ECN_MARK_MODE_GREEN_YELLOW</code></td>
+<td>Green + Yellow。Red は WRED drop のみ</td>
+<td><code>qosorch.cpp:41</code>, YANG</td>
+</tr>
+<tr>
+<td><code>ecn_green_red</code></td>
+<td><code>SAI_ECN_MARK_MODE_GREEN_RED</code></td>
+<td>Green + Red。Yellow は WRED drop のみ</td>
+<td><code>qosorch.cpp:42</code>, YANG</td>
+</tr>
+<tr>
+<td><code>ecn_yellow_red</code></td>
+<td><code>SAI_ECN_MARK_MODE_YELLOW_RED</code></td>
+<td>Yellow + Red。Green は WRED drop のみ</td>
+<td><code>qosorch.cpp:43</code>, YANG</td>
+</tr>
+<tr>
+<td><code>ecn_all</code></td>
+<td><code>SAI_ECN_MARK_MODE_ALL</code></td>
+<td>全色 (Green + Yellow + Red) ECN マーキング有効</td>
+<td><code>qosorch.cpp:44</code>, YANG:123</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">ロスレス運用</p>
+<p>RoCE / ロスレストラフィックでは <code>ecn_all</code> + <code>wred_*_enable=true</code> が典型設定。<code>ecn_none</code> では ECN 通知が発生しないためロスレス保証ができない。</p>
+</div>
+<h3 id="_8">複合条件<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>ecn_none</code> + <code>wred_*_enable=true</code> — WRED drop は発生するが ECN マーキングなし。ベストエフォートの確率的 drop のみ。</li>
+<li><code>ecn_all</code> + <code>wred_*_enable=false</code> — ECN モードは設定されるが WRED 閾値に到達しない。実質 ECN 無効と同じ。</li>
+<li><code>ecn_green</code> + <code>wred_yellow_enable=true</code> — Yellow パケットは確率的に drop されるが ECN マーキングなし。Green パケットのみ ECN 通知。</li>
+<li><strong>threshold 2 フェーズ適用</strong>: 閾値変更時に「現在 min &gt; 新 max」または「現在 max &lt; 新 min」の属性は deferred リストに退避して後回し。<code>ecn</code> 変更と閾値変更が同時の場合、適用順序が通常と異なる (<code>qosorch.cpp:WredMapHandler</code>)。</li>
+</ol>
+<h3 id="grep">値別 grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ecn_none</td>
+<td>3</td>
+<td>qosorch.cpp:37, yang(enum), yang(default)</td>
+</tr>
+<tr>
+<td>ecn_green</td>
+<td>2</td>
+<td>qosorch.cpp:38, yang</td>
+</tr>
+<tr>
+<td>ecn_yellow</td>
+<td>2</td>
+<td>qosorch.cpp:39, yang</td>
+</tr>
+<tr>
+<td>ecn_red</td>
+<td>2</td>
+<td>qosorch.cpp:40, yang</td>
+</tr>
+<tr>
+<td>ecn_green_yellow</td>
+<td>2</td>
+<td>qosorch.cpp:41, yang</td>
+</tr>
+<tr>
+<td>ecn_green_red</td>
+<td>2</td>
+<td>qosorch.cpp:42, yang</td>
+</tr>
+<tr>
+<td>ecn_yellow_red</td>
+<td>2</td>
+<td>qosorch.cpp:43, yang</td>
+</tr>
+<tr>
+<td>ecn_all</td>
+<td>2</td>
+<td>qosorch.cpp:44, yang:123</td>
+</tr>
+</tbody>
+</table>
+<p>全 8 値 hit。0 hit なし。</p>
+<!-- /value-behavior -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-wred-profile/"><code>sonic-wred-profile</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -30076,18 +30285,18 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">典型値<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>WRED_PROFILE|&lt;name&gt;</code>。</li>
 <li><code>ecn</code>: <code>ecn_all</code> / <code>ecn_green</code> / <code>ecn_none</code>。</li>
 <li><code>*_min_threshold</code> / <code>*_max_threshold</code> / <code>*_drop_probability</code>。</li>
 </ul>
-<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">よくある誤設定<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>min &gt; max に設定すると <a href="../../glossary/#term-sai">SAI</a> がエラーを返し、profile が hardware に下りない。</li>
 </ul>
-<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WRED_PROFILE|AZURE_LOSSY&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>wred
 </span></code></pre></div>
