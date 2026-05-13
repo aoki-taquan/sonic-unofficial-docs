@@ -81,6 +81,23 @@ VXLAN_TUNNEL|<name>
 - 関連 CLI: [`config vxlan`](../cli/config-vxlan.md)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vxlan`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `ttl_mode` | `uniform` | decap 時に outer TTL を inner TTL にコピーして適用 |
+| `ttl_mode` | `pipe` | decap 時に inner TTL を保持（outer TTL は無視） |
+| `ttl_mode` | その他 | YANG `pattern "uniform\|pipe"` 違反で reject |
+| `dst_ip` | 省略 | EVPN 動的学習モード。`ip link add ... type vxlan id <vni> local <src_ip>` の remote オプションなし (vxlanmgr.cpp:1014) |
+| `dst_ip` | 明示指定 | P2P 静的トンネル。`ip link add ... remote <dst_ip>` が追加される。EVPN との併用は非推奨 |
+| `src_ip` | Loopback0 IP | 推奨構成。リンクダウン影響なし |
+| `src_ip` | 物理 IF IP | リンクダウン時に VTEP が消失するため非推奨 |
+| エントリ数 | 1〜2 件 | YANG `max-elements 2`。通常 EVPN 用 1 + P2P 用 1 |
+| エントリ数 | 3 件以上 | YANG バリデーションで reject |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
@@ -90,7 +107,7 @@ VXLAN_TUNNEL|<name>
 - **`src_ip` / `dst_ip` 型 (YANG)**: `inet:ip-address` 型 — 不正 IP は YANG で reject[^exc2]。
 - **削除時の NVO 残留**: tunnel 削除時に NVO エントリが残存していると `SWSS_LOG_WARN("Tunnel %s deletion failed. Need to delete NVO")` を記録してリトライ待ち[^exc1]。
 - **削除時のマップ残留**: tunnel map エントリが残存していると `SWSS_LOG_WARN("Need to delete mapping entries")` でリトライ待ち[^exc1]。
-- **State テーブル未クリア**: state VXLAN tunnel テーブルが空でない場合 `SWSS_LOG_WARN("State VXLAN tunnel table not yet empty.")` を記録してリトライ[^exc1]。
+- **State テーブル未クリア**: state [VXLAN](../../reference/glossary.md#term-vxlan) tunnel テーブルが空でない場合 `SWSS_LOG_WARN("State VXLAN tunnel table not yet empty.")` を記録してリトライ[^exc1]。
 - **Vxlan Net Dev 作成失敗**: `SWSS_LOG_WARN("Vxlan Net Dev creation failure for %s VNI(%s) VLAN(%s)")` を記録[^exc1]。
 
 [^exc1]: `sonic-swss/cfgmgr/vxlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp>
@@ -138,4 +155,4 @@ show vxlan remotevtep
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f45d7ede5f79 -->
+<!-- glossary-links-injected: 7e2e79cf3524 -->

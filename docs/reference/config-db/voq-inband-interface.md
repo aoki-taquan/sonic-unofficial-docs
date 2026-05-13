@@ -82,6 +82,22 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-voq-inband-interface`、`sonic-bgp-internal-neighbor`、`sonic-bgp-voq-chassis-neighbor`
 - 関連 CLI: `config interface`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+本テーブルは enum フィールドが少なく、フィールドはほぼ string パターンで制御される。
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `inband_type` | `port` | インバンドタイプを port に設定（デフォルト、YANG default "port"）|
+| `inband_type` | `Port` | `port` と同義。YANG pattern "port\|Port" で両方許可 |
+| `inband_type` | 省略 | YANG default `"port"` が補完される |
+| `inband_type` | その他 | YANG pattern 違反で reject |
+| `name` | `Ethernet-IB<n>` | 有効な VOQ インバンド IF 名 |
+| `name` | その他 | YANG `pattern "Ethernet-IB[0-9]+"` 違反で reject |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang; sonic-swss/cfgmgr/intfmgr.cpp -->
@@ -90,7 +106,7 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 - **`inband_type` パターン (YANG)**: `pattern "port|Port"` のみ許可[^exc1]。
 - **IP プレフィクス leafref (YANG)**: `VOQ_INBAND_INTERFACE_IPPREFIX_LIST` の `name` は `VOQ_INBAND_INTERFACE_LIST/name` への leafref — 対応エントリが存在しない場合 YANG バリデーションで reject[^exc1]。
 - **デフォルト補完**: `inband_type` 省略時は YANG `default "port"` が補完される[^exc1]。
-- **インタフェース未 ready**: 親インタフェースが STATE_DB に未登録の場合 `intfmgrd` はリトライ待ちとなる（通常の `VLAN_INTERFACE` と同動作）[^exc2]。
+- **インタフェース未 ready**: 親インタフェースが [STATE_DB](../../reference/glossary.md#term-state_db) に未登録の場合 `intfmgrd` はリトライ待ちとなる（通常の `VLAN_INTERFACE` と同動作）[^exc2]。
 
 [^exc1]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang>
 [^exc2]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
@@ -133,4 +149,4 @@ show ip interface | grep Ethernet-IB
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ad5cec746880 -->
+<!-- glossary-links-injected: 6981be1a469d -->

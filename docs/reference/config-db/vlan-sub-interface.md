@@ -92,6 +92,23 @@ VLAN_SUB_INTERFACE|<name>|<ip-prefix>
 - 関連 CLI: `config interface`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan-sub-interface`、`sonic-port`、`sonic-portchannel`、`sonic-vrf`、`sonic-vnet`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `admin_status` | `up` | `ip link set <sub-if> up` |
+| `admin_status` | `down` | `ip link set <sub-if> down` |
+| `admin_status` | 省略 | `"up"` が自動補完（ただし親 IF の admin_status で実効値が決定）|
+| `vlan` | `1`〜`4094` | encapsulation VLAN ID として設定 |
+| `vlan` | `0` または空 | `SWSS_LOG_INFO("Vlan ID not configured")` でリトライ待ち (intfmgr.cpp) |
+| `loopback_action` | `drop` | 同一 IF に戻るパケットをドロップ |
+| `loopback_action` | `forward` | 同一 IF に戻るパケットを転送 |
+| `mtu` | 省略 | `MTU_INHERITANCE`（親 IF の MTU を継承）|
+| `mtu` | 明示指定 | `ip link set <sub-if> mtu <val>` |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan-sub-interface.yang -->

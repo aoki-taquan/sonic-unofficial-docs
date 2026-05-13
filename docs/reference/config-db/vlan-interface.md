@@ -91,13 +91,36 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - 関連 CLI: `config interface ip add/remove Vlan<id>`、`config vlan proxy_arp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- value-behavior -->
+## 値依存挙動マトリクス
+
+| フィールド | 値 | 実挙動 |
+|-----------|-----|--------|
+| `mpls` | `enable` | `sysctl -w net.mpls.conf.<IF>.input=1` (intfmgr.cpp) |
+| `mpls` | `disable` または空 | `sysctl -w net.mpls.conf.<IF>.input=0` |
+| `proxy_arp` | `enabled` | `/proc/sys/net/ipv4/conf/<IF>/proxy_arp` / `proxy_arp_pvlan` に `1` |
+| `proxy_arp` | `disabled` | 同ファイルに `0` |
+| `proxy_arp` | その他 | `SWSS_LOG_ERROR("Proxy ARP state is invalid")` で処理中断 |
+| `grat_arp` | `enabled` | `/proc/sys/net/ipv4/conf/<IF>/arp_accept` に `1` |
+| `grat_arp` | `disabled` | 同ファイルに `0` |
+| `grat_arp` | その他 | `SWSS_LOG_ERROR("GARP state is invalid")` で処理中断 |
+| `ipv6_use_link_local_only` | `enable` | IPv6 link-local アドレスのみ付与。グローバル IPv6 アドレス付与不可 |
+| `ipv6_use_link_local_only` | `disable` | 通常の IPv6 アドレス割当（デフォルト） |
+| `loopback_action` | `drop` | 同一 IF に ingress/egress するパケットをドロップ |
+| `loopback_action` | `forward` | 同一 IF に ingress/egress するパケットを転送 |
+| `nat_zone` | `0` | [NAT](../../reference/glossary.md#term-nat) zone なし（デフォルト） |
+| `nat_zone` | `1`〜`3` | 該当 NAT zone へのバインド |
+| `vrf_name` | 変更 (既存 IF) | `isIntfChangeVrf()` で検出しエラー。削除後再 add が必要 |
+
+<!-- /value-behavior -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang -->
 
 - **VRF 変更禁止**: `intfmgrd` は既存 IF の VRF 変更を `isIntfChangeVrf()` で検出し `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` を記録してエントリを破棄する[^exc1]。
 - **インタフェース未 ready**: `isIntfStateOk()` が false の場合リトライ待ち（"Interface is not ready, skipping"）[^exc1]。
-- **VRF 未 ready**: VRF が STATE_DB に未登録の場合もリトライ待ち[^exc1]。
+- **VRF 未 ready**: VRF が [STATE_DB](../../reference/glossary.md#term-state_db) に未登録の場合もリトライ待ち[^exc1]。
 - **`proxy_arp` / `grat_arp` / `mpls` 不正値**: 不正値の場合 `SWSS_LOG_ERROR("... state is invalid")` を記録して処理を中断[^exc1]。
 - **デフォルト補完**: `admin_status` 省略時は `"up"` が補完される[^exc1]。YANG では `nat_zone` のデフォルト `0`、`ipv6_use_link_local_only` のデフォルト `disable`[^exc2]。
 
@@ -145,4 +168,4 @@ show ip interfaces
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c4023422f31d -->
+<!-- glossary-links-injected: b8bde3f9637a -->
