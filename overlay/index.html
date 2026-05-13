@@ -29461,11 +29461,11 @@
 <h1 id="_1">オーバーレイ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><a href="../reference/glossary/#term-vxlan">VXLAN</a> / VNet、<a href="../reference/glossary/#term-dash">DASH</a>、Dual ToR、NVGRE など overlay と <a href="../reference/glossary/#term-smartswitch">SmartSwitch</a> 周辺を扱う章。</p>
 <h2 id="_2">この章の趣旨<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>物理 underlay の上に仮想ネットワーク（テナント / マルチサイト / DPU offload）を構築するための SONiC 機能群を扱う。具体的には以下:</p>
+<p>物理 underlay の上に仮想ネットワーク（テナント / マルチサイト / <a href="../reference/glossary/#term-dpu">DPU</a> offload）を構築するための SONiC 機能群を扱う。具体的には以下:</p>
 <ul>
-<li><strong>VXLAN / VNet</strong>: VxlanOrch / VnetOrch / VRF mapper を中心とした L2VPN / L3VPN overlay</li>
-<li><strong>Dual ToR</strong>: y-cable / linkmgrd / IPinIP tunnel による HA、active-active 構成も含む</li>
-<li><strong>DASH / SmartSwitch</strong>: NPU + DPU 構成での ENI / ACL / connection offload</li>
+<li><strong>VXLAN / VNet</strong>: VxlanOrch / VnetOrch / <a href="../reference/glossary/#term-vrf">VRF</a> mapper を中心とした L2VPN / L3VPN overlay</li>
+<li><strong>Dual ToR</strong>: y-cable / <a href="../reference/glossary/#term-linkmgrd">linkmgrd</a> / <a href="../reference/glossary/#term-ipinip">IPinIP</a> tunnel による HA、active-active 構成も含む</li>
+<li><strong>DASH / SmartSwitch</strong>: <a href="../reference/glossary/#term-npu">NPU</a> + DPU 構成での <a href="../reference/glossary/#term-eni">ENI</a> / <a href="../reference/glossary/#term-acl">ACL</a> / connection offload</li>
 <li><strong>NVGRE</strong>: nvgreorch + decap mapper の legacy overlay</li>
 </ul>
 <h2 id="_3">この章の読み方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -29484,9 +29484,9 @@
 </ul>
 <h2 id="_5">扱わない範囲<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>L3 underlay の経路設計そのもの（BGP / ECMP / VRF route leak は <a href="../routing/">routing</a> 章）</li>
+<li>L3 underlay の経路設計そのもの（<a href="../reference/glossary/#term-bgp">BGP</a> / <a href="../reference/glossary/#term-ecmp">ECMP</a> / VRF route leak は <a href="../routing/">routing</a> 章）</li>
 <li>SmartSwitch ハードウェア依存層（DPU カード固有の bring-up は <a href="../platform/">platform</a> 章）</li>
-<li>DASH の上位 API スキーマ詳細（<a href="../reference/">reference</a> 章の CONFIG_DB / YANG リファレンスを参照）</li>
+<li>DASH の上位 API スキーマ詳細（<a href="../reference/">reference</a> 章の <a href="../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../reference/glossary/#term-yang">YANG</a> リファレンスを参照）</li>
 <li>ベンダー版 SONiC の overlay 実装差分（コミュニティ版 <code>master</code> のみ扱う）</li>
 </ul>
 <h2 id="_6">検証状況<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -29545,7 +29545,7 @@
 </tr>
 </tbody>
 </table>
-<!-- glossary-links-injected: 9751825192ec -->
+<!-- glossary-links-injected: a33e47022552 -->
 
 
 

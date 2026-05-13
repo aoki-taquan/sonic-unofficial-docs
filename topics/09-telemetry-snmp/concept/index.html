@@ -29812,7 +29812,7 @@
 <li><strong>CRM (Critical Resource Monitoring)</strong>: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。</li>
 <li><strong>sFlow</strong>: パケットサンプリング + interface counter を <code>sFlow datagram</code> として外部 collector に UDP 送信するプロトコル。SONiC では <code>hsflowd</code> が担当。</li>
 <li><strong>DTel (Data plane Telemetry)</strong>: <a href="../../../reference/glossary/#term-int">INT</a> (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。</li>
-<li><strong>Syslog / Event</strong>: テキストログと構造化イベント。<code>syslog-ng</code> で集約し、外部 collector に転送。</li>
+<li><strong><a href="../../../reference/glossary/#term-syslog">Syslog</a> / Event</strong>: テキストログと構造化イベント。<code>syslog-ng</code> で集約し、外部 collector に転送。</li>
 <li><strong>Techsupport</strong>: <code>show techsupport</code> が作る tarball。CLI 出力、Redis dump、syslog、journal、core などをまとめる。</li>
 <li><strong>Dump utility</strong>: <code>sonic-dump</code> がオブジェクト単位（PORT / <a href="../../../reference/glossary/#term-vlan">VLAN</a> / ACL_TABLE...）で全 DB と関連 CLI を構造化収集するツール。</li>
 </ul>
@@ -29931,7 +29931,7 @@
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>
 <li><a href="../../20-swss-sai-redis/">SWSS / SAI / Redis 内部実装</a></li>
 </ul>
-<!-- glossary-links-injected: bcf0ee3d3334 -->
+<!-- glossary-links-injected: ae40922103ac -->
 
 
 

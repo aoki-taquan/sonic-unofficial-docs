@@ -29477,8 +29477,8 @@
 <li><strong>ACL</strong>: テーブル型、ingress / egress、ユーザ定義テーブル型、L3V4V6 統合、flex counter 化</li>
 <li><strong>CoPP</strong>: Manager 再設計、neighbor miss trap、enum capability query</li>
 <li><strong>Mirror / Everflow</strong>: SPAN / ERSPAN、egress mirror + action capability</li>
-<li><strong>Buffer / PFC</strong>: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、WRED / ECN</li>
-<li><strong>QoS scheduler</strong>: SP / WRR / DWRR、min/max bandwidth、shaper</li>
+<li><strong>Buffer / PFC</strong>: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、<a href="../reference/glossary/#term-wred">WRED</a> / ECN</li>
+<li><strong>QoS scheduler</strong>: SP / WRR / <a href="../reference/glossary/#term-dwrr">DWRR</a>、min/max bandwidth、shaper</li>
 <li><strong>Watermark / Drop counter</strong>: PG / queue 占有量、buffer drop、configurable drop counter</li>
 </ul>
 <h2 id="_2">この章の読み方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -29500,10 +29500,10 @@
 </ul>
 <h2 id="_4">扱わない範囲<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li>経路選択そのもの（ECMP / nexthop policy）は <a href="../routing/">routing</a> 章</li>
-<li>L2 forwarding テーブル設計（FDB / VLAN 内 flooding）は <a href="../switching/">switching</a> 章</li>
-<li>個別ベンダーの SAI 拡張 ACL（コミュニティ <code>master</code> の SAI 標準範囲のみ扱う）</li>
-<li>ACL / QoS の <strong>CLI コマンド一覧</strong> / <strong>CONFIG_DB テーブル定義</strong> は <a href="../reference/">reference</a> 章</li>
+<li>経路選択そのもの（<a href="../reference/glossary/#term-ecmp">ECMP</a> / nexthop policy）は <a href="../routing/">routing</a> 章</li>
+<li>L2 forwarding テーブル設計（<a href="../reference/glossary/#term-fdb">FDB</a> / <a href="../reference/glossary/#term-vlan">VLAN</a> 内 flooding）は <a href="../switching/">switching</a> 章</li>
+<li>個別ベンダーの <a href="../reference/glossary/#term-sai">SAI</a> 拡張 ACL（コミュニティ <code>master</code> の SAI 標準範囲のみ扱う）</li>
+<li>ACL / QoS の <strong>CLI コマンド一覧</strong> / <strong><a href="../reference/glossary/#term-config_db">CONFIG_DB</a> テーブル定義</strong> は <a href="../reference/">reference</a> 章</li>
 </ul>
 <h2 id="_5">検証状況<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
@@ -29659,7 +29659,7 @@
 </tr>
 </tbody>
 </table>
-<!-- glossary-links-injected: f16175ea2d57 -->
+<!-- glossary-links-injected: 58337c3c8df8 -->
 
 
 
