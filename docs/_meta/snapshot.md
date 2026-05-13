@@ -85,13 +85,13 @@ sources: []
 
 | round | 総平均スコア / 5 |
 |---:|---:|
+| 52 | 4.986 |
 | 51 | 4.986 |
 | 50 | 4.972 |
 | 49 | 4.974 |
 | 48 | 5.000 |
-| 47 | 4.986 |
 
-- 最新詳細: `meta/quality-audit-51.md`
+- 最新詳細: `meta/quality-audit-52.md`
 
 ## Lint / informational 検出件数
 

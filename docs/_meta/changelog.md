@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-13 #1177 chore(q56-bd): regen generators + roadmap-v2 iteration BA-BD
 - 2026-05-13 #1176 Add quality audit round 51 (weighted random, guide §6 initial trial)
 - 2026-05-13 #1175 chore: resolve all partial-boundary phase-table violations (15 -> 0)
 - 2026-05-13 #1174 chore(q55-bc): add MKDOCS_SOCIAL_ENABLED toggle for local --strict builds
@@ -521,6 +522,5 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-09 #573 [system] Transceiver / DOM Sensor Monitoring
 - 2026-05-09 #571 [system] Fast-reboot Flow Improvements
 - 2026-05-09 #569 [system] SWSS docker warm restart
-- 2026-05-09 #566 [system] System-wide Warmboot
 - 2026-05-09 #567 [verify] high 優先度 12 ページの裏取り (batch13) [lgtm]
 
