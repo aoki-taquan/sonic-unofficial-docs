@@ -1,7 +1,9 @@
 ---
 title: プラットフォーム
 description: "プラットフォーム — SAI、PMON、センサー、トランシーバ、プラットフォーム API、シャーシ機能を扱う章。"
-verification: stub
+area: platform
+verification: meta
+last_verified: 2026-05-13
 ---
 
 # プラットフォーム

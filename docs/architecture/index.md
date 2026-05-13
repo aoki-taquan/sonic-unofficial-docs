@@ -1,7 +1,9 @@
 ---
 title: アーキテクチャ
 description: "アーキテクチャ — SONiC 全体構成、ビルド、管理基盤、共通設計を横断的に扱う章。"
-verification: stub
+area: architecture
+verification: meta
+last_verified: 2026-05-13
 ---
 
 # アーキテクチャ

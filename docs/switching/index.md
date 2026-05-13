@@ -1,13 +1,47 @@
 ---
 title: スイッチング
 description: "スイッチング — VLAN、LAG、MCLAG、STP、MACsec、L2 forwarding など L2 制御面を扱う章。"
-verification: stub
+area: switching
+verification: meta
+last_verified: 2026-05-13
 ---
 
 # スイッチング
 [VLAN](../reference/glossary.md#term-vlan)、[LAG](../reference/glossary.md#term-lag)、[MCLAG](../reference/glossary.md#term-mclag)、STP、MACsec、L2 forwarding など L2 制御面を扱う章。
+
+## この章の趣旨
+
+L2 / link layer の制御面を扱う。具体的には:
+
+- **VLAN / Switchport モード**: access / trunk / routed、VLAN range、OpenConfig YANG 対応
+- **LAG (PortChannel)**: teammgrd、LACP、warm-reboot 中の retry、分散 VOQ シャシでの system LAG
+- **MCLAG / ICCP**: dynamic config、unique IP、isolation group
+- **MSTP**: Multiple Spanning Tree Protocol on SONiC
+- **MACsec**: wpa_supplicant 連携、Gearbox PHY 上の backend 選択、FIPS POST
+- **L2 forwarding**: FDB flush / aging、static MAC、リンクイベントダンピング、Wake-on-LAN
+
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+
+## 主要ページ
+
+- [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](layer-2-forwarding-enhancements.md)
+- [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md)
+- [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](mclag-enhancements.md)
+- [Multiple Spanning Tree Protocol (MSTP) on SONiC](multiple-spanning-tree-protocol.md)
+- [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](macsec-sonic-high-level-design-document.md)
+- [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](add-support-for-vlan-interface-using-openconfig-yang.md)
+- [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](openconfig-support-for-portchannel-aggregate-interface.md)
+- [BUM ストームコントロール（PORT_STORM_CONTROL）](sonic-bum-storm-control.md)
+- [Wake-on-LAN（wol CLI と SonicWolService gNOI）](wake-on-lan-in-sonic.md)
+- [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](link-event-damping-hld.md)
+
+## 扱わない範囲
+
+- L3 機能（IP routing / BGP / VRF）は [routing](../routing/index.md) 章
+- L2 over IP (VXLAN / NVGRE / VNet) は [overlay](../overlay/index.md) 章
+- ACL / QoS / buffer / scheduler は [acl-qos](../acl-qos/index.md) 章
+- PortChannel / VLAN の **CLI コマンド一覧** や **CONFIG_DB テーブル定義** は [reference](../reference/index.md) 章
 ## 検証状況
 - ページ数: 19
 - 分布: Code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3

@@ -1,13 +1,49 @@
 ---
 title: ACL & QoS
 description: "ACL & QoS — ACL、CoPP、mirror、buffer、PFC、watermark、scheduler などパケット制御と QoS を扱う章。"
-verification: stub
+area: acl-qos
+verification: meta
+last_verified: 2026-05-13
 ---
 
 # ACL & QoS
 [ACL](../reference/glossary.md#term-acl)、[CoPP](../reference/glossary.md#term-copp)、mirror、buffer、[PFC](../reference/glossary.md#term-pfc)、watermark、scheduler などパケット制御と [QoS](../reference/glossary.md#term-qos) を扱う章。
+
+## この章の趣旨
+
+データプレーンのパケット選別・優先度制御・統計を扱う。具体的には:
+
+- **ACL**: テーブル型、ingress / egress、ユーザ定義テーブル型、L3V4V6 統合、flex counter 化
+- **CoPP**: Manager 再設計、neighbor miss trap、enum capability query
+- **Mirror / Everflow**: SPAN / ERSPAN、egress mirror + action capability
+- **Buffer / PFC**: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、WRED / ECN
+- **QoS scheduler**: SP / WRR / DWRR、min/max bandwidth、shaper
+- **Watermark / Drop counter**: PG / queue 占有量、buffer drop、configurable drop counter
+
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
+
+## 主要ページ
+
+- [ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）](acl-in-sonic.md)
+- [ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）](acl-support-in-sonic.md)
+- [ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）](acl-user-defined-table-type-support.md)
+- [ACL カウンタの flex counter 化（ACL_COUNTER + COUNTERS_ACL_COUNTER_RULE_MAP）](acl-flex-counters-support.md)
+- [SONiC Port Mirroring（SPAN / ERSPAN）](sonic-port-mirroring-hld.md)
+- [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](sonic-qos-scheduler-and-shaping.md)
+- [Dynamic Headroom Calculation（buffer_model = dynamic）](dynamically-headroom-calculation.md)
+- [PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）](pfc-historical-statistics.md)
+- [バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）](watermark-counters-in-sonic.md)
+- [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](configurable-drop-counters-in-sonic.md)
+- [CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）](copp-manager-redesign-test-plan.md)
+- [Port Access Control（PAC: 802.1x / MAB / RADIUS）](port-access-control-in-sonic.md)
+
+## 扱わない範囲
+
+- 経路選択そのもの（ECMP / nexthop policy）は [routing](../routing/index.md) 章
+- L2 forwarding テーブル設計（FDB / VLAN 内 flooding）は [switching](../switching/index.md) 章
+- 個別ベンダーの SAI 拡張 ACL（コミュニティ `master` の SAI 標準範囲のみ扱う）
+- ACL / QoS の **CLI コマンド一覧** / **CONFIG_DB テーブル定義** は [reference](../reference/index.md) 章
 ## 検証状況
 - ページ数: 31
 - 分布: Code-verified: 23 / Discrepancy-found: 2 / HLD-only: 6
