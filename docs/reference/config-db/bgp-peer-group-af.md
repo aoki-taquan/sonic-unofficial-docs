@@ -135,4 +135,15 @@ vtysh -c "show running-config bgpd"
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 | ソース |
+|------|------|--------|
+| key パース時 `\|` が不正 (ValueError) | catch → continue (skip) | `frrcfgd.py` L2665 |
+| `local_asn` が未設定の VRF | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
+| 対象 peer-group が FRR に未存在のまま AF 設定 | vtysh コマンド失敗 → `failed running BGP neighbor config command` を LOG_ERR → continue | `frrcfgd.py` L2791 |
+| `BGP_PEER_GROUP_AF` と `BGP_NEIGHBOR_AF` の key_map 共用 | 両テーブルは同一 `nbr_af_key_map` を使用。max_prefix / send_default_route の複合条件は BGP_NEIGHBOR_AF と同様 | `frrcfgd.py` L2112 |
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->

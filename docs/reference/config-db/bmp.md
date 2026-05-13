@@ -99,4 +99,15 @@ show bmp
 ```
 <!-- /ops-hint -->
 
+<!-- cdb-exceptions -->
+## 例外条件・特殊挙動
+
+| 条件 | 挙動 | ソース |
+|------|------|--------|
+| 不明なフィールドが設定される | `common_config.get('bgp_neighbor_table', 'false')` 等のデフォルト補完で `false` 扱い。スキーマ外フィールドは silently ignored | `bmpcfgd.py` L41-43 |
+| `"True"` / `"TRUE"` / `"1"` 等の値 | `is_true()` は `str(val).lower() == 'true'` のみ受理。`"true"` 小文字のみ有効 | `bmpcfgd.py` L28 |
+| 設定変更ごとに openbmpd を再起動 | stop → BMP_STATE_DB クリア → start の順序。`supervisorctl` 失敗時は例外 catch なし → bmpcfgd クラッシュの可能性 | `bmpcfgd.py` L46-49 |
+| CONFIG_DB 接続不可 | `retry_on=True` で無限リトライ (CONFIG_DB 起動まで待機) | `bmpcfgd.py` L78 |
+<!-- /cdb-exceptions -->
+
 <!-- glossary-links-injected: 9e5a57a09d49 -->
