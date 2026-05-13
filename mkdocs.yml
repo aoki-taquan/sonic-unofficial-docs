@@ -80,8 +80,13 @@ plugins:
   # ビルド時に生成する。旧 mkdocs 純正の `prebuild_index` 相当は
   # material/search では deprecated（常時有効）なので明示指定はしない。
   - search:
-      lang: ja
-      separator: '[\s\-、。・]+'
+      lang:
+        - ja
+        - en
+      # 日本語/英語混在を想定した分割: 空白・記号類・句読点・HTML エンティティで分割。
+      # 形態素解析（jieba/kuromoji 等）は build 時間が伸びるため導入せず、
+      # lunr 標準 + 区切り文字での近似分割に留める。
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|[、。・「」『』（）：；！？]'
   - awesome-pages
   - tags
 
