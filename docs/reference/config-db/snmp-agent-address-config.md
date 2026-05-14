@@ -141,4 +141,28 @@ show runningconfiguration snmp
 
 [^2]: snmpd.conf テンプレート: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
 
+
+<!-- runtime-trace -->
+## CDB → 実コンテナ動作トレース
+
+### 段階 1: Consumer 登録
+
+- **hostcfgd**: `SNMP_AGENT_ADDRESS_CONFIG` テーブルを `ConfigDBConnector` で購読。
+
+### 段階 2: CFG → APPL 翻訳
+
+- hostcfgd が SNMP エージェント (`snmpd`) のリッスンアドレス設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
+- APP_DB への書き込みなし。
+
+### 段階 3: APPL → SAI
+
+- SAI 経由なし。snmpd がデータプレーン統計を直接 SAI/kernel から読み取る。
+
+### 段階 4: タイミング + 副作用
+
+- snmpd 再起動まで数秒。既存 SNMP セッションは切断される。
+- 副作用: リッスンアドレス変更中に SNMP モニタリングが一時停止。
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->

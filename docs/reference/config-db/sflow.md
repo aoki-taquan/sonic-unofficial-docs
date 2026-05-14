@@ -179,4 +179,28 @@ show sflow
 
 [^2]: sflowmgr / sfloworch 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
+
+<!-- runtime-trace -->
+## CDB → 実コンテナ動作トレース
+
+### 段階 1: Consumer 登録
+
+- **sflowmgrd** (`sonic-swss/cfgmgr/sflowmgr.cpp`): `SFLOW` / `SFLOW_SESSION` テーブルを `ConfigDBConnector` で購読。
+
+### 段階 2: CFG → APPL 翻訳
+
+- sflowmgrd が `hsflowd` (sFlow エージェント) の設定ファイルを更新し再起動。
+- ポート単位のサンプリングレート設定を APP_DB `SFLOW_SESSION_TABLE` に書き込み。
+
+### 段階 3: APPL → SAI
+
+- orchagent / SflowOrch が APP_DB `SFLOW_SESSION_TABLE` を購読し `sai_samplepacket_api` でハードウェアサンプリングを設定。
+
+### 段階 4: タイミング + 副作用
+
+- グローバル有効化 (`admin_state=up`) 後に各ポートのサンプリングが有効になる。
+- 副作用: サンプリングレートを低くしすぎると CPU 負荷が増大。デフォルト 512 は一般的な設定。
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 8e8594481100 -->
