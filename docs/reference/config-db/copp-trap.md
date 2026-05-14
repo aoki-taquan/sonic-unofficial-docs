@@ -16,6 +16,7 @@ related:
     - config copp
   yang:
     - sonic-copp
+hard: 0
 ---
 
 # COPP_TRAP テーブル
@@ -191,4 +192,37 @@ show copp config
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| COPP_TRAP は `copp_cfg.json` からロードされ、minigraph/init_cfg.json.j2 では生成されない | — | `/etc/sonic/copp_cfg.json` 参照 |
+| 派生なし | — | — |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `CoppOrch` が `COPP_TRAP` を `doTask` で購読 | `sonic-swss/orchagent/copporch.cpp:880` |
+
+### grep カバレッジ
+
+- copporch.cpp L880: COPP_TRAP を含む doTask ディスパッチ
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `CoppOrch` | `doTask()` | `table_name == CFG_COPP_TRAP_TABLE_NAME`（COPP_TRAP テーブル） | `processCoppTrap()` を呼び出し（COPP_GROUP と別パス） | `sonic-swss/orchagent/copporch.cpp:880-935` |
+| `CoppOrch` | `processCoppTrap()` | `trap_id` が `snat_miss` / `dnat_miss` かつ NAT が無効 | SAI ホストインターフェーストラップ作成をスキップ | `sonic-swss/orchagent/copporch.cpp:401-404` |
+| `CoppOrch` | `processCoppTrap()` | `trap_group` が `m_trap_group_map` に未存在 | `task_need_retry`（グループ未作成ガード） | `sonic-swss/orchagent/copporch.cpp:584` |
+| `CoppOrch` | `processCoppTrap()` | `op == DEL_COMMAND` | SAI トラップを削除しグループからアンバインド | `sonic-swss/orchagent/copporch.cpp:1102` |
+
+> **スキャン証跡**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 7a3847939b09 -->

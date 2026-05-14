@@ -17,6 +17,7 @@ related:
   cli: []
   yang:
     - sonic-buffer-profile
+hard: 0
 ---
 
 # BUFFER_PROFILE テーブル
@@ -194,4 +195,40 @@ show buffer profile
 - Dynamic buffer model: `buffermgrd` が速度・ケーブル長に基づいて Lossless プロファイルを自動計算・書き込み
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| DB 移行: `pool` フィールドの区切り文字を新形式に更新 | `BUFFER_PROFILE.pool` を変換 | `sonic-utilities/scripts/db_migrator.py:448` |
+| DB 移行: 動的計算プロファイル（`pg_lossless_*_profile` 形式）を削除 | `BUFFER_PROFILE` から動的エントリを除去 | `sonic-utilities/scripts/db_migrator.py:351-362` |
+| Dynamic buffer model: `buffermgrd` が速度・ケーブル長から Lossless プロファイルを自動生成 | `BUFFER_PROFILE` に `pg_lossless_<speed>_<cable>_profile` を書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2692` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `BufferMgrDynamic` が `BUFFER_PROFILE` を `handleBufferProfileTable` に登録 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:444` |
+
+### grep カバレッジ
+
+- buffermgrdyn.cpp L444: BUFFER_PROFILE ハンドラ登録（条件なし）
+- db_migrator.py L351-362: 動的プロファイル削除
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BufferMgrDynamic` | `handleBufferProfileTable()` | `pool` フィールドが空 | `task_failed` 返却（pool 未指定エラー） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2748` |
+| `BufferMgrDynamic` | `handleBufferProfileTable()` | `pool` が `m_bufferPoolLookup` に未存在 | `task_need_retry`（pool 未準備ガード） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2712` |
+| `BufferMgrDynamic` | `handleBufferProfileTable()` | `threshold_mode` が pool の mode と不一致 | `task_failed` 返却（threshold mode 整合チェック） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2730` |
+| `BufferMgrDynamic` | `handleBufferProfileTable()` | `PROFILE_INITIALIZING == profileApp.state`（新規） | `dynamic_calculated = false`、`lossless = false` で初期化 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2690-2693` |
+| `BufferMgrDynamic` | `handleBufferProfileTable()` | `op == DEL_COMMAND` かつプロファイルが動的計算中 | 動的計算プロファイルは削除せず内部状態をリセット | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2934` |
+
+> **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 22dbf67b9d97 -->

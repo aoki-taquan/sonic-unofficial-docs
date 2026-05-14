@@ -166,6 +166,39 @@ show mux status
 - 副作用: ピア障害検知後、MuxOrch がトラフィックを local に引き込む自動フェイルオーバーを実施。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+PEER_SWITCH テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし — minigraph または手動 JSON 投入
+
+### minigraph / sonic-cfggen
+
+**minigraph.py** が `results['PEER_SWITCH']` にデュアルトール構成のピア情報を投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での PEER_SWITCH マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+`src/sonic-config-engine/config_samples.py` にサンプルエントリあり
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

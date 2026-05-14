@@ -2,6 +2,7 @@
 title: WARM_RESTART テーブル
 description: "WARM_RESTART テーブル — ホットフィックスやソフトウェアアップグレード時にデータプレーンを落とさずコントロールプレーンを再起動するためのモジュール別 warm-restart 設定を持つテーブル。モジュール (bgp/teamd/swss/system) ごとに enable 状態と各種タイマを保持する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -181,5 +182,38 @@ show warm_restart state
 - STATE_DB `WARM_RESTART_TABLE` で各サービスの進捗を確認可能。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+WARM_RESTART テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config warm_restart enable/disable/neighsyncd_timer/bgp_timer/teamsyncd_timer ...` — `config/main.py` が `mod_entry('WARM_RESTART', 'swss'/'bgp'/'teamd', ...)` を呼ぶ (sonic-utilities/config/main.py:4032–4094)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に WARM_RESTART 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+**db_migrator.py** が WARM_RESTART のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: ddc022697593 -->

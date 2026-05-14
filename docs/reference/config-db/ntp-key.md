@@ -163,6 +163,39 @@ enum: `type`=md5/sha1/sha256/sha384/sha512、`trusted`=yes/no。変更は `syste
 - 鍵更新後 ntpd 再起動まで数秒。鍵ロールオーバー中は NTP 認証が一時的に失敗する可能性。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+NTP_KEY テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config ntp authentication-key add/del ...` — `config/main.py` が NTP_KEY を書き込む (sonic-utilities/config/main.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に NTP_KEY 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での NTP_KEY マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+`files/image_config/chrony/chrony.keys.j2` が NTP_KEY を参照して chrony.keys を生成するが、逆方向の DB 書き込みではない
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 

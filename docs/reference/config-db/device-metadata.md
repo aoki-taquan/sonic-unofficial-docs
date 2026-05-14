@@ -607,4 +607,61 @@ orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り
 | `rack_mgmt_map`, `slice_type`, `downstream_subrole`, `dhcp_server` | 1 (minigraph 各) | いいえ | **YANG 未定義フィールド** |
 <!-- /entry-points -->
 
+<!-- runtime-trace -->
+## 起動経路 (Direction B: CFG → APPL → SAI)
+
+### 段階 1: Consumer 登録
+
+| Daemon / Manager | DB / Table 名 | Key separator | namespace | コールバック | evidence |
+|---|---|---|---|---|---|
+| `buffermgrd` (BufferMgr) | CONFIG_DB / `DEVICE_METADATA` | `\|` | ASIC ごとの cfgDb | `BufferMgr::doTask()` → `doBufferMetaTask()` | sonic-swss/cfgmgr/buffermgrd.cpp:200; buffermgr.cpp:464-499 |
+| `orchagent` (FlexCounterOrch) | CONFIG_DB / `DEVICE_METADATA` | `\|` | ASIC namespace | `FlexCounterOrch::handleDeviceMetadataTable()` | sonic-swss/orchagent/orchdaemon.cpp:622; flexcounterorch.cpp:149-152,488-521 |
+| `hostcfgd` (DeviceMetaCfg) | CONFIG_DB / `DEVICE_METADATA` | `\|` | default | `DeviceMetaCfg.hostname_update()`, `apply_timezone_if_needed()`, `rsyslog_config()` | sonic-host-services/scripts/hostcfgd:2492,1485- |
+| `fpmsyncd` | CONFIG_DB / `DEVICE_METADATA` | `\|` | default | `fpmsyncd` main loop (suppress-fib-pending 監視) | sonic-swss/fpmsyncd/fpmsyncd.cpp:113,265-300 |
+| `orchagent` main (起動時のみ) | CONFIG_DB / `DEVICE_METADATA` | `\|` | ASIC namespace | `getCfgSwitchType()` — `switch_type`, `subtype`, `switch_id` を hget | sonic-swss/orchagent/main.cpp:244,292,658 |
+
+### 段階 2: CFG_DB → APPL_DB / STATE_DB 翻訳
+
+| CFG field | APPL/STATE field | 変換 | evidence |
+|---|---|---|---|
+| `buffer_model = traditional` | APPL_DB `BUFFER_POOL`, `BUFFER_PG`, `BUFFER_QUEUE`, `BUFFER_PROFILE` | CFG_DB テーブルをそのまま APPL_DB に転写 (`m_applBufferPoolTable.set()` 等) | sonic-swss/cfgmgr/buffermgr.cpp:481-499 |
+| `buffer_model = dynamic` | APPL_DB への書き込みを **抑制** | `dynamic_buffer_model = true` → APPL_DB 書き込みをスキップし platform SAI に委ねる | sonic-swss/cfgmgr/buffermgr.cpp:476 |
+| `create_only_config_db_buffers` | FLEX_COUNTER_DB 設定 | `m_createOnlyConfigDbBuffers` フラグ更新 → `getQueueConfigurations()` でカウンタ設定分岐 | sonic-swss/orchagent/flexcounterorch.cpp:488-521 |
+| その他全フィールド | APPL_DB / STATE_DB への書き込みなし | 直接 Linux コマンド / 起動フラグ / FRR conf 生成で処理 | 下記段階 3 を参照 |
+
+### 段階 3: APPL_DB → SAI / Linux
+
+| APPL/CFG field | SAI attribute / コマンド | 形式 | evidence |
+|---|---|---|---|
+| `switch_type = voq` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ` | `sai_switch_api->create_switch()` 起動時引数 | sonic-swss/orchagent/main.cpp:697-698 |
+| `switch_type = fabric` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC` | `sai_switch_api->create_switch()` 起動時引数 | sonic-swss/orchagent/main.cpp:741-742 |
+| `synchronous_mode = enable` | orchagent 起動フラグ `-s` → SAI を同期 API で呼び出し | shell スクリプト → orchagent / syncd 起動引数 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:37-40; sonic-sairedis/syncd/scripts/syncd_init_common.sh:43-54 |
+| `buffer_model = dynamic` | `buffermgrd -a /etc/sonic/asic_table.json` → dynamic SAI buffer | shell 起動引数 → platform SAI buffer API | sonic-buildimage/dockers/docker-orchagent/buffermgrd.sh:5-9 |
+| `buffer_model = traditional` | APPL_DB BUFFER_* → orchagent `BufferOrch::doTask()` → `sai_buffer_api->create_buffer_pool()` / `set_ingress_priority_group_attribute()` | APPL_DB 経由 | sonic-swss/orchagent/bufferorch.cpp |
+| `nexthop_group = enabled` | `fpm use-next-hop-groups` (FRR zebra.conf) → FRR FPM → Linux netlink NEXTHOP | J2 テンプレート展開 → FRR 設定 | sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2:19-22 |
+| `zebra_nexthop = disabled` | `no zebra nexthop kernel enable` → Linux カーネル nexthop 無効化 | J2 テンプレート展開 → FRR 設定 | sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2:11-12 |
+| `suppress-fib-pending = enabled` | FRR `bgp suppress-fib-pending` + fpmsyncd FIB 応答待機 | FRR vtysh コマンド + fpmsyncd 内部状態 | sonic-swss/fpmsyncd/fpmsyncd.cpp:113-114 |
+| `hostname` | `service hostname-config restart` → `/etc/hostname` 更新 | Linux systemd サービス | sonic-host-services/scripts/hostcfgd:1530-1535 |
+| `timezone` | `timedatectl set-timezone <tz>` + `systemctl restart rsyslog` | Linux timedatectl / systemd | sonic-host-services/scripts/hostcfgd:1558-1561 |
+| `async_swss_rec = enabled` | orchagent 起動フラグ `-A` → swss.rec 非同期書き込み | shell 起動引数 (SAI 影響なし) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68 |
+
+### 段階 4: タイミングと副作用
+
+| 条件 | 副作用 / タイミング | evidence |
+|---|---|---|
+| `switch_type` runtime SET | **create-only** — orchagent 起動時に一度だけ読む。runtime 変更には swss コンテナ再起動が必要 | orchagent/main.cpp:658 |
+| `synchronous_mode` runtime SET | **create-only** — `swss_vars.j2` は起動時生成。コンテナ再起動が必要 | orchagent.sh:37 |
+| `buffer_model` runtime SET | **フラグは mutable** — BufferMgr は ConsumerStateTable で動的更新可。ただしバッファ計算エンジン (`buffermgrd` 起動引数) の切り替えには再起動が必要 | buffermgr.cpp:390-406; buffermgrd.sh |
+| `create_only_config_db_buffers` runtime SET | **mutable** — FlexCounterOrch が ConsumerStateTable で動的に更新 | flexcounterorch.cpp:488-521 |
+| `suppress-fib-pending = enabled → disabled` | **mutable** — fpmsyncd が即時切替。切替時に既存保留ルートを offloaded としてマークする副作用あり | fpmsyncd.cpp:280-300 |
+| `hostname` runtime SET | **mutable** — hostcfgd が `service hostname-config restart` + `monit reload` を即時実行 | hostcfgd:1530-1535 |
+| `nexthop_group` / `zebra_nexthop` runtime SET | **create-only** — zebra.conf は起動時 J2 展開。FRR コンテナ再起動が必要 | zebra.conf.j2 |
+| warm-restart 時 | `buffer_model` フラグ・`create_only_config_db_buffers` は reconciling 後に再適用。`switch_type` は warm-restart でも変更不可 (SAI `create_switch` は一度のみ) | main.cpp:658 |
+| cold-boot 時 | 全フィールドが起動時に順次読み込まれる。`switch_type` は最初の SAI `create_switch()` に渡される | main.cpp:658,697 |
+| `suppress-fib-pending = enabled` かつ SAI 応答遅延 | FRR がルートを保留し続けるとルーティングブラックホールリスクあり。YANG `must` 制約で `synchronous_mode = enable` を必須化することでリスク軽減 | sonic-device_metadata.yang:250; fpmsyncd.cpp:113-116 |
+| `buffer_model = dynamic` + BUFFER_PG 変更 | dynamic model 時は orchagent が BUFFER_PG 変更を SAI に送らない。platform SAI が自動調整するため PORT 再起動シーケンスへの影響なし | buffermgr.cpp:476 |
+| `switch_type = dpu` (synchronous_mode 上書き) | `switch_type = dpu` のとき `orchestagent.sh:38-39` で `-z zmq_sync -k 65536` を強制。`synchronous_mode` フィールドの値は無視される | orchagent.sh:38-39 |
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: e22e287b939b -->

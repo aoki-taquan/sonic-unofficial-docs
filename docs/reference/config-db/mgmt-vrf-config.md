@@ -152,6 +152,39 @@ enum なし (boolean)。`NTP.vrf=mgmt` は本フィールドが `true` の場合
 - 副作用: `mgmtVrfEnabled = true` 時に eth0 が mgmt namespace に移動。SSH 接続が一時的に切断される可能性。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+MGMT_VRF_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config vrf add mgmt` / `config vrf del mgmt` — `config/main.py` が `mod_entry('MGMT_VRF_CONFIG', 'vrf_global', {'mgmtVrfEnabled': 'true/false'})` を呼ぶ (sonic-utilities/config/main.py:4107, 4121)
+
+### minigraph / sonic-cfggen
+
+minigraph.py で `MGMT_VRF_CONFIG` は生成されない
+
+### REST / gNMI
+
+sonic-mgmt-common トランスフォーマーなし — REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+`files/build_templates/init_cfg.json.j2` にデフォルトなし — CLI でのみ作成
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: ca16c59f26d9 -->
 

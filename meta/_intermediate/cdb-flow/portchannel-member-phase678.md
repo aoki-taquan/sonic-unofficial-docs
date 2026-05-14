@@ -1,10 +1,43 @@
-# portchannel-member — Phase 6/7/8 中間ファイル
+# PORTCHANNEL_MEMBER — Phase 6/7/8 中間ファイル
 
-生成日: 2026-05-14 (cdb_batch_5 + cdb_batch_6)
+生成日: 2026-05-14 (batch cdb_batch_4)
 
-## スキャン概要
+<!-- derivation -->
+## Phase 6: 自動派生代入スキャン
 
-Phase 6 (自動派生) / Phase 7 (条件付き登録) / Phase 8 (handler メソッド内分岐) の証跡を抽出し、
-`docs/reference/config-db/portchannel-member.md` に `<!-- derivation -->` / `<!-- handler-branching -->` ブロックとして追記。
+### minigraph.py — PORTCHANNEL_MEMBER 自動生成
 
-詳細証跡は各 md ブロック内の evidence 列を参照。
+```
+# minigraph.py:2547
+results['PORTCHANNEL_MEMBER'] = pc_members
+```
+
+`pc_members` は minigraph XML の `<PortChannel>` 内 `<member>` タグから自動生成。各メンバーポートに空のフィールド辞書 `{}` を割り当て。
+
+### db_migrator.py / config_samples.py / init_cfg.json.j2 — 該当なし
+
+<!-- /derivation -->
+
+<!-- derivation -->
+## Phase 7: 条件付き manager/orch 登録
+
+TeamMgr (teammgr.cpp) が PORTCHANNEL_MEMBER を購読し `teamd` にメンバーポートを追加/削除。常時起動、条件付き登録なし。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+## Phase 8: manager メソッド内 early return / dispatch
+
+### teammgr.cpp — PORTCHANNEL_MEMBER ハンドラ分岐
+
+| 操作 | 処理 |
+|------|------|
+| SET | `addPortChannelMember()` → `teamd ctl port add` |
+| DEL | `removePortChannelMember()` → `teamd ctl port remove` |
+
+early return:
+- PortChannel 未作成 → `task_need_retry`
+- ポートが他 PortChannel に所属中 → `task_invalid_entry`
+- teamd コマンド失敗 → `task_failed`
+
+<!-- /handler-branching -->

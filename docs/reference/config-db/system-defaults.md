@@ -2,6 +2,7 @@
 title: SYSTEM_DEFAULTS テーブル
 description: "SYSTEM_DEFAULTS テーブル — システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。init_cfg.json 由来の値を保持し、db_migrator が初期化時にエントリの有無を確認する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -130,6 +131,34 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+各サービスが `SYSTEM_DEFAULTS` を参照して起動時のデフォルト動作を決定する。`synchronous_mode==enable` → orchagent が SAI call を synchronous モードで実行。`interface_naming_mode==alias` → portsyncd / intfmgrd がエイリアス名を使用。`frr_mgmt_framework_config==true` → sonic-mgmt-framework が FRR 設定を管理。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイグレーションする。orchagent は起動時に `synchronous_mode` を読み取って起動モードを決定する（起動後の変更は無効）。`SYSTEM_DEFAULTS|GLOBAL` エントリのみ有効（シングルトン制約）。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `orchagent` 起動 | `synchronous_mode==enable` | SAI API を synchronous モードで呼び出し | `orchagent/main.cpp` |
+| `orchagent` 起動 | `synchronous_mode==disable` または未設定 | SAI API を asynchronous モードで呼び出し | `orchagent/main.cpp` |
+| 各サービス | `frr_mgmt_framework_config==true` | sonic-mgmt-framework による FRR 設定管理を有効化 | 複数サービス |
+| `portsyncd` / `intfmgrd` | `interface_naming_mode==alias` | インターフェース alias 名を使用 | `portsyncd` |
+| `portsyncd` / `intfmgrd` | `interface_naming_mode==default` | 標準 IF 名を使用 | `portsyncd` |
+
+> **スキャン証跡**: `SYSTEM_DEFAULTS` は複数のシステム全体設定を束ねるシングルトンテーブル。`synchronous_mode` の分岐が orchagent 起動時の動作に直結する主要な Phase 8 分岐。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -152,5 +181,38 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 - 副作用: switch_type の変更は swss/syncd の完全再起動が必要でサービス断が生じる。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SYSTEM_DEFAULTS テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SYSTEM_DEFAULTS 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SYSTEM_DEFAULTS マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+**`files/build_templates/init_cfg.json.j2`** に SYSTEM_DEFAULTS エントリ (IPv6 forwarding 等) がビルド時に投入 (sonic-buildimage/files/build_templates/init_cfg.json.j2); **`files/build_templates/qos_config.j2`** と **`files/build_templates/buffers_config.j2`** も参照
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 90fa20b1e615 -->

@@ -18,6 +18,7 @@ related:
     - config bgp
   yang:
     - sonic-bgp-global
+hard: 0
 ---
 
 # BGP_GLOBALS テーブル
@@ -252,4 +253,36 @@ vtysh -c 'show running-config bgpd'
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph.py は BGP_GLOBALS を直接生成しない | — | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2273` (BGP_NEIGHBOR のみ) |
+| frrcfgd が FRR running-config を読み込み CONFIG_DB と同期 | BGP_GLOBALS の各フィールドを上書き | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2094-2140` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `frrcfgd.BGPConfigDaemon` が `BGP_GLOBALS` を購読 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2293-2295` |
+
+### grep カバレッジ
+
+- frrcfgd.py 3000+ 行、BGP_GLOBALS handler 登録: 1 件（条件なし）
+- minigraph.py: BGP_GLOBALS への直接代入: 0 件
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPConfigDaemon` | `bgp_global_handler()` | `data is None`（DELETE） | `del_table=True` → FRR に `no router bgp` 相当を送出 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
+| `BGPConfigDaemon` | `bgp_global_handler()` | `data` が `keepalive` と `holdtime` を共に含む | `comb_attr_list` 制約により両フィールドがセットでのみ FRR コマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3937` |
+
+> **スキャン証跡**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
