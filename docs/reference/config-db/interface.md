@@ -292,6 +292,40 @@ show ip interfaces
 4. **eth0 / docker0 / usb0 は silent drop**: intfsorch が即 erase (SAI に届かない)
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> 調査日: 2026-05-14
+
+### 他テーブル先行必須
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|-------------------|-----------|-----------|
+| `PORT` + portmgrd が STATE_DB に `state=ok` を書く | `isIntfStateOk(alias)` が false → `INTERFACE` SET をスキップ・retry | `intfmgr.cpp:831-837` |
+| `VRF` + vrfmgrd が STATE_DB に ready を書く | `isIntfStateOk(vrf_name)` が false → `vrf_name` 付き SET をスキップ | `intfmgr.cpp:839-842` |
+| `INTERFACE|<port>` (L3 enable 行) が STATE_INTERFACE_TABLE に存在 | `isIntfCreated(alias)` が false → IP プレフィクスロウの SET をスキップ | `intfmgr.cpp:1115` |
+| orchagent 側: `VRF` オブジェクトが orchagent 内に存在 | `m_vrfOrch->isVRFexists(vrf_name)` が false → APP_DB 側の処理もスキップ | `intfsorch.cpp:826-830` |
+
+### SET 後 DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| L3 enable 行 (`INTERFACE|<port>`) の DEL | すべての IP プレフィクスロウ (`INTERFACE|<port>|<ip>`) を先に DEL してから | `intfmgr.cpp:1058-1063` |
+| VRF 変更 | 直接変更不可。`vrf_name=""` で unbind → 新 VRF で rebind の 2 ステップ | `intfmgr.cpp:846-849` |
+
+### Notification 順序
+
+`intfmgrd` は起動時に `SubscriberStateTable` で `STATE_PORT_TABLE` と `STATE_LAG_TABLE` を購読する。portmgrd / lagmgrd が `state=ok` を STATE_DB に書いた瞬間、intfmgrd の `doPortTableTask` がトリガされ、キューに積まれていた `INTERFACE` エントリが再処理される。このため、**CONFIG_DB に書いた時点ではなく STATE_DB 通知のタイミングで実際の適用が始まる**。
+
+### warm-reboot 影響
+
+- warm-start 時、intfmgrd は `buildIntfReplayList()` で CONFIG_DB の `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` キーを収集し、カーネルへ replay する。replay リストが空になると即 `RECONCILED` に遷移する（reconciliation ロジックなし）。
+- `m_ipv6LinkLocalModeList` は in-memory の `std::set` であり、warm-reboot 後は空に戻る。CONFIG_DB の `ipv6_use_link_local_only: enable` エントリが replay されて再 SET されるまで link-local モードは失われる。
+- cold restart では `flushLoopbackIntfs()` で Loopback インタフェースをカーネルから全削除してから再作成する。INTERFACE は PORT STATE_DB ready 待ちから通常の順序依存で処理される。
+
+<!-- /ordering -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
