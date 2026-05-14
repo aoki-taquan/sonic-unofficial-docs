@@ -273,4 +273,29 @@ show buffer profile
 
 > **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG 定義のデフォルト値と `buffermgrdyn.cpp` / `bufferorch.cpp` 実装の実際の挙動を突き合わせた結果。
+
+| フィールド | YANG default | 実装の実際の挙動 | 種別 | evidence |
+|-----------|-------------|----------------|------|----------|
+| `xon` | `0` | lossy プロファイル (`lossless==false`) では APPL_DB/SAI に **書かれない** (silent omit) | YANG-impl 乖離 / silent omit | `buffermgrdyn.cpp:903-905` |
+| `xon_offset` | `0` | 未設定時 APPL_DB/SAI に **含まれない** (silent omit)。SAI platform default が適用される | silent omit | `buffermgrdyn.cpp:906-908` |
+| `xoff` | `0` | lossy プロファイルでは APPL_DB/SAI に書かれない。**`xoff` フィールドの存在** が `lossless=true` フラグのトリガー | YANG-impl 乖離 / flag derivation | `buffermgrdyn.cpp:2755,909` |
+| `headroom_type` | `static` | フィールド不在 → `dynamic_calculated=false` (static 扱い)。`dynamic` 指定時は `lossless=true` + `direction=INGRESS` が自動セットされ、ポート参照まで APPL_DB に書かれない | flag derivation / APPL_DB defer | `buffermgrdyn.cpp:2692,2788-2795,2820` |
+| `packet_discard_action` | (none) | 未設定時 APPL_DB/SAI に送らない。SAI platform default (通常 `drop`) が適用される | silent omit / platform dependency | `buffermgrdyn.cpp:911-913` |
+| `dynamic_th` / `static_th` | (none) | どちらも未設定時: pool の `mode` を `threshold_mode` に採用。`threshold` が空文字のまま APPL_DB に書かれるリスクあり | fallback / empty-string write | `buffermgrdyn.cpp:901,917` |
+| `lossless` (内部フラグ) | `false` | `xoff` 設定 または `headroom_type=dynamic` で自動 `true`。pool 方向チェック (ingress 必須) が有効になる | flag derivation | `buffermgrdyn.cpp:2755,2793,2807` |
+| `size` (dynamic mode) | mandatory | dynamic headroom model ではポート速度・ケーブル長から lua plugin が計算して上書き | ランタイム上書き | `buffermgrdyn.cpp:989-1001` |
+| `xon` (Mellanox 8-lane) | YANG 0 / lua 計算値 | Mellanox モデル番号 4xxx/5xxx の 8 レーンポートは xon が **2 倍** の値で計算される | platform dependency | `buffermgrdyn.cpp:504-517` |
+
+### 注意事項
+
+- **static buffer model** (`buffermgr.cpp`): BUFFER_PROFILE を CONFIG_DB から APPL_DB へ **passthrough** する。`headroom_type` フィールドは解釈されず dead field となる。
+- **pool 未準備時の APPL_DB 書き込み skip**: `m_bufferPoolReady == false` のとき `updateBufferProfileToDb()` が pending フラグを立てて即座にリターンする (`buffermgrdyn.cpp:892-896`)。
+- **pool 削除待ち状態 (pendingRemove) への SET**: `task_need_retry` を返す。プロファイルを参照中の PG/Queue が存在する限り削除もできない (`buffermgrdyn.cpp:2858`)。
+- **threshold_mode と pool mode の不一致**: `dynamic_th` を指定したが pool が `static` mode の場合 (またはその逆)、`task_failed` でリジェクトされる (`buffermgrdyn.cpp:2726-2735`)。
+
+<!-- /defaults -->
 <!-- glossary-links-injected: 22dbf67b9d97 -->
