@@ -16,6 +16,7 @@ related:
     - config copp
   yang:
     - sonic-copp
+hard: 0
 ---
 
 # COPP_GROUP テーブル
@@ -208,4 +209,37 @@ show copp config
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| COPP_GROUP は init_cfg / minigraph では生成されない（`/etc/sonic/copp_cfg.json` からロード） | — | `sonic-swss/orchagent/copporch.cpp` コメント |
+| 派生なし | — | — |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `CoppOrch` が `COPP_GROUP` / `COPP_TRAP` を `doTask` で購読 | `sonic-swss/orchagent/copporch.cpp:737` |
+
+### grep カバレッジ
+
+- copporch.cpp 1200+ 行、COPP_GROUP 購読: 1 件（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `CoppOrch` | `processCoppTrapGroup()` | `op == SET_COMMAND` かつ trap_group が未存在 | SAI でトラップグループを新規作成 | `sonic-swss/orchagent/copporch.cpp:737,756` |
+| `CoppOrch` | `processCoppTrapGroup()` | `op == DEL_COMMAND` かつ `trap_group_name == "default"` | `task_ignore`（デフォルトグループ削除を拒否） | `sonic-swss/orchagent/copporch.cpp:861-864` |
+| `CoppOrch` | `processCoppTrapGroup()` | `genetlink_name` フィールドが存在する | Genetlink hostif を作成してトラップグループに紐付け | `sonic-swss/orchagent/copporch.cpp:844` |
+| `CoppOrch` | `processCoppTrapGroup()` | `trap_ids` フィールド変更あり | `trapGroupProcessTrapIdChange()` でトラップ ID を追加・削除 | `sonic-swss/orchagent/copporch.cpp:853` |
+
+> **スキャン証跡**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 87fa713c3c5e -->

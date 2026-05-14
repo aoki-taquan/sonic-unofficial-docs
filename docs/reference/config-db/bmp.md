@@ -14,6 +14,7 @@ related:
     - BGP_MONITORS
   yang:
     - sonic-bmp
+hard: 0
 ---
 
 # BMP テーブル
@@ -181,4 +182,36 @@ show bmp
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| 派生なし（BMP テーブルは CLI / config load のみで書き込む） | — | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` は読み取り専用 |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `bmpcfgd.BMPCfgDaemon` が `BMP` テーブルを購読 | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:82-86` |
+
+### grep カバレッジ
+
+- bmpcfgd.py 100 行全行読了、BMP テーブル購読: 1 件（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BMPCfg` | `load()` | `bgp_neighbor_table == 'true'` | `self.bgp_neighbor_table = True`（openbmpd が BGP_NEIGHBOR State を BMP_STATE_DB に書き込む） | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:38` |
+| `BMPCfg` | `load()` | `bgp_rib_in_table == 'true'` | `self.bgp_rib_in_table = True`（openbmpd が RIB_IN を BMP_STATE_DB に書き込む） | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:39` |
+| `BMPCfg` | `load()` | `bgp_rib_out_table == 'true'` | `self.bgp_rib_out_table = True`（openbmpd が RIB_OUT を BMP_STATE_DB に書き込む） | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:40` |
+| `BMPCfg` | `load()` | 設定変更時（常に） | `stop_bmp()` → `reset_bmp_table()` → `start_bmp()` の順で openbmpd を再起動し BMP_STATE_DB をクリア | `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:44-46` |
+
+> **スキャン証跡**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 9e5a57a09d49 -->
