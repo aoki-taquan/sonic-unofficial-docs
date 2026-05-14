@@ -448,6 +448,88 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 概要
+
+`DEVICE_METADATA|localhost` は SONiC スタックの起動基盤となるテーブルであり、swss / bgp / host-services コンテナの **起動前に** 全フィールドが揃っている必要がある。起動後の変更可否はフィールドごとに大きく異なる。
+
+### 他テーブル先行必須
+
+`DEVICE_METADATA` 自体が他テーブルの先行を必要とするのではなく、逆に **`DEVICE_METADATA` が先行して存在することを前提とするコンポーネントが多数ある**。
+
+| コンポーネント | 依存フィールド | タイミング | evidence |
+|---|---|---|---|
+| `orchagent` (main.cpp) | `switch_type`, `mac`, `asic_id` | swss コンテナ起動時に一度だけ読む | `main.cpp:657`; `getCfgSwitchType()` |
+| `orchagent.sh` | `synchronous_mode`, `async_swss_rec`, `ring_thread_enabled` | スクリプト起動時に読む (`swss_vars.j2`) | `orchagent.sh:37-68` |
+| `buffermgrd.sh` | `buffer_model` | swss コンテナ起動時 | `buffermgrd.sh:5-13` |
+| `docker_init.sh` (FRR) | `docker_routing_config_mode`, `frr_mgmt_framework_config` | bgp コンテナ起動時に J2 展開 | `docker_init.sh:59-99` |
+| `zebra.conf.j2` | `nexthop_group`, `zebra_nexthop` | bgp コンテナ起動時 J2 展開 | `zebra.conf.j2:9-25` |
+| `bgpcfgd/managers_bgp.py` | `bgp_asn`, `type` | bgpcfgd 起動時に依存フィールド登録 | `managers_bgp.py:119-120` |
+| `supervisord.conf.j2` (orchagent) | `switch_type` (fabric 判定) | J2 展開時 (コンテナビルド/起動前) | `supervisord.conf.j2:34-40` |
+
+順序制約: `config_db.json` または `minigraph` による `DEVICE_METADATA` の一括投入 → 各コンテナ起動 の順。コンテナ起動後に create-only フィールドを書き込んでも反映されない。
+
+### SET 後 DEL 順 — create-only フィールド
+
+以下のフィールドは**起動時にのみ読まれる**。SET/DEL 後にコンテナを再起動しない限り変更は無効。
+
+| フィールド | 再起動必要コンテナ | evidence |
+|---|---|---|
+| `switch_type` | swss (orchagent) | `main.cpp:657`; `getCfgSwitchType()` は起動時のみ |
+| `synchronous_mode` | swss (orchagent) | `orchagent.sh:37-40`; `swss_vars.j2` は起動時生成 |
+| `nexthop_group` | bgp (FRR) | `zebra.conf.j2:19-22`; J2 展開は `docker_init.sh` 起動時のみ |
+| `zebra_nexthop` | bgp (FRR) | `zebra.conf.j2:11-12` 同上 |
+| `docker_routing_config_mode` | bgp (FRR) | `docker_init.sh:59-99`; frr.conf 生成は起動時のみ |
+| `frr_mgmt_framework_config` | bgp (FRR) | `frr_vars.j2:3-7`; 起動時 J2 展開 |
+| `buffer_model` (計算エンジン切替え) | swss (buffermgrd) | `buffermgrd.sh:5-13`; 計算エンジンの引数は起動時確定 |
+
+mutable フィールド（ランタイム SET が即時反映される）:
+
+| フィールド | 即時適用するコンポーネント | evidence |
+|---|---|---|
+| `hostname` | hostcfgd → `service hostname-config restart` | `hostcfgd:1530-1535` |
+| `timezone` | hostcfgd → `timedatectl set-timezone` | `hostcfgd:1558-1561` |
+| `suppress-fib-pending` | fpmsyncd (即時切替、ただし副作用あり) | `fpmsyncd.cpp:280-300` |
+| `create_only_config_db_buffers` | FlexCounterOrch (ConsumerStateTable) | `flexcounterorch.cpp:488-521` |
+| `buffer_model` フラグ | BufferMgr (ConsumerStateTable) | `buffermgr.cpp:390-406` |
+
+### Notification 順
+
+**`bgp_asn` → `suppress-fib-pending` の順序制約**:
+
+`managers_bgp.py:119-120` で bgpcfgd は `bgp_asn` を依存フィールドとして登録し、`bgp_asn` が未到達の間は BGP セッション設定をテンプレート展開しない。`suppress-fib-pending = enabled` を SET した後に `bgp_asn` が到達した場合、bgpcfgd は再処理を試みるが FRR への反映が遅れる。
+
+推奨順: `bgp_asn` を先に SET してから `suppress-fib-pending = enabled` を SET する。
+
+**YANG `must` 制約によるバリデーション順序**:
+
+`sonic-device_metadata.yang:250` の `must` 制約により、`suppress-fib-pending = enabled` かつ `synchronous_mode != 'enable'` の組み合わせは YANG バリデーション reject となる。`yang_config_validation = enable` 環境では:
+
+1. `synchronous_mode = enable` を SET（またはデフォルト値を確認）
+2. その後 `suppress-fib-pending = enabled` を SET
+
+逆順または同時 SET は reject の可能性がある。
+
+### warm-reboot 影響
+
+| フィールド | warm-reboot での挙動 |
+|---|---|
+| `switch_type` | **変更不可**。SAI `create_switch` は cold-boot 時のみ呼ばれる。warm-reboot でも変更は無効 (`main.cpp:658`) |
+| `synchronous_mode` | warm-reboot 再起動後に orchagent.sh が再読取り。変更した場合は前後で一致させること |
+| `buffer_model` フラグ | reconciling 後に ConsumerStateTable replay で再適用される |
+| `create_only_config_db_buffers` | reconciling 後に再適用される (`flexcounterorch.cpp:488-521`) |
+| `hostname` / `timezone` | hostcfgd が再起動後に再読取りして再適用 |
+
+warm-reboot 中に `switch_type` を変更してはならない。warm-reboot は SAI `create_switch` を再呼び出ししないため、変更は反映されない。
+
+### `switch_type = dpu` の特殊挙動
+
+`orchagent.sh:38-39` で `switch_type = dpu` のとき `-z zmq_sync -k 65536` が強制設定される。この場合 `synchronous_mode` フィールドの値は**無視**され ZMQ synchronous mode が強制される。`switch_type = dpu` では `synchronous_mode` の設定は実質無意味。
+
+<!-- /ordering -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
