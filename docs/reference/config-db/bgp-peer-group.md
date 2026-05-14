@@ -143,4 +143,32 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 | FRR 10.1 以降: listen range がある peer-group の削除 | 先に `no bgp listen range` を実行してから peer-group 削除。range 削除失敗でも peer-group 削除を試みる | `managers_bgp.py` `del_handler()` |
 <!-- /cdb-exceptions -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `BGP_PEER_GROUP`
+
+### CLI
+- `vtysh` 経由 peer-group コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+  - ソース: `sonic-frr bgpcfgd`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- sonic-mgmt-common OpenConfig BGP peer-group 経由
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- `bgpcfgd` が FRR running-config を CONFIG_DB と同期
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->

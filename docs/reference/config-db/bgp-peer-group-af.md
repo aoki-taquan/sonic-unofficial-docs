@@ -181,4 +181,32 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 | `BGP_PEER_GROUP_AF` と `BGP_NEIGHBOR_AF` の key_map 共用 | 両テーブルは同一 `nbr_af_key_map` を使用。max_prefix / send_default_route の複合条件は BGP_NEIGHBOR_AF と同様 | `frrcfgd.py` L2112 |
 <!-- /cdb-exceptions -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `BGP_PEER_GROUP_AF`
+
+### CLI
+- `vtysh` 経由 peer-group address-family コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+  - ソース: `sonic-frr bgpcfgd`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- sonic-mgmt-common OpenConfig BGP peer-group 経由
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- `bgpcfgd` が FRR running-config を CONFIG_DB と同期
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
