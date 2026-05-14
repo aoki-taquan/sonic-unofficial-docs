@@ -21865,6 +21865,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30308,6 +30369,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30642,6 +30764,105 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: e41770dcd7bc -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORTCHANNEL_INTERFACE</code> エントリ全体</td>
+<td>minigraph.py が XML <code>PortChannelInterfaces</code> を解析したとき</td>
+<td><code>pc_intfs</code> dict に IP prefix とインタフェース名を格納</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2556</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>pc_intfs</code> の不整合 (PORTCHANNEL に存在しないインタフェース参照) があれば minigraph.py が削除して警告を出す (<code>minigraph.py:2550-2561</code>)。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<p><code>PORTCHANNEL_INTERFACE</code> は <code>IntfMgr</code> (cfgmgr) が CONFIG_DB を購読し、カーネル side の LAG インタフェースに IP アドレスを付与する。orchagent の条件付き platform 登録はなし。</p>
+<h3 id="_15">グレップカバレッジ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph.py PORTCHANNEL_INTERFACE</td>
+<td>3</td>
+<td><code>minigraph.py:2546,2550-2556</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>IntfMgr</code> の <code>PORTCHANNEL_INTERFACE</code> 処理分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IntfMgr</code></td>
+<td><code>doTask()</code></td>
+<td><code>loopback_action</code> フィールドあり</td>
+<td>SAI ループバックアクション属性を設定</td>
+<td><code>sonic-swss/cfgmgr/intfmgr.cpp</code></td>
+</tr>
+<tr>
+<td><code>IntfMgr</code></td>
+<td><code>doTask()</code></td>
+<td><code>mpls == "enable"</code></td>
+<td>MPLS を LAG インタフェースで有効化</td>
+<td><code>sonic-swss/cfgmgr/intfmgr.cpp</code></td>
+</tr>
+<tr>
+<td><code>IntfMgr</code></td>
+<td><code>doTask()</code></td>
+<td><code>nat_zone</code> フィールドあり</td>
+<td>NAT ゾーン設定を INTF_TABLE に反映</td>
+<td><code>sonic-swss/cfgmgr/intfmgr.cpp</code></td>
+</tr>
+<tr>
+<td><code>IntfMgr</code></td>
+<td><code>doTask()</code></td>
+<td>key がポートチャネル名のみ (IP prefix なし)</td>
+<td>インタフェース属性のみ設定 (IP アドレス設定スキップ)</td>
+<td><code>sonic-swss/cfgmgr/intfmgr.cpp</code></td>
+</tr>
+<tr>
+<td><code>IntfMgr</code></td>
+<td><code>doTask()</code></td>
+<td>key が <code>(PortChannel, prefix)</code> 形式</td>
+<td><code>ip addr add &lt;prefix&gt; dev &lt;portchannel&gt;</code> でアドレス付与</td>
+<td><code>sonic-swss/cfgmgr/intfmgr.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>minigraph.py:2546-2561</code> + <code>intfmgr.cpp</code> を確認、5 件分岐抽出 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

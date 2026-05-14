@@ -23131,6 +23131,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30152,6 +30213,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30465,6 +30587,109 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NTP_SERVER</code> エントリ全体</td>
+<td>minigraph.py が XML <code>NtpServers</code> ノードを解析したとき</td>
+<td><code>{&lt;server_ip&gt;: {'iburst': 'on'}}</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2646</code></td>
+</tr>
+<tr>
+<td><code>iburst</code></td>
+<td>minigraph.py 固定値</td>
+<td><code>"on"</code> (常時)</td>
+<td><code>minigraph.py:2646</code></td>
+</tr>
+</tbody>
+</table>
+<p>minigraph.py は NTP サーバ全台に対して <code>iburst: on</code> を自動設定する。init_cfg.json.j2 の <code>NTP</code> セクション (グローバル設定) は別テーブル。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<p><code>NTP_SERVER</code> は orchagent では処理されない。<code>hostcfgd</code> が <code>NTP_SERVER</code> を購読し ntp.conf を再生成する (<code>hostcfgd:1308</code>)。条件付き platform 登録なし。YANG <code>max-elements 10</code> により 11 件目以降は拒否。</p>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph.py NTP_SERVER 自動設定</td>
+<td>1</td>
+<td><code>minigraph.py:2646</code></td>
+</tr>
+<tr>
+<td>hostcfgd ntp_server_conf</td>
+<td>1</td>
+<td><code>hostcfgd:1286,1308</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> の NTP_SERVER 処理分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>ntp_srv_key_update()</code></td>
+<td><code>ntp_servers</code> が前回キャッシュと同一</td>
+<td>ntp.conf 再生成スキップ</td>
+<td><code>hostcfgd:1383-1384</code></td>
+</tr>
+<tr>
+<td>YANG validation</td>
+<td>—</td>
+<td><code>max-elements 10</code> 超過</td>
+<td>YANG 制約で 11 件目以降を拒否</td>
+<td><code>sonic-ntp.yang max-elements 10</code></td>
+</tr>
+<tr>
+<td>YANG validation</td>
+<td>—</td>
+<td><code>version</code> が 3/4 以外</td>
+<td>YANG <code>range 3..4</code> 制約で拒否</td>
+<td><code>sonic-ntp.yang</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>ntp_srv_key_update()</code></td>
+<td><code>iburst == "on"</code></td>
+<td>ntp.conf サーバエントリに <code>iburst</code> オプションを追加</td>
+<td><code>hostcfgd</code> NTP テンプレート</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>minigraph.py:2646</code> + <code>hostcfgd:1285-1389</code> を確認、4 件分岐抽出。iburst のデフォルト on が minigraph から自動付与されることを確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

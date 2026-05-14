@@ -22487,6 +22487,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30152,6 +30213,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30481,6 +30603,143 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: c326cbcc6490 -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>minigraph.py からの <code>MIRROR_SESSION</code> 自動派生はなし (minigraph.py の該当行はコメントアウト済: <code>minigraph.py:2721</code>)。init_cfg.json.j2 からの自動設定もなし。CLI (<code>config mirror_session</code>) による手動設定のみ。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MirrorOrch</code> は常時登録 (platform 非依存)</td>
+<td><code>CFG_MIRROR_SESSION_TABLE_NAME</code> を無条件で購読</td>
+<td><code>orchdaemon.cpp:405-406</code></td>
+</tr>
+<tr>
+<td><code>gPortsOrch-&gt;allPortsReady()</code> が false</td>
+<td><code>doTask()</code> を早期リターン (全ポート初期化待ち)</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:1571-1574</code></td>
+</tr>
+<tr>
+<td>ERSPAN セッション + HW resource 不足</td>
+<td><code>isHwResourcesAvailable()</code> = false → セッション作成失敗</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:500-503</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>allPortsReady guard</td>
+<td>1</td>
+<td><code>mirrororch.cpp:1571-1574</code></td>
+</tr>
+<tr>
+<td>HW resource check</td>
+<td>1</td>
+<td><code>mirrororch.cpp:500-504</code></td>
+</tr>
+<tr>
+<td>minigraph.py MIRROR_SESSION コメントアウト</td>
+<td>1</td>
+<td><code>minigraph.py:2721</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>MirrorOrch::createEntry()</code> の分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td>セッション名が既存</td>
+<td><code>task_duplicated</code> ログ + 処理なし</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:389-393</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>queue &gt;= m_maxNumTC</code></td>
+<td><code>task_invalid_entry</code> (queue が最大 TC 数以上)</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:426-430</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>policer</code> 指定かつ policer が未存在</td>
+<td><code>task_need_retry</code> (ポリサーが作成されるまで待機)</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:434-438</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>direction</code> が <code>RX</code>/<code>TX</code>/<code>BOTH</code> 以外</td>
+<td><code>task_invalid_entry</code></td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:464-469</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>src_ip</code> と <code>dst_ip</code> のアドレスファミリ不一致</td>
+<td><code>task_invalid_entry</code> ("Address family of source and destination IPs is different")</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:494-498</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>!isHwResourcesAvailable()</code></td>
+<td><code>task_failed</code> (HW リソース不足)</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:500-503</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>type == MIRROR_SESSION_SPAN &amp;&amp; !dst_port.empty()</code></td>
+<td>即時 <code>activateSession()</code> (SPAN は dst_port があれば即アクティブ化)</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:509-513</code></td>
+</tr>
+<tr>
+<td><code>MirrorOrch</code></td>
+<td><code>createEntry()</code></td>
+<td>それ以外 (ERSPAN)</td>
+<td><code>m_routeOrch-&gt;attach()</code> で dst IP を RouteOrch に登録して非同期アクティブ化</td>
+<td><code>sonic-swss/orchagent/mirrororch.cpp:517</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>mirrororch.cpp:381-523</code> を全行読了、8 件分岐抽出。MIRROR_SESSION の minigraph.py 派生がコメントアウトされていることを実ソースで確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

@@ -22800,6 +22800,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30386,6 +30447,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30736,6 +30858,164 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: 62798bcc4162 -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>action</code> デフォルト値</td>
+<td><code>createEntry()</code> 内部での初期化</td>
+<td><code>PFC_WD_ACTION_DROP</code> (drop が規定デフォルト)</td>
+<td><code>sonic-swss/orchagent/pfcwdorch.cpp:190</code></td>
+</tr>
+</tbody>
+</table>
+<p>db_migrator.py が旧テーブル名 <code>PFC_WD_TABLE</code> → <code>PFC_WD</code> へのデータ移行を実施 (<code>db_migrator.py:160-165</code>)。minigraph.py からの直接派生はなし。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platform == MLNX_PLATFORM_SUBSTRING</code> または <code>VS</code></td>
+<td><code>PfcWdSwOrch&lt;PfcWdZeroBufferHandler, PfcWdLossyHandler&gt;</code> を登録。SAI_PORT_STAT_PFC_*_PAUSE_DURATION_US 使用</td>
+<td><code>orchdaemon.cpp:635-672</code></td>
+</tr>
+<tr>
+<td><code>platform == MRVL_TL</code> / <code>MRVL_PRST</code> / <code>CLX</code> / <code>NPS</code></td>
+<td>同 ZeroBufferHandler / LossyHandler だが SAI_PORT_STAT_PFC_*_PAUSE_DURATION (ms 単位) を使用</td>
+<td><code>orchdaemon.cpp:674-720</code></td>
+</tr>
+<tr>
+<td><code>platform == BFN_PLATFORM_SUBSTRING</code></td>
+<td><code>PfcWdSwOrch&lt;PfcWdAclHandler, PfcWdLossyHandler&gt;</code> を登録 (ACL ベースの復旧)</td>
+<td><code>orchdaemon.cpp:722-731</code></td>
+</tr>
+<tr>
+<td><code>platform == BRCM_PLATFORM_SUBSTRING</code></td>
+<td><code>PfcWdSwOrch</code> で Broadcom 専用 SAI 統計 + <code>PfcWdDlrHandler</code> 等を使用</td>
+<td><code>orchdaemon.cpp:733-803</code></td>
+</tr>
+<tr>
+<td>それ以外の platform</td>
+<td><code>PFC_WD</code> ハンドラは登録されない (PFC-WD 機能無効)</td>
+<td><code>orchdaemon.cpp:635-803</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>action デフォルト DROP</td>
+<td>1</td>
+<td><code>pfcwdorch.cpp:190</code></td>
+</tr>
+<tr>
+<td>platform 条件分岐 (platform == MLNX)</td>
+<td>1</td>
+<td><code>orchdaemon.cpp:635</code></td>
+</tr>
+<tr>
+<td>db_migrator PFC_WD_TABLE → PFC_WD</td>
+<td>3</td>
+<td><code>db_migrator.py:160-165</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>PfcWdOrch::doTask()</code> → <code>createEntry()</code> の分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>!gPortsOrch-&gt;allPortsReady()</code></td>
+<td>早期リターン (全ポート初期化待ち)</td>
+<td><code>pfcwdorch.cpp:68-71</code></td>
+</tr>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>!gPortsOrch-&gt;getPort(key, port)</code></td>
+<td><code>task_invalid_entry</code> (ポート名不正)</td>
+<td><code>pfcwdorch.cpp:193-197</code></td>
+</tr>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>port.m_type != Port::PHY</code></td>
+<td><code>task_invalid_entry</code> (物理ポートのみ有効)</td>
+<td><code>pfcwdorch.cpp:199-203</code></td>
+</tr>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>action == PFC_WD_ACTION_UNKNOWN</code></td>
+<td><code>task_invalid_entry</code> (無効な action 文字列)</td>
+<td><code>pfcwdorch.cpp:228-231</code></td>
+</tr>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>platform == CISCO_8000 &amp;&amp; action == FORWARD</code></td>
+<td><code>task_invalid_entry</code> (Cisco-8000 は forward 非サポート)</td>
+<td><code>pfcwdorch.cpp:233-236</code></td>
+</tr>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>platform == BRCM &amp;&amp; checkPfcDlrInitEnable() &amp;&amp; m_pfcwd_ports.empty()</code></td>
+<td>SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION を設定 (最初のポートのみ)</td>
+<td><code>pfcwdorch.cpp:237-266</code></td>
+</tr>
+<tr>
+<td><code>PfcWdOrch</code></td>
+<td><code>createEntry()</code></td>
+<td><code>platform == BRCM &amp;&amp; DLR action 不一致</code></td>
+<td><code>task_invalid_entry</code> (全ポート同一 action 強制)</td>
+<td><code>pfcwdorch.cpp:257-263</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>pfcwdorch.cpp:64-278</code> を全行読了、7 件分岐抽出。PFC-WD の platform 条件付き登録 (MLNX/BFN/BRCM/MRVL等) を実ソースで確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

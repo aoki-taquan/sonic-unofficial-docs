@@ -24374,6 +24374,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30286,6 +30347,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30587,6 +30709,128 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: eebb97ac8e67 -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT_QOS_MAP</code> エントリ (ポートへのマップバインド)</td>
+<td><code>qos_config.j2</code> から platform 別 QoS ポリシーが読み込まれたとき</td>
+<td>各ポートへの dscp_to_tc_map / pfc_to_queue_map 等の参照名</td>
+<td><code>sonic-buildimage/files/build_templates/qos_config.j2:414-423</code></td>
+</tr>
+<tr>
+<td><code>dscp_to_tc_map</code> のグローバルバインド</td>
+<td>db_migrator.py が PORT_QOS_MAP テーブルを更新したとき</td>
+<td>既存 DSCP→TC マップ名から <code>global</code> エントリを生成</td>
+<td><code>sonic-utilities/scripts/db_migrator.py:711-714</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QosOrch</code> は常時登録 (platform 非依存)</td>
+<td><code>CFG_PORT_QOS_MAP_TABLE_NAME</code> を無条件で購読</td>
+<td><code>orchdaemon.cpp:374</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>qos_config.j2 PORT_QOS_MAP</td>
+<td>2</td>
+<td><code>qos_config.j2:414,423</code></td>
+</tr>
+<tr>
+<td>db_migrator PORT_QOS_MAP</td>
+<td>3</td>
+<td><code>db_migrator.py:576,711-714</code></td>
+</tr>
+<tr>
+<td>CFG_PORT_QOS_MAP_TABLE_NAME 登録</td>
+<td>1</td>
+<td><code>orchdaemon.cpp:374</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>QosOrch::PortQosMapHandler</code> の分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>PortQosMapHandler</code></td>
+<td><code>pfc_enable</code> フィールドのパターン検証失敗</td>
+<td><code>task_invalid_entry</code></td>
+<td><code>sonic-swss/orchagent/qosorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>PortQosMapHandler</code></td>
+<td>leafref 先のマップ (<code>dscp_to_tc_map</code> 等) が未存在</td>
+<td><code>task_need_retry</code> (マップ作成まで待機)</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>PortQosMapHandler</code></td>
+<td>ポートが <code>gPortsOrch-&gt;getPort()</code> で取得できない</td>
+<td><code>task_invalid_entry</code> または <code>task_need_retry</code></td>
+<td><code>sonic-swss/orchagent/qosorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>PortQosMapHandler</code></td>
+<td>SAI ポート属性設定失敗</td>
+<td><code>task_failed</code></td>
+<td><code>sonic-swss/orchagent/qosorch.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>qosorch.cpp</code> PortQosMapHandler + <code>db_migrator.py:576,711-714</code> + <code>qos_config.j2:414-423</code> を確認、4 件分岐抽出 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

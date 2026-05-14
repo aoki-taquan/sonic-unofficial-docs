@@ -24206,6 +24206,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30230,6 +30291,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30554,6 +30676,142 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: a6fe2efe021a -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_GLOBAL.Values.admin_mode</code></td>
+<td>起動時デフォルト</td>
+<td><code>"disabled"</code></td>
+<td><code>sonic-swss/orchagent/natorch.cpp:64</code></td>
+</tr>
+</tbody>
+</table>
+<p>init_cfg.json.j2 および minigraph.py からの <code>NAT_GLOBAL</code> / <code>STATIC_NAT</code> / <code>NAT_POOL</code> の自動書き込みはなし。CLI (<code>config nat enable/disable</code>) での手動設定のみ。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NatOrch</code> は常時登録 (platform 非依存)</td>
+<td>NAT 関連全テーブルを購読</td>
+<td><code>orchdaemon.cpp:465</code></td>
+</tr>
+<tr>
+<td><code>admin_mode == "disabled"</code> の状態で NAT/NAPT/DNAT Pool エントリが来た場合</td>
+<td>登録はされるが NAT 機能が実際には非アクティブ</td>
+<td><code>sonic-swss/orchagent/natorch.cpp:1791,1909,2011,2139,2296</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>admin_mode デフォルト "disabled"</td>
+<td>2</td>
+<td><code>natorch.cpp:64,2590</code></td>
+</tr>
+<tr>
+<td>"NAT Feature is not yet enabled" skip</td>
+<td>5</td>
+<td><code>natorch.cpp:1791,1909,2011,2139,2296</code></td>
+</tr>
+<tr>
+<td>NatOrch 登録</td>
+<td>1</td>
+<td><code>orchdaemon.cpp:465</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>NatOrch::doTask()</code> → <code>doNatGlobalTableTask()</code> の分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NatOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == APP_NAT_GLOBAL_TABLE_NAME</code></td>
+<td><code>doNatGlobalTableTask()</code> にディスパッチ</td>
+<td><code>sonic-swss/orchagent/natorch.cpp:3061-3065</code></td>
+</tr>
+<tr>
+<td><code>NatOrch</code></td>
+<td><code>doNatGlobalTableTask()</code></td>
+<td><code>key != "Values"</code></td>
+<td>ERROR ログ + erase してスキップ (<code>NAT_GLOBAL</code> のキーは "Values" 固定)</td>
+<td><code>natorch.cpp:2924-2928</code></td>
+</tr>
+<tr>
+<td><code>NatOrch</code></td>
+<td><code>doNatGlobalTableTask()</code></td>
+<td><code>admin_mode</code> 値が <code>"enabled"</code> かつ現在 <code>"disabled"</code></td>
+<td><code>enableNatFeature()</code> を呼び出し</td>
+<td><code>natorch.cpp:2942-2943</code></td>
+</tr>
+<tr>
+<td><code>NatOrch</code></td>
+<td><code>doNatGlobalTableTask()</code></td>
+<td><code>admin_mode</code> 値が <code>"disabled"</code> かつ現在 <code>"enabled"</code></td>
+<td><code>disableNatFeature()</code> を呼び出し</td>
+<td><code>natorch.cpp:2944-2945</code></td>
+</tr>
+<tr>
+<td><code>NatOrch</code></td>
+<td><code>doNatGlobalTableTask()</code></td>
+<td><code>admin_mode</code> が現状と同じ値</td>
+<td>no-op (変化なし)</td>
+<td><code>natorch.cpp:2940</code></td>
+</tr>
+<tr>
+<td><code>NatMgr</code></td>
+<td><code>doNatGlobalTask()</code></td>
+<td><code>admin_mode</code> が <code>"enabled"</code>/<code>"disabled"</code> 以外</td>
+<td>ERROR ログ + スキップ</td>
+<td><code>sonic-swss/cfgmgr/natmgr.cpp:7250-7253</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>natorch.cpp:2904-2966</code> + <code>natmgr.cpp:7115-7260</code> を全行読了、6 件分岐抽出 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

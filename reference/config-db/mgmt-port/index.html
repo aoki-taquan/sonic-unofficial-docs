@@ -21653,6 +21653,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30108,6 +30169,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30368,6 +30490,102 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MGMT_PORT</code> エントリ全体</td>
+<td>minigraph.py が XML <code>ManagementIPInterfaces</code> を解析したとき</td>
+<td><code>{'alias': alias, 'admin_status': 'up'}</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2294</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code></td>
+<td>minigraph.py 固定値</td>
+<td><code>"up"</code> (常時)</td>
+<td><code>minigraph.py:2294</code></td>
+</tr>
+<tr>
+<td><code>speed</code></td>
+<td><code>port_speeds_default</code> dict にエイリアスが存在する場合のみ</td>
+<td>platform 定義のデフォルト速度 (例 <code>1000</code>)</td>
+<td><code>minigraph.py:2295-2296</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<p><code>MGMT_PORT</code> は orchagent では処理されない。<code>portmgrd</code> 系が CONFIG_DB の変更を受けてカーネル管理ポートを設定する。条件付き platform 登録なし。</p>
+<h3 id="_15">グレップカバレッジ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph.py MGMT_PORT 設定</td>
+<td>3</td>
+<td><code>minigraph.py:2281,2294-2296</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>portmgr.cpp</code> が MGMT_PORT を処理する:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortMgr</code></td>
+<td><code>doTask()</code></td>
+<td><code>admin_status == "up"</code></td>
+<td>カーネルインタフェースを up に設定 (<code>ip link set eth0 up</code>)</td>
+<td><code>sonic-swss/cfgmgr/portmgr.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortMgr</code></td>
+<td><code>doTask()</code></td>
+<td><code>speed</code> フィールドあり</td>
+<td><code>ethtool -s eth0 speed &lt;n&gt;</code> で速度設定</td>
+<td><code>sonic-swss/cfgmgr/portmgr.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortMgr</code></td>
+<td><code>doTask()</code></td>
+<td><code>speed</code> フィールドなし</td>
+<td>速度設定処理をスキップ</td>
+<td><code>sonic-swss/cfgmgr/portmgr.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

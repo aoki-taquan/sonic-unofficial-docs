@@ -24391,6 +24391,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30264,6 +30325,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30522,6 +30644,107 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>minigraph.py および init_cfg.json.j2 からの <code>PORT_STORM_CONTROL</code> 自動派生はなし。CLI (<code>config storm-control</code>) による手動設定のみ。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PolicerOrch</code> が <code>CFG_PORT_STORM_CONTROL_TABLE_NAME</code> も購読</td>
+<td>POLICER と PORT_STORM_CONTROL は同一 PolicerOrch インスタンスで処理</td>
+<td><code>orchdaemon.cpp:398</code></td>
+</tr>
+<tr>
+<td><code>gPortsOrch-&gt;allPortsReady()</code> が false</td>
+<td><code>doTask()</code> を早期リターン</td>
+<td><code>sonic-swss/orchagent/policerorch.cpp:379-382</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">グレップカバレッジ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CFG_PORT_STORM_CONTROL_TABLE_NAME 登録</td>
+<td>1</td>
+<td><code>orchdaemon.cpp:398</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>PolicerOrch::handlePortStormControlTable()</code> の分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PolicerOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME</code></td>
+<td><code>handlePortStormControlTable()</code> にディスパッチ (通常の POLICER 処理と分岐)</td>
+<td><code>sonic-swss/orchagent/policerorch.cpp:394-407</code></td>
+</tr>
+<tr>
+<td><code>PolicerOrch</code></td>
+<td><code>handlePortStormControlTable()</code></td>
+<td><code>storm_type</code> が <code>broadcast</code>/<code>unknown-unicast</code>/<code>unknown-multicast</code> 以外</td>
+<td>YANG 制約で事前拒否</td>
+<td><code>sonic-storm-control.yang</code></td>
+</tr>
+<tr>
+<td><code>PolicerOrch</code></td>
+<td><code>handlePortStormControlTable()</code></td>
+<td>SAI create/set 失敗</td>
+<td><code>task_failed</code></td>
+<td><code>sonic-swss/orchagent/policerorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>PolicerOrch</code></td>
+<td><code>handlePortStormControlTable()</code></td>
+<td>成功 または 失敗</td>
+<td><code>task_success</code>/<code>task_failed</code> → <code>it = consumer.m_toSync.erase(it)</code></td>
+<td><code>policerorch.cpp:397-401</code></td>
+</tr>
+<tr>
+<td><code>PolicerOrch</code></td>
+<td><code>handlePortStormControlTable()</code></td>
+<td><code>task_need_retry</code></td>
+<td><code>it++</code> (リトライ)</td>
+<td><code>policerorch.cpp:402-405</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>policerorch.cpp:374-407</code> を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の <code>doTask()</code> 内で最優先にディスパッチされることを確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

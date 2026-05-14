@@ -22028,6 +22028,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30242,6 +30303,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30462,6 +30584,106 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PEER_SWITCH</code> エントリ全体</td>
+<td>minigraph.py が dual-ToR トポロジを検出し <code>peer_switch_ip</code> が設定された場合</td>
+<td><code>{'address_ipv4': peer_switch_ip}</code> を Tunnel エントリ経由で生成</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2614</code></td>
+</tr>
+</tbody>
+</table>
+<p>minigraph.py の <code>get_tunnel_entries()</code> 関数が <code>peer_switch_ip</code> を受け取り、TUNNEL テーブルと合わせて PEER_SWITCH 相当の設定を構築する。直接の <code>PEER_SWITCH</code> キー設定は CLI 経由が主。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MuxOrch</code> が <code>CFG_PEER_SWITCH_TABLE_NAME</code> も購読</td>
+<td>MUX_CABLE と PEER_SWITCH は同一 MuxOrch インスタンスで処理</td>
+<td><code>orchdaemon.cpp:468-469</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CFG_PEER_SWITCH_TABLE_NAME 購読</td>
+<td>1</td>
+<td><code>orchdaemon.cpp:469</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>MuxOrch</code> の <code>PEER_SWITCH</code> 処理分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MuxOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_PEER_SWITCH_TABLE_NAME</code></td>
+<td>peer switch IP を設定し MuxOrch の peer_switch_id を更新</td>
+<td><code>sonic-swss/orchagent/muxorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>MuxOrch</code></td>
+<td><code>addOperation()</code></td>
+<td><code>address_ipv4</code> が無効な IPv4 アドレス</td>
+<td>パース例外 → エントリスキップ</td>
+<td><code>sonic-swss/orchagent/muxorch.cpp</code></td>
+</tr>
+<tr>
+<td>YANG validation</td>
+<td>—</td>
+<td><code>max-elements 1</code> 超過 (2 件目以降)</td>
+<td>YANG 制約で拒否</td>
+<td><code>sonic-peer-switch.yang</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>orchdaemon.cpp:467-471</code> + <code>muxorch.cpp</code> を確認、3 件分岐抽出。PEER_SWITCH は MuxOrch が MUX_CABLE と同一インスタンスで処理することを確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

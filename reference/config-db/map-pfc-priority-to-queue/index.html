@@ -24111,6 +24111,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30208,6 +30269,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30465,6 +30587,123 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: d2191ccfe0bd -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pfc_priority</code> / <code>qindex</code> (初期値)</td>
+<td><code>qos_config.j2</code> から platform 別 QoS ポリシーが読み込まれたとき</td>
+<td>AZURE プロファイル等の platform 定義マップ値</td>
+<td><code>sonic-buildimage/files/build_templates/qos_config.j2:209</code></td>
+</tr>
+</tbody>
+</table>
+<p>minigraph.py からの直接派生はなし。<code>config qos reload</code> 時に <code>qos_config.j2</code> Jinja テンプレートが <code>MAP_PFC_PRIORITY_TO_QUEUE</code> を CONFIG_DB に書き込む。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QosOrch</code> は常時登録 (platform 非依存)</td>
+<td><code>MAP_PFC_PRIORITY_TO_QUEUE</code> 購読は無条件</td>
+<td><code>orchdaemon.cpp:374-384</code></td>
+</tr>
+<tr>
+<td><code>CFG_PFC_PRIORITY_TO_QUEUE_MAP_TABLE_NAME</code> も同 QosOrch が購読</td>
+<td>MAP_PFC_PRIORITY_TO_QUEUE と PFC_PRIORITY_TO_PRIORITY_GROUP_MAP は同一 orch インスタンス</td>
+<td><code>orchdaemon.cpp:377-378</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_18">グレップカバレッジ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>qos_config.j2 MAP_PFC_PRIORITY_TO_QUEUE</td>
+<td>1</td>
+<td><code>qos_config.j2:209</code></td>
+</tr>
+<tr>
+<td>QosOrch 登録</td>
+<td>2</td>
+<td><code>orchdaemon.cpp:374,384</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>QosOrch</code> が <code>MAP_PFC_PRIORITY_TO_QUEUE</code> テーブルを処理する。<code>PfcToQueueHandler::processWorkItem()</code> 内での分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>doTask()</code> → <code>convertFieldValuesToAttributes()</code></td>
+<td><code>stoi()</code> 変換失敗 (pfc_priority/qindex が非数値・空文字)</td>
+<td><code>task_invalid_entry</code> でエントリ破棄</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:147,179,199</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>PfcToQueueHandler</code></td>
+<td><code>isObjectBeingReferenced()</code> = true かつ DEL 操作</td>
+<td><code>m_pendingRemove=true</code> + <code>task_need_retry</code>。参照解除まで削除保留</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:180-186</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>PfcToQueueHandler</code></td>
+<td>SAI object ID が NULL かつ DEL 操作</td>
+<td><code>"Object with name not found"</code> ログ + <code>task_invalid_entry</code></td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:156-162</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>sai_qos_map_api-&gt;create_qos_map()</code></td>
+<td>SAI 返値 ≠ <code>SAI_STATUS_SUCCESS</code></td>
+<td><code>task_failed</code></td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:977,1032</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>QosOrch::PfcToQueueHandler</code> を全行読了、4 件分岐抽出。Phase 6/7 derivation ブロックの evidence 再確認: qos_config.j2 からの platform 別マップ書き込みは実ソースと整合 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

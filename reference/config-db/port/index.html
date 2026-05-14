@@ -21831,6 +21831,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30352,6 +30413,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30923,6 +31045,154 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>派生先フィールド</th>
+<th>派生元条件</th>
+<th>派生値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT</code> エントリ全体</td>
+<td>minigraph.py が XML <code>Interfaces</code> / port_config.ini を解析したとき</td>
+<td><code>alias</code>、<code>lanes</code>、<code>speed</code>、<code>admin_status</code> 等</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code></td>
+<td>minigraph.py デフォルト</td>
+<td><code>"up"</code> (明示的に down 指定がない限り)</td>
+<td><code>minigraph.py</code> PORT 生成ロジック</td>
+</tr>
+<tr>
+<td><code>mux_cable</code></td>
+<td>対応 MUX_CABLE エントリが存在する場合</td>
+<td><code>"true"</code></td>
+<td><code>minigraph.py:2621-2622</code></td>
+</tr>
+<tr>
+<td>init_cfg.json.j2</td>
+<td>全 PORT エントリのデフォルト</td>
+<td><code>"admin_status": "up"</code> など最小限の属性</td>
+<td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:29</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortsOrch</code> は常時登録かつ最優先 (orchList 先頭)</td>
+<td><code>PORT</code> テーブル購読は無条件。全ポート初期化後に other orch が起動</td>
+<td><code>orchdaemon.cpp:232,500</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>init_cfg.json.j2 PORT デフォルト</td>
+<td>1</td>
+<td><code>init_cfg.json.j2:29</code></td>
+</tr>
+<tr>
+<td>PortsOrch 登録 (先頭)</td>
+<td>2</td>
+<td><code>orchdaemon.cpp:232,500</code></td>
+</tr>
+<tr>
+<td>minigraph.py mux_cable 派生</td>
+<td>2</td>
+<td><code>minigraph.py:2621-2622</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch</code> の PORT 処理分岐 (主要分岐のみ):</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortsOrch</code></td>
+<td><code>doTask()</code></td>
+<td>SET 操作かつポートが未作成</td>
+<td>SAI <code>create_port()</code> でポートを作成</td>
+<td><code>sonic-swss/orchagent/portsorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortsOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>admin_status == "up"</code></td>
+<td>SAI <code>set_port_attribute(SAI_PORT_ATTR_ADMIN_STATE, true)</code></td>
+<td><code>portsorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortsOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>fec</code> フィールドあり</td>
+<td>SAI <code>SAI_PORT_ATTR_FEC_MODE</code> を設定。<code>auto</code> の場合は <code>SAI_PORT_FEC_MODE_AUTO</code></td>
+<td><code>portsorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortsOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>autoneg == "on"</code> かつ <code>speed</code> 指定あり</td>
+<td><code>SAI_PORT_ATTR_AUTO_NEG_MODE</code> + advertised speed 設定</td>
+<td><code>portsorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortsOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>mux_cable == "true"</code></td>
+<td>ポートの MUX cable フラグを設定し MuxOrch に通知</td>
+<td><code>portsorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>PortsOrch</code></td>
+<td><code>doTask()</code></td>
+<td>SET でポートが <code>allPortsReady()</code> を完成させた場合</td>
+<td><code>allPortsReady</code> = true、他 orch の doTask() をアンブロック</td>
+<td><code>portsorch.cpp:allPortsReady()</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>portsorch.cpp</code> PORT 処理ロジックおよび <code>init_cfg.json.j2:29</code>、<code>minigraph.py:2621-2622</code> を確認、6 件分岐抽出 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />

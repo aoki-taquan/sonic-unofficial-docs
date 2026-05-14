@@ -24122,6 +24122,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30174,6 +30235,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グレップカバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30485,6 +30607,112 @@
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: f50d4e92baed -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>minigraph.py および init_cfg.json.j2 からの <code>MCLAG_DOMAIN</code> 自動派生はなし。iccpd デーモンが CONFIG_DB の <code>MCLAG_DOMAIN</code> を読み取り、<code>APP_DB</code> に状態を書き込む方向。CONFIG_DB への書き込みは CLI (<code>config mclag</code>) のみ。</p>
+<h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MlagOrch</code> は常時登録 (platform 非依存)</td>
+<td><code>CFG_MCLAG_TABLE_NAME</code> + <code>CFG_MCLAG_INTF_TABLE_NAME</code> を無条件で購読</td>
+<td><code>orchdaemon.cpp:536-540</code></td>
+</tr>
+<tr>
+<td><code>gPortsOrch-&gt;allPortsReady()</code> が false</td>
+<td><code>doTask()</code> を早期リターン (全ポート初期化待ち)</td>
+<td><code>sonic-swss/orchagent/mlagorch.cpp:49-52</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hit 数</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MlagOrch 登録</td>
+<td>1</td>
+<td><code>orchdaemon.cpp:540</code></td>
+</tr>
+<tr>
+<td>allPortsReady guard</td>
+<td>1</td>
+<td><code>mlagorch.cpp:49-52</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p><code>MlagOrch::doTask()</code> → <code>doMlagDomainTask()</code> の分岐:</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MlagOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_MCLAG_TABLE_NAME</code></td>
+<td><code>doMlagDomainTask()</code> にディスパッチ</td>
+<td><code>sonic-swss/orchagent/mlagorch.cpp:54-56</code></td>
+</tr>
+<tr>
+<td><code>MlagOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_MCLAG_INTF_TABLE_NAME</code></td>
+<td><code>doMlagInterfaceTask()</code> にディスパッチ</td>
+<td><code>sonic-swss/orchagent/mlagorch.cpp:58-60</code></td>
+</tr>
+<tr>
+<td><code>MlagOrch</code></td>
+<td><code>doTask()</code></td>
+<td>それ以外のテーブル名</td>
+<td><code>SWSS_LOG_ERROR</code> + 処理なし</td>
+<td><code>sonic-swss/orchagent/mlagorch.cpp:63-65</code></td>
+</tr>
+<tr>
+<td><code>MlagOrch</code></td>
+<td><code>doMlagDomainTask()</code></td>
+<td>SET で <code>peer_link</code> フィールドが空</td>
+<td>erase してスキップ（peer_link は必須）</td>
+<td><code>sonic-swss/orchagent/mlagorch.cpp:98-99</code></td>
+</tr>
+<tr>
+<td><code>MlagOrch</code></td>
+<td><code>doMlagDomainTask()</code></td>
+<td><code>addIslInterface(peer_link)</code> = false</td>
+<td><code>it++</code> (retry)</td>
+<td><code>sonic-swss/orchagent/mlagorch.cpp:96</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>mlagorch.cpp:45-105</code> を全行読了、5 件分岐抽出。minigraph からの自動派生なしを確認 — 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <div class="footnote">
 <hr />
