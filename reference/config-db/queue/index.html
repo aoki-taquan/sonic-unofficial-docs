@@ -22596,6 +22596,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30076,6 +30126,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30496,6 +30596,57 @@
 <li><strong>port 未検出</strong>: <code>&lt;ifname&gt;</code> が PORT テーブルに存在しない場合 <code>SWSS_LOG_ERROR("Port with alias:%s not found")</code> でスキップ。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>scheduler group 未検出</strong>: ポートは存在しても queue index に対応する SAI scheduler group が見つからない場合 <code>task_failed</code>。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>QosOrch が <code>QUEUE.wred_profile</code> / <code>QUEUE.scheduler</code> / <code>QUEUE.dscp_to_tc_map</code> フィールドを参照して各テーブルの OID を解決し、SAI キューオブジェクトに bind する。参照先テーブルが未作成の場合は設定がペンディング状態になる（待機派生）。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>QosOrch は常時登録し <code>QUEUE</code> テーブルを無条件購読する。ただし <code>SCHEDULER</code> / <code>WRED_PROFILE</code> が未作成の場合は対応 OID が未解決でペンディングとなる。port が未初期化の場合はエラーログ + スキップ。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>wred_profile</code> フィールドあり</td>
+<td><code>WRED_PROFILE</code> OID 参照 → <code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code> 設定</td>
+<td><code>qosorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td><code>scheduler</code> フィールドあり</td>
+<td><code>SCHEDULER</code> OID 参照 → <code>SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID</code> 設定</td>
+<td><code>qosorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td>port のキュー番号が範囲外</td>
+<td>ERROR ログ + スキップ</td>
+<td><code>qosorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>QosOrch</code></td>
+<td>del_handler: <code>wred_profile</code> あり</td>
+<td>SAI attribute を NULL OID に設定して解除</td>
+<td><code>qosorch.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: QUEUE は SAI キューオブジェクトの属性 (scheduler, wred_profile) を束ねる。Phase 6 派生はフィールドから OID 解決への変換。自動付与はなし。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>

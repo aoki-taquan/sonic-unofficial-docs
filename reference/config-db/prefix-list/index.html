@@ -22126,6 +22126,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30032,6 +30082,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30356,6 +30456,63 @@
 <li><strong>プレフィクス形式不正</strong>: <code>netaddr.IPNetwork()</code> がパース失敗した場合 (<code>NotRegisteredError</code> / <code>AddrFormatError</code> / <code>AddrConversionError</code>) は <code>log_warn</code> してエントリをスキップする（処理自体は <code>return True</code> で継続）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>constants オーバーライド</strong>: <code>bgp.prefix_list.&lt;type&gt;.ipv4_name</code> / <code>ipv6_name</code> が constants に定義されていれば、デフォルトの prefix list 名を上書きする。</li>
 </ul>
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd の <code>PrefixListMgr</code> が <code>family</code> フィールドの値に基づいて FRR コマンド種別を自動決定する。<code>family==IPv6</code> → <code>ipv6 prefix-list</code>、<code>family==IPv4</code> → <code>ip prefix-list</code>。<code>constants</code> に <code>bgp.prefix_list.&lt;type&gt;.ipv4_name</code> が定義されていれば、リスト名を上書きする（暗黙的派生）。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd は platform 非依存で常時起動し <code>PrefixListMgr</code> を無条件登録する。ただし <code>DEVICE_METADATA|localhost</code> が未存在の場合は <code>bgp_asn</code> / <code>type</code> キーが取得できずリトライ待ちになる。<code>ANCHOR_PREFIX</code> は SpineRouter / UpperSpineRouter 以外のデバイスではスキップされる。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PrefixListMgr</code></td>
+<td><code>prefix_type</code> が <code>ANCHOR_PREFIX</code>/<code>SUPPRESS_PREFIX</code> 以外</td>
+<td><code>log_warn</code> + スキップ (FRR 設定なし)</td>
+<td><code>managers_prefix_list.py</code></td>
+</tr>
+<tr>
+<td><code>PrefixListMgr</code></td>
+<td><code>family==IPv6</code></td>
+<td><code>ipv6 prefix-list</code> コマンド生成</td>
+<td><code>managers_prefix_list.py</code></td>
+</tr>
+<tr>
+<td><code>PrefixListMgr</code></td>
+<td><code>family==IPv4</code></td>
+<td><code>ip prefix-list</code> コマンド生成</td>
+<td><code>managers_prefix_list.py</code></td>
+</tr>
+<tr>
+<td><code>PrefixListMgr</code></td>
+<td><code>netaddr.IPNetwork()</code> 解析失敗</td>
+<td><code>log_warn</code> + return True (エントリスキップ)</td>
+<td><code>managers_prefix_list.py</code></td>
+</tr>
+<tr>
+<td><code>PrefixListMgr</code></td>
+<td><code>ANCHOR_PREFIX</code> + SpineRouter 以外</td>
+<td><code>log_warn</code> + スキップ</td>
+<td><code>managers_prefix_list.py</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>managers_prefix_list.py</code> 全体読了。CONFIG_DB 内フィールド間の自動派生なし（Phase 6 は FRR テキスト変換のみ）。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>

@@ -23066,6 +23066,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30120,6 +30170,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30509,6 +30609,69 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>syslog
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>hostcfgd が <code>protocol</code> フィールド値から rsyslog forwarding 形式を自動決定する。<code>udp</code> → <code>@&lt;host&gt;:&lt;port&gt;</code> 形式、<code>tcp</code> → <code>@@&lt;host&gt;:&lt;port&gt;</code> 形式。<code>port</code> フィールド未設定の場合はデフォルト UDP/514 を補完する。<code>vrf==mgmt</code> の場合は VRF バインド設定を自動付与する。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>hostcfgd は常時起動し <code>SYSLOG_SERVER</code> テーブルを無条件購読する。<code>DEVICE_METADATA.hostname</code> が必要（hostname ベースのフィルタ設定）。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>protocol==udp</code></td>
+<td>rsyslog <code>@&lt;host&gt;:&lt;port&gt;</code> 形式</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>protocol==tcp</code></td>
+<td>rsyslog <code>@@&lt;host&gt;:&lt;port&gt;</code> 形式</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>vrf==mgmt</code></td>
+<td>VRF バインド設定を追加</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>vrf==default</code> または未設定</td>
+<td>デフォルト VRF で転送</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>source_interface</code> フィールドあり</td>
+<td>rsyslog source IP 設定</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>サーバー削除</td>
+<td>対応 rsyslog 設定を削除して reload</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>SYSLOG_SERVER</code> はリモート syslog 転送先の設定。<code>protocol</code> フィールドと <code>vrf</code> フィールドの組み合わせが主要分岐。ポートデフォルト値の補完が Phase 6 相当。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>

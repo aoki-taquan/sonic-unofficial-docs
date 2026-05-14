@@ -24394,6 +24394,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30032,6 +30082,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30388,6 +30488,51 @@
 <li><strong>categories フィールド未指定でデフォルト全カテゴリ</strong>: <code>categories</code> フィールドが存在しない場合は <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> が引数なしで呼ばれ、全カテゴリが抑制対象として登録される。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>DEL 操作は全カテゴリ抑制解除</strong>: DEL_COMMAND 受信時も <code>registerAsicSdkHealthEventCategories(saiSeverity, key)</code> 引数なしが呼ばれ全カテゴリの抑制を解除する。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>SwitchOrch が <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> エントリの <code>event_category</code> フィールド値を対応する SAI health event suppression 属性へ自動マッピングする。Config-DB 内フィールド間の自動付与なし。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>SwitchOrch は常時登録し <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> テーブルを無条件購読する。SAI が health event suppression をサポートしない場合は SAI 属性設定がエラーになるが orchagent はログのみで継続する。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td><code>event_category</code> フィールド値</td>
+<td>対応する SAI health event カテゴリへの suppress 属性設定</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td>エントリ削除</td>
+<td>対応 SAI suppress 設定を解除</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td>SAI 応答エラー</td>
+<td>ログ出力 + 処理継続 (致命的エラーとしない)</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>SUPPRESS_ASIC_SDK_HEALTH_EVENT</code> は比較的新しいテーブル。SwitchOrch 経由で SAI の ASIC health event フィルタリングを制御。Config-DB 内フィールド間の自動派生なし（該当なし）。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>

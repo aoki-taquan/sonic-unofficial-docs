@@ -23234,6 +23234,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30120,6 +30170,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30571,6 +30671,69 @@
 <li><strong>既存セッションのクリーンアップ失敗</strong>: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが ASIC に残留する可能性がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>グローバル無効はローカル設定を上書き</strong>: <code>isPortEnabled()</code> は <code>m_gEnable &amp;&amp; (m_intfAllConf || ...)</code> で判定するため、グローバル sflow が無効なら per-port 設定に関わらず全ポートで sFlow は停止する。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>sflowmgrd が <code>SFLOW.admin_state==up</code> の場合に hsflowd 設定ファイルを生成して hsflowd を起動する。<code>agent_id</code> フィールドがある場合は指定インターフェースの IP を agent IP として自動的に hsflowd 設定に反映する。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>sflowmgrd は常時起動し <code>SFLOW</code> / <code>SFLOW_SESSION</code> テーブルを無条件購読する。<code>SFLOW.admin_state==down</code> の場合は hsflowd を停止する。<code>agent_id</code> に指定したインターフェースが存在しない場合はログ警告して agent IP 設定をスキップ。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sflowmgrd</code></td>
+<td><code>admin_state==up</code></td>
+<td>hsflowd 設定ファイル生成 + サービス起動</td>
+<td><code>sflowmgrd</code></td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code></td>
+<td><code>admin_state==down</code></td>
+<td>hsflowd サービス停止</td>
+<td><code>sflowmgrd</code></td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code></td>
+<td><code>agent_id</code> フィールドあり</td>
+<td>指定 IF の IP を <code>agent { ip &lt;x&gt; }</code> として設定</td>
+<td><code>sflowmgrd</code></td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code> SFLOW_SESSION</td>
+<td><code>admin_state==down</code></td>
+<td>ポートの sFlow を無効化</td>
+<td><code>sflowmgrd</code></td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code> SFLOW_SESSION</td>
+<td>key が <code>all</code></td>
+<td>全ポートに設定を適用</td>
+<td><code>sflowmgrd</code></td>
+</tr>
+<tr>
+<td><code>sflowmgrd</code> SFLOW_SESSION</td>
+<td><code>sample_rate</code> フィールドあり</td>
+<td>ポートごとのサンプリングレートを明示設定</td>
+<td><code>sflowmgrd</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>SFLOW</code> テーブルは hsflowd 設定生成のための入力。admin_state による主要分岐あり。SAI 経路はなし (ユーザースペース制御)。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>

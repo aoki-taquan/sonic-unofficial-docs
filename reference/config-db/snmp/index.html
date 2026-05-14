@@ -24349,6 +24349,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30110,6 +30160,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30457,6 +30557,63 @@
 <li><strong>設定変更の反映はコンテナ再起動時のみ</strong>: テーブル変更は <code>docker-snmp</code> コンテナの再起動 / snmpd リロードまで反映されない。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>key の大文字/小文字</strong>: <code>SNMP|LOCATION</code> / <code>SNMP|CONTACT</code> の key 名の大文字/小文字が YANG 定義と実装の間で一致しない場合、テンプレートがその値を参照できずサイレントスキップが発生する可能性がある。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>snmp-config が <code>DEVICE_METADATA.hostname</code> を参照して snmpd の <code>sysName</code> を自動設定する。<code>SNMP.traps</code> 値に基づいて snmpd trap 設定の有無を決定する（<code>enabled</code> → <code>trap2sink</code> ディレクティブ生成）。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>sonic-snmpagent サービスが有効の場合のみ <code>SNMP</code> テーブルを購読する snmp-config が動作する。<code>SNMP.traps==enabled</code> の場合のみ trap 送信が有効化される。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>snmp-config</code></td>
+<td><code>traps==enabled</code></td>
+<td>snmpd に <code>trap2sink</code> 設定を生成</td>
+<td><code>snmp_config</code></td>
+</tr>
+<tr>
+<td><code>snmp-config</code></td>
+<td><code>traps==disabled</code></td>
+<td><code>trap2sink</code> 行を生成しない</td>
+<td><code>snmp_config</code></td>
+</tr>
+<tr>
+<td><code>snmp-config</code></td>
+<td><code>sysLocation</code> フィールドあり</td>
+<td><code>syslocation &lt;value&gt;</code> を snmpd.conf に追加</td>
+<td><code>snmp_config</code></td>
+</tr>
+<tr>
+<td><code>snmp-config</code></td>
+<td><code>sysContact</code> フィールドあり</td>
+<td><code>syscontact &lt;value&gt;</code> を snmpd.conf に追加</td>
+<td><code>snmp_config</code></td>
+</tr>
+<tr>
+<td><code>snmp-config</code></td>
+<td><code>SNMP_COMMUNITY</code> テーブルエントリ変化</td>
+<td>snmpd 設定ファイルを再生成して reload</td>
+<td><code>snmp_config</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>SNMP</code> テーブルはグローバル SNMP 設定。<code>traps</code> フィールドで trap 設定の有無を分岐。<code>DEVICE_METADATA.hostname</code> からの <code>sysName</code> 自動設定が Phase 6 派生相当。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>

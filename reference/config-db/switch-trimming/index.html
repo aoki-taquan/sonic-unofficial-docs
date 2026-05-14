@@ -24422,6 +24422,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29976,6 +30026,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30308,6 +30408,63 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>switch-trimming
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>SwitchOrch が <code>dscp_value</code> フィールドの有無から SAI DSCP resolution mode を自動決定する。<code>dscp_value</code> あり → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_ASSIGN</code>、なし → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_PRESERVE</code>。<code>queue</code> フィールドの有無も同様に SAI queue resolution mode を自動決定する。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>SwitchOrch は常時登録し <code>SWITCH_TRIMMING</code> テーブルを無条件購読する。<code>SWITCH_TRIMMING|GLOBAL</code> エントリのみ有効（シングルトン制約）。SAI trim capability 未サポートの場合はログのみで継続。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td><code>size</code> フィールドあり</td>
+<td><code>SAI_SWITCH_ATTR_PACKET_TRIM_SIZE</code> 設定</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td><code>dscp_value</code> フィールドあり</td>
+<td>ASSIGN モード + 指定 DSCP 値を SAI に設定</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td><code>dscp_value</code> フィールドなし</td>
+<td>PRESERVE モード (元パケットの DSCP を保持)</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td><code>queue</code> フィールドあり</td>
+<td>STATIC モード + 指定キュー番号を SAI に設定</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td>del_handler</td>
+<td>SAI trim 設定を解除</td>
+<td><code>switchorch.cpp</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>SWITCH_TRIMMING</code> はパケットトリミング機能の設定。<code>dscp_value</code> / <code>queue</code> の有無が SAI resolution mode を自動決定する点が主要 Phase 6 派生。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>

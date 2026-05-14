@@ -24259,6 +24259,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30098,6 +30148,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30492,6 +30592,69 @@
 <li><strong>modify_conf_file 失敗は syslog のみ</strong>: テンプレート展開やサービス SIGHUP 送信に失敗しても例外はキャッチされ <code>LOG_ERR</code> / <code>LOG_WARNING</code> に記録されるだけ。設定ファイルとメモリ内 radius_servers とのずれが生じる可能性がある。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>statistics / skip_msg_auth のブール変換</strong>: <code>is_true()</code> で変換され <code>True/true/yes/1</code> 以外はすべて False 扱い。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>hostcfgd が <code>RADIUS</code> テーブルを読み、未設定フィールドに PAM のデフォルト値を補完する。<code>auth_type</code> 未設定 → <code>pap</code>、<code>auth_port</code> 未設定 → <code>1812</code>、<code>timeout</code> 未設定 → <code>5</code>、<code>retransmit</code> 未設定 → <code>3</code>。これらはデフォルト値による自動補完（Phase 6 相当）。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>hostcfgd は常時起動し <code>RADIUS</code> テーブルを無条件購読する。ただし <code>aaa.authentication.login</code> に <code>radius</code> が含まれない場合、RADIUS サーバー設定があっても PAM に反映されない。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostcfgd</code> RADIUS handler</td>
+<td><code>auth_type==chap</code></td>
+<td>PAM に chap オプションを追加</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> RADIUS handler</td>
+<td><code>auth_type==mschapv2</code></td>
+<td>PAM に mschapv2 オプションを追加</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> RADIUS handler</td>
+<td><code>auth_type==pap</code> (デフォルト)</td>
+<td>PAM に pap 設定</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> RADIUS handler</td>
+<td><code>src_ip</code> あり</td>
+<td><code>source_ip=&lt;src_ip&gt;</code> を PAM 設定に追加</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> RADIUS handler</td>
+<td><code>vrf_name</code> あり</td>
+<td><code>vrf=&lt;vrf_name&gt;</code> を PAM 設定に追加</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> RADIUS handler</td>
+<td><code>passkey</code> フィールドあり</td>
+<td><code>secret=&lt;passkey&gt;</code> を設定</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>RADIUS</code> テーブルは PAM/NSS 設定ファイル生成のための入力。hostcfgd が <code>RADIUS</code> + <code>RADIUS_SERVER</code> + <code>AAA</code> を合わせて処理する。デフォルト値補完が Phase 6 派生相当。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>

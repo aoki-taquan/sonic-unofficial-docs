@@ -23111,6 +23111,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30098,6 +30148,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30500,6 +30600,69 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>systemctl<span class="w"> </span>status<span class="w"> </span>telemetry
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>telemetry サービスが <code>server_crt</code> / <code>server_key</code> フィールドの有無から TLS 有効/無効を自動決定する。<code>client_auth</code> フィールド値から認証モード（JWT / cert / なし）を自動設定する。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>telemetry サービスが有効の場合のみ <code>TELEMETRY</code> テーブルを消費する sonic-gnmi が動作する。<code>TELEMETRY|gnmi</code> エントリのみ処理するシングルトン制約あり（YANG で強制）。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>telemetry</code></td>
+<td><code>server_crt</code> / <code>server_key</code> フィールドあり</td>
+<td>TLS 有効で gNMI サーバー起動</td>
+<td><code>telemetry</code></td>
+</tr>
+<tr>
+<td><code>telemetry</code></td>
+<td>TLS 設定なし</td>
+<td>平文または insecure モードで起動</td>
+<td><code>telemetry</code></td>
+</tr>
+<tr>
+<td><code>telemetry</code></td>
+<td><code>client_auth==jwt</code></td>
+<td>JWT 認証ミドルウェアを有効化</td>
+<td><code>telemetry</code></td>
+</tr>
+<tr>
+<td><code>telemetry</code></td>
+<td><code>client_auth==cert</code></td>
+<td>クライアント証明書認証を有効化</td>
+<td><code>telemetry</code></td>
+</tr>
+<tr>
+<td><code>telemetry</code></td>
+<td><code>allow_no_client_auth==true</code></td>
+<td>mTLS を強制しない</td>
+<td><code>telemetry</code></td>
+</tr>
+<tr>
+<td><code>telemetry</code></td>
+<td><code>log_level</code> 変化</td>
+<td>ランタイムログレベルを変更</td>
+<td><code>telemetry</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>TELEMETRY</code> は gNMI/gRPC サーバー設定のシングルトン。TLS フィールド有無と <code>client_auth</code> 値が起動モードを決定する主要分岐。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>

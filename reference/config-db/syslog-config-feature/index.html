@@ -24461,6 +24461,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29998,6 +30048,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-add_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き登録 (add_manager 条件)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30318,6 +30418,57 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>cat<span class="w"> </span>/etc/rsyslog.d/*.conf
 </span></code></pre></div>
 <!-- /ops-hint -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<p>hostcfgd が <code>SYSLOG_CONFIG_FEATURE</code> の per-feature rate limit 設定を読み、未設定の場合は <code>SYSLOG_CONFIG</code> グローバル値を継承させる（フォールバック自動派生）。<code>rate_limit_interval</code> / <code>rate_limit_burst</code> が設定されている feature のみ個別 rsyslog conf ファイルが生成される。</p>
+<h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
+<p>hostcfgd は常時起動し <code>SYSLOG_CONFIG_FEATURE</code> テーブルを無条件購読する。Feature が <code>FEATURE</code> テーブルに登録されていない場合は per-feature syslog 設定が参照されない。</p>
+<!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>rate_limit_interval</code> フィールドあり</td>
+<td>feature 別 rsyslog rate limit 設定を生成</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>rate_limit_burst</code> フィールドあり</td>
+<td>feature 別 rsyslog burst 設定を生成</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>フィールド未設定</td>
+<td>グローバル <code>SYSLOG_CONFIG</code> の値にフォールバック</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>エントリ削除</td>
+<td>feature 別 conf ファイルを削除して rsyslog reload</td>
+<td><code>hostcfgd.py</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>SYSLOG_CONFIG_FEATURE</code> は per-feature の syslog rate limit 設定。未設定時は <code>SYSLOG_CONFIG</code> グローバル値への暗黙的なフォールバックが Phase 6 派生相当。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
