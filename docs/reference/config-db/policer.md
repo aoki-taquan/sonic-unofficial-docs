@@ -257,3 +257,44 @@ db_migrator.py での POLICER マイグレーションなし
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: 849eee828f8c -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はなし。CLI (`config policer`) による手動設定のみ。`MIRROR_SESSION` の `policer` フィールドから参照されるが、`POLICER` エントリ自体は手動作成が必要。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `PolicerOrch` は常時登録 (platform 非依存) | `CFG_POLICER_TABLE_NAME` + `CFG_PORT_STORM_CONTROL_TABLE_NAME` を同一インスタンスで購読 | `orchdaemon.cpp:396-402` |
+| `gPortsOrch->allPortsReady()` が false | `doTask()` を早期リターン | `sonic-swss/orchagent/policerorch.cpp:379-382` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| PolicerOrch 登録 | 1 | `orchdaemon.cpp:396-402` |
+| allPortsReady guard | 1 | `policerorch.cpp:379-382` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`PolicerOrch::doTask()` の分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `PolicerOrch` | `doTask()` | `table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME` | `handlePortStormControlTable()` にディスパッチ (POLICER とは別ハンドラ) | `sonic-swss/orchagent/policerorch.cpp:394-407` |
+| `PolicerOrch` | `doTask()` SET | `m_syncdPolicers.find(key) != end` | `update = true` → 既存ポリサーの属性更新処理へ | `policerorch.cpp:411` |
+| `PolicerOrch` | `doTask()` SET | `!update && (!meter_type || !mode)` | ERROR ログ + 処理継続 (meter_type と mode は必須) | `policerorch.cpp:491-495` |
+| `PolicerOrch` | `doTask()` SET | SAI `create_policer()` ≠ `SAI_STATUS_SUCCESS` → `task_need_retry` | `it++` (リトライ) | `policerorch.cpp:498-508` |
+| `PolicerOrch` | `doTask()` SET | フィールド名が既知の enum 外 | ERROR ログ + `continue` (フィールドスキップ) | `policerorch.cpp:478-483` |
+| `PolicerOrch` | `doTask()` DEL | ポリサーが参照カウント > 0 | ERROR ログ + it++ (参照中は削除スキップ) | `policerorch.cpp` |
+
+> **スキャン証跡**: `policerorch.cpp:374-520` を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
+
+<!-- /handler-branching -->

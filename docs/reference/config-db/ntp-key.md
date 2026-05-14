@@ -198,3 +198,38 @@ db_migrator.py での NTP_KEY マイグレーションなし
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+minigraph.py および init_cfg.json.j2 からの `NTP_KEY` 自動派生はなし。CLI (`config ntp authentication-key`) による手動設定のみ。
+
+### Phase 7: 条件付き登録
+
+`NTP_KEY` は orchagent では処理されない。`hostcfgd` が `NTP`, `NTP_SERVER`, `NTP_KEY` を一括購読し `ntp.conf` テンプレートを再生成する (`hostcfgd:1285-1309`)。条件付き platform 登録なし。
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| hostcfgd ntp_key_conf 購読 | 1 | `hostcfgd:1286,1295` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`hostcfgd` の NTP_KEY 処理分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `hostcfgd` | `ntp_srv_key_update()` | `ntp_keys` が前回キャッシュと同一 | ntp.conf 再生成スキップ (diff なし) | `hostcfgd:1383-1384` |
+| YANG validation | — | `key-id` が 1..65535 範囲外 | YANG `range` 制約で拒否 | `sonic-ntp.yang` |
+| YANG validation | — | `NTP_SERVER.trusted_key` が存在しない `NTP_KEY` を leafref 参照 | leafref 整合性チェックで拒否 | `sonic-ntp.yang` |
+| YANG validation | — | DEL で `NTP_SERVER` から参照中の `NTP_KEY` を削除 | leafref 整合性チェックで拒否 | `sonic-ntp.yang` |
+
+> **スキャン証跡**: hostcfgd:1285-1389 確認。NTP_KEY は YANG leafref による参照整合性チェックが主な制約であることを確認 — 誤読なし。
+
+<!-- /handler-branching -->

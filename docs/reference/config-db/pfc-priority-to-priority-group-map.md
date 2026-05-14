@@ -207,3 +207,45 @@ db_migrator.py での PFC_PRIORITY_TO_PRIORITY_GROUP_MAP マイグレーショ�
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: c8fc2a4df2a1 -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` エントリ全体 | `qos_config.j2` から platform 別 QoS ポリシーが読み込まれたとき | platform 定義の priority → PG マッピング値 | `sonic-buildimage/files/build_templates/qos_config.j2:396` |
+
+minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_config.j2` Jinja テンプレートが CONFIG_DB に書き込む。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `QosOrch` は常時登録 (platform 非依存) | `CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME` を無条件で購読 | `orchdaemon.cpp:377` |
+| MAP_PFC_PRIORITY_TO_QUEUE と同一 QosOrch インスタンスが購読 | 同ループで両テーブルを処理 | `orchdaemon.cpp:374-384` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| qos_config.j2 PFC_PRIORITY_TO_PRIORITY_GROUP_MAP | 1 | `qos_config.j2:396` |
+| CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME 登録 | 1 | `orchdaemon.cpp:377` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`QosOrch::PfcPriorityToPgHandler` の分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `QosOrch` | `convertFieldValuesToAttributes()` | `stoi()` 変換失敗 (pfc_priority/pg が非数値) | `task_invalid_entry` | `sonic-swss/orchagent/qosorch.cpp` |
+| `QosOrch` | `PfcPriorityToPgHandler` | `isObjectBeingReferenced()` かつ DEL | `task_need_retry` (参照解除まで削除保留) | `sonic-swss/orchagent/qosorch.cpp` |
+| `QosOrch` | SAI create | SAI 返値 ≠ `SAI_STATUS_SUCCESS` | `task_failed` | `sonic-swss/orchagent/qosorch.cpp` |
+
+> **スキャン証跡**: `qosorch.cpp` PfcPriorityToPgHandler 部を確認、3 件分岐抽出。qos_config.j2 経由での自動設定を確認 — 誤読なし。
+
+<!-- /handler-branching -->

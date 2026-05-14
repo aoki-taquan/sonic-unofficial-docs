@@ -194,3 +194,41 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `MGMT_PORT` エントリ全体 | minigraph.py が XML `ManagementIPInterfaces` を解析したとき | `{'alias': alias, 'admin_status': 'up'}` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2294` |
+| `admin_status` | minigraph.py 固定値 | `"up"` (常時) | `minigraph.py:2294` |
+| `speed` | `port_speeds_default` dict にエイリアスが存在する場合のみ | platform 定義のデフォルト速度 (例 `1000`) | `minigraph.py:2295-2296` |
+
+### Phase 7: 条件付き登録
+
+`MGMT_PORT` は orchagent では処理されない。`portmgrd` 系が CONFIG_DB の変更を受けてカーネル管理ポートを設定する。条件付き platform 登録なし。
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| minigraph.py MGMT_PORT 設定 | 3 | `minigraph.py:2281,2294-2296` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`portmgr.cpp` が MGMT_PORT を処理する:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `PortMgr` | `doTask()` | `admin_status == "up"` | カーネルインタフェースを up に設定 (`ip link set eth0 up`) | `sonic-swss/cfgmgr/portmgr.cpp` |
+| `PortMgr` | `doTask()` | `speed` フィールドあり | `ethtool -s eth0 speed <n>` で速度設定 | `sonic-swss/cfgmgr/portmgr.cpp` |
+| `PortMgr` | `doTask()` | `speed` フィールドなし | 速度設定処理をスキップ | `sonic-swss/cfgmgr/portmgr.cpp` |
+
+> **スキャン証跡**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。
+
+<!-- /handler-branching -->

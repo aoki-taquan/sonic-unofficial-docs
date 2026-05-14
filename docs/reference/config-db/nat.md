@@ -242,3 +242,49 @@ db_migrator.py での NAT マイグレーションなし
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: a6fe2efe021a -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `NAT_GLOBAL.Values.admin_mode` | 起動時デフォルト | `"disabled"` | `sonic-swss/orchagent/natorch.cpp:64` |
+
+init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / `NAT_POOL` の自動書き込みはなし。CLI (`config nat enable/disable`) での手動設定のみ。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `NatOrch` は常時登録 (platform 非依存) | NAT 関連全テーブルを購読 | `orchdaemon.cpp:465` |
+| `admin_mode == "disabled"` の状態で NAT/NAPT/DNAT Pool エントリが来た場合 | 登録はされるが NAT 機能が実際には非アクティブ | `sonic-swss/orchagent/natorch.cpp:1791,1909,2011,2139,2296` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| admin_mode デフォルト "disabled" | 2 | `natorch.cpp:64,2590` |
+| "NAT Feature is not yet enabled" skip | 5 | `natorch.cpp:1791,1909,2011,2139,2296` |
+| NatOrch 登録 | 1 | `orchdaemon.cpp:465` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`NatOrch::doTask()` → `doNatGlobalTableTask()` の分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `NatOrch` | `doTask()` | `table_name == APP_NAT_GLOBAL_TABLE_NAME` | `doNatGlobalTableTask()` にディスパッチ | `sonic-swss/orchagent/natorch.cpp:3061-3065` |
+| `NatOrch` | `doNatGlobalTableTask()` | `key != "Values"` | ERROR ログ + erase してスキップ (`NAT_GLOBAL` のキーは "Values" 固定) | `natorch.cpp:2924-2928` |
+| `NatOrch` | `doNatGlobalTableTask()` | `admin_mode` 値が `"enabled"` かつ現在 `"disabled"` | `enableNatFeature()` を呼び出し | `natorch.cpp:2942-2943` |
+| `NatOrch` | `doNatGlobalTableTask()` | `admin_mode` 値が `"disabled"` かつ現在 `"enabled"` | `disableNatFeature()` を呼び出し | `natorch.cpp:2944-2945` |
+| `NatOrch` | `doNatGlobalTableTask()` | `admin_mode` が現状と同じ値 | no-op (変化なし) | `natorch.cpp:2940` |
+| `NatMgr` | `doNatGlobalTask()` | `admin_mode` が `"enabled"`/`"disabled"` 以外 | ERROR ログ + スキップ | `sonic-swss/cfgmgr/natmgr.cpp:7250-7253` |
+
+> **スキャン証跡**: `natorch.cpp:2904-2966` + `natmgr.cpp:7115-7260` を全行読了、6 件分岐抽出 — 誤読なし。
+
+<!-- /handler-branching -->
