@@ -2,6 +2,7 @@
 title: NTP_SERVER テーブル
 description: "NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpHandler が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -190,3 +191,44 @@ enum: `association_type`=server/pool、`iburst`=on/off、`admin_state`=enabled/d
 <!-- /runtime-trace -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `NTP_SERVER` エントリ全体 | minigraph.py が XML `NtpServers` ノードを解析したとき | `{<server_ip>: {'iburst': 'on'}}` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2646` |
+| `iburst` | minigraph.py 固定値 | `"on"` (常時) | `minigraph.py:2646` |
+
+minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定する。init_cfg.json.j2 の `NTP` セクション (グローバル設定) は別テーブル。
+
+### Phase 7: 条件付き登録
+
+`NTP_SERVER` は orchagent では処理されない。`hostcfgd` が `NTP_SERVER` を購読し ntp.conf を再生成する (`hostcfgd:1308`)。条件付き platform 登録なし。YANG `max-elements 10` により 11 件目以降は拒否。
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| minigraph.py NTP_SERVER 自動設定 | 1 | `minigraph.py:2646` |
+| hostcfgd ntp_server_conf | 1 | `hostcfgd:1286,1308` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`hostcfgd` の NTP_SERVER 処理分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `hostcfgd` | `ntp_srv_key_update()` | `ntp_servers` が前回キャッシュと同一 | ntp.conf 再生成スキップ | `hostcfgd:1383-1384` |
+| YANG validation | — | `max-elements 10` 超過 | YANG 制約で 11 件目以降を拒否 | `sonic-ntp.yang max-elements 10` |
+| YANG validation | — | `version` が 3/4 以外 | YANG `range 3..4` 制約で拒否 | `sonic-ntp.yang` |
+| `hostcfgd` | `ntp_srv_key_update()` | `iburst == "on"` | ntp.conf サーバエントリに `iburst` オプションを追加 | `hostcfgd` NTP テンプレート |
+
+> **スキャン証跡**: `minigraph.py:2646` + `hostcfgd:1285-1389` を確認、4 件分岐抽出。iburst のデフォルト on が minigraph から自動付与されることを確認 — 誤読なし。
+
+<!-- /handler-branching -->

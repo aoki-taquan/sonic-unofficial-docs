@@ -2,6 +2,7 @@
 title: PORT_STORM_CONTROL テーブル
 description: "PORT_STORM_CONTROL テーブル — 物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -181,3 +182,42 @@ show storm-control all
 <!-- /runtime-trace -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派生はなし。CLI (`config storm-control`) による手動設定のみ。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `PolicerOrch` が `CFG_PORT_STORM_CONTROL_TABLE_NAME` も購読 | POLICER と PORT_STORM_CONTROL は同一 PolicerOrch インスタンスで処理 | `orchdaemon.cpp:398` |
+| `gPortsOrch->allPortsReady()` が false | `doTask()` を早期リターン | `sonic-swss/orchagent/policerorch.cpp:379-382` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| CFG_PORT_STORM_CONTROL_TABLE_NAME 登録 | 1 | `orchdaemon.cpp:398` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`PolicerOrch::handlePortStormControlTable()` の分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `PolicerOrch` | `doTask()` | `table_name == CFG_PORT_STORM_CONTROL_TABLE_NAME` | `handlePortStormControlTable()` にディスパッチ (通常の POLICER 処理と分岐) | `sonic-swss/orchagent/policerorch.cpp:394-407` |
+| `PolicerOrch` | `handlePortStormControlTable()` | `storm_type` が `broadcast`/`unknown-unicast`/`unknown-multicast` 以外 | YANG 制約で事前拒否 | `sonic-storm-control.yang` |
+| `PolicerOrch` | `handlePortStormControlTable()` | SAI create/set 失敗 | `task_failed` | `sonic-swss/orchagent/policerorch.cpp` |
+| `PolicerOrch` | `handlePortStormControlTable()` | 成功 または 失敗 | `task_success`/`task_failed` → `it = consumer.m_toSync.erase(it)` | `policerorch.cpp:397-401` |
+| `PolicerOrch` | `handlePortStormControlTable()` | `task_need_retry` | `it++` (リトライ) | `policerorch.cpp:402-405` |
+
+> **スキャン証跡**: `policerorch.cpp:374-407` を確認、5 件分岐抽出。PORT_STORM_CONTROL が PolicerOrch の `doTask()` 内で最優先にディスパッチされることを確認 — 誤読なし。
+
+<!-- /handler-branching -->

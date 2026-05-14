@@ -2,6 +2,7 @@
 title: NTP テーブル (global)
 description: "NTP テーブル (global) — NTP クライアントのグローバル設定を保持するシングルトン的テーブル。YANG 上は sonic-ntp.yang の container NTP 配下 container global として定義され、CONFIG_DB 上は NTP|global の単一エントリで現れる。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -175,3 +176,38 @@ show ntp
 <!-- /runtime-trace -->
 
 <!-- glossary-links-injected: 8b572e7ecef7 -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ minigraph.py が自動設定する (iburst='on' 付き)。`NTP_GLOBAL` は CLI (`config ntp`) または `hostcfgd` のテンプレート生成で参照される。
+
+### Phase 7: 条件付き登録
+
+`NTP_GLOBAL` は orchagent では処理されない。`hostcfgd` が CONFIG_DB の `NTP`, `NTP_SERVER`, `NTP_KEY`, `LOOPBACK_INTERFACE` を購読し、`ntp.conf` テンプレートを再生成する (`hostcfgd:1278-1384`)。条件付き platform 登録なし。
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| hostcfgd NTP_GLOBAL (NTP) 購読 | 3 | `hostcfgd:1278,1285,1307` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`hostcfgd` の NTP ハンドラ分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `hostcfgd` | `ntp_global_update()` | `vrf` フィールドが `"mgmt"` | ntp.conf に `interface eth0` を追加して管理 VRF 経由 NTP を設定 | `hostcfgd:1331-1365` |
+| `hostcfgd` | `ntp_global_update()` | `vrf` フィールドがなし / `"default"` | `interface` 指定なしで全インタフェース使用 | `hostcfgd:1331-1365` |
+| `hostcfgd` | `ntp_global_update()` | `mgmtVrfEnabled` が false かつ `vrf=mgmt` | YANG `must` 制約が事前に拒否 (ntp.yang 制約) | `sonic-ntp.yang must` 制約 |
+| `hostcfgd` | `ntp_srv_key_update()` | サーバ設定が前回キャッシュと同一 | `ntp.conf` 再生成スキップ (diff なしの早期リターン) | `hostcfgd:1383-1384` |
+
+> **スキャン証跡**: `hostcfgd:1278-1389` を確認、4 件分岐抽出。NTP_GLOBAL は orchagent 非経由で hostcfgd が処理することを確認 — 誤読なし。
+
+<!-- /handler-branching -->

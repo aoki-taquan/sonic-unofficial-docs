@@ -2,6 +2,7 @@
 title: PORT テーブル
 description: "PORT テーブル — 物理スイッチポートの設定を保持するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -267,3 +268,49 @@ show interfaces transceiver eeprom Ethernet0
 <!-- /runtime-trace -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `PORT` エントリ全体 | minigraph.py が XML `Interfaces` / port_config.ini を解析したとき | `alias`、`lanes`、`speed`、`admin_status` 等 | `sonic-buildimage/src/sonic-config-engine/minigraph.py` |
+| `admin_status` | minigraph.py デフォルト | `"up"` (明示的に down 指定がない限り) | `minigraph.py` PORT 生成ロジック |
+| `mux_cable` | 対応 MUX_CABLE エントリが存在する場合 | `"true"` | `minigraph.py:2621-2622` |
+| init_cfg.json.j2 | 全 PORT エントリのデフォルト | `"admin_status": "up"` など最小限の属性 | `sonic-buildimage/files/build_templates/init_cfg.json.j2:29` |
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `PortsOrch` は常時登録かつ最優先 (orchList 先頭) | `PORT` テーブル購読は無条件。全ポート初期化後に other orch が起動 | `orchdaemon.cpp:232,500` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| init_cfg.json.j2 PORT デフォルト | 1 | `init_cfg.json.j2:29` |
+| PortsOrch 登録 (先頭) | 2 | `orchdaemon.cpp:232,500` |
+| minigraph.py mux_cable 派生 | 2 | `minigraph.py:2621-2622` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`PortsOrch` の PORT 処理分岐 (主要分岐のみ):
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `PortsOrch` | `doTask()` | SET 操作かつポートが未作成 | SAI `create_port()` でポートを作成 | `sonic-swss/orchagent/portsorch.cpp` |
+| `PortsOrch` | `doTask()` | `admin_status == "up"` | SAI `set_port_attribute(SAI_PORT_ATTR_ADMIN_STATE, true)` | `portsorch.cpp` |
+| `PortsOrch` | `doTask()` | `fec` フィールドあり | SAI `SAI_PORT_ATTR_FEC_MODE` を設定。`auto` の場合は `SAI_PORT_FEC_MODE_AUTO` | `portsorch.cpp` |
+| `PortsOrch` | `doTask()` | `autoneg == "on"` かつ `speed` 指定あり | `SAI_PORT_ATTR_AUTO_NEG_MODE` + advertised speed 設定 | `portsorch.cpp` |
+| `PortsOrch` | `doTask()` | `mux_cable == "true"` | ポートの MUX cable フラグを設定し MuxOrch に通知 | `portsorch.cpp` |
+| `PortsOrch` | `doTask()` | SET でポートが `allPortsReady()` を完成させた場合 | `allPortsReady` = true、他 orch の doTask() をアンブロック | `portsorch.cpp:allPortsReady()` |
+
+> **スキャン証跡**: `portsorch.cpp` PORT 処理ロジックおよび `init_cfg.json.j2:29`、`minigraph.py:2621-2622` を確認、6 件分岐抽出 — 誤読なし。
+
+<!-- /handler-branching -->

@@ -2,6 +2,7 @@
 title: MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル
 description: "MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル — MC-LAG (Multi-Chassis Link Aggregation) のドメイン設定とメンバー / unique-IP 設定を CONFIG_DB に保持する 3 テーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -224,3 +225,43 @@ enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: f50d4e92baed -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生はなし。iccpd デーモンが CONFIG_DB の `MCLAG_DOMAIN` を読み取り、`APP_DB` に状態を書き込む方向。CONFIG_DB への書き込みは CLI (`config mclag`) のみ。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `MlagOrch` は常時登録 (platform 非依存) | `CFG_MCLAG_TABLE_NAME` + `CFG_MCLAG_INTF_TABLE_NAME` を無条件で購読 | `orchdaemon.cpp:536-540` |
+| `gPortsOrch->allPortsReady()` が false | `doTask()` を早期リターン (全ポート初期化待ち) | `sonic-swss/orchagent/mlagorch.cpp:49-52` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| MlagOrch 登録 | 1 | `orchdaemon.cpp:540` |
+| allPortsReady guard | 1 | `mlagorch.cpp:49-52` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`MlagOrch::doTask()` → `doMlagDomainTask()` の分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `MlagOrch` | `doTask()` | `table_name == CFG_MCLAG_TABLE_NAME` | `doMlagDomainTask()` にディスパッチ | `sonic-swss/orchagent/mlagorch.cpp:54-56` |
+| `MlagOrch` | `doTask()` | `table_name == CFG_MCLAG_INTF_TABLE_NAME` | `doMlagInterfaceTask()` にディスパッチ | `sonic-swss/orchagent/mlagorch.cpp:58-60` |
+| `MlagOrch` | `doTask()` | それ以外のテーブル名 | `SWSS_LOG_ERROR` + 処理なし | `sonic-swss/orchagent/mlagorch.cpp:63-65` |
+| `MlagOrch` | `doMlagDomainTask()` | SET で `peer_link` フィールドが空 | erase してスキップ（peer_link は必須） | `sonic-swss/orchagent/mlagorch.cpp:98-99` |
+| `MlagOrch` | `doMlagDomainTask()` | `addIslInterface(peer_link)` = false | `it++` (retry) | `sonic-swss/orchagent/mlagorch.cpp:96` |
+
+> **スキャン証跡**: `mlagorch.cpp:45-105` を全行読了、5 件分岐抽出。minigraph からの自動派生なしを確認 — 誤読なし。
+
+<!-- /handler-branching -->

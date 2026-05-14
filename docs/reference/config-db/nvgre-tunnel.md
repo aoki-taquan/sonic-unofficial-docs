@@ -2,6 +2,7 @@
 title: NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブル
 description: "NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブル — NVGRE (Network Virtualization using GRE, RFC 7637) のトンネル端点と VLAN ↔ VSID マップを CONFIG_DB に保持する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -188,3 +189,42 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 <!-- /runtime-trace -->
 
 <!-- glossary-links-injected: 91a36a875109 -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+minigraph.py および init_cfg.json.j2 からの `NVGRE_TUNNEL` 自動派生はなし。CLI (`config nvgre-tunnel`) または RESTCONF 経由での手動設定のみ。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `NvgreTunnelOrch` は常時登録 (platform 非依存) | `CFG_NVGRE_TUNNEL_TABLE_NAME` を無条件で購読 | `orchdaemon.cpp:361` |
+| `NvgreTunnelMapOrch` は常時登録 (platform 非依存) | `CFG_NVGRE_TUNNEL_MAP_TABLE_NAME` を無条件で購読 | `orchdaemon.cpp:363` |
+| `NvgreTunnelOrch` は `Orch2` ベース (request_parser 使用) | `addOperation()`/`delOperation()` で処理 (allPortsReady guard なし) | `sonic-swss/orchagent/nvgreorch.cpp:350-385` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| NvgreTunnelOrch 登録 | 1 | `orchdaemon.cpp:361` |
+| addOperation entry point | 1 | `nvgreorch.cpp:350` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`NvgreTunnelOrch::addOperation()` の分岐:
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `NvgreTunnelOrch` | `addOperation()` | `isTunnelExists(tunnel_name)` = true | WARN ログ + `return true` (冪等、エラーなし) | `sonic-swss/orchagent/nvgreorch.cpp:357-361` |
+| `NvgreTunnelOrch` | `addOperation()` | `isTunnelExists(tunnel_name)` = false | 新規 `NvgreTunnel` オブジェクトを作成して SAI トンネルを設定 | `nvgreorch.cpp:363` |
+| `NvgreTunnelOrch` | `delOperation()` | `!isTunnelExists(tunnel_name)` | ERROR ログ + `return true` (冪等) | `nvgreorch.cpp:374-378` |
+
+> **スキャン証跡**: `nvgreorch.cpp:350-385` を全行読了、3 件分岐抽出。minigraph.py からの自動派生なしを確認 — 誤読なし。
+
+<!-- /handler-branching -->
