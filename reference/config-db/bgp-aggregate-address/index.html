@@ -22056,6 +22056,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bbr_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bbr_status の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30186,6 +30214,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bbr_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bbr_status の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30450,6 +30506,58 @@
 <li><code>bgpcfgd</code> が FRR running-config を読み CONFIG_DB と同期</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG <code>default</code> 宣言に加えて、<code>bgpcfgd</code> (<code>managers_aggregate_address.py</code>) と <code>sonic-utilities</code> (<code>config/bgp_cli.py</code>) が独立して同値を <code>.get()</code> / <code>is_flag</code> で再定義している。全フィールドで三層 (YANG / bgpcfgd / CLI) が一致しており、フィールド欠落時の挙動は以下のとおり。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>暗黙デフォルト値</th>
+<th>コード fallback 箇所</th>
+<th>FRR への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bbr-required</code></td>
+<td><code>"false"</code></td>
+<td><code>data.get(BBR_REQUIRED_KEY, COMMON_FALSE_STRING)</code> (L77, L210)</td>
+<td>BBR 状態チェックをバイパス。常に FRR へ投入を試みる</td>
+</tr>
+<tr>
+<td><code>summary-only</code></td>
+<td><code>"false"</code></td>
+<td><code>data.get(SUMMARY_ONLY_KEY, COMMON_FALSE_STRING)</code> (L109, L212)</td>
+<td><code>aggregate-address &lt;prefix&gt;</code> のみ生成。<code>summary-only</code> キーワードなし</td>
+</tr>
+<tr>
+<td><code>as-set</code></td>
+<td><code>"false"</code></td>
+<td><code>data.get(AS_SET_KEY, COMMON_FALSE_STRING)</code> (L110, L213)</td>
+<td><code>as-set</code> キーワードなし</td>
+</tr>
+<tr>
+<td><code>aggregate-address-prefix-list</code></td>
+<td><code>""</code> (空文字列)</td>
+<td><code>data.get(AGGREGATE_ADDRESS_PREFIX_LIST_KEY, "")</code> (L214); <code>default=""</code> in CLI</td>
+<td>空の場合 <code>generate_prefix_list_commands()</code> 未呼び出し。FRR prefix-list 設定なし</td>
+</tr>
+<tr>
+<td><code>contributing-address-prefix-list</code></td>
+<td><code>""</code> (空文字列)</td>
+<td><code>data.get(CONTRIBUTING_ADDRESS_PREFIX_LIST_KEY, "")</code> (L215); <code>default=""</code> in CLI</td>
+<td>空の場合スキップ。非空の場合は IPv4 <code>le 32</code> / IPv6 <code>le 128</code> suffix が自動付与</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bbr_status">bbr_status の暗黙デフォルト<a class="headerlink" href="#bbr_status" title="Permanent link">&para;</a></h3>
+<p><code>BGP_BBR</code> テーブルが CONFIG_DB に存在しない場合、bgpcfgd は <code>bbr_status = ""</code> を設定する (L73-76)。この状態で <code>bbr-required=true</code> のエントリは <code>ADDRESS_INACTIVE_STATE</code> に落とされ FRR に反映されない。</p>
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang -->
+<!-- evidence: sonic-net/sonic-utilities/config/bgp_cli.py -->
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 

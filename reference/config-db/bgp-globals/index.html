@@ -22184,6 +22184,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase A: コード由来の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase A: コード由来の暗黙デフォルト">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 組み込みデフォルトが暗黙適用されるフィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み時デフォルト vs 実行時 fallback の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複合制約: 両フィールドが揃わないと FRR コマンド未生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG デフォルトが存在するフィールド（サブテーブル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30330,6 +30391,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase A: コード由来の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase A: コード由来の暗黙デフォルト">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR 組み込みデフォルトが暗黙適用されるフィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み時デフォルト vs 実行時 fallback の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複合制約: 両フィールドが揃わないと FRR コマンド未生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG デフォルトが存在するフィールド（サブテーブル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30926,6 +31048,120 @@
 <p><strong>スキャン証跡</strong>: <code>bgp_table_handler_common()</code> L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- defaults -->
+<h2 id="phase-a">Phase A: コード由来の暗黙デフォルト<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG <code>sonic-bgp-global.yang</code> の <code>BGP_GLOBALS_LIST</code> 本体には <code>default</code> 文を持つリーフが<strong>ゼロ</strong>（全フィールド optional）。以下は frrcfgd (<code>global_key_map</code> + Jinja2 テンプレート) のコードから判明した実行時 fallback。</p>
+<h3 id="frr">FRR 組み込みデフォルトが暗黙適用されるフィールド<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>CONFIG_DB 未設定時の動作</th>
+<th>FRR 組み込みデフォルト</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fast_external_failover</code></td>
+<td>frrcfgd は何も送出しない</td>
+<td><strong>有効 (true)</strong></td>
+<td><code>global_key_map</code> の <code>['true','false',True]</code> — 第3要素 <code>True</code> は DELETE 時に「FRR デフォルトの有効状態に戻す」ことを示す。J2 テンプレート L33 も <code>== 'false'</code> 時のみ <code>no bgp fast-external-failover</code> を発行 (<code>frrcfgd.py:1798</code>, <code>bgpd.conf.db.j2:33</code>)</td>
+</tr>
+<tr>
+<td><code>rr_clnt_to_clnt_reflection</code></td>
+<td>frrcfgd は何も送出しない</td>
+<td><strong>有効 (true)</strong></td>
+<td>同上パターン。J2 テンプレート L64 も <code>== 'false'</code> 時のみ <code>no bgp client-to-client reflection</code> を発行 (<code>frrcfgd.py:1801</code>, <code>bgpd.conf.db.j2:64</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vs-fallback">書き込み時デフォルト vs 実行時 fallback の乖離<a class="headerlink" href="#vs-fallback" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>J2 テンプレート (bgpcfgd) の動作</th>
+<th>frrcfgd key_map の動作</th>
+<th>乖離</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default_ipv4_unicast</code></td>
+<td>未設定時も <code>else</code> 節で <code>no bgp default ipv4-unicast</code> を発行 → <strong>実質 false</strong></td>
+<td><code>['true','false']</code> — 未設定なら何も送出しない</td>
+<td><strong>あり</strong>: bgpcfgd 経由では未設定 = 無効扱いになる (<code>bgpd.conf.db.j2:46-50</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frr_1">複合制約: 両フィールドが揃わないと FRR コマンド未生成<a class="headerlink" href="#frr_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールドセット</th>
+<th>制約</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>keepalive</code> + <code>holdtime</code></td>
+<td><code>comb_attr_list={'keepalive','holdtime'}</code> — 片方のみでは集合全体を除去</td>
+<td>FRR タイマー未更新。両方セット時のみ <code>timers bgp &lt;k&gt; &lt;h&gt;</code> 発行</td>
+<td><code>frrcfgd.py:3936, 1820</code></td>
+</tr>
+<tr>
+<td><code>max_delay</code> (必須) + <code>establish_wait</code> (optional)</td>
+<td><code>max_delay</code> がトリガー。<code>establish_wait</code> は存在すれば追記</td>
+<td><code>max_delay</code> なしで <code>establish_wait</code> 単独は無意味</td>
+<td><code>frrcfgd.py:1817</code>, <code>bgpd.conf.db.j2:76-83</code></td>
+</tr>
+<tr>
+<td><code>max_med_time</code> (必須) + <code>max_med_val</code> (optional)</td>
+<td><code>max_med_time</code> がトリガー</td>
+<td>startup max-med は <code>max_med_time</code> が必須</td>
+<td><code>frrcfgd.py:1816</code>, <code>bgpd.conf.db.j2:84-91</code></td>
+</tr>
+<tr>
+<td><code>max_med_admin</code> (必須 <code>true</code>) + <code>max_med_admin_val</code> (optional)</td>
+<td><code>max_med_admin == 'true'</code> がトリガー</td>
+<td>admin max-med は <code>max_med_admin</code> が必須</td>
+<td><code>frrcfgd.py:1821</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang">YANG デフォルトが存在するフィールド（サブテーブル）<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_GLOBALS_AF</code></td>
+<td><code>max_ebgp_paths</code></td>
+<td><strong>1</strong></td>
+<td><code>sonic-bgp-global.yang:345</code></td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS_AF</code></td>
+<td><code>max_ibgp_paths</code></td>
+<td><strong>1</strong></td>
+<td><code>sonic-bgp-global.yang:354</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> <code>global_key_map</code> L1784-1821 全行読了、<code>get_command_cmn()</code> L374-413 全行読了、<code>bgpd.conf.db.j2</code> 全行読了、<code>sonic-bgp-global.yang</code> 全行読了。</p>
+</blockquote>
+<!-- /defaults -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
 
 <div class="footnote">

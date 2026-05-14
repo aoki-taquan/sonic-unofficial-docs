@@ -22271,6 +22271,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy_desc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policy_desc の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actionmatch-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部自動付与 action/match (YANG 外)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30192,6 +30242,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy_desc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policy_desc の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actionmatch-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部自動付与 action/match (YANG 外)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -31041,6 +31141,80 @@
 <p><strong>スキャン証跡</strong>: <code>doAclTableTask()</code> L5346-5520 全行読了 + <code>addAclTable()</code> / <code>addEgrSetDscpTable()</code> 参照。7 件分岐抽出。Phase 6/7 derivation ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG スキーマに <code>default</code> 宣言がない (<code>ACL_TABLE</code> は YANG 未定義) 状態で、C++ struct 初期化・Python CLI fallback・実装読み捨てによって実質的に適用されるデフォルト値を列挙する。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来デフォルト</th>
+<th>発生源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stage</code></td>
+<td>なし</td>
+<td><strong><code>INGRESS</code></strong></td>
+<td>C++ struct 初期値 <code>acl_stage_type_t stage = ACL_STAGE_INGRESS</code> (<code>aclorch.h:543</code>) + CLI <code>default="ingress"</code> (<code>config/main.py:8081</code>)</td>
+</tr>
+<tr>
+<td><code>policy_desc</code></td>
+<td>なし</td>
+<td><strong><code>&lt;table_name&gt;</code></strong> (CLI 経由) / <code>""</code> (直接書き込み)</td>
+<td><code>parse_acl_table_info()</code> の <code>else</code> 分岐 <code>table_info["policy_desc"] = table_name</code> (<code>main.py:8047</code>)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>なし</td>
+<td><strong>なし</strong> (必須フィールド)</td>
+<td><code>processAclTableType()</code> — 空文字のみ reject、省略時は <code>bAllAttributesOk=false</code> → erase (<code>aclorch.cpp:5823</code>)</td>
+</tr>
+<tr>
+<td><code>ports</code></td>
+<td>なし</td>
+<td><strong>全有効 ACL ポート</strong> (CLI 経由) / <code>[]</code> (直接書き込み)</td>
+<td><code>get_acl_bound_ports()</code> fallback (<code>main.py:8059</code>)</td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td>なし</td>
+<td><strong>なし</strong> (読み捨て)</td>
+<td><code>doAclTableTask()</code> 内で <code>continue</code> — 内部状態に影響しない (<code>aclorch.cpp:5413</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stage_1"><code>stage</code> の詳細<a class="headerlink" href="#stage_1" title="Permanent link">&para;</a></h3>
+<p>C++ の <code>AclTable</code> クラスは <code>stage = ACL_STAGE_INGRESS</code> でメンバを初期化する (<code>aclorch.h:543</code>)。CONFIG_DB エントリに <code>stage</code> フィールドがなければ <code>processAclTableStage()</code> が呼ばれず INGRESS がそのまま <code>validate()</code> に渡る。CLI でも <code>-s</code> 省略時に <code>"ingress"</code> をセット済みで書き込むため、2 重に担保されている。</p>
+<h3 id="policy_desc"><code>policy_desc</code> の詳細<a class="headerlink" href="#policy_desc" title="Permanent link">&para;</a></h3>
+<p><code>config acl add table</code> 実行時に <code>-d</code> を省略すると <code>policy_desc</code> に <code>table_name</code> 文字列が設定される。REST/minigraph/直接書き込みでは <code>policy_desc</code> は任意で、省略時は orchagent の <code>AclTable::description</code> が空文字列デフォルト。orchagent は <code>description</code> を SAI 属性として渡さないため SAI ハードウェアに影響なし（ログ・<code>show</code> 表示のみ）。</p>
+<h3 id="actionmatch-yang">内部自動付与 action/match (YANG 外)<a class="headerlink" href="#actionmatch-yang" title="Permanent link">&para;</a></h3>
+<p><code>addMandatoryActions()</code> (<code>aclorch.cpp:2563</code>) — ASIC が action list mandatory と報告する場合、ユーザ指定 action が空なら <code>SAI_ACL_ACTION_TYPE_COUNTER</code> を自動追加し、さらに <code>defaultAclActionList</code> テーブルから type/stage 組み合わせで追加する。これは CONFIG_DB フィールドではなく SAI 属性 (<code>SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST</code>) として展開される。主要な自動付与:</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>INGRESS 自動付与</th>
+<th>EGRESS 自動付与</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>L3</code> / <code>L3V6</code> / <code>L3V4V6</code></td>
+<td><code>PACKET_ACTION</code>, <code>REDIRECT</code></td>
+<td><code>PACKET_ACTION</code>, <code>REDIRECT</code></td>
+</tr>
+<tr>
+<td><code>MIRROR</code></td>
+<td><code>MIRROR_INGRESS</code>, <code>MIRROR_EGRESS</code></td>
+<td><code>MIRROR_EGRESS</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /defaults -->
 
 <!-- ref-triangle:start -->
 

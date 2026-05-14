@@ -21376,6 +21376,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto_techsupportglobal_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AUTO_TECHSUPPORT|GLOBAL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto_techsupport_feature_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AUTO_TECHSUPPORT_FEATURE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30015,6 +30054,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto_techsupportglobal_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AUTO_TECHSUPPORT|GLOBAL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto_techsupport_feature_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AUTO_TECHSUPPORT_FEATURE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30491,6 +30569,114 @@
 <li><code>GLOBAL.state=enabled</code> かつ feature エントリ <code>state=disabled</code> → その feature のコアダンプのみスキップ</li>
 </ul>
 <!-- /value-behavior -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>以下は YANG <code>default</code> 宣言の<strong>外</strong>にあるコードレベルの fallback。<code>init_cfg.json.j2</code> の初期値 + ランタイム <code>.get</code>/<code>try-except</code>/<code>or</code> パターンを全行精読して導出。</p>
+<h3 id="auto_techsupportglobal_1">AUTO_TECHSUPPORT|GLOBAL<a class="headerlink" href="#auto_techsupportglobal_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>init_cfg.j2 初期値</th>
+<th>コード fallback</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td>なし</td>
+<td>ビルド変数 <code>enable_auto_tech_support</code> で <code>enabled</code>/<code>disabled</code></td>
+<td>未設定 → <code>disabled</code> 扱い（<code>!= "enabled"</code> 分岐でスキップ）</td>
+<td><code>coredump_gen_handler.py:17</code>, <code>techsupport_cleanup.py:27</code></td>
+</tr>
+<tr>
+<td><code>rate_limit_interval</code></td>
+<td>なし</td>
+<td><code>"180"</code> (秒)</td>
+<td><code>ValueError</code> / 未設定 → <code>0.0</code>（rate-limit 無効）</td>
+<td><code>auto_techsupport_helper.py:323-326</code></td>
+</tr>
+<tr>
+<td><code>max_techsupport_limit</code></td>
+<td>なし</td>
+<td><code>"10.0"</code> (%)</td>
+<td><code>ValueError</code> / 未設定 → <code>0.0</code> → クリーンアップなし</td>
+<td><code>techsupport_cleanup.py:32-39</code></td>
+</tr>
+<tr>
+<td><code>max_core_limit</code></td>
+<td>なし</td>
+<td><code>"5.0"</code> (%)</td>
+<td><code>ValueError</code> / 未設定 → <code>0.0</code> → クリーンアップなし</td>
+<td><code>coredump_gen_handler.py:22-30</code></td>
+</tr>
+<tr>
+<td><code>available_mem_threshold</code></td>
+<td><strong>10.0</strong></td>
+<td><code>"10.0"</code> (%)</td>
+<td>未設定 → <code>10</code> (%) — YANG/init_cfg/コード 3層一致</td>
+<td><code>memory_threshold_check.py:24,122-127</code></td>
+</tr>
+<tr>
+<td><code>min_available_mem</code></td>
+<td><strong>200</strong> (MB)</td>
+<td><code>"200"</code></td>
+<td>未設定 → <code>200 MB</code>（内部では <code>× 1024 = 204800 KB</code>）— 3層一致</td>
+<td><code>memory_threshold_check.py:26,128-134</code></td>
+</tr>
+<tr>
+<td><code>since</code></td>
+<td>なし</td>
+<td><code>"2 days ago"</code></td>
+<td>未設定 または <code>date</code> 検証失敗 → <code>"2 days ago"</code>（二重 fallback）</td>
+<td><code>auto_techsupport_helper.py:213,215,219</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="auto_techsupport_feature_1">AUTO_TECHSUPPORT_FEATURE<a class="headerlink" href="#auto_techsupport_feature_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>init_cfg.j2 / feature.py 初期値</th>
+<th>コード fallback</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td>なし</td>
+<td>GLOBAL <code>state</code> 継承 (<code>infer_auto_ts_capability</code>)</td>
+<td>GLOBAL 未設定 → <code>"disabled"</code></td>
+<td><code>feature.py:159-174,181-183</code></td>
+</tr>
+<tr>
+<td><code>available_mem_threshold</code></td>
+<td><strong>10.0</strong></td>
+<td><code>"10.0"</code></td>
+<td>DB 欠落時のみコード定数 <code>0</code>（feature チェック無効）— 通常は YANG/init_cfg の 10.0 が優先</td>
+<td><code>memory_threshold_check.py:28,139-145</code></td>
+</tr>
+<tr>
+<td><code>rate_limit_interval</code></td>
+<td>なし</td>
+<td><code>"600"</code> (秒)</td>
+<td><code>ValueError</code> / 未設定 → <code>0.0</code>（feature rate-limit 無効）</td>
+<td><code>auto_techsupport_helper.py:316-330</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">FEATURE.available_mem_threshold の非対称</p>
+<p><code>memory_threshold_check.py</code> のコード定数は <code>DEFAULT_MEMORY_AVAILABLE_FEATURE_THRESHOLD = 0</code> (%)。
+これは DB 値が<strong>完全に欠落</strong>した場合のみ有効。通常は <code>init_cfg.json.j2</code> または YANG default の <code>10.0</code> が DB に書き込まれているため、コード定数 <code>0</code> は事実上発動しない。</p>
+</div>
+<!-- /defaults -->
 
 <!-- ref-triangle:start -->
 

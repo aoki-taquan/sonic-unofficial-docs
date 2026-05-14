@@ -23422,6 +23422,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available_mem_threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        available_mem_threshold
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rate_limit_interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rate_limit_interval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30230,6 +30280,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available_mem_threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        available_mem_threshold
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rate_limit_interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rate_limit_interval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30288,19 +30388,19 @@
 <tr>
 <td><code>state</code></td>
 <td><code>enabled</code>/<code>disabled</code> (<code>stypes:admin_mode</code>)</td>
-<td>なし</td>
+<td>なし (YANG); install 時 <code>disabled</code> または GLOBAL 継承</td>
 <td>この feature でクラッシュした際の techsupport 起動可否</td>
 </tr>
 <tr>
 <td><code>available_mem_threshold</code></td>
 <td>decimal (0.0..99.99)</td>
-<td><code>10.0</code></td>
+<td><code>10.0</code> (YANG + install 時); 欠落時は実行時 <code>0.0</code> へ fallback</td>
 <td>メモリ使用率しきい値。0 で無効化</td>
 </tr>
 <tr>
 <td><code>rate_limit_interval</code></td>
 <td>uint16 (秒)</td>
-<td>なし</td>
+<td>なし (YANG); install 時 <code>600</code>; 欠落時は実行時 <code>0.0</code> へ fallback</td>
 <td>この feature の rate-limit。0 で明示的に無効化</td>
 </tr>
 </tbody>
@@ -30477,6 +30577,90 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG 宣言デフォルトに加え、Python コードが持つ fallback を per-field で記録する。</p>
+<h3 id="state"><code>state</code><a class="headerlink" href="#state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DB 書き込み時 (パッケージ install)</td>
+<td><code>disabled</code> (AUTO_TECHSUPPORT|GLOBAL 不在時) / GLOBAL の <code>state</code> 値を引き継ぎ</td>
+<td><code>sonic_package_manager/service_creator/feature.py:22-26,159-197</code></td>
+</tr>
+<tr>
+<td>実行時 fallback (フィールド不在)</td>
+<td><code>None</code> → <code>!= "enabled"</code> 比較でスキップ扱い = <code>disabled</code> と同等</td>
+<td><code>scripts/coredump_gen_handler.py:55</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>infer_auto_ts_capability()</code> が <code>AUTO_TECHSUPPORT|GLOBAL.state</code> を読み、値が空なら <code>(False, "disabled")</code> を返す。<code>False</code> の場合、<code>AUTO_TECHSUPPORT_FEATURE</code> エントリ自体が作成されない (<code>feature.py:185-186</code>)。</p>
+<h3 id="available_mem_threshold"><code>available_mem_threshold</code><a class="headerlink" href="#available_mem_threshold" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG default</td>
+<td><code>10.0</code></td>
+<td><code>sonic-auto_techsupport.yang:114</code></td>
+</tr>
+<tr>
+<td>DB 書き込み時 (パッケージ install / ビルド)</td>
+<td><code>"10.0"</code></td>
+<td><code>feature.py:26</code>; <code>init_cfg.json.j2</code> AUTO_TECHSUPPORT_FEATURE ブロック</td>
+</tr>
+<tr>
+<td>実行時 fallback (フィールド欠落)</td>
+<td><code>0.0</code> → メモリチェック無効</td>
+<td><code>memory_threshold_check.py:28</code> (<code>DEFAULT_MEMORY_AVAILABLE_FEATURE_THRESHOLD = 0</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><code>Config.parse_value_from_db()</code> (memory_threshold_check.py:148-156) が <code>config.get("available_mem_threshold")</code> で falsy 値を得た場合に <code>0.0</code> を返す。float 変換失敗は <code>MemoryCheckerException</code> を raise し techsupport を起動しない。</p>
+<h3 id="rate_limit_interval"><code>rate_limit_interval</code><a class="headerlink" href="#rate_limit_interval" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>段階</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG default</td>
+<td>なし (宣言なし)</td>
+<td><code>sonic-auto_techsupport.yang</code></td>
+</tr>
+<tr>
+<td>DB 書き込み時 (パッケージ install / ビルド)</td>
+<td><code>"600"</code> (秒)</td>
+<td><code>feature.py:25</code>; <code>init_cfg.json.j2</code></td>
+</tr>
+<tr>
+<td>実行時 fallback (空文字 / フィールド欠落)</td>
+<td><code>0.0</code> → rate-limit 無効 (連続実行を許可)</td>
+<td><code>auto_techsupport_helper.py:328-331</code> (<code>except ValueError: container_cooloff = 0.0</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>書き込み時 default (<code>600</code>) と実行時 fallback (<code>0.0</code>) が<strong>乖離</strong>している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。</p>
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 

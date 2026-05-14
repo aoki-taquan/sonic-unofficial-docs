@@ -23119,6 +23119,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29888,6 +29899,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30290,6 +30312,53 @@
 </tr>
 </tbody>
 </table>
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG <code>default</code> 文はプロビジョニング時 (sonic-cfggen が <code>init_cfg.json.j2</code> を展開して DB に書く段階) に適用される。
+以下は <strong>DB エントリ自体がない場合</strong> のランタイム fallback を per-field で示す。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>init_cfg.json.j2</th>
+<th>コード fallback (DB なし)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td><code>disabled</code></td>
+<td><code>"disabled"</code></td>
+<td><code>hostcfgd</code> <code>.get("state", {})</code> → <code>{}</code> → <code>banner-config.sh</code> で <code>STATE=</code> (空文字列) → バナー無効と同等</td>
+</tr>
+<tr>
+<td><code>login</code></td>
+<td><code>"Debian GNU/Linux 11"</code></td>
+<td><code>"Debian GNU/Linux 11"</code></td>
+<td><code>.get("login", {})</code> → <code>{}</code> → <code>state=disabled</code> 時 no-op、<code>state=enabled</code> 時 <code>LOGIN=</code> (空文字列) → <code>/etc/issue</code> / <code>/etc/issue.net</code> 空白化</td>
+</tr>
+<tr>
+<td><code>motd</code></td>
+<td>SONiC ASCII アート + 警告文 (多行)</td>
+<td>同一内容</td>
+<td><code>.get("motd", {})</code> → <code>{}</code> → <code>state=enabled</code> 時 <code>MOTD=</code> → <code>/etc/motd</code> 空白化</td>
+</tr>
+<tr>
+<td><code>logout</code></td>
+<td><code>""</code> (空文字列)</td>
+<td><code>""</code></td>
+<td><code>.get("logout", {})</code> → <code>{}</code> → <code>state=enabled</code> 時 <code>LOGOUT=</code> → <code>/etc/logout_message</code> 空白化</td>
+</tr>
+</tbody>
+</table>
+<p><strong>コード根拠</strong>:
+- <code>hostcfgd</code> <code>BannerCfg.load()</code>: <code>sonic-host-services/scripts/hostcfgd:2069-2077</code>
+- <code>banner-config.sh</code> shell fallback: <code>sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:4-6</code>
+- <code>init_cfg.json.j2</code> 初期値: <code>sonic-buildimage/files/build_templates/init_cfg.json.j2:180-186</code>
+- YANG default: <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-banner.yang:22-48</code></p>
+<!-- /defaults -->
+
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>hostcfgd</code> (<code>host-services</code> パッケージ)。ConfigDBConnector で <code>BANNER_MESSAGE/global</code> を listen し、<code>/etc/issue</code>, <code>/etc/motd</code>, <code>/etc/issue.net</code> をテンプレ展開して書き換える</li>

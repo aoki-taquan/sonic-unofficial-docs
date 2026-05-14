@@ -22106,6 +22106,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tsa_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tsa_enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wcmp_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wcmp_enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#idf_isolation_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        idf_isolation_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asn-peers-confed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asn / peers (CONFED)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_tsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部ランタイム参照: chassis_tsa
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30230,6 +30302,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tsa_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tsa_enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wcmp_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        wcmp_enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#idf_isolation_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        idf_isolation_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asn-peers-confed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asn / peers (CONFED)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassis_tsa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部ランタイム参照: chassis_tsa
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30547,6 +30691,173 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>YANG <code>default</code> 以外の Python/C++ レベル fallback を per-field で整理する。
+書き込み時デフォルト (init_cfg 注入) と実行時 fallback (del_handler / <code>or</code> / クラス定数) の乖離を区別する。</p>
+</blockquote>
+<h3 id="tsa_enabled"><code>tsa_enabled</code><a class="headerlink" href="#tsa_enabled" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG default</td>
+<td><code>"false"</code></td>
+<td><code>sonic-bgp-device-global.yang:35</code></td>
+</tr>
+<tr>
+<td>init_cfg 書き込みデフォルト</td>
+<td><code>"false"</code></td>
+<td><code>init_cfg.json.j2</code> (ビルド時 CONFIG_DB へ静的注入)</td>
+</tr>
+<tr>
+<td>Python クラス定数</td>
+<td><code>TSA_DEFAULTS = "false"</code></td>
+<td><code>managers_device_global.py:12</code></td>
+</tr>
+<tr>
+<td><code>__init__</code> fallback</td>
+<td><code>path_exist</code> ガードで DB にキーなし時のみ directory キャッシュへ <code>"false"</code> を書き込む</td>
+<td><code>managers_device_global.py:42-43</code></td>
+</tr>
+<tr>
+<td><code>del_handler</code> fallback</td>
+<td><code>configure_tsa(data=None)</code> → <code>state = TSA_DEFAULTS</code> → <code>isolate_unisolate_device("false")</code> (TSB 実行)</td>
+<td><code>managers_device_global.py:78,94</code></td>
+</tr>
+<tr>
+<td><code>configure_tsa</code> fallback</td>
+<td><code>data</code> が None / キーなし → <code>state = "false"</code></td>
+<td><code>managers_device_global.py:94-98</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>乖離</strong>: なし。YANG default / init_cfg / Python クラス定数すべて <code>"false"</code> で一致。<code>del_handler</code> 時は FRR に TSB ルートマップが即時 push される。</p>
+<hr />
+<h3 id="wcmp_enabled"><code>wcmp_enabled</code><a class="headerlink" href="#wcmp_enabled" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG default</td>
+<td><code>"false"</code></td>
+<td><code>sonic-bgp-device-global.yang:44</code></td>
+</tr>
+<tr>
+<td>init_cfg 書き込みデフォルト</td>
+<td><code>"false"</code></td>
+<td><code>init_cfg.json.j2</code></td>
+</tr>
+<tr>
+<td>Python クラス定数</td>
+<td><code>WCMP_DEFAULTS = "false"</code></td>
+<td><code>managers_device_global.py:13</code></td>
+</tr>
+<tr>
+<td><code>__init__</code> fallback</td>
+<td><code>path_exist</code> ガードで <code>"false"</code> を directory へ書き込む</td>
+<td><code>managers_device_global.py:45-46</code></td>
+</tr>
+<tr>
+<td><code>del_handler</code> fallback</td>
+<td><code>configure_wcmp(data=None)</code> → <code>state = "false"</code> → <code>set_wcmp("false")</code></td>
+<td><code>managers_device_global.py:80,116</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>乖離</strong>: なし。<code>set_wcmp("false")</code> は <code>bgpd.wcmp.conf.j2</code> を <code>wcmp_enabled="false"</code> でレンダリングして extcommunity bandwidth を FRR から削除する。</p>
+<hr />
+<h3 id="idf_isolation_state"><code>idf_isolation_state</code><a class="headerlink" href="#idf_isolation_state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG default</td>
+<td><code>"unisolated"</code></td>
+<td><code>sonic-bgp-device-global.yang:59</code></td>
+</tr>
+<tr>
+<td>init_cfg 書き込みデフォルト</td>
+<td><code>"unisolated"</code></td>
+<td><code>init_cfg.json.j2</code></td>
+</tr>
+<tr>
+<td>Python クラス定数</td>
+<td><code>IDF_DEFAULTS = "unisolated"</code></td>
+<td><code>managers_device_global.py:14</code></td>
+</tr>
+<tr>
+<td><code>__init__</code> fallback</td>
+<td><code>path_exist</code> ガードで <code>"unisolated"</code> を directory へ書き込む</td>
+<td><code>managers_device_global.py:48-49</code></td>
+</tr>
+<tr>
+<td><code>del_handler</code> fallback</td>
+<td><code>configure_idf(data=None)</code> → <code>state = "unisolated"</code> → <code>downstream_isolate_unisolate("unisolated")</code></td>
+<td><code>managers_device_global.py:82,130</code></td>
+</tr>
+<tr>
+<td>新 peer-group 追加時</td>
+<td><code>check_state_and_get_idf_isolation_routemaps()</code> が <code>"unisolated"</code> なら空文字返却 → isolate テンプレート非適用</td>
+<td><code>managers_device_global.py:283</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>乖離 (重要)</strong>: <code>downstream_isolate_unisolate("unisolated")</code> は <code>switch_role</code> が <code>SpineRouter</code> / <code>LowerSpineRouter</code> / <code>UpperSpineRouter</code> 以外の場合は FRR への push を<strong>スキップ</strong> (<code>managers_device_global.py:260</code>)。ToR 等の非 Spine では del_handler でも IDF unisolate テンプレートが送出されない。これは書き込み時デフォルト (<code>init_cfg</code> が <code>"unisolated"</code> を注入) と実行時処理の乖離ではなく、ロール依存スキップである。</p>
+<hr />
+<h3 id="asn-peers-confed"><code>asn</code> / <code>peers</code> (CONFED)<a class="headerlink" href="#asn-peers-confed" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG default</td>
+<td>なし (optional leaf)</td>
+<td><code>sonic-bgp-device-global.yang:69-81</code></td>
+</tr>
+<tr>
+<td>init_cfg 書き込みデフォルト</td>
+<td>なし (<code>BGP_DEVICE_GLOBAL|CONFED</code> セクション未定義)</td>
+<td><code>init_cfg.json.j2</code></td>
+</tr>
+<tr>
+<td>Python fallback</td>
+<td>なし。<code>DeviceGlobalCfgMgr</code> は CONFED を直接処理しない</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>乖離</strong>: CONFIG_DB に <code>BGP_DEVICE_GLOBAL|CONFED</code> エントリが存在しない場合、bgpcfgd は confederation 設定を FRR へ送出しない。FRR 側では <code>no bgp confederation identifier</code> が有効 (未設定状態)。</p>
+<hr />
+<h3 id="chassis_tsa">内部ランタイム参照: <code>chassis_tsa</code><a class="headerlink" href="#chassis_tsa" title="Permanent link">&para;</a></h3>
+<p><code>get_chassis_tsa_status()</code> が <code>CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled</code> を読む。非シャーシ環境またはキー不在時のデフォルトは <code>"false"</code> (<code>managers_device_global.py:239</code>)。CONFIG_DB フィールドではなく内部状態変数。</p>
+<!-- evidence: managers_device_global.py:12-14,42-49,78-82,94-98,116,130,239,260,283 -->
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 029bff240b1b -->
 

@@ -23416,6 +23416,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30274,6 +30302,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30653,6 +30709,72 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG default 以外の fallback。<code>hostcfgd</code> (<code>AaaCfg</code> クラス) の <code>__init__</code> リテラルおよび <code>authentication_default</code> / <code>authorization_default</code> / <code>accounting_default</code> dict から導出。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>AAA type</th>
+<th>コード由来デフォルト</th>
+<th>fallback 源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>login</code></td>
+<td><code>authentication</code></td>
+<td><code>'local'</code></td>
+<td><code>authentication_default = {'login': 'local'}</code> — hostcfgd:357–359</td>
+</tr>
+<tr>
+<td><code>login</code></td>
+<td><code>authorization</code></td>
+<td><code>'local'</code></td>
+<td><code>authorization_default = {'login': 'local'}</code> — hostcfgd:361–363</td>
+</tr>
+<tr>
+<td><code>login</code></td>
+<td><code>accounting</code></td>
+<td><code>'disable'</code></td>
+<td><code>accounting_default = {'login': 'disable'}</code> — hostcfgd:364–366</td>
+</tr>
+<tr>
+<td><code>failthrough</code></td>
+<td><code>authentication</code></td>
+<td><code>False</code> (Jinja2 undefined → falsy)</td>
+<td><code>authentication_default</code> にキーなし; DB 欠如時 Jinja2 が falsy 評価</td>
+</tr>
+<tr>
+<td><code>fallback</code></td>
+<td><code>authentication</code></td>
+<td><code>False</code> (Jinja2 undefined → falsy)</td>
+<td><code>authentication_default</code> にキーなし; bool 変換なしで dict に格納</td>
+</tr>
+<tr>
+<td><code>debug</code></td>
+<td><code>authentication</code></td>
+<td><code>False</code></td>
+<td><code>self.debug = False</code> literal — hostcfgd:393; DB に <code>debug</code> キーがある場合のみ <code>is_true()</code> で上書き</td>
+</tr>
+<tr>
+<td><code>trace</code></td>
+<td><code>authentication</code></td>
+<td>常に <code>False</code> (<strong>DB 値は無視</strong>)</td>
+<td><code>self.trace = False</code> literal — hostcfgd:394; <code>aaa_update()</code> に <code>trace</code> 処理ブロックが存在しないため DB 値が反映されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">補足<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>modify_conf_file()</code> (hostcfgd:641–648) は <code>&lt;type&gt;_default.copy()</code> に DB 値を <code>update()</code> するパターン。DB にキーが存在しない場合は default dict の値がそのまま Jinja2 テンプレートへ渡る。</li>
+<li><code>is_true()</code> (hostcfgd:156–162) は <code>'True'</code> / <code>'true'</code> のみ <code>True</code> を返す。<code>'yes'</code> / <code>'1'</code> 等は <code>False</code> 扱い (syslog ERR を出力)。</li>
+<li><code>trace</code> フィールドは CLI (<code>config aaa authentication trace enable</code>) で CONFIG_DB に書き込めるが、<code>aaa_update()</code> で <code>self.trace</code> を更新する分岐が存在しない。結果として PAM テンプレートには常に <code>trace=False</code> が渡り、RADIUS <code>trace</code> オプションは機能しない。これは <code>debug</code> との非対称性であり、実装上のバグと見られる。</li>
+<li><code>accounting.login</code> の <code>'disable'</code> デフォルトは YANG default (<code>'local'</code>) と異なる点に注意。DB に <code>AAA|accounting</code> エントリが存在しない場合、hostcfgd は <code>'disable'</code> として振る舞う。</li>
+</ul>
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->
 

@@ -23640,6 +23640,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙デフォルト・コード由来の固定値 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルト・コード由来の固定値 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールドごとの YANG default と実装 fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テンプレートハードコード値（CONFIG_DB 非依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30330,6 +30380,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙デフォルト・コード由来の固定値 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルト・コード由来の固定値 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールドごとの YANG default と実装 fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テンプレートハードコード値（CONFIG_DB 非依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30727,6 +30827,167 @@
 <p><strong>スキャン証跡</strong>: <code>BGPPeerMgrBase</code> 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">暗黙デフォルト・コード由来の固定値 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="yang-default-fallback">フィールドごとの YANG default と実装 fallback<a class="headerlink" href="#yang-default-fallback" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>実装デフォルト / fallback</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>なし</td>
+<td><code>BGPMonitor</code> 固定 (YANG <code>must</code> 制約)</td>
+<td><code>sonic-bgp-monitor.yang:41</code></td>
+</tr>
+<tr>
+<td><code>asn</code></td>
+<td>なし</td>
+<td><strong>使用されない</strong> — FRR への <code>remote-as</code> は常に <code>DEVICE_METADATA/localhost/bgp_asn</code> を使用</td>
+<td><code>instance.conf.j2:4</code></td>
+</tr>
+<tr>
+<td><code>holdtime</code></td>
+<td>なし</td>
+<td>FRR のグローバルデフォルト (<code>hold-time 180</code>) に依存</td>
+<td><code>sonic-bgp-common.yang</code></td>
+</tr>
+<tr>
+<td><code>keepalive</code></td>
+<td>なし</td>
+<td>FRR のグローバルデフォルト (<code>keepalive 60</code>) に依存</td>
+<td><code>sonic-bgp-common.yang</code></td>
+</tr>
+<tr>
+<td><code>local_addr</code></td>
+<td>なし</td>
+<td>欠如時: <code>log_warn</code> のみ、処理続行。FRR の <code>update-source</code> 未設定になる</td>
+<td><code>managers_bgp.py:194-195</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code></td>
+<td>なし</td>
+<td>欠如しても peer 追加は続行。shutdown コマンドなし → <code>up</code> 相当</td>
+<td><code>managers_bgp.py:set_handler</code></td>
+</tr>
+<tr>
+<td><code>nhopself</code></td>
+<td>なし</td>
+<td>テンプレートで未参照 (FRR デフォルト動作)</td>
+<td><code>instance.conf.j2</code></td>
+</tr>
+<tr>
+<td><code>rrclient</code></td>
+<td>なし</td>
+<td>テンプレートで未参照 (FRR デフォルト動作)</td>
+<td><code>instance.conf.j2</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db">テンプレートハードコード値（CONFIG_DB 非依存）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>以下は CONFIG_DB のフィールドとは無関係に <code>bgpcfgd</code> が FRR に注入する固定値:</p>
+<table>
+<thead>
+<tr>
+<th>FRR コマンド</th>
+<th>注入条件</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>neighbor &lt;addr&gt; remote-as &lt;bgp_asn&gt;</code></td>
+<td>常時。<code>bgp_asn</code> は DEVICE_METADATA 由来</td>
+<td><code>instance.conf.j2:4</code></td>
+</tr>
+<tr>
+<td><code>neighbor &lt;addr&gt; peer-group BGPMON</code></td>
+<td>常時</td>
+<td><code>instance.conf.j2:5</code></td>
+</tr>
+<tr>
+<td><code>neighbor &lt;addr&gt; activate</code> (IPv4 + IPv6)</td>
+<td>常時</td>
+<td><code>instance.conf.j2:7,9</code></td>
+</tr>
+<tr>
+<td><code>neighbor BGPMON update-source Loopback4096</code></td>
+<td><code>switch_type=voq</code> または chassisdb.conf 存在時</td>
+<td><code>peer-group.conf.j2:10</code></td>
+</tr>
+<tr>
+<td><code>neighbor BGPMON update-source &lt;lo0_ipv4&gt;</code></td>
+<td>Loopback0 IPv4 存在時（通常ケース）</td>
+<td><code>peer-group.conf.j2:12</code></td>
+</tr>
+<tr>
+<td><code>neighbor BGPMON maximum-prefix 1</code></td>
+<td>IPv4 AF に無条件</td>
+<td><code>peer-group.conf.j2:20</code></td>
+</tr>
+<tr>
+<td><code>neighbor BGPMON send-community</code></td>
+<td>無条件</td>
+<td><code>peer-group.conf.j2:19</code></td>
+</tr>
+<tr>
+<td><code>route-map FROM_BGPMON deny 10</code></td>
+<td>常時（全受信拒否）</td>
+<td><code>policies.conf.j2:4</code></td>
+</tr>
+<tr>
+<td><code>route-map TO_BGPMON permit 10</code></td>
+<td>常時（全送信許可）</td>
+<td><code>policies.conf.j2:6</code></td>
+</tr>
+<tr>
+<td><code>bgp suppress-fib-pending</code></td>
+<td>全 BGP context に無条件注入</td>
+<td><code>managers_bgp.py:apply_op()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-vs-discrepancy">YANG vs 実装 discrepancy<a class="headerlink" href="#yang-vs-discrepancy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG 定義</th>
+<th>実装挙動</th>
+<th>乖離種別</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>asn</code></td>
+<td>uint32、Optional</td>
+<td>FRR の <code>remote-as</code> は DEVICE_METADATA の <code>bgp_asn</code> を使用。CONFIG_DB の <code>asn</code> は<strong>参照されない</strong></td>
+<td><strong>重大 discrepancy</strong>: <code>asn</code> は dead field</td>
+</tr>
+<tr>
+<td><code>admin_status</code></td>
+<td>Optional</td>
+<td>欠如時でも peer 追加続行 (<code>up</code> 相当)</td>
+<td>soft — YANG は明示を推奨しない</td>
+</tr>
+<tr>
+<td><code>local_addr</code></td>
+<td>Optional, inet:ip-address</td>
+<td>欠如時は warn のみ。<code>update-source</code> 未設定</td>
+<td>soft — YANG の optional と整合</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: <code>BGP_MONITORS|&lt;addr&gt;|asn</code> を CONFIG_DB に設定しても、bgpcfgd は FRR peer の <code>remote-as</code> をローカル ASN (DEVICE_METADATA) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。</p>
+</blockquote>
+<!-- /defaults -->
 <!-- glossary-links-injected: a1dd9e34d62e -->
 
 <div class="footnote">
