@@ -2,6 +2,7 @@
 title: TELEMETRY テーブル
 description: "TELEMETRY テーブル — gRPC ストリーミングテレメトリ / gNMI サーバの設定。TLS 証明書パスと gNMI ランタイムオプションを保持する。telemetry コンテナ (docker-telemetry、docker-gnmi) が起動時に CONFIG_DB を読み込む。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -176,5 +177,38 @@ systemctl status telemetry
 - 設定変更は gnmi-telemetry 再起動後に有効 (数秒)。クライアントは再接続が必要。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+TELEMETRY テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし — minigraph または手動 `config load` 経由
+
+### minigraph / sonic-cfggen
+
+**minigraph.py** が TELEMETRY エントリを生成 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での TELEMETRY マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+**`dockers/docker-sonic-telemetry/telemetry_vars.j2`** が TELEMETRY テーブルを参照して設定を生成 (読み取り側)
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 896d391185a9 -->
