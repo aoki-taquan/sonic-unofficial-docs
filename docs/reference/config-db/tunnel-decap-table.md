@@ -249,4 +249,48 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-swss/orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d + tunneldecaporch.h -->
+
+### ハードコード定数（フィールドで上書き不可）
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `OVERLAY_RIF_DEFAULT_MTU` | **9100** | デカプセル用オーバーレイ loopback RIF の MTU。フィールドとして公開されておらず変更不可 |
+| subnet decap tunnel 名 | `"IPINIP_SUBNET"` / `"IPINIP_SUBNET_V6"` | `SubnetDecapConfig` にハードコード。ユーザーが別名を指定しても subnet decap 機能は動作しない |
+
+### フィールド省略時の暗黙デフォルト
+
+| フィールド | 省略時の挙動 |
+|-----------|-------------|
+| `src_ip` | `nullptr` として扱い `SAI_TUNNEL_ATTR_ENCAP_SRC_IP` をスキップ。P2MP タームが自動選択される |
+| `decap_dscp_to_tc_map` | `SAI_NULL_OBJECT_ID` → SAI 属性をプッシュしない（QoS マップなし） |
+| `decap_tc_to_pg_map` | 同上 |
+| `encap_ecn_mode` | 空文字列 → `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` をスキップ（SAI デフォルト依存） |
+| `term_type` (DECAP_TERM) | デフォルト `P2MP`（`TUNNEL_TERM_TYPE_P2MP`、`doDecapTunnelTermTask` 内変数初期値） |
+
+### Dead-SAI フィールド（SAI に流れない）
+
+`encap_tc_to_dscp_map` と `encap_tc_to_queue_map` は `addDecapTunnel()` に渡されず SAI には設定されない。内部 `tunnelTable` に記録され、**`muxorch` が `getQosMapId()` 経由で読み出すためだけに使用**される。tunnel decap の QoS には影響しない。
+
+### Create-Only 属性（更新時スキップ）
+
+| フィールド | 更新時の挙動 |
+|-----------|------------|
+| `ecn_mode` | 既存トンネルへの変更は `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` が create-only のため WARN ログを出してスキップ、エントリ全体が再処理対象外になる |
+| `encap_ecn_mode` | 同様に `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` が create-only。NOTICE ログでスキップ |
+
+### 書込み順依存
+
+- `allPortsReady()` が false の間は `doTask()` が即 return。ports 初期化前のエントリはキューに留まる。
+- DECAP_TERM_TABLE エントリがトンネル本体より先に届いた場合、`unhandledDecapTerms` に蓄積され、トンネル作成成功後にまとめて処理される。
+
+### Unknown フィールドによる Silent Drop
+
+認識されないフィールド名が含まれると `LOG_ERROR` して **エントリ全体をスキップ**する。フィールド名の typo が設定欠落を引き起こす。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
