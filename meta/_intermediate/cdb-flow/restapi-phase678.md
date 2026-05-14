@@ -1,29 +1,62 @@
-# RESTAPI — Phase 6/7/8 派生・分岐 証跡
+# RESTAPI — Phase 6/7/8 中間ファイル
 
-## Phase 6: 自動派生 (assignment scan)
+生成日: 2026-05-14 (batch cdb_batch_4)
 
-`REST_API` テーブルは sonic-restapi プロセス (`sonic-gnmi` / `sonic-mgmt-framework`) が読み込む設定テーブル。
+<!-- derivation -->
+## Phase 6: 自動派生代入スキャン
 
-| 派生先 | 派生元条件 | 派生値 | ソース |
-|---|---|---|---|
-| TLS 設定 | `client_auth` が未設定またはデフォルト | `user_auth` モードで起動 | `restapi` / `sonic-gnmi` 起動スクリプト |
-| REST API ポート | `port` フィールド未設定 | デフォルト `8080` (または `443` TLS 時) | `restapi` 設定 |
+### minigraph.py — RESTAPI 自動生成
 
-**CONFIG_DB 内フィールド間の自動派生**: 特になし。各フィールドは独立して restapi プロセスの起動引数・設定ファイルに反映される。
+```
+# minigraph.py:2689
+results['RESTAPI'] = {
+    'config': {'client_auth': 'user_jwt',
+               'allow_insecure': 'false',
+               'log_level': 'notice'},
+    'certs': {}
+}
+```
 
-## Phase 7: 条件付き登録 (add_manager 条件)
+### init_cfg.json.j2 — RESTAPI feature 条件
 
-| 条件 | 影響 | ソース |
-|---|---|---|
-| `sonic-mgmt-framework` / `sonic-gnmi` インストール時のみ | `REST_API` テーブルを消費するプロセスが存在する | build-time 依存 |
-| restapi サービスが有効化されていない | テーブルを読んでも REST API サービスは起動しない | systemd service 設定 |
+```
+# restapi feature: type NOT IN [LeafRouter, BackEndLeafRouter] → enabled
+```
 
-## Phase 8: Handler メソッド内分岐
+### db_migrator.py — RESTAPI 欠如補完 (Phase 6 派生)
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `restapi` 起動処理 | `client_auth==user_auth` | ユーザー認証モードで TLS 設定 | restapi 設定処理 |
-| `restapi` 起動処理 | `client_auth==cert` | クライアント証明書認証モード | restapi 設定処理 |
-| `restapi` 起動処理 | `log_level` 値により | ログ出力レベルを変更 | restapi 設定処理 |
+```
+# db_migrator.py:608-619  migrate_restapi()
+config = self.configDB.get_entry('RESTAPI', 'config')
+if not config:
+    self.configDB.set_entry("RESTAPI", "config", restapi_data.get("config"))
+certs = self.configDB.get_entry('RESTAPI', 'certs')
+if not certs:
+    self.configDB.set_entry("RESTAPI", "certs", restapi_data.get("certs"))
+```
 
-> **スキャン証跡**: `RESTAPI` テーブルは REST API サービス設定の薄いラッパー。CONFIG_DB 内での自動派生なし。主にサービス起動時の設定ファイル生成に使われる。
+既存エントリ欠如時にデフォルト値を **自動補完**。
+
+<!-- /derivation -->
+
+<!-- derivation -->
+## Phase 7: 条件付き manager/orch 登録
+
+RESTAPI は `feature` テーブルで有効/無効が制御。featuremgrd が `FEATURE|restapi` の `state` を見てコンテナを起動/停止。`type NOT IN [LeafRouter, BackEndLeafRouter]` のとき `always_enabled` (間接的な条件付き起動)。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+## Phase 8: manager メソッド内 early return / dispatch
+
+### RESTAPI サービス — 起動時読み込み
+
+| フィールド | 処理 |
+|-----------|------|
+| `client_auth` | JWT / cert 認証モード選択 |
+| `allow_insecure` | HTTP 許可/拒否 |
+| `log_level` | ログレベル設定 |
+
+CONFIG_DB の RESTAPI は主に起動時設定。実行時の動的変更ハンドラは最小限。
+
+<!-- /handler-branching -->

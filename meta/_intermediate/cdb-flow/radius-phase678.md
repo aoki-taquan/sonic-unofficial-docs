@@ -1,33 +1,49 @@
-# RADIUS — Phase 6/7/8 派生・分岐 証跡
+# RADIUS — Phase 6/7/8 中間ファイル
 
-## Phase 6: 自動派生 (assignment scan)
+生成日: 2026-05-14 (batch cdb_batch_4)
 
-`hostcfgd` の `HostConfigDaemon` が `RADIUS` テーブルを購読し、PAM/NSS 設定ファイルを生成する。
+<!-- derivation -->
+## Phase 6: 自動派生代入スキャン
 
-| 派生先 | 派生元条件 | 派生値 | ソース |
-|---|---|---|---|
-| PAM 設定 `auth_type` | `RADIUS.auth_type` が未設定 | デフォルト `pap` | `hostcfgd.py` |
-| PAM 設定 `port` | `RADIUS.auth_port` が未設定 | デフォルト `1812` | `hostcfgd.py` |
-| PAM 設定 `timeout` | `RADIUS.timeout` が未設定 | デフォルト `5` | `hostcfgd.py` |
-| PAM 設定 `retransmit` | `RADIUS.retransmit` が未設定 | デフォルト `3` | `hostcfgd.py` |
-| NSS 設定 | `RADIUS_SERVER` エントリ存在 | `/etc/nsswitch.conf` の passwd/shadow を更新 | `hostcfgd.py` |
+### 全ソース — 該当なし
 
-## Phase 7: 条件付き登録 (add_manager 条件)
+minigraph.py / config_samples.py / db_migrator.py / init_cfg.json.j2 に RADIUS への代入なし（TACACS_SERVER はあるが RADIUS は minigraph 管轄外）。CLI (`config radius`) で明示設定。
 
-| 条件 | 影響 | ソース |
-|---|---|---|
-| `hostcfgd` は常時起動 | `RADIUS` テーブルは無条件購読 | `hostcfgd.py` |
-| `aaa.authentication.login` に `radius` が含まれる | PAM 設定を radius 用に切り替え | `hostcfgd.py` |
-| `aaa.authentication.login` に `radius` が含まれない | RADIUS サーバ設定はあっても PAM に反映されない | `hostcfgd.py` |
+**結論**: Phase 6 派生なし。
 
-## Phase 8: Handler メソッド内分岐
+<!-- /derivation -->
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `hostcfgd` RADIUS handler | `passkey` フィールドあり | PAM 設定に `secret=<passkey>` を設定 | `hostcfgd.py` |
-| `hostcfgd` RADIUS handler | `auth_type==chap` | PAM に `chap` オプションを追加 | `hostcfgd.py` |
-| `hostcfgd` RADIUS handler | `auth_type==mschapv2` | PAM に `mschapv2` オプションを追加 | `hostcfgd.py` |
-| `hostcfgd` RADIUS handler | `src_ip` あり | `source_ip=<src_ip>` を PAM 設定に追加 | `hostcfgd.py` |
-| `hostcfgd` RADIUS handler | `vrf_name` あり | `vrf=<vrf_name>` を PAM 設定に追加 | `hostcfgd.py` |
+<!-- derivation -->
+## Phase 7: 条件付き manager/orch 登録
 
-> **スキャン証跡**: `RADIUS` テーブルは PAM/NSS 設定ファイル生成のための入力。`hostcfgd` が `RADIUS` + `RADIUS_SERVER` + `AAA` テーブルを合わせて処理する。CONFIG_DB 内フィールド間の自動付与はデフォルト値の補完のみ。
+### hostcfgd — AaaCfg クラス
+
+```python
+# hostcfgd:354  class AaaCfg(object)
+# RADIUS, RADIUS_SERVER, AAA テーブルを購読
+```
+
+AaaCfg は **常時** 登録。条件付き登録なし。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+## Phase 8: manager メソッド内 early return / dispatch
+
+### AaaCfg — RADIUS ハンドラ分岐
+
+```
+# hostcfgd:36-37
+NSS_RADIUS_CONF = "/etc/radius_nss.conf"
+NSS_RADIUS_CONF_TEMPLATE = "/usr/share/sonic/templates/radius_nss.conf.j2"
+```
+
+| 変更フィールド | 処理 |
+|----------------|------|
+| `passkey` / `auth_type` | `/etc/pam_radius_auth.d/` 設定ファイル再生成 |
+| `timeout` / `retransmit` | RADIUS クライアント設定ファイル更新 |
+| `nas_ip` | NAS IP 設定更新 |
+
+early return: AAA で `radius` が有効でない (`authentication order` に含まれない) → PAM 設定を更新しない。
+
+<!-- /handler-branching -->

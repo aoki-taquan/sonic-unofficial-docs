@@ -1,35 +1,48 @@
-# QUEUE — Phase 6/7/8 派生・分岐 証跡
+# QUEUE — Phase 6/7/8 中間ファイル
 
-## Phase 6: 自動派生 (assignment scan)
+生成日: 2026-05-14 (batch cdb_batch_4)
 
-`QosOrch::doQueueTask()` が `QUEUE` テーブルを処理する。
+<!-- derivation -->
+## Phase 6: 自動派生代入スキャン
 
-| 派生先フィールド | 派生元条件 | 派生値 | ソース |
-|---|---|---|---|
-| SAI queue type | `scheduler.type==STRICT` | `SAI_QUEUE_TYPE_ALL` (strict priority) | `qosorch.cpp` |
-| SAI queue type | `scheduler.type==DWRR` | `SAI_QUEUE_TYPE_ALL` (weighted round-robin) | `qosorch.cpp` |
-| `wred_profile` OID | `QUEUE.wred_profile` フィールド参照 | `WRED_PROFILE` テーブルから OID 取得して SAI に設定 | `qosorch.cpp` |
-| `scheduler` OID | `QUEUE.scheduler` フィールド参照 | `SCHEDULER` テーブルから OID 取得して SAI に設定 | `qosorch.cpp` |
-| `dscp_to_tc_map` OID | `QUEUE.dscp_to_tc_map` フィールド参照 | 対応マップテーブルから OID 取得 | `qosorch.cpp` |
+### db_migrator.py — QUEUE フィールド参照フォーマット移行
 
-**BUFFER_PG への間接依存**: `QUEUE` 更新後に `BUFFER_QUEUE` が参照するポート・キュー番号を解決する。
+```
+# db_migrator.py:575
+('QUEUE', ['scheduler', 'wred_profile']),
+```
 
-## Phase 7: 条件付き登録 (add_manager 条件)
+`migrate_qos_fieldval_reference_format()` の対象に QUEUE が含まれる。`scheduler` / `wred_profile` フィールド値を旧フォーマットから新フォーマットに正規化。
 
-| 条件 | 影響 | ソース |
-|---|---|---|
-| `QosOrch` は常時登録 | `QUEUE` テーブルは無条件購読 | `orchdaemon.cpp` |
-| `SCHEDULER` / `WRED_PROFILE` が未作成の場合 | 対応 OID 未解決 → 設定がペンディング状態 | `qosorch.cpp` |
-| port 未初期化 | `Port` オブジェクト未取得 → エラーログ + スキップ | `qosorch.cpp` |
+### minigraph.py / config_samples.py / init_cfg.json.j2 — 該当なし
 
-## Phase 8: Handler メソッド内分岐
+(config_samples.py:38-50 は QoS サンプルとして QUEUE を含むが自動生成ではない)
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `QosOrch` | `wred_profile` フィールドあり | `WRED_PROFILE` OID 参照 → `SAI_QUEUE_ATTR_WRED_PROFILE_ID` 設定 | `qosorch.cpp` |
-| `QosOrch` | `scheduler` フィールドあり | `SCHEDULER` OID 参照 → `SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID` 設定 | `qosorch.cpp` |
-| `QosOrch` | `dscp_to_tc_map` フィールドあり | マップ OID 参照 → `SAI_QUEUE_ATTR_QOS_MAP` 設定 | `qosorch.cpp` |
-| `QosOrch` | port のキュー番号が範囲外 | ERROR ログ + スキップ | `qosorch.cpp` |
-| `QosOrch` | del_handler: `wred_profile` あり | SAI attribute を NULL OID に設定して解除 | `qosorch.cpp` |
+<!-- /derivation -->
 
-> **スキャン証跡**: QUEUE は SAI キューオブジェクトの属性 (scheduler, wred_profile) を束ねる。Phase 6 派生はフィールドから OID 解決への変換。自動付与はなし。
+<!-- derivation -->
+## Phase 7: 条件付き manager/orch 登録
+
+QosOrch (常時登録) が QUEUE テーブルを購読し SAI キューにスケジューラ / WRED プロファイルを適用。条件付き登録なし。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+## Phase 8: manager メソッド内 early return / dispatch
+
+### qosorch.cpp — QUEUE doTask フィールド別 dispatch
+
+| フィールド | SAI 属性 |
+|-----------|---------|
+| `scheduler` | SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID |
+| `wred_profile` | SAI_QUEUE_ATTR_WRED_PROFILE_ID |
+
+early return:
+- キュー不在 (ポート初期化前) → `task_need_retry`
+- `scheduler` が SCHEDULER テーブル未登録 → `task_need_retry`
+- `wred_profile` が WRED_PROFILE テーブル未登録 → `task_need_retry`
+- SAI 属性設定失敗 → `task_failed`
+
+DEL: スケジューラ/WRED を NULL にリセット。
+
+<!-- /handler-branching -->
