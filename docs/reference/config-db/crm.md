@@ -237,4 +237,46 @@ crm show resources all
 
 > **スキャン証跡**: `CrmOrch::doTask` L440-477 + `handleSetCommand` L478-537 全行読了。6 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### ハードコードデフォルト (crmorch.cpp L12-15)
+
+`CrmOrch` コンストラクタは、CONFIG_DB に `CRM|Config` エントリが存在しない場合でも、全リソースに対して以下の値を即時適用する。
+
+| フィールド | 暗黙デフォルト値 | 由来 |
+|---|---|---|
+| `polling_interval` | **300** 秒 | `#define CRM_POLLING_INTERVAL_DEFAULT (5 * 60)` (crmorch.cpp:12) |
+| `*_threshold_type` (全リソース) | **`percentage`** | `CRM_THRESHOLD_TYPE_DEFAULT` (crmorch.cpp:13) |
+| `*_low_threshold` (全リソース) | **70** | `CRM_THRESHOLD_LOW_DEFAULT` (crmorch.cpp:14) |
+| `*_high_threshold` (全リソース) | **85** | `CRM_THRESHOLD_HIGH_DEFAULT` (crmorch.cpp:15) |
+
+YANG には `default` ステートメントが存在しない。実行時デフォルトは純粋に C++ マクロ定義のみで決まる。
+
+### init_cfg.json.j2 との対象リソース乖離
+
+`init_cfg.json.j2` がデフォルト設定するのは 18 リソース (YANG 定義済み範囲: `ipv4_route` / `fdb_entry` / `mpls_inseg` 等) のみ。一方、`crmResTypeNameMap` には以下の追加リソースが含まれており、CONFIG_DB に設定がなくてもオーケストレータ起動時に **percentage/70/85 で監視開始**する:
+
+- `srv6_my_sid_entry`, `srv6_nexthop`, `nexthop_group_map`, `extension_table`
+- `dash_vnet`, `dash_eni`, `dash_eni_ether_address_map` ほか DASH 系全リソース
+- `twamp_entry`
+
+### 暗黙副作用
+
+| 副作用 | 条件 | 詳細 |
+|---|---|---|
+| COUNTERS_DB CRM 統計の初期消去 | orchagent 起動毎 | コンストラクタで `m_countersCrmTable->del("STATS")` が走り、次の polling (最大 300 秒後) まで統計が空になる (crmorch.cpp:414) |
+| アラート silent drop | 同一リソースで閾値超過 10 回以上 | `exceededLogCounter >= CRM_EXCEEDED_MSG_MAX (10)` で syslog を停止。`threshold_type` 変更でリセット (crmorch.cpp:16, 1179) |
+| DASH リソースの monitoring skip | `gMySwitchType != "dpu"` | `CRM_DASH_*` リソースを `CRM_RES_NOT_SUPPORTED` にセットし polling/alert を一切行わない。CONFIG_DB への書き込みは受け入れるが監視は無効 (crmorch.cpp:839, 933-936) |
+| `threshold_type` 変更時の exceededLogCounter リセット | type が変化した場合のみ | 全サブカウンタ (ACL stage/bind_point 単位) の `exceededLogCounter` を 0 にリセット。次 cycle で超過があれば即 WARN (crmorch.cpp:503-507) |
+
+### YANG-実装 discrepancy
+
+YANG の `must` は `high_threshold < 100` (strictly less) を要求するが、実装 (`CrmResourceEntry` コンストラクタ) が例外を発生させるのは `> 100` のときのみ。**値 100 は YANG では拒否されるが、実装では通過する。** <!-- evidence: sonic-crm.yang L38-40, crmorch.cpp L428-431 -->
+
+### 大文字小文字制約 (silent substitution なし)
+
+`crmThreshTypeMap` は `"percentage"` / `"used"` / `"free"` の小文字のみを受け付ける。大文字 (`PERCENTAGE` 等) を CONFIG_DB に書き込むと `std::out_of_range` 例外 → `SWSS_LOG_ERROR` + `return` (残フィールドも適用されない)。YANG 型 `crm_threshold_type` は大文字も許容するため、YANG バリデーション通過後でも実装側でエラーとなる。<!-- evidence: crmorch.cpp L299-303, L496, L530-531 -->
+<!-- /defaults -->
+
 <!-- glossary-links-injected: c6e41e02b036 -->
