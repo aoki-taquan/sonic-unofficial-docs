@@ -245,4 +245,30 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C — cross-table refs)
+
+YANG leafref に明示されていない、コード実装レベルで存在するテーブル間依存。
+
+| 参照先テーブル | DB | 方向 | 契機 | 詳細 |
+|--------------|-----|------|------|------|
+| `DEVICE_METADATA.mac` | CONFIG_DB | READ | vlanmgrd 起動時 1 回 | `gMacAddress` 初期化。フィールド欠如で vlanmgrd が起動失敗 (`vlanmgrd.cpp:59-62`) |
+| `STATE_PORT_TABLE` | STATE_DB | READ | `VLAN_MEMBER` SET 時 | ポート readiness ガード (`isMemberStateOk`)。未 ready なら処理を保留 (`vlanmgr.cpp:503`) |
+| `STATE_LAG_TABLE` | STATE_DB | READ | `VLAN_MEMBER` SET 時 (`PortChannel` プレフィクス) | LAG readiness ガード。`STATE_PORT_TABLE` と同一ロジック (`vlanmgr.cpp:497`) |
+| `VLAN_MEMBER` | CONFIG_DB | READ+購読 | `VLAN` SET と連動 | 同一 `vlanmgrd` プロセスが共同購読。VLAN 先行作成後に pending VLAN_MEMBER をフラッシュする順序制約あり |
+| `VLAN_INTERFACE.name` | CONFIG_DB | leafref READ | YANG バリデーション | `VLAN_INTERFACE` の `name` が `VLAN_LIST.name` を leafref。VLAN 先行作成が必須 (`sonic-vlan.yang:83`) |
+| `VRF` | CONFIG_DB | leafref READ | YANG バリデーション | `VLAN_INTERFACE.vrf_name` が `VRF_LIST.name` を leafref。VRF 先行作成が必須 (`sonic-vlan.yang:88`) |
+| `VNET` | CONFIG_DB | leafref READ | YANG バリデーション | `VLAN_INTERFACE.vnet_name` が `VNET_LIST.name` を leafref。VXLAN オーバレイ設定時 (`sonic-vlan.yang:95`) |
+| `PORT` / `PORTCHANNEL` | CONFIG_DB | leafref+must READ | YANG バリデーション | `VLAN_MEMBER.port` が PORT または PORTCHANNEL を leafref union で参照。さらに `MIRROR_SESSION` dst・`PORTCHANNEL_MEMBER`・`INTERFACE` との排他 must 制約あり (`sonic-vlan.yang:291-307`) |
+| `DHCP_RELAY` | CONFIG_DB | WRITE | minigraph 生成時 | `dhcpv6_servers` を持つ VLAN XML から `DHCP_RELAY|Vlan<N>` を同時生成 (`minigraph.py:1078, 2645`) |
+| `ACL_TABLE` | CONFIG_DB | READ→WRITE | minigraph 生成時 | エグレス ACL の AttachTo に VLAN を指定した場合、VLAN メンバーポートを展開して ACL_TABLE に書き込む (`minigraph.py:1163`) |
+| `APP_FDB_TABLE` | APP_DB | WRITE | PAC / FDB 変化時 | vlanmgrd が `STATE_OPER_FDB_TABLE` を購読し FDB エントリを APP_DB に書き込む副作用 (`vlanmgr.cpp:832`) |
+
+### 注記
+
+- **起動順序の罠**: `DEVICE_METADATA|localhost.mac` が CONFIG_DB に存在しない場合、vlanmgrd は例外で終了する。`VLAN` エントリが存在しても MAC が確定していない段階では vlanmgrd は全タスクを保留する (`vlanmgr.cpp:313, 318-321`)。
+- **`dhcp_servers` の独立経路**: `dhcprelayd` は vlanmgrd を経由せず CONFIG_DB の `VLAN` テーブルを直接購読する (`dhcprelayd.py:83`)。vlanmgrd の処理完了を待たず relay を構成できる一方、CONFIG_DB への直接書き込みタイミングに依存する。
+- **VLAN → VLAN_INTERFACE 順序**: `VLAN_INTERFACE` の `name` leafref が `VLAN_LIST.name` を参照するため、VLAN より先に VLAN_INTERFACE を投入すると reject される。L3 SVI 設定は必ず VLAN 作成後。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
