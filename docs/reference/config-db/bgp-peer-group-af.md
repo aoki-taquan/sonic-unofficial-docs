@@ -21,6 +21,7 @@ related:
   yang:
     - sonic-bgp-peergroup
     - sonic-bgp-common
+hard: 0
 ---
 
 # BGP_PEER_GROUP_AF テーブル
@@ -234,4 +235,35 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 - `bgpcfgd` が FRR running-config を CONFIG_DB と同期
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph.py は BGP_PEER_GROUP_AF を生成しない | — | minigraph.py に代入なし |
+| 派生なし | — | — |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `frrcfgd.BGPConfigDaemon` が `BGP_PEER_GROUP_AF` を購読（`bgp_table_handler_common`） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2305` |
+
+### grep カバレッジ
+
+- frrcfgd.py L2305: BGP_PEER_GROUP_AF 購読（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPConfigDaemon` | `bgp_table_handler_common()` | `data is None`（DELETE） | `del_table=True` → AF を FRR から削除 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
+| `BGPConfigDaemon` | `bgp_table_handler_common()` | `data` あり（SET） | FRR peer-group AF 設定コマンドを生成・送出 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3930` |
+
+> **スキャン証跡**: BGP_PEER_GROUP_AF は comb_attr_list なしの `bgp_table_handler_common` に直接渡される。BGP_NEIGHBOR_AF と同一パスを共有。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

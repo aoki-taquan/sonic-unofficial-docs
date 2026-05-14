@@ -21,6 +21,7 @@ related:
   yang:
     - sonic-bgp-neighbor
     - sonic-bgp-common
+hard: 0
 ---
 
 # BGP_NEIGHBOR テーブル
@@ -244,4 +245,44 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 - `bgpcfgd` が FRR running-config を CONFIG_DB と同期
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph XML の `<BGPSession>` エントリ（name != 'BGPMonitor'） | `BGP_NEIGHBOR` テーブルにエントリを生成 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1355,2273` |
+| `type IN [MultiAsicInternalPeer]` | `internal_peers` に分類（loopback 参照） | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1355-1360` |
+| `admin_status` が VoQ chassis 構成時 | `enable_internal_bgp_session()` により `admin_status='up'` に強制設定 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1888-1901` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `BGPPeerMgrBase(peer_type="general")` が `BGP_NEIGHBOR` を購読 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:87` |
+| `check_neig_meta=True` のとき | `DEVICE_NEIGHBOR_METADATA` 依存関係を追加 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:137` |
+
+### grep カバレッジ
+
+- minigraph.py L2273: BGP_NEIGHBOR 代入
+- bgpcfgd/main.py L87: 条件なし登録（check_neig_meta=True）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPPeerMgrBase` | `set_handler()` | `peer_key NOT IN self.peers` | `add_peer()` 新規追加 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:167` |
+| `BGPPeerMgrBase` | `set_handler()` | `peer_key IN self.peers` | `update_peer()` 更新 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:169` |
+| `BGPPeerMgrBase` | `add_peer()` | `lo_ipv4 is None AND bgp_router_id not configured` | 早期 `return False` | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:186-189` |
+| `BGPPeerMgrBase` | `add_peer()` | `check_neig_meta AND data["name"] NOT IN neigmeta` | 早期 `return False`（DEVICE_NEIGHBOR_METADATA 未準備ガード） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:221-223` |
+| `BGPPeerMgrBase` | `update_peer()` | `"admin_status" in data` | `change_admin_status()` 委譲 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:314` |
+| `BGPPeerMgrBase` | `change_admin_status()` | `admin_status == 'up'` | FRR に `no neighbor X shutdown` | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:333` |
+| `BGPPeerMgrBase` | `change_admin_status()` | `admin_status == 'down'` | FRR に `neighbor X shutdown` | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:335` |
+| `BGPPeerMgrBase` | `change_admin_status()` | `admin_status` が up/down 以外 | `log_err` のみ（処理継続） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:337-339` |
+
+> **スキャン証跡**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 9133f44230c2 -->

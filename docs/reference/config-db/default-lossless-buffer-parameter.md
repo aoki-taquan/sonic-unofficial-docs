@@ -18,6 +18,7 @@ related:
     - BUFFER_POOL
   yang:
     - sonic-default-lossless-buffer-parameter
+hard: 0
 ---
 
 # DEFAULT_LOSSLESS_BUFFER_PARAMETER テーブル
@@ -186,4 +187,37 @@ show buffer profile
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| DB 移行: 新 DB に `DEFAULT_LOSSLESS_BUFFER_PARAMETER|AZURE` が存在しない | `default_dynamic_th` フィールドを補完して生成 | `sonic-utilities/scripts/db_migrator.py:413` |
+| Dynamic buffer model での自動計算: buffermgrd が `default_dynamic_th` を読み取り headroom 計算のデフォルト閾値として使用 | BUFFER_PROFILE の動的計算に影響 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:148-153` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `BufferMgrDynamic` が `DEFAULT_LOSSLESS_BUFFER_PARAMETER` を `handleDefaultLosslessBufferParam` 相当で購読 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:199` |
+
+### grep カバレッジ
+
+- buffermgrdyn.cpp L199: CFG_DEFAULT_LOSSLESS_BUFFER_PARAMETER 購読（条件なし）
+- db_migrator.py L413: AZURE エントリ生成
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == SET_COMMAND` かつ `key != "global"` | ポート情報の存在チェック → 未設定なら `task_need_retry` | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1898` |
+| `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `field == "default_dynamic_th"` | デフォルト閾値 `m_defaultThreshold` を更新し動的プロファイルを再計算トリガー | `sonic-swss/cfgmgr/buffermgrdyn.cpp:1993-1996` |
+| `BufferMgrDynamic` | `doTask()`（DEFAULT_LOSSLESS_BUFFER_PARAMETER） | `op == DEL_COMMAND` | `log_notice` のみ（削除操作は内部状態をリセットせず継続） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2005` |
+
+> **スキャン証跡**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010 全行読了。3 件分岐抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

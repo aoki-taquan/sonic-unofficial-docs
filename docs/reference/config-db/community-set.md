@@ -16,6 +16,7 @@ related:
   cli: []
   yang:
     - sonic-routing-policy-sets
+hard: 0
 ---
 
 # COMMUNITY_SET テーブル
@@ -180,4 +181,36 @@ vtysh -c 'show bgp community-list'
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| 派生なし（COMMUNITY_SET は CLI または gNMI/OpenConfig 経由でのみ書き込まれる） | — | frrcfgd は読み取り専用消費 |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `frrcfgd.BGPConfigDaemon` が `COMMUNITY_SET` を購読（`comm_set_handler`） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2300` |
+
+### grep カバレッジ
+
+- frrcfgd.py L2300: COMMUNITY_SET 購読（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPConfigDaemon` | `hdl_com_set()` | `len(args) < 2` または必須フィールド欠如 | `return None`（コマンド生成スキップ） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:982` |
+| `BGPConfigDaemon` | `hdl_com_set()` | `op == CachedDataWithOp.OP_DELETE` | FRR `no bgp community-list` のみ発行（member 追加なし） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:991` |
+| `BGPConfigDaemon` | `hdl_com_set()` | `match_action == 'all'` | `permit <all members>` を 1 行コマンドで生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:993-999` |
+| `BGPConfigDaemon` | `hdl_com_set()` | `match_action == 'any'` | member ごとに `permit <member>` を個別コマンドで生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1000-1006` |
+
+> **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->

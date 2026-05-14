@@ -15,6 +15,7 @@ related:
   yang:
     - sonic-console
   _no_related_cli: true
+hard: 0
 ---
 
 # CONSOLE_PORT / CONSOLE_SWITCH テーブル
@@ -182,4 +183,32 @@ show console
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph XML に `<Console>` エントリが存在する | `CONSOLE_PORT` テーブルにポートエントリを生成 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2516` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| CONSOLE_PORT を購読する常駐デーモンはない（consutil が CLI 経由で読み取るのみ） | — | `sonic-utilities/consutil/lib.py:106` |
+
+### grep カバレッジ
+
+- minigraph.py L2516: CONSOLE_PORT 代入
+- consutil/lib.py L106: get_keys 読み取りのみ（デーモン購読なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+`CONSOLE_PORT` テーブルを直接消費する常駐デーモンは存在しない。consutil が CONFIG_DB から読み取るのみであり、handler メソッド内分岐の対象外。
+
+> **スキャン証跡**: ソース横断 grep で CONSOLE_PORT の subscribe/doTask 呼び出しなし。分岐: 0 件。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: d5320e852f7a -->

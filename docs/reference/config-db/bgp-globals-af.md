@@ -20,6 +20,7 @@ related:
     - config bgp
   yang:
     - sonic-bgp-global
+hard: 0
 ---
 
 # BGP_GLOBALS_AF テーブル
@@ -240,4 +241,36 @@ vtysh -c 'show bgp l2vpn evpn summary'
 - `bgpcfgd` が FRR running-config を CONFIG_DB と同期
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph.py は BGP_GLOBALS_AF を生成しない | — | `sonic-buildimage/src/sonic-config-engine/minigraph.py` に代入なし |
+| `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` が揃う | FRR `distance bgp` コマンドを生成（組み合わせ制約） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3940` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `frrcfgd.BGPConfigDaemon` が `BGP_GLOBALS_AF` を購読（`bgp_af_handler`） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2297` |
+
+### grep カバレッジ
+
+- frrcfgd.py: BGP_GLOBALS_AF 登録 1 件（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPConfigDaemon` | `bgp_af_handler()` | `data is None`（DELETE） | `del_table=True` → AF を FRR から削除 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
+| `BGPConfigDaemon` | `bgp_af_handler()` | `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` の 3 フィールド揃い | `comb_attr_list` 制約: 3 フィールドが揃った場合のみ FRR `distance bgp` コマンド生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3939-3941` |
+| `BGPConfigDaemon` | `bgp_af_handler()` | `route_flap_dampen_*` 3 フィールド揃い | 同様に組み合わせ制約: 揃った場合のみ FRR `bgp dampening` コマンドを生成 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3940` |
+
+> **スキャン証跡**: `bgp_af_handler` L3938 全行読了。2 組の comb_attr_list 制約のみ。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 803f36c2634d -->

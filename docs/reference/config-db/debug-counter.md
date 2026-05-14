@@ -18,6 +18,7 @@ related:
     - show debug counter
   yang:
     - sonic-debug-counter
+hard: 0
 ---
 
 # DEBUG_COUNTER テーブル
@@ -197,4 +198,37 @@ show dropcounters configuration
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| 派生なし（DEBUG_COUNTER は CLI / sonic-mgmt-common 経由でのみ書き込まれる） | — | — |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `DebugCounterOrch` が `DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` を `doTask` で購読 | `sonic-swss/orchagent/debugcounterorch.cpp:129` |
+
+### grep カバレッジ
+
+- debugcounterorch.cpp L129-220: doTask 登録（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `DebugCounterOrch` | `doTask()` | `!gPortsOrch->allPortsReady()` | 早期 `return`（全ポート初期化待ちガード） | `sonic-swss/orchagent/debugcounterorch.cpp:137` |
+| `DebugCounterOrch` | `doTask()` | `table_name == CFG_DEBUG_COUNTER_TABLE_NAME` | `installDebugCounter()` / `uninstallDebugCounter()` を呼び出し | `sonic-swss/orchagent/debugcounterorch.cpp:151` |
+| `DebugCounterOrch` | `doTask()` | `table_name == CFG_DEBUG_COUNTER_DROP_REASON_TABLE_NAME` | `addDropReason()` / `removeDropReason()` を呼び出し（別パス） | `sonic-swss/orchagent/debugcounterorch.cpp:182` |
+| `DebugCounterOrch` | `doTask()` | `op == SET_COMMAND`（DEBUG_COUNTER テーブル） | `installDebugCounter()` 実行 | `sonic-swss/orchagent/debugcounterorch.cpp:153` |
+| `DebugCounterOrch` | `doTask()` | `op == DEL_COMMAND`（DEBUG_COUNTER テーブル） | `uninstallDebugCounter()` 実行 | `sonic-swss/orchagent/debugcounterorch.cpp:165` |
+
+> **スキャン証跡**: `doTask` L129-220 全行読了。`allPortsReady()` ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: d2c490dcfe8c -->

@@ -21,6 +21,7 @@ related:
   yang:
     - sonic-bgp-neighbor
     - sonic-bgp-common
+hard: 0
 ---
 
 # BGP_NEIGHBOR_AF テーブル
@@ -226,4 +227,35 @@ vtysh -c 'show bgp neighbor <ip>'
 - `bgpcfgd` が FRR running-config を CONFIG_DB と同期
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph.py は BGP_NEIGHBOR_AF を直接生成しない | — | `sonic-buildimage/src/sonic-config-engine/minigraph.py` に代入なし |
+| frrcfgd が FRR running-config から AF 設定を同期 | BGP_NEIGHBOR_AF の各フィールドを反映 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2140` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `frrcfgd.BGPConfigDaemon` が `BGP_NEIGHBOR_AF` を購読（`bgp_table_handler_common`） | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2304` |
+
+### grep カバレッジ
+
+- frrcfgd.py L2304: BGP_NEIGHBOR_AF 購読（条件なし）
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPConfigDaemon` | `bgp_table_handler_common()` | `data is None`（DELETE） | `del_table=True` → AF を FRR から削除 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3918` |
+| `BGPConfigDaemon` | `bgp_table_handler_common()` | `data` あり（SET） | `bgp_message` キューに積み `__update_bgp()` で FRR 更新 | `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3930` |
+
+> **スキャン証跡**: BGP_NEIGHBOR_AF は `bgp_table_handler_common` に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

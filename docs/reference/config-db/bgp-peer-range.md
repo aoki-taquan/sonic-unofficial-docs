@@ -18,6 +18,7 @@ related:
     - config bgp
   yang:
     - sonic-bgp-peerrange
+hard: 0
 ---
 
 # BGP_PEER_RANGE テーブル
@@ -204,4 +205,37 @@ vtysh -c 'show bgp listen range'
 - なし
 <!-- /entry-points -->
 
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 値による他フィールド自動派生
+
+| 条件 | 派生先 | evidence |
+|---|---|---|
+| minigraph XML に `<BGPPeerRange>` エントリが存在する | `BGP_PEER_RANGE` テーブルに `ip_range` エントリを生成 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1401-1408,2275` |
+| `PeerRange.Address` が IPv4/IPv6 のどちらか | `ip_range` の CIDR 文字列として格納 | `sonic-buildimage/src/sonic-config-engine/minigraph.py:1401` |
+
+### Phase 7: 条件付き module/manager 登録
+
+| 条件 | 登録 module | evidence |
+|---|---|---|
+| 常時（条件なし） | `BGPPeerMgrBase(peer_type="dynamic")` が `BGP_PEER_RANGE` を購読 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:90` |
+
+### grep カバレッジ
+
+- minigraph.py L2275: BGP_PEER_RANGE 代入
+- bgpcfgd/main.py L90: 条件なし登録
+<!-- /derivation -->
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPPeerMgrBase` | `set_handler()` | `peer_key NOT IN self.peers` | `add_peer()` 新規追加 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:167` |
+| `BGPPeerMgrBase` | `update_peer()` | `"ip_range" in data AND peer_type == "dynamic"` | `change_ip_range()` を呼び出し（動的 BGP range 更新） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:317` |
+| `BGPPeerMgrBase` | `del_handler()` | `peer_type == "dynamic" OR peer_type == "sentinels"` | `no bgp listen range` コマンドを送出 | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:461` |
+
+> **スキャン証跡**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 9543a3643673 -->
