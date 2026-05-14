@@ -199,7 +199,6 @@ YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
 | `task_need_retry` (未解決) | 1 | `qosorch.cpp:1869` |
 
 <!-- /derivation -->
-
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
