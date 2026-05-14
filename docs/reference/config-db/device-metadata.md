@@ -223,8 +223,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `DualToR` | BGP `coalesce-time 10000` 設定; DHCPv4 relay に `-U Loopback0 -dt` フラグ追加; DHCPv6 relay に `-u Loopback0` フラグ追加; mux feature を `enabled` に設定; DHCP relay モニタに Loopback0 フラグ; pmon で ycabled 起動 | bgpd.main.conf.j2:110; dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2:14; init_cfg.json.j2:81; dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157 |
 | `SmartSwitch` | `type != 'SmartSwitchDPU'` との複合条件のとき chrony 追加時刻同期設定; `interfaces.j2:145,147` でネットワークインタフェース設定 | sonic-buildimage/files/image_config/chrony/chrony.conf.j2:58; files/image_config/interfaces/interfaces.j2:145,147 |
 | `Supervisor` | コード参照なし（YANG 定義のみ）→ 該当なし | — |
-| `UpstreamLC` | `type=='SpineRouter' AND subtype=='UpstreamLC'` の複合条件で BGP table-map 適用; `voq_chassis/policies.conf.j2:19,54` で route-map `FROM_VOQ_CHASSIS_V4_PEER` / `FROM_VOQ_CHASSIS_V6_PEER` の deny 節を挿入し `DEVICE_INTERNAL_FALLBACK_COMMUNITY` を deny | peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19,54 |
-| `DownstreamLC` | `internal/policies.conf.j2:42,67` で route-map `FROM_BGP_INTERNAL_PEER_V4` / `FROM_BGP_INTERNAL_PEER_V6` の `DEVICE_INTERNAL_FALLBACK_COMMUNITY` 処理が DownstreamLC 向けに分岐 (comm-list delete) | dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42,67 |
+| `UpstreamLC` | `type=='SpineRouter' AND subtype=='UpstreamLC'` の複合条件で BGP table-map 適用; `voq_chassis/policies.conf.j2:19,54` で route-map `FROM_VOQ_CHASSIS_V4_PEER` / `FROM_VOQ_CHASSIS_V6_PEER` の **if 分岐**: deny 3/4 で `DEVICE_INTERNAL_FALLBACK_COMMUNITY` を deny / **else 分岐** (それ以外の subtype): permit 3/4 で `set comm-list DEVICE_INTERNAL_FALLBACK_COMMUNITY delete` + `set tag {{ constants.bgp.route_eligible_for_fallback_to_default_tag }}` (=203) | peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19-27,54-62 |
+| `DownstreamLC` | `internal/policies.conf.j2:42,67` で route-map `FROM_BGP_INTERNAL_PEER_V4` / `FROM_BGP_INTERNAL_PEER_V6` の **if 分岐** (DownstreamLC): permit 3/4 で `set comm-list DEVICE_INTERNAL_FALLBACK_COMMUNITY delete` のみ (tag 設定なし) / **else 分岐** (それ以外): permit 3/4 で `set comm-list DEVICE_INTERNAL_FALLBACK_COMMUNITY delete` + `set tag {{ constants.bgp.route_eligible_for_fallback_to_default_tag }}` (=203) | dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42-51,67-76 |
 
 ### `switch_type` 値別挙動 (全 6 値)
 
@@ -285,7 +285,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | 10 | `subtype='SmartSwitch' AND type != 'SmartSwitchDPU'` | chrony 追加時刻同期設定 | chrony.conf.j2:58 |
 | 11 | `type IN ['MgmtToRRouter','MgmtTsToR','BmcMgmtToRRouter','EPMS']` | pfcwd 呼び出しスキップ | config/main.py:2425 |
 | 12 | `type NOT IN ['ToRRouter','EPMS','MgmtTsToR','MgmtToRRouter','BmcMgmtToRRouter']` | dhcp_relay feature 有効化 | init_cfg.json.j2:76 |
-| 13 | `subtype='UpstreamLC'` (voq chassis) | route-map `FROM_VOQ_CHASSIS_V4_PEER` / `FROM_VOQ_CHASSIS_V6_PEER` で `DEVICE_INTERNAL_FALLBACK_COMMUNITY` を deny | voq_chassis/policies.conf.j2:19,54 |
+| 13 | `subtype='UpstreamLC'` (voq chassis) / else | if: route-map `FROM_VOQ_CHASSIS_V4_PEER` / `FROM_VOQ_CHASSIS_V6_PEER` deny 3/4 で `DEVICE_INTERNAL_FALLBACK_COMMUNITY` を deny / else (DownstreamLC 等): permit 3/4 で `set comm-list delete` + `set tag 203` | voq_chassis/policies.conf.j2:19-27,54-62 |
 | 14 | `type='SpineRouter' AND switch_type='voq'` | VoQ chassis BGP 設定を有効化 | bgpd.main.conf.j2:59 |
 
 ---
