@@ -166,4 +166,32 @@ show ip interfaces | grep Loopback
 
 <!-- /cdb-exceptions -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `LOOPBACK_INTERFACE`
+
+### CLI
+- `config interface ip add/remove Loopback<N> <ip/prefix>`
+  - ソース: `sonic-utilities/config/main.py (interface グループ)`
+
+### minigraph / sonic-cfggen
+- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
+
+### REST / gNMI (sonic-mgmt-common)
+- sonic-mgmt-common OpenConfig interfaces 経由
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- `sonic-cfggen -m` で minigraph から Loopback0 IP 等を生成
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: b5270404647a -->

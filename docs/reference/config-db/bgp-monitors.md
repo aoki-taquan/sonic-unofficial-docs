@@ -150,4 +150,32 @@ vtysh -c 'show bgp summary'
 | `check_neig_meta=False` | BGP_MONITORS は DEVICE_NEIGHBOR_METADATA への依存なし (monitors peer_type で固定) | `managers_bgp.py` `main.py` L89 |
 <!-- /cdb-exceptions -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `BGP_MONITORS`
+
+### CLI
+- `config bgp monitor add/del <address>`
+  - ソース: `sonic-utilities/config/main.py (bgp グループ)`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: a1dd9e34d62e -->

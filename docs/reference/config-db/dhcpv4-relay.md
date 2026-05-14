@@ -165,4 +165,32 @@ show dhcprelay_helper ipv4
 > **Evidence**: [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/db_migrator.py:928`; `config/vlan.py:242-243`; `config/main.py:1699-1706`; [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py:601-628`
 <!-- /cdb-exceptions -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `DHCPV4_RELAY`
+
+### CLI
+- `config dhcpv4-relay add/del <vlan> <server-ip>`
+  - ソース: `sonic-utilities/config/main.py (dhcpv4-relay グループ)`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 9aad8bf0c717 -->
