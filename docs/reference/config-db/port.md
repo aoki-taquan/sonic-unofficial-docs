@@ -386,6 +386,76 @@ REST/gNMI 書き込み経路なし (PORT はプラットフォーム初期化で
 
 <!-- /derivation -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-ordering.md -->
+
+### SET 時の先行必須テーブル
+
+| 依存テーブル | 理由 | ソース |
+|---|---|---|
+| `BUFFER_POOL` → `BUFFER_PG` | `gBufferOrch->isPortReady()` が true を返すまで PORT SET はハードウェア反映保留。`m_pendingPortSet` に積まれリトライ待ちとなる | `portsorch.cpp:4779`, `bufferorch.cpp:254-274` |
+| `MACSEC_PROFILE` | `PORT.macsec` は YANG leafref 参照。MACSEC_PROFILE エントリが存在しない状態で PORT に `macsec` フィールドを書くと YANG バリデーション失敗。`macsecmgrd` もプロファイルを参照してセッションを確立する | `sonic-port.yang`, `macsecmgrd` |
+| なし (VLAN/INTERFACE/LAG は PORT 作成後) | `allPortsReady()` が true になった後にのみ VLAN/INTERFACE/PORTCHANNEL などの他テーブルが処理される。PORT は他テーブルより先に作成される | `portsorch.cpp:6514-6517`, `orchdaemon.cpp:500` |
+
+### フィールド適用順 (SET 内部順序)
+
+`PortsOrch::doTask()` は同一 SET イベント内で以下の順にフィールドを適用する:
+
+1. `autoneg` — 変更時はポートを一時 `admin_status=down` にしてから変更 (`portsorch.cpp:4827`)
+2. `link_training`
+3. `speed` — `autoneg=off` かつ `admin_status=up` 時は一時 down してから変更 (`portsorch.cpp:5034-5050`)
+4. `adv_speeds` / `adv_interface_types` / `interface_type`
+5. `fec`
+6. `mtu`
+7. `pfc_asym` / `tpid`
+8. **`admin_status` — 最後に適用**。speed/fec/autoneg 設定完了後に CONFIG_DB の値に戻す (`portsorch.cpp:5500-5529`)
+
+> **注意**: `speed` / `autoneg` / `link_training` を変更するとリンクフラップが発生する。対向装置との調整を先に行うこと。
+
+### DEL 前に先に削除が必要なエントリ
+
+PORT の DEL は `m_port_ref_count[alias] == 0` を要求する (`portsorch.cpp:5649`)。ref_count を保持するオブジェクトを先に削除する必要がある:
+
+| 削除順 | テーブル / 操作 | 理由 |
+|---|---|---|
+| 1 | `VLAN_MEMBER` DEL | bridge_port_oid が残っていると DEL 拒否 (`portsorch.cpp:5661`) |
+| 2 | `PORTCHANNEL_MEMBER` DEL | LAG メンバシップが ref_count を保持 |
+| 3 | `INTERFACE` DEL | `intfsorch` が `increasePortRefCount()` を呼ぶ (`intfsorch.cpp:498`) |
+| 4 | `BUFFER_PG` / `BUFFER_QUEUE` DEL | `bufferorch` が `increasePortRefCount()` を呼ぶ (`bufferorch.cpp:1175,1546`) |
+| 5 | `PORT` DEL | ref_count=0 を確認後に SAI `remove_port()` を発行 |
+
+`PORT_SERDES` は `removePort()` 内部で自動的に先行削除される (`portsorch.cpp:1526`)。
+
+### warm-reboot 影響
+
+- **warm reboot 中**: portsyncd は APP_PORT_TABLE への書込みおよび `PortConfigDone` 通知をスキップする (`portsyncd.cpp:205,211`)。PortsOrch は APP_DB の `PortConfigDone` / `PortInitDone` の有無でポートテーブルを再利用し、見つからない場合は cold start にフォールバック (`portsorch.cpp:4357-4362`)。
+- **oper_status 引き継ぎ**: warm reboot 復元時にポートの `oper_status` / `flap_count` を STATE_DB から引き継ぐ (`portsorch.cpp:6609-6648`)。
+- **fast reboot**: kernel/hardware 状態を保持するが portsyncd は cold start 相当の手順で PORT を処理する（特別分岐なし）。
+
+### boot order (起動時シーケンス)
+
+```
+platform/pmon が port_config.ini / minigraph → CONFIG_DB|PORT 生成
+  ↓
+portsyncd が CONFIG_DB|PORT 全件を APP|PORT へ書込み → PortConfigDone 通知
+  ↓
+PortsOrch が PortConfigDone 受信 → SAI create_port() → PORT_CONFIG_DONE
+  ↓
+kernel netdev 生成完了 → portsyncd が netlink で検出 → PortInitDone 通知
+  ↓
+PortsOrch が PortInitDone 受信 → m_initDone=true
+  ↓
+gBufferOrch->isPortReady() = true (BUFFER_PG 処理完了後)
+  ↓
+allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロック
+```
+
+**orchList 順序** (`orchdaemon.cpp:500`): `gSwitchOrch → gCrmOrch → gPortsOrch → gBufferOrch → ...`。PortsOrch は 3 番目だが、BufferOrch の ready 判定まで PORT の最終ハードウェア反映は保留される。
+
+<!-- /ordering -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
