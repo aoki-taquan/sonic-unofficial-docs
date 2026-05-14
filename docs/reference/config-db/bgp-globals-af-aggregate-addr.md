@@ -100,6 +100,32 @@ BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3187L -->
 <!-- /cdb-exceptions -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+YANG の `sonic-bgp-global.yang` は `as_set`、`summary_only`、`policy` すべてで `default` 文を宣言していない。実装上の fallback は frrcfgd.py のコードで定義される。
+
+| フィールド | YANG default | 実装 fallback | FRR コマンド影響 |
+|-----------|-------------|--------------|----------------|
+| `as_set` | 未宣言 | `False`（`AggregateAddr.__init__` L1704） | キーワード `as-set` なし |
+| `summary_only` | 未宣言 | `False`（`AggregateAddr.__init__` L1705） | キーワード `summary-only` なし |
+| `policy` | 未宣言 | 空文字列（`+` optional フィールド） | `route-map` 指定なし |
+
+### as_set / summary_only の fallback 根拠
+
+`frrcfgd.py` の `AggregateAddr` クラス（L1702-1705）は `__init__` で両フィールドを `False` に初期化する。フィールドが CONFIG_DB に存在しないか `"true"` でない場合、`setattr` が呼ばれないため初期値 `False` が維持される。`CommandArgument.__format__` の `bool_format`（L815-816）で `"false"` または空は FRR キーワードなしに変換される。
+
+### policy の fallback 根拠
+
+`af_aggregate_key_map`（L1982）で `policy` は `'+policy'`（`+` = optional）として宣言される。フィールド欠如時は `cmd_data` に空文字列 `''` が渡り、`aggr-policy` format（L928-930）は空文字列にプレフィックスを追加しないため、FRR コマンドに `route-map` が付加されない。
+
+### Discrepancy: Jinja2 テンプレート経路で `policy` が無視される
+
+`bgpd.conf.db.addr_family.j2`（L48-61）の bgpcfgd テンプレート経路は `as_set`/`summary_only` のみを処理し、`policy` フィールドを完全に無視する。frr-mgmt-framework 経路（`frrcfgd.py`）は `policy` を `route-map <name>` として反映するが、Jinja2 経路では同フィールドが読まれない。通常は両経路が同一エントリを処理しないため実害は限定的だが、設定経路の混在時に `policy` が反映されないリスクがある。
+
+<!-- evidence: sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1702-1705,1982; sonic-buildimage/src/sonic-frr-mgmt-framework/templates/bgpd/bgpd.conf.db.addr_family.j2:48-61 -->
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
