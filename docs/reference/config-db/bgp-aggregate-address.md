@@ -2,6 +2,7 @@
 title: BGP_AGGREGATE_ADDRESS テーブル
 description: "BGP_AGGREGATE_ADDRESS テーブル — BGP aggregate-address (集約広告) の設定テーブル。frr-mgmt-framework または bgpcfgd テンプレ経路で aggregate-address [summary-only] [as-set] ... に変換される。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -193,5 +194,57 @@ vtysh -c 'show bgp ipv4 unicast'
 ### ランタイム注入 (デーモン自動書き込み)
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド/動作 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| FRR `aggregate-address` コマンドの `summary-only` フラグ | `summary-only == "true"` | FRR コマンドに ` summary-only` を付与 | `managers_aggregate_address.py:245-246` |
+| FRR `aggregate-address` コマンドの `as-set` フラグ | `as-set == "true"` | FRR コマンドに ` as-set` を付与 | `managers_aggregate_address.py:247-248` |
+| STATE_DB `BGP_AGGREGATE_ADDRESS` エントリ | `bbr-required` フィールド値 | BBR 状態に応じて `ACTIVE` / `INACTIVE` を STATE_DB に書き込み | `managers_aggregate_address.py:85-89` |
+
+**minigraph.py 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `AggregateAddressMgr` は常時登録 (bgpcfgd manager リストに無条件追加) | BBR 状態に関わらず購読は有効 | `bgpcfgd/main.py:106` |
+| `bbr-required == "true"` かつ BBR 状態が `"enabled"` | `address_set_handler()` 呼び出し → FRR に適用 | `managers_aggregate_address.py:49-55` |
+| `bbr-required == "true"` かつ BBR 状態が `"disabled"` | FRR から削除 (`address_del_handler`) → STATE_DB に INACTIVE | `managers_aggregate_address.py:57-61` |
+| `bbr-required == "true"` かつ BBR 状態 unknown | スキップ → STATE_DB に INACTIVE | `managers_aggregate_address.py:78-80` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| summary-only フラグ付与 | 1 | `managers_aggregate_address.py:245` |
+| as-set フラグ付与 | 1 | `managers_aggregate_address.py:247` |
+| BBR 状態分岐 | 3 | `managers_aggregate_address.py:49,57,78` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+BGP_AGGREGATE_ADDRESS は `AggregateAddressMgr.set_handler()` / `del_handler()` が処理する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `AggregateAddressMgr` | `set_handler()` | IP prefix パース失敗 | STATE_DB に INACTIVE を書き込み → return True | `managers_aggregate_address.py:69-72` |
+| `AggregateAddressMgr` | `set_handler()` | `bbr-required == "true"` かつ BBR 状態 unknown | スキップ → INACTIVE | `managers_aggregate_address.py:78-80` |
+| `AggregateAddressMgr` | `set_handler()` | `bbr-required == "true"` かつ BBR disabled | 削除 → INACTIVE | `managers_aggregate_address.py:81-83` |
+| `AggregateAddressMgr` | `set_handler()` | それ以外 (bbr-required=false or BBR enabled) | `address_set_handler()` 呼び出し → ACTIVE/INACTIVE | `managers_aggregate_address.py:85-89` |
+| `AggregateAddressMgr` | `del_handler()` | STATE_DB エントリが INACTIVE | 削除試行せず STATE_DB 削除のみ | `managers_aggregate_address.py:140-142` |
+| `AggregateAddressMgr` | `del_handler()` | STATE_DB エントリが ACTIVE | `address_del_handler()` で FRR から削除 | `managers_aggregate_address.py:143-145` |
+| `address_set_handler()` | 内部 | `summary_only == "true"` | FRR コマンドに `summary-only` 付与 | `managers_aggregate_address.py:245-246` |
+| `address_set_handler()` | 内部 | `as_set == "true"` | FRR コマンドに `as-set` 付与 | `managers_aggregate_address.py:247-248` |
+
+> **スキャン証跡**: `managers_aggregate_address.py` 全行読了、8 件分岐抽出。BBR 状態による 3-way 分岐が主要制御フロー。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->

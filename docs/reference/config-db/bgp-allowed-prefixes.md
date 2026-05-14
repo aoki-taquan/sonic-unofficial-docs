@@ -2,6 +2,7 @@
 title: BGP_ALLOWED_PREFIXES テーブル
 description: "BGP_ALLOWED_PREFIXES テーブル — BGP_ALLOWED_PREFIXES は deployment ID 単位の prefix 許可リスト を CONFIG_DB に格納するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -214,5 +215,53 @@ vtysh -c 'show running-config bgp'
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド/動作 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| FRR route-map の default action community | `default_action == "deny"` | `"no-export"` community を付与 | `managers_allow_list.py:774-775` |
+| FRR route-map の default action community | `default_action == "permit"` または未設定 | `constants["bgp"]["allow_list"]["drop_community"]` 値を付与 | `managers_allow_list.py:776-785` |
+| BGP community-list エントリ | `community_value` フィールド | `bgp community-list standard <name> permit <community>` として FRR に適用 | `managers_allow_list.py:374` |
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `BGPAllowListMgr` は常時登録 | BGP_ALLOWED_PREFIXES 購読は無条件 | `bgpcfgd/main.py:94` |
+| `default_action` が `"permit"` / `"deny"` 以外 | バリデーション失敗 → エラーログ + return False (FRR 未適用) | `managers_allow_list.py:110-112` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| default_action → community マッピング | 2 | `managers_allow_list.py:774-775,777` |
+| バリデーション失敗 | 1 | `managers_allow_list.py:110-112` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+BGP_ALLOWED_PREFIXES は `BGPAllowListMgr.set_handler()` / `del_handler()` が処理する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BGPAllowListMgr` | `set_handler()` | キー形式が `<neighbor_type>\|<community>` 形式 | `neighbor_type` と `community_value` を分割 | `managers_allow_list.py:64` |
+| `BGPAllowListMgr` | `set_handler()` | キー形式が単純文字列 | `deployment_id` として使用、`community_value` は `EMPTY_COMMUNITY` | `managers_allow_list.py:67` |
+| `BGPAllowListMgr` | `set_handler()` | `default_action == "deny"` | community = `"no-export"` として route-map に設定 | `managers_allow_list.py:774-775` |
+| `BGPAllowListMgr` | `set_handler()` | `default_action == "permit"` または未設定 | community = `drop_community` (constants から取得) | `managers_allow_list.py:776-785` |
+| `BGPAllowListMgr` | `del_handler()` | キー形式が `<neighbor_type>\|<community>` 形式 | neighbor_type と community_value を分割して削除 | `managers_allow_list.py:129` |
+| `__update_default_route_map_entry` | 内部 | 現在値と新値が異なる | route-map を更新 | `managers_allow_list.py:447-453` |
+| `__update_default_route_map_entry` | 内部 | 現在値と新値が同一 | no-op | `managers_allow_list.py:447` |
+
+> **スキャン証跡**: `managers_allow_list.py` の `set_handler()` (L49-113)、`__get_default_action_community()` (L764-785)、`__update_default_route_map_entry()` (L438-453) を全行読了、7 件分岐抽出。`default_action=deny` → `no-export` community という間接マッピングが主要パターン。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 43ff039eae38 -->

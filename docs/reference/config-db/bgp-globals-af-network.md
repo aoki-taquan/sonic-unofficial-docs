@@ -2,6 +2,7 @@
 title: BGP_GLOBALS_AF_NETWORK テーブル
 description: "BGP_GLOBALS_AF_NETWORK テーブル — BGP_GLOBALS_AF_AGGREGATE_ADDR が複数の動的ルートを 集約 するのに対し、こちらは管理者が 明示的に広告したいプレフィックス を列挙する用途。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -212,5 +213,52 @@ vtysh -c "show ip bgp"
 ### ランタイム注入 (デーモン自動書き込み)
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+BGP_GLOBALS_AF_NETWORK は frrcfgd 経由で処理される。フィールド値が FRR `network` コマンドの引数に変換される。
+
+| 派生先フィールド/動作 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| FRR `network <prefix> backdoor` | `backdoor == "true"` | `backdoor` オプションを付与 | `bgpd.conf.db.addr_family.j2:36-37` |
+| FRR `network <prefix> route-map <policy>` | `policy` フィールドが存在 | `route-map <policy>` オプションを付与 | `bgpd.conf.db.addr_family.j2:39-40` |
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `frrcfgd` は常時登録 | BGP_GLOBALS_AF_NETWORK 購読は無条件 | `frrcfgd.py:99,2318` |
+| IP prefix パース失敗 | エラーログ → continue (当該エントリをスキップ) | `frrcfgd.py:3173-3175` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| backdoor フラグ | 1 | `bgpd.conf.db.addr_family.j2:36` |
+| policy (route-map) 付与 | 1 | `bgpd.conf.db.addr_family.j2:39` |
+| IP prefix パース | 1 | `frrcfgd.py:3172-3174` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+BGP_GLOBALS_AF_NETWORK は `frrcfgd.py` の `bgp_table_handler_common()` 経由で処理される。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `frrcfgd` | `bgp_table_handler_common()` | `table == 'BGP_GLOBALS_AF_NETWORK'` | network-prefix パス: `af_type\|ip_prefix` 形式でキー分割 | `frrcfgd.py:3169-3170` |
+| `frrcfgd` | 内部処理 | `norm_ip_prefix is None` | エラーログ + continue | `frrcfgd.py:3173-3175` |
+| `frrcfgd` | Jinja2 テンプレート | `backdoor == "true"` | FRR `network` コマンドに `backdoor` を付与 | `bgpd.conf.db.addr_family.j2:36-37` |
+| `frrcfgd` | Jinja2 テンプレート | `policy` フィールド存在 | FRR `network` コマンドに `route-map <policy>` を付与 | `bgpd.conf.db.addr_family.j2:39-40` |
+
+> **スキャン証跡**: `frrcfgd.py:3169-3186` および `bgpd.conf.db.addr_family.j2:32-45` を全行読了、4 件分岐抽出。BGP_GLOBALS_AF_NETWORK には boolean フィールドのみで enum フィールドなし、分岐はシンプル。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: fcbe746ecf8b -->

@@ -2,6 +2,7 @@
 title: BANNER_MESSAGE テーブル
 description: "BANNER_MESSAGE テーブル — SSH / コンソールログイン時の login バナー、MOTD、logout バナーを設定するテーブル。 hostcfgd が CONFIG_DB を購読し、/etc/issue / /etc/motd / /etc/issue.net を書き換える。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -185,5 +186,46 @@ show banner
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+BANNER_MESSAGE テーブルのフィールドが他フィールドを自動派生させるパターンは確認されなかった。`state` フィールドはバナー表示の ON/OFF を制御するが、他のフィールドへの派生は行わない。
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `hostcfgd` の `BannerCfg` ハンドラは常時登録 (platform 非依存) | `BANNER_MESSAGE` テーブル購読は無条件 | `hostcfgd:2520` |
+| キャッシュと値が一致する場合 | `update_required = False` → `systemctl restart banner-config` をスキップ | `hostcfgd:2107-2108` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| BannerCfg 登録 | 1 | `hostcfgd:2520` |
+| キャッシュ比較 | 1 | `hostcfgd:2102-2105` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+BANNER_MESSAGE は `BannerCfg.banner_message()` が処理する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `BannerCfg` | `banner_message()` | `type(data) != dict` | 早期 return (処理対象外) | `hostcfgd:2096-2098` |
+| `BannerCfg` | `banner_message()` | キャッシュと全フィールドが一致 | `update_required = False` → return (no-op) | `hostcfgd:2100-2108` |
+| `BannerCfg` | `banner_message()` | いずれかのフィールドがキャッシュと不一致 | `systemctl restart banner-config` を実行 | `hostcfgd:2111` |
+| `BannerCfg` | `banner_message()` | `systemctl restart` 失敗 | `syslog ERR` + return (クラッシュなし) | `hostcfgd:2113-2115` |
+
+> **スキャン証跡**: `hostcfgd:2084-2119` を全行読了、4 件分岐抽出。`state` フィールド値による内部分岐は存在せず、変化検知 → `banner-config` サービス再起動の一本道。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->

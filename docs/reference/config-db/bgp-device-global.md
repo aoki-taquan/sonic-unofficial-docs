@@ -2,6 +2,7 @@
 title: BGP_DEVICE_GLOBAL テーブル
 description: "BGP_DEVICE_GLOBAL テーブル — スイッチ全体（VRF 横断）の BGP 動作スイッチを保持する。BGP_GLOBALS が VRF 単位なのに対し、BGP_DEVICE_GLOBAL は装置全体スコープ。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -213,5 +214,64 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド/動作 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| Directory (内部キャッシュ) `tsa_enabled` | `tsa_enabled` in data かつ値が `"true"/"false"` | data の値をそのまま Directory に書き込み | `managers_device_global.py:103-104` |
+| Directory `wcmp_enabled` | `wcmp_enabled` 変化あり | data の値をそのまま Directory に書き込み | `managers_device_global.py:124` |
+| Directory `idf_isolation_state` | `idf_isolation_state` 変化あり | data の値をそのまま Directory に書き込み | `managers_device_global.py:139` |
+| FRR TSA route-map 適用 | `tsa_enabled == "true"` かつ chassis_tsa == `"false"` | `tsa_template` から route-map 生成 → FRR へ push | `managers_device_global.py:106-109,191-193` |
+| FRR TSB route-map 適用 | `tsa_enabled == "false"` かつ chassis_tsa == `"false"` | `tsb_template` から route-map 生成 → FRR へ push | `managers_device_global.py:106-109,194-196` |
+
+**chassis cross-cutting**: `chassis_tsa == "true"` のとき local TSA 操作をスキップ (`managers_device_global.py:106`)
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `DeviceGlobalCfgMgr` は常時登録 | BGP_DEVICE_GLOBAL 購読は無条件 | `bgpcfgd/main.py:104` |
+| `device_info.is_chassis()` が true | `ChassisAppDbMgr` を追加登録 → CHASSIS_APP_DB の BGP_DEVICE_GLOBAL も購読 | `bgpcfgd/main.py:112-113` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| tsa_enabled 条件分岐 | 3 | `managers_device_global.py:103,106,177` |
+| chassis_tsa チェック | 2 | `managers_device_global.py:100,106` |
+| idf_isolation_state 分岐 | 3 | `managers_device_global.py:256,265,269` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+BGP_DEVICE_GLOBAL は `DeviceGlobalCfgMgr.set_handler()` が処理し、内部で `configure_tsa()` / `configure_wcmp()` / `configure_idf()` を呼び出す。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `DeviceGlobalCfgMgr` | `configure_tsa()` | `tsa_enabled` in data | data から state を取得 | `managers_device_global.py:97-98` |
+| `DeviceGlobalCfgMgr` | `configure_tsa()` | `chassis_tsa == "false"` かつ requires_update | `isolate_unisolate_device()` 呼び出し | `managers_device_global.py:106-109` |
+| `DeviceGlobalCfgMgr` | `configure_tsa()` | `chassis_tsa == "true"` | TSA 操作をスキップ (chassis が制御) | `managers_device_global.py:106` |
+| `DeviceGlobalCfgMgr` | `isolate_unisolate_device()` | `tsa_status == "true"` | `tsa_template` で route-map 生成 (TSA) | `managers_device_global.py:191-193` |
+| `DeviceGlobalCfgMgr` | `isolate_unisolate_device()` | `tsa_status == "false"` | `tsb_template` で route-map 生成 (TSB) | `managers_device_global.py:194-196` |
+| `DeviceGlobalCfgMgr` | `isolate_unisolate_device()` | `tsa_status` が `"true"/"false"` 以外 | エラーログ + return False | `managers_device_global.py:186-188` |
+| `DeviceGlobalCfgMgr` | `set_wcmp()` | `status == "true"` | wcmp_template で W-ECMP 有効化 | `managers_device_global.py:150-158` |
+| `DeviceGlobalCfgMgr` | `set_wcmp()` | `status == "false"` | wcmp_template で W-ECMP 無効化 | `managers_device_global.py:152-158` |
+| `DeviceGlobalCfgMgr` | `set_wcmp()` | `status` が `"true"/"false"` 以外 | エラーログ + return False | `managers_device_global.py:146-148` |
+| `DeviceGlobalCfgMgr` | `downstream_isolate_unisolate()` | `idf_isolation_state == "unisolated"` | IDF unisolate コマンドを FRR に送信 | `managers_device_global.py:265` |
+| `DeviceGlobalCfgMgr` | `downstream_isolate_unisolate()` | `idf_isolation_state == "isolated_withdraw_all"` | IDF isolate (withdraw all) を FRR に送信 | `managers_device_global.py:269` |
+| `DeviceGlobalCfgMgr` | `downstream_isolate_unisolate()` | `idf_isolation_state == "isolated_no_export"` | IDF isolate (no-export) を FRR に送信 | `managers_device_global.py:269` |
+| `DeviceGlobalCfgMgr` | `downstream_isolate_unisolate()` | 上記以外の値 | エラーログ + return | `managers_device_global.py:256-257` |
+
+> **スキャン証跡**: `managers_device_global.py` を全行読了、12 件分岐抽出。TSA/TSB/W-ECMP/IDF の 4 機能がそれぞれ独立した分岐ロジックを持つ。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 029bff240b1b -->

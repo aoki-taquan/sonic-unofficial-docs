@@ -2,6 +2,7 @@
 title: BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル
 description: "BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — BGP_GLOBALS_AF で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の aggregate prefix をこのテーブルで列挙する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -219,5 +220,53 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 ### ランタイム注入 (デーモン自動書き込み)
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+BGP_GLOBALS_AF_AGGREGATE_ADDR は frrcfgd 経由で処理される。フィールド値が FRR `aggregate-address` コマンドの引数に変換される。
+
+| 派生先フィールド/動作 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| FRR `aggregate-address <prefix> as-set` | `as_set == "true"` | `as-set` オプションを付与 | `bgpd.conf.db.addr_family.j2:52-53` |
+| FRR `aggregate-address <prefix> summary-only` | `summary_only == "true"` | `summary-only` オプションを付与 | `bgpd.conf.db.addr_family.j2:55-57` |
+| `af_aggr_list` (内部キャッシュ) | `as_set` / `summary_only` の値 | `AggregateAddr` オブジェクトに格納、後続の FRR 再生成で使用 | `frrcfgd.py:3188-3193` |
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `frrcfgd` は常時登録 | BGP_GLOBALS_AF_AGGREGATE_ADDR 購読は無条件 | `frrcfgd.py:98,2317` |
+| IP prefix パース失敗 | エラーログ → continue (当該エントリをスキップ) | `frrcfgd.py:3173-3175` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| as_set フラグ | 2 | `bgpd.conf.db.addr_family.j2:52`, `frrcfgd.py:3191` |
+| summary_only フラグ | 2 | `bgpd.conf.db.addr_family.j2:55`, `frrcfgd.py:3191` |
+| IP prefix パース | 1 | `frrcfgd.py:3172-3174` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+BGP_GLOBALS_AF_AGGREGATE_ADDR は `frrcfgd.py` の `bgp_table_handler_common()` 経由で処理される。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `frrcfgd` | `bgp_table_handler_common()` | `table == 'BGP_GLOBALS_AF_AGGREGATE_ADDR'` | aggregate-addr パス: `af_type\|ip_prefix` 形式でキー分割 | `frrcfgd.py:3169-3170` |
+| `frrcfgd` | 内部処理 | `norm_ip_prefix is None` | エラーログ + continue (当該エントリスキップ) | `frrcfgd.py:3173-3175` |
+| `frrcfgd` | 内部処理 | `del_table == False` かつ `as_set/summary_only == "true"` | `AggregateAddr` オブジェクトを生成・キャッシュ | `frrcfgd.py:3188-3193` |
+| `frrcfgd` | 内部処理 | `del_table == True` | `af_aggr_list` から当該 prefix を削除 | `frrcfgd.py:3194-3196` |
+
+> **スキャン証跡**: `frrcfgd.py:3169-3196` および `bgpd.conf.db.addr_family.j2:48-61` を全行読了、4 件分岐抽出。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: fcbe746ecf8b -->

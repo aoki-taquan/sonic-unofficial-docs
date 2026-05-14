@@ -2,6 +2,7 @@
 title: AAA テーブル
 description: "AAA テーブル — ログイン認証 (authentication) / 認可 (authorization) / アカウンティング (accounting) の手段優先順序を CONFIG_DB に保持するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -232,5 +233,53 @@ show aaa
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `AAA|authentication.login` | db_migrator が既存エントリ不在を検出 | `aaa_new.get("authentication")` 値をそのまま設定 | `db_migrator.py:876-880` |
+| `AAA|accounting.login` | db_migrator が既存エントリ不在を検出 | `aaa_new.get("accounting")` 値をそのまま設定 | `db_migrator.py:883-887` |
+| `AAA|authorization.login` | db_migrator が `TACPLUS.global.passkey` 存在かつ非空を検出 | `aaa_new.get("authorization")` 値をそのまま設定 | `db_migrator.py:890-895` |
+
+**minigraph.py 由来の自動設定**: 該当なし (AAA テーブルは minigraph から生成されない)
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `hostcfgd` の `AaaHandler` は常時登録 (platform 非依存) | AAA テーブル購読は無条件 | `sonic-host-services/scripts/hostcfgd` |
+| `type=authentication` かつ `login` に `ldap` を含む場合 | `nslcd` サービスを起動。`nslcd` が存在しない場合は silent skip | `hostcfgd:419L` |
+| `type=authentication` かつ `login` に `tacacs+` を含む場合 | TACACS+ サーバへの接続設定が必要; YANG must 制約で `TACPLUS.global.passkey` が必須 | `sonic-system-aaa.yang:must` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| db_migrator AAA 移行 | 3 | `db_migrator.py:869-897` |
+| hostcfgd AaaHandler 登録 | 1 | `hostcfgd:AaaHandler.__init__` |
+| YANG must 制約 | 1 | `sonic-system-aaa.yang:must` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+AAA は `hostcfgd` の `aaa_update()` メソッドが処理する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `hostcfgd` | `aaa_update()` | `key == 'authentication'` | PAM `common-auth-sonic.j2` を再生成 | `hostcfgd:419-420` |
+| `hostcfgd` | `aaa_update()` | `key == 'authorization'` | `tacplus_nss.conf.j2` を更新 | `hostcfgd:2443` |
+| `hostcfgd` | `aaa_update()` | `key == 'accounting'` | TACACS+ アカウンティング設定を更新 | `hostcfgd:2443` |
+| `hostcfgd` | `aaa_update()` | `'failthrough' in data` | `failthrough` フラグを PAM stanza に反映 | `hostcfgd:422` |
+| `hostcfgd` | `aaa_update()` | `login` に `ldap` を含む | `nslcd` サービスを起動 (未設定なら silent skip) | `hostcfgd:419L` |
+
+> **スキャン証跡**: `aaa_update()` および `modify_conf_file()` を全行読了。`key` による 3-way 分岐と `failthrough` / `ldap` フラグによる 2 件追加分岐を抽出。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->

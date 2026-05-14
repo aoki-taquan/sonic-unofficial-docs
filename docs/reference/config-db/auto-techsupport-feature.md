@@ -2,6 +2,7 @@
 title: AUTO_TECHSUPPORT_FEATURE テーブル
 description: "AUTO_TECHSUPPORT_FEATURE テーブル — AUTO_TECHSUPPORT (GLOBAL) で定義したイベント駆動 techsupport の挙動を、FEATURE (docker) 単位でオーバーライドするテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -202,5 +203,45 @@ ls -lh /var/dump/
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+AUTO_TECHSUPPORT_FEATURE テーブル自体のフィールドによる他フィールド派生は確認されなかった。ただし `state` 値が `AUTO_TECHSUPPORT|GLOBAL.state` と AND 条件で評価される (Phase 7 参照)。
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `AUTO_TECHSUPPORT\|GLOBAL.state == "enabled"` かつ `AUTO_TECHSUPPORT_FEATURE\|<container>.state == "enabled"` | `invoke_ts_command_rate_limited()` を実行 | `coredump_gen_handler.py:47-60` |
+| どちらか一方でも `"enabled"` 以外 | techsupport 呼び出しをスキップ | `coredump_gen_handler.py:47-58` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| FEATURE.state チェック | 1 | `coredump_gen_handler.py:55` |
+| GLOBAL との AND 条件 | 1 | `coredump_gen_handler.py:47` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+AUTO_TECHSUPPORT_FEATURE は `coredump_gen_handler.py` の `CriticalProcCoreDumpHandle.handle_core_dump_creation_event()` が参照する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `CriticalProcCoreDumpHandle` | `handle_core_dump_creation_event()` | `GLOBAL.state != "enabled"` | 先行 return (FEATURE.state は参照しない) | `coredump_gen_handler.py:47-49` |
+| `CriticalProcCoreDumpHandle` | `handle_core_dump_creation_event()` | `FEATURE_KEY.state != "enabled"` | 早期 return (techsupport 呼び出しスキップ) | `coredump_gen_handler.py:55-58` |
+| `CriticalProcCoreDumpHandle` | `handle_core_dump_creation_event()` | 両方 `"enabled"` | techsupport を rate-limited で呼び出し | `coredump_gen_handler.py:60` |
+
+> **スキャン証跡**: `coredump_gen_handler.py` 全行読了。FEATURE.state は GLOBAL.state が enabled であることを前提とした 2 段階ガード。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->

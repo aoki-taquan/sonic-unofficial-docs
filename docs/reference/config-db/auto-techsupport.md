@@ -2,6 +2,7 @@
 title: AUTO_TECHSUPPORT テーブル
 description: "AUTO_TECHSUPPORT テーブル — イベント駆動 (core dump 生成) で show techsupport を自動実行・古いダンプを掃除する機能の設定。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -218,5 +219,51 @@ global テーブル (single key `GLOBAL`) と feature テーブルを同一ハ�
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド/動作 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| コアダンプクリーンアップの実行 | `AUTO_TECHSUPPORT\|GLOBAL.state == "enabled"` | `max_core_limit` に従い古いコアダンプを削除 | `coredump_gen_handler.py:17-33` |
+| `show techsupport --since` 引数 | `AUTO_TECHSUPPORT\|GLOBAL.since` の値 | `since` 設定値 (未設定時は `SINCE_DEFAULT`) | `auto_techsupport_helper.py:212-219` |
+
+**minigraph.py / config_samples.py 由来の自動設定**: 該当なし。`init_cfg.json.j2` には AUTO_TECHSUPPORT のデフォルト値が埋め込まれる場合がある。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `AUTO_TECHSUPPORT\|GLOBAL.state != "enabled"` | `coredump_gen_handler` は techsupport 呼び出しもクリーンアップも行わず return | `coredump_gen_handler.py:17,47-49` |
+| `AUTO_TECHSUPPORT_FEATURE\|<container>.state != "enabled"` | 対象コンテナのコアダンプ発生時も techsupport 呼び出しをスキップ | `coredump_gen_handler.py:55-58` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| GLOBAL.state チェック | 2 | `coredump_gen_handler.py:17,47` |
+| since 取得 | 1 | `auto_techsupport_helper.py:214` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+AUTO_TECHSUPPORT|GLOBAL は `coredump_gen_handler.py` の `handle_coredump_cleanup()` および `handle_core_dump_creation_event()` が処理する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `handle_coredump_cleanup` | - | `state != "enabled"` | ログ出力のみで return (クリーンアップ無し) | `coredump_gen_handler.py:17-20` |
+| `handle_coredump_cleanup` | - | `state == "enabled"` かつ `core_usage` 未設定 | ログ出力のみで return | `coredump_gen_handler.py:28-31` |
+| `handle_coredump_cleanup` | - | `state == "enabled"` かつ `core_usage` 設定済み | `cleanup_process()` 呼び出し | `coredump_gen_handler.py:33` |
+| `CriticalProcCoreDumpHandle` | `handle_core_dump_creation_event()` | `GLOBAL.state != "enabled"` | 早期 return (techsupport 未呼び出し) | `coredump_gen_handler.py:47-49` |
+| `CriticalProcCoreDumpHandle` | `handle_core_dump_creation_event()` | `FEATURE_KEY.state != "enabled"` | 早期 return (対象コンテナ無効) | `coredump_gen_handler.py:55-58` |
+| `CriticalProcCoreDumpHandle` | `handle_core_dump_creation_event()` | 両方 enabled | `invoke_ts_command_rate_limited()` 呼び出し | `coredump_gen_handler.py:60` |
+
+> **スキャン証跡**: `coredump_gen_handler.py` 全行読了、6 件分岐抽出。GLOBAL.state と FEATURE.state の 2 段階ガードが確認された。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->

@@ -2,6 +2,7 @@
 title: AS_PATH_SET テーブル
 description: "AS_PATH_SET テーブル — BGP の AS path access-list を CONFIG_DB に持たせるテーブル。sonic-routing-policy-sets.yang の AS_PATH_SET コンテナで定義され、ROUTE_MAP の match as-path 等から参照される。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -184,5 +185,52 @@ vtysh -c "show ip as-path-access-list"
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+AS_PATH_SET テーブル自体のフィールドから他フィールドが派生するパターンは確認されなかった。`AsPathMgr` は `DEVICE_METADATA.localhost.t2_group_asns` を読み取り FRR の `bgp as-path access-list T2_GROUP_ASNS` を生成する。
+
+| 派生先 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| FRR `bgp as-path access-list T2_GROUP_ASNS` | `t2_group_asns` フィールドが非 null | カンマ区切り ASN を個別 access-list エントリに展開 | `managers_as_path.py:39-57` |
+
+**minigraph.py / config_samples.py / init_cfg 由来の自動設定**: 該当なし
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `type == "UpstreamLC"` かつ `subtype` 条件充足 | `AsPathMgr` を managers リストに追加 | `bgpcfgd/main.py:124-130` |
+| `type == "UpperSpineRouter"` | 同上 | `bgpcfgd/main.py:124-130` |
+| 上記以外 | `AsPathMgr` は未登録 → AS_PATH_SET テーブル変更を無視 | `bgpcfgd/main.py:128` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| `AsPathMgr` 条件起動 | 2 | `main.py:128-130` |
+| FRR as-path access-list 生成 | 2 | `managers_as_path.py:52,56` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+AS_PATH_SET は `AsPathMgr` の `set_handler()` / `del_handler()` が処理する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `AsPathMgr` | `set_handler()` | `key != "localhost"` | 早期 return True (key を無視) | `managers_as_path.py:31-32` |
+| `AsPathMgr` | `set_handler()` | `"t2_group_asns"` in data | ASN リストを差分比較して追加/削除 | `managers_as_path.py:35-57` |
+| `AsPathMgr` | `set_handler()` | `asns is None` | `new_asns` を空集合として処理 → 既存エントリを全削除 | `managers_as_path.py:38-41` |
+| `AsPathMgr` | `del_handler()` | `key != "localhost"` | 早期 return True | `managers_as_path.py:61-62` |
+| `AsPathMgr` | `del_handler()` | `key == "localhost"` | FRR から `no bgp as-path access-list T2_GROUP_ASNS` を発行 | `managers_as_path.py:65-66` |
+
+> **スキャン証跡**: `managers_as_path.py` 全 67 行読了、5 件分岐抽出。
+
+<!-- /handler-branching -->
 
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
