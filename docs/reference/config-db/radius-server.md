@@ -73,7 +73,7 @@ RADIUS_SERVER|<ip_or_hostname>
 - `passkey` は印字可能 ASCII から SPACE/`#`/`,` を除外 (`pattern '[^ #,]*'`)
 - `priority` 範囲外は YANG 制約違反でロード拒否
 - `timeout` 範囲: 1..60
-- `retransmit` 範囲: 0..10 (YANG) — CLI は 1..10 のみ許容 ([YANG-CLI discrepancy](#fld-retransmit))
+- `retransmit` 範囲: 0..10 (YANG) — CLI は 1..10 のみ許容 (YANG-CLI discrepancy は下記「コード由来の暗黙デフォルト」セクション参照)
 - エントリ上限: **8 台** (`max-elements 8` in YANG / `RADIUS_MAXSERVERS = 8` in CLI)
 
 ## 購読者
@@ -193,7 +193,7 @@ show radius
 | `vrf` | なし | なし | なし (フラグ `--use-mgmt-vrf`) | 未設定 → vrf 行なし → デフォルト VRF |
 | `src_intf` | なし | なし | なし | 未設定 → src_ip 行なし |
 
-### {#fld-retransmit} YANG-CLI Discrepancy: `retransmit`
+### YANG-CLI Discrepancy: `retransmit`
 
 - **YANG**: `range "0..10"` — 0 は有効値
 - **CLI** (`config/aaa.py`): `type=click.IntRange(1, 10)` — 0 は設定不能
