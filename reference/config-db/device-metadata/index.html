@@ -21341,6 +21341,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30047,6 +30097,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -31215,6 +31315,159 @@
 <li><code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> — type/subtype/switch_type</li>
 </ul>
 <!-- /value-behavior -->
+
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PEER_SWITCH</code> テーブルにエントリが存在する</td>
+<td><code>subtype = 'DualToR'</code>、<code>peer_switch = &lt;hostname&gt;</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2188-2193</code></td>
+</tr>
+<tr>
+<td><code>type == 'SpineRouter'</code> かつ <code>macsec_enabled == 'True'</code></td>
+<td><code>subtype = 'UpstreamLC'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2194-2196</code></td>
+</tr>
+<tr>
+<td><code>type == 'SpineRouter'</code> かつ <code>macsec_enabled == 'False'</code></td>
+<td><code>subtype = 'DownstreamLC'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2197-2198</code></td>
+</tr>
+<tr>
+<td><code>type == 'SpineRouter'</code> かつ macsec_enabled が True/False 以外</td>
+<td><code>subtype = 'Supervisor'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2199-2200</code></td>
+</tr>
+<tr>
+<td><code>type == 'LeafRouter'</code> かつ downstream_redundancy_types に Gemini/Libra を含む</td>
+<td><code>SYSTEM_DEFAULTS.tunnel_qos_remap.status = 'enabled'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2206-2212</code></td>
+</tr>
+<tr>
+<td><code>type == 'ToRRouter'</code> かつ redundancy_type に Gemini/Libra を含む</td>
+<td><code>SYSTEM_DEFAULTS.tunnel_qos_remap.status = 'enabled'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2208-2212</code></td>
+</tr>
+<tr>
+<td><code>switch_type == 'voq'</code> または <code>chassis_type == VOQ</code></td>
+<td><code>asic_name = 'Asic0'</code>（single ASIC 時）</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2221-2223</code></td>
+</tr>
+<tr>
+<td><code>switch_type == 'voq'</code> または <code>chassis_type == VOQ</code> かつ <code>card_type == 'Supervisor'</code></td>
+<td><code>sub_role = 'fabric'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2227-2228</code></td>
+</tr>
+<tr>
+<td><code>chassis_type == 'chassis-packet'</code></td>
+<td><code>sub_role = BACKEND_ASIC_SUB_ROLE ('BackEnd')</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2229-2230</code></td>
+</tr>
+<tr>
+<td><code>chassis_type == CHASSIS_CARD_VOQ</code> かつ <code>sub_role == FABRIC_ASIC_SUB_ROLE</code></td>
+<td><code>switch_type = 'fabric'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2232-2233</code></td>
+</tr>
+<tr>
+<td><code>type == 'SmartSwitchDPU'</code> のサンプル設定生成時</td>
+<td><code>switch_type = 'dpu'</code>、<code>subtype = 'SmartSwitch'</code> を同時設定</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/config_samples.py:155-157</code></td>
+</tr>
+<tr>
+<td><code>hwsku</code> に <code>'pensando'</code> を含む（SmartSwitchDPU）</td>
+<td><code>SYSTEM_DEFAULTS.polaris.status = 'enabled'</code></td>
+<td><code>sonic-buildimage/src/sonic-config-engine/config_samples.py:179-184</code></td>
+</tr>
+<tr>
+<td>DB移行: 新 DB に <code>synchronous_mode</code> が欠如</td>
+<td>旧 DB から <code>synchronous_mode</code> を補完（既存値は上書きしない）</td>
+<td><code>sonic-utilities/scripts/db_migrator.py:669-678</code></td>
+</tr>
+<tr>
+<td>DB移行: 新旧 DB で <code>docker_routing_config_mode</code> が異なる</td>
+<td>新 DB の値で上書き</td>
+<td><code>sonic-utilities/scripts/db_migrator.py:742-755</code></td>
+</tr>
+<tr>
+<td><code>type NOT IN [ToRRouter, EPMS, MgmtTsToR, MgmtToRRouter, BmcMgmtToRRouter]</code></td>
+<td><code>FEATURE.dhcp_relay.state = 'enabled'</code></td>
+<td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:76</code></td>
+</tr>
+<tr>
+<td><code>subtype == 'DualToR'</code></td>
+<td><code>FEATURE.mux.state = 'enabled'</code></td>
+<td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:81</code></td>
+</tr>
+<tr>
+<td><code>type NOT IN [LeafRouter, BackEndLeafRouter]</code></td>
+<td><code>FEATURE.restapi.state = 'enabled'</code></td>
+<td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:85</code></td>
+</tr>
+<tr>
+<td><code>type IN [SpineRouter, UpperSpineRouter, LowerRegionalHub]</code> かつ <code>MACSEC_SUPPORTED</code></td>
+<td><code>FEATURE.macsec.state = 'enabled'</code></td>
+<td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:90</code></td>
+</tr>
+<tr>
+<td><code>type == 'SpineRouter'</code></td>
+<td><code>pmon has_per_asic_scope = False</code></td>
+<td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:69</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_info.is_chassis() == True</code></td>
+<td><code>ChassisAppDbMgr</code>（CHASSIS_APP_DB / BGP_DEVICE_GLOBAL）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:112-113</code></td>
+</tr>
+<tr>
+<td><code>SYSTEM_DEFAULTS.software_bfd.status == 'enabled'</code></td>
+<td><code>BfdMgr</code>（STATE_DB / BFD_SOFTWARE_SESSION）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:118-120</code></td>
+</tr>
+<tr>
+<td><code>type == 'SpineRouter' AND subtype == 'UpstreamLC'</code> または <code>type == 'UpperSpineRouter'</code></td>
+<td><code>AsPathMgr</code>（CONFIG_DB / DEVICE_METADATA）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:124-130</code></td>
+</tr>
+<tr>
+<td><code>subtype == 'DualToR'</code></td>
+<td><code>ycabled</code> daemon（pmon コンテナで条件付き起動）</td>
+<td><code>sonic-buildimage/dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157-175</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注</strong>: <code>FEATURE</code> テーブルの <code>enabled</code>/<code>always_disabled</code> 状態（Phase 6 で <code>type</code>/<code>subtype</code> から派生）は <code>featuremgrd</code> がコンテナ起動/停止の最終判定に使用する。上記 Phase 7 一覧はその上流にある明示的な条件付き manager/daemon 登録のみを記載。</p>
+</blockquote>
+<h3 id="grep_1">grep カバレッジ<a class="headerlink" href="#grep_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>minigraph.py 行数: 2967、DEVICE_METADATA assignment ヒット: 約 30 件</li>
+<li>bgpcfgd/main.py managers.append 総数: 25、条件付き: 3 件、DEVICE_METADATA.type/subtype 直接条件: 1 件 (AsPathMgr)</li>
+<li>db_migrator.py: 2 フィールド補完派生 (synchronous_mode L669、docker_routing_config_mode L742)</li>
+<li>init_cfg.json.j2: type/subtype で 5 種 feature 状態を条件派生</li>
+</ul>
+<!-- /derivation -->
 
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
