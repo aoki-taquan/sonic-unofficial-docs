@@ -87,6 +87,28 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 - **最後の drop_reason の削除 → task_ignore**: drop_reasons が 1 件のときに `removeDropReason()` を呼ぶと `SWSS_LOG_WARN("Attempted to remove all drop reasons from counter")` → `task_ignore`。drop counter は最低 1 つの理由が必要。<!-- evidence: debugcounterorch.cpp L476-479 -->
 - **更新はべき等・失敗は状態を変更しない**: 失敗した更新はシステム状態を変更しない。同一リクエストの繰り返しは同一結果となる。<!-- evidence: debugcounterorch.cpp L128-130 -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+| フィールド | YANG default | 実行時 fallback | 種別 | evidence |
+|---|---|---|---|---|
+| `alias` | なし | **無視** (SAI・FlexCounter に不伝播) | dead field | `debugcounterorch.cpp:726-758` |
+| `desc` | なし | **無視** (同上) | dead field | `debugcounterorch.cpp:726-758` |
+| `group` | なし | **無視** (同上) | dead field | `debugcounterorch.cpp:726-758` |
+| `drop_monitor_status` | `"disabled"` | `false` (C++ メンバ初期値) | YANG default = 実装整合 | `debugcounterorch.h:102` |
+| `window` | `900` 秒 | **`0`** (Lua `tonumber(nil) or 0`) | YANG default 外 fallback — 欠損時は全インシデントを即クリア | `drop_monitor.lua:34` |
+| `incident_count_threshold` | `3` | **`0`** (同 Lua fallback) | YANG default 外 fallback — 欠損時は 1 インシデントでアラート発火 | `drop_monitor.lua:33, 80` |
+| `drop_count_threshold` | `100` | **`0`** (同 Lua fallback) | YANG default 外 fallback — 欠損時は 1 ドロップでインシデント登録 | `drop_monitor.lua:32, 59` |
+| `type` | mandatory | 欠損時は空文字 → `task_failed` | mandatory 違反は silent empty fallback 後に task_failed | `debugcounterorch.cpp:385-391` |
+
+### 補足: ハードコード固定値・プラットフォーム依存
+
+- **FlexCounter polling interval**: `60000` ms ハードコード（`debugcounterorch.h:21` `DEBUG_DROP_MONITOR_FLEX_COUNTER_POLLING_INTERVAL_MS`）。`window` の精度はこの値に依存。
+- **PHY ポートのみ対象**: `PORT_DEBUG` カウンタは `Port::Type::PHY` のみ追跡。LAG・VLAN・CPU ポートは silent skip（`debugcounterorch.cpp:639`）。
+- **SAI 非サポート環境**: `sai_query_attribute_enum_values_capability` が失敗すると `supported_counter_types` が空になり、全カウンタ作成が `task_failed`（`drop_counter.cpp:380-384`）。
+- **drop_reason 未設定の counter**: SAI オブジェクトを作成せず `free_drop_counters` に保留。`task_success` を返すが SAI 上にカウンタは存在しない（partial pending）（`debugcounterorch.cpp:393-394`）。
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
