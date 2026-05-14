@@ -87,7 +87,7 @@ WRED_PROFILE|<name>
 | `ecn` | `ecn_green_red` | `SAI_ECN_MARK_MODE_GREEN_RED`。緑・赤をマーク |
 | `ecn` | `ecn_yellow_red` | `SAI_ECN_MARK_MODE_YELLOW_RED`。黄・赤をマーク |
 | `ecn` | `ecn_all` | `SAI_ECN_MARK_MODE_ALL`。全色 ECN マーク（DCQCN 等で推奨）|
-| `wred_*_enable` | `true` | 指定色の WRED ドロップを有効化 |
+| `wred_*_enable` | `true` | 指定色の WRED ドロップを有効化（フィールド定数: `wred_green_enable_field_name` / `wred_yellow_enable_field_name` / `wred_red_enable_field_name`、qosorch.h:40-42） |
 | `wred_*_enable` | `false` | 無効（デフォルト）。閾値設定があっても drop しない |
 | `wred_*_enable` | `"true"`/`"false"` 以外 | `SWSS_LOG_ERROR("Invalid input specified")` でエントリ破棄 |
 | `*_drop_probability` | `0` | min threshold 到達時もドロップなし（ECN マーキングのみ使用する場合）|
@@ -121,7 +121,7 @@ WRED_PROFILE|<name>
 ## `ecn` 値別挙動
 
 YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
-実装 `ecn_map` (qosorch.cpp:36-44) → `SAI_WRED_ATTR_ECN_MARK_MODE` (qosorch.cpp:743)。
+実装 lookup map: `ecn_map` (qosorch.cpp:36-44)、フィールド定数: `ecn_field_name = "ecn"` (qosorch.h:55) → `SAI_WRED_ATTR_ECN_MARK_MODE` (qosorch.cpp:743)。
 不正値 (`ecn_map.at()` が `std::out_of_range`) → エントリ破棄。
 
 | 値 | SAI マッピング | マーキング対象色 | evidence |

@@ -155,7 +155,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | 値 | grep hits | 主要挙動 | evidence |
 |----|-----------|---------|---------|
 | `ToRRouter` | 35 | BGP graceful-restart 有効化 (constants 有効時); BGP peer-group に `allowas-in 1` 設定; dhcp_relay feature 無効化対象 **外** | bgpd.main.conf.j2:118; peer-group.conf.j2:7,22; init_cfg.json.j2:76 |
-| `LeafRouter` | 42 | BGP peer-group の IPv4/IPv6 で BBR 有効時 `allowas-in 1`; Broadcom 限定で IPinIP 追加エントリ生成; restapi feature 無効化; 下流 ToR ネイバーとの uplink/downlink バッファ・QoS 設定 | peer-group.conf.j2:9,24; ipinip.json.j2:12; init_cfg.json.j2:85; qos_config.j2:109 |
+| `LeafRouter` | 42 | BGP peer-group の IPv4/IPv6 で BBR 有効時 `allowas-in 1`; Broadcom 限定で IPinIP 追加エントリ生成; restapi feature 無効化; 下流 ToR ネイバーとの uplink/downlink バッファ・QoS 設定; uplink ポートへ `dscp_to_tc_map: "AZURE_UPLINK"` / `tc_to_queue_map: "AZURE_UPLINK"` 適用 (`qos_config.j2`); ダウンリンク `PORT_DOWNLINK` / アップリンク `PORT_UPLINK` リストで分岐 | peer-group.conf.j2:9,24; ipinip.json.j2:12; init_cfg.json.j2:85; qos_config.j2:109,440,452 |
 | `SpineChassisFrontendRouter` | 2 | FRR BGP iBGP ピア設定 (bgpd.conf.j2) および FRR instance 設定 (instance.conf.j2) を有効化 | sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.conf.j2:17; templates/general/instance.conf.j2:38 |
 | `ChassisBackendRouter` | 1 | `minigraph.py:49` で `chassis_backend_role` 定数として定義のみ（直接的なコード分岐はその定数経由） | sonic-buildimage/src/sonic-config-engine/minigraph.py:49 |
 | `ASIC` | 14 | `minigraph.py:95,109` で ASIC 名生成 (`ASIC{N}` 形式); `hardware_checker.py` でハードウェア種別判定 | sonic-buildimage/src/sonic-config-engine/minigraph.py:95,109 |
@@ -165,11 +165,11 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `MgmtAccessRouter` | 0 | コード参照なし → 該当なし | — |
 | `LowerMgmtAggregator` | 0 | コード参照なし → 該当なし | — |
 | `UpperMgmtAggregator` | 0 | コード参照なし → 該当なし | — |
-| `SpineRouter` | 16 | pmon の `delayed=False` 設定 (SpineRouter は pmon を遅延起動しない); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); `type==SpineRouter AND subtype==UpstreamLC` のとき table-map 適用 | init_cfg.json.j2:69,90; peer-group.conf.j2:17,32 |
-| `UpperSpineRouter` | 4 | SpineRouter+UpstreamLC と同等の table-map 適用 (`SELECTIVE_ROUTE_DOWNLOAD`); macsec 有効化対象 | peer-group.conf.j2:17,32; init_cfg.json.j2:90 |
-| `FabricSpineRouter` | 0 | bgpd.main.conf.j2:20 の lowercase 比較 `in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']` で `disagg_t2=true` が設定される（コード中の単体参照はなし） | sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:20 |
-| `LowerSpineRouter` | 0 | 同上 disagg_t2=true → FRR に disaggregated T2 フラグが立つ | bgpd.main.conf.j2:20 |
-| `BackEndToRRouter` | 12 | `backend_device_types` グループ; `AND storage_device IN DEVICE_METADATA` のとき ACL を特殊バインド; `AND storage_device NOT IN DEVICE_METADATA` のとき IPinIP decap エントリ生成スキップ; QoS backend 設定 | minigraph.py:1828; ipinip.json.j2:68-69; qos_config.j2:164 |
+| `SpineRouter` | 16 | pmon の `delayed=False` 設定 (SpineRouter は pmon を遅延起動しない); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); `type==SpineRouter AND subtype==UpstreamLC` のとき BGP address-family に `table-map SELECTIVE_ROUTE_DOWNLOAD_V4` / `table-map SELECTIVE_ROUTE_DOWNLOAD_V6` 適用 | init_cfg.json.j2:69,90; peer-group.conf.j2:17,32 |
+| `UpperSpineRouter` | 4 | SpineRouter+UpstreamLC と同等の `table-map SELECTIVE_ROUTE_DOWNLOAD_V4` / `SELECTIVE_ROUTE_DOWNLOAD_V6` 適用; macsec 有効化対象 | peer-group.conf.j2:17,32; init_cfg.json.j2:90 |
+| `FabricSpineRouter` | 0 | bgpd.main.conf.j2:20 の lowercase 比較 `in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']` で テンプレートローカル変数 `disagg_t2 = "true"` が設定される（コード中の単体参照はなし） | sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:20 |
+| `LowerSpineRouter` | 0 | 同上 `disagg_t2 = "true"` → FRR に disaggregated T2 フラグが立つ | bgpd.main.conf.j2:20 |
+| `BackEndToRRouter` | 12 | `backend_device_types` グループ (`['BackEndToRRouter', 'BackEndLeafRouter']`); `AND storage_device IN DEVICE_METADATA` のとき `filter_acl_table_for_backend()` 経由で ACL を特殊バインド; `AND storage_device NOT IN DEVICE_METADATA` のとき IPinIP decap エントリ生成スキップ; QoS backend 設定 | minigraph.py:1828; ipinip.json.j2:68-69; qos_config.j2:164 |
 | `BackEndLeafRouter` | 13 | `backend_device_types` グループ; IPinIP decap エントリ生成スキップ; restapi feature 無効化; QoS backend 設定 | minigraph.py:51; ipinip.json.j2:68; init_cfg.json.j2:85 |
 | `EPMS` | 2 | pfcwd 呼び出しスキップ; dhcp_relay feature 無効化 | config/main.py:2425; init_cfg.json.j2:76 |
 | `MgmtTsToR` | 4 | pfcwd 呼び出しスキップ; dhcp_relay feature 無効化; `console_device_types` グループ (minigraph.py:52); `mgmt_device_types` グループ | config/main.py:2425; minigraph.py:52,54 |
@@ -186,9 +186,9 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `NetworkBmc` | 0 | コード参照なし → 該当なし | — |
 | `MseeRouter` | 0 | コード参照なし → 該当なし | — |
 | `not-provisioned` | 0 | コード参照なし → 該当なし | — |
-| `LowerRegionalHub` | 1 | bgpd.main.conf.j2:27 lowercase 比較で `disagg_rh=true` → Regional Hub FRR フラグ; init_cfg.json.j2:90 macsec 有効化対象 | bgpd.main.conf.j2:27; init_cfg.json.j2:90 |
-| `FabricRegionalHub` | 0 | bgpd.main.conf.j2:27 の lowercase 比較 `in ['lowerregionalhub', 'fabricregionalhub', 'upperregionalhub']` で `disagg_rh=true` | bgpd.main.conf.j2:27 |
-| `UpperRegionalHub` | 0 | 同上 disagg_rh=true | bgpd.main.conf.j2:27 |
+| `LowerRegionalHub` | 1 | bgpd.main.conf.j2:27 lowercase 比較でテンプレートローカル変数 `disagg_rh = "true"` → Regional Hub FRR フラグ; init_cfg.json.j2:90 macsec 有効化対象 | bgpd.main.conf.j2:27; init_cfg.json.j2:90 |
+| `FabricRegionalHub` | 0 | bgpd.main.conf.j2:27 の lowercase 比較 `in ['lowerregionalhub', 'fabricregionalhub', 'upperregionalhub']` で `disagg_rh = "true"` | bgpd.main.conf.j2:27 |
+| `UpperRegionalHub` | 0 | 同上 `disagg_rh = "true"` | bgpd.main.conf.j2:27 |
 
 > **`type` フィールドの複合条件** (要注意):
 >
@@ -222,8 +222,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `DualToR` | BGP `coalesce-time 10000` 設定; DHCPv4 relay に `-U Loopback0 -dt` フラグ追加; DHCPv6 relay に `-u Loopback0` フラグ追加; mux feature を `enabled` に設定; DHCP relay モニタに Loopback0 フラグ; pmon で ycabled 起動 | bgpd.main.conf.j2:110; dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2:14; init_cfg.json.j2:81; dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157 |
 | `SmartSwitch` | `type != 'SmartSwitchDPU'` との複合条件のとき chrony 追加時刻同期設定; `interfaces.j2:145,147` でネットワークインタフェース設定 | sonic-buildimage/files/image_config/chrony/chrony.conf.j2:58; files/image_config/interfaces/interfaces.j2:145,147 |
 | `Supervisor` | コード参照なし（YANG 定義のみ）→ 該当なし | — |
-| `UpstreamLC` | `type=='SpineRouter' AND subtype=='UpstreamLC'` の複合条件で BGP table-map 適用; `voq_chassis/policies.conf.j2:19,54` で fallback community を deny する route-map 設定 | peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19,54 |
-| `DownstreamLC` | `internal/policies.conf.j2:42,67` で FROM_VOQ route-map の local-pref/community 設定が DownstreamLC 向けに分岐 | dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42,67 |
+| `UpstreamLC` | `type=='SpineRouter' AND subtype=='UpstreamLC'` の複合条件で BGP table-map 適用; `voq_chassis/policies.conf.j2:19,54` で route-map `FROM_VOQ_CHASSIS_V4_PEER` / `FROM_VOQ_CHASSIS_V6_PEER` の deny 節を挿入し `DEVICE_INTERNAL_FALLBACK_COMMUNITY` を deny | peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19,54 |
+| `DownstreamLC` | `internal/policies.conf.j2:42,67` で route-map `FROM_BGP_INTERNAL_PEER_V4` / `FROM_BGP_INTERNAL_PEER_V6` の `DEVICE_INTERNAL_FALLBACK_COMMUNITY` 処理が DownstreamLC 向けに分岐 (comm-list delete) | dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42,67 |
 
 ### `switch_type` 値別挙動 (全 6 値)
 
@@ -274,17 +274,17 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 |---|------|------|---------|
 | 1 | `type='BackEndToRRouter' AND 'storage_device' IN DEVICE_METADATA` | ACL テーブルを `filter_acl_table_for_backend()` で特殊バインド | minigraph.py:1828 |
 | 2 | `type IN ['BackEndToRRouter','BackEndLeafRouter','BackEndSpineRouter'] AND 'storage_device' NOT IN DEVICE_METADATA` | IPinIP decap エントリ生成をスキップ | ipinip.json.j2:69 |
-| 3 | `type='SpineRouter' AND subtype='UpstreamLC'` | BGP peer-group に SELECTIVE_ROUTE_DOWNLOAD table-map 適用 | peer-group.conf.j2:17,32 |
+| 3 | `type='SpineRouter' AND subtype='UpstreamLC'` | BGP peer-group に `table-map SELECTIVE_ROUTE_DOWNLOAD_V4` / `SELECTIVE_ROUTE_DOWNLOAD_V6` 適用 | peer-group.conf.j2:17,32 |
 | 4 | `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` | FRR BGP graceful-restart 設定 | bgpd.main.conf.j2:118 |
 | 5 | `type IN ['SpineRouter','UpperSpineRouter','LowerRegionalHub'] AND MACSEC_SUPPORTED` | macsec feature 有効化 | init_cfg.json.j2:90 |
 | 6 | `switch_type='dpu'` (いかなる `synchronous_mode` 値でも) | `-z zmq_sync -k 65536` 強制 → ZMQ synchronous mode | orchagent.sh:38-39 |
 | 7 | `suppress-fib-pending='enabled' AND synchronous_mode != 'enable'` | YANG must 違反 → reject | sonic-device_metadata.yang:250 |
-| 8 | `subtype='DualToR'` | mux feature 有効、DHCP relay Loopback0 フラグ、BGP coalesce-time 10000 | bgpd.main.conf.j2:110; init_cfg.json.j2:81 |
+| 8 | `subtype='DualToR'` | mux feature `FEATURE.mux.state = 'enabled'`、DHCP relay `-U Loopback0 -dt` フラグ、BGP `coalesce-time 10000` | bgpd.main.conf.j2:110; init_cfg.json.j2:81 |
 | 9 | `type='LeafRouter' AND neighbor.type='ToRRouter'` | downlink バッファ・QoS 設定を適用 | buffers_config.j2:209; qos_config.j2:150 |
 | 10 | `subtype='SmartSwitch' AND type != 'SmartSwitchDPU'` | chrony 追加時刻同期設定 | chrony.conf.j2:58 |
 | 11 | `type IN ['MgmtToRRouter','MgmtTsToR','BmcMgmtToRRouter','EPMS']` | pfcwd 呼び出しスキップ | config/main.py:2425 |
 | 12 | `type NOT IN ['ToRRouter','EPMS','MgmtTsToR','MgmtToRRouter','BmcMgmtToRRouter']` | dhcp_relay feature 有効化 | init_cfg.json.j2:76 |
-| 13 | `subtype='UpstreamLC'` (voq chassis) | FROM_VOQ route-map で fallback community を deny | voq_chassis/policies.conf.j2:19,54 |
+| 13 | `subtype='UpstreamLC'` (voq chassis) | route-map `FROM_VOQ_CHASSIS_V4_PEER` / `FROM_VOQ_CHASSIS_V6_PEER` で `DEVICE_INTERNAL_FALLBACK_COMMUNITY` を deny | voq_chassis/policies.conf.j2:19,54 |
 | 14 | `type='SpineRouter' AND switch_type='voq'` | VoQ chassis BGP 設定を有効化 | bgpd.main.conf.j2:59 |
 
 ---
@@ -317,10 +317,10 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `type == 'SpineRouter'` かつ macsec_enabled が True/False 以外 | `subtype = 'Supervisor'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2199-2200` |
 | `type == 'LeafRouter'` かつ downstream_redundancy_types に Gemini/Libra を含む | `SYSTEM_DEFAULTS.tunnel_qos_remap.status = 'enabled'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2206-2212` |
 | `type == 'ToRRouter'` かつ redundancy_type に Gemini/Libra を含む | `SYSTEM_DEFAULTS.tunnel_qos_remap.status = 'enabled'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2208-2212` |
-| `switch_type == 'voq'` または `chassis_type == VOQ` | `asic_name = 'Asic0'`（single ASIC 時） | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2221-2223` |
-| `switch_type == 'voq'` または `chassis_type == VOQ` かつ `card_type == 'Supervisor'` | `sub_role = 'fabric'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2227-2228` |
+| `switch_type == 'voq'` または `chassis_type == CHASSIS_CARD_VOQ ('VoQ')` | `asic_name = 'Asic0'`（single ASIC 時） | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2221-2223` |
+| `switch_type == 'voq'` または `chassis_type == CHASSIS_CARD_VOQ ('VoQ')` かつ `card_type == 'Supervisor'` | `sub_role = 'fabric'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2227-2228` |
 | `chassis_type == 'chassis-packet'` | `sub_role = BACKEND_ASIC_SUB_ROLE ('BackEnd')` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2229-2230` |
-| `chassis_type == CHASSIS_CARD_VOQ` かつ `sub_role == FABRIC_ASIC_SUB_ROLE` | `switch_type = 'fabric'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2232-2233` |
+| `chassis_type == CHASSIS_CARD_VOQ ('VoQ')` かつ `sub_role == FABRIC_ASIC_SUB_ROLE ('Fabric')` | `switch_type = 'fabric'` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2232-2233` |
 | `type == 'SmartSwitchDPU'` のサンプル設定生成時 | `switch_type = 'dpu'`、`subtype = 'SmartSwitch'` を同時設定 | `sonic-buildimage/src/sonic-config-engine/config_samples.py:155-157` |
 | `hwsku` に `'pensando'` を含む（SmartSwitchDPU） | `SYSTEM_DEFAULTS.polaris.status = 'enabled'` | `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-184` |
 | DB移行: 新 DB に `synchronous_mode` が欠如 | 旧 DB から `synchronous_mode` を補完（既存値は上書きしない） | `sonic-utilities/scripts/db_migrator.py:669-678` |
@@ -335,8 +335,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 
 | 条件 | 登録 module | evidence |
 |---|---|---|
-| `device_info.is_chassis() == True` | `ChassisAppDbMgr`（CHASSIS_APP_DB / BGP_DEVICE_GLOBAL） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:112-113` |
-| `SYSTEM_DEFAULTS.software_bfd.status == 'enabled'` | `BfdMgr`（STATE_DB / BFD_SOFTWARE_SESSION） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:118-120` |
+| `device_info.is_chassis() == True` | `ChassisAppDbMgr`（テーブル `"CHASSIS_APP_DB"` / `"BGP_DEVICE_GLOBAL"`） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:112-113` |
+| `SYSTEM_DEFAULTS.software_bfd.status == 'enabled'` | `BfdMgr`（`"STATE_DB"` / `swsscommon.STATE_BFD_SOFTWARE_SESSION_TABLE_NAME`） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:118-120` |
 | `type == 'SpineRouter' AND subtype == 'UpstreamLC'` または `type == 'UpperSpineRouter'` | `AsPathMgr`（CONFIG_DB / DEVICE_METADATA） | `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:124-130` |
 | `subtype == 'DualToR'` | `ycabled` daemon（pmon コンテナで条件付き起動） | `sonic-buildimage/dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157-175` |
 
