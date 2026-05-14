@@ -366,4 +366,78 @@ RIF (Router Interface) 数上限・ECMP メンバ数はこれらの初期化フ�
 
 <!-- /platform -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+INTERFACE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
+
+### SET — 属性ロウ (`INTERFACE|<name>`)
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `INTF_TABLE.set(<name>, data)` | APPL_DB / `INTF_TABLE` | `<name>` | 常時 (`intfmgrd`) |
+| `INTERFACE_TABLE.hset(<name>, "vrf", vrf_name)` | STATE_DB / `INTERFACE_TABLE` | `<name>` field=`vrf` | 常時 (`intfmgrd`) |
+| `PORT_TABLE.set(<name>, {state:ok})` | STATE_DB / `PORT_TABLE` | `<name>` | サブ IF かつ Ethernet 系 (`intfmgrd`) |
+| `LAG_TABLE.set(<name>, {state:ok})` | STATE_DB / `LAG_TABLE` | `<name>` | サブ IF かつ PortChannel 系 (`intfmgrd`) |
+| `COUNTERS_RIF_NAME_MAP.set("", {<alias>:<oid>})` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` field=`<alias>` | RIF 作成後タイマーで (`IntfsOrch`) |
+| `COUNTERS_RIF_TYPE_MAP.set("", {<oid>:<type>})` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<oid>` | RIF 作成後タイマーで (`IntfsOrch`) |
+| FlexCounter エントリ登録 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成時 (`IntfsOrch`) |
+| `SYSTEM_INTERFACE_TABLE.set(<sys_alias>, {oper_status})` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<system_port_alias>` | VoQ システムかつ Local IF |
+
+SAI 呼び出し (`ASIC_DB` に反映):
+
+- `sai_router_intfs_api->create_router_interface(...)` — RIF OID 生成
+- `set_router_interface_attribute(NAT_ZONE_ID)` — `nat_zone` 設定時
+- `set_router_interface_attribute(ADMIN_MPLS_STATE)` — `mpls` 設定時
+- `set_router_interface_attribute(SRC_MAC_ADDRESS)` — `mac_addr` 設定時
+- `set_router_interface_attribute(LOOPBACK_PACKET_ACTION)` — `loopback_action` 設定時
+
+### SET — IP プレフィクスロウ (`INTERFACE|<name>|<ip_prefix>`)
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `INTF_TABLE.set(<name>:<ip_prefix>, {scope,family})` | APPL_DB / `INTF_TABLE` | `<name>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
+| `INTERFACE_TABLE.hset("<name>|<ip_prefix>", "state", "ok")` | STATE_DB / `INTERFACE_TABLE` | `<name>|<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
+| CRM カウンタ increment | COUNTERS_DB / CRM | — | 常時 (`IntfsOrch`) |
+| FlexCounter misc route 登録 | FLEX_COUNTER_DB | — | 常時 (`IntfsOrch`) |
+
+SAI 呼び出し:
+
+- `sai_route_api->create_route_entry(...)` — IP2me ルート (CPU trap) 追加
+- `sai_neighbor_api->create_neighbor_entry(broadcast)` — VLAN ポートの IPv4 /30 以上で Directed Broadcast 追加
+
+### DEL — 属性ロウ (`INTERFACE|<name>`)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `INTF_TABLE.del(<name>)` | APPL_DB / `INTF_TABLE` | `<name>` | 常時 (`intfmgrd`) |
+| `INTERFACE_TABLE.del(<name>)` | STATE_DB / `INTERFACE_TABLE` | `<name>` | 常時 (`intfmgrd`) |
+| `PORT_TABLE.del(<name>)` | STATE_DB / `PORT_TABLE` | `<name>` | サブ IF かつ Ethernet 系 |
+| `LAG_TABLE.del(<name>)` | STATE_DB / `LAG_TABLE` | `<name>` | サブ IF かつ PortChannel 系 |
+| `COUNTERS_RIF_NAME_MAP.hdel("", <alias>)` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`IntfsOrch`) |
+| `COUNTERS_RIF_TYPE_MAP.hdel("", <oid>)` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | — | RIF 削除時 (`IntfsOrch`) |
+| FlexCounter エントリ削除 | FLEX_COUNTER_DB | `<oid>` | RIF 削除時 (`IntfsOrch`) |
+| `SYSTEM_INTERFACE_TABLE.del(<sys_alias>)` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<system_port_alias>` | VoQ システムかつ Local IF |
+
+SAI 呼び出し:
+
+- `sai_router_intfs_api->remove_router_interface(...)` — RIF 削除
+
+### DEL — IP プレフィクスロウ (`INTERFACE|<name>|<ip_prefix>`)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `INTF_TABLE.del(<name>:<ip_prefix>)` | APPL_DB / `INTF_TABLE` | `<name>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
+| `INTERFACE_TABLE.del("<name>|<ip_prefix>")` | STATE_DB / `INTERFACE_TABLE` | `<name>|<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
+| CRM カウンタ decrement | COUNTERS_DB / CRM | — | 常時 (`IntfsOrch`) |
+| FlexCounter misc route 削除 | FLEX_COUNTER_DB | — | 常時 (`IntfsOrch`) |
+
+SAI 呼び出し:
+
+- `sai_route_api->remove_route_entry(...)` — IP2me ルート削除
+- `sai_neighbor_api->remove_neighbor_entry(broadcast)` — VLAN ポートの Directed Broadcast 削除
+
+<!-- 証跡: sonic-swss/cfgmgr/intfmgr.cpp, sonic-swss/orchagent/intfsorch.cpp -->
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 8c01908c2492 -->
