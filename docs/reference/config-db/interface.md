@@ -2,6 +2,7 @@
 title: INTERFACE テーブル
 description: "INTERFACE テーブル — 物理 Ethernet ポート (PORT) を L3 IF として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local モード、MAC を持つ。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -249,5 +250,63 @@ show ip interfaces
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 他テーブル先行必須
+
+| 前提テーブル / 状態 | チェック担当 | 条件未満時の挙動 |
+|-------------------|------------|----------------|
+| `PORT` → STATE_DB `PORT_TABLE` に `state=ok` | `intfmgr.cpp` `isIntfStateOk()` | SET をスキップしてキューに残す (`return false`) |
+| `PORTCHANNEL` → STATE_DB `LAG_TABLE` に ready | 同 `isIntfStateOk()` | 同上 |
+| `VRF` → STATE_DB `VRF_TABLE` に ready | `doIntfGeneralTask()` L839–843 | `vrf_name` 指定時に追加チェック。未 ready なら skip |
+| `VNET` → orchagent が VNET オブジェクトを保持 | `intfsorch.cpp` `isVnetExists()` | `it++; continue` でリトライ |
+| portsorch の `allPortsReady()` | `IntfsOrch::doTask()` L665 | 全ポート ready 前は INTERFACE の SAI 処理全体をブロック |
+
+### SET 後 DEL 順序
+
+1. **IP プレフィクスロウ DEL が先**: 属性ロウ (`INTERFACE|EthernetN`) を DEL する前に、  
+   IP プレフィクスロウ (`INTERFACE|EthernetN|<ip/pfx>`) を全件 DEL しなければならない。  
+   残っている間は `getIntfIpCount()` が非ゼロを返し DEL が `return false` でブロックされ続ける  
+   (`intfmgr.cpp` L1060–1063)。
+
+2. **VRF 変更は 2 ステップ必須**: `vrf_name` を別の VRF 名に直接書き換えると  
+   `isIntfChangeVrf()` が検出してエラーログを出力しエントリを破棄する。  
+   正しい手順: ① `vrf_name` を空にした SET (VRF 除去) → ② 新 VRF 名で SET  
+   (`intfmgr.cpp` L846–849)。
+
+### Notification 順
+
+```
+CONFIG_DB INTERFACE SET
+  → intfmgrd: isIntfStateOk(port) + isIntfStateOk(vrf) 確認
+  → APP_DB INTF_TABLE SET (属性ロウ)
+  → STATE_DB INTERFACE_TABLE hset(alias, "vrf", ...)
+  → IntfsOrch: APP_DB 変化受信 → addRouterIntfs() → SAI create_router_interface
+  ※ IP プレフィクスロウは isIntfCreated(alias) (STATE_DB 確認) 成功後に
+    APP_DB INTF_TABLE SET でプレフィクスを送出 (intfmgr.cpp L1115)
+```
+
+### select() ポーリング
+
+- `intfmgrd` は `SELECT_TIMEOUT=1000ms` 周期でタイムアウトごとに `doTask()` を再試行する。
+- 依存関係が未解消の Consumer エントリは `it++` でキューに残り、次サイクルで再試行される。
+- warm-reboot 時は `m_pendingReplayIntfList` が全件完了するまで `RECONCILED` 状態に移行しない。
+
+### 起動時 boot order
+
+- 通常起動: `intfmgrd` コンストラクタが `flushLoopbackIntfs()` を実行してカーネルのダミーデバイスをクリア。
+- `IntfsOrch::doTask()` は `gPortsOrch->allPortsReady()` が真になるまで全 INTERFACE 処理を遅延する。  
+  つまり `portmgrd → portsorch` によるポート初期化が完了しないと、L3 IF の SAI 作成は開始されない。
+
+### warm-reboot 影響
+
+- warm-start 中: `flushLoopbackIntfs()` をスキップし、カーネルの IP 設定を保持したままリプレイする。
+- `buildIntfReplayList()` が `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTERFACE` / `LAG_INTERFACE` の全キーをリストアップし、再処理完了ごとにリストから除去する。
+- pending リストが空になった時点で `WarmStart::RECONCILED` に遷移する。
+- ポート ready 通知が遅延した場合、エントリは 1000ms 周期でリトライされ続ける。
+
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 8c01908c2492 -->
