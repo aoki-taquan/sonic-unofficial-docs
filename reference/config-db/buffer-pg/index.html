@@ -22560,6 +22560,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30186,6 +30247,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30467,6 +30589,100 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DB 移行: 旧 DB で <code>profile</code> が <code>pg_lossless_&lt;speed&gt;_&lt;cable&gt;_profile</code> 形式</td>
+<td><code>profile = 'NULL'</code> に変換（Dynamic buffer model 移行）</td>
+<td><code>sonic-utilities/scripts/db_migrator.py:347-398</code></td>
+</tr>
+<tr>
+<td>Dynamic buffer model: <code>buffermgrd</code> が速度・ケーブル長から headroom を計算</td>
+<td><code>BUFFER_PG.profile</code> を自動生成プロファイル名で書き込む</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:1483-1528</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常時（条件なし）</td>
+<td><code>BufferMgrDynamic</code> が <code>BUFFER_PG</code> を <code>handleBufferPgTable</code> に登録</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:446</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>buffermgrdyn.cpp L446: BUFFER_PG ハンドラ登録（条件なし）</li>
+<li>db_migrator.py L364-398: BUFFER_PG profile='NULL' 移行</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BufferMgrDynamic</code></td>
+<td><code>handleBufferObjectTables()</code></td>
+<td>キー形式 <code>port:ids</code> が不正</td>
+<td><code>task_invalid_entry</code> 返却（早期リジェクト）</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:3514</code></td>
+</tr>
+<tr>
+<td><code>BufferMgrDynamic</code></td>
+<td><code>handleBufferObjectTables()</code></td>
+<td>カンマ区切りポートリスト（複数ポート）</td>
+<td>ポートごとにシングルポートハンドラを繰り返し呼び出し</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:3536-3547</code></td>
+</tr>
+<tr>
+<td><code>BufferMgrDynamic</code></td>
+<td>BUFFER_PG シングルポートハンドラ</td>
+<td><code>portPg.dynamic_calculated == true</code></td>
+<td>headroom を自動計算してプロファイル名を決定</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:1483</code></td>
+</tr>
+<tr>
+<td><code>BufferMgrDynamic</code></td>
+<td>BUFFER_PG シングルポートハンドラ</td>
+<td><code>portPg.dynamic_calculated == false</code></td>
+<td>静的プロファイル参照として APPL_DB に直接書き込む</td>
+<td><code>sonic-swss/cfgmgr/buffermgrdyn.cpp:1515</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>handleBufferObjectTables</code> L3502-3553 全行読了。<code>handleBufferPgTable</code> は共通ルーターを経由。4 件分岐抽出。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 566f959873ea -->
 
 <div class="footnote">

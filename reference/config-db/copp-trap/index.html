@@ -22431,6 +22431,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30152,6 +30213,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30390,6 +30512,99 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COPP_TRAP は <code>copp_cfg.json</code> からロードされ、minigraph/init_cfg.json.j2 では生成されない</td>
+<td>—</td>
+<td><code>/etc/sonic/copp_cfg.json</code> 参照</td>
+</tr>
+<tr>
+<td>派生なし</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常時（条件なし）</td>
+<td><code>CoppOrch</code> が <code>COPP_TRAP</code> を <code>doTask</code> で購読</td>
+<td><code>sonic-swss/orchagent/copporch.cpp:880</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>copporch.cpp L880: COPP_TRAP を含む doTask ディスパッチ</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CoppOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_COPP_TRAP_TABLE_NAME</code>（COPP_TRAP テーブル）</td>
+<td><code>processCoppTrap()</code> を呼び出し（COPP_GROUP と別パス）</td>
+<td><code>sonic-swss/orchagent/copporch.cpp:880-935</code></td>
+</tr>
+<tr>
+<td><code>CoppOrch</code></td>
+<td><code>processCoppTrap()</code></td>
+<td><code>trap_id</code> が <code>snat_miss</code> / <code>dnat_miss</code> かつ NAT が無効</td>
+<td>SAI ホストインターフェーストラップ作成をスキップ</td>
+<td><code>sonic-swss/orchagent/copporch.cpp:401-404</code></td>
+</tr>
+<tr>
+<td><code>CoppOrch</code></td>
+<td><code>processCoppTrap()</code></td>
+<td><code>trap_group</code> が <code>m_trap_group_map</code> に未存在</td>
+<td><code>task_need_retry</code>（グループ未作成ガード）</td>
+<td><code>sonic-swss/orchagent/copporch.cpp:584</code></td>
+</tr>
+<tr>
+<td><code>CoppOrch</code></td>
+<td><code>processCoppTrap()</code></td>
+<td><code>op == DEL_COMMAND</code></td>
+<td>SAI トラップを削除しグループからアンバインド</td>
+<td><code>sonic-swss/orchagent/copporch.cpp:1102</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>doTask</code> L880-935 + <code>processCoppTrap</code> L1164-1200 全行読了。4 件分岐抽出。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 7a3847939b09 -->
 
 <div class="footnote">

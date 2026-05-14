@@ -23607,6 +23607,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30208,6 +30269,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30476,6 +30598,93 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph XML に <code>&lt;BGPPeerRange&gt;</code> エントリが存在する</td>
+<td><code>BGP_PEER_RANGE</code> テーブルに <code>ip_range</code> エントリを生成</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:1401-1408,2275</code></td>
+</tr>
+<tr>
+<td><code>PeerRange.Address</code> が IPv4/IPv6 のどちらか</td>
+<td><code>ip_range</code> の CIDR 文字列として格納</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:1401</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常時（条件なし）</td>
+<td><code>BGPPeerMgrBase(peer_type="dynamic")</code> が <code>BGP_PEER_RANGE</code> を購読</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:90</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>minigraph.py L2275: BGP_PEER_RANGE 代入</li>
+<li>bgpcfgd/main.py L90: 条件なし登録</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>set_handler()</code></td>
+<td><code>peer_key NOT IN self.peers</code></td>
+<td><code>add_peer()</code> 新規追加</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:167</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>update_peer()</code></td>
+<td><code>"ip_range" in data AND peer_type == "dynamic"</code></td>
+<td><code>change_ip_range()</code> を呼び出し（動的 BGP range 更新）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:317</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>del_handler()</code></td>
+<td><code>peer_type == "dynamic" OR peer_type == "sentinels"</code></td>
+<td><code>no bgp listen range</code> コマンドを送出</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:461</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の <code>no listen range</code> テンプレート使用を確認。3 件分岐抽出。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 9543a3643673 -->
 
 <div class="footnote">

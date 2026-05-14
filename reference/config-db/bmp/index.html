@@ -23613,6 +23613,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30164,6 +30225,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30399,6 +30521,94 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>派生なし（BMP テーブルは CLI / config load のみで書き込む）</td>
+<td>—</td>
+<td><code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py</code> は読み取り専用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常時（条件なし）</td>
+<td><code>bmpcfgd.BMPCfgDaemon</code> が <code>BMP</code> テーブルを購読</td>
+<td><code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:82-86</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>bmpcfgd.py 100 行全行読了、BMP テーブル購読: 1 件（条件なし）</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BMPCfg</code></td>
+<td><code>load()</code></td>
+<td><code>bgp_neighbor_table == 'true'</code></td>
+<td><code>self.bgp_neighbor_table = True</code>（openbmpd が BGP_NEIGHBOR State を BMP_STATE_DB に書き込む）</td>
+<td><code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:38</code></td>
+</tr>
+<tr>
+<td><code>BMPCfg</code></td>
+<td><code>load()</code></td>
+<td><code>bgp_rib_in_table == 'true'</code></td>
+<td><code>self.bgp_rib_in_table = True</code>（openbmpd が RIB_IN を BMP_STATE_DB に書き込む）</td>
+<td><code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:39</code></td>
+</tr>
+<tr>
+<td><code>BMPCfg</code></td>
+<td><code>load()</code></td>
+<td><code>bgp_rib_out_table == 'true'</code></td>
+<td><code>self.bgp_rib_out_table = True</code>（openbmpd が RIB_OUT を BMP_STATE_DB に書き込む）</td>
+<td><code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:40</code></td>
+</tr>
+<tr>
+<td><code>BMPCfg</code></td>
+<td><code>load()</code></td>
+<td>設定変更時（常に）</td>
+<td><code>stop_bmp()</code> → <code>reset_bmp_table()</code> → <code>start_bmp()</code> の順で openbmpd を再起動し BMP_STATE_DB をクリア</td>
+<td><code>sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py:44-46</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>BMPCfg.load()</code> L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 9e5a57a09d49 -->
 
 <div class="footnote">

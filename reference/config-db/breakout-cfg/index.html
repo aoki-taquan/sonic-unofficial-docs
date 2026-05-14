@@ -23652,6 +23652,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30186,6 +30247,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30466,6 +30588,99 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLI <code>config interface breakout &lt;port&gt; &lt;mode&gt;</code> 実行時</td>
+<td><code>BREAKOUT_CFG</code> の <code>brkout_mode</code> を更新、<code>PORT</code> テーブルの子ポートエントリを生成・削除</td>
+<td><code>sonic-utilities/config/main.py:5554</code></td>
+</tr>
+<tr>
+<td><code>cur_brkout_mode != target_brkout_mode</code></td>
+<td><code>PORT</code> テーブルの子ポートを <code>del_ports</code> + <code>add_ports</code> で再構成</td>
+<td><code>sonic-utilities/config/main.py:5496-5507</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BREAKOUT_CFG を直接消費するデーモンはない（設定操作は CLI 経由のみ）</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>config/main.py L5479-5554: BREAKOUT_CFG 読み取り・更新のみ（条件付き登録なし）</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config interface breakout</code> (CLI)</td>
+<td><code>interface_breakout()</code></td>
+<td><code>BREAKOUT_CFG NOT IN CONFIG_DB</code></td>
+<td>エラー終了（テーブル存在確認）</td>
+<td><code>sonic-utilities/config/main.py:5481</code></td>
+</tr>
+<tr>
+<td><code>config interface breakout</code> (CLI)</td>
+<td><code>interface_breakout()</code></td>
+<td><code>interface_name NOT IN BREAKOUT_CFG</code></td>
+<td>エラー終了（ポート存在確認）</td>
+<td><code>sonic-utilities/config/main.py:5485</code></td>
+</tr>
+<tr>
+<td><code>config interface breakout</code> (CLI)</td>
+<td><code>_validate_interface_mode()</code></td>
+<td><code>target_brkout_mode NOT IN breakout_cfg_file</code></td>
+<td>バリデーション失敗 → エラー終了</td>
+<td><code>sonic-utilities/config/main.py:5491</code></td>
+</tr>
+<tr>
+<td><code>config interface breakout</code> (CLI)</td>
+<td><code>interface_breakout()</code></td>
+<td><code>cur_brkout_mode != target_brkout_mode</code></td>
+<td>PORT テーブルを <code>del_ports</code> + <code>add_ports</code> で再構成。同一モードの場合はスキップ</td>
+<td><code>sonic-utilities/config/main.py:5496-5507</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: config/main.py L5467-5554 全行読了。ランタイムデーモンによる直接消費なし。分岐はすべて CLI コマンドパス内。4 件抽出。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 17ab2ab6ed91 -->
 
 <div class="footnote">

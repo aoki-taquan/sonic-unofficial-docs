@@ -22162,6 +22162,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30230,6 +30291,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30634,6 +30756,138 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph XML の <code>&lt;BGPSession&gt;</code> エントリ（name != 'BGPMonitor'）</td>
+<td><code>BGP_NEIGHBOR</code> テーブルにエントリを生成</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:1355,2273</code></td>
+</tr>
+<tr>
+<td><code>type IN [MultiAsicInternalPeer]</code></td>
+<td><code>internal_peers</code> に分類（loopback 参照）</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:1355-1360</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code> が VoQ chassis 構成時</td>
+<td><code>enable_internal_bgp_session()</code> により <code>admin_status='up'</code> に強制設定</td>
+<td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:1888-1901</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常時（条件なし）</td>
+<td><code>BGPPeerMgrBase(peer_type="general")</code> が <code>BGP_NEIGHBOR</code> を購読</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:87</code></td>
+</tr>
+<tr>
+<td><code>check_neig_meta=True</code> のとき</td>
+<td><code>DEVICE_NEIGHBOR_METADATA</code> 依存関係を追加</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:137</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>minigraph.py L2273: BGP_NEIGHBOR 代入</li>
+<li>bgpcfgd/main.py L87: 条件なし登録（check_neig_meta=True）</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>set_handler()</code></td>
+<td><code>peer_key NOT IN self.peers</code></td>
+<td><code>add_peer()</code> 新規追加</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:167</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>set_handler()</code></td>
+<td><code>peer_key IN self.peers</code></td>
+<td><code>update_peer()</code> 更新</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:169</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>add_peer()</code></td>
+<td><code>lo_ipv4 is None AND bgp_router_id not configured</code></td>
+<td>早期 <code>return False</code></td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:186-189</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>add_peer()</code></td>
+<td><code>check_neig_meta AND data["name"] NOT IN neigmeta</code></td>
+<td>早期 <code>return False</code>（DEVICE_NEIGHBOR_METADATA 未準備ガード）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:221-223</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>update_peer()</code></td>
+<td><code>"admin_status" in data</code></td>
+<td><code>change_admin_status()</code> 委譲</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:314</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>change_admin_status()</code></td>
+<td><code>admin_status == 'up'</code></td>
+<td>FRR に <code>no neighbor X shutdown</code></td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:333</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>change_admin_status()</code></td>
+<td><code>admin_status == 'down'</code></td>
+<td>FRR に <code>neighbor X shutdown</code></td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:335</code></td>
+</tr>
+<tr>
+<td><code>BGPPeerMgrBase</code></td>
+<td><code>change_admin_status()</code></td>
+<td><code>admin_status</code> が up/down 以外</td>
+<td><code>log_err</code> のみ（処理継続）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:337-339</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>BGPPeerMgrBase</code> 597 行全行読了。7 件分岐抽出。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: 9133f44230c2 -->
 
 <div class="footnote">

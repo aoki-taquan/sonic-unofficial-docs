@@ -22459,6 +22459,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30152,6 +30213,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-67" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        派生・条件付き登録 (Phase 6/7)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="派生・条件付き登録 (Phase 6/7)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6: 値による他フィールド自動派生
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-7-modulemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7: 条件付き module/manager 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        grep カバレッジ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30424,6 +30546,101 @@
 </ul>
 <!-- /entry-points -->
 
+<!-- derivation -->
+<h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
+<h3 id="phase-6">Phase 6: 値による他フィールド自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>派生先</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>派生なし（DEBUG_COUNTER は CLI / sonic-mgmt-common 経由でのみ書き込まれる）</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-7-modulemanager">Phase 7: 条件付き module/manager 登録<a class="headerlink" href="#phase-7-modulemanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録 module</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>常時（条件なし）</td>
+<td><code>DebugCounterOrch</code> が <code>DEBUG_COUNTER</code> / <code>DEBUG_COUNTER_DROP_REASON</code> を <code>doTask</code> で購読</td>
+<td><code>sonic-swss/orchagent/debugcounterorch.cpp:129</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grep">grep カバレッジ<a class="headerlink" href="#grep" title="Permanent link">&para;</a></h3>
+<ul>
+<li>debugcounterorch.cpp L129-220: doTask 登録（条件なし）</li>
+</ul>
+<!-- /derivation -->
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DebugCounterOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>!gPortsOrch-&gt;allPortsReady()</code></td>
+<td>早期 <code>return</code>（全ポート初期化待ちガード）</td>
+<td><code>sonic-swss/orchagent/debugcounterorch.cpp:137</code></td>
+</tr>
+<tr>
+<td><code>DebugCounterOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_DEBUG_COUNTER_TABLE_NAME</code></td>
+<td><code>installDebugCounter()</code> / <code>uninstallDebugCounter()</code> を呼び出し</td>
+<td><code>sonic-swss/orchagent/debugcounterorch.cpp:151</code></td>
+</tr>
+<tr>
+<td><code>DebugCounterOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>table_name == CFG_DEBUG_COUNTER_DROP_REASON_TABLE_NAME</code></td>
+<td><code>addDropReason()</code> / <code>removeDropReason()</code> を呼び出し（別パス）</td>
+<td><code>sonic-swss/orchagent/debugcounterorch.cpp:182</code></td>
+</tr>
+<tr>
+<td><code>DebugCounterOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>op == SET_COMMAND</code>（DEBUG_COUNTER テーブル）</td>
+<td><code>installDebugCounter()</code> 実行</td>
+<td><code>sonic-swss/orchagent/debugcounterorch.cpp:153</code></td>
+</tr>
+<tr>
+<td><code>DebugCounterOrch</code></td>
+<td><code>doTask()</code></td>
+<td><code>op == DEL_COMMAND</code>（DEBUG_COUNTER テーブル）</td>
+<td><code>uninstallDebugCounter()</code> 実行</td>
+<td><code>sonic-swss/orchagent/debugcounterorch.cpp:165</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>doTask</code> L129-220 全行読了。<code>allPortsReady()</code> ガードと 2 テーブルの dispatch 分岐が核心。5 件抽出。</p>
+</blockquote>
+<!-- /handler-branching -->
 <!-- glossary-links-injected: d2c490dcfe8c -->
 
 <div class="footnote">
