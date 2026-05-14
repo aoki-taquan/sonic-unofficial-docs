@@ -210,4 +210,43 @@ db_migrator.py での VRF マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+> 調査日 2026-05-14。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/vrforch.h`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
+
+### fallback — dead field (silent drop at orchagent)
+
+`fallback` は YANG で `default false` として定義されており、vrfmgrd は `kfvFieldsValues(t)` をそのまま APP_DB へ pass-through する (`vrfmgr.cpp:303`)。しかし `orchagent/vrforch.cpp` の `addOperation` には `"fallback"` のハンドラが存在せず、`SWSS_LOG_ERROR("Logic error: Unknown attribute")` が出てフィールドが silent drop される。bgpcfgd/FRR テンプレートでも `fallback` を参照するコードは存在しない。**実質的に dead field であり、`true` に設定しても Linux カーネル・SAI・FRR のいずれにも影響しない。**
+
+- `vrforch.h:34`: `{ "fallback", REQ_T_BOOL }` — 宣言のみ
+- `vrforch.cpp` addOperation: `"fallback"` の分岐なし → else branch で `SWSS_LOG_ERROR` → フィールド破棄
+
+### vni — YANG default と実装デフォルトが一致
+
+省略時は vrfmgr.cpp:418 で `uint32_t vni = 0;`、vrforch.cpp:30 でも `uint32_t vni = 0;` として初期化される。YANG `default 0` と一致。VNI マッピングなしの状態をコード的にも `0` で表現する。
+
+### Linux ルーティングテーブル割り当て (ハードコード・CONFIG_DB 非表現)
+
+vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割り当てする。このロジックは CONFIG_DB フィールドには一切現れない。
+
+| 定数 | 値 | 意味 |
+|------|----|------|
+| `VRF_TABLE_START` | `1001` | 通常 VRF テーブル ID 開始 (vrfmgr.cpp:12) |
+| `VRF_TABLE_END` | `5097` | 通常 VRF テーブル ID 終端 (vrfmgr.cpp:13) |
+| `TABLE_LOCAL_PREF` | `1001` | local テーブル移動先 preference (vrfmgr.cpp:14) |
+| `MGMT_VRF_TABLE_ID` | `6000` | `mgmt` VRF 専用テーブル ID (vrfmgr.cpp:15) |
+
+最大同時 VRF 数は **4096** (5097 − 1001)。超過時 `getFreeTable()` が `0` を返して Linux VRF デバイス作成失敗。
+
+### mgmt VRF 特例 (プラットフォーム依存)
+
+`vrfName == "mgmt"` の場合、通常の free テーブルプールを使わず固定 ID `6000` を使用し (`vrfmgr.cpp:180-183`)、Linux VRF デバイスの `ip link add` も実行しない。mgmt VRF は hostcfgd 側で初期化済みの前提。
+
+### orchagent 内部フィールド (YANG 未定義・CONFIG_DB 非経由)
+
+`vrforch.h` には `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` が宣言されており、orchagent で SAI 属性に変換される実装がある。しかし **YANG `sonic-vrf.yang` には存在せず**、通常の `config vrf add` で CONFIG_DB に書かれることはない。VNET テーブル経由で APP_DB に直接書き込まれた場合のみ機能する残存コード。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
