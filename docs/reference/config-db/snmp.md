@@ -232,4 +232,45 @@ db_migrator.py での SNMP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+`SNMP` テーブルの各フィールドについて、YANG `default` ステートメント外のコード依存デフォルト・ハードコード値・乖離を記録する。
+
+### `SNMP|LOCATION` — `Location` フィールド
+
+| 状態 | 実際の動作 | 証拠 |
+|------|-----------|------|
+| `SNMP.LOCATION` が CONFIG_DB に存在しない | `sysLocation public` が snmpd.conf に出力される (`"public"` ハードコード) | `snmpd.conf.j2` L91 |
+| `SNMP.LOCATION` が存在する | `{{ SNMP.LOCATION.Location \| replace('\n', ' ') }}` で展開。`\n` は空白に置換 | `snmpd.conf.j2` L89 |
+
+**注意**: デフォルト値 `"public"` は community 名と同一文字列だが別物。YANG に `default` ステートメントなし — テンプレート固有のハードコード。
+
+### `SNMP|CONTACT` — `Contact` フィールド
+
+| 状態 | 実際の動作 | 証拠 |
+|------|-----------|------|
+| `SNMP.CONTACT` が CONFIG_DB に存在しない | `sysContact Azure Cloud Switch vteam <linuxnetdev@microsoft.com>` が出力される (Microsoft/Azure 固有ハードコード) | `snmpd.conf.j2` L96 |
+| `SNMP.CONTACT` が存在する | `SNMP.CONTACT.keys()\|first` を連絡先名、`values()\|first` を連絡先情報として展開 | `snmpd.conf.j2` L94 |
+
+**注意**: 本番環境では必ず設定すること。YANG に `default` ステートメントなし。
+
+### YANG-実装 discrepancy — `SNMP|CONTACT` のフィールド構造
+
+YANG は `container CONTACT { leaf Contact { ... } }` と定義するが、CLI (`config/main.py` L4483) は `{contact_name: contact_email}` という任意 key の dict を書き込む。テンプレートも `.keys()|first` / `.values()|first` で参照するため、YANG の `Contact` leaf 名は事実上機能しない。CLI ソースコード自身に `# TODO: ERROR IN YANG MODEL. Contact name is not defined as key` と記されている。YANG validator はこの構造を正しく検証できない。
+
+### `sysServices` ハードコード値
+
+`sysServices 72` (application + end-to-end layers) が `snmpd.conf.j2` L100 に固定記載。CONFIG_DB の `SNMP` テーブルでは管理されず、変更不可。
+
+### `SNMP_AGENT_ADDRESS_CONFIG` 未定義時のフォールバック
+
+`SNMP_AGENT_ADDRESS_CONFIG` テーブルが空の場合、`agentAddress udp:161` / `agentAddress udp6:161` (全インターフェース公開) がデフォルト (`snmpd.conf.j2` L32–33)。
+
+### `snmp.yml` 注入の挙動
+
+`snmp_yml_to_configdb.py` は起動時に `/etc/sonic/snmp.yml` から `SNMP|LOCATION` を注入するが、`snmp_location` キーが存在しない場合は `sys.exit(1)` で終了し LOCATION は未設定のまま。`SNMP|CONTACT` はこのスクリプトでは設定されず CLI のみが書き込み元。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
