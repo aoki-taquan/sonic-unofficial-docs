@@ -2,6 +2,7 @@
 title: INTERFACE テーブル
 description: "INTERFACE テーブル — 物理 Ethernet ポート (PORT) を L3 IF として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local モード、MAC を持つ。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -250,4 +251,114 @@ show ip interfaces
 - なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** と **ProducerStateTable/ConsumerStateTable** パターンで構成される。
+
+#### CONFIG_DB → intfmgrd
+
+`intfmgrd` は起動時に以下のテーブルを `SubscriberStateTable` で購読する。
+
+| テーブル | 用途 |
+|---------|------|
+| `INTERFACE` | 物理 L3 IF 属性・IP プレフィクス |
+| `VLAN_INTERFACE` | VLAN L3 IF |
+| `LAG_INTERFACE` | PortChannel L3 IF |
+| `LOOPBACK_INTERFACE` | Loopback IF |
+| `VLAN_SUB_INTERFACE` | サブインタフェース |
+| `VOQ_INBAND_INTERFACE` | VOQ inband IF |
+
+`SubscriberStateTable` は Redis の **keyspace notification** を用いる。
+
+```
+PSUBSCRIBE __keyspace@{db_id}__:INTERFACE|*
+```
+
+イベント (`hset` / `hdel` / `del`) 受信 → `readData()` がバッファに蓄積 → `pops()` でキーを取り出し `TABLE.get(key)` で現在値取得 → `Consumer::doTask()` 呼び出し。
+
+また、PORT / LAG の状態変化を検知するために STATE_DB の `STATE_PORT_TABLE` と `STATE_LAG_TABLE` も別途 `SubscriberStateTable` で購読する（親ポートの admin_status・MTU 変化をサブインタフェースに伝播）。
+
+#### intfmgrd → APPL_DB
+
+処理完了後、`ProducerStateTable m_appIntfTableProducer` で `APP_INTF_TABLE` に書き込む。
+
+| 項目 | 値 |
+|------|----|
+| Publish チャンネル | `APP_INTF_TABLE_CHANNEL@0` |
+| Key SET | `APP_INTF_TABLE_KEY_SET` |
+| Del SET | `APP_INTF_TABLE_DEL_SET` |
+| 一時 hash | `_APP_INTF_TABLE:<key>` |
+
+Lua スクリプト (`EVALSHA`) が `SADD KEY_SET` + `HSET _<table>:<key>` + `PUBLISH APP_INTF_TABLE_CHANNEL@0 G` をアトミックに実行する。
+
+#### APPL_DB → orchagent (IntfsOrch)
+
+`orchdaemon` が `IntfsOrch(m_applDb, APP_INTF_TABLE_NAME, ...)` を生成し、`ConsumerStateTable` が `APP_INTF_TABLE_CHANNEL@0` を購読する。
+
+```
+WATCH APP_INTF_TABLE_KEY_SET
+SUBSCRIBE APP_INTF_TABLE_CHANNEL@0
+```
+
+チャンネル通知で `Select::select()` が wake-up → `consumer_state_table_pops.lua` (`SPOP KEY_SET` + `HGETALL _<table>:<key>`) で一括取得 → `IntfsOrch::doTask()` → `sai_router_intf_api`。
+
+### STATE_DB への書き込み (hset / TTL)
+
+`intfmgrd` は以下のタイミングで STATE_DB (`STATE_INTERFACE_TABLE`) に書き込む。TTL は使用しない。
+
+| タイミング | 操作 |
+|-----------|------|
+| L3 IF 属性設定完了 | `m_stateIntfTable.hset(alias, "vrf", vrf_name)` |
+| IP アドレス追加完了 | `m_stateIntfTable.hset("<alias>\|<prefix>", "state", "ok")` |
+| IP アドレス削除 | `m_stateIntfTable.del("<alias>\|<prefix>")` |
+| L3 IF 削除 | `m_stateIntfTable.del(alias)` |
+
+`isIntfCreated(alias)` は `m_stateIntfTable.get(alias, ...)` で STATE_DB エントリの有無を確認し、IP アドレス設定の前提条件チェックに用いる。
+
+### select() ループと retry
+
+`intfmgrd` の main ループはタイムアウト 1000 ms で `Select::select()` を呼ぶ。
+
+```
+SELECT_TIMEOUT = 1000 ms
+if (TIMEOUT) { intfmgr.doTask(); }   // 未処理タスクを全 consumer で再試行
+```
+
+`doIntfGeneralTask` / `doIntfAddrTask` が `false` を返した場合（IF/VRF が not ready）、エントリは `m_toSync` に残留し次のループで再試行される。
+
+### cross-namespace 通信 (VOQ / Chassis)
+
+VOQ システム (`isChassisDbInUse()` が真) では `CHASSIS_APP_DB` の `SYSTEM_INTERFACE_TABLE` も `SubscriberStateTable` で購読し、リモートシステムポートの IF 情報を受信する。通常の単体スイッチでは使用されない。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB[INTERFACE|*]
+  │  keyspace notification (psubscribe __keyspace@N__:INTERFACE|*)
+  ▼
+intfmgrd::doIntfGeneralTask / doIntfAddrTask
+  │  ProducerStateTable::set/del
+  │  EVALSHA → SADD KEY_SET + HSET _APP_INTF_TABLE:key
+  │            + PUBLISH APP_INTF_TABLE_CHANNEL@0 G
+  ▼
+APPL_DB[APP_INTF_TABLE|*]
+  │  ConsumerStateTable (subscribe APP_INTF_TABLE_CHANNEL@0)
+  │  consumer_state_table_pops.lua → SPOP + HGETALL
+  ▼
+orchagent::IntfsOrch::doTask
+  ▼
+sai_router_intf_api (SAI)
+
+STATE_DB[STATE_INTERFACE_TABLE]
+  ← intfmgrd hset(vrf) / hset(state=ok)  ← TTL なし
+
+STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
+  → SubscriberStateTable → intfmgrd::doPortTableTask
+    (admin_status / MTU 変化をサブインタフェースへ伝播)
+```
+
+<!-- /pubsub -->
 <!-- glossary-links-injected: 8c01908c2492 -->
