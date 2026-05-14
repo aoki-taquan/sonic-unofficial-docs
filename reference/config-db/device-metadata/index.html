@@ -31082,13 +31082,13 @@
 </tr>
 <tr>
 <td><code>UpstreamLC</code></td>
-<td><code>type=='SpineRouter' AND subtype=='UpstreamLC'</code> の複合条件で BGP table-map 適用; <code>voq_chassis/policies.conf.j2:19,54</code> で route-map <code>FROM_VOQ_CHASSIS_V4_PEER</code> / <code>FROM_VOQ_CHASSIS_V6_PEER</code> の deny 節を挿入し <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> を deny</td>
-<td>peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19,54</td>
+<td><code>type=='SpineRouter' AND subtype=='UpstreamLC'</code> の複合条件で BGP table-map 適用; <code>voq_chassis/policies.conf.j2:19,54</code> で route-map <code>FROM_VOQ_CHASSIS_V4_PEER</code> / <code>FROM_VOQ_CHASSIS_V6_PEER</code> の <strong>if 分岐</strong>: deny 3/4 で <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> を deny / <strong>else 分岐</strong> (それ以外の subtype): permit 3/4 で <code>set comm-list DEVICE_INTERNAL_FALLBACK_COMMUNITY delete</code> + <code>set tag {{ constants.bgp.route_eligible_for_fallback_to_default_tag }}</code> (=203)</td>
+<td>peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19-27,54-62</td>
 </tr>
 <tr>
 <td><code>DownstreamLC</code></td>
-<td><code>internal/policies.conf.j2:42,67</code> で route-map <code>FROM_BGP_INTERNAL_PEER_V4</code> / <code>FROM_BGP_INTERNAL_PEER_V6</code> の <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> 処理が DownstreamLC 向けに分岐 (comm-list delete)</td>
-<td>dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42,67</td>
+<td><code>internal/policies.conf.j2:42,67</code> で route-map <code>FROM_BGP_INTERNAL_PEER_V4</code> / <code>FROM_BGP_INTERNAL_PEER_V6</code> の <strong>if 分岐</strong> (DownstreamLC): permit 3/4 で <code>set comm-list DEVICE_INTERNAL_FALLBACK_COMMUNITY delete</code> のみ (tag 設定なし) / <strong>else 分岐</strong> (それ以外): permit 3/4 で <code>set comm-list DEVICE_INTERNAL_FALLBACK_COMMUNITY delete</code> + <code>set tag {{ constants.bgp.route_eligible_for_fallback_to_default_tag }}</code> (=203)</td>
+<td>dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42-51,67-76</td>
 </tr>
 </tbody>
 </table>
@@ -31311,9 +31311,9 @@
 </tr>
 <tr>
 <td>13</td>
-<td><code>subtype='UpstreamLC'</code> (voq chassis)</td>
-<td>route-map <code>FROM_VOQ_CHASSIS_V4_PEER</code> / <code>FROM_VOQ_CHASSIS_V6_PEER</code> で <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> を deny</td>
-<td>voq_chassis/policies.conf.j2:19,54</td>
+<td><code>subtype='UpstreamLC'</code> (voq chassis) / else</td>
+<td>if: route-map <code>FROM_VOQ_CHASSIS_V4_PEER</code> / <code>FROM_VOQ_CHASSIS_V6_PEER</code> deny 3/4 で <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> を deny / else (DownstreamLC 等): permit 3/4 で <code>set comm-list delete</code> + <code>set tag 203</code></td>
+<td>voq_chassis/policies.conf.j2:19-27,54-62</td>
 </tr>
 <tr>
 <td>14</td>
