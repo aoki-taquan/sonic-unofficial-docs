@@ -167,4 +167,32 @@ show qos map dscp-tc
 **副作用**: DSCP→TC マップ変更はそのマップを使用するすべてのポートの QoS 分類に即座に影響。L3 traffic の優先度処理が変化する。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `DSCP_TO_TC_MAP`
+
+### CLI
+- `config qos map dscp-tc add/del <map-name> <dscp> <tc>`
+  - ソース: `sonic-utilities/config/main.py (qos グループ)`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- `qos_config.j2` から platform 別 DSCP→TC マップが生成される場合あり
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 9e94f614fc2c -->

@@ -177,4 +177,32 @@ show qos map dot1p-tc
 **副作用**: マップ内容の変更は即座にマップを参照するすべてのポートの QoS 分類に影響。traffic の優先度処理が変化する。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `DOT1P_TO_TC_MAP`
+
+### CLI
+- `config qos map dot1p-tc add/del <map-name> <dot1p> <tc>`
+  - ソース: `sonic-utilities/config/main.py (qos グループ)`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- `qos_config.j2` から platform 別 QoS マップが生成される場合あり
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: b1003b21c66f -->

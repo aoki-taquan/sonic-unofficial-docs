@@ -201,4 +201,33 @@ show feature status
 **副作用**: `state: disabled` でコンテナ停止 → そのコンテナが管理するすべての機能が停止。`auto_restart: disabled` でクラッシュ時に自動復旧しない。`set_owner: kube` に変更で Kubernetes 管理に移行。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `FEATURE`
+
+### CLI
+- `config feature state <feature> enabled/disabled`
+- `config feature autorestart <feature> enabled/disabled`
+  - ソース: `sonic-utilities/config/feature.py`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- `init_cfg.json.j2` の `FEATURE` セクションでプラットフォーム対応フィーチャーがデフォルト値付きで注入
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- `featured` デーモンが systemd サービス状態を監視し FEATURE テーブルと同期
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 92d0997ed33c -->

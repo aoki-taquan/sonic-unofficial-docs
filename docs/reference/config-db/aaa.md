@@ -201,4 +201,36 @@ show aaa
 **副作用**: PAM 設定ファイル上書き → 進行中セッションには影響なし（PAM は認証時にファイルを読む）。`tacacs+`/`radius` が選択された場合 `nslcd`/`radiusd` 設定も更新。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `AAA`
+
+### CLI
+- `config aaa authentication login <method>`
+- `config aaa authentication failthrough <enable|disable>`
+- `config aaa authentication fallback <enable|disable>`
+- `config aaa authorization login <method>`
+- `config aaa accounting login <method>`
+  - ソース: `sonic-utilities/config/aaa.py`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- あり: `migrate_aaa_table_field_sync()` で `authentication`/`accounting`/`authorization` エントリを再生成 (db_migrator.py:879,886,895)
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->

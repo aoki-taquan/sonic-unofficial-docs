@@ -168,4 +168,33 @@ show kube server config
 **副作用**: Kubernetes master アドレス変更は `set_owner: kube` のフィーチャーの管理移行に影響。TLS 証明書の再取得が必要な場合がある。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `KUBERNETES_MASTER`
+
+### CLI
+- `config kubernetes server ip <ip>`
+- `config kubernetes server enable/disable`
+  - ソース: `sonic-utilities/config/main.py (kubernetes グループ)`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- `kubemgrd` が Kubernetes 接続状態を CONFIG_DB と同期
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->

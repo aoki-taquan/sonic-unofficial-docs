@@ -156,4 +156,33 @@ vtysh -c "show ip as-path-access-list"
 **副作用**: FRR プロセスへの設定注入のみ。既存 BGP セッションには次回 UPDATE 送信時または policy soft-clear 実施時に適用。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `AS_PATH_SET`
+
+### CLI
+- `config route-map as-path-set add <name> <pattern>`
+- `config route-map as-path-set delete <name>`
+  - ソース: `sonic-utilities/config/main.py (route-map グループ)`
+
+### minigraph / sonic-cfggen
+- なし
+
+### REST / gNMI (sonic-mgmt-common)
+- sonic-mgmt-common translib でルーティングポリシー OpenConfig モデル経由の書き込みが可能
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->

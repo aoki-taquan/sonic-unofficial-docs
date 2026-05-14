@@ -212,4 +212,32 @@ vtysh -c 'show bgp l2vpn evpn summary'
 **副作用**: Maximum-paths, redistribute 設定など AF 全体の動作に影響。変更によっては BGP session reset が発生する。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `BGP_GLOBALS_AF`
+
+### CLI
+- `vtysh` 経由 address-family コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+  - ソース: `sonic-frr bgpcfgd`
+
+### minigraph / sonic-cfggen
+- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
+
+### REST / gNMI (sonic-mgmt-common)
+- sonic-mgmt-common OpenConfig BGP 経由
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- `bgpcfgd` が FRR running-config を CONFIG_DB と同期
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 803f36c2634d -->

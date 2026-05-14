@@ -176,4 +176,32 @@ vtysh -c 'show bgp listen range'
 **副作用**: 指定プレフィクス内からの BGP 接続が自動的に対象 peer-group として処理される。既存の static ネイバーとは独立。
 <!-- /runtime-trace -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+対象テーブル: `BGP_PEER_RANGE`
+
+### CLI
+- `config bgp peer-range add/del <prefix>`
+  - ソース: `sonic-utilities/config/main.py (bgp グループ)`
+
+### minigraph / sonic-cfggen
+- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
+
+### REST / gNMI (sonic-mgmt-common)
+- なし (対応 OpenConfig/SONiC YANG transformer なし)
+
+### db_migrator
+- なし
+
+### ビルド時デフォルト (init_cfg / j2 テンプレート)
+- なし
+
+### ハードコードデフォルト
+- なし
+
+### ランタイム注入 (デーモン自動書き込み)
+- なし
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: 9543a3643673 -->
