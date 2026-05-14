@@ -2,8 +2,9 @@
 title: INTERFACE テーブル
 description: "INTERFACE テーブル — 物理 Ethernet ポート (PORT) を L3 IF として扱う設定を保持する。VRF / VNET binding、IP アサイン、NAT zone、MPLS、IPv6 link-local モード、MAC を持つ。"
 area: reference
+hard: 0
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-14
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-interface.yang
@@ -290,5 +291,79 @@ show ip interfaces
 3. **VRF が STATE_DB に ready**: `isIntfStateOk(vrf_name)` → 未 ready はスキップ
 4. **eth0 / docker0 / usb0 は silent drop**: intfsorch が即 erase (SAI に届かない)
 <!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/device/mellanox|broadcom/*/sai.profile`
+> 調査日: 2026-05-14
+
+### `nat_zone` — SAI capability query による有効/無効
+
+`gIsNatSupported` フラグが `false` の ASIC では `nat_zone` フィールドを設定しても SAI に渡されない。起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を取得し、返り値が `0` なら NAT 非対応と判断する。
+
+```cpp
+// main.cpp:936-947
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0) {
+    gIsNatSupported = true;
+}
+// intfsorch.cpp:1287-1294
+if (gIsNatSupported) {
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID;
+    ...
+}
+```
+
+| ASIC / プラットフォーム | `nat_zone` SAI 反映 |
+|------------------------|---------------------|
+| NAT HW オフロード対応 ASIC | 反映される |
+| NAT 非対応 ASIC (SAI が `AVAILABLE_SNAT_ENTRY=0` を返す) | 黙殺 |
+| VS (virtual switch) | 反映される (`AVAILABLE_SNAT_ENTRY=100` を返す) |
+
+### `ipv6_use_link_local_only` — Mellanox/NVIDIA 専用 SAI プロファイルキー
+
+Mellanox/NVIDIA の全 SKU `sai.profile` に `SAI_NOT_DROP_SIP_DIP_LINK_LOCAL=1` が設定されている（`Mellanox-SN2700/sai.profile`, `Mellanox-SN4700-C128/sai.profile` 等）。
+
+```
+SAI_NOT_DROP_SIP_DIP_LINK_LOCAL=1
+```
+
+Mellanox/NVIDIA ASIC はデフォルトで link-local (169.254.x.x / fe80::/10) パケットをハードウェアでドロップする。このキーを `1` にすることで L3 インタフェース経由の転送を許可する。Broadcom / Marvell / Barefoot の `sai.profile` にはこのキーが存在しない。
+
+`INTERFACE|<port>` に `ipv6_use_link_local_only: enable` を設定しても、Mellanox 側の `sai.profile` 未設定環境では link-local パケットが ASIC 段でドロップされ続ける可能性がある。
+
+### `loopback_action` — SAI プラットフォームデフォルト依存
+
+省略時は `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` 属性を SAI に渡さず、ASIC プラットフォームのデフォルト動作に委ねる。ASIC ベンダーによってデフォルト動作が異なるため、`loopback_action` 未設定時の実際の挙動はベンダー依存。
+
+### `proxy_arp` — VLAN IF のみ SAI 操作、物理 IF は SAI 無変更
+
+```cpp
+// intfsorch.cpp:409-425
+if (port.m_type == Port::VLAN) {
+    // SAI_VLAN_ATTR_BROADCAST_FLOOD_CONTROL_TYPE を変更
+    // SAI_VLAN_ATTR_UNKNOWN_MULTICAST_FLOOD_CONTROL_TYPE も変更
+}
+// PHY / LAG には SAI 変更なし
+```
+
+物理 Ethernet ポートに `proxy_arp` を設定してもカーネル層での処理となり、SAI/ASIC 側には変更が走らない。VLAN IF のみ SAI VLAN flood type を制御する。
+
+### `mac_addr` — VS プラットフォームでの特例
+
+実 ASIC では orchagent が `mac_addr` 省略時に switch global MAC (`gMacAddress`) を SAI に設定する。VS (virtual switch) プラットフォーム (`ASIC_VENDOR=vs`) では、近傍プログラミング時に `gMacAddress` への置換をスキップし元の MAC を保持する特例がある（`neighorch.cpp:2213-2218`）。
+
+### SAI 初期化ファイルによる RIF 上限差
+
+| プラットフォーム | SAI 設定方式 | 備考 |
+|----------------|-------------|------|
+| Mellanox/NVIDIA | XML ファイル (`sai_<chip>.xml`) | `SAI_INIT_CONFIG_FILE` で指定 |
+| Broadcom (Arista 等) | `config.bcm` ファイル | `SAI_INIT_CONFIG_FILE` で指定 |
+
+RIF (Router Interface) 数上限・ECMP メンバ数はこれらの初期化ファイルで決定される。`INTERFACE` テーブルで大量の L3 IF を作成する場合は ASIC ごとの制限に注意が必要。
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 8c01908c2492 -->
