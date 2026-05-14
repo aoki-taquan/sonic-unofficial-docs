@@ -160,6 +160,46 @@ YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
 全 8 値 hit。0 hit なし。
 <!-- /value-behavior -->
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `ecn` | YANG `default` | `ecn_none` (フィールド省略時に自動補完) | `sonic-wred-profile.yang:128` |
+| `wred_green_enable` / `wred_yellow_enable` / `wred_red_enable` | YANG `default` | `false` (フィールド省略時) | `sonic-wred-profile.yang` |
+| `green_drop_probability` 等 | YANG `default` | `100` (%) (フィールド省略時) | `sonic-wred-profile.yang` |
+| `WRED_PROFILE` エントリ全体 | `qos_config.j2` の静的テンプレート | `AZURE_LOSSLESS` プロファイル (`ecn=ecn_all`, 各閾値固定値) が自動生成 | `qos_config.j2:489-506` |
+| `generate_wred_profiles` あり | ベンダー固有 j2 テンプレート定義 | プラットフォーム固有の WRED_PROFILE を生成 (標準の `AZURE_LOSSLESS` を置換) | `qos_config.j2:486-487` |
+| `wred_profile` (QUEUE 側) | `qos_config.j2` QUEUE セクション | RoCE キュー (queue 3, 4 等) に `wred_profile=AZURE_LOSSLESS` を自動設定 | `qos_config.j2:514-660` |
+
+**フォーマット変換 (db_migrator.py)**:
+
+- 旧バージョンの CONFIG_DB では `wred_profile` の値が `|AZURE_LOSSLESS|` ABNF 形式で格納。
+- `db_migrator.py:574-585` のマイグレーションステップでプレーン文字列 `AZURE_LOSSLESS` に変換。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `QosOrch` は常時登録 (platform / capability 非依存) | `CFG_WRED_PROFILE_TABLE_NAME` 購読は無条件 | `orchdaemon.cpp:375,384` |
+| `gMySwitchType == "voq"` | `applyWredProfileToQueue()` が VoQ ID を使用 (物理キューではなく VoQ に適用) | `qosorch.cpp:1709-1730` |
+| `QUEUE.wred_profile` 未解決 | `task_need_retry` → WRED_PROFILE エントリ登録後に再試行 | `qosorch.cpp:1864-1870` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| `ecn` YANG default | 1 | `sonic-wred-profile.yang:128` |
+| `AZURE_LOSSLESS` 自動生成 | 2 | `qos_config.j2:489,514-660` |
+| `generate_wred_profiles` 条件 | 1 | `qos_config.j2:486` |
+| db_migrator `wred_profile` 変換 | 1 | `db_migrator.py:575` |
+| `applyWredProfileToQueue` VoQ 分岐 | 2 | `qosorch.cpp:1709,1716-1722` |
+| `task_need_retry` (未解決) | 1 | `qosorch.cpp:1869` |
+
+<!-- /derivation -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

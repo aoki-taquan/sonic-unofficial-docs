@@ -182,6 +182,48 @@ YANG 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
 4. `type=EGR_SET_DSCP` → EGRESS stage 固定。`stage=INGRESS` を指定しても egress 動作になる (`aclorch.cpp:489`)
 <!-- /value-behavior -->
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `type` | minigraph.py: AttachTo に `erspan` prefix | `MIRROR` | `minigraph.py:1218` |
+| `type` | minigraph.py: AttachTo に `erspanv6` prefix | `MIRRORV6` | `minigraph.py:1220` |
+| `type` | minigraph.py: AttachTo に `erspan_dscp` prefix | `MIRROR_DSCP` | `minigraph.py:1222` |
+| `type` | minigraph.py: ports なし | `CTRLPLANE` | `minigraph.py:1233-1247` |
+| `type` | minigraph.py: 名前に `v6` | `L3V6`、それ以外 → `L3` | `minigraph.py:1228` |
+| `stage` | minigraph.py: XML `InAcl` タグ | `ingress` | `minigraph.py:1103-1104` |
+| `stage` | minigraph.py: XML `OutAcl` タグ | `egress` | `minigraph.py:1106-1107` |
+| `stage` (強制上書き) | `type=EGR_SET_DSCP` 設定時 | `EGRESS` 固定 (ユーザ指定無視) | `aclorch.cpp:489` |
+| 内部 type 変換 | `type=UNDERLAY_SET_DSCP` | 内部で `MARK_META` に変換して SAI 投入 | `acltable.h:41`, `aclorch.cpp` |
+| 内部 type 変換 | `type=UNDERLAY_SET_DSCPV6` | 内部で `MARK_METAV6` に変換して SAI 投入 | `acltable.h:42` |
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `AclOrch` は常時登録 (platform 非依存) | ACL_TABLE 購読は無条件 | `orchdaemon.cpp:533,569` |
+| `type=MIRROR`/`MIRRORV6` + ASIC capability なし | 起動時 SAI capability query 失敗 → テーブル作成 reject | `aclorch.cpp:3500-3541,5198-5199` |
+| `type=L3V4V6` + ASIC 未サポート | `isAclL3V4V6TableSupported(stage)` → false → reject | `aclorch.cpp:2737-2739` |
+| `type=CTRLPLANE` | SAI テーブル非生成。`stage` フィールド無視 | `aclorch.cpp:2727` |
+| `META_DATA` 系 capability | `sai_query_attribute_capability()` 確認後に有効化 | `aclorch.cpp:3590-3659` |
+| `DTelOrch` は `platform==BFN\|VS` のみ生成 | DTEL 関連 action が有効になる前提条件 | `orchdaemon.cpp:502-530` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| `type` 派生 (minigraph.py) | 6 | `minigraph.py:1218-1228` |
+| `stage` 派生 (minigraph.py) | 2 | `minigraph.py:1103-1107` |
+| `EGR_SET_DSCP` EGRESS 強制 | 1 | `aclorch.cpp:489` |
+| UNDERLAY 内部変換 | 2 | `acltable.h:41-42` |
+| MIRROR capability check | 4 | `aclorch.cpp:3500-3541` |
+| L3V4V6 サポート確認 | 2 | `aclorch.cpp:2737-2739` |
+
+<!-- /derivation -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
