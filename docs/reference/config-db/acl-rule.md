@@ -443,5 +443,4 @@ Multi-ASIC: 各 namespace の `namespace_configdb` にも同じ操作を適用�
 - **STATE_DB 書き込み**: ルール作成/削除時に `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) へステータスを書き込む (`aclorch.cpp:3479`)。
 
 <!-- /runtime-trace -->
-
 <!-- glossary-links-injected: a78cb4c857bd -->

@@ -364,5 +364,4 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 - **db_migrator**: 旧 DB の `wred_profile` フィールド値 `|AZURE_LOSSLESS|` 形式を `AZURE_LOSSLESS` に変換 (`db_migrator.py:574-585`)。
 
 <!-- /runtime-trace -->
-
 <!-- glossary-links-injected: 7c1942297ce7 -->

@@ -389,5 +389,4 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 - **CRM 連携**: 作成/削除時に `gCrmOrch->incCrmAclUsedCounter()` / `decCrmAclUsedCounter()` (`aclorch.cpp:2855`)。
 
 <!-- /runtime-trace -->
-
 <!-- glossary-links-injected: 9f69b0796e2c -->
