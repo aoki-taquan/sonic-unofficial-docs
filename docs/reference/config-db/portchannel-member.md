@@ -92,6 +92,20 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## フィールドデフォルト (コード由来)
+
+`PORTCHANNEL_MEMBER` は key-only テーブルであり付加フィールドを持たない。
+エントリの値は常に空ハッシュ `{}` で、デフォルト設定値は存在しない。
+
+| フィールド | デフォルト | 由来 |
+|-----------|-----------|------|
+| `name` (key) | なし (必須) | YANG leafref キー — `sonic-portchannel.yang` L140-145 |
+| `port` (key) | なし (必須) | YANG leafref キー — `sonic-portchannel.yang` L147-153 |
+
+> **ソース**: `sonic-portchannel.yang` L134-154、`minigraph.py` L967 (`pc_members[(pcintfname, pcmbr_list[i])] = {}`)
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
