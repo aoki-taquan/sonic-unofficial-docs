@@ -249,4 +249,110 @@ show dhcprelay_helper ipv4
 - なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 概要
+
+`dhcp6relay` は orchagent/SAI を経由せず Linux カーネルの UDP relay (L4) として動作するため、SAI error / task_need_retry / task_failed の概念は存在しない。失敗は大きく「起動時致命エラー (exit)」「パケット単位の silent drop」「設定変更の無視」の 3 類型に分類される。
+
+### 起動時致命エラー (exit)
+
+| 発生箇所 | 条件 | 挙動 |
+|---------|------|------|
+| `relay.cpp:168` `RelayMsg::MarshalBinary()` | `new uint8_t[BUFFER_SIZE]` 失敗 | `LOG_ERR "Failed to init relay msg buffer"` → `exit(1)` |
+| `relay.cpp:1241` `loop_relay()` | `event_base_new()` NULL | `LOG_ERR "libevent: Failed to create event base"` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:1253` `loop_relay()` | `sock_open()` (raw socket/bind/BPF) 失敗 | `LOG_ERR "Failed to create client listen socket"` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:1271` `loop_relay()` | DualToR: `prepare_lo_socket()` 失敗 | `LOG_ERR "Failed to create dualtor loopback listen socket"` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:1420` `lla_check_callback()` | `prepare_vlan_sockets()` 失敗 (6 回 retry 後) | `LOG_ERR` → `exit(EXIT_FAILURE)` |
+| `relay.cpp:489` `prepare_relay_config()` | `getifaddrs()` 失敗 | `LOG_WARNING "getifaddrs: Unable to get network interfaces"` → `exit(1)` |
+| `main.cpp:40` | 未捕捉 `std::exception` | `LOG_ERR "An exception occurred."` → `return 1` (プロセス終了) |
+
+プロセス終了後は systemd / supervisord による自動 restart に委ねる。CONFIG_DB/STATE_DB の状態はそのまま残る。
+
+### VLAN ソケット bind retry (起動時)
+
+`prepare_vlan_sockets()` (`relay.cpp:604-658`) では VLAN インタフェースの GUA/LLA アドレス未割り当て時に 5 秒 sleep × 最大 6 回リトライする。
+
+```
+LOG_WARNING "Retry #%d to bind to sockets on interface %s"
+```
+
+6 回全失敗後は `exit(EXIT_FAILURE)`。**retry 回数: 6、retry 間隔: 5 秒**。
+
+### LLA 未準備 VLAN の定期チェック (60 s タイマー)
+
+`lla_check_callback()` (`relay.cpp:1361`) が 60 秒周期で起動時に LLA 未準備だった VLAN を再チェックする。起動直後にも即時実行される。
+
+- LLA 未準備の VLAN はスキップされ、その間にサーバから届いた reply パケットは:
+  - `LOG_WARNING "Link local address for %s is not ready, packet will be dropped"` → drop
+- 全 VLAN の LLA が準備完了すると `event_del(timer_event)` でタイマー解除。
+
+### 設定変更の無視 (hot-reload 不可)
+
+`config_interface.cpp:76-78` — ランタイム中に CONFIG_DB の `DHCP_RELAY` エントリが変更されると:
+
+```
+LOG_WARNING "relay config changed, need restart container to take effect"
+```
+
+**変更は適用されない。** CONFIG_DB への書き込みは正常完了するが dhcp6relay は無視する。ロールバックもなく、**DB 状態と実動作が乖離したまま**になる。反映にはコンテナ再起動が必要。
+
+### SELECT エラー → return (継続)
+
+`config_interface.cpp:67-70` — 初期化時の `swssSelect.select()` が `Select::ERROR` を返した場合:
+
+```
+LOG_WARNING "Select: returned ERROR"
+```
+
+return して継続。retry はなく、次の呼び出しタイミングまで待つ。
+
+### パケット単位の silent drop
+
+| 発生箇所 | 条件 | ログ / カウンタ |
+|---------|------|----------------|
+| `relay.cpp:679` `relay_client()` | DHCPv6 オプション不正 (malformed) | `LOG_WARNING "DHCPv6 option is invalid..."` + `Malformed` カウンタ +1 → drop |
+| `relay.cpp:807` `relay_relay_reply()` | relay-reply オプション不正 | `LOG_WARNING "Relay-reply option is invalid..."` + `Malformed` カウンタ +1 → drop |
+| `relay.cpp:814` `relay_relay_reply()` | OPTION_RELAY_MSG なし | `LOG_WARNING "Option relay-msg not found"` + `Unknown` カウンタ +1 → drop |
+| `relay.cpp:747` `relay_relay_forw()` | hop_count >= HOP_LIMIT (32) | `LOG_INFO "Dropping relay-forward message..."` → drop (カウンタ加算なし) |
+| `relay.cpp:969` `client_packet_handler()` | 不明 msg_type | `LOG_WARNING "Unknown DHCPv6 message type..."` + `Unknown` カウンタ +1 → drop |
+| `relay.cpp:893` `client_callback()` | if_indextoname 失敗 | `LOG_WARNING "Invalid input interface index..."` → continue |
+| `relay.cpp:908` `client_callback()` | vlan_map に該当インタフェースなし | silent continue (CLIENT_IF_PREFIX 以外) または `LOG_WARNING` |
+| `relay.cpp:1038` `get_relay_int_from_relay_msg()` | link_address から VLAN 特定不可 | `LOG_WARNING "can't find vlan info from link address..."` → NULL → drop |
+
+### パケット送信失敗 → retry なし
+
+`sender.cpp:21-27` — `sendto()` 失敗:
+
+```
+LOG_ERR "sendto: Failed to send to target address: %s, error: %s"
+```
+
+return false → 呼び出し元で `increase_counter()` が呼ばれない（**カウンタ未加算**）。retry なし。
+
+### libevent イベント生成失敗の非対称性
+
+| イベント種別 | 失敗時の挙動 |
+|------------|------------|
+| client listen event (全体共用) | `exit(EXIT_FAILURE)` |
+| server listen event (VLAN ごと) | `LOG_ERR "libevent: Failed to create server listen libevent"` → exit なし (サーバ応答受信不可のまま継続) |
+
+VLAN 単位の server listen event 生成失敗は **プロセスを停止させない部分失敗**。その VLAN のクライアントへ reply が届かなくなるが、他の VLAN の relay は継続する。
+
+### STATE_DB への障害記録
+
+`STATE_DB` の `DHCPv6_COUNTER_TABLE|<ifname>` にメッセージ種別ごとのカウンタを記録する:
+
+- カウンタ種別: `Unknown`, `Solicit`, `Advertise`, `Request`, `Confirm`, `Renew`, `Rebind`, `Reply`, `Release`, `Decline`, `Reconfigure`, `Information-Request`, `Relay-Forward`, `Relay-Reply`, `Malformed`
+- 送信失敗 (`sendto` エラー) 時はカウンタが加算されない
+- `STATE_DB` の `ERROR_TABLE` への書き込みはなし (dhcp6relay は ERROR_TABLE を使用しない)
+
+### 部分成功シナリオ
+
+複数 VLAN が設定されている場合、一部の VLAN が LLA 未準備で `is_lla_ready=false` のまま残っていても他 VLAN の relay は正常動作する。その VLAN に関連する CONFIG_DB エントリは残骸として存在するが削除はされない。
+
+> **Evidence**: `sonic-dhcp-relay` `dhcp6relay/src/relay.cpp`, `dhcp6relay/src/config_interface.cpp`, `dhcp6relay/src/sender.cpp`, `dhcp6relay/src/main.cpp`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 11715e560dc6 -->
