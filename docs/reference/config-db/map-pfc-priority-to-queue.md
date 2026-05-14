@@ -217,6 +217,35 @@ enum なし — `pfc_priority`/`qindex` は数値文字列のみ。
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## 暗黙デフォルト・コード由来デフォルト (Phase A)
+
+<!-- evidence: sonic-buildimage/files/build_templates/qos_config.j2:206-221 / sonic-swss/orchagent/qosorch.cpp:991-1009 -->
+
+### YANG デフォルト
+
+`sonic-pfc-priority-queue-map.yang` に `default` 文は一切なし。`name` / `pfc_priority` / `qindex` いずれもデフォルト値未定義。
+
+### ビルド時コード由来デフォルト (qos_config.j2)
+
+`config qos reload` 実行時、platform 側が `generate_pfc_to_queue_map` Jinja マクロを定義していない場合に限り、`qos_config.j2:209-220` のハードコード fallback が適用される:
+
+| フィールド | fallback 値 | 条件 |
+|-----------|------------|------|
+| `name` | `"AZURE"` | platform が `generate_pfc_to_queue_map` を未定義のとき |
+| `pfc_priority` | `"0"`.`"7"` (全 8 エントリ) | 同上 |
+| `qindex` | `pfc_priority` と同値 (identity map) | 同上 |
+
+platform が `generate_pfc_to_queue_map` を定義している場合はそちらが優先されるため、**マップ名・マッピング内容ともにプラットフォーム依存**となる。
+
+### 実装の暗黙挙動
+
+- **`stoi()` 例外なし版**: `PfcToQueueHandler::convertFieldValuesToAttributes` は try/catch を持たない。空文字・非数値 field/value は uncaught `std::invalid_argument` を発生させ、呼び出し元 `processWorkItem` が `task_invalid_entry` を返す。他の Handler (Dot1pToTcMapHandler 等) が try/catch で `continue` するのと異なる点に注意。
+- **`qindex` 欠落時の silent skip**: YANG に mandatory 指定がないため CONFIG_DB に `qindex` なしエントリが存在しえるが、その field-value pair 自体が `kfvFieldsValues` に入らないため SAI list からその priority のエントリが除外される (silent skip)。
+- **`(uint8_t)` キャスト**: `stoi()` 結果を無検証でキャスト。YANG バリデーションが 0..7 を保証するため通常は問題ないが、YANG バリデーションをバイパスして書き込んだ場合は 0..255 範囲で切り捨てのみ。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: d2191ccfe0bd -->
 
 <!-- derivation -->
