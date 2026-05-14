@@ -232,4 +232,43 @@ show lldp table
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルトと dead field
+
+> 根拠: `dockers/docker-lldp/lldpmgrd`, `lldpd.conf.j2`, `lldpdSysDescr.conf.j2`, `sonic-lldp.yang`
+
+### dead field（CONFIG_DB に書けるが lldpd に伝わらないフィールド）
+
+| フィールド | 理由 |
+|-----------|------|
+| `multiplier` | `lldpmgrd` も `lldpd.conf.j2` も lldpcli/conf に inject しない。lldpd 自体のデフォルト hold-multiplier = 4 で偶然一致するが、変更しても反映されない |
+| `system_name` | `lldpmgrd` は `DEVICE_METADATA\|localhost` の `hostname` / `chassis_hostname` を直接 `lldpcli configure system hostname` に渡す。`LLDP\|GLOBAL.system_name` は読まれない |
+| `system_description` | 起動時に `lldpdSysDescr.conf.j2` が `SONiC Software Version: SONiC.<ver> - HwSku: <sku> - Distribution: Debian <ver> - Kernel: <ver>` 形式でハードコード生成する。CONFIG_DB の値は無視される |
+| `supp_mgmt_address_tlv` | `lldpmgrd` に読み取りパスなし。Management IP 制御は `MGMT_INTERFACE` テーブル + `lldpmgrd.update_mgmt_addr()` の別経路 |
+| `supp_system_capabilities_tlv` | `lldpmgrd` に読み取りパスなし |
+| `LLDP\|GLOBAL.enabled` | `lldpmgrd` は `LLDP|GLOBAL` テーブルを購読しない。lldpd の起動停止はコンテナ制御に委ねられる |
+| `LLDP\|GLOBAL.mode` | 同上。未設定時 lldpd デフォルト = 双方向 (tx_and_rx) |
+| `LLDP_PORT.enabled` | `lldpmgrd` は `LLDP_PORT` テーブルを購読しない（ポートの on/off は APP_DB PORT の oper_status 経由で間接制御） |
+| `LLDP_PORT.mode` | 同上 |
+
+### 暗黙デフォルトとハードコード固定値
+
+| フィールド / 設定 | 暗黙値 | ソース |
+|-----------------|-------|--------|
+| `hello_time` 未設定 | 30 秒 | lldpd ハードコード（YANG default と一致） |
+| `multiplier` 未設定 | 4 | lldpd ハードコード（YANG default と一致だが CONFIG_DB 変更は無効） |
+| system description | `SONiC Software Version: SONiC.<ver> - HwSku: <sku> - Distribution: Debian <ver> - Kernel: <ver>` | `lldpdSysDescr.conf.j2` 起動時展開 |
+| portidsubtype (global) | `ifname` | `lldpd.conf.j2` でハードコード (`configure lldp portidsubtype ifname`) |
+| eth0 portidsubtype | `MGMT_PORT.alias` なければ `eth0` | `lldpd.conf.j2` |
+| Management IP | MGMT_INTERFACE の IPv4 優先、なければ IPv6 | `lldpd.conf.j2` + `lldpmgrd.update_mgmt_addr()` |
+| LLDP PDU 送信 | コンテナ起動直後は `pause` 状態 | `lldpd.conf.j2` 末尾 `pause` 命令。全ポート設定完了後に `lldpmgrd` が `lldpcli resume` を発行 |
+
+### ポート設定の書込み順依存・retry 挙動
+
+`lldpmgrd` はポートごとの `lldpcli configure ports <ifname> lldp portidsubtype local <alias>` コマンドを、**PORT が `oper_status=up` になるまでキューイング**する。コマンド失敗時は `RETRY_LIMIT=5` 回まで `FAILED_CMD_TIMEOUT=6` 秒間隔で再試行し、超過すると **silent drop**（ログのみ出力、lldpd への alias/description 未反映で継続）。
+
+起動タイムアウト `PORT_INIT_TIMEOUT=300` 秒に達すると `PortInitDone` / `PortConfigDone` 待ちを強制完了し `lldpcli resume` を実行する。フロントエンドポートが存在しない場合（`device_info.is_frontend_port_present_in_host()` が False）はエラーログなしでタイムアウト処理される。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 9d2a20a8f03b -->
