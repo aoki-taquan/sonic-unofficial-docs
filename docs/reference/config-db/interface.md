@@ -610,4 +610,34 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/cfgmgr/intfmgr.cpp`、`orchagent/intfsorch.cpp`、`orchagent/intfsorch.h`、`lib/subintf.cpp` および YANG モデルから検出したマジックナンバー・閾値。
+
+| 定数 / マクロ名 | 値 | 定義ファイル | 意味・影響 |
+|-----------------|-----|--------------|-----------|
+| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp:29` | 物理 Ethernet ポートの **デフォルト MTU** (bytes)。PORT テーブルに `mtu` フィールドがない場合にフォールバックされる |
+| `LOOPBACK_DEFAULT_MTU_STR` | `65536` | `intfmgr.cpp:28` | `ip link add <alias> mtu 65536 type dummy` でループバック作成時に固定使用。物理ポートへは適用されない |
+| `MTU_INHERITANCE` | `"0"` | `intfmgr.cpp:24` | サブインタフェースが親ポートの MTU を継承することを示す内部マーカー。APP_DB に `mtu=0` として書き込まれる |
+| `nat_zone` 有効範囲 | `0..3` (uint8) | `sonic-interface.yang:79` | YANG `range` 制約。4 ゾーンのみ許容。デフォルト `0` は YANG と SAI 初期化コード (`intfsorch.cpp:1361`) の両方で再現 |
+| `RIF_FLEX_STAT_COUNTER_POLL_MSECS` | `"1000"` ms | `intfsorch.h:21` | RIF 統計フレックスカウンターのポーリング間隔。1 秒周期で SAI から in/out パケット・オクテット・エラーを収集 |
+| `UPDATE_MAPS_SEC` | `1` 秒 | `intfsorch.cpp:45` | `m_updateMapsTimer` 周期。RIF 名 → カウンタ ID マップを COUNTERS_DB に更新する間隔 |
+| `intfsorch_pri` | `35` | `intfsorch.cpp:43` | `IntfsOrch` の Orch 優先度。数値が小さいほど優先度高 |
+| サブインタフェース名上限 | `< IFNAMSIZ` (16) → **15 文字以下** | `subintf.cpp:65` | `alias.length() >= IFNAMSIZ` を満たすとサブインタフェース無効判定。Linux カーネルの `IFNAMSIZ=16` に由来 |
+| IPv4 broadcast 付与閾値 | プレフィクス長 `< 31` | `intfmgr.cpp:89` | `/31` 以上 (`/31`, `/32`) では broadcast オプションなしで `ip address add` を実行 |
+| IPv6 broadcast 付与閾値 | プレフィクス長 `< 127` | `intfmgr.cpp:108` | `/127` 以上 (`/127`, `/128`) では broadcast オプションなしで `ip -6 address add` を実行 |
+| VoQ IPv6 metric | `256` | `intfmgr.cpp:105` | `switch_type=voq` のときのみ IPv6 アドレス追加に `metric 256` を付与。通常構成では metric 指定なし (kernel default) |
+| STATE_PORT Consumer 優先度 | `100` | `intfmgr.cpp:46` | `SubscriberStateTable` の pri 引数。STATE_PORT_TABLE 変化通知のキュー優先度 |
+| STATE_LAG Consumer 優先度 | `200` | `intfmgr.cpp:51` | STATE_LAG_TABLE 変化通知のキュー優先度 |
+| `DEFAULT_POP_BATCH_SIZE` | `128` | `sonic-swss-common` `table.h:164` | Consumer キューの 1 回あたりデフォルトポップ数。上記 2 Consumer はデフォルト値で動作 |
+
+!!! note "nat_zone の二重定義"
+    `nat_zone` デフォルト `0` は YANG `default "0"` と SAI 初期化 (`port.m_nat_zone_id = 0`, `intfsorch.cpp:1361`) の両方に現れる。YANG バリデーションと SAI 設定が独立して同じ値を保持しており、どちらか片方の変更では不整合が生じる。
+
+!!! note "MTU=9100 の出処"
+    `DEFAULT_MTU_STR 9100` は SONiC の歴史的デフォルト値。Ethernet フレームの Jumbo Frame 標準 (9000 bytes payload + 100 bytes overhead) に由来するとされるが、公式 HLD には明記なし。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 8c01908c2492 -->
