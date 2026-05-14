@@ -22273,6 +22273,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別デフォルト・fallback 一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要乖離・silent パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29960,6 +29999,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別デフォルト・fallback 一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要乖離・silent パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30388,7 +30466,7 @@
 <td><code>profile</code></td>
 <td>leafref <code>BUFFER_PROFILE.name</code> または <code>NULL</code></td>
 <td>-</td>
-<td><code>0</code> (numeric <code>0</code>)</td>
+<td><code>0</code> (YANG 定義値、<strong>実装上は dead field</strong>。実効デフォルトは経路依存: Jinja2 静的=<code>ingress_lossy_profile</code>、Jinja2 動的=<code>NULL</code>、buffermgr=<code>pg_lossless_*_profile</code>)</td>
 <td>関連付ける buffer profile。<code>NULL</code> で削除扱い</td>
 </tr>
 </tbody>
@@ -30404,6 +30482,135 @@
 <li>関連 CLI: なし（<code>config_db.json</code> でロード）</li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-buffer-pg</code></li>
 </ul>
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="fallback">フィールド別デフォルト・fallback 一覧<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>実装上の実効デフォルト</th>
+<th>経路</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profile</code></td>
+<td><code>0</code> (numeric)</td>
+<td><strong>dead field</strong> — 実装上一切使われない</td>
+<td>—</td>
+<td><code>sonic-buffer-pg.yang:59</code></td>
+</tr>
+<tr>
+<td><code>profile</code> (Jinja2 静的モード, PG 0)</td>
+<td>—</td>
+<td><code>"ingress_lossy_profile"</code></td>
+<td><code>buffers_config.j2</code> フォールバック分岐</td>
+<td><code>buffers_config.j2:271-272</code></td>
+</tr>
+<tr>
+<td><code>profile</code> (Jinja2 動的モード, PG 3-4)</td>
+<td>—</td>
+<td><code>"NULL"</code> → pureDynamic fallback</td>
+<td><code>buffers_config.j2</code> + <code>buffermgrdyn.cpp</code></td>
+<td><code>buffers_config.j2:266-268</code></td>
+</tr>
+<tr>
+<td><code>profile</code> (buffermgr 静的モード, PG 3-4)</td>
+<td>—</td>
+<td><code>"pg_lossless_&lt;speed&gt;_&lt;cable&gt;_profile"</code> (速度・ケーブル長から自動生成)</td>
+<td><code>buffermgr.cpp doSpeedUpdateTask()</code></td>
+<td><code>buffermgr.cpp:183-184</code></td>
+</tr>
+<tr>
+<td><code>dynamic_calculated</code> (pureDynamic)</td>
+<td>—</td>
+<td><code>true</code> (profile 未指定時に暗黙設定)</td>
+<td><code>buffermgrdyn.cpp handleSingleBufferPgEntry()</code></td>
+<td><code>buffermgrdyn.cpp:3194</code></td>
+</tr>
+<tr>
+<td><code>lossless</code> (pureDynamic)</td>
+<td>—</td>
+<td><code>true</code> (固定値)</td>
+<td>同上</td>
+<td><code>buffermgrdyn.cpp:3195</code></td>
+</tr>
+<tr>
+<td>threshold (動的計算)</td>
+<td>—</td>
+<td><code>m_defaultThreshold</code> = <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th</code> (Jinja2 デフォルト <code>"0"</code>)</td>
+<td><code>buffermgrdyn.cpp refreshPgsForPort()</code></td>
+<td><code>buffermgrdyn.cpp:1521</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code> (暗黙)</td>
+<td>—</td>
+<td><code>"down"</code> (PORT テーブルに無ければ <code>down</code> 扱い → PG 書き込み抑制)</td>
+<td><code>buffermgr.cpp doTask()</code></td>
+<td><code>buffermgr.cpp:565</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="silent">主要乖離・silent パターン<a class="headerlink" href="#silent" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>パターン</th>
+<th>内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>dead field</strong></td>
+<td>YANG <code>profile default 0</code> は実装で一切参照されない</td>
+<td><code>sonic-buffer-pg.yang:59</code></td>
+</tr>
+<tr>
+<td><strong>書き込み経路依存乖離</strong></td>
+<td>Jinja2 静的: PG 0 → <code>ingress_lossy_profile</code>; Jinja2 動的: PG 3-4 → <code>NULL</code>; buffermgr 静的: <code>pg_lossless_*_profile</code></td>
+<td>各経路</td>
+</tr>
+<tr>
+<td><strong>silent fallback</strong> (動的 threshold)</td>
+<td>profile 未指定の lossless PG は <code>default_dynamic_th</code> を threshold に使用</td>
+<td><code>buffermgrdyn.cpp:1521</code></td>
+</tr>
+<tr>
+<td><strong>silent drop</strong> (cable=0m)</td>
+<td>ケーブル長 <code>0m</code> の lossless PG は APPL_DB から削除。WARN なし</td>
+<td><code>buffermgrdyn.cpp:1492-1509</code></td>
+</tr>
+<tr>
+<td><strong>silent skip</strong> (PFC 未設定)</td>
+<td><code>PORT_QOS_MAP.pfc_enable</code> が未設定のポートは BUFFER_PG を書かずに <code>task_success</code> 返却</td>
+<td><code>buffermgr.cpp:173-179</code></td>
+</tr>
+<tr>
+<td><strong>consumer 乖離</strong> (egress reject)</td>
+<td>egress profile を PG に設定すると <code>task_failed</code> drop — YANG 無制約、実装のみで enforcement</td>
+<td><code>buffermgrdyn.cpp:3156-3163</code></td>
+</tr>
+<tr>
+<td><strong>db_migrator silent overwrite</strong></td>
+<td>動的モード移行時に <code>profile</code> を <code>NULL</code> に強制書き換え</td>
+<td><code>db_migrator.py:398</code></td>
+</tr>
+<tr>
+<td><strong>admin down 書き込み抑制</strong></td>
+<td>PORT admin down 時は APPL_DB 書き込みをスキップし内部状態のみ保持</td>
+<td><code>buffermgrdyn.cpp:3198-3202</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>中間調査ファイル: <code>meta/_intermediate/cdb-flow/buffer-pg-defaults.md</code></p>
+</blockquote>
+<!-- /defaults -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

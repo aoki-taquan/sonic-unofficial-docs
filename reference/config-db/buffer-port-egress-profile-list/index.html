@@ -23724,6 +23724,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙デフォルト・コード由来挙動 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルト・コード由来挙動 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#profile_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        profile_list フィールドの挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-vs-dynamic-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路依存の乖離 (static vs dynamic model)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 段の追加制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partial-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複数ポートキー時の partial failure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox プラットフォーム注記
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30274,6 +30357,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙デフォルト・コード由来挙動 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルト・コード由来挙動 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#profile_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        profile_list フィールドの挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#static-vs-dynamic-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路依存の乖離 (static vs dynamic model)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 段の追加制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partial-failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複数ポートキー時の partial failure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mellanox プラットフォーム注記
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30555,6 +30721,138 @@
 <p><strong>スキャン証跡</strong>: <code>handleBufferPortEgressProfileListTable</code> は <code>handleBufferObjectTables(tuple, CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME, false)</code> に委譲。<code>keyWithIds=false</code>（PG/Queue と異なりインデックスなし）。2 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">暗黙デフォルト・コード由来挙動 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>このテーブルには YANG <code>default</code> を持つフィールドがない。以下はコードトレースで判明した暗黙挙動。</p>
+<h3 id="profile_list"><code>profile_list</code> フィールドの挙動<a class="headerlink" href="#profile_list" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>実際の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>YANG <code>default</code></td>
+<td>なし (leaf-list に default 文なし)</td>
+<td><code>sonic-buffer-port-egress-profile-list.yang</code></td>
+</tr>
+<tr>
+<td>SET 時・ポートが admin-down (dynamic model)</td>
+<td>CONFIG_DB 値でなくゼロプロファイルリストを APPL_DB に書き込む (silent substitution)</td>
+<td><code>buffermgrdyn.cpp:3418-3438</code></td>
+</tr>
+<tr>
+<td>SET 時・buffer pool 未準備 (dynamic model)</td>
+<td>APPL_DB に書かず <code>m_bufferObjectsPending=true</code> を立てて <code>task_success</code> 返却 (silent pending)</td>
+<td><code>buffermgrdyn.cpp:3408-3415</code></td>
+</tr>
+<tr>
+<td><code>profile_list</code> 以外のフィールドが来た場合</td>
+<td><code>SWSS_LOG_ERROR("Unknown field %s")</code> + <code>continue</code> で silent drop</td>
+<td><code>buffermgrdyn.cpp:3401-3405</code></td>
+</tr>
+<tr>
+<td>DEL 操作</td>
+<td>count=0 の空リストを SAI に送る (<code>attr.value.objlist.count = 0</code>)</td>
+<td><code>bufferorch.cpp:1939-1940</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="static-vs-dynamic-model">書き込み経路依存の乖離 (static vs dynamic model)<a class="headerlink" href="#static-vs-dynamic-model" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>Static model (<code>buffermgr.cpp</code>)</th>
+<th>Dynamic model (<code>buffermgrdyn.cpp</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>direction 検証</td>
+<td>なし (CONFIG_DB 値をそのまま APPL_DB にコピー)</td>
+<td>あり: ingress profile を egress list に指定 → <code>task_failed</code> (<code>checkBufferProfileDirection</code>)</td>
+</tr>
+<tr>
+<td>profile 存在検証</td>
+<td>なし (orchagent 段で retry)</td>
+<td>あり: <code>m_bufferProfileLookup</code> 未登録 → <code>task_need_retry</code></td>
+</tr>
+<tr>
+<td>admin-down 置換</td>
+<td>なし</td>
+<td>あり: ゼロプロファイルリストに差し替え</td>
+</tr>
+<tr>
+<td>buffer pool guard</td>
+<td>なし</td>
+<td>あり: pool 未準備時 pending</td>
+</tr>
+</tbody>
+</table>
+<p>Static model は <code>DEVICE_METADATA.buffer_model == "dynamic"</code> の環境では一切動作しない (<code>buffermgr.cpp:476-480</code>: <code>SWSS_LOG_DEBUG("Dynamic buffer model enabled. Skipping further processing")</code>)。</p>
+<h3 id="orchagent">orchagent 段の追加制約<a class="headerlink" href="#orchagent" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_PROFILE.packet_discard_action == "trim"</code> のプロファイルを指定</td>
+<td><code>task_failed</code> (<code>isTrimmingEligible=true</code> 検出)</td>
+<td><code>bufferorch.cpp:1907-1921</code></td>
+</tr>
+<tr>
+<td>profile_list が既存キャッシュと同一</td>
+<td>SAI 呼び出しスキップ (<code>task_success</code> 即返却)</td>
+<td><code>bufferorch.cpp:1885-1890</code></td>
+</tr>
+<tr>
+<td>Bulk SAI 呼び出し</td>
+<td><code>SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR</code> で一部ポート失敗が他ポートをブロックしない</td>
+<td><code>bufferorch.cpp:2009-2014</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="partial-failure">複数ポートキー時の partial failure<a class="headerlink" href="#partial-failure" title="Permanent link">&para;</a></h3>
+<p>カンマ区切りポートリスト (<code>Ethernet0,Ethernet4</code>) のキーが来た場合、ポートごとに分解して処理する。途中でいずれかが <code>task_need_retry</code> を返すと即時 return し、後続ポートは未処理のまま残る (<code>buffermgrdyn.cpp:3546-3547</code>)。</p>
+<h3 id="mellanox">Mellanox プラットフォーム注記<a class="headerlink" href="#mellanox" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn.cpp:handleSingleBufferPortProfileListEntry</code> の DEL パスには <code>// Not supported on Mellanox platform for now.</code> のコメントが存在する (L3443)。削除処理は動作するが、Mellanox での正式サポート状態について留意が必要。</p>
+<h3 id="yang-vs-discrepancy">YANG vs 実装 discrepancy<a class="headerlink" href="#yang-vs-discrepancy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>YANG</th>
+<th>実装</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>direction 制約</td>
+<td>記述なし</td>
+<td>dynamic model: ingress profile → egress list は <code>task_failed</code></td>
+</tr>
+<tr>
+<td>trimming 制約</td>
+<td>記述なし</td>
+<td>orchagent: trimming-eligible profile は <code>task_failed</code></td>
+</tr>
+<tr>
+<td>複数ポートキー</td>
+<td>記述なし</td>
+<td>カンマ区切りポートリストをキーとして設定可能 (内部で展開)</td>
+</tr>
+</tbody>
+</table>
+<!-- /defaults -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
 
 <div class="footnote">
