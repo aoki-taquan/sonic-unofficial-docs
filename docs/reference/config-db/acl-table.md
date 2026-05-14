@@ -274,6 +274,8 @@ C++ の `AclTable` クラスは `stage = ACL_STAGE_INGRESS` でメンバを初�
 | `L3` / `L3V6` / `L3V4V6` | `PACKET_ACTION`, `REDIRECT` | `PACKET_ACTION`, `REDIRECT` |
 | `MIRROR` | `MIRROR_INGRESS`, `MIRROR_EGRESS` | `MIRROR_EGRESS` |
 
+`addStageMandatoryMatchFields()` (`aclorch.cpp:2632`) — type/stage 組み合わせに応じて SAI match 属性を自動付与する。`SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` (L4 ポート範囲) は BRCM プラットフォームの EGRESS stage では省略される (`addStageMandatoryRangeFields()` が `false` を返す)。これらも CONFIG_DB フィールドではなく SAI 属性として展開される。
+
 <!-- /defaults -->
 
 <!-- ref-triangle:start -->
