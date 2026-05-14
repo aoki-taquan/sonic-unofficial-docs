@@ -500,4 +500,111 @@ show platform summary
 > **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`, `managers_device_global.py`; [sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) `syncd/Syncd.cpp:167`; [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:112`; sonic-[linkmgrd](../../reference/glossary.md#term-linkmgrd) `src/DbInterface.cpp:576`; [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/db_migrator.py:676`
 <!-- /cdb-exceptions -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+### CLI 経由
+
+| コマンド | 書き込みフィールド | 値 / 制約 | evidence |
+|---|---|---|---|
+| `config hostname <name>` | `hostname` | 任意文字列 | `sonic-utilities/config/main.py:2733` |
+| `config synchronous_mode <enable\|disable>` | `synchronous_mode` | `enable` / `disable` | `config/main.py:2763` |
+| `config suppress-fib-pending <enabled\|disabled>` | `suppress-fib-pending` | `enabled` / `disabled`（multi-asic: 全 namespace） | `config/main.py:2792` |
+| `config yang_config_validation <enable\|disable>` | `yang_config_validation` | `enable` / `disable` | `config/main.py:2807` |
+| `config clock timezone <tz>` | `timezone` | pytz 有効文字列 | `config/main.py:9789` |
+| `config qos reload [--no-dynamic-buffer]` | `buffer_model` | `dynamic` / `traditional` | `config/main.py:3649` |
+| `config platform barefoot profile <profile>` | `p4_profile` | `<profile>_profile` (Barefoot/Tofino 専用) | `config/plugins/barefoot.py:50` |
+
+### minigraph 経由
+
+| minigraph 入力 / 計算ロジック | CDB フィールド | evidence |
+|---|---|---|
+| `<Device name=...>` | `hostname` | `minigraph.py:2152` |
+| `<Device Hwsku=...>` | `hwsku` | `minigraph.py:2153` |
+| `<Device type=...>` | `type` | `minigraph.py:2154` |
+| Device attr: region | `region` | `minigraph.py:2147` |
+| Device attr: cloudtype | `cloudtype` | `minigraph.py:2148` |
+| Device attr: dockerRoutingConfigMode (default: `separated`) | `docker_routing_config_mode` | `minigraph.py:2149` |
+| hard-coded `'enable'` | `synchronous_mode` | `minigraph.py:2155` |
+| hard-coded `'disable'` | `yang_config_validation` | `minigraph.py:2156` |
+| `<BGP><DeviceBGPInfo ASN=...>` | `bgp_asn` | `minigraph.py:2159` |
+| chassis topology | `chassis_hostname` | `minigraph.py:2162` |
+| Device attr: deploymentId | `deployment_id` | `minigraph.py:2165` |
+| PEER_SWITCH 存在 → `DualToR`; SpineRouter + macsec → `UpstreamLC`/`DownstreamLC`/`Supervisor` | `subtype` | `minigraph.py:2189-2200` |
+| PEER_SWITCH keys[0] | `peer_switch` | `minigraph.py:2193` |
+| namespace arg | `asic_name` | `minigraph.py:2218` |
+| asic sub_role (`BackEnd`/`FrontEnd`/`Fabric`) | `sub_role` | `minigraph.py:2226-2230` |
+| chassis_type / voq switch_type | `switch_type` | `minigraph.py:2233-2241` |
+| Voq slot_index 計算 | `switch_id` | `minigraph.py:2250` |
+| chassis max_cores | `max_cores` | `minigraph.py:2253-2257` |
+| Device attr: resourceType | `resource_type` | `minigraph.py:2266` |
+| Device attr: downstreamSubrole | `downstream_subrole` | `minigraph.py:2271` |
+| storage chassis のみ | `storage_device: "true"` | `minigraph.py:2602` |
+| dhcpServerEnabled=True | `dhcp_server: "enabled"` | `minigraph.py:2736` |
+| dhcpServerEnabled | `suppress-fib-pending: "enabled"` | `minigraph.py:2744` |
+| `sonic-cfggen --platform-info`: platform / MAC 取得 | `platform`, `mac` | `sonic-cfggen:479-491` |
+| `sonic-cfggen`: 環境変数 `NAMESPACE_ID` | `namespace_id` | `sonic-cfggen:384` |
+| `sonic-cfggen`: `device_info.get_bmc_data()` | `DEVICE_METADATA|bmc.*` | `sonic-cfggen:369` |
+
+### REST/gNMI 経由
+
+`sonic-mgmt-common` リポジトリはソースキャッシュ範囲外のため transformer 実装を直接確認できなかった。YANG path `/sonic-device-metadata:sonic-device-metadata/DEVICE_METADATA/localhost` 経由で書き込まれると推定される。
+
+### db_migrator 経由
+
+| 移行メソッド | 条件 | 書き込みフィールド | evidence |
+|---|---|---|---|
+| `migrate_device_metadata()` | DB に `synchronous_mode` なし | 移行元値を補完 | `db_migrator.py:678` |
+| `migrate_routing_config_mode()` | `docker_routing_config_mode` なし or minigraph 値と不一致 | `docker_routing_config_mode` (minigraph 値で上書き) | `db_migrator.py:755` |
+| `version_1_0_4()` | Mellanox 非 dynamic 環境 | `buffer_model: 'traditional'` | `db_migrator.py:1096` |
+| `MellanoxBufferMigrator.commit()` | dynamic 移行失敗フォールバック | `buffer_model: 'traditional'` | `mellanox_buffer_migrator.py:828` |
+
+### build-time default (init_cfg.json.j2)
+
+| Jinja 変数 / 条件 | フィールド | 値 |
+|---|---|---|
+| `default_buffer_model` make 変数 | `buffer_model` | `dynamic` / `traditional` |
+| `include_p4rt == "y"` のみ | `synchronous_mode` | `enable` |
+| `shutdown_bgp_on_start == "y"` | `default_bgp_status` | `down` / `up` |
+| `enable_pfcwd_on_start == "y"` | `default_pfcwd_status` | `enable` / `disable` |
+| 無条件 | `timezone` | `UTC` |
+
+evidence: `sonic-buildimage/files/build_templates/init_cfg.json.j2:2-9`
+
+### hard-coded / setdefault (config_samples.py)
+
+| 関数 / 条件 | フィールド | 値 |
+|---|---|---|
+| `generate_sample_tor_router_config()` | `hostname`, `type`, `bgp_asn` | `sonic`, `LeafRouter`, `65100` |
+| `generate_sample_smartswitch_config()` | `subtype` | `SmartSwitch` |
+| `generate_sample_dpu_config()` | `hostname`, `switch_type`, `type`, `subtype`, `bgp_asn` | SmartSwitch DPU 系 |
+| hostname 欠如フォールバック | `hostname` | `sonic` |
+| type 欠如フォールバック | `type` | `LeafRouter` |
+
+evidence: `sonic-buildimage/src/sonic-config-engine/config_samples.py:50-222`
+
+### runtime injection
+
+orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り専用** で参照し、CONFIG_DB への逆書きは行わない。
+
+### 入り口の死活
+
+| フィールド | 書き込み入り口数 | runtime 書き換え可能 | 注 |
+|---|---|---|---|
+| `hostname` | 2 (CLI, minigraph) | はい (`config hostname`) | |
+| `synchronous_mode` | 4 (CLI, minigraph hard-coded, db_migrator, init_cfg) | はい | |
+| `suppress-fib-pending` | 2 (CLI, minigraph) | はい | |
+| `yang_config_validation` | 2 (CLI, minigraph hard-coded) | はい | |
+| `timezone` | 2 (CLI, init_cfg) | はい | |
+| `buffer_model` | 4 (CLI qos reload, db_migrator ×2, init_cfg) | はい | |
+| `type` | 2 (minigraph, config_samples) | いいえ | 変更には minigraph 再適用が必要 |
+| `subtype` | 2 (minigraph 計算, config_samples) | いいえ | |
+| `switch_type` | 1 (minigraph 計算) | いいえ | |
+| `docker_routing_config_mode` | 2 (minigraph, db_migrator) | いいえ | |
+| `p4_profile` | 1 (CLI barefoot plugin) | はい | **YANG 未定義フィールド** |
+| `namespace_id` | 1 (sonic-cfggen 環境変数) | いいえ | **YANG 未定義フィールド** |
+| `storage_device` | 1 (minigraph 条件付き) | いいえ | **YANG 未定義フィールド** |
+| `rack_mgmt_map`, `slice_type`, `downstream_subrole`, `dhcp_server` | 1 (minigraph 各) | いいえ | **YANG 未定義フィールド** |
+<!-- /entry-points -->
+
 <!-- glossary-links-injected: e22e287b939b -->
