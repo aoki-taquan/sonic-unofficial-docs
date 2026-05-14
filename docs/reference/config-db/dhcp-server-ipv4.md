@@ -225,4 +225,58 @@ show dhcp_server ipv4 info
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 他テーブル先行必須
+
+| 先行テーブル | 理由 | 違反時の挙動 |
+|---|---|---|
+| `VLAN` / `VLAN_INTERFACE|<name>|<ipv4_prefix>` | `dhcp_cfggen.generate()` が VLAN_INTERFACE から IPv4 サブネットを取得してから DHCP 設定を生成。未設定だと `_parse_port()` でそのインタフェースをスキップ | kea-dhcp4 起動するが VLAN のサブネット定義なし→ DISCOVER 無応答（`dhcp_cfggen.py:432-433`） |
+| `VLAN_MEMBER|<vlan>|<port>` | PORT モードでポートが VLAN メンバーとして登録されていないと `_parse_port()` で `"Port %s is not in %s"` 警告を出しスキップ | そのポートへの IP プール割当なし |
+| `FEATURE|dhcp_server state=enabled` | CLI の `dhcp_server` グループ入口で feature 有効チェック。dhcpservd 自体も feature 有効でなければ起動しない | CLI コマンドすべて `ctx.fail()` で終了（`dhcp_server.py:54`） |
+| `DHCP_SERVER_IPV4_RANGE|<name>` | `ranges` 参照の `DHCP_SERVER_IPV4_PORT` を書く前に range エントリが必須。CLI bind は range 存在チェック済み | CLI `ctx.fail()`; 直接 DB 書込み時は `LOG_WARNING` でそのレンジのプールをスキップ（`dhcp_cfggen.py:452-454`） |
+| `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS|<name>` | `customized_options` leafref を書く前にオプションエントリが必須。CLI option bind は存在チェック済み | CLI `ctx.fail()`; 直接 DB 書込み時は `LOG_WARNING` でそのオプションをスキップ（`dhcp_cfggen.py:213-215`） |
+
+**推奨書込み順序**:
+
+```
+# 1. VLAN / IF / Member
+SET VLAN|<name>
+SET VLAN_INTERFACE|<name>|<ipv4_prefix>
+SET VLAN_MEMBER|<name>|<port>
+
+# 2. DHCP サブリソース（range / option）
+SET DHCP_SERVER_IPV4_RANGE|<range_name>   # ranges 利用時
+SET DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS|<opt_name>  # customized_options 利用時
+
+# 3. DHCP メインエントリ（state=disabled で投入）
+SET DHCP_SERVER_IPV4|<name>  state=disabled  ...
+
+# 4. ポート-IP/レンジ バインド
+SET DHCP_SERVER_IPV4_PORT|<name>|<port>
+
+# 5. 有効化（最後に state=enabled）
+SET DHCP_SERVER_IPV4|<name>  state=enabled
+```
+
+### SET 後 DEL の順序依存
+
+| シナリオ | 問題 | 安全な手順 |
+|---|---|---|
+| `state=enabled` エントリをいきなり DEL | dhcpservd が即再生成して kea-dhcp4 SIGHUP。既存リースはリース期限まで有効のまま残る（新規割当は停止） | 先に `state=disabled` を SET してから DEL |
+| `DHCP_SERVER_IPV4_RANGE` を使用中に DEL | CLI は参照中の range を `ctx.fail()` で拒否。`--force` で強制 DEL すると次回 generate 時にそのレンジが kea-dhcp4 設定から消える | `unbind` → `range del` の順で実施 |
+| `DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` を参照中に DEL | CLI は参照中のオプションを `ctx.fail()` で拒否 | `option unbind` → `option del` の順で実施 |
+
+### Notification / SIGHUP 経路と反映タイミング
+
+CONFIG_DB 書込み → dhcpservd `Select()` (最大 5000 ms ポーリング) → `dump_dhcp4_config()` (全量 generate) → `kea-dhcp4.conf` 上書き → SIGHUP → kea-dhcp4 再読込。1 変更につき 1 回の SIGHUP が発生する。設定変更は次回 DHCP DISCOVER から有効。
+
+### warm-reboot
+
+dhcpservd は stateless（CONFIG_DB から毎回全量 generate）。再起動時に `start()` → `dump_dhcp4_config()` → SIGHUP を自動実行するため、CONFIG_DB が整合していれば再起動後も自動復元される。kea-lease.csv (`/var/lib/kea/kea-lease.csv`) は永続化されており既存リース情報は引き継がれる。
+
+> **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100,190-270,381-465`; `dhcpservd.py:39-68,89-100`; `common/dhcp_db_monitor.py:160-347`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54-106,250-313,356-444`
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 75921d013977 -->
