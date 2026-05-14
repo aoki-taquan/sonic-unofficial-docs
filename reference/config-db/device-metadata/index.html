@@ -30853,7 +30853,7 @@
 <tr>
 <td><code>SpineRouter</code></td>
 <td>16</td>
-<td>pmon の <code>has_per_asic_scope=False</code> 設定 (SpineRouter は per-ASIC scope なし); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); <code>type==SpineRouter AND subtype==UpstreamLC</code> のとき table-map 適用</td>
+<td>pmon の <code>delayed=False</code> 設定 (SpineRouter は pmon を遅延起動しない); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); <code>type==SpineRouter AND subtype==UpstreamLC</code> のとき table-map 適用</td>
 <td>init_cfg.json.j2:69,90; peer-group.conf.j2:17,32</td>
 </tr>
 <tr>
@@ -31066,7 +31066,7 @@
 <tbody>
 <tr>
 <td><code>DualToR</code></td>
-<td>BGP <code>coalesce-time 10000</code> 設定; DHCPv4 relay に <code>-U Loopback0 -dt</code> フラグ追加; DHCPv6 relay に <code>-u Loopback0</code> フラグ追加; mux feature を <code>enabled</code> に設定; DHCP relay モニタに Loopback0 フラグ; pmon で mux_manager 起動</td>
+<td>BGP <code>coalesce-time 10000</code> 設定; DHCPv4 relay に <code>-U Loopback0 -dt</code> フラグ追加; DHCPv6 relay に <code>-u Loopback0</code> フラグ追加; mux feature を <code>enabled</code> に設定; DHCP relay モニタに Loopback0 フラグ; pmon で ycabled 起動</td>
 <td>bgpd.main.conf.j2:110; dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2:14; init_cfg.json.j2:81; dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157</td>
 </tr>
 <tr>
@@ -31150,8 +31150,8 @@
 </tr>
 <tr>
 <td><code>disabled</code> (デフォルト)</td>
-<td>suppress-fib-pending 無効; <code>fpmsyncd.cpp:278</code> でルートを即座に通知</td>
-<td>sonic-swss/fpmsyncd/fpmsyncd.cpp:278</td>
+<td>suppress-fib-pending 無効 (起動時に <code>fpmsyncd.cpp:114</code> の if 分岐に入らない); ランタイム無効化時は <code>fpmsyncd.cpp:291-300</code> で既存ルートを offloaded にマークして遷移</td>
+<td>sonic-swss/fpmsyncd/fpmsyncd.cpp:113-114</td>
 </tr>
 </tbody>
 </table>
@@ -31170,13 +31170,13 @@
 <tbody>
 <tr>
 <td><code>disabled</code> (デフォルト)</td>
-<td>swss.rec を同期書き込み</td>
-<td>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66 (else 節)</td>
+<td><code>-A</code> フラグを付加しない → swss.rec を同期書き込み (デフォルト動作、else 節なし)</td>
+<td>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68</td>
 </tr>
 <tr>
 <td><code>enabled</code></td>
-<td><code>orchagent.sh:66</code> で非同期書き込みフラグを設定 → 高トラフィック時の遅延軽減</td>
-<td>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66</td>
+<td><code>orchagent.sh:67-68</code> で <code>-A</code> フラグを追加 → 非同期書き込みフラグを設定 → 高トラフィック時の遅延軽減</td>
+<td>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68</td>
 </tr>
 </tbody>
 </table>
@@ -31442,7 +31442,7 @@
 </tr>
 <tr>
 <td><code>type == 'SpineRouter'</code></td>
-<td><code>pmon has_per_asic_scope = False</code></td>
+<td><code>pmon delayed = False</code> (pmon を遅延起動しない)</td>
 <td><code>sonic-buildimage/files/build_templates/init_cfg.json.j2:69</code></td>
 </tr>
 </tbody>
