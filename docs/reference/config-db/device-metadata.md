@@ -165,7 +165,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `MgmtAccessRouter` | 0 | コード参照なし → 該当なし | — |
 | `LowerMgmtAggregator` | 0 | コード参照なし → 該当なし | — |
 | `UpperMgmtAggregator` | 0 | コード参照なし → 該当なし | — |
-| `SpineRouter` | 16 | pmon の `has_per_asic_scope=False` 設定 (SpineRouter は per-ASIC scope なし); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); `type==SpineRouter AND subtype==UpstreamLC` のとき table-map 適用 | init_cfg.json.j2:69,90; peer-group.conf.j2:17,32 |
+| `SpineRouter` | 16 | pmon の `delayed=False` 設定 (SpineRouter は pmon を遅延起動しない); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); `type==SpineRouter AND subtype==UpstreamLC` のとき table-map 適用 | init_cfg.json.j2:69,90; peer-group.conf.j2:17,32 |
 | `UpperSpineRouter` | 4 | SpineRouter+UpstreamLC と同等の table-map 適用 (`SELECTIVE_ROUTE_DOWNLOAD`); macsec 有効化対象 | peer-group.conf.j2:17,32; init_cfg.json.j2:90 |
 | `FabricSpineRouter` | 0 | bgpd.main.conf.j2:20 の lowercase 比較 `in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']` で `disagg_t2=true` が設定される（コード中の単体参照はなし） | sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:20 |
 | `LowerSpineRouter` | 0 | 同上 disagg_t2=true → FRR に disaggregated T2 フラグが立つ | bgpd.main.conf.j2:20 |
@@ -219,7 +219,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 
 | 値 | 挙動 | evidence |
 |----|------|---------|
-| `DualToR` | BGP `coalesce-time 10000` 設定; DHCPv4 relay に `-U Loopback0 -dt` フラグ追加; DHCPv6 relay に `-u Loopback0` フラグ追加; mux feature を `enabled` に設定; DHCP relay モニタに Loopback0 フラグ; pmon で mux_manager 起動 | bgpd.main.conf.j2:110; dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2:14; init_cfg.json.j2:81; dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157 |
+| `DualToR` | BGP `coalesce-time 10000` 設定; DHCPv4 relay に `-U Loopback0 -dt` フラグ追加; DHCPv6 relay に `-u Loopback0` フラグ追加; mux feature を `enabled` に設定; DHCP relay モニタに Loopback0 フラグ; pmon で ycabled 起動 | bgpd.main.conf.j2:110; dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2:14; init_cfg.json.j2:81; dockers/docker-platform-monitor/docker-pmon.supervisord.conf.j2:157 |
 | `SmartSwitch` | `type != 'SmartSwitchDPU'` との複合条件のとき chrony 追加時刻同期設定; `interfaces.j2:145,147` でネットワークインタフェース設定 | sonic-buildimage/files/image_config/chrony/chrony.conf.j2:58; files/image_config/interfaces/interfaces.j2:145,147 |
 | `Supervisor` | コード参照なし（YANG 定義のみ）→ 該当なし | — |
 | `UpstreamLC` | `type=='SpineRouter' AND subtype=='UpstreamLC'` の複合条件で BGP table-map 適用; `voq_chassis/policies.conf.j2:19,54` で fallback community を deny する route-map 設定 | peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19,54 |
@@ -241,7 +241,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | 値 | 挙動 | evidence |
 |----|------|---------|
 | `enabled` | bgpcfgd `managers_bgp.py:502` で FRR に `bgp suppress-fib-pending` コマンドを適用; `fpmsyncd.cpp:114` でルート FIB インストール待機モードに入る; `route_check.py:387` でルートチェック時に抑制状態を考慮 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:502; sonic-swss/fpmsyncd/fpmsyncd.cpp:113-114; sonic-utilities/scripts/route_check.py:387 |
-| `disabled` (デフォルト) | suppress-fib-pending 無効; `fpmsyncd.cpp:278` でルートを即座に通知 | sonic-swss/fpmsyncd/fpmsyncd.cpp:278 |
+| `disabled` (デフォルト) | suppress-fib-pending 無効 (起動時に `fpmsyncd.cpp:114` の if 分岐に入らない); ランタイム無効化時は `fpmsyncd.cpp:291-300` で既存ルートを offloaded にマークして遷移 | sonic-swss/fpmsyncd/fpmsyncd.cpp:113-114 |
 
 > **YANG `must` 制約**: `sonic-device_metadata.yang:250` `must "(current() = 'disabled') or (current() = 'enabled' and ../synchronous_mode = 'enable')"` → `enabled` かつ `synchronous_mode != 'enable'` のとき YANG バリデーションで reject。
 
@@ -249,8 +249,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 
 | 値 | 挙動 | evidence |
 |----|------|---------|
-| `disabled` (デフォルト) | swss.rec を同期書き込み | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66 (else 節) |
-| `enabled` | `orchagent.sh:66` で非同期書き込みフラグを設定 → 高トラフィック時の遅延軽減 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66 |
+| `disabled` (デフォルト) | `-A` フラグを付加しない → swss.rec を同期書き込み (デフォルト動作、else 節なし) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68 |
+| `enabled` | `orchagent.sh:67-68` で `-A` フラグを追加 → 非同期書き込みフラグを設定 → 高トラフィック時の遅延軽減 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68 |
 
 ### `nexthop_group` 値別挙動
 
@@ -329,7 +329,7 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `subtype == 'DualToR'` | `FEATURE.mux.state = 'enabled'` | `sonic-buildimage/files/build_templates/init_cfg.json.j2:81` |
 | `type NOT IN [LeafRouter, BackEndLeafRouter]` | `FEATURE.restapi.state = 'enabled'` | `sonic-buildimage/files/build_templates/init_cfg.json.j2:85` |
 | `type IN [SpineRouter, UpperSpineRouter, LowerRegionalHub]` かつ `MACSEC_SUPPORTED` | `FEATURE.macsec.state = 'enabled'` | `sonic-buildimage/files/build_templates/init_cfg.json.j2:90` |
-| `type == 'SpineRouter'` | `pmon has_per_asic_scope = False` | `sonic-buildimage/files/build_templates/init_cfg.json.j2:69` |
+| `type == 'SpineRouter'` | `pmon delayed = False` (pmon を遅延起動しない) | `sonic-buildimage/files/build_templates/init_cfg.json.j2:69` |
 
 ### Phase 7: 条件付き module/manager 登録
 

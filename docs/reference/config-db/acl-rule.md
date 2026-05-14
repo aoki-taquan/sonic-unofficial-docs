@@ -165,7 +165,7 @@ YANG は `mandatory true` のため省略不可。
 
 | 値 | SAI マッピング | 意味 | evidence |
 |---|---|---|---|
-| `ANY` | `SAI_ACL_IP_TYPE_ANY` | IP/非IP 問わず全パケット | `aclorch.h:100`, `aclorch.cpp:503` |
+| `ANY` | `SAI_ACL_IP_TYPE_ANY` | IP/非IP 問わず全パケット | `aclorch.h:98`, `aclorch.cpp:503` |
 | `IP` | `SAI_ACL_IP_TYPE_IP` | IPv4 または IPv6 パケット | `aclorch.h:99`, `aclorch.cpp:504` |
 | `IPV4` | `SAI_ACL_IP_TYPE_IPV4ANY` | IPv4 パケット (YANG のみ、実装上 IPV4ANY と同義) | `sonic-acl.yang:125` |
 | `IPV4ANY` | `SAI_ACL_IP_TYPE_IPV4ANY` | IPv4 パケット | `aclorch.h:101`, `aclorch.cpp:506` |
