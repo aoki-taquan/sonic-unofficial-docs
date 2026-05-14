@@ -195,7 +195,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 > 1. `type='BackEndToRRouter' AND 'storage_device' IN DEVICE_METADATA` → ACL テーブルを `filter_acl_table_for_backend()` で特殊バインド（`minigraph.py:1828`）
 > 2. `type IN ['BackEndToRRouter','BackEndLeafRouter','BackEndSpineRouter'] AND 'storage_device' NOT IN DEVICE_METADATA` → IPinIP decap エントリ生成スキップ（`ipinip.json.j2:69`）
 > 3. `type='SpineRouter' AND subtype='UpstreamLC'` → BGP peer-group に `SELECTIVE_ROUTE_DOWNLOAD` table-map 適用（`peer-group.conf.j2:17,32`）
-> 4. `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` → FRR BGP graceful-restart 設定（`bgpd.main.conf.j2:118`）
+> 4. `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` → FRR BGP graceful-restart 設定（`bgpd.main.conf.j2:118`）  
+>    ↳ block 内参照: `constants.bgp.graceful_restart.enabled` (= `true`), `.restart_time` (= `240` 秒), `.select_defer_time` (未定義 → fallback `45` 秒)
 > 5. `type='LeafRouter' AND neighbor.type='ToRRouter'` → downlink バッファ・QoS 設定を生成（`buffers_config.j2:209; qos_config.j2:150`）
 > 6. `type NOT IN ['ToRRouter','EPMS','MgmtTsToR','MgmtToRRouter','BmcMgmtToRRouter']` → dhcp_relay feature 有効化（`init_cfg.json.j2:76`）
 
@@ -301,6 +302,21 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
   3. `sonic-buildimage/src/sonic-config-engine/minigraph.py` — type/switch_type で多数分岐
   4. `sonic-buildimage/dockers/docker-orchagent/orchagent.sh` — switch_type/synchronous_mode/async_swss_rec
   5. `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` — type/subtype/switch_type
+
+!!! note "Phase 11: bgpd.main.conf.j2 ブロック内 constants 実値"
+    `bgpd.main.conf.j2` の `{% if %}` ブロック全体を精読した結果、evidence 行外で以下の定数が使用されていることを確認:
+
+    | constants 参照 | 実値 (constants.yml) | 効果 |
+    |---|---|---|
+    | `constants.bgp.graceful_restart.enabled` | `true` | ToRRouter で BGP graceful-restart を有効化 |
+    | `constants.bgp.graceful_restart.restart_time` | `240` 秒 | graceful-restart タイマー |
+    | `constants.bgp.graceful_restart.select_defer_time` | 未定義 → fallback `45` 秒 | 経路選択遅延タイマー |
+    | `constants.bgp.multipath_relax.enabled` | `true` | 全ロールで `bgp bestpath as-path multipath-relax` |
+    | `constants.bgp.maximum_paths.ipv4` | `514` | IPv4 ECMP 最大パス数 (default 値 64 より大) |
+    | `constants.bgp.maximum_paths.ipv6` | `514` | IPv6 ECMP 最大パス数 |
+    | `constants.bgp.hide_internal_community` | `55555:55555` | FabricSpineRouter/LowerSpineRouter/UpperSpineRouter 時に HIDE_INTERNAL route-map へ additive 付与 |
+
+    また `peer-group.conf.j2` の LeafRouter 分岐 (L10) は `CONFIG_DB__BGP_BBR['status']` との複合条件であり、`BGP_BBR` テーブル参照が evidence 行外で発生する。
 
 <!-- /value-behavior -->
 
