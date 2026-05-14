@@ -234,4 +234,35 @@ show interfaces breakout
 
 > **スキャン証跡**: config/main.py L5467-5554 全行読了。ランタイムデーモンによる直接消費なし。分岐はすべて CLI コマンドパス内。4 件抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+### `brkout_mode`
+
+| 観点 | 値 / 挙動 | ソース |
+|------|----------|--------|
+| YANG default 宣言 | **なし** | `sonic-breakout_cfg.yang` |
+| YANG mandatory 宣言 | **なし**（ただし実装上は事実上必須） | `sonic-breakout_cfg.yang` |
+| 初期化デフォルト | `hwsku.json` の `default_brkout_mode` フィールド値（プラットフォーム依存） | `portconfig.py` L477 |
+| `port_config.ini` 環境 | BREAKOUT_CFG テーブル自体が生成されない（`get_breakout_mode` が `None` を返す） | `portconfig.py` L464-465 |
+| `config reload` 再初期化 | `sonic-cfggen` が `hwsku.json` の `default_brkout_mode` で上書き（CLI 設定が失われる） | `sonic-cfggen` L402-404 |
+| 欠落時の実行時挙動 | `config interface breakout` が `KeyError` で crash（YANG は optional だが実装は必須） | `config/main.py` L5488 |
+| `show interfaces breakout` 欠落時 | 対象ポートを silent skip（エラーなし） | `show/interfaces/__init__.py` L228-235 |
+
+### YANG vs 実装の discrepancy
+
+- **`brkout_mode` が optional (YANG) vs 事実上 mandatory (実装)**: `cur_brkout_dict[interface_name]["brkout_mode"]` への直接アクセスにより、フィールド欠落で `KeyError` が発生する。YANG に `mandatory true` が宣言されていないが実装上は必須。
+
+### `brkout_mode` 値による PORT テーブルへの暗黙派生
+
+`config interface breakout` 実行時に `BreakoutCfg.get_config()` がチャイルドポートの PORT エントリを自動生成する際の暗黙ルール:
+
+| 条件 | PORT エントリへの暗黙付与 | ソース |
+|------|------------------------|--------|
+| `default_speed / lanes_per_port >= 50000` (50G/lane 以上) | `fec: rs` が PORT テーブルに自動設定 | `portconfig.py` L387-388 |
+| `total_num_ports == 1`（単一ポート構成） | `subport: "0"` | `portconfig.py` L383 |
+| `total_num_ports > 1`（複数分割） | `subport: "1"` 〜 `"N"`（連番） | `portconfig.py` L383 |
+
+> これらは BREAKOUT_CFG 自身のフィールドではなく、`brkout_mode` 値に依存した **PORT テーブルへの暗黙派生**。YANG に記述なし。
+<!-- /defaults -->
 <!-- glossary-links-injected: 17ab2ab6ed91 -->
