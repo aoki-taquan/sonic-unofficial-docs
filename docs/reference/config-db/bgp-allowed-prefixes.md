@@ -88,6 +88,51 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 - 関連 CLI: 専用 CLI なし。`sonic-cfggen` / minigraph 経由で投入されるのが通常
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-allowed-prefix`, `sonic-routing-policy-sets`
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+YANG の `default` 節には値がないが、`bgpcfgd` (`managers_allow_list.py`) が実行時に適用する暗黙デフォルトが存在する。書き込み時 (SET) と実行時 (FRR 生成) で乖離が生じる点に注意。
+
+### `default_action`
+
+| 条件 | fallback 値 | フェーズ | 根拠 |
+|------|------------|---------|------|
+| フィールド省略時 (SET) | `constants["bgp"]["allow_list"]["default_action"]` の値 → なければ `drop_community` を返す (`"permit"` 相当) | 書き込み時 | `managers_allow_list.py:773-785` |
+| DEL 後の残置ルール | 同上 (`data=None` で呼ばれる) | 実行時 | `managers_allow_list.py:197` |
+| `constants.yml` の実値 | `default_action: "permit"`, `drop_community: "5060:12345"` | — | `files/image_config/constants/constants.yml:33-34` |
+
+> 書き込み時と実行時で同じ constants を参照するため**乖離なし**。ただし constants を後から変更しても既存ルールは再 SET するまで更新されない。
+
+### `prefixes_v4` / `prefixes_v6`
+
+| 条件 | fallback 動作 | フェーズ | 根拠 |
+|------|--------------|---------|------|
+| フィールド省略 (key なし) | `[]` (空リスト) として処理 | 書き込み時 | `managers_allow_list.py:70-71` |
+| 両方空の場合 | validate 失敗 (`log_err` + `return False`) | 書き込み時 | `managers_allow_list.py:107-109` |
+| FRR prefix-list 生成時 | `constants["bgp"]["allow_list"]["default_pl_rules"]["v4/v6"]` を先頭に prepend | 実行時 | `managers_allow_list.py:265-266` |
+| v4 constants 実値 | `["deny 0.0.0.0/0 le 17", "permit 127.0.0.1/32"]` | — | `constants.yml:36-38` |
+| v6 constants 実値 | `["deny 0::/0 le 59", "deny 0::/0 ge 65"]` | — | `constants.yml:39-41` |
+
+> **書き込み時 vs 実行時の乖離**: CONFIG_DB 上の `prefixes_v4` / `prefixes_v6` が空でも、FRR の実 prefix-list には constants 由来のエントリが必ず挿入される。
+
+#### `__to_prefix_list` による暗黙の `le` 補完
+
+`le` / `ge` 修飾子がなく、かつマスク長が `/32` (v4) / `/128` (v6) 未満の prefix は FRR 送出時に自動で `le 32` / `le 128` が付与される。例: `10.0.0.0/8` → `permit 10.0.0.0/8 le 32`。`managers_allow_list.py:736-754`。
+
+### キーフィールドの暗黙補完
+
+| key 部分 | 省略時の値 | 根拠 |
+|---------|-----------|------|
+| `community_value` (key に community なし) | `"empty"` (`EMPTY_COMMUNITY`) | `managers_allow_list.py:15,64,67` |
+| `neighbor_type` (key に NEIGHBOR_TYPE なし) | `''` (空文字) | `managers_allow_list.py:68` |
+| `prefix_match_tag` (constants に未定義) | `None` → `set tag` 行を生成しない | `managers_allow_list.py:657` |
+
+### 機能無効時
+
+`constants["bgp"]["allow_list"]["enabled"]` が `false` または存在しない場合、SET/DEL 両方とも warn log のみで消化される（テーブル処理が完全スキップ）。`managers_allow_list.py:699-707`。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

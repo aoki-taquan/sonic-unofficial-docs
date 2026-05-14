@@ -285,4 +285,41 @@ vtysh -c 'show running-config bgpd'
 
 > **スキャン証跡**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## Phase A: コード由来の暗黙デフォルト
+
+YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文を持つリーフが**ゼロ**（全フィールド optional）。以下は frrcfgd (`global_key_map` + Jinja2 テンプレート) のコードから判明した実行時 fallback。
+
+### FRR 組み込みデフォルトが暗黙適用されるフィールド
+
+| フィールド | CONFIG_DB 未設定時の動作 | FRR 組み込みデフォルト | evidence |
+|-----------|----------------------|---------------------|---------|
+| `fast_external_failover` | frrcfgd は何も送出しない | **有効 (true)** | `global_key_map` の `['true','false',True]` — 第3要素 `True` は DELETE 時に「FRR デフォルトの有効状態に戻す」ことを示す。J2 テンプレート L33 も `== 'false'` 時のみ `no bgp fast-external-failover` を発行 (`frrcfgd.py:1798`, `bgpd.conf.db.j2:33`) |
+| `rr_clnt_to_clnt_reflection` | frrcfgd は何も送出しない | **有効 (true)** | 同上パターン。J2 テンプレート L64 も `== 'false'` 時のみ `no bgp client-to-client reflection` を発行 (`frrcfgd.py:1801`, `bgpd.conf.db.j2:64`) |
+
+### 書き込み時デフォルト vs 実行時 fallback の乖離
+
+| フィールド | J2 テンプレート (bgpcfgd) の動作 | frrcfgd key_map の動作 | 乖離 |
+|-----------|-------------------------------|----------------------|------|
+| `default_ipv4_unicast` | 未設定時も `else` 節で `no bgp default ipv4-unicast` を発行 → **実質 false** | `['true','false']` — 未設定なら何も送出しない | **あり**: bgpcfgd 経由では未設定 = 無効扱いになる (`bgpd.conf.db.j2:46-50`) |
+
+### 複合制約: 両フィールドが揃わないと FRR コマンド未生成
+
+| フィールドセット | 制約 | 効果 | evidence |
+|----------------|------|------|---------|
+| `keepalive` + `holdtime` | `comb_attr_list={'keepalive','holdtime'}` — 片方のみでは集合全体を除去 | FRR タイマー未更新。両方セット時のみ `timers bgp <k> <h>` 発行 | `frrcfgd.py:3936, 1820` |
+| `max_delay` (必須) + `establish_wait` (optional) | `max_delay` がトリガー。`establish_wait` は存在すれば追記 | `max_delay` なしで `establish_wait` 単独は無意味 | `frrcfgd.py:1817`, `bgpd.conf.db.j2:76-83` |
+| `max_med_time` (必須) + `max_med_val` (optional) | `max_med_time` がトリガー | startup max-med は `max_med_time` が必須 | `frrcfgd.py:1816`, `bgpd.conf.db.j2:84-91` |
+| `max_med_admin` (必須 `true`) + `max_med_admin_val` (optional) | `max_med_admin == 'true'` がトリガー | admin max-med は `max_med_admin` が必須 | `frrcfgd.py:1821` |
+
+### YANG デフォルトが存在するフィールド（サブテーブル）
+
+| テーブル | フィールド | YANG default | evidence |
+|---------|-----------|-------------|---------|
+| `BGP_GLOBALS_AF` | `max_ebgp_paths` | **1** | `sonic-bgp-global.yang:345` |
+| `BGP_GLOBALS_AF` | `max_ibgp_paths` | **1** | `sonic-bgp-global.yang:354` |
+
+> **スキャン証跡**: `frrcfgd.py` `global_key_map` L1784-1821 全行読了、`get_command_cmn()` L374-413 全行読了、`bgpd.conf.db.j2` 全行読了、`sonic-bgp-global.yang` 全行読了。
+<!-- /defaults -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->

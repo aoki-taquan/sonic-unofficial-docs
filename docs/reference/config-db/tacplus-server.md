@@ -251,4 +251,52 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L87-89 L366-370 L648-665, sonic-utilities/config/aaa.py L266-267 L283-286, sonic-host-services/data/templates/common-auth-sonic.j2, sonic-host-services/data/templates/tacplus_nss.conf.j2 -->
+
+### ハードコードデフォルト (hostcfgd モジュール定数)
+
+| フィールド | コード定数 | 値 | 適用タイミング |
+|-----------|----------|-----|-------------|
+| `timeout` | `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` | `TACPLUS\|global` 未設定時に全サーバーへ fallback |
+| `auth_type` | `TACPLUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | 同上 |
+| `passkey` | `TACPLUS_SERVER_PASSKEY_DEFAULT` | `""` (空文字) | 同上。空文字は pam_tacplus に渡され認証失敗の可能性あり（silent） |
+
+`tacplus_global_default` が `modify_conf_file()` 冒頭で常に初期化され、`TACPLUS|global` 取得値で上書きされる。つまり `TACPLUS|global` 自体が存在しなくても上記 3 値が補完される。
+
+### CLI 書き込み時デフォルト
+
+`config tacacs add <ip>` は以下を**常に** CONFIG_DB へ書き込む（オプション省略時も）:
+
+| フィールド | CLI デフォルト | 証跡 |
+|-----------|-------------|------|
+| `tcp_port` | `49` | `aaa.py L266: default=49` |
+| `priority` | `1` | `aaa.py L267: default=1` |
+
+`auth_type`、`timeout`、`passkey`、`vrf` は CLI オプションが渡された場合のみ書き込まれる。
+
+### global → per-server 継承
+
+`modify_conf_file()` はサーバーごとに `tacplus_global.copy()` をベースとして per-server の値で上書きする。`TACPLUS|global.auth_type` / `timeout` / `passkey` が per-server の未設定フィールドに自動継承される。
+
+### dead field: `key_encrypt`
+
+YANG では `key_encrypt` フィールドが両テーブルに定義されデフォルト `false`。しかし hostcfgd の `modify_conf_file()` および全テンプレートで `key_encrypt` への参照がゼロ。passkey は CONFIG_DB 値をそのまま pam_tacplus に展開する。`key_encrypt=true` に設定しても暗号化/復号処理は行われず、暗号文が secret として渡り認証失敗になる。**YANG-実装 discrepancy**。
+
+### dead consumer: `src_intf`
+
+YANG: `TACPLUS|global.src_intf` (leafref union)。hostcfgd は `if 'src_ip' in tacplus_global` を参照するが、`src_intf` を IP アドレスに解決するコードがない (RADIUS には実装済み)。`src_intf` を設定しても PAM / NSS 設定に `source_ip=` は挿入されない。TACPLUS の送信元 interface 指定機能は実質的に動作しない。**YANG-実装 discrepancy**。
+
+### `priority` 未設定時の KeyError リスク
+
+hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする。`priority` が DB に存在しない場合 `KeyError` 後に `int()` で `ValueError` が発生し設定ファイル生成が中断する。CLI は常に `priority=1` を書くが、直接 DB 操作時は注意。
+
+### `aaa.authentication.login` 経路依存
+
+`TACPLUS_SERVER` にエントリがあっても `AAA|authentication.login` に `tacacs+` が含まれない場合、hostcfgd は PAM への TACACS+ 行生成をスキップし nsswitch.conf への `tacplus` 追加も行わない。設定値が存在しても認証に効果なし (silent skip)。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: e0332a023fdb -->

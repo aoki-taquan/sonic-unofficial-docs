@@ -62,6 +62,8 @@ DHCP_RELAY|<name>
 
 `rfc6939_support` / `interface_id` は [YANG](../../reference/glossary.md#term-yang) 上 `pattern "false|true"` の string 型（boolean ではない）。[CONFIG_DB](../../reference/glossary.md#term-config_db) の慣習で文字列リテラル。
 
+> **注意 (YANG-実装 discrepancy)**: `dhcp6relay` daemon は YANG が定義する flat field キー名（`rfc6939_support` / `interface_id`）ではなく、`dhcpv6_option|rfc6939_support` / `dhcpv6_option|interface_id`（フィールド名にパイプ `|` を含む形式）を読む。YANG バリデーションを通過した設定が daemon に届かない silent drop が発生する可能性がある（`config_interface.cpp:169,172` / `mock_config.py` 参照）。
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -146,9 +148,12 @@ show dhcprelay_helper ipv4
 | dhcp6relay | 登録 VLAN が VLAN_INTERFACE テーブルに存在しない | `LOG_WARNING: "%s doesn't exist in VLAN_INTERFACE table, skip it"` を出力してスキップ（config_interface.cpp:135） |
 | dhcp6relay | VLAN に IPv6 アドレス未設定 | `LOG_WARNING: "%s doesn't have IPv6 address configured, skip it"` を出力してスキップ（config_interface.cpp:146） |
 | dhcp6relay | VLAN にサーバアドレスが 0 件 | `LOG_WARNING: "No servers found for VLAN %s, skipping configuration."` を出力（config_interface.cpp:177） |
-| dhcp6relay | `dhcpv6_option\|interface_id` フィールド未設定 | 非 Dual-ToR 環境では `false`、Dual-ToR 環境では `true` をデフォルト使用（config_interface.cpp:117-121） |
+| dhcp6relay | `dhcpv6_option\|interface_id` 未設定 | 非 Dual-ToR 環境: `false`、Dual-ToR 環境: `true` をデフォルト使用（config_interface.cpp:117-121） |
+| dhcp6relay | `dhcpv6_option\|rfc6939_support` 未設定 | `true`（Option 79 付与）をハードコードデフォルト使用（config_interface.cpp:117） |
+| dhcp6relay | DHCP_RELAY 設定変更（起動後） | 動的変更は無視。"need restart container" ログのみ出力（config_interface.cpp:76-78） |
+| dhcp6relay | YANG 経由の `rfc6939_support`/`interface_id` 書込み | daemon は `dhcpv6_option\|` prefix 付きキーを読むため YANG flat key 設定は silent drop |
 
-> **Evidence**: sonic-dhcp-relay `dhcp6relay/src/config_interface.cpp:117-177`
+> **Evidence**: sonic-dhcp-relay `dhcp6relay/src/config_interface.cpp:76-182`、`sonic-buildimage/dockers/docker-dhcp-relay/cli-plugin-tests/mock_config.py`
 <!-- /cdb-exceptions -->
 
 
@@ -176,6 +181,45 @@ show dhcprelay_helper ipv4
 **副作用**: DHCP server アドレスの変更は relay 転送先を変更。サービス再起動中 DHCP relay が一時停止する。
 <!-- /runtime-trace -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読 (2026-05-14)
+
+### `rfc6939_support` — ハードコードデフォルト `true` + YANG-実装 discrepancy
+
+| 状態 | 実行時挙動 |
+|---|---|
+| フィールド未設定 | RFC 6939 Option 79 を**有効**（ハードコード `option_79_default = true`、cpp:117） |
+| フィールド = `"false"` | Option 79 無効（cpp:169 で明示 override） |
+| フィールド = `"true"` | Option 79 有効（デフォルトと同じ） |
+
+**YANG-実装 discrepancy**: YANG モデルは `rfc6939_support` を `DHCP_RELAY|<vlan>` の flat field として定義するが、C++ daemon は `dhcpv6_option|rfc6939_support`（フィールド名にパイプを含む Redis hash key）を読む（cpp:169）。YANG 経由で `rfc6939_support = "false"` を書き込んでも daemon は読まず **silent drop** — 常にハードコードデフォルト `true` で動作する。CLI テスト mock は `dhcpv6_option|rfc6939_support` 形式を使用（`mock_config.py` 参照）。
+
+### `interface_id` — プラットフォーム依存デフォルト + YANG-実装 discrepancy
+
+| 環境 | フィールド未設定時の挙動 |
+|---|---|
+| 非 DualToR | Interface-ID オプション**無効**（ハードコード `interface_id_default = false`、cpp:118） |
+| DualToR (`dual_tor_sock` 存在) | Interface-ID オプション**有効**（cpp:121 で `true` に変更） |
+
+**DualToR 判定**: `dhcpv6-relay.agents.j2:16` で `DEVICE_METADATA.localhost.subtype == "DualToR"` の場合に `-u Loopback0` オプションが付き `dual_tor_sock` が生成される。`interface_id` のデフォルトは **DEVICE_METADATA.subtype に間接依存**。
+
+**YANG-実装 discrepancy**: `rfc6939_support` と同様、YANG の flat field `interface_id` ではなく `dhcpv6_option|interface_id` を daemon が読む（cpp:172）。YANG 経由の設定は **silent drop**。
+
+### `dhcpv6_servers` — 空リスト時の silent skip
+
+`dhcpv6_servers` が空または未設定の VLAN は vlans マップに登録されない（cpp:176-179）。ログ出力のみで relay は無効（エラーなし）。
+
+### 動的変更の dead consumer
+
+`dhcp6relay` 起動後に `DHCP_RELAY` を変更しても設定は反映されない（cpp:76-78: "need restart container to take effect"）。**コンテナ再起動が必要**。ライブ変更は complete dead consumer。
+
+### minigraph / CLI による書込みフィールドの制限
+
+`sonic-cfggen` (minigraph.py:1071-1078) および CLI plugin (`dhcp_relay.py`) は `dhcpv6_servers` のみ `DHCP_RELAY` に書き込み、`rfc6939_support` / `interface_id` は**書き込まない**。これらは daemon のハードコードデフォルト（`true` / 環境依存）が適用される。
+<!-- /defaults -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -186,7 +230,7 @@ show dhcprelay_helper ipv4
   - ソース: `sonic-utilities/config/vlan.py`
 
 ### minigraph / sonic-cfggen
-- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
+- あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる。`dhcpv6_servers` のみ書き込まれ、`rfc6939_support` / `interface_id` は省略される（minigraph.py:1071-1078）
 
 ### REST / gNMI (sonic-mgmt-common)
 - なし (対応 OpenConfig/SONiC YANG transformer なし)
@@ -198,10 +242,65 @@ show dhcprelay_helper ipv4
 - なし
 
 ### ハードコードデフォルト
-- なし
+- `rfc6939_support` 未設定 → daemon 内部で `true`（Option 79 有効）
+- `interface_id` 未設定 → 非 DualToR: `false`、DualToR: `true`
 
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 概要
+
+`DHCP_RELAY` テーブルの consumer (`dhcp6relay`) は **起動時に一度だけ** CONFIG_DB を読み込む設計であり、ランタイム中の変更は無視される。そのため SET/DEL の順序と、先行テーブルの存在有無が動作に直接影響する。
+
+### 順序依存マトリクス
+
+| フィールド / 操作 | 依存テーブル / 条件 | 順序制約 | 違反時の挙動 |
+|-----------------|-------------------|---------|------------|
+| key (`<vlan>`) SET | `VLAN_INTERFACE\|<vlan>\|*` (IPv6 アドレス付き) が CONFIG_DB に存在すること | `VLAN` → `VLAN_INTERFACE`（IPv6 prefix 付き）→ `DHCP_RELAY` の順 | `LOG_WARNING: "%s doesn't exist in VLAN_INTERFACE table, skip it"` でスキップ。エントリは書き込まれるが dhcp6relay に反映されない |
+| key (`<vlan>`) SET | VLAN インタフェースに IPv6 アドレスが設定済みであること | `VLAN_INTERFACE` の IPv6 prefix 設定 → `DHCP_RELAY` SET | `LOG_WARNING: "%s doesn't have IPv6 address configured, skip it"` でスキップ |
+| `dhcpv6_servers` SET/DEL | dhcp_relay サービス再起動 | SET/DEL 後に `systemctl stop/reset-failed/start dhcp_relay` | 設定変更後に再起動しないと `LOG_WARNING: "relay config changed, need restart container to take effect"` が出力され反映されない |
+| `dhcpv6_servers` 追加順 | — | CLI `add` は末尾 append (`dhcp_servers.append`) | 追加順が dhcp6relay の upstream スキャン順（`ordered-by user`）に直結。後から追加したサーバは優先度が低い |
+| `dhcpv6_servers` 全削除 DEL | dhcp_relay サービス再起動 | DEL 後に再起動しないと vlans マップがメモリ上に残留 | dhcp6relay プロセスはリレーを継続する（DEL は未反映）。再起動でのみリセット |
+| `rfc6939_support` / `interface_id` | 起動時の `DEVICE_METADATA.subtype` / `-u` 引数 | サービス起動前に確定（boot 時）。変更は再起動が必要 | DualToR 環境では `-u Loopback0` 引数で `dual_tor_sock=true` → `interface_id` デフォルト `true`。非 DualToR はデフォルト `false` |
+| 全フィールド（boot 時） | STATE_DB `INTERFACE_TABLE\|<vlan>\|<prefix>\|state == ok` | `wait_for_intf.sh` が STATE_DB をポーリングし、インタフェース up 確認後さらに 10 秒待機してから dhcp6relay を起動 | VLAN インタフェースが STATE_DB に `ok` 状態で現れる前に dhcp_relay コンテナを起動しても dhcp6relay は起動しない |
+
+### Evidence
+
+- `config_interface.cpp:63-79` — `get_dhcp` が `dynamic=true` 時に変更を無視して警告ログを出すコードパス
+- `config_interface.cpp:117-121` — `dual_tor_sock` による `interface_id_default` 切り替え
+- `config_interface.cpp:130-143` — `VLAN_INTERFACE|<vlan>|*` キー存在チェック + IPv6 アドレス確認
+- `config_interface.cpp:145-148` — `has_ipv6_address == false` 時のスキップ
+- `config_interface.cpp:160-165` — `dhcpv6_servers` の順序付き push_back（`ordered-by user` 反映）
+- `config_interface.cpp:176-179` — `servers.empty()` 時のスキップ
+- `dhcp_relay.py:51-61` — `restart_dhcp_relay_service`: add/del 後に `systemctl stop/reset-failed/start dhcp_relay` を自動実行
+- `dhcp_relay.py:155-162` — `del_dhcp_relay`: servers が空になると `set_entry(None)` でエントリ全削除 (DEL 伝播)
+- `wait_for_intf.sh.j2:12-19` — STATE_DB `INTERFACE_TABLE|<intf>|<prefix>|state` ポーリング
+- `wait_for_intf.sh.j2:49-52` — `sleep 10` (インタフェース ready 後の追加待機)
+- `docker-dhcp-relay.supervisord.conf.j2:33-44` — `start` (priority=2) → `dhcp6relay` (priority=3, `dependent_startup_wait_for=start:exited`)
+- `dhcpv6-relay.agents.j2:2-10` — `DHCP_RELAY[vlan_name]['dhcpv6_servers']|length > 0` で dhcp6relay プログラムエントリ生成を制御
+
+### LSP トレース証跡
+
+```
+main.cpp:37          initialize_swss(vlans)
+  └── config_interface.cpp:22      SubscriberStateTable("DHCP_RELAY")  ← 購読登録
+  └── config_interface.cpp:24      get_dhcp(vlans, &ipHelpersTable, false, configDbPtr)
+        └── config_interface.cpp:66       swssSelect.select()
+        └── config_interface.cpp:72-79    selectable == ipHelpersTable && !dynamic
+              └── handleRelayNotification(...)
+                    └── processRelayNotification(entries, vlans, config_db)
+                          ├── config_interface.cpp:130-143  VLAN_INTERFACE IPv6 チェック
+                          ├── config_interface.cpp:160-165  dhcpv6_servers push_back (順序保持)
+                          ├── config_interface.cpp:169      rfc6939_support="false" → is_option_79=false
+                          ├── config_interface.cpp:172-173  interface_id="true" → is_interface_id=true
+                          └── config_interface.cpp:176-183  servers.empty() → skip; else vlans[vlan]=intf
+
+main.cpp:38          loop_relay(vlans)  ← 取り込んだ vlans でリレーループ開始（以降変更不可）
+```
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 11715e560dc6 -->

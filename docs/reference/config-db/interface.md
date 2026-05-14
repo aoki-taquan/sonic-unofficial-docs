@@ -4,7 +4,7 @@ description: "INTERFACE テーブル — 物理 Ethernet ポート (PORT) を L3
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-14
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-interface.yang
@@ -361,4 +361,120 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 ```
 
 <!-- /pubsub -->
+
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> 調査日: 2026-05-14
+
+### 属性ロウ
+
+| フィールド | YANG default | 実装上の暗黙デフォルト / fallback | 備考 |
+|-----------|-------------|----------------------------------|------|
+| `nat_zone` | `"0"` | C++ 初期値 `0`、SAI default `0` — YANG と一致 | `gIsNatSupported==false` の場合 SAI 未設定 (プラットフォーム依存) |
+| `mpls` | なし | 省略時 → Linux `sysctl input=0`、SAI RIF 作成時に `ADMIN_MPLS_STATE` 属性を省略 (SAI default = disabled) | 不正値 → `SWSS_LOG_ERROR` + `return false`、エントリがキューに残り retry |
+| `ipv6_use_link_local_only` | `disable` | 省略時は何もしない (APP_DB に書かない) | IF 削除時に `m_ipv6LinkLocalModeList` と link-local neigh を自動 reset。warm reboot 後は in-memory リストが空に戻るため再 replay なし |
+| `mac_addr` | なし | 省略時 → intfmgr が `"00:00:00:00:00:00"` を APP_DB に書き込み、orchagent が switch global MAC (`gMacAddress`) を SAI に設定 — **CONFIG_DB の空値と SAI 実際値が乖離** | silent substitution: APP_DB 上は `00:00:00:00:00:00`、SAI では switch MAC |
+| `loopback_action` | なし | 省略時 → SAI RIF 作成時に `LOOPBACK_PACKET_ACTION` 属性を省略 → SAI プラットフォームデフォルト動作 | 不正値 → `SWSS_LOG_WARN` + 設定スキップ (silent drop of setting) |
+| `vrf_name` / `vnet_name` | なし | 省略時 → グローバル VRF (`gVirtualRouterId`) | VRF 直接変更不可: `SWSS_LOG_ERROR` → 2 ステップ (unbind → rebind) 必須 |
+
+### IP プレフィクスロウ
+
+| フィールド | YANG default | 実装上の暗黙デフォルト / fallback | 備考 |
+|-----------|-------------|----------------------------------|------|
+| `scope` | なし | **dead field**: intfmgr は CONFIG_DB の `scope` を無視し、常に `"global"` を APP_DB に書き込む | `scope=local` を書いても orchagent には `global` が届く |
+| `family` | なし | **dead field**: intfmgr は CONFIG_DB の `family` を無視し、ip-prefix の `:` / `.` から `IPv6`/`IPv4` を自動計算して APP_DB に書く | IPv4 link-local (169.254.x.x) は APP_DB / SAI に送られない (silent drop) |
+
+### ハードコード固定値
+
+| 定数 | 値 | 適用箇所 |
+|------|----|---------|
+| `DEFAULT_MTU_STR` | `9100` | subintf に `mtu` 未設定時のデフォルト MTU (intfmgr.cpp L29) |
+| `LOOPBACK_DEFAULT_MTU_STR` | `65536` | Loopback 作成時の MTU (intfmgr.cpp L28) |
+| `MTU_INHERITANCE` | `"0"` | subintf で mtu 省略時に APP_DB に書く値。orchagent 側で親 PORT MTU を継承するシグナル |
+| admin_status fallback | `"up"` | Loopback IF で `admin_status` 省略または不正値のとき強制 up (intfmgr.cpp L862-869) |
+
+### 前提条件依存
+
+1. **IP プレフィクスロウ追加は L3 enable 行が先**: `isIntfCreated()` が false の場合スキップ → retry
+2. **PORT が STATE_DB に `state=ok`**: `isIntfStateOk()` 確認 → 未 ready はキューに戻す
+3. **VRF が STATE_DB に ready**: `isIntfStateOk(vrf_name)` → 未 ready はスキップ
+4. **eth0 / docker0 / usb0 は silent drop**: intfsorch が即 erase (SAI に届かない)
+<!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/device/mellanox|broadcom/*/sai.profile`
+> 調査日: 2026-05-14
+
+### `nat_zone` — SAI capability query による有効/無効
+
+`gIsNatSupported` フラグが `false` の ASIC では `nat_zone` フィールドを設定しても SAI に渡されない。起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を取得し、返り値が `0` なら NAT 非対応と判断する。
+
+```cpp
+// main.cpp:936-947
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0) {
+    gIsNatSupported = true;
+}
+// intfsorch.cpp:1287-1294
+if (gIsNatSupported) {
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID;
+    ...
+}
+```
+
+| ASIC / プラットフォーム | `nat_zone` SAI 反映 |
+|------------------------|---------------------|
+| NAT HW オフロード対応 ASIC | 反映される |
+| NAT 非対応 ASIC (SAI が `AVAILABLE_SNAT_ENTRY=0` を返す) | 黙殺 |
+| VS (virtual switch) | 反映される (`AVAILABLE_SNAT_ENTRY=100` を返す) |
+
+### `ipv6_use_link_local_only` — Mellanox/NVIDIA 専用 SAI プロファイルキー
+
+Mellanox/NVIDIA の全 SKU `sai.profile` に `SAI_NOT_DROP_SIP_DIP_LINK_LOCAL=1` が設定されている（`Mellanox-SN2700/sai.profile`, `Mellanox-SN4700-C128/sai.profile` 等）。
+
+```
+SAI_NOT_DROP_SIP_DIP_LINK_LOCAL=1
+```
+
+Mellanox/NVIDIA ASIC はデフォルトで link-local (169.254.x.x / fe80::/10) パケットをハードウェアでドロップする。このキーを `1` にすることで L3 インタフェース経由の転送を許可する。Broadcom / Marvell / Barefoot の `sai.profile` にはこのキーが存在しない。
+
+`INTERFACE|<port>` に `ipv6_use_link_local_only: enable` を設定しても、Mellanox 側の `sai.profile` 未設定環境では link-local パケットが ASIC 段でドロップされ続ける可能性がある。
+
+### `loopback_action` — SAI プラットフォームデフォルト依存
+
+省略時は `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` 属性を SAI に渡さず、ASIC プラットフォームのデフォルト動作に委ねる。ASIC ベンダーによってデフォルト動作が異なるため、`loopback_action` 未設定時の実際の挙動はベンダー依存。
+
+### `proxy_arp` — VLAN IF のみ SAI 操作、物理 IF は SAI 無変更
+
+```cpp
+// intfsorch.cpp:409-425
+if (port.m_type == Port::VLAN) {
+    // SAI_VLAN_ATTR_BROADCAST_FLOOD_CONTROL_TYPE を変更
+    // SAI_VLAN_ATTR_UNKNOWN_MULTICAST_FLOOD_CONTROL_TYPE も変更
+}
+// PHY / LAG には SAI 変更なし
+```
+
+物理 Ethernet ポートに `proxy_arp` を設定してもカーネル層での処理となり、SAI/ASIC 側には変更が走らない。VLAN IF のみ SAI VLAN flood type を制御する。
+
+### `mac_addr` — VS プラットフォームでの特例
+
+実 ASIC では orchagent が `mac_addr` 省略時に switch global MAC (`gMacAddress`) を SAI に設定する。VS (virtual switch) プラットフォーム (`ASIC_VENDOR=vs`) では、近傍プログラミング時に `gMacAddress` への置換をスキップし元の MAC を保持する特例がある（`neighorch.cpp:2213-2218`）。
+
+### SAI 初期化ファイルによる RIF 上限差
+
+| プラットフォーム | SAI 設定方式 | 備考 |
+|----------------|-------------|------|
+| Mellanox/NVIDIA | XML ファイル (`sai_<chip>.xml`) | `SAI_INIT_CONFIG_FILE` で指定 |
+| Broadcom (Arista 等) | `config.bcm` ファイル | `SAI_INIT_CONFIG_FILE` で指定 |
+
+RIF (Router Interface) 数上限・ECMP メンバ数はこれらの初期化ファイルで決定される。`INTERFACE` テーブルで大量の L3 IF を作成する場合は ASIC ごとの制限に注意が必要。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 8c01908c2492 -->

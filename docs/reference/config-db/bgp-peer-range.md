@@ -239,4 +239,49 @@ vtysh -c 'show bgp listen range'
 
 > **スキャン証跡**: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の `no listen range` テンプレート使用を確認。3 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## フィールド暗黙デフォルトと fallback
+
+### `peer_asn` — `deployment_id_asn_map` fallback
+
+`peer_asn` を省略すると `instance.conf.j2` が `constants.deployment_id_asn_map` を参照して自動的に AS 番号を決定する。
+
+```
+peer_asn 未設定
+  → constants.yml deployment_id_asn_map[DEVICE_METADATA.localhost.deployment_id]
+    "1" → 65432
+    "2" → 65433
+  → DEVICE_METADATA に deployment_id が未設定 → Jinja2 KeyError → log_err + drop
+```
+
+YANG は `peer_asn` を optional としているが、この fallback の存在は YANG に記載がない。
+
+### `src_address` — Loopback1 ハードコード fallback
+
+`src_address` を省略すると `instance.conf.j2` は `Loopback1` の IPv4 アドレスをハードコード参照する。`"Loopback1"` という名前は CONFIG_DB 経由で変更できない。Loopback1 が未設定の場合は Jinja2 エラーで drop される。
+
+### ハードコード固定値（CONFIG_DB 非依存）
+
+以下は全 `BGP_PEER_RANGE` エントリに無条件で適用されるハードコード設定。フィールドで制御する手段はない。
+
+| FRR コマンド | 固定値 |
+|------------|--------|
+| `neighbor <name> passive` | 常時 passive |
+| `neighbor <name> ebgp-multihop` | 255 固定 |
+| `neighbor <name> soft-reconfiguration inbound` | 常時有効 |
+| `neighbor <name> route-map FROM_BGP_SPEAKER in` | route-map 名固定 |
+| `neighbor <name> route-map TO_BGP_SPEAKER out` | route-map 名固定 |
+| `address-family ipv4/ipv6 activate` | 両 AF 常時有効 |
+
+### `ip_range` — 空値の silent no-op
+
+`ip_range` が空文字の場合 `change_ip_range()` の `if data['ip_range']:` ガードでスキップされ、FRR に `bgp listen range` コマンドが発行されない（エラーなし・silent）。YANG の leaf-list はゼロ要素を許容するが実質的に意味をなさない。
+
+### 書き込み経路依存乖離（gNMI bypass）
+
+`sonic-gnmi` の `bypass.go` で `BGP_PEER_RANGE` は `AllowedTables` に登録されており、gNMI Set 時に DBUS/GCU 検証をバイパスして CONFIG_DB 直接書き込みが可能。ただし Cisco-8102/8101/8223 HwSku のみに制限される。
+
+> **ソース**: `dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/instance.conf.j2`, `bgpcfgd/managers_bgp.py` L358-386, `files/image_config/constants/constants.yml`, `sonic-gnmi/pkg/bypass/bypass.go` L29
+
+<!-- /defaults -->
 <!-- glossary-links-injected: 9543a3643673 -->

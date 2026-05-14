@@ -231,6 +231,62 @@ ACL_RULE で使用可能な match / action は ACL_TABLE の `type` によって
 5. `PACKET_ACTION=REDIRECT:` のコロン後ターゲット欠如 → `return false` → rule INACTIVE (`aclorch.cpp:2020-2028`)
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG 未定義テーブルのため、全デフォルトはコード実装が正本。
+
+### field × 種別 一覧
+
+| フィールド / 属性 | 種別 | 暗黙デフォルト値 | ソース |
+|---|---|---|---|
+| `PRIORITY` (C++) | `__init__` 属性 literal | `m_priority = 0` (コンストラクタ初期値) | `aclorch.cpp:905` |
+| `PRIORITY` min/max | SAI 動的取得 | `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM/MAXIMUM_PRIORITY` を起動時に問合せ | `aclorch.cpp:3689-3696` |
+| `PRIORITY` (acl_loader) | Python literal | `max_priority - sequence_id`; `max_priority = 10000` | `acl_loader/main.py:93,772` |
+| `PRIORITY` (acl_app.go) | Go literal | `MAX_PRIORITY - seqId`; `MAX_PRIORITY = 65536` | `acl_app.go:56,1153` |
+| `TCP_FLAGS` mask | C++ fallback (`else` branch) | マスク省略時 `0x3F` (6bit フルマスク) | `aclorch.cpp:1061` |
+| `DSCP` match mask | C++ fallback (`else` branch) | マスク省略時 `0x3F` (6bit フルマスク) | `aclorch.cpp:1090-1093` |
+| `ETHER_TYPE` / `L4_SRC_PORT` / `L4_DST_PORT` mask | C++ 固定 | 常に `0xFFFF` | `aclorch.cpp:1067` |
+| `VLAN_ID` mask | C++ 固定 | 常に `0xFFF` (12bit) | `aclorch.cpp:1072` |
+| `IP_PROTOCOL` / `NEXT_HEADER` / `TC` / `ICMP_*` mask | C++ 固定 | 常に `0xFF` | `aclorch.cpp:1099,1151,1156` |
+| `IP_TYPE` mask | C++ 固定 | 常に `0xFFFFFFFF` | `aclorch.cpp:1046` |
+| `TUNNEL_VNI` / `META_DATA` mask | C++ 固定 | 常に `0xFFFFFFFF` | `aclorch.cpp:1163,1208` |
+| `INNER_ETHER_TYPE` / `INNER_L4_*PORT` mask | C++ 固定 | 常に `0xFFFF` | `aclorch.cpp:1167` |
+| `INNER_IP_PROTOCOL` mask | C++ 固定 | 常に `0xFF` | `aclorch.cpp:1172` |
+| `INNER_SRC_MAC` / `INNER_DST_MAC` mask | C++ 固定 | 常に `ff:ff:ff:ff:ff:ff` (完全一致) | `aclorch.cpp:957` |
+| `IP_PROTOCOL` / `NEXT_HEADER` | C++ 自動付与 | `TCP_FLAGS` あり + `IP_PROTOCOL` 未指定 → `6` (TCP) | `aclorch.cpp:5633-5648` |
+| `SAI_ACL_ENTRY_ATTR_ADMIN_STATE` | C++ 固定 (非 CONFIG_DB) | 常に `true` を SAI に送出 | `aclorch.cpp:1293-1295` |
+| `MIRROR_ACTION` → ingress | C++ fallback (後方互換) | 旧 `MIRROR_ACTION` フィールドは `MIRROR_INGRESS_ACTION` として処理 | `aclorch.cpp:2268-2271` |
+| `IP_TYPE` (acl_loader・L3) | Python 自動付与 | `ETHER_TYPE = 0x0800` (IPv4) を付与 | `acl_loader/main.py:789` |
+| `IP_TYPE` (acl_loader・L3V6) | Python 自動付与 | `IP_TYPE = "IPV6ANY"` を付与 | `acl_loader/main.py:787` |
+| `IP_TYPE` (acl_app.go・IPv4) | Go 自動付与 | `IP_TYPE = "IPV4ANY"` を常に付与 | `acl_app.go:1219` |
+| `IP_TYPE` (acl_app.go・IPv6) | Go 自動付与 | `IP_TYPE = "IPV6ANY"` を常に付与 | `acl_app.go:1251` |
+
+### YANG default との関係
+
+`ACL_RULE` は YANG 未定義のため YANG default は存在しない。全デフォルトはコードレベルのみ。
+
+### 乖離・注意点
+
+1. **PRIORITY の最大値が経路依存**: `acl_loader` は `max_priority=10000`、`acl_app.go` (REST/gNMI) は `MAX_PRIORITY=65536` を使用。同一 sequence_id でも経路によって格納される PRIORITY 値が異なる。
+2. **DEFAULT_RULE の IP_TYPE**: `acl_loader` はテーブル種別に応じて `ETHER_TYPE` または `IP_TYPE` を設定するが、`acl_app.go` は常に `IP_TYPE=ANY` を設定 (`acl_app.go:1148`)。
+3. **mask は CONFIG_DB に格納されない**: 全 mask デフォルトは C++ 内部でのみ付与され、CONFIG_DB には書かれない。DB には値 (data) のみが格納される。
+4. **COUNTER フィールド**: `AclRuleMirror` はデフォルトでカウンタを作成しない (`createCounter=false`)。`AclRulePacket` は `createCounter=true`。
+
+### 該当なしフィールド (追加デフォルトなし)
+
+以下のフィールドは省略時に自動設定は一切行われず、ルールに含まれなければ単に match 条件が適用されない:
+`SRC_IP`, `DST_IP`, `SRC_IPV6`, `DST_IPV6`, `IN_PORTS`, `OUT_PORT`, `OUT_PORTS`, `REDIRECT_ACTION`, `MIRROR_INGRESS_ACTION`, `MIRROR_EGRESS_ACTION`, `FLOW_OP`, `INT_SESSION`, `DROP_REPORT_ENABLE`, `TAIL_DROP_REPORT_ENABLE`, `FLOW_SAMPLE_PERCENT`, `REPORT_ALL_PACKETS`, `INNER_SRC_IP`, `BTH_OPCODE`, `AETH_SYNDROME`, `TUNNEL_TERM`, `DO_NOT_NAT_ACTION`, `DISABLE_TRIM_ACTION`, `META_DATA_ACTION`, `DSCP_ACTION`, `INNER_SRC_MAC_REWRITE_ACTION`。
+
+### LSP トレース証跡
+
+- 訪問ファイル数: 3 (`aclorch.cpp`, `acl_loader/main.py`, `acl_app.go`)
+- 訪問関数数: 17
+- 検出 fallback: 21 件 (mask 系 9 件 + 自動付与 7 件 + 初期値 3 件 + 後方互換 1 件 + SAI 固定 1 件)
+- 中間トレース: `meta/_intermediate/cdb-flow/acl-rule-defaults.md`
+
+<!-- /defaults -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

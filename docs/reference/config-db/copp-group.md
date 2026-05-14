@@ -242,4 +242,46 @@ show copp config
 
 > **スキャン証跡**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### `default` グループ — `trap_action` 省略
+
+`copp_cfg.j2` の `default` グループには `trap_action` フィールドが存在しない（YANG では `mandatory true`）。`CoppOrch::getAttribsFromTrapGroup()` は受け取ったフィールドのみ SAI に渡すため、`trap_action` は SAI 実装のデフォルト値（実装依存）が適用される。<!-- evidence: copp_cfg.j2 L3-9, copporch.cpp L1177-1182 -->
+
+### `trap_priority` — Mellanox / Marvell での silent drop
+
+`getAttribsFromTrapGroup()` は `platform` 環境変数を確認し、`mlnx` または `mrvl_prest` を含む場合は `trap_priority` フィールドを `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` に変換せずに **silent drop** する。CONFIG_DB に値が存在しても SAI に伝達されない。他プラットフォームでは正常に反映される。<!-- evidence: copporch.cpp L1184-1195 -->
+
+### `SAI_HOSTIF_TRAP_TYPE_TTL_ERROR` のハードコード登録
+
+`CoppOrch` 初期化時に `initDefaultTrapIds()` が `TTL_ERROR` trap を `default` グループに強制登録する (`trap_action=TRAP`, `trap_priority=1`)。この動作は CONFIG_DB の `COPP_GROUP|default` の値に関係なく実行される。Mellanox/Marvell では `trap_priority` の設定はスキップされる。<!-- evidence: copporch.cpp L332-368 -->
+
+### `color` 省略 → SAI policer のデフォルト適用
+
+`color` フィールドが CONFIG_DB に存在しない場合、`SAI_POLICER_ATTR_COLOR_SOURCE` は policer 属性リストに追加されない。SAI policer 作成時に実装デフォルト（通常 `blind` 相当）が適用される。また `policer_object` の `color` フィールドが未初期化のまま保存されるため、後続の変更検出で誤判定が発生する可能性がある（potential bug）。<!-- evidence: copporch.cpp L632-650, L1343-1350 -->
+
+### `cir=0` の実効意味
+
+YANG では `cir` のデフォルトは `0`。SAI 仕様では `SAI_POLICER_ATTR_CIR=0` はレート無制限を意味する。ただし `copp_cfg.j2` の全グループは `cir` を明示的に設定しているため、実運用でレート無制限になることは稀。<!-- evidence: sonic-copp.yang L74-80, copporch.cpp L1226-1230 -->
+
+### `queue4_group3` の `cir`/`cbs` — デバイスタイプ分岐
+
+`copp_cfg.j2` の Jinja2 テンプレートで `DEVICE_METADATA['localhost']['type']` に `'Mgmt'` が含まれる場合、`queue4_group3`（lldp/dhcp_relay 担当）の `cir`/`cbs` は `300` pps、それ以外は `100` pps が適用される。プラットフォーム依存のデフォルト。<!-- evidence: copp_cfg.j2 L37-43 -->
+
+### DEL 後の init cfg 自動復元
+
+`COPP_GROUP` エントリが DEL されても、`m_coppGroupInitCfg`（`copp_cfg.j2` 由来）に存在するキーは `coppmgr` によって自動的に init 値で再生成される。ユーザーが `sonic-db-cli CONFIG_DB del 'COPP_GROUP|queue4_group1'` を実行しても、`coppmgrd` の次回処理で init 値が APPL_DB に再書き込みされる。<!-- evidence: coppmgr.cpp L898-921 -->
+
+### NULL cfg → 全フィールドの除外
+
+ユーザーが `COPP_GROUP|<name>` に `NULL` フィールドを設定すると、`mergeConfig()` はそのエントリ全体を merged_cfg から除外する。init cfg のデフォルト値もマージされず、APPL_DB への書き込みが行われない。<!-- evidence: coppmgr.cpp L218-224 -->
+
+### SAI capability query 失敗 → `neighbor_miss` の silent drop
+
+SAI capability query（`sai_query_attribute_enum_values_capability`）が失敗した場合、`default_supported_trap_ids` の静的リストにフォールバックする。このリストには `neighbor_miss` が意図的に含まれていない（コメント: "This list is intended to remain static"）。古い SAI を使うプラットフォームでは `neighbor_miss` trap が silent drop される可能性がある。<!-- evidence: copporch.cpp L104-151, L263-270 -->
+
+> **スキャン証跡**: coppmgr.cpp 全行、copporch.cpp L1-1500 読了、sonic-copp.yang 全行、copp_cfg.j2 全行。発見 9 件。
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 87fa713c3c5e -->
