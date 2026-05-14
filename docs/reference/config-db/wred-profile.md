@@ -87,7 +87,7 @@ WRED_PROFILE|<name>
 | `ecn` | `ecn_green_red` | `SAI_ECN_MARK_MODE_GREEN_RED`。緑・赤をマーク |
 | `ecn` | `ecn_yellow_red` | `SAI_ECN_MARK_MODE_YELLOW_RED`。黄・赤をマーク |
 | `ecn` | `ecn_all` | `SAI_ECN_MARK_MODE_ALL`。全色 ECN マーク（DCQCN 等で推奨）|
-| `wred_*_enable` | `true` | 指定色の WRED ドロップを有効化 |
+| `wred_*_enable` | `true` | 指定色の WRED ドロップを有効化（フィールド定数: `wred_green_enable_field_name` / `wred_yellow_enable_field_name` / `wred_red_enable_field_name`、qosorch.h:40-42） |
 | `wred_*_enable` | `false` | 無効（デフォルト）。閾値設定があっても drop しない |
 | `wred_*_enable` | `"true"`/`"false"` 以外 | `SWSS_LOG_ERROR("Invalid input specified")` でエントリ破棄 |
 | `*_drop_probability` | `0` | min threshold 到達時もドロップなし（ECN マーキングのみ使用する場合）|
@@ -121,7 +121,7 @@ WRED_PROFILE|<name>
 ## `ecn` 値別挙動
 
 YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
-実装 `ecn_map` (qosorch.cpp:36-44) → `SAI_WRED_ATTR_ECN_MARK_MODE` (qosorch.cpp:743)。
+実装 lookup map: `ecn_map` (qosorch.cpp:36-44)、フィールド定数: `ecn_field_name = "ecn"` (qosorch.h:55) → `SAI_WRED_ATTR_ECN_MARK_MODE` (qosorch.cpp:743)。
 不正値 (`ecn_map.at()` が `std::out_of_range`) → エントリ破棄。
 
 | 値 | SAI マッピング | マーキング対象色 | evidence |
@@ -160,6 +160,64 @@ YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
 
 全 8 値 hit。0 hit なし。
 <!-- /value-behavior -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `ecn` | YANG `default` | `ecn_none` (フィールド省略時に自動補完) | `sonic-wred-profile.yang:128` |
+| `wred_green_enable` / `wred_yellow_enable` / `wred_red_enable` | YANG `default` | `false` (フィールド省略時) | `sonic-wred-profile.yang` |
+| `green_drop_probability` 等 | YANG `default` | `100` (%) (フィールド省略時) | `sonic-wred-profile.yang` |
+| `WRED_PROFILE` エントリ全体 | `qos_config.j2` の静的テンプレート | `AZURE_LOSSLESS` プロファイル (`ecn=ecn_all`, 各閾値固定値) が自動生成 | `qos_config.j2:489-506` |
+| `generate_wred_profiles` あり | ベンダー固有 j2 テンプレート定義 | プラットフォーム固有の WRED_PROFILE を生成 (標準の `AZURE_LOSSLESS` を置換) | `qos_config.j2:486-487` |
+| `wred_profile` (QUEUE 側) | `qos_config.j2` QUEUE セクション | RoCE キュー (queue 3, 4 等) に `wred_profile=AZURE_LOSSLESS` を自動設定 | `qos_config.j2:514-660` |
+
+**フォーマット変換 (db_migrator.py)**:
+
+- 旧バージョンの CONFIG_DB では `wred_profile` の値が `|AZURE_LOSSLESS|` ABNF 形式で格納。
+- `db_migrator.py:574-585` のマイグレーションステップでプレーン文字列 `AZURE_LOSSLESS` に変換。
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `QosOrch` は常時登録 (platform / capability 非依存) | `CFG_WRED_PROFILE_TABLE_NAME` 購読は無条件 | `orchdaemon.cpp:375,384` |
+| `gMySwitchType == "voq"` | `applyWredProfileToQueue()` が VoQ ID を使用 (物理キューではなく VoQ に適用) | `qosorch.cpp:1709-1730` |
+| `QUEUE.wred_profile` 未解決 | `task_need_retry` → WRED_PROFILE エントリ登録後に再試行 | `qosorch.cpp:1864-1870` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| `ecn` YANG default | 1 | `sonic-wred-profile.yang:128` |
+| `AZURE_LOSSLESS` 自動生成 | 2 | `qos_config.j2:489,514-660` |
+| `generate_wred_profiles` 条件 | 1 | `qos_config.j2:486` |
+| db_migrator `wred_profile` 変換 | 1 | `db_migrator.py:575` |
+| `applyWredProfileToQueue` VoQ 分岐 | 2 | `qosorch.cpp:1709,1716-1722` |
+| `task_need_retry` (未解決) | 1 | `qosorch.cpp:1869` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィールド値を解釈し SAI 属性リストに変換する。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `WredMapHandler` | `convertFieldValuesToAttributes()` | `fvField == ecn_field_name` | `ecn_map.at(fvValue)` で `SAI_WRED_ATTR_ECN_MARK_MODE` を設定、未知値は `std::out_of_range` 例外 → エントリ破棄 | `sonic-swss/orchagent/qosorch.cpp:741-746` |
+| `WredMapHandler` | `convertFieldValuesToAttributes()` | `fvField IN [wred_green_enable, wred_yellow_enable, wred_red_enable]` | `convertBool()` 失敗（`"true"/"false"` 以外）→ `SWSS_LOG_ERROR` + `return false`（エントリ破棄） | `sonic-swss/orchagent/qosorch.cpp:714-739` |
+| `WredMapHandler` | `convertFieldValuesToAttributes()` | `storedProfile.yellow_min_threshold > threshold` (新 max < 旧 min) | 閾値変更を deferred リストへ退避（2 フェーズ適用、先に反対側を SAI に投入して min>max 違反を回避）| `sonic-swss/orchagent/qosorch.cpp:636-644` |
+| `WredMapHandler` | `convertFieldValuesToAttributes()` | `currentProfile.green_min_threshold > currentProfile.green_max_threshold` (いずれかの色で) | `SWSS_LOG_ERROR("Wrong wred profile: min > max")` + `return false` → エントリ破棄 | `sonic-swss/orchagent/qosorch.cpp:754-760` |
+| `WredMapHandler` | `addQosItem()` | `wred_enable_set & GREEN_WRED_ENABLED` かつ `drop_prob_set` に green なし | `SAI_WRED_ATTR_GREEN_DROP_PROBABILITY = 100` を自動補完 | `sonic-swss/orchagent/qosorch.cpp:836-840` |
+| `WredMapHandler` | `addQosItem()` | 同上 yellow / red 各色 | `SAI_WRED_ATTR_YELLOW/RED_DROP_PROBABILITY = 100` を自動補完 | `sonic-swss/orchagent/qosorch.cpp:842-850` |
+
+> **スキャン証跡**: `convertFieldValuesToAttributes()` L585-762 全行読了（34 フィールド if-elif 連鎖）、`addQosItem()` L784-860 読了。6 件分岐抽出。`ecn` 値の dispatch は `ecn_map.at()` ルックアップテーブル形式。Phase 6/7 derivation ブロック再確認: YANG default / qos_config.j2 AZURE_LOSSLESS 生成 / VoQ applyWredProfileToQueue — 実ソースと整合、誤読なし。
+
+<!-- /handler-branching -->
 
 <!-- ref-triangle:start -->
 

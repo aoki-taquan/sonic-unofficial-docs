@@ -131,35 +131,35 @@ ACL_TABLE|<table_name>
 ### `type` 値別挙動
 
 YANG 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
-実装定義 (acltable.h:26-42): 14 種以上。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
+実装定義マクロ (acltable.h:26-42): `TABLE_TYPE_L3` / `TABLE_TYPE_L3V6` / `TABLE_TYPE_L3V4V6` / `TABLE_TYPE_MIRROR` / `TABLE_TYPE_MIRRORV6` / `TABLE_TYPE_MIRROR_DSCP` / `TABLE_TYPE_PFCWD` / `TABLE_TYPE_CTRLPLANE` / `TABLE_TYPE_MCLAG` / `TABLE_TYPE_MUX` / `TABLE_TYPE_DROP` / `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
 
 | 値 | 動作 | ASIC 確認 | evidence |
 |---|---|---|---|
-| `L3` | IPv4 L3 [ACL](../../reference/glossary.md#term-acl)。INGRESS/EGRESS 両対応 | なし | `acltable.h:26`, `aclorch.cpp:200,454` |
-| `L3V6` | IPv6 L3 [ACL](../../reference/glossary.md#term-acl)。`IP_PROTOCOL` 使用は非推奨 (WARN ログ) | なし | `acltable.h:27`, `aclorch.cpp:220,1231` |
-| `L3V4V6` | IPv4/IPv6 デュアルスタック ACL | `isAclL3V4V6TableSupported()` 必須 (`aclorch.cpp:2737`) | `acltable.h:28`, `aclorch.cpp:240,3541-3543` |
-| `MIRROR` | INGRESS mirror セッション転送専用 | `m_mirrorTableCapabilities[MIRROR]` 必須 | `acltable.h:29`, `aclorch.cpp:260,3502,3671` |
-| `MIRRORV6` | IPv6 INGRESS mirror 専用。ASIC によっては MIRROR テーブルに統合 | `m_mirrorTableCapabilities[MIRRORV6]` 必須 | `acltable.h:30`, `aclorch.cpp:279,3503,3510-3511,5811` |
-| `MIRROR_DSCP` | [DSCP](../../reference/glossary.md#term-dscp) 値でミラー先決定 | なし | `acltable.h:31`, `aclorch.cpp:298` |
-| `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) 専用。BRCM DNX では `SAI_ACL_BIND_POINT_TYPE_SWITCH` | なし | `acltable.h:32`, `aclorch.cpp:316,3811-3825` |
-| `CTRLPLANE` | SAI テーブル作成なし。`copporch` 経由で制御 | なし (stage 無視) | `acltable.h:33`, `aclorch.cpp:2727` |
-| `MCLAG` | [MCLAG](../../reference/glossary.md#term-mclag) 制御専用テーブル | なし | `acltable.h:35`, `aclorch.cpp:334,3791` |
-| `MUX` | dual-ToR mux 専用テーブル | なし | `acltable.h:36`, `aclorch.cpp:352` |
-| `DROP` | drop 最適化テーブル (`IngressTableDrop`/`EgressTableDrop`) | なし | `acltable.h:37`, `aclorch.cpp:370` |
-| `MARK_META` | メタデータマーキング (IPv4) | なし | `acltable.h:38`, `aclorch.cpp:388` |
-| `MARK_METAV6` | メタデータマーキング (IPv6) | なし | `acltable.h:39`, `aclorch.cpp:400` |
-| `EGR_SET_DSCP` | egress [DSCP](../../reference/glossary.md#term-dscp) 書き換え専用。EGRESS stage 固定 | なし | `acltable.h:40`, `aclorch.cpp:412,489` |
-| `UNDERLAY_SET_DSCP` | 内部で `MARK_META` に変換して SAI 投入 | なし | `acltable.h:41`, `aclorch.cpp:121 相当` |
-| `UNDERLAY_SET_DSCPV6` | 内部で `MARK_METAV6` に変換して SAI 投入 | なし | `acltable.h:42` |
+| `L3` | IPv4 L3 [ACL](../../reference/glossary.md#term-acl)。INGRESS/EGRESS 両対応 (`TABLE_TYPE_L3`) | なし | `acltable.h:26`, `aclorch.cpp:200,454` |
+| `L3V6` | IPv6 L3 [ACL](../../reference/glossary.md#term-acl)。`IP_PROTOCOL` 使用は非推奨 (WARN ログ) (`TABLE_TYPE_L3V6`) | なし | `acltable.h:27`, `aclorch.cpp:220,1231` |
+| `L3V4V6` | IPv4/IPv6 デュアルスタック ACL (`TABLE_TYPE_L3V4V6`) | `isAclL3V4V6TableSupported()` 必須 (`aclorch.cpp:2737`) | `acltable.h:28`, `aclorch.cpp:240,3541-3543` |
+| `MIRROR` | INGRESS mirror セッション転送専用 (`TABLE_TYPE_MIRROR`) | `m_mirrorTableCapabilities[MIRROR]` 必須 | `acltable.h:29`, `aclorch.cpp:260,3502,3671` |
+| `MIRRORV6` | IPv6 INGRESS mirror 専用。ASIC によっては MIRROR テーブルに統合 (`TABLE_TYPE_MIRRORV6`) | `m_mirrorTableCapabilities[MIRRORV6]` 必須 | `acltable.h:30`, `aclorch.cpp:279,3503,3510-3511,5811` |
+| `MIRROR_DSCP` | [DSCP](../../reference/glossary.md#term-dscp) 値でミラー先決定 (`TABLE_TYPE_MIRROR_DSCP`) | なし | `acltable.h:31`, `aclorch.cpp:298` |
+| `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) 専用 (`TABLE_TYPE_PFCWD`)。BRCM DNX では `SAI_ACL_BIND_POINT_TYPE_SWITCH` | なし | `acltable.h:32`, `aclorch.cpp:316,3811-3825` |
+| `CTRLPLANE` | SAI テーブル作成なし。`copporch` 経由で制御 (`TABLE_TYPE_CTRLPLANE`) | なし (stage 無視) | `acltable.h:33`, `aclorch.cpp:2727` |
+| `MCLAG` | [MCLAG](../../reference/glossary.md#term-mclag) 制御専用テーブル (`TABLE_TYPE_MCLAG`) | なし | `acltable.h:35`, `aclorch.cpp:334,3791` |
+| `MUX` | dual-ToR mux 専用テーブル (`TABLE_TYPE_MUX`) | なし | `acltable.h:36`, `aclorch.cpp:352` |
+| `DROP` | drop 最適化テーブル (`TABLE_TYPE_DROP`; 内部クラス `IngressTableDrop` / `EgressTableDrop`) | なし | `acltable.h:37`, `aclorch.cpp:370` |
+| `MARK_META` | メタデータマーキング (IPv4) (`TABLE_TYPE_MARK_META`) | なし | `acltable.h:38`, `aclorch.cpp:388` |
+| `MARK_METAV6` | メタデータマーキング (IPv6) (`TABLE_TYPE_MARK_META_V6`) | なし | `acltable.h:39`, `aclorch.cpp:400` |
+| `EGR_SET_DSCP` | egress [DSCP](../../reference/glossary.md#term-dscp) 書き換え専用 (`TABLE_TYPE_EGR_SET_DSCP`)。EGRESS stage 固定 | なし | `acltable.h:40`, `aclorch.cpp:412,489` |
+| `UNDERLAY_SET_DSCP` | 内部で `TABLE_TYPE_MARK_META` (`MARK_META`) に変換して SAI 投入 (`TABLE_TYPE_UNDERLAY_SET_DSCP`) | なし | `acltable.h:41`, `aclorch.cpp:121 相当` |
+| `UNDERLAY_SET_DSCPV6` | 内部で `TABLE_TYPE_MARK_META_V6` (`MARK_METAV6`) に変換して SAI 投入 (`TABLE_TYPE_UNDERLAY_SET_DSCPV6`) | なし | `acltable.h:42` |
 
 ### `stage` 値別挙動
 
-`aclStageLookUp` (aclorch.cpp:164-167) でパース。不正値は `processAclTableStage()` が false を返し erase。
+lookup map: `aclStageLookUp` (aclorch.cpp:164-167)。マクロ: `STAGE_INGRESS` / `STAGE_EGRESS` (acltable.h:23-24)。不正値は `processAclTableStage()` が false を返し erase。
 
 | 値 | SAI stage | 有効 MIRROR action | evidence |
 |---|---|---|---|
-| `INGRESS` (既定) | `SAI_ACL_STAGE_INGRESS` | `MIRROR_INGRESS_ACTION` 有効 | `aclorch.cpp:166,173,263-266` |
-| `EGRESS` | `SAI_ACL_STAGE_EGRESS` | `MIRROR_EGRESS_ACTION` のみ有効 | `aclorch.cpp:167,185,270-272` |
+| `INGRESS` (既定) | `SAI_ACL_STAGE_INGRESS` | `MIRROR_INGRESS_ACTION` 有効 (`STAGE_INGRESS` マクロ) | `aclorch.cpp:166,173,263-266` |
+| `EGRESS` | `SAI_ACL_STAGE_EGRESS` | `MIRROR_EGRESS_ACTION` のみ有効 (`STAGE_EGRESS` マクロ) | `aclorch.cpp:167,185,270-272` |
 
 ### `ETHER_TYPE` / `IP_TYPE` / `PACKET_ACTION` — ACL_TABLE への直接影響なし
 
@@ -182,6 +182,67 @@ YANG 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
 3. `type=MIRROR` / `MIRRORV6` → 起動時 ASIC capability query、capability なければ reject (`aclorch.cpp:3502-3541`)
 4. `type=EGR_SET_DSCP` → EGRESS stage 固定。`stage=INGRESS` を指定しても egress 動作になる (`aclorch.cpp:489`)
 <!-- /value-behavior -->
+
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+| 派生先フィールド | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| `type` | minigraph.py: AttachTo に `erspan` prefix | `MIRROR` | `minigraph.py:1218` |
+| `type` | minigraph.py: AttachTo に `erspanv6` prefix | `MIRRORV6` | `minigraph.py:1220` |
+| `type` | minigraph.py: AttachTo に `erspan_dscp` prefix | `MIRROR_DSCP` | `minigraph.py:1222` |
+| `type` | minigraph.py: ports なし | `CTRLPLANE` | `minigraph.py:1233-1247` |
+| `type` | minigraph.py: 名前に `v6` | `L3V6`、それ以外 → `L3` | `minigraph.py:1228` |
+| `stage` | minigraph.py: XML `InAcl` タグ | `ingress` | `minigraph.py:1103-1104` |
+| `stage` | minigraph.py: XML `OutAcl` タグ | `egress` | `minigraph.py:1106-1107` |
+| `stage` (強制上書き) | `type=EGR_SET_DSCP` 設定時 | `EGRESS` 固定 (ユーザ指定無視) | `aclorch.cpp:489` |
+| 内部 type 変換 | `type=UNDERLAY_SET_DSCP` | 内部で `MARK_META` に変換して SAI 投入 | `acltable.h:41`, `aclorch.cpp` |
+| 内部 type 変換 | `type=UNDERLAY_SET_DSCPV6` | 内部で `MARK_METAV6` に変換して SAI 投入 | `acltable.h:42` |
+
+### Phase 7: 条件付き登録
+
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `AclOrch` は常時登録 (platform 非依存) | ACL_TABLE 購読は無条件 | `orchdaemon.cpp:533,569` |
+| `type=MIRROR`/`MIRRORV6` + ASIC capability なし | 起動時 SAI capability query 失敗 → テーブル作成 reject | `aclorch.cpp:3500-3541,5198-5199` |
+| `type=L3V4V6` + ASIC 未サポート | `isAclL3V4V6TableSupported(stage)` → false → reject | `aclorch.cpp:2737-2739` |
+| `type=CTRLPLANE` | SAI テーブル非生成。`stage` フィールド無視 | `aclorch.cpp:2727` |
+| `META_DATA` 系 capability | `sai_query_attribute_capability()` 確認後に有効化 | `aclorch.cpp:3590-3659` |
+| `DTelOrch` は `platform==BFN\|VS` のみ生成 | DTEL 関連 action が有効になる前提条件 | `orchdaemon.cpp:502-530` |
+
+### グレップカバレッジ
+
+| 項目 | hit 数 | 証跡 |
+|---|---|---|
+| `type` 派生 (minigraph.py) | 6 | `minigraph.py:1218-1228` |
+| `stage` 派生 (minigraph.py) | 2 | `minigraph.py:1103-1107` |
+| `EGR_SET_DSCP` EGRESS 強制 | 1 | `aclorch.cpp:489` |
+| UNDERLAY 内部変換 | 2 | `acltable.h:41-42` |
+| MIRROR capability check | 4 | `aclorch.cpp:3500-3541` |
+| L3V4V6 サポート確認 | 2 | `aclorch.cpp:2737-2739` |
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+ACL_TABLE は `AclOrch::doAclTableTask()` が処理する。`type` / `stage` フィールド値によって SAI テーブルの作成方法や bind point が変わる。
+
+| Handler | メソッド | 分岐条件 | 効果 | evidence |
+|---|---|---|---|---|
+| `AclOrch` | `doAclTableTask()` | `attr_name == ACL_TABLE_TYPE` | `processAclTableType()` 呼び出し — 空文字は reject、それ以外はカスタム / 組み込み type として通す | `sonic-swss/orchagent/aclorch.cpp:5380-5388` |
+| `AclOrch` | `doAclTableTask()` | `attr_name == ACL_TABLE_STAGE` | `processAclTableStage()` 呼び出し — INGRESS/EGRESS 以外は `bAllAttributesOk=false` → erase | `sonic-swss/orchagent/aclorch.cpp:5400-5408` |
+| `AclOrch` | `doAclTableTask()` | `attr_name == ACL_TABLE_SERVICES` | `continue`（完全無視 — コントロールプレーン ACL 専用フィールドのため）| `sonic-swss/orchagent/aclorch.cpp:5410-5413` |
+| `AclOrch` | `addAclTable()` | `type == TABLE_TYPE_CTRLPLANE` | SAI テーブルを作成せず `copporch` に委譲 | `sonic-swss/orchagent/aclorch.cpp:2727` |
+| `AclOrch` | `addAclTable()` | `type == TABLE_TYPE_L3V4V6` | `isAclL3V4V6TableSupported(stage)` で ASIC capability を確認、非サポート時はテーブル作成失敗 | `sonic-swss/orchagent/aclorch.cpp:2739` |
+| `AclOrch` | `addAclTable()` | `type IN [MIRROR, MIRRORV6]` | `m_mirrorTableCapabilities[type]` で ASIC capability 確認、非サポート時 reject | `sonic-swss/orchagent/aclorch.cpp:3502-3541` |
+| `AclOrch` | `addEgrSetDscpTable()` | `type == TABLE_TYPE_EGR_SET_DSCP` | 内部で `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_METAV6` へ変換して SAI 投入、stage を EGRESS 固定 | `sonic-swss/orchagent/aclorch.cpp:4444-4539` |
+
+> **スキャン証跡**: `doAclTableTask()` L5346-5520 全行読了 + `addAclTable()` / `addEgrSetDscpTable()` 参照。7 件分岐抽出。Phase 6/7 derivation ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。
+
+<!-- /handler-branching -->
 
 <!-- ref-triangle:start -->
 
