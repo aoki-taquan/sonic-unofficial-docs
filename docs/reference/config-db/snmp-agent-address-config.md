@@ -143,6 +143,33 @@ show runningconfiguration snmp
 [^2]: snmpd.conf テンプレート: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+snmp-config サービスが `ip` + `port` + `interface` の組み合わせから snmpd の `agentAddress` ディレクティブを自動生成する。`interface` フィールドが mgmt VRF 名の場合は `udp:<ip>:<port>@<vrf>` 形式で VRF バインドが自動付与される。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG` を購読する snmp-config が動作する。エントリがない場合は snmpd がデフォルトの agentAddress を使用する。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `snmp-config` | `interface` フィールドあり | VRF バインド形式の agentAddress 生成 | `snmp_config` |
+| `snmp-config` | `interface` フィールドなし | シンプルな `udp:<ip>:<port>` 形式 | `snmp_config` |
+| `snmp-config` | `port` フィールドあり | カスタムポート使用 (デフォルト 161) | `snmp_config` |
+| `snmp-config` | エントリ削除時 | snmpd 設定から対応 agentAddress 行を削除して reload | `snmp_config` |
+
+> **スキャン証跡**: `SNMP_AGENT_ADDRESS_CONFIG` は snmpd のリッスンアドレス/ポート/VRF を設定するシンプルテーブル。`interface` フィールド有無が VRF バインドを自動決定する（Phase 6 相当）。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

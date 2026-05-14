@@ -162,6 +162,35 @@ show syslog
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+hostcfgd が `protocol` フィールド値から rsyslog forwarding 形式を自動決定する。`udp` → `@<host>:<port>` 形式、`tcp` → `@@<host>:<port>` 形式。`port` フィールド未設定の場合はデフォルト UDP/514 を補完する。`vrf==mgmt` の場合は VRF バインド設定を自動付与する。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+hostcfgd は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する。`DEVICE_METADATA.hostname` が必要（hostname ベースのフィルタ設定）。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `hostcfgd` | `protocol==udp` | rsyslog `@<host>:<port>` 形式 | `hostcfgd.py` |
+| `hostcfgd` | `protocol==tcp` | rsyslog `@@<host>:<port>` 形式 | `hostcfgd.py` |
+| `hostcfgd` | `vrf==mgmt` | VRF バインド設定を追加 | `hostcfgd.py` |
+| `hostcfgd` | `vrf==default` または未設定 | デフォルト VRF で転送 | `hostcfgd.py` |
+| `hostcfgd` | `source_interface` フィールドあり | rsyslog source IP 設定 | `hostcfgd.py` |
+| `hostcfgd` | サーバー削除 | 対応 rsyslog 設定を削除して reload | `hostcfgd.py` |
+
+> **スキャン証跡**: `SYSLOG_SERVER` はリモート syslog 転送先の設定。`protocol` フィールドと `vrf` フィールドの組み合わせが主要分岐。ポートデフォルト値の補完が Phase 6 相当。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

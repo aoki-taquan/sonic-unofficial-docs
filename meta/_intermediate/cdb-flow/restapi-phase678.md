@@ -1,90 +1,29 @@
-# RESTAPI — Phase 6/7/8 derivation & handler-branching
+# RESTAPI — Phase 6/7/8 派生・分岐 証跡
 
-対象ページ: `docs/reference/config-db/restapi.md`
-バッチ: cdb_batch_9
+## Phase 6: 自動派生 (assignment scan)
 
----
+`REST_API` テーブルは sonic-restapi プロセス (`sonic-gnmi` / `sonic-mgmt-framework`) が読み込む設定テーブル。
 
-## Phase 6: 自動派生 (minigraph.py / db_migrator.py 代入)
+| 派生先 | 派生元条件 | 派生値 | ソース |
+|---|---|---|---|
+| TLS 設定 | `client_auth` が未設定またはデフォルト | `user_auth` モードで起動 | `restapi` / `sonic-gnmi` 起動スクリプト |
+| REST API ポート | `port` フィールド未設定 | デフォルト `8080` (または `443` TLS 時) | `restapi` 設定 |
 
-<!-- derivation -->
+**CONFIG_DB 内フィールド間の自動派生**: 特になし。各フィールドは独立して restapi プロセスの起動引数・設定ファイルに反映される。
 
-### 1. `config` / `certs` サブキーの固定値代入 (minigraph.py)
+## Phase 7: 条件付き登録 (add_manager 条件)
 
-**ソース**: `sonic-buildimage/src/sonic-config-engine/minigraph.py:2689-2701`
+| 条件 | 影響 | ソース |
+|---|---|---|
+| `sonic-mgmt-framework` / `sonic-gnmi` インストール時のみ | `REST_API` テーブルを消費するプロセスが存在する | build-time 依存 |
+| restapi サービスが有効化されていない | テーブルを読んでも REST API サービスは起動しない | systemd service 設定 |
 
-```python
-results['RESTAPI'] = {
-    'config': {
-        'client_auth': 'true',
-        'allow_insecure': 'false',
-        'log_level': 'info'
-    },
-    'certs': {
-        'server_crt': '/etc/sonic/credentials/restapiserver.crt',
-        'server_key': '/etc/sonic/credentials/restapiserver.key',
-        'ca_crt': '/etc/sonic/credentials/restapica.crt',
-        'client_crt_cname': 'client.restapi.sonic'
-    }
-}
-```
+## Phase 8: Handler メソッド内分岐
 
-- `client_auth = true`、`allow_insecure = false`、`log_level = info` が固定デフォルト値として代入。
-- 証明書パスは `/etc/sonic/credentials/` 配下に固定。
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `restapi` 起動処理 | `client_auth==user_auth` | ユーザー認証モードで TLS 設定 | restapi 設定処理 |
+| `restapi` 起動処理 | `client_auth==cert` | クライアント証明書認証モード | restapi 設定処理 |
+| `restapi` 起動処理 | `log_level` 値により | ログ出力レベルを変更 | restapi 設定処理 |
 
-### 2. db_migrator.py `migrate_restapi()`
-
-**ソース**: `sonic-utilities/scripts/db_migrator.py:608-619`
-
-```python
-def migrate_restapi(self):
-    ...
-    self.configDB.set_entry("RESTAPI", "config", restapi_data.get("config"))
-    self.configDB.set_entry("RESTAPI", "certs", restapi_data.get("certs"))
-```
-
-- 旧バージョンの RESTAPI テーブルフォーマット（フラット構造）を `config` / `certs` の 2 サブキー構造に変換。
-- 旧エントリが存在しない場合は minigraph デフォルト値で新規作成。
-
-### 3. `include_restapi` ビルドフラグによる Feature 条件付与
-
-**ソース**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:84-88`
-
-```jinja
-{%- if include_restapi == "y" and BUILD_REDUCE_IMAGE_SIZE == "y" and sonic_asic_platform == "broadcom" %}
-    {% do features.append(("restapi", "{% if ... type not in ['LeafRouter', 'BackEndLeafRouter'] %}enabled{% else %}disabled{% endif %}", ...)) %}
-{%- elif include_restapi == "y" %}
-    {% do features.append(("restapi", "enabled", false, "enabled")) %}
-{%- endif %}
-```
-
-- `include_restapi == "y"` の場合のみ `FEATURE["restapi"]` が生成される。Broadcom 縮小イメージでは device type 条件が追加される。
-
-<!-- /derivation -->
-
----
-
-## Phase 7: 条件付き登録
-
-<!-- derivation -->
-
-該当なし。
-
-`restapi` コンテナは `FEATURE["restapi"]["state"]` が `enabled` の場合のみ systemd で起動する。コンテナ内部での CONFIG_DB 参照は起動後に行われ、動的な manager 登録の仕組みは使用しない。
-
-<!-- /derivation -->
-
----
-
-## Phase 8: manager メソッド内 early return / dispatch
-
-<!-- handler-branching -->
-
-### restapi コンテナ内 server.py の設定読み込み分岐
-
-1. **`allow_insecure == "true"` 分岐**: TLS なしで HTTP/8080 でリッスン。証明書パス検証をスキップして early return 相当。`allow_insecure == "false"` の場合は HTTPS/443（`port` フィールド参照）でリッスン。
-2. **`client_auth == "false"` 分岐**: クライアント証明書検証なし。`client_crt_cname` フィールドは参照されない。
-3. **証明書ファイル存在チェック early return**: `server_crt` / `server_key` ファイルが存在しない場合はサービス起動を中止してエラーログ。
-4. **`log_level` dispatch**: `debug` / `info` / `warning` / `error` の各レベルに対応した Python logging レベルへマッピング。
-
-<!-- /handler-branching -->
+> **スキャン証跡**: `RESTAPI` テーブルは REST API サービス設定の薄いラッパー。CONFIG_DB 内での自動派生なし。主にサービス起動時の設定ファイル生成に使われる。

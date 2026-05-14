@@ -156,6 +156,35 @@ systemctl status telemetry
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+telemetry サービスが `server_crt` / `server_key` フィールドの有無から TLS 有効/無効を自動決定する。`client_auth` フィールド値から認証モード（JWT / cert / なし）を自動設定する。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+telemetry サービスが有効の場合のみ `TELEMETRY` テーブルを消費する sonic-gnmi が動作する。`TELEMETRY|gnmi` エントリのみ処理するシングルトン制約あり（YANG で強制）。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `telemetry` | `server_crt` / `server_key` フィールドあり | TLS 有効で gNMI サーバー起動 | `telemetry` |
+| `telemetry` | TLS 設定なし | 平文または insecure モードで起動 | `telemetry` |
+| `telemetry` | `client_auth==jwt` | JWT 認証ミドルウェアを有効化 | `telemetry` |
+| `telemetry` | `client_auth==cert` | クライアント証明書認証を有効化 | `telemetry` |
+| `telemetry` | `allow_no_client_auth==true` | mTLS を強制しない | `telemetry` |
+| `telemetry` | `log_level` 変化 | ランタイムログレベルを変更 | `telemetry` |
+
+> **スキャン証跡**: `TELEMETRY` は gNMI/gRPC サーバー設定のシングルトン。TLS フィールド有無と `client_auth` 値が起動モードを決定する主要分岐。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

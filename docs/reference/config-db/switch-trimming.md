@@ -133,6 +133,34 @@ show switch-trimming
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+SwitchOrch が `dscp_value` フィールドの有無から SAI DSCP resolution mode を自動決定する。`dscp_value` あり → `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_ASSIGN`、なし → `SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_PRESERVE`。`queue` フィールドの有無も同様に SAI queue resolution mode を自動決定する。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+SwitchOrch は常時登録し `SWITCH_TRIMMING` テーブルを無条件購読する。`SWITCH_TRIMMING|GLOBAL` エントリのみ有効（シングルトン制約）。SAI trim capability 未サポートの場合はログのみで継続。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `SwitchOrch` | `size` フィールドあり | `SAI_SWITCH_ATTR_PACKET_TRIM_SIZE` 設定 | `switchorch.cpp` |
+| `SwitchOrch` | `dscp_value` フィールドあり | ASSIGN モード + 指定 DSCP 値を SAI に設定 | `switchorch.cpp` |
+| `SwitchOrch` | `dscp_value` フィールドなし | PRESERVE モード (元パケットの DSCP を保持) | `switchorch.cpp` |
+| `SwitchOrch` | `queue` フィールドあり | STATIC モード + 指定キュー番号を SAI に設定 | `switchorch.cpp` |
+| `SwitchOrch` | del_handler | SAI trim 設定を解除 | `switchorch.cpp` |
+
+> **スキャン証跡**: `SWITCH_TRIMMING` はパケットトリミング機能の設定。`dscp_value` / `queue` の有無が SAI resolution mode を自動決定する点が主要 Phase 6 派生。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 

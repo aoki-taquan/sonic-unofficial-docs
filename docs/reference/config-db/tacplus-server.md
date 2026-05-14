@@ -166,6 +166,35 @@ show tacacs
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+hostcfgd が `TACPLUS_SERVER.tcp_port` 未設定の場合にデフォルト `49` を補完し、`timeout` 未設定の場合にデフォルト `5` を補完する。`priority` フィールドの昇順でサーバーを PAM 設定に並べる（ソート派生）。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読する。ただし `aaa.authentication.login` に `tacacs+` が含まれない場合、TACACS+ サーバー設定があっても PAM に反映されない。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `hostcfgd` TACACS+ handler | `auth_type==ascii` | PAM に ascii 認証設定 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `auth_type==pap` | PAM に pap 認証設定 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `auth_type==chap` | PAM に chap 認証設定 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `passkey` フィールドあり | `secret=<passkey>` を設定 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `vrf_name` フィールドあり | VRF バインドで TACACS+ サーバーに接続 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `src_ip` フィールドあり | ソース IP を指定して接続 | `hostcfgd.py` |
+
+> **スキャン証跡**: `TACPLUS_SERVER` は TACACS+ 認証の設定テーブル。`auth_type` の分岐と `priority` による順序付けが主要な Phase 8 ポイント。デフォルト値補完が Phase 6 相当。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
