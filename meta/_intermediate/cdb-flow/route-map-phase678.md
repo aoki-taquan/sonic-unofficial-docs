@@ -1,33 +1,52 @@
-# ROUTE_MAP — Phase 6/7/8 派生・分岐 証跡
+# ROUTE_MAP — Phase 6/7/8 中間ファイル
 
-## Phase 6: 自動派生 (assignment scan)
+生成日: 2026-05-14 (batch cdb_batch_4)
 
-`bgpcfgd` の `RouteMapMgr` が `ROUTE_MAP` テーブルを読み、FRR の `route-map` 設定コマンドを生成する。
+<!-- derivation -->
+## Phase 6: 自動派生代入スキャン
 
-| 派生先 | 派生元条件 | 派生値 | ソース |
-|---|---|---|---|
-| FRR `route-map permit/deny` | `route_map_entry.action` | `permit` または `deny` | `managers_route_map.py` |
-| FRR `match` 句 | `MATCH_PREFIX_LIST` / `MATCH_AS_PATH` 等のフィールド | 対応する FRR `match` コマンド | `managers_route_map.py` |
-| FRR `set` 句 | `SET_COMMUNITY` / `SET_LOCAL_PREF` 等のフィールド | 対応する FRR `set` コマンド | `managers_route_map.py` |
+### 全ソース — 該当なし
 
-**CONFIG_DB 内フィールド間の自動付与なし**: すべてのフィールドは FRR テキストコマンドへの変換のみ。
+minigraph.py / config_samples.py / db_migrator.py / init_cfg.json.j2 に ROUTE_MAP への代入なし。CLI (`config route-map`) または config_db.json で明示設定。
 
-## Phase 7: 条件付き登録 (add_manager 条件)
+**結論**: Phase 6 派生なし。
 
-| 条件 | 影響 | ソース |
-|---|---|---|
-| `bgpcfgd` は常時起動 | `RouteMapMgr` は無条件登録 | `bgpcfgd/main.py` |
-| 参照する `PREFIX_LIST` / `AS_PATH_SET` / `COMMUNITY_SET` が未設定 | FRR コマンドは発行されるが、FRR 側で未解決参照エラー | FRR vtysh |
+<!-- /derivation -->
 
-## Phase 8: Handler メソッド内分岐
+<!-- derivation -->
+## Phase 7: 条件付き manager/orch 登録
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `RouteMapMgr` | `action==permit` | `route-map <name> permit <seq>` | `managers_route_map.py` |
-| `RouteMapMgr` | `action==deny` | `route-map <name> deny <seq>` | `managers_route_map.py` |
-| `RouteMapMgr` | `MATCH_PREFIX_LIST` フィールドあり | `match ip address prefix-list <list>` 追加 | `managers_route_map.py` |
-| `RouteMapMgr` | `MATCH_AS_PATH` フィールドあり | `match as-path <list>` 追加 | `managers_route_map.py` |
-| `RouteMapMgr` | `SET_COMMUNITY` フィールドあり | `set community <value>` 追加 | `managers_route_map.py` |
-| `RouteMapMgr` | del_handler | FRR に `no route-map <name>` 発行 | `managers_route_map.py` |
+### bgpcfgd/main.py — RouteMapMgr 登録
 
-> **スキャン証跡**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR vtysh に変換。CONFIG_DB 内フィールド間の自動派生なし。
+```python
+# bgpcfgd/main.py:102
+RouteMapMgr(common_objs, "APPL_DB", swsscommon.APP_BGP_PROFILE_TABLE_NAME),
+```
+
+RouteMapMgr は APPL_DB の BGP_PROFILE テーブルを購読 (CONFIG_DB の ROUTE_MAP とは別経路)。**常時** 登録、条件なし。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+## Phase 8: manager メソッド内 early return / dispatch
+
+### managers_rm.py — set_handler / del_handler 分岐
+
+```python
+# L47-65  __set_handler_validate — early return 条件
+if key not in ROUTE_MAPS:           return False  # 定義済み ROUTE_MAP 外
+if type not in ['permit', 'deny']:  return False  # type 不正
+if seq <= 0:                        return False  # seq 不正
+
+# L70-73  __del_handler_validate
+if key not in ROUTE_MAPS:           return False  # key 不存在
+```
+
+`ROUTE_MAPS` はデプロイ固有の route-map 名一覧 (bgpcfgd constants)。その外のキーは early return。
+
+deployment_id に応じた ASN マッピング dispatch (L80):
+```python
+return self.constants['deployment_id_asn_map'][FROM_SDN_SLB_DEPLOYMENT_ID]
+```
+
+<!-- /handler-branching -->

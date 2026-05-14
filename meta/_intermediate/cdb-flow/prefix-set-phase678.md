@@ -1,28 +1,34 @@
-# PREFIX_SET — Phase 6/7/8 派生・分岐 証跡
+# PREFIX_SET — Phase 6/7/8 中間ファイル
 
-## Phase 6: 自動派生 (assignment scan)
+生成日: 2026-05-14 (batch cdb_batch_4)
 
-`frrcfgd` の `PrefixSetMgr` (sonic-mgmt-framework / sonic-routing-policy-sets) が `PREFIX_SET` テーブルを購読し、FRR の `ip prefix-list` / `ipv6 prefix-list` に変換する。
+<!-- derivation -->
+## Phase 6: 自動派生代入スキャン
 
-| 派生先 | 派生元条件 | 派生値 | ソース |
-|---|---|---|---|
-| FRR コマンド種別 | `ip_prefix` に `:` 含む | `ipv6 prefix-list` コマンド | `frrcfgd prefix_set manager` |
-| FRR コマンド種別 | `ip_prefix` に `.` 含む | `ip prefix-list` コマンド | `frrcfgd prefix_set manager` |
+### 全ソース — 該当なし
 
-**CONFIG_DB 内フィールド間の自動派生なし**。FRR テキスト生成のみ。
+minigraph.py / config_samples.py / db_migrator.py / init_cfg.json.j2 に PREFIX_SET への代入なし。OpenConfig RPC 経由または CLI で明示設定。
 
-## Phase 7: 条件付き登録 (add_manager 条件)
+PREFIX_SET は `sonic-mgmt-common` (gNMI / REST) 経由でのみ設定されることが多く、トランスレーションレイヤが PREFIX_LIST に変換して CONFIG_DB に書き込む場合がある。
 
-| 条件 | 影響 | ソース |
-|---|---|---|
-| `frrcfgd` は常時起動 | `PrefixSetMgr` は無条件登録 | `frrcfgd/main.py` |
-| sonic-mgmt-framework 非インストール時 | frrcfgd が存在しない → `PREFIX_SET` を消費するプロセスなし | build-time 依存 |
+**結論**: Phase 6 派生なし。
 
-## Phase 8: Handler メソッド内分岐
+<!-- /derivation -->
 
-| Handler | 分岐条件 | 効果 | evidence |
-|---|---|---|---|
-| `PrefixSetMgr` | `ip_prefix` の形式 (IPv4/IPv6 判定) | `ip prefix-list` vs `ipv6 prefix-list` の切り替え | `frrcfgd` prefix_set manager |
-| `PrefixSetMgr` | エントリ削除 (del_handler) | FRR に `no ip prefix-list` コマンド発行 | `frrcfgd` prefix_set manager |
+<!-- derivation -->
+## Phase 7: 条件付き manager/orch 登録
 
-> **スキャン証跡**: PREFIX_SET は BGP 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。Config-DB 内フィールド間の自動派生なし。
+bgpcfgd の `main.py` には PREFIX_SET を直接購読するマネージャなし。orchdaemon 側も同様。sonic-mgmt-common の transformer が担当。
+
+条件付き登録なし (直接登録自体なし)。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+## Phase 8: manager メソッド内 early return / dispatch
+
+### 該当なし
+
+PREFIX_SET は sonic-mgmt-common のトランスレーションレイヤが `PREFIX_SET` → `PREFIX_LIST` 変換を担当する。orchagent / bgpcfgd が直接処理しないため、本フェーズの handler-branching 証跡なし。
+
+<!-- /handler-branching -->
