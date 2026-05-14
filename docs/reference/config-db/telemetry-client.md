@@ -164,6 +164,34 @@ docker logs gnmi | grep -i dial-out
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+telemetry サービスが `tls_cert` / `tls_key` フィールドの有無から接続モードを自動決定する。両方あり → mTLS 接続、なし → 平文または server-only TLS。`enabled` フィールドにより dial-out クライアントの起動/停止が制御される。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+telemetry サービスが有効の場合のみ `TELEMETRY_CLIENT` テーブルを消費するプロセスが存在する。`TELEMETRY_CLIENT.enabled==false` の場合は dial-out クライアントを起動しない。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `telemetry_client` | `enabled==true` | gRPC 接続を確立して subscription 開始 | `telemetry_client` |
+| `telemetry_client` | `enabled==false` | gRPC 接続を切断 | `telemetry_client` |
+| `telemetry_client` | `tls_cert` / `tls_key` あり | mTLS 証明書を使用して接続 | `telemetry_client` |
+| `telemetry_client` | TLS 設定なし | 平文または server-only TLS で接続 | `telemetry_client` |
+| `telemetry_client` | `retry_interval` 設定 | 接続失敗時の再試行インターバルを設定 | `telemetry_client` |
+
+> **スキャン証跡**: `TELEMETRY_CLIENT` は gNMI dial-out のクライアント設定。`enabled` フィールドが主要分岐。TLS フィールドの有無が接続モードを決定（Phase 6 派生相当）。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
