@@ -302,6 +302,62 @@ REST/gNMI 書き込み経路なし (PORT はプラットフォーム初期化で
 
 <!-- glossary-links-injected: 16a5b728a75a -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+> **注記**: YANG `default` 指定がない場合でも、portmgr / portsorch がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
+
+### admin_status
+
+- YANG: `default "down"`。portmgr.h でも `DEFAULT_ADMIN_STATUS_STR "down"` をハードコード (`portmgr.h:14`)
+- portmgr が**初回 SET 時**（ポートが未登録）に CONFIG_DB に `admin_status` フィールドがなければ `"down"` を APP_DB に書き込む (`portmgr.cpp:175`)
+- PortsOrch は `admin_status` の SAI 反映を**最後**に実行する（speed / fec / autoneg の設定後）。speed や fec 変更中はポートを一時的に `down` に落とし、完了後に CONFIG_DB の値に戻す (`portsorch.cpp:5500-5529`)
+
+### mtu
+
+- YANG: デフォルト指定なし（range 68..9216）
+- portmgr.h でハードコード: `DEFAULT_MTU_STR "9100"` (`portmgr.h:15`)
+- 初回 SET 時に CONFIG_DB に `mtu` フィールドがなければ **9100** が APP_DB に注入される（silent fallback）(`portmgr.cpp:176`)
+- SAI に渡す実際の値は `mtu + 22 bytes`（ethernet header 14 + FCS 4 + VLAN tag 4）を加算。MACsec ポートはさらに `MAX_MACSEC_SECTAG_SIZE` を加算（プラットフォーム依存）(`portsorch.cpp:setPortMtu()`)
+
+### speed
+
+- YANG: mandatory、デフォルト指定なし
+- SAI サポート速度リストが空のプラットフォームでは `isSpeedSupported()` が**常に true を返す** — 任意の speed 値が SAI に渡る (`portsorch.cpp:3093-3096`)
+- `autoneg=off` かつ `admin_status=up` の状態で speed 変更時はポートを一時 down してから変更（backward compatible 挙動）(`portsorch.cpp:5034-5050`)
+
+### autoneg
+
+- YANG: デフォルト指定なし
+- SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE の取得が失敗した場合、能力フラグ `m_cap_an = 1`（サポートあり）として楽観的に扱う (`portsorch.cpp:3189`)
+- `m_cap_an < 1`（非サポート確定）の場合は SWSS_LOG_ERROR + task をスキップ（ポートは変更されない）
+
+### link_training
+
+- YANG: デフォルト指定なし
+- `initPortCapLinkTraining()` は SAI 問い合わせを行わず `m_cap_lt = 1` を**無条件セット**（TODO コメントあり）(`portsorch.cpp:3201`)
+- **全プラットフォームで link_training 設定が通過する** — 非対応 HW では SAI が failure を返すのみ
+
+### fec
+
+- YANG: デフォルト指定なし（`rs`/`fc`/`none`/`auto`）
+- `fec=auto` は SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE サポートがないプラットフォーム（`fec_override_sup=false`）で **task_failed** になる（SWSS_LOG_ERROR "Auto FEC mode is not supported"）(`portsorch.cpp:5317-5321`)
+- FEC サポートリスト未取得のプラットフォームでは `isFecModeSupported()` が常に true を返す(`portsorch.cpp:3211-3213`)
+
+### tpid
+
+- YANG: デフォルト指定なし
+- `addPortBulk()` で `tpid == DEFAULT_TPID (0x8100)` の場合は SAI 属性に追加しない — ハードウェアデフォルトとして扱う (`portsorch.cpp:1337-1344`)
+- 0x8100 以外の TPID を設定後に 0x8100 に戻す場合の HW 挙動はプラットフォーム依存
+
+### pfc_asym
+
+- YANG: デフォルト指定なし
+- 非サポートプラットフォームでは SAI_STATUS_NOT_SUPPORTED を受け取っても **成功扱い**（silent succeed）(`portsorch.cpp:2540-2543`)
+- `pfc_asym=on`（SEPARATE モード）設定時は RX PFC を `0xff`（全優先度有効）に強制設定 — CONFIG_DB に RX PFC 明示フィールドなし (`portsorch.cpp:2556-2570`)
+
+<!-- /defaults -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

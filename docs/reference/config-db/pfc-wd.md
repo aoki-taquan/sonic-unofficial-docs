@@ -257,6 +257,41 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-defaults.md -->
+
+### `action` — ハードコードデフォルト `drop`
+
+`createEntry()` 冒頭 (`pfcwdorch.cpp:190`) で `PFC_WD_ACTION_DROP` に初期化。`pfcwd start` で `--action` を省略した場合、フィールド自体が CONFIG_DB に書かれないが orchagent 側で `drop` を補完する。YANG に `default` 文なし。
+
+### `pfc_stat_history` — ハードコードデフォルト `disable`
+
+`createEntry()` 冒頭 (`pfcwdorch.cpp:191`) で `"disable"` に初期化。`pfcwd start` で `--pfc-stat-history` フラグを付けない限り `disable` が使われる（フラグ不在 → フィールド不書込 → orchagent が `disable` を補完）。
+
+### `restoration_time` — CLI 算出デフォルト `2 × detection_time`
+
+`pfcwd start` で `--restoration-time` を省略すると `main.py:334` が `2 × detection_time` を算出して書き込む。直接 redis-cli で `restoration_time` なしで書いた場合、orchagent は `restorationTime=0` のまま処理し COUNTERS_DB に空文字列を書く（= 無限待機相当）。
+
+### `POLL_INTERVAL` — 初期内部値 100 ms
+
+orchagent 起動時は `#define PFC_WD_POLL_MSECS 100` (`orchdaemon.cpp:24`) をポーリング間隔として使用。`PFC_WD|GLOBAL` に `POLL_INTERVAL` が書かれれば `updateGroupPollingInterval()` で上書きされる。CLI `start_default` のデフォルト書込値は 200 ms。
+
+### `detection_time` — 暗黙デフォルトなし（必須）
+
+`createEntry()` 内で `detectionTime == 0` を検出すると `SWSS_LOG_ERROR("detection_time missing")` + `task_invalid_entry` で reject。YANG にも `default` なし。省略は不可。
+
+### BIG_RED_SWITCH — YANG 外隠しフィールド
+
+`PFC_WD|GLOBAL` のみに書ける非 YANG フィールド。値は `enable`/`disable`。`enable` 時は全 PFC 対象キューへ action=`drop` をハードコード強制適用 (`pfcwdorch.cpp:505`)。デフォルトは無効 (`m_bigRedSwitchFlag = false`)。
+
+### `start_default` のポート数スケーリング
+
+`DEVICE_METADATA.default_pfcwd_status == enable` の場合のみ動作。`port_num = len(PORT)` から `multiply = max(1, (port_num-1)//32+1)` を算出し `detection_time = restoration_time = 200 * multiply` ms、`POLL_INTERVAL = min(200 * multiply, 1000)` ms を書き込む (ポート数 ≤32 → 200ms、33–64 → 400ms、65–96 → 600ms 等)。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 62798bcc4162 -->
 
 <!-- derivation -->

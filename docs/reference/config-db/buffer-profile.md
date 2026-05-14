@@ -67,6 +67,48 @@ BUFFER_PROFILE|<name>
 | `headroom_type` | enum `static`/`dynamic` | - | `static` | headroom 動的計算かどうか |
 | `packet_discard_action` | enum `drop`/`trim` | - | - | shared buffer に admit できないときの動作 |
 
+<!-- defaults -->
+## フィールド暗黙デフォルト・コード由来の挙動
+
+### 検出種類と調査根拠
+
+全フィールドを `handleBufferProfileTable()` (buffermgrdyn.cpp L2671-2886)、`updateBufferProfileToDb()` (L890-922)、`processBufferProfile()` (bufferorch.cpp L600-880)、CLI `update_profile()` (sonic-utilities/config/main.py L8556-8632) の全行精読により調査した。
+
+### フィールド別暗黙デフォルト
+
+| フィールド | YANG default | 実装上の実効デフォルト | 種別 |
+|-----------|-------------|----------------------|------|
+| `pool` | なし (mandatory) | CLI 経由のみ: 未指定時 `ingress_lossless_pool` を使用 | 書き込み経路依存乖離・ハードコード |
+| `size` | なし (mandatory) | CLI 経由: `xon+xoff` (SHP 無効) or `xon` (SHP 有効) で自動計算。dynamic model: 速度・ケーブル長から自動計算 | 書き込み経路依存乖離 |
+| `dynamic_th` | なし | CLI 経由のみ: 未指定時 `DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` から自動補完 | 書き込み経路依存乖離・silent fallback |
+| `xon` | `0` | lossless=false プロファイルでは APPL_DB/SAI に出力されない (silent drop) | YANG vs 実装 discrepancy |
+| `xon_offset` | `0` | 空文字列の場合は APPL_DB 出力スキップ (lossless=true でも) | YANG vs 実装 discrepancy |
+| `xoff` | `0` | lossless=false では APPL_DB/SAI に出力されない。`xoff` フィールドの存在が `lossless=true` のトリガー | dead field (lossless=false 時) |
+| `headroom_type` | `static` | YANG と一致。`dynamic` 指定時は `lossless=true` + `direction=BUFFER_INGRESS` を強制セット | 副作用あり |
+| `packet_discard_action` | なし | 省略時 APPL_DB/SAI に出力されない。SAI 実装依存の DROP が適用 (ASIC vendor 固有) | ハードコード固定値 (SAI 側) |
+| `static_th` / `dynamic_th` | なし | 相互排他。pool の mode と不一致時 `task_failed` | 複合必須制約 |
+
+### 書き込み経路別の差異
+
+- **CLI** (`config buffer profile add`): `pool` 未指定 → `ingress_lossless_pool`。`dynamic_th` 未指定 → `DEFAULT_LOSSLESS_BUFFER_PARAMETER` から補完。`size` 未指定 → `xon+xoff` or `xon` で計算。
+- **minigraph / buffers_config.j2**: platform/SKU/topology 別テンプレートで全フィールドを明示指定。補完ロジックなし。
+- **buffermgrd (dynamic model)**: `pg_lossless_<speed>_<cable>_profile` を自動生成・書き込み。`headroom_type=dynamic` 強制。
+- **REST / gNMI**: 対応なし (`sonic-mgmt-common` に BUFFER_PROFILE transformer 未実装)。
+
+### create-only フィールド (更新不可)
+
+`pool` および閾値モード (`static_th`/`dynamic_th`) は SAI の create-only 属性のため、既存 SAI オブジェクトへの変更は **silently スキップ**される。(`bufferorch.cpp L656-659, L692-714`)
+
+### trim 制約 (packet_discard_action=trim)
+
+`trim` 設定プロファイルの適用先制限:
+- ingress PG への適用: `task_failed` (bufferorch.cpp L1382)
+- ingress port profile list への適用: `task_failed` (bufferorch.cpp L1725)
+- egress port profile list への適用: `task_failed` (bufferorch.cpp L1915)
+- egress shared buffer のみ有効。`SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` 返却時は `task_ignore` (ASIC 非対応)。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -231,4 +273,29 @@ show buffer profile
 
 > **スキャン証跡**: `handleBufferProfileTable` L2671-2935 全行読了。5 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG 定義のデフォルト値と `buffermgrdyn.cpp` / `bufferorch.cpp` 実装の実際の挙動を突き合わせた結果。
+
+| フィールド | YANG default | 実装の実際の挙動 | 種別 | evidence |
+|-----------|-------------|----------------|------|----------|
+| `xon` | `0` | lossy プロファイル (`lossless==false`) では APPL_DB/SAI に **書かれない** (silent omit) | YANG-impl 乖離 / silent omit | `buffermgrdyn.cpp:903-905` |
+| `xon_offset` | `0` | 未設定時 APPL_DB/SAI に **含まれない** (silent omit)。SAI platform default が適用される | silent omit | `buffermgrdyn.cpp:906-908` |
+| `xoff` | `0` | lossy プロファイルでは APPL_DB/SAI に書かれない。**`xoff` フィールドの存在** が `lossless=true` フラグのトリガー | YANG-impl 乖離 / flag derivation | `buffermgrdyn.cpp:2755,909` |
+| `headroom_type` | `static` | フィールド不在 → `dynamic_calculated=false` (static 扱い)。`dynamic` 指定時は `lossless=true` + `direction=INGRESS` が自動セットされ、ポート参照まで APPL_DB に書かれない | flag derivation / APPL_DB defer | `buffermgrdyn.cpp:2692,2788-2795,2820` |
+| `packet_discard_action` | (none) | 未設定時 APPL_DB/SAI に送らない。SAI platform default (通常 `drop`) が適用される | silent omit / platform dependency | `buffermgrdyn.cpp:911-913` |
+| `dynamic_th` / `static_th` | (none) | どちらも未設定時: pool の `mode` を `threshold_mode` に採用。`threshold` が空文字のまま APPL_DB に書かれるリスクあり | fallback / empty-string write | `buffermgrdyn.cpp:901,917` |
+| `lossless` (内部フラグ) | `false` | `xoff` 設定 または `headroom_type=dynamic` で自動 `true`。pool 方向チェック (ingress 必須) が有効になる | flag derivation | `buffermgrdyn.cpp:2755,2793,2807` |
+| `size` (dynamic mode) | mandatory | dynamic headroom model ではポート速度・ケーブル長から lua plugin が計算して上書き | ランタイム上書き | `buffermgrdyn.cpp:989-1001` |
+| `xon` (Mellanox 8-lane) | YANG 0 / lua 計算値 | Mellanox モデル番号 4xxx/5xxx の 8 レーンポートは xon が **2 倍** の値で計算される | platform dependency | `buffermgrdyn.cpp:504-517` |
+
+### 注意事項
+
+- **static buffer model** (`buffermgr.cpp`): BUFFER_PROFILE を CONFIG_DB から APPL_DB へ **passthrough** する。`headroom_type` フィールドは解釈されず dead field となる。
+- **pool 未準備時の APPL_DB 書き込み skip**: `m_bufferPoolReady == false` のとき `updateBufferProfileToDb()` が pending フラグを立てて即座にリターンする (`buffermgrdyn.cpp:892-896`)。
+- **pool 削除待ち状態 (pendingRemove) への SET**: `task_need_retry` を返す。プロファイルを参照中の PG/Queue が存在する限り削除もできない (`buffermgrdyn.cpp:2858`)。
+- **threshold_mode と pool mode の不一致**: `dynamic_th` を指定したが pool が `static` mode の場合 (またはその逆)、`task_failed` でリジェクトされる (`buffermgrdyn.cpp:2726-2735`)。
+
+<!-- /defaults -->
 <!-- glossary-links-injected: 22dbf67b9d97 -->

@@ -252,4 +252,60 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## 暗黙デフォルト・コード由来の落とし穴
+
+### `route_operation` 欠落 → 全フィールド処理スキップ
+
+frrcfgd は起動時に `route_operation` を内部キャッシュに登録する。フィールドが CONFIG_DB エントリに存在しない場合、後続の `match_*` / `set_*` フィールドが全て `route-map {name} seq {seq} not found for update` エラーでスキップされる（silent drop）。YANG に mandatory / default 宣言なし。
+
+### `match_ipv6_prefix_set` — dead field (frrcfgd 未処理)
+
+YANG に定義はあるが `frrcfgd` の `route_map_key_map` に対応エントリなし。CONFIG_DB に書き込んでも FRR に反映されない。IPv6 prefix-list match は `match_prefix_set` で代替し、参照先 `PREFIX_SET.mode=IPv6` で AF を決定させること。
+
+### `set_tag` — dead field (frrcfgd 未処理)
+
+YANG に `set_tag` (uint32) が定義されているが `route_map_key_map` に対応エントリなし。frrcfgd は無視する。
+
+### `match_prefix_set` / `match_next_hop_set` — 書き込み順依存
+
+frrcfgd は参照先 `PREFIX_SET.mode` を動的に参照して IPv4/IPv6 を判定する。PREFIX_SET が先に作成されていない場合、AF が特定できず FRR へのコマンド発行がスキップされる。**PREFIX_SET を先に作成してから ROUTE_MAP を設定すること。**
+
+### `set_metric_action` + `set_metric` の組み合わせ依存
+
+- `METRIC_SET_VALUE` / `METRIC_ADD_VALUE` / `METRIC_SUBTRACT_VALUE` は `set_metric` が必須。未設定時 `handle_rmap_set_metric` が `LOG_ERR` を出力し `None` を返却 → FRR コマンド未発行（silent drop）。
+- RTT 系 (`METRIC_SET_RTT` / `METRIC_ADD_RTT` / `METRIC_SUBTRACT_RTT`) は `set_metric` 不要。
+- `set_metric_action` なしで `set_med` のみを設定した場合、`set_med` の値がそのまま `set metric` コマンドに使われる（フォールバック）。
+
+### `set_repeat_asn` 単独設定 — silent drop
+
+`set_asn` が未設定で `set_repeat_asn` のみ設定しても `hdl_set_asn` が `return None` → FRR コマンド未発行。`set_repeat_asn` は `set_asn` とセットで設定すること。`set_repeat_asn` 省略時は繰り返し 1 回（デフォルト）。
+
+### `set_asn_list` — カンマ区切り → スペース区切り変換
+
+CONFIG_DB では `"1111,2222,3333"` 形式で格納するが、FRR コマンドでは `"1111 2222 3333"` に自動変換される。
+
+### `match_protocol` — zebra daemon のみ有効
+
+`[zebra]` タグが付いており bgpd インスタンスでは無視される。また `ospf3` は frrcfgd が `ospf6` に変換して発行する。
+
+### `match_neighbor` — max-elements 1 だが複数書込み時は先頭のみ
+
+YANG は `max-elements 1` の leaf-list。frrcfgd の format `:peer-ip` は list の場合先頭要素のみ使用。2 番目以降は silent drop。
+
+### BGPRouteMapMgr のハードコード (SDN ユースケース専用)
+
+`FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` の 2 キーに限り `managers_rm.py` が以下をハードコード:
+- シーケンス番号: **`permit 100`** (固定)
+- `set origin incomplete` (固定)
+- `set as-path prepend <bgp_asn> <bgp_asn>` (ASN を **2 回** prepend)
+
+BGP ASN は `constants['deployment_id_asn_map']['2']` から取得。未設定時は既存 route-map を残したまま更新スキップ。
+
+### `set_community_ref` — 参照先未作成時 silent drop
+
+参照先 `COMMUNITY_SET` が CONFIG_DB に存在しないか `is_configurable()` が False の場合、FRR コマンドが生成されない。COMMUNITY_SET を先に作成すること。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 24dbb72211e3 -->

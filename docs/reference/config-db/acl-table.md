@@ -244,6 +244,40 @@ ACL_TABLE は `AclOrch::doAclTableTask()` が処理する。`type` / `stage` フ
 
 <!-- /handler-branching -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG スキーマに `default` 宣言がない (`ACL_TABLE` は YANG 未定義) 状態で、C++ struct 初期化・Python CLI fallback・実装読み捨てによって実質的に適用されるデフォルト値を列挙する。
+
+| フィールド | YANG default | コード由来デフォルト | 発生源 |
+|---|---|---|---|
+| `stage` | なし | **`INGRESS`** | C++ struct 初期値 `acl_stage_type_t stage = ACL_STAGE_INGRESS` (`aclorch.h:543`) + CLI `default="ingress"` (`config/main.py:8081`) |
+| `policy_desc` | なし | **`<table_name>`** (CLI 経由) / `""` (直接書き込み) | `parse_acl_table_info()` の `else` 分岐 `table_info["policy_desc"] = table_name` (`main.py:8047`) |
+| `type` | なし | **なし** (必須フィールド) | `processAclTableType()` — 空文字のみ reject、省略時は `bAllAttributesOk=false` → erase (`aclorch.cpp:5823`) |
+| `ports` | なし | **全有効 ACL ポート** (CLI 経由) / `[]` (直接書き込み) | `get_acl_bound_ports()` fallback (`main.py:8059`) |
+| `services` | なし | **なし** (読み捨て) | `doAclTableTask()` 内で `continue` — 内部状態に影響しない (`aclorch.cpp:5413`) |
+
+### `stage` の詳細
+
+C++ の `AclTable` クラスは `stage = ACL_STAGE_INGRESS` でメンバを初期化する (`aclorch.h:543`)。CONFIG_DB エントリに `stage` フィールドがなければ `processAclTableStage()` が呼ばれず INGRESS がそのまま `validate()` に渡る。CLI でも `-s` 省略時に `"ingress"` をセット済みで書き込むため、2 重に担保されている。
+
+### `policy_desc` の詳細
+
+`config acl add table` 実行時に `-d` を省略すると `policy_desc` に `table_name` 文字列が設定される。REST/minigraph/直接書き込みでは `policy_desc` は任意で、省略時は orchagent の `AclTable::description` が空文字列デフォルト。orchagent は `description` を SAI 属性として渡さないため SAI ハードウェアに影響なし（ログ・`show` 表示のみ）。
+
+### 内部自動付与 action/match (YANG 外)
+
+`addMandatoryActions()` (`aclorch.cpp:2563`) — ASIC が action list mandatory と報告する場合、ユーザ指定 action が空なら `SAI_ACL_ACTION_TYPE_COUNTER` を自動追加し、さらに `defaultAclActionList` テーブルから type/stage 組み合わせで追加する。これは CONFIG_DB フィールドではなく SAI 属性 (`SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST`) として展開される。主要な自動付与:
+
+| type | INGRESS 自動付与 | EGRESS 自動付与 |
+|---|---|---|
+| `L3` / `L3V6` / `L3V4V6` | `PACKET_ACTION`, `REDIRECT` | `PACKET_ACTION`, `REDIRECT` |
+| `MIRROR` | `MIRROR_INGRESS`, `MIRROR_EGRESS` | `MIRROR_EGRESS` |
+
+`addStageMandatoryMatchFields()` (`aclorch.cpp:2632`) — type/stage 組み合わせに応じて SAI match 属性を自動付与する。`SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` (L4 ポート範囲) は BRCM プラットフォームの EGRESS stage では省略される (`addStageMandatoryRangeFields()` が `false` を返す)。これらも CONFIG_DB フィールドではなく SAI 属性として展開される。
+
+<!-- /defaults -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

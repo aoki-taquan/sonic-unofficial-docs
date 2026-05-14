@@ -218,4 +218,48 @@ db_migrator.py での TC_TO_QUEUE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+### ビルド時デフォルト
+
+`config qos reload` が展開する `qos_config.j2` は以下の優先順で `TC_TO_QUEUE_MAP` を生成する。
+
+1. `generate_tc_to_queue_map` 関数定義あり **かつ** `tunnel_qos_remap_enable=true` → プラットフォーム固有関数（`AZURE_UPLINK` 等）
+2. `generate_tc_to_queue_map_per_sku` 定義あり → SKU 別マップ
+3. **フォールバック（デフォルト）**: TC 0–7 → queue 0–7 の恒等写像（マップ名 `AZURE`）
+
+### フィールド別暗黙挙動
+
+| フィールド | YANG デフォルト | コード挙動 | 備考 |
+|-----------|--------------|----------|------|
+| `qindex` | なし | `stoi()` 変換のみ。空/非数値 → 例外 → `task_invalid_entry`（silent drop） | YANG は 1 桁 (0–9) を pattern で制約するが実装は上限チェックなし |
+| `tc` (key) | なし（型: `tc_type` 0–7） | `stoi()` 変換のみ。無効値 → `task_invalid_entry` | try-catch なし |
+
+### ハードコード
+
+`TcToQueueMapHandler::addQosItem()` 内で SAI map type が静的にハードコードされている。
+
+```cpp
+qos_map_attr.value.s32 = SAI_QOS_MAP_TYPE_TC_TO_QUEUE;
+```
+
+テーブル名から動的解決ではなく、ハンドラクラスに埋め込み固定。
+
+### 書込み順依存
+
+- `PORT_QOS_MAP` が参照する前に `TC_TO_QUEUE_MAP` が存在しない場合、`PORT_QOS_MAP` 処理は `task_need_retry` で再キューイングされる。
+- `TC_TO_QUEUE_MAP` DEL 時に `PORT_QOS_MAP` 参照中であれば `m_pendingRemove=true` でキューイング、参照解放まで SAI remove は呼ばれない。
+
+### 経路依存乖離
+
+PORT_QOS_MAP への適用マップ名は `qos_config.j2` の条件分岐で決定する。
+
+```
+uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE_UPLINK
+それ以外 → AZURE（デフォルト恒等写像）
+```
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 16a5b728a75a -->

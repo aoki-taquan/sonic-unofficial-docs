@@ -195,4 +195,61 @@ show qos map dscp-tc
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト・制約
+
+### `tc` フィールド — YANG-実装 discrepancy
+
+| 観点 | 内容 |
+|------|------|
+| YANG 定義 | `stypes:tc_type` = `uint8 range "0..15"` (`sonic-types.yang.j2:338`) |
+| SAI/ASIC 実態 | 大多数の ASIC は TC 0..7 のみサポート。TC 8..15 を設定すると SAI エラー → `task_failed` |
+| 結論 | **YANG は 0..15 を許可するが、実運用上 8..15 は ASIC に reject される** (silent エラーでなく task_failed) |
+
+### `dscp` フィールド (key) — 暗黙の型変換と例外処理欠如
+
+- CONFIG_DB に格納される型は **string** (`"0"`..`"63"`)
+- `qosorch.cpp:245`: `(uint8_t)stoi(fvField(*i))` で uint8 変換 → SAI へ渡す
+- **例外処理なし**: 数値以外の文字列を書くと `std::invalid_argument` が投げられ `task_failed`（[`Dot1pToTcMapHandler`](../../reference/glossary.md#term-orchagent) は try/catch あり、`DscpToTcMapHandler` は **なし**）
+
+### 未定義 DSCP のデフォルト TC (スパース定義時)
+
+- 0..63 全エントリの定義は不要（スパース定義可能）
+- 未定義 DSCP のデフォルト TC は **ASIC/SAI 実装依存**（一般的に TC=0 だが非保証）
+- SONiC 標準 AZURE マップは全 64 エントリを明示定義 (`qos_config.j2:265-332`)
+
+### ビルド時ハードコードデフォルト (`qos_config.j2`)
+
+プラットフォーム固有 `generate_dscp_to_tc_map` マクロ未定義時のフォールバック AZURE マップ:
+
+| DSCP | TC | 備考 |
+|------|----|------|
+| 3 | 3 | CS0 相当 lossless |
+| 4 | 4 | CS0 相当 lossless |
+| 5 | 2 | — |
+| 8 | 0 | CS1: best-effort |
+| 46 | 5 | EF: expedited forwarding |
+| 48 | 6 | CS6: network control |
+| その他 | 1 | デフォルト低優先度 |
+
+- **LeafRouter + tunnel_qos_remap_enable**: uplink ポートには `AZURE_UPLINK` マップを使用
+- **DualToR + uplink**: 同様に `AZURE_UPLINK` を使用
+
+### `PORT_QOS_MAP|global` — スイッチレベル適用の条件分岐
+
+| 条件 | 挙動 |
+|------|------|
+| `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` 非対応 | `querySwitchCapability()` が false → **適用スキップ（エラーなし）** |
+| Broadcom ASIC かつ `PORT_QOS_MAP|global` 未存在 | `db_migrator.migrate_port_qos_map_global()` が **自動生成** |
+| 複数の DSCP_TO_TC_MAP 存在時 | `get_keys()` の **最初の 1 件** を使用（順序未定義） |
+
+> **Evidence**: `qosorch.cpp:1956` (capability check), `db_migrator.py:704-715` (Broadcom 限定自動生成)
+
+### DEL 時の pending_remove ロック
+
+- 参照中 (PORT_QOS_MAP / TUNNEL) のマップへ DEL → `m_pendingRemove = true` + `task_need_retry`
+- pending_remove 中に SET が来ても **実行せず** `task_need_retry` を返す
+- Tunnel decap 経路 (`tunneldecaporch.cpp:832-836`): `dscp_to_tc_map_id == SAI_NULL_OBJECT_ID` 時はトンネル作成時に設定しない（silent skip）
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 9e94f614fc2c -->

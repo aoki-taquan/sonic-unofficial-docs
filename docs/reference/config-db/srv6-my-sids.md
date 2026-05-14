@@ -123,6 +123,6 @@ SAI 実装の多くは `uniform` をデフォルトとするが SONiC コード�
 
 ## 関連テーブル
 
-- [`SRV6_MY_LOCATORS`](../../reference/config-db/srv6-my-locators.md) — ロケータ定義（SID アドレス空間の分割）
+- `SRV6_MY_LOCATORS` — ロケータ定義（SID アドレス空間の分割）
 
 [^1]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-srv6.yang` (revision 2024-12-05) より。

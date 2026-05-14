@@ -241,6 +241,81 @@ db_migrator.py での NAT マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ (`natorch.cpp:63-73`) と `NatMgr` コンストラクタ (`natmgr.cpp:55-65`) の両方が独立してデフォルト値を保持する。
+
+| フィールド | YANG default | コード hardcode | fallback 源 |
+|-----------|-------------|----------------|------------|
+| `admin_mode` | `disabled` | `"disabled"` | `NatOrch::NatOrch() L64`、`NatMgr::NatMgr() L56` |
+| `nat_timeout` | `600` | `600` | `NatOrch L67`、`NatMgr L59`、`NAT_TIMEOUT_DEFAULT natmgr.h:64` |
+| `nat_tcp_timeout` | `86400` | `86400` | `NatOrch L70`、`NatMgr L62`、`NAT_TCP_TIMEOUT_DEFAULT natmgr.h:69` |
+| `nat_udp_timeout` | `300` | `300` | `NatOrch L73`、`NatMgr L65`、`NAT_UDP_TIMEOUT_DEFAULT natmgr.h:73` |
+
+全フィールドで YANG default と実装 hardcode は一致。ただし以下の暗黙挙動・乖離がある:
+
+### プラットフォーム依存 silent drop (`admin_mode=enabled` が無視される)
+
+- `main.cpp:936-948`: `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が 0 を返すプラットフォームでは `gIsNatSupported = false`。
+- `natorch.cpp:2541-2544`: `enableNatFeature()` 冒頭で `gIsNatSupported == false` → `SWSS_LOG_NOTICE + return`。
+- CONFIG_DB に `admin_mode=enabled` を書いても、SAI が SNAT エントリを 0 と報告するプラットフォームでは NAT は有効化されない。`show nat config` では enabled と表示されるが SAI 操作は行われない。
+
+### タイムアウト変更の遅延伝播 (admin_mode 依存)
+
+- `natmgr.cpp:7282-7313`: timeout フィールドの変更は `isNatEnabled()` が `true` の場合のみ APPL_DB に書き込まれる。
+- `admin_mode=disabled` 状態でタイムアウトを変更しても APPL_DB には伝播しない。
+- `enableNatFeature()` (natmgr.cpp:5688-5704) は `if (m_natTcpTimeout != NAT_TCP_TIMEOUT_DEFAULT)` 等で非デフォルト値のみ書き込む。デフォルト値と同じ値への変更は APPL_DB に届かない。
+
+### BRCM プラットフォームのみ有効な DNAT next-hop 追跡
+
+- `natorch.cpp:144-148`: `getenv("platform")` が `"broadcom"` を含む場合のみ `gNhTrackingSupported = true`。
+- 非 BRCM 環境では `enableNatFeature()` 内で `m_neighOrch->attach(this)` が呼ばれず、DNAT エントリの next-hop 変化追跡が行われない。経路変更時に DNAT エントリが stale になるリスクあり。
+
+### nat_type default の STATIC_NAT vs NAT_BINDINGS 非対称
+
+- `STATIC_NAT.nat_type` / `STATIC_NAPT.nat_type`: YANG `default dnat` (sonic-nat.yang L101, L141)。
+- `NAT_BINDINGS.nat_type`: YANG `default snat` (sonic-nat.yang L280)。
+- 省略時の動作が テーブルによって逆であることに注意。
+
+### DEL_COMMAND 時の APPL_DB 書き込み条件
+
+- `natmgr.cpp:7337-7366`: `NAT_GLOBAL` DEL 時は内部変数をデフォルトにリセットするが、APPL_DB への書き込みは `natAdminMode == ENABLED` 時のみ実行される。`admin_mode=disabled` のまま DEL した場合は APPL_DB への書き込みはなく内部状態のみリセット。
+
+### orchagent の assert クラッシュ (admin_mode 異常値)
+
+- `natorch.cpp:2938`: `assert(mode == "enabled" || mode == "disabled")` — APPL_DB に enabled/disabled 以外の値が入ると orchagent が abort する。natmgr 経由ではガード済みだが、直接 APPL_DB 操作や YANG 迂回でバイパスすると問題が発生する。
+
+### NAT_POOL テーブル — silent drop / 暗黙デフォルト / YANG-実装 discrepancy
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatPoolTask L6482-6866 / sonic-utilities/config/nat.py add_pool L673-772 / sonic-nat.yang -->
+
+| フィールド / 条件 | 検出種別 | 挙動 | ソース |
+|---|---|---|---|
+| `nat_ip` 欠落 | silent drop | `SWSS_LOG_ERROR("Invalid nat_ip values, skipping %s")` + erase (再試行なし) | `natmgr.cpp:6539` |
+| `nat_port` 欠落 または `"NULL"` | 暗黙デフォルト | `port_range = EMPTY_STRING` → iptables に port 制限なし (full-cone MASQUERADE) | `natmgr.cpp:6812` |
+| `nat_port` 省略時の CLI 書き込み | 経路依存乖離 | CLI は `"NULL"` を DB に書き込む; natmgr は `""` と同等に扱う | `nat.py:721` |
+| `nat_port` で port 0 指定 | silent drop | `portValue_low < L4_PORT_MIN(1)` → ERROR + erase (YANG は 0 を許容) | `natmgr.cpp:6694` |
+| `nat_ip` に単一 IP 指定 | ハードコード展開 | `ipv4_addr_high = ntohl(ipv4_addr_low)` で 1-address pool として処理 | `natmgr.cpp:6652` |
+| `nat_ip` に 0.0.0.0 / ブロードキャスト / ループバック / マルチキャスト / 予約済み | silent drop | ERROR + erase (YANG の `ip-address-range` typedef はこれらを拒否しない) | `natmgr.cpp:6608` |
+| `nat_ip` 範囲で low >= high | silent drop | ERROR + erase (YANG は順序を検証しない) | `natmgr.cpp:6635` |
+| `nat_ip` が既存 STATIC_NAT の global_ip と重複 | silent drop | `SWSS_LOG_ERROR("Pool Ip address is overlaps with static NAT entry")` + erase | `natmgr.cpp:6771` |
+| 未知フィールド (`nat_ip` / `nat_port` 以外) | silent drop | `nonValueFound=true` → ERROR + erase | `natmgr.cpp:6557` |
+| key が `|` で複数セグメント (size != 1) | silent drop | ERROR + erase | `natmgr.cpp:6504` |
+
+### NAT_BINDINGS テーブル — silent drop / 暗黙デフォルト / YANG-実装 discrepancy
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatBindingTask L6868-7100 -->
+
+| フィールド / 条件 | 検出種別 | 挙動 | ソース |
+|---|---|---|---|
+| `nat_type` 欠落 | 暗黙デフォルト | `m_natBindingInfo[key].nat_type = "snat"` にフォールバック | `natmgr.cpp:7056` |
+| `nat_type = "dnat"` | **YANG-実装 discrepancy** | YANG は `dnat` を許可 (`default snat`); natmgr は `"snat"` 以外を ERROR + erase で完全拒否 | `natmgr.cpp:6986` |
+| `twice_nat_id` 欠落 または `"NULL"` | 暗黙デフォルト | `EMPTY_STRING` = twice-NAT 無効。`"NULL"` は明示的に `EMPTY_STRING` に変換される | `natmgr.cpp:6993` |
+| `pool_interface` / `acl_interface` | ハードコード内部値 | CONFIG_DB フィールドではなく natmgr 内部キャッシュに `"None"` で初期化 | `natmgr.cpp:7052` |
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: a6fe2efe021a -->
 
 <!-- derivation -->
