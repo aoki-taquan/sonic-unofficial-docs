@@ -409,4 +409,44 @@ VLAN 単位の server listen event 生成失敗は **プロセスを停止させ
 > **Evidence**: `sonic-dhcp-relay` `dhcp6relay/src/relay.cpp`, `dhcp6relay/src/config_interface.cpp`, `dhcp6relay/src/sender.cpp`, `dhcp6relay/src/main.cpp`
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp`, `relay.cpp`, `main.cpp`, `dhcpv6-relay.agents.j2`, `minigraph.py` 全行精読 (2026-05-14)
+
+`DHCP_RELAY` テーブルは YANG leafref を持たないが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | 条件 | 証拠 |
+|---|---|---|---|---|
+| `VLAN_INTERFACE\|<vlan>\|*` | CONFIG_DB | 読み取り (IPv6 アドレス有無チェック) | 常時 | config_interface.cpp:130 |
+| `VLAN_MEMBER\|<vlan>\|*` | CONFIG_DB | 読み取り (port→vlan 逆引きマップ構築) | 常時 | relay.cpp:856 |
+| `DEVICE_METADATA.localhost.subtype` | CONFIG_DB | 読み取り (DualToR 判定・起動時) | 起動時 j2 テンプレート | dhcpv6-relay.agents.j2:16 |
+| `HW_MUX_CABLE_TABLE\|<port>` | STATE_DB | 読み取り (mux active/standby) | DualToR 環境のみ | relay.cpp:1250, 915 |
+| `DHCPv6_COUNTER_TABLE\|<vlan>` | STATE_DB | 書き込み (メッセージカウンタ) | 常時 | relay.cpp:18, 273-304 |
+
+### VLAN_INTERFACE — 実質的な必須前提条件
+
+`processRelayNotification()` は `DHCP_RELAY|<vlan>` エントリを処理するとき、`VLAN_INTERFACE|<vlan>|*` パターンで CONFIG_DB をスキャンし IPv6 アドレスを確認する (config_interface.cpp:130)。IPv6 アドレスが存在しない場合は LOG_WARNING を出力してスキップ — **VLAN_INTERFACE への leafref は YANG 上存在しないが、実装上は必須の暗黙前提条件**。
+
+### VLAN_MEMBER — client packet 受付の前提
+
+`update_vlan_mapping()` が `VLAN_MEMBER|<vlan>|*` からメンバーポート一覧を取得し、受信パケットの interface→vlan 逆引きマップを構築する (relay.cpp:856-863)。メンバーが存在しない VLAN はクライアントパケットを受け付けられない。
+
+### DEVICE_METADATA.subtype — interface_id デフォルト値を決定
+
+`dhcpv6-relay.agents.j2:16` が `DEVICE_METADATA['localhost']['subtype'] == 'DualToR'` を評価し、真の場合 `-u Loopback0` を `dhcp6relay` 起動引数に追加する。これにより `dual_tor_sock = true` → `interface_id` のハードコードデフォルトが `false` から `true` に変わる (config_interface.cpp:120-122)。
+
+### HW_MUX_CABLE_TABLE — DualToR の active/standby 制御
+
+DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::HW_MUX_CABLE_TABLE|<port>` の `state` フィールドを読む (relay.cpp:915)。`state == "standby"` のポートからのパケットはリレーしない。CONFIG_DB の `MUX_CABLE` テーブルに対応する STATE_DB 側テーブル。
+
+### DHCPv6_COUNTER_TABLE — STATE_DB への書き込み副作用
+
+`DHCP_RELAY` に登録された VLAN ごとに `STATE_DB::DHCPv6_COUNTER_TABLE|<vlan>` を初期化・更新する (relay.cpp:273-304)。`show dhcprelay counters` コマンドの参照先。DHCP_RELAY にエントリがない VLAN はカウンタ対象外。
+
+### SAI 参照
+
+なし。`dhcp6relay` は Linux カーネルの L4 UDP relay であり SAI/ASIC に一切触れない。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 11715e560dc6 -->
