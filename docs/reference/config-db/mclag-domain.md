@@ -265,3 +265,31 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 > **スキャン証跡**: `mlagorch.cpp:45-105` を全行読了、5 件分岐抽出。minigraph からの自動派生なしを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## フィールドデフォルト (Phase A)
+
+### MCLAG_DOMAIN
+
+| フィールド | デフォルト | 出典 | hard |
+|-----------|-----------|------|------|
+| `keepalive_interval` | `1` | YANG `default 1;` (`sonic-mclag.yang` L81) | 0 |
+| `session_timeout` | `30` | YANG `default 30;` (`sonic-mclag.yang` L91) | 0 |
+| `source_ip` | (必須・省略不可) | YANG mandatory-equivalent (default 文なし) | — |
+| `peer_ip` | (必須・省略不可) | YANG mandatory-equivalent (default 文なし) | — |
+| `peer_link` | (必須・省略不可) | YANG mandatory-equivalent; `mlagorch.cpp` L85-91 で空時 skip | — |
+
+### MCLAG_INTERFACE
+
+| フィールド | デフォルト | 出典 | hard |
+|-----------|-----------|------|------|
+| `if_type` | (省略可・参照なし) | プレースホルダ。`mlagorch.cpp` 全体で値参照なし | — |
+
+### MCLAG_UNIQUE_IP
+
+| フィールド | デフォルト | 出典 | hard |
+|-----------|-----------|------|------|
+| `unique_ip` | (エントリ不在 = 無効) | YANG コメント "by default disable"; `enum enable` のみ有効値 | — |
+
+> **hard=0**: すべての推奨デフォルトは YANG `default` 文由来。iccpd 内部の定数 (`MCLAG_DEFAULT_PORT 2626` 等) は CONFIG_DB フィールドとは無関係。
+<!-- /defaults -->
