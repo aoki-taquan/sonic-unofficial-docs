@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/console-port/">
       
       
-        <link rel="prev" href="../buffer-port-ingress-profile-list/">
+        <link rel="prev" href="../chassis-module/">
       
       
         <link rel="next" href="../default-lossless-buffer-parameter/">
@@ -20985,6 +20985,8 @@
       
         
       
+        
+      
     
     
     
@@ -23314,6 +23316,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-module/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -23438,7 +23468,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#console_port_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONSOLE_PORT フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#console_switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONSOLE_SWITCH フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        特記事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -23449,7 +23529,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -23460,7 +23540,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23471,7 +23551,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23482,7 +23562,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23493,7 +23573,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -23504,7 +23584,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23516,7 +23596,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23527,7 +23607,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23538,7 +23618,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23554,7 +23634,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -23682,7 +23762,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -23693,7 +23773,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -29921,7 +30001,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#console_port_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONSOLE_PORT フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#console_switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONSOLE_SWITCH フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        特記事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29932,7 +30062,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -29943,7 +30073,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -29954,7 +30084,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29965,7 +30095,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29976,7 +30106,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29987,7 +30117,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29999,7 +30129,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -30010,7 +30140,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -30021,7 +30151,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -30037,7 +30167,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -30165,7 +30295,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -30176,7 +30306,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -30357,8 +30487,81 @@
 </tr>
 </tbody>
 </table>
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="console_port_1">CONSOLE_PORT フィールド<a class="headerlink" href="#console_port_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>CLI 省略時挙動</th>
+<th>実行時 fallback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baud_rate</code></td>
+<td>なし</td>
+<td><code>--baud</code> required — 必ず書き込まれる</td>
+<td>フィールド欠如で接続時 <code>InvalidConfigurationError</code>（consutil/lib.py L198）</td>
+</tr>
+<tr>
+<td><code>flow_control</code></td>
+<td><code>"0"</code> (YANG L62)</td>
+<td><code>--flowcontrol</code> は is_flag — 省略で <code>"0"</code> を明示書き込み</td>
+<td>フィールド欠如は <code>False</code> 扱い（<code>== "1"</code> 比較、consutil/lib.py L153）</td>
+</tr>
+<tr>
+<td><code>remote_device</code></td>
+<td>なし</td>
+<td>省略時はエントリに key 自体を含めない (silent omit)</td>
+<td><code>None</code> のまま接続は続行可</td>
+</tr>
+<tr>
+<td><code>escape_char</code></td>
+<td>なし</td>
+<td>省略時は key なし。書き込み前に <code>escape.lower()</code> 強制小文字化</td>
+<td><code>CONSOLE_SWITCH.default_escape_char</code> → 未設定なら picocom デフォルト (<code>-e</code> なし = Ctrl+A)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="console_switch">CONSOLE_SWITCH フィールド<a class="headerlink" href="#console_switch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>CLI 省略時挙動</th>
+<th>実行時 fallback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td><code>"no"</code> (YANG L86)</td>
+<td><code>config console enable/disable</code> で明示設定</td>
+<td><code>feature_state.get(..., "no")</code> — エントリ不在は <code>"no"</code> 扱い (consutil/lib.py L94)</td>
+</tr>
+<tr>
+<td><code>default_escape_char</code></td>
+<td>なし</td>
+<td><code>clear</code> で key を del</td>
+<td>CONSOLE_SWITCH disabled 時は DB 値に関わらず <code>None</code> に固定 (consutil/lib.py L93–98)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_3">特記事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>flow_control</code> 書き込み vs 実行時乖離</strong>: minigraph 経由では integer <code>0</code>/<code>1</code> が格納されるが、consutil は文字列 <code>"1"</code> との比較を行うため、minigraph 由来のエントリは常に flow_control = False 判定になる。<!-- evidence: minigraph.py L616, consutil/lib.py L153 --></li>
+<li><strong><code>escape_char</code> 大文字小文字制約</strong>: YANG は <code>[a-z]</code> のみ許可するが CLI の <code>click.Choice</code> は大文字も受け入れ、<code>.lower()</code> で変換後に書き込む。ユーザーには大文字が受け付けられるように見えるが DB には小文字が格納される UX 乖離。<!-- evidence: config/console.py L65,L101,L82,L126,L282 --></li>
+<li><strong>デバイスパスのプラットフォーム依存</strong>: <code>SysInfoProvider.DEVICE_PREFIX</code> はデフォルト <code>/dev/ttyUSB</code>。プラットフォームの <code>udevprefix.conf</code> が存在する場合は上書きされる。同一 line_num でもプラットフォームにより物理デバイスが変わる。<!-- evidence: consutil/lib.py L297,L301–307 --></li>
+<li><strong><code>baud_rate</code> の minigraph パス</strong>: XML <code>&lt;Bandwidth&gt;</code> タグから取得。タグ不在時の None チェックなし — AttributeError の潜在リスク。<!-- evidence: minigraph.py L615 --></li>
+</ul>
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
-<h2 id="_3">例外条件・特殊挙動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>既存エントリへの add → 即時失敗</strong>: <code>config console add</code> で指定 linenum のエントリが既に存在する場合 <code>ctx.fail("Trying to add console port setting, which is already exists.")</code> で終了。CLI 側でのガードであり上書きは不可。<!-- evidence: config/console.py L114-115 --></li>
 <li><strong>remote_device 重複 → 失敗</strong>: 同じ <code>remote_device</code> 名がすでに別の linenum で使われている場合 <code>ctx.fail("Given device name ... has been used.")</code> で終了。device 名はシステム内一意制約。<!-- evidence: config/console.py L120-121 isExistingSameDevice --></li>
@@ -30367,7 +30570,7 @@
 <li><strong>baud が既存値と同一 → no-op</strong>: <code>config console baud</code> で現在値と同じ値を指定した場合 DB 更新をスキップして正常終了。<!-- evidence: config/console.py L215-216 --></li>
 </ul>
 <!-- value-behavior -->
-<h2 id="_4">値依存挙動マトリクス<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">値依存挙動マトリクス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -30411,43 +30614,43 @@
 </table>
 <!-- /value-behavior -->
 
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>consutil</code> (CLI)</li>
 <li>console switch を有効化したときの host service</li>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-console</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>CONSOLE_PORT|&lt;line&gt;</code>。</li>
 <li><code>baud_rate</code>: <code>9600</code>、<code>flow_control</code>: <code>0</code>、<code>remote_device</code>: 接続先名。</li>
 </ul>
-<h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>console switch ライセンス / consutil パッケージが入っていない環境で設定だけ入れても接続不能。</li>
 </ul>
-<h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;CONSOLE_PORT|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>console
 </span></code></pre></div>
 <!-- /ops-hint -->
 
 <!-- runtime-trace -->
-<h2 id="_13">実コンテナ動作トレース<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">実コンテナ動作トレース<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>hostcfgd</code> (console port 管理) / <code>conserver</code> (コンソールサーバ) が CONFIG_DB の <code>CONSOLE_PORT</code> テーブルを購読する。</p>
 <p><code>CONSOLE_PORT</code> の key は <code>&lt;port_num&gt;</code> (例: <code>1</code>)。</p>
@@ -30485,11 +30688,11 @@
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_14">ハードコードデフォルト<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">ハードコードデフォルト<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_15">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
