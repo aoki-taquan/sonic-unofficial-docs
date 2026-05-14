@@ -249,6 +249,61 @@ show dhcprelay_helper ipv4
 - なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp6relay/src/config_interface.cpp` 全行精読、`sonic-swss-common/common/subscriberstatetable.cpp` 参照 (2026-05-14)
+
+### 購読方式
+
+`dhcp6relay` は `swss::SubscriberStateTable` を通じて CONFIG_DB の `DHCP_RELAY` テーブルを購読する。内部実装は Redis の **keyspace notification (PSUBSCRIBE)** であり、ConsumerStateTable / NotificationConsumer は使用しない。TTL/keyspace expire 通知も使用しない。
+
+### 通信シーケンス
+
+```
+dhcp6relay 起動
+  └─ initialize_swss()                               (config_interface.cpp:18)
+       ├─ DBConnector("CONFIG_DB", 0)                ← Redis DB #4
+       ├─ SubscriberStateTable(db, "DHCP_RELAY")
+       │    ├─ PSUBSCRIBE __keyspace@4__:DHCP_RELAY|*  ← keyspace 購読
+       │    ├─ KEYS "DHCP_RELAY|*"                    ← 起動時スナップショット取得
+       │    └─ 全エントリを m_buffer に SET_COMMAND として積む
+       └─ swssSelect.addSelectable(&ipHelpersTable)
+            └─ get_dhcp(vlans, table, dynamic=false, config_db)
+                 └─ swssSelect.select(timeout_ms=1000)
+                      └─ handleRelayNotification()
+                           ├─ ipHelpersTable.pops(entries)
+                           └─ processRelayNotification(entries, vlans, config_db)
+```
+
+### keyspace notification 詳細
+
+| 項目 | 値 |
+|------|-----|
+| PSUBSCRIBE パターン | `__keyspace@4__:DHCP_RELAY\|*` |
+| notify-keyspace-events | `KEA` (K=keyspace, E=keyevent, A=all commands) |
+| Select timeout | 1000 ms |
+| 起動時スナップショット | `Table::getKeys()` + `Table::get()` で全エントリ即時読み込み |
+| 実行時変更検知 | keyspace event を受信するが `dynamic=true` フラグにより **無視** |
+
+### pops() 処理フロー
+
+```
+ipHelpersTable.pops(entries)
+  ├─ m_buffer (起動時スナップショット) があれば flush して return
+  └─ m_keyspace_event_buffer を処理:
+       pmessage.channel = "__keyspace@4__:DHCP_RELAY|<vlan>"
+       pmessage.data    = "set" | "hset" | "del" | ...
+       → "del"  → kfvOp = DEL_COMMAND
+       → その他 → Table::get(key) で最新値を再取得 → kfvOp = SET_COMMAND
+```
+
+### 動的変更の dead consumer
+
+起動後に `DHCP_RELAY` エントリを変更しても、`get_dhcp()` が `dynamic=true` フラグ付きで呼ばれるため、keyspace event を受信しても設定には反映されず `LOG_WARNING "relay config changed, need restart container to take effect"` のみ出力する (config_interface.cpp:76-78)。**コンテナ再起動が必須**。
+
+<!-- /pubsub -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
