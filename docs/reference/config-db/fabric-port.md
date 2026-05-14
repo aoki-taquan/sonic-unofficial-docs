@@ -157,6 +157,31 @@ show fabric counters port
 > **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/fabricportsorch.cpp:179-396,534-536`
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`fabricmgrd` → `FabricPortsOrch` (APPL_DB 経由) が CONFIG_DB の `FABRIC_PORT` テーブルを購読する。
+
+`FABRIC_PORT` は Chassis の fabric ASIC ポートを管理。通常の ToR では使用しない。
+
+### 段階 2 — CFG→APPL 翻訳
+
+`APP_FABRIC_MONITOR_PORT_TABLE` に書き込み
+
+### 段階 3 — APPL→SAI
+
+fabric 固有 SAI (fabric port enable/isolate)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: CONFIG_DB 変化を `fabricmgrd` が検知後 APPL_DB に書き込み。`FabricPortsOrch` が SAI fabric port attribute を更新。
+
+**副作用**: `admin_status` 変更は fabric link の up/down に直結。isolate 設定は traffic の再ルーティングを引き起こす。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

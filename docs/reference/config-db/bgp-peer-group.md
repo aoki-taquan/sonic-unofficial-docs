@@ -143,6 +143,31 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 | FRR 10.1 以降: listen range がある peer-group の削除 | 先に `no bgp listen range` を実行してから peer-group 削除。range 削除失敗でも peer-group 削除を試みる | `managers_bgp.py` `del_handler()` |
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`bgpcfgd` が CONFIG_DB の `BGP_PEER_GROUP` テーブルを購読する。
+
+`BGP_PEER_GROUP` は `<vrf>|<pg_name>` の key 構造。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (FRR vtysh 経由)
+
+### 段階 3 — APPL→SAI
+
+なし (FRR BGP peer-group 設定)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: 変化検知後 FRR に `neighbor <pg_name> peer-group` 等のコマンドを発行。peer-group 削除はメンバーネイバー全体への影響あり。
+
+**副作用**: peer-group 削除はメンバーの BGP session を切断。AS/password 変更はメンバー全 session リセット。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

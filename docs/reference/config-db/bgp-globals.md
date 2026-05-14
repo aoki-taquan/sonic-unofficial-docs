@@ -198,6 +198,31 @@ vtysh -c 'show running-config bgpd'
 | `frr-mgmt-framework` と `bgpcfgd` の並存 | 両方が同テーブルを購読する環境では二重処理に注意 (通常はどちらか一方のみ稼働) | `main.py` L87 |
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS` テーブルを購読する。
+
+`BGP_GLOBALS` は `<vrf>` の key 構造。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (FRR vtysh 経由)
+
+### 段階 3 — APPL→SAI
+
+なし (FRR BGP グローバル設定)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: 変化検知後 FRR に `router bgp <asn>` 等のグローバルコマンドを発行。AS 番号変更は BGP session reset を引き起こす。
+
+**副作用**: AS 番号・Router ID 変更は全 BGP ピアとの session リセットを引き起こす。graceful-restart 設定変更は次回ネゴシエーション時に有効。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

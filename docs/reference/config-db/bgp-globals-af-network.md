@@ -160,6 +160,31 @@ vtysh -c "show ip bgp"
 ```
 <!-- /ops-hint -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS_AF_NETWORK` テーブルを購読する。
+
+`BGP_GLOBALS_AF_NETWORK` は `<vrf>|<prefix>` の key 構造。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (FRR vtysh 経由)
+
+### 段階 3 — APPL→SAI
+
+なし (FRR BGP network コマンド)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: 変化検知後 FRR に `network <prefix>` コマンドを発行。次回 BGP Update で広告開始。
+
+**副作用**: 指定プレフィクスが BGP テーブルに inject されピアに広告される。ルートが存在しない場合 null-route が生成される可能性。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

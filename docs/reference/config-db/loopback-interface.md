@@ -166,6 +166,31 @@ show ip interfaces | grep Loopback
 
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`intfmgrd` → `IntfsOrch` (APPL_DB 経由) が CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを購読する。
+
+`LOOPBACK_INTERFACE` の key は `<lo_name>|<ip_prefix>` または `<lo_name>`。`Loopback0` が BGP router-id として使用される。
+
+### 段階 2 — CFG→APPL 翻訳
+
+`APP_INTF_TABLE` に書き込み (loopback interface の IP address)
+
+### 段階 3 — APPL→SAI
+
+`sai_router_intf_api` — loopback router interface を作成/更新
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: CONFIG_DB 変化を `intfmgrd` が検知後 `APP_INTF_TABLE` に書き込み。`IntfsOrch` が SAI loopback router interface を更新。即時反映。
+
+**副作用**: Loopback IP address は BGP の Router ID / peering source として使用される。削除すると BGP session に影響する可能性がある。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

@@ -143,6 +143,31 @@ show kube server config
 
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`kube_scheduler` / `hostcfgd` が CONFIG_DB の `KUBERNETES_MASTER` テーブルを購読する。
+
+`KUBERNETES_MASTER` の key は `SERVER` (単一エントリ)。`ip` / `port` / `insecure` フィールド。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (APPL_DB 中継なし)
+
+### 段階 3 — APPL→SAI
+
+なし (SAI 非経由 — Kubernetes master 接続設定)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: CONFIG_DB の `KUBERNETES_MASTER` 変化を検知後、Kubernetes クライアント設定を更新。接続は非同期で再確立。
+
+**副作用**: Kubernetes master アドレス変更は `set_owner: kube` のフィーチャーの管理移行に影響。TLS 証明書の再取得が必要な場合がある。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 

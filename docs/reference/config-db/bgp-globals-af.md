@@ -187,6 +187,31 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | `max_ebgp_paths` / `max_ibgp_paths` 未設定 | YANG default=1 が適用される | `sonic-bgp-global.yang` |
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS_AF` テーブルを購読する。
+
+`BGP_GLOBALS_AF` は `<vrf>|<af>` の key 構造。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (FRR vtysh 経由)
+
+### 段階 3 — APPL→SAI
+
+なし (FRR BGP の AF レベル設定)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: 変化検知後 FRR に AF の global 設定コマンドを発行。既存セッションへの影響は AF の再ネゴシエーションを要する場合がある。
+
+**副作用**: Maximum-paths, redistribute 設定など AF 全体の動作に影響。変更によっては BGP session reset が発生する。
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
