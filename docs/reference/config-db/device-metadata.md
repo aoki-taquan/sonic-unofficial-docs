@@ -167,8 +167,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `UpperMgmtAggregator` | 0 | コード参照なし → 該当なし | — |
 | `SpineRouter` | 16 | pmon の `has_per_asic_scope=False` 設定 (SpineRouter は per-ASIC scope なし); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); `type==SpineRouter AND subtype==UpstreamLC` のとき table-map 適用 | init_cfg.json.j2:69,90; peer-group.conf.j2:17,32 |
 | `UpperSpineRouter` | 4 | SpineRouter+UpstreamLC と同等の table-map 適用 (`SELECTIVE_ROUTE_DOWNLOAD`); macsec 有効化対象 | peer-group.conf.j2:17,32; init_cfg.json.j2:90 |
-| `FabricSpineRouter` | 0 | bgpd.main.conf.j2:20 の lowercase 比較 `in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']` で `disagg_t2=true` が設定される（コード中の単体参照はなし） | sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:20 |
-| `LowerSpineRouter` | 0 | 同上 disagg_t2=true → FRR に disaggregated T2 フラグが立つ | bgpd.main.conf.j2:20 |
+| `FabricSpineRouter` | 0 | bgpd.main.conf.j2:20 の lowercase 比較 `in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']` で `{% set disagg_t2 = "true" %}` が立つ。disagg_t2=true のとき HIDE_INTERNAL route-map に `constants.bgp.hide_internal_community` (= `55555:55555`) を additive で付与 | sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:20-83 |
+| `LowerSpineRouter` | 0 | 同上 disagg_t2=true → FRR に disaggregated T2 フラグが立つ; HIDE_INTERNAL に community 55555:55555 追加 | bgpd.main.conf.j2:20-83 |
 | `BackEndToRRouter` | 12 | `backend_device_types` グループ; `AND storage_device IN DEVICE_METADATA` のとき ACL を特殊バインド; `AND storage_device NOT IN DEVICE_METADATA` のとき IPinIP decap エントリ生成スキップ; QoS backend 設定 | minigraph.py:1828; ipinip.json.j2:68-69; qos_config.j2:164 |
 | `BackEndLeafRouter` | 13 | `backend_device_types` グループ; IPinIP decap エントリ生成スキップ; restapi feature 無効化; QoS backend 設定 | minigraph.py:51; ipinip.json.j2:68; init_cfg.json.j2:85 |
 | `EPMS` | 2 | pfcwd 呼び出しスキップ; dhcp_relay feature 無効化 | config/main.py:2425; init_cfg.json.j2:76 |
@@ -186,16 +186,17 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | `NetworkBmc` | 0 | コード参照なし → 該当なし | — |
 | `MseeRouter` | 0 | コード参照なし → 該当なし | — |
 | `not-provisioned` | 0 | コード参照なし → 該当なし | — |
-| `LowerRegionalHub` | 1 | bgpd.main.conf.j2:27 lowercase 比較で `disagg_rh=true` → Regional Hub FRR フラグ; init_cfg.json.j2:90 macsec 有効化対象 | bgpd.main.conf.j2:27; init_cfg.json.j2:90 |
-| `FabricRegionalHub` | 0 | bgpd.main.conf.j2:27 の lowercase 比較 `in ['lowerregionalhub', 'fabricregionalhub', 'upperregionalhub']` で `disagg_rh=true` | bgpd.main.conf.j2:27 |
-| `UpperRegionalHub` | 0 | 同上 disagg_rh=true | bgpd.main.conf.j2:27 |
+| `LowerRegionalHub` | 1 | bgpd.main.conf.j2:27 lowercase 比較で `{% set disagg_rh = "true" %}` が立つ → confederation iBGP 設定 (L97-103) が有効化される; init_cfg.json.j2:90 macsec 有効化対象; `DEVICE_RUNTIME_METADATA['MACSEC_SUPPORTED']` との複合条件 | bgpd.main.conf.j2:27,97-103; init_cfg.json.j2:90 |
+| `FabricRegionalHub` | 0 | bgpd.main.conf.j2:27 の lowercase 比較 `in ['lowerregionalhub', 'fabricregionalhub', 'upperregionalhub']` で disagg_rh=true → confederation iBGP 設定有効化 | bgpd.main.conf.j2:27,97-103 |
+| `UpperRegionalHub` | 0 | 同上 disagg_rh=true → confederation iBGP 設定有効化 | bgpd.main.conf.j2:27,97-103 |
 
 > **`type` フィールドの複合条件** (要注意):
 >
 > 1. `type='BackEndToRRouter' AND 'storage_device' IN DEVICE_METADATA` → ACL テーブルを `filter_acl_table_for_backend()` で特殊バインド（`minigraph.py:1828`）
 > 2. `type IN ['BackEndToRRouter','BackEndLeafRouter','BackEndSpineRouter'] AND 'storage_device' NOT IN DEVICE_METADATA` → IPinIP decap エントリ生成スキップ（`ipinip.json.j2:69`）
 > 3. `type='SpineRouter' AND subtype='UpstreamLC'` → BGP peer-group に `SELECTIVE_ROUTE_DOWNLOAD` table-map 適用（`peer-group.conf.j2:17,32`）
-> 4. `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` → FRR BGP graceful-restart 設定（`bgpd.main.conf.j2:118`）
+> 4. `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` → FRR BGP graceful-restart 設定（`bgpd.main.conf.j2:118`）  
+>    ↳ block 内で参照される: `constants.bgp.graceful_restart.enabled` (= `true`), `constants.bgp.graceful_restart.restart_time` (= `240` 秒), `constants.bgp.graceful_restart.select_defer_time` (未定義 → fallback `45` 秒)
 > 5. `type='LeafRouter' AND neighbor.type='ToRRouter'` → downlink バッファ・QoS 設定を生成（`buffers_config.j2:209; qos_config.j2:150`）
 > 6. `type NOT IN ['ToRRouter','EPMS','MgmtTsToR','MgmtToRRouter','BmcMgmtToRRouter']` → dhcp_relay feature 有効化（`init_cfg.json.j2:76`）
 
@@ -275,8 +276,8 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 | 1 | `type='BackEndToRRouter' AND 'storage_device' IN DEVICE_METADATA` | ACL テーブルを `filter_acl_table_for_backend()` で特殊バインド | minigraph.py:1828 |
 | 2 | `type IN ['BackEndToRRouter','BackEndLeafRouter','BackEndSpineRouter'] AND 'storage_device' NOT IN DEVICE_METADATA` | IPinIP decap エントリ生成をスキップ | ipinip.json.j2:69 |
 | 3 | `type='SpineRouter' AND subtype='UpstreamLC'` | BGP peer-group に SELECTIVE_ROUTE_DOWNLOAD table-map 適用 | peer-group.conf.j2:17,32 |
-| 4 | `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` | FRR BGP graceful-restart 設定 | bgpd.main.conf.j2:118 |
-| 5 | `type IN ['SpineRouter','UpperSpineRouter','LowerRegionalHub'] AND MACSEC_SUPPORTED` | macsec feature 有効化 | init_cfg.json.j2:90 |
+| 4 | `type='ToRRouter' AND constants.bgp.graceful_restart.enabled` (= `true`) | FRR BGP graceful-restart 設定; restart_time = 240 秒, select-defer-time = 45 秒 | bgpd.main.conf.j2:118-122 |
+| 5 | `type IN ['SpineRouter','UpperSpineRouter','LowerRegionalHub'] AND MACSEC_SUPPORTED` | macsec feature 有効化 (`DEVICE_RUNTIME_METADATA['MACSEC_SUPPORTED']` との複合) | init_cfg.json.j2:90 |
 | 6 | `switch_type='dpu'` (いかなる `synchronous_mode` 値でも) | `-z zmq_sync -k 65536` 強制 → ZMQ synchronous mode | orchagent.sh:38-39 |
 | 7 | `suppress-fib-pending='enabled' AND synchronous_mode != 'enable'` | YANG must 違反 → reject | sonic-device_metadata.yang:250 |
 | 8 | `subtype='DualToR'` | mux feature 有効、DHCP relay Loopback0 フラグ、BGP coalesce-time 10000 | bgpd.main.conf.j2:110; init_cfg.json.j2:81 |
@@ -301,6 +302,21 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
   3. `sonic-buildimage/src/sonic-config-engine/minigraph.py` — type/switch_type で多数分岐
   4. `sonic-buildimage/dockers/docker-orchagent/orchagent.sh` — switch_type/synchronous_mode/async_swss_rec
   5. `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` — type/subtype/switch_type
+
+!!! note "Phase 11: bgpd.main.conf.j2 ブロック内 constants 実値"
+    `bgpd.main.conf.j2` の `{% if %}` ブロック全体を精読した結果、evidence 行外で以下の定数が使用されていることを確認:
+
+    | constants 参照 | 実値 (constants.yml) | 効果 |
+    |---|---|---|
+    | `constants.bgp.graceful_restart.enabled` | `true` | ToRRouter で BGP graceful-restart を有効化 |
+    | `constants.bgp.graceful_restart.restart_time` | `240` 秒 | graceful-restart タイマー |
+    | `constants.bgp.graceful_restart.select_defer_time` | 未定義 → fallback `45` 秒 | 経路選択遅延タイマー |
+    | `constants.bgp.multipath_relax.enabled` | `true` | 全ロールで `bgp bestpath as-path multipath-relax` |
+    | `constants.bgp.maximum_paths.ipv4` | `514` | IPv4 ECMP 最大パス数 (default 値 64 より大) |
+    | `constants.bgp.maximum_paths.ipv6` | `514` | IPv6 ECMP 最大パス数 |
+    | `constants.bgp.hide_internal_community` | `55555:55555` | FabricSpineRouter/LowerSpineRouter/UpperSpineRouter 時に HIDE_INTERNAL route-map へ additive 付与 |
+
+    また `peer-group.conf.j2` の LeafRouter 分岐 (L10) は `CONFIG_DB__BGP_BBR['status']` との複合条件であり、`BGP_BBR` テーブル参照が evidence 行外で発生する。
 
 <!-- /value-behavior -->
 
