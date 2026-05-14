@@ -37,6 +37,25 @@ jobs:
 
       - run: mkdocs build --strict
 
+      # Built HTML quality checks (informational; promote to strict once
+      # stable). Walks site/ to detect visually broken pages: missing
+      # <title>, duplicate <h1>, empty <a>/<img>, dead internal links.
+      - name: Built HTML quality (informational)
+        run: python3 meta/scripts/check_built_html.py --check || true
+
+      - name: Built HTML internal link check (informational)
+        run: python3 meta/scripts/check_built_links.py --check || true
+
+      - name: Upload built-html reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-html-reports
+          path: |
+            meta/built-html-report.md
+            meta/built-links-report.md
+          if-no-files-found: ignore
+
   # frontmatter linter (strict) + 全 drift / 各種 informational check。
   # 元は job を細かく分けて並走させていたが、setup-python の起動オーバヘッド
   # の方が大きく、step は ~10 秒 / job 並走による並列効果は小さいため、
