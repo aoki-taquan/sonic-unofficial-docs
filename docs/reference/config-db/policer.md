@@ -99,6 +99,44 @@ POLICER|<name>
 - 関連 [YANG](../../reference/glossary.md#term-yang): 直接の [YANG](../../reference/glossary.md#term-yang) モジュールは無し（参照側 [YANG](../../reference/glossary.md#term-yang) が個別フィールドを持つ）
 - 関連 CLI: なし（`config_db.json` で投入）
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+> 根拠: `policerorch.cpp` 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-defaults.md`
+
+| フィールド | 省略時の実挙動 | 分類 |
+|-----------|--------------|------|
+| `METER_TYPE` | ERROR ログ出力後に SAI `create_policer()` が続行 → SAI エラー。エントリは `m_toSync` から削除されリトライなし | 必須欠落バグ (silent-proceed) |
+| `MODE` | 同上 | 必須欠落バグ (silent-proceed) |
+| `COLOR_SOURCE` | SAI プラットフォームデフォルト (SAI 仕様では `BLIND`、ASIC 依存) | platform-dependent |
+| `CIR` / `CBS` / `PIR` / `PBS` | SAI へ渡されない → SAI デフォルト 0 (unlimited または platform-defined) | platform-dependent |
+| `GREEN_PACKET_ACTION` | SAI デフォルト `FORWARD` (ASIC 依存) | platform-dependent |
+| `YELLOW_PACKET_ACTION` | SAI デフォルト `FORWARD` (ASIC 依存) | platform-dependent |
+| `RED_PACKET_ACTION` | SAI デフォルト `DROP` (ASIC 依存) | platform-dependent |
+
+### storm-control 経由のハードコード (PORT_STORM_CONTROL テーブル)
+
+CONFIG_DB の `METER_TYPE`/`MODE`/`RED_PACKET_ACTION` を無視し、以下をコードで固定する:
+
+| 属性 | 固定値 | コード根拠 |
+|-----|--------|-----------|
+| `METER_TYPE` | `BYTES` | `policerorch.cpp:157-159` |
+| `MODE` | `STORM_CONTROL` | `policerorch.cpp:162-164` |
+| `RED_PACKET_ACTION` | `DROP` | `policerorch.cpp:167-169` |
+| `KBPS` (入力) → `CIR` (SAI) | `kbps × 1000 / 8` bytes/sec | `policerorch.cpp:181-184` |
+
+storm-control update パスでは **`CIR` のみ** SAI に渡す。`CBS` は update されない (`policerorch.cpp:252-253`)。
+
+### create-only フィールド (UPDATE 時 silently ignored)
+
+既存 policer への SET では `CIR`/`CBS`/`PIR`/`PBS` のみ SAI に渡す。`METER_TYPE`/`MODE`/`COLOR_SOURCE`/`*_PACKET_ACTION` は **policerorch がフィルタして破棄** する (`policerorch.cpp:527-533`)。
+
+### 実装で受理される packet_action 値 (ドキュメント未掲載分)
+
+`packet_action_map` (`policerorch.cpp:50-59`) には `FORWARD`/`DROP` に加え `COPY`/`COPY_CANCEL`/`TRAP`/`LOG`/`DENY`/`TRANSIT` も定義されている。SAI 側の対応状況は ASIC 依存。
+
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
