@@ -225,4 +225,42 @@ show copp config
 
 > **スキャン証跡**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A)
+
+### 検出種類の凡例
+
+| 記号 | 意味 |
+|------|------|
+| IF | init cfg フォールバック |
+| AR | 暗黙 reset on DEL |
+| PD | 前提条件依存 |
+| ID | 暗黙デフォルト値 |
+| CS | 大文字小文字制約 |
+
+### `trap_ids`
+
+- **YANG default**: なし (`mandatory true`)
+- **実装上の挙動 [IF, AR]**: `coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`copp_cfg.j2` 由来）を読み込み `m_coppTrapInitCfg` に保持する。ユーザーが `COPP_TRAP|<name>` を CONFIG_DB から DELETE しても、init cfg に同名エントリが存在すれば init 値でトラップを自動再登録する（実質「ユーザー設定削除 = init 値リセット」）。<!-- evidence: coppmgr.cpp L773-805 -->
+- **SET 時・不完全設定のスキップ [PD]**: `trap_ids` が空かつ `trap_group` も空の SET は incomplete configuration として処理スキップ（no-op）。<!-- evidence: coppmgr.cpp L609-615 -->
+
+### `trap_group`
+
+- **YANG default**: なし (optional leafref)
+- **GROUP 未到着時の書き込み保留 [PD]**: 参照先 `COPP_GROUP` が未作成の場合、`coppmgr` は APPL_DB への書き込みを保留し、GROUP 作成後に再処理する（`checkTrapGroupPending()` が true の間は書き込みなし）。<!-- evidence: coppmgr.cpp L62-79, copporch.cpp L584 -->
+- **暗黙 reset on DEL [AR]**: DELETE 後に init cfg の同名エントリが存在すれば `trap_group` も init 値に自動復元。<!-- evidence: coppmgr.cpp L777-802 -->
+
+### `always_enabled`
+
+- **YANG default**: なし (optional boolean)
+- **未設定 = `"false"` [ID]**: フィールドが存在しない場合、`coppmgr` 初期化コードは `is_always_enabled = "false"` として扱う。feature の有効/無効に応じてトラップのインストール可否が決まる通常動作となる。<!-- evidence: coppmgr.cpp L340, L354-357 -->
+- **DELETE 後の復元時も `"false"` [ID, AR]**: init cfg 側に `always_enabled` が存在しない場合、DELETE 後の自動復元でも `"false"` が補完される。<!-- evidence: coppmgr.cpp L792-795 -->
+- **大文字小文字制約 [CS]**: 実装は文字列比較 (`== "true"`)。YANG boolean 型であっても `"True"` / `"TRUE"` は `"false"` として扱われる（サイレント誤動作）。<!-- evidence: coppmgr.cpp L90, L183 -->
+
+### マージ優先度（書き込み順依存）
+
+`mergeConfig()` は init cfg を基底として user cfg フィールドで上書きする。同一フィールドが user cfg に存在すれば user 値優先、存在しないフィールドのみ init 値が補完される。`NULL` フィールドを持つ key は init 側もスキップ（無効化）される。<!-- evidence: coppmgr.cpp L196-258 -->
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 7a3847939b09 -->

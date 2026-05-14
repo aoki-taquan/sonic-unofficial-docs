@@ -228,4 +228,40 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 > **スキャン証跡**: `bgp_neighbor_handler` L3942 読了。keepalive/holdtime 組み合わせ制約のみ。
 <!-- /handler-branching -->
+<!-- defaults -->
+## 暗黙デフォルトとコード由来 fallback (Phase A)
+
+### YANG レベル
+
+`sonic-bgp-cmn` grouping の全 leaf に **YANG `default` 文は存在しない**。すべてオプション扱いで、値省略時の動作は FRR / frrcfgd が決定する。
+
+### フィールド別暗黙挙動
+
+| フィールド | 省略/条件 | 実際の動作 | ソース |
+|-----------|----------|-----------|--------|
+| `keepalive` / `holdtime` | **いずれか一方のみ** | FRR タイマーコマンド生成されない。FRR デフォルト keepalive=60s / holdtime=180s が使われる | `frrcfgd.py` `bgp_neighbor_handler` — `comb_attr_list=[{'keepalive','holdtime'}]` |
+| `keepalive` / `holdtime` | **両方設定** | `neighbor <pg> timers <ka> <ht>` を生成 | `frrcfgd.py` L1874, `bgpd.conf.db.nbr_or_peer.j2` L83-84 |
+| `ebgp_multihop` = `'true'` かつ `ebgp_multihop_ttl` 省略 | — | TTL **255** (最大ホップ) が暗黙使用される | `bgpd.conf.db.nbr_or_peer.j2` L58-66 |
+| `ebgp_multihop_ttl` のみ設定 (`ebgp_multihop` 省略) | — | j2 テンプレートでは TTL 値で `ebgp-multihop` を生成。frrcfgd は `+ebgp_multihop_ttl` でオプション扱い | `bgpd.conf.db.nbr_or_peer.j2` L62-66 |
+| `admin_status` 省略 | — | `shutdown` コマンドなし → FRR デフォルト **no shutdown (up)** | `bgpd.conf.db.nbr_or_peer.j2` L33-38 |
+| `admin_status` = `'up'` | — | `shutdown` コマンドなし (`'down'` / `'false'` 時のみ生成) | `frrcfgd.py` `hdl_admin_status_shutdown_msg` |
+| `bfd_check_ctrl_plane_failure` | `bfd` が `'true'` に変更 + キャッシュに `'true'` が残存 | CONFIG_DB 未更新のまま frrcfgd が OP_ADD に昇格して FRR に再送 | `frrcfgd.py` L2812-2817 |
+| `asn` (peer-group 側) | OP_ADD | peer-group に紐づくネイバー全体 + `BGP_GLOBALS_LISTEN_PREFIX` を再適用 | `frrcfgd.py` `__nbr_impl_action` L2550-2562 |
+| `asn` (peer-group 側) | OP_DELETE | peer-group メンバーネイバーを全削除シーケンス | 同上 |
+| `local_asn` (VRF 側) 未設定 | — | `BGP_PEER_GROUP` 更新を **silently drop** (LOG_DEBUG のみ) | `frrcfgd.py` L2658-2662 |
+
+### YANG vs 実装の discrepancy
+
+| フィールド | YANG | 実装 | 差異種別 |
+|-----------|------|------|---------|
+| `ebgp_multihop_ttl` | optional, range 1..255, default 文なし | `ebgp_multihop=true` 時に未設定で TTL=255 を補完 | YANG default 外 fallback |
+| `keepalive` / `holdtime` | 独立 leaf、互いに optional | 実装は両方揃わないと FRR コマンド未生成 | 複合必須制約 (comb_attr_list) |
+| `local_asn` + `local_as_no_prepend` / `local_as_replace_as` | 各々独立 optional | Jinja2 テンプレート (起動時) はフラグを無視。frrcfgd (動的変更) は付与。書き込み経路で差異 | 書き込み経路依存の乖離 |
+| `admin_status` | optional, enum up/down | 省略時は FRR デフォルト (up) 依存。YANG に default 文なし | 実行時 fallback |
+
+### peer-group 自動作成
+
+SET 受信時、FRR に peer-group が存在しなければ `neighbor <pg_name> peer-group` を **属性設定より先に自動発行**する。失敗した場合は LOG_ERR を出力して属性設定全体を skip (`frrcfgd.py` L2793-2801)。
+<!-- /defaults -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->

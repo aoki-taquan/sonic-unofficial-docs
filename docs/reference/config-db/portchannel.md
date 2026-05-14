@@ -303,3 +303,63 @@ REST/gNMI 書き込み経路なし
 > **スキャン証跡**: `teammgr.cpp:149-330` を全行読了、7 件分岐抽出。minigraph.py からの admin_status="up" 自動付与および db_migrator.py による lacp_key 付与を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## コード由来暗黙デフォルト (Phase A)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-defaults.md`
+
+YANG スキーマに `default` 文が存在しないフィールドでも、consumer コードが独自の fallback 値を持つ。以下はコードベースから検出した暗黙デフォルト・dead field・discrepancy の一覧。
+
+### フィールド別ハードコードデフォルト
+
+| フィールド | YANG | コード fallback 値 | 定義箇所 | 備考 |
+|---|---|---|---|---|
+| `admin_status` | mandatory (default なし) | `"down"` | `portmgr.h:14 DEFAULT_ADMIN_STATUS_STR` | YANG-実装 discrepancy: mandatory なのに省略時 "down" で動作 |
+| `mtu` | optional (range 1..9216) | `"9100"` | `portmgr.h:15 DEFAULT_MTU_STR` | YANG range 上限 9216 と異なる。member ポートにも継承 |
+| `min_links` | optional (range 1..1024) | `0` → teamd に min_ports 非出力 | `teammgr.cpp:248` | 省略時は 1 ポートでも LAG が up。LAG 作成後は変更不可 |
+| `fallback` | optional (boolean) | `false` → teamd conf に出力しない | `teammgr.cpp:249` | CLI は `false` 時フィールド自体を書かない (silent drop)。LAG 作成後変更不可 |
+| `fast_rate` | optional (boolean) | `false` → teamd conf に出力しない | `teammgr.cpp:250` | CLI は常に書く。LAG 作成後の変更は teamd 再起動まで無効 |
+| `lacp_key` | optional | `0` (backward compat) | `teammgr.cpp:726 generateLacpKey()` | フィールドなし → LACP key=0 → peer と不一致の可能性。db_migrator が retroactive に `'auto'` 付与 |
+| `tpid` | optional (tpid_type) | silent skip → SAI/HW デフォルト (通常 0x8100) | `teammgr.cpp:321` | フィールドなし時は setLagTpid() 未呼び出し |
+
+### Dead Consumer フィールド
+
+以下のフィールドは CONFIG_DB に書けるが、`teammgrd` / `portsorch` のいずれも runtime に読み取らない。
+
+| フィールド | 書き込み元 | 実装での扱い |
+|---|---|---|
+| `mode` | `config/switchport.py` | teammgrd・portsorch ともに参照しない。実際の L2/L3 切替は VLAN_MEMBER テーブル操作が決定する |
+| `description` | CLI / 手動 | 完全 dead field。動作に影響しない |
+
+### YANG-実装 Discrepancy
+
+#### `admin_status`: mandatory vs 実装フォールバック
+
+- YANG は `mandatory true`（省略すると YANG 検証で reject）。
+- `teammgrd::doLagTask()` は `admin_status` を `DEFAULT_ADMIN_STATUS_STR = "down"` で初期化し、フィールドが来なければ `"down"` で `setLagAdminStatus()` を呼ぶ。
+- **影響**: minigraph.py は PORTCHANNEL エントリに `admin_status` を含めないため、minigraph 経由で生成された LAG は `admin_status` が CONFIG_DB に不在のまま → teamd は admin-down で起動する。
+
+#### `mode` YANG description vs 実装
+
+- YANG leaf の description に "Default value for mode is routed" と記述されているが、YANG leaf 自体に `default` 文がなく、実装コードも `mode` フィールドを読まない。
+- 実質 dead field であり、`mode` フィールドの値が実挙動（routing/switching）に直接影響しない。
+
+### 書込み順依存 / ランタイム制約
+
+- `min_links` / `fallback` / `fast_rate` は **LAG 作成時 (`addLag()`) のみ teamd conf に反映**。
+  - 既存 LAG の CONFIG_DB 更新後は teamd プロセスを再起動しないと変更が反映されない。
+  - `teammgr.cpp:258-259` に明示コメント: "min_links and fallback attributes cannot be changed after the LAG is created."
+- `fast_rate` は上記コメントに含まれないが、同様に `addLag()` の conf 生成時のみ teamd に渡される。
+
+### minigraph 経路の自動値
+
+| フィールド | 自動設定値 | ロジック |
+|---|---|---|
+| `min_links` | `ceil(メンバ数 × 0.75)` | `minigraph.py:969,971` |
+| `lacp_key` | `'auto'` | `minigraph.py:969,971` |
+| `fallback` | XML `<Fallback>` ノードがある場合のみ設定 | `minigraph.py:968-969` |
+| `admin_status` | 設定しない (→ teammgrd が "down" fallback) | — |
+| `mtu` | 設定しない (→ teammgrd が "9100" fallback) | — |
+
+<!-- /defaults -->

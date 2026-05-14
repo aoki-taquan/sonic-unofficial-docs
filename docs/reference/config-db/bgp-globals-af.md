@@ -127,6 +127,69 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-bgp-global.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-global.yang>
 [^2]: テーブル名定数参照: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### 概要
+
+YANG `default` 文が存在するフィールドは 2 つのみ (`max_ebgp_paths=1`, `max_ibgp_paths=1`)。
+それ以外のフィールドはすべて optional で、DB に値がなければ FRR コマンドが発行されず、FRR 自身の初期値が使われる。
+
+重要な点として、`frrcfgd` は **組み合わせ制約 (comb_attr_list)** を持つ:
+
+- `distance bgp`: `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` の **3 フィールドが揃わないとコマンドを発行しない**
+- `bgp dampening` の引数: `route_flap_dampen_reuse_threshold` / `route_flap_dampen_suppress_threshold` / `route_flap_dampen_max_suppress` の **3 フィールドが揃わないと全て無視**
+
+### per-field デフォルト早見表
+
+| フィールド | YANG default | FRR 実装デフォルト (省略時) | 書き込み/実行 乖離 |
+|-----------|-------------|--------------------------|-------------------|
+| `max_ebgp_paths` | `1` | `1` (FRR 初期値) | なし |
+| `max_ibgp_paths` | `1` | `1` (FRR 初期値) | なし |
+| `ibgp_equal_cluster_length` | — | なし (比較無効) | なし (省略=無効) |
+| `import_vrf` | — | VRF import 無効 | なし |
+| `import_vrf_route_map` | — | route-map フィルタなし | なし |
+| `route_download_filter` | — | FIB 全 prefix download | なし |
+| `ebgp_route_distance` | — | **20** (FRR 固定値)、ただし **3 フィールド揃いが必須** | **部分設定は無視される** |
+| `ibgp_route_distance` | — | **200** (FRR 固定値)、3 フィールド揃い必須 | **部分設定は無視される** |
+| `local_route_distance` | — | **200** (FRR 固定値)、3 フィールド揃い必須 | **部分設定は無視される** |
+| `route_flap_dampen` | — | dampening 無効 | なし (`true` 単体は有効、引数なしで FRR デフォルト適用) |
+| `route_flap_dampen_half_life` | — | **15 分** (FRR `DEFAULT_HALF_LIFE`) | `route_flap_dampen=true` のみ設定時は FRR デフォルト適用 |
+| `route_flap_dampen_reuse_threshold` | — | **750** (FRR `DEFAULT_REUSE`)、3 フィールド揃い必須 | **部分設定は無視される** |
+| `route_flap_dampen_suppress_threshold` | — | **2000** (FRR `DEFAULT_SUPPRESS`)、3 フィールド揃い必須 | **部分設定は無視される** |
+| `route_flap_dampen_max_suppress` | — | **4 × half_life** (FRR 算出値)、3 フィールド揃い必須 | **部分設定は無視される** |
+| `autort` | — | route-target 自動生成無効 | なし |
+| `advertise-all-vni` | — | VNI 広告無効 | なし |
+| `advertise-svi-ip` | — | SVI IP 広告無効 | なし |
+
+### 乖離の詳細
+
+#### distance bgp の部分設定問題
+
+`frrcfgd` の `bgp_af_handler` は `comb_attr_list` として
+`{'ebgp_route_distance', 'ibgp_route_distance', 'local_route_distance'}` を指定する。
+`__add_op_to_data` (L3886-3888) の処理により、3 フィールドのうち 1 つでも欠ければ
+3 フィールド全体が `data` から削除され `distance bgp` コマンドは一切発行されない。
+結果として FRR が eBGP=20 / iBGP=200 / local=200 というデフォルト距離を維持する。
+
+#### route_flap_dampen の引数省略問題
+
+同様に `{route_flap_dampen_reuse_threshold, route_flap_dampen_suppress_threshold, route_flap_dampen_max_suppress}` が
+comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去される。
+`route_flap_dampen=true` + `route_flap_dampen_half_life` のみ設定した場合、frrcfgd は
+`bgp dampening <half_life>` だけを発行し、残りの引数は FRR 側デフォルト (reuse=750, suppress=2000, max_suppress=4×half_life) が使われる。
+
+FRR `bgp_damp.h` 定数 (ソース: `sonic-frr/bgpd/bgp_damp.h`):
+
+```c
+#define DEFAULT_HALF_LIFE  15      /* minutes */
+#define DEFAULT_REUSE      750
+#define DEFAULT_SUPPRESS   2000
+/* max_suppress = half_life * 4 (frrcfgd L514) */
+```
+
+<!-- /defaults -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 

@@ -230,4 +230,41 @@ show feature status
 - `featured` デーモンが systemd サービス状態を監視し FEATURE テーブルと同期
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+### フィールド別デフォルト・fallback
+
+| フィールド | YANG/ドキュメント上のデフォルト | コード実装の実デフォルト | 乖離 |
+|-----------|-------------------------------|------------------------|------|
+| `state` | `enabled` | sonic_package_manager 登録時: `'disabled'`（`feature.py:13`）| あり — インストール直後は disabled |
+| `auto_restart` | `enabled` | `Feature.__init__` 欠落時: `'disabled'`（`featured:82`）| **あり** — 欠落時 disabled (YANG と逆) |
+| `delayed` | `false` | manifest から強制取得（ユーザー設定不可、`feature.py:234`）| - |
+| `has_global_scope` | `false` | manifest default `True`、欠落時 `'True'`（`featured:84`）| あり |
+| `has_per_asic_scope` | `false` | manifest default `False`、欠落時 `'False'`（`featured:85`）| - |
+| `has_per_dpu_scope` | `false` | 欠落時 `'False'`（`featured:86`）、manifest 非管理 | - |
+| `high_mem_alert` | `disabled` | `'disabled'`（`feature.py:15`、`init_cfg.json.j2:124`）| - |
+| `set_owner` | `local` | `'local'`（`feature.py:16`）| - |
+| `check_up_status` | `false` | manifest default `False`（`manifest.py:205`）| - |
+| `support_syslog_rate_limit` | `false` | init_cfg では全 feature `"true"` にハードコード（`init_cfg.json.j2:113`）| あり |
+
+### 発見した暗黙挙動・特殊ケース
+
+1. **`auto_restart` 欠落時の YANG 乖離**: `Feature.__init__` は `feature_cfg.get('auto_restart', 'disabled')` を使用（`featured:82`）。YANG/init_cfg デフォルト `enabled` と逆。CONFIG_DB に `auto_restart` フィールドが存在しない場合 `Restart=no` が設定される。
+
+2. **SpineRouter での `auto_restart` ハードコード上書き**: `syncd` / `gbsyncd` かつ `DEVICE_METADATA.localhost.type == 'SpineRouter'` のとき CONFIG_DB 値を無視して `Restart=no` を強制（`featured:375-380`）。ユーザーが `auto_restart: enabled` を設定しても無効。
+
+3. **`FEATURE_EXCLUSION_LIST` による silent skip**: `telemetry` / `frr_bmp` は `enable_feature` / `disable_feature` をスキップ（`featured:135`）。CONFIG_DB の state 変更が systemd に適用されない。
+
+4. **`has_timer` は obsolete dead field**: 存在すると `ValueError` を raise し feature 適用を完全拒否（`featured:75-77`）。古い DB を持つ環境では注意。
+
+5. **`state` の Jinja2 テンプレートと resync**: `bgp`/`teamd`/`mux` の init_cfg 値は Jinja2 テンプレート文字列。`featured` 起動時に `render_all_feature_states()` がレンダリングして CONFIG_DB を上書き（`featured:687,219-240`）。
+
+6. **`delayed` / `check_up_status` / `support_syslog_rate_limit` / `has_global_scope` / `has_per_asic_scope` はユーザー設定不可**: sonic_package_manager の `get_non_configurable_feature_entries` が manifest 値で常に上書き（`feature.py:228-237`）。
+
+7. **`has_per_dpu_scope` は `get_non_configurable_feature_entries` 対象外**: 他のスコープフィールドと異なり manifest 管理外（`feature.py:228-237`）。CONFIG_DB 値がそのまま使用される。
+
+> **Evidence**: `sonic-host-services/scripts/featured:75-86,135,375-380,466,551-596`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17,228-237`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:113,117-124`; `sonic-utilities/sonic_package_manager/manifest.py:202-217`
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 92d0997ed33c -->

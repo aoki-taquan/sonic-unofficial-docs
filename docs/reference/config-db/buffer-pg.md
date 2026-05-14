@@ -59,7 +59,7 @@ BUFFER_PG|<port>|<pg_num>
 |-----------|----|------|-----------|------|
 | `port` (key) | leafref `PORT.name` | ✅ | - | 対象ポート |
 | `pg_num` (key) | string `[0-7]((-)[0-7])?` | ✅ | - | PG 番号または範囲 |
-| `profile` | leafref `BUFFER_PROFILE.name` または `NULL` | - | `0` (numeric `0`) | 関連付ける buffer profile。`NULL` で削除扱い |
+| `profile` | leafref `BUFFER_PROFILE.name` または `NULL` | - | `0` (YANG 定義値、**実装上は dead field**。実効デフォルトは経路依存: Jinja2 静的=`ingress_lossy_profile`、Jinja2 動的=`NULL`、buffermgr=`pg_lossless_*_profile`) | 関連付ける buffer profile。`NULL` で削除扱い |
 
 ## 購読者
 
@@ -71,6 +71,39 @@ BUFFER_PG|<port>|<pg_num>
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PROFILE`、`BUFFER_POOL`、`PORT`、`PFC_WD`
 - 関連 CLI: なし（`config_db.json` でロード）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-buffer-pg`
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### フィールド別デフォルト・fallback 一覧
+
+| フィールド | YANG default | 実装上の実効デフォルト | 経路 | evidence |
+|-----------|-------------|----------------------|------|---------|
+| `profile` | `0` (numeric) | **dead field** — 実装上一切使われない | — | `sonic-buffer-pg.yang:59` |
+| `profile` (Jinja2 静的モード, PG 0) | — | `"ingress_lossy_profile"` | `buffers_config.j2` フォールバック分岐 | `buffers_config.j2:271-272` |
+| `profile` (Jinja2 動的モード, PG 3-4) | — | `"NULL"` → pureDynamic fallback | `buffers_config.j2` + `buffermgrdyn.cpp` | `buffers_config.j2:266-268` |
+| `profile` (buffermgr 静的モード, PG 3-4) | — | `"pg_lossless_<speed>_<cable>_profile"` (速度・ケーブル長から自動生成) | `buffermgr.cpp doSpeedUpdateTask()` | `buffermgr.cpp:183-184` |
+| `dynamic_calculated` (pureDynamic) | — | `true` (profile 未指定時に暗黙設定) | `buffermgrdyn.cpp handleSingleBufferPgEntry()` | `buffermgrdyn.cpp:3194` |
+| `lossless` (pureDynamic) | — | `true` (固定値) | 同上 | `buffermgrdyn.cpp:3195` |
+| threshold (動的計算) | — | `m_defaultThreshold` = `DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` (Jinja2 デフォルト `"0"`) | `buffermgrdyn.cpp refreshPgsForPort()` | `buffermgrdyn.cpp:1521` |
+| `admin_status` (暗黙) | — | `"down"` (PORT テーブルに無ければ `down` 扱い → PG 書き込み抑制) | `buffermgr.cpp doTask()` | `buffermgr.cpp:565` |
+
+### 主要乖離・silent パターン
+
+| パターン | 内容 | evidence |
+|---------|------|---------|
+| **dead field** | YANG `profile default 0` は実装で一切参照されない | `sonic-buffer-pg.yang:59` |
+| **書き込み経路依存乖離** | Jinja2 静的: PG 0 → `ingress_lossy_profile`; Jinja2 動的: PG 3-4 → `NULL`; buffermgr 静的: `pg_lossless_*_profile` | 各経路 |
+| **silent fallback** (動的 threshold) | profile 未指定の lossless PG は `default_dynamic_th` を threshold に使用 | `buffermgrdyn.cpp:1521` |
+| **silent drop** (cable=0m) | ケーブル長 `0m` の lossless PG は APPL_DB から削除。WARN なし | `buffermgrdyn.cpp:1492-1509` |
+| **silent skip** (PFC 未設定) | `PORT_QOS_MAP.pfc_enable` が未設定のポートは BUFFER_PG を書かずに `task_success` 返却 | `buffermgr.cpp:173-179` |
+| **consumer 乖離** (egress reject) | egress profile を PG に設定すると `task_failed` drop — YANG 無制約、実装のみで enforcement | `buffermgrdyn.cpp:3156-3163` |
+| **db_migrator silent overwrite** | 動的モード移行時に `profile` を `NULL` に強制書き換え | `db_migrator.py:398` |
+| **admin down 書き込み抑制** | PORT admin down 時は APPL_DB 書き込みをスキップし内部状態のみ保持 | `buffermgrdyn.cpp:3198-3202` |
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-defaults.md`
+
+<!-- /defaults -->
 
 <!-- ref-triangle:start -->
 
