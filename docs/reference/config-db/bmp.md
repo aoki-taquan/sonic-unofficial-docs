@@ -214,4 +214,46 @@ show bmp
 
 > **スキャン証跡**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### YANG デフォルト vs 実行時 fallback
+
+| フィールド | YANG default | `bmpcfgd` 実行時 fallback | 乖離 |
+|---|---|---|---|
+| `bgp_neighbor_table` | `"true"` | `'false'` (`bmpcfgd.py` L41) | **あり — discrepancy** |
+| `bgp_rib_in_table` | `"false"` | `'false'` (`bmpcfgd.py` L42) | なし |
+| `bgp_rib_out_table` | `"false"` | `'false'` (`bmpcfgd.py` L43) | なし |
+
+### `bgp_neighbor_table` の YANG vs 実装 discrepancy
+
+`sonic-bmp.yang` は `bgp_neighbor_table` の `default "true"` を宣言しているが、
+`bmpcfgd.py` L41 は `common_config.get('bgp_neighbor_table', 'false')` という Python fallback を持つ。
+
+CONFIG_DB に `BMP|table` エントリが存在しない状態（初期起動 / エントリ削除後）では、
+YANG スキーマ上は `bgp_neighbor_table=true` であるべきだが、`bmpcfgd` は `false` として openbmpd を起動する。
+その結果、BGP neighbor テーブルダンプが送信されない。
+
+> **運用上の注意**: `sonic-db-cli CONFIG_DB exists 'BMP|table'` が 0 を返す状態では
+> YANG default に反して neighbor dump は **無効**。`config bmp enable bgp-neighbor-table` で明示的に有効化が必要。
+
+### `is_true()` の大文字非許容
+
+```python
+def is_true(val):
+    return str(val).lower() == 'true'
+```
+
+`"true"`（小文字）のみ `True` と判定。`"True"`, `"TRUE"`, `"1"`, `"yes"` はすべて `False` 扱い。
+YANG `stypes:boolean_type` は `"true"` / `"false"` の小文字 enum のみを許容するため、
+YANG バリデーションを通った値は常に正しく処理される。ただし YANG バリデーションをバイパスして
+直接 `CONFIG_DB` に書き込む場合（スクリプト等）は注意が必要。
+
+### CLI 部分書き込み時の挙動
+
+`config bmp enable bgp-neighbor-table` を `BMP|table` エントリが存在しない状態で実行すると、
+`bgp_rib_in_table` / `bgp_rib_out_table` は DB に書き込まれず未定義のまま残る。
+`bmpcfgd` はそれらを `'false'` として処理する（YANG default の `false` と一致するため実害なし）。
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 9e5a57a09d49 -->
