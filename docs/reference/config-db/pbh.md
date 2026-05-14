@@ -254,6 +254,7 @@ db_migrator.py での PBH マイグレーションなし
 
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-table-defaults.md -->
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-defaults.md -->
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-hash-defaults.md -->
 
 ### PBH_TABLE フィールド別デフォルト
 
@@ -292,6 +293,27 @@ db_migrator.py での PBH マイグレーションなし
 
 - **match field が 1 つも設定されない PBH_RULE は SAI バリデーションで reject** される
 - YANG 側にこの制約の記述はなく、YANG は全 match field を optional として定義する
+
+### PBH_HASH フィールド別デフォルト
+
+| フィールド | YANG 定義 | 実装デフォルト | 備考 |
+|---|---|---|---|
+| `hash_field_list` | `leaf-list; min-elements 1; ordered-by user; leafref PBH_HASH_FIELD` | **なし** (mandatory) | 空リスト → `validatePbhHash` が `SWSS_LOG_ERROR` + `return false`。重複エントリは `unordered_set` で dedup + SWSS_LOG_WARN のみ |
+
+- 未知フィールドは `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` でサイレントスキップ
+- YANG-実装 discrepancy: なし (`min-elements 1` と実装が一致)
+
+### PBH_HASH_FIELD フィールド別デフォルト
+
+| フィールド | YANG 定義 | 実装デフォルト (pbhmgr.cpp `validatePbhHashField`) | 備考 |
+|---|---|---|---|
+| `hash_field` | `mandatory true; enum INNER_IP_PROTOCOL\|INNER_L4_*\|INNER_*_IPV4\|INNER_*_IPV6` | **なし** (mandatory) | 未設定 → `SWSS_LOG_ERROR` + `return false` |
+| `ip_mask` | `when hash_field is IP addr type; inet:ip-address-no-zone` | **なし** (条件付き必須) | `hash_field` が `INNER_DST/SRC_IPV4/6` のとき必須; 非 IP フィールドで設定すると `isIpv4/6MaskRequired` が false → validation error。未設定でも `sequence_id` があれば通過 |
+| `sequence_id` | `mandatory true; uint32` | **なし** (mandatory) | 未設定 → `SWSS_LOG_ERROR` + `return false`。同値を複数フィールドで使用可能 (uniqueness 制約なし) |
+
+- 非 IP フィールド (`INNER_IP_PROTOCOL`, `INNER_L4_DST_PORT`, `INNER_L4_SRC_PORT`) に `ip_mask` を設定するとエラー
+- `ip_mask` の IPv4/IPv6 混在も YANG `must` 条件でエラー (`.` 含むなら IPv4 フィールド専用、`:` 含むなら IPv6 フィールド専用)
+- YANG-実装 discrepancy: なし
 
 ### dead update: PBH_HASH_FIELD
 
