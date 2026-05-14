@@ -145,4 +145,27 @@ vtysh -c 'show ip prefix-list'
 
 [^2]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
 
+
+<!-- runtime-trace -->
+## CDB → 実コンテナ動作トレース
+
+### 段階 1: Consumer 登録
+
+- **bgpcfgd** または **sonic-cfggen**: `PREFIX_SET` テーブルを `ConfigDBConnector` で購読。
+
+### 段階 2: CFG → APPL 翻訳
+
+- bgpcfgd が FRR の prefix-list 設定を生成して vtysh 経由で反映。
+- APP_DB への書き込みなし。
+
+### 段階 3: APPL → SAI
+
+- FRR がプレフィックスセットをポリシーマッチ条件として使用。SAI 経由なし。
+
+### 段階 4: タイミング + 副作用
+
+- FRR 設定反映は即時。ルーティングポリシーへの影響はピアの next UPDATE から。
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 88e792f23f63 -->
