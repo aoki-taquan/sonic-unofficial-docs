@@ -22254,6 +22254,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30009,6 +30020,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30639,6 +30661,76 @@
 </tbody>
 </table>
 <!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p>ACL_TABLE は <code>AclOrch::doAclTableTask()</code> が処理する。<code>type</code> / <code>stage</code> フィールド値によって SAI テーブルの作成方法や bind point が変わる。</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclTableTask()</code></td>
+<td><code>attr_name == ACL_TABLE_TYPE</code></td>
+<td><code>processAclTableType()</code> 呼び出し — 空文字は reject、それ以外はカスタム / 組み込み type として通す</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5380-5388</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclTableTask()</code></td>
+<td><code>attr_name == ACL_TABLE_STAGE</code></td>
+<td><code>processAclTableStage()</code> 呼び出し — INGRESS/EGRESS 以外は <code>bAllAttributesOk=false</code> → erase</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5400-5408</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclTableTask()</code></td>
+<td><code>attr_name == ACL_TABLE_SERVICES</code></td>
+<td><code>continue</code>（完全無視 — コントロールプレーン ACL 専用フィールドのため）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5410-5413</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>addAclTable()</code></td>
+<td><code>type == TABLE_TYPE_CTRLPLANE</code></td>
+<td>SAI テーブルを作成せず <code>copporch</code> に委譲</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:2727</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>addAclTable()</code></td>
+<td><code>type == TABLE_TYPE_L3V4V6</code></td>
+<td><code>isAclL3V4V6TableSupported(stage)</code> で ASIC capability を確認、非サポート時はテーブル作成失敗</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:2739</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>addAclTable()</code></td>
+<td><code>type IN [MIRROR, MIRRORV6]</code></td>
+<td><code>m_mirrorTableCapabilities[type]</code> で ASIC capability 確認、非サポート時 reject</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:3502-3541</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>addEgrSetDscpTable()</code></td>
+<td><code>type == TABLE_TYPE_EGR_SET_DSCP</code></td>
+<td>内部で <code>TABLE_TYPE_MARK_META</code> / <code>TABLE_TYPE_MARK_METAV6</code> へ変換して SAI 投入、stage を EGRESS 固定</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:4444-4539</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>doAclTableTask()</code> L5346-5520 全行読了 + <code>addAclTable()</code> / <code>addEgrSetDscpTable()</code> 参照。7 件分岐抽出。Phase 6/7 derivation ブロック再確認: minigraph.py type/stage 派生・UNDERLAY 変換・MIRROR capability check — 実ソースと整合、誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <!-- ref-triangle:start -->
 

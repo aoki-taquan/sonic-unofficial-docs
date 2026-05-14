@@ -22248,6 +22248,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30053,6 +30064,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30851,6 +30873,76 @@ YANG は <code>mandatory true</code> のため省略不可。</p>
 </tbody>
 </table>
 <!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p>ACL_RULE は <code>AclOrch::doAclRuleTask()</code> が処理する。同メソッド内で ACL_TABLE の <code>type</code> / <code>stage</code> フィールド値を読み取り、ルールの処理方法を分岐する。</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>table_id.empty()</code></td>
+<td>早期 WARN + erase（TABLE_ID 欠如はルール無効）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5536-5540</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>table_oid == SAI_NULL_OBJECT_ID</code> かつ <code>m_ctrlAclTables.find(table_id) != end</code></td>
+<td>INFO ログ + erase（コントロールプレーンルールをスキップ）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5556-5561</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>table_oid == SAI_NULL_OBJECT_ID</code> かつ ACL_TABLE 未作成</td>
+<td><code>it++</code>（テーブル作成まで待機）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5563-5565</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>type IN [TABLE_TYPE_MIRROR, TABLE_TYPE_MIRRORV6]</code></td>
+<td><code>table_id == m_mirrorTableId[stage]</code> により MIRROR / MIRRORV6 を再判定</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5570-5573</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>bHasTCPFlag &amp;&amp; !bHasIPProtocol</code> かつ <code>type IN [MIRRORV6, L3V6]</code></td>
+<td><code>IP_PROTOCOL</code> 自動付与: <code>MATCH_NEXT_HEADER=6</code> (IPv6)</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5636-5638</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>bHasTCPFlag &amp;&amp; !bHasIPProtocol</code> かつ <code>type</code> が上記以外</td>
+<td><code>IP_PROTOCOL</code> 自動付与: <code>MATCH_IP_PROTOCOL=6</code> (IPv4)</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5640-5643</code></td>
+</tr>
+<tr>
+<td><code>AclOrch</code></td>
+<td><code>doAclRuleTask()</code></td>
+<td><code>bHasIPV4 &amp;&amp; bHasIPV6 &amp;&amp; type == TABLE_TYPE_L3V4V6</code></td>
+<td>ERROR + <code>bAllAttributesOk=false</code> → rule INACTIVE（v4/v6 混在不可）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:5656-5663</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>doAclRuleTask()</code> L5520-5700 を全行読了、7 件分岐抽出。<code>type</code> / <code>stage</code> は ACL_RULE 自体のフィールドではなく ACL_TABLE から継承した値を参照。Phase 6/7 derivation ブロックの evidence 再確認: TCP 自動付与・minigraph 派生・DTelOrch 条件起動は実ソースと整合（<code>aclorch.cpp:5632-5660</code>、<code>minigraph.py:1218-1228</code>、<code>orchdaemon.cpp:502-530</code>）— 誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <!-- ref-triangle:start -->
 

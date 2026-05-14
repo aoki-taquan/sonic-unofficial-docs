@@ -21385,6 +21385,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30141,6 +30152,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -31468,6 +31490,110 @@
 <li>init_cfg.json.j2: type/subtype で 5 種 feature 状態を条件派生</li>
 </ul>
 <!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Manager / Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DeviceGlobalCfgMgr</code></td>
+<td><code>downstream_isolate_unisolate()</code></td>
+<td><code>self.switch_role NOT IN ["SpineRouter","LowerSpineRouter","UpperSpineRouter"]</code></td>
+<td>早期 <code>return True</code>（IDF isolation 設定をスキップ）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:260-262</code></td>
+</tr>
+<tr>
+<td><code>DeviceGlobalCfgMgr</code></td>
+<td><code>downstream_isolate_unisolate()</code></td>
+<td><code>idf_isolation_state == "unisolated"</code></td>
+<td><code>idf_unisolate_template</code> を使用 / それ以外は <code>idf_isolate_template</code></td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:265-269</code></td>
+</tr>
+<tr>
+<td><code>DeviceGlobalCfgMgr</code></td>
+<td><code>isolate_unisolate_device()</code></td>
+<td><code>tsa_status NOT IN ["true","false"]</code></td>
+<td>早期 <code>return False</code>（無効値ガード）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:186-188</code></td>
+</tr>
+<tr>
+<td><code>DeviceGlobalCfgMgr</code></td>
+<td><code>isolate_unisolate_device()</code></td>
+<td><code>tsa_status == "true"</code></td>
+<td>TSA <code>bgpd.tsa.isolate.conf.j2</code> テンプレートを適用 / <code>"false"</code> は TSB <code>bgpd.tsa.unisolate.conf.j2</code></td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:191-196</code></td>
+</tr>
+<tr>
+<td><code>DeviceGlobalCfgMgr</code></td>
+<td><code>set_wcmp()</code></td>
+<td><code>status NOT IN ["true","false"]</code></td>
+<td>早期 <code>return False</code>（無効値ガード）</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:146-148</code></td>
+</tr>
+<tr>
+<td><code>DeviceGlobalCfgMgr</code></td>
+<td><code>set_wcmp()</code></td>
+<td><code>status == "true"</code></td>
+<td>W-ECMP 有効化ログ + テンプレート push / <code>"false"</code> は無効化ログ</td>
+<td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:150-153</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd.DeviceMetaCfg</code></td>
+<td><code>hostname_update()</code></td>
+<td><code>not new_hostname</code></td>
+<td>早期 return（空 hostname は不可）</td>
+<td><code>sonic-host-services/scripts/hostcfgd:1516-1518</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd.DeviceMetaCfg</code></td>
+<td><code>hostname_update()</code></td>
+<td><code>new_hostname == self.hostname</code></td>
+<td>早期 return（変更なし、restart スキップ）</td>
+<td><code>sonic-host-services/scripts/hostcfgd:1519-1521</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd.DeviceMetaCfg</code></td>
+<td><code>apply_timezone_if_needed()</code></td>
+<td><code>new_tz is None</code></td>
+<td>早期 return（タイムゾーン未設定）</td>
+<td><code>sonic-host-services/scripts/hostcfgd:1546-1548</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd.DeviceMetaCfg</code></td>
+<td><code>apply_timezone_if_needed()</code></td>
+<td><code>new_tz == self.timezone AND system_timezone_realpath == new_timezone_realpath</code></td>
+<td>早期 return（変更なし、<code>timedatectl</code> スキップ）</td>
+<td><code>sonic-host-services/scripts/hostcfgd:1552-1554</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd.DeviceMetaCfg</code></td>
+<td><code>rsyslog_config()</code></td>
+<td><code>new_syslog_with_osversion is None</code></td>
+<td>早期 return（フィールド未設定）</td>
+<td><code>sonic-host-services/scripts/hostcfgd:1590-1593</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd.DeviceMetaCfg</code></td>
+<td><code>rsyslog_config()</code></td>
+<td><code>new_syslog_with_osversion == self.syslog_with_osversion</code></td>
+<td>早期 return（変更なし、rsyslog-config restart スキップ）</td>
+<td><code>sonic-host-services/scripts/hostcfgd:1595-1598</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>managers_device_global.py</code> 287 行・public メソッド 9 個（ヒット 6 分岐）、<code>managers_bgp.py</code> <code>apply_op()</code> は <code>suppress-fib-pending</code> を常時適用（値分岐なし）、<code>hostcfgd</code> <code>device_metadata_handler()</code> は <code>hostname_update</code> / <code>timezone_update</code> / <code>rsyslog_config</code> を委譲（ヒット 6 分岐）。</p>
+</blockquote>
+<!-- /handler-branching -->
 
 <h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

@@ -22641,6 +22641,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -29932,6 +29943,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#phase-8-handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -30493,6 +30515,70 @@
 </tbody>
 </table>
 <!-- /derivation -->
+
+<!-- handler-branching -->
+<h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
+<p>WRED_PROFILE は <code>WredMapHandler::convertFieldValuesToAttributes()</code> がフィールド値を解釈し SAI 属性リストに変換する。</p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>メソッド</th>
+<th>分岐条件</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WredMapHandler</code></td>
+<td><code>convertFieldValuesToAttributes()</code></td>
+<td><code>fvField == ecn_field_name</code></td>
+<td><code>ecn_map.at(fvValue)</code> で <code>SAI_WRED_ATTR_ECN_MARK_MODE</code> を設定、未知値は <code>std::out_of_range</code> 例外 → エントリ破棄</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:741-746</code></td>
+</tr>
+<tr>
+<td><code>WredMapHandler</code></td>
+<td><code>convertFieldValuesToAttributes()</code></td>
+<td><code>fvField IN [wred_green_enable, wred_yellow_enable, wred_red_enable]</code></td>
+<td><code>convertBool()</code> 失敗（<code>"true"/"false"</code> 以外）→ <code>SWSS_LOG_ERROR</code> + <code>return false</code>（エントリ破棄）</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:714-739</code></td>
+</tr>
+<tr>
+<td><code>WredMapHandler</code></td>
+<td><code>convertFieldValuesToAttributes()</code></td>
+<td><code>storedProfile.yellow_min_threshold &gt; threshold</code> (新 max &lt; 旧 min)</td>
+<td>閾値変更を deferred リストへ退避（2 フェーズ適用、先に反対側を SAI に投入して min&gt;max 違反を回避）</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:636-644</code></td>
+</tr>
+<tr>
+<td><code>WredMapHandler</code></td>
+<td><code>convertFieldValuesToAttributes()</code></td>
+<td><code>currentProfile.green_min_threshold &gt; currentProfile.green_max_threshold</code> (いずれかの色で)</td>
+<td><code>SWSS_LOG_ERROR("Wrong wred profile: min &gt; max")</code> + <code>return false</code> → エントリ破棄</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:754-760</code></td>
+</tr>
+<tr>
+<td><code>WredMapHandler</code></td>
+<td><code>addQosItem()</code></td>
+<td><code>wred_enable_set &amp; GREEN_WRED_ENABLED</code> かつ <code>drop_prob_set</code> に green なし</td>
+<td><code>SAI_WRED_ATTR_GREEN_DROP_PROBABILITY = 100</code> を自動補完</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:836-840</code></td>
+</tr>
+<tr>
+<td><code>WredMapHandler</code></td>
+<td><code>addQosItem()</code></td>
+<td>同上 yellow / red 各色</td>
+<td><code>SAI_WRED_ATTR_YELLOW/RED_DROP_PROBABILITY = 100</code> を自動補完</td>
+<td><code>sonic-swss/orchagent/qosorch.cpp:842-850</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>convertFieldValuesToAttributes()</code> L585-762 全行読了（34 フィールド if-elif 連鎖）、<code>addQosItem()</code> L784-860 読了。6 件分岐抽出。<code>ecn</code> 値の dispatch は <code>ecn_map.at()</code> ルックアップテーブル形式。Phase 6/7 derivation ブロック再確認: YANG default / qos_config.j2 AZURE_LOSSLESS 生成 / VoQ applyWredProfileToQueue — 実ソースと整合、誤読なし。</p>
+</blockquote>
+<!-- /handler-branching -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
