@@ -171,4 +171,29 @@ show dhcp_server ipv4 info
 > **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:133-454`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`dhcpservd` (`sonic-dhcp-server`) が CONFIG_DB の `DHCP_SERVER_IPV4` テーブルを購読する。
+
+`DHCP_SERVER_IPV4` は SONiC 独自の DHCP server 機能 (sonic-dhcp-server)。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (APPL_DB 中継なし)
+
+### 段階 3 — APPL→SAI
+
+なし (SAI 非経由 — Linux カーネルの DHCP サーバ機能)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: `dhcpservd` が CONFIG_DB の `DHCP_SERVER_IPV4` を購読。変化検知後 DHCP server 設定を更新。新規設定は次回 DHCP discover から有効。
+
+**副作用**: subnet / pool 変更は新規 DHCP リクエストから適用。既存 lease には影響しない (lease 期限まで)。
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 75921d013977 -->

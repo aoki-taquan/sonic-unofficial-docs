@@ -163,4 +163,29 @@ show queue counters
 enum なし — `pfc_priority`/`qindex` は数値文字列のみ。
 <!-- /value-behavior -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`QosOrch` (orchagent 直接 CFG 購読) が CONFIG_DB の `MAP_PFC_PRIORITY_TO_QUEUE` テーブルを購読する。
+
+`MAP_PFC_PRIORITY_TO_QUEUE` の key はマップ名。PFC priority (0-7) → Queue (0-7) のマッピング。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (orchagent が直接 CONFIG_DB を購読)
+
+### 段階 3 — APPL→SAI
+
+`sai_qos_map_api` — PFC priority → Queue マッピングテーブルを作成
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: orchagent が CONFIG_DB 変化を検知後即座に SAI QoS map を作成/更新。ポートへの割り当ては `PORT_QOS_MAP` で行う。
+
+**副作用**: PFC priority → Queue マッピング変更は PFC フロー制御の動作に直接影響。誤設定で lossless traffic が loss になる可能性がある。
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: d2191ccfe0bd -->

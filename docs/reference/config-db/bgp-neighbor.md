@@ -190,4 +190,29 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 | Jinja2 テンプレートレンダリング失敗 | `log_err` して `return True` (再試行なし) | `managers_bgp.py` `add_peer()` |
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`bgpcfgd` が CONFIG_DB の `BGP_NEIGHBOR` テーブルを購読する。
+
+`BGP_NEIGHBOR` は `<vrf>|<neighbor>` の key 構造。peer-group を参照する場合がある。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (FRR vtysh 経由)
+
+### 段階 3 — APPL→SAI
+
+なし (FRR BGP ネイバー管理)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: 変化検知後 FRR にネイバー定義コマンドを発行。新規ネイバーは即座に接続試行を開始。削除は BGP session を即座に切断。
+
+**副作用**: ネイバー削除は該当 BGP session の NOTIFICATION 送信と経路削除を引き起こす。パスワード変更は session リセットを引き起こす。
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 9133f44230c2 -->

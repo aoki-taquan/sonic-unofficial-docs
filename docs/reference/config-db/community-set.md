@@ -126,4 +126,29 @@ vtysh -c 'show bgp community-list'
 ```
 <!-- /ops-hint -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`bgpcfgd` が CONFIG_DB の `COMMUNITY_SET` テーブルを購読する。
+
+`COMMUNITY_SET` は SONiC の route policy 管理用 (OpenConfig 準拠)。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (FRR vtysh 経由で community-list を設定)
+
+### 段階 3 — APPL→SAI
+
+なし (FRR BGP policy のみ)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: 変化検知後 FRR に `ip community-list` コマンドを発行。次回 BGP route-map 評価から適用。
+
+**副作用**: community-list 変更は route-map を通じて BGP 経路のフィルタリング/属性に影響。soft-clear により即時反映が可能。
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->

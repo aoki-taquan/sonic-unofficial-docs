@@ -165,4 +165,29 @@ show dhcprelay_helper ipv4
 > **Evidence**: [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/db_migrator.py:928`; `config/vlan.py:242-243`; `config/main.py:1699-1706`; [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `dockers/docker-dhcp-relay/cli/config/plugins/dhcp_relay.py:601-628`
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`dhcrelay` / `dhcp_relay` サービス (DHCPv4 relay 専用) が CONFIG_DB の `DHCPV4_RELAY` テーブルを購読する。
+
+`DHCPV4_RELAY` は一部の SONiC バージョンで `DHCP_RELAY` と統合/分離されている。
+
+### 段階 2 — CFG→APPL 翻訳
+
+なし (APPL_DB 中継なし)
+
+### 段階 3 — APPL→SAI
+
+なし (SAI 非経由 — Linux カーネルの DHCPv4 relay)
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: `dhcrelay` が CONFIG_DB を読み込んで設定。`DHCP_RELAY` と同様にサービス再起動で反映。
+
+**副作用**: `DHCP_RELAY` テーブルと機能的に重複する部分がある。設定変更時はサービス再起動が必要。
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 9aad8bf0c717 -->

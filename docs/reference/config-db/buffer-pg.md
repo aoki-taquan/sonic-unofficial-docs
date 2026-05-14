@@ -147,4 +147,29 @@ show buffer pg
 | admin down ポートへの SET | APPL_DB 書き込みをスキップし内部状態のみ保持。ポート up 時に APPL_DB に反映 | `buffermgrdyn.cpp` L3202 |
 <!-- /cdb-exceptions -->
 
+
+<!-- runtime-trace -->
+## 実コンテナ動作トレース
+
+### 段階 1 — Consumer 登録
+
+`buffermgrd` / `buffermgrdyn` → `BufferOrch` (APPL_DB 経由) が CONFIG_DB の `BUFFER_PG` テーブルを購読する。
+
+`BUFFER_PG` の key は `<port>|<pg_range>` (例: `Ethernet0|3-4`)。
+
+### 段階 2 — CFG→APPL 翻訳
+
+`APP_BUFFER_PG_TABLE` (`BUFFER_PG_TABLE`) に書き込み
+
+### 段階 3 — APPL→SAI
+
+`sai_buffer_api` — `sai_create_ingress_priority_group_attr` でポート毎の PG (Priority Group) バッファプロファイルを設定
+
+### 段階 4 — タイミングと副作用
+
+**適用タイミング**: CONFIG_DB 変化を `buffermgrd(yn)` が検知後 APPL_DB に書き込み。`BufferOrch` が APPL_DB を購読して SAI call を発行。動的モードでは cable length / speed から自動計算。
+
+**副作用**: PG バッファ変更は ingress traffic の一時的な pause/drop に影響する可能性がある。warm-reboot では既存バッファ設定が保持される。
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 566f959873ea -->
