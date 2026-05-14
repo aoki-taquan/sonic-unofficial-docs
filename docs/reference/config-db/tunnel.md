@@ -2,6 +2,7 @@
 title: TUNNEL テーブル
 description: "TUNNEL テーブル — SONiC Dual-ToR (Active-Standby) 構成で、ToR スイッチ間に張る IPinIP トンネルを定義するテーブル。tunnelmgrd が CONFIG_DB の本テーブルを購読し、APPL_DB TUNNEL_DECAP_TABLE を生成。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -217,5 +218,38 @@ tunnelmgrd は常時起動し `TUNNEL` テーブルを無条件購読する。`s
 - 副作用: アンダーレイルートが存在しないと ECMP nexthop 解決ができずトンネルが inactive。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+TUNNEL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし — NVGRE トンネルは `config nvgre_tunnel`、VxLAN は `config vxlan` コマンド経由で別テーブルに投入
+
+### minigraph / sonic-cfggen
+
+minigraph.py に TUNNEL 直接生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+**db_migrator.py** が TUNNEL テーブルのマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLAN_TUNNEL / NVGRE_TUNNEL が使用される
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: ae9e20070353 -->

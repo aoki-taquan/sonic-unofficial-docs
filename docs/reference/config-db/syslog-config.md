@@ -2,6 +2,7 @@
 title: SYSLOG_CONFIG テーブル
 description: "SYSLOG_CONFIG テーブル — ホスト全体の rsyslog グローバル設定を CONFIG_DB に保持するシングルトンテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -187,5 +188,38 @@ hostcfgd は常時起動し `SYSLOG_CONFIG` テーブルを無条件購読する
 - 設定変更後 rsyslog 再起動まで数秒。リモートサーバ到達不能の場合はバッファリングまたはログ欠落。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SYSLOG_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config syslog rate-limit ...` / `config syslog format ...` — `config/syslog.py` が SYSLOG_CONFIG を書き込む (sonic-utilities/config/syslog.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SYSLOG_CONFIG 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SYSLOG_CONFIG マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: f29534787f37 -->

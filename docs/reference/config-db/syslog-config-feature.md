@@ -2,6 +2,7 @@
 title: SYSLOG_CONFIG_FEATURE テーブル
 description: "SYSLOG_CONFIG_FEATURE テーブル — SYSLOG_CONFIG.GLOBAL の rate-limit を FEATURE (docker) ごとに上書きするテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -185,5 +186,38 @@ hostcfgd は常時起動し `SYSLOG_CONFIG_FEATURE` テーブルを無条件購�
 - rsyslog 再起動まで数秒。再起動中のログが欠落する可能性。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SYSLOG_CONFIG_FEATURE テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config syslog rate-limit-feature ...` — `config/syslog.py` が SYSLOG_CONFIG_FEATURE を書き込む (sonic-utilities/config/syslog.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SYSLOG_CONFIG_FEATURE 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 9dae6d74c08e -->

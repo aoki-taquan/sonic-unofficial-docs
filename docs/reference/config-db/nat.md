@@ -2,6 +2,7 @@
 title: NAT_GLOBAL / NAT_POOL テーブル
 description: "NAT_GLOBAL / NAT_POOL テーブル — NAT_GLOBAL は NAT feature の admin mode と timeout を保持するグローバル設定、NAT_POOL は dynamic NAT で利用する変換アドレス / port 範囲の named pool を定義する CONFIG…"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:
@@ -206,5 +207,38 @@ enum: `admin_mode`=enabled/disabled、`nat_type`=snat/dnat。
 - 副作用: NAT pool の枯渇時は新規 NAT セッションが確立できず DROP。STATE_DB でカウンタ確認可能。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+NAT_GLOBAL / NAT_POOL / NAT_BINDINGS / NAT_STATIC テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config nat add/del ...` — `config/nat.py` が `set_entry()` で各 NAT サブテーブルを書き込む (sonic-utilities/config/nat.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に NAT テーブル生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での NAT マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+`init_cfg.json.j2` にエントリなし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: a6fe2efe021a -->

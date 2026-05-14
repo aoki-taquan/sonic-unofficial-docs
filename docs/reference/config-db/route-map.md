@@ -2,6 +2,7 @@
 title: ROUTE_MAP テーブル
 description: "ROUTE_MAP テーブル — ルーティングポリシー (route-map) の statement 単位の定義テーブル。BGP neighbor / peer-group や redistribute から名前で参照される。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -217,5 +218,38 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 - 副作用: `set local-preference` 変更等でルート選択が変わり、トラフィックパスが切り替わる可能性。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+ROUTE_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし — `sonic-cfggen` または `config load` 経由
+
+### minigraph / sonic-cfggen
+
+minigraph.py に ROUTE_MAP 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での ROUTE_MAP マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+**sonic-bgpcfgd** `managers_rm.py` が ROUTE_MAP テーブルを監視し FRR bgpd に反映 (sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py); **frrcfgd** `frrcfgd.py` も ROUTE_MAP を監視
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 24dbb72211e3 -->

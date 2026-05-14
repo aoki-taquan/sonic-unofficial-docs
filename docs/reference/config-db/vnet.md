@@ -2,6 +2,7 @@
 title: VNET / VNET_ROUTE テーブル
 description: "VNET / VNET_ROUTE テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:
@@ -201,5 +202,38 @@ show vnet routes all
 - 副作用: VNet 削除時は関連するルート・ネクストホップが全て削除される。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+VNET テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし — `config load` または REST API 経由
+
+### minigraph / sonic-cfggen
+
+minigraph.py に VNET 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし (VNET は手動 JSON 投入が主経路)
+
+### db_migrator
+
+db_migrator.py での VNET マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: f94986e6b96c -->

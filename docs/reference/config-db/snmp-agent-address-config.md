@@ -2,6 +2,7 @@
 title: SNMP_AGENT_ADDRESS_CONFIG テーブル
 description: "SNMP_AGENT_ADDRESS_CONFIG テーブル — snmpd のリッスンアドレスと UDP ポートを CONFIG_DB に登録するテーブル。docker-snmp 起動スクリプトが CONFIG_DB を読み、snmpd.conf の agentaddress 行を生成する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -191,5 +192,38 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG`
 - 副作用: リッスンアドレス変更中に SNMP モニタリングが一時停止。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SNMP_AGENT_ADDRESS_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config snmp agentaddress add/del ...` — `config/main.py` が `set_entry('SNMP_AGENT_ADDRESS_CONFIG', key, {})` を呼ぶ (sonic-utilities/config/main.py:4142–4186)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SNMP_AGENT_ADDRESS_CONFIG 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SNMP_AGENT_ADDRESS_CONFIG マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 59acbdd0f2b6 -->

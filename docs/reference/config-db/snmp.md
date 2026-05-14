@@ -2,6 +2,7 @@
 title: SNMP テーブル
 description: "SNMP テーブル — SNMP エージェント (snmpd in docker-snmp) のシステム情報 (Contact / Location) を保持するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -196,5 +197,39 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP` テーブルを購�
 - 副作用: 旧 community string での SNMP ポーリングが失敗するため、NMS 側の設定変更も必要。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SNMP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config snmp contact add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'CONTACT', ...)` を呼ぶ (sonic-utilities/config/main.py:4483–4560)
+  - `config snmp location add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'LOCATION', ...)` を呼ぶ (sonic-utilities/config/main.py:4600–4667)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SNMP 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SNMP マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: d5320e852f7a -->

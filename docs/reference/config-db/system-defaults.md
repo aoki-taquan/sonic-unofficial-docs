@@ -2,6 +2,7 @@
 title: SYSTEM_DEFAULTS テーブル
 description: "SYSTEM_DEFAULTS テーブル — システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。init_cfg.json 由来の値を保持し、db_migrator が初期化時にエントリの有無を確認する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -180,5 +181,38 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 - 副作用: switch_type の変更は swss/syncd の完全再起動が必要でサービス断が生じる。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SYSTEM_DEFAULTS テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SYSTEM_DEFAULTS 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SYSTEM_DEFAULTS マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+**`files/build_templates/init_cfg.json.j2`** に SYSTEM_DEFAULTS エントリ (IPv6 forwarding 等) がビルド時に投入 (sonic-buildimage/files/build_templates/init_cfg.json.j2); **`files/build_templates/qos_config.j2`** と **`files/build_templates/buffers_config.j2`** も参照
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 90fa20b1e615 -->

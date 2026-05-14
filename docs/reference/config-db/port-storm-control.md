@@ -2,6 +2,7 @@
 title: PORT_STORM_CONTROL テーブル
 description: "PORT_STORM_CONTROL テーブル — 物理ポートで BUM (broadcast / unknown-unicast / unknown-multicast) トラフィックのレート制限 (storm control) を設定するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -179,5 +180,38 @@ show storm-control all
 - 副作用: レートを低く設定しすぎると正常な broadcast (ARP 等) も制限される。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+PORT_STORM_CONTROL テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config storm-control ...` — `config/main.py` と `scripts/storm_control.py` が `set_entry()` を呼ぶ (sonic-utilities/config/main.py, scripts/storm_control.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に PORT_STORM_CONTROL 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での PORT_STORM_CONTROL マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
