@@ -585,4 +585,29 @@ SAI 呼び出し:
 <!-- 証跡: sonic-swss/cfgmgr/intfmgr.cpp, sonic-swss/orchagent/intfsorch.cpp -->
 <!-- /side-effects -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `STATE_PORT_TABLE` | STATE_DB | READ | SET 時 readiness ガード。ポートが state=ok でなければ処理をキューに戻し再試行 | `intfmgr.cpp` L686 |
+| `STATE_LAG_TABLE` | STATE_DB | READ | PortChannel プレフィクスのとき LAG readiness を確認 | `intfmgr.cpp` L663 |
+| `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` / `vnet_name` 指定時に VRF/VNET が ready か確認 | `intfmgr.cpp` L671-680 |
+| `DEVICE_METADATA|localhost.switch_type` | CONFIG_DB | READ | `intfmgrd` 起動時 1 回。`voq` のとき IPv6 アドレス追加に `metric 256` を付与 | `intfmgr.cpp` L71-75 |
+| `NAT_GLOBAL` → `gIsNatSupported` | CONFIG_DB | READ | orchagent 起動時にグローバルフラグ化。`gIsNatSupported==true` のとき SAI RIF 作成時に `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を設定する | `intfsorch.cpp` L1287-1294 |
+| `DEVICE_METADATA|localhost.mac` → `gMacAddress` | CONFIG_DB | READ | orchagent 起動時にグローバル変数化。ポート固有 `mac_addr` 未指定時に SAI `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` のフォールバック値として使用 | `intfsorch.cpp` L1205 |
+| `VLAN_MEMBER` (YANG `must` 排他制約) | CONFIG_DB | READ | YANG バリデーション時。`VLAN_MEMBER` の `must "not(INTERFACE_LIST[name=current()])"` でポートの L2/L3 二重登録を防止 | `sonic-vlan.yang` L305 |
+| `port_config.ini` / `platform.json` | プラットフォームファイル | READ | `sonic-cfggen -m <minigraph.xml>` 実行時。ポート名が platform ファイルに存在しなければ `INTERFACE` エントリをスキップ | `minigraph.py` L2064 |
+| `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` | CHASSIS_APP_DB | WRITE | VoQ スイッチ (`switch_type=voq`) 限定。`INTERFACE` の ADD/DEL に連動してラインカード間インタフェース情報を同期 | `intfsorch.cpp` L1316-1317 |
+| `APP_NEIGH_TABLE` | APP_DB | WRITE | `ipv6_use_link_local_only` を `disable` に変更したとき、同 IF の link-local ネイバーエントリを削除する副作用 | `intfmgr.cpp` L712-738 |
+
+!!! note "補足"
+    - **`STATE_*TABLE` 依存** は leafref には現れない実行時 readiness ガード。VRF / LAG / ポートのいずれかが未 ready なら Consumer がエントリを保持して再試行する。
+    - **`NAT_GLOBAL` 依存** は `nat_zone` フィールドを持っていても NAT が無効なプラットフォームでは SAI に渡らないことを意味する。
+    - **VoQ 専用参照** (`DEVICE_METADATA.switch_type=voq`, `CHASSIS_APP_DB`) は non-VoQ 環境では動作しない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 8c01908c2492 -->
