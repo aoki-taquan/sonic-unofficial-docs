@@ -338,4 +338,110 @@ aclshow -a -t EVERFLOW
 ```
 <!-- /ops-hint -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+CONFIG_DB の `ACL_RULE` テーブルを書き込むコードパスを網羅する。
+
+### CLI — acl_loader
+
+`sonic-utilities/acl_loader/main.py` — `acl-loader update full / incremental / delete`
+
+**full update** (`full_update()` L850):
+
+```python
+configdb.mod_entry(ACL_RULE, key, None)           # 既存全削除
+configdb.mod_config({ACL_RULE: rules_info})        # 新規一括書き込み
+```
+
+入力プロトコル: JSON ファイル（OpenConfig ACL 形式）— `<filename>` 引数で指定
+
+**incremental update** (`incremental_update()` L871):
+
+```python
+configdb.mod_entry(ACL_RULE, key, value)           # 追加
+configdb.mod_entry(ACL_RULE, key, None)            # 削除
+configdb.set_entry(ACL_RULE, key, value)           # 内容変更
+```
+
+dataplane ACL は full update 方式、controlplane ACL は差分更新。
+
+**delete** (`delete()` L946):
+
+```python
+configdb.set_entry(ACL_RULE, key, None)
+```
+
+Multi-ASIC: 各 namespace の `namespace_configdb` にも同じ操作を適用。
+
+**デフォルト deny ルール自動追加** (`createDefaultDenyAclRule()` L1138):
+
+`full_update` の末尾で priority=0 の DROP ルールを自動追加する。
+
+### REST / gNMI
+
+`sonic-mgmt-common/translib/acl_app.go:1062-1418`
+
+- REST path: `PATCH /openconfig-acl:acl/acl-sets/acl-set/{name}/{type}/acl-entries/acl-entry/{seq}`
+- gNMI path: `/openconfig-acl:acl/acl-sets/acl-set[...]/acl-entries/acl-entry[seq-id=...]`
+- `convertOCAclRulesToInternal()` でルール変換後、`d.SetEntry(app.ruleTs, db.Key{Comp: []string{aclKey, ruleKey}}, ...)` で CONFIG_DB の ACL_RULE に書き込み
+
+### minigraph
+
+なし。`minigraph.py` は ACL_RULE を生成しない（ACL_TABLE のみ）。
+
+### db_migrator
+
+なし。ACL_RULE の migration ステップは `db_migrator.py` に存在しない。
+
+### build-time デフォルト
+
+なし。`init_cfg.json.j2` および `qos_config.j2` に ACL_RULE エントリは存在しない。
+
+### hard-coded デフォルト
+
+`acl_loader` の `createDefaultDenyAclRule()` (L1138) が `full_update` 時に priority=0 の DROP ルールを自動追加する（これは build-time ではなく CLI 実行時の動作）。
+
+### 死活 (runtime injection)
+
+`orchagent` の `AclOrch` は ACL_RULE を購読するのみ（書き込みなし）。
+
+<!-- /entry-points -->
+
+<!-- runtime-trace -->
+## 起動経路 (Direction B: CFG → APPL → SAI)
+
+### 段階 1: Consumer 登録
+
+`orchdaemon.cpp:410,413` で `CONFIG_DB / ACL_RULE` (`"ACL_RULE"`) と `APP_DB / ACL_RULE_TABLE` (`"ACL_RULE_TABLE"`) の `TableConnector` を作成し `AclOrch` コンストラクタに渡す。`doTask()` (`aclorch.cpp:4287`) で `table_name` が `CFG_ACL_RULE_TABLE_NAME` または `APP_ACL_RULE_TABLE_NAME` に一致すると `doAclRuleTask()` に委譲。retry キャッシュも登録 (`aclorch.cpp:4221`) 。追加コンシューマ: `MirrorOrch` (`MIRROR_*_ACTION` 連動)、`CoppOrch` (`CTRLPLANE` 種別)、`NatMgr` (`cfgmgr/natmgrd.cpp:120`)。
+
+### 段階 2: CFG → APPL 翻訳
+
+`ACL_RULE` も `cfgmgr` 中間層なし。`AclOrch` が `CONFIG_DB` を直接購読する。`APP_DB` への中間書き込みなし。主な変換 (`doAclRuleTask()`, `aclorch.cpp:5520`):
+
+| CFG フィールド | 変換 | SAI 属性 |
+|---|---|---|
+| `PRIORITY` | uint32 そのまま | `SAI_ACL_ENTRY_ATTR_PRIORITY` |
+| `PACKET_ACTION` | `aclPacketActionLookup` ルックアップ | `SAI_ACL_ENTRY_ATTR_ACTION_PACKET_ACTION` |
+| `IP_TYPE` | `aclIpTypeLookup` ルックアップ | `SAI_ACL_ENTRY_ATTR_FIELD_ACL_IP_TYPE` |
+| `ETHER_TYPE` | `stoul(str, &idx, 0)` hex 変換、mask `0xFFFF` | `SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE` |
+| `MATCH_TCP_FLAGS` + `IP_PROTOCOL` 未指定 | `IP_PROTOCOL=6` を自動付与 (`aclorch.cpp:5640`) | `SAI_ACL_ENTRY_ATTR_FIELD_IP_PROTOCOL` |
+| `REDIRECT_ACTION` | next-hop / mirror セッション OID 解決 | `SAI_ACL_ENTRY_ATTR_ACTION_REDIRECT` |
+
+暗黙追加: `SAI_ACL_ENTRY_ATTR_TABLE_ID` (所属 ACL_TABLE の OID) を常に create 時に付与。
+
+### 段階 3: APPL → SAI
+
+`AclRule::create()` → `sai_acl_api->create_acl_entry(&m_ruleOid, gSwitchId, attrs, ...)` (`aclorch.cpp:1344`)。設定 SAI 属性: `SAI_ACL_ENTRY_ATTR_TABLE_ID`、`SAI_ACL_ENTRY_ATTR_PRIORITY`、`SAI_ACL_ENTRY_ATTR_FIELD_*` (match 群)、`SAI_ACL_ENTRY_ATTR_ACTION_*` (action 群)。ランタイム更新は `sai_acl_api->set_acl_entry_attribute(m_ruleOid, &attr)` (`aclorch.cpp:1466`) — match / action は **mutable**。
+
+### 段階 4: タイミング・副作用
+
+- **config reload**: warm start 非対応。reload 時は全ルールを再作成。ACL_TABLE が未作成なら `it++` で待機し、テーブル作成後に再処理される (`aclorch.cpp:5563-5565`)。
+- **runtime 変更 (SET)**: 既存ルール検出時は `AclRule::update()` → `set_acl_entry_attribute()` で差分適用。match / action は runtime mutable。
+- **warm-restart**: `AclOrch` は `onWarmBootEnd()` を実装しない。orchagent 全体の `warmRestoreAndSyncUp()` (`orchdaemon.cpp:872`) でリカバリ。
+- **SAI resource 枯渇**: `SAI_STATUS_INSUFFICIENT_RESOURCES` 時に retry キャッシュへ退避、リソース解放後に再試行 (`aclorch.cpp:4221`)。
+- **STATE_DB 書き込み**: ルール作成/削除時に `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) へステータスを書き込む (`aclorch.cpp:3479`)。
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: a78cb4c857bd -->

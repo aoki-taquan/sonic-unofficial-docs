@@ -295,4 +295,99 @@ aclshow -a
 ```
 <!-- /ops-hint -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+CONFIG_DB の `ACL_TABLE` テーブルを書き込むコードパスを網羅する。
+
+### CLI
+
+`sonic-utilities/config/main.py:8084-8123` — `config acl add table` / `config acl remove table`
+
+```python
+config_db.set_entry("ACL_TABLE", table_name, table_info)   # 追加
+config_db.set_entry("ACL_TABLE", table_name, None)          # 削除
+```
+
+- 入力プロトコル: CLI 引数 (`table_name`, `table_type`, `-d desc`, `-p ports`, `-s stage`)
+- `stage` 未指定時デフォルト: `"ingress"` (`parse_acl_table_info()` L8041)
+- ports: カンマ区切り文字列 → リストに変換
+
+### minigraph
+
+`sonic-buildimage/src/sonic-config-engine/minigraph.py:1102-1249, 2671`
+
+XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB に書き込む。
+
+| XML 要素 / 属性 | 生成フィールド | 生成値 |
+|---|---|---|
+| `<InAcl>` タグ | `stage` | `ingress` |
+| `<OutAcl>` タグ | `stage` | `egress` |
+| `<AttachTo>` に `erspan` prefix | `type` | `MIRROR` |
+| `<AttachTo>` に `erspanv6` prefix | `type` | `MIRRORV6` |
+| `<AttachTo>` に `erspan_dscp` prefix | `type` | `MIRROR_DSCP` |
+| interface list が空 | `type` | `CTRLPLANE` |
+| ACL 名に `v6` を含む、それ以外 | `type` | `L3V6` / `L3` |
+
+入力プロトコル: minigraph XML (`<AclInterface>`, `<InAcl>`, `<OutAcl>`, `<AttachTo>` XPath)
+
+### REST / gNMI
+
+`sonic-mgmt-common/translib/acl_app.go:95-300`
+
+- REST path: `PATCH /openconfig-acl:acl/acl-sets/acl-set/{name}/{type}`
+- gNMI path: `/openconfig-acl:acl/acl-sets/acl-set[name=...][type=...]`
+- `AclApp.processCreate()` → `processCommon()` → `d.SetEntry(app.aclTs, ...)` で CONFIG_DB の ACL_TABLE に書き込み
+- OpenConfig type → SONiC type マッピング: `ACL_IPV4` → `L3`、`ACL_IPV6` → `L3V6` など
+
+### db_migrator
+
+なし。ACL_TABLE の migration ステップは `db_migrator.py` に存在しない。
+
+### build-time デフォルト
+
+なし。`init_cfg.json.j2` および `qos_config.j2` に ACL_TABLE エントリは存在しない。
+
+### hard-coded デフォルト
+
+なし。
+
+### 死活 (runtime injection)
+
+`orchagent` の `AclOrch` は ACL_TABLE を購読するのみ（書き込みなし）。
+
+<!-- /entry-points -->
+
+<!-- runtime-trace -->
+## 起動経路 (Direction B: CFG → APPL → SAI)
+
+### 段階 1: Consumer 登録
+
+`orchdaemon.cpp:408-419` で `CONFIG_DB / ACL_TABLE` (`"ACL_TABLE"`)、`CONFIG_DB / ACL_TABLE_TYPE`、`CONFIG_DB / ACL_RULE` および対応する `APP_DB` 版の計 6 本の `TableConnector` を作成し `AclOrch` コンストラクタに渡す。`AclOrch` は `gOrchDaemon->orchList` に登録され、メインループで `doTask()` (`aclorch.cpp:4272`) が呼ばれる。`table_name` が `CFG_ACL_TABLE_TABLE_NAME` または `APP_ACL_TABLE_TABLE_NAME` に一致すると `doAclTableTask()` に委譲される。追加コンシューマ: `NatMgr` (`cfgmgr/natmgrd.cpp:119`) が `ACL_TABLE` を購読して NAT 設定に連動。
+
+### 段階 2: CFG → APPL 翻訳
+
+`ACL_TABLE` は `cfgmgr` 中間層を**持たない**。`AclOrch` が `CONFIG_DB` を直接購読し `doAclTableTask()` でフィールドを解釈する。`APP_DB` への中間書き込みなし。主な変換:
+
+| CFG フィールド | 変換 | 備考 |
+|---|---|---|
+| `type` | `processAclTableType()` → `AclTableType` オブジェクト | 空文字は reject、`UNDERLAY_SET_DSCP` → 内部で `MARK_META` に変換 |
+| `stage` | `processAclTableStage()` → `STAGE_INGRESS` / `STAGE_EGRESS` | 不正値は erase |
+| `ports` | `processAclTablePorts()` → PORT OID 解決 | SAI bind point (port/LAG/VLAN) に変換 |
+| `services` | `continue` で無視 | CTRLPLANE ACL 専用フィールド |
+
+### 段階 3: APPL → SAI
+
+`AclTable::create()` → `sai_acl_api->create_acl_table(&m_oid, gSwitchId, attrs, ...)` (`aclorch.cpp:2847`) を呼び出す。設定 SAI 属性: `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST`、`SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST`、`SAI_ACL_TABLE_ATTR_ACL_STAGE`、`SAI_ACL_TABLE_ATTR_FIELD_*` (match フィールド群)。ポートバインドは別途 `sai_port_api->set_port_attribute(SAI_PORT_ATTR_INGRESS_ACL / EGRESS_ACL)` 等を呼ぶ。`type=MIRROR/MIRRORV6` は ASIC capability 確認 (`aclorch.cpp:3502-3541`)、`type=L3V4V6` は `isAclL3V4V6TableSupported()` 確認 (`aclorch.cpp:2737`)、`type=CTRLPLANE` は SAI テーブル非作成 (`aclorch.cpp:2727`)。
+
+### 段階 4: タイミング・副作用
+
+- **config reload**: warm start 非対応。reload 時は全エントリを再処理し `create_acl_table` を再投入。
+- **runtime 変更 (SET)**: 既存 table 検出時は `updateAclTable()` → ポート bind/unbind を差分適用 (`aclorch.cpp:5446-5520`)。`type` / `stage` は作成後変更不可 (create-only 属性)。
+- **warm-restart**: `AclOrch` は `onWarmBootEnd()` を実装しない。orchagent 全体の `warmRestoreAndSyncUp()` (`orchdaemon.cpp:872`) でリカバリ。
+- **DEL**: バインドを外した後 `sai_acl_api->remove_acl_table()` を呼ぶ。配下に ACL_RULE が残ると SAI エラー。
+- **CRM 連携**: 作成/削除時に `gCrmOrch->incCrmAclUsedCounter()` / `decCrmAclUsedCounter()` (`aclorch.cpp:2855`)。
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 9f69b0796e2c -->

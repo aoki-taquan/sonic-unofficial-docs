@@ -260,4 +260,109 @@ show wred
 ```
 <!-- /ops-hint -->
 
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+CONFIG_DB の `WRED_PROFILE` テーブルを書き込むコードパスを網羅する。
+
+### CLI — config qos reload
+
+`sonic-utilities/config/main.py:3666-3755`
+
+`config qos reload` の実行フロー:
+
+1. `_clear_qos()` (L895-915) で WRED_PROFILE テーブルを全削除:
+   ```python
+   config_db.delete_table("WRED_PROFILE")
+   ```
+2. プラットフォーム固有の `qos.json.j2` を `sonic-cfggen` で展開し `--write-to-db` で CONFIG_DB に書き込む
+3. テンプレート内の `WRED_PROFILE` セクション (`AZURE_LOSSLESS` 等) が CONFIG_DB に反映される
+
+入力プロトコル: `sonic-cfggen` のテンプレート展開（プラットフォーム hwsku パスの `qos.json.j2`）
+
+### CLI — config qos clear
+
+`sonic-utilities/config/main.py:895-915` (`_clear_qos()`)
+
+`QOS_TABLE_NAMES` リストに `'WRED_PROFILE'` が含まれており、`config qos clear` で WRED_PROFILE テーブルが全削除される。
+
+```python
+config_db.delete_table("WRED_PROFILE")
+```
+
+### build-time デフォルト (qos_config.j2)
+
+`sonic-buildimage/files/build_templates/qos_config.j2:486-506`
+
+`generate_wred_profiles` マクロが未定義の場合、デフォルトの `AZURE_LOSSLESS` プロファイルを静的生成:
+
+| フィールド | デフォルト値 |
+|---|---|
+| `wred_green_enable` / `wred_yellow_enable` / `wred_red_enable` | `"true"` |
+| `ecn` | `"ecn_all"` |
+| `green_max_threshold` / `yellow_max_threshold` / `red_max_threshold` | `"2097152"` (bytes) |
+| `green_min_threshold` / `yellow_min_threshold` / `red_min_threshold` | `"1048576"` (bytes) |
+| `green_drop_probability` / `yellow_drop_probability` / `red_drop_probability` | `"5"` (%) |
+
+プラットフォームが `generate_wred_profiles` マクロを定義している場合は置換。`config qos reload` または firstboot 時に CONFIG_DB へ書き込まれる。
+
+### db_migrator
+
+`sonic-utilities/scripts/db_migrator.py:574-585`
+
+WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブルの `wred_profile` フィールド値の ABNF 形式（`|AZURE_LOSSLESS|`）をプレーン文字列（`AZURE_LOSSLESS`）に変換するマイグレーションを実行する。
+
+### minigraph
+
+なし。WRED_PROFILE は `minigraph.py` で生成しない。
+
+### REST / gNMI
+
+なし。`sonic-mgmt-common/translib/` に WRED_PROFILE 対応の App が存在しない。OpenConfig QoS YANG モデルへの translib 実装が未完のため、REST/gNMI 経由での直接書き込みは現時点では非サポート。
+
+### hard-coded デフォルト
+
+なし。デフォルト値は YANG `default` 宣言および `qos_config.j2` テンプレートで定義。
+
+### 死活 (runtime injection)
+
+`orchagent` の `QosOrch` は WRED_PROFILE を購読するのみ（書き込みなし）。
+
+<!-- /entry-points -->
+
+<!-- runtime-trace -->
+## 起動経路 (Direction B: CFG → APPL → SAI)
+
+### 段階 1: Consumer 登録
+
+`orchdaemon.cpp:375` で `CFG_WRED_PROFILE_TABLE_NAME` (`"WRED_PROFILE"`) を QoS tables list に追加し、`gQosOrch = new QosOrch(m_configDb, qos_tables)` (`orchdaemon.cpp:384`) で `CONFIG_DB` の `WRED_PROFILE` テーブルを購読。`QosOrch` は `m_orchList` に登録され (`orchdaemon.cpp:500`)、メインループで `doTask()` → `handleWredProfileTable(consumer, tuple)` (`qosorch.cpp:877`) に委譲。他コンシューマなし。ただし `QUEUE.wred_profile` で名前参照されるため、`QosOrch::handleQueueTable()` が `task_need_retry` を発行して WRED_PROFILE の先行作成を待つ (`qosorch.cpp:1864-1870`)。
+
+### 段階 2: CFG → APPL 翻訳
+
+`WRED_PROFILE` は `cfgmgr` 中間層なし、`APP_DB` への書き込みなし。`WredMapHandler::convertFieldValuesToAttributes()` (`qosorch.cpp:585-762`) でフィールドを SAI 属性に変換する。主な変換:
+
+| CFG フィールド | 変換 | SAI 属性 |
+|---|---|---|
+| `ecn` | `ecn_map.at(value)` ルックアップ (`qosorch.cpp:36-44`) | `SAI_WRED_ATTR_ECN_MARK_MODE` |
+| `wred_*_enable` | `convertBool()` → bool | `SAI_WRED_ATTR_{GREEN/YELLOW/RED}_ENABLE` |
+| `*_min/max_threshold` | uint64 bytes そのまま | `SAI_WRED_ATTR_*_{MIN/MAX}_THRESHOLD` |
+| `*_drop_probability` | uint64 (0-100%) | `SAI_WRED_ATTR_*_DROP_PROBABILITY` |
+
+暗黙追加: `SAI_WRED_ATTR_WEIGHT = 0` を常に先頭に付与 (`qosorch.cpp:794`)。`*_enable=true` かつ `*_drop_probability` 未指定 → 100% を自動補完 (`qosorch.cpp:836-850`)。閾値変更は **2 フェーズ適用**: min > 新 max となる属性を deferred リストへ退避し後から適用 (`qosorch.cpp:636-644`)。
+
+### 段階 3: APPL → SAI
+
+`WredMapHandler::addQosItem()` → `sai_wred_api->create_wred(&sai_object, gSwitchId, attrs, ...)` (`qosorch.cpp:855`)。設定 SAI 属性: `SAI_WRED_ATTR_WEIGHT`、`SAI_WRED_ATTR_{GREEN/YELLOW/RED}_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_ECN_MARK_MODE`。ランタイム更新は `sai_wred_api->set_wred_attribute(sai_object, &attr)` (`qosorch.cpp:774`) — WRED 属性は **mutable**。WRED 作成後、`QUEUE.wred_profile` 参照が解決した時点で `sai_queue_api->set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` でキューに紐付け。
+
+### 段階 4: タイミング・副作用
+
+- **config reload**: warm start 非対応 (warm start 分岐なし)。reload 時は WRED_PROFILE を再作成。QUEUE 側が先に処理された場合は `task_need_retry` で待機し、WRED_PROFILE 作成後に再処理。
+- **runtime 変更 (SET)**: `modifyQosItem()` → `set_wred_attribute()` で差分適用。閾値変更は 2 フェーズ適用あり。`ecn` / `wred_*_enable` も mutable。
+- **DEL**: `sai_wred_api->remove_wred()` 後に参照エントリを削除。QUEUE から先に unbind しないと SAI エラーになる可能性。
+- **VoQ スイッチ**: `gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` が VoQ ID を使用 (`qosorch.cpp:1709-1730`)。
+- **AZURE_LOSSLESS 自動生成**: 起動時に `qos_config.j2` が `WRED_PROFILE|AZURE_LOSSLESS` を CONFIG_DB に書き込み (`qos_config.j2:489-506`)。`ecn=ecn_all`、RoCE キュー (queue 3, 4) に自動 bind。
+- **db_migrator**: 旧 DB の `wred_profile` フィールド値 `|AZURE_LOSSLESS|` 形式を `AZURE_LOSSLESS` に変換 (`db_migrator.py:574-585`)。
+
+<!-- /runtime-trace -->
+
 <!-- glossary-links-injected: 7c1942297ce7 -->
