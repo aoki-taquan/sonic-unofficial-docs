@@ -266,4 +266,70 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 > **スキャン証跡**: BGP_PEER_GROUP_AF は comb_attr_list なしの `bgp_table_handler_common` に直接渡される。BGP_NEIGHBOR_AF と同一パスを共有。
 <!-- /handler-branching -->
+<!-- defaults -->
+## 暗黙デフォルトとコード由来の挙動 (Phase A)
+
+### 全フィールド共通: YANG default なし
+
+`sonic-bgp-cmn-af` grouping の全 leaf は YANG `default` 文を持たない。フィールドが CONFIG_DB に存在しない場合、frrcfgd は対応する FRR コマンドを一切発行しない。実行時の動作は FRR 内部デフォルトに依存する。
+
+### `admin_status` — activate の明示が必須
+
+| 状況 | frrcfgd の挙動 | FRR 側の結果 |
+|------|---------------|-------------|
+| フィールド不在 | コマンド発行なし | BGP_GLOBALS 初期化時の `no bgp default ipv4-unicast` により ipv4_unicast も inactive |
+| `true` / `up` | `neighbor PG activate` | AF 有効 |
+| `false` / `down` | `no neighbor PG activate` | AF 無効 |
+| DELETE | `no neighbor PG activate`（`false` として処理） | AF 無効 |
+
+**要点**: `admin_status` を省略すると ipv4 AF も activate されない。frrcfgd 購読テーブルの ipv4/ipv6/l2vpn は AF プレフィックスで振り分けられる（`frrcfgd.py:2665`）。
+
+### `send_community` — 書き込み時の implicit reset
+
+`hdl_send_com` は SET 時にまず `no neighbor PG send-community all` を発行してから指定値を適用する。`send_community=none` を書いた場合、追加コマンドは発行されない（`no send-community all` のみ）。
+
+### `remove_private_as_*` — 複合フィールドの reset シーケンス
+
+`hdl_rm_priv_as` は SET/DELETE にかかわらず 4 パターン全 `no` を先発行する:
+
+```
+no neighbor PG remove-private-AS
+no neighbor PG remove-private-AS all
+no neighbor PG remove-private-AS replace-AS
+no neighbor PG remove-private-AS all replace-AS
+```
+
+### `nexthop_self_force` — 書き込み経路依存の乖離
+
+| 書き込み経路 | `nexthop_self_force=true` 単独時の FRR 出力 |
+|------------|------------------------------------------|
+| frrcfgd（運用時 SET） | `neighbor PG next-hop-self force` を発行 |
+| J2 テンプレート（minigraph/init_cfg） | `nhself=true` が前提条件 — `nhself` 不在時は無視 |
+
+### `allow_as_in` 複合条件
+
+`allow_as_count` と `allow_as_origin` は `allow_as_in=true` がある場合のみ意味を持つ:
+
+| 設定 | FRR コマンド |
+|------|------------|
+| `allow_as_in=true` のみ | `neighbor PG allowas-in`（FRR デフォルト 3 回） |
+| `allow_as_in=true` + `allow_as_count=N` | `neighbor PG allowas-in N` |
+| `allow_as_in=true` + `allow_as_origin=true` | `neighbor PG allowas-in origin` |
+
+### `cap_orf` — 削除時の reset
+
+DELETE または SET 開始時に `no neighbor PG capability orf prefix-list both` を先発行し、SET 時のみ指定値を追加適用する。
+
+### VRF guard — BGP_GLOBALS 未設定時の silent skip
+
+`BGP_GLOBALS` の `local_asn` が設定されていない VRF に対する SET は `frrcfgd.py:2659` で LOG_DEBUG して skip される。FRR コマンドは発行されない。BGP_PEER_GROUP_AF は BGP_GLOBALS より後に書く必要がある。
+
+### `afi_safi` leaf — dead field
+
+YANG では `afi_safi` が独立した leaf として定義されているが、frrcfgd はこのフィールドを key parse（`key.split('|')`）から取得する。DB 値としての `afi_safi` は参照されない。
+
+### `max_prefix_*` — 複合コマンド生成規則
+
+`max_prefix_limit` が必須のアンカー。`max_prefix_warning_threshold` が不在の場合は `max_prefix_restart_interval` と `max_prefix_warning_only` も生成されない（`++` オプション連鎖）。
+<!-- /defaults -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
