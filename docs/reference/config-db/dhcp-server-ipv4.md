@@ -225,4 +225,42 @@ show dhcp_server ipv4 info
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト・Fallback
+
+### `lease_time` — CLI デフォルト 900 秒 + 実行時 fallback
+
+`config dhcp_server ipv4 add` の `--lease_time` オプションは省略時 `"900"` を DB に書き込む（`dhcp_server.py:70`）。さらに dhcpservd の設定生成時にも `dhcp_config.get("lease_time", DEFAULT_LEASE_TIME)` で `DEFAULT_LEASE_TIME = 900` へフォールバックする（`dhcp_cfggen.py:255, :25`）。YANG は `mandatory true` だが実装は absent でも動作継続する（YANG-実装 discrepancy）。
+
+### `state` — CLI 書込み時は常に `disabled`
+
+`add` コマンドは必ず `"state": "disabled"` を書き込む（`dhcp_server.py:105`）。`enable` サブコマンドを実行するまで dhcpservd はそのインタフェースを silent skip する（`dhcp_cfggen.py:199`）。`state` フィールドが DB に存在しない場合も `enabled` 以外として扱われ skip される。
+
+### `gateway` — absent 時は silent omission
+
+`gateway` が DB に存在しない場合、kea-dhcp4 設定の `routers` オプションが生成されない（`dhcp_cfggen.py:258-259`）。クライアントへのデフォルトゲートウェイ通知が行われない。`--dup_gw_nm` フラグで VLAN_INTERFACE の IPv4 アドレスから自動コピー可能（`dhcp_server.py:86-91`）。
+
+### `netmask` — kea 設定生成では参照されない (dead field 相当)
+
+YANG は `mandatory true` だが、dhcp_cfggen が kea-dhcp4 の subnet を計算する際は VLAN_INTERFACE の ip_prefix を `ipaddress.ip_network()` で変換して使用する。`netmask` フィールドの値は kea 設定生成で直接参照されない（YANG-実装 discrepancy）。CLI での入力検証用として機能する。
+
+### `customized_options.always_send` — DB absent 時は `true`
+
+`DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS` の `always_send` フィールドは YANG default `true`（`sonic-dhcp-server-ipv4.yang:168`）、dhcp_cfggen でも `config.get("always_send", "true")` でフォールバック（`dhcp_cfggen.py:151`）。
+
+### dhcp_server_id (option 54) の自動注入
+
+`customized_options` に option ID `"54"` が含まれない場合、dhcp_cfggen は VLAN_INTERFACE の IPv4 アドレスを `always_send=true` で dhcp_server_id オプションとして自動注入する（`dhcp_cfggen.py:245-249`）。ユーザー定義で上書き可能。
+
+### SmartSwitch 時の subnet ID ハードコード
+
+SmartSwitch 環境では kea-dhcp4 の subnet ID が `MID_PLANE_BRIDGE_SUBNET_ID = 10000` に固定される（`dhcp_cfggen.py:251, :19`）。通常 VLAN では VLAN 番号を整数変換して使用。
+
+### 書込み順依存 (CLI add → enable)
+
+`add` 時点で `state=disabled` が書き込まれるため、`enable` コマンドを実行しないと dhcpservd は設定を無効とみなす。ORDER-SENSITIVE。
+
+> **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:19,25,151,199,245-249,251,255,258-259`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:70,86-91,105`; `src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang:168`
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 75921d013977 -->
