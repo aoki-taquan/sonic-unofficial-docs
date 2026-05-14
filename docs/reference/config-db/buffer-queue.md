@@ -81,6 +81,24 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 
 `when` 条件: `switch_type = voq`。
 
+<!-- defaults -->
+## コード由来暗黙デフォルト (Phase A)
+
+このテーブルの有効フィールドは `profile` 1 つのみ。以下はコード精読から得た暗黙挙動。
+
+| 種別 | フィールド | 内容 | evidence |
+|------|-----------|------|----------|
+| YANG-実装 discrepancy | `profile` | YANG は `default 0` を宣言するが実装 (`buffermgrdyn`) は `profile` フィールドのない SET を `task_failed` で拒否する。実質必須。 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3337-3341` |
+| 方向制約（YANG になし） | `profile` | 参照プロファイルが `BUFFER_EGRESS` 以外（ingress pool 参照）の場合 `task_failed`。YANG に方向制約の記述なし。 | `buffermgrdyn.cpp:3318-3325` |
+| silent substitution (admin-down) | `profile` | ポートが admin-down になると `reclaimReservedBufferForPort` が設定プロファイルを zero profile（`_zero_` 含む名前）に自動差し替えて APPL_DB に書き込む。CONFIG_DB 値は変わらないが SAI 反映値は異なる。 | `buffermgrdyn.cpp:1319-1383` |
+| platform 依存（zero profile） | `profile` | vendor 提供 JSON に `queues_to_apply_zero_profile` / `egress_zero_profile` が定義されない場合、admin-down 時に各 queue が APPL_DB から削除される（zero profile 適用なし）。platform によって admin-down 挙動が異なる。 | `buffermgrdyn.cpp:285-289`, `1332` |
+| dead field 相当（removal 非対応） | DEL 操作 | `support_removing_buffer_items: no` の platform では DEL が `task_failed`。削除自体をサポートしないプラットフォームが存在する。 | `buffermgrdyn.cpp:3355-3358` |
+| flexcounter 暗黙スキップ | `profile` | プロファイル名に `_zero_` を含む場合、flex counter の追加・削除を行わない。YANG に規定なく、命名慣習による暗黙ルール。 | `bufferorch.cpp:995, 1017` |
+| retry（書込み順依存） | `profile` | BUFFER_PROFILE が APPL_DB に未到達の時点で BUFFER_QUEUE SET が届くと `task_need_retry` ループになる。CONFIG_DB 書き込み順が重要。 | `bufferorch.cpp:961-974` |
+
+> **運用上の注意**: YANG `default 0` を信頼して `profile` を省略した場合、`buffermgrd` 起動直後のリプレイで `task_failed` が発生しエントリが消失する。テンプレート生成時は必ず `profile` フィールドを明示する。
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
