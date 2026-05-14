@@ -46,6 +46,7 @@ nav:
   - buffer-queue.md
   - dscp-to-tc-map.md
   - pfc-wd.md
+  - pwm.md
   - queue.md
   - scheduler.md
   - tc-to-queue-map.md
