@@ -30793,8 +30793,8 @@
 <tr>
 <td><code>LeafRouter</code></td>
 <td>42</td>
-<td>BGP peer-group の IPv4/IPv6 で BBR 有効時 <code>allowas-in 1</code>; Broadcom 限定で IPinIP 追加エントリ生成; restapi feature 無効化; 下流 ToR ネイバーとの uplink/downlink バッファ・QoS 設定</td>
-<td>peer-group.conf.j2:9,24; ipinip.json.j2:12; init_cfg.json.j2:85; qos_config.j2:109</td>
+<td>BGP peer-group の IPv4/IPv6 で BBR 有効時 <code>allowas-in 1</code>; Broadcom 限定で IPinIP 追加エントリ生成; restapi feature 無効化; 下流 ToR ネイバーとの uplink/downlink バッファ・QoS 設定; uplink ポートへ <code>dscp_to_tc_map: "AZURE_UPLINK"</code> / <code>tc_to_queue_map: "AZURE_UPLINK"</code> 適用 (<code>qos_config.j2</code>); ダウンリンク <code>PORT_DOWNLINK</code> / アップリンク <code>PORT_UPLINK</code> リストで分岐</td>
+<td>peer-group.conf.j2:9,24; ipinip.json.j2:12; init_cfg.json.j2:85; qos_config.j2:109,440,452</td>
 </tr>
 <tr>
 <td><code>SpineChassisFrontendRouter</code></td>
@@ -30853,31 +30853,31 @@
 <tr>
 <td><code>SpineRouter</code></td>
 <td>16</td>
-<td>pmon の <code>delayed=False</code> 設定 (SpineRouter は pmon を遅延起動しない); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); <code>type==SpineRouter AND subtype==UpstreamLC</code> のとき table-map 適用</td>
+<td>pmon の <code>delayed=False</code> 設定 (SpineRouter は pmon を遅延起動しない); macsec feature 有効化対象 (MACSEC_SUPPORTED 必須); <code>type==SpineRouter AND subtype==UpstreamLC</code> のとき BGP address-family に <code>table-map SELECTIVE_ROUTE_DOWNLOAD_V4</code> / <code>table-map SELECTIVE_ROUTE_DOWNLOAD_V6</code> 適用</td>
 <td>init_cfg.json.j2:69,90; peer-group.conf.j2:17,32</td>
 </tr>
 <tr>
 <td><code>UpperSpineRouter</code></td>
 <td>4</td>
-<td>SpineRouter+UpstreamLC と同等の table-map 適用 (<code>SELECTIVE_ROUTE_DOWNLOAD</code>); macsec 有効化対象</td>
+<td>SpineRouter+UpstreamLC と同等の <code>table-map SELECTIVE_ROUTE_DOWNLOAD_V4</code> / <code>SELECTIVE_ROUTE_DOWNLOAD_V6</code> 適用; macsec 有効化対象</td>
 <td>peer-group.conf.j2:17,32; init_cfg.json.j2:90</td>
 </tr>
 <tr>
 <td><code>FabricSpineRouter</code></td>
 <td>0</td>
-<td>bgpd.main.conf.j2:20 の lowercase 比較 <code>in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']</code> で <code>disagg_t2=true</code> が設定される（コード中の単体参照はなし）</td>
+<td>bgpd.main.conf.j2:20 の lowercase 比較 <code>in ['lowerspinerouter', 'upperspinerouter', 'fabricspinerouter']</code> で テンプレートローカル変数 <code>disagg_t2 = "true"</code> が設定される（コード中の単体参照はなし）</td>
 <td>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:20</td>
 </tr>
 <tr>
 <td><code>LowerSpineRouter</code></td>
 <td>0</td>
-<td>同上 disagg_t2=true → FRR に disaggregated T2 フラグが立つ</td>
+<td>同上 <code>disagg_t2 = "true"</code> → FRR に disaggregated T2 フラグが立つ</td>
 <td>bgpd.main.conf.j2:20</td>
 </tr>
 <tr>
 <td><code>BackEndToRRouter</code></td>
 <td>12</td>
-<td><code>backend_device_types</code> グループ; <code>AND storage_device IN DEVICE_METADATA</code> のとき ACL を特殊バインド; <code>AND storage_device NOT IN DEVICE_METADATA</code> のとき IPinIP decap エントリ生成スキップ; QoS backend 設定</td>
+<td><code>backend_device_types</code> グループ (<code>['BackEndToRRouter', 'BackEndLeafRouter']</code>); <code>AND storage_device IN DEVICE_METADATA</code> のとき <code>filter_acl_table_for_backend()</code> 経由で ACL を特殊バインド; <code>AND storage_device NOT IN DEVICE_METADATA</code> のとき IPinIP decap エントリ生成スキップ; QoS backend 設定</td>
 <td>minigraph.py:1828; ipinip.json.j2:68-69; qos_config.j2:164</td>
 </tr>
 <tr>
@@ -30979,19 +30979,19 @@
 <tr>
 <td><code>LowerRegionalHub</code></td>
 <td>1</td>
-<td>bgpd.main.conf.j2:27 lowercase 比較で <code>disagg_rh=true</code> → Regional Hub FRR フラグ; init_cfg.json.j2:90 macsec 有効化対象</td>
+<td>bgpd.main.conf.j2:27 lowercase 比較でテンプレートローカル変数 <code>disagg_rh = "true"</code> → Regional Hub FRR フラグ; init_cfg.json.j2:90 macsec 有効化対象</td>
 <td>bgpd.main.conf.j2:27; init_cfg.json.j2:90</td>
 </tr>
 <tr>
 <td><code>FabricRegionalHub</code></td>
 <td>0</td>
-<td>bgpd.main.conf.j2:27 の lowercase 比較 <code>in ['lowerregionalhub', 'fabricregionalhub', 'upperregionalhub']</code> で <code>disagg_rh=true</code></td>
+<td>bgpd.main.conf.j2:27 の lowercase 比較 <code>in ['lowerregionalhub', 'fabricregionalhub', 'upperregionalhub']</code> で <code>disagg_rh = "true"</code></td>
 <td>bgpd.main.conf.j2:27</td>
 </tr>
 <tr>
 <td><code>UpperRegionalHub</code></td>
 <td>0</td>
-<td>同上 disagg_rh=true</td>
+<td>同上 <code>disagg_rh = "true"</code></td>
 <td>bgpd.main.conf.j2:27</td>
 </tr>
 </tbody>
@@ -31081,12 +31081,12 @@
 </tr>
 <tr>
 <td><code>UpstreamLC</code></td>
-<td><code>type=='SpineRouter' AND subtype=='UpstreamLC'</code> の複合条件で BGP table-map 適用; <code>voq_chassis/policies.conf.j2:19,54</code> で fallback community を deny する route-map 設定</td>
+<td><code>type=='SpineRouter' AND subtype=='UpstreamLC'</code> の複合条件で BGP table-map 適用; <code>voq_chassis/policies.conf.j2:19,54</code> で route-map <code>FROM_VOQ_CHASSIS_V4_PEER</code> / <code>FROM_VOQ_CHASSIS_V6_PEER</code> の deny 節を挿入し <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> を deny</td>
 <td>peer-group.conf.j2:17,32; dockers/docker-fpm-frr/frr/bgpd/templates/voq_chassis/policies.conf.j2:19,54</td>
 </tr>
 <tr>
 <td><code>DownstreamLC</code></td>
-<td><code>internal/policies.conf.j2:42,67</code> で FROM_VOQ route-map の local-pref/community 設定が DownstreamLC 向けに分岐</td>
+<td><code>internal/policies.conf.j2:42,67</code> で route-map <code>FROM_BGP_INTERNAL_PEER_V4</code> / <code>FROM_BGP_INTERNAL_PEER_V6</code> の <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> 処理が DownstreamLC 向けに分岐 (comm-list delete)</td>
 <td>dockers/docker-fpm-frr/frr/bgpd/templates/internal/policies.conf.j2:42,67</td>
 </tr>
 </tbody>
@@ -31251,7 +31251,7 @@
 <tr>
 <td>3</td>
 <td><code>type='SpineRouter' AND subtype='UpstreamLC'</code></td>
-<td>BGP peer-group に SELECTIVE_ROUTE_DOWNLOAD table-map 適用</td>
+<td>BGP peer-group に <code>table-map SELECTIVE_ROUTE_DOWNLOAD_V4</code> / <code>SELECTIVE_ROUTE_DOWNLOAD_V6</code> 適用</td>
 <td>peer-group.conf.j2:17,32</td>
 </tr>
 <tr>
@@ -31281,7 +31281,7 @@
 <tr>
 <td>8</td>
 <td><code>subtype='DualToR'</code></td>
-<td>mux feature 有効、DHCP relay Loopback0 フラグ、BGP coalesce-time 10000</td>
+<td>mux feature <code>FEATURE.mux.state = 'enabled'</code>、DHCP relay <code>-U Loopback0 -dt</code> フラグ、BGP <code>coalesce-time 10000</code></td>
 <td>bgpd.main.conf.j2:110; init_cfg.json.j2:81</td>
 </tr>
 <tr>
@@ -31311,7 +31311,7 @@
 <tr>
 <td>13</td>
 <td><code>subtype='UpstreamLC'</code> (voq chassis)</td>
-<td>FROM_VOQ route-map で fallback community を deny</td>
+<td>route-map <code>FROM_VOQ_CHASSIS_V4_PEER</code> / <code>FROM_VOQ_CHASSIS_V6_PEER</code> で <code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> を deny</td>
 <td>voq_chassis/policies.conf.j2:19,54</td>
 </tr>
 <tr>
@@ -31381,12 +31381,12 @@
 <td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2208-2212</code></td>
 </tr>
 <tr>
-<td><code>switch_type == 'voq'</code> または <code>chassis_type == VOQ</code></td>
+<td><code>switch_type == 'voq'</code> または <code>chassis_type == CHASSIS_CARD_VOQ ('VoQ')</code></td>
 <td><code>asic_name = 'Asic0'</code>（single ASIC 時）</td>
 <td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2221-2223</code></td>
 </tr>
 <tr>
-<td><code>switch_type == 'voq'</code> または <code>chassis_type == VOQ</code> かつ <code>card_type == 'Supervisor'</code></td>
+<td><code>switch_type == 'voq'</code> または <code>chassis_type == CHASSIS_CARD_VOQ ('VoQ')</code> かつ <code>card_type == 'Supervisor'</code></td>
 <td><code>sub_role = 'fabric'</code></td>
 <td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2227-2228</code></td>
 </tr>
@@ -31396,7 +31396,7 @@
 <td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2229-2230</code></td>
 </tr>
 <tr>
-<td><code>chassis_type == CHASSIS_CARD_VOQ</code> かつ <code>sub_role == FABRIC_ASIC_SUB_ROLE</code></td>
+<td><code>chassis_type == CHASSIS_CARD_VOQ ('VoQ')</code> かつ <code>sub_role == FABRIC_ASIC_SUB_ROLE ('Fabric')</code></td>
 <td><code>switch_type = 'fabric'</code></td>
 <td><code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2232-2233</code></td>
 </tr>
@@ -31459,12 +31459,12 @@
 <tbody>
 <tr>
 <td><code>device_info.is_chassis() == True</code></td>
-<td><code>ChassisAppDbMgr</code>（CHASSIS_APP_DB / BGP_DEVICE_GLOBAL）</td>
+<td><code>ChassisAppDbMgr</code>（テーブル <code>"CHASSIS_APP_DB"</code> / <code>"BGP_DEVICE_GLOBAL"</code>）</td>
 <td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:112-113</code></td>
 </tr>
 <tr>
 <td><code>SYSTEM_DEFAULTS.software_bfd.status == 'enabled'</code></td>
-<td><code>BfdMgr</code>（STATE_DB / BFD_SOFTWARE_SESSION）</td>
+<td><code>BfdMgr</code>（<code>"STATE_DB"</code> / <code>swsscommon.STATE_BFD_SOFTWARE_SESSION_TABLE_NAME</code>）</td>
 <td><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:118-120</code></td>
 </tr>
 <tr>

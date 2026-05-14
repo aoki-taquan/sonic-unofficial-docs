@@ -30200,7 +30200,7 @@
 <tr>
 <td><code>wred_*_enable</code></td>
 <td><code>true</code></td>
-<td>指定色の WRED ドロップを有効化</td>
+<td>指定色の WRED ドロップを有効化（フィールド定数: <code>wred_green_enable_field_name</code> / <code>wred_yellow_enable_field_name</code> / <code>wred_red_enable_field_name</code>、qosorch.h:40-42）</td>
 </tr>
 <tr>
 <td><code>wred_*_enable</code></td>
@@ -30261,7 +30261,7 @@
 <!-- value-behavior -->
 <h2 id="ecn"><code>ecn</code> 値別挙動<a class="headerlink" href="#ecn" title="Permanent link">&para;</a></h2>
 <p>YANG 定義 8 値 (sonic-wred-profile.yang)、default <code>ecn_none</code>。
-実装 <code>ecn_map</code> (qosorch.cpp:36-44) → <code>SAI_WRED_ATTR_ECN_MARK_MODE</code> (qosorch.cpp:743)。
+実装 lookup map: <code>ecn_map</code> (qosorch.cpp:36-44)、フィールド定数: <code>ecn_field_name = "ecn"</code> (qosorch.h:55) → <code>SAI_WRED_ATTR_ECN_MARK_MODE</code> (qosorch.cpp:743)。
 不正値 (<code>ecn_map.at()</code> が <code>std::out_of_range</code>) → エントリ破棄。</p>
 <table>
 <thead>

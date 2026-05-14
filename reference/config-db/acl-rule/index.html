@@ -30460,7 +30460,7 @@
 <h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="packet_action"><code>PACKET_ACTION</code> 値別挙動<a class="headerlink" href="#packet_action" title="Permanent link">&para;</a></h3>
 <p>YANG 定義値: <code>FORWARD</code> / <code>DROP</code> / <code>REDIRECT</code> (sonic-acl.yang:114-116)。
-実装 lookup: <code>aclPacketActionLookup</code> (aclorch.cpp:145-147)。</p>
+実装 lookup map: <code>aclPacketActionLookup</code> (aclorch.cpp:143)。マクロ定数: <code>PACKET_ACTION_FORWARD</code> / <code>PACKET_ACTION_DROP</code> / <code>PACKET_ACTION_COPY</code> / <code>PACKET_ACTION_REDIRECT</code> / <code>PACKET_ACTION_DO_NOT_NAT</code> / <code>PACKET_ACTION_DISABLE_TRIM</code> (aclorch.h:83-88)。</p>
 <table>
 <thead>
 <tr>
@@ -30474,37 +30474,37 @@
 <tr>
 <td><code>FORWARD</code></td>
 <td><code>SAI_PACKET_ACTION_FORWARD</code></td>
-<td>パケットを通過させる</td>
+<td>パケットを通過させる (<code>PACKET_ACTION_FORWARD</code>)</td>
 <td><code>aclorch.h:83</code>, <code>aclorch.cpp:145</code></td>
 </tr>
 <tr>
 <td><code>DROP</code></td>
 <td><code>SAI_PACKET_ACTION_DROP</code></td>
-<td>パケットをドロップ</td>
+<td>パケットをドロップ (<code>PACKET_ACTION_DROP</code>)</td>
 <td><code>aclorch.h:84</code>, <code>aclorch.cpp:146</code></td>
 </tr>
 <tr>
 <td><code>COPY</code></td>
 <td><code>SAI_PACKET_ACTION_COPY</code></td>
-<td>パケットを CPU コピー後に続行 (YANG 外)</td>
+<td>パケットを CPU コピー後に続行 (<code>PACKET_ACTION_COPY</code>、YANG 外)</td>
 <td><code>aclorch.h:85</code>, <code>aclorch.cpp:147</code></td>
 </tr>
 <tr>
 <td><code>REDIRECT</code></td>
 <td>oid 解決後に redirect</td>
-<td><code>REDIRECT:&lt;target&gt;</code> 形式。コロンなし / ターゲット空は <code>return false</code> → rule INACTIVE</td>
+<td><code>REDIRECT:&lt;target&gt;</code> 形式 (<code>PACKET_ACTION_REDIRECT</code>)。コロンなし / ターゲット空は <code>return false</code> → rule INACTIVE</td>
 <td><code>aclorch.h:86</code>, <code>aclorch.cpp:2013-2040</code></td>
 </tr>
 <tr>
 <td><code>DO_NOT_NAT</code></td>
 <td>—</td>
-<td><a href="../../glossary/#term-nat">NAT</a> 処理をバイパス (YANG 外)</td>
+<td><a href="../../glossary/#term-nat">NAT</a> 処理をバイパス (<code>PACKET_ACTION_DO_NOT_NAT</code>、YANG 外)</td>
 <td><code>aclorch.h:87</code></td>
 </tr>
 <tr>
 <td><code>DISABLE_TRIM</code></td>
 <td>—</td>
-<td>バッファ trim を無効化 (YANG 外)</td>
+<td>バッファ trim を無効化 (<code>PACKET_ACTION_DISABLE_TRIM</code>、YANG 外)</td>
 <td><code>aclorch.h:88</code></td>
 </tr>
 </tbody>
@@ -30514,7 +30514,7 @@
 <p><code>ACTION_PACKET_ACTION</code> フィールドに <code>REDIRECT:&lt;target&gt;</code> を書く旧形式が後方互換として残る。新形式は <code>REDIRECT_ACTION</code> フィールドを使う (<code>aclorch.cpp:2013</code>)。</p>
 </div>
 <h3 id="ip_type"><code>IP_TYPE</code> 値別挙動<a class="headerlink" href="#ip_type" title="Permanent link">&para;</a></h3>
-<p>YANG 定義値 7 種 (sonic-acl.yang:122-130)。実装 lookup table (aclorch.cpp:503-512)。
+<p>YANG 定義値 7 種 (sonic-acl.yang:122-130)。実装 lookup map: <code>aclIpTypeLookup</code> (aclorch.cpp:501)。マクロ定数: <code>IP_TYPE_ANY</code> / <code>IP_TYPE_IP</code> / <code>IP_TYPE_NON_IP</code> / <code>IP_TYPE_IPv4ANY</code> / <code>IP_TYPE_NON_IPv4</code> / <code>IP_TYPE_IPv6ANY</code> / <code>IP_TYPE_NON_IPv6</code> / <code>IP_TYPE_ARP</code> / <code>IP_TYPE_ARP_REQUEST</code> / <code>IP_TYPE_ARP_REPLY</code> (aclorch.h:98-107)。
 YANG は <code>mandatory true</code> のため省略不可。</p>
 <table>
 <thead>
@@ -30529,69 +30529,69 @@ YANG は <code>mandatory true</code> のため省略不可。</p>
 <tr>
 <td><code>ANY</code></td>
 <td><code>SAI_ACL_IP_TYPE_ANY</code></td>
-<td>IP/非IP 問わず全パケット</td>
+<td>IP/非IP 問わず全パケット (<code>IP_TYPE_ANY</code>)</td>
 <td><code>aclorch.h:98</code>, <code>aclorch.cpp:503</code></td>
 </tr>
 <tr>
 <td><code>IP</code></td>
 <td><code>SAI_ACL_IP_TYPE_IP</code></td>
-<td>IPv4 または IPv6 パケット</td>
+<td>IPv4 または IPv6 パケット (<code>IP_TYPE_IP</code>)</td>
 <td><code>aclorch.h:99</code>, <code>aclorch.cpp:504</code></td>
 </tr>
 <tr>
 <td><code>IPV4</code></td>
 <td><code>SAI_ACL_IP_TYPE_IPV4ANY</code></td>
-<td>IPv4 パケット (YANG のみ、実装上 IPV4ANY と同義)</td>
+<td>IPv4 パケット (YANG のみ、実装上 <code>IP_TYPE_IPv4ANY</code> と同義)</td>
 <td><code>sonic-acl.yang:125</code></td>
 </tr>
 <tr>
 <td><code>IPV4ANY</code></td>
 <td><code>SAI_ACL_IP_TYPE_IPV4ANY</code></td>
-<td>IPv4 パケット</td>
+<td>IPv4 パケット (<code>IP_TYPE_IPv4ANY</code>)</td>
 <td><code>aclorch.h:101</code>, <code>aclorch.cpp:506</code></td>
 </tr>
 <tr>
 <td><code>NON_IPV4</code></td>
 <td><code>SAI_ACL_IP_TYPE_NON_IPV4</code></td>
-<td>非 IPv4 パケット</td>
+<td>非 IPv4 パケット (<code>IP_TYPE_NON_IPv4</code>)</td>
 <td><code>aclorch.h:102</code>, <code>aclorch.cpp:507</code></td>
 </tr>
 <tr>
 <td><code>IPV6ANY</code></td>
 <td><code>SAI_ACL_IP_TYPE_IPV6ANY</code></td>
-<td>IPv6 パケット</td>
+<td>IPv6 パケット (<code>IP_TYPE_IPv6ANY</code>)</td>
 <td><code>aclorch.h:103</code>, <code>aclorch.cpp:508</code></td>
 </tr>
 <tr>
 <td><code>NON_IPV6</code></td>
 <td><code>SAI_ACL_IP_TYPE_NON_IPV6</code></td>
-<td>非 IPv6 パケット</td>
+<td>非 IPv6 パケット (<code>IP_TYPE_NON_IPv6</code>)</td>
 <td><code>aclorch.h:104</code>, <code>aclorch.cpp:509</code></td>
 </tr>
 <tr>
 <td><code>ARP</code></td>
 <td><code>SAI_ACL_IP_TYPE_ARP</code></td>
-<td><a href="../../glossary/#term-arp">ARP</a> パケット (実装のみ、YANG 外)</td>
+<td><a href="../../glossary/#term-arp">ARP</a> パケット (<code>IP_TYPE_ARP</code>、実装のみ、YANG 外)</td>
 <td><code>aclorch.h:105</code>, <code>aclorch.cpp:510</code></td>
 </tr>
 <tr>
 <td><code>ARP_REQUEST</code></td>
 <td><code>SAI_ACL_IP_TYPE_ARP_REQUEST</code></td>
-<td><a href="../../glossary/#term-arp">ARP</a> Request (実装のみ)</td>
+<td><a href="../../glossary/#term-arp">ARP</a> Request (<code>IP_TYPE_ARP_REQUEST</code>、実装のみ)</td>
 <td><code>aclorch.h:106</code>, <code>aclorch.cpp:511</code></td>
 </tr>
 <tr>
 <td><code>ARP_REPLY</code></td>
 <td><code>SAI_ACL_IP_TYPE_ARP_REPLY</code></td>
-<td><a href="../../glossary/#term-arp">ARP</a> Reply (実装のみ)</td>
+<td><a href="../../glossary/#term-arp">ARP</a> Reply (<code>IP_TYPE_ARP_REPLY</code>、実装のみ)</td>
 <td><code>aclorch.h:107</code>, <code>aclorch.cpp:512</code></td>
 </tr>
 </tbody>
 </table>
 <h3 id="ether_type"><code>ETHER_TYPE</code> 値別挙動<a class="headerlink" href="#ether_type" title="Permanent link">&para;</a></h3>
 <p>YANG pattern で 7 値に制限 (sonic-acl.yang:142)。実装では任意 uint16 を受理 (aclorch.cpp:1066)。
-格納値は <code>0x</code> プレフィックス付き hex 文字列。<code>stoul(str, &amp;idx, 0)</code> で auto 判定 (converter.h:18)。
-マスク: <code>0xFFFF</code> (完全一致) で SAI に投入 (aclorch.cpp:1067)。</p>
+格納値は <code>0x</code> プレフィックス付き hex 文字列。<code>stoul(str, &amp;idx, 0)</code> で auto 判定 (<code>converter.h:18</code> の変換関数)。
+マスク: <code>0xFFFF</code> (完全一致) で <code>SAI_ACL_ENTRY_ATTR_FIELD_ETHER_TYPE</code> として SAI に投入 (aclorch.cpp:1067)。</p>
 <table>
 <thead>
 <tr>
