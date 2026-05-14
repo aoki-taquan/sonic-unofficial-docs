@@ -375,6 +375,55 @@ key は固定文字列 `localhost`（必須）と任意の `bmc`。
 - init_cfg.json.j2: type/subtype で 5 種 feature 状態を条件派生
 <!-- /derivation -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG default と別に、コード側で「フィールド不在時の fallback」が実装されている field を全列挙する。
+
+| field | YANG default | コード default | 適用箇所 | 種別 | evidence |
+|---|---|---|---|---|---|
+| `synchronous_mode` | `enable` | `enable` (非 disable → enable) | `swss_vars.j2:9` → `orchagent.sh:40` | Jinja else | swss_vars.j2:9 |
+| `buffer_model` | — | static モード (`pg_profile_lookup.ini`) | `buffermgrd.sh:13-15` | sh else | buffermgrd.sh:13 |
+| `bgp_adv_lo_prefix_as_128` | — | /64 広告 (field 不在 or != "true") | `bgpd.main.conf.j2:165-173` | Jinja else | bgpd.main.conf.j2:168 |
+| `default_bgp_status` | `up` | up (neighbor shutdown なし; field 不在でも shutdown しない) | `general/instance.conf.j2:13` | Jinja absent check | instance.conf.j2:13 |
+| `create_only_config_db_buffers` | — | `false` (C++ メンバ初期値 false; hget が false を返すと上書きなし) | `flexcounterorch.cpp:114-120` | C++ member default | flexcounterorch.h:86 |
+| `orch_northbond_dash_zmq_enabled` | `true` | DASH ZMQ 有効 (field 不在 → != "false" → テーブル有効) | `orch_zmq_tables.conf.j2:1` | Jinja != "false" | orch_zmq_tables.conf.j2:1 |
+| `orch_northbond_route_zmq_enabled` | `false` | ROUTE ZMQ 無効 (field 不在 → != "true" → テーブル無効) | `orch_zmq_tables.conf.j2:27` | Jinja == "true" | orch_zmq_tables.conf.j2:27 |
+| `frr_mgmt_framework_config` | `false` | `""` (空文字) → bgpcfgd がテンプレ展開担当 | `frr_vars.j2:3-7` | Jinja absent | frr_vars.j2:5-6 |
+| `docker_routing_config_mode` | `unified` | `""` → `"separated"` 扱い (frrcfgd.py else 節) | `frr_vars.j2:8-13`, `frrcfgd.py:2170` | Jinja absent + Python else | frr_vars.j2:12; frrcfgd.py:2170 |
+| `timezone` | `UTC` | `None` → `timedatectl` 呼び出しなし (YANG default UTC は OS 起動時に別途設定済み) | `hostcfgd:1500`, `apply_timezone_if_needed:1546` | Python .get() → None guard | hostcfgd:1546 |
+| `hostname` | — | `""` → `hostname-config` restart なし (空文字は不許可) | `hostcfgd:1496`, `hostname_update:1516` | Python .get('', '') | hostcfgd:1516 |
+| `syslog_with_osversion` | `false` | `""` → `"false"` (rsyslog-config.sh で明示変換) | `rsyslog-config.sh:28-30` | sh fallback | rsyslog-config.sh:28-30 |
+| `bgp_router_id` | — | Loopback0 (または BackEnd/VoQ 時は Loopback4096) の IPv4 を使用 | `bgpd.main.conf.j2:141-153` | Jinja absent → loopback fallback | bgpd.main.conf.j2:144,151 |
+| `ring_thread_enabled` | `false` | `-R` フラグなし (field 不在 or != "true") | `orchagent.sh:121-123` | sh absent | orchagent.sh:122 |
+| `mac` | — | `eth0` の MAC アドレス (field 不在 / "None") | `orchagent.sh:12-15` | sh absent / "None" guard | orchagent.sh:13-15 |
+
+### YANG default を上書きするケース
+
+| field | YANG default | 実質 default | 上書き理由 | evidence |
+|---|---|---|---|---|
+| `docker_routing_config_mode` | `unified` | `separated` | frr_vars.j2 が field 不在時 `""` を返し、frrcfgd.py の else 節が `""` を `separated` として処理する。minigraph.py:1630 では `separated` をデフォルト設定する | frr_vars.j2:12; frrcfgd.py:2170; minigraph.py:1630 |
+| `default_pfcwd_status` | `disable` | `enable` (config reload 時の実質挙動) | `config/main.py:2427` が内部変数を `enable` で初期化し、DEVICE_METADATA に `default_pfcwd_status` がない場合 `pfcwd start_default` を実行する。YANG default `disable` はコードに到達しない | config/main.py:2427 |
+
+### 該当なし field (探したが fallback 無し)
+
+- `bgp_asn` — 未設定時は bgpd.main.conf.j2 で `router bgp` ブロックごと出力しない (L94 条件)
+- `type` — J2 テンプレートは field 存在チェック後に使用; 未設定時は分岐なし
+- `subtype` — 同上; 未設定時は DualToR/SmartSwitch 等の条件に入らない
+- `switch_type` — 未設定時は npu 扱いだが、コード上は `if switch_type == 'X'` の else 節で implicit fallback (明示的 fallback 文字列なし)
+- `deployment_id` — 未設定時は `BGPPeerMgrBase` の `check_deployment_id` 条件に入らない (deps から除外)
+- `peer_switch` — 未設定時 DualToR 設定が不完全になるが、ガード処理なし (consumer 依存)
+- `asic_id` — 未設定時は orchagent に `-i` フラグを渡さない (L55 条件)
+- `cluster`, `region`, `cloudtype`, `resource_type`, `mgmt_type` — J2/Python で読まれるが fallback 文字列なし (swss_vars.j2 経由で空文字列)
+
+### LSP trace 証跡
+
+- workspaceSymbol で参照した consumer ファイル数: 155+ (grep entry point)、production consumer 精読: 15 ファイル
+- 完全読書した関数・スクリプト区間数: 18
+- 検出した fallback パターン総数: 15
+- 詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-defaults.md`
+<!-- /defaults -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
