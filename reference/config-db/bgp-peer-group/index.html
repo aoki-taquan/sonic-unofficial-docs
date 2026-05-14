@@ -22257,6 +22257,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#fallback-phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙デフォルトとコード由来 fallback (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルトとコード由来 fallback (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG レベル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別暗黙挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装の discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 自動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30308,6 +30369,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#fallback-phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙デフォルトとコード由来 fallback (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルトとコード由来 fallback (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG レベル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別暗黙挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装の discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 自動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30617,6 +30739,124 @@
 <p><strong>スキャン証跡</strong>: <code>bgp_neighbor_handler</code> L3942 読了。keepalive/holdtime 組み合わせ制約のみ。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="fallback-phase-a">暗黙デフォルトとコード由来 fallback (Phase A)<a class="headerlink" href="#fallback-phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="yang">YANG レベル<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p><code>sonic-bgp-cmn</code> grouping の全 leaf に <strong>YANG <code>default</code> 文は存在しない</strong>。すべてオプション扱いで、値省略時の動作は FRR / frrcfgd が決定する。</p>
+<h3 id="_17">フィールド別暗黙挙動<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>省略/条件</th>
+<th>実際の動作</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>keepalive</code> / <code>holdtime</code></td>
+<td><strong>いずれか一方のみ</strong></td>
+<td>FRR タイマーコマンド生成されない。FRR デフォルト keepalive=60s / holdtime=180s が使われる</td>
+<td><code>frrcfgd.py</code> <code>bgp_neighbor_handler</code> — <code>comb_attr_list=[{'keepalive','holdtime'}]</code></td>
+</tr>
+<tr>
+<td><code>keepalive</code> / <code>holdtime</code></td>
+<td><strong>両方設定</strong></td>
+<td><code>neighbor &lt;pg&gt; timers &lt;ka&gt; &lt;ht&gt;</code> を生成</td>
+<td><code>frrcfgd.py</code> L1874, <code>bgpd.conf.db.nbr_or_peer.j2</code> L83-84</td>
+</tr>
+<tr>
+<td><code>ebgp_multihop</code> = <code>'true'</code> かつ <code>ebgp_multihop_ttl</code> 省略</td>
+<td>—</td>
+<td>TTL <strong>255</strong> (最大ホップ) が暗黙使用される</td>
+<td><code>bgpd.conf.db.nbr_or_peer.j2</code> L58-66</td>
+</tr>
+<tr>
+<td><code>ebgp_multihop_ttl</code> のみ設定 (<code>ebgp_multihop</code> 省略)</td>
+<td>—</td>
+<td>j2 テンプレートでは TTL 値で <code>ebgp-multihop</code> を生成。frrcfgd は <code>+ebgp_multihop_ttl</code> でオプション扱い</td>
+<td><code>bgpd.conf.db.nbr_or_peer.j2</code> L62-66</td>
+</tr>
+<tr>
+<td><code>admin_status</code> 省略</td>
+<td>—</td>
+<td><code>shutdown</code> コマンドなし → FRR デフォルト <strong>no shutdown (up)</strong></td>
+<td><code>bgpd.conf.db.nbr_or_peer.j2</code> L33-38</td>
+</tr>
+<tr>
+<td><code>admin_status</code> = <code>'up'</code></td>
+<td>—</td>
+<td><code>shutdown</code> コマンドなし (<code>'down'</code> / <code>'false'</code> 時のみ生成)</td>
+<td><code>frrcfgd.py</code> <code>hdl_admin_status_shutdown_msg</code></td>
+</tr>
+<tr>
+<td><code>bfd_check_ctrl_plane_failure</code></td>
+<td><code>bfd</code> が <code>'true'</code> に変更 + キャッシュに <code>'true'</code> が残存</td>
+<td>CONFIG_DB 未更新のまま frrcfgd が OP_ADD に昇格して FRR に再送</td>
+<td><code>frrcfgd.py</code> L2812-2817</td>
+</tr>
+<tr>
+<td><code>asn</code> (peer-group 側)</td>
+<td>OP_ADD</td>
+<td>peer-group に紐づくネイバー全体 + <code>BGP_GLOBALS_LISTEN_PREFIX</code> を再適用</td>
+<td><code>frrcfgd.py</code> <code>__nbr_impl_action</code> L2550-2562</td>
+</tr>
+<tr>
+<td><code>asn</code> (peer-group 側)</td>
+<td>OP_DELETE</td>
+<td>peer-group メンバーネイバーを全削除シーケンス</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>local_asn</code> (VRF 側) 未設定</td>
+<td>—</td>
+<td><code>BGP_PEER_GROUP</code> 更新を <strong>silently drop</strong> (LOG_DEBUG のみ)</td>
+<td><code>frrcfgd.py</code> L2658-2662</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-vs-discrepancy">YANG vs 実装の discrepancy<a class="headerlink" href="#yang-vs-discrepancy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG</th>
+<th>実装</th>
+<th>差異種別</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ebgp_multihop_ttl</code></td>
+<td>optional, range 1..255, default 文なし</td>
+<td><code>ebgp_multihop=true</code> 時に未設定で TTL=255 を補完</td>
+<td>YANG default 外 fallback</td>
+</tr>
+<tr>
+<td><code>keepalive</code> / <code>holdtime</code></td>
+<td>独立 leaf、互いに optional</td>
+<td>実装は両方揃わないと FRR コマンド未生成</td>
+<td>複合必須制約 (comb_attr_list)</td>
+</tr>
+<tr>
+<td><code>local_asn</code> + <code>local_as_no_prepend</code> / <code>local_as_replace_as</code></td>
+<td>各々独立 optional</td>
+<td>Jinja2 テンプレート (起動時) はフラグを無視。frrcfgd (動的変更) は付与。書き込み経路で差異</td>
+<td>書き込み経路依存の乖離</td>
+</tr>
+<tr>
+<td><code>admin_status</code></td>
+<td>optional, enum up/down</td>
+<td>省略時は FRR デフォルト (up) 依存。YANG に default 文なし</td>
+<td>実行時 fallback</td>
+</tr>
+</tbody>
+</table>
+<h3 id="peer-group">peer-group 自動作成<a class="headerlink" href="#peer-group" title="Permanent link">&para;</a></h3>
+<p>SET 受信時、FRR に peer-group が存在しなければ <code>neighbor &lt;pg_name&gt; peer-group</code> を <strong>属性設定より先に自動発行</strong>する。失敗した場合は LOG_ERR を出力して属性設定全体を skip (<code>frrcfgd.py</code> L2793-2801)。</p>
+<!-- /defaults -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->
 
 <div class="footnote">

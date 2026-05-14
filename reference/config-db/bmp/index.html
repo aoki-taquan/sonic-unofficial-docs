@@ -23674,6 +23674,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG デフォルト vs 実行時 fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_neighbor_table-yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgp_neighbor_table の YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is_true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_true() の大文字非許容
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 部分書き込み時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30286,6 +30347,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG デフォルト vs 実行時 fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_neighbor_table-yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgp_neighbor_table の YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is_true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_true() の大文字非許容
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 部分書き込み時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30609,6 +30731,63 @@ BMP collector への接続自体は <code>BGP_MONITORS</code> で定義し、<co
 <p><strong>スキャン証跡</strong>: <code>BMPCfg.load()</code> L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="yang-vs-fallback">YANG デフォルト vs 実行時 fallback<a class="headerlink" href="#yang-vs-fallback" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th><code>bmpcfgd</code> 実行時 fallback</th>
+<th>乖離</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgp_neighbor_table</code></td>
+<td><code>"true"</code></td>
+<td><code>'false'</code> (<code>bmpcfgd.py</code> L41)</td>
+<td><strong>あり — discrepancy</strong></td>
+</tr>
+<tr>
+<td><code>bgp_rib_in_table</code></td>
+<td><code>"false"</code></td>
+<td><code>'false'</code> (<code>bmpcfgd.py</code> L42)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>bgp_rib_out_table</code></td>
+<td><code>"false"</code></td>
+<td><code>'false'</code> (<code>bmpcfgd.py</code> L43)</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp_neighbor_table-yang-vs-discrepancy"><code>bgp_neighbor_table</code> の YANG vs 実装 discrepancy<a class="headerlink" href="#bgp_neighbor_table-yang-vs-discrepancy" title="Permanent link">&para;</a></h3>
+<p><code>sonic-bmp.yang</code> は <code>bgp_neighbor_table</code> の <code>default "true"</code> を宣言しているが、
+<code>bmpcfgd.py</code> L41 は <code>common_config.get('bgp_neighbor_table', 'false')</code> という Python fallback を持つ。</p>
+<p>CONFIG_DB に <code>BMP|table</code> エントリが存在しない状態（初期起動 / エントリ削除後）では、
+YANG スキーマ上は <code>bgp_neighbor_table=true</code> であるべきだが、<code>bmpcfgd</code> は <code>false</code> として openbmpd を起動する。
+その結果、BGP neighbor テーブルダンプが送信されない。</p>
+<blockquote>
+<p><strong>運用上の注意</strong>: <code>sonic-db-cli CONFIG_DB exists 'BMP|table'</code> が 0 を返す状態では
+YANG default に反して neighbor dump は <strong>無効</strong>。<code>config bmp enable bgp-neighbor-table</code> で明示的に有効化が必要。</p>
+</blockquote>
+<h3 id="is_true"><code>is_true()</code> の大文字非許容<a class="headerlink" href="#is_true" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">is_true</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+</span></code></pre></div>
+<p><code>"true"</code>（小文字）のみ <code>True</code> と判定。<code>"True"</code>, <code>"TRUE"</code>, <code>"1"</code>, <code>"yes"</code> はすべて <code>False</code> 扱い。
+YANG <code>stypes:boolean_type</code> は <code>"true"</code> / <code>"false"</code> の小文字 enum のみを許容するため、
+YANG バリデーションを通った値は常に正しく処理される。ただし YANG バリデーションをバイパスして
+直接 <code>CONFIG_DB</code> に書き込む場合（スクリプト等）は注意が必要。</p>
+<h3 id="cli_1">CLI 部分書き込み時の挙動<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
+<p><code>config bmp enable bgp-neighbor-table</code> を <code>BMP|table</code> エントリが存在しない状態で実行すると、
+<code>bgp_rib_in_table</code> / <code>bgp_rib_out_table</code> は DB に書き込まれず未定義のまま残る。
+<code>bmpcfgd</code> はそれらを <code>'false'</code> として処理する（YANG default の <code>false</code> と一致するため実害なし）。</p>
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 9e5a57a09d49 -->
 
 <div class="footnote">
