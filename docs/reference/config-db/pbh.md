@@ -252,7 +252,18 @@ db_migrator.py での PBH マイグレーションなし
 <!-- defaults -->
 ## 暗黙デフォルト・ハードコード挙動 (Phase A)
 
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-defaults.md -->
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-defaults.md -->
+
+### PBH_TABLE フィールド別デフォルト
+
+| フィールド | YANG 定義 | 実装デフォルト | 備考 |
+|---|---|---|---|
+| `interface_list` | `leaf-list; min-elements 1; leafref PORT\|PORTCHANNEL` | **なし** (mandatory) | 空リスト → parse error。重複 interface は `unordered_set` で dedup + SWSS_LOG_WARN のみ (error にならない) |
+| `description` | `mandatory true; string length 1..255` | **なし** (mandatory) | 空文字列 → parse error |
+
+- 未知フィールドは `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` でサイレントスキップ (error にならない)
+- YANG-実装 discrepancy: なし (両フィールドとも YANG mandatory/min-elements と実装が一致)
 
 ### PBH_RULE フィールド別デフォルト
 
