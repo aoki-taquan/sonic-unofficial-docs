@@ -22251,6 +22251,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG default 節の状況
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙 fallback 一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comb_attr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複合必須制約 (comb_attr 相当)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路依存の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30352,6 +30424,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG default 節の状況
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙 fallback 一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comb_attr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        複合必須制約 (comb_attr 相当)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路依存の乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30743,6 +30887,128 @@
 <p><strong>スキャン証跡</strong>: BGP_NEIGHBOR_AF は <code>bgp_table_handler_common</code> に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>frrcfgd.py</code> <code>nbr_af_key_map</code>、<code>hdl_*</code> ハンドラ、<code>bgpd.conf.db.nbr_af.j2</code></p>
+</blockquote>
+<h3 id="yang-default">YANG default 節の状況<a class="headerlink" href="#yang-default" title="Permanent link">&para;</a></h3>
+<p><code>grouping sonic-bgp-cmn-af</code> の全 leaf に <strong>YANG <code>default</code> 節は一切なし</strong>。全フィールドが任意 (optional) で、DB に存在しなければ FRR コマンドは発行されない。</p>
+<h3 id="fallback">暗黙 fallback 一覧<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>DB 未設定時の実行時挙動</th>
+<th>ソース証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow_as_count</code></td>
+<td><code>allow_as_in=true</code> かつ未設定 → <code>neighbor X allowas-in</code>（カウント省略）。FRR デフォルト <strong>3</strong> が適用される</td>
+<td><code>frrcfgd.py:1895</code> <code>nbr_af_key_map</code> + <code>nbr_af.j2:85-93</code></td>
+</tr>
+<tr>
+<td><code>admin_status</code> (ipv4_unicast)</td>
+<td><code>BGP_GLOBALS</code> に <code>local_asn</code> 書き込み時に <code>no bgp default ipv4-unicast</code> が発行される。<code>BGP_NEIGHBOR_AF</code> に <code>admin_status=up</code> を明示しないと ipv4-unicast が <strong>非</strong> activate のまま</td>
+<td><code>frrcfgd.py:2700</code></td>
+</tr>
+<tr>
+<td><code>default_rmap</code></td>
+<td><code>send_default_route=true</code> かつ未設定 → <code>neighbor X default-originate</code>（route-map なし）</td>
+<td><code>frrcfgd.py:1899</code> (+プレフィックス) + <code>nbr_af.j2:54-59</code></td>
+</tr>
+<tr>
+<td><code>max_prefix_warning_threshold</code></td>
+<td><code>max_prefix_limit</code> 設定済みかつ未設定 → <code>maximum-prefix &lt;limit&gt;</code>（閾値省略。FRR デフォルト 75%）</td>
+<td><code>frrcfgd.py:1901</code> (++プレフィックス) + <code>nbr_af.j2:68-78</code></td>
+</tr>
+<tr>
+<td><code>max_prefix_restart_interval</code> / <code>max_prefix_warning_only</code></td>
+<td>いずれも未設定 → <code>maximum-prefix &lt;limit&gt;</code> のみ（shutdown モード）</td>
+<td><code>frrcfgd.py:1902</code> (+プレフィックス)</td>
+</tr>
+<tr>
+<td><code>send_community</code></td>
+<td>未設定 → コマンド不発行。FRR デフォルト: 送信なし</td>
+<td><code>frrcfgd.py:1910</code></td>
+</tr>
+<tr>
+<td><code>weight</code></td>
+<td>未設定 → コマンド不発行。FRR デフォルト: 0（weight なし）</td>
+<td><code>frrcfgd.py:1908</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="comb_attr">複合必須制約 (comb_attr 相当)<a class="headerlink" href="#comb_attr" title="Permanent link">&para;</a></h3>
+<p><code>BGP_NEIGHBOR_AF</code> は <code>bgp_table_handler_common</code> に <code>comb_attr_list=[]</code> で渡される（<code>frrcfgd.py:2306</code>）。
+ただし <code>nbr_af_key_map</code> 内の mandatory/optional 指定により以下の実質的な複合制約がある:</p>
+<table>
+<thead>
+<tr>
+<th>制約</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_prefix_limit</code> 必須</td>
+<td><code>max_prefix_warning_threshold</code> / <code>max_prefix_restart_interval</code> / <code>max_prefix_warning_only</code> は <code>max_prefix_limit</code> が DB に存在しなければ FRR に反映されない</td>
+</tr>
+<tr>
+<td><code>allow_as_in</code> 必須</td>
+<td><code>allow_as_count</code> / <code>allow_as_origin</code> は <code>allow_as_in</code> がなければ意味をなさない</td>
+</tr>
+<tr>
+<td><code>send_default_route</code> 必須</td>
+<td><code>default_rmap</code> は <code>send_default_route=true</code> なしでも独立エントリとして発行される（L1900 に別エントリあり）が、<code>send_default_route=false</code> の場合は L1899 の <code>default_rmap</code> 付きコマンドは不発行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">書き込み経路依存の乖離<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>乖離</th>
+<th>frrcfgd (REST/gNMI/CLI)</th>
+<th>bgpcfgd Jinja2 テンプレートパス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nexthop_self_force</code> の単独適用</td>
+<td><code>nhself</code> なしで <code>next-hop-self force</code> コマンドが発行可能</td>
+<td><code>nhself=true</code> が前提条件 (<code>nbr_af.j2:18-24</code>)</td>
+</tr>
+<tr>
+<td><code>send_default_route=false</code></td>
+<td><code>no neighbor X default-originate</code> を明示発行</td>
+<td>ブロックスキップのみ（<code>no</code> コマンド不発行）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-vs-discrepancy">YANG vs 実装 discrepancy<a class="headerlink" href="#yang-vs-discrepancy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_path_tx_all</code> / <code>add_path_tx_bestpath</code></td>
+<td>YANG <code>grouping sonic-bgp-cmn-af</code> に定義なし。<code>nbr_af.j2:95-100</code> に処理が残存する旧来フィールド。frrcfgd パスでは無視される</td>
+</tr>
+<tr>
+<td><code>send_community='none'</code> vs 未設定</td>
+<td>DB 上の状態は異なるが FRR 上の効果は同一（送信なし）。<code>'none'</code> は <code>hdl_send_com</code> で <code>no send-community all</code> のみ発行、未設定はコマンド不発行</td>
+</tr>
+</tbody>
+</table>
+<!-- /defaults -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">

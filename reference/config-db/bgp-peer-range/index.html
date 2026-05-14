@@ -23668,6 +23668,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルトと fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルトと fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer_asn-deployment_id_asn_map-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer_asn — deployment_id_asn_map fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_address-loopback1-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_address — Loopback1 ハードコード fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード固定値（CONFIG_DB 非依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_range-silent-no-op" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_range — 空値の silent no-op
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路依存乖離（gNMI bypass）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30330,6 +30402,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルトと fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルトと fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer_asn-deployment_id_asn_map-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer_asn — deployment_id_asn_map fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_address-loopback1-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        src_address — Loopback1 ハードコード fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード固定値（CONFIG_DB 非依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip_range-silent-no-op" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_range — 空値の silent no-op
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnmi-bypass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路依存乖離（gNMI bypass）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30685,6 +30829,63 @@
 <p><strong>スキャン証跡</strong>: peer_type="dynamic" 固有の ip_range 更新分岐と del_handler の <code>no listen range</code> テンプレート使用を確認。3 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="fallback">フィールド暗黙デフォルトと fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h2>
+<h3 id="peer_asn-deployment_id_asn_map-fallback"><code>peer_asn</code> — <code>deployment_id_asn_map</code> fallback<a class="headerlink" href="#peer_asn-deployment_id_asn_map-fallback" title="Permanent link">&para;</a></h3>
+<p><code>peer_asn</code> を省略すると <code>instance.conf.j2</code> が <code>constants.deployment_id_asn_map</code> を参照して自動的に AS 番号を決定する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>peer_asn 未設定
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → constants.yml deployment_id_asn_map[DEVICE_METADATA.localhost.deployment_id]
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    &quot;1&quot; → 65432
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    &quot;2&quot; → 65433
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  → DEVICE_METADATA に deployment_id が未設定 → Jinja2 KeyError → log_err + drop
+</span></code></pre></div>
+<p>YANG は <code>peer_asn</code> を optional としているが、この fallback の存在は YANG に記載がない。</p>
+<h3 id="src_address-loopback1-fallback"><code>src_address</code> — Loopback1 ハードコード fallback<a class="headerlink" href="#src_address-loopback1-fallback" title="Permanent link">&para;</a></h3>
+<p><code>src_address</code> を省略すると <code>instance.conf.j2</code> は <code>Loopback1</code> の IPv4 アドレスをハードコード参照する。<code>"Loopback1"</code> という名前は CONFIG_DB 経由で変更できない。Loopback1 が未設定の場合は Jinja2 エラーで drop される。</p>
+<h3 id="config_db">ハードコード固定値（CONFIG_DB 非依存）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p>以下は全 <code>BGP_PEER_RANGE</code> エントリに無条件で適用されるハードコード設定。フィールドで制御する手段はない。</p>
+<table>
+<thead>
+<tr>
+<th>FRR コマンド</th>
+<th>固定値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>neighbor &lt;name&gt; passive</code></td>
+<td>常時 passive</td>
+</tr>
+<tr>
+<td><code>neighbor &lt;name&gt; ebgp-multihop</code></td>
+<td>255 固定</td>
+</tr>
+<tr>
+<td><code>neighbor &lt;name&gt; soft-reconfiguration inbound</code></td>
+<td>常時有効</td>
+</tr>
+<tr>
+<td><code>neighbor &lt;name&gt; route-map FROM_BGP_SPEAKER in</code></td>
+<td>route-map 名固定</td>
+</tr>
+<tr>
+<td><code>neighbor &lt;name&gt; route-map TO_BGP_SPEAKER out</code></td>
+<td>route-map 名固定</td>
+</tr>
+<tr>
+<td><code>address-family ipv4/ipv6 activate</code></td>
+<td>両 AF 常時有効</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ip_range-silent-no-op"><code>ip_range</code> — 空値の silent no-op<a class="headerlink" href="#ip_range-silent-no-op" title="Permanent link">&para;</a></h3>
+<p><code>ip_range</code> が空文字の場合 <code>change_ip_range()</code> の <code>if data['ip_range']:</code> ガードでスキップされ、FRR に <code>bgp listen range</code> コマンドが発行されない（エラーなし・silent）。YANG の leaf-list はゼロ要素を許容するが実質的に意味をなさない。</p>
+<h3 id="gnmi-bypass">書き込み経路依存乖離（gNMI bypass）<a class="headerlink" href="#gnmi-bypass" title="Permanent link">&para;</a></h3>
+<p><code>sonic-gnmi</code> の <code>bypass.go</code> で <code>BGP_PEER_RANGE</code> は <code>AllowedTables</code> に登録されており、gNMI Set 時に DBUS/GCU 検証をバイパスして CONFIG_DB 直接書き込みが可能。ただし Cisco-8102/8101/8223 HwSku のみに制限される。</p>
+<blockquote>
+<p><strong>ソース</strong>: <code>dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/instance.conf.j2</code>, <code>bgpcfgd/managers_bgp.py</code> L358-386, <code>files/image_config/constants/constants.yml</code>, <code>sonic-gnmi/pkg/bypass/bypass.go</code> L29</p>
+</blockquote>
+<!-- /defaults -->
 <!-- glossary-links-injected: 9543a3643673 -->
 
 <div class="footnote">

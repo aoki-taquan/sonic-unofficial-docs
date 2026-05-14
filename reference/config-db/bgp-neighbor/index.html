@@ -22223,6 +22223,111 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keepalive-holdtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keepalive / holdtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin_status_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status (フィールド未設定時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conn_retry-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conn_retry (bgpcfgd 経路では無効)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        local_addr (未設定時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name (実質必須)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 自動付与 (bgpcfgd パスのみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-suppress-fib-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgp suppress-fib-pending (暗黙副作用)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer_type と実テーブルのマッピング乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30352,6 +30457,111 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#keepalive-holdtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keepalive / holdtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin_status_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status (フィールド未設定時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conn_retry-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conn_retry (bgpcfgd 経路では無効)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        local_addr (未設定時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        name (実質必須)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 自動付与 (bgpcfgd パスのみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-suppress-fib-pending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgp suppress-fib-pending (暗黙副作用)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer_type と実テーブルのマッピング乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30888,6 +31098,125 @@
 <p><strong>スキャン証跡</strong>: <code>BGPPeerMgrBase</code> 597 行全行読了。7 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG には <code>default</code> 文が一切ない。フィールドごとのランタイム実効値はテンプレートやコードで決まる。</p>
+<h3 id="keepalive-holdtime">keepalive / holdtime<a class="headerlink" href="#keepalive-holdtime" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書き込み経路</th>
+<th>keepalive</th>
+<th>holdtime</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>minigraph (XML <code>&lt;HoldTime&gt;</code> / <code>&lt;KeepAliveTime&gt;</code> 欠落時)</td>
+<td><strong>60</strong></td>
+<td><strong>180</strong></td>
+<td><code>minigraph.py:1316,1320</code></td>
+</tr>
+<tr>
+<td>bgpcfgd <code>general</code> テンプレート (CONFIG_DB 値が 60/180 のとき)</td>
+<td>FRR デフォルトに委任</td>
+<td>FRR デフォルトに委任</td>
+<td><code>general/instance.conf.j2:7-10</code></td>
+</tr>
+<tr>
+<td>bgpcfgd <code>internal</code> テンプレート</td>
+<td><strong>3</strong> (強制)</td>
+<td><strong>10</strong> (強制)</td>
+<td><code>internal/instance.conf.j2:6</code></td>
+</tr>
+<tr>
+<td>bgpcfgd <code>voq_chassis</code> テンプレート</td>
+<td><strong>2</strong> (強制)</td>
+<td><strong>7</strong> (強制)</td>
+<td><code>voq_chassis/instance.conf.j2:13</code></td>
+</tr>
+<tr>
+<td>frrcfgd 経路 (REST/gNMI)</td>
+<td>CONFIG_DB 値をそのまま送出</td>
+<td>同左</td>
+<td><code>frrcfgd.py:1874</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>discrepancy</strong>: <code>peer_type=internal</code> では CONFIG_DB の <code>keepalive</code>/<code>holdtime</code> 値は無視される。</p>
+</blockquote>
+<h3 id="admin_status_1">admin_status (フィールド未設定時)<a class="headerlink" href="#admin_status_1" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd <code>general</code> テンプレート (<code>general/instance.conf.j2:13</code>):
+- <code>admin_status</code> フィールドなし + <code>DEVICE_METADATA.localhost.default_bgp_status</code> が <code>'down'</code> → <code>neighbor X shutdown</code> を発行
+- <code>admin_status</code> フィールドなし + <code>default_bgp_status</code> も未設定 → shutdown なし = <strong>ピアは up</strong></p>
+<p>minigraph 経路:
+- external (general) ピア: <code>admin_status</code> フィールドを <strong>書き込まない</strong> (→ 上記フォールバックに委ねる)
+- internal / VoQ chassis ピア: <code>admin_status = 'up'</code> を強制書き込み (<code>minigraph.py:1347-1353</code>)</p>
+<h3 id="conn_retry-bgpcfgd">conn_retry (bgpcfgd 経路では無効)<a class="headerlink" href="#conn_retry-bgpcfgd" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd 全テンプレートで <code>neighbor X timers connect 10</code> をハードコード発行。CONFIG_DB の <code>conn_retry</code> 値は <strong>bgpcfgd 経路では完全に無視される</strong>。frrcfgd 経路では <code>frrcfgd.py:1875</code> で有効。</p>
+<blockquote>
+<p><strong>discrepancy</strong>: YANG で <code>range "1..65535"</code> として定義されるが bgpcfgd パスでは機能しない。</p>
+</blockquote>
+<h3 id="local_addr">local_addr (未設定時)<a class="headerlink" href="#local_addr" title="Permanent link">&para;</a></h3>
+<p><code>managers_bgp.py:194-202</code>: <code>local_addr</code> フィールドなし → <code>log_warn</code> のみ、peer 追加は続行 (FRR が送信元アドレスを自動選択)。<code>local_addr</code> ありでインタフェース未登録 → <code>return False</code> でリトライ待ち。</p>
+<h3 id="name">name (実質必須)<a class="headerlink" href="#name" title="Permanent link">&para;</a></h3>
+<p>YANG では optional leaf だが bgpcfgd <code>general</code>/<code>internal</code>/<code>voq_chassis</code> テンプレートが <code>bgp_session['name']</code> を直接参照する。未設定時は Jinja2 <code>UndefinedError</code> → テンプレートレンダリング失敗 → peer 追加不可。</p>
+<h3 id="peer-group-bgpcfgd">peer-group 自動付与 (bgpcfgd パスのみ)<a class="headerlink" href="#peer-group-bgpcfgd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>general</th>
+<th>internal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>soft-reconfiguration inbound</code></td>
+<td>全 peer (常時)</td>
+<td>全 peer (常時)</td>
+</tr>
+<tr>
+<td><code>send-community</code></td>
+<td>なし</td>
+<td>全 peer (常時)</td>
+</tr>
+<tr>
+<td><code>allowas-in 1</code></td>
+<td>ToRRouter / LeafRouter+BBR enabled のみ</td>
+<td>全 peer (常時)</td>
+</tr>
+<tr>
+<td><code>next-hop-self force</code></td>
+<td>なし</td>
+<td><code>sub_role=BackEnd</code> または <code>switch_type=chassis-packet</code></td>
+</tr>
+<tr>
+<td><code>update-source Loopback4096</code></td>
+<td>なし</td>
+<td><code>switch_type=chassis-packet</code> のみ</td>
+</tr>
+<tr>
+<td><code>ttl-security hops 1</code></td>
+<td>なし</td>
+<td><code>switch_type=chassis-packet</code> のみ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp-suppress-fib-pending">bgp suppress-fib-pending (暗黙副作用)<a class="headerlink" href="#bgp-suppress-fib-pending" title="Permanent link">&para;</a></h3>
+<p><code>managers_bgp.py:502-506</code>: neighbor の追加・変更のたびに <code>bgp suppress-fib-pending</code> を BGP インスタンス設定として注入。BGP_NEIGHBOR フィールドには現れない。</p>
+<h3 id="peer_type">peer_type と実テーブルのマッピング乖離<a class="headerlink" href="#peer_type" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd は <code>constants.yml</code> の <code>peers.&lt;type&gt;.db_table</code> でテーブルを区別:
+- <code>BGP_NEIGHBOR</code> → <code>general</code> (external) 専用
+- <code>BGP_INTERNAL_NEIGHBOR</code> → <code>internal</code> 専用
+- <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> → <code>voq_chassis</code> 専用</p>
+<p>YANG の <code>peer_type</code> フィールドは bgpcfgd 経路では <strong>参照されない</strong>。frrcfgd 経路でのみ有効。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md</code></p>
+</blockquote>
+<!-- /defaults -->
 <!-- glossary-links-injected: 9133f44230c2 -->
 
 <div class="footnote">
