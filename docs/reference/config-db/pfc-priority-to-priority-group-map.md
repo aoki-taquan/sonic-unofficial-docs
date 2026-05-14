@@ -2,6 +2,7 @@
 title: PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
 description: "PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル — PFC_PRIORITY_TO_PRIORITY_GROUP_MAP は PFC priority 0..7 を ingress priority group 0..7 に対応付ける named QoS map テーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-10
 sources:
@@ -171,5 +172,38 @@ show priority-group persistent-watermark
 - 副作用: PFC しきい値設定 (BUFFER_PG) と組み合わせて動作するため、両方の設定が揃う必要がある。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し PFC_PRIORITY_TO_PRIORITY_GROUP_MAP エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に直接生成なし — `qos_config.j2` テンプレート経由
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での PFC_PRIORITY_TO_PRIORITY_GROUP_MAP マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+各プラットフォームの `qos.json.j2` (例: device/arista/.../qos.json.j2) に値が定義され、ビルド時または `qos reload` 時に投入
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: c8fc2a4df2a1 -->

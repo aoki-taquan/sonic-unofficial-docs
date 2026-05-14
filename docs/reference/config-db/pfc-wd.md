@@ -2,6 +2,7 @@
 title: PFC_WD テーブル
 description: "PFC_WD テーブル — PFC Watchdog の設定テーブル。port ごとに detection_time / restoration_time / action を持ち、PFC pause storm を検出して指定アクションを取る。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -222,5 +223,38 @@ show pfcwd stats
 - STATE_DB `PFC_WD_TABLE` でデッドロック検知状態を確認可能。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+PFC_WD テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `pfcwd start/stop/interval ...` — `pfcwd/main.py` が `set_entry('PFC_WD', ...)` を呼ぶ (sonic-utilities/pfcwd/main.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に PFC_WD 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+**db_migrator.py** が PFC_WD に対してマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 62798bcc4162 -->

@@ -2,6 +2,7 @@
 title: VXLAN_TUNNEL_MAP テーブル
 description: "VXLAN_TUNNEL_MAP テーブル — VXLAN tunnel に対し、ローカル VLAN と VNI (VXLAN Network Identifier) のマッピングを与える。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -166,5 +167,38 @@ show vxlan vlanvnimap
 - 副作用: VNI マッピング削除時は対応する EVPN MAC/IP ルートも連動して削除。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+VXLAN_TUNNEL_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config vxlan map add/del ...` / `config vxlan map_range add/del ...` — `config/vxlan.py` が `set_entry('VXLAN_TUNNEL_MAP', mapname, fvs)` を呼ぶ (sonic-utilities/config/vxlan.py:206, 248, 315, 359)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に VXLAN_TUNNEL_MAP 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+**db_migrator.py** が VXLAN_TUNNEL_MAP のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 7111763d84c2 -->
