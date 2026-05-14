@@ -194,4 +194,26 @@ vtysh -c 'show bgp ipv4 unicast'
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A コード由来)
+
+YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) と `sonic-utilities` (`config/bgp_cli.py`) が独立して同値を `.get()` / `is_flag` で再定義している。全フィールドで三層 (YANG / bgpcfgd / CLI) が一致しており、フィールド欠落時の挙動は以下のとおり。
+
+| フィールド | 暗黙デフォルト値 | コード fallback 箇所 | FRR への影響 |
+|-----------|---------------|---------------------|-------------|
+| `bbr-required` | `"false"` | `data.get(BBR_REQUIRED_KEY, COMMON_FALSE_STRING)` (L77, L210) | BBR 状態チェックをバイパス。常に FRR へ投入を試みる |
+| `summary-only` | `"false"` | `data.get(SUMMARY_ONLY_KEY, COMMON_FALSE_STRING)` (L109, L212) | `aggregate-address <prefix>` のみ生成。`summary-only` キーワードなし |
+| `as-set` | `"false"` | `data.get(AS_SET_KEY, COMMON_FALSE_STRING)` (L110, L213) | `as-set` キーワードなし |
+| `aggregate-address-prefix-list` | `""` (空文字列) | `data.get(AGGREGATE_ADDRESS_PREFIX_LIST_KEY, "")` (L214); `default=""` in CLI | 空の場合 `generate_prefix_list_commands()` 未呼び出し。FRR prefix-list 設定なし |
+| `contributing-address-prefix-list` | `""` (空文字列) | `data.get(CONTRIBUTING_ADDRESS_PREFIX_LIST_KEY, "")` (L215); `default=""` in CLI | 空の場合スキップ。非空の場合は IPv4 `le 32` / IPv6 `le 128` suffix が自動付与 |
+
+### bbr_status の暗黙デフォルト
+
+`BGP_BBR` テーブルが CONFIG_DB に存在しない場合、bgpcfgd は `bbr_status = ""` を設定する (L73-76)。この状態で `bbr-required=true` のエントリは `ADDRESS_INACTIVE_STATE` に落とされ FRR に反映されない。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang -->
+<!-- evidence: sonic-net/sonic-utilities/config/bgp_cli.py -->
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
