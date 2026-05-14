@@ -21385,6 +21385,56 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG default を上書きするケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        該当なし field (探したが fallback 無し)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsp-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LSP trace 証跡
+      
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#phase-8-handler" class="md-nav__link">
     <span class="md-ellipsis">
@@ -30318,6 +30368,56 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG default を上書きするケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        該当なし field (探したが fallback 無し)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lsp-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LSP trace 証跡
+      
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#phase-8-handler" class="md-nav__link">
     <span class="md-ellipsis">
@@ -31919,6 +32019,191 @@
 <li>init_cfg.json.j2: type/subtype で 5 種 feature 状態を条件派生</li>
 </ul>
 <!-- /derivation -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG default と別に、コード側で「フィールド不在時の fallback」が実装されている field を全列挙する。</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>YANG default</th>
+<th>コード default</th>
+<th>適用箇所</th>
+<th>種別</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>synchronous_mode</code></td>
+<td><code>enable</code></td>
+<td><code>enable</code> (非 disable → enable)</td>
+<td><code>swss_vars.j2:9</code> → <code>orchagent.sh:40</code></td>
+<td>Jinja else</td>
+<td>swss_vars.j2:9</td>
+</tr>
+<tr>
+<td><code>buffer_model</code></td>
+<td>—</td>
+<td>static モード (<code>pg_profile_lookup.ini</code>)</td>
+<td><code>buffermgrd.sh:13-15</code></td>
+<td>sh else</td>
+<td>buffermgrd.sh:13</td>
+</tr>
+<tr>
+<td><code>bgp_adv_lo_prefix_as_128</code></td>
+<td>—</td>
+<td>/64 広告 (field 不在 or != "true")</td>
+<td><code>bgpd.main.conf.j2:165-173</code></td>
+<td>Jinja else</td>
+<td>bgpd.main.conf.j2:168</td>
+</tr>
+<tr>
+<td><code>default_bgp_status</code></td>
+<td><code>up</code></td>
+<td>up (neighbor shutdown なし; field 不在でも shutdown しない)</td>
+<td><code>general/instance.conf.j2:13</code></td>
+<td>Jinja absent check</td>
+<td>instance.conf.j2:13</td>
+</tr>
+<tr>
+<td><code>create_only_config_db_buffers</code></td>
+<td>—</td>
+<td><code>false</code> (C++ メンバ初期値 false; hget が false を返すと上書きなし)</td>
+<td><code>flexcounterorch.cpp:114-120</code></td>
+<td>C++ member default</td>
+<td>flexcounterorch.h:86</td>
+</tr>
+<tr>
+<td><code>orch_northbond_dash_zmq_enabled</code></td>
+<td><code>true</code></td>
+<td>DASH ZMQ 有効 (field 不在 → != "false" → テーブル有効)</td>
+<td><code>orch_zmq_tables.conf.j2:1</code></td>
+<td>Jinja != "false"</td>
+<td>orch_zmq_tables.conf.j2:1</td>
+</tr>
+<tr>
+<td><code>orch_northbond_route_zmq_enabled</code></td>
+<td><code>false</code></td>
+<td>ROUTE ZMQ 無効 (field 不在 → != "true" → テーブル無効)</td>
+<td><code>orch_zmq_tables.conf.j2:27</code></td>
+<td>Jinja == "true"</td>
+<td>orch_zmq_tables.conf.j2:27</td>
+</tr>
+<tr>
+<td><code>frr_mgmt_framework_config</code></td>
+<td><code>false</code></td>
+<td><code>""</code> (空文字) → bgpcfgd がテンプレ展開担当</td>
+<td><code>frr_vars.j2:3-7</code></td>
+<td>Jinja absent</td>
+<td>frr_vars.j2:5-6</td>
+</tr>
+<tr>
+<td><code>docker_routing_config_mode</code></td>
+<td><code>unified</code></td>
+<td><code>""</code> → <code>"separated"</code> 扱い (frrcfgd.py else 節)</td>
+<td><code>frr_vars.j2:8-13</code>, <code>frrcfgd.py:2170</code></td>
+<td>Jinja absent + Python else</td>
+<td>frr_vars.j2:12; frrcfgd.py:2170</td>
+</tr>
+<tr>
+<td><code>timezone</code></td>
+<td><code>UTC</code></td>
+<td><code>None</code> → <code>timedatectl</code> 呼び出しなし (YANG default UTC は OS 起動時に別途設定済み)</td>
+<td><code>hostcfgd:1500</code>, <code>apply_timezone_if_needed:1546</code></td>
+<td>Python .get() → None guard</td>
+<td>hostcfgd:1546</td>
+</tr>
+<tr>
+<td><code>hostname</code></td>
+<td>—</td>
+<td><code>""</code> → <code>hostname-config</code> restart なし (空文字は不許可)</td>
+<td><code>hostcfgd:1496</code>, <code>hostname_update:1516</code></td>
+<td>Python .get('', '')</td>
+<td>hostcfgd:1516</td>
+</tr>
+<tr>
+<td><code>syslog_with_osversion</code></td>
+<td><code>false</code></td>
+<td><code>""</code> → <code>"false"</code> (rsyslog-config.sh で明示変換)</td>
+<td><code>rsyslog-config.sh:28-30</code></td>
+<td>sh fallback</td>
+<td>rsyslog-config.sh:28-30</td>
+</tr>
+<tr>
+<td><code>bgp_router_id</code></td>
+<td>—</td>
+<td>Loopback0 (または BackEnd/VoQ 時は Loopback4096) の IPv4 を使用</td>
+<td><code>bgpd.main.conf.j2:141-153</code></td>
+<td>Jinja absent → loopback fallback</td>
+<td>bgpd.main.conf.j2:144,151</td>
+</tr>
+<tr>
+<td><code>ring_thread_enabled</code></td>
+<td><code>false</code></td>
+<td><code>-R</code> フラグなし (field 不在 or != "true")</td>
+<td><code>orchagent.sh:121-123</code></td>
+<td>sh absent</td>
+<td>orchagent.sh:122</td>
+</tr>
+<tr>
+<td><code>mac</code></td>
+<td>—</td>
+<td><code>eth0</code> の MAC アドレス (field 不在 / "None")</td>
+<td><code>orchagent.sh:12-15</code></td>
+<td>sh absent / "None" guard</td>
+<td>orchagent.sh:13-15</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-default">YANG default を上書きするケース<a class="headerlink" href="#yang-default" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>YANG default</th>
+<th>実質 default</th>
+<th>上書き理由</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker_routing_config_mode</code></td>
+<td><code>unified</code></td>
+<td><code>separated</code></td>
+<td>frr_vars.j2 が field 不在時 <code>""</code> を返し、frrcfgd.py の else 節が <code>""</code> を <code>separated</code> として処理する。minigraph.py:1630 では <code>separated</code> をデフォルト設定する</td>
+<td>frr_vars.j2:12; frrcfgd.py:2170; minigraph.py:1630</td>
+</tr>
+<tr>
+<td><code>default_pfcwd_status</code></td>
+<td><code>disable</code></td>
+<td><code>enable</code> (config reload 時の実質挙動)</td>
+<td><code>config/main.py:2427</code> が内部変数を <code>enable</code> で初期化し、DEVICE_METADATA に <code>default_pfcwd_status</code> がない場合 <code>pfcwd start_default</code> を実行する。YANG default <code>disable</code> はコードに到達しない</td>
+<td>config/main.py:2427</td>
+</tr>
+</tbody>
+</table>
+<h3 id="field-fallback">該当なし field (探したが fallback 無し)<a class="headerlink" href="#field-fallback" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>bgp_asn</code> — 未設定時は bgpd.main.conf.j2 で <code>router bgp</code> ブロックごと出力しない (L94 条件)</li>
+<li><code>type</code> — J2 テンプレートは field 存在チェック後に使用; 未設定時は分岐なし</li>
+<li><code>subtype</code> — 同上; 未設定時は DualToR/SmartSwitch 等の条件に入らない</li>
+<li><code>switch_type</code> — 未設定時は npu 扱いだが、コード上は <code>if switch_type == 'X'</code> の else 節で implicit fallback (明示的 fallback 文字列なし)</li>
+<li><code>deployment_id</code> — 未設定時は <code>BGPPeerMgrBase</code> の <code>check_deployment_id</code> 条件に入らない (deps から除外)</li>
+<li><code>peer_switch</code> — 未設定時 DualToR 設定が不完全になるが、ガード処理なし (consumer 依存)</li>
+<li><code>asic_id</code> — 未設定時は orchagent に <code>-i</code> フラグを渡さない (L55 条件)</li>
+<li><code>cluster</code>, <code>region</code>, <code>cloudtype</code>, <code>resource_type</code>, <code>mgmt_type</code> — J2/Python で読まれるが fallback 文字列なし (swss_vars.j2 経由で空文字列)</li>
+</ul>
+<h3 id="lsp-trace">LSP trace 証跡<a class="headerlink" href="#lsp-trace" title="Permanent link">&para;</a></h3>
+<ul>
+<li>workspaceSymbol で参照した consumer ファイル数: 155+ (grep entry point)、production consumer 精読: 15 ファイル</li>
+<li>完全読書した関数・スクリプト区間数: 18</li>
+<li>検出した fallback パターン総数: 15</li>
+<li>詳細 trace: <code>meta/_intermediate/cdb-flow/device-metadata-defaults.md</code></li>
+</ul>
+<!-- /defaults -->
 
 <!-- handler-branching -->
 <h3 id="phase-8-handler">Phase 8: Handler メソッド内分岐<a class="headerlink" href="#phase-8-handler" title="Permanent link">&para;</a></h3>
