@@ -20987,6 +20987,8 @@
       
         
       
+        
+      
     
     
     
@@ -22494,6 +22496,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出種類の凡例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trap_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trap_group
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#always_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        always_enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マージ優先度（書き込み順依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23750,6 +23824,34 @@
     
   
     BUFFER_PORT_INGRESS_PROFILE_LIST テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cable-length/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CABLE_LENGTH テーブル
   
 
     
@@ -30304,6 +30406,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出種類の凡例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap_ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trap_ids
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trap_group
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#always_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        always_enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        マージ優先度（書き込み順依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30635,6 +30809,62 @@
 <p><strong>スキャン証跡</strong>: <code>doTask</code> L880-935 + <code>processCoppTrap</code> L1164-1200 全行読了。4 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="_17">検出種類の凡例<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>記号</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IF</td>
+<td>init cfg フォールバック</td>
+</tr>
+<tr>
+<td>AR</td>
+<td>暗黙 reset on DEL</td>
+</tr>
+<tr>
+<td>PD</td>
+<td>前提条件依存</td>
+</tr>
+<tr>
+<td>ID</td>
+<td>暗黙デフォルト値</td>
+</tr>
+<tr>
+<td>CS</td>
+<td>大文字小文字制約</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trap_ids"><code>trap_ids</code><a class="headerlink" href="#trap_ids" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>YANG default</strong>: なし (<code>mandatory true</code>)</li>
+<li><strong>実装上の挙動 [IF, AR]</strong>: <code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>copp_cfg.j2</code> 由来）を読み込み <code>m_coppTrapInitCfg</code> に保持する。ユーザーが <code>COPP_TRAP|&lt;name&gt;</code> を CONFIG_DB から DELETE しても、init cfg に同名エントリが存在すれば init 値でトラップを自動再登録する（実質「ユーザー設定削除 = init 値リセット」）。<!-- evidence: coppmgr.cpp L773-805 --></li>
+<li><strong>SET 時・不完全設定のスキップ [PD]</strong>: <code>trap_ids</code> が空かつ <code>trap_group</code> も空の SET は incomplete configuration として処理スキップ（no-op）。<!-- evidence: coppmgr.cpp L609-615 --></li>
+</ul>
+<h3 id="trap_group"><code>trap_group</code><a class="headerlink" href="#trap_group" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>YANG default</strong>: なし (optional leafref)</li>
+<li><strong>GROUP 未到着時の書き込み保留 [PD]</strong>: 参照先 <code>COPP_GROUP</code> が未作成の場合、<code>coppmgr</code> は APPL_DB への書き込みを保留し、GROUP 作成後に再処理する（<code>checkTrapGroupPending()</code> が true の間は書き込みなし）。<!-- evidence: coppmgr.cpp L62-79, copporch.cpp L584 --></li>
+<li><strong>暗黙 reset on DEL [AR]</strong>: DELETE 後に init cfg の同名エントリが存在すれば <code>trap_group</code> も init 値に自動復元。<!-- evidence: coppmgr.cpp L777-802 --></li>
+</ul>
+<h3 id="always_enabled"><code>always_enabled</code><a class="headerlink" href="#always_enabled" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>YANG default</strong>: なし (optional boolean)</li>
+<li><strong>未設定 = <code>"false"</code> [ID]</strong>: フィールドが存在しない場合、<code>coppmgr</code> 初期化コードは <code>is_always_enabled = "false"</code> として扱う。feature の有効/無効に応じてトラップのインストール可否が決まる通常動作となる。<!-- evidence: coppmgr.cpp L340, L354-357 --></li>
+<li><strong>DELETE 後の復元時も <code>"false"</code> [ID, AR]</strong>: init cfg 側に <code>always_enabled</code> が存在しない場合、DELETE 後の自動復元でも <code>"false"</code> が補完される。<!-- evidence: coppmgr.cpp L792-795 --></li>
+<li><strong>大文字小文字制約 [CS]</strong>: 実装は文字列比較 (<code>== "true"</code>)。YANG boolean 型であっても <code>"True"</code> / <code>"TRUE"</code> は <code>"false"</code> として扱われる（サイレント誤動作）。<!-- evidence: coppmgr.cpp L90, L183 --></li>
+</ul>
+<h3 id="_18">マージ優先度（書き込み順依存）<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>mergeConfig()</code> は init cfg を基底として user cfg フィールドで上書きする。同一フィールドが user cfg に存在すれば user 値優先、存在しないフィールドのみ init 値が補完される。<code>NULL</code> フィールドを持つ key は init 側もスキップ（無効化）される。<!-- evidence: coppmgr.cpp L196-258 --></p>
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 7a3847939b09 -->
 
 <div class="footnote">

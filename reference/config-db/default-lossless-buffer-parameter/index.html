@@ -20987,6 +20987,8 @@
       
         
       
+        
+      
     
     
     
@@ -23319,6 +23321,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cable-length/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CABLE_LENGTH テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../chassis-module/" class="md-nav__link">
         
   
@@ -23827,6 +23857,45 @@
     <span class="md-ellipsis">
       
         Phase 8: Handler メソッド内分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default_dynamic_th" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        default_dynamic_th
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#over_subscribe_ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        over_subscribe_ratio
       
     </span>
   </a>
@@ -30304,6 +30373,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default_dynamic_th" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        default_dynamic_th
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#over_subscribe_ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        over_subscribe_ratio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30603,6 +30711,71 @@
 <p><strong>スキャン証跡</strong>: <code>DEFAULT_LOSSLESS_BUFFER_PARAMETER</code> のハンドラパス L1894-2010 全行読了。3 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="default_dynamic_th"><code>default_dynamic_th</code><a class="headerlink" href="#default_dynamic_th" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>検出種類</th>
+<th>暗黙値 / 挙動</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ハードコード固定値（j2 テンプレート）</strong></td>
+<td><code>"0"</code> (alpha=1) — <code>dynamic_mode</code> が定義されている場合に固定値 <code>"0"</code> を書き込む。プラットフォーム・トポロジーに依存しない</td>
+<td><code>buffers_config.j2:334</code></td>
+</tr>
+<tr>
+<td><strong>ハードコード固定値（db_migrator 移行）</strong></td>
+<td><code>"0"</code> — 静的→動的バッファ移行時（Mellanox 系）に <code>default_dynamic_th='0'</code> をハードコードで INSERT。<code>over_subscribe_ratio</code> は書き込まれない（SHP 無効）</td>
+<td><code>db_migrator.py:1087, 413</code></td>
+</tr>
+<tr>
+<td><strong>前提条件依存（起動時空文字列）</strong></td>
+<td><code>m_defaultThreshold = ""</code> — CONFIG_DB にエントリがない場合、起動時に空のまま残る。空状態では lossless PG のバッファ計算が全保留 (<code>task_success</code> を返すが <code>m_bufferObjectsPending=true</code> にセット)</td>
+<td><code>buffermgrdyn.cpp:150-154, 1460-1464</code></td>
+</tr>
+<tr>
+<td><strong>書き込み順依存（プロファイル名エンコーディング）</strong></td>
+<td>起動直後のレースで <code>m_defaultThreshold</code> が空のまま threshold 比較が走ると、すべての threshold が <code>_th&lt;value&gt;</code> サフィックス付きプロファイル名で生成される。後から <code>m_defaultThreshold</code> が設定されると命名規則が変わり既存プロファイルと乖離する可能性</td>
+<td><code>buffermgrdyn.cpp:494-496</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="over_subscribe_ratio"><code>over_subscribe_ratio</code><a class="headerlink" href="#over_subscribe_ratio" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>検出種類</th>
+<th>暗黙値 / 挙動</th>
+<th>証拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>YANG default 外 fallback（未設定）</strong></td>
+<td>YANG に <code>default</code> 宣言なし。C++ メンバー <code>m_overSubscribeRatio</code> は空文字列で初期化。フィールドが SET コマンドに含まれない場合、<code>newRatio=""</code> → <code>isNonZero("")=false</code> → SHP 無効扱い</td>
+<td><code>buffermgrdyn.cpp:1981-2003</code></td>
+</tr>
+<tr>
+<td><strong>暗黙 reset（DEL コマンド）</strong></td>
+<td>DEL 受信時 <code>newRatio=""</code> に強制リセット → SHP 無効化 + <code>refreshSharedHeadroomPool</code> トリガー。エントリ削除は過去値を保持せずゼロリセット</td>
+<td><code>buffermgrdyn.cpp:2005-2008</code></td>
+</tr>
+<tr>
+<td><strong>プラットフォーム依存（j2 テンプレート）</strong></td>
+<td><code>shp</code> 変数が Jinja コンテキストで定義されていない場合（通常）、フィールド自体が CONFIG_DB に書き込まれない（SHP デフォルト無効）。<code>shp</code> 定義時のみ固定値 <code>"1"</code> が書き込まれる</td>
+<td><code>buffers_config.j2:335-339</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>handleDefaultLossLessBufferParam</code> L1978-2033 全行読了、コンストラクタ L130-172 全行読了、<code>buffers_config.j2</code> L331-349 全行読了、<code>db_migrator.py</code> L327-416, L1075-1099 全行読了、<code>sonic-default-lossless-buffer-parameter.yang</code> 全行読了。</p>
+</blockquote>
+<!-- /defaults -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 
 <div class="footnote">

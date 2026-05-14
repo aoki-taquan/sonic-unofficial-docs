@@ -20987,6 +20987,8 @@
       
         
       
+        
+      
     
     
     
@@ -23290,6 +23292,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別暗黙デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-asic-vs-multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路依存乖離（single-ASIC vs multi-ASIC）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type フィールドの大文字小文字制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP 依存関係と延期ロジック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23706,6 +23769,34 @@
     
   
     BUFFER_PORT_INGRESS_PROFILE_LIST テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cable-length/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CABLE_LENGTH テーブル
   
 
     
@@ -30216,6 +30307,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド別暗黙デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-asic-vs-multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路依存乖離（single-ASIC vs multi-ASIC）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type フィールドの大文字小文字制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP 依存関係と延期ロジック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30499,6 +30651,146 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="_17">コード由来の暗黙デフォルト<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>Evidence</strong>: <code>src/sonic-config-engine/minigraph.py</code>（<code>parse_device()</code> / <code>parse_png()</code>）、<code>src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code>、<code>sonic-utilities/pfcwd/main.py</code>、<code>sonic-utilities/show/interfaces/__init__.py</code>、<code>files/build_templates/buffers_config.j2</code>、<code>files/build_templates/qos_config.j2</code></p>
+</blockquote>
+<h3 id="_18">フィールド別暗黙デフォルト<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来挙動</th>
+<th>カテゴリ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> (key)</td>
+<td>なし（必須）</td>
+<td>XML <code>&lt;Hostname&gt;</code> から取得。None の場合は後段でサイレント KeyError リスク</td>
+<td>複合必須制約</td>
+</tr>
+<tr>
+<td><code>hwsku</code></td>
+<td>なし</td>
+<td><code>&lt;HwSku&gt;</code> ノード欠落時は <code>device_data</code> に追加されない（silent drop）</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td><code>cluster</code></td>
+<td>なし</td>
+<td><code>&lt;ClusterName&gt;</code> 欠落時 silent drop。自ノードの cluster 取得時は <code>""</code> フォールバック（<code>minigraph.py:2170</code>）</td>
+<td>YANG 外 fallback</td>
+</tr>
+<tr>
+<td><code>lo_addr</code></td>
+<td>なし</td>
+<td><code>&lt;Address&gt;&lt;IPPrefix&gt;</code> 欠落時 silent drop。<code>show interfaces neighbor expected</code> では文字列 <code>'None'</code> を表示。bgpcfgd での <code>devices[peer]["lo_addr"]</code> 直接参照では KeyError リスク</td>
+<td>silent drop + consumer 依存</td>
+</tr>
+<tr>
+<td><code>lo_addr_v6</code></td>
+<td>なし</td>
+<td>欠落時 silent drop。bgpcfgd は事前に <code>'lo_addr_v6' in devices[neighbor]</code> でガード済み</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td><code>mgmt_addr</code></td>
+<td>なし</td>
+<td><code>&lt;ManagementAddress&gt;&lt;IPPrefix&gt;</code> 欠落時 silent drop。show コマンドでは文字列 <code>'None'</code> を表示</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td><code>mgmt_addr_v6</code></td>
+<td>なし</td>
+<td>欠落時 silent drop</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>なし（string、enum 制約なし）</td>
+<td><code>&lt;ElementType&gt;</code> 欠落時は属性 <code>xsi:type</code> にフォールバック。それも欠落なら silent drop。pfcwd は <code>type</code> キー欠落時に KeyError（<code>pfcwd/main.py:104</code>）。qos_config.j2 は <code>'ToRRouter' in neighbor_info.type</code> で <code>type</code> が None だとエラー。show コマンドでは文字列 <code>'None'</code> 表示</td>
+<td>silent drop + 消費者依存エラー</td>
+</tr>
+<tr>
+<td><code>deployment_id</code></td>
+<td>なし（uint32）</td>
+<td><code>&lt;DeploymentId&gt;</code> テキストを文字列として格納。欠落時 silent drop。bgpcfgd は DEVICE_NEIGHBOR_METADATA の <code>deployment_id</code> を直接参照しない（DEVICE_METADATA.localhost.deployment_id を使用）</td>
+<td>dead field 候補</td>
+</tr>
+<tr>
+<td><code>slice_type</code></td>
+<td>なし</td>
+<td><code>&lt;AssociatedSliceStr&gt;</code> テキストに <code>"AZNG_Production"</code> が含まれる場合のみ <code>"AZNG_Production"</code> 固定値で書き込まれる。それ以外は silent drop</td>
+<td>ハードコード固定値</td>
+</tr>
+<tr>
+<td><code>resource_type</code></td>
+<td>なし</td>
+<td>YANG に定義されているが <code>parse_device()</code> が書き込まない。minigraph は <code>resource_type</code> を DEVICE_METADATA.localhost にのみ書き込む</td>
+<td>dead field / YANG-実装 discrepancy</td>
+</tr>
+<tr>
+<td><code>subtype</code></td>
+<td>YANG 外フィールド</td>
+<td><code>parse_device()</code> が <code>&lt;SubType&gt;</code> ノードから読み出し <code>device_data['subtype']</code> として書き込む。YANG モデルに定義なし</td>
+<td>YANG-実装 discrepancy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="single-asic-vs-multi-asic">経路依存乖離（single-ASIC vs multi-ASIC）<a class="headerlink" href="#single-asic-vs-multi-asic" title="Permanent link">&para;</a></h3>
+<p><code>minigraph.py</code> の以下ロジックにより格納内容が変わる:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># single-ASIC または asic_name 未指定: 自ホスト以外の全デバイス</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">results</span><span class="p">[</span><span class="s1">&#39;DEVICE_NEIGHBOR_METADATA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">key</span><span class="p">:</span> <span class="n">devices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">devices</span> <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">hostname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># multi-ASIC（asic_name 指定あり）: DEVICE_NEIGHBOR に出現するデバイスのみ</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">results</span><span class="p">[</span><span class="s1">&#39;DEVICE_NEIGHBOR_METADATA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">key</span><span class="p">:</span> <span class="n">devices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">devices</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>multi-ASIC 環境では直接隣接していないデバイスのメタデータが欠落する。</p>
+<h3 id="type"><code>type</code> フィールドの大文字小文字制約<a class="headerlink" href="#type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>消費者</th>
+<th>比較方法</th>
+<th>大文字小文字</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pfcwd</td>
+<td><code>.lower() == 'server'</code></td>
+<td>非感受</td>
+</tr>
+<tr>
+<td>buffers_config.j2</td>
+<td><code>neighbor_role \| lower</code></td>
+<td>非感受</td>
+</tr>
+<tr>
+<td>qos_config.j2</td>
+<td><code>'ToRRouter' in neighbor_info.type</code></td>
+<td>感受（大文字小文字区別）</td>
+</tr>
+<tr>
+<td>db_migrator</td>
+<td><code>v.get("type") == "EdgeZoneAggregator"</code></td>
+<td>感受</td>
+</tr>
+</tbody>
+</table>
+<p><code>type</code> 値は大文字小文字を一致させないと qos_config.j2 / db_migrator で意図した分岐に入らない。</p>
+<h3 id="bgp">BGP 依存関係と延期ロジック<a class="headerlink" href="#bgp" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd では <code>constants.bgp.use_neighbors_meta</code> が True の場合のみ DEVICE_NEIGHBOR_METADATA を依存関係として登録する。テーブルが directory に未到達の場合 <code>log_info("DEVICE_NEIGHBOR_METADATA is not ready...")</code> を出力し <code>return False</code>（到達後に自動再処理）。フラグが False の場合、テーブルは依存関係として登録されず参照もされない。</p>
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 6a290c48f0ce -->
 

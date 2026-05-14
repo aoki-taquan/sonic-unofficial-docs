@@ -20987,6 +20987,8 @@
       
         
       
+        
+      
     
     
     
@@ -22998,6 +23000,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crmorchcpp-l12-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコードデフォルト (crmorch.cpp L12-15)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_cfgjsonj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_cfg.json.j2 との対象リソース乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG-実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-substitution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        大文字小文字制約 (silent substitution なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23750,6 +23824,34 @@
     
   
     BUFFER_PORT_INGRESS_PROFILE_LIST テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cable-length/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CABLE_LENGTH テーブル
   
 
     
@@ -30304,6 +30406,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crmorchcpp-l12-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコードデフォルト (crmorch.cpp L12-15)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_cfgjsonj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_cfg.json.j2 との対象リソース乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG-実装 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-substitution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        大文字小文字制約 (silent substitution なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30659,6 +30833,87 @@
 <p><strong>スキャン証跡</strong>: <code>CrmOrch::doTask</code> L440-477 + <code>handleSetCommand</code> L478-537 全行読了。6 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="crmorchcpp-l12-15">ハードコードデフォルト (crmorch.cpp L12-15)<a class="headerlink" href="#crmorchcpp-l12-15" title="Permanent link">&para;</a></h3>
+<p><code>CrmOrch</code> コンストラクタは、CONFIG_DB に <code>CRM|Config</code> エントリが存在しない場合でも、全リソースに対して以下の値を即時適用する。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>暗黙デフォルト値</th>
+<th>由来</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>polling_interval</code></td>
+<td><strong>300</strong> 秒</td>
+<td><code>#define CRM_POLLING_INTERVAL_DEFAULT (5 * 60)</code> (crmorch.cpp:12)</td>
+</tr>
+<tr>
+<td><code>*_threshold_type</code> (全リソース)</td>
+<td><strong><code>percentage</code></strong></td>
+<td><code>CRM_THRESHOLD_TYPE_DEFAULT</code> (crmorch.cpp:13)</td>
+</tr>
+<tr>
+<td><code>*_low_threshold</code> (全リソース)</td>
+<td><strong>70</strong></td>
+<td><code>CRM_THRESHOLD_LOW_DEFAULT</code> (crmorch.cpp:14)</td>
+</tr>
+<tr>
+<td><code>*_high_threshold</code> (全リソース)</td>
+<td><strong>85</strong></td>
+<td><code>CRM_THRESHOLD_HIGH_DEFAULT</code> (crmorch.cpp:15)</td>
+</tr>
+</tbody>
+</table>
+<p>YANG には <code>default</code> ステートメントが存在しない。実行時デフォルトは純粋に C++ マクロ定義のみで決まる。</p>
+<h3 id="init_cfgjsonj2">init_cfg.json.j2 との対象リソース乖離<a class="headerlink" href="#init_cfgjsonj2" title="Permanent link">&para;</a></h3>
+<p><code>init_cfg.json.j2</code> がデフォルト設定するのは 18 リソース (YANG 定義済み範囲: <code>ipv4_route</code> / <code>fdb_entry</code> / <code>mpls_inseg</code> 等) のみ。一方、<code>crmResTypeNameMap</code> には以下の追加リソースが含まれており、CONFIG_DB に設定がなくてもオーケストレータ起動時に <strong>percentage/70/85 で監視開始</strong>する:</p>
+<ul>
+<li><code>srv6_my_sid_entry</code>, <code>srv6_nexthop</code>, <code>nexthop_group_map</code>, <code>extension_table</code></li>
+<li><code>dash_vnet</code>, <code>dash_eni</code>, <code>dash_eni_ether_address_map</code> ほか DASH 系全リソース</li>
+<li><code>twamp_entry</code></li>
+</ul>
+<h3 id="_17">暗黙副作用<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用</th>
+<th>条件</th>
+<th>詳細</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB CRM 統計の初期消去</td>
+<td>orchagent 起動毎</td>
+<td>コンストラクタで <code>m_countersCrmTable-&gt;del("STATS")</code> が走り、次の polling (最大 300 秒後) まで統計が空になる (crmorch.cpp:414)</td>
+</tr>
+<tr>
+<td>アラート silent drop</td>
+<td>同一リソースで閾値超過 10 回以上</td>
+<td><code>exceededLogCounter &gt;= CRM_EXCEEDED_MSG_MAX (10)</code> で syslog を停止。<code>threshold_type</code> 変更でリセット (crmorch.cpp:16, 1179)</td>
+</tr>
+<tr>
+<td>DASH リソースの monitoring skip</td>
+<td><code>gMySwitchType != "dpu"</code></td>
+<td><code>CRM_DASH_*</code> リソースを <code>CRM_RES_NOT_SUPPORTED</code> にセットし polling/alert を一切行わない。CONFIG_DB への書き込みは受け入れるが監視は無効 (crmorch.cpp:839, 933-936)</td>
+</tr>
+<tr>
+<td><code>threshold_type</code> 変更時の exceededLogCounter リセット</td>
+<td>type が変化した場合のみ</td>
+<td>全サブカウンタ (ACL stage/bind_point 単位) の <code>exceededLogCounter</code> を 0 にリセット。次 cycle で超過があれば即 WARN (crmorch.cpp:503-507)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-discrepancy">YANG-実装 discrepancy<a class="headerlink" href="#yang-discrepancy" title="Permanent link">&para;</a></h3>
+<p>YANG の <code>must</code> は <code>high_threshold &lt; 100</code> (strictly less) を要求するが、実装 (<code>CrmResourceEntry</code> コンストラクタ) が例外を発生させるのは <code>&gt; 100</code> のときのみ。<strong>値 100 は YANG では拒否されるが、実装では通過する。</strong> <!-- evidence: sonic-crm.yang L38-40, crmorch.cpp L428-431 --></p>
+<h3 id="silent-substitution">大文字小文字制約 (silent substitution なし)<a class="headerlink" href="#silent-substitution" title="Permanent link">&para;</a></h3>
+<p><code>crmThreshTypeMap</code> は <code>"percentage"</code> / <code>"used"</code> / <code>"free"</code> の小文字のみを受け付ける。大文字 (<code>PERCENTAGE</code> 等) を CONFIG_DB に書き込むと <code>std::out_of_range</code> 例外 → <code>SWSS_LOG_ERROR</code> + <code>return</code> (残フィールドも適用されない)。YANG 型 <code>crm_threshold_type</code> は大文字も許容するため、YANG バリデーション通過後でも実装側でエラーとなる。<!-- evidence: crmorch.cpp L299-303, L496, L530-531 --></p>
+<!-- /defaults -->
+
 <!-- glossary-links-injected: c6e41e02b036 -->
 
 <div class="footnote">
