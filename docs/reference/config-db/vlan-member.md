@@ -2,6 +2,7 @@
 title: VLAN_MEMBER テーブル
 description: "VLAN_MEMBER テーブル — VLAN とポート (PORT または PORTCHANNEL) のメンバ関係、および各メンバが tagged / untagged のいずれで参加するかを保持する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -176,5 +177,38 @@ show vlan brief
 - 副作用: ポートを VLAN から削除すると、そのポートの MAC エントリが FDB から自動削除される。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+VLAN_MEMBER テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config vlan member add/del ...` — `config/vlan.py` が `set_entry('VLAN_MEMBER', (vlan, port), {'tagging_mode': ...})` を呼ぶ (sonic-utilities/config/vlan.py:407, 451)
+
+### minigraph / sonic-cfggen
+
+**minigraph.py** が VLAN_MEMBER を生成し投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での VLAN_MEMBER マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 6981be1a469d -->

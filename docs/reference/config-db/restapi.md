@@ -2,6 +2,7 @@
 title: RESTAPI テーブル
 description: "RESTAPI テーブル — go-server-server ベースの SONiC REST API (docker-sonic-restapi) の TLS 設定とランタイム挙動を保持するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -151,6 +152,33 @@ systemctl status restapi
 [^2]: YANG 定義: `sonic-restapi.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-restapi.yang>
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+REST_API テーブルの各フィールドはサービス起動引数に直接マッピングされる。CONFIG_DB 内フィールド間の自動付与はなし。`client_auth` 未設定の場合はサービスデフォルトの認証モード（`user_auth`）が使用される。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+restapi サービス (sonic-mgmt-framework / sonic-gnmi) がインストールされている場合のみ `REST_API` テーブルを消費するプロセスが存在する。サービスが有効化されていない場合はテーブルを読んでも REST API サービスは起動しない。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `restapi` 起動処理 | `client_auth==user_auth` | ユーザー認証モードで TLS 設定 | restapi 設定処理 |
+| `restapi` 起動処理 | `client_auth==cert` | クライアント証明書認証モード | restapi 設定処理 |
+| `restapi` 起動処理 | `log_level` 値により | ログ出力レベルを変更 | restapi 設定処理 |
+| `restapi` 起動処理 | `server_crt` / `server_key` あり | TLS を有効化して起動 | restapi 設定処理 |
+
+> **スキャン証跡**: `RESTAPI` テーブルは REST API サービス設定の薄いラッパー。CONFIG_DB 内での自動派生なし。主にサービス起動時の設定ファイル生成に使われる。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -173,5 +201,38 @@ systemctl status restapi
 - 副作用: REST API 無効化中に自動化スクリプトが接続しようとするとタイムアウトが発生。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+RESTAPI テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - 専用 CLI なし
+
+### minigraph / sonic-cfggen
+
+**minigraph.py** が `results['RESTAPI']` に REST API 設定を投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py:2689)
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+**db_migrator.py** が RESTAPI のマイグレーション処理 (`config` / `certs` サブキー) を実装 (sonic-utilities/scripts/db_migrator.py:609–619)
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: d5320e852f7a -->

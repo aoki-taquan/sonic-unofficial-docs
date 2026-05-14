@@ -2,6 +2,7 @@
 title: TC_TO_QUEUE_MAP テーブル
 description: "TC_TO_QUEUE_MAP テーブル — Traffic Class (TC) を egress queue インデックスへマップする。DSCP_TO_TC_MAP で TC 化された値が、このマップで物理キューに振り分けられる。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-09
 sources:
@@ -134,6 +135,33 @@ show qos map tc-queue
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+QosOrch が `TC_TO_QUEUE_MAP` テーブル名から SAI map type `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` を自動決定する。テーブル名による種別自動解決が Phase 6 相当。Config-DB 内フィールド間の自動付与なし。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読する。`PORT.tc_to_queue_map` から参照されている場合のみ SAI port QoS map として bind される。未参照の場合は map オブジェクトが作成されるが port に適用されない。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `QosOrch` | map エントリ追加 | SAI `sai_qos_map_api->create_qos_map()` 呼び出し | `qosorch.cpp` |
+| `QosOrch` | map エントリ更新 | SAI qos map attribute を set (既存 map OID に対して) | `qosorch.cpp` |
+| `QosOrch` | del_handler | SAI qos map 削除、port 参照を解除してから削除 | `qosorch.cpp` |
+| `QosOrch` | TC 値が範囲外 (0-7 以外) | ログエラー + スキップ | `qosorch.cpp` |
+
+> **スキャン証跡**: `TC_TO_QUEUE_MAP` は Traffic Class からキュー番号へのマッピングテーブル。QosOrch が SAI QoS map として管理。テーブル名からの map type 自動解決が Phase 6 相当。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -156,5 +184,38 @@ show qos map tc-queue
 - 副作用: TC→Queue マッピング変更でトラフィックの queue 割り当てが変わり QoS 特性が変化。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+TC_TO_QUEUE_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し TC_TO_QUEUE_MAP エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に TC_TO_QUEUE_MAP 直接生成なし — `qos_config.j2` テンプレート経由
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での TC_TO_QUEUE_MAP マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+各プラットフォームの `qos.json.j2` に TC_TO_QUEUE_MAP エントリが定義され、ビルド時に投入
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->

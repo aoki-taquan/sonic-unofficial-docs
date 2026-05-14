@@ -2,6 +2,7 @@
 title: TELEMETRY_CLIENT テーブル
 description: "TELEMETRY_CLIENT テーブル — docker-sonic-gnmi (旧 docker-sonic-telemetry) の dial-out モードで使う、コレクタ宛のサブスクリプション情報を CONFIG_DB に登録するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -164,6 +165,34 @@ docker logs gnmi | grep -i dial-out
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+telemetry サービスが `tls_cert` / `tls_key` フィールドの有無から接続モードを自動決定する。両方あり → mTLS 接続、なし → 平文または server-only TLS。`enabled` フィールドにより dial-out クライアントの起動/停止が制御される。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+telemetry サービスが有効の場合のみ `TELEMETRY_CLIENT` テーブルを消費するプロセスが存在する。`TELEMETRY_CLIENT.enabled==false` の場合は dial-out クライアントを起動しない。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `telemetry_client` | `enabled==true` | gRPC 接続を確立して subscription 開始 | `telemetry_client` |
+| `telemetry_client` | `enabled==false` | gRPC 接続を切断 | `telemetry_client` |
+| `telemetry_client` | `tls_cert` / `tls_key` あり | mTLS 証明書を使用して接続 | `telemetry_client` |
+| `telemetry_client` | TLS 設定なし | 平文または server-only TLS で接続 | `telemetry_client` |
+| `telemetry_client` | `retry_interval` 設定 | 接続失敗時の再試行インターバルを設定 | `telemetry_client` |
+
+> **スキャン証跡**: `TELEMETRY_CLIENT` は gNMI dial-out のクライアント設定。`enabled` フィールドが主要分岐。TLS フィールドの有無が接続モードを決定（Phase 6 派生相当）。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -184,5 +213,38 @@ docker logs gnmi | grep -i dial-out
 - 設定変更後 gnmi-telemetry が再起動されるまで数秒。サブスクリプション確立に数秒かかる場合あり。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+TELEMETRY_CLIENT テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config hft target/session ...` — `config/hft.py` が TELEMETRY_CLIENT を書き込む (sonic-utilities/config/hft.py)
+
+### minigraph / sonic-cfggen
+
+**minigraph.py** が `<TelemetryInfo>` タグから TELEMETRY_CLIENT エントリを生成 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+**db_migrator.py** が TELEMETRY_CLIENT のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: d5320e852f7a -->

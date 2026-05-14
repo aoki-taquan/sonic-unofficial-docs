@@ -2,6 +2,7 @@
 title: SWITCH_HASH テーブル
 description: "SWITCH_HASH テーブル — ECMP / LAG ハッシュに使うフィールド集合とハッシュアルゴリズムをスイッチ全体で設定する Generic Hash 設定テーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -145,6 +146,34 @@ show switch-hash global
 <!-- /ops-hint -->
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+SwitchOrch が `ecmp_hash_algorithm` / `lag_hash_algorithm` フィールド値を SAI scheduling type enum へ自動変換する。`ecmp_hash` / `lag_hash` leaf-list の各 hash-field から対応する SAI hash field オブジェクト群を自動生成する。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する。`SWITCH_HASH|GLOBAL` エントリのみ有効（シングルトン制約、YANG で強制）。SAI hash capability 未サポートの場合はログのみで継続。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `SwitchOrch` | `ecmp_hash_algorithm` フィールドあり | ECMP hash algorithm を SAI 属性として設定 | `switchorch.cpp` |
+| `SwitchOrch` | `lag_hash_algorithm` フィールドあり | LAG hash algorithm を SAI 属性として設定 | `switchorch.cpp` |
+| `SwitchOrch` | `ecmp_hash` leaf-list あり | ECMP 用 hash field オブジェクト群を生成して SAI に設定 | `switchorch.cpp` |
+| `SwitchOrch` | `lag_hash` leaf-list あり | LAG 用 hash field オブジェクト群を生成して SAI に設定 | `switchorch.cpp` |
+| `SwitchOrch` | SAI 設定エラー | ログ出力 + 処理継続 | `switchorch.cpp` |
+
+> **スキャン証跡**: `SWITCH_HASH` はスイッチ全体の ECMP/LAG ハッシュポリシーの単一エントリ。SwitchOrch が SAI hash attribute を直接設定。`dscp_value` / `queue` の有無が SAI resolution mode を自動決定する点が主要 Phase 6。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -167,5 +196,38 @@ show switch-hash global
 - 副作用: ハッシュフィールド変更でフローの ECMP メンバ割り当てが変わりパケット順序逆転が生じる可能性。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SWITCH_HASH テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config switch-hash global ecmp/lag ...` — `config/plugins/sonic-hash.py` が `set_entry('SWITCH_HASH', ...)` を呼ぶ (sonic-utilities/config/plugins/sonic-hash.py)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SWITCH_HASH 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SWITCH_HASH マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: a26ef253c175 -->

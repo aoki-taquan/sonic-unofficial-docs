@@ -2,6 +2,7 @@
 title: SNMP テーブル
 description: "SNMP テーブル — SNMP エージェント (snmpd in docker-snmp) のシステム情報 (Contact / Location) を保持するテーブル。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-11
 sources:
@@ -147,6 +148,34 @@ show snmp community
 [^2]: snmpd.conf テンプレート: `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
 
 
+<!-- derivation -->
+## 派生・条件付き登録 (Phase 6/7)
+
+### Phase 6: 自動派生
+
+snmp-config が `DEVICE_METADATA.hostname` を参照して snmpd の `sysName` を自動設定する。`SNMP.traps` 値に基づいて snmpd trap 設定の有無を決定する（`enabled` → `trap2sink` ディレクティブ生成）。
+
+### Phase 7: 条件付き登録 (add_manager 条件)
+
+sonic-snmpagent サービスが有効の場合のみ `SNMP` テーブルを購読する snmp-config が動作する。`SNMP.traps==enabled` の場合のみ trap 送信が有効化される。
+
+<!-- /derivation -->
+
+<!-- handler-branching -->
+### Phase 8: Handler メソッド内分岐
+
+| Handler | 分岐条件 | 効果 | evidence |
+|---|---|---|---|
+| `snmp-config` | `traps==enabled` | snmpd に `trap2sink` 設定を生成 | `snmp_config` |
+| `snmp-config` | `traps==disabled` | `trap2sink` 行を生成しない | `snmp_config` |
+| `snmp-config` | `sysLocation` フィールドあり | `syslocation <value>` を snmpd.conf に追加 | `snmp_config` |
+| `snmp-config` | `sysContact` フィールドあり | `syscontact <value>` を snmpd.conf に追加 | `snmp_config` |
+| `snmp-config` | `SNMP_COMMUNITY` テーブルエントリ変化 | snmpd 設定ファイルを再生成して reload | `snmp_config` |
+
+> **スキャン証跡**: `SNMP` テーブルはグローバル SNMP 設定。`traps` フィールドで trap 設定の有無を分岐。`DEVICE_METADATA.hostname` からの `sysName` 自動設定が Phase 6 派生相当。
+
+<!-- /handler-branching -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -168,5 +197,39 @@ show snmp community
 - 副作用: 旧 community string での SNMP ポーリングが失敗するため、NMS 側の設定変更も必要。
 
 <!-- /runtime-trace -->
+<!-- entry-points -->
+## 書き込み入り口 (Direction A)
+
+SNMP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+
+### CLI
+
+  - `config snmp contact add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'CONTACT', ...)` を呼ぶ (sonic-utilities/config/main.py:4483–4560)
+  - `config snmp location add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'LOCATION', ...)` を呼ぶ (sonic-utilities/config/main.py:4600–4667)
+
+### minigraph / sonic-cfggen
+
+minigraph.py に SNMP 生成なし
+
+### REST / gNMI
+
+REST/gNMI 書き込み経路なし
+
+### db_migrator
+
+db_migrator.py での SNMP マイグレーションなし
+
+### ビルド時デフォルト (build-time default)
+
+なし
+
+### ハードコードデフォルト / ランタイム注入
+
+なし
+
+### 死活・デッドコード
+
+なし
+<!-- /entry-points -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
