@@ -22008,6 +22008,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実コンテナ動作トレース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実コンテナ動作トレース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1 — Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cfgappl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2 — CFG→APPL 翻訳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-applsai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 3 — APPL→SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 4 — タイミングと副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22075,7 +22136,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -22086,7 +22147,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -30015,6 +30076,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実コンテナ動作トレース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実コンテナ動作トレース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1 — Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cfgappl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2 — CFG→APPL 翻訳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-applsai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 3 — APPL→SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 4 — タイミングと副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30082,7 +30204,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -30093,7 +30215,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -30463,6 +30585,20 @@
 </table>
 <!-- /cdb-exceptions -->
 
+<!-- runtime-trace -->
+<h2 id="_15">実コンテナ動作トレース<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> が CONFIG_DB の <code>BGP_NEIGHBOR</code> テーブルを購読する。</p>
+<p><code>BGP_NEIGHBOR</code> は <code>&lt;vrf&gt;|&lt;neighbor&gt;</code> の key 構造。peer-group を参照する場合がある。</p>
+<h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
+<p>なし (FRR vtysh 経由)</p>
+<h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
+<p>なし (FRR BGP ネイバー管理)</p>
+<h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<p><strong>適用タイミング</strong>: 変化検知後 FRR にネイバー定義コマンドを発行。新規ネイバーは即座に接続試行を開始。削除は BGP session を即座に切断。</p>
+<p><strong>副作用</strong>: ネイバー削除は該当 BGP session の NOTIFICATION 送信と経路削除を引き起こす。パスワード変更は session リセットを引き起こす。</p>
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
 <p>対象テーブル: <code>BGP_NEIGHBOR</code></p>
@@ -30488,11 +30624,11 @@
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_15">ハードコードデフォルト<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">ハードコードデフォルト<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_16">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>bgpcfgd</code> が FRR running-config を CONFIG_DB と同期</li>
 </ul>

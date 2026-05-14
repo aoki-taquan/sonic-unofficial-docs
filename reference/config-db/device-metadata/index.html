@@ -21622,6 +21622,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#direction-b-cfg-appl-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動経路 (Direction B: CFG → APPL → SAI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="起動経路 (Direction B: CFG → APPL → SAI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1: Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cfg_db-appl_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2: CFG_DB → APPL_DB / STATE_DB 翻訳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-appl_db-sai-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 3: APPL_DB → SAI / Linux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 4: タイミングと副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30494,6 +30555,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#direction-b-cfg-appl-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動経路 (Direction B: CFG → APPL → SAI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="起動経路 (Direction B: CFG → APPL → SAI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1: Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cfg_db-appl_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2: CFG_DB → APPL_DB / STATE_DB 翻訳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-appl_db-sai-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 3: APPL_DB → SAI / Linux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 4: タイミングと副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -32457,6 +32579,253 @@ reasoning: フィールド一覧と型・デフォルト・enum 値はこのモ�
 </tbody>
 </table>
 <!-- /entry-points -->
+
+<!-- runtime-trace -->
+<h2 id="direction-b-cfg-appl-sai">起動経路 (Direction B: CFG → APPL → SAI)<a class="headerlink" href="#direction-b-cfg-appl-sai" title="Permanent link">&para;</a></h2>
+<h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Daemon / Manager</th>
+<th>DB / Table 名</th>
+<th>Key separator</th>
+<th>namespace</th>
+<th>コールバック</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>buffermgrd</code> (BufferMgr)</td>
+<td>CONFIG_DB / <code>DEVICE_METADATA</code></td>
+<td><code>\|</code></td>
+<td>ASIC ごとの cfgDb</td>
+<td><code>BufferMgr::doTask()</code> → <code>doBufferMetaTask()</code></td>
+<td>sonic-swss/cfgmgr/buffermgrd.cpp:200; buffermgr.cpp:464-499</td>
+</tr>
+<tr>
+<td><code>orchagent</code> (FlexCounterOrch)</td>
+<td>CONFIG_DB / <code>DEVICE_METADATA</code></td>
+<td><code>\|</code></td>
+<td>ASIC namespace</td>
+<td><code>FlexCounterOrch::handleDeviceMetadataTable()</code></td>
+<td>sonic-swss/orchagent/orchdaemon.cpp:622; flexcounterorch.cpp:149-152,488-521</td>
+</tr>
+<tr>
+<td><code>hostcfgd</code> (DeviceMetaCfg)</td>
+<td>CONFIG_DB / <code>DEVICE_METADATA</code></td>
+<td><code>\|</code></td>
+<td>default</td>
+<td><code>DeviceMetaCfg.hostname_update()</code>, <code>apply_timezone_if_needed()</code>, <code>rsyslog_config()</code></td>
+<td>sonic-host-services/scripts/hostcfgd:2492,1485-</td>
+</tr>
+<tr>
+<td><code>fpmsyncd</code></td>
+<td>CONFIG_DB / <code>DEVICE_METADATA</code></td>
+<td><code>\|</code></td>
+<td>default</td>
+<td><code>fpmsyncd</code> main loop (suppress-fib-pending 監視)</td>
+<td>sonic-swss/fpmsyncd/fpmsyncd.cpp:113,265-300</td>
+</tr>
+<tr>
+<td><code>orchagent</code> main (起動時のみ)</td>
+<td>CONFIG_DB / <code>DEVICE_METADATA</code></td>
+<td><code>\|</code></td>
+<td>ASIC namespace</td>
+<td><code>getCfgSwitchType()</code> — <code>switch_type</code>, <code>subtype</code>, <code>switch_id</code> を hget</td>
+<td>sonic-swss/orchagent/main.cpp:244,292,658</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-cfg_db-appl_db-state_db">段階 2: CFG_DB → APPL_DB / STATE_DB 翻訳<a class="headerlink" href="#2-cfg_db-appl_db-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>CFG field</th>
+<th>APPL/STATE field</th>
+<th>変換</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>buffer_model = traditional</code></td>
+<td>APPL_DB <code>BUFFER_POOL</code>, <code>BUFFER_PG</code>, <code>BUFFER_QUEUE</code>, <code>BUFFER_PROFILE</code></td>
+<td>CFG_DB テーブルをそのまま APPL_DB に転写 (<code>m_applBufferPoolTable.set()</code> 等)</td>
+<td>sonic-swss/cfgmgr/buffermgr.cpp:481-499</td>
+</tr>
+<tr>
+<td><code>buffer_model = dynamic</code></td>
+<td>APPL_DB への書き込みを <strong>抑制</strong></td>
+<td><code>dynamic_buffer_model = true</code> → APPL_DB 書き込みをスキップし platform SAI に委ねる</td>
+<td>sonic-swss/cfgmgr/buffermgr.cpp:476</td>
+</tr>
+<tr>
+<td><code>create_only_config_db_buffers</code></td>
+<td>FLEX_COUNTER_DB 設定</td>
+<td><code>m_createOnlyConfigDbBuffers</code> フラグ更新 → <code>getQueueConfigurations()</code> でカウンタ設定分岐</td>
+<td>sonic-swss/orchagent/flexcounterorch.cpp:488-521</td>
+</tr>
+<tr>
+<td>その他全フィールド</td>
+<td>APPL_DB / STATE_DB への書き込みなし</td>
+<td>直接 Linux コマンド / 起動フラグ / FRR conf 生成で処理</td>
+<td>下記段階 3 を参照</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-appl_db-sai-linux">段階 3: APPL_DB → SAI / Linux<a class="headerlink" href="#3-appl_db-sai-linux" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>APPL/CFG field</th>
+<th>SAI attribute / コマンド</th>
+<th>形式</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type = voq</code></td>
+<td><code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ</code></td>
+<td><code>sai_switch_api-&gt;create_switch()</code> 起動時引数</td>
+<td>sonic-swss/orchagent/main.cpp:697-698</td>
+</tr>
+<tr>
+<td><code>switch_type = fabric</code></td>
+<td><code>SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC</code></td>
+<td><code>sai_switch_api-&gt;create_switch()</code> 起動時引数</td>
+<td>sonic-swss/orchagent/main.cpp:741-742</td>
+</tr>
+<tr>
+<td><code>synchronous_mode = enable</code></td>
+<td>orchagent 起動フラグ <code>-s</code> → SAI を同期 API で呼び出し</td>
+<td>shell スクリプト → orchagent / syncd 起動引数</td>
+<td>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:37-40; sonic-sairedis/syncd/scripts/syncd_init_common.sh:43-54</td>
+</tr>
+<tr>
+<td><code>buffer_model = dynamic</code></td>
+<td><code>buffermgrd -a /etc/sonic/asic_table.json</code> → dynamic SAI buffer</td>
+<td>shell 起動引数 → platform SAI buffer API</td>
+<td>sonic-buildimage/dockers/docker-orchagent/buffermgrd.sh:5-9</td>
+</tr>
+<tr>
+<td><code>buffer_model = traditional</code></td>
+<td>APPL_DB BUFFER_* → orchagent <code>BufferOrch::doTask()</code> → <code>sai_buffer_api-&gt;create_buffer_pool()</code> / <code>set_ingress_priority_group_attribute()</code></td>
+<td>APPL_DB 経由</td>
+<td>sonic-swss/orchagent/bufferorch.cpp</td>
+</tr>
+<tr>
+<td><code>nexthop_group = enabled</code></td>
+<td><code>fpm use-next-hop-groups</code> (FRR zebra.conf) → FRR FPM → Linux netlink NEXTHOP</td>
+<td>J2 テンプレート展開 → FRR 設定</td>
+<td>sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2:19-22</td>
+</tr>
+<tr>
+<td><code>zebra_nexthop = disabled</code></td>
+<td><code>no zebra nexthop kernel enable</code> → Linux カーネル nexthop 無効化</td>
+<td>J2 テンプレート展開 → FRR 設定</td>
+<td>sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2:11-12</td>
+</tr>
+<tr>
+<td><code>suppress-fib-pending = enabled</code></td>
+<td>FRR <code>bgp suppress-fib-pending</code> + fpmsyncd FIB 応答待機</td>
+<td>FRR vtysh コマンド + fpmsyncd 内部状態</td>
+<td>sonic-swss/fpmsyncd/fpmsyncd.cpp:113-114</td>
+</tr>
+<tr>
+<td><code>hostname</code></td>
+<td><code>service hostname-config restart</code> → <code>/etc/hostname</code> 更新</td>
+<td>Linux systemd サービス</td>
+<td>sonic-host-services/scripts/hostcfgd:1530-1535</td>
+</tr>
+<tr>
+<td><code>timezone</code></td>
+<td><code>timedatectl set-timezone &lt;tz&gt;</code> + <code>systemctl restart rsyslog</code></td>
+<td>Linux timedatectl / systemd</td>
+<td>sonic-host-services/scripts/hostcfgd:1558-1561</td>
+</tr>
+<tr>
+<td><code>async_swss_rec = enabled</code></td>
+<td>orchagent 起動フラグ <code>-A</code> → swss.rec 非同期書き込み</td>
+<td>shell 起動引数 (SAI 影響なし)</td>
+<td>sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4">段階 4: タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>副作用 / タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type</code> runtime SET</td>
+<td><strong>create-only</strong> — orchagent 起動時に一度だけ読む。runtime 変更には swss コンテナ再起動が必要</td>
+<td>orchagent/main.cpp:658</td>
+</tr>
+<tr>
+<td><code>synchronous_mode</code> runtime SET</td>
+<td><strong>create-only</strong> — <code>swss_vars.j2</code> は起動時生成。コンテナ再起動が必要</td>
+<td>orchagent.sh:37</td>
+</tr>
+<tr>
+<td><code>buffer_model</code> runtime SET</td>
+<td><strong>フラグは mutable</strong> — BufferMgr は ConsumerStateTable で動的更新可。ただしバッファ計算エンジン (<code>buffermgrd</code> 起動引数) の切り替えには再起動が必要</td>
+<td>buffermgr.cpp:390-406; buffermgrd.sh</td>
+</tr>
+<tr>
+<td><code>create_only_config_db_buffers</code> runtime SET</td>
+<td><strong>mutable</strong> — FlexCounterOrch が ConsumerStateTable で動的に更新</td>
+<td>flexcounterorch.cpp:488-521</td>
+</tr>
+<tr>
+<td><code>suppress-fib-pending = enabled → disabled</code></td>
+<td><strong>mutable</strong> — fpmsyncd が即時切替。切替時に既存保留ルートを offloaded としてマークする副作用あり</td>
+<td>fpmsyncd.cpp:280-300</td>
+</tr>
+<tr>
+<td><code>hostname</code> runtime SET</td>
+<td><strong>mutable</strong> — hostcfgd が <code>service hostname-config restart</code> + <code>monit reload</code> を即時実行</td>
+<td>hostcfgd:1530-1535</td>
+</tr>
+<tr>
+<td><code>nexthop_group</code> / <code>zebra_nexthop</code> runtime SET</td>
+<td><strong>create-only</strong> — zebra.conf は起動時 J2 展開。FRR コンテナ再起動が必要</td>
+<td>zebra.conf.j2</td>
+</tr>
+<tr>
+<td>warm-restart 時</td>
+<td><code>buffer_model</code> フラグ・<code>create_only_config_db_buffers</code> は reconciling 後に再適用。<code>switch_type</code> は warm-restart でも変更不可 (SAI <code>create_switch</code> は一度のみ)</td>
+<td>main.cpp:658</td>
+</tr>
+<tr>
+<td>cold-boot 時</td>
+<td>全フィールドが起動時に順次読み込まれる。<code>switch_type</code> は最初の SAI <code>create_switch()</code> に渡される</td>
+<td>main.cpp:658,697</td>
+</tr>
+<tr>
+<td><code>suppress-fib-pending = enabled</code> かつ SAI 応答遅延</td>
+<td>FRR がルートを保留し続けるとルーティングブラックホールリスクあり。YANG <code>must</code> 制約で <code>synchronous_mode = enable</code> を必須化することでリスク軽減</td>
+<td>sonic-device_metadata.yang:250; fpmsyncd.cpp:113-116</td>
+</tr>
+<tr>
+<td><code>buffer_model = dynamic</code> + BUFFER_PG 変更</td>
+<td>dynamic model 時は orchagent が BUFFER_PG 変更を SAI に送らない。platform SAI が自動調整するため PORT 再起動シーケンスへの影響なし</td>
+<td>buffermgr.cpp:476</td>
+</tr>
+<tr>
+<td><code>switch_type = dpu</code> (synchronous_mode 上書き)</td>
+<td><code>switch_type = dpu</code> のとき <code>orchestagent.sh:38-39</code> で <code>-z zmq_sync -k 65536</code> を強制。<code>synchronous_mode</code> フィールドの値は無視される</td>
+<td>orchagent.sh:38-39</td>
+</tr>
+</tbody>
+</table>
+<!-- /runtime-trace -->
 
 <!-- glossary-links-injected: e22e287b939b -->
 

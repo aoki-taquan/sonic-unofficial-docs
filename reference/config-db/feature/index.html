@@ -21375,6 +21375,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実コンテナ動作トレース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実コンテナ動作トレース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1 — Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cfgappl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2 — CFG→APPL 翻訳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-applsai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 3 — APPL→SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 4 — タイミングと副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -21442,7 +21503,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -21453,7 +21514,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -30037,6 +30098,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実コンテナ動作トレース
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実コンテナ動作トレース">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 1 — Consumer 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-cfgappl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 2 — CFG→APPL 翻訳
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-applsai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 3 — APPL→SAI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        段階 4 — タイミングと副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -30104,7 +30226,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -30115,7 +30237,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -30485,6 +30607,20 @@
 </blockquote>
 <!-- /cdb-exceptions -->
 
+<!-- runtime-trace -->
+<h2 id="_13">実コンテナ動作トレース<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> の <code>FeatureHandler</code> + <code>containercfgd</code> + <code>coppmgrd</code> + <code>dhcprelayd</code> が CONFIG_DB の <code>FEATURE</code> テーブルを購読する。</p>
+<p><code>FEATURE</code> の key はフィーチャー名 (例: <code>bgp</code>, <code>swss</code>, <code>lldp</code>)。<code>always_enabled</code> フィーチャーは disable 不可。</p>
+<h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
+<p>なし (APPL_DB 中継なし)</p>
+<h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
+<p>なし (SAI 非経由 — Docker コンテナの起動/停止制御)</p>
+<h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<p><strong>適用タイミング</strong>: CONFIG_DB の <code>FEATURE</code> エントリ変化を <code>hostcfgd</code> が検知後、<code>systemctl start/stop &lt;feature&gt;</code> を呼び出す。コンテナ起動/停止は非同期で時間がかかる。</p>
+<p><strong>副作用</strong>: <code>state: disabled</code> でコンテナ停止 → そのコンテナが管理するすべての機能が停止。<code>auto_restart: disabled</code> でクラッシュ時に自動復旧しない。<code>set_owner: kube</code> に変更で Kubernetes 管理に移行。</p>
+<!-- /runtime-trace -->
+
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
 <p>対象テーブル: <code>FEATURE</code></p>
@@ -30510,11 +30646,11 @@
 <ul>
 <li><code>init_cfg.json.j2</code> の <code>FEATURE</code> セクションでプラットフォーム対応フィーチャーがデフォルト値付きで注入</li>
 </ul>
-<h3 id="_13">ハードコードデフォルト<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<h3 id="_14">ハードコードデフォルト<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_14">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>featured</code> デーモンが systemd サービス状態を監視し FEATURE テーブルと同期</li>
 </ul>
