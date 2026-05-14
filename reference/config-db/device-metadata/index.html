@@ -31002,7 +31002,8 @@
 <li><code>type='BackEndToRRouter' AND 'storage_device' IN DEVICE_METADATA</code> → ACL テーブルを <code>filter_acl_table_for_backend()</code> で特殊バインド（<code>minigraph.py:1828</code>）</li>
 <li><code>type IN ['BackEndToRRouter','BackEndLeafRouter','BackEndSpineRouter'] AND 'storage_device' NOT IN DEVICE_METADATA</code> → IPinIP decap エントリ生成スキップ（<code>ipinip.json.j2:69</code>）</li>
 <li><code>type='SpineRouter' AND subtype='UpstreamLC'</code> → BGP peer-group に <code>SELECTIVE_ROUTE_DOWNLOAD</code> table-map 適用（<code>peer-group.conf.j2:17,32</code>）</li>
-<li><code>type='ToRRouter' AND constants.bgp.graceful_restart.enabled</code> → FRR BGP graceful-restart 設定（<code>bgpd.main.conf.j2:118</code>）</li>
+<li><code>type='ToRRouter' AND constants.bgp.graceful_restart.enabled</code> → FRR BGP graceful-restart 設定（<code>bgpd.main.conf.j2:118</code>）<br />
+   ↳ block 内参照: <code>constants.bgp.graceful_restart.enabled</code> (= <code>true</code>), <code>.restart_time</code> (= <code>240</code> 秒), <code>.select_defer_time</code> (未定義 → fallback <code>45</code> 秒)</li>
 <li><code>type='LeafRouter' AND neighbor.type='ToRRouter'</code> → downlink バッファ・QoS 設定を生成（<code>buffers_config.j2:209; qos_config.j2:150</code>）</li>
 <li><code>type NOT IN ['ToRRouter','EPMS','MgmtTsToR','MgmtToRRouter','BmcMgmtToRRouter']</code> → dhcp_relay feature 有効化（<code>init_cfg.json.j2:76</code>）</li>
 </ol>
@@ -31336,6 +31337,57 @@
 <li><code>sonic-buildimage/dockers/docker-orchagent/orchagent.sh</code> — switch_type/synchronous_mode/async_swss_rec</li>
 <li><code>sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> — type/subtype/switch_type</li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Phase 11: bgpd.main.conf.j2 ブロック内 constants 実値</p>
+<p><code>bgpd.main.conf.j2</code> の <code>{% if %}</code> ブロック全体を精読した結果、evidence 行外で以下の定数が使用されていることを確認:</p>
+<table>
+<thead>
+<tr>
+<th>constants 参照</th>
+<th>実値 (constants.yml)</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constants.bgp.graceful_restart.enabled</code></td>
+<td><code>true</code></td>
+<td>ToRRouter で BGP graceful-restart を有効化</td>
+</tr>
+<tr>
+<td><code>constants.bgp.graceful_restart.restart_time</code></td>
+<td><code>240</code> 秒</td>
+<td>graceful-restart タイマー</td>
+</tr>
+<tr>
+<td><code>constants.bgp.graceful_restart.select_defer_time</code></td>
+<td>未定義 → fallback <code>45</code> 秒</td>
+<td>経路選択遅延タイマー</td>
+</tr>
+<tr>
+<td><code>constants.bgp.multipath_relax.enabled</code></td>
+<td><code>true</code></td>
+<td>全ロールで <code>bgp bestpath as-path multipath-relax</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.maximum_paths.ipv4</code></td>
+<td><code>514</code></td>
+<td>IPv4 ECMP 最大パス数 (default 値 64 より大)</td>
+</tr>
+<tr>
+<td><code>constants.bgp.maximum_paths.ipv6</code></td>
+<td><code>514</code></td>
+<td>IPv6 ECMP 最大パス数</td>
+</tr>
+<tr>
+<td><code>constants.bgp.hide_internal_community</code></td>
+<td><code>55555:55555</code></td>
+<td>FabricSpineRouter/LowerSpineRouter/UpperSpineRouter 時に HIDE_INTERNAL route-map へ additive 付与</td>
+</tr>
+</tbody>
+</table>
+<p>また <code>peer-group.conf.j2</code> の LeafRouter 分岐 (L10) は <code>CONFIG_DB__BGP_BBR['status']</code> との複合条件であり、<code>BGP_BBR</code> テーブル参照が evidence 行外で発生する。</p>
+</div>
 <!-- /value-behavior -->
 
 <!-- derivation -->
