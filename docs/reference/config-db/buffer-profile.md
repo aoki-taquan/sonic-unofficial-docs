@@ -67,6 +67,48 @@ BUFFER_PROFILE|<name>
 | `headroom_type` | enum `static`/`dynamic` | - | `static` | headroom 動的計算かどうか |
 | `packet_discard_action` | enum `drop`/`trim` | - | - | shared buffer に admit できないときの動作 |
 
+<!-- defaults -->
+## フィールド暗黙デフォルト・コード由来の挙動
+
+### 検出種類と調査根拠
+
+全フィールドを `handleBufferProfileTable()` (buffermgrdyn.cpp L2671-2886)、`updateBufferProfileToDb()` (L890-922)、`processBufferProfile()` (bufferorch.cpp L600-880)、CLI `update_profile()` (sonic-utilities/config/main.py L8556-8632) の全行精読により調査した。
+
+### フィールド別暗黙デフォルト
+
+| フィールド | YANG default | 実装上の実効デフォルト | 種別 |
+|-----------|-------------|----------------------|------|
+| `pool` | なし (mandatory) | CLI 経由のみ: 未指定時 `ingress_lossless_pool` を使用 | 書き込み経路依存乖離・ハードコード |
+| `size` | なし (mandatory) | CLI 経由: `xon+xoff` (SHP 無効) or `xon` (SHP 有効) で自動計算。dynamic model: 速度・ケーブル長から自動計算 | 書き込み経路依存乖離 |
+| `dynamic_th` | なし | CLI 経由のみ: 未指定時 `DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` から自動補完 | 書き込み経路依存乖離・silent fallback |
+| `xon` | `0` | lossless=false プロファイルでは APPL_DB/SAI に出力されない (silent drop) | YANG vs 実装 discrepancy |
+| `xon_offset` | `0` | 空文字列の場合は APPL_DB 出力スキップ (lossless=true でも) | YANG vs 実装 discrepancy |
+| `xoff` | `0` | lossless=false では APPL_DB/SAI に出力されない。`xoff` フィールドの存在が `lossless=true` のトリガー | dead field (lossless=false 時) |
+| `headroom_type` | `static` | YANG と一致。`dynamic` 指定時は `lossless=true` + `direction=BUFFER_INGRESS` を強制セット | 副作用あり |
+| `packet_discard_action` | なし | 省略時 APPL_DB/SAI に出力されない。SAI 実装依存の DROP が適用 (ASIC vendor 固有) | ハードコード固定値 (SAI 側) |
+| `static_th` / `dynamic_th` | なし | 相互排他。pool の mode と不一致時 `task_failed` | 複合必須制約 |
+
+### 書き込み経路別の差異
+
+- **CLI** (`config buffer profile add`): `pool` 未指定 → `ingress_lossless_pool`。`dynamic_th` 未指定 → `DEFAULT_LOSSLESS_BUFFER_PARAMETER` から補完。`size` 未指定 → `xon+xoff` or `xon` で計算。
+- **minigraph / buffers_config.j2**: platform/SKU/topology 別テンプレートで全フィールドを明示指定。補完ロジックなし。
+- **buffermgrd (dynamic model)**: `pg_lossless_<speed>_<cable>_profile` を自動生成・書き込み。`headroom_type=dynamic` 強制。
+- **REST / gNMI**: 対応なし (`sonic-mgmt-common` に BUFFER_PROFILE transformer 未実装)。
+
+### create-only フィールド (更新不可)
+
+`pool` および閾値モード (`static_th`/`dynamic_th`) は SAI の create-only 属性のため、既存 SAI オブジェクトへの変更は **silently スキップ**される。(`bufferorch.cpp L656-659, L692-714`)
+
+### trim 制約 (packet_discard_action=trim)
+
+`trim` 設定プロファイルの適用先制限:
+- ingress PG への適用: `task_failed` (bufferorch.cpp L1382)
+- ingress port profile list への適用: `task_failed` (bufferorch.cpp L1725)
+- egress port profile list への適用: `task_failed` (bufferorch.cpp L1915)
+- egress shared buffer のみ有効。`SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` 返却時は `task_ignore` (ASIC 非対応)。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
