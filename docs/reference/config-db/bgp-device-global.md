@@ -214,4 +214,73 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+> YANG `default` 以外の Python/C++ レベル fallback を per-field で整理する。
+> 書き込み時デフォルト (init_cfg 注入) と実行時 fallback (del_handler / `or` / クラス定数) の乖離を区別する。
+
+### `tsa_enabled`
+
+| 種別 | 値 | ソース |
+|------|----|--------|
+| YANG default | `"false"` | `sonic-bgp-device-global.yang:35` |
+| init_cfg 書き込みデフォルト | `"false"` | `init_cfg.json.j2` (ビルド時 CONFIG_DB へ静的注入) |
+| Python クラス定数 | `TSA_DEFAULTS = "false"` | `managers_device_global.py:12` |
+| `__init__` fallback | `path_exist` ガードで DB にキーなし時のみ directory キャッシュへ `"false"` を書き込む | `managers_device_global.py:42-43` |
+| `del_handler` fallback | `configure_tsa(data=None)` → `state = TSA_DEFAULTS` → `isolate_unisolate_device("false")` (TSB 実行) | `managers_device_global.py:78,94` |
+| `configure_tsa` fallback | `data` が None / キーなし → `state = "false"` | `managers_device_global.py:94-98` |
+
+**乖離**: なし。YANG default / init_cfg / Python クラス定数すべて `"false"` で一致。`del_handler` 時は FRR に TSB ルートマップが即時 push される。
+
+---
+
+### `wcmp_enabled`
+
+| 種別 | 値 | ソース |
+|------|----|--------|
+| YANG default | `"false"` | `sonic-bgp-device-global.yang:44` |
+| init_cfg 書き込みデフォルト | `"false"` | `init_cfg.json.j2` |
+| Python クラス定数 | `WCMP_DEFAULTS = "false"` | `managers_device_global.py:13` |
+| `__init__` fallback | `path_exist` ガードで `"false"` を directory へ書き込む | `managers_device_global.py:45-46` |
+| `del_handler` fallback | `configure_wcmp(data=None)` → `state = "false"` → `set_wcmp("false")` | `managers_device_global.py:80,116` |
+
+**乖離**: なし。`set_wcmp("false")` は `bgpd.wcmp.conf.j2` を `wcmp_enabled="false"` でレンダリングして extcommunity bandwidth を FRR から削除する。
+
+---
+
+### `idf_isolation_state`
+
+| 種別 | 値 | ソース |
+|------|----|--------|
+| YANG default | `"unisolated"` | `sonic-bgp-device-global.yang:59` |
+| init_cfg 書き込みデフォルト | `"unisolated"` | `init_cfg.json.j2` |
+| Python クラス定数 | `IDF_DEFAULTS = "unisolated"` | `managers_device_global.py:14` |
+| `__init__` fallback | `path_exist` ガードで `"unisolated"` を directory へ書き込む | `managers_device_global.py:48-49` |
+| `del_handler` fallback | `configure_idf(data=None)` → `state = "unisolated"` → `downstream_isolate_unisolate("unisolated")` | `managers_device_global.py:82,130` |
+| 新 peer-group 追加時 | `check_state_and_get_idf_isolation_routemaps()` が `"unisolated"` なら空文字返却 → isolate テンプレート非適用 | `managers_device_global.py:283` |
+
+**乖離 (重要)**: `downstream_isolate_unisolate("unisolated")` は `switch_role` が `SpineRouter` / `LowerSpineRouter` / `UpperSpineRouter` 以外の場合は FRR への push を**スキップ** (`managers_device_global.py:260`)。ToR 等の非 Spine では del_handler でも IDF unisolate テンプレートが送出されない。これは書き込み時デフォルト (`init_cfg` が `"unisolated"` を注入) と実行時処理の乖離ではなく、ロール依存スキップである。
+
+---
+
+### `asn` / `peers` (CONFED)
+
+| 種別 | 値 | ソース |
+|------|----|--------|
+| YANG default | なし (optional leaf) | `sonic-bgp-device-global.yang:69-81` |
+| init_cfg 書き込みデフォルト | なし (`BGP_DEVICE_GLOBAL|CONFED` セクション未定義) | `init_cfg.json.j2` |
+| Python fallback | なし。`DeviceGlobalCfgMgr` は CONFED を直接処理しない | — |
+
+**乖離**: CONFIG_DB に `BGP_DEVICE_GLOBAL|CONFED` エントリが存在しない場合、bgpcfgd は confederation 設定を FRR へ送出しない。FRR 側では `no bgp confederation identifier` が有効 (未設定状態)。
+
+---
+
+### 内部ランタイム参照: `chassis_tsa`
+
+`get_chassis_tsa_status()` が `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled` を読む。非シャーシ環境またはキー不在時のデフォルトは `"false"` (`managers_device_global.py:239`)。CONFIG_DB フィールドではなく内部状態変数。
+
+<!-- evidence: managers_device_global.py:12-14,42-49,78-82,94-98,116,130,239,260,283 -->
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 029bff240b1b -->

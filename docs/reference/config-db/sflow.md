@@ -267,4 +267,39 @@ minigraph.py に sFlow テーブル生成なし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+### SflowMgr コンストラクタのハードコード初期値
+
+`sflowmgr.cpp` コンストラクタで以下の内部状態が初期化される。これらは CONFIG_DB に対応するフィールドがない:
+
+| 内部変数 | 初期値 | 意味 |
+|---------|-------|------|
+| `m_gEnable` | `false` | グローバル admin_state 内部表現。YANG `default "down"` と一致。 |
+| `m_gDirection` | `"rx"` | グローバル sample_direction 内部表現。YANG `default "rx"` と一致。 |
+| `m_intfAllConf` | `true` | SFLOW_SESSION\|all 未設定時の「全ポートにグローバル設定を適用」フラグ。CONFIG_DB / YANG に対応フィールドなし。SFLOW_SESSION\|all を DEL すると `true` に戻る。 |
+| `m_intfAllDir` | `"rx"` | SFLOW_SESSION\|all の direction 内部表現。 |
+
+### `sample_rate` — 速度由来動的デフォルト
+
+`sample_rate` を SFLOW_SESSION に指定しない場合、`findSamplingRate()` がポートの **oper_speed**（なければ cfg_speed の文字列）をそのまま返す。つまりサンプリングレートはポート速度文字列（例: `"1000"`, `"10000"`）になる。ポートが未登録の場合は `"error"` を返し、SflowOrch は rate=0 としてセッション作成をスキップする。
+
+### `sample_direction` — YANG-実装 discrepancy (D1)
+
+YANG では `SFLOW_SESSION.sample_direction default "rx"` だが、実装 (`sflowmgr.cpp:374-378`) では per-port に direction が指定されていない場合、固定 `"rx"` ではなく `m_gDirection`（グローバルの現在値）を採用する。グローバル direction が `"tx"` や `"both"` に変更された後に per-port セッションを作成すると、YANG default とは異なる値が APP_DB に書き込まれる。**書込み順依存乖離**。
+
+### `admin_state` — 欠落時の `"up"` 注入
+
+per-port セッションに `admin_state` フィールドが存在しない場合、sflowmgrd は `"up"` をハードコードで注入する (`sflowmgr.cpp:364-368`)。YANG `default "up"` と一致するが、実装側でも明示的に強制している。
+
+### `agent_id` — 欠落時のサイレントスキップ
+
+`SFLOW.global.agent_id` が CONFIG_DB に存在しない場合、sflowmgrd は hsflowd 設定ファイルの agent IP 行を生成しない。エラーログなし（silent drop）。hsflowd 自身のデフォルト agent IP 選択ロジックが使われる。
+
+### SflowOrch の書込み順依存 (D3)
+
+SflowOrch は `m_sflowStatus = false` で初期化され、APP_SFLOW_TABLE の SET で `true` になるまで per-port SESSION の SET を全て無視する。APP_SFLOW_TABLE より先に APP_SFLOW_SESSION_TABLE が届くと per-port 設定が捨てられる。
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 8e8594481100 -->

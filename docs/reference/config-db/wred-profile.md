@@ -161,6 +161,38 @@ YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
 全 8 値 hit。0 hit なし。
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG `default` 宣言、C++ runtime fallback、Jinja テンプレート生成の 3 層を per-field で整理する。
+
+| フィールド | YANG default | C++ runtime fallback | qos_config.j2 AZURE_LOSSLESS |
+|---|---|---|---|
+| `ecn` | `ecn_none` | なし | `"ecn_all"` (明示設定) |
+| `wred_green_enable` / `wred_yellow_enable` / `wred_red_enable` | `false` | なし | `"true"` (明示設定) |
+| `green_drop_probability` / `yellow_drop_probability` / `red_drop_probability` | `100` (%) | `100` — `wred_*_enable=true` かつ当該フィールド省略時に `addQosItem()` が SAI へ自動補完[^def1] | `"5"` (%) |
+| `green_min_threshold` / `yellow_min_threshold` / `red_min_threshold` | なし | なし（SAI ベンダーデフォルト依存） | `"1048576"` bytes (1 MiB) |
+| `green_max_threshold` / `yellow_max_threshold` / `red_max_threshold` | なし | なし（SAI ベンダーデフォルト依存） | `"2097152"` bytes (2 MiB) |
+| `SAI_WRED_ATTR_WEIGHT` *(CONFIG_DB フィールドなし)* | — | 常に `0` を SAI 属性リスト先頭へ無条件挿入[^def1] | — |
+
+[^def1]: `sonic-swss/orchagent/qosorch.cpp` `WredMapHandler::addQosItem()` L794-850 <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
+
+### 詳細
+
+**`*_drop_probability` の C++ fallback**
+
+`addQosItem()` では、WRED enable が `true` に設定されているにもかかわらず drop probability フィールドが CONFIG_DB に存在しない場合（`drop_prob_set` ビットが立っていない）、SAI 属性リストに `SAI_WRED_ATTR_{GREEN/YELLOW/RED}_DROP_PROBABILITY = 100` を自動補完する（`qosorch.cpp:836-850`）。YANG default の `100` と一致するが、YANG default は sonic-yang validation 層で補完される一方、C++ fallback は SAI API 呼び出し直前に補完される点が異なる。
+
+**`SAI_WRED_ATTR_WEIGHT` の無条件注入**
+
+CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は SAI WRED オブジェクト作成時に常に `SAI_WRED_ATTR_WEIGHT = 0` を属性リスト先頭に追加する（`qosorch.cpp:794-796`）。これは SAI の要求する必須属性を満たすための固定値である。
+
+**`*_min_threshold` / `*_max_threshold` のデフォルトなし**
+
+YANG に `default` 宣言がなく、orchagent も省略時のフォールバックを設定しない。フィールド省略時は SAI に対応属性が渡されず、ベンダー SAI 実装のデフォルト値に依存する。実用上は `qos_config.j2` の `AZURE_LOSSLESS` テンプレート（min=1 MiB / max=2 MiB）か、プラットフォーム固有の `generate_wred_profiles` マクロで設定される。
+
+<!-- /defaults -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 

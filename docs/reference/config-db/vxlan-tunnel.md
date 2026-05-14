@@ -213,4 +213,24 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+| フィールド | 省略/条件 | 実挙動 | 分類 | 根拠 |
+|-----------|---------|--------|------|------|
+| `ttl_mode` | 省略 | `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を SAI に渡さない → プラットフォーム実装依存のデフォルトが適用 | プラットフォーム依存 silent default | `vxlanorch.cpp:1617`, `vxlanorch.cpp:372-383` |
+| `dst_ip` | 省略 | IPv4 なら `0.0.0.0`、IPv6 なら `::` に置換。`SAI_TUNNEL_PEER_MODE_P2MP` で SAI トンネルを生成 | 暗黙フォールバック | `vxlanorch.cpp:1598-1606`, `vxlanorch.cpp:356-370` |
+| `src_ip` | CONFIG_DB に書かれない (直接 DB 書き込み) | vxlanmgrd 内部キャッシュの `m_sourceIp` が `"NULL"` のまま。`isTunnelActive()` が false を返し、後続の `VXLAN_TUNNEL_MAP` 処理が永続サスペンド | dead-consumer / silent drop | `vxlanmgr.cpp:1318`, `vxlanmgr.cpp:420-421` |
+| `encap_ttl` | CONFIG_DB / YANG に存在しないフィールド | 呼び出し元が常に `encap_ttl=0` を渡すため `SAI_TUNNEL_ATTR_ENCAP_TTL_VAL` 属性は SAI に設定されない | YANG 未定義 dead field | `vxlanorch.cpp:885-907` |
+| UDP dstport | 設定フィールドなし | カーネル netdevice 作成時に `dstport 4789` をハードコード | ハードコード | `vxlanmgr.cpp:67` |
+| FDB learning | 設定フィールドなし | `createVxlanNetdevice()` は常に `nolearning` フラグ付きで netdevice を作成。EVPN NVO 登録後は `bridge link set dev ... learning off` も追加 | ハードコード | `vxlanmgr.cpp:1015`, `vxlanmgr.cpp:1046-1049` |
+| CLI 書き込み | `config vxlan add` | `src_ip` のみ書き込む。`dst_ip`・`ttl_mode` は常に省略 → 上記フォールバックが適用 | 書込み元依存 | `sonic-utilities/config/vxlan.py:47` |
+| 書込み順 | MAP が TUNNEL より先に書かれた場合 | `isTunnelActive()` が false → MAP 処理がサスペンド。TUNNEL 書き込み後も vxlanmgrd がリトライするまで適用されない | 書込み順依存 | `vxlanmgr.cpp:530-535` |
+
+### 追記: YANG-実装 二重バリデーション
+
+`ttl_mode` は YANG `pattern "uniform|pipe"` でバリデーションされるが、orchagent も独自に文字列比較して無効値を `SWSS_LOG_ERROR` で排除する (`vxlanorch.cpp:1629-1633`)。管理面バイパス (直接 Redis 書き込み) では YANG チェックを回避するため orchagent 側のみが有効になる。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->

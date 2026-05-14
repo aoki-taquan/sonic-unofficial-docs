@@ -286,4 +286,71 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+YANG には `default` 文が一切ない。フィールドごとのランタイム実効値はテンプレートやコードで決まる。
+
+### keepalive / holdtime
+
+| 書き込み経路 | keepalive | holdtime | 根拠 |
+|------------|-----------|----------|------|
+| minigraph (XML `<HoldTime>` / `<KeepAliveTime>` 欠落時) | **60** | **180** | `minigraph.py:1316,1320` |
+| bgpcfgd `general` テンプレート (CONFIG_DB 値が 60/180 のとき) | FRR デフォルトに委任 | FRR デフォルトに委任 | `general/instance.conf.j2:7-10` |
+| bgpcfgd `internal` テンプレート | **3** (強制) | **10** (強制) | `internal/instance.conf.j2:6` |
+| bgpcfgd `voq_chassis` テンプレート | **2** (強制) | **7** (強制) | `voq_chassis/instance.conf.j2:13` |
+| frrcfgd 経路 (REST/gNMI) | CONFIG_DB 値をそのまま送出 | 同左 | `frrcfgd.py:1874` |
+
+> **discrepancy**: `peer_type=internal` では CONFIG_DB の `keepalive`/`holdtime` 値は無視される。
+
+### admin_status (フィールド未設定時)
+
+bgpcfgd `general` テンプレート (`general/instance.conf.j2:13`):
+- `admin_status` フィールドなし + `DEVICE_METADATA.localhost.default_bgp_status` が `'down'` → `neighbor X shutdown` を発行
+- `admin_status` フィールドなし + `default_bgp_status` も未設定 → shutdown なし = **ピアは up**
+
+minigraph 経路:
+- external (general) ピア: `admin_status` フィールドを **書き込まない** (→ 上記フォールバックに委ねる)
+- internal / VoQ chassis ピア: `admin_status = 'up'` を強制書き込み (`minigraph.py:1347-1353`)
+
+### conn_retry (bgpcfgd 経路では無効)
+
+bgpcfgd 全テンプレートで `neighbor X timers connect 10` をハードコード発行。CONFIG_DB の `conn_retry` 値は **bgpcfgd 経路では完全に無視される**。frrcfgd 経路では `frrcfgd.py:1875` で有効。
+
+> **discrepancy**: YANG で `range "1..65535"` として定義されるが bgpcfgd パスでは機能しない。
+
+### local_addr (未設定時)
+
+`managers_bgp.py:194-202`: `local_addr` フィールドなし → `log_warn` のみ、peer 追加は続行 (FRR が送信元アドレスを自動選択)。`local_addr` ありでインタフェース未登録 → `return False` でリトライ待ち。
+
+### name (実質必須)
+
+YANG では optional leaf だが bgpcfgd `general`/`internal`/`voq_chassis` テンプレートが `bgp_session['name']` を直接参照する。未設定時は Jinja2 `UndefinedError` → テンプレートレンダリング失敗 → peer 追加不可。
+
+### peer-group 自動付与 (bgpcfgd パスのみ)
+
+| 設定 | general | internal |
+|------|---------|---------|
+| `soft-reconfiguration inbound` | 全 peer (常時) | 全 peer (常時) |
+| `send-community` | なし | 全 peer (常時) |
+| `allowas-in 1` | ToRRouter / LeafRouter+BBR enabled のみ | 全 peer (常時) |
+| `next-hop-self force` | なし | `sub_role=BackEnd` または `switch_type=chassis-packet` |
+| `update-source Loopback4096` | なし | `switch_type=chassis-packet` のみ |
+| `ttl-security hops 1` | なし | `switch_type=chassis-packet` のみ |
+
+### bgp suppress-fib-pending (暗黙副作用)
+
+`managers_bgp.py:502-506`: neighbor の追加・変更のたびに `bgp suppress-fib-pending` を BGP インスタンス設定として注入。BGP_NEIGHBOR フィールドには現れない。
+
+### peer_type と実テーブルのマッピング乖離
+
+bgpcfgd は `constants.yml` の `peers.<type>.db_table` でテーブルを区別:
+- `BGP_NEIGHBOR` → `general` (external) 専用
+- `BGP_INTERNAL_NEIGHBOR` → `internal` 専用
+- `BGP_VOQ_CHASSIS_NEIGHBOR` → `voq_chassis` 専用
+
+YANG の `peer_type` フィールドは bgpcfgd 経路では **参照されない**。frrcfgd 経路でのみ有効。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md`
+<!-- /defaults -->
 <!-- glossary-links-injected: 9133f44230c2 -->

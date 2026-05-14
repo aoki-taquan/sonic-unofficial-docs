@@ -255,3 +255,34 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 > **スキャン証跡**: `muxorch.cpp` および `minigraph.py:2617-2622` を確認、4 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence:
+  sonic-swss/orchagent/muxorch.cpp:2206-2207,2240,2192,2260-2265
+  sonic-swss/orchagent/neighorch.cpp:78-105
+  sonic-linkmgrd/src/DbInterface.cpp:827,880-881,1012
+  sonic-buildimage/src/sonic-config-engine/minigraph.py:2831,2837,2844-2845
+-->
+
+| フィールド | YANG default | コード実装の fallback / 乖離 | 乖離種別 |
+|-----------|-------------|---------------------------|---------|
+| `cable_type` | `active-standby` | 欠落時も `"active-standby"` に fallback (DbInterface.cpp:827) | 乖離なし |
+| `prober_type` | `software` | `hw_offload_capable=false` または欠落 → 常に `"software"` に強制 (DbInterface.cpp:880-881) | プラットフォーム依存 silent 降格 |
+| `neighbor_mode` | `host-route` | SAI が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 非対応 → `"prefix-route"` を指定しても silent に `host-route` 動作 (muxorch.cpp:2240) | プラットフォーム依存 silent 無視 |
+| `server_ipv4` | — (optional) | 欠落時に `request.getAttrIpPrefix()` が `std::out_of_range` 例外 → orchagent 障害 (muxorch.cpp:2206) | **YANG optional vs 実装 mandatory** |
+| `server_ipv6` | — (optional) | 同上 (muxorch.cpp:2207) | **YANG optional vs 実装 mandatory** |
+| `soc_ipv4` | — (optional) | 欠落 → no-op。`skip_neighbors` への追加をスキップ | 乖離なし |
+| `soc_ipv6` | — (optional) | 欠落 → no-op | 乖離なし |
+| `state` | `auto` | warm restart 完了時に linkmgrd が `"auto"` を CONFIG_DB に強制書き戻す (DbInterface.cpp:1012) | 書込み順依存 |
+
+### 注記
+
+- **`prober_type = hardware` の silent 降格**: スイッチの ASIC が ICMP offload 非対応（`SWITCH_CAPABILITY.ICMP_OFFLOAD_CAPABLE != "true"`）の場合、CONFIG_DB に `prober_type = hardware` と設定しても linkmgrd は `software` として動作し、エラーは発生しない。ログ(`MUXLOGWARNING`)のみ。
+- **`neighbor_mode = prefix-route` の silent 無視**: `isNoHostRouteSupported()` が false を返す ASIC では、`prefix-route` 指定が無視され `host-route` として動作する。動的変更（既存エントリへの再設定）は orchagent が `SWSS_LOG_ERROR` を出して拒否する。再起動が必要。
+- **`server_ipv4` / `server_ipv6` の実質 mandatory**: YANG 定義では `mandatory true` がなく optional だが、orchagent の `handleMuxCfg` は両フィールドを無条件で `getAttrIpPrefix()` により読み取る。欠落すると `std::out_of_range` 例外が発生し orchagent が異常終了する可能性がある。minigraph 経由では `lo_addr` から自動補完されるが、手動設定時は必須。
+- **warm restart 後の `state` 強制 `auto`**: `warmRestartReconciliation()` が呼ばれると `state = "auto"` が CONFIG_DB に書き戻される。manual/active/standby で固定設定していても上書きされる。
+- **`neighbor_mode` 初期化タイミング**: MuxCable オブジェクト生成時にのみ有効。生成後に CONFIG_DB を更新しても orchagent は変更を拒否する（ポート削除+再登録が必要）。
+
+<!-- /defaults -->

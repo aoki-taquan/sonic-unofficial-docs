@@ -92,6 +92,31 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 - 関連 CLI: `config interface ip add/remove Vlan<id>`、`config vlan proxy_arp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+> 以下はコード精読により導出した暗黙デフォルト・dead field・乖離の一覧。YANG 定義にない挙動を含む[^d1][^d2]。
+
+| フィールド | 省略・空時の実挙動 | 導出元 |
+|-----------|-----------------|--------|
+| `nat_zone` | YANG `default "0"`。orchagent 変数も `0` 初期化。NAT 非対応プラットフォームでは SAI に送信されず `SWSS_LOG_NOTICE` のみ | YANG L111; intfsorch.cpp:713,984 |
+| `mpls` | `empty()` を `"disable"` と等価に扱う (`sysctl input=0`)。sysctl 失敗は省略時 silent。SAI `ADMIN_MPLS_STATE` はデフォルト disabled のため RIF create attrs に含まれない | intfmgr.cpp:178-189; intfsorch.cpp:1276-1284 |
+| `proxy_arp` | カーネル/SAI 操作なし。orchagent 内部フラグ `proxy_arp=false` 固定 | intfsorch.cpp:501,845 |
+| `grat_arp` | カーネル操作なし | intfmgr.cpp:1038-1051 |
+| `ipv6_use_link_local_only` | YANG `default disable`。省略時は `m_ipv6LinkLocalModeList` への追加なし（通常 IPv6 割当） | YANG L138; intfmgr.cpp:913 |
+| `mac_addr` | intfmgr が `00:00:00:00:00:00` を APP_DB へ書く。orchagent はゼロ MAC を受け取ると `gMacAddress`（スイッチ全体 MAC）を SAI に適用 | intfmgr.cpp:1019; intfsorch.cpp:1199-1207 |
+| `loopback_action` | intfmgr も orchagent も省略時は SAI attrs に含めない。SAI 実装依存デフォルト（多くは `forward`） | intfsorch.cpp:1187-1195,999 |
+| `vrf_name` | orchagent が `gVirtualRouterId`（デフォルト VRF）を使用 | intfsorch.cpp:823 |
+| `vnet_name` | 省略時は通常 VRF 経路。`vnet_name` と `vrf_name` を同時指定した場合 `vnet_name` が優先される | intfsorch.cpp:933-957 |
+| `scope` (IP prefix) | **dead field**: CONFIG_DB 値は読まれず、intfmgr が常に `"global"` を APP_DB へ書く | intfmgr.cpp:1134 |
+| `family` (IP prefix) | **dead field**: CONFIG_DB 値は読まれず、intfmgr が ip-prefix の型から自動判定して APP_DB へ書く | intfmgr.cpp:1129 |
+| `secondary` (IP prefix) | **dead consumer**: intfmgr・orchagent のどちらもこのフィールドを参照しない | intfmgr.cpp:784-829; intfsorch.cpp:720-814 |
+
+[^d1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^d2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -102,7 +127,7 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | `proxy_arp` | `enabled` | `/proc/sys/net/ipv4/conf/<IF>/proxy_arp` / `proxy_arp_pvlan` に `1` |
 | `proxy_arp` | `disabled` | 同ファイルに `0` |
 | `proxy_arp` | その他 | `SWSS_LOG_ERROR("Proxy ARP state is invalid")` で処理中断 |
-| `grat_arp` | `enabled` | `/proc/sys/net/ipv4/conf/<IF>/arp_accept` に `1` |
+| `grat_arp` | `enabled` | `/proc/sys/net/ipv4/conf/<IF>/arp_accept` に `2`（accept_untracked_na も同値、カーネル対応時のみ） |
 | `grat_arp` | `disabled` | 同ファイルに `0` |
 | `grat_arp` | その他 | `SWSS_LOG_ERROR("GARP state is invalid")` で処理中断 |
 | `ipv6_use_link_local_only` | `enable` | IPv6 link-local アドレスのみ付与。グローバル IPv6 アドレス付与不可 |

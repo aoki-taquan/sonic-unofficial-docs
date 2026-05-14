@@ -220,4 +220,69 @@ show ip interfaces | grep Loopback
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+> 証跡: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`,
+> `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`
+
+### `admin_status` — YANG + コード二重保護
+
+YANG default は `up`。さらに `intfmgrd` も空値または不正値を受け取った場合に `"up"` へフォールバックする
+（`intfmgr.cpp:861-868`）。したがって `admin_status` が CONFIG_DB に存在しない場合も、不正文字列の場合も、
+常に `"up"` として動作する。
+
+### `nat_zone` — dead consumer（Loopback 上でのみ）
+
+YANG default は `"0"` だが、`natmgr` は Loopback インターフェースに対して
+mangle iptables ルールを**生成しない**（`natmgr.cpp:7526-7549, 7581`）。
+値はキャッシュ (`m_natZoneInterfaceInfo`) に記録されるが、カーネルの mark 付与は行われない。
+Loopback の `nat_zone` は設定可能だが、実際の NAT 効果はゼロ。
+
+### `scope`（IP プレフィクスロウ）— dead field
+
+`intfmgr` は `doIntfAddrTask` において APP_DB 書き込み時に `scope` を
+常に `"global"` でハードコードする（`intfmgr.cpp:1134`）。CONFIG_DB の
+`scope = "local"` は Orchagent / SAI に伝わらない。
+
+### `family`（IP プレフィクスロウ）— dead consumer
+
+`intfmgr` は `ip_prefix.isV4()` から family を自動判定し APP_DB に書く
+（`intfmgr.cpp:1129`）。CONFIG_DB の `family` フィールドは読まれない。
+
+### MTU — ハードコード `65536`
+
+`LOOPBACK_INTERFACE` テーブルに `mtu` フィールドはない。`intfmgr` は
+`ip link add <name> mtu 65536 type dummy` のハードコード値を使う
+（`intfmgr.cpp:28, 201`）。CONFIG_DB から変更する経路は存在しない。
+
+### IPv6 link-local アドレス — silent drop
+
+`fe80::/10` の IPv6 アドレスはカーネルには付与されるが、APP_DB には
+送信されない（`intfmgr.cpp:1123-1139`）。IntfsOrch / SAI に通知されず、
+SAI ルータ IF の更新は発生しない。
+
+### Loopback0 IPv4 欠如 — BGP peer ブロック（経路依存乖離）
+
+`bgpcfgd` は `DEVICE_METADATA.bgp_router_id` が未設定の場合、
+`Loopback0` の IPv4 アドレスを BGP peer 追加の必要条件とする
+（`managers_bgp.py:184-189`）。`Loopback0` 行は存在しても IP プレフィクス行
+がなければ BGP peer が永続的にペンディングになる。
+
+### VOQ 環境固有の挙動
+
+| 条件 | 挙動 | 証跡 |
+|------|------|------|
+| `switch_type == "voq"` | IPv6 アドレス付与時に `metric 256` を自動追加 | `intfmgr.cpp:103-106` |
+| internal BGP peer | `Loopback4096` エントリが必須依存 | `managers_bgp.py:145-146` |
+| `Loopback4096` 未設定 | VOQ 環境の internal BGP peer 設定がブロック | `managers_bgp.py:146` |
+
+### `mac_addr` — 暗黙ゼロ MAC
+
+`mac_addr` が未設定の場合、`intfmgr` は `MacAddress().to_string()` (= `00:00:00:00:00:00`)
+を APP_DB に送信する（`intfmgr.cpp:1018-1020`）。Loopback では通常無視されるが、
+APP_INTF_TABLE に記録される。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: b5270404647a -->

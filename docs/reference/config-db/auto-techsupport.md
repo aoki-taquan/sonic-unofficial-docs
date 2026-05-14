@@ -123,6 +123,36 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 - `GLOBAL.state=enabled` かつ feature エントリ `state=disabled` → その feature のコアダンプのみスキップ
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+以下は YANG `default` 宣言の**外**にあるコードレベルの fallback。`init_cfg.json.j2` の初期値 + ランタイム `.get`/`try-except`/`or` パターンを全行精読して導出。
+
+### AUTO_TECHSUPPORT|GLOBAL
+
+| フィールド | YANG default | init_cfg.j2 初期値 | コード fallback | evidence |
+|---|---|---|---|---|
+| `state` | なし | ビルド変数 `enable_auto_tech_support` で `enabled`/`disabled` | 未設定 → `disabled` 扱い（`!= "enabled"` 分岐でスキップ） | `coredump_gen_handler.py:17`, `techsupport_cleanup.py:27` |
+| `rate_limit_interval` | なし | `"180"` (秒) | `ValueError` / 未設定 → `0.0`（rate-limit 無効） | `auto_techsupport_helper.py:323-326` |
+| `max_techsupport_limit` | なし | `"10.0"` (%) | `ValueError` / 未設定 → `0.0` → クリーンアップなし | `techsupport_cleanup.py:32-39` |
+| `max_core_limit` | なし | `"5.0"` (%) | `ValueError` / 未設定 → `0.0` → クリーンアップなし | `coredump_gen_handler.py:22-30` |
+| `available_mem_threshold` | **10.0** | `"10.0"` (%) | 未設定 → `10` (%) — YANG/init_cfg/コード 3層一致 | `memory_threshold_check.py:24,122-127` |
+| `min_available_mem` | **200** (MB) | `"200"` | 未設定 → `200 MB`（内部では `× 1024 = 204800 KB`）— 3層一致 | `memory_threshold_check.py:26,128-134` |
+| `since` | なし | `"2 days ago"` | 未設定 または `date` 検証失敗 → `"2 days ago"`（二重 fallback） | `auto_techsupport_helper.py:213,215,219` |
+
+### AUTO_TECHSUPPORT_FEATURE
+
+| フィールド | YANG default | init_cfg.j2 / feature.py 初期値 | コード fallback | evidence |
+|---|---|---|---|---|
+| `state` | なし | GLOBAL `state` 継承 (`infer_auto_ts_capability`) | GLOBAL 未設定 → `"disabled"` | `feature.py:159-174,181-183` |
+| `available_mem_threshold` | **10.0** | `"10.0"` | DB 欠落時のみコード定数 `0`（feature チェック無効）— 通常は YANG/init_cfg の 10.0 が優先 | `memory_threshold_check.py:28,139-145` |
+| `rate_limit_interval` | なし | `"600"` (秒) | `ValueError` / 未設定 → `0.0`（feature rate-limit 無効） | `auto_techsupport_helper.py:316-330` |
+
+!!! note "FEATURE.available_mem_threshold の非対称"
+    `memory_threshold_check.py` のコード定数は `DEFAULT_MEMORY_AVAILABLE_FEATURE_THRESHOLD = 0` (%)。
+    これは DB 値が**完全に欠落**した場合のみ有効。通常は `init_cfg.json.j2` または YANG default の `10.0` が DB に書き込まれているため、コード定数 `0` は事実上発動しない。
+<!-- /defaults -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

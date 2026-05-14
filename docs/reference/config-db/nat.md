@@ -241,6 +241,53 @@ db_migrator.py での NAT マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ (`natorch.cpp:63-73`) と `NatMgr` コンストラクタ (`natmgr.cpp:55-65`) の両方が独立してデフォルト値を保持する。
+
+| フィールド | YANG default | コード hardcode | fallback 源 |
+|-----------|-------------|----------------|------------|
+| `admin_mode` | `disabled` | `"disabled"` | `NatOrch::NatOrch() L64`、`NatMgr::NatMgr() L56` |
+| `nat_timeout` | `600` | `600` | `NatOrch L67`、`NatMgr L59`、`NAT_TIMEOUT_DEFAULT natmgr.h:64` |
+| `nat_tcp_timeout` | `86400` | `86400` | `NatOrch L70`、`NatMgr L62`、`NAT_TCP_TIMEOUT_DEFAULT natmgr.h:69` |
+| `nat_udp_timeout` | `300` | `300` | `NatOrch L73`、`NatMgr L65`、`NAT_UDP_TIMEOUT_DEFAULT natmgr.h:73` |
+
+全フィールドで YANG default と実装 hardcode は一致。ただし以下の暗黙挙動・乖離がある:
+
+### プラットフォーム依存 silent drop (`admin_mode=enabled` が無視される)
+
+- `main.cpp:936-948`: `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が 0 を返すプラットフォームでは `gIsNatSupported = false`。
+- `natorch.cpp:2541-2544`: `enableNatFeature()` 冒頭で `gIsNatSupported == false` → `SWSS_LOG_NOTICE + return`。
+- CONFIG_DB に `admin_mode=enabled` を書いても、SAI が SNAT エントリを 0 と報告するプラットフォームでは NAT は有効化されない。`show nat config` では enabled と表示されるが SAI 操作は行われない。
+
+### タイムアウト変更の遅延伝播 (admin_mode 依存)
+
+- `natmgr.cpp:7282-7313`: timeout フィールドの変更は `isNatEnabled()` が `true` の場合のみ APPL_DB に書き込まれる。
+- `admin_mode=disabled` 状態でタイムアウトを変更しても APPL_DB には伝播しない。
+- `enableNatFeature()` (natmgr.cpp:5688-5704) は `if (m_natTcpTimeout != NAT_TCP_TIMEOUT_DEFAULT)` 等で非デフォルト値のみ書き込む。デフォルト値と同じ値への変更は APPL_DB に届かない。
+
+### BRCM プラットフォームのみ有効な DNAT next-hop 追跡
+
+- `natorch.cpp:144-148`: `getenv("platform")` が `"broadcom"` を含む場合のみ `gNhTrackingSupported = true`。
+- 非 BRCM 環境では `enableNatFeature()` 内で `m_neighOrch->attach(this)` が呼ばれず、DNAT エントリの next-hop 変化追跡が行われない。経路変更時に DNAT エントリが stale になるリスクあり。
+
+### nat_type default の STATIC_NAT vs NAT_BINDINGS 非対称
+
+- `STATIC_NAT.nat_type` / `STATIC_NAPT.nat_type`: YANG `default dnat` (sonic-nat.yang L101, L141)。
+- `NAT_BINDINGS.nat_type`: YANG `default snat` (sonic-nat.yang L280)。
+- 省略時の動作が テーブルによって逆であることに注意。
+
+### DEL_COMMAND 時の APPL_DB 書き込み条件
+
+- `natmgr.cpp:7337-7366`: `NAT_GLOBAL` DEL 時は内部変数をデフォルトにリセットするが、APPL_DB への書き込みは `natAdminMode == ENABLED` 時のみ実行される。`admin_mode=disabled` のまま DEL した場合は APPL_DB への書き込みはなく内部状態のみリセット。
+
+### orchagent の assert クラッシュ (admin_mode 異常値)
+
+- `natorch.cpp:2938`: `assert(mode == "enabled" || mode == "disabled")` — APPL_DB に enabled/disabled 以外の値が入ると orchagent が abort する。natmgr 経由ではガード済みだが、直接 APPL_DB 操作や YANG 迂回でバイパスすると問題が発生する。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: a6fe2efe021a -->
 
 <!-- derivation -->

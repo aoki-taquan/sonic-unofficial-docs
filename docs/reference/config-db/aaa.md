@@ -233,4 +233,28 @@ show aaa
 - なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__` リテラルおよび `authentication_default` / `authorization_default` / `accounting_default` dict から導出。
+
+| フィールド | AAA type | コード由来デフォルト | fallback 源 |
+|-----------|---------|-------------------|------------|
+| `login` | `authentication` | `'local'` | `authentication_default = {'login': 'local'}` — hostcfgd:357–359 |
+| `login` | `authorization` | `'local'` | `authorization_default = {'login': 'local'}` — hostcfgd:361–363 |
+| `login` | `accounting` | `'disable'` | `accounting_default = {'login': 'disable'}` — hostcfgd:364–366 |
+| `failthrough` | `authentication` | `False` (Jinja2 undefined → falsy) | `authentication_default` にキーなし; DB 欠如時 Jinja2 が falsy 評価 |
+| `fallback` | `authentication` | `False` (Jinja2 undefined → falsy) | `authentication_default` にキーなし; bool 変換なしで dict に格納 |
+| `debug` | `authentication` | `False` | `self.debug = False` literal — hostcfgd:393; DB に `debug` キーがある場合のみ `is_true()` で上書き |
+| `trace` | `authentication` | 常に `False` (**DB 値は無視**) | `self.trace = False` literal — hostcfgd:394; `aaa_update()` に `trace` 処理ブロックが存在しないため DB 値が反映されない |
+
+### 補足
+
+- `modify_conf_file()` (hostcfgd:641–648) は `<type>_default.copy()` に DB 値を `update()` するパターン。DB にキーが存在しない場合は default dict の値がそのまま Jinja2 テンプレートへ渡る。
+- `is_true()` (hostcfgd:156–162) は `'True'` / `'true'` のみ `True` を返す。`'yes'` / `'1'` 等は `False` 扱い (syslog ERR を出力)。
+- `trace` フィールドは CLI (`config aaa authentication trace enable`) で CONFIG_DB に書き込めるが、`aaa_update()` で `self.trace` を更新する分岐が存在しない。結果として PAM テンプレートには常に `trace=False` が渡り、RADIUS `trace` オプションは機能しない。これは `debug` との非対称性であり、実装上のバグと見られる。
+- `accounting.login` の `'disable'` デフォルトは YANG default (`'local'`) と異なる点に注意。DB に `AAA|accounting` エントリが存在しない場合、hostcfgd は `'disable'` として振る舞う。
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->

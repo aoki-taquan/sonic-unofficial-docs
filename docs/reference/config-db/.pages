@@ -67,6 +67,7 @@ nav:
   - telemetry.md
   - device-neighbor.md
   - device-neighbor-metadata.md
+  - neigh.md
   - fg-nhg.md
   - sflow.md
   - ...

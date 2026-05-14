@@ -121,6 +121,63 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 - `BGP_GLOBALS.network_import_check=true` (FRR デフォルト) の場合、対象 prefix が RIB に存在しないと FRR が BGP UPDATE への注入を拒否する (CONFIG_DB への書き込みは成功するが実際には広告されない)
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## 暗黙デフォルトとコード由来フォールバック
+
+### YANG デフォルト宣言
+
+`BGP_GLOBALS_AF_NETWORK_LIST` 配下のフィールドには YANG `default` 文が**ない**。
+
+### 実行時フォールバック (frrcfgd)
+
+`af_network_key_map` 定義 (`frrcfgd.py:1985`):
+
+```python
+['ip_prefix', '++policy', '+backdoor']
+→ '{no:no-prefix}network {2} {3:network-policy} {4:network-backdoor}'
+```
+
+| フィールド | key_map 修飾 | 欠如時の挙動 | 生成コマンドへの影響 |
+|---|---|---|---|
+| `ip_prefix` | required (修飾なし) | 処理スキップ (必ず存在) | 常に出力 |
+| `policy` | `++` (opt_idx_list) | 空文字列で継続 → `network-policy` フォーマッタが `len==0` チェックで省略 | `route-map` キーワードなし |
+| `backdoor` | `+` (optional のみ) | break → 空文字列パディング → `network-backdoor` フォーマッタが `''` を出力 | `backdoor` キーワードなし |
+
+**実質デフォルト**: `policy` 欠如 = route-map なし、`backdoor` 欠如 = `false` 相当。
+
+### backdoor フォーマッタ詳細 (`frrcfgd.py:811-814`)
+
+```python
+'network-backdoor': 'backdoor'  # bool_format テーブル
+# true  → 'backdoor' キーワード出力
+# false → '' (空文字列)
+# 欠如  → 空文字列 (+修飾によるパディング)
+```
+
+### network-policy フォーマッタ詳細 (`frrcfgd.py:922-924`)
+
+```python
+elif format == 'network-policy':
+    if len(self.value) > 0:
+        self.value = 'route-map %s' % self.to_str()
+# 空文字列 → 何も追記しない
+```
+
+### 書き込み時 vs 実行時の乖離
+
+CONFIG_DB への書き込みは常に成功するが、`BGP_GLOBALS.network_import_check` が `true` (FRR デフォルト、YANG default 宣言なし) の場合、対象プレフィックスが RIB に存在しなければ FRR は実際の BGP UPDATE 注入を拒否する。
+
+### YANG vs 実装の discrepancy
+
+| 項目 | YANG 定義 | 実装挙動 |
+|---|---|---|
+| `backdoor` の afi 制約 | `ValidateAfisafiForBackdoor` カスタム検証あり (**コメントアウト**) | 検証なし — `ipv6_unicast` 等でも設定可能 (FRR が拒否する場合あり) |
+| `backdoor` + `policy` 出力順 | 未規定 | frrcfgd: `route-map <name>` → `backdoor`; j2 テンプレート: `backdoor ` → `route-map <name>` (逆順) |
+| `policy`/`backdoor` デフォルト | 宣言なし | 空文字列フォールバック (省略 = キーワードなし) |
+
+<!-- evidence: sonic-bgp-global.yang:537-540; frrcfgd.py:1985,811-826,922-924 -->
+<!-- /defaults -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
