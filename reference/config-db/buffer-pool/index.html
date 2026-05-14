@@ -22671,6 +22671,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト / 実装乖離 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト / 実装乖離 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xoff-yang-default-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        xoff — YANG default と実装 fallback が一致
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#size-lua-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        size — 不在時は Lua plugin へサイレント委譲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-both-egress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type — both は内部キャッシュで EGRESS 扱い (乖離)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-mode-sai-create-only-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type / mode — SAI では create-only 属性 (YANG に記述なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#percentage-bufferorch-dead-field-log_error-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        percentage — bufferorch では dead field (LOG_ERROR + skip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路別 field 扱い早見表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30352,6 +30435,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト / 実装乖離 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト / 実装乖離 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xoff-yang-default-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        xoff — YANG default と実装 fallback が一致
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#size-lua-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        size — 不在時は Lua plugin へサイレント委譲
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-both-egress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type — both は内部キャッシュで EGRESS 扱い (乖離)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-mode-sai-create-only-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type / mode — SAI では create-only 属性 (YANG に記述なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#percentage-bufferorch-dead-field-log_error-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        percentage — bufferorch では dead field (LOG_ERROR + skip)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み経路別 field 扱い早見表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -30791,6 +30957,72 @@
 <p><strong>スキャン証跡</strong>: <code>handleBufferPoolTable</code> L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト / 実装乖離 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<h3 id="xoff-yang-default-fallback"><code>xoff</code> — YANG default と実装 fallback が一致<a class="headerlink" href="#xoff-yang-default-fallback" title="Permanent link">&para;</a></h3>
+<p>YANG: <code>default 0</code>。<code>buffermgrdyn.cpp</code> も <code>newSHPSize = "0"</code> で初期化 (L2523)。乖離なし。</p>
+<h3 id="size-lua-plugin"><code>size</code> — 不在時は Lua plugin へサイレント委譲<a class="headerlink" href="#size-lua-plugin" title="Permanent link">&para;</a></h3>
+<p><code>size</code> フィールドが CONFIG_DB に存在しない場合、<code>buffermgrdyn.cpp</code> は <code>bufferPool.dynamic_size = true</code> を立て、<strong>APPL_DB への書き込みを遅延</strong>する。実効サイズは Mellanox/Barefoot の Lua plugin (<code>buffer_pool_mellanox.lua</code>) が MMU 使用量から逆算して APPL_DB へ書き込む。<code>buffermgrdyn.cpp</code> 自身は APPL_DB を更新しない (silent defer)。</p>
+<p>さらに <code>ingress_lossless_pool</code> は <code>dynamic_size=true</code> かつ <code>overSubscribeRatio</code> 非ゼロかつ SHP が size で有効でない場合、<code>dontUpdatePoolToDb=true</code> となり APPL_DB への直接書き込みが完全にスキップされる (<code>buffermgrdyn.cpp</code> L2555-2628)。</p>
+<h3 id="type-both-egress"><code>type</code> — <code>both</code> は内部キャッシュで <code>EGRESS</code> 扱い (乖離)<a class="headerlink" href="#type-both-egress" title="Permanent link">&para;</a></h3>
+<p><code>buffermgrdyn.cpp</code> L2544-2549 の分岐:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">buffer_value_ingress</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">bufferPool</span><span class="p">.</span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BUFFER_INGRESS</span><span class="p">;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">else</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">bufferPool</span><span class="p">.</span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BUFFER_EGRESS</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;both&quot; はここに落ちる</span>
+</span></code></pre></div>
+<p><code>type=both</code> を設定すると内部キャッシュの <code>direction</code> は <code>BUFFER_EGRESS</code> になる。raw 文字列はそのまま APPL_DB に転送されるため SAI 側では <code>SAI_BUFFER_POOL_TYPE_BOTH</code> を受け取るが、buffermgrdyn の headroom 計算では ingress 側プールとして参照されなくなる可能性がある。</p>
+<h3 id="type-mode-sai-create-only-yang"><code>type</code> / <code>mode</code> — SAI では create-only 属性 (YANG に記述なし)<a class="headerlink" href="#type-mode-sai-create-only-yang" title="Permanent link">&para;</a></h3>
+<p><code>bufferorch.cpp</code> L437-441 / L467-471: 既存 SAI オブジェクトに対する更新操作では <code>type</code> と <code>mode</code> フィールドが<strong>サイレントスキップ</strong>される (LOG_INFO 出力のみ)。YANG にはこの制約が記述されていない。<strong>プール作成後に <code>type</code> や <code>mode</code> を変更しても SAI には反映されない。</strong></p>
+<h3 id="percentage-bufferorch-dead-field-log_error-skip"><code>percentage</code> — bufferorch では dead field (LOG_ERROR + skip)<a class="headerlink" href="#percentage-bufferorch-dead-field-log_error-skip" title="Permanent link">&para;</a></h3>
+<p><code>bufferorch.cpp</code> L497-501: <code>percentage</code> は不明フィールドとして <code>LOG_ERROR("Unknown pool field specified")</code> を出力し SAI に渡さない。<code>percentage</code> は Lua plugin (<code>buffer_pool_mellanox.lua</code>) のみが APPL_DB から読み取り実効サイズ計算に使用する。Lua plugin を持たないプラットフォームでは完全に無視される。</p>
+<h3 id="field">書き込み経路別 field 扱い早見表<a class="headerlink" href="#field" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>buffermgr (static 専用)</th>
+<th>buffermgrdyn (dynamic 専用)</th>
+<th>bufferorch (SAI)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>pass-through</td>
+<td>cache (<code>both</code>→<code>EGRESS</code>) + forward</td>
+<td>SAI (create-only、更新時スキップ)</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>pass-through</td>
+<td>cache + forward</td>
+<td>SAI (create-only、更新時スキップ)</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>pass-through</td>
+<td><code>dynamic_size</code> フラグ制御</td>
+<td><code>SAI_BUFFER_POOL_ATTR_SIZE</code></td>
+</tr>
+<tr>
+<td><code>xoff</code></td>
+<td>pass-through</td>
+<td>SHP 計算トリガ</td>
+<td><code>SAI_BUFFER_POOL_ATTR_XOFF_SIZE</code></td>
+</tr>
+<tr>
+<td><code>percentage</code></td>
+<td>pass-through (無意味)</td>
+<td>forward のみ (未読取)</td>
+<td>LOG_ERROR + skip (SAI 非反映)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>証跡</strong>: <code>buffermgrdyn.cpp</code> L2509-2669 全行読了、<code>bufferorch.cpp</code> L391-596 全行読了、<code>buffermgr.cpp</code> L337-410 全行読了、<code>buffer_pool_mellanox.lua</code> L440-476 全行読了。</p>
+</blockquote>
+<!-- /defaults -->
 <!-- glossary-links-injected: 44ea702536a5 -->
 
 <div class="footnote">
