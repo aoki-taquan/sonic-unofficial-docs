@@ -352,4 +352,37 @@ DEL VLAN|Vlan100
 
 <!-- /ordering -->
 
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐
+
+### SAI Flood control capability — `COMBINED` 非対応 ASIC
+
+orchagent 起動時に `sai_query_attribute_enum_values_capability()` で UUC (Unknown Unicast) / BC (Broadcast) の flood control タイプを問い合わせる (portsorch.cpp:900-931)。`SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` をサポートしない ASIC では、VXLAN EVPN エンドポイント (`VLAN_MEMBER.end_point_ip`) を用いた flood group 設定がエラー終了する (portsorch.cpp:7517-7524)。VS (Virtual Switch) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返し `COMBINED` を返さないため、VS 環境では EVPN flood group は設定不可[^plat1]。
+
+### create_vlan() — SAI 属性最小化とベンダー SAI デフォルト依存
+
+`addVlan()` は `SAI_VLAN_ATTR_VLAN_ID` 1 属性のみで `create_vlan()` を呼び出す (portsorch.cpp:7392)。flooding control 属性は渡さず SAI プラットフォームデフォルトに委ねるため、VLAN 作成直後の flooding 挙動がベンダー SAI 実装依存となる[^plat1]。
+
+### SAI_HOSTIF_VLAN_TAG — ベンダー間の段階的サポート
+
+コードコメントに「`SAI_HOSTIF_VLAN_TAG_ORIGINAL` は全 ASIC ベンダーの libsai でサポートされる前」と明記 (portsorch.cpp:3043-3045)。現状 orchagent は VLAN メンバ追加時に `STRIP` / `KEEP` を条件で切り替えており、CPU ポートへのパケット受信時の VLAN タグ有無がベンダー実装で異なる可能性がある。
+
+### プラットフォーム識別子 (orch.h)
+
+orchagent は `platform` 環境変数の部分文字列でベンダーを識別する。VLAN 直接分岐ではないが、潜在的なベンダー特殊処理の根拠となる:
+
+| 定数 | 値 |
+|------|----|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` |
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` |
+
+[^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
