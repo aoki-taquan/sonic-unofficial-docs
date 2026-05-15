@@ -140,6 +140,34 @@ systemctl status restapi
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト・Fallback
+
+`RESTAPI` テーブルは YANG `sonic-restapi.yang` で `client_auth=true` / `allow_insecure=false` の宣言的 default を持つが、起動ラッパスクリプト (`restapi.sh` / `rest-server.sh`) が **YANG 未宣言の追加 fallback** を持つ。CONFIG_DB absent でも以下の値が `go-server-server` / `rest_server` の引数に注入される。
+
+### `log_level` — コード fallback `trace` (YANG 宣言なし)
+
+`docker-sonic-restapi/restapi.sh:33-38` が `LOG_LEVEL` 空のとき `-loglevel=trace` を付与する。YANG `sonic-restapi.yang:68-` の `log_level` leaf には `default` 宣言がないため、ラッパ層でのみ担保される code-only fallback。`RESTAPI|config` を空のまま `restapi` を有効化すると、本番でも詳細ログ (`trace`) が出続ける。
+
+### `-enablehttp=false` — `allow_insecure` 未設定時 fallback (YANG default と整合)
+
+`restapi.sh:13-17` は `allow_insecure != 'true'` のすべてのケース (CONFIG_DB absent 含む) で `-enablehttp=false` を付与。YANG `default false` (`sonic-restapi.yang:77`) と二重で一致。
+
+### `client_auth` — `true` 必須の起動ガード
+
+`restapi.sh:10` は `$client_auth == 'true'` のときのみ cert ロードへ進む。YANG `default true` (`sonic-restapi.yang:64`) と整合するが、もし `RESTAPI|config:client_auth=false` を投入すると `go-server-server` は起動せず無限 `sleep 60` ループに入る（code-only の起動ガード挙動）。
+
+### mgmt-framework 側 `CLIENT_AUTH` — code-only fallback `user`
+
+`docker-sonic-mgmt-framework/rest-server.sh:20,29-31` は `REST_SERVER` (mgmt_vars 経由) から `client_auth` を読めない場合 `"user"` (ユーザ認証モード) を 2 段階で fallback する (`jq -r '.client_auth // "user"'` + 後段の `[ -z "$CLIENT_AUTH" ]` 再代入)。YANG にこの default 宣言はなく、Phase 8 表の `client_auth==user_auth` 分岐の前提となる値。
+
+### mgmt-framework 側 TLS cert path — code-only `/tmp/cert.pem` `/tmp/key.pem`
+
+`rest-server.sh:45-50` は `SERVER_CRT` / `SERVER_KEY` 共に未設定の場合、`/usr/sbin/generate_cert --host="localhost,127.0.0.1"` で自己署名証明書を生成し `/tmp/cert.pem` / `/tmp/key.pem` を引数注入する。CONFIG_DB / YANG いずれにもパス default は無く、本 fallback はラッパ層のみで担保される。再起動ごとに新証明書が再生成される点に注意。
+
+> **Evidence**: `dockers/docker-sonic-restapi/restapi.sh:10,13-17,33-38`、`dockers/docker-sonic-mgmt-framework/rest-server.sh:20,29-31,45-50`、`src/sonic-yang-models/yang-models/sonic-restapi.yang:62-77`。`sonic-buildimage` SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`。詳細は `meta/_intermediate/cdb-flow/restapi-defaults.md` を参照。
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
