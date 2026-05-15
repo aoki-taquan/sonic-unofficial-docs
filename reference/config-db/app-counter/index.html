@@ -24067,7 +24067,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route-flow-counter-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route flow counter の SAI capability ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-community-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC 別の対応状況（community master）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap-flow-counter-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap flow counter には capability ゲートなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-vpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS / VPP プラットフォーム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム共通の定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24078,7 +24161,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34947,7 +35030,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route-flow-counter-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Route flow counter の SAI capability ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic-community-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC 別の対応状況（community master）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trap-flow-counter-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trap flow counter には capability ゲートなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-vpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS / VPP プラットフォーム
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム共通の定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34958,7 +35124,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35357,9 +35523,66 @@
 <p>詳細な購読パターン・PSUBSCRIBE チャンネル・競合解析は中間メモを参照: <code>meta/_intermediate/cdb-flow/app-counter-pubsub.md</code>。</p>
 <!-- /pubsub -->
 
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<p><code>FLEX_COUNTER_TABLE|FLOW_CNT_TRAP</code> / <code>FLOW_CNT_ROUTE</code> の動作は、ハードコード定数（ポーリング間隔・stat リスト・<code>max_match_count</code> デフォルト）はプラットフォーム共通だが、<strong>route flow counter は SAI capability ゲート</strong>で機種差が大きく、<strong>multi-asic / VOQ chassis</strong> は asic 単位での独立制御になる。</p>
+<h3 id="route-flow-counter-sai-capability">Route flow counter の SAI capability ゲート<a class="headerlink" href="#route-flow-counter-sai-capability" title="Permanent link">&para;</a></h3>
+<p><code>FlowCounterRouteOrch::initRouteFlowCounterCapability()</code> が起動時に <code>SAI_OBJECT_TYPE_ROUTE_ENTRY</code> の <code>SAI_ROUTE_ENTRY_ATTR_COUNTER_ID</code> を <code>sai_query_attribute_capability()</code> で問い合わせ、結果を <code>mRouteFlowCounterSupported</code> フラグと <strong>STATE_DB <code>FLOW_COUNTER_CAPABILITY_TABLE|FLOW_CNT_ROUTE</code> の <code>support</code> フィールド</strong> に保存する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// flowcounterrouteorch.cpp:166-179</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">mRouteFlowCounterSupported</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FlowCounterHandler</span><span class="o">::</span><span class="n">queryRouteFlowCounterCapability</span><span class="p">();</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">swss</span><span class="o">::</span><span class="n">Table</span><span class="w"> </span><span class="nf">capability_table</span><span class="p">(</span><span class="o">&amp;</span><span class="n">state_db</span><span class="p">,</span><span class="w"> </span><span class="n">STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME</span><span class="p">);</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">fvs</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">FLOW_COUNTER_SUPPORT_FIELD</span><span class="p">,</span><span class="w"> </span><span class="n">mRouteFlowCounterSupported</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">capability_table</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">FLOW_COUNTER_ROUTE_KEY</span><span class="p">,</span><span class="w"> </span><span class="n">fvs</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>mRouteFlowCounterSupported == false</code> の場合、<code>flowcounterrouteorch.cpp</code> 内の <code>generateRouteFlowStats()</code> / <code>addRoutePattern()</code> / <code>removeRoutePattern()</code> / <code>onRoutePatternChange()</code> ほか合計 10 箇所超の関数がすべて即 <code>return</code> する。さらに <code>flexcounterorch.cpp:324</code> の <code>FLOW_CNT_ROUTE</code> enable 受信処理も <code>getRouteFlowCounterSupported()</code> を AND 条件にしているため、<strong>SAI 非対応 ASIC では <code>FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE</code> を <code>enable</code> にしても <code>FLOW_COUNTER_ROUTE_PATTERN</code> にパターンを書き込んでもカウンタは生成されない</strong>。</p>
+<h3 id="asic-community-master">ASIC 別の対応状況（community master）<a class="headerlink" href="#asic-community-master" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ASIC / SAI 実装</th>
+<th><code>set_implemented</code></th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broadcom XGS (modern Broadcom SAI)</td>
+<td>true 想定</td>
+<td>一般的に対応</td>
+</tr>
+<tr>
+<td>Mellanox / NVIDIA SDK (mlnx-sai)</td>
+<td>true</td>
+<td>community master で動作実績</td>
+</tr>
+<tr>
+<td>Broadcom DNX / Marvell / Cisco silicon-one</td>
+<td>SDK バージョン依存</td>
+<td><code>show flowcnt-route capabilities</code> で要確認</td>
+</tr>
+<tr>
+<td><strong>VS (libsaivs) / VPP (libsaivpp)</strong></td>
+<td><strong>false</strong></td>
+<td>SAI スタブが未実装応答</td>
+</tr>
+</tbody>
+</table>
+<p>ユーザー側からは <code>show flowcnt-route capabilities</code>（STATE_DB の <code>FLOW_COUNTER_CAPABILITY_TABLE</code> を読む）で <code>support: false</code> を確認できる。</p>
+<h3 id="trap-flow-counter-capability">Trap flow counter には capability ゲートなし<a class="headerlink" href="#trap-flow-counter-capability" title="Permanent link">&para;</a></h3>
+<p><code>FLOW_CNT_TRAP</code> 側（<code>flexcounterorch.cpp:311-322</code>）には事前 capability チェックがない。SAI が <code>SAI_HOSTIF_TRAP_ATTR_COUNTER_ID</code> の set を <code>SAI_STATUS_NOT_SUPPORTED</code> で返した場合、copporch が個別 trap ごとに warn ログを残しつつ無視するのみで、<strong>STATE_DB <code>FLOW_COUNTER_CAPABILITY_TABLE</code> には trap 側のエントリは書かれない</strong>。事前判定の手段がないため、<code>COUNTERS_DB:COUNTERS:oid:*</code> に値が現れるかを実機で確認する必要がある。</p>
+<h3 id="multi-asic-voq-chassis">multi-asic / VOQ chassis<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>flexcounterorch</code> と <code>FlowCounterRouteOrch</code> は他 orch と同じく <strong>swss@asicN コンテナごとに 1 インスタンス</strong>起動する。<code>FLEX_COUNTER_TABLE|FLOW_CNT_TRAP</code> / <code>FLOW_CNT_ROUTE</code> の enable/disable・<code>FLOW_COUNTER_ROUTE_PATTERN</code> のパターン定義はすべて <strong>asic-namespace ごとの CONFIG_DB に独立</strong>しており、chassis-wide に同期する仕組みは存在しない（<code>CHASSIS_APP_DB</code> に flow counter 系テーブルなし）。chassis 全 asic で有効化したい場合は asic-namespace の数だけ書き込みが必要。</p>
+<p>VOQ chassis 特例として <code>flexcounterorch.cpp:546</code> で <code>gMySwitchType == "voq"</code> のとき queue counter の生成方針が変わるが、<strong>flow counter (<code>FLOW_CNT_TRAP</code> / <code>FLOW_CNT_ROUTE</code>) の挙動には影響しない</strong>。<code>CHASSIS_APP_DB</code> 経由で resolve される remote system port nexthop へのルートも、local <code>mRoutePatternSet</code> のパターンにマッチすれば通常通り counter が付く。</p>
+<h3 id="vs-vpp">VS / VPP プラットフォーム<a class="headerlink" href="#vs-vpp" title="Permanent link">&para;</a></h3>
+<p>VS / VPP では <code>queryRouteFlowCounterCapability()</code> が <code>false</code> を返すため route flow counter は完全に no-op になる。trap flow counter は受理されカウンタオブジェクトが生え <code>COUNTERS_DB</code> にも値が出るが、SAI 側の dummy 実装で実トラフィックを反映しない。sonic-mgmt の <code>test_flow_counter_*</code> は VS では route 系を原則スキップする。</p>
+<h3 id="_11">プラットフォーム共通の定数<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p><code>HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS = 10000</code>、<code>ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS = 10000</code>、<code>ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT = 30</code>、<code>FLEX_COUNTER_UPD_INTERVAL = 1</code> 秒、generic counter の stat リスト (<code>SAI_COUNTER_STAT_PACKETS</code> / <code>_BYTES</code>) はベンダー側で上書きする手段がなく、全機種同一。</p>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/app-counter-platform.md</code> を参照。</p>
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../flex-counter-table/">CONFIG_DB FLEX_COUNTER_TABLE</a> — グループレベルの enable/disable・polling interval 設定</li>
 <li><a href="../debug-counter/">CONFIG_DB debug-counter</a></li>
@@ -35367,7 +35590,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

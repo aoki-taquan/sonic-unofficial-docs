@@ -22624,6 +22624,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34626,6 +34637,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34940,6 +34962,88 @@
 </tr>
 </tbody>
 </table>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>本ページの STATE_DB 3 テーブル（<code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> / <code>ACL_STAGE_CAPABILITY_TABLE</code>）はいずれも YANG 未モデル化のオペレーショナルテーブルで、<code>AclOrch</code> が<strong>書き手 (producer only)</strong> として書き込む。
+ここでの暗黙参照は、これら STATE_DB エントリの<strong>生成トリガ・キー値・フィールド値</strong>が依存する入力側テーブルと前提 Orch / プラットフォーム情報を指す。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL_TABLE\|&lt;table_name&gt;</code> (CONFIG_DB)</td>
+<td>キー転写 + SET/DEL トリガ</td>
+<td>常時。<code>&lt;table_name&gt;</code> は STATE_DB <code>ACL_TABLE_TABLE</code> キーに転写される</td>
+<td><code>aclorch.cpp</code> L4283–4285 (dispatch), L5346 (<code>doAclTableTask</code>), L6087–6092 (<code>setAclTableStatus</code>)</td>
+</tr>
+<tr>
+<td><code>ACL_RULE\|&lt;table_name&gt;\|&lt;rule_name&gt;</code> (CONFIG_DB)</td>
+<td>キー転写 + SET/DEL トリガ</td>
+<td>常時。複合キーがそのまま STATE_DB <code>ACL_RULE_TABLE</code> キーへ</td>
+<td><code>aclorch.cpp</code> L4287–4289, L5520 (<code>doAclRuleTask</code>), L6101–6106 (<code>setAclRuleStatus</code>)</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TABLE</code> (APPL_DB)</td>
+<td>同等の入力経路</td>
+<td>APPL_DB 経由の動的 ACL（feature プロセス等）</td>
+<td><code>aclorch.cpp</code> L4283 (<code>APP_ACL_TABLE_TABLE_NAME</code> も dispatch)</td>
+</tr>
+<tr>
+<td><code>ACL_RULE_TABLE</code> (APPL_DB)</td>
+<td>同等の入力経路、retry cache 対象</td>
+<td>APPL_DB 経由の動的 ACL ルール。SAI リソース枯渇時は retry cache にパーク</td>
+<td><code>aclorch.cpp</code> L4222 (<code>createRetryCache(APP_ACL_RULE_TABLE_NAME)</code>), L4287</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE</code> (CONFIG_DB) / <code>ACL_TABLE_TYPE_TABLE</code> (APPL_DB)</td>
+<td>カスタム型解決</td>
+<td><code>ACL_TABLE</code> の <code>type</code> がカスタム型のとき。未定義なら <code>status="Inactive"</code></td>
+<td><code>aclorch.cpp</code> L4291</td>
+</tr>
+<tr>
+<td><code>PORT</code> (PortsOrch <code>allPortsReady()</code>)</td>
+<td>起動順序ガード</td>
+<td>常時。false の間は <code>doAclRuleTask()</code> に到達せず STATE_DB <code>ACL_RULE_TABLE</code> に新規エントリが書かれない</td>
+<td><code>aclorch.cpp</code> L4276</td>
+</tr>
+<tr>
+<td>SAI Switch capability (<code>SAI_SWITCH_ATTR_ACL_STAGE_*</code>)</td>
+<td>SAI クエリ → STATE_DB 書込み</td>
+<td>起動時 1 回。<code>ACL_STAGE_CAPABILITY_TABLE</code> の動的値ソース。失敗時は <code>defaultAclActionsSupported</code> でフォールバック</td>
+<td><code>aclorch.cpp</code> L4025–4036, L4056–4101 (<code>putAclActionCapabilityInDB</code>), L4104–4118</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost.platform</code>（platform 文字列）</td>
+<td>プラットフォーム分岐</td>
+<td><code>supported_L3V4V6</code> フィールド決定時 (MRVL_PRST / MRVL_TL / VS で <code>true</code>、他で <code>false</code>)</td>
+<td><code>aclorch.cpp</code> L3489–3510 (<code>queryMirrorTableCapability</code>), L4093–4099</td>
+</tr>
+<tr>
+<td>SAI ACL API 戻り値 (<code>create/remove_acl_table/entry</code>)</td>
+<td>戻り値判定 → <code>status</code> 値</td>
+<td>常時。<code>Active</code> / <code>Inactive</code> / <code>Pending creation</code> / <code>Pending removal</code> を決定。リソース枯渇は retry cache にパーク</td>
+<td><code>aclorch.cpp</code> L5462–5508 (table), L5670–5726 (rule), <code>isSaiStatusResourceFull()</code> L5683–5692</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">STATE_DB エントリは「書き出し専用」のステータスレジスタ</p>
+<p><code>AclOrch</code> 以外の書き手は存在しない。<code>show acl table</code> / <code>show acl rule</code> / <code>acl-loader</code> / <code>sonic-mgmt-common</code> (translib) は読み手のみ。
+<code>removeAllAclTableStatus()</code> / <code>removeAllAclRuleStatus()</code> (<code>aclorch.cpp:6116</code>, <code>6128</code>) が orchagent 起動時 (<code>init()</code> L3479–3481) に一度全エントリを削除し、その後 CONFIG_DB / APPL_DB からの再 SET を契機に再構築される。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title"><code>ACL_STAGE_CAPABILITY_TABLE</code> は起動時 1 回のみ更新</p>
+<p><code>putAclActionCapabilityInDB()</code> (<code>aclorch.cpp:4056</code>) は orchagent 起動時の capability 確定段階で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。
+フィールド値はプラットフォーム SAI capability と <code>DEVICE_METADATA</code> の <code>platform</code> 文字列に静的に依存する。</p>
+</div>
+<!-- /cross-refs -->
+
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />

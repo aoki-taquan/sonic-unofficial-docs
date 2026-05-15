@@ -24135,6 +24135,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込の対応表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34792,6 +34820,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込の対応表
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35245,12 +35301,120 @@
 <p>フォールバックは <code>mlacp_link_handler.c</code> L3108, L3120, L3137, L3142 で <code>-1</code> を検出した際にも同値がセットされる。</p>
 <!-- /defaults -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>APPL_DB MCLAG/ICCP 関連テーブル群 (<code>MCLAG_FDB_TABLE</code> / <code>ISOLATION_GROUP_TABLE</code> /
+<code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> / <code>LAG_TABLE</code> / <code>PORT_TABLE</code> / <code>INTF_TABLE</code>) の
+書込主体である <code>mclagsyncd</code> は、本 APPL_DB 書込に <strong>副次して</strong> <a href="../../glossary/#term-state_db">STATE_DB</a>
+側にも MCLAG 状態テーブルを書き込む。COUNTERS_DB は読取のみで書込は無い<sup id="fnref11:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>対象テーブル / 根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td>あり</td>
+<td><code>STATE_MCLAG_TABLE</code> (<code>mclaglink.cpp:1357,1412,1460,1503,1733</code>) / <code>STATE_MCLAG_LOCAL_INTF_TABLE</code> (L1520,1533) / <code>STATE_MCLAG_REMOTE_INTF_TABLE</code> (L1584,1633)</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし (読取のみ)</td>
+<td><code>p_counters_db-&gt;hgetall("COUNTERS_PORT_NAME_MAP")</code> (<code>mclaglink.cpp:66</code>) — OID 解決用、書込呼出 0 件</td>
+</tr>
+<tr>
+<td>ASIC_DB (直接)</td>
+<td>なし</td>
+<td><code>mclagsyncd</code> から SAI 呼出無し。APPL_DB 経由で <code>fdborch</code> / <code>isolationGroupOrch</code> が間接書込</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB / LOGLEVEL_DB</td>
+<td>なし</td>
+<td><code>mclagsyncd</code> 全体で参照 0 件</td>
+</tr>
+<tr>
+<td><code>iccpd</code> から直接</td>
+<td>なし</td>
+<td>iccpd は <code>mclagsyncd</code> への IPC メッセージのみで Redis 直書きコード無し (STATE_DB 参照はコメントのみ)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">STATE_DB 書込の対応表<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書込関数</th>
+<th>STATE_DB テーブル</th>
+<th>操作</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mclagsyncdSetIccpState()</code></td>
+<td><code>STATE_MCLAG_TABLE</code></td>
+<td><code>set(&lt;mlag_id&gt;, oper_status)</code></td>
+<td>ICCP セッション up/down</td>
+</tr>
+<tr>
+<td><code>mclagsyncdSetIccpRole()</code></td>
+<td><code>STATE_MCLAG_TABLE</code></td>
+<td><code>set(&lt;mlag_id&gt;, role, system_mac)</code></td>
+<td>active / standby ロール</td>
+</tr>
+<tr>
+<td><code>mclagsyncdSetSystemId()</code></td>
+<td><code>STATE_MCLAG_TABLE</code></td>
+<td><code>set(&lt;mlag_id&gt;, system_mac)</code></td>
+<td>システム MAC 通知</td>
+</tr>
+<tr>
+<td><code>mclagsyncdDelIccpInfo()</code></td>
+<td><code>STATE_MCLAG_TABLE</code></td>
+<td><code>del(&lt;mlag_id&gt;)</code></td>
+<td>ICCP 情報削除</td>
+</tr>
+<tr>
+<td><code>setLocalIfPortIsolate()</code></td>
+<td><code>STATE_MCLAG_LOCAL_INTF_TABLE</code></td>
+<td><code>set(&lt;if&gt;, port_isolate_peer_link)</code></td>
+<td>ローカル IF のピアリンク分離状態</td>
+</tr>
+<tr>
+<td><code>deleteLocalIfPortIsolate()</code></td>
+<td><code>STATE_MCLAG_LOCAL_INTF_TABLE</code></td>
+<td><code>del(&lt;if&gt;)</code></td>
+<td>ローカル IF エントリ削除</td>
+</tr>
+<tr>
+<td><code>mclagsyncdSetRemoteIfState()</code></td>
+<td><code>STATE_MCLAG_REMOTE_INTF_TABLE</code></td>
+<td><code>set("&lt;id&gt;\|&lt;if&gt;", oper_status)</code></td>
+<td>リモート IF oper 状態</td>
+</tr>
+<tr>
+<td><code>mclagsyncdDelRemoteIfInfo()</code></td>
+<td><code>STATE_MCLAG_REMOTE_INTF_TABLE</code></td>
+<td><code>del("&lt;id&gt;\|&lt;if&gt;")</code></td>
+<td>リモート IF エントリ削除</td>
+</tr>
+</tbody>
+</table>
+<p>これら STATE_DB エントリは <code>show mclag brief</code> / <code>show mclag interface</code> などの CLI が
+直接読みに行く参照源となる。</p>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/appl-mclag-side.md</code> を参照。</p>
+<!-- /side-effects -->
+
 <h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:link">
-<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
