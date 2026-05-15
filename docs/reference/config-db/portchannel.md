@@ -461,6 +461,113 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 
 <!-- /ordering -->
 
+<!-- pubsub -->
+## PUBSUB / Keyspace 通知メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-pubsub.md`
+> ソース: `sonic-swss-common/common/subscriberstatetable.cpp`, `producerstatetable.cpp`, `consumerstatetable.cpp`, `sonic-swss/cfgmgr/teammgrd.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+
+### 通知チャネル一覧
+
+| DB | Redis チャネル / パターン | 用途 |
+|---|---|---|
+| CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL\|*` | `TeamMgr` が `PSUBSCRIBE` — PORTCHANNEL SET/DEL 検知 |
+| APPL_DB (db=0) | `LAG_TABLE_CHANNEL@0` | `PortsOrch` の `ConsumerStateTable` が `SUBSCRIBE` — LAG_TABLE SET/DEL 受信 |
+| STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | `TeamMgr` が `SubscriberStateTable` で LAG 状態 (state=ok) を監視 |
+| STATE_DB (db=6) | `__keyspace@6__:PORT_TABLE\|*` | `TeamMgr::doPortUpdateTask()` がポート再作成イベントを検知 |
+
+### CONFIG_DB → TeamMgr: SubscriberStateTable (PSUBSCRIBE)
+
+`SubscriberStateTable` (`subscriberstatetable.cpp:20-22`) は初期化時に以下を実行する:
+
+```python
+m_keyspace = f"__keyspace@4__:PORTCHANNEL|*"
+PSUBSCRIBE(m_keyspace)  # Redis keyspace notification 購読
+```
+
+- CONFIG_DB の `PORTCHANNEL|<name>` キーへの HSET / DEL 操作が発生すると Redis が当該チャネルに `set` / `del` を PUBLISH する
+- `readData()` (`subscriberstatetable.cpp:45-83`) が `redisGetReply()` で非ブロッキング受信し `m_keyspace_event_buffer` に蓄積
+- `pops()` (`subscriberstatetable.cpp:95-165`) がバッファを消費し `KeyOpFieldsValuesTuple` に変換:
+  - `del` イベント → DEL コマンド (テーブル読取りなし)
+  - その他 → `m_table.get()` で実データを取得して SET コマンドに変換
+- 起動時は既存キーを全件バッファに積み込み初期同期を行う
+
+`teammgrd.cpp:55-73` が `TableConnector` 3 本 (PORTCHANNEL / PORTCHANNEL_MEMBER / STATE PORT_TABLE) を `Select` に登録し、fd ベースの epoll で通知を待つ:
+
+```cpp
+Select s;
+s.addSelectables(o->getSelectables());
+while (!received_sigterm) {
+    ret = s.select(&sel, SELECT_TIMEOUT);  // 1000ms タイムアウト
+    auto *c = (Executor *)sel;
+    c->execute();  // → TeamMgr::doTask() → doLagTask()
+}
+```
+
+### TeamMgr → APPL_DB: ProducerStateTable (PUBLISH)
+
+`TeamMgr` は `ProducerStateTable m_appLagTable` (APPL_DB / `LAG_TABLE`) を通じて APP_DB に書き込む。  
+`ProducerStateTable::set()` は Redis Lua スクリプト (EVALSHA) を実行し、以下を **1 トランザクション** で行う:
+
+1. Key を key-set (`LAG_TABLE_KEY_SET`) に `SADD`
+2. フィールドを Hash に `HSET` (`LAG_TABLE|<name>`)
+3. `redis.call('PUBLISH', KEYS[1], ARGV[1])` でチャネル `LAG_TABLE_CHANNEL@0` に通知 PUBLISH (`producerstatetable.cpp:108`)
+
+チャネル名の生成規則 (`table.h:88-96`):
+```
+getChannelName(tag) = "<tableName>_CHANNEL@<tag>"
+// → "LAG_TABLE_CHANNEL@0"
+```
+
+### APPL_DB → PortsOrch (LagOrch): ConsumerStateTable (SUBSCRIBE + EVALSHA)
+
+`orchdaemon.cpp:222` で `APP_LAG_TABLE_NAME` を priority 44 で登録:
+
+```cpp
+{ APP_LAG_TABLE_NAME, portsorch_base_pri + 4 },  // priority=44
+```
+
+`ConsumerStateTable` が `LAG_TABLE_CHANNEL@0` を `SUBSCRIBE` で購読する (`consumerstatetable.cpp:27`)。  
+PUBLISH を受信すると `pops()` (Lua EVALSHA) が key-set から key を取り出し `KeyOpFieldsValuesTuple` に変換し `PortsOrch::doTask()` を起動する。
+
+`portsorch.cpp:6527-6529` での分岐:
+
+```cpp
+else if (table_name == APP_LAG_TABLE_NAME || table_name == CHASSIS_APP_LAG_TABLE_NAME)
+    doLagTask(consumer);  // → SAI create_lag() / remove_lag()
+```
+
+処理優先度順 (`portsorch.cpp:6466-6478`): PORT → LAG (pri 44) → LAG_MEMBER → VLAN → VLAN_MEMBER。
+
+### STATE_DB 書戻しループ
+
+- `orchagent / LagOrch` が SAI LAG 作成完了後に `STATE_DB.LAG_TABLE|<name>` へ `state=ok` を書込む
+- `TeamMgr::isLagStateOk()` が `m_stateLagTable.get()` でこの値を確認し、LAG メンバ追加の可否を判断
+- `TeamMgr::doPortUpdateTask()` は `STATE_DB.PORT_TABLE` の SubscriberStateTable 通知を受け、ポート再作成後に `addLagMember()` を自動再実行する (`teammgr.cpp:439-472`)
+
+### エンドツーエンド通信シーケンス
+
+```
+CONFIG_DB PORTCHANNEL|PortChannelN  HSET
+  │  Redis keyspace notify
+  ▼
+PSUBSCRIBE "__keyspace@4__:PORTCHANNEL|*"
+  │  SubscriberStateTable.pops() → KeyOpFieldsValuesTuple(SET)
+  ▼
+TeamMgr::doLagTask() → addLag() → teamd spawn
+  │  ProducerStateTable.set() → HSET + PUBLISH "LAG_TABLE_CHANNEL@0"
+  ▼
+APPL_DB LAG_TABLE|PortChannelN
+  │  ConsumerStateTable SUBSCRIBE → pops() → KeyOpFieldsValuesTuple(SET)
+  ▼
+PortsOrch::doLagTask() → sai_lag_api->create_lag()
+  │  STATE_DB LAG_TABLE|PortChannelN  state=ok
+  ▼
+TeamMgr::isLagStateOk() = true → addLagMember() 可能
+```
+
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動・リトライ・リカバリ (Phase D)
 
