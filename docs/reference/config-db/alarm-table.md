@@ -150,6 +150,63 @@ YANG optional / event profile 未指定時の実行時フォールバック。
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E — コード由来)
+
+ALARM テーブルのスキーマ・運用に直接効く固定値。event profile や CONFIG_DB から上書き不能で、コード/HLD でリテラル固定されている。
+
+### severity 列挙値 (5 値、ハードコード文字列)
+
+| 値 | アラーム適用 | 出典 |
+|----|-------------|------|
+| `CRITICAL` | 可 | HLD §3.1.2 (event-alarm-framework.md:136) |
+| `MAJOR` | 可 | HLD :138 |
+| `MINOR` | 可 | HLD :140 |
+| `WARNING` | 可 | HLD :142 |
+| `INFORMATIONAL` | **不可** (one-shot event 専用) | HLD :144, :348 |
+
+eventd は event profile (`default.json`) に書かれた severity 文字列をそのまま ALARM テーブルへ書き込む。enum は YANG (`openconfig-alarms`) 側に定義され、コード上は文字列比較で扱われる。
+
+### テーブル名固定文字列
+
+`sonic-swss-common/common/schema.h:551-554`:
+
+```c
+#define EVENT_HISTORY_TABLE_NAME          "EVENT"
+#define EVENT_CURRENT_ALARM_TABLE_NAME    "ALARM"
+#define EVENT_STATS_TABLE_NAME            "EVENT_STATS"
+#define EVENT_ALARM_STATS_TABLE_NAME      "ALARM_STATS"
+```
+
+これらは `#define` で固定され、設定で変更不可。
+
+### retention / サイズ上限
+
+| 対象 | 上限 | 出典 |
+|------|------|------|
+| ALARM テーブル records 数 | **上限なし** (スナップショット) | HLD §3.1.7 |
+| ALARM テーブル保持日数 | **非永続** (リブートでクリア) | HLD §3.1.7 |
+| EVENT テーブル records 数 | `40000` (range 1-40000) | HLD :482, :491, :496 |
+| EVENT テーブル保持日数 | `30` (range 1-30) | HLD :482, :492, :497 |
+
+ALARM 側に records / days 上限は定義されておらず、`eventd.json` の `no-of-records` / `no-of-days` は EVENT テーブルにのみ適用される。
+
+### action 列挙 (プロトコル定数)
+
+ALARM テーブルへ作用する 4 操作 (HLD §3.1.4 / §3.1.5):
+
+- `RAISE_ALARM` — 行追加 (`action=RAISE` で格納)
+- `CLEAR_ALARM` — 対応行を削除
+- `ACK_ALARM` — `acknowledged=true` に更新
+- `UNACK_ALARM` — `acknowledged=false` に更新
+
+ALARM テーブル内の `action` フィールドは常に `"RAISE"` (CLEAR は行削除なのでテーブル上に残らない)。
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-constants.md`
+
+<!-- evidence: sonic-swss-common/common/schema.h:551-554, SONiC/doc/event-alarm-framework/event-alarm-framework.md:136-144,346-348,480-499 -->
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
