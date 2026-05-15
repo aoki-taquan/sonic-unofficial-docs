@@ -230,6 +230,56 @@ show feature status
 - `featured` デーモンが systemd サービス状態を監視し FEATURE テーブルと同期
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書き込み順依存 (Phase B)
+
+FEATURE テーブルへの書き込みは複数経路が重なるため、フィールドごとに「最終書き込み者」が異なる。誤った順序での操作はユーザ設定の消失やサービス誤動作を引き起こす。
+
+### 書き込み優先順序
+
+```
+① init_cfg.json.j2      — ビルド時に全フィールドを初期注入 (set_entry)
+② db_migrator.py        — 起動時マイグレーション (set_entry / mod_entry)
+③ FeatureRegistry       — パッケージ登録時 (set_entry、既存 DB 値優先ロジック付き)
+④ CLI                   — state / auto_restart / set_owner を部分更新 (mod_entry)
+⑤ featured デーモン     — state / delayed / has_*_scope を条件付き上書き (mod_entry)
+```
+
+### フィールド別「最終権限」
+
+| フィールド | CLI 変更可 | featured 上書き可 | 最終権限者 |
+|-----------|----------|-----------------|-----------|
+| `state` | ✅ (always_* 除く) | ✅ (always_* or template のみ) | CLI > featured (条件付) |
+| `auto_restart` | ✅ | ❌ | CLI |
+| `delayed` | ❌ | ✅ (DB と不一致時) | FeatureRegistry / featured |
+| `has_global_scope` | ❌ | ✅ (条件付) | FeatureRegistry / featured |
+| `has_per_asic_scope` | ❌ | ✅ (条件付) | FeatureRegistry / featured |
+| `has_per_dpu_scope` | ❌ | ❌ | init_cfg |
+| `high_mem_alert` | ❌ | ❌ | init_cfg |
+| `set_owner` | ✅ | ❌ | CLI |
+| `check_up_status` | ❌ | ❌ | FeatureRegistry (register 時) |
+| `support_syslog_rate_limit` | ❌ | ❌ | FeatureRegistry (register 時) |
+
+### 重要な順序依存ルール
+
+1. **FeatureRegistry は既存 DB 値を優先する** (`feature.py:71-80`):
+   `new_cfg = defaults ← current_cfg ← non_cfg_entries` の順で合成。`state` / `auto_restart` はユーザ設定が保持されるが、`delayed` / `has_*_scope` / `check_up_status` / `support_syslog_rate_limit` はパッケージ再インストール時に manifest 値で強制上書き。
+
+2. **featured は `auto_restart` を `state` より先に更新する** (`featured:200-217`):
+   `update_systemd_config()` → `update_feature_state()` の順で実行。逆順では、サービスが failed 状態になった後 auto_restart が更新されず再起動されないリスクがある。
+
+3. **`delayed=True` のフィーチャーは PortInitDone または 180 秒タイムアウト待ち** (`featured:273-275`):
+   先に FEATURE テーブルへ `state=enabled` を書き込んでも、条件成立まで systemd 起動は実行されない。
+
+4. **`set_owner=kube` への変更は KUBERNETES_MASTER 設定が前提**:
+   `KUBERNETES_MASTER` テーブルに k8s cluster 接続設定を書き込んでから `set_owner` を変更すること。逆順では featured が k8s 接続試行に失敗する。
+
+5. **`always_enabled` / `always_disabled` は CLI で変更不可** (`config/feature.py:24-25`):
+   これらの値は init_cfg.json.j2 または FeatureRegistry.register() が設定する。ユーザ変更が必要な場合は DB 直接操作またはビルド設定変更が必要。
+
+> **Evidence**: `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-host-services/scripts/featured:200-217,255-275`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
