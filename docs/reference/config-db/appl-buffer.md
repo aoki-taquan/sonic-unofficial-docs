@@ -526,6 +526,65 @@ flex counter スキップ判定として、プロファイル名に `_zero_` を
 
 <!-- /constants -->
 
+---
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID 解決のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`BufferOrch` は CONFIG_DB を**直接購読しない**ため、CONFIG_DB 側 `BUFFER_*` は `buffermgrd` 経由の Direction A 入力として扱われる（本ブロックには含めない）。
+
+### BUFFER_PROFILE_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `BUFFER_POOL_TABLE\|<pool>` | OID 解決 (`resolveFieldRefValue`) | `pool` フィールド指定の `SET`。プール未作成だと `field_not_resolved` で task 再試行 | `bufferorch.cpp` L640-650 |
+| `m_buffer_type_maps[BUFFER_POOL]` の object reference map | 削除時の逆引き | profile 削除時に pool 側 refcount を減算、参照中の pool は `m_pendingRemove` で削除保留 | `bufferorch.cpp` L560-585, L821 |
+
+### BUFFER_QUEUE_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `BUFFER_PROFILE_TABLE\|<profile>` | OID 解決 (`resolveFieldRefValue`) | `profile` フィールド指定の `SET`。未作成なら task 再試行 | `bufferorch.cpp` L961-992 |
+| `PORT\|<name>` (PortsOrch) | `gPortsOrch->getPort(port_name, port)` | key の port トークン。未 ready なら `field_not_ready` で再試行 | `bufferorch.cpp` L1033, L1111 |
+| `getPortVoQIds(port)` (PortsOrch) | VoQ id 列の取得 | `isSwitchTypeVoq()` 真のとき。VoQ スイッチでは port 単位 queue ではなく VoQ id を SAI に渡す | `bufferorch.cpp` L1051 |
+| `FLEX_COUNTER_DB` — `QUEUE_STAT_COUNTER` / `QUEUE_WATERMARK_STAT_COUNTER` | flex counter 動的登録 | 非 VoQ かつ `FlexCounterOrch::isCreateOnlyConfigDbBuffers()` 真、かつ queue/watermark counter 有効時 | `bufferorch.cpp` L1135-1158 |
+
+### BUFFER_PG_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `BUFFER_PROFILE_TABLE\|<profile>` | OID 解決 (`resolveFieldRefValue`) | `profile` フィールド指定の `SET` | `bufferorch.cpp` L1339-1397 |
+| `PORT\|<name>` (PortsOrch) | `gPortsOrch->getPort(port_name, port)` | key の port トークン。未 ready なら再試行 | `bufferorch.cpp` L1431, L1488 |
+| `FLEX_COUNTER_DB` — `PG_STAT_COUNTER` / `PG_WATERMARK_STAT_COUNTER` | flex counter 動的登録 | `FlexCounterOrch::isCreateOnlyConfigDbBuffers()` 真、かつ PG/watermark counter 有効時 | `bufferorch.cpp` L1513-1531 |
+| CONFIG_DB `BUFFER_PG` / APPL_DB `BUFFER_PG_TABLE` | warm-reboot 時の復旧スキャン | コンストラクタが既存設定有無を確認し、queue 既定値を保留 | `bufferorch.cpp` L113-141 |
+
+### BUFFER_PORT_INGRESS/EGRESS_PROFILE_LIST_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `BUFFER_PROFILE_TABLE\|<profile>` (複数) | OID 解決ループ | `profile_list` カンマ区切り要素を逐次 `resolveFieldRefValue` で解決 | `bufferorch.cpp` L1672-1739, L1862-1929 |
+| `PORT\|<name>` (PortsOrch) | `gPortsOrch->getPort()` | port 単位 `SET_PORT_ATTRIBUTE` 発行のため。未 ready なら再試行 | `bufferorch.cpp` L1762, L1952 |
+
+### BUFFER_POOL_TABLE の参照（および全テーブル共通の前提）
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `FLEX_COUNTER_DB` — `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | flex counter group 登録 / 削除 | `generateBufferPoolWatermarkCounterIdList()` 発火時 | `bufferorch.cpp` L247, L281, L316-348 |
+| PortsOrch 初期化 (`isInitDone()` / `isConfigDone()`) | ブロッキング | 常時。PortsOrch 未完了なら handler 全体が早期 return | `bufferorch.cpp` L22 |
+| `m_buffer_type_maps` object reference graph | 削除時整合性 | profile→pool / queue→profile / pg→profile / profile_list→profile の 4 種参照関係。参照中は `m_pendingRemove` で削除保留 | `bufferorch.cpp` L35-48, L560-585, L837-872 |
+
+!!! note "VoQ スイッチの queue 解決"
+    `BUFFER_QUEUE_TABLE` の SAI 反映は通常 port 単位の queue id を取るが、`gPortsOrch->isSwitchTypeVoq()` が真のときは `getPortVoQIds(port)` で system-wide な VoQ id リストに切り替わる (`bufferorch.cpp:1051`)。VoQ スイッチでは queue counter 自動登録 (`bufferorch.cpp:1135-1158`) もスキップされる。
+
+!!! note "FlexCounter 連動は条件付き"
+    `FlexCounterOrch::isCreateOnlyConfigDbBuffers()` が真のときのみ、APPL_DB `BUFFER_QUEUE_TABLE` / `BUFFER_PG_TABLE` の SET が FLEX_COUNTER_DB への counter 登録を駆動する。本フラグは CONFIG_DB の `FLEX_COUNTER_TABLE` で切替えられる (`bufferorch.cpp:1138-1158, L1513-1531`)。
+
+!!! warning "buffermgrd 側 CONFIG_DB 参照は本ブロック対象外"
+    CONFIG_DB の `BUFFER_POOL` / `BUFFER_PROFILE` / `BUFFER_PG` / `BUFFER_QUEUE` / `DEVICE_METADATA.localhost.buffer_model` / `PORT` / `PORT_QOS_MAP` 等は `buffermgrd` (`buffermgrdyn` / `buffermgr`) が読み出して APPL_DB に変換する。`bufferorch` から直接参照されるのは warm-reboot 復旧スキャン (`bufferorch.cpp:129-141`) のみ。
+
+詳細分析: `meta/_intermediate/cdb-flow/appl-buffer-cross-refs.md`
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^buforch]: `bufferorch.cpp` — `processBufferPool()` / `processBufferProfile()` / `processPriorityGroup()` / `processQueue()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp>
