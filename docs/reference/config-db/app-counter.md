@@ -203,6 +203,90 @@ FlowCounterRouteOrch は COUNTERS_DB への書き込みを 1 秒間隔のタイ�
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp,
+     sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp,
+     sonic-swss/orchagent/copporch.cpp -->
+
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` / `FLOW_COUNTER_ROUTE_PATTERN` 周辺で実装に直書きされた定数群。CONFIG_DB / YANG / 環境変数からは変更できず、変更にはソースビルドが必要。
+
+### CONFIG_DB key / capability 文字列
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FLOW_CNT_TRAP_KEY` | `"FLOW_CNT_TRAP"` | `FLEX_COUNTER_TABLE` の trap 用 key | `flexcounterorch.cpp:58` |
+| `FLOW_CNT_ROUTE_KEY` | `"FLOW_CNT_ROUTE"` | `FLEX_COUNTER_TABLE` の route 用 key | `flexcounterorch.cpp:59` |
+| `FLOW_COUNTER_ROUTE_KEY` | `"route"` | `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE` のキー | `flowcounterrouteorch.cpp:22` |
+| `FLOW_COUNTER_SUPPORT_FIELD` | `"support"` | capability テーブルの値フィールド名 | `flowcounterrouteorch.cpp:23` |
+| `ROUTE_PATTERN_MAX_MATCH_COUNT_FIELD` | `"max_match_count"` | `FLOW_COUNTER_ROUTE_PATTERN` のフィールド名 | `flowcounterrouteorch.cpp:24` |
+| `FLEX_COUNTER_STATUS_FIELD` | `"FLEX_COUNTER_STATUS"` | enable/disable フィールド名 | swss-common `schema.h` |
+| `POLL_INTERVAL_FIELD` | `"POLL_INTERVAL"` | ポーリング間隔フィールド名 | swss-common `schema.h` |
+
+### ポーリング間隔のデフォルト (10 秒)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` | `FLOW_CNT_TRAP` の `POLL_INTERVAL` 未設定時の値 | `copporch.cpp:189` |
+| `ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS` | `10000` | `FLOW_CNT_ROUTE` の `POLL_INTERVAL` 未設定時の値 | `flowcounterrouteorch.cpp:26` |
+
+### 非同期タイマー定数 (1 秒)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` (秒) | `FlowCounterRouteOrch` 内 pending route 再 bind 周期 | `flowcounterrouteorch.cpp:21,43` |
+| `"FLEX_COUNTER_UPD_TIMER"` | (タイマー名) | `ExecutableTimer` の identifier 文字列 | `flowcounterrouteorch.cpp:45` |
+
+### パターンマッチ既定値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT` | `30` | `max_match_count` 未指定 / `0` 指定時の silent fallback 値 | `flowcounterrouteorch.cpp:25,73,84` |
+
+### Warm restart 遅延
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FLEX_COUNTER_DELAY_SEC` | `60` | warm boot 後、`FlexCounterOrch::doTask` を no-op に保つ秒数 | `flexcounterorch.cpp:44,127` |
+
+### 内部 group 名 (`flexCounterGroupMap`)
+
+CONFIG_DB key から FLEX_COUNTER_DB 上の group 名へのマッピングは静的マップで固定。
+
+| CONFIG_DB key | 内部 group constant | ソース |
+|---|---|---|
+| `FLOW_CNT_TRAP` | `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `flexcounterorch.cpp:87` |
+| `FLOW_CNT_ROUTE` | `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` | `flexcounterorch.cpp:88` |
+
+### SAI generic counter stat リスト (固定 2 種)
+
+| stat | 意味 | ソース |
+|------|------|--------|
+| `SAI_COUNTER_STAT_PACKETS` | パケット数 | `flow_counter_handler.cpp:12` |
+| `SAI_COUNTER_STAT_BYTES` | バイト数 | `flow_counter_handler.cpp:13` |
+
+`generic_counter_stat_ids[]` (`flow_counter_handler.cpp:10-13`) で `std::vector<sai_counter_stat_t>` として定義。trap / route 両グループ共通でユーザは増減不可。
+
+### StatsMode 文字列マッピング
+
+| StatsMode enum | 文字列 | ソース |
+|---|---|---|
+| `StatsMode::READ` | `"STATS_MODE_READ"` | `flex_counter_manager.cpp:27` |
+| `StatsMode::READ_AND_CLEAR` | `"STATS_MODE_READ_AND_CLEAR"` | `flex_counter_manager.cpp:28` |
+
+`FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` 両グループとも `StatsMode::READ` 固定 (`copporch.cpp:198`, `flowcounterrouteorch.cpp:35`)。CONFIG_DB からの変更手段なし。
+
+!!! note "ユーザ可変項目との対比"
+    `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP|FLOW_CNT_ROUTE` でユーザが変更できるのは `FLEX_COUNTER_STATUS` と `POLL_INTERVAL` のみ。stats_mode・stat ID リスト・group 名・warm-up 遅延・1 秒タイマー周期・capability キー文字列はすべてビルド時固定。
+
+詳細根拠は `meta/_intermediate/cdb-flow/app-counter-constants.md` を参照。
+
+<!-- /constants -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
