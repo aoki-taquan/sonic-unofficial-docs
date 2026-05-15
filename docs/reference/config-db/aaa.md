@@ -400,4 +400,89 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`AAA` / `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER` テーブル群および `hostcfgd` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-host-services/scripts/ldap.py`。
+
+### PAM / NSS 設定ファイルパス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `PAM_AUTH_CONF` | `/etc/pam.d/common-auth-sonic` | SONiC 専用 PAM auth 共通インクルード (テンプレートから再生成) | hostcfgd L28 |
+| `PAM_PASSWORD_CONF` | `/etc/pam.d/common-password` | パスワードポリシー PAM 設定 | hostcfgd L30 |
+| `NSS_TACPLUS_CONF` | `/etc/tacplus_nss.conf` | libnss-tacplus 設定ファイル | hostcfgd L34 |
+| `NSS_RADIUS_CONF` | `/etc/radius_nss.conf` | libnss-radius 設定ファイル | hostcfgd L36 |
+| `NSS_CONF` | `/etc/nsswitch.conf` | NSS スイッチ設定 (`passwd:` 行を書換) | hostcfgd L39 |
+| `LDAP_CONF` | `/etc/ldap/ldap.conf` | LDAP クライアント設定 | hostcfgd L41 |
+| `NSLCD_CONF` | `/etc/nslcd.conf` | nslcd デーモン設定 | hostcfgd L43 |
+| `PAM_SESSION_CONF` | `/etc/pam.d/common-session` | PAM session 共通設定 (mkhomedir ルール挿入対象) | hostcfgd L44 |
+| `PAM_SESSION_NONINT_CONF` | `/etc/pam.d/common-session-noninteractive` | PAM session noninteractive | hostcfgd L45 |
+| `ETC_PAMD_SSHD` | `/etc/pam.d/sshd` | sshd PAM (`common-auth` インクルードを `common-auth-sonic` に書換) | hostcfgd L50 |
+| `ETC_PAMD_LOGIN` | `/etc/pam.d/login` | login PAM (同上の include 書換) | hostcfgd L51 |
+| `ETC_LOGIN_DEF` | `/etc/login.defs` | Linux パスワードエージング設定 | hostcfgd L52 |
+| `RADIUS_PAM_AUTH_CONF_DIR` | `/etc/pam_radius_auth.d/` | サーバごと `{ip}_{auth_port}.conf` を 0600 で生成するディレクトリ | hostcfgd L97, L829 |
+
+> **注意**: SONiC は `/etc/pam.d/common-auth` (Debian 標準) を直接書換せず、`/etc/pam.d/common-auth-sonic` を生成して `sshd` / `login` の include 行のみ書き換える。これにより Debian の `pam-auth-update` 機構を回避している。
+
+### PAM モジュール / セッションルール
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MKHOME_DIR_RULE` | `session required pam_mkhomedir.so skel=/etc/skel/ umask=0022 silent` | リモート認証ユーザのホーム自動作成ルール (`common-session` 末尾の `# end of pam-auth-update config` 直前に挿入) | hostcfgd L46-47 |
+| `MKHOME_DIR_LIB` | `pam_mkhomedir.so` | mkhomedir モジュール名 (ルール存在チェック) | hostcfgd L48 |
+
+### TACACS+ サーバデフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `TACPLUS_SERVER_PASSKEY_DEFAULT` | `""` (空) | `TACPLUS_SERVER.passkey` 未指定時のデフォルト (= passkey なし) | hostcfgd L87 |
+| `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` 秒 | `TACPLUS_SERVER.timeout` 未指定時のデフォルト | hostcfgd L88 |
+| `TACPLUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | `TACPLUS_SERVER.auth_type` 未指定時のデフォルト認証方式 | hostcfgd L89 |
+| TACACS+ TCP ポート | `49` (YANG default) | `hostcfgd` 内にリテラル定数なし。CONFIG_DB `TACPLUS_SERVER.tcp_port` から直接 NSS/PAM テンプレートに渡される (IANA well-known) | YANG: sonic-system-tacacs |
+
+### RADIUS サーバデフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `RADIUS_SERVER_AUTH_PORT_DEFAULT` | `"1812"` (UDP) | `RADIUS_SERVER.auth_port` 未指定時 (RFC 2865) | hostcfgd L92 |
+| `RADIUS_SERVER_PASSKEY_DEFAULT` | `""` (空) | RADIUS 共有秘密未指定時 | hostcfgd L93 |
+| `RADIUS_SERVER_RETRANSMIT_DEFAULT` | `"3"` | 再送回数デフォルト | hostcfgd L94 |
+| `RADIUS_SERVER_TIMEOUT_DEFAULT` | `"5"` 秒 | タイムアウトデフォルト | hostcfgd L95 |
+| `RADIUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | 認証方式デフォルト | hostcfgd L96 |
+| `RADIUS_SERVER_SKIP_MSG_AUTH` | `False` | Message-Authenticator 属性スキップフラグ | hostcfgd L98 |
+
+### LDAP デフォルト (ldap.py)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LdapCfg.PORT` | `389` (TCP) | `LDAP_SERVER.port` 未指定時のデフォルト (RFC 4511) | ldap.py L15 |
+| `LdapCfg.TIMEOUT_SEARCH` | `5` 秒 | `LDAP.search_timeout` デフォルト | ldap.py L13 |
+| `LdapCfg.TIMEOUT_BIND` | `5` 秒 | `LDAP.bind_timeout` デフォルト | ldap.py L14 |
+| `LdapCfg.VERSION` | `'3'` | LDAP プロトコルバージョン | ldap.py L12 |
+| `LdapCfg.BASE` | `'ou=users,dc=example,dc=com'` | サンプル base_dn プレースホルダ (本番で必ず上書き) | ldap.py L9 |
+| `LdapCfg.SCOPE` | `"sub"` | デフォルト検索スコープ (subtree) | ldap.py L16 |
+| `TLS1_2` cipher | `SECURE128:SECURE192:SECURE256:-VERS-TLS1.0:-VERS-DTLS1.0:-VERS-TLS1.1:-SHA1` | LDAPS TLS1.2 GnuTLS 暗号スイート (固定) | ldap.py L4 |
+| `TLS1_3` cipher | `SECURE128:SECURE192:SECURE256:-VERS-TLS-ALL:-VERS-DTLS-ALL:+VERS-TLS1.3` | LDAPS TLS1.3 GnuTLS 暗号スイート (固定) | ldap.py L5 |
+
+> **注意**: LDAPS の well-known ポート `636` は定数化されていない。`LdapCfg.PORT = 389` のみ。LDAPS 使用時はユーザが `LDAP_SERVER.port` で明示 636 を指定する必要がある。`ldap_mode` (`ldap`/`ldaps`) は URI スキームのみ切替する (ldap.py L58)。
+
+### Linux login.def デフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `LINUX_DEFAULT_PASS_MAX_DAYS` | `99999` | パスワードハードニング無効時の最大有効日数 (Debian 標準) | hostcfgd L57 |
+| `LINUX_DEFAULT_PASS_WARN_AGE` | `7` | パスワード期限切れ警告日数 | hostcfgd L58 |
+
+### FIPS
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FIPS_CONFIG_FILE` | `/etc/sonic/fips.json` | FIPS モード設定ファイル | hostcfgd L101 |
+| `OPENSSL_FIPS_CONFIG_FILE` | `/etc/fips/fips_enable` | OpenSSL FIPS 有効化フラグ | hostcfgd L102 |
+| `DEFAULT_FIPS_RESTART_SERVICES` | `['ssh', 'telemetry.service', 'restapi']` | FIPS 切替時に再起動するサービス固定リスト | hostcfgd L103 |
+
+詳細な定数一覧 (mkhomedir 正規表現、PAM_SESSION_LAST_LINE マーカ、SSH min/max 値、nslcd 制御等) は `meta/_intermediate/cdb-flow/aaa-constants.md` を参照。
+<!-- /constants -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->
