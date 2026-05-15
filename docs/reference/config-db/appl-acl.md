@@ -574,6 +574,51 @@ SAI: sai_acl_api->create_acl_table / create_acl_entry
 
 ---
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は `AclOrch::doTask()` (`aclorch.cpp:4283-4292`) で **CONFIG_DB 版と同一ハンドラ** へ振り分けられる。したがってプラットフォーム差は CONFIG_DB 版 [`ACL_RULE`](acl-rule.md) の「プラットフォーム差 (Phase H)」とほぼ完全に共通する。本節は APPL_DB 経路で**実際に観測される**差分のみを整理する。
+
+### APPL_DB 経路で発火する差分
+
+| capability | スコープ | APPL_DB での実発火 | 効果 | evidence |
+|---|---|---|---|---|
+| **ASIC action capability** (`isAclActionSupported`) | ASIC (SAI 動的照会) | vnetorch の `REDIRECT_ACTION` / dashenifwdorch の REDIRECT 系 | SAI が action 未実装の ASIC では `validateAddAction()` が false → rule INACTIVE | `aclorch.cpp:1681-1688, 3987-4042, 5237-5246` |
+| **ACL 優先度範囲** (`m_minPriority` / `m_maxPriority`) | ASIC (起動時 SAI 取得) | 全書込み元 | 範囲外の `PRIORITY` で `setPriority()` false → rule INACTIVE | `aclorch.cpp:3687-3699, 1654-1661` |
+| **SmartSwitch DPU 分岐** (`gMySwitchType == "dpu"`) | SmartSwitch DPU 側 orchagent | dashenifwdorch (DPU 側) のみ | DPU 側では priority 範囲取得と `queryAclActionCapability()` を **スキップ** → `m_minPriority = m_maxPriority = 0` のまま動作、action capability 未検証 | `aclorch.cpp:3686-3710` |
+| **multi-asic namespace** | 構成 | 全書込み元 (namespace 毎に独立 orchagent) | 各 ASIC の SAI capability / 優先度範囲が異なれば、同一 APPL_DB エントリでも namespace ごとに異なる挙動 | 構成上の派生 (`aclorch.cpp` 自体は namespace 非対応) |
+
+### APPL_DB 経路では発火しない差分
+
+CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6` / PFCWD OUT_PORT / Egress range / ACL range 上限 / META_DATA 動的 capability / DTel 系 action は、いずれも APPL_DB 書込み元プロセス (`vnetorch` / `mclagsyncd` / `dashenifwdorch`) が**使用しない**テーブルタイプ・match キー・action に紐付くため、APPL_DB 経路では発火しない。
+
+| 書き込み元 | 使用 `type` | 使用 match / action | 影響する平台差 |
+|---|---|---|---|
+| `vnetorch` | `VNET_TUNNEL_TERM` (custom type) | `MATCH_DST_IP` / `MATCH_TUNNEL_TERM` / `ACTION_REDIRECT_ACTION` | ASIC capability (REDIRECT support) のみ |
+| `mclagsyncd` | `L3` | `IP_TYPE=ANY` / `OUT_PORTS` / `PACKET_ACTION=DROP` | 実質なし (全 ASIC で DROP 対応) |
+| `dashenifwdorch` | (ENI fwd custom) | REDIRECT 系 | ASIC capability + DPU 分岐 |
+
+!!! warning "SmartSwitch DPU 側で APPL_DB ACL を書く場合"
+    `gMySwitchType == "dpu"` の orchagent では `AclOrch::init()` が
+    `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` / `MAXIMUM_PRIORITY` を取得せず、
+    `queryAclActionCapability()` も呼ばれない (`aclorch.cpp:3686`)。結果として
+    `AclRule::m_minPriority = m_maxPriority = 0` の static 初期値のまま動作し、
+    `PRIORITY` 値の範囲チェックが事実上「0 以外を全て拒否」する状態になる点に注意。
+    `dashenifwdorch` が書き込む rule の `PRIORITY` が 0 でない場合、DPU 側では INACTIVE になる可能性がある。
+
+!!! note "multi-asic 環境でのばらつき"
+    multi-asic シャーシでは ASIC ごとに SAI capability と priority 範囲が異なる場合があり、
+    同じ vnetorch 設定でも namespace (`asic0` / `asic1` / ...) ごとに rule が
+    INACTIVE になる ASIC とそうでない ASIC が混在し得る。確認は各 namespace の
+    `sonic-db-cli -n asicN STATE_DB hgetall 'ACL_TABLE_TABLE|<name>'` で行う。
+
+詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md#プラットフォーム差-phase-h) を参照。
+
+> **証跡**: `AclOrch::init()` priority 範囲取得 `aclorch.cpp:3687-3699`、DPU 分岐 `aclorch.cpp:3686-3710`、`isAclActionSupported()` `aclorch.cpp:5237-5246`、`validateAddAction()` `aclorch.cpp:1681-1688`、`queryAclActionCapability()` `aclorch.cpp:3987-4042`、`setPriority()` 範囲チェック `aclorch.cpp:1654-1661`、書き込み元仕様 `vnetorch.cpp:3775-3837` / `mclaglink.cpp:325-373` / `dashenifwdorch.cpp:619-643`。詳細分析 `meta/_intermediate/cdb-flow/appl-acl-platform.md`
+<!-- /platform -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)

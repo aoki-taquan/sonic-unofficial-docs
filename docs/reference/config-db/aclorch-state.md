@@ -301,6 +301,63 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+本ページの STATE_DB 3 テーブル (`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`) は `AclOrch` のみが書き手で、`swss::Table::set/del` を直接呼ぶ（戻り値なし）。よって「STATE_DB 書込み自体の失敗」はアプリ層で観測できず、Redis 接続例外時は orchagent プロセスごと abort して systemd 再起動で自己回復する経路に集約される。本節は (A) SAI capability クエリ失敗時のフォールバック、(B/C) `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` ステータス書込みに至る失敗分岐、(D) SAI リソース枯渇時の retry cache 経由経路、(E) `init()` 起動時クリアの例外扱い、の 5 系統を整理する。
+
+### A. SAI capability クエリ失敗 → フォールバック (`ACL_STAGE_CAPABILITY_TABLE`)
+
+| 失敗条件 | 結果 | STATE_DB 反映 | evidence |
+|---|---|---|---|
+| `SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT` 取得失敗 | WARN ログ → 両 stage で `initDefaultAclActionCapabilities()` → `putAclActionCapabilityInDB()`。retry なし、1 回で確定 | `ACL_STAGE_CAPABILITY_TABLE|INGRESS` / `|EGRESS` に `defaultAclActionsSupported` のフォールバック値 (`action_list` = INGRESS: `PACKET_ACTION,MIRROR_INGRESS,NO_NAT` / EGRESS: `PACKET_ACTION`、`is_action_list_mandatory="false"`) | `aclorch.cpp:3984, 4028-4038, 4104-4118, 168-196` |
+| stage 別 `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS/_EGRESS` 取得失敗 | WARN ログ → 当該 stage のみフォールバック、他 stage は SAI 成功値 | 片側フォールバック、片側 SAI 動的値 | `aclorch.cpp:3999, 4016-4022` |
+| `sai_query_attribute_capability(SAI_SWITCH_ATTR_ACL_USER_META_DATA_RANGE)` 失敗 | WARN ログ → `m_aclMetaDataSupported=false` で続行 | `action_list` から DSCP metadata action が除外される | `aclorch.cpp:3590, 4069-4072` |
+| `sai_query_attribute_capability` (`FIELD_ACL_USER_META` / `ACTION_SET_ACL_META_DATA`) 失敗 | WARN ログ → 関連 capability false で続行 | `action_list` 内容に間接反映 | `aclorch.cpp:3634, 3648` |
+
+!!! note "capability クエリは retry なし・1 回限り確定"
+    `AclOrch::init()` 内で 1 回しか呼ばれず、SAI 一時失敗時もオンライン再試行はしない。orchagent プロセス寿命中、`ACL_STAGE_CAPABILITY_TABLE` の値はフォールバック確定のまま固定される。読み手 (`acl-loader` / `sonic-mgmt-common`) は orchagent 再起動まで古い値を参照する。
+
+### B. `ACL_TABLE_TABLE` 書込みに至る失敗分岐 (`doAclTableTask`)
+
+| 失敗条件 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|
+| `addAclTable()` 失敗（SAI `create_acl_table` 失敗等） | ERROR ログ → `setAclTableStatus(PENDING_CREATION)` → `it++`（次サイクル再試行） | `"Pending creation"` | `aclorch.cpp:5474-5485` |
+| `updateAclTable()` 失敗 | ERROR ログ → `setAclTableStatus` 呼ばれず → `it++`（前ステータス保持） | （前値保持） | `aclorch.cpp:5457-5470` |
+| バリデーション失敗（不正設定: 未定義 type / stage 不一致 / port 解決不能等） | ERROR ログ → `setAclTableStatus(INACTIVE)` → `erase(it)`（恒久スキップ） | `"Inactive"` | `aclorch.cpp:5488-5495` |
+| `removeAclTable()` 失敗（配下ルール削除失敗 / SAI `remove_acl_table` 失敗） | `setAclTableStatus(PENDING_REMOVAL)` → `it++`（次サイクル再試行） | `"Pending removal"` | `aclorch.cpp:5505-5510` |
+| 未知 op（SET/DEL 以外） | ERROR ログ → `erase(it)` | （前値保持） | `aclorch.cpp:5512-5516` |
+
+### C. `ACL_RULE_TABLE` 書込みに至る失敗分岐 (`doAclRuleTask`)
+
+| 失敗条件 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|
+| 親 `ACL_TABLE` 未作成 (`table_oid == SAI_NULL_OBJECT_ID`) | INFO ログ → `it++`（テーブル作成待機、再キュー） | （書込まれない） | `aclorch.cpp:5563-5565` |
+| 属性検証失敗 (`bAllAttributesOk=false`) または `newRule->validate()` 失敗 | ERROR ログ → `setAclRuleStatus(INACTIVE)` → `erase(it)`（恒久スキップ） | `"Inactive"` | `aclorch.cpp:5700-5705` |
+| `addAclRule()` 失敗 + リソース枯渇 (`isSaiStatusResourceFull` 真) + retry cache 投入成功 | WARN ログ → `setAclRuleStatus(PENDING_CREATION)` → retry cache park → `erase(it)` | `"Pending creation"` | `aclorch.cpp:5673-5685` |
+| `addAclRule()` 失敗 + リソース枯渇だが retry cache 投入失敗 | ERROR ログ → `setAclRuleStatus(PENDING_CREATION)` → `it++` | `"Pending creation"` | `aclorch.cpp:5686-5692` |
+| `addAclRule()` 失敗（リソース枯渇以外、SAI `create_acl_entry` 一般失敗） | `setAclRuleStatus(PENDING_CREATION)` → `it++` | `"Pending creation"` | `aclorch.cpp:5694-5698` |
+| `removeAclRule()` 失敗 | `setAclRuleStatus(PENDING_REMOVAL)` → `it++` | `"Pending removal"` | `aclorch.cpp:5722-5728` |
+
+### D. retry cache 経由の遷移 (SAI リソース枯渇 → 解放)
+
+`isSaiStatusResourceFull()` が真で `addAclRule()` が失敗したルールは `RETRY_CST_SAI_RESOURCE+table_id` 制約付きで retry cache に park される。**同一テーブル内の他ルール DEL** が成功 (`ruleExisted==true`) すると `notifyRetry(this, tableName, RETRY_CST_SAI_RESOURCE+table_id)` で park 中ルールが `m_toSync` に再キューされ、再度 `addAclRule()` が走る。成功時に `setAclRuleStatus(ACTIVE)` で `"Pending creation"` → `"Active"` 上書き、再失敗時は `"Pending creation"` 維持。`ruleExisted==false` の場合は `notifyRetry()` が呼ばれず park 滞留が継続する（evidence: `aclorch.cpp:5673-5692, 5710-5721, 5670`）。
+
+### E. `init()` 起動時 STATE_DB クリアの例外扱い
+
+`removeAllAclTableStatus()` / `removeAllAclRuleStatus()` は `m_aclTableStateTable.getKeys()` と `del(key)` を呼ぶ。Redis I/O エラー時、`swss::DBConnector` 系から `system_error` 例外が送出されうるが `AclOrch::init()` 側に try/catch はない。例外は orchdaemon まで伝播し orchagent プロセス abort、systemd で再起動 → 再 `init()` で再試行という自己回復経路を取る（evidence: `aclorch.cpp:3479-3481, 6116-6135`）。
+
+### 検出ロジック補足
+
+- **`status` 値は 5 状態** (`"Active"` / `"Inactive"` / `"Pending creation"` / `"Pending removal"` / エントリ削除)。失敗経路では `"Inactive"` が恒久スキップ、`"Pending creation"` / `"Pending removal"` が再試行ループに対応する。
+- **`setAclTableStatus` / `setAclRuleStatus` / `putAclActionCapabilityInDB` の戻り値なし**: `swss::Table::set/del` は void。Redis 失敗は例外として伝播し、orchagent プロセス再起動でのみ回復する。STATE_DB 不整合が永続することは設計上ない（再起動後 CONFIG_DB / APPL_DB 再投入で再構築）。
+- **capability フォールバックの不可逆性**: SAI が後から capability を返せるようになっても再クエリされない。`ACL_STAGE_CAPABILITY_TABLE` の値は orchagent プロセス寿命中固定。
+- **retry cache の解放契機の非自明性**: 「無関係に見えるルール A の DEL がルール B を `Pending creation` → `Active` に遷移させる」順序がある。Phase B（順序依存 #5）と表裏。
+
+> **証跡**: `queryAclActionCapability()` L3975-4054、`initDefaultAclActionCapabilities()` L4104-4118、`putAclActionCapabilityInDB()` L4056-4101、`doAclTableTask()` L5450-5518、`doAclRuleTask()` L5520-5734、`setAclTableStatus()` L6088-6093、`setAclRuleStatus()` L6102-6107、`removeAllAclTableStatus()` / `removeAllAclRuleStatus()` L6116-6135、`isSaiStatusResourceFull` L5673、`notifyRetry` L5720。詳細グレップ証跡は `meta/_intermediate/cdb-flow/aclorch-state-failure.md` を参照。
+
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
