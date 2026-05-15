@@ -479,4 +479,38 @@ CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (SAI capability / vendor)
+
+### SAI capability クエリと fallback
+
+`CoppOrch` 起動時に `sai_query_attribute_enum_values_capability()` で `SAI_HOSTIF_TRAP_ATTR_TRAP_TYPE` の対応 enum 一覧を取得し、`supported_trap_ids` セットに格納して STATE_DB `COPP_TRAP_CAPABILITY_TABLE|traps` に publish する。<!-- evidence: copporch.cpp:240-299 -->
+
+クエリが失敗した場合（`SAI_STATUS != SUCCESS`）、ソースコード内に static 定義された `default_supported_trap_ids` リストへフォールバックする。このリストは変更凍結（コメント参照）されており、新しい trap_id は追加されない。<!-- evidence: copporch.cpp:106-151 -->
+
+!!! note "neighbor_miss の制約"
+    `copp_cfg.j2` は `neighbor_miss` エントリを定義するが、`default_supported_trap_ids` には含まれない。SAI capability クエリが失敗するベンダー環境では `neighbor_miss` は非サポート扱いとなり NOTICE ログでスキップされる。
+
+### NAT 非対応プラットフォーム
+
+`SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が 0 を返す（または取得失敗）スイッチでは `gIsNatSupported = false` のまま。この場合 `src_nat_miss` / `dest_nat_miss` の trap_id は適用されない。<!-- evidence: main.cpp:935-948, copporch.cpp:401-405 -->
+
+### Mellanox / Marvell-Prestera — trap_priority 非対応
+
+`getenv("platform")` で `"mellanox"` または `"marvell-prestera"` を含む場合、`SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` の SET を skip する（サイレント — NOTICE ログなし）。これはデフォルト trap 初期化時と `processCoppTrap()` でのフィールド処理の両方に適用される。<!-- evidence: copporch.cpp:354, 1186-1194 -->
+
+Broadcom 等その他プラットフォームでは priority=1 をデフォルトとして設定し、`COPP_GROUP.trap_priority` のカスタム値も有効になる。
+
+### プラットフォーム差サマリー
+
+| プラットフォーム条件 | 影響 | 挙動 |
+|---|---|---|
+| SAI capability クエリ非対応 | `trap_ids` の一部 | `default_supported_trap_ids` フォールバック。`neighbor_miss` 等が無効 |
+| `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY == 0` | `src_nat_miss`, `dest_nat_miss` | スキップ (NOTICE ログ) |
+| `platform` 環境変数に `"mellanox"` | `trap_priority` | SAI 属性 SET なし (サイレント skip) |
+| `platform` 環境変数に `"marvell-prestera"` | `trap_priority` | 同上 |
+| Broadcom 等その他 | `trap_priority` | priority 有効。SET コマンドが SAI に反映される |
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 7a3847939b09 -->
