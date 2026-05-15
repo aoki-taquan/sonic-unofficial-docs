@@ -22600,6 +22600,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールドの暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールドの暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mode-yang-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode — YANG-実装乖離（軽度）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#family-prefix_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        family 既定 — PREFIX_SET には実装側フォールバックなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action 既定（参考 — PREFIX メンバ側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34946,6 +34996,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールドの暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールドの暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mode-yang-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mode — YANG-実装乖離（軽度）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#family-prefix_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        family 既定 — PREFIX_SET には実装側フォールバックなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#action-prefix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action 既定（参考 — PREFIX メンバ側）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cdb" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35332,6 +35432,43 @@
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- defaults -->
+<h2 id="phase-a">フィールドの暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>frrcfgd (<code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code>) のコード精読により判明したコード由来のデフォルトと、YANG 宣言との乖離点<sup id="fnref:fdef"><a class="footnote-ref" href="#fn:fdef">3</a></sup>。</p>
+<h3 id="mode-yang-"><code>mode</code> — YANG-実装乖離（軽度）<a class="headerlink" href="#mode-yang-" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>YANG デフォルト</th>
+<th>frrcfgd 実装挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フィールド不在</td>
+<td><code>"IPv4"</code></td>
+<td>エラーログを出して当該 PREFIX_SET エントリを<strong>完全スキップ</strong>（<code>if 'mode' not in data: continue</code>、L2901-2903）</td>
+</tr>
+<tr>
+<td><code>"IPv4"</code> / <code>"ipv4"</code> / <code>"IPV4"</code></td>
+<td>—</td>
+<td><code>.lower()</code> で正規化し <code>MatchPrefixList('ipv4')</code> → <code>AF_INET</code></td>
+</tr>
+<tr>
+<td><code>"IPv6"</code> 等それ以外</td>
+<td>—</td>
+<td><code>MatchPrefixList(&lt;value&gt;)</code> で <code>af_mode == 'ipv4'</code> 一致以外は <strong>すべて <code>AF_INET6</code> にフォールバック</strong>（L1665）。typo (<code>"ipv5"</code> 等) も IPv6 として扱われる</td>
+</tr>
+</tbody>
+</table>
+<p>YANG モードで投入する経路（sonic-yang-mgmt / <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> YANG 検証 / GNMI）では YANG default <code>"IPv4"</code> が補完される。<code>redis-cli</code> / <code>sonic-db-cli hset</code> で直接 <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く場合は <code>mode</code> 欠落で frrcfgd が無反応になる点に注意。</p>
+<h3 id="family-prefix_set">family 既定 — <code>PREFIX_SET</code> には実装側フォールバックなし<a class="headerlink" href="#family-prefix_set" title="Permanent link">&para;</a></h3>
+<p><code>MatchPrefixList.__init__</code> は <code>af_mode=None</code> で生成すると <code>self.af = None</code> となり、その後 <code>add_prefix()</code> の最初の呼び出しで <code>__get_ip_af()</code> が prefix 文字列から family を自動推定する（L1660-1690）。ただしこの「最初の prefix の family を採用」する経路は <strong><code>NEIGHBOR_SET</code> / <code>NEXTHOP_SET</code> ハンドラ専用</strong>で、<code>PREFIX_SET</code> ハンドラからは常に <code>mode</code> 引数付きで <code>MatchPrefixList(set_mode)</code> を呼ぶため到達しない。よって <code>PREFIX_SET</code> の family 既定は YANG レイヤ (<code>default "IPv4"</code>) のみが提供する。</p>
+<h3 id="action-prefix"><code>action</code> 既定（参考 — PREFIX メンバ側）<a class="headerlink" href="#action-prefix" title="Permanent link">&para;</a></h3>
+<p><code>MatchPrefix.__init__</code> および <code>MatchPrefixList.add_prefix</code> の Python デフォルト引数は <code>action='permit'</code>（L1622, L1682）。<code>PREFIX_SET</code> テーブル自身に <code>action</code> フィールドはなく、メンバ <code>PREFIX_LIST</code> / <code>PREFIX_NOSEQ_LIST</code> 側で持つため、ここでの既定はあくまで Python メソッド側のフォールバック。YANG default も <code>permit</code> で一致。</p>
+<!-- /defaults -->
+
 <!-- runtime-trace -->
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
@@ -35383,6 +35520,9 @@
 </li>
 <li id="fn:2">
 <p>YANG 定義: <code>sonic-routing-policy-sets.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fdef">
+<p>frrcfgd 実装: <code>sonic-net/sonic-buildimage</code>, <code>src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> L1605-1700, L2894-2910. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</a>&#160;<a class="footnote-backref" href="#fnref:fdef" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
