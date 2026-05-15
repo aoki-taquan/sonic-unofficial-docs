@@ -350,6 +350,81 @@ AUTO_TECHSUPPORT (GLOBAL) の挙動は ASIC ベンダー / VOQ chassis / namespa
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-platform.md` を参照。
 <!-- /platform -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/auto-techsupport-ordering.md`
+
+### 起動順 (kernel core_pattern → handler)
+
+`kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P` (`90-sonic.conf:45`) が `systemd-sysctl.service` で適用された後にのみ、coredump → `coredump-compress` → `coredump_gen_handler.py` のパイプが成立する。sysctl 適用前に critical process がクラッシュした場合 kernel は default pattern を使い、AUTO_TECHSUPPORT 設定は一切評価されない。
+
+### CONFIG_DB 進入条件チェック順
+
+`coredump_gen_handler.py` は CONFIG_DB を以下の順で参照し、いずれかが未充足なら即 return する (GLOBAL kill switch → per-feature kill switch → rate-limit)。
+
+| 順 | キー / フィールド | 未充足時の挙動 | ソース |
+|---|---|---|---|
+| 1 | `AUTO_TECHSUPPORT\|GLOBAL.state` | `!= "enabled"` → syslog NOTICE のみで終了。FEATURE 読取りに進まない | `coredump_gen_handler.py:47-49` |
+| 2 | `trim_masic_suffix(container)` | multi-asic suffix を除去し 1 つの FEATURE エントリで全 instance を表現 | `:52` |
+| 3 | `AUTO_TECHSUPPORT_FEATURE\|<feature>.state` | `!= "enabled"` → syslog NOTICE のみで終了 | `:54-58` |
+| 4 | `rate_limit_interval` (GLOBAL + FEATURE) | rate-limit 該当なら techsupport 起動せず終了 | `auto_techsupport_helper.py:316-330` |
+
+`techsupport_cleanup.py` も同じ GLOBAL `state` → `max_techsupport_limit` 順で読む (`:27,32`)。
+
+### handler 内アクション順 (`main()`)
+
+```
+1. db.connect(CFG_DB); db.connect(STATE_DB)            # :70-71
+2. verify_recent_file_creation(/var/core/<name>)       # :73 — TIME_BUF=20s 以内のみ受理
+3. handle_core_dump_creation_event()                   # :76-77 — techsupport 起動 + STATE_DB hset
+4. handle_coredump_cleanup(args.name, db)              # :78 — /var/core を max_core_limit で掃除
+```
+
+段階 3 → 4 の順序は重要。逆順だと **trigger となった core ファイルを techsupport 採取前に削除** してしまい、収集 dump に core が含まれない事故が起きる。現実装はこの順を厳守して防いでいる。
+
+### techsupport_cleanup 内の削除順
+
+```
+cleanup_process()           # :43 — 物理ファイル削除を先行
+clean_state_db_entries()    # :44 — STATE_DB AUTO_TECHSUPPORT_DUMP_INFO を後追い削除
+```
+
+ファイル削除を先行させることで、`cleanup_process` 失敗時に STATE_DB を巻き込まない (再試行可能な状態を維持) 設計。
+
+### warm reboot との関係
+
+- 本 2 スクリプトおよび `auto_techsupport_helper.py` に `WARM_RESTART` / `warm-reboot` 参照は **0 hit**。warm reboot 専用ロジックは持たない
+- kernel 継続稼働 = `core_pattern` 継続有効。warm reboot 中の critical process クラッシュでも `coredump-compress` は通常起動する
+- `AUTO_TECHSUPPORT_DUMP_INFO` は STATE_DB に保存され warm reboot を跨いで保持される (`auto_techsupport_helper.py:302-310`)。warm reboot 直後の連続 trigger でも rate-limit timestamp が尊重される
+- warm reboot 中の container 再起動で `AUTO_TECHSUPPORT_FEATURE|<feature>.state` が瞬間的に消えたタイミングで core が落ちると skip される副作用がある
+
+### 起動シーケンス図
+
+```
+systemd-sysctl.service → kernel.core_pattern セット
+  ↓
+[critical process クラッシュ]
+  ↓
+kernel pipe → coredump-compress → /var/core/<pfx>core.gz
+  ↓
+setsid python3 coredump_gen_handler.py <name> <container>
+  ↓
+GLOBAL.state == enabled ?
+  ├─ no → 終了 (syslog)
+  └─ yes → FEATURE.state == enabled ?
+            ├─ no → 終了 (syslog)
+            └─ yes → invoke_ts_command_rate_limited
+                       ├─ rate-limit hit → 終了
+                       └─ pass → show techsupport → STATE_DB hset
+  ↓
+handle_coredump_cleanup → /var/core の max_core_limit 超過分削除
+```
+
+実運用では `config auto-techsupport global enable` で GLOBAL を有効化した後、各 feature について `config auto-techsupport-feature` で個別有効化する順序を取る (GLOBAL → FEATURE 伝搬は `init_cfg.json.j2` 側 `infer_auto_ts_capability` でビルド時に確立)。
+
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — `coredump_gen_handler` / `techsupport_cleanup` が読み書きする関連テーブル (Phase C)
 
