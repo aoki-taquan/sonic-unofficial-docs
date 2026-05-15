@@ -358,6 +358,63 @@ REST/gNMI 書き込み経路なし (PORT はプラットフォーム初期化で
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/port-constants.md`
+
+### portmgr / PortsOrch 定義定数
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `DEFAULT_ADMIN_STATUS_STR` | `"down"` | `portmgr.h:14` | admin_status 暗黙デフォルト (portmgrd) |
+| `DEFAULT_MTU_STR` | `"9100"` | `portmgr.h:15` | MTU 暗黙デフォルト (portmgrd 初回 SET) |
+| `DEFAULT_SYSTEM_PORT_MTU` | `9100` | `portsorch.cpp:79` | PortsOrch の SystemPort MTU デフォルト |
+| `DEFAULT_TPID` | `0x8100` | `port.h:33` | TPID のハードウェアデフォルト。`0x8100` の場合は SAI 属性を追加しない |
+| `FCS_LEN` | `4` bytes | `portsorch.h:26` | MTU → SAI 変換時の FCS 加算量 |
+| `VLAN_TAG_LEN` | `4` bytes | `portsorch.h:27` | MTU → SAI 変換時の VLAN tag 加算量 |
+| `sizeof(struct ether_header)` | `14` bytes | C 標準 | MTU → SAI 変換時の ethernet header 加算量 |
+| `MAX_MACSEC_SECTAG_SIZE` | `32` bytes | `portsorch.h:28` | MACsec SecTAG オーバーヘッド。MACsec ポートの MTU 計算に追加加算 |
+
+### speed 検証定数 (porthlpr.cpp)
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `minPortSpeed` | `1` Mbps | `porthlpr.cpp:31` | speed フィールドの最小値。未満は task_failed |
+| `maxPortSpeed` | `1600000` Mbps | `porthlpr.cpp:32` | speed フィールドの最大値。超過は task_failed |
+
+### MTU 変換計算式
+
+CONFIG_DB の `mtu` を SAI に渡す際に `setPortMtu()` が加算するオーバーヘッド (`portsorch.cpp:2309-2315`):
+
+```
+SAI_mtu = mtu + 14 (ether_header) + 4 (FCS) + 4 (VLAN tag) = mtu + 22 bytes
+```
+
+MACsec ポートではさらに `MAX_MACSEC_SECTAG_SIZE = 32 bytes` を追加。ASIC からの逆変換も同じオフセットで減算する (`portsorch.cpp:6754-6759`)。
+
+### ポーリング間隔定数 (portsorch.h)
+
+| 定数 | 値 | 対象 |
+|------|----|------|
+| `PORT_RATE_FLEX_COUNTER_POLLING_INTERVAL_MS` | `1000` ms | ポート rate counter |
+| `PG_DROP_FLEX_STAT_COUNTER_POLL_MSECS` | `10000` ms | PG drop stat |
+| `QUEUE_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `60000` ms | queue watermark |
+| `PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `60000` ms | PG watermark |
+
+### dhcp_rate_limit migration デフォルト
+
+`db_migrator.py:524` の `migrate_config_db_port_table_for_dhcp_rate_limit()` が、既存ポートに `dhcp_rate_limit` フィールドがない場合に `"300"` pps を自動注入する。YANG にはデフォルト記載なし。
+
+### MACsec 関連タイマー (macsecmgr.cpp)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `RETRY_TIME` | `30` 回 | wpa_supplicant 起動待ちのリトライ上限 (`macsecmgr.cpp:32`) |
+| interface_remove リトライ間隔 | `10` 秒 | interface_remove タイムアウト時の待機時間 (`macsecmgr.cpp:904`) |
+
+<!-- /constants -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
