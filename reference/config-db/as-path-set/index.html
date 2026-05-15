@@ -22298,6 +22298,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22521,6 +22532,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -34974,6 +34996,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35197,6 +35230,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -35611,6 +35655,59 @@
 </blockquote>
 <!-- /constants -->
 
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: AS_PATH_SET は FRR (<code>bgpd</code>) 制御プレーン上の AS path access-list で SAI 非経由。ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / VPP)・VOQ chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別</td>
+<td>影響なし</td>
+<td>SAI 非経由 (FRR <code>bgpd</code> 内部 access-list)。orchagent / syncd 経由なし</td>
+</tr>
+<tr>
+<td>multi-asic (<code>asicN</code> namespace)</td>
+<td>各 namespace 独立・同一ロジック</td>
+<td><code>frrcfgd</code> は per-namespace 起動。AS_PATH_SET ハンドラ (<code>frrcfgd.py:1009-1020, 2998-3011</code>) に namespace 分岐なし</td>
+</tr>
+<tr>
+<td><code>switch_type</code> (voq / chassis-packet)</td>
+<td>影響なし</td>
+<td><code>managers_as_path.py</code> 全 67 行・<code>frrcfgd.py</code> AS_PATH_SET ハンドラ部を <code>platform\|asic\|switch_type\|chassis\|sub_role\|namespace\|vendor</code> で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td><code>sub_role</code> (FrontEnd / BackEnd)</td>
+<td>影響なし</td>
+<td>同上で参照 0</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.type</code> / <code>subtype</code></td>
+<td><strong>AsPathMgr (T2_GROUP_ASNS 固定経路) の登録 gate のみ</strong> — AS_PATH_SET テーブル自身には影響しない</td>
+<td><code>bgpcfgd/main.py:122-130</code> (<code>SpineRouter</code>+<code>UpstreamLC</code> または <code>UpperSpineRouter</code> のみ AsPathMgr 起動)</td>
+</tr>
+<tr>
+<td>ベンダー固有 hook</td>
+<td>なし</td>
+<td><code>files/image_config/</code> / <code>files/build_templates/</code> を <code>as.?path.?set\|aspath_set</code> で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td>テンプレート内分岐 (<code>bgpd.conf.db.j2</code>)</td>
+<td>プラットフォーム条件なし</td>
+<td>L11-20 AS_PATH_SET ブロックに <code>{% if platform/asic/chassis/switch_type %}</code> 0</td>
+</tr>
+</tbody>
+</table>
+<p>注意: <code>DEVICE_METADATA.type</code> / <code>subtype</code> は HW プラットフォームではなく <strong>論理トポロジー role</strong> で、<code>AsPathMgr</code> (T2_GROUP_ASNS 経路) の起動可否のみを左右する。ユーザが <code>AS_PATH_SET|&lt;name&gt;</code> を CONFIG_DB に直接入れる経路は role に関わらず常時 <code>frrcfgd</code> 経由で FRR に反映される。</p>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/as-path-set-platform.md</code> を参照。</p>
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
@@ -35687,6 +35784,44 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>AS_PATH_SET</code> テーブルの変更に伴って主購読者 <code>frrcfgd</code> (<code>sonic-frr-mgmt-framework</code>) および補助購読経路 <code>AsPathMgr</code> (<code>sonic-bgpcfgd</code>) が副次的に書き込む DB エントリは <strong>存在しない</strong>。副作用はすべて <a href="../../glossary/#term-frr">FRR</a> <code>bgpd</code> プロセスへの vtysh コマンド送出に閉じる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>frrcfgd.py</code> の <code>swsscommon</code> import は <code>ConfigDBConnector</code> のみ。<code>hdl_aspath_set</code> (<code>frrcfgd.py:1009-1020</code>) は <code>cmd_str.format(...)</code> で FRR vtysh コマンド文字列を返すだけで <code>ProducerStateTable</code> / <code>Table</code> を生成しない</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>frrcfgd.py</code> 全体および <code>managers_as_path.py:1-67</code> に <code>STATE_DB</code> / <code>state_db</code> 参照 0 件</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td>同上、<code>COUNTERS_DB</code> 参照 0 件。AS path access-list は FRR <code>bgpd</code> プロセス内のフィルタで SONiC レイヤに統計テーブルを持たない</td>
+</tr>
+<tr>
+<td>その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB)</td>
+<td>なし</td>
+<td>SAI 非経由 (段階 3 トレース参照)。<code>sonic-swss/</code> 内に <code>AS_PATH_SET</code> を購読する mgrd/orchagent は存在しない</td>
+</tr>
+</tbody>
+</table>
+<p>主購読者 2 経路の主作用はいずれも FRR デーモンへの <code>bgp as-path access-list &lt;name&gt; permit &lt;regex&gt;</code> / <code>no bgp as-path access-list &lt;name&gt;</code> の vtysh 送出のみ (<code>frrcfgd.py:1015-1019</code> / <code>managers_as_path.py:52,56,65</code>)。<code>AsPathMgr.set_handler</code> は <code>cfg_mgr.update()</code> で FRR running-config を読み戻すが (<code>managers_as_path.py:45-49</code>)、これは FRR テキスト config の読み出しであって DB 書込ではない。起動時 Jinja2 (<code>bgpd.conf.db.j2:11-20</code>) も <code>/etc/frr/bgpd.conf</code> 系のテキストファイルを生成するのみ。</p>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/as-path-set-side.md</code> を参照。</p>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
 
