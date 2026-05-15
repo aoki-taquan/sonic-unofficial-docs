@@ -24187,6 +24187,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35278,6 +35339,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35928,6 +36050,138 @@
 <li><strong><code>trace</code> の無効化バグ</strong>: <code>aaa_update()</code> に <code>trace</code> 更新ブロックが存在しないため <code>self.trace</code> は常に <code>False</code>。CONFIG_DB の <code>trace=True</code> は PAM テンプレートに反映されない。</li>
 </ul>
 <!-- /failure -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: AAA は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td>AAA は SAI 非経由。<code>hostcfgd</code> が Linux PAM / NSS 設定ファイルを直接書き換えるのみ (段階 3 トレース参照)</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>影響なし</td>
+<td><code>AaaCfg</code> は host CONFIG_DB (<code>ConfigDBConnector()</code> 引数なし) のみを購読。<code>asicN</code> namespace を iterate しない (<code>hostcfgd:2166-2185</code>)。<code>is_multi_npu</code> 値は AAA 経路に渡されない</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td>AAA テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で <code>hostcfgd</code> が独立に PAM を再生成</td>
+</tr>
+<tr>
+<td>ベンダー固有 PAM モジュール</td>
+<td>なし</td>
+<td>community master の PAM スタックは <code>pam_unix</code> / <code>pam_tacplus</code> / <code>pam_radius_auth</code> / <code>pam_ldap</code> の Debian 標準。<code>files/image_config/</code> にも <code>files/build_templates/</code> にもベンダー hook 注入箇所なし (<code>ls files/image_config \| grep -iE 'aaa\|tacacs\|radius\|ldap\|pam\|nss'</code> が 0 ヒット)</td>
+</tr>
+<tr>
+<td>テンプレート内分岐</td>
+<td>プラットフォーム条件なし</td>
+<td><code>common-auth-sonic.j2</code> / <code>tacplus_nss.conf.j2</code> を <code>platform\|asic\|chassis\|namespace\|vendor</code> で grep して 0 ヒット。分岐は <code>AAA.login</code> / <code>failthrough</code> / <code>debug</code> / <code>trace</code> とサーバリストのみ</td>
+</tr>
+</tbody>
+</table>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/aaa-platform.md</code> を参照。</p>
+<!-- /platform -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>AAA</code> テーブル（および関連 <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> / <code>LDAP</code> / <code>LDAP_SERVER</code>）への変更通知は、<code>hostcfgd</code> が <strong><code>ConfigDBConnector.subscribe()</code> + <code>listen()</code></strong> で登録する <strong>Redis keyspace 通知 (PSUBSCRIBE <code>__keyspace@&lt;dbId&gt;__:&lt;TABLE&gt;|*</code>)</strong> によって配信される。<code>swsscommon.SubscriberStateTable</code> や <code>ConsumerStateTable</code> (channel ベース PUBLISH/SUBSCRIBE) は <strong>使用しない</strong>。CONFIG_DB は永続前提のため TTL は設定されない。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>購読テーブル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hostcfgd</code> (<code>AaaCfg</code> 経由)</td>
+<td><code>ConfigDBConnector.subscribe()</code></td>
+<td><code>AAA</code></td>
+<td><code>aaa_handler</code> → <code>aaa_update</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>同上</td>
+<td><code>TACPLUS</code> / <code>TACPLUS_SERVER</code></td>
+<td><code>tacacs_global_handler</code> / <code>tacacs_server_handler</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>同上</td>
+<td><code>RADIUS</code> / <code>RADIUS_SERVER</code></td>
+<td><code>radius_global_handler</code> / <code>radius_server_handler</code></td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>同上</td>
+<td><code>LDAP</code> / <code>LDAP_SERVER</code></td>
+<td><code>ldap_global_handler</code> / <code>ldap_server_handler</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>hostcfgd</code> 以外で <code>AAA</code> テーブルを購読するプロセスは存在しない (<code>pam_tacplus</code> / <code>pam_radius</code> / <code>pam_ldap</code> / <code>pam_unix</code> は PAM 設定ファイルを認証時に読むのみで Redis を購読しない)。</p>
+<h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>config aaa authentication login tacacs+,local
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓ HSET &quot;AAA|authentication&quot; login &quot;tacacs+,local&quot;
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Redis keyspace PUBLISH &quot;__keyspace@4__:AAA|authentication&quot;  &quot;hset&quot;
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓ ConfigDBConnector.listen() がパターンマッチ
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>make_callback() で (key, op, data) を生成
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ↓ HGETALL &quot;AAA|authentication&quot;  ← 通知後に値を再取得
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>aaa_handler(key=&quot;authentication&quot;, op=SET, data={login:&quot;tacacs+,local&quot;})
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ↓ AaaCfg.aaa_update() → modify_conf_file()
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  ↓ PAM/NSS テンプレ再生成 (/etc/pam.d/common-auth, /etc/tacplus_nss.conf, ...)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  ↓ handle_nslcd_service(is_ldap_config_complete())  ← LDAP 状態変化時のみ
+</span></code></pre></div>
+<ul>
+<li>keyspace 通知のペイロードは操作名 (<code>hset</code>/<code>del</code> 等) のみ。フィールド値は <code>HGETALL</code> で取得する。</li>
+<li><code>op</code> は <code>data is None ? DEL : SET</code> で 2 値判定。<code>HDEL</code> / <code>HSET</code> の Redis 操作種別自体は区別しない。</li>
+<li>起動時は <code>config_db.listen(init_data_handler=self.load)</code> (hostcfgd:2528) により、Subscribe ループ開始前に <code>AaaCfg.load()</code> が <code>init_data['AAA']</code> / <code>TACPLUS*</code> / <code>RADIUS*</code> / <code>LDAP*</code> を一括スナップショットで適用する。</li>
+</ul>
+<h3 id="_23">サービス再起動トリガー<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>契機</th>
+<th>操作</th>
+<th>コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AAA</code> / <code>LDAP*</code> 変更で <code>is_ldap_config_complete()</code> 真偽が変化</td>
+<td><code>systemctl unmask/restart nslcd</code> または <code>stop/mask nslcd</code></td>
+<td><code>handle_nslcd_service</code> — hostcfgd:241-251, 434-435</td>
+</tr>
+<tr>
+<td><code>TACPLUS_SERVER</code> 変更</td>
+<td><code>audisp-tacplus</code> プロセスに <code>SIGHUP</code> (PAM ホット再読込)</td>
+<td><code>notify_audisp_tacplus_reload_config</code> — hostcfgd:483-493</td>
+</tr>
+<tr>
+<td>PAM 設定ファイル書き換え</td>
+<td>デーモン restart <strong>なし</strong> (PAM は次回ログイン時にファイルを読む)</td>
+<td><code>modify_conf_file</code> — hostcfgd:641-648</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528</code> (subscribe/listen/make_callback)、<code>hostcfgd:2289-2343</code> (各 *_handler)、<code>hostcfgd:399-417</code> (<code>AaaCfg.load()</code> 起動時スナップショット)、<code>hostcfgd:419-435</code> (<code>aaa_update</code>)、<code>hostcfgd:230-251</code> (<code>restart_service</code>/<code>handle_nslcd_service</code>)、<code>hostcfgd:483-493</code> (<code>notify_audisp_tacplus_reload_config</code>); 詳細分析 <code>meta/_intermediate/cdb-flow/aaa-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->
 
