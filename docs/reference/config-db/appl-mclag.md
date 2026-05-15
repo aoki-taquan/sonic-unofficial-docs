@@ -5,6 +5,7 @@ area: reference
 hard: 0
 verification: code-verified
 last_verified: 2026-05-15
+
 sources:
   - repo: sonic-net/sonic-swss
     path: mclagsyncd/mclaglink.cpp
@@ -260,6 +261,41 @@ csm->session_timeout = HEARTBEAT_TIMEOUT_SEC;  // = 15
 フォールバックは `mlacp_link_handler.c` L3108, L3120, L3137, L3142 で `-1` を検出した際にも同値がセットされる。
 
 <!-- /defaults -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+APPL_DB MCLAG/ICCP 関連テーブル群 (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_TABLE` /
+`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `LAG_TABLE` / `PORT_TABLE` / `INTF_TABLE`) の
+書込主体である `mclagsyncd` は、本 APPL_DB 書込に **副次して** [STATE_DB](../../reference/glossary.md#term-state_db)
+側にも MCLAG 状態テーブルを書き込む。COUNTERS_DB は読取のみで書込は無い[^link]。
+
+| 副次 DB | 書込有無 | 対象テーブル / 根拠 |
+|---|---|---|
+| STATE_DB | あり | `STATE_MCLAG_TABLE` (`mclaglink.cpp:1357,1412,1460,1503,1733`) / `STATE_MCLAG_LOCAL_INTF_TABLE` (L1520,1533) / `STATE_MCLAG_REMOTE_INTF_TABLE` (L1584,1633) |
+| COUNTERS_DB | なし (読取のみ) | `p_counters_db->hgetall("COUNTERS_PORT_NAME_MAP")` (`mclaglink.cpp:66`) — OID 解決用、書込呼出 0 件 |
+| ASIC_DB (直接) | なし | `mclagsyncd` から SAI 呼出無し。APPL_DB 経由で `fdborch` / `isolationGroupOrch` が間接書込 |
+| FLEX_COUNTER_DB / LOGLEVEL_DB | なし | `mclagsyncd` 全体で参照 0 件 |
+| `iccpd` から直接 | なし | iccpd は `mclagsyncd` への IPC メッセージのみで Redis 直書きコード無し (STATE_DB 参照はコメントのみ) |
+
+### STATE_DB 書込の対応表
+
+| 書込関数 | STATE_DB テーブル | 操作 | 用途 |
+|---|---|---|---|
+| `mclagsyncdSetIccpState()` | `STATE_MCLAG_TABLE` | `set(<mlag_id>, oper_status)` | ICCP セッション up/down |
+| `mclagsyncdSetIccpRole()` | `STATE_MCLAG_TABLE` | `set(<mlag_id>, role, system_mac)` | active / standby ロール |
+| `mclagsyncdSetSystemId()` | `STATE_MCLAG_TABLE` | `set(<mlag_id>, system_mac)` | システム MAC 通知 |
+| `mclagsyncdDelIccpInfo()` | `STATE_MCLAG_TABLE` | `del(<mlag_id>)` | ICCP 情報削除 |
+| `setLocalIfPortIsolate()` | `STATE_MCLAG_LOCAL_INTF_TABLE` | `set(<if>, port_isolate_peer_link)` | ローカル IF のピアリンク分離状態 |
+| `deleteLocalIfPortIsolate()` | `STATE_MCLAG_LOCAL_INTF_TABLE` | `del(<if>)` | ローカル IF エントリ削除 |
+| `mclagsyncdSetRemoteIfState()` | `STATE_MCLAG_REMOTE_INTF_TABLE` | `set("<id>\|<if>", oper_status)` | リモート IF oper 状態 |
+| `mclagsyncdDelRemoteIfInfo()` | `STATE_MCLAG_REMOTE_INTF_TABLE` | `del("<id>\|<if>")` | リモート IF エントリ削除 |
+
+これら STATE_DB エントリは `show mclag brief` / `show mclag interface` などの CLI が
+直接読みに行く参照源となる。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/appl-mclag-side.md` を参照。
+<!-- /side-effects -->
 
 ## 引用元
 
