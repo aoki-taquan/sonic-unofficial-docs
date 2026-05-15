@@ -15,6 +15,9 @@ sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/p4orch/p4orch_util.h
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/mirrororch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - MIRROR_SESSION
@@ -93,6 +96,58 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`FIXED_MIRROR_SESSION_TABLE` を処理する `MirrorSessionManager` は **`getenv("platform")` を一切参照せず**、GRE type / IP header version / encapsulation type / session type をすべて C++ 定数としてハードコードする (`mirror_session_manager.h:20-21`、`mirror_session_manager.cpp::prepareSaiAttrs()`)。
+一方 CONFIG_DB 側 `MirrorOrch` は `mirrororch.cpp:65-72` で `platform == MLNX_PLATFORM_SUBSTRING` のときに GRE type を `0x8949` に切り替える等、複数のプラットフォーム / スイッチタイプ分岐を持つ。
+このため同一 ASIC 上で CONFIG_DB 経路と P4RT 経路を併用すると、Mellanox 等で **経路によって SAI 属性値が異なる discrepancy** が発生する。
+
+### P4RT 経路 vs CONFIG_DB 経路の capability 差異一覧
+
+| capability | CONFIG_DB MIRROR_SESSION (MirrorOrch) | APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT) | evidence |
+|---|---|---|---|
+| **GRE protocol type** | mellanox は `0x8949`、それ以外は `0x88be` (`platform` env で分岐、`gre_type` フィールドで上書き可) | **`0x88be` ハードコード** (上書き不可) | `mirrororch.cpp:57-77` / `mirror_session_manager.h:21` |
+| **IP header version** | IPv4 / IPv6 を `src_ip` / `dst_ip` のアドレスファミリで自動判定 | **`4` ハードコード** (IPv6 ERSPAN 不可) | `mirrororch.cpp:1005-1049` / `mirror_session_manager.h:20` |
+| **VoQ スイッチ向け monitor_port 差し替え** | `gMySwitchType == "voq"` かつ ERSPAN のとき **recirc port** に強制差し替え | 差し替えなし (`param/port` をそのまま使用) | `mirrororch.cpp:592-598, 961-973, 1193-1205` |
+| **VoQ スイッチ向け DST_MAC 差し替え** | `voq` かつ ERSPAN のとき **`gMacAddress`** に差し替え | 差し替えなし (`param/dst_mac` をそのまま使用) | `mirrororch.cpp:609-615, 1037-1044, 1153-1159` |
+| **ingress/egress mirror ASIC capability** | bind 前に `SwitchOrch::isPortIngressMirrorSupported()` / `isPortEgressMirrorSupported()` で fail-fast | チェックなし (P4RT はポート bind を行わない) | `mirrororch.cpp:816-826` |
+| **SAI mirror_session リソース枯渇チェック** | ADD 前に `sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)` を呼ぶ | チェックなし (SAI create 失敗で初めて検出) | `mirrororch.cpp:357-379` |
+| **SAI_MIRROR_SESSION_ATTR_TC サポート差** | `queue=0` のとき TC 属性を付加しない (TC 非対応 ASIC への配慮) | TC 属性そのものを APP_DB スキーマに持たず、常に SAI デフォルト | `mirrororch.cpp:931-938` |
+| **Policer 連携** | `policer` フィールドで `PolicerOrch::getPolicerOid()` を解決し `SAI_MIRROR_SESSION_ATTR_POLICER` に設定 | **policer フィールド非対応** (連携不可) | `mirrororch.cpp:1052-1064` / `p4orch_util.h::P4MirrorSessionAppDbEntry` |
+
+### プラットフォーム別 GRE type の取り扱い
+
+| プラットフォーム | CONFIG_DB MIRROR_SESSION デフォルト | APPL_DB FIXED_MIRROR_SESSION_TABLE | 同一 ASIC で経路併用時の挙動 |
+|----------------|------------------------------------|-----------------------------------|---------------------------|
+| mellanox (Spectrum) | `gre_type = 0x8949` | `0x88be` 固定 | **discrepancy あり**: SAI に渡る値が経路で異なる |
+| broadcom (XGS / DNX) | `gre_type = 0x88be` | `0x88be` 固定 | 一致 |
+| barefoot / cisco-8000 / marvell-* / nephos / clounix / xsight | `gre_type = 0x88be` | `0x88be` 固定 | 一致 |
+| (CLI で `gre_type` 明示上書き) | 任意値 | 上書き不可 | 上書き値次第で discrepancy |
+
+### スイッチタイプ別の monitor_port / dst_mac 差し替え
+
+| `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB ERSPAN monitor_port | CONFIG_DB ERSPAN DST_MAC | P4RT FIXED_MIRROR_SESSION |
+|---|---|---|---|
+| `voq` (分散シャーシ — Cisco 8000 等) | **recirc port** に強制差し替え | **`gMacAddress`** (router MAC) | 差し替えなし。`switch_type=voq` で実用可否は未定義 |
+| `switch` (一般スタンドアロン) | `neighborInfo.portId` (ARP/NDP 解決) | `neighborInfo.mac` | `param/port` / `param/dst_mac` をそのまま使用 |
+
+### Multi-ASIC (namespace) サポート
+
+`MirrorSessionManager` 自体に multi-asic 固有の分岐コードはない。multi-asic シャーシ (Broadcom DNX / Cisco 8000) では asic namespace ごとに orchagent と APPL_DB インスタンスが起動するため、P4RT controller 側で asic を選択して APPL_DB に書き込む必要がある。
+namespace 間の整合性 (例: 同一 `mirror_session_id` を複数 asic に作成するか) は orchagent / SAI レベルでは強制されず、上位 P4RT controller の責務となる[^5]。
+
+### 既知の discrepancy (重要)
+
+- **Mellanox での GRE type 不整合**: P4RT 経由で ERSPAN セッションを作ると `0x88be` が SAI に渡るが、Mellanox Spectrum は通常 `0x8949` を期待する。CONFIG_DB 経路 (`MirrorOrch`) は `platform` env で正しく `0x8949` を選択するため、**Mellanox 上で P4RT ERSPAN を使うとハードウェアが期待しない GRE type で encap される可能性がある**。
+- **IPv6 outer ヘッダ非対応**: P4RT 側は IP header version を `4` にハードコードするため、`src_ip` / `dst_ip` に IPv6 を渡しても IPv4 ヘッダバージョンが設定される。CONFIG_DB 側はアドレスファミリで自動判定する。
+- **policer 連携の機能差**: CONFIG_DB 経路では `MIRROR_SESSION.policer` で rate limiter を付けられるが、P4RT 経路は policer フィールドそのものが存在せず、ASIC が policer 連携をサポートしていても **P4RT 経由では利用不可**。
+- **VoQ シャーシでの monitor_port 不整合**: `switch_type=voq` 環境では CONFIG_DB 経路は ERSPAN の monitor_port を recirc port に差し替えるが、P4RT 経路は差し替えない。**P4RT FIXED_MIRROR_SESSION_TABLE は VoQ シャーシ向けに設計されていない**。
+
+詳細は `meta/_intermediate/cdb-flow/appl-mirror-platform.md` を参照。
+
+<!-- /platform -->
+
 ## 購読者
 
 - `p4orch` 内の `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`)
@@ -117,3 +172,4 @@ sonic-db-cli APPL_DB hgetall 'FIXED_MIRROR_SESSION_TABLE|{"match/mirror_session_
 [^2]: `processAddRequest()` の必須フィールドチェック: `orchagent/p4orch/mirror_session_manager.cpp` L339-363. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L339-L363>
 [^3]: 物理ポート制約: `orchagent/p4orch/mirror_session_manager.cpp` L124-135. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135>
 [^4]: `deserializeP4MirrorSessionAppDbEntry()`: `orchagent/p4orch/mirror_session_manager.cpp` L190-323. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323>
+[^5]: `MirrorEntry::MirrorEntry()` での GRE type platform 分岐: `orchagent/mirrororch.cpp` L57-77. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77>
