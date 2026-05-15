@@ -435,3 +435,43 @@ ROUTE_TABLE に関係する 4 リソースの紐付け:
 > 詳細スキャン証跡: `meta/_intermediate/cdb-flow/appl-db-route-constants.md`
 
 <!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB `ROUTE_TABLE` は YANG 未定義（APPL_DB は YANG 管理対象外）のため leafref は存在しない。`RouteOrch::doTask()` / `addRoute()` / `addNextHopGroup()` (`routeorch.cpp`) と `NhgOrch` (`nhgorch.cpp`) のコード精読により、以下の Orch / テーブルへの暗黙参照（存在確認 + OID 解決 + refcount + retry トリガ）が発生する[^rorch][^nhgorch]。
+
+### key / フィールド由来の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `VRF_TABLE` (VRFOrch) | 存在確認 + virtual_router OID + refcount | key が `Vrf<name>:<prefix>` 形式（非デフォルト VRF） | `routeorch.cpp` L706–717 (`isVRFexists` / `getVRFid`)、L2013 (`increaseVrfRefCount`)、L2773 / L2993 (`decreaseVrfRefCount`) |
+| `NEIGH_TABLE` (NeighOrch) | next-hop OID + refcount + ARP/ND resolve トリガ | `nexthop` 非空かつ各 NH が IP NH（intf-only でない） | `routeorch.cpp` L1499–1510 (`hasNextHop` / `getNextHopId` / `addNextHop`)、L2094–2119（single NH）、L2151–2155 (`resolveNeighbor`)、L2197–2219（ECMP メンバ） |
+| `INTF_TABLE` (IntfsOrch) | RIF OID + refcount + サブネット判定 | `ifname` 指定 / intf-only NH / コネクテッドルート判定 | `routeorch.cpp` L968 (`getRouterIntfsAlias`)、L1045 (`isPrefixSubnet`)、L2083 / L2086–2090 (`getRouterIntfsId` — `SAI_NULL_OBJECT_ID` なら retry)、L2429 |
+| `PORT_TABLE` (PortsOrch) | allPortsReady ブロック + inband skip + CPU port | 常時 + intf-only NH が inband port | `routeorch.cpp` L609 (`allPortsReady` — false で全 ROUTE 処理保留)、L243 (`getCpuPort`)、L2074 (`isInbandPort`)、L915–926（`eth0`/`docker0`/`Loopback*` 宛は ASIC から撤去） |
+| `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` (NhgOrch / CbfNhgOrch) | index 解決 + 共有 NHG OID + refcount + 上限 | `nexthop_group` 非空（`nexthop`/`ifname` と排他） | `routeorch.cpp` L807–812（排他）、L838–839 / L996–1012 (`getNhg` — `out_of_range` で retry)、L1096 / L1424 / L1478（NHG 上限）、L2411 (`hasNhg` OR)、L2546 (`incNhgRefCount`)、`nhgorch.cpp` L319–362（temp NHG 保持と promotion） |
+| `FG_NHG` / `FG_NHG_PREFIX` (FgNhgOrch) | 適用判定 + 専用 SAI NHG + ロールバック | `isRouteFineGrained(vrf_id, prefix, NHs)` が true | `routeorch.cpp` L529 / L597、L1424–1431（上限ガード）、L2028–2037 (`setFgNhg`)、L2403 / L2470–2477 (`removeFgNhg`) |
+| `SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` (Srv6Orch) | SRv6 NH OID + Agg ID + バルク削除 | `segment` または `seg_src` 非空（`srv6_nh = true`） | `routeorch.cpp` L736–795（フラグ立て）、L1250 (`removeSrv6Nexthops`)、L2055 (`contextIdExists`)、L2100 / L2143 / L2169 (`srv6Nexthops`)、L2295 / L2352 (`getAggId`)、L2188–2200（temp route 非生成） |
+| `VXLAN_TUNNEL` / remote VTEP (VxlanTunnelOrch + NeighOrch) | L3 VNI 検証 + remote VTEP 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ非 SRv6 | `routeorch.cpp` L872 / L893–897 (`isL3VniVlan`)、L2127 (`createRemoteVtep`)、L2133 / L2208 (`addTunnelNextHop`)、L2128–2141（失敗時 retry）、L1781–1789（remove） |
+
+### 通知 / side ref
+
+| 参照先 | 操作 | 条件 | 参照元 evidence |
+|--------|------|------|----------------|
+| `FlowCounterRouteOrch` | route flow counter 候補通知（refcount/OID なし） | 常時 + link-local prefix の add/remove | `routeorch.cpp` L259 (`onAddMiscRouteEntry`)、L282 (`onRemoveMiscRouteEntry`)、L2708 (`handleRouteAdd`) |
+| `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` / `CRM_NEXTHOP_GROUP` / `CRM_NEXTHOP_GROUP_MEMBER` (CrmOrch) | 残量カウンタ inc/dec — 投入はブロックしない | 経路 / NHG / member の create / remove ごと | `routeorch.cpp` 各所 `gCrmOrch->incCrmResUsedCounter()` / `dec...`、SAI 枯渇は `handleSaiCreateStatus` で `task_failed` / `task_need_retry` に分岐 |
+
+### 排他関係
+
+- `nexthop_group` と `nexthop` / `ifname` の同時指定はエラー（`routeorch.cpp` L807–812 — erase で打ち切り、retry なし）。
+- `segment` / `seg_src` (SRv6) と `vni_label` (VxLAN overlay) は実装上 `srv6_nh` と `overlay_nh` が排他的に分岐し、SRv6 NHG は temp route を作らず即 `return false`（L2188–2200）。
+- `blackhole = "true"` のとき `nexthop` / `ifname` は不要かつ無視される。
+
+!!! note "retry の本体は doTask の `m_toSync` 保留"
+    暗黙参照の欠落（VRF 未作成 / NEIGH 未解決 / NHG index 不在 / RIF 未作成 / L3 VNI 未紐付け / SRv6 NH 作成失敗 / Tunnel NH 作成失敗）はすべて `addRoute()` が `return false` を返し、doTask が `it++` で `m_toSync` 上に保留する。被参照側 Orch が当該オブジェクトを作成すると、次回 doTask 周回で install される（fpmsyncd 側は再送しない）。
+
+!!! note "`nhgorch.cpp` には platform 分岐なし"
+    `nhgorch.cpp` / `nhgbase.cpp` は `SAI_NEXT_HOP_GROUP_TYPE_ECMP` (`nhgorch.cpp` L771–772) と `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` を共通 API で発行するのみで、platform / switch_type の if 分岐は無い。NHG 上限は `routeorch` が起動時に算出する `m_maxNextHopGroupCount` を `gRouteOrch->getMaxNhgCount()` 経由で参照し、満員時は temp NHG として保持する。
+
+詳細分析: `meta/_intermediate/cdb-flow/appl-db-route-cross-refs.md`
+<!-- /cross-refs -->
