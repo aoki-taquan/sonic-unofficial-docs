@@ -249,4 +249,84 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-utilities/config/main.py`
+
+### CREATE 順序
+
+| ステップ | 書込み対象 | 理由 |
+|---------|-----------|------|
+| 1 | `VXLAN_TUNNEL` | EVPN L3 VNI を使う場合のみ |
+| 2 | `VXLAN_TUNNEL_MAP` (VLAN-VNI エントリ) | `VRF.vni` の前提条件。CLI が存在確認 (main.py:7759) |
+| 3 | **`VRF\|<name>`** | Linux VRF デバイス作成。vrfmgrd が STATE_DB に `state=ok` を書く (vrfmgr.cpp:289) |
+| 4 | `VRF\|<name>.vni` (mod_entry) | VRF 作成後かつ VXLAN_TUNNEL_MAP 確認後に設定 (main.py:7774) |
+| 5 | `*_INTERFACE\|<port>` (vrf_name 指定) | intfmgrd が `isIntfStateOk(vrf_name)` で VRF の STATE_DB ready を確認してから処理 (intfmgr.cpp:839) |
+| 6 | `BGP_GLOBALS\|<vrf_name>` | Linux VRF デバイス作成後が推奨。逆順でも FRR 側で retry されるがタイムアウト依存になる |
+
+### DELETE 順序
+
+| ステップ | 書込み対象 | 理由 |
+|---------|-----------|------|
+| 1 | `SYSLOG_SERVER` (VRF 参照エントリ) | CLI が参照存在時に削除を拒否 (main.py:7712-7717) |
+| 2 | `BGP_GLOBALS\|<vrf_name>` DEL | FRR VRF 設定を先に解除 |
+| 3 | ROUTE テーブルの VRF 内全ルート DEL | routeorch が `decreaseVrfRefCount` を呼ぶまで ref_count が残る (routeorch.cpp:2773) |
+| 4 | `*_INTERFACE\|<port>` (vrf_name 参照ロウ) DEL | intfsorch が `decreaseVrfRefCount` を呼ぶ (intfsorch.cpp:640)。CLI は自動処理 (main.py:7729) |
+| 5 | `VRF\|<name>.vni` を 0 に SET | VNI マッピング解除 (vrfmgr.cpp:337)。CLI `del_vrf_vni_map` が自動実行 |
+| 6 | **`VRF\|<name>`** DEL | orchagent の ref_count が 0 になると VRFOrch が SAI VR を削除し STATE_VRF_OBJECT_TABLE を消去。vrfmgrd がそれを確認して Linux デバイスを削除 (vrfmgr.cpp:331-346) |
+
+### 重要な挙動
+
+- **ref_count ガード**: `VRF|<name>` DEL は orchagent 内で `vrf_table_[name].ref_count == 0` になるまで `delOperation` が `return false` を返し続ける (vrforch.cpp:169)。所属インタフェース・ルート・MPLS ルート・SRv6 SID をすべて削除してから VRF を DEL すること。
+- **STATE_DB ready 待機**: `*_INTERFACE` への `vrf_name` 指定は、vrfmgrd が `STATE_DB.VRF_TABLE|<name>` に `state=ok` を書くまで Consumer キューで待機する。逆順でも最終収束するが、VRF 作成が完了するまでインタフェース設定は適用されない。
+- **mgmt VRF 特例**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` による mgmt VRF は hostcfgd の初期化済みを前提とし、Linux VRF デバイス `ip link add` をスキップする (vrfmgr.cpp:176-183)。通常の `VRF` テーブル書込みとは別経路。
+- **VNI 変更制限**: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 `vni=0` に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。
+
+<!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
+
+### `STATE_VRF_TABLE` (STATE_DB) — readiness sentinel
+
+各 `*_INTERFACE` テーブルで `vrf_name` が指定されたとき、`intfmgrd` は `STATE_DB::STATE_VRF_TABLE` に VRF が登録済みであることを `isIntfStateOk(vrf_name)` で確認する（`intfmgr.cpp:671-684`）。未登録なら SET をスキップして Consumer キューに残す。orchagent 側も `isVRFexists(vrf_name)` で VRF OID 存在を確認する（`intfsorch.cpp:826-830`）。YANG leafref `VRF.name` は静的参照だが、この STATE_DB 依存は実行時ガードとして機能する。
+
+### `VRF_OBJECT_TABLE` (STATE_DB) — 削除同期 sentinel
+
+`orchagent/VRFOrch` が SAI Virtual Router 作成成功後に `STATE_VRF_OBJECT_TABLE|<name>` へ `state=ok` を書き込む。`vrfmgrd` は VRF 削除前に `isVrfObjExist()` でこのエントリを確認し、orchagent 側 SAI オブジェクトが残存する間は削除をリトライ待ちにする。VRF テーブル設定には一切現れない 2 フェーズ非同期削除の同期機構。
+
+### `MGMT_VRF_CONFIG` (CONFIG_DB) — mgmt VRF 特例制御
+
+`vrfmgrd` は `MGMT_VRF_CONFIG|vrf_global` の `mgmtVrfEnabled` と `in_band_mgmt_enabled` を参照し、いずれかが `false` のとき `VRF` テーブルへの SET を DEL として上書き処理する（`vrfmgr.cpp:257`）。`mgmt` VRF は通常プール（1001–5096）を使わず固定 ID `6000` を割り当てる（`vrfmgr.cpp:180-183`）。この制御ロジックは `VRF` テーブルフィールドには一切現れない。
+
+### `VXLAN_TUNNEL_MAP` (CONFIG_DB) — `vni` 設定の副作用 WRITE
+
+`VRF.vni` に非ゼロ値を設定すると、`vrfmgrd` が自動で `VXLAN_TUNNEL_MAP` に `evpn_map_<vni>_<vrf>` エントリを作成する（`vrfmgr.cpp:510`）。`vni=0` に戻すと対応エントリが削除される。`VRF` テーブルの `vni` フィールド変更が別テーブルを書き換えるという暗黙の副作用。
+
+### YANG leafref 被参照テーブル
+
+以下のテーブルは `vrf_name` フィールドで `VRF.name` を leafref 参照する。`VRF` エントリが削除されると orphan になり、各 consumer がエラーを返す。
+
+| 被参照テーブル | leafref フィールド | orphan 時の影響 |
+|--------------|------------------|---------------|
+| `INTERFACE` | `vrf_name` | intfmgrd / intfsorch が VRF not found エラー |
+| `VLAN_INTERFACE` | `vrf_name` | 同上 |
+| `PORTCHANNEL_INTERFACE` | `vrf_name` | 同上 |
+| `LOOPBACK_INTERFACE` | `vrf_name` | 同上 |
+| `VLAN_SUB_INTERFACE` | `vrf_name` | 同上 |
+| `BGP_GLOBALS` | key `<vrf_name>` | bgpcfgd が `"non-default VRF {} was not configured"` エラー |
+
+### key 埋め込み参照（leafref 非強制）
+
+`STATIC_ROUTE|<vrf_name>|<prefix>` および `PIM_GLOBALS|<vrf>|<af>` / `PIM_INTERFACE|<vrf>|<af>|<interface>` は key に VRF 名を直接埋め込む形式。YANG leafref による強制バリデーションはなく、VRF が存在しなくても CONFIG_DB への書き込みは成功するが、各 manager（staticroutemgrd、frr-mgmt-framework）が FRR への反映で失敗する。
+
+### Linux ルーティングテーブル ID（隠れたリソース上限）
+
+`vrfmgrd` は VRF 追加のたびに Linux カーネルのルーティングテーブル ID（`VRF_TABLE_START=1001` 〜 `VRF_TABLE_END=5097`）を消費する。CONFIG_DB フィールドに現れない外部リソースで、最大 4096 VRF を超えると `getFreeTable()=0` となり Linux VRF デバイス作成が失敗する。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->

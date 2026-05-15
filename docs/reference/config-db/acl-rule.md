@@ -345,6 +345,40 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装から導出した。
+
+### 先行必須テーブル (SET 時)
+
+| 依存テーブル | 理由 | 緩和策 | evidence |
+|---|---|---|---|
+| `PORT` (PortsOrch 初期化完了) | `doTask()` が `allPortsReady()` false の間全ブロック | なし（自動待機） | `aclorch.cpp:4276` |
+| `ACL_TABLE` (SAI 作成済み) | `getTableById()` が `SAI_NULL_OBJECT_ID` のとき `it++` 無限待機 | 自動再試行（毎イベントループ） | `aclorch.cpp:5550-5565` |
+| `MIRROR_SESSION` (存在のみ必須) | `sessionExists()` が false → rule INACTIVE (ERROR ログ) | active 化は後追い可 — `MirrorSessionUpdate` イベントで遅延 install | `aclorch.cpp:2331-2347` |
+| REDIRECT 先 next-hop / NH group | NH 未解決 → `SAI_NULL_OBJECT_ID` → rule INACTIVE | NH group は orchagent が自動作成を試みる | `aclorch.cpp:2090-2165` |
+
+### SET / DEL 操作順序
+
+| 操作 | 制約 | 理由 | evidence |
+|---|---|---|---|
+| MIRROR ルールの**内容変更** | `DEL` → `SET` の順が必須 | `AclRuleMirror::update()` は未実装 (`SWSS_LOG_ERROR` + `return false`) | `aclorch.cpp:2415-2420` |
+| 非 MIRROR ルールの変更 | `SET` のみで差分適用可 | `set_acl_entry_attribute()` — match / action は runtime mutable | `aclorch.cpp:1466` |
+| ACL_TABLE を DEL する前に ACL_RULE を DEL | **推奨**（必須ではない） | `removeAclTable()` が暗黙に全ルールを SAI から削除するが CONFIG_DB の ACL_RULE エントリは残存するため、再起動時に再投入される | `aclorch.cpp:4849-4857` |
+| SAI リソース枯渇時: 既存ルール DEL → retry 自動発火 | 自動 | ルール DEL 成功時に `notifyRetry()` が同テーブルの待機キャッシュを再処理 | `aclorch.cpp:5716-5720` |
+
+### warm-restart / cold-restart 影響
+
+- `AclOrch` は `onWarmBootEnd()` を**実装しない**（warm-restart 非対応）。orchagent 再起動（cold）で CONFIG_DB replay により自動再構築。
+- 再起動後、ACL_TABLE が再処理される前に ACL_RULE が Consumer に届いても、待機ループ（`it++`）で自動調停される。
+- MIRROR ルールは MIRROR_SESSION が inactive → `activate()` が SAI entry 未作成のまま `return true` → SESSION が後から active になると `onUpdate()` で遅延 install — 再起動後も同様に動作する。
+
+!!! warning "MIRROR ルール変更"
+    `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` を含む ACL_RULE の変更は `SET` のみでは適用されない。必ず `DEL` → `SET` の順で操作すること (`aclorch.cpp:2415-2420`)。
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
