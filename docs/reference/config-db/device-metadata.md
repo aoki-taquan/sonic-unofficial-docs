@@ -468,6 +468,75 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - 関連 CLI: [`config bgp`](../cli/config-bgp.md)、`config hostname`
 - 関連 YANG: `sonic-device_metadata`（`hostname`、`hwsku`、`mode-status` などの typedef を当該モジュール内で定義）
 
+<!-- cross-refs -->
+## 暗黙参照 — daemon 起動時の DEVICE_METADATA 読み出し (Phase C)
+
+各 daemon は起動時（あるいは subscribe 経由でランタイムに）`DEVICE_METADATA|localhost` を参照する。
+以下は実コードから確認した参照一覧。フィールドが欠如した場合の挙動は「例外条件」セクションも参照。
+
+### 起動時のみ読み出し (create-only / static)
+
+| daemon / スクリプト | 参照フィールド | 用途 | evidence |
+|---|---|---|---|
+| `orchagent` (main.cpp:248) | `switch_type` | SAI `create_switch()` の `SAI_SWITCH_ATTR_TYPE` 引数。未設定は `"switch"` (npu) 扱い | sonic-swss/orchagent/main.cpp:244-252 |
+| `orchagent` (main.cpp:269) | `subtype` | switch subtype を取得。DualToR / SmartSwitch 等の SAI 初期化分岐 | sonic-swss/orchagent/main.cpp:269 |
+| `orchagent` (main.cpp:305,321,337,351) | `switch_id`, `max_cores`, `hostname`, `asic_name` | VoQ モード (`switch_type=voq`) 時のみ必須。未設定時は `SWSS_LOG_ERROR` | sonic-swss/orchagent/main.cpp:292-355 |
+| `orchagent` (main.cpp:748) | `switch_id` | `gVoqMySwitchId` 初期値として再取得 | sonic-swss/orchagent/main.cpp:748 |
+| `orchagent.sh` (L22) | `switch_type` | `LOCALHOST_SWITCHTYPE` に格納。`dpu` なら `-z zmq_sync -k 65536` を強制 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:22 |
+| `orchagent.sh` (L44-55) | `asic_id` | `-i <asic_id>` オプションとして orchagent プロセスに渡す | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:44-55 |
+| `orchagent.sh` (L66-68) | `async_swss_rec` | `enabled` → `-A` フラグ (swss.rec 非同期書き込み) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:66-68 |
+| `orchagent.sh` (L106) | `subtype` | `DualToR` のとき `tunnel_packet_handler` を追加起動 | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:106 |
+| `orchagent.sh` (L121-123) | `ring_thread_enabled` | `true` → `-R` フラグ (OrchDaemon ring thread) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:121-123 |
+| `swss_vars.j2` (起動時 Jinja 展開) | `synchronous_mode` | 非 `disable` → orchagent に `-s` フラグ (SAI 同期呼び出し) | sonic-buildimage/dockers/docker-orchagent/swss_vars.j2:9; orchagent.sh:37-40 |
+| `buffermgrd.sh` (L5-13) | `buffer_model` | `dynamic` → `buffermgrd -a asic_table.json`。それ以外 → `buffermgrd -l pg_profile_lookup.ini` | sonic-buildimage/dockers/docker-orchagent/buffermgrd.sh:5-13 |
+| `vlanmgrd` (L56-61) | `mac` | VLAN インタフェースのシステム MAC として設定。未設定は `runtime_error` で起動失敗 | sonic-swss/cfgmgr/vlanmgrd.cpp:56-61 |
+| `teammgrd` (L54-57) | `mac` | PortChannel の switch MAC として使用。未設定は起動失敗 | sonic-swss/cfgmgr/teammgr.cpp:54-57 |
+| `nbrmgrd` (L73-78) | `switch_type` | `voq` のとき SYSTEM_NEIGH を購読し VoQ リモートネイバー用 static route をカーネルに設定 | sonic-swss/cfgmgr/nbrmgr.cpp:73-78 |
+| `intfmgrd` (L71-74) | `switch_type` | `mySwitchType` に格納。インタフェース設定の switch_type 分岐に使用 | sonic-swss/cfgmgr/intfmgr.cpp:71-74 |
+| `bgpcfgd` (main.py:122-130) | `type`, `subtype` | `SpineRouter+UpstreamLC` または `UpperSpineRouter` のとき `AsPathMgr` を起動時に登録 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:122-130 |
+
+> **起動失敗トリガー**: `mac` フィールド欠如は vlanmgrd / teammgrd を即時 crash させる。`switch_type=voq` 時の `switch_id` / `max_cores` / `hostname` / `asic_name` 欠如は orchagent の VoQ 初期化失敗 (`SWSS_LOG_ERROR`) を引き起こす。
+
+### ランタイム購読 (subscribe / ConsumerStateTable)
+
+| daemon / Manager | 参照フィールド | 用途 | evidence |
+|---|---|---|---|
+| `buffermgr` (BufferMgr) | `buffer_model` | `dynamic` → APPL_DB 書き込みを抑制し platform SAI に委譲。`traditional` → APPL_DB に転写 | sonic-swss/cfgmgr/buffermgr.cpp:464-499 |
+| `FlexCounterOrch` | `create_only_config_db_buffers` | ConsumerStateTable で動的更新。`true` → `getQueueConfigurations()` カウンタ設定分岐 | sonic-swss/orchagent/flexcounterorch.cpp:488-521 |
+| `fpmsyncd` | `suppress-fib-pending` | SubscriberStateTable で購読。`enabled` → FIB インストール応答待機モード。動的切り替え時に保留ルートを offloaded にマーク | sonic-swss/fpmsyncd/fpmsyncd.cpp:82-83,113-114,265-300 |
+| `hostcfgd` (DeviceMetaCfg) | `hostname` | 変更時に `service hostname-config restart` + `monit reload` を即時実行 | sonic-host-services/scripts/hostcfgd:1485-1535,2492 |
+| `hostcfgd` (DeviceMetaCfg) | `timezone` | 変更時に `timedatectl set-timezone <tz>` + `systemctl restart rsyslog` を実行 | sonic-host-services/scripts/hostcfgd:1546-1561 |
+| `hostcfgd` (DeviceMetaCfg) | `syslog_with_osversion` | 変更時に `rsyslog-config.sh` 経由で rsyslog を再設定 | sonic-host-services/scripts/hostcfgd:1590-1598 |
+| `bgpcfgd BgpPeerMgr` | `bgp_asn`, `type` | 必須依存フィールド。`bgp_asn` 欠如でピア追加を延期・待機 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:119-192 |
+| `bgpcfgd BgpPeerMgr` | `deployment_id` | deployment_id チェック有効時のみ依存追加 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:143 |
+| `bgpcfgd DeviceGlobalCfgMgr` | `type` | subscribe → `switch_role` 更新。IDF isolation / WCMP 設定の分岐に使用 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:33-54 |
+| `bgpcfgd StaticRouteMgr` | `bgp_asn` | subscribe → static route の BGP ASN 解決 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:25,67,144 |
+| `bgpcfgd BbrMgr` | `bgp_asn` | subscribe → BBR (Best-path-based Route) の ASN 解決 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bbr.py:25,156 |
+| `bgpcfgd AdvertiseRouteMgr` | `bgp_asn` | subscribe → 広告ルートの ASN 解決 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_advertise_rt.py:26,59-81 |
+| `bgpcfgd PrefixListMgr` | `type`, `bgp_asn` | subscribe → prefix-list 生成の AS 番号と role 判定 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py:42-67 |
+| `frrcfgd` | `bgp_asn`, `docker_routing_config_mode` | 起動時に `DEVICE_METADATA` を読み設定モード初期化。変更時は metadata_handler で FRR 設定再生成 | sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2162,2295 |
+| `dhcprelayd` | `has_sonic_dhcpv4_relay` | `"True"` のとき旧来 `dhcrelay` プロセスを起動せず、新 dhcpv4-relay サービスに委譲 | sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:64,111-113 |
+
+### 起動時設定ファイル生成 (Jinja2 テンプレート展開)
+
+docker コンテナ起動時に `sonic-cfggen` が DEVICE_METADATA を読んで以下のファイルを生成する。
+生成後は再起動まで変更不可 (create-only)。
+
+| テンプレート | 参照フィールド | 生成ファイル / 効果 |
+|---|---|---|
+| `switch.json.j2` | `type`, `namespace_id`, `switch_type` | `/etc/sonic/switch.json` — SAI ecmp_hash_seed / lag_hash_seed / ordered_ecmp を type 別に設定 |
+| `swss_vars.j2` | `synchronous_mode` | orchagent 起動引数 (`-s` フラグ) |
+| `orch_zmq_tables.conf.j2` | `orch_northbond_dash_zmq_enabled`, `orch_northbond_route_zmq_enabled` | ZMQ テーブル有効/無効設定 |
+| `critical_processes.j2` | `switch_type` | `fabric` のとき portsyncd 等を critical_processes から除外 |
+| `supervisord.conf.j2` | `switch_type` | `fabric` のとき orchagent の dependent_startup_wait_for を変更 |
+| `docker_init.sh` (docker-fpm-frr) | `docker_routing_config_mode`, `frr_mgmt_framework_config` | FRR 設定ファイル群 (`frr.conf` / 個別 `*.conf`) を生成 |
+| `zebra.conf.j2` | `nexthop_group`, `zebra_nexthop` | `/etc/frr/zebra.conf` — FPM next-hop group / カーネル nexthop 設定 |
+| `bgpd.main.conf.j2` | `type`, `subtype`, `switch_type`, `bgp_router_id`, `bgp_adv_lo_prefix_as_128` | BGP main 設定 |
+
+evidence: `sonic-buildimage/dockers/docker-orchagent/switch.json.j2; orch_zmq_tables.conf.j2; critical_processes.j2; supervisord.conf.j2; dockers/docker-fpm-frr/docker_init.sh; frr/zebra/zebra.conf.j2`
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
