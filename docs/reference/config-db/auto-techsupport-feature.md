@@ -286,4 +286,40 @@ coredump_gen_handler.py
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338`; `sonic-utilities/scripts/coredump-compress:1-35`; `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`; `sonic-host-services/scripts/hostcfgd:2468-2528`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md`
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md`
+
+`AUTO_TECHSUPPORT_FEATURE` テーブル自体は常駐 subscriber を持たないが、関連スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) が core dump および techsupport 生成イベントを起点に **STATE_DB `AUTO_TECHSUPPORT_DUMP_INFO`** へ書込みを行う。CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への副次書込みは存在しない。
+
+### core dump 発生 → techsupport 生成成功時 — STATE_DB へ SET
+
+経路: `coredump_gen_handler.py` → `invoke_ts_command_rate_limited()` → `write_to_state_db()`。AUTO_TECHSUPPORT\|GLOBAL.state と AUTO_TECHSUPPORT_FEATURE\|<feat>.state がともに `enabled` かつ rate-limit を満たした場合のみ発火。
+
+| 対象 DB / テーブル | キー | フィールド | 値 |
+|------------------|------|----------|----|
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | `<dump-name>` (例 `sonic_dump_DUT_20260515_123456`) | `timestamp` | `int(time.time())` (Unix epoch 秒、文字列化) |
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `event_type` | `core` または `memory` |
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `core_dump` | core dump ファイル名 (`event_type=core` 時のみ) |
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `container` | feature/docker 名 (例 `swss`) |
+
+### techsupport rotate 時 — STATE_DB から DELETE
+
+経路: `generate_dump` 完了 → `techsupport_cleanup.py` → `clean_state_db_entries()`。AUTO_TECHSUPPORT\|GLOBAL.state=`enabled` かつ `max_techsupport_limit>0` のときのみ、`/var/dump/` 配下を最古順で削除した結果に対応する STATE_DB エントリを 1:1 で除去する。**本処理は AUTO_TECHSUPPORT_FEATURE を参照しない** (GLOBAL の値のみ評価)。
+
+| 対象 DB / テーブル | 操作 | キー |
+|------------------|------|------|
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | `delete` | rotate された techsupport dump 名 |
+
+### 非該当 (副次書込なし)
+
+- CONFIG_DB: 両 script とも `db.get` のみで参照、書込みなし
+- APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB / ASIC_DB: 接続自体なし (`db.connect` は `CFG_DB` と `STATE_DB` のみ)
+- SAI 呼出: なし (techsupport は OS レベルの diagnostic 収集に閉じる)
+- Notification / Pub/Sub: なし (`SonicV2Connector` の素の `set`/`delete` のみで、keyspace 通知の購読クライアント不在)
+
+<!-- 証跡: sonic-utilities/scripts/coredump_gen_handler.py:69-78; sonic-utilities/scripts/techsupport_cleanup.py:13-18,52-55; sonic-utilities/utilities_common/auto_techsupport_helper.py:43-60,302-338 -->
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
