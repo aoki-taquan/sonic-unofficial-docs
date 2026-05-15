@@ -178,6 +178,63 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/appl-vrf-failure.md -->
+
+### 共通機構
+
+`VRFOrch` は `Orch2` 派生で、`addOperation()` / `delOperation()` の戻り値 `bool` が Consumer の `m_toSync` キュー残置を制御する: `true` でタスク削除 (retry なし)、`false` で `m_toSync` 残置 → 次 `doTask()` で再試行 (上限なし)。SAI 失敗は `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` で `task_success` / `task_need_retry` / `task_failed` に正規化されたのち、`parseHandleSaiStatusFailure(handle_status)` が retry 要否に変換する (`saihelper.cpp:581-762`)。
+
+| handler 戻り | parseHandleSaiStatusFailure | VRFOrch | SAI status 例 |
+|---|---|---|---|
+| `task_need_retry` | `false` | `return false` → retry | `INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` / `NV_STORAGE_FULL` |
+| `task_failed` | `true` | `return true` → エントリ削除 | default (`handleSaiFailure` 経由で crash dump 要求) |
+| `task_success` | (想定外で WARN) | 分岐前に通過 | `ITEM_ALREADY_EXISTS` / `ITEM_NOT_FOUND` 等 |
+
+`VRFOrch` 自身は `ERROR_TABLE` / STATE_DB に失敗状態を書き戻さない。失敗時 `STATE_VRF_OBJECT_TABLE|<vrfName>` は更新されず、`vrfmgrd::isVrfObjExist()` がキー存在のみを見るため、**失敗中の VRF は STATE 上「存在しない」と扱われる**。
+
+### 失敗パターン一覧
+
+| パターン | トリガー | ログ | 挙動 |
+|---|---|---|---|
+| **Unknown attribute (silent drop)** | `fallback` など if/else 未対応フィールド | `SWSS_LOG_ERROR "Logic error: Unknown attribute"` | `continue` のみ。SAI 書込・STATE_DB 書込は続行され値は黙ってロスト。retry なし |
+| **SAI `create_virtual_router()` 失敗 (resource 系)** | INSUFFICIENT_RESOURCES / TABLE_FULL / NO_MEMORY / NV_STORAGE_FULL | `SWSS_LOG_ERROR "Failed to create virtual router"` | `return false` → 永久 retry |
+| **SAI `create_virtual_router()` 失敗 (NOT_SUPPORTED 等)** | default ブランチ | `handleSaiFailure` で crash dump 要求 | `return true` → エントリ削除・no retry |
+| **SAI `create_virtual_router()` の `ITEM_ALREADY_EXISTS` 系** | 既存 router_id 衝突 | `SWSS_LOG_NOTICE "Returning success"` | `task_success` 扱いで通過。**`router_id` が未初期化のまま `vrf_table_[vrf_name].vrf_id = router_id` を実行する潜在不具合**。VRFOrch に明示 fallback 無し |
+| **EVPN VTEP 不在 (`vni>0` 時)** | `VXLAN_EVPN_NVO` 未投入で `vni!=0` 書込 | `SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"` (ERROR 無し) | `updateVrfVNIMap` が `false` → `addOperation` も `false` → 永久 retry。**SAI Virtual Router は手前で create 済み**だが `STATE_VRF_OBJECT_TABLE` `state=ok` と `vrf_vni_map_table_` は未投入。`EvpnNvoOrch` 側の明示的再 kick は無く `doTask()` ループ任せ → 運用上は **silent skip** に見える |
+| **SAI `set_virtual_router_attribute()` 部分失敗 (update パス)** | 複数 attrs の途中で SAI 失敗 | `SWSS_LOG_ERROR "Failed to update virtual router attribute"` | resource 系のみ `return false` で retry。**先行 attr の SAI 書込は rollback されず部分適用が残る**。retry 時はループ先頭から再投入 (idempotent な属性のみ安全) |
+| **SAI `remove_virtual_router()` default 失敗** | default ブランチ | `handleSaiFailure` | `return true` でエントリ削除されるが `vrf_table_.erase()` 前に抜ける → **内部 map に VRF が残置 (リーク)** |
+| **SAI `remove_virtual_router()` の `OBJECT_IN_USE`** | SAI 側参照残 | `handleSaiRemoveStatus` で `task_need_retry` | `return false` → retry |
+| **`ref_count > 0` での削除** | INTERFACE/ROUTE が参照中 | ログ無し (silent) | `return false` で永久 retry。`ref_count` 解放イベント待ち |
+| **`delVrfVNIMap()` 失敗** | (該当実装無し: 常に `true` 返却) | — | `if (error == false) return false;` は dead code |
+
+### EVPN VTEP 不在の silent skip 詳細
+
+`vrforch.cpp:225-230`:
+
+```cpp
+auto evpn_vtep_ptr = evpn_orch->getEVPNVtep();
+if(!evpn_vtep_ptr)
+{
+    SWSS_LOG_NOTICE("updateVrfVNIMap unable to find EVPN VTEP");
+    return false;
+}
+```
+
+このパスでは `vrf_vni_map_table_[vrf_name] = vni` も `l3vni_table_[vni].vlan_id` も呼ばれず、`STATE_VRF_OBJECT_TABLE` `state=ok` 書き込みも前段で return しているため発生しない。新規作成パスでは **SAI Virtual Router 自体は手前で既に成功している** ため、`vrf_table_.find(vrf_name)` 以後の retry は update パス側 (`set_virtual_router_attribute`) に流れる。ログレベルが `NOTICE` のみで `ERROR` を出さないため運用上は **silent skip** と認識されやすい。
+
+### fallback 未処理
+
+`vrfmgrd` は `fallback` を pass-through で APP_DB に届けるが、`VRFOrch::addOperation` の if/else チェーン (`vrforch.cpp:36-83`) には `"fallback"` の専用分岐が存在しない。結果として最後の `else` で `SWSS_LOG_ERROR "Logic error: Unknown attribute: fallback"` を出してから `continue` で抜ける。SAI 属性化されず、retry にも繋がらず、STATE_DB にも残らない。**dead field**。
+
+### 部分適用 / rollback 不在
+
+`addOperation` の update パス (`vrforch.cpp:129-141`) は attribute を逐次 SAI に流すため、途中失敗時の rollback が一切無い。`l3_mc_action` のような SAI 任意属性が未対応 ASIC で `NOT_SUPPORTED` を返すと、**先行属性 (例: `src_mac`) は SAI に書込済みのまま** エントリは削除される。STATE_DB の整合チェック側でも検出されないため、ユーザは `sonic-db-cli ASIC_DB hgetall ASIC_STATE:SAI_OBJECT_TYPE_VIRTUAL_ROUTER:<oid>` で実状態を直接確認する必要がある。
+
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
