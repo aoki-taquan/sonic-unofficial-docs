@@ -178,6 +178,124 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.cpp`) を経由して以下の副次書込みを発火させる。`VRFOrch` 自身が保持する swss `Table` ハンドルは `m_stateVrfObjectTable` ただ 1 つで (`vrforch.h:54, 182`)、それ以外の DB 直接書込は存在しない。
+
+### 直接 — STATE_DB `VRF_OBJECT_TABLE`
+
+| トリガ (APPL_DB SET/DEL 由来) | コード位置 | 書込内容 |
+|---|---|---|
+| 新規 `VRF_TABLE\|<vrfName>` SET → SAI create 成功 | `vrforch.cpp:120` | `m_stateVrfObjectTable.hset(vrfName, "state", "ok")` |
+| 既存 `VRF_TABLE\|<vrfName>` SET (更新) → SAI set 成功 | `vrforch.cpp:150` | `m_stateVrfObjectTable.hset(vrfName, "state", "ok")` |
+| `VRF_TABLE\|<vrfName>` DEL → SAI remove 成功 | `vrforch.cpp:193` | `m_stateVrfObjectTable.del(vrfName)` |
+
+テーブル名定数は `STATE_VRF_OBJECT_TABLE_NAME = "VRF_OBJECT_TABLE"` (`sonic-swss-common/common/schema.h`)。コンストラクタで `stateDb` と `stateTableName` が `orchdaemon.cpp` から注入される (`vrforch.h:52-56`)。購読側は `vrfmgrd::isVrfObjExist()` が VRF 削除タイミング制御に利用する (`cfgmgr/vrfmgr.cpp`)。
+
+### 間接 — COUNTERS_DB / FLEX_COUNTER_DB (条件付き)
+
+`addOperation` の create 直後 (`vrforch.cpp:110`) と `delOperation` の SAI remove 直後 (`vrforch.cpp:184`) で、`gFlowCounterRouteOrch->onAddVR(router_id)` / `onRemoveVR(router_id)` が呼ばれる。これは `FlowCounterRouteOrch` (`orchagent/flex_counter/flowcounterrouteorch.cpp`) が保持する以下の DB ハンドルへ副次書込みを発火し得る:
+
+| DB | テーブル | 用途 |
+|---|---|---|
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` (`mPrefixToCounterTable`) | route prefix → counter OID マップ |
+| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` (`mPrefixToPatternTable`) | route prefix → 適用パターン名マップ |
+| FLEX_COUNTER_DB | `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` (`mRouteFlowCounterMgr`) | poller group / interval 登録 |
+
+ただし `FlowCounterRouteOrch::onAddVR` (`flowcounterrouteorch.cpp:401-432`) は
+
+1. `mRouteFlowCounterSupported == false` の場合は即 return（プラットフォーム側 capability で決まる）、
+2. CONFIG_DB `FLOW_COUNTER_ROUTE_PATTERN_TABLE` に当該 `vrf_name` を含む `RoutePattern` が登録済みの場合に限り `createRouteFlowCounterByPattern()` を呼ぶ、
+
+という二重ガードで保護されており、通常運用（ROUTE フローカウンタ機能未使用）では VRF_TABLE への SET/DEL は COUNTERS_DB / FLEX_COUNTER_DB に**何も書かない**。
+
+### その他 DB
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB (他テーブルへの fan-out) | なし | `VRFOrch` は `Orch2(appDb, appTableName, ...)` で `APP_VRF_TABLE_NAME` を購読するのみ。`appDb` への producer hand を持たない (`vrforch.h:52-56`) |
+| ASIC_DB (VRFOrch 直接) | なし | `sai_virtual_router_api->create_virtual_router()` 呼出により syncd 経由で ASIC_DB に流れるのは SAI 通常経路。`VRFOrch` 自身は ASIC_DB Table ハンドルを保持しない |
+| LOGLEVEL_DB | なし | `vrforch.cpp` 全文に LOGLEVEL_DB 参照 0 件 |
+| Notification channel | なし | `vrforch.cpp` に `NotificationProducer` / `publish()` の呼出なし |
+
+### VNET_TABLE 経路について
+
+本ページは APPL_DB `VRF_TABLE` スコープ。同じ APPL_DB 上の `VNET_TABLE` は `VnetOrch` (`vnetorch.cpp`) が処理し、`STATE_VNET_RT_TUNNEL_TABLE` / `STATE_ADVERTISE_NETWORK_TABLE` 等への副次書込みを発火させるが、これは別ハンドラの責務のため本ページの対象外。
+
+詳細スキャン手順・grep 結果は `meta/_intermediate/cdb-flow/appl-vrf-side.md` を参照。
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、ASIC SAI 実装と VS/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは EVPN VTEP 事前作成を必須とする。
+
+### VRF / VNET capability 4 属性
+
+`vrforch.cpp:48-67` の if/else チェーンで以下のとおり SAI 属性へ無条件変換され、capability チェック・fallback はない。SAI が `SAI_STATUS_NOT_SUPPORTED` を返した場合は `task_failed` で APPL_DB エントリが再試行キューに残る。
+
+| APPL_DB フィールド | SAI 属性 | 実装状況 |
+|--------------------|---------|---------|
+| `src_mac` | `SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` | 主要 ASIC 必須属性。VS / VPP も受理 (no-op) |
+| `ttl_action` | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION` | SAI 任意。Broadcom / Mellanox / Cisco silicon-one OK。古い SDK / VPP は `NOT_SUPPORTED` の可能性 |
+| `ip_opt_action` | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION` | 同上 |
+| `l3_mc_action` | `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` | L3 マルチキャスト未対応 ASIC / VS / VPP では `NOT_SUPPORTED` の可能性 |
+
+YANG `sonic-vrf.yang` には 4 属性のいずれも定義がない（`vni` / `fallback` / `description` のみ）ため、`config vrf add` 経由では書き込まれない。`VNET` テーブル経由で `vnetorch` が APPL_DB `VRF_TABLE` を直書きする非標準経路でのみ capability 差が顕在化する。
+
+### VS (`libsaivs`)
+
+`SAI_OBJECT_TYPE_VIRTUAL_ROUTER` の create/remove は内部 map 操作のみで、4 属性すべて SUCCESS で受理する。実 ASIC が無いため packet action / src_mac は no-op。
+
+### VPP (`libsaivpp` / `sonic-sairedis/vslib/vpp`)
+
+`SwitchVpp.cpp:1183-1187` で VRF remove は `removeVrf()` (`SwitchVppRif.cpp:1940-1955`) に分岐し、`m_switchConfig->m_useTapDevice == true` のとき `vpp_del_ip_vrf()` で VPP データプレーン側の VRF も同期削除する。`vpp_add_ip_vrf()` (`SwitchVppRif.cpp:1387-1419`) は `ip_vrf_add(vrf_id, "vrf_<n>", false)` で VPP VRF を作成し、`vpp_ip_flow_hash_set()` で 5-tuple ハッシュ (`SRC_IP|DST_IP|SRC_PORT|DST_PORT|PROTO`) を固定設定する:
+
+```cpp
+// SwitchVppRif.cpp:1407-1418
+std::string vrf_name = "vrf_" + vrf_id;
+if (!vrf_id || ip_vrf_add(vrf_id, vrf_name.c_str(), false) == 0) {
+    vrf_objMap[objectId] = std::make_shared<IpVrfInfo>(objectId, vrf_id, vrf_name, false);
+    uint32_t hash_mask = VPP_IP_API_FLOW_HASH_SRC_IP | VPP_IP_API_FLOW_HASH_DST_IP |
+        VPP_IP_API_FLOW_HASH_SRC_PORT | VPP_IP_API_FLOW_HASH_DST_PORT |
+        VPP_IP_API_FLOW_HASH_PROTO;
+    int ret = vpp_ip_flow_hash_set(vrf_id, hash_mask, AF_INET);
+}
+```
+
+VPP では VRF ハッシュマスクは APPL_DB / SAI 側から制御不可で 5-tuple 固定。4 capability 属性は VS と同じく no-op。
+
+### EVPN VTEP 依存（`vni != 0` の前提条件）
+
+`vni != 0` を指定して L3 VNI を VRF にマップする場合、`VRFOrch::updateVrfVNIMap` (`vrforch.cpp:225-230`) は `EvpnNvoOrch::getEVPNVtep()` で **CONFIG_DB `VXLAN_EVPN_NVO` 経由で作成済みの source VTEP** を取得することを必須とする:
+
+```cpp
+// vrforch.cpp:225-230
+auto evpn_vtep_ptr = evpn_orch->getEVPNVtep();
+if(!evpn_vtep_ptr)
+{
+    SWSS_LOG_NOTICE("updateVrfVNIMap unable to find EVPN VTEP");
+    return false;
+}
+```
+
+VTEP 未設定で `vni > 0` の VRF エントリを APPL_DB に書くと VRFOrch は failure 復路で抜け、`STATE_VRF_OBJECT_TABLE|<vrfName>` の `state=ok` 書き込みも `vrf_vni_map_table_[vrf_name] = vni` も発生しない。さらに `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 を返す場合（VLAN-VNI map 未投入）、`updateL3VniStatus()` は呼ばれず L3 VNI は半設定状態となる。
+
+### プラットフォーム影響まとめ
+
+| 観点 | Broadcom DNX / XGS | Mellanox | Cisco silicon-one | VS | VPP |
+|------|--------------------|----------|--------------------|----|-----|
+| `src_mac` SAI 属性 | OK | OK | OK | OK (no-op) | OK (no-op) |
+| `ttl_action` / `ip_opt_action` | OK | OK | OK | OK (no-op) | OK (no-op) |
+| `l3_mc_action` | OK (一部 SKU) | OK | OK | OK (no-op) | OK (no-op) |
+| `vni` (L3 VNI) 実データプレーン転送 | DNX OK / XGS 一部 | OK | OK | dummy | dummy |
+| EVPN VTEP 事前作成必須 | あり | あり | あり | あり (受理のみ) | あり (受理のみ) |
+| VRF 削除時の外部同期 | 不要 | 不要 | 不要 | 不要 | `m_useTapDevice=true` のみ VPP に伝搬 |
+
+詳細根拠は `meta/_intermediate/cdb-flow/appl-vrf-platform.md` を参照。
+<!-- /platform -->
+
 ## 関連ページ
 
 - [CONFIG_DB VRF テーブル](./vrf.md)
