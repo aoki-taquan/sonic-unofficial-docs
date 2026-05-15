@@ -635,4 +635,53 @@ STATE_DB テーブル名: `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` (`sch
 > **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:62-63`、`aclorch.cpp:42-44,105-106,523-526,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`ACL_TABLE` の SET/DEL を受けた `AclOrch` は CONFIG_DB のほか STATE_DB と COUNTERS_DB に以下を書き込む。
+
+### STATE_DB 書込み
+
+| タイミング | テーブル | キー | フィールド | 値 |
+|---|---|---|---|---|
+| SET → `addAclTable()` 成功 | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Active"` |
+| SET → `addAclTable()` 失敗 (retry) | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Pending creation"` |
+| SET → `bAllAttributesOk=false` or `validate()=false` | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Inactive"` |
+| DEL → `removeAclTable()` 失敗 (retry) | `ACL_TABLE_TABLE` | `<table_name>` | `status` | `"Pending removal"` |
+| DEL → `removeAclTable()` 成功 | `ACL_TABLE_TABLE` | `<table_name>` | — | エントリ削除 |
+| AclOrch 起動時 (`init()`) | `ACL_TABLE_TABLE` | 全キー | — | 全エントリ一括削除 (`removeAllAclTableStatus()`) |
+| AclOrch 起動時 SAI capability query 後 | `ACL_STAGE_CAPABILITY_TABLE` | `"INGRESS"` / `"EGRESS"` | `is_action_list_mandatory`, `action_list`, `supported_L3V4V6` | ASIC 問い合わせ結果 |
+
+`ACL_TABLE_TABLE` テーブル名定数: `STATE_ACL_TABLE_TABLE_NAME` (`schema.h:514`)
+`ACL_STAGE_CAPABILITY_TABLE` テーブル名定数: `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME` (`schema.h:418`)
+
+確認コマンド:
+
+```bash
+sonic-db-cli STATE_DB hgetall 'ACL_TABLE_TABLE|<table_name>'
+sonic-db-cli STATE_DB hgetall 'ACL_STAGE_CAPABILITY_TABLE|INGRESS'
+```
+
+### COUNTERS_DB 書込み
+
+ACL_TABLE 自体は COUNTERS_DB に直接書き込まない。ただし ACL_TABLE に紐づく **ACL_RULE** の作成/削除時に以下が連動する。
+
+| タイミング | テーブル | キー | 内容 |
+|---|---|---|---|
+| ACL_RULE 作成 (`registerFlexCounter()`) | `ACL_COUNTER_RULE_MAP` | `<table_name>:<rule_name>` | SAI counter OID 文字列 |
+| ACL_RULE 削除 (`deregisterFlexCounter()`) | `ACL_COUNTER_RULE_MAP` | `<table_name>:<rule_name>` | エントリ削除 |
+| ACL テーブル作成 | CRM カウンタ (`COUNTERS_DB`) | — | `incCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:2855`) |
+| ACL テーブル削除 | CRM カウンタ (`COUNTERS_DB`) | — | `decCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:4877`) |
+| ACL_RULE 作成 | CRM カウンタ (`COUNTERS_DB`) | テーブル OID 配下 | `incCrmAclTableUsedCounter(CRM_ACL_ENTRY)` + `CRM_ACL_COUNTER` |
+| ACL_RULE 削除 | CRM カウンタ (`COUNTERS_DB`) | テーブル OID 配下 | `decCrmAclTableUsedCounter(CRM_ACL_ENTRY)` + `CRM_ACL_COUNTER` |
+
+FlexCounter 連動: ACL_RULE 作成時に `FLEX_COUNTER_DB / ACL_STAT_COUNTER` グループへ counter OID を登録し、FlexCounter デーモンが定期的に SAI カウンタをポーリングして `COUNTERS_DB / COUNTERS` に統計値を書き込む。
+
+```bash
+sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
+```
+
+> **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。全行精読 + `schema.h:418,514` 確認。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 9f69b0796e2c -->
