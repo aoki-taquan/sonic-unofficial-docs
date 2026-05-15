@@ -27629,6 +27629,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auth_type-pap-yang-default-pap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_type — コード "pap" + YANG default "pap"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeout-5-yang-default-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        timeout — コード "5" 秒 + YANG default 5
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retransmit-3-yang-default-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retransmit — コード "3" 回 + YANG default 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auth_port-fallback-1812" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_port — コードのみの fallback "1812"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passkey" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        passkey — コード "" (空文字)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34918,6 +34990,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auth_type-pap-yang-default-pap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_type — コード "pap" + YANG default "pap"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeout-5-yang-default-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        timeout — コード "5" 秒 + YANG default 5
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retransmit-3-yang-default-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retransmit — コード "3" 回 + YANG default 3
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auth_port-fallback-1812" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_port — コードのみの fallback "1812"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#passkey" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        passkey — コード "" (空文字)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35362,6 +35506,24 @@
 <li><strong>modify_conf_file 失敗は syslog のみ</strong>: テンプレート展開やサービス SIGHUP 送信に失敗しても例外はキャッチされ <code>LOG_ERR</code> / <code>LOG_WARNING</code> に記録されるだけ。設定ファイルとメモリ内 radius_servers とのずれが生じる可能性がある。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>statistics / skip_msg_auth のブール変換</strong>: <code>is_true()</code> で変換され <code>True/true/yes/1</code> 以外はすべて False 扱い。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
+<!-- defaults -->
+<h2 id="fallback">コード由来の暗黙デフォルト・Fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h2>
+<p>hostcfgd の <code>RadiusCfg</code> は <code>self.radius_global_default</code> というモジュール定数由来の dict を保持し、<code>modify_conf_file()</code> で <code>radius_global_default.copy()</code> → <code>update(self.radius_global)</code> の順にマージしてから <code>pam_radius_auth.conf</code> / <code>radius_nss.conf</code> を生成する。このため <code>RADIUS|global</code> に該当キーが書かれていなくても、以下の値が PAM 設定に反映される。</p>
+<h3 id="auth_type-pap-yang-default-pap"><code>auth_type</code> — コード <code>"pap"</code> + YANG <code>default "pap"</code><a class="headerlink" href="#auth_type-pap-yang-default-pap" title="Permanent link">&para;</a></h3>
+<p><code>RADIUS_SERVER_AUTH_TYPE_DEFAULT = "pap"</code> (<code>hostcfgd:96</code>) が <code>radius_global_default['auth_type']</code> (<code>hostcfgd:377</code>) に設定される。YANG <code>sonic-system-radius.yang</code> の <code>default "pap"</code> 宣言と二重で一致しており、DB absent でも CLI 未指定でも <code>pap</code> で PAM テンプレートに展開される。</p>
+<h3 id="timeout-5-yang-default-5"><code>timeout</code> — コード <code>"5"</code> 秒 + YANG <code>default 5</code><a class="headerlink" href="#timeout-5-yang-default-5" title="Permanent link">&para;</a></h3>
+<p><code>RADIUS_SERVER_TIMEOUT_DEFAULT = "5"</code> (<code>hostcfgd:95</code>) が <code>radius_global_default['timeout']</code> (<code>hostcfgd:379</code>) に設定。YANG <code>default 5</code> と一致。<code>pam_radius_auth.conf</code> の応答待ち秒数として書き込まれる。</p>
+<h3 id="retransmit-3-yang-default-3"><code>retransmit</code> — コード <code>"3"</code> 回 + YANG <code>default 3</code><a class="headerlink" href="#retransmit-3-yang-default-3" title="Permanent link">&para;</a></h3>
+<p><code>RADIUS_SERVER_RETRANSMIT_DEFAULT = "3"</code> (<code>hostcfgd:94</code>) が <code>radius_global_default['retransmit']</code> (<code>hostcfgd:378</code>) に設定。YANG <code>default 3</code> と一致。</p>
+<h3 id="auth_port-fallback-1812"><code>auth_port</code> — コードのみの fallback <code>"1812"</code><a class="headerlink" href="#auth_port-fallback-1812" title="Permanent link">&para;</a></h3>
+<p><code>RADIUS_SERVER_AUTH_PORT_DEFAULT = "1812"</code> (<code>hostcfgd:92</code>) が <code>radius_global_default['auth_port']</code> (<code>hostcfgd:376</code>) に注入される。<code>RADIUS</code> global container 側の YANG には <code>auth_port</code> は宣言されていない（フィールドは <code>RADIUS_SERVER</code> 側）が、hostcfgd は global default dict にこの値を一括で持っているため、PAM 設定生成時にサーバごとの <code>auth_port</code> が未指定ならこの値が使われる。コード由来のみで担保される fallback。</p>
+<h3 id="passkey"><code>passkey</code> — コード <code>""</code> (空文字)<a class="headerlink" href="#passkey" title="Permanent link">&para;</a></h3>
+<p><code>RADIUS_SERVER_PASSKEY_DEFAULT = ""</code> (<code>hostcfgd:93</code>) が <code>radius_global_default['passkey']</code> (<code>hostcfgd:380</code>) に設定。空文字は PAM 設定で <code>secret=</code> 行が省略される動作に相当し、サーバごとの passkey 上書きが無い場合は認証が成立しない設定となる（YANG-実装 discrepancy: YANG は <code>passkey</code> を <code>RADIUS</code> global の任意フィールドとして許容するが、値なし時のフォールバックは空文字でありそのまま使うと PAM が認証拒否する）。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd:92-96</code> (モジュール定数)、<code>:374-382</code> (<code>self.radius_global_default</code> 構築)。SHA <code>c5bbbe8b07b96f078fa4b761316627404b01bd04</code>。詳細は <code>meta/_intermediate/cdb-flow/radius-defaults.md</code> を参照。</p>
+</blockquote>
+<!-- /defaults -->
+
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>

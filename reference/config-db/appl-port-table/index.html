@@ -22349,6 +22349,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API 種別と batch 設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portconfigdone-portinitdone-channel-port_table-sentinel-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortConfigDone / PortInitDone トリガ — 専用 channel ではなく PORT_TABLE 内の sentinel key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 自書き戻しは PUBLISH しない（自己ループ回避）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-addexistingdata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart 時の addExistingData()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加 consumer（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-port" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35509,6 +35581,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api-batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API 種別と batch 設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portconfigdone-portinitdone-channel-port_table-sentinel-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PortConfigDone / PortInitDone トリガ — 専用 channel ではなく PORT_TABLE 内の sentinel key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent 自書き戻しは PUBLISH しない（自己ループ回避）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-addexistingdata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart 時の addExistingData()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        追加 consumer（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-port" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35580,7 +35724,7 @@
 <h1 id="appl_db-port_table">APPL_DB PORT_TABLE<a class="headerlink" href="#appl_db-port_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>APPL_DB PORT_TABLE</code> は物理ポートの実効設定と運用状態を保持する <a href="../../glossary/#term-appl_db">APPL_DB</a> テーブル。
-CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つのプロセスが書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">2</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">3</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">4</a></sup>:</p>
+CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つのプロセスが書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">3</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">4</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">5</a></sup>:</p>
 <ol>
 <li><strong>portsyncd</strong> — 起動時に CONFIG_DB <code>PORT</code> テーブルの全フィールドを APPL_DB に転写する</li>
 <li><strong>portmgrd</strong> — CONFIG_DB の変更を監視し、<code>admin_status</code> / <code>mtu</code> の変更を APPL_DB に反映する。初回書き込み時はコード由来のデフォルト値を補完する</li>
@@ -36070,7 +36214,7 @@ CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つ�
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>注記</strong>: PortsOrch は APPL_DB <code>PORT_TABLE</code> を購読し、SAI を呼び出すと同時に複数の関連 DB に副次書き込みを行う。以下は <code>sonic-swss/orchagent/portsorch.cpp</code> の精読から検出した副次書込<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">5</a></sup>。詳細な操作行・コード行番号は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-side.md"><code>meta/_intermediate/cdb-flow/appl-port-table-side.md</code></a> を参照。</p>
+<p><strong>注記</strong>: PortsOrch は APPL_DB <code>PORT_TABLE</code> を購読し、SAI を呼び出すと同時に複数の関連 DB に副次書き込みを行う。以下は <code>sonic-swss/orchagent/portsorch.cpp</code> の精読から検出した副次書込<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">6</a></sup>。詳細な操作行・コード行番号は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-side.md"><code>meta/_intermediate/cdb-flow/appl-port-table-side.md</code></a> を参照。</p>
 </blockquote>
 <h3 id="_5">副次書込サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
@@ -36504,7 +36648,7 @@ CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つ�
 <blockquote>
 <p><strong>注記</strong>: orchagent (PortsOrch) が APPL_DB <code>PORT_TABLE</code> を購読して SAI に反映する際、
 入力値の不正や SAI 失敗を 3 系統 (<code>task_success</code> / <code>task_need_retry</code> / <code>task_failed</code>) で扱う。
-詳細・コード行は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md"><code>meta/_intermediate/cdb-flow/appl-port-table-failure.md</code></a> を参照<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">6</a></sup>。</p>
+詳細・コード行は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md"><code>meta/_intermediate/cdb-flow/appl-port-table-failure.md</code></a> を参照<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">7</a></sup>。</p>
 </blockquote>
 <h3 id="eraseretry">永久失敗 (タスクを erase、retry なし)<a class="headerlink" href="#eraseretry" title="Permanent link">&para;</a></h3>
 <table>
@@ -36587,6 +36731,133 @@ CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つ�
 SET が失敗してもデータ面の運用表示は最新値を反映する。</p>
 <!-- /failure -->
 
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>注記</strong>: APPL_DB <code>PORT_TABLE</code> は <code>PortsOrch</code> が <strong><code>ConsumerStateTable</code></strong> で購読する（CONFIG_DB / STATE_DB のような keyspace 通知ベースの <code>SubscriberStateTable</code> ではない）。producer の <code>portsyncd</code> / <code>portmgrd</code> が <code>ProducerStateTable</code> で KEY_SET に key を push し、Lua スクリプトが Redis <code>PUBLISH</code> を叩く。詳細・行番号は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-pubsub.md"><code>meta/_intermediate/cdb-flow/appl-port-table-pubsub.md</code></a> を参照<sup id="fnref:pubsub"><a class="footnote-ref" href="#fn:pubsub">2</a></sup>。</p>
+</blockquote>
+<h3 id="api-batch">購読 API 種別と batch 設定<a class="headerlink" href="#api-batch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>consumer 種別</td>
+<td><code>ConsumerStateTable</code> (channel + KEY_SET ベース)</td>
+<td><code>orch.cpp:1185-1196</code> の <code>Orch::addConsumer()</code> で APPL_DB は else 側分岐</td>
+</tr>
+<tr>
+<td>pop batch サイズ</td>
+<td><code>gBatchSize</code> (default <strong>128</strong>、<code>orchagent -b &lt;N&gt;</code> で可変、<code>0</code> で 30000 cap)</td>
+<td><code>main.cpp:95-105, 459, 478</code> / <code>orch.cpp:17, 913</code></td>
+</tr>
+<tr>
+<td>Redis channel</td>
+<td><code>getChannelName(&lt;APPL_DB id&gt;)</code> — <strong>DB 単位 1 channel</strong> (テーブル単位ではない)</td>
+<td><code>producerstatetable.cpp:104-108</code> Lua <code>PUBLISH KEYS[1] ARGV[1]</code></td>
+</tr>
+<tr>
+<td>通知 payload</td>
+<td>固定文字列 <code>"G"</code> (差分は SPOP <code>_PORT_TABLE_KEY_SET</code> + HGETALL で取得)</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>なし (APPL_DB は永続)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>PORT_TABLE</code> の priority</td>
+<td><strong>45</strong> (<code>portsorch_base_pri (=40) + 5</code>)</td>
+<td><code>orchdaemon.cpp:215-218</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>Orch::addConsumer()</code> (<code>orch.cpp:1185-1196</code>) は DB ID が <code>CONFIG_DB</code> / <code>STATE_DB</code> / <code>CHASSIS_APP_DB</code> のときのみ <code>SubscriberStateTable</code> を使い、それ以外（APPL_DB を含む）では <code>ConsumerStateTable</code> を使う。<code>PORT_TABLE</code> は APPL_DB なので後者経路。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// orchagent/orchdaemon.cpp:215-232</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">portsorch_base_pri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="p">;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">table_name_with_pri_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ports_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_PORT_TABLE_NAME</span><span class="p">,</span><span class="w">             </span><span class="n">portsorch_base_pri</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="p">},</span><span class="w">  </span><span class="c1">// 45</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_SEND_TO_INGRESS_PORT_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">portsorch_base_pri</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_VLAN_TABLE_NAME</span><span class="p">,</span><span class="w">             </span><span class="n">portsorch_base_pri</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_VLAN_MEMBER_TABLE_NAME</span><span class="p">,</span><span class="w">      </span><span class="n">portsorch_base_pri</span><span class="w">     </span><span class="p">},</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_LAG_TABLE_NAME</span><span class="p">,</span><span class="w">              </span><span class="n">portsorch_base_pri</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_LAG_MEMBER_TABLE_NAME</span><span class="p">,</span><span class="w">       </span><span class="n">portsorch_base_pri</span><span class="w">     </span><span class="p">},</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">};</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">gPortsOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PortsOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">m_stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">ports_tables</span><span class="p">,</span><span class="w"> </span><span class="n">m_chassisAppDb</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>PORT_TABLE</code> の priority 45 は LAG_MEMBER / VLAN_MEMBER (40) より高く、同 cycle 内で PORT 系 SET が先に処理される（同 <code>doTask()</code> 内の <code>tableOrder</code> <code>{PORT, LAG, LAG_MEMBER, VLAN, VLAN_MEMBER}</code> (<code>portsorch.cpp:6467</code>) と整合）。</p>
+<h3 id="portconfigdone-portinitdone-channel-port_table-sentinel-key">PortConfigDone / PortInitDone トリガ — 専用 channel ではなく PORT_TABLE 内の sentinel key<a class="headerlink" href="#portconfigdone-portinitdone-channel-port_table-sentinel-key" title="Permanent link">&para;</a></h3>
+<p><code>PortConfigDone</code> / <code>PortInitDone</code> は <strong><code>PORT_TABLE</code> 内の予約 key</strong>であって、専用 channel や <code>NotificationProducer</code> ではない。portsyncd は通常の <code>ProducerStateTable::set()</code> でこれらの key を書き、orchagent は通常の <code>consumer.pops()</code> で受け取った <code>KeyOpFieldsValuesTuple</code> の <code>key</code> を文字列比較して検出する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// portsyncd/portsyncd.cpp:71, 134, 171-176</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">ProducerStateTable</span><span class="w"> </span><span class="nf">p</span><span class="p">(</span><span class="o">&amp;</span><span class="n">appl_db</span><span class="p">,</span><span class="w"> </span><span class="n">APP_PORT_TABLE_NAME</span><span class="p">);</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">p</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;PortInitDone&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">attrs</span><span class="p">);</span><span class="w">                              </span><span class="c1">// L134</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">notifyPortConfigDone</span><span class="p">(</span><span class="n">ProducerStateTable</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// L171</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">FieldValueTuple</span><span class="w"> </span><span class="n">finish_notice</span><span class="p">(</span><span class="s">&quot;count&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">g_portSet</span><span class="p">.</span><span class="n">size</span><span class="p">()));</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">p</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;PortConfigDone&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">finish_notice</span><span class="w"> </span><span class="p">});</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// orchagent/portsorch.cpp:4585-4626 (PortsOrch::doPortTask)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;PortConfigDone&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">setPortConfigState</span><span class="p">(</span><span class="n">PORT_CONFIG_RECEIVED</span><span class="p">);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">taskMap</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w">   </span><span class="c1">// 保留中タスクを先頭から再評価</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;PortInitDone&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_initDone</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">addSystemPorts</span><span class="p">();</span><span class="w"> </span><span class="n">m_initDone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">taskMap</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>PortConfigDone</code> 受信前に届いた個別 <code>PORT_TABLE:&lt;alias&gt;</code> SET は <code>taskMap</code> に保留され (<code>portsorch.cpp:4772-4777</code>)、<code>PortConfigDone</code> 受信時に <code>it = taskMap.begin()</code> で先頭から再評価される。これにより「producer (portsyncd) は順不同で <code>PORT_TABLE:&lt;alias&gt;</code> を全件書いてから最後に <code>PortConfigDone</code> を書く」という契約が成立する（順序詳細は Phase B を参照）。</p>
+<h3 id="orchagent-publish">orchagent 自書き戻しは PUBLISH しない（自己ループ回避）<a class="headerlink" href="#orchagent-publish" title="Permanent link">&para;</a></h3>
+<p><code>PortsOrch</code> は SAI 通知由来の <code>oper_status</code> / <code>flap_count</code> / <code>last_*_time</code> / Gearbox 状態を書き戻すために <code>m_portTable</code> を <strong><code>Table</code>（<code>ProducerStateTable</code> ではない素の Table）</strong> として保持する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// orchagent/portsorch.cpp:770</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">m_portTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">APP_PORT_TABLE_NAME</span><span class="p">));</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// portsorch.cpp:3890, 3930, 6643, 6656, 11244, 11259</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">m_portTable</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_alias</span><span class="p">,</span><span class="w"> </span><span class="n">tuples</span><span class="p">);</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">m_portTable</span><span class="o">-&gt;</span><span class="n">hset</span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_alias</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;oper_status&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;down&quot;</span><span class="p">);</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">m_portTable</span><span class="o">-&gt;</span><span class="n">hset</span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_alias</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;flap_count&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">flapCount</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>Table::hset</code> は <code>_PORT_TABLE_KEY_SET</code> を更新せず Redis の <code>PUBLISH</code> も発火しないため、orchagent 自身の <code>ConsumerStateTable</code> はこれらを検出しない。これは「自分の通知を自分で拾うループ」を回避する設計。逆に <code>portsyncd</code> / <code>portmgrd</code> の書き込みは <code>ProducerStateTable::set()</code> 経由で KEY_SET 投入 + PUBLISH を伴うため、orchagent consumer が次の <code>select()</code> cycle で即時拾う。</p>
+<h3 id="warm-restart-addexistingdata">warm-restart 時の <code>addExistingData()</code><a class="headerlink" href="#warm-restart-addexistingdata" title="Permanent link">&para;</a></h3>
+<p><code>bake()</code> で APPL_DB の整合性検証（<code>PortConfigDone:count</code> と <code>PortInitDone</code> の存在）を通過した後、<code>addExistingData(m_portTable.get())</code> (<code>portsorch.cpp:4386</code>) が APPL_DB に残っている全 <code>PORT_TABLE:*</code> キーを <code>m_toSync</code> に投入してから通常の <code>doTask()</code> ループに入る。warm 時は <code>ConsumerStateTable</code> 経由の通知を待たずに既存スナップショットをそのまま consumer の保留キューに流し込む形になる。</p>
+<h3 id="consumer">追加 consumer（参考）<a class="headerlink" href="#consumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>追加購読</th>
+<th>DB</th>
+<th>種別</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_TRANSCEIVER_INFO_TABLE</code></td>
+<td>STATE_DB</td>
+<td><code>SubscriberStateTable</code></td>
+<td>常時</td>
+<td><code>portsorch.cpp:984</code></td>
+</tr>
+<tr>
+<td>CHASSIS_APP_DB system port table x2</td>
+<td>CHASSIS_APP_DB</td>
+<td><code>SubscriberStateTable</code></td>
+<td>VOQ chassis (<code>gMySwitchType == "voq"</code>) のみ</td>
+<td><code>portsorch.cpp:1086, 1091</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらは <code>PORT_TABLE</code> 本体とは別 consumer。<code>PortsOrch::doTask(Consumer&amp;)</code> (<code>portsorch.cpp:6498-6520</code>) で <code>table_name</code> 別に分岐ディスパッチされる。</p>
+<!-- /pubsub -->
+
 <h2 id="config_db-port">CONFIG_DB PORT との対応<a class="headerlink" href="#config_db-port" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36625,15 +36896,15 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。<
 </tbody>
 </table>
 <h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># APPL_DB PORT_TABLE を直接参照</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT_TABLE:Ethernet0&#39;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># 全ポートの oper_status を確認</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># APPL_DB と CONFIG_DB の差分確認</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT_TABLE:Ethernet0&#39;</span><span class="w"> </span>oper_status
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># APPL_DB PORT_TABLE を直接参照</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT_TABLE:Ethernet0&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># 全ポートの oper_status を確認</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># APPL_DB と CONFIG_DB の差分確認</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT_TABLE:Ethernet0&#39;</span><span class="w"> </span>oper_status
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status
 </span></code></pre></div>
 <h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
@@ -36647,20 +36918,23 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。<
 <li id="fn:portorder">
 <p>orchagent portsorch.cpp (Phase B 順序依存): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:portorder" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
+<li id="fn:pubsub">
+<p>orchagent portsorch.cpp (Phase G 通信メカニズム): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および orch.cpp <code>Orch::addConsumer</code>: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp</a> / sonic-swss-common: <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp</a>&#160;<a class="footnote-backref" href="#fnref:pubsub" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p>portsyncd portsyncd.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>portsyncd portsyncd.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>portmgrd portmgr.h, portmgr.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>portmgrd portmgr.h, portmgr.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>orchagent portsorch.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>orchagent portsorch.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>orchagent portsorch.cpp (副次 DB 書込): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>orchagent portsorch.cpp (副次 DB 書込): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>orchagent portsorch.cpp <code>doPortTask()</code> / <code>setPort*</code> 系失敗分岐 (Phase D): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <code>handleSaiSetStatus()</code>: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>orchagent portsorch.cpp <code>doPortTask()</code> / <code>setPort*</code> 系失敗分岐 (Phase D): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <code>handleSaiSetStatus()</code>: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
