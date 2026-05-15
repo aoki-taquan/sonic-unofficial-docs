@@ -51,6 +51,101 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/aclorch.cpp AclOrch::doAclRuleTask:5520 / AclTable::add:2988 / AclRuleMirror::activate:2324 / AclRulePacket::getRedirectObjectId:2078 -->
+
+`ACL_RULE` の SAI 反映は複数の外部状態（PortsOrch 初期化、`ACL_TABLE`、`MIRROR_SESSION`、REDIRECT 先 next-hop、SAI リソース余裕）に依存する。違反時の挙動はガード機構により**自動回復するもの**と**rule INACTIVE で erase されるもの**に分かれる。
+
+### 依存 1: PortsOrch 初期化（必須先行・グローバル）
+
+```
+PortsOrch::allPortsReady() == true  先行
+  ↓
+ACL_TABLE / ACL_TABLE_TYPE / ACL_RULE のどの SET も処理開始
+```
+
+`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は何も処理しない。ACL 関連の全 CONFIG_DB エントリは PortsOrch の `PORT` 初期化完了を待つ。
+
+**違反時**: 書込み自体は CONFIG_DB に残り、PortsOrch 完了後の最初のイベントループで一括処理（自動回復）。
+
+### 依存 2: ACL_TABLE 先行（必須先行・自動回復あり）
+
+```
+ACL_TABLE|<table>  SET 完了（SAI OID 割当済み）  先行
+  ↓
+ACL_RULE|<table>|<rule>  SET
+```
+
+`doAclRuleTask()` (`aclorch.cpp:5548-5566`) は `getTableById(table_id)` が `SAI_NULL_OBJECT_ID` の場合、CTRLPLANE 種別ならその場で erase、それ以外は `it++` で `m_toSync` に保留し次の tick で再試行する（無限ポーリング）。
+
+**違反時**: ACL_TABLE が後から SAI に登録されると自動的にルール作成が成功する。CTRLPLANE 種別（`m_ctrlAclTables`）の table_id 配下ルールは INFO ログ後 erase される点に注意。
+
+### 依存 3: MIRROR_SESSION 存在（MIRROR action 限定・存在必須）
+
+```
+MIRROR_SESSION|<sess>  SET（存在化）  先行
+  ↓
+ACL_RULE|<table>|<rule>  with MIRROR_*_ACTION=<sess>  SET
+```
+
+`AclRuleMirror::activate()` (`aclorch.cpp:2331-2335`) は `m_pMirrorOrch->sessionExists(m_sessionName)` が false なら `return false` で rule 作成失敗。セッションが inactive（存在はする）の場合は SAI entry を作らずに保留し、`MirrorSessionUpdate` イベント経由で `AclRuleMirror::onUpdate()` (`aclorch.cpp:2424-2452`) が `activate()` を呼び戻す。
+
+**違反時**: session 不存在ならルール INACTIVE で erase。session が後から作成されても自動回復はせず、ACL_RULE の再 SET が必要。inactive → active の遷移は自動回復される。
+
+### 依存 4: REDIRECT ターゲット解決（推奨先行・自動回復なし）
+
+```
+（REDIRECT_ACTION = <port> / <nexthop> / <nh_group> / <tunnel_nh> の場合）
+PORT / PORTCHANNEL / NEIGH_TABLE / ROUTE_TABLE の対象が解決済み  先行
+  ↓
+ACL_RULE  SET（REDIRECT_ACTION または PACKET_ACTION=REDIRECT:<target>）
+```
+
+`AclRulePacket::getRedirectObjectId()` (`aclorch.cpp:2078-2166`) は PORT/LAG → NextHop → Tunnel NH → NextHopGroup の順でターゲットを解決する。NextHopGroup のみ未存在時に `routeOrch->addNextHopGroup()` で自動作成を試みる。それ以外が解決できない場合は `SAI_NULL_OBJECT_ID` → rule INACTIVE で erase。
+
+**違反時**: rule INACTIVE で erase。MIRROR_SESSION と異なり SubjectType 購読がないため自動回復せず、ACL_RULE の再 SET が必要。
+
+### 依存 5: MIRROR ルールの内容変更は DEL → SET 必須
+
+```
+ACL_RULE|<table>|<rule>  DEL  先行
+  ↓
+ACL_RULE|<table>|<rule>  SET（新属性）
+```
+
+`AclRuleMirror::update()` は未実装で `SWSS_LOG_ERROR` 後に `return false` を返す（`aclorch.cpp:2415-2420`）。同 key への SET だけでは内容変更されない。
+
+**違反時**: 更新 SET が ERROR ログのみで無視される。差分更新は不可。非 MIRROR ルール（L3/L3V6 等）は `AclTable::add()` (`aclorch.cpp:2988-3023`) が既存ルールを `remove()` → `create()` で完全再作成するため、同 key 再 SET で上書き可能。
+
+### 依存 6: DEL 順序（ACL_RULE → ACL_TABLE 推奨）
+
+```
+ACL_RULE|<table>|<rule>  DEL  先行（推奨）
+  ↓
+ACL_TABLE|<table>  DEL
+```
+
+`AclOrch::removeAclTable()` (`aclorch.cpp:4850`) は table 削除前に `m_AclTables[oid].clear()` で配下の全ルールを一括 `remove()` するため、SAI 上は順序不問。ただし CONFIG_DB に ACL_RULE が残ったまま ACL_TABLE のみ DEL すると、orchagent 再起動時の replay で ACL_RULE が依存 2 の待機ループに入り続けるため、**CONFIG_DB 整合性のためルール先 DEL を推奨**。
+
+**違反時**: 機能的には問題なし。再起動後に保留ルールが残るのみ。
+
+### 依存 7: SAI リソース枯渇時の retry cache（自動順序逆転）
+
+```
+（SAI ACL リソース枯渇時）
+新規 ACL_RULE SET → SAI_STATUS_INSUFFICIENT_RESOURCES → retry cache 退避
+  ↓
+同 table 内の既存 ACL_RULE DEL  → notifyRetry(RETRY_CST_SAI_RESOURCE)  → cache 再投入
+```
+
+`doAclRuleTask()` (`aclorch.cpp:5673-5698`, `5716-5720`) は resource-full 失敗を `RETRY_CST_SAI_RESOURCE` 制約付きで retry cache に退避し、同 table_id の rule DEL 成功時に `notifyRetry()` で再投入する。
+
+**違反時**: 自動メカニズム。SET 順序と独立に「枯渇したら退避、空いたら再投入」が回る。
+
+<!-- /ordering -->
+
 ## key 構造
 
 ```text
@@ -344,6 +439,69 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 > **スキャン証跡**: `doAclRuleTask()` L5520-5700 を全行読了、7 件分岐抽出。`type` / `stage` は ACL_RULE 自体のフィールドではなく ACL_TABLE から継承した値を参照。Phase 6/7 derivation ブロックの evidence 再確認: TCP 自動付与・minigraph 派生・DTelOrch 条件起動は実ソースと整合（`aclorch.cpp:5632-5660`、`minigraph.py:1218-1228`、`orchdaemon.cpp:502-530`）— 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### aclorch.cpp 数値・mask 定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ACL counter FlexCounter ポーリング間隔 | `sonic-swss/orchagent/aclorch.cpp:47` |
+| `ACL_COUNTER_DEFAULT_ENABLED_STATE` | `false` | ACL counter FlexCounter 初期無効状態（起動直後はカウンタ更新されない） | `sonic-swss/orchagent/aclorch.cpp:48` |
+| `MAX_META_DATA_VALUE` | `4095` | `META_DATA` / `META_DATA_ACTION` の最大許容値。SAI `u32range.max` がこれを超えると `4095` にクランプ | `sonic-swss/orchagent/aclorch.cpp:52,3619-3621` |
+| `TCP_PROTOCOL_NUM` | `6` | `TCP_FLAGS` あり + `IP_PROTOCOL` 未指定時に自動付与する TCP プロトコル番号（Phase 6 派生） | `sonic-swss/orchagent/aclorch.cpp:54,5645` |
+| `MAC_EXACT_MATCH` | `"ff:ff:ff:ff:ff:ff"` | `INNER_SRC_MAC` / `INNER_DST_MAC` 完全一致 mask（CONFIG_DB 非保存・C++ 内部固定） | `sonic-swss/orchagent/aclorch.cpp:56,957` |
+| `ACL_COUNTER_FLEX_COUNTER_GROUP` | `"ACL_STAT_COUNTER"` | FLEX_COUNTER グループ名 | `sonic-swss/orchagent/aclorch.cpp:4209` |
+
+### SAI mask 固定値 (CONFIG_DB に格納されない・C++ 内部のみ)
+
+| フィールド | mask 値 | ビット幅 | evidence |
+|-----------|---------|---------|---------|
+| `IP_TYPE` / `TUNNEL_VNI` / `META_DATA` | `0xFFFFFFFF` | 32bit | `sonic-swss/orchagent/aclorch.cpp:1046,1162,1208` |
+| `ETHER_TYPE` / `L4_SRC_PORT` / `L4_DST_PORT` / `INNER_ETHER_TYPE` / `INNER_L4_*` | `0xFFFF` | 16bit | `sonic-swss/orchagent/aclorch.cpp:1067,1168` |
+| `VLAN_ID` | `0xFFF` | 12bit | `sonic-swss/orchagent/aclorch.cpp:1072` |
+| `IP_PROTOCOL` / `NEXT_HEADER` / `TC` / `ICMP_*` / `INNER_IP_PROTOCOL` | `0xFF` | 8bit | `sonic-swss/orchagent/aclorch.cpp:1099,1151,1157,1173` |
+| `TCP_FLAGS` / `DSCP` (省略時フォールバック) | `0x3F` | 6bit | `sonic-swss/orchagent/aclorch.cpp:1061,1093` |
+
+`TCP_FLAGS` / `DSCP` は CONFIG_DB に `<data>/<mask>` 形式で明示指定可能。省略時のフォールバックが `0x3F`。
+
+### PRIORITY 範囲 (SAI capability で実行時決定)
+
+| 変数 | 既定値 | 設定タイミング | evidence |
+|-----|--------|--------------|---------|
+| `AclRule::m_minPriority` | `0` (静的初期値) | 起動時に `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` を query して `setRulePriorities()` で上書き | `sonic-swss/orchagent/aclorch.cpp:22,3689-3700`, `sonic-swss/orchagent/aclorch.h:321,376` |
+| `AclRule::m_maxPriority` | `0` (静的初期値) | 起動時に `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` を query して `setRulePriorities()` で上書き | `sonic-swss/orchagent/aclorch.cpp:23,3690-3700`, `sonic-swss/orchagent/aclorch.h:322,377` |
+
+`PRIORITY` 値が `[m_minPriority, m_maxPriority]` 範囲外なら `setPriority()` で ERROR ログ後 `return false` → rule INACTIVE (`aclorch.cpp:1654-1661`)。DPU (`gMySwitchType == "dpu"`) は SAI query をスキップし、静的初期値 `0/0` のままになる。
+
+### 内部 stage 値・デフォルト
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `stage` ローカル変数初期値 | `ACL_STAGE_INGRESS` | ACL_TABLE 解析時の `stage` 未指定フォールバック | `sonic-swss/orchagent/aclorch.cpp:543` |
+| `aclStageLookup[STAGE_INGRESS]` | `ACL_STAGE_INGRESS` | `STAGE` 文字列 → enum 変換マップ | `sonic-swss/orchagent/aclorch.cpp:166` |
+| `aclStageLookup[STAGE_EGRESS]` | `ACL_STAGE_EGRESS` | 同上 | `sonic-swss/orchagent/aclorch.cpp:167` |
+
+### acl_loader (CLI) ハードコード定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `AclLoader.min_priority` | `1` | `createDefaultDenyAclRule()` で生成するデフォルト DROP ルールの `PRIORITY` | `sonic-utilities/acl_loader/main.py:92,811` |
+| `AclLoader.max_priority` | `10000` | `PRIORITY = max_priority - sequence_id` の計算基底値（OpenConfig 経路） | `sonic-utilities/acl_loader/main.py:93` |
+| デフォルト deny `PACKET_ACTION` | `"DROP"` | `full_update` 完了時に L3/L3V6/L3V4V6 テーブルへ自動追加するルールの action | `sonic-utilities/acl_loader/main.py:812` |
+| デフォルト deny `rule_name` | `"DEFAULT_RULE"` | 自動追加 deny ルールの固定 key 部 | `sonic-utilities/acl_loader/main.py:810` |
+
+### REST/gNMI 経路定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `MAX_PRIORITY` | `65536` | `PRIORITY = MAX_PRIORITY - seqId` の計算基底値（REST/gNMI 経路）。`acl_loader` (`10000`) と異なる | `sonic-mgmt-common/translib/acl_app.go:56` |
+
+`acl_loader` (CLI) と REST/gNMI で計算基底値が異なるため、同一 OpenConfig `sequence-id` でも経路により CONFIG_DB に書き込まれる `PRIORITY` 値が変わる点に注意。
+
+> **スキャン証跡**: `aclorch.h` L22-23,321-322,376-377、`aclorch.cpp` L22-23,47-56,166-167,543,924,957,1046-1208,1654-1661,3610-3621,3689-3700,4209-4212,5640-5645 読了。`acl_loader/main.py` L92-93,805-815、`acl_app.go` L56 読了。定数 6 (cpp) + 5 (mask) + 2 (PRIORITY) + 3 (stage) + 4 (loader) + 1 (gNMI) = 21 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/acl-rule-constants.md`
+<!-- /constants -->
 
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
