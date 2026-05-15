@@ -550,4 +550,89 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
   (`AclRuleMirror::validateAddMatch()`)。`ACL_TABLE` 自体は直接参照しない。
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+実装コードに直接定義されている文字列定数・enum 値を一覧化する。CONFIG_DB フィールド名やステータス値を正確に把握するための参照用。
+
+### フィールドキー定数
+
+| マクロ名 | CONFIG_DB フィールド名 | ソース |
+|---|---|---|
+| `ACL_TABLE_DESCRIPTION` | `"POLICY_DESC"` | `acltable.h:12` |
+| `ACL_TABLE_STAGE` | `"STAGE"` | `acltable.h:13` |
+| `ACL_TABLE_TYPE` | `"TYPE"` | `acltable.h:14` |
+| `ACL_TABLE_PORTS` | `"PORTS"` | `acltable.h:15` |
+| `ACL_TABLE_SERVICES` | `"SERVICES"` | `acltable.h:16` |
+| `ACL_TABLE_TYPE_MATCHES` | `"MATCHES"` | `acltable.h:18` (ACL_TABLE_TYPE サブテーブル) |
+| `ACL_TABLE_TYPE_BPOINT_TYPES` | `"BIND_POINTS"` | `acltable.h:19` (ACL_TABLE_TYPE サブテーブル) |
+| `ACL_TABLE_TYPE_ACTIONS` | `"ACTIONS"` | `acltable.h:20` (ACL_TABLE_TYPE サブテーブル) |
+
+### stage 値定数
+
+| マクロ名 | 文字列値 | SAI マッピング | ソース |
+|---|---|---|---|
+| `STAGE_INGRESS` | `"INGRESS"` | `SAI_ACL_STAGE_INGRESS` | `acltable.h:22` |
+| `STAGE_EGRESS` | `"EGRESS"` | `SAI_ACL_STAGE_EGRESS` | `acltable.h:23` |
+| `STAGE_PRE_INGRESS` | `"PRE_INGRESS"` | `SAI_ACL_STAGE_PRE_INGRESS` | `acltable.h:24` |
+
+!!! note
+    `PRE_INGRESS` は `aclStageLookup` map に含まれるが、`processAclTableStage()` の受理リストに入っておらず、`INGRESS` / `EGRESS` 以外は erase される。enum: `ACL_STAGE_UNKNOWN=0`, `ACL_STAGE_INGRESS=1`, `ACL_STAGE_EGRESS=2`, `ACL_STAGE_PRE_INGRESS=3` (`acltable.h:44-50`)。
+
+### type 値定数
+
+| マクロ名 | 文字列値 | ソース |
+|---|---|---|
+| `TABLE_TYPE_L3` | `"L3"` | `acltable.h:26` |
+| `TABLE_TYPE_L3V6` | `"L3V6"` | `acltable.h:27` |
+| `TABLE_TYPE_L3V4V6` | `"L3V4V6"` | `acltable.h:28` |
+| `TABLE_TYPE_MIRROR` | `"MIRROR"` | `acltable.h:29` |
+| `TABLE_TYPE_MIRRORV6` | `"MIRRORV6"` | `acltable.h:30` |
+| `TABLE_TYPE_MIRROR_DSCP` | `"MIRROR_DSCP"` | `acltable.h:31` |
+| `TABLE_TYPE_PFCWD` | `"PFCWD"` | `acltable.h:32` |
+| `TABLE_TYPE_CTRLPLANE` | `"CTRLPLANE"` | `acltable.h:33` |
+| `TABLE_TYPE_DTEL_FLOW_WATCHLIST` | `"DTEL_FLOW_WATCHLIST"` | `acltable.h:34` |
+| `TABLE_TYPE_MCLAG` | `"MCLAG"` | `acltable.h:35` |
+| `TABLE_TYPE_MUX` | `"MUX"` | `acltable.h:36` |
+| `TABLE_TYPE_DROP` | `"DROP"` | `acltable.h:37` |
+| `TABLE_TYPE_MARK_META` | `"MARK_META"` | `acltable.h:38` |
+| `TABLE_TYPE_MARK_META_V6` | `"MARK_METAV6"` | `acltable.h:39` |
+| `TABLE_TYPE_EGR_SET_DSCP` | `"EGR_SET_DSCP"` | `acltable.h:40` |
+| `TABLE_TYPE_UNDERLAY_SET_DSCP` | `"UNDERLAY_SET_DSCP"` | `acltable.h:41` |
+| `TABLE_TYPE_UNDERLAY_SET_DSCPV6` | `"UNDERLAY_SET_DSCPV6"` | `acltable.h:42` |
+
+!!! note "DTEL_FLOW_WATCHLIST"
+    `DTelOrch` は `platform==BFN|VS` のみ生成 (`orchdaemon.cpp:502-530`)。一般的な環境では使用不可。
+
+### バインドポイント型定数
+
+| マクロ名 | 文字列値 | SAI マッピング | ソース |
+|---|---|---|---|
+| `BIND_POINT_TYPE_PORT` | `"PORT"` | `SAI_ACL_BIND_POINT_TYPE_PORT` | `aclorch.h:62`, `aclorch.cpp:105` |
+| `BIND_POINT_TYPE_PORTCHANNEL` | `"PORTCHANNEL"` | `SAI_ACL_BIND_POINT_TYPE_LAG` | `aclorch.h:63`, `aclorch.cpp:106` |
+
+`ACL_TABLE_TYPE.BIND_POINTS` フィールドで使う文字列定数。`VLAN` / `SWITCH` はマクロなく直接 SAI 定数を使用。
+
+### STATE_DB ステータス値定数
+
+| enum 値 | `status` フィールド値 | ソース |
+|---|---|---|
+| `AclObjectStatus::ACTIVE` | `"Active"` | `aclorch.cpp:523` |
+| `AclObjectStatus::INACTIVE` | `"Inactive"` | `aclorch.cpp:524` |
+| `AclObjectStatus::PENDING_CREATION` | `"Pending creation"` | `aclorch.cpp:525` |
+| `AclObjectStatus::PENDING_REMOVAL` | `"Pending removal"` | `aclorch.cpp:526` |
+
+STATE_DB テーブル名: `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` (`schema.h:514`)。フィールド名: `"status"` (ハードコード, `aclorch.cpp:6091`)。
+
+### APP_DB / STATE_DB テーブル名定数
+
+| マクロ名 | 値 | DB | ソース |
+|---|---|---|---|
+| `APP_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | APP_DB | `schema.h:94` |
+| `APP_ACL_TABLE_TYPE_TABLE_NAME` | `"ACL_TABLE_TYPE_TABLE"` | APP_DB | `schema.h:95` |
+| `STATE_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | STATE_DB | `schema.h:514` |
+
+> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:62-63`、`aclorch.cpp:42-44,105-106,523-526,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
+<!-- /constants -->
+
 <!-- glossary-links-injected: 9f69b0796e2c -->
