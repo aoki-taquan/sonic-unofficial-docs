@@ -619,6 +619,112 @@ CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6`
 
 ---
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は `AclOrch::doTask()`（`aclorch.cpp:4272-4299`）で CONFIG_DB 版と同一ハンドラへ合流するため、参照されるハードコード定数も大部分が CONFIG_DB 版と共通する。本節は APPL_DB 経路で**実発火する**定数のみを列挙する。
+
+### SAI priority range（起動時動的取得 + フォールバック）
+
+`AclRule` クラスは `m_minPriority` / `m_maxPriority` を static メンバとして持つ（`aclorch.h:376-377`）。初期値は **`0` / `0`**（`aclorch.cpp:22-23`）で、`AclOrch::init()` から SAI 属性を取得して上書きする。
+
+| 定数 / 属性 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `AclRule::m_minPriority` 初期値 | `0` (static) | 取得失敗時 / DPU フォールバック | `aclorch.cpp:22` |
+| `AclRule::m_maxPriority` 初期値 | `0` (static) | 同上 | `aclorch.cpp:23` |
+| `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` | ASIC 依存（動的取得） | `m_minPriority` 上書き | `aclorch.cpp:3689,3697` |
+| `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` | ASIC 依存（動的取得） | `m_maxPriority` 上書き | `aclorch.cpp:3690,3697` |
+| DPU 分岐ガード | `gMySwitchType != "dpu"` | DPU では SAI 取得をスキップ → `0/0` のまま | `aclorch.cpp:3686` |
+
+```cpp
+// aclorch.cpp:1654-1661 (setPriority)
+if (!(value >= m_minPriority && value <= m_maxPriority))
+{
+    SWSS_LOG_ERROR("Priority value %d is not in range [%d, %d]",
+        value, m_minPriority, m_maxPriority);
+    return false;
+}
+```
+
+DPU 側 orchagent では SAI 取得が走らず `0/0` のままになるため、`PRIORITY != 0` を実質的に全て弾く（Phase H と整合）。
+
+### STAGE 文字列リテラル / enum
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `STAGE_INGRESS` | `"INGRESS"` | `ACL_TABLE.stage` 入力文字列 | `acltable.h:22` |
+| `STAGE_EGRESS` | `"EGRESS"` | 同上 | `acltable.h:23` |
+| `STAGE_PRE_INGRESS` | `"PRE_INGRESS"` | 同上 | `acltable.h:24` |
+| `AclTable::stage` C++ 初期値 | `ACL_STAGE_INGRESS` | `STAGE` フィールド未指定時の default | `aclorch.h:543` |
+
+`aclStageLookUp`（`aclorch.cpp:165-168`）は `STAGE_INGRESS` / `STAGE_EGRESS` の 2 つのみマッピング登録する。APPL_DB 書込み元はいずれも `STAGE_INGRESS` 固定または stage 省略（C++ default 依存）で、`STAGE_EGRESS` / `STAGE_PRE_INGRESS` は APPL_DB 経路では実発火しない。
+
+### PACKET_ACTION 文字列リテラル
+
+`aclorch.h:83-89` に `#define`、`aclPacketActionLookup`（`aclorch.cpp:144-148`）が SAI enum 3 種へマッピング。
+
+| 定数 | 値 | SAI マッピング | ソース |
+|---|---|---|---|
+| `PACKET_ACTION_FORWARD` | `"FORWARD"` | `SAI_PACKET_ACTION_FORWARD` | `aclorch.h:83` / `aclorch.cpp:145` |
+| `PACKET_ACTION_DROP` | `"DROP"` | `SAI_PACKET_ACTION_DROP` | `aclorch.h:84` / `aclorch.cpp:146` |
+| `PACKET_ACTION_COPY` | `"COPY"` | `SAI_PACKET_ACTION_COPY` | `aclorch.h:85` / `aclorch.cpp:147` |
+| `PACKET_ACTION_REDIRECT` | `"REDIRECT"` | 別経路（`ACTION_REDIRECT_ACTION`） | `aclorch.h:86` |
+
+APPL_DB 経路に `PACKET_ACTION` のコード由来 default は無い。書込み側が明示指定する（mclagsyncd は `"DROP"` 固定書込み: `mclaglink.cpp:347`）。
+
+### TCP プロトコル番号（自動補完用ハードコード）
+
+```cpp
+// aclorch.cpp:54
+const int TCP_PROTOCOL_NUM = 6; // TCP protocol number
+
+// aclorch.cpp:5645
+string attr_value = std::to_string(TCP_PROTOCOL_NUM);
+```
+
+`TCP_FLAGS` match があり `IP_PROTOCOL` / `NEXT_HEADER` が未指定のとき、orchagent が `MATCH_IP_PROTOCOL` (IPv4) / `MATCH_NEXT_HEADER` (IPv6) に **`"6"`** を自動付与する（`aclorch.cpp:5632-5654`）。APPL_DB / CONFIG_DB 双方で同様に発火する。
+
+### 書込み側ハードコード（APPL_DB 固有）
+
+| 書込み元 | 定数 | 値 | フィールド | ソース |
+|---|---|---|---|---|
+| vnetorch | `VNET_TUNNEL_TERM_ACL_BASE_PRIORITY` | `9998` | `ACL_RULE.PRIORITY` 固定書込み | `tunneltermhelper.h:14` / `vnetorch.cpp:3827` |
+| vnetorch | `VNET_TUNNEL_TERM_ACL_TABLE` | `"VNET_LOCAL_ENDPOINT"` | `ACL_TABLE_TABLE` key 固定 | `tunneltermhelper.h:13` / `vnetorch.cpp:3797` |
+| vnetorch | `STAGE_INGRESS` | `"INGRESS"` | `ACL_TABLE.stage` 固定 | `vnetorch.cpp:3793` |
+| dashenifwdorch | `STAGE_INGRESS` | `"INGRESS"` | `ACL_TABLE.stage` 固定 | `dashenifwdorch.cpp:637` |
+| mclagsyncd | (stage 未指定 → C++ default) | `ACL_STAGE_INGRESS` | 暗黙 INGRESS | `mclaglink.cpp:325-336` / `aclorch.h:543` |
+| mclagsyncd | `TABLE_TYPE_L3` | `"L3"` | `ACL_TABLE.type` 固定 | `mclaglink.cpp:327` |
+| mclagsyncd | `IP_TYPE_ANY` | `"ANY"` | `ACL_RULE.IP_TYPE` 固定 | `mclaglink.cpp:343` |
+| mclagsyncd | `PACKET_ACTION_DROP` | `"DROP"` | `ACL_RULE.PACKET_ACTION` 固定 | `mclaglink.cpp:347` |
+
+vnetorch の `9998` は SAI から取得した `m_minPriority` / `m_maxPriority` 範囲内であることを暗黙前提とする。Broadcom XGS / Marvell 等の一般的 ASIC では収まるが、DPU フォールバック `0/0` では範囲外で rule 不採用になる（Phase H と整合）。
+
+### テーブル名定数（schema.h）
+
+| 定数 | 値 | ソース |
+|---|---|---|
+| `APP_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | `schema.h:94` |
+| `APP_ACL_TABLE_TYPE_TABLE_NAME` | `"ACL_TABLE_TYPE_TABLE"` | `schema.h:95` |
+| `APP_ACL_RULE_TABLE_NAME` | `"ACL_RULE_TABLE"` | `schema.h:96` |
+
+`AclOrch::doTask()` 内で `CFG_ACL_*_TABLE_NAME` と OR 分岐し、同一ハンドラへ流す（`aclorch.cpp:4283-4293`）。
+
+### 定数サマリ
+
+| カテゴリ | 定数 | 値 | 種別 |
+|---|---|---|---|
+| priority range | `m_minPriority` / `m_maxPriority` | ASIC 動的取得（失敗時 `0/0`） | static フォールバック |
+| stage default | `AclTable::stage` 初期値 | `ACL_STAGE_INGRESS` | C++ 初期化 |
+| TCP 自動補完 | `TCP_PROTOCOL_NUM` | `6` | リテラル定数 |
+| vnetorch priority | `VNET_TUNNEL_TERM_ACL_BASE_PRIORITY` | `9998` | リテラル定数 |
+| stage 文字列 | `STAGE_INGRESS` / `STAGE_EGRESS` / `STAGE_PRE_INGRESS` | `"INGRESS"` / `"EGRESS"` / `"PRE_INGRESS"` | `#define` |
+| packet_action 文字列 | `PACKET_ACTION_FORWARD/DROP/COPY/REDIRECT` | `"FORWARD"` / `"DROP"` / `"COPY"` / `"REDIRECT"` | `#define` |
+
+> **証跡**: priority range 取得 `aclorch.cpp:3686-3710`、初期値 `aclorch.cpp:22-23`、`setPriority()` 範囲チェック `aclorch.cpp:1654-1661`、stage default `aclorch.h:543`、stage 文字列 `acltable.h:22-24`、packet_action 文字列 `aclorch.h:83-89`、`aclPacketActionLookup` `aclorch.cpp:144-148`、TCP 自動補完 `aclorch.cpp:54,5632-5654`、vnetorch 固定 priority `tunneltermhelper.h:13-14` / `vnetorch.cpp:3793-3827`、mclagsyncd 固定リテラル `mclaglink.cpp:325-372`、dashenifwdorch stage `dashenifwdorch.cpp:637`、テーブル名定数 `schema.h:94-96`。詳細分析 `meta/_intermediate/cdb-flow/appl-acl-constants.md`
+<!-- /constants -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)
