@@ -26283,6 +26283,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34934,6 +34962,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35157,6 +35213,44 @@ OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞�
 <li><code>hostcfgd</code> の FIPS ハンドラが kernel モジュール設定と同期</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p><code>sonic-fips.yang</code> には <code>enable</code> / <code>enforce</code> の <code>default</code> 文がないため、実効デフォルトは hostcfgd <code>FipsCfg</code> クラスのコード由来 fallback で決まる。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来 fallback</th>
+<th>実効デフォルト (未設定時)</th>
+<th>注記</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable</code></td>
+<td>なし</td>
+<td><code>False</code> (<code>FipsCfg.__init__:1760</code>) / <code>is_true(get('enable', 'false'))</code> (<code>load:1782</code>)</td>
+<td><code>False</code> → <code>/etc/fips/fips_enable = 0</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>enforce</code></td>
+<td>なし</td>
+<td><code>False</code> (<code>FipsCfg.__init__:1761</code>) / <code>is_true(get('enforce', 'false'))</code> (<code>load:1781</code>)</td>
+<td><code>False</code> → bootloader 未設定 (<code>sonic_fips=1</code> 付与なし)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">補足<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>派生則</strong>: <code>load()</code> は <code>self.enable = self.enforce or is_true(common_config.get('enable', 'false'))</code> (hostcfgd:1782) で <code>enable</code> を計算する。<code>enforce=true</code> のときは <code>enable_db=false</code> でも <code>self.enable=True</code> に強制引き上げされる。</li>
+<li><strong>早期 return</strong>: <code>FIPS|global</code> エントリが CONFIG_DB に存在しない場合 (<code>common_config</code> が空)、<code>load()</code> は L1777-1779 で skip ログを出して return し、<code>/etc/fips/fips_enable</code> を書き換えない。実効デフォルトは「現状維持」（前回起動時の状態）。</li>
+<li><strong>付随定数</strong>: <code>DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']</code> (hostcfgd:103)。FIPS 切替時に再起動される systemd unit のデフォルトリスト（CONFIG_DB フィールドではなく hostcfgd 内部定数 / <code>/etc/sonic/fips.json</code> で上書き可能）。</li>
+</ul>
+<!-- /defaults -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

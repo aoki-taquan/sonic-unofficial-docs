@@ -24150,6 +24150,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#retry-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry 経路 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry 経路 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounterorch-flexcounterorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounterOrch ディスパッチ層の失敗 (flexcounterorch.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcountermanager-statmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounterManager / StatManager 層の失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flowcounterhandler-sai-flow_counter_handlercpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlowCounterHandler の SAI 失敗 (flow_counter_handler.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flowcounterrouteorch-flow_counter_route_pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlowCounterRouteOrch (FLOW_COUNTER_ROUTE_PATTERN) の失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35113,6 +35185,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#retry-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry 経路 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry 経路 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flexcounterorch-flexcounterorchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounterOrch ディスパッチ層の失敗 (flexcounterorch.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flexcountermanager-statmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlexCounterManager / StatManager 層の失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flowcounterhandler-sai-flow_counter_handlercpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlowCounterHandler の SAI 失敗 (flow_counter_handler.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flowcounterrouteorch-flow_counter_route_pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FlowCounterRouteOrch (FLOW_COUNTER_ROUTE_PATTERN) の失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35579,6 +35723,224 @@
 <p><code>HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS = 10000</code>、<code>ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS = 10000</code>、<code>ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT = 30</code>、<code>FLEX_COUNTER_UPD_INTERVAL = 1</code> 秒、generic counter の stat リスト (<code>SAI_COUNTER_STAT_PACKETS</code> / <code>_BYTES</code>) はベンダー側で上書きする手段がなく、全機種同一。</p>
 <p>詳細根拠は <code>meta/_intermediate/cdb-flow/app-counter-platform.md</code> を参照。</p>
 <!-- /platform -->
+
+<!-- failure -->
+<h2 id="retry-phase-d">失敗挙動・retry 経路 (Phase D)<a class="headerlink" href="#retry-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_stat_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp,
+     sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp -->
+
+<p><code>FLEX_COUNTER_TABLE|FLOW_CNT_TRAP</code> / <code>FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE</code> / <code>FLOW_COUNTER_ROUTE_PATTERN</code> の各設定が失敗するパスをコードから抽出した。FlexCounterOrch・FlexCounterManager・FlowCounterRouteOrch・FlowCounterHandler の 4 階層がそれぞれ独立に失敗を扱う。</p>
+<h3 id="flexcounterorch-flexcounterorchcpp">FlexCounterOrch ディスパッチ層の失敗 (<code>flexcounterorch.cpp</code>)<a class="headerlink" href="#flexcounterorch-flexcounterorchcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>動作</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_TABLE</code> の key が <code>flexCounterGroupMap</code> に未登録 (例: <code>FLOW_CNT_TRAP</code> を <code>FLOW_CNT_TRAPS</code> と typo)</td>
+<td>エントリ即破棄。<strong>retry なし</strong></td>
+<td><code>SWSS_LOG_NOTICE ("Invalid flex counter group input, %s")</code></td>
+<td><code>flexcounterorch.cpp:183-188</code></td>
+</tr>
+<tr>
+<td>未対応フィールド (<code>FLEX_COUNTER_STATUS</code> / <code>POLL_INTERVAL</code> / bulk_chunk_size 系以外)</td>
+<td>フィールド単位で無視、handler は失敗にしない</td>
+<td><code>SWSS_LOG_NOTICE ("Unsupported field %s")</code></td>
+<td><code>flexcounterorch.cpp:396-399</code></td>
+</tr>
+<tr>
+<td><code>POLL_INTERVAL</code> の値検証</td>
+<td>orchagent では検証されない (文字列のまま syncd に転送)。数値不正や 0 は syncd 側 FlexCounter で握り潰される</td>
+<td>(orchagent ログなし)</td>
+<td>flexcounterorch は値を素通し</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_STATUS</code> の値検証</td>
+<td><code>enable</code> / <code>disable</code> 以外は syncd 側で <code>disable</code> 相当扱い</td>
+<td>(orchagent ログなし)</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flexcountermanager-statmanager">FlexCounterManager / StatManager 層の失敗<a class="headerlink" href="#flexcountermanager-statmanager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>動作</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>既存 group の stats_mode / polling_interval / enabled と不一致で再 <code>createFlexCounterManager</code></td>
+<td><code>NULL</code> 返却で manager 不発</td>
+<td><code>SWSS_LOG_ERROR ("Stats mode mismatch ...")</code> 等 3 種</td>
+<td><code>flex_counter_manager.cpp:71-88</code></td>
+</tr>
+<tr>
+<td><code>setCounterIdList</code> の counter_type 未登録</td>
+<td><code>startFlexCounterPolling</code> を呼ばず早期 return → <strong>COUNTERS_DB 更新が始まらない</strong></td>
+<td><code>SWSS_LOG_ERROR ("Could not update flex counter id list for group '%s': counter type not found.")</code></td>
+<td><code>flex_counter_manager.cpp:212-217</code></td>
+</tr>
+<tr>
+<td><code>removeFlexCounterStat</code> で object_id 未登録 (二重削除 / race)</td>
+<td>後処理スキップ、例外なし</td>
+<td><code>SWSS_LOG_WARN ("Could not find flex stat '%s' on object '%s'")</code></td>
+<td><code>flex_counter_stat_manager.cpp:66-72</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="flowcounterhandler-sai-flow_counter_handlercpp">FlowCounterHandler の SAI 失敗 (<code>flow_counter_handler.cpp</code>)<a class="headerlink" href="#flowcounterhandler-sai-flow_counter_handlercpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>動作</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_counter_api-&gt;create_counter</code> が <code>SAI_STATUS_SUCCESS</code> 以外</td>
+<td><code>false</code> 返却で route binding 中断。後段の pending list 経由で <strong>タイマー再試行される</strong></td>
+<td><code>SWSS_LOG_WARN ("Failed to create generic counter")</code></td>
+<td><code>flow_counter_handler.cpp:20-26</code></td>
+</tr>
+<tr>
+<td><code>sai_counter_api-&gt;remove_counter</code> 失敗</td>
+<td>orchagent ハッシュからは削除済みなので <strong>counter OID リーク</strong></td>
+<td><code>SWSS_LOG_ERROR ("Failed to remove generic counter: ...")</code></td>
+<td><code>flow_counter_handler.cpp:32-38</code></td>
+</tr>
+<tr>
+<td><code>sai_query_attribute_capability(SAI_ROUTE_ENTRY_ATTR_COUNTER_ID)</code> 失敗 / <code>set_implemented = false</code></td>
+<td><code>mRouteFlowCounterSupported = false</code> で <strong>以降 <code>FLOW_CNT_ROUTE</code> を <code>enable</code> にしても no-op</strong>。<code>STATE_DB FLOW_COUNTER_CAPABILITY_TABLE</code> に <code>support=false</code> が書かれる</td>
+<td><code>SWSS_LOG_WARN ("Could not query route entry attribute ...")</code> + <code>SWSS_LOG_NOTICE ("Route flow counter is not supported on this platform")</code></td>
+<td><code>flow_counter_handler.cpp:51-62</code>, <code>flowcounterrouteorch.cpp:165-178</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="flowcounterrouteorch-flow_counter_route_pattern">FlowCounterRouteOrch (<code>FLOW_COUNTER_ROUTE_PATTERN</code>) の失敗<a class="headerlink" href="#flowcounterrouteorch-flow_counter_route_pattern" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>動作</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_match_count = 0</code> を SET</td>
+<td><strong>値を 30 (デフォルト) に silent fallback</strong></td>
+<td><code>SWSS_LOG_WARN ("Max match count for route pattern cannot be 0, set it to default value 30")</code></td>
+<td><code>flowcounterrouteorch.cpp:80-86</code></td>
+</tr>
+<tr>
+<td><code>max_match_count</code> が非数値文字列 (CONFIG_DB 直接編集時のみ)</td>
+<td><code>std::stoul</code> の <code>std::invalid_argument</code> が doTask まで伝播 (catch なし)</td>
+<td>(例外スタックトレース)</td>
+<td><code>flowcounterrouteorch.cpp:80</code></td>
+</tr>
+<tr>
+<td>既存パターンと overlap する key を SET</td>
+<td>bind を実行せず <code>false</code> 返却。<code>mRoutePatternSet</code> には残るがカウンタは作られない</td>
+<td><code>SWSS_LOG_ERROR ("Configured route pattern %s is conflict with existing one %s")</code></td>
+<td><code>flowcounterrouteorch.cpp:573-588</code></td>
+</tr>
+<tr>
+<td>存在しない pattern を DEL</td>
+<td>early return</td>
+<td><code>SWSS_LOG_ERROR ("Trying to remove route pattern %s, but it does not exist")</code></td>
+<td><code>flowcounterrouteorch.cpp:266-275</code></td>
+</tr>
+<tr>
+<td>VRF/VNET 名が未解決</td>
+<td>bind 失敗で <code>mPendingAddToFlexCntr</code> に残置 → <strong>1 秒タイマーで再試行</strong></td>
+<td><code>SWSS_LOG_NOTICE ("VRF/VNET name %s is not resolved")</code></td>
+<td><code>flowcounterrouteorch.cpp:971-975</code></td>
+</tr>
+<tr>
+<td>SAI <code>set_route_entry_attribute(COUNTER_ID)</code> 失敗</td>
+<td>生成済み generic counter を巻き戻して <code>false</code> 返却</td>
+<td><code>SWSS_LOG_WARN ("Failed to bind route entry vrf=%s prefix=%s to flow counter")</code></td>
+<td><code>flowcounterrouteorch.cpp:476-483</code></td>
+</tr>
+<tr>
+<td>SAI unbind 失敗</td>
+<td>warning のみで続行</td>
+<td><code>SWSS_LOG_WARN ("Failed to unbind route entry vrf=%s prefix=%s from flow counter")</code></td>
+<td><code>flowcounterrouteorch.cpp:501-506</code></td>
+</tr>
+<tr>
+<td>マッチするルート数が <code>max_match_count</code> を超過</td>
+<td>超過分は <strong>silent drop</strong> (bind されない)</td>
+<td>(超過時のログなし、limit 変更時のみ <code>LOG_NOTICE</code>)</td>
+<td><code>flowcounterrouteorch.cpp:800-820</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="retry">retry 経路まとめ<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>retry 種別</th>
+<th>トリガ</th>
+<th>仕組み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VRF 未解決時の route pattern 再 bind</td>
+<td><code>mPendingAddToFlexCntr</code> 非空</td>
+<td><code>mFlexCounterUpdTimer</code> (1 秒周期, <code>FLEX_COUNTER_UPD_INTERVAL</code>) が <code>doTask(SelectableTimer&amp;)</code> で再試行</td>
+</tr>
+<tr>
+<td>SAI <code>create_counter</code> 失敗</td>
+<td>pending list に残る</td>
+<td>次回タイマーで再試行</td>
+</tr>
+<tr>
+<td>SAI <code>set_route_entry_attribute</code> 失敗</td>
+<td>pending list から除去</td>
+<td>route が再通知されるか pattern を再 SET しない限り <strong>自動 retry なし</strong></td>
+</tr>
+<tr>
+<td><code>Invalid flex counter group input</code> (未知 group key)</td>
+<td>エントリ erase</td>
+<td><strong>retry なし</strong></td>
+</tr>
+<tr>
+<td><code>FLOW_CNT_ROUTE</code> の <code>enable</code> が SAI 非対応</td>
+<td><code>mRouteFlowCounterSupported = false</code></td>
+<td>一度 capability が false 確定すると <strong>再 query なし</strong> (orchagent 再起動が必要)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">ユーザー視点の代表的な失敗症状</p>
+<ul>
+<li><strong><code>FLEX_COUNTER_STATUS=enable</code> を書いたのにカウンタが現れない</strong> — group key typo (<code>Invalid flex counter group input</code>)、SAI capability 不足、<code>max_match_count</code> 超過のいずれか。</li>
+<li><strong><code>max_match_count=0</code> を設定したのに 30 になっている</strong> — Phase D で挙動として確定 (silent fallback)。</li>
+<li><strong>VRF 作成直後に route flow counter が出ない</strong> — 1 秒タイマーの再試行待ちで数秒のラグ。</li>
+<li><strong><code>POLL_INTERVAL</code> に不正値を入れても何も起きない</strong> — orchagent 段では検証されず syncd 側で握り潰される。</li>
+</ul>
+</div>
+<!-- /failure -->
 
 <!-- ref-triangle:start -->
 
