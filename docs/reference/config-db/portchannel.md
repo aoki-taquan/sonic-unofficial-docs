@@ -363,3 +363,64 @@ YANG スキーマに `default` 文が存在しないフィールドでも、cons
 | `mtu` | 設定しない (→ teammgrd が "9100" fallback) | — |
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `PORT` (物理ポート) | `TeamMgr::addLag()` が `m_portsOrch->getPort()` でポート存在を確認。未存在時は `task_need_retry` を返しポート初期化まで LAG 作成が保留される | `teammgr.cpp:212-225, 303-305` |
+| PortConfigDone / allPortsReady | orchagent は `allPortsReady()` が true になるまで LagOrch / TeamMgr の SET 処理をブロック。portsyncd が PortConfigDone → PortInitDone を発行するまで PORTCHANNEL 処理は保留 | `portsorch.cpp:6513-6517` |
+
+### フィールド適用順 (TeamMgr::doLagTask 内)
+
+`doLagTask()` (`teammgr.cpp:280-330`) はフィールドを以下の順に適用する:
+
+1. **`addLag()`** — LAG が未作成の場合、teamd プロセスを起動して Linux bond デバイスを作成。この時点で `min_links` / `fallback` / `fast_rate` が teamd conf に書き込まれる。`task_need_retry` を返した場合は後続フィールドが一切処理されない。
+2. **`admin_status`** — `setLagAdminStatus()` でカーネル LAG インタフェースの up/down を設定 (`teammgr.cpp:314`)。
+3. **`tpid`** — `setLagTpid()` で TPID を設定 (`teammgr.cpp:321-323`)。
+
+!!! warning "LAG 作成後に変更不可なフィールド"
+    `min_links` / `fallback` / `fast_rate` は `addLag()` 呼出し時のみ teamd conf に反映される。
+    LAG 作成後に CONFIG_DB を更新しても teamd は変更を認識しない。
+    反映には `config portchannel del` → `config portchannel add` による teamd 再起動が必要。
+    (`teammgr.cpp:258-259` に明示コメント: "min_links and fallback attributes cannot be changed after the LAG is created.")
+
+### DEL 時の先行削除順序
+
+PORTCHANNEL エントリを DEL するには以下を先に削除する必要がある:
+
+| ステップ | 削除対象 | 省略時のエラー |
+|---|---|---|
+| 1 | `VLAN_MEMBER` (LAG が VLAN に所属する場合) | `Failed to remove LAG %s, it is still in VLAN` |
+| 2 | `PORTCHANNEL_INTERFACE` (L3 設定が存在する場合) | `Failed to remove ref count %d LAG %s` |
+| 3 | `PORTCHANNEL_MEMBER` (全メンバポート) | `Failed to remove non-empty LAG %s` |
+| 4 | `PORTCHANNEL` DEL | — |
+
+### 起動時シーケンス
+
+```
+minigraph.py が CONFIG_DB|PORTCHANNEL を生成
+  ↓
+portsyncd が CONFIG_DB|PORT を処理 → PortConfigDone → PortInitDone
+  ↓
+allPortsReady() = true → TeamMgr がアンブロック
+  ↓
+TeamMgr が PORTCHANNEL SET 処理 → addLag() → teamd spawn → APP_DB|LAG_TABLE 書込み
+  ↓
+LagOrch が APP_DB|LAG_TABLE → SAI create_lag() → LAG ready
+  ↓
+TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
+```
+
+### warm reboot 影響
+
+- warm reboot 時は既存 teamd プロセスを維持し APP_DB を reconcile する。
+- warm reboot 中の CONFIG_DB 書き込みは処理保留になる。
+- warm reboot 後に `min_links` / `fallback` / `fast_rate` を変更するには cold リスタートが必要。
+
+<!-- /ordering -->
