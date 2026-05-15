@@ -104,6 +104,49 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 | プロファイル名に `_zero_` を含む | flex counter の追加・削除をスキップ（traffic なしを意味する zero profile 扱い）（`bufferorch.cpp:1017, 1020`）。 |
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な default がない。実体の「未指定時挙動」はビルド時テンプレート (`buffers_config.j2`) と orchagent ランタイムロジック (`bufferorch.cpp`) に分散している。
+
+### ビルド時テンプレート由来 (非 VOQ — `PORT_ACTIVE` 各ポート)
+
+`buffers_config.j2:307–324` の fallback ブロック (プラットフォームが `defs.generate_queue_buffers` 等を定義していない場合に使用):
+
+| queue range | 既定 profile | 源 |
+|---|---|---|
+| `<port>\|3-4` | `egress_lossless_profile` | `buffers_config.j2:309-311` |
+| `<port>\|0-2` | `egress_lossy_profile` | `buffers_config.j2:314-316` |
+| `<port>\|5-6` | `egress_lossy_profile` | `buffers_config.j2:319-321` |
+
+### ビルド時テンプレート由来 ([VOQ](../../reference/glossary.md#term-voq) シャーシ — `SYSTEM_PORT_ALL` 各 system_port)
+
+`buffers_config.j2:279–295`:
+
+| queue range | 既定 profile | 源 |
+|---|---|---|
+| `<system_port>\|3-4` | `egress_lossless_profile` | `buffers_config.j2:281-283` |
+| `<system_port>\|0-2` | `egress_lossy_profile` | `buffers_config.j2:286-288` |
+| `<system_port>\|5-6` | `egress_lossy_profile` | `buffers_config.j2:291-293` |
+
+### orchagent ランタイム fallback
+
+| 条件 | 挙動 | evidence |
+|---|---|---|
+| `profile` フィールド参照が解決不能 (`ref_resolve_status::not_resolved`) | `task_need_retry` を返し SAI 未書き込み（既存値維持） | `bufferorch.cpp:966-970` |
+| `BUFFER_QUEUE` エントリ削除時 / `profile` 取得不能時 | SAI に `SAI_NULL_OBJECT_ID` をセット（queue buffer profile を解放） | `bufferorch.cpp:1005` |
+| profile 名に `_zero_` を含む | flex counter 追加・削除をスキップ（traffic なし扱い、デフォルト適用自体は通常通り） | `bufferorch.cpp:995, 1017` |
+
+### 補足
+
+- 上記テンプレート fallback は、プラットフォーム側 `buffers_defaults_*.j2` で `defs.generate_queue_buffers` / `defs.generate_queue_buffers_with_extra_lossless_queues` 等のマクロが定義されていない場合にのみ適用される (`buffers_config.j2:298-306` の `{% elif %}` チェーン)。Mellanox dynamic buffer SKU や t1-lag 等の主要プラットフォームは独自マクロを持つため、上記 3 レンジ固定 mapping は使用されない。
+- orchagent には「`profile` が未指定なら自動で `egress_lossy_profile` を当てる」といったランタイムフォールバックは**存在しない**。ビルド時テンプレートで埋まらなかった queue は SAI 側で NULL profile (= 動的バッファ割当なし) となる。
+- scheduler 既定 (`QUEUE.scheduler`) は `BUFFER_QUEUE` テーブルのフィールドではなく `QUEUE` テーブル側で割当される。BUFFER_QUEUE スコープ外のため本ページでは扱わない。
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-defaults.md` を参照。
+
+<!-- /defaults -->
+
 ## 購読者
 
 - `buffermgrd`: [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送

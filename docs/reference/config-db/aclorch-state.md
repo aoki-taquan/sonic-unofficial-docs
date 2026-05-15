@@ -178,6 +178,34 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 | `acl-loader` | `STATE_DB ACL_STAGE_CAPABILITY_TABLE` | プラットフォーム対応能力の参照 |
 | `sonic-mgmt-common` (translib) | `STATE_DB ACL_STAGE_CAPABILITY_TABLE` | REST/gNMI 経由の能力情報提供 |
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+本ページの STATE_DB 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`）はいずれも YANG 未モデル化のオペレーショナルテーブルで、`AclOrch` が**書き手 (producer only)** として書き込む。
+ここでの暗黙参照は、これら STATE_DB エントリの**生成トリガ・キー値・フィールド値**が依存する入力側テーブルと前提 Orch / プラットフォーム情報を指す。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `ACL_TABLE\|<table_name>` (CONFIG_DB) | キー転写 + SET/DEL トリガ | 常時。`<table_name>` は STATE_DB `ACL_TABLE_TABLE` キーに転写される | `aclorch.cpp` L4283–4285 (dispatch), L5346 (`doAclTableTask`), L6087–6092 (`setAclTableStatus`) |
+| `ACL_RULE\|<table_name>\|<rule_name>` (CONFIG_DB) | キー転写 + SET/DEL トリガ | 常時。複合キーがそのまま STATE_DB `ACL_RULE_TABLE` キーへ | `aclorch.cpp` L4287–4289, L5520 (`doAclRuleTask`), L6101–6106 (`setAclRuleStatus`) |
+| `ACL_TABLE_TABLE` (APPL_DB) | 同等の入力経路 | APPL_DB 経由の動的 ACL（feature プロセス等） | `aclorch.cpp` L4283 (`APP_ACL_TABLE_TABLE_NAME` も dispatch) |
+| `ACL_RULE_TABLE` (APPL_DB) | 同等の入力経路、retry cache 対象 | APPL_DB 経由の動的 ACL ルール。SAI リソース枯渇時は retry cache にパーク | `aclorch.cpp` L4222 (`createRetryCache(APP_ACL_RULE_TABLE_NAME)`), L4287 |
+| `ACL_TABLE_TYPE` (CONFIG_DB) / `ACL_TABLE_TYPE_TABLE` (APPL_DB) | カスタム型解決 | `ACL_TABLE` の `type` がカスタム型のとき。未定義なら `status="Inactive"` | `aclorch.cpp` L4291 |
+| `PORT` (PortsOrch `allPortsReady()`) | 起動順序ガード | 常時。false の間は `doAclRuleTask()` に到達せず STATE_DB `ACL_RULE_TABLE` に新規エントリが書かれない | `aclorch.cpp` L4276 |
+| SAI Switch capability (`SAI_SWITCH_ATTR_ACL_STAGE_*`) | SAI クエリ → STATE_DB 書込み | 起動時 1 回。`ACL_STAGE_CAPABILITY_TABLE` の動的値ソース。失敗時は `defaultAclActionsSupported` でフォールバック | `aclorch.cpp` L4025–4036, L4056–4101 (`putAclActionCapabilityInDB`), L4104–4118 |
+| `DEVICE_METADATA\|localhost.platform`（platform 文字列） | プラットフォーム分岐 | `supported_L3V4V6` フィールド決定時 (MRVL_PRST / MRVL_TL / VS で `true`、他で `false`) | `aclorch.cpp` L3489–3510 (`queryMirrorTableCapability`), L4093–4099 |
+| SAI ACL API 戻り値 (`create/remove_acl_table/entry`) | 戻り値判定 → `status` 値 | 常時。`Active` / `Inactive` / `Pending creation` / `Pending removal` を決定。リソース枯渇は retry cache にパーク | `aclorch.cpp` L5462–5508 (table), L5670–5726 (rule), `isSaiStatusResourceFull()` L5683–5692 |
+
+!!! note "STATE_DB エントリは「書き出し専用」のステータスレジスタ"
+    `AclOrch` 以外の書き手は存在しない。`show acl table` / `show acl rule` / `acl-loader` / `sonic-mgmt-common` (translib) は読み手のみ。
+    `removeAllAclTableStatus()` / `removeAllAclRuleStatus()` (`aclorch.cpp:6116`, `6128`) が orchagent 起動時 (`init()` L3479–3481) に一度全エントリを削除し、その後 CONFIG_DB / APPL_DB からの再 SET を契機に再構築される。
+
+!!! note "`ACL_STAGE_CAPABILITY_TABLE` は起動時 1 回のみ更新"
+    `putAclActionCapabilityInDB()` (`aclorch.cpp:4056`) は orchagent 起動時の capability 確定段階で呼ばれるのみで、CONFIG_DB / APPL_DB の動的変更による再書込みは発生しない。
+    フィールド値はプラットフォーム SAI capability と `DEVICE_METADATA` の `platform` 文字列に静的に依存する。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-swss `orchagent/aclorch.cpp` — `setAclTableStatus()` L6088, `setAclRuleStatus()` L6102, `putAclActionCapabilityInDB()` L4056, `init()` L3475

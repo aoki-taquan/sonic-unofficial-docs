@@ -284,6 +284,102 @@ if (bHasTCPFlag && !bHasIPProtocol)
 
 ---
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+APPL_DB の ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE / ACL_RULE_TABLE は `AclOrch::doTask(Consumer&)` (`aclorch.cpp:4272-4299`) で CONFIG_DB 版と**同一ハンドラ**へ振り分けられる:
+
+```cpp
+if (table_name == CFG_ACL_TABLE_TABLE_NAME || table_name == APP_ACL_TABLE_TABLE_NAME)
+    doAclTableTask(consumer);
+else if (table_name == CFG_ACL_RULE_TABLE_NAME || table_name == APP_ACL_RULE_TABLE_NAME)
+    doAclRuleTask(consumer);
+else if (table_name == CFG_ACL_TABLE_TYPE_TABLE_NAME || table_name == APP_ACL_TABLE_TYPE_TABLE_NAME)
+    doAclTableTypeTask(consumer);
+```
+
+したがって失敗分岐は CONFIG_DB 版 [`ACL_TABLE`](acl-table.md) / [`ACL_RULE`](acl-rule.md) とほぼ共通だが、APPL_DB 経路は次の 3 点が異なる。
+
+### APPL_DB 固有の挙動
+
+**(1) `allPortsReady()` 早期 return** (`aclorch.cpp:4276-4279`):
+
+```cpp
+if (!gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+起動直後 / port 構成変更直後に vnetorch・mclagsyncd・dashenifwdorch が APPL_DB へ書き込んだエントリは、`Consumer::m_toSync` に滞留し**暗黙 retry**される（erase されない・ログ出力なし・STATE_DB 書き込みなし）。
+
+**(2) `APP_ACL_RULE_TABLE` 用 RetryCache** (`aclorch.cpp:4221-4222`):
+
+```cpp
+createRetryCache(CFG_ACL_RULE_TABLE_NAME);
+createRetryCache(APP_ACL_RULE_TABLE_NAME);
+```
+
+ACL_RULE 系のみ `RetryCache` が用意されており、`ConsumerBase::addToRetry()` (`orch.cpp:169-178`) 経由で SAI リソース枯渇（`SAI_STATUS_TABLE_FULL` 等）時のタスクが退避され、resource 解放を待って再投入される。ACL_TABLE / ACL_TABLE_TYPE は対象外。
+
+**(3) `STAGE` 書き込み側ハードコード**:
+
+- `vnetorch.cpp:3793` / `dashenifwdorch.cpp:637` が `STAGE_INGRESS` を固定書き込み
+- `mclagsyncd/mclaglink.cpp:325-336` は `STAGE` を書かず C++ 初期値 `ACL_STAGE_INGRESS` (`aclorch.h:543`) に依存
+
+すべて INGRESS 前提のため、`processAclTableStage()` (`aclorch.cpp:5838-5853`) で `ACL_STAGE_UNKNOWN` になる経路は APPL_DB 書き込み元プロセス経由では発生しない（CLI 等で直接 APPL_DB を書き換えた場合のみ）。
+
+### ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB status | retry |
+|---|---|---|---|---|
+| `allPortsReady() == false` | `doTask()` L4276-4279 | 早期 return | 変化なし | port 準備完了まで暗黙 retry |
+| `TYPE` 空文字 | `processAclTableType()` L5819-5826 | `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
+| 不明な属性名 | `doAclTableTask()` L5415-5419 | `bAllAttributesOk=false` → break → erase | `"Inactive"` | なし |
+| `STAGE` 不正値（直接 APPL_DB を書いた場合のみ） | `processAclTableStage()` L5838-5853 | `ACL_STAGE_UNKNOWN` → `validate()` false → erase | `"Inactive"` | なし |
+| `PORTS` に未登録ポート | `processAclTablePorts()` L5786-5791 | `pendingPortSet.emplace()` スキップ継続 | 変化なし | `onPortReady()` で自動解消 |
+| `PORTS` に bind 不可ポート | `getAclBindPortId()` L5795-5799 | `return false` → `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
+| ユーザ定義 `TYPE` 未登録（vnetorch の VNET_TUNNEL_TERM 等） | `getAclTableType()` L5432-5437 | `it++`（保留） | 変化なし | ACL_TABLE_TYPE_TABLE 登録まで無制限 |
+| `type=L3V4V6` + ASIC 非サポート | `AclTable::validate()` L2737-2745 | `validate()` false → erase | `"Inactive"` | なし |
+| action 非サポート（SAI capability 不足） | `AclTable::validate()` L2759-2766 | `validate()` false → erase | `"Inactive"` | なし |
+| `addAclTable()` SAI 失敗（MIRROR capability 欠如等） | `doAclTableTask()` L5474-5485 | `it++`（retry） | `"Pending creation"` | 無制限 |
+| `updateAclTable()` 失敗 | `doAclTableTask()` L5465-5470 | `it++`（retry） | 変化なし | 無制限 |
+| ACL_TABLE_TYPE の `MATCHES`/`ACTIONS`/`BIND_POINTS` 欠落 | `doAclTableTypeTask()` L5738 | type 未完成扱い → 関連 ACL_TABLE は保留 | 変化なし | type 補完まで無制限 |
+
+### ACL_RULE_TABLE 失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| 親 ACL_TABLE 未登録 | `doAclRuleTask()` 親探索 | `it++`（保留） | 親 ACL_TABLE 作成まで無制限 |
+| match キーが table type の `MATCHES` 外 | `validateAddMatch()` | false → rule 不採用 → erase | なし |
+| action が table type の `ACTIONS` 外 | `validateAddAction()` | false → rule 不採用 → erase | なし |
+| `PRIORITY` が `m_minPriority` / `m_maxPriority` 範囲外 | `setPriority()` L1656 | false → rule 不採用 → erase | なし |
+| SAI `create_acl_entry` リソース枯渇 | `createRule()` | `addToRetry()` で `APP_ACL_RULE_TABLE_NAME` の RetryCache 投入 | リソース解放まで保留 |
+| 不明 op type | `doAclRuleTask()` | erase + `SWSS_LOG_ERROR` | なし |
+
+### STATE_DB status 遷移
+
+```
+APPL_DB SET 受信
+  ├─ allPortsReady()=false                       → 暗黙保留 (m_toSync 滞留)
+  ├─ bAllAttributesOk=false or validate()=false  → "Inactive"        (erase, no retry)
+  ├─ addAclTable() 失敗                          → "Pending creation" (it++, retry)
+  └─ addAclTable() 成功                          → "Active"           (erase)
+
+APPL_DB DEL 受信
+  ├─ removeAclTable() 失敗                       → "Pending removal"  (it++, retry)
+  └─ removeAclTable() 成功                       → STATE_DB エントリ削除
+```
+
+確認: `sonic-db-cli STATE_DB hgetall 'ACL_TABLE|<table_name>'`
+
+エラーは `SWSS_LOG_ERROR` で syslog 出力。`ERROR_TABLE` への書き込みはなし。APPL_DB のエントリは失敗後も残り、書き込んだプロセス（vnetorch / mclagsyncd / dashenifwdorch）側が再 SET / DEL するまで orchagent からは復旧手段がない。
+
+> **証跡**: `AclOrch::doTask()` L4272-4299、`createRetryCache` 呼び出し L4221-4222、`doAclTableTask()` L5361-5518、`doAclRuleTask()` L5550-5710、`doAclTableTypeTask()` L5720-5770、`AclTable::validate()` L2725-2769、`processAclTableType()` L5819-5831、`processAclTableStage()` L5838-5853、`processAclTablePorts()` L5776-5807、`setAclTableStatus()` L6088-6093、`Orch::createRetryCache()` (`orch.cpp:149-152`)、`ConsumerBase::addToRetry()` (`orch.cpp:169-178`)。
+<!-- /failure -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)

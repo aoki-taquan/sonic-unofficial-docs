@@ -194,6 +194,172 @@ FlowCounterRouteOrch は COUNTERS_DB への書き込みを 1 秒間隔のタイ�
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`FLEX_COUNTER_TABLE` と `FLOW_COUNTER_ROUTE_PATTERN` はどちらも orchagent 内の単一スレッドで消費される。両者は **Redis keyspace notification (PSUBSCRIBE)** で変更検出される `SubscriberStateTable` 経路を取る。`ConsumerStateTable` / `NotificationConsumer` は CONFIG_DB 側では**使用しない**。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|--------------------|
+| CLI/CONFIG_DB → orchagent | `SubscriberStateTable` | `__keyspace@{config_db_id}__:FLEX_COUNTER_TABLE\|*` |
+| CLI/CONFIG_DB → orchagent | `SubscriberStateTable` | `__keyspace@{config_db_id}__:FLOW_COUNTER_ROUTE_PATTERN\|*` |
+| FlowCounterRouteOrch 内部 | `SelectableTimer` (1 秒) | `FLEX_COUNTER_UPD_TIMER` (`flowcounterrouteorch.cpp:21,43-46`) |
+| orchagent → syncd | `ProducerTable` または SAI redis switch attr 直書き | FLEX_COUNTER_DB `FLEX_COUNTER_TABLE` / `FLEX_COUNTER_GROUP_TABLE` |
+| syncd → COUNTERS_DB | SAI generic counter polling | `COUNTERS:<oid>` (HSET) |
+
+### SubscriberStateTable の動作
+
+`FlexCounterOrch` (`orchdaemon.cpp:620-628`) と `FlowCounterRouteOrch` (`orchdaemon.cpp:251-254`) はいずれも `Orch(db, tableNames)` 基底経由で `Orch::addConsumer()` を呼ぶ (`orch.cpp:1186-1196`)。db が CONFIG_DB のため `SubscriberStateTable` ブランチが選択される:
+
+```
+PSUBSCRIBE __keyspace@{config_db_id}__:FLEX_COUNTER_TABLE|*
+PSUBSCRIBE __keyspace@{config_db_id}__:FLOW_COUNTER_ROUTE_PATTERN|*
+PSUBSCRIBE __keyspace@{config_db_id}__:DEVICE_METADATA|*    ← FlexCounterOrch が同居
+```
+
+keyspace 通知のペイロードは Redis 操作名 (`hset` / `del` / 等) のみ。フィールド値は通知後に `HGETALL` で別途取得する (`subscriberstatetable.cpp:95-`)。
+
+### 起動時スナップショット
+
+`SubscriberStateTable` ctor は PSUBSCRIBE 直後に `getKeys()` + `get()` で既存全エントリを `SET_COMMAND` として buffer に充填する (`subscriberstatetable.cpp:26-44`)。orchagent 起動時に存在する `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN|*` はすべて遅延なく `doTask` に流れる。
+
+### Warm restart 遅延
+
+`FlexCounterOrch` のみ warm start 時に 60 秒の `FLEX_COUNTER_DELAY_SEC` タイマー (`flexcounterorch.cpp:44, 127-133`) が走り、満了まで `doTask(Consumer&)` は即 return する (`flexcounterorch.cpp:156-159`)。コールド起動時は遅延なし。`FlowCounterRouteOrch` には同等の遅延は無い。
+
+### doTask の処理フロー
+
+`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:145-410`) は `flexCounterGroupMap` (`flexcounterorch.cpp:65-99`) で CONFIG_DB key を内部 group 定数に変換する:
+
+| CONFIG_DB key | 内部 group constant |
+|---|---|
+| `FLOW_CNT_TRAP` | `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` |
+| `FLOW_CNT_ROUTE` | `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` |
+
+`FLEX_COUNTER_STATUS = enable` 受信時の副作用呼び出し:
+
+- `FLOW_CNT_TRAP` → `gCoppOrch->generateHostIfTrapCounterIdList()` (`flexcounterorch.cpp:311-323`)
+- `FLOW_CNT_ROUTE` → `gFlowCounterRouteOrch->generateRouteFlowStats()` (SAI 能力ガード付, `flexcounterorch.cpp:324-336`)
+
+どちらの key も最後に `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` が呼ばれ、FLEX_COUNTER_DB に enable/disable と polling interval が反映される (`saihelper.cpp:868-885, 918-962`)。
+
+`FlowCounterRouteOrch::doTask(Consumer&)` (`flowcounterrouteorch.cpp:55-97`) は `addRoutePattern(key, max_match_count)` / `removeRoutePattern(key)` を呼ぶのみ。実際の SAI route entry → flex counter 紐付けは `FLEX_COUNTER_UPD_TIMER` (1 秒) 経由で `doTask(SelectableTimer&)` (`flowcounterrouteorch.cpp:99-`) が行う。
+
+### 書き込み元 (Publisher 側)
+
+CONFIG_DB への書き込みは **直接 Redis HSET** (`ConfigDBConnector`) で行われ、`ProducerStateTable` は通らない:
+
+| 書き込み元 | 経路 |
+|---|---|
+| `counterpoll flowcnt-trap {enable\|disable\|interval}` | `counterpoll/main.py` → ConfigDBConnector.mod_entry → HSET |
+| `counterpoll flowcnt-route {enable\|disable\|interval}` | 同上 |
+| `config flowcnt-route pattern add/del` | `config/flow_counters.py` → ConfigDBConnector.set_entry → HSET/DEL |
+| `config_db.json` 初期投入 | sonic-cfggen による一括 HSET |
+
+HSET 完了で Redis が自動的に `__keyspace@{config_db_id}__:<key>` channel に `hset` メッセージを publish し、orchagent の SubscriberStateTable が拾う。
+
+### データフロー図
+
+```
+admin (counterpoll flowcnt-trap enable)
+  ↓ ConfigDBConnector.mod_entry()
+CONFIG_DB[FLEX_COUNTER_TABLE|FLOW_CNT_TRAP]
+  ↓ HSET + keyspace PUBLISH
+  ↓   channel: __keyspace@{config_db_id}__:FLEX_COUNTER_TABLE|FLOW_CNT_TRAP
+  ↓   message: "hset"
+orchagent select() ループ
+  ↓ SubscriberStateTable.pops() → HGETALL "FLEX_COUNTER_TABLE|FLOW_CNT_TRAP"
+FlexCounterOrch::doTask(Consumer&)
+  ├─ flexCounterGroupMap → HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP
+  ├─ gCoppOrch->generateHostIfTrapCounterIdList()
+  │    └─ bindTrapCounter() → SAI create_counter + set_hostif_trap_attribute
+  └─ setFlexCounterGroupOperation(group, "enable")
+       └─ ProducerTable(gFlexCounterGroupTable).set() / SAI redis switch attr
+FLEX_COUNTER_DB[FLEX_COUNTER_GROUP_TABLE|<group>]
+  ↓ syncd FlexCounter スレッドが受信
+syncd (FlexCounter)
+  ↓ 10 秒間隔で SAI get_counter_stats(SAI_COUNTER_STAT_PACKETS/BYTES)
+COUNTERS_DB[COUNTERS:<oid>]   ← HSET
+
+NotificationConsumer: なし
+ConsumerStateTable (CONFIG_DB 側): なし
+TTL / expire: なし
+```
+
+派生フロー (FLOW_COUNTER_ROUTE_PATTERN):
+
+```
+CONFIG_DB[FLOW_COUNTER_ROUTE_PATTERN|<prefix> or <vrf>|<prefix>]
+  ↓ keyspace notification
+FlowCounterRouteOrch::doTask(Consumer&) → addRoutePattern(key, max_match_count)
+  ↓
+mPendingAddToFlexCntr キュー
+  ↓ FLEX_COUNTER_UPD_TIMER (1 秒間隔, SelectableTimer)
+FlowCounterRouteOrch::doTask(SelectableTimer&)
+  ↓ VID→RID 解決 (VIDTORID HGET)
+  ↓ mRouteFlowCounterMgr.setCounterIdList()
+FLEX_COUNTER_DB → syncd → COUNTERS_DB
+```
+
+### 詳細ノート
+
+詳細な購読パターン・PSUBSCRIBE チャンネル・競合解析は中間メモを参照: `meta/_intermediate/cdb-flow/app-counter-pubsub.md`。
+
+<!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` の動作は、ハードコード定数（ポーリング間隔・stat リスト・`max_match_count` デフォルト）はプラットフォーム共通だが、**route flow counter は SAI capability ゲート**で機種差が大きく、**multi-asic / VOQ chassis** は asic 単位での独立制御になる。
+
+### Route flow counter の SAI capability ゲート
+
+`FlowCounterRouteOrch::initRouteFlowCounterCapability()` が起動時に `SAI_OBJECT_TYPE_ROUTE_ENTRY` の `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` を `sai_query_attribute_capability()` で問い合わせ、結果を `mRouteFlowCounterSupported` フラグと **STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE|FLOW_CNT_ROUTE` の `support` フィールド** に保存する:
+
+```cpp
+// flowcounterrouteorch.cpp:166-179
+mRouteFlowCounterSupported = FlowCounterHandler::queryRouteFlowCounterCapability();
+swss::Table capability_table(&state_db, STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME);
+fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true" : "false");
+capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
+```
+
+`mRouteFlowCounterSupported == false` の場合、`flowcounterrouteorch.cpp` 内の `generateRouteFlowStats()` / `addRoutePattern()` / `removeRoutePattern()` / `onRoutePatternChange()` ほか合計 10 箇所超の関数がすべて即 `return` する。さらに `flexcounterorch.cpp:324` の `FLOW_CNT_ROUTE` enable 受信処理も `getRouteFlowCounterSupported()` を AND 条件にしているため、**SAI 非対応 ASIC では `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` を `enable` にしても `FLOW_COUNTER_ROUTE_PATTERN` にパターンを書き込んでもカウンタは生成されない**。
+
+### ASIC 別の対応状況（community master）
+
+| ASIC / SAI 実装 | `set_implemented` | 備考 |
+|---|---|---|
+| Broadcom XGS (modern Broadcom SAI) | true 想定 | 一般的に対応 |
+| Mellanox / NVIDIA SDK (mlnx-sai) | true | community master で動作実績 |
+| Broadcom DNX / Marvell / Cisco silicon-one | SDK バージョン依存 | `show flowcnt-route capabilities` で要確認 |
+| **VS (libsaivs) / VPP (libsaivpp)** | **false** | SAI スタブが未実装応答 |
+
+ユーザー側からは `show flowcnt-route capabilities`（STATE_DB の `FLOW_COUNTER_CAPABILITY_TABLE` を読む）で `support: false` を確認できる。
+
+### Trap flow counter には capability ゲートなし
+
+`FLOW_CNT_TRAP` 側（`flexcounterorch.cpp:311-322`）には事前 capability チェックがない。SAI が `SAI_HOSTIF_TRAP_ATTR_COUNTER_ID` の set を `SAI_STATUS_NOT_SUPPORTED` で返した場合、copporch が個別 trap ごとに warn ログを残しつつ無視するのみで、**STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE` には trap 側のエントリは書かれない**。事前判定の手段がないため、`COUNTERS_DB:COUNTERS:oid:*` に値が現れるかを実機で確認する必要がある。
+
+### multi-asic / VOQ chassis
+
+`flexcounterorch` と `FlowCounterRouteOrch` は他 orch と同じく **swss@asicN コンテナごとに 1 インスタンス**起動する。`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` の enable/disable・`FLOW_COUNTER_ROUTE_PATTERN` のパターン定義はすべて **asic-namespace ごとの CONFIG_DB に独立**しており、chassis-wide に同期する仕組みは存在しない（`CHASSIS_APP_DB` に flow counter 系テーブルなし）。chassis 全 asic で有効化したい場合は asic-namespace の数だけ書き込みが必要。
+
+VOQ chassis 特例として `flexcounterorch.cpp:546` で `gMySwitchType == "voq"` のとき queue counter の生成方針が変わるが、**flow counter (`FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE`) の挙動には影響しない**。`CHASSIS_APP_DB` 経由で resolve される remote system port nexthop へのルートも、local `mRoutePatternSet` のパターンにマッチすれば通常通り counter が付く。
+
+### VS / VPP プラットフォーム
+
+VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため route flow counter は完全に no-op になる。trap flow counter は受理されカウンタオブジェクトが生え `COUNTERS_DB` にも値が出るが、SAI 側の dummy 実装で実トラフィックを反映しない。sonic-mgmt の `test_flow_counter_*` は VS では route 系を原則スキップする。
+
+### プラットフォーム共通の定数
+
+`HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS = 10000`、`ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS = 10000`、`ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT = 30`、`FLEX_COUNTER_UPD_INTERVAL = 1` 秒、generic counter の stat リスト (`SAI_COUNTER_STAT_PACKETS` / `_BYTES`) はベンダー側で上書きする手段がなく、全機種同一。
+
+詳細根拠は `meta/_intermediate/cdb-flow/app-counter-platform.md` を参照。
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
