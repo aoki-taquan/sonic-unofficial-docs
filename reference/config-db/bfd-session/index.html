@@ -24391,6 +24391,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的に照会される SAI capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        capability 結果と経路の対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hardware-software-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hardware ⇄ software 経路差 (デフォルト値・単位・API)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC ベンダー別の傾向 (経験則)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34846,6 +34907,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        動的に照会される SAI capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        capability 結果と経路の対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hardware-software-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hardware ⇄ software 経路差 (デフォルト値・単位・API)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC ベンダー別の傾向 (経験則)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35363,6 +35485,233 @@
 <li>レコード内整合性 (<code>local_addr</code> 必須、<code>interface</code> と <code>dst_mac</code> の併用条件) は順序ではないが、不整合な SET は永続スキップされる (<a href="#例外条件特殊挙動">例外条件・特殊挙動</a> 参照)。</li>
 </ul>
 <!-- /ordering -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>BFD_SESSION の処理は <strong>SAI 動的 capability 照会</strong> で hardware/software 経路を起動時に決定する。ACL 系のように <code>platform</code> / <code>sub_platform</code> 環境変数を静的比較する分岐は <code>bfdorch.cpp</code> には存在しない。差異の決定は SAI 実装 (<code>libsai*.so</code>) 側の <code>set_implemented</code> / <code>get_implemented</code> プロパティに完全依存する。詳細スキャンノート: <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-platform.md"><code>meta/_intermediate/cdb-flow/bfd-session-platform.md</code></a>。</p>
+<h3 id="sai-capability">動的に照会される SAI capability<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>照会タイミング</th>
+<th>影響</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE</code></td>
+<td><code>BgpGlobalStateOrch</code> 起動時 (1 回)</td>
+<td>IPv4 hardware offload 可否</td>
+<td><code>bfdorch.cpp:761, 767-793</code></td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE</code></td>
+<td><code>BgpGlobalStateOrch</code> 起動時 (1 回)</td>
+<td>IPv6 hardware offload 可否</td>
+<td><code>bfdorch.cpp:764, 767-793</code></td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY</code></td>
+<td>最初の <code>create_bfd_session()</code> 時</td>
+<td>UP/DOWN 通知ハンドラ登録の可否</td>
+<td><code>bfdorch.cpp:274-302</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>bfd_offload = (offload_supported(ipv4) &amp;&amp; offload_supported(ipv6))</code> (<code>bfdorch.cpp:741</code>) — <strong>IPv4 / IPv6 両方</strong> が <code>get_implemented=true</code> かつ <code>OFFLOAD_TYPE != NONE</code> でなければ <code>bfd_offload=false</code> となり、<code>getSoftwareBfd()</code> が常に true を返して software BFD 経路に強制される。</p>
+<h3 id="capability">capability 結果と経路の対応<a class="headerlink" href="#capability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SAI 照会結果</th>
+<th><code>bfd_offload</code></th>
+<th><code>getSoftwareBfd()</code></th>
+<th>経路</th>
+<th>SAI 経由</th>
+<th>state 通知</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPv4/IPv6 両方 capability あり + <code>OFFLOAD_TYPE != NONE</code></td>
+<td>true</td>
+<td>false</td>
+<td><strong>hardware BFD</strong></td>
+<td>あり (<code>bfdorch</code> → SAI → ASIC)</td>
+<td>SAI notify handler</td>
+</tr>
+<tr>
+<td>いずれかが <code>get_implemented=false</code></td>
+<td>false</td>
+<td>true</td>
+<td><strong>software BFD</strong></td>
+<td>なし (STATE_DB のみ)</td>
+<td>bgpcfgd <code>BfdMgr</code> polling</td>
+</tr>
+<tr>
+<td>いずれかが <code>OFFLOAD_TYPE_NONE</code></td>
+<td>false</td>
+<td>true</td>
+<td>software BFD</td>
+<td>なし</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>sai_query</code> 失敗 (ERROR ログ)</td>
+<td>false</td>
+<td>true</td>
+<td>software BFD</td>
+<td>なし</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>BFD_SESSION_STATE_CHANGE_NOTIFY</code> の <code>set_implemented=false</code></td>
+<td>(hw 経路時) hardware だが<strong>通知欠落</strong></td>
+<td>—</td>
+<td>hardware BFD (通知なし)</td>
+<td>あり</td>
+<td><strong>なし</strong> (<code>BFD_SESSION_TABLE.state</code> 未更新, <code>bfdorch.cpp:286-290</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hardware-software-api">hardware ⇄ software 経路差 (デフォルト値・単位・API)<a class="headerlink" href="#hardware-software-api" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>hardware BFD (<code>bfdorch</code>)</th>
+<th>software BFD (<code>bgpcfgd/BfdMgr</code>)</th>
+<th>static route BFD (<code>staticroutebfd</code>)</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tx_interval</code> 既定</td>
+<td>1000 ms</td>
+<td>200 ms</td>
+<td>50 ms (上書き)</td>
+<td><code>bfdorch.cpp:15</code> / <code>managers_bfd.py:14</code> / <code>staticroutebfd/main.py:101</code></td>
+</tr>
+<tr>
+<td><code>rx_interval</code> 既定</td>
+<td>1000 ms</td>
+<td>200 ms</td>
+<td>50 ms</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>multiplier</code> 既定</td>
+<td>10</td>
+<td>3</td>
+<td>設定追従</td>
+<td><code>bfdorch.cpp:17</code> / <code>managers_bfd.py:13</code></td>
+</tr>
+<tr>
+<td>SAI 単位変換</td>
+<td>ms × 1000 → μs</td>
+<td>FRR vtysh は ms をそのまま</td>
+<td>—</td>
+<td><code>bfdorch.cpp:451-458</code> / <code>managers_bfd.py:146-148</code></td>
+</tr>
+<tr>
+<td>multihop</td>
+<td><code>SAI_BFD_SESSION_ATTR_MULTIHOP=true</code> + <code>minimum-ttl 1</code></td>
+<td>FRR <code>multihop</code> キーワード</td>
+<td>—</td>
+<td><code>bfdorch.cpp:472-475</code> / <code>managers_bfd.py:125-127, 151-152</code></td>
+</tr>
+<tr>
+<td>VRF</td>
+<td><code>interface=="default"</code> のみ。<code>vrf != "default"</code> かつ <code>interface != "default"</code> は永続スキップ</td>
+<td>FRR 側で peer 設定の VRF 指定可</td>
+<td>—</td>
+<td><code>bfdorch.cpp:498-503</code></td>
+</tr>
+<tr>
+<td>state 通知</td>
+<td>SAI notification handler</td>
+<td>FRR bfdd → bgpcfgd polling</td>
+<td>—</td>
+<td><code>bfdorch.cpp:register_bfd_state_change_notification</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="asic">ASIC ベンダー別の傾向 (経験則)<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h3>
+<p><code>bfdorch.cpp</code> 自体はベンダー文字列を見ないが、SAI 実装による <code>BFD_SESSION_OFFLOAD_TYPE</code> capability の典型的な実装状況は以下:</p>
+<table>
+<thead>
+<tr>
+<th>ASIC / プラットフォーム</th>
+<th>hardware BFD offload</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>broadcom (XGS / 非 DNX)</td>
+<td>あり (機種・SDK バージョン依存)</td>
+<td>Trident / Tomahawk 系の一部で実装</td>
+</tr>
+<tr>
+<td>broadcom-dnx (Jericho / Qumran)</td>
+<td>あり</td>
+<td>DNX SDK は BFD endpoint をサポート</td>
+</tr>
+<tr>
+<td>mellanox (Spectrum 系)</td>
+<td>あり</td>
+<td>Spectrum / Spectrum-2/3/4 で SAI BFD offload 実装</td>
+</tr>
+<tr>
+<td>barefoot (Tofino)</td>
+<td>通常なし</td>
+<td>P4 で実装可能だが標準 SAI 未含。<strong>software BFD 前提</strong></td>
+</tr>
+<tr>
+<td>cisco-8000 (Silicon One)</td>
+<td>あり</td>
+<td>SAI BFD offload あり</td>
+</tr>
+<tr>
+<td>marvell-prestera / marvell-teralynx</td>
+<td>機種依存</td>
+<td>SAI が NONE を返すと software fallback</td>
+</tr>
+<tr>
+<td>nephos / xsight / clounix</td>
+<td>機種依存</td>
+<td>SAI 実装次第</td>
+</tr>
+<tr>
+<td>vs (Virtual Switch)</td>
+<td><strong>なし</strong></td>
+<td>libsai が capability 未実装 → software BFD 強制</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">最終判定は SAI capability</p>
+<p>上表は一般的傾向で、最終の hw/sw 判定は起動時の <code>sai_query_attribute_capability</code> 戻り値が決める。
+実機では <code>swssloglevel -l DEBUG -c bfdorch</code> で <code>"BFD offload type: %d"</code> ログ、
+または <code>STATE_DB</code> の <code>SOFTWARE_BFD_SESSION_TABLE</code> 有無で確実に確認できる (<code>bfdorch.cpp:783</code>)。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">state 通知ハンドラ未対応プラットフォーム</p>
+<p><code>SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY</code> の <code>set_implemented=false</code> を返す SAI 実装では
+hardware BFD は動くものの UP/DOWN 通知が orchagent に届かず、
+<code>BFD_SESSION_TABLE.state</code> が永久に更新されない (<code>bfdorch.cpp:286-290</code>)。
+BGP 等の上位プロトコルが BFD 状態を参照する場合は事前に SAI capability 検証が必要。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">経路切替は起動時のみ確定</p>
+<p><code>bfd_offload</code> は <code>BgpGlobalStateOrch</code> コンストラクタで <strong>1 回だけ</strong> 決定される (<code>bfdorch.cpp:741</code>) ため、
+実行中に SAI capability が変わっても hw/sw 経路は切り替わらない。
+経路を変更したい場合は orchagent (BfdOrch を含むコンテナ swss) の再起動が必要。</p>
+</div>
+<!-- /platform -->
 
 <div class="footnote">
 <hr />
