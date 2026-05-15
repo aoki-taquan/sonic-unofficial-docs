@@ -22407,6 +22407,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: PortsOrch 初期化（必須先行・グローバル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: ACL_TABLE 先行（必須先行・自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mirror_session-mirror-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: MIRROR_SESSION 存在（MIRROR action 限定・存在必須）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: REDIRECT ターゲット解決（推奨先行・自動回復なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-mirror-del-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: MIRROR ルールの内容変更は DEL → SET 必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-del-acl_rule-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 6: DEL 順序（ACL_RULE → ACL_TABLE 推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sai-retry-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 7: SAI リソース枯渇時の retry cache（自動順序逆転）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22711,6 +22805,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aclorchcpp-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        aclorch.cpp 数値・mask 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-mask-config_db-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI mask 固定値 (CONFIG_DB に格納されない・C++ 内部のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PRIORITY 範囲 (SAI capability で実行時決定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部 stage 値・デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_loader-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        acl_loader (CLI) ハードコード定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restgnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST/gNMI 経路定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22772,7 +22949,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#phase-e_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコード定数 (Phase E)
@@ -22822,7 +22999,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順依存 (Phase B)
@@ -35118,6 +35295,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: PortsOrch 初期化（必須先行・グローバル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: ACL_TABLE 先行（必須先行・自動回復あり）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mirror_session-mirror-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: MIRROR_SESSION 存在（MIRROR action 限定・存在必須）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-redirect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: REDIRECT ターゲット解決（推奨先行・自動回復なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-mirror-del-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: MIRROR ルールの内容変更は DEL → SET 必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-del-acl_rule-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 6: DEL 順序（ACL_RULE → ACL_TABLE 推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sai-retry-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 7: SAI リソース枯渇時の retry cache（自動順序逆転）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35422,6 +35693,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aclorchcpp-mask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        aclorch.cpp 数値・mask 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-mask-config_db-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI mask 固定値 (CONFIG_DB に格納されない・C++ 内部のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#priority-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PRIORITY 範囲 (SAI capability で実行時決定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内部 stage 値・デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_loader-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        acl_loader (CLI) ハードコード定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restgnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST/gNMI 経路定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35483,7 +35837,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-e" class="md-nav__link">
+  <a href="#phase-e_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコード定数 (Phase E)
@@ -35533,7 +35887,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b" class="md-nav__link">
+  <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         書込み順依存 (Phase B)
@@ -35992,8 +36346,66 @@
 </div>
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/aclorch.cpp AclOrch::doAclRuleTask:5520 / AclTable::add:2988 / AclRuleMirror::activate:2324 / AclRulePacket::getRedirectObjectId:2078 -->
+
+<p><code>ACL_RULE</code> の SAI 反映は複数の外部状態（PortsOrch 初期化、<code>ACL_TABLE</code>、<code>MIRROR_SESSION</code>、REDIRECT 先 next-hop、SAI リソース余裕）に依存する。違反時の挙動はガード機構により<strong>自動回復するもの</strong>と<strong>rule INACTIVE で erase されるもの</strong>に分かれる。</p>
+<h3 id="1-portsorch">依存 1: PortsOrch 初期化（必須先行・グローバル）<a class="headerlink" href="#1-portsorch" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>PortsOrch::allPortsReady() == true  先行
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ↓
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>ACL_TABLE / ACL_TABLE_TYPE / ACL_RULE のどの SET も処理開始
+</span></code></pre></div>
+<p><code>AclOrch::doTask()</code> (<code>aclorch.cpp:4276</code>) は <code>gPortsOrch-&gt;allPortsReady()</code> が false の間は何も処理しない。ACL 関連の全 CONFIG_DB エントリは PortsOrch の <code>PORT</code> 初期化完了を待つ。</p>
+<p><strong>違反時</strong>: 書込み自体は CONFIG_DB に残り、PortsOrch 完了後の最初のイベントループで一括処理（自動回復）。</p>
+<h3 id="2-acl_table">依存 2: ACL_TABLE 先行（必須先行・自動回復あり）<a class="headerlink" href="#2-acl_table" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ACL_TABLE|&lt;table&gt;  SET 完了（SAI OID 割当済み）  先行
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>ACL_RULE|&lt;table&gt;|&lt;rule&gt;  SET
+</span></code></pre></div>
+<p><code>doAclRuleTask()</code> (<code>aclorch.cpp:5548-5566</code>) は <code>getTableById(table_id)</code> が <code>SAI_NULL_OBJECT_ID</code> の場合、CTRLPLANE 種別ならその場で erase、それ以外は <code>it++</code> で <code>m_toSync</code> に保留し次の tick で再試行する（無限ポーリング）。</p>
+<p><strong>違反時</strong>: ACL_TABLE が後から SAI に登録されると自動的にルール作成が成功する。CTRLPLANE 種別（<code>m_ctrlAclTables</code>）の table_id 配下ルールは INFO ログ後 erase される点に注意。</p>
+<h3 id="3-mirror_session-mirror-action">依存 3: MIRROR_SESSION 存在（MIRROR action 限定・存在必須）<a class="headerlink" href="#3-mirror_session-mirror-action" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>MIRROR_SESSION|&lt;sess&gt;  SET（存在化）  先行
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ACL_RULE|&lt;table&gt;|&lt;rule&gt;  with MIRROR_*_ACTION=&lt;sess&gt;  SET
+</span></code></pre></div>
+<p><code>AclRuleMirror::activate()</code> (<code>aclorch.cpp:2331-2335</code>) は <code>m_pMirrorOrch-&gt;sessionExists(m_sessionName)</code> が false なら <code>return false</code> で rule 作成失敗。セッションが inactive（存在はする）の場合は SAI entry を作らずに保留し、<code>MirrorSessionUpdate</code> イベント経由で <code>AclRuleMirror::onUpdate()</code> (<code>aclorch.cpp:2424-2452</code>) が <code>activate()</code> を呼び戻す。</p>
+<p><strong>違反時</strong>: session 不存在ならルール INACTIVE で erase。session が後から作成されても自動回復はせず、ACL_RULE の再 SET が必要。inactive → active の遷移は自動回復される。</p>
+<h3 id="4-redirect">依存 4: REDIRECT ターゲット解決（推奨先行・自動回復なし）<a class="headerlink" href="#4-redirect" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>（REDIRECT_ACTION = &lt;port&gt; / &lt;nexthop&gt; / &lt;nh_group&gt; / &lt;tunnel_nh&gt; の場合）
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>PORT / PORTCHANNEL / NEIGH_TABLE / ROUTE_TABLE の対象が解決済み  先行
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  ↓
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ACL_RULE  SET（REDIRECT_ACTION または PACKET_ACTION=REDIRECT:&lt;target&gt;）
+</span></code></pre></div>
+<p><code>AclRulePacket::getRedirectObjectId()</code> (<code>aclorch.cpp:2078-2166</code>) は PORT/LAG → NextHop → Tunnel NH → NextHopGroup の順でターゲットを解決する。NextHopGroup のみ未存在時に <code>routeOrch-&gt;addNextHopGroup()</code> で自動作成を試みる。それ以外が解決できない場合は <code>SAI_NULL_OBJECT_ID</code> → rule INACTIVE で erase。</p>
+<p><strong>違反時</strong>: rule INACTIVE で erase。MIRROR_SESSION と異なり SubjectType 購読がないため自動回復せず、ACL_RULE の再 SET が必要。</p>
+<h3 id="5-mirror-del-set">依存 5: MIRROR ルールの内容変更は DEL → SET 必須<a class="headerlink" href="#5-mirror-del-set" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACL_RULE|&lt;table&gt;|&lt;rule&gt;  DEL  先行
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ACL_RULE|&lt;table&gt;|&lt;rule&gt;  SET（新属性）
+</span></code></pre></div>
+<p><code>AclRuleMirror::update()</code> は未実装で <code>SWSS_LOG_ERROR</code> 後に <code>return false</code> を返す（<code>aclorch.cpp:2415-2420</code>）。同 key への SET だけでは内容変更されない。</p>
+<p><strong>違反時</strong>: 更新 SET が ERROR ログのみで無視される。差分更新は不可。非 MIRROR ルール（L3/L3V6 等）は <code>AclTable::add()</code> (<code>aclorch.cpp:2988-3023</code>) が既存ルールを <code>remove()</code> → <code>create()</code> で完全再作成するため、同 key 再 SET で上書き可能。</p>
+<h3 id="6-del-acl_rule-acl_table">依存 6: DEL 順序（ACL_RULE → ACL_TABLE 推奨）<a class="headerlink" href="#6-del-acl_rule-acl_table" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ACL_RULE|&lt;table&gt;|&lt;rule&gt;  DEL  先行（推奨）
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>ACL_TABLE|&lt;table&gt;  DEL
+</span></code></pre></div>
+<p><code>AclOrch::removeAclTable()</code> (<code>aclorch.cpp:4850</code>) は table 削除前に <code>m_AclTables[oid].clear()</code> で配下の全ルールを一括 <code>remove()</code> するため、SAI 上は順序不問。ただし CONFIG_DB に ACL_RULE が残ったまま ACL_TABLE のみ DEL すると、orchagent 再起動時の replay で ACL_RULE が依存 2 の待機ループに入り続けるため、<strong>CONFIG_DB 整合性のためルール先 DEL を推奨</strong>。</p>
+<p><strong>違反時</strong>: 機能的には問題なし。再起動後に保留ルールが残るのみ。</p>
+<h3 id="7-sai-retry-cache">依存 7: SAI リソース枯渇時の retry cache（自動順序逆転）<a class="headerlink" href="#7-sai-retry-cache" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>（SAI ACL リソース枯渇時）
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>新規 ACL_RULE SET → SAI_STATUS_INSUFFICIENT_RESOURCES → retry cache 退避
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  ↓
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>同 table 内の既存 ACL_RULE DEL  → notifyRetry(RETRY_CST_SAI_RESOURCE)  → cache 再投入
+</span></code></pre></div>
+<p><code>doAclRuleTask()</code> (<code>aclorch.cpp:5673-5698</code>, <code>5716-5720</code>) は resource-full 失敗を <code>RETRY_CST_SAI_RESOURCE</code> 制約付きで retry cache に退避し、同 table_id の rule DEL 成功時に <code>notifyRetry()</code> で再投入する。</p>
+<p><strong>違反時</strong>: 自動メカニズム。SET 順序と独立に「枯渇したら退避、空いたら再投入」が回る。</p>
+<!-- /ordering -->
+
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ACL_RULE|&lt;table_name&gt;|&lt;rule_name&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>ACL_RULE|&lt;table_name&gt;|&lt;rule_name&gt;
 </span></code></pre></div>
 <p><code>&lt;table_name&gt;</code> は <code>ACL_TABLE.name</code> を参照（実装上は名前一致のみで leafref はない）。</p>
 <h2 id="_3">共通フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -36875,6 +37287,220 @@ YANG は <code>mandatory true</code> のため省略不可。</p>
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="aclorchcpp-mask">aclorch.cpp 数値・mask 定数<a class="headerlink" href="#aclorchcpp-mask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms (10 秒)</td>
+<td>ACL counter FlexCounter ポーリング間隔</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:47</code></td>
+</tr>
+<tr>
+<td><code>ACL_COUNTER_DEFAULT_ENABLED_STATE</code></td>
+<td><code>false</code></td>
+<td>ACL counter FlexCounter 初期無効状態（起動直後はカウンタ更新されない）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:48</code></td>
+</tr>
+<tr>
+<td><code>MAX_META_DATA_VALUE</code></td>
+<td><code>4095</code></td>
+<td><code>META_DATA</code> / <code>META_DATA_ACTION</code> の最大許容値。SAI <code>u32range.max</code> がこれを超えると <code>4095</code> にクランプ</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:52,3619-3621</code></td>
+</tr>
+<tr>
+<td><code>TCP_PROTOCOL_NUM</code></td>
+<td><code>6</code></td>
+<td><code>TCP_FLAGS</code> あり + <code>IP_PROTOCOL</code> 未指定時に自動付与する TCP プロトコル番号（Phase 6 派生）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:54,5645</code></td>
+</tr>
+<tr>
+<td><code>MAC_EXACT_MATCH</code></td>
+<td><code>"ff:ff:ff:ff:ff:ff"</code></td>
+<td><code>INNER_SRC_MAC</code> / <code>INNER_DST_MAC</code> 完全一致 mask（CONFIG_DB 非保存・C++ 内部固定）</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:56,957</code></td>
+</tr>
+<tr>
+<td><code>ACL_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"ACL_STAT_COUNTER"</code></td>
+<td>FLEX_COUNTER グループ名</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:4209</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-mask-config_db-c">SAI mask 固定値 (CONFIG_DB に格納されない・C++ 内部のみ)<a class="headerlink" href="#sai-mask-config_db-c" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>mask 値</th>
+<th>ビット幅</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IP_TYPE</code> / <code>TUNNEL_VNI</code> / <code>META_DATA</code></td>
+<td><code>0xFFFFFFFF</code></td>
+<td>32bit</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:1046,1162,1208</code></td>
+</tr>
+<tr>
+<td><code>ETHER_TYPE</code> / <code>L4_SRC_PORT</code> / <code>L4_DST_PORT</code> / <code>INNER_ETHER_TYPE</code> / <code>INNER_L4_*</code></td>
+<td><code>0xFFFF</code></td>
+<td>16bit</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:1067,1168</code></td>
+</tr>
+<tr>
+<td><code>VLAN_ID</code></td>
+<td><code>0xFFF</code></td>
+<td>12bit</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:1072</code></td>
+</tr>
+<tr>
+<td><code>IP_PROTOCOL</code> / <code>NEXT_HEADER</code> / <code>TC</code> / <code>ICMP_*</code> / <code>INNER_IP_PROTOCOL</code></td>
+<td><code>0xFF</code></td>
+<td>8bit</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:1099,1151,1157,1173</code></td>
+</tr>
+<tr>
+<td><code>TCP_FLAGS</code> / <code>DSCP</code> (省略時フォールバック)</td>
+<td><code>0x3F</code></td>
+<td>6bit</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:1061,1093</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>TCP_FLAGS</code> / <code>DSCP</code> は CONFIG_DB に <code>&lt;data&gt;/&lt;mask&gt;</code> 形式で明示指定可能。省略時のフォールバックが <code>0x3F</code>。</p>
+<h3 id="priority-sai-capability">PRIORITY 範囲 (SAI capability で実行時決定)<a class="headerlink" href="#priority-sai-capability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>既定値</th>
+<th>設定タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclRule::m_minPriority</code></td>
+<td><code>0</code> (静的初期値)</td>
+<td>起動時に <code>SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY</code> を query して <code>setRulePriorities()</code> で上書き</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:22,3689-3700</code>, <code>sonic-swss/orchagent/aclorch.h:321,376</code></td>
+</tr>
+<tr>
+<td><code>AclRule::m_maxPriority</code></td>
+<td><code>0</code> (静的初期値)</td>
+<td>起動時に <code>SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY</code> を query して <code>setRulePriorities()</code> で上書き</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:23,3690-3700</code>, <code>sonic-swss/orchagent/aclorch.h:322,377</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>PRIORITY</code> 値が <code>[m_minPriority, m_maxPriority]</code> 範囲外なら <code>setPriority()</code> で ERROR ログ後 <code>return false</code> → rule INACTIVE (<code>aclorch.cpp:1654-1661</code>)。DPU (<code>gMySwitchType == "dpu"</code>) は SAI query をスキップし、静的初期値 <code>0/0</code> のままになる。</p>
+<h3 id="stage">内部 stage 値・デフォルト<a class="headerlink" href="#stage" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stage</code> ローカル変数初期値</td>
+<td><code>ACL_STAGE_INGRESS</code></td>
+<td>ACL_TABLE 解析時の <code>stage</code> 未指定フォールバック</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:543</code></td>
+</tr>
+<tr>
+<td><code>aclStageLookup[STAGE_INGRESS]</code></td>
+<td><code>ACL_STAGE_INGRESS</code></td>
+<td><code>STAGE</code> 文字列 → enum 変換マップ</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:166</code></td>
+</tr>
+<tr>
+<td><code>aclStageLookup[STAGE_EGRESS]</code></td>
+<td><code>ACL_STAGE_EGRESS</code></td>
+<td>同上</td>
+<td><code>sonic-swss/orchagent/aclorch.cpp:167</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl_loader-cli">acl_loader (CLI) ハードコード定数<a class="headerlink" href="#acl_loader-cli" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclLoader.min_priority</code></td>
+<td><code>1</code></td>
+<td><code>createDefaultDenyAclRule()</code> で生成するデフォルト DROP ルールの <code>PRIORITY</code></td>
+<td><code>sonic-utilities/acl_loader/main.py:92,811</code></td>
+</tr>
+<tr>
+<td><code>AclLoader.max_priority</code></td>
+<td><code>10000</code></td>
+<td><code>PRIORITY = max_priority - sequence_id</code> の計算基底値（OpenConfig 経路）</td>
+<td><code>sonic-utilities/acl_loader/main.py:93</code></td>
+</tr>
+<tr>
+<td>デフォルト deny <code>PACKET_ACTION</code></td>
+<td><code>"DROP"</code></td>
+<td><code>full_update</code> 完了時に L3/L3V6/L3V4V6 テーブルへ自動追加するルールの action</td>
+<td><code>sonic-utilities/acl_loader/main.py:812</code></td>
+</tr>
+<tr>
+<td>デフォルト deny <code>rule_name</code></td>
+<td><code>"DEFAULT_RULE"</code></td>
+<td>自動追加 deny ルールの固定 key 部</td>
+<td><code>sonic-utilities/acl_loader/main.py:810</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="restgnmi">REST/gNMI 経路定数<a class="headerlink" href="#restgnmi" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_PRIORITY</code></td>
+<td><code>65536</code></td>
+<td><code>PRIORITY = MAX_PRIORITY - seqId</code> の計算基底値（REST/gNMI 経路）。<code>acl_loader</code> (<code>10000</code>) と異なる</td>
+<td><code>sonic-mgmt-common/translib/acl_app.go:56</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>acl_loader</code> (CLI) と REST/gNMI で計算基底値が異なるため、同一 OpenConfig <code>sequence-id</code> でも経路により CONFIG_DB に書き込まれる <code>PRIORITY</code> 値が変わる点に注意。</p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>aclorch.h</code> L22-23,321-322,376-377、<code>aclorch.cpp</code> L22-23,47-56,166-167,543,924,957,1046-1208,1654-1661,3610-3621,3689-3700,4209-4212,5640-5645 読了。<code>acl_loader/main.py</code> L92-93,805-815、<code>acl_app.go</code> L56 読了。定数 6 (cpp) + 5 (mask) + 2 (PRIORITY) + 3 (stage) + 4 (loader) + 1 (gNMI) = 21 件抽出。中間ファイル: <code>meta/_intermediate/cdb-flow/acl-rule-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
 <p>ACL_RULE の処理は <code>AclOrch::init()</code> が起動時に環境変数 <code>platform</code> / <code>sub_platform</code> を読み取り、以下の capability を静的に決定する。MIRROR V6 / L3V4V6 / isCombinedMirrorV6 はすべて env var の <strong>静的比較</strong> で確定。META_DATA 系のみ SAI 動的照会 (<code>sai_query_attribute_capability</code>) を使う。</p>
@@ -37219,7 +37845,7 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <!-- /cross-refs -->
 
 <!-- constants -->
-<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h2 id="phase-e_1">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e_1" title="Permanent link">&para;</a></h2>
 <p>YANG 未定義テーブルのため、全定数はソースコードが正本。以下は <code>aclorch.h</code> / <code>aclorch.cpp</code> / <code>acl_loader/main.py</code> / <code>acl_app.go</code> から抽出した硬直定数一覧。</p>
 <h3 id="mask">数値・mask 定数<a class="headerlink" href="#mask" title="Permanent link">&para;</a></h3>
 <table>
@@ -37392,7 +38018,7 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <!-- /constants -->
 
 <!-- ordering -->
-<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <p>ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装から導出した。</p>
 <h3 id="set">先行必須テーブル (SET 時)<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
 <table>
@@ -37675,8 +38301,8 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <li><code>packet_action: REDIRECT:</code> の nexthop 解決が失敗すると rule が install されない（syslog 確認）。</li>
 </ul>
 <h3 id="_20">確認コマンド<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE|EVERFLOW|*&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>aclshow<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span>EVERFLOW
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE|EVERFLOW|*&#39;</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>aclshow<span class="w"> </span>-a<span class="w"> </span>-t<span class="w"> </span>EVERFLOW
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -37686,18 +38312,18 @@ POLICER を ACL に組み合わせる場合は P4 orch (<code>p4orch/acl_util.cp
 <h3 id="cli-acl_loader">CLI — acl_loader<a class="headerlink" href="#cli-acl_loader" title="Permanent link">&para;</a></h3>
 <p><code>sonic-utilities/acl_loader/main.py</code> — <code>acl-loader update full / incremental / delete</code></p>
 <p><strong>full update</strong> (<code>full_update()</code> L850):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>           <span class="c1"># 既存全削除</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_config</span><span class="p">({</span><span class="n">ACL_RULE</span><span class="p">:</span> <span class="n">rules_info</span><span class="p">})</span>        <span class="c1"># 新規一括書き込み</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>           <span class="c1"># 既存全削除</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_config</span><span class="p">({</span><span class="n">ACL_RULE</span><span class="p">:</span> <span class="n">rules_info</span><span class="p">})</span>        <span class="c1"># 新規一括書き込み</span>
 </span></code></pre></div>
 <p>入力プロトコル: JSON ファイル（OpenConfig ACL 形式）— <code>&lt;filename&gt;</code> 引数で指定</p>
 <p><strong>incremental update</strong> (<code>incremental_update()</code> L871):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 追加</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>            <span class="c1"># 削除</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 内容変更</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 追加</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">configdb</span><span class="o">.</span><span class="n">mod_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>            <span class="c1"># 削除</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>           <span class="c1"># 内容変更</span>
 </span></code></pre></div>
 <p>dataplane ACL は full update 方式、controlplane ACL は差分更新。</p>
 <p><strong>delete</strong> (<code>delete()</code> L946):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">configdb</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">ACL_RULE</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Multi-ASIC: 各 namespace の <code>namespace_configdb</code> にも同じ操作を適用。</p>
 <p><strong>デフォルト deny ルール自動追加</strong> (<code>createDefaultDenyAclRule()</code> L1138):</p>
