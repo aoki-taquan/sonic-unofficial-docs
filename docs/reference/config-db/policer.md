@@ -434,3 +434,30 @@ sai_status_t status = sai_policer_api->create_policer(...);
     `create_policer()` 成功後に `set_port_attribute()` が失敗すると、SAI policer を `remove_policer()` で削除してから `task_need_retry` を返す。これにより次ループで最初から再作成を試みる。ただし `remove_policer()` が失敗した場合は SAI 上に孤立した policer が残る可能性がある (`policerorch.cpp:299-305` に TODO コメントあり)。
 
 <!-- /failure -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`POLICER` は YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
+
+> evidence: `meta/_intermediate/cdb-flow/policer-cross-refs.md`
+
+| 参照元テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `MIRROR_SESSION.policer` | POLICER を消費 (OID 取得 + refcount++) | `policer` フィールド指定時。POLICER 不在 → `task_need_retry`、追加後に自動再処理 | `mirrororch.cpp:432-441` (`policerExists()` / `increaseRefCount()`) |
+| `ACL_RULE` (標準 aclorch) | 表示目的のみ (読み取り) | `aclshow` コマンド実行時。orchagent の `aclorch.cpp` は POLICER を直接参照しない | `acl_loader/main.py:254-266` (`read_policers_info()`) |
+| `ACL_RULE` (P4 orch) | POLICER OID 取得 + ACL action 設定 | P4 ACL rule に policer action を指定したとき | `p4orch/acl_util.cpp` |
+| `COPP_GROUP` | 直接参照なし (インライン policer) | 常時。COPP_GROUP 自身に policer 属性をインライン定義し、CoppOrch が独立した SAI policer を生成。`POLICER` テーブルとはリンクしない | `copporch.cpp` `trapGroupAddPolicer()` |
+| `PORT_STORM_CONTROL` | 内部 SAI policer 生成 (POLICER テーブルとは独立) | PORT_STORM_CONTROL SET/DEL 時。PolicerOrch が兼務し、`handlePortStormControlTable()` にディスパッチ。`POLICER` テーブルへのエントリは生成しない | `policerorch.cpp:394-407`, `orchdaemon.cpp:396-402` |
+
+!!! note "COPP_GROUP と PORT_STORM_CONTROL は POLICER テーブルをキーで参照しない"
+    `COPP_GROUP` はポリサー属性をインラインで保持し、`POLICER` テーブルとは別物の SAI policer を生成する。
+    `PORT_STORM_CONTROL` は PolicerOrch 内部で SAI policer を生成するが、`POLICER` テーブルには書き込まない。
+    いずれも `POLICER` テーブルへの leafref / 外部キー参照は発生しない。
+
+!!! note "MIRROR_SESSION との参照カウント"
+    `MirrorOrch` が `increaseRefCount()` / `decreaseRefCount()` を対称的に呼ぶ。
+    MIRROR_SESSION を DEL せずに POLICER を削除しようとすると `m_policerRefCounts[key] > 0` のまま保留され続ける（`policerorch.cpp:563-568`）。
+    削除順序: MIRROR_SESSION (DEL) → POLICER (DEL) の順が必須。
+
+<!-- /cross-refs -->
