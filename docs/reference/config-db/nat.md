@@ -390,6 +390,47 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 <!-- /handler-branching -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 -->
+
+### APPL_DB への副次書込
+
+`NatMgr` (`natmgrd` コンテナ) が CONFIG_DB 変更を受けて以下の APPL_DB テーブルへ書込を行う。
+
+| テーブル名 | キー形式 | 書込フィールド | 書込条件 |
+|-----------|---------|--------------|---------|
+| `NAT_GLOBAL_TABLE` | `Values` | `admin_mode`, `nat_tcp_timeout` *, `nat_udp_timeout` *, `nat_timeout` * | `admin_mode` 変更時、または timeout 変更時 (NAT 有効時のみ) |
+| `NAT_TABLE` | `<global_ip>` | `translated_ip`, `nat_type`, `entry_type`, `twice_nat_id` | `admin_mode=enabled` かつ L3 インタフェース ready 時に STATIC_NAT エントリ追加 |
+| `NAT_DNAT_POOL_TABLE` | `<dest_ip>` | `NULL: NULL` | DNAT pool エントリ参照カウント > 0 時に追加 |
+
+> * `nat_tcp_timeout` / `nat_udp_timeout` / `nat_timeout` はデフォルト値 (86400 / 300 / 600) の場合は書込されない (`enableNatFeature()` の条件ガード: `natmgr.cpp:5684-5704`)。
+
+### STATE_DB への書込
+
+`NatMgr` / `NatOrch` はいずれも STATE_DB への**書込は行わない**。STATE_DB は `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` / `STATE_INTERFACE_TABLE` の readiness ガードとして**読み取り専用**で参照される (`natmgr.cpp:100-139`)。
+
+### COUNTERS_DB への副次書込
+
+`NatOrch` (`orchagent` コンテナ) が以下の COUNTERS_DB テーブルへ書込を行う。
+
+| テーブル名 | キー形式 | 書込フィールド | 書込タイミング |
+|-----------|---------|--------------|--------------|
+| `COUNTERS_GLOBAL_NAT` | `Values` | `MAX_NAT_ENTRIES`, `TIMEOUT`, `UDP_TIMEOUT`, `TCP_TIMEOUT` | NatOrch コンストラクタ起動時 (SAI 値取得後) |
+| `COUNTERS_GLOBAL_NAT` | `Values` | `STATIC_NAT_ENTRIES`, `STATIC_NAPT_ENTRIES`, `STATIC_TWICE_NAT_ENTRIES`, `STATIC_TWICE_NAPT_ENTRIES`, `DYNAMIC_NAT_ENTRIES`, `DYNAMIC_NAPT_ENTRIES`, `DYNAMIC_TWICE_NAT_ENTRIES`, `DYNAMIC_TWICE_NAPT_ENTRIES`, `SNAT_ENTRIES`, `DNAT_ENTRIES` | エントリ追加/削除ごとにカウント更新 |
+| `COUNTERS_NAT` | `<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` | hitbit クエリタイマー (5 秒周期) |
+| `COUNTERS_NAPT` | `<proto>:<ip>:<port>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` | hitbit クエリタイマー (5 秒周期) |
+| `COUNTERS_TWICE_NAT` | `<src_ip>:<dst_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` | hitbit クエリタイマー (5 秒周期) |
+| `COUNTERS_TWICE_NAPT` | `<proto>:<src_ip>:<src_port>:<dst_ip>:<dst_port>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` | hitbit クエリタイマー (5 秒周期) |
+
+### FLUSH 通知による副次効果
+
+- `FLUSHNATSTATISTICS` 通知 (APPL_DB) 受信時: `COUNTERS_NAT` / `COUNTERS_NAPT` / `COUNTERS_TWICE_NAT` / `COUNTERS_TWICE_NAPT` の全エントリのカウンタを 0 にリセット (`natorch.cpp:3955-4038`)
+- `NAT_DB_CLEANUP_NOTIFICATION` 通知 (APPL_DB) 受信時: dynamic NAT エントリを全削除し対応 `COUNTERS_*` エントリも削除
+
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## Redis 通知メカニズム (Phase G)
 
