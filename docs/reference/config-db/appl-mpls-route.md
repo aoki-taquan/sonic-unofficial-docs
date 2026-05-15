@@ -195,3 +195,20 @@ if (alsv.size() == 0 && !blackhole)
 ## 書き込み元
 
 - `fpmsyncd::RouteSync::onLabelRouteMsg()` (`sonic-swss/fpmsyncd/routesync.cpp`): カーネル netlink MPLS ルート受信時
+
+<!-- side-effects -->
+## 副次 DB 書込
+
+APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask()`
+(`orchagent/mplsrouteorch.cpp`) および `nhgorch` の MPLS NH 経路 (`isLabeled()` 分岐) は
+**STATE_DB / COUNTERS_DB / APPL_STATE_DB への副次書き込みを一切行わない**。
+副作用は SAI `inseg_entry` および MPLS NH (SAI `next_hop`) オブジェクトの ASIC 反映に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| STATE_DB | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `m_stateDb` / `STATE_DB` 参照なし。`routeorch.cpp:294` の `m_stateDefaultRouteTb->set()` は IPv4/IPv6 デフォルトルート (`APP_ROUTE_TABLE_NAME`) 経路でのみ呼ばれ、`doTask` (`routeorch.cpp:618`) は `APP_LABEL_ROUTE_TABLE_NAME` のとき `doLabelTask` 呼出後 `return;` するため MPLS 経路には波及しない |
+| COUNTERS_DB | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `FlexCounter` / `COUNTERS_DB` 参照なし。SAI `inseg_entry` 用カウンタは未統合 |
+| APPL_STATE_DB | なし | `routeorch.cpp:3201` の `m_publisher.publish(APP_ROUTE_TABLE_NAME, ...)` は `ROUTE_TABLE` キー固定で、`LABEL_ROUTE_TABLE` に対する APPL_STATE_DB ミラーは存在しない |
+
+詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-side.md` を参照。
+<!-- /side-effects -->
