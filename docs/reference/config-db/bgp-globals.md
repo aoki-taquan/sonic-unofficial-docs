@@ -371,4 +371,28 @@ VRF インスタンスを使う場合は `VRF|<vrf>` を CONFIG_DB に書いて�
 `bgp_global_handler()` は `comb_attr_list=[{'keepalive', 'holdtime'}]` を指定しており、片方のみが含まれると集合全体が除外され `timers bgp <k> <h>` コマンドが生成されない (`frrcfgd.py:3935-3936`)。
 
 <!-- /ordering -->
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+BGP_GLOBALS ハンドラが実装上参照する、YANG leafref 以外の暗黙依存。
+
+### YANG 明示 leafref
+
+| フィールド | leafref 先 |
+|-----------|-----------|
+| `vrf_name` (BGP_GLOBALS_LIST) | union: `"default"` 固定 または `VRF.VRF_LIST.name` |
+| `vrf_name` (BGP_GLOBALS_AF_LIST など) | `BGP_GLOBALS.BGP_GLOBALS_LIST.vrf_name` |
+| `import_vrf` (BGP_GLOBALS_AF_LIST) | `BGP_GLOBALS.BGP_GLOBALS_LIST.vrf_name`（自 VRF 以外） |
+
+### 暗黙参照
+
+| 参照先テーブル / フィールド | 参照元 | 意味 |
+|---------------------------|--------|------|
+| `DEVICE_METADATA\|localhost\|bgp_asn` | `frrcfgd.py:2162-2166, 2445-2446` | `default` VRF で `BGP_GLOBALS.local_asn` 未設定時のフォールバック。`metadata_handler` が変更を購読する |
+| `DEVICE_METADATA\|localhost\|docker_routing_config_mode` | `frrcfgd.py:2167-2170` | `"unified"` モードのみ BGP_GLOBALS を vtysh でプログラムする。`separated` では挙動が異なる |
+| `VRF`（`vni` フィールド） | `frrcfgd.py:2271-2273, 2413-2440` | BGP_GLOBALS の vrf_name に対応する VRF の VNI マッピングを zebra に連携する |
+| `ROUTE_REDISTRIBUTE`（同 VRF） | `frrcfgd.py:2704` | `local_asn` 新規設定時に同 VRF の redistribution を強制再適用する |
+| `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF`（同 VRF） | `frrcfgd.py:2849-2853` | `local_asn` 確定後に pending の neighbor / neighbor-AF を再適用する |
+| `BGP_GLOBALS_EVPN_VNI` / `BGP_GLOBALS_EVPN_RT` / `BGP_GLOBALS_EVPN_VNI_RT` | `frrcfgd.py:2100-2103, 2659` | VRF-based テーブルとして `local_asn` の存在確認を共有する。未設定なら skip |
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
