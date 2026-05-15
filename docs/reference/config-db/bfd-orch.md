@@ -111,6 +111,61 @@ CONFIG_DB の `BFD_SESSION|<vrf>|<interface>|<peer_ip>` と同一構造 (区切�
 
 [^1]: `sonic-swss/orchagent/bfdorch.cpp` (L15-20 マクロ定義、L305-574 `create_bfd_session()`、L111-217 `doTask()`). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`bfdorch` は環境変数 `platform` / `sub_platform` を参照しない。プラットフォーム差はすべて **SAI capability 動的照会** (`sai_query_attribute_capability`) で決定される。経路選択は起動時 1 回のみ評価される。
+
+### capability 照会と経路分岐
+
+| 照会対象 SAI attribute | 判定関数 | true (実装あり) | false (未実装) | evidence |
+|---|---|---|---|---|
+| `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` (`set_implemented`) | `BfdOrch::register_bfd_state_change_notification()` | state change 通知ハンドラ登録 → セッション作成可 | `"BFD register change notification not supported"` → セッション作成 reject | `bfdorch.cpp:270-303, 307-314` |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE` (`get_implemented`) | `BgpGlobalStateOrch::offload_supported()` | hardware BFD 経路 (`use_software_bfd=false`) | software BFD 経路 (`use_software_bfd=true`) | `bfdorch.cpp:755-791` |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE` (`get_implemented`) | 同上 (IPv6) | IPv6 offload 対応 | IPv6 は software 経路 | `bfdorch.cpp:761-768` |
+
+### Hardware BFD vs Software BFD
+
+| 項目 | Hardware BFD 経路 | Software BFD 経路 |
+|---|---|---|
+| 条件 | SAI が BFD offload を `SAI_BFD_SESSION_OFFLOAD_TYPE_NONE` 以外で返す | SAI が BFD offload 未実装、または `NONE` を返す |
+| `use_software_bfd` | `false` | `true` |
+| 実処理 | ASIC が hello/echo パケットを送受信 (SAI BFD API) | FRR `bfdd` (CPU) が `bgpcfgd/BfdMgr` 経由で処理 |
+| bfdorch の動作 | SAI `create_bfd_session` 呼び出し + STATE_DB 更新 | STATE_DB `SOFTWARE_BFD_SESSION_TABLE` 転記のみ |
+| multiplier default | 10 | 3 (FRR 側) |
+| tx/rx interval default | 1000 ms | 200 ms (BfdMgr) / 50 ms (static route BFD) |
+| 最小推奨 interval | ASIC 依存 (Broadcom 50ms / Mellanox 100ms 等) | CPU 負荷の観点で 50 ms 以上推奨 |
+| evidence | `bfdorch.cpp:116-139, 415-543` | `bfdorch.cpp:133-139, 182-188` |
+
+### ASIC ベンダー差サマリ (community SAI 実装の一般的傾向)
+
+| ベンダー / ASIC 世代 | BFD offload | デフォルト経路 | 備考 |
+|---|---|---|---|
+| Broadcom XGS (Tomahawk2 / Trident2) | 未実装 | software | 旧世代 |
+| Broadcom XGS (Tomahawk3+ / Trident3+) | 一部実装 | hardware | SKU・SDK 依存 |
+| Broadcom DNX (Jericho2 / Q2A) | 実装 | hardware | DNX は概ね hardware BFD 対応 |
+| Mellanox Spectrum / Spectrum-2 | 未実装 | software | 旧世代 |
+| Mellanox Spectrum-3 / -4 | 実装 | hardware | 新世代で SAI BFD offload |
+| Cisco Silicon One (Q200 系) | 実装 | hardware | 世代依存 |
+| Marvell Prestera / Teralynx | 未実装 | software | community SAI 未対応 |
+| Intel/Barefoot Tofino | 未実装 | software | P4 実装次第 |
+| Nephos / Innovium (xsight) / Clounix | 未実装 | software | 同上 |
+| Virtual Switch (vs) | 未実装 | software | テスト用、常に software 経路 |
+
+!!! note "bfdorch.cpp に静的ベンダー分岐は存在しない"
+    `aclorch` 等とは異なり、`bfdorch.cpp` に `BRCM_PLATFORM_SUBSTRING` / `MLNX_PLATFORM_SUBSTRING` 等のベンダー文字列分岐は **一切存在しない**。
+    すべての分岐は SAI capability 動的照会で決定される。
+    上記の「ベンダー差サマリ」は `libsai*` の community 実装慣行に基づく傾向であり、特定 SKU / SDK バージョンで例外がある。
+    実機での経路判定は `BGP_DEVICE_GLOBAL|STATE.use_software_bfd` を STATE_DB で確認するのが確実。
+
+!!! warning "capability 不在時の致命的挙動"
+    `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` を `set_implemented=false` で返す ASIC では、
+    `register_bfd_state_change_notification()` が false を返し、
+    `create_bfd_session()` が `"BFD session for %s cannot be created"` を SWSS_LOG_ERROR 出力して **セッション作成自体を reject** する。
+    この場合、`BFD_SESSION` テーブルにエントリを投入しても hardware BFD は一切起動しない。
+    また `use_software_bfd` の判定は **bfdorch 起動時 1 回のみ** であり、動的切替は swss コンテナの再起動が必要。
+<!-- /platform -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
