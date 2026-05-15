@@ -74,6 +74,81 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`BANNER_MESSAGE` テーブルおよびその購読者 (`hostcfgd` `BannerCfg` クラス + `banner-config.sh`) に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd` と `sonic-buildimage/files/image_config/bannerconfig/`。
+
+### banner 出力先ファイルパス (banner-config.sh)
+
+`banner-config.sh` は `state=enabled` の場合に CONFIG_DB から `login` / `motd` / `logout` を取得し、以下 4 つの絶対パスへ書き込む。これらは shell スクリプト内にリテラル直書きで、CONFIG_DB / YANG / 環境変数で変更不可。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| LOGIN_BANNER_PATH | `/etc/issue` | コンソール (getty) ログインプロンプト前に表示される Linux 標準 issue ファイル | banner-config.sh:13 |
+| LOGIN_NET_BANNER_PATH | `/etc/issue.net` | sshd `Banner /etc/issue.net` ディレクティブ経由で SSH ログイン前に表示される | banner-config.sh:12 |
+| MOTD_PATH | `/etc/motd` | PAM `pam_motd.so` がログイン成功直後に cat する標準 MOTD ファイル | banner-config.sh:14 |
+| LOGOUT_BANNER_PATH | `/etc/logout_message` | SONiC 独自パス。`~/.bash_logout` 等から参照する想定 (Debian 標準ではない) | banner-config.sh:15 |
+
+> **注意**: `/etc/logout_message` は Debian / Linux 標準にないファイル名で、SONiC が独自に導入したもの。実際に logout 時に cat されるかは shell プロファイル設定 (`/etc/skel/.bash_logout` 等) に依存する。
+
+### 書き込みコマンドと改行コード処理
+
+| 定数/構文 | 値 | 用途 | ソース |
+|----------|----|------|--------|
+| `echo -e` フラグ | `-e` (バックスラッシュエスケープ解釈) | CONFIG_DB に格納された `\n` を実改行 (LF 0x0A) に展開して書き込む | banner-config.sh:12-15 |
+| リダイレクト | `>` (truncate + write) | 上書きモード。毎回ファイル全文を置換 | banner-config.sh:12-15 |
+| シェバン | `#!/bin/bash -e` | bash 必須 (`[[ ]]` 使用)。`-e` で任意のコマンド失敗時即終了 | banner-config.sh:1 |
+
+> **注意**: `echo -e` は bash builtin に依存。Redis 上には `\` + `n` の 2 文字として保存され、`echo -e` 展開時に初めて LF になる。CRLF を CLI から渡すのは難しいため運用上は LF (`\n`) のみが推奨される。
+
+### CONFIG_DB アクセス・有効化判定
+
+| 定数/構文 | 値 | 用途 | ソース |
+|----------|----|------|--------|
+| DB クライアント | `sonic-db-cli CONFIG_DB HGET` | Redis HGET でフィールド単位取得 | banner-config.sh:3,9-11 |
+| テーブルキー | `'BANNER_MESSAGE\|global'` | シングルトン固定キー | banner-config.sh:3,9-11 |
+| 有効化判定値 | `"enabled"` | `[[ $STATE == "enabled" ]]` の右辺リテラル | banner-config.sh:7 |
+
+### systemd unit (banner-config.service) 内固定値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| ExecStart | `/usr/bin/banner-config.sh` | スクリプトのインストール先絶対パス | banner-config.service:11 |
+| Type | `oneshot` | 起動して終了するワンショット (デーモン化しない) | banner-config.service:9 |
+| RemainAfterExit | `no` | 終了後 inactive に戻る | banner-config.service:10 |
+| BindsTo | `database.service`, `sonic.target` | database 停止時に自動停止 | banner-config.service:5-6 |
+| Requires/After | `config-setup.service` | config-setup 完了後に起動 | banner-config.service:3-4 |
+
+### hostcfgd 内ハードコード文字列
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| 再起動対象 service 名 | `"banner-config"` | `run_cmd(["systemctl", "restart", "banner-config"], ...)` の対象 unit 名 | hostcfgd L2111 |
+| 読み取りフィールド名 | `"state"` / `"login"` / `"motd"` / `"logout"` | `BannerCfg.load()` で `.get()` に渡す固定 4 キー。これ以外の CONFIG_DB フィールドは無視 | hostcfgd L2074-2077 |
+| syslog タグ | `'BannerCfg: load initial'` / `'BannerCfg: Failed to restart banner-config service'` / `'BANNER_MESSAGE table handler...'` | デバッグ識別文字列 | hostcfgd L2067, L2113-2114, L2443 |
+| CFG テーブル名定数参照 | `swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` | swsscommon の C++ 定義 (`"BANNER_MESSAGE"`) を import | hostcfgd L2259 |
+
+### デフォルト文字列定数 (YANG / init_cfg.json.j2)
+
+| フィールド | YANG default | init_cfg.json.j2 値 | 改行表現 |
+|-----------|-------------|---------------------|---------|
+| `state` | `disabled` | `"disabled"` | N/A (enum) |
+| `login` | `"Debian GNU/Linux 11"` | `"Debian GNU/Linux 11"` | 改行なし (1 行) |
+| `motd` | SONiC ASCII アート + 警告文 (複数行リテラル) | 同一内容 (`\n` エスケープで 1 行 JSON 化) | `\n` 区切り、末尾 `\n\n` |
+| `logout` | `""` | `""` | 改行なし (空) |
+
+> **注意**: motd の表示文字 (ASCII アート骨格 + 警告文) は YANG default と init_cfg.json.j2 で等価だが、インデント空白と改行表現が異なる。実 DB には init_cfg.json.j2 の `\n` 形式が書き込まれる。
+
+### 暗黙の前提
+
+- `/etc/issue` / `/etc/issue.net` / `/etc/motd` / `/etc/logout_message` の所有者・パーミッションは Debian デフォルト (`root:root 0644`)。`banner-config.sh` は明示的に `chmod` / `chown` しないため、Debian インストール時の値を継承する
+- `state=enabled` で上書きしたファイルは `state=disabled` に戻しても復元されない (CONFIG_DB のみ無効化される)
+- `sshd_config` の `Banner /etc/issue.net` ディレクティブが前提。SONiC イメージビルド時に有効化されている
+
+詳細な定数一覧 (systemd 依存関係、改行処理の細部、CFG_BANNER_MESSAGE_TABLE_NAME の C++ 由来) は `meta/_intermediate/cdb-flow/banner-message-constants.md` を参照。
+<!-- /constants -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。ConfigDBConnector で `BANNER_MESSAGE/global` を listen し、`/etc/issue`, `/etc/motd`, `/etc/issue.net` をテンプレ展開して書き換える
