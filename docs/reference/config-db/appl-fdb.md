@@ -432,6 +432,104 @@ docker logs swss 2>&1 | grep -i 'saved.*fdb\|Add warm input FDB State'
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`APPL_DB FDB_TABLE` の書込主体である `FdbOrch` (`sonic-swss/orchagent/fdborch.cpp` / `fdborch.h`) と、テーブル名マクロが定義された `sonic-swss-common/common/schema.h` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-constants.md`。
+
+### テーブル名マクロの実値
+
+| マクロ | 実文字列 | 用途 | ソース |
+|--------|---------|------|--------|
+| `APP_FDB_TABLE_NAME` | `"FDB_TABLE"` | APPL_DB の動的/静的 FDB テーブル名（本ページ対象） | schema.h L52 |
+| `APP_VXLAN_FDB_TABLE_NAME` | `"VXLAN_FDB_TABLE"` | `VXLAN_ADVERTIZED` origin の入力テーブル | schema.h L87 |
+| `APP_MCLAG_FDB_TABLE_NAME` | `"MCLAG_FDB_TABLE"` | `MCLAG_ADVERTIZED` origin の入力テーブル | schema.h L118 |
+| `STATE_FDB_TABLE_NAME` | `"FDB_TABLE"` | STATE_DB 側ローカル MAC 書き戻し (`m_fdbStateTable`) | schema.h L426 |
+| `STATE_MCLAG_REMOTE_FDB_TABLE_NAME` | `"MCLAG_REMOTE_FDB_TABLE"` | STATE_DB MCLAG advertise 用 (`m_mclagFdbStateTable`) | schema.h L443 |
+
+bind 箇所は `orchdaemon.cpp:233-235` で `TableConnector` として `FdbOrch` コンストラクタへ渡される。
+
+### FDB type 文字列 (列挙化されていないリテラル)
+
+`fdborch.cpp` 内で **enum 化されておらず、すべて文字列リテラルで比較される**。
+
+| 値 | 主な出現箇所 | 意味 |
+|----|-------------|------|
+| `"dynamic"` | L770 default, L830 assert, L1431/1435 三項, L1579 STATE 書き戻し | カーネル学習 / swssconfig 由来の動的 MAC |
+| `"static"` | L830 assert, L1359 等, L1750 placeholder | 静的 MAC (CONFIG_DB `FDB` / VlanMgr 由来) |
+| `"dynamic_local"` | L830 assert, L875, L1431 三項, L1552, L1572-1579 | **MCLAG ピア由来のローカル aging 用内部値** — YANG `sonic-fdb` に存在せず orchagent 内部のみで生成される |
+| `"true"` / `"false"` | L1497 (`discard` フィールド) | パケット破棄制御の真偽値リテラル |
+
+入力検証は L830 の単一 `assert(type == "dynamic" || type == "dynamic_local" || type == "static")` のみ。NDEBUG ビルドでは silent 通過し L1431/1435 の三項演算子で `SAI_FDB_ENTRY_TYPE_STATIC` にフォールバックする。
+
+### `FdbOrigin` 列挙 (`fdborch.h:9-15`)
+
+```cpp
+enum FdbOrigin {
+    FDB_ORIGIN_INVALID          = 0,
+    FDB_ORIGIN_LEARN            = 1,
+    FDB_ORIGIN_PROVISIONED      = 2,  // doTask() default
+    FDB_ORIGIN_VXLAN_ADVERTIZED = 4,
+    FDB_ORIGIN_MCLAG_ADVERTIZED = 8,
+};
+```
+
+数値は 2 のべきだが現コードでは bit-OR せず単一値として比較される。`fdborch.h:53-61` のコメントが `type` × `origin` 有効組合せを定義し、`{"static", FDB_ORIGIN_LEARN}` のみ **Invalid** と明示されている。`FdbOrigin` 値は orchagent プロセス内のみで使用され、Redis 経路で外部に露出しない。
+
+### APPL_DB フィールド名リテラル
+
+`doTask()` L779-822 で `fvField(i)` と文字列直接比較される。
+
+| フィールド名 | 出現位置 | 適用 origin |
+|-------------|---------|-----------|
+| `"port"` | L779, L133 (STATE 書き戻し fvs) | 全 origin |
+| `"type"` | L784, L134, L1579 | 全 origin |
+| `"discard"` | L788 | 全 origin (PAC/802.1X 用) |
+| `"remote_vtep"` | L795 | `VXLAN_ADVERTIZED` のみ |
+| `"esi"` | L811 | `VXLAN_ADVERTIZED` のみ |
+| `"vni"` | L816 | `VXLAN_ADVERTIZED` のみ |
+
+### `saved_fdb_entries` キャッシュキー
+
+PORT 未準備 / VLAN メンバー未満足の SET を保留するキャッシュ。
+
+- **キー**: ポート別名 (`Port::m_alias` 文字列)。VLAN や MAC は値側 `vector<SavedFdbEntry>` 内のフィールドに保持
+- push: L1301, L1316 (`saved_fdb_entries[port_name].push_back(...)`)
+- replay: L1254-1255 (`auto fdb_list = std::move(saved_fdb_entries[port_name]); saved_fdb_entries[port_name].clear();`)
+- L1750 の `entry.fdbData.type = "static"` は `deleteFdbEntryFromSavedFDB()` 内の vector iteration 用 placeholder で、コメント `/* Below members are unused during delete compare */` の通り比較対象ではない
+
+### SAI 列挙マッピング (orchagent 内固定)
+
+| `type` × `origin` 条件 | SAI 値 | コード位置 |
+|----------------------|--------|----------|
+| `"dynamic_local"` + `MCLAG_ADVERTIZED` | `SAI_FDB_ENTRY_TYPE_DYNAMIC` (aging 効かせるため) | L1431 三項 |
+| 上記以外で `MCLAG_ADVERTIZED` | `SAI_FDB_ENTRY_TYPE_STATIC` | L1431 三項 false 側 |
+| `"dynamic"` (LEARN / PROVISIONED / VXLAN) | `SAI_FDB_ENTRY_TYPE_DYNAMIC` | L1435 三項 |
+| `"static"` | `SAI_FDB_ENTRY_TYPE_STATIC` | L1435 三項 false 側 |
+| `discard == "true"` | `SAI_PACKET_ACTION_DROP` | L1497 |
+| `discard != "true"` | `SAI_PACKET_ACTION_FORWARD` | L1497 |
+
+flush 系の `SAI_FDB_FLUSH_ATTR_ENTRY_TYPE` は L949-950 / L1122-1123 / L1161-1162 のいずれも `SAI_FDB_FLUSH_ENTRY_TYPE_DYNAMIC` を指定し、**flush は動的エントリのみ対象**という暗黙制約がコードに焼き付いている。
+
+### その他の固定値
+
+| 値 | 名前 | 用途 | ソース |
+|----|-----|------|--------|
+| `20` | `FdbOrch::fdborch_pri` | Orch スケジューラ優先度 | fdborch.cpp L25 (`const int FdbOrch::fdborch_pri = 20;`) |
+| `SUBJECT_TYPE_FDB_FLUSH_CHANGE` | notify subject | flush 発生時の observer 通知 | L1199 |
+| `SUBJECT_TYPE_VLAN_MEMBER_CHANGE` | 購読 subject | `updateVlanMember()` の起動 | L655 |
+
+`fdborch_pri = 20` は他 Orch との相対値で hard-coded、CONFIG_DB から変更不可。
+
+### CONFIG_DB / YANG 不在の項目
+
+- `"dynamic_local"` type は YANG `sonic-fdb` に存在しない（`static`/`dynamic` のみ）。MCLAG ピア由来 MAC の aging 制御のため orchagent 内部で動的に生成される内部値
+- `FdbOrigin` 列挙は orchagent プロセス内のみで生存し、APPL_DB / STATE_DB スキーマには露出しない
+- 上記すべての定数は schema.h マクロまたは `fdborch.cpp` 内リテラルで固定されており、CONFIG_DB / 環境変数 / 起動引数から変更する経路は存在しない
+
+<!-- /constants -->
+
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
