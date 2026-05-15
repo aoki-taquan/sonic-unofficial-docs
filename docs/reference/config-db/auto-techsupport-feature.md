@@ -238,6 +238,23 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 書き込み時 default (`600`) と実行時 fallback (`0.0`) が**乖離**している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | SAI 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ参照、`asicN` namespace を iterate しない。container 名の asic suffix (`swss0`/`syncd1` 等) は feature 名との `startswith` 前方一致で吸収 |
+| VOQ chassis (supervisor + line card) | 各 host で独立適用 | chassisdb (REDIS_CHASSIS_SERVER) 非参照。各 line card host で独立にローカル CONFIG_DB を見てローカル `/var/dump/` に techsupport を生成。chassis 全体集中機構なし |
+| namespace (asic0..asicN) | 影響なし | `coredump_gen_handler.py` / `techsupport_cleanup.py` / `auto_techsupport_helper.py` のいずれにも namespace 引数なし。すべて host namespace の `unix:///var/run/redis/redis.sock` に接続 |
+| ベンダー固有 hook | なし | `AUTO_TECHSUPPORT_FEATURE` schema / handler に vendor 分岐なし。`generate_dump` 内の `show platform summary` 等 vendor 依存コマンドは別 entity (本テーブル field 解釈には影響しない) |
+| init_cfg / build template | 分岐なし | `init_cfg.json.j2` の AUTO_TECHSUPPORT_FEATURE ブロックは `{% for feature in FEATURE %}` のみで platform 条件式なし |
+
+詳細根拠と grep ログは `meta/_intermediate/cdb-flow/auto-techsupport-feature-platform.md` を参照。
+<!-- /platform -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
@@ -285,5 +302,81 @@ coredump_gen_handler.py
 
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338`; `sonic-utilities/scripts/coredump-compress:1-35`; `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`; `sonic-host-services/scripts/hostcfgd:2468-2528`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md`
 <!-- /pubsub -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`AUTO_TECHSUPPORT_FEATURE` を消費する Python パイプライン (`coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / 共通ヘルパ `auto_techsupport_helper.py`) と、パッケージ install 時の初期値を担う `feature.py` に存在する CONFIG_DB に格納されないハードコード定数の一覧。
+
+### 1. ファイルシステムパス / パターン (`auto_techsupport_helper.py:33-39`)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `CORE_DUMP_DIR` | `/var/core` | core dump 保存ディレクトリ。`coredump-compress` の gzip 出力先と handler の容量集計対象 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:33`; `sonic-utilities/scripts/coredump-compress:21` |
+| `CORE_DUMP_PTRN` | `*.core.gz` | core dump cleanup 対象の glob | `sonic-utilities/utilities_common/auto_techsupport_helper.py:34` |
+| `TS_DIR` | `/var/dump` | techsupport tarball 保存先 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:36` |
+| `TS_ROOT` / `TS_PTRN` / `TS_PTRN_GLOB` | `sonic_dump_*` / `sonic_dump_.*tar.*` / `sonic_dump_*tar*` | techsupport tarball 検出パターン (cleanup / 既存 dump 一覧) | `sonic-utilities/utilities_common/auto_techsupport_helper.py:37-39` |
+
+### 2. CONFIG_DB / STATE_DB キー定数 (`auto_techsupport_helper.py:42-67`)
+
+| 定数 | 値 | evidence |
+|-----|-----|---------|
+| `AUTO_TS` | `AUTO_TECHSUPPORT\|GLOBAL` | `sonic-utilities/utilities_common/auto_techsupport_helper.py:46` |
+| `FEATURE` | `AUTO_TECHSUPPORT_FEATURE\|{}` (format テンプレ) | `sonic-utilities/utilities_common/auto_techsupport_helper.py:54` |
+| `CFG_STATE` / `COOLOFF` / `CFG_MAX_TS` / `CFG_CORE_USAGE` / `CFG_SINCE` | `state` / `rate_limit_interval` / `max_techsupport_limit` / `max_core_limit` / `since` | `sonic-utilities/utilities_common/auto_techsupport_helper.py:47-51` |
+| `TS_MAP` | `AUTO_TECHSUPPORT_DUMP_INFO` (STATE_DB 上の dump 記録テーブル) | `sonic-utilities/utilities_common/auto_techsupport_helper.py:60` |
+| `EVENT_TYPE_CORE` / `EVENT_TYPE_MEMORY` | `core` / `memory` | `sonic-utilities/utilities_common/auto_techsupport_helper.py:66-67` |
+
+### 3. タイミング・しきい値・終了コード (`auto_techsupport_helper.py:69-84`)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `TIME_BUF` | `20` 秒 | `verify_recent_file_creation()` の判定窓。core 生成と handler 起動のラグ吸収 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:69,115` |
+| `SINCE_DEFAULT` | `"2 days ago"` | `CFG_SINCE` が `date -d` で解釈不能/欠落時の `show techsupport --since` fallback | `sonic-utilities/utilities_common/auto_techsupport_helper.py:70,216,220` |
+| `TS_GLOBAL_TIMEOUT` | `"60"` (文字列) | `show techsupport --global-timeout` 引数。CONFIG_DB から上書き不可 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:71,235` |
+| `EXT_LOCKFAIL` / `EXT_RETRY` / `EXT_SUCCESS` | `2` / `4` / `0` | `generate_dump` 終了コード分岐 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:81-83` |
+| `MAX_RETRY_LIMIT` | `2` | `EXT_RETRY` 時の最大再試行回数 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:84,242` |
+
+### 4. メモリしきい値デフォルト (`memory_threshold_check.py:10-30`)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `DEFAULT_MEMORY_AVAILABLE_THRESHOLD` | `10` (%) | `AUTO_TECHSUPPORT\|GLOBAL.available_mem_threshold` 欠落時のホスト全体 fallback | `sonic-utilities/scripts/memory_threshold_check.py:24` |
+| `DEFAULT_MEMORY_AVAILABLE_MIN_THRESHOLD` | `200` (MB) | ホスト全体の絶対最小 free memory しきい値 (% しきい値と AND 評価) | `sonic-utilities/scripts/memory_threshold_check.py:26` |
+| `DEFAULT_MEMORY_AVAILABLE_FEATURE_THRESHOLD` | `0` (%) | `AUTO_TECHSUPPORT_FEATURE.<feat>.available_mem_threshold` 欠落時 fallback。`0` でメモリチェック無効 | `sonic-utilities/scripts/memory_threshold_check.py:28` |
+| `MB_TO_KB_MULTIPLIER` | `1024` | メモリ量単位換算 | `sonic-utilities/scripts/memory_threshold_check.py:30` |
+| `EXIT_THRESHOLD_CROSSED` | `2` | メモリしきい値超過時の終了コード (techsupport 起動経路) | `sonic-utilities/scripts/memory_threshold_check.py:12` |
+
+> GLOBAL fallback (`10` %) と FEATURE fallback (`0` %) が**乖離**。通常運用では `init_cfg.json.j2` / `feature.py` が install 時に `"10.0"` を書き込むため発生しないが、CLI で feature の `available_mem_threshold` を削除するとメモリチェックが当該 feature 単位で無効化される。
+
+### 5. パッケージ install 時デフォルト (`feature.py:22-26`)
+
+| フィールド | install 時値 | 用途 | evidence |
+|-----------|-------------|------|---------|
+| `state` | `'disabled'` | `sonic-package-manager install` 時、`AUTO_TECHSUPPORT\|GLOBAL` 不在ならこの値で `AUTO_TECHSUPPORT_FEATURE` エントリ作成 (GLOBAL 存在時はその値を継承) | `sonic-utilities/sonic_package_manager/service_creator/feature.py:23,159-197` |
+| `rate_limit_interval` | `'600'` (秒) | install 時 cool-off 初期値 (10 分) | `sonic-utilities/sonic_package_manager/service_creator/feature.py:24` |
+| `available_mem_threshold` | `'10.0'` (%) | install 時メモリしきい値初期値 | `sonic-utilities/sonic_package_manager/service_creator/feature.py:25` |
+
+> install 時 default (`rate_limit_interval=600`) と実行時 fallback (`auto_techsupport_helper.py:328-331` の `except ValueError: container_cooloff = 0.0`) が乖離。フィールドが消えると rate-limit 無効で動作。
+
+### 6. coredump-compress 出力パス (bash; `scripts/coredump-compress`)
+
+| パス | 用途 | evidence |
+|------|------|---------|
+| `/var/core/${PREFIX}core.gz` | kernel `core_pattern` から渡された core を gzip 圧縮して書き出す固定出力先 | `sonic-utilities/scripts/coredump-compress:21` |
+| `/usr/local/bin/coredump_gen_handler.py` | `setsid` でバックグラウンド起動される handler の固定パス | `sonic-utilities/scripts/coredump-compress:32` |
+| `/tmp/coredump_gen_handler.log` | handler の stdout/stderr 集約先 (毎回 truncate) | `sonic-utilities/scripts/coredump-compress:31-32` |
+
+kernel `core_pattern` 側 (`sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`) で `|/usr/local/bin/coredump-compress %e %t %p %P` が固定。`/var/core` を変更する場合は coredump-compress と `auto_techsupport_helper.py` の両方の書き換えが必要。
+
+### 7. 重要な特性
+
+- **`coredump_gen_handler.py` 単体は定数を持たない**: `from utilities_common.auto_techsupport_helper import *` で全定数を取り込む。Phase E の実体は `auto_techsupport_helper.py`。
+- **`techsupport_cleanup.py` は `TS_DIR` / `CFG_MAX_TS` のみ参照**: `AUTO_TECHSUPPORT_FEATURE` テーブルは見ず、GLOBAL の `state` と `max_techsupport_limit` だけで cleanup 判定。
+- **`TS_GLOBAL_TIMEOUT="60"` は CONFIG_DB から上書き不可**: 長時間 techsupport を必要とする運用ではソース改変が要る。
+- **`TIME_BUF=20` 秒**: handler 起動時に `find_new_core_files()` で「直近 20 秒以内」の `*.core.gz` のみを対象にして二重起動を避ける。
+
+> **Evidence**: `sonic-utilities/utilities_common/auto_techsupport_helper.py:1-84`; `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/scripts/memory_threshold_check.py:1-30`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:22-26`; `sonic-utilities/scripts/coredump-compress:1-35`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-constants.md`
+<!-- /constants -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
