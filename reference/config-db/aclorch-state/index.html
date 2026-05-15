@@ -22613,6 +22613,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#consumer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22635,7 +22674,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34626,6 +34665,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#consumer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34648,7 +34726,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34930,6 +35008,70 @@
 <p><strong><code>ACL_ACTIONS|INGRESS</code> / <code>ACL_ACTIONS|EGRESS</code></strong>:
 - フィールド名は <code>"ACL_ACTIONS|" + stage_str</code>（<code>stage_str</code> = <code>"INGRESS"</code> または <code>"EGRESS"</code>）。
 - 値はサポートされるアクション名（<code>PACKET_ACTION</code>, <code>REDIRECT_ACTION</code>, <code>MIRROR_INGRESS_ACTION</code> 等）をカンマ区切りで列挙した文字列。</p>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>AclOrch</code> は CONFIG_DB / APP_DB の <code>ACL_TABLE</code> / <code>ACL_RULE</code> を SAI に反映した後、結果ステータスを STATE_DB 3 テーブルへ書き込む。SAI 操作の成否と親子関係（テーブル → ルール）に応じて、書込み順は orchagent 内部で自動調停されるが、consumer から観測しうる中間状態がいくつか存在する。</p>
+<h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>init()</code> での STATE_DB クリア → capability 公開</td>
+<td>強制先行（クリア優先）</td>
+<td>起動直後は capability が公開されるまでテーブル / ルールのステータスは未確定</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SAI capability クエリ成否に応じた 2 経路 → <code>ACL_STAGE_CAPABILITY_TABLE</code> 書込み</td>
+<td>1 回限り（init 内で確定）</td>
+<td>クエリ失敗時は <code>defaultAclActionsSupported</code> のフォールバック値で公開</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ACL_TABLE</code> が <code>Active</code> 登録 → <code>ACL_RULE_TABLE</code> ステータス書込み許可</td>
+<td><strong>強制先行</strong></td>
+<td>rule は <code>m_toSync</code> で再キューされ、テーブル登録後に書込まれる</td>
+</tr>
+<tr>
+<td>4</td>
+<td>SAI 結果 → <code>ACL_TABLE_TABLE.status</code> 遷移</td>
+<td>即時（中間状態あり）</td>
+<td>consumer は <code>Pending creation</code> を一時的に観測しうる</td>
+</tr>
+<tr>
+<td>5</td>
+<td>他ルール DEL → retry cache の <code>Pending creation</code> ルール再評価</td>
+<td>操作依存（非自明）</td>
+<td><code>notifyRetry()</code> が自動再キュー、成功時 <code>Active</code> 上書き</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SAI DEL 失敗 → <code>Pending removal</code> 滞留</td>
+<td>即時（次回イテレーションで再試行）</td>
+<td>配下ルール削除後の再試行で自然解消</td>
+</tr>
+<tr>
+<td>7</td>
+<td>INGRESS / EGRESS capability 書込み</td>
+<td>独立</td>
+<td>init 完了前の同時読み出しは中間状態あり</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">主要な制約詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>ACL_TABLE → ACL_RULE 親子順序 (依存 #3)</strong>: <code>doAclRuleTask()</code> は <code>getTableById(table_id)</code> が <code>SAI_NULL_OBJECT_ID</code> を返す間、ルールを <code>m_toSync</code> に残したまま <code>it++; continue;</code> で再キューする。このため <code>ACL_RULE_TABLE|&lt;table&gt;|&lt;rule&gt;</code> の STATE_DB ステータスは、対応する <code>ACL_TABLE</code> が <code>addAclTable()</code> 成功で内部マップ <code>m_AclTables</code> に登録された後まで<strong>書き込まれない</strong>。CONFIG_DB 側でルールを先に投入しても、consumer から見た STATE_DB の出現順は常に「テーブル <code>Active</code> → ルール <code>Active</code>」となる（evidence: <code>aclorch.cpp:5548-5566</code>, <code>aclorch.cpp:5665-5706</code>）。</p>
+<p><strong>retry cache 経由の非自明な順序 (依存 #5)</strong>: SAI リソース枯渇 (<code>isSaiStatusResourceFull()</code> が真) で <code>addAclRule()</code> が失敗した場合、<code>setAclRuleStatus(..., PENDING_CREATION)</code> を書いてから <code>consumer.addToRetry()</code> でルールを retry cache にパークし、<code>m_toSync</code> からは erase する。後続で<strong>同一テーブル内の他ルールが</strong> <code>removeAclRule()</code> 成功すると <code>notifyRetry()</code> が retry cache を再キューし、再度 <code>addAclRule()</code> が実行される。成功時に <code>setAclRuleStatus(..., ACTIVE)</code> で上書きされるため、操作者から見ると「無関係に見えるルール A の削除がルール B を <code>Pending creation</code> → <code>Active</code> に遷移させる」という非自明な順序関係が成立する（evidence: <code>aclorch.cpp:5673-5692</code>, <code>aclorch.cpp:5710-5721</code>）。</p>
+<p><strong>init() でのクリア → capability の順 (依存 #1, #2)</strong>: <code>AclOrch::init()</code> は冒頭で <code>removeAllAclTableStatus()</code> / <code>removeAllAclRuleStatus()</code> を呼んで STATE_DB の旧テーブル/ルールステータスを全削除し、その後 <code>queryAclActionCapability()</code> を呼んで <code>ACL_STAGE_CAPABILITY_TABLE</code> を書き込む。SAI クエリが失敗した場合も <code>initDefaultAclActionCapabilities()</code> → <code>putAclActionCapabilityInDB()</code> の同 path でフォールバック値が公開されるため、<code>ACL_STAGE_CAPABILITY_TABLE</code> は init 完了時点で必ず 1 回書かれる（evidence: <code>aclorch.cpp:3479-3481</code>, <code>aclorch.cpp:3708</code>, <code>aclorch.cpp:4017-4037</code>, <code>aclorch.cpp:4104-4118</code>）。</p>
+<!-- /ordering -->
+
 <h2 id="consumer">購読者 (consumer)<a class="headerlink" href="#consumer" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35044,7 +35186,7 @@
 </div>
 <!-- /cross-refs -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
