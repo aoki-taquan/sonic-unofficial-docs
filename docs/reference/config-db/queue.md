@@ -507,4 +507,70 @@ DPC (Direct Port Connect) ポートは q3/q4 の lossless 設定を省略する�
 
 <!-- /platform -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-side.md`
+
+QUEUE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。
+
+### QUEUE SET — SAI 呼び出し (ASIC_DB)
+
+| 条件 | SAI API / 属性 | 対象 |
+|------|--------------|------|
+| `scheduler` フィールドあり | `set_scheduler_group_attribute(SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID)` | ASIC_DB `SAI_OBJECT_TYPE_SCHEDULER_GROUP` |
+| `wred_profile` フィールドあり | `set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | ASIC_DB `SAI_OBJECT_TYPE_QUEUE` |
+| `scheduler` フィールド削除 | 上記属性を NULL OID に更新 | スケジューラ解除 |
+| `wred_profile` フィールド削除 | `SAI_QUEUE_ATTR_WRED_PROFILE_ID = OID_NULL` | WRED 解除 |
+
+QosOrch は APPL_DB / STATE_DB への直接書き込みを行わない。
+
+### ポート作成時 (PORT SET) — COUNTERS_DB Queue マップ群
+
+`generateQueueMapPerPort()` が各ポートの全 queue OID に対して書き込む:
+
+| 対象 DB / テーブル | キー / フィールド | 書込内容 |
+|------------------|-----------------|---------|
+| COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` | `""` field=`<alias>:<qindex>` | queue SAI OID |
+| COUNTERS_DB / `COUNTERS_QUEUE_PORT_MAP` | `""` field=`<queue_oid>` | port SAI OID |
+| COUNTERS_DB / `COUNTERS_QUEUE_INDEX_MAP` | `""` field=`<queue_oid>` | queue real index |
+| COUNTERS_DB / `COUNTERS_QUEUE_TYPE_MAP` | `""` field=`<queue_oid>` | queue type 文字列 (`SAI_QUEUE_TYPE_UNICAST` 等) |
+
+### ポート作成時 — FLEX_COUNTER_DB Queue Counter 登録
+
+| FlexCounter グループ | FLEX_COUNTER_DB キー | ポーリング間隔 | 有効化条件 | カウンタ |
+|--------------------|-------------------|-------------|---------|---------|
+| `QUEUE_STAT_COUNTER` | `QUEUE_STAT_COUNTER:<queue_oid>` | 10,000 ms | `FLEX_COUNTER_TABLE\|QUEUE` enable | PACKETS / BYTES / DROPPED_PACKETS / DROPPED_BYTES / TRIM 系[^3] |
+| `QUEUE_WATERMARK_STAT_COUNTER` | `QUEUE_WATERMARK_STAT_COUNTER:<queue_oid>` | 60,000 ms | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` enable | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` |
+| `WRED_ECN_QUEUE_STAT_COUNTER` | `WRED_ECN_QUEUE_STAT_COUNTER:<queue_oid>` | 10,000 ms | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` enable | WRED_ECN_MARKED / WRED_DROPPED 系[^3] |
+
+VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加される。
+
+### orchagent 起動時 — STATE_DB QUEUE_COUNTER_CAPABILITIES
+
+`initCounterCapabilities()` が起動時 1 回のみ SAI 能力クエリを実行し書き込む:
+
+| STATE_DB キー | フィールド | デフォルト | SAI 成功時 |
+|--------------|---------|---------|-----------|
+| `QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | `isSupported` | `"false"` | `"true"` |
+| `QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | `isSupported` | `"false"` | `"true"` |
+| `QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER` | `isSupported` | `"false"` | `"true"` |
+| `QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER` | `isSupported` | `"false"` | `"true"` |
+
+### ポート削除時 (PORT DEL) — COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ
+
+| 対象 DB / テーブル | 操作 |
+|------------------|------|
+| COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` | `hdel` (全 queue OID) |
+| COUNTERS_DB / `COUNTERS_QUEUE_PORT_MAP` | `hdel` |
+| COUNTERS_DB / `COUNTERS_QUEUE_INDEX_MAP` | `hdel` |
+| COUNTERS_DB / `COUNTERS_QUEUE_TYPE_MAP` | `hdel` |
+| FLEX_COUNTER_DB / `QUEUE_STAT_COUNTER:<oid>` | `clearCounterIdList` |
+| FLEX_COUNTER_DB / `WRED_ECN_QUEUE_STAT_COUNTER:<oid>` | `clearCounterIdList` |
+
+[^3]: カウンタ定義: `sonic-swss/orchagent/portsorch.cpp` L389-435 (`queue_stat_ids`, `queueWatermarkStatIds`, `wred_queue_stat_ids`)
+
+<!-- 証跡: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/qosorch.cpp, sonic-swss/orchagent/flexcounterorch.cpp -->
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: f9445b5b4106 -->
