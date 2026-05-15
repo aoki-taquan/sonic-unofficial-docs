@@ -380,6 +380,145 @@ APPL_DB DEL 受信
 
 ---
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は CONFIG_DB 版と**同一の `AclOrch::doTask()` ハンドラ**で処理される (`aclorch.cpp:4283-4293`)。テーブル名で分岐せず CONFIG_DB / APPL_DB 双方を扱うため、書込み順依存も大部分が共通だが、APPL_DB 経路特有の挙動（独立 retry cache など）を含めて整理する。
+
+### 1. PortsOrch readiness ガード（最優先）
+
+```cpp
+// aclorch.cpp:4272-4279
+void AclOrch::doTask(Consumer &consumer)
+{
+    SWSS_LOG_ENTER();
+    if (!gPortsOrch->allPortsReady())
+    {
+        return;
+    }
+    ...
+}
+```
+
+`gPortsOrch->allPortsReady()` が false の間、APPL_DB / CONFIG_DB すべての ACL テーブル処理が**即 return** で保留される。vnetorch・mclagsyncd・dashenifwdorch が起動直後に APPL_DB へ書き込んでも、PortsOrch が PORT 初期化を完了するまで AclOrch は何も処理しない。
+
+→ 順序依存: `PORT` テーブル初期化完了が ACL 全テーブルより**先行必須**。
+
+### 2. ACL_TABLE_TABLE 先行ガード（APPL_DB ACL_RULE_TABLE の SET）
+
+```cpp
+// aclorch.cpp:5548-5566 (doAclRuleTask)
+sai_object_id_t table_oid = getTableById(table_id);
+if (table_oid == SAI_NULL_OBJECT_ID)
+{
+    if (m_ctrlAclTables.find(table_id) != m_ctrlAclTables.end())
+    {
+        SWSS_LOG_INFO("Skip control plane ACL rule %s", key.c_str());
+        it = consumer.m_toSync.erase(it);
+        continue;
+    }
+    SWSS_LOG_INFO("Wait for ACL table %s to be created", table_id.c_str());
+    it++;
+    continue;
+}
+```
+
+APPL_DB の `ACL_RULE_TABLE|<table>|<rule>` SET が先に届いても、対応する `ACL_TABLE_TABLE|<table>` が AclOrch で処理されて SAI ACL table OID が割り当てられるまで `it++` で**毎イベントループ再試行**される（無限ポーリング）。
+
+vnetorch (vnetorch.cpp:3797 → 3832) / mclagsyncd (mclaglink.cpp:336 → 372) / dashenifwdorch は自身は `ACL_TABLE_TABLE` → `ACL_RULE_TABLE` の順で `set()` するが、APPL_DB Producer/Consumer は順序を保証しないため、orchagent 側のこの待機ループで依存が解消される。
+
+→ 順序依存: 同一テーブル名の `ACL_TABLE_TABLE` エントリが AclOrch で処理済みであること。
+
+### 3. ACL_TABLE_TYPE_TABLE 先行ガード（カスタム TYPE 使用時）
+
+```cpp
+// aclorch.cpp:4291-4293
+else if (table_name == CFG_ACL_TABLE_TYPE_TABLE_NAME || table_name == APP_ACL_TABLE_TYPE_TABLE_NAME)
+{
+    doAclTableTypeTask(consumer);
+}
+
+// aclorch.cpp:5432 (doAclTableTask)
+auto tableType = getAclTableType(tableTypeName);
+```
+
+vnetorch のように `VNET_TUNNEL_TERM_ACL_TABLE_TYPE` というカスタム TYPE を使う場合、`ACL_TABLE_TYPE_TABLE` 側が先に AclOrch で処理されないと `ACL_TABLE_TABLE` の lookup が失敗し、テーブルが pending 状態に留まる。vnetorch.cpp は `acl_table_type_->set(...)` (L3781) を `acl_table_->set(...)` (L3797) より前に呼ぶ。
+
+→ 順序依存: カスタム TYPE 名を参照する場合は `ACL_TABLE_TYPE_TABLE|<type>` が先行必須。
+
+### 4. PORTS フィールドの port readiness — `pendingPortSet` キャッシュ
+
+```cpp
+// aclorch.cpp:5786-5790 (doAclTableTask 内)
+if (!gPortsOrch->getPort(alias, port))
+{
+    SWSS_LOG_INFO("Add unready port %s to pending list for ACL table %s", ...);
+    aclTable.pendingPortSet.emplace(alias);
+}
+```
+
+APPL_DB 側書込み元が指定するポート（vnetorch の `ports_str`、mclagsyncd の `isolate_src_port`、dashenifwdorch の port リスト）が PortsOrch に未登録の場合、テーブル本体は SAI 作成されつつ未 ready port のみ `pendingPortSet` に積まれる。後続で PortsOrch から `SUBJECT_TYPE_PORT_CHANGE` 通知が `AclOrch::update()` (aclorch.cpp:4243-4247) に届くと、`AclTable::onUpdate()` (aclorch.cpp:2884-2904) で pending port が逐次バインドされる。
+
+→ 部分順序: 未 ready port は非ブロッキング（pending キューで遅延バインド）。
+
+### 5. Retry cache 経路（SAI resource full）— CONFIG_DB と独立
+
+```cpp
+// aclorch.cpp:4220-4222 (コンストラクタ)
+createRetryCache(CFG_ACL_RULE_TABLE_NAME);
+createRetryCache(APP_ACL_RULE_TABLE_NAME);
+```
+
+`AclOrch` コンストラクタが CONFIG_DB / APPL_DB の `ACL_RULE_TABLE` それぞれに**独立した retry cache** を初期化する。
+
+```cpp
+// aclorch.cpp:5673-5693 (doAclRuleTask, addAclRule 失敗時)
+else if (isSaiStatusResourceFull(newRule->getLastSaiStatus()))
+{
+    SWSS_LOG_WARN("ACL rule %s in table %s failed due to resource exhaustion, parking for retry", ...);
+    auto cst = make_constraint(RETRY_CST_SAI_RESOURCE, table_id);
+    if (consumer.addToRetry(it->second, cst))
+    {
+        setAclRuleStatus(table_id, rule_id, AclObjectStatus::PENDING_CREATION);
+        it = consumer.m_toSync.erase(it);
+    }
+    ...
+}
+```
+
+SAI resource 枯渇 (`SAI_STATUS_TABLE_FULL` 等) で `addAclRule()` が失敗した APPL_DB ルールは、APPL_DB 専用 retry cache に park され `PENDING_CREATION` ステータスが記録される。
+
+```cpp
+// aclorch.cpp:5716-5721 (DEL 成功時)
+if (ruleExisted)
+{
+    notifyRetry(this, consumer.getTableName(), make_constraint(RETRY_CST_SAI_RESOURCE, table_id));
+}
+```
+
+`notifyRetry` の第 2 引数に `consumer.getTableName()` が渡されるため、**CONFIG_DB の DEL は CONFIG_DB の retry のみ、APPL_DB の DEL は APPL_DB の retry のみ**を起こす。CONFIG_DB / APPL_DB の retry cache は完全に独立で、片方のリソース解放が他方の park 済みルールを再投入することは**ない**。
+
+→ タイミング依存: 同一 APPL_DB テーブル内で `ACL_RULE_TABLE` の DEL が成功するまで、park 済みルールは復帰しない。
+
+### 6. SET → DEL 順序（MIRROR rule 内容変更）
+
+MIRROR / MIRRORV6 rule は `AclRule::update()` 未実装 (`aclorch.cpp:1466` で `SWSS_LOG_ERROR` 後 `return false`)。APPL_DB 経由でも同じハンドラを通るため、MIRROR rule の内容変更は `DEL → SET` の 2 段操作が必須。L3 / L3V6 等の通常 rule は `set_acl_entry_attribute()` で mutable 更新される。
+
+### 順序依存サマリ
+
+| 依存項目 | スコープ | 解消メカニズム | evidence |
+|---|---|---|---|
+| PortsOrch readiness | CONFIG_DB / APPL_DB 共通 | `doTask` 早期 return → event loop 再投入 | aclorch.cpp:4276 |
+| ACL_TABLE → ACL_RULE | 共通（同一ハンドラ） | `doAclRuleTask` の `it++` 待機ループ | aclorch.cpp:5548-5566 |
+| ACL_TABLE_TYPE → ACL_TABLE | 共通 | `doAclTableTask` で type lookup 失敗 → pending | aclorch.cpp:5432 |
+| PORTS の port readiness | 共通 | `pendingPortSet` + `SUBJECT_TYPE_PORT_CHANGE` | aclorch.cpp:2884-2904, 5786-5790 |
+| SAI resource full retry | CONFIG_DB / APPL_DB **独立** | `createRetryCache` x2、`notifyRetry` は consumer 限定 | aclorch.cpp:4220-4222, 5673-5721 |
+| MIRROR rule 更新 | 共通 | DEL → SET 必須 | aclorch.cpp:1466 |
+
+<!-- /ordering -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)
