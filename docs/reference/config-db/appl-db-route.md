@@ -350,3 +350,25 @@ if (status != SAI_STATUS_SUCCESS)
 [^crmorch]: CrmOrch 実装: `sonic-swss/orchagent/crmorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp>
 [^failuremem]: 失敗分岐の中間メモ: `meta/_intermediate/cdb-flow/appl-db-route-failure.md`
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`APPL_DB:ROUTE_TABLE` の SET/DEL に伴い、主購読者 `routeorch` および同居する `CrmOrch` / `FlowCounterRouteOrch` が以下の副次 DB エントリを書き込む。SAI `route_entry` 自体は本ページのデータフロー図で示した主作用 (ASIC_DB 反映) のため除外する[^rorch][^crmorch][^sidemem].
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| APPL_STATE_DB | `ROUTE_TABLE\|<key>` | SET 時 `protocol=<value>` を書き、DEL 時は空 fvs でキーを削除 (`ResponsePublisher::publish`)。`m_publisher.setBuffered(true)` + `m_directDbWrite=true` のためバッチ flush で実 DB に書く | `sonic-swss/orchagent/routeorch.cpp:57-58,3185-3201` `publishRouteState()`; 呼び出し箇所 L923 / L1050 / L1090 / L2729 / L2970 |
+| STATE_DB | `ROUTE_TABLE\|0.0.0.0/0`, `ROUTE_TABLE\|::/0` | デフォルトルートの到達性状態のみ。`state=ok` (デフォルト経路が learned) / `state=na` (撤去) を書く。個別プレフィクスは書かない | `routeorch.cpp:126-127,130,156,287-295` `m_stateDefaultRouteTb->set(ip, tuples)` (`STATE_ROUTE_TABLE_NAME`) |
+| COUNTERS_DB | `CRM:STATS` | `crm_stats_ipv4_route_used` / `crm_stats_ipv6_route_used` を `incCrmResUsedCounter` / `decCrmResUsedCounter` で更新し、CrmOrch の polling timer (`CRM_POLLING_INTERVAL_DEFAULT`) が `COUNTERS_CRM_TABLE` へ周期反映する。`available` 値は SAI クエリ結果 (`SAI_SWITCH_ATTR_AVAILABLE_IPV4/IPV6_ROUTE_ENTRY`) | `routeorch.cpp:148,168,257,280,2481-2488,2532-2536,2884-2888`; `crmorch.cpp:400-401,1063-1113` `m_countersCrmTable->set()` |
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP`, `COUNTERS_ROUTE_TO_PATTERN_MAP` | route flow-counter 有効パターン下で「prefix↔counter OID」「prefix↔pattern」の HSET / HDEL を行う。bind/unbind は flex counter timer 経過時 (`doTask(SelectableTimer)`) に反映 | `flex_counter/flowcounterrouteorch.cpp:33-34,123-157,916-923` `mPrefixToCounterTable->set/hdel`, `mPrefixToPatternTable->set/hdel`; `routeorch.cpp:259,282,2708,2996` 連動呼出 (`gFlowCounterRouteOrch->onAdd/onRemoveMiscRouteEntry` / `handleRouteAdd/Remove`) |
+| STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | 起動時 1 回。`support="true"/"false"` を SAI ケーパビリティ問合せ結果として広告 | `flex_counter/flowcounterrouteorch.cpp:166-178` `capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs)` |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|ROUTE_FLOW_COUNTER`, `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER:<counter_oid>` | route flow-counter bind 時に `mRouteFlowCounterMgr.setCounterIdList()` でポーリング対象を登録、unbind 時に `clearCounterIdList()` で削除 | `flex_counter/flowcounterrouteorch.cpp:35,123,923` `FlexCounterManager(ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP, ...)` |
+| ASIC_DB (参考) | SAI `route_entry`, `next_hop`, `next_hop_group`, `next_hop_group_member` | SAI Route / NextHop / NHG API 経由のハードウェア反映。**副次ではなく主作用** | `routeorch.cpp` 全般。本ページ「データフロー」参照 |
+
+それ以外 (LOGLEVEL_DB / CONFIG_DB / CHASSIS_APP_DB / SNMP_OVERLAY_DB) への直接書込みは `routeorch.cpp` / `crmorch.cpp` / `flowcounterrouteorch.cpp` の grep で 0 件 (`routeorch` は CONFIG_DB を購読のみ)。
+
+> **Evidence**: `sonic-swss/orchagent/routeorch.cpp` (`publishRouteState` L3185-3201、`updateDefRouteState` L287-295、CRM `inc/decCrmResUsedCounter` 各所、`gFlowCounterRouteOrch->handleRoute*` L2708/L2996)、`orchagent/crmorch.cpp:400-401,1063-1113`、`orchagent/flex_counter/flowcounterrouteorch.cpp:33-35,123,152-178,916-923`。詳細なスキャン手順と grep ログは `meta/_intermediate/cdb-flow/appl-db-route-side.md` を参照[^sidemem]。
+
+[^sidemem]: 副次 DB 書込スキャンの中間メモ: `meta/_intermediate/cdb-flow/appl-db-route-side.md`
+<!-- /side-effects -->
