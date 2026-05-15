@@ -872,6 +872,59 @@ sonic-db-cli FLEX_COUNTER_DB keys 'FLEX_COUNTER_TABLE:ACL_STAT_COUNTER:*'
 
 ---
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は 3 テーブルとも YANG 未定義のため、leafref は存在しない。`AclOrch::doTask()` (`aclorch.cpp:4272-4299`) が CONFIG_DB と**同一ハンドラ**へ振り分ける結果、以下のテーブル / Orch / DB に対する暗黙参照が発生する。
+
+### ACL_TABLE_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `PORT\|EthernetN` | OID 解決（`SAI_ACL_BIND_POINT_TYPE_PORT`） | `PORTS` フィールドに物理ポート名を指定したとき | `aclorch.cpp` L5776-5807 (`processAclTablePorts()`)、L6056-6083 (`getAclBindPortId()`) |
+| `PORTCHANNEL\|PortChannelN` | OID 解決（`SAI_ACL_BIND_POINT_TYPE_LAG`） | `PORTS` に LAG 名を指定したとき | `aclorch.cpp` L6073-6075、L103-107 (`aclBindPointTypeLookup`) |
+| `ACL_TABLE_TYPE_TABLE\|<type>` | type 定義 lookup（必須先行） | `TYPE` がカスタム型のとき (`vnetorch` の `VNET_TUNNEL_TERM_ACL_TABLE_TYPE` 等)。事前定義型 (`L3`/`MIRROR` 等) は不要 | `aclorch.cpp` L5380-5388、L5432 (`getAclTableType()`) |
+| `PORT` 全体（PortsOrch 初期化完了） | ブロッキング | 常時。`allPortsReady() == false` の間は APPL_DB エントリ全てが早期 return で保留 | `aclorch.cpp` L4276-4279 |
+
+### ACL_RULE_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `ACL_TABLE_TABLE\|<table>`（または CONFIG_DB `ACL_TABLE\|<table>`） | SAI OID 解決（必須） | 常時。未作成なら `it++` で無限ポーリング再試行 | `aclorch.cpp` L5548-5566 (`doAclRuleTask()` 親 table ガード) |
+| `PORT\|<name>` / `PORTCHANNEL\|<name>` | OID 解決 | match の `IN_PORTS` / `OUT_PORT` / `OUT_PORTS`、または `REDIRECT_ACTION` 値が PORT/LAG 名と一致するとき | `aclorch.cpp` L961-1034 (match 系)、L2085-2099 (`getRedirectObjectId()` ステップ 1) |
+| `NEIGH`（NeighOrch） | next-hop OID + refcount | `REDIRECT_ACTION` 値が `<ip>@<intf>` 形式の next-hop のとき (`vnetorch` の VIP→NH redirect が該当) | `aclorch.cpp` L2102-2116 (`getRedirectObjectId()` ステップ 2) |
+| TunnelNhop（TunnelOrch） | OID 解決 | `REDIRECT_ACTION` 値がトンネル next-hop 形式のとき | `aclorch.cpp` L2118-2136 (ステップ 3) |
+| `ROUTE_TABLE`（RouteOrch 管理の NH group） | OID + refcount、不在時自動生成 | `REDIRECT_ACTION` 値が NH group 形式のとき | `aclorch.cpp` L2138-2157 (ステップ 4) |
+| `MIRROR_SESSION\|<name>` | 存在確認 + OID + refcount（**現書込み元では未発火**） | `MIRROR_ACTION` / `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 指定時。現状 `vnetorch` / `mclagsyncd` / `dashenifwdorch` は MIRROR action 未使用 | `aclorch.cpp` L2295-2401 (`AclRuleMirror::activate()`) |
+
+### 書き込み先（counter / 状態 — side ref）
+
+| 参照先 | 操作 | キー / フィールド | 参照元 evidence |
+|--------|------|------------------|----------------|
+| `COUNTERS_DB` — `ACL_COUNTER_RULE_MAP` | `HSET` / `HDEL` | `<table>:<rule>` → SAI counter OID | `aclorch.cpp` L25-26、L45 (`COUNTERS_ACL_COUNTER_RULE_MAP`)、L6020-6051 (`registerFlexCounter` / `deregisterFlexCounter`) |
+| `FLEX_COUNTER_DB` | ACL counter group ポーリング | デフォルト 10000ms (`ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS`) | `aclorch.cpp` L47 |
+| `STATE_DB / ACL_TABLE` | status 書き込み (`Active`/`Inactive`/`Pending creation`/`Pending removal`) | `ACL_TABLE\|<name>` | `aclorch.cpp` L6088-6093 |
+| `CRM_ACL_TABLE` / `CRM_ACL_ENTRY` | ASIC リソース残量カウンタ更新 | — | `aclorch.cpp` L1361, L1434, L2855, L4877 |
+
+!!! note "REDIRECT_ACTION の解決順序"
+    `getRedirectObjectId()` (`aclorch.cpp:2078`) は次の固定順で解決を試みる:
+    1. PortsOrch — PORT / LAG 名として解決
+    2. NeighOrch — `<ip>@<intf>` next-hop として解決
+    3. TunnelOrch — トンネル next-hop として解決
+    4. RouteOrch — next-hop group として解決（不在時は自動生成）
+    いずれも失敗すると `SAI_NULL_OBJECT_ID` → rule INACTIVE。`vnetorch` の VIP redirect は通常ステップ 2 (NEIGH) で解決される。
+
+!!! note "MIRROR_SESSION への暗黙参照は現状未発火"
+    APPL_DB ACL を書き込む 3 プロセス (`vnetorch` / `mclagsyncd` / `dashenifwdorch`) はいずれも MIRROR action を使用しない (`vnetorch` = REDIRECT、`mclagsyncd` = DROP、`dashenifwdorch` = REDIRECT)。`MIRROR_SESSION` への参照は CLI 等で APPL_DB を直接書き換えた場合のみ発火する。
+
+!!! warning "未 ready PORT は非ブロッキング"
+    `PORTS` に含まれる未登録ポートは `aclTable.pendingPortSet` に積まれ、PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知 (`aclorch.cpp:2884-2904`) で遅延バインドされる。テーブル本体は SAI 作成され `Active` ステータスを得る。
+
+詳細分析: `meta/_intermediate/cdb-flow/appl-acl-cross-refs.md`
+<!-- /cross-refs -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)
