@@ -336,3 +336,41 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 > **スキャン証跡**: `policerorch.cpp:374-520` を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 根拠: `policerorch.cpp` L374-589 全行精読、`mirrororch.cpp` L432-441、`orchdaemon.cpp` L396-402。evidence: `meta/_intermediate/cdb-flow/policer-ordering.md`
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `allPortsReady()` 完了 → POLICER 処理 | 強制先行 | なし（PortsOrch 起動完了待ち） |
+| 2 | POLICER 作成 → MIRROR_SESSION SET (policer 指定時) | 推奨先行（未作成でも session 自体は作成されるが policer 未 attach） | policer 作成後に session を DEL → SET で再設定 |
+| 3 | create-only フィールドは初回 SET に含める必須 | 必須（後送り不可、サイレント破棄） | 再作成（DEL → SET）で変更 |
+| 4 | 参照先（MIRROR_SESSION 等）DEL → POLICER DEL | 強制先行（参照残存中は SAI 削除がブロック） | 参照テーブルを先に DEL |
+| 5 | PORT_STORM_CONTROL 依存ポートの PortsOrch 登録 | 自動 retry で調停 | `task_need_retry` により次のループで再試行 |
+| 6 | SAI create / set 失敗 → 自動 retry | 自動（一時エラー時） | `task_need_retry` 機構 |
+| 7 | orchagent 再起動後 MIRROR_SESSION + POLICER replay 整合 | 手動復旧が必要な場合あり | MIRROR_SESSION の DEL → SET |
+
+### 詳細
+
+#### 1. PortsOrch 初期化ガード
+
+`doTask()` 冒頭 (`policerorch.cpp:379`) で `gPortsOrch->allPortsReady()` が false の間は即 return する。POLICER / PORT_STORM_CONTROL の両テーブル処理がブロックされるため、PortsOrch の起動完了前に書き込んだエントリは一括キューイングされ、ポート初期化完了後に処理される。
+
+#### 2. MIRROR_SESSION への policer attach は SET 時のみ
+
+`MirrorOrch` は MIRROR_SESSION の SET 処理時にのみ `policerExists()` を確認し、存在する場合に `increaseRefCount()` を呼んで attach する (`mirrororch.cpp:432-441`)。POLICER が存在しない状態で MIRROR_SESSION を SET すると、session は作成されるが policer が attach されないまま動作する。後から POLICER を作成しても自動的な再 attach は発生しない。
+
+#### 3. create-only フィールドの制約（UPDATE 時のサイレント破棄）
+
+新規作成（`update = false`）時: `METER_TYPE` と `MODE` の両方が必要。欠落した場合は ERROR ログを出力した後に `create_policer()` を呼び続け SAI エラーとなる（`policerorch.cpp:491-495`）。  
+更新（`update = true`）時: `METER_TYPE` / `MODE` / `COLOR_SOURCE` / `*_PACKET_ACTION` はコードでフィルタして SAI に渡されない（`policerorch.cpp:527-533`）。これらの変更には DEL → SET による再作成が必要。
+
+#### 4. 参照カウントによる DEL ブロック
+
+`m_policerRefCounts[key] > 0` の間は DEL を `it++` で保留し続ける (`policerorch.cpp:563-568`)。参照カウントは MirrorOrch 等が `increaseRefCount()` / `decreaseRefCount()` で管理する。POLICER を削除するには、参照している MIRROR_SESSION / COPP_GROUP / PORT_STORM_CONTROL を先に DEL または参照解除する必要がある。
+
+<!-- /ordering -->

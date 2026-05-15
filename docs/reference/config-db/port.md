@@ -861,3 +861,93 @@ SAI 呼び出し → ASIC_DB: `sai_port_api->remove_port()` でポート OID エ
 | ASIC_DB | PORT_SERDES OID エントリ | 自動作成 / 自動削除 |
 
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-platform.md -->
+
+### ベンダー識別とプラットフォーム文字列
+
+SWSS コンテナは起動時に環境変数 `platform` を受け取り、ベンダーごとの挙動を切り替える。`orch.h` で定義される文字列定数が判定に使われる。
+
+| 定数 | 値 | 代表ベンダー / ASIC |
+|------|----|-------------------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | NVIDIA Spectrum |
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom Trident/Tomahawk/Jericho |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` | Marvell Teralynx |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` | Cisco Silicon One |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | 仮想スイッチ (テスト用) |
+
+### SAI Capability クエリと非対応時の挙動
+
+PortsOrch はポート初期化時に SAI に対して各属性の対応状況を問い合わせる。SAI 非対応の場合は `STATE_DB` への書き込みをスキップするか、処理を中断する。
+
+| フィールド | SAI クエリ属性 | 非対応時の挙動 | STATE_DB 影響 |
+|-----------|-------------|------------|-------------|
+| `speed` | `SAI_PORT_ATTR_SUPPORTED_SPEED` | WARN ログ、バリデーションスキップ → 不正値は SAI が `SAI_STATUS_INVALID_PARAMETER` で検知 | `supported_speeds` フィールドなし |
+| `fec` | `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` | INFO ログ、スキップ | `supported_fecs` フィールドなし |
+| `autoneg` | `SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE` | デフォルト `m_cap_an=1`（有効扱い）。非対応確定時は ERROR + タスク破棄 | - |
+| `fast_linkup` | `SAI_PORT_ATTR_FAST_LINKUP_ENABLED` | NOTICE ログ「not supported on this platform」、設定値を無視 | - |
+| `pfc_asym` | `SAI_PORT_PRIORITY_FLOW_CONTROL_MODE` | WARN ログ「not supported: skipping」、設定値をスキップ | - |
+| `tpid` | `SAI_PORT_ATTR_TPID` | SAI 失敗 → `handleSaiSetStatus` でエラー処理 | - |
+
+#### FEC auto モードの制約
+
+`fec: auto` は `autoneg: on` が有効なときのみ機能する。autoneg が off の状態で `fec: auto` を設定すると `"Autoneg must be enabled for port fec mode auto to work"` と警告が出る (`portsorch.cpp:5335`)。
+
+### Mellanox (NVIDIA Spectrum) 固有の挙動
+
+`isMlnxPlatform()` 関数 (`portsorch.cpp:689`) が `platform` 環境変数から `"mellanox"` 部分文字列を検索し、以下の分岐を行う。
+
+| 挙動 | 条件 | 詳細 |
+|------|------|------|
+| NVIDIA 専用 trim 統計プラグイン追加 | `SAI_PORT_STAT_TRIM_PACKETS` / `TX_TRIM_PACKETS` 対応かつ `DROPPED_TRIM_PACKETS` 非対応 | FlexCounter に `nvdaPortTrimSha` プラグインを追加 (`portsorch.cpp:863`) |
+| LAG distribution-only モード非対応 | Mellanox 全プラットフォーム | LAG MEMBER enable 時: collection → distribution の順。disable 時: distribution → collection の順を強制 (`portsorch.cpp:6362,6379`) |
+
+### platform_asic ファイルと ASIC タイプ
+
+各プラットフォームディレクトリの `platform_asic` ファイルが ASIC タイプを示し、`orchdaemon.cpp:635,733` で初期化フローを分岐させる。
+
+| platform_asic 値 | 代表デバイス / 採用例 |
+|-----------------|-------------------|
+| `broadcom` | Arista 7050/7060 系 (Trident/Tomahawk)、Dell S/Z 系 |
+| `broadcom-dnx` | Arista 7280/7800 系 (Jericho2/3) |
+| `broadcom-legacy-th` | 旧世代 Arista (Tomahawk legacy) |
+| `mellanox` | NVIDIA Spectrum (MSN2700 等) |
+| `marvell-teralynx` | Supermicro SSE-T7132S |
+| `barefoot` | Arista 7170 (Intel Tofino P4) |
+
+### port_config.ini — プラットフォーム依存のレーン/速度定義
+
+各プラットフォームの `port_config.ini` が `sonic-cfggen` によって PORT テーブルのデフォルト値に変換される。フォーマットは共通だが値はプラットフォーム固有。
+
+```ini
+# Mellanox MSN2700 (ACS-MSN2700/port_config.ini)
+# name      lanes       alias  index
+Ethernet0   0,1,2,3     etp1   1
+
+# Broadcom BCM956960K (BCM956960K/port_config.ini)
+# name      lanes           alias               index  speed
+Ethernet0   1,2,3,4         Ethernet1/0/1       0      100000
+```
+
+- `lanes` はプラットフォームのレーンマッピングに完全依存。他プラットフォームへの移植不可。
+- Mellanox の `alias` は `etpN` 形式、Broadcom は `EthernetX/Y/Z` 形式など、ベンダーごとに異なる。
+
+### minigraph.py による FEC デフォルト自動設定 (100G 限定)
+
+```python
+# minigraph.py:2428-2433
+if linkmetas.get(alias, {}).get('FECDisabled', '').lower() == 'true':
+    port['fec'] = 'none'
+elif not port.get('fec') and port.get('speed') == '100000':
+    port['fec'] = 'rs'   # 100G ポートは自動で Reed-Solomon FEC を付与
+```
+
+- 100G ポートは `FECDisabled=true` の minigraph プロパティがない限り自動的に `fec: rs` が設定される。
+- 25G、40G、400G 等は明示指定が必要 (`port_config.ini` に記載するか `config interface fec` で変更)。
+
+<!-- /platform -->

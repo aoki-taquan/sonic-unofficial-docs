@@ -448,6 +448,109 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+DEVICE_METADATA フィールド値に基づいて分岐する処理の中で用いられる、起動タイマー・retry カウント・threshold の固定数値。
+
+### orchagent バッチ/bulk サイズ (`switch_type` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `-b` batch_size | `128` | `switch_type == 'chassis-packet'` | orchagent pop バッチサイズ。リンク通知の高速処理 | `docker-orchagent/orchagent.sh:24-26` |
+| `-b` batch_size | `65536` | `switch_type == 'dpu'` | DPU 高ボリューム処理向け大容量バッチ | `docker-orchagent/orchagent.sh:29` |
+| `-b` batch_size | `1024` | その他 (デフォルト) | 通常スイッチ標準バッチ | `docker-orchagent/orchagent.sh:32` |
+| `-k` bulk_size (ZMQ) | `65536` | `switch_type == 'dpu'` | ZMQ synchronous mode の最大 bulk limit | `docker-orchagent/orchagent.sh:39` |
+
+### SAI create_switch タイムアウト (`switch_type` 依存)
+
+基準値: `SAI_REDIS_DEFAULT_SYNC_OPERATION_RESPONSE_TIMEOUT = 60,000 ms`（`sonic-sairedis/lib/sairedis.h:46`）
+
+| 条件 | タイムアウト | 計算根拠 | evidence |
+|------|------------|---------|---------|
+| `switch_type IN ['voq','chassis-packet','dpu']` | `300,000 ms` | `5 × 60,000 ms` | `sonic-swss/orchagent/main.cpp:822` |
+| `switch_type == 'fabric'` | `600,000 ms` | `10 × 60,000 ms` | `sonic-swss/orchagent/main.cpp:825` |
+| その他 / デフォルト | `60,000 ms` | `1 × 基準値` | `sonic-swss/orchagent/main.cpp:829` |
+
+### BGP タイマー (`type` / `subtype` / `constants.yml` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `graceful_restart.restart_time` | `240` 秒 | `type == 'ToRRouter'` かつ `constants.bgp.graceful_restart.enabled == true` | FRR BGP graceful-restart タイマー | `constants.yml:24; bgpd.main.conf.j2:119` |
+| `graceful_restart.select_defer_time` | `45` 秒 (Jinja `default(45)`) | 同上、constants.yml に未定義のため fallback | BGP best-path 選択遅延タイマー | `bgpd.main.conf.j2:122` |
+| `coalesce-time` | `10,000` ms | `subtype == 'DualToR'` | BGP ルート集約タイマー (mux 切替時の収束遅延緩和) | `bgpd.main.conf.j2:111` |
+
+### BMP 接続タイマー (`FEATURE.frr_bmp/bmp.state == 'enabled'` 時)
+
+| 定数 | 値 | 用途 | evidence |
+|------|-----|------|---------|
+| `bmp stats interval` | `1,000` ms | BMP 統計送信間隔 | `bgpd.main.conf.j2:133` |
+| `bmp connect port` | `5000` | ローカル BMP コレクター接続先ポート | `bgpd.main.conf.j2:136` |
+| `bmp connect min-retry` | `10,000` ms | BMP 接続リトライ最小間隔 | `bgpd.main.conf.j2:136` |
+| `bmp connect max-retry` | `15,000` ms | BMP 接続リトライ最大間隔 | `bgpd.main.conf.j2:136` |
+| `bmp mirror buffer-limit` | `4,294,967,214` bytes | BMP ミラーバッファ上限 (≒ 4 GiB) | `bgpd.main.conf.j2:130` |
+
+### teamd retry count / sleep (`default_bgp_status` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `DEFAULT_RETRY_COUNT` | `3` | 通常 / リセットパケット時 | LACPDU actor/partner retry_count フィールド値 | `teamd_increase_retry_count.py:31` |
+| `EXTENDED_RETRY_COUNT` | `5` | `default_bgp_status == 'up'` かつ 新バージョン対向時 | BGP up 状態で retry を延ばし PortChannel 安定化を待つ | `teamd_increase_retry_count.py:32,215` |
+| LACPDU 送信 sleep | `15` 秒 | retry count 変更パケット送信ループ | LACPDU ブロードキャスト間隔 | `teamd_increase_retry_count.py:225,327` |
+| peer 処理待ち sleep | `2` 秒 | リセットパケット送信前 | 対向デバイスの処理完了待機 | `teamd_increase_retry_count.py:297` |
+| LACP sniff timeout | `30` 秒 | sniffer 起動時 | LACPDU キャプチャ待機タイムアウト | `teamd_increase_retry_count.py:99` |
+
+### fpmsyncd warm-restart / flush タイマー (`suppress-fib-pending` 依存)
+
+| 定数 | 値 | 用途 | evidence |
+|------|-----|------|---------|
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | FRR routing stack warm-restart 完了待機 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:46` |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` 秒 | EOIU フラグ検出後 reconciliation 開始前 hold タイマー | `sonic-swss/fpmsyncd/fpmsyncd.cpp:51` |
+| `FLUSH_TIMEOUT` | `500` ms | route flush 間隔の上限 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:25` |
+| `SMALL_TRAFFIC` | `500` ルート | `remaining < 500` のとき即時 flush するトラフィック量閾値 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:28` |
+| `FPM_MAX_MSG_LEN` | `16,384` bytes | FPM メッセージバッファ最大長 | `sonic-swss/fpmsyncd/fpm/fpm.h:95` |
+
+### bgpcfgd / bfdmon 起動定数
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `wait_for_daemons seconds` | `20` 秒 | bgpcfgd 起動時 | FRR daemons が vtysh に接続するまでの最大待機 | `bgpcfgd/main.py:47` |
+| `MAX_RETRY_ATTEMPTS` (bfdmon) | `3` | `switch_type != 'dpu'` | vtysh コマンド失敗時の BFD 情報取得リトライ上限 | `bfdmon/bfdmon.py:21` |
+| `SLEEP_TIME` (bfdmon) | `2` 秒 | 同上 | BFD ポーリングループ待機間隔 | `bfdmon/bfdmon.py:151` |
+| `HEART_BEAT_INTERVAL_MSECS_DEFAULT` | `10,000` ms | orchagent デフォルト | orchagent heartbeat 送信間隔 (`-I` で上書き可) | `sonic-swss/orchagent/main.cpp:75` |
+
+### ECMP hash_seed (`type` 別固定値)
+
+multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値になる。
+
+| `type` | `hash_seed` | `ecmp_hash_offset` | `lag_hash_offset` | `ordered_ecmp` | evidence |
+|--------|------------|------------------|-----------------|---------------|---------|
+| `ToRRouter` | `0` | `0` | `0` | `false` | `switch.json.j2:9` |
+| `LeafRouter` | `10` | `10` | `10` | `true` | `switch.json.j2:11-13` |
+| `SpineRouter` | `25` | `0` | `0` | `false` | `switch.json.j2:15` |
+| `FabricSpineRouter` | `40` | `0` | `0` | `false` | `switch.json.j2:16-17` |
+| `UpperSpineRouter` | `50` | `0` | `0` | `false` | `switch.json.j2:18-19` |
+| `LowerRegionalHub` | `60` | `0` | `0` | `false` | `switch.json.j2:20-21` |
+| `FabricRegionalHub` | `70` | `0` | `0` | `false` | `switch.json.j2:22-23` |
+| `UpperRegionalHub` | `80` | `0` | `0` | `false` | `switch.json.j2:24-25` |
+
+### constants.yml 参照値 (DEVICE_METADATA consumer が利用)
+
+| key | 値 | 用途 |
+|-----|-----|------|
+| `bgp.maximum_paths.ipv4` | `514` | IPv4 ECMP 最大パス数 |
+| `bgp.maximum_paths.ipv6` | `514` | IPv6 ECMP 最大パス数 |
+| `bgp.route_do_not_send_appdb_tag` | `202` | SpineRouter+UpstreamLC BGP route-map タグ |
+| `bgp.route_eligible_for_fallback_to_default_tag` | `203` | VoQ chassis BGP route-map タグ |
+| `bgp.internal_fallback_community` | `22222:22222` | SpineRouter+UpstreamLC route-map community |
+| `bgp.hide_internal_community` | `55555:55555` | FabricSpineRouter/LowerSpineRouter 等 HIDE_INTERNAL route-map |
+| `bgp.traffic_shift_community` | `12345:12345` | TSA/TSB isolation route-map community |
+| `bgp.internal_community` | `11111:11111` | internal BGP community |
+
+> **スキャン証跡**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`。確認した定数総数: 約 54 個。
+
+<!-- /constants -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
@@ -781,5 +884,146 @@ orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り
 | `switch_type = dpu` (synchronous_mode 上書き) | `switch_type = dpu` のとき `orchestagent.sh:38-39` で `-z zmq_sync -k 65536` を強制。`synchronous_mode` フィールドの値は無視される | orchagent.sh:38-39 |
 
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 起動時一括読み取りフィールド（create-only）
+
+`orchagent.sh` は swss コンテナ起動時に `DEVICE_METADATA|localhost` から以下のフィールドを順次読み取り、
+orchagent プロセスの起動引数を組み立てる。**全フィールドは orchagent コンテナ起動前に CONFIG_DB へ存在していること**が必須。
+
+| 読み取り順 | フィールド | 利用方法 | evidence |
+|-----------|-----------|---------|---------|
+| 1 | `mac` | `sonic-cfggen` の `swss_vars.j2` 展開 → `-m` フラグ | orchagent.sh:8-16 |
+| 2 | `switch_type` | `sonic-db-cli hget` → `-b` バッチサイズ決定 | orchagent.sh:22 |
+| 3 | `synchronous_mode` | `swss_vars.j2` 経由 → `-s` フラグ | orchagent.sh:37-41 |
+| 4 | `asic_id` | `swss_vars.j2` 経由 → `-i` フラグ | orchagent.sh:54-57 |
+| 5 | `async_swss_rec` | `sonic-db-cli hget` → `-A` フラグ | orchagent.sh:66-68 |
+| 6 | `subtype` | `sonic-db-cli hget` → ZMQ エンドポイント決定 | orchagent.sh:106 |
+| 7 | `ring_thread_enabled` | `sonic-db-cli hget` → `-R` フラグ | orchagent.sh:121 |
+
+boot 時は `config-setup` service が swss より先に起動し `config_db.json` を redis にロードする。
+`switch_type`/`synchronous_mode`/`mac` はコンテナ再起動でのみ切り替えられる（runtime 変更不可）。
+
+orchagent `main.cpp` 内では起動時に `getCfgSwitchType()` → `getCfgVoqMyInfo()` の順で hget し、
+`sai_switch_api->create_switch()` の引数として使用する（`switch_type` / `switch_id` / `max_cores`）。
+
+### ランタイム動的購読フィールド（mutable）
+
+| フィールド | consumer | 順序制約 | 副作用 |
+|-----------|---------|---------|-------|
+| `suppress-fib-pending` | fpmsyncd | 起動時 hget + SubscriberStateTable 購読。`enabled → disabled` ランタイム遷移時に既存保留ルートを `offloaded` にマーク | blackhole リスク軽減のため `synchronous_mode = enable` との同時設定が YANG `must` 制約 |
+| `buffer_model` | buffermgrd (BufferMgr) | BUFFER_POOL/BUFFER_PG より先に SET 推奨。逆順でも最終収束するが過渡的に APPL_DB へ転写が発生する | buffermgrd 起動引数（`-a` vs `-l`）の切り替えは swss 再起動が必要 |
+| `create_only_config_db_buffers` | FlexCounterOrch | コンストラクタ起動時に hget、以降は ConsumerStateTable で動的更新。warm-reboot 後も自動 reconcile | — |
+| `hostname` / `timezone` / `syslog_with_osversion` | hostcfgd | ConsumerStateTable 購読。ランタイム即時反映。boot 順序依存なし | `hostname` 変更は `service hostname-config restart` + `monit reload` を即時実行 |
+
+### bgpcfgd の依存待機（BGP_NEIGHBOR 処理の先行条件）
+
+`BGPPeerMgrBase` は `Directory` 機構を使い、以下が揃うまで `BGP_NEIGHBOR` SET 処理を保留する:
+
+```
+DEVICE_METADATA|localhost/bgp_asn     ← 必須（欠如時は return False で再試行）
+DEVICE_METADATA|localhost/type        ← 必須
+LOOPBACK_INTERFACE|Loopback0          ← 必須（IPv4 アドレス付き）
+BGP_DEVICE_GLOBAL/tsa_enabled         ← 必須
+BGP_DEVICE_GLOBAL/idf_isolation_state ← 必須
+DEVICE_METADATA|localhost/deployment_id ← use_deployment_id=true 環境のみ必須
+```
+
+推奨書込み順序:
+
+```
+1. DEVICE_METADATA|localhost  (bgp_asn, type, …)
+2. BGP_DEVICE_GLOBAL          (tsa_enabled, idf_isolation_state)
+3. LOOPBACK_INTERFACE|Loopback0|<ipv4_prefix>
+4. BGP_NEIGHBOR               (上記が揃うと処理開始)
+```
+
+evidence: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-143, 186-192`
+
+### warm-reboot / restart 影響
+
+| フィールド | warm-reboot 影響 | 順序制約 |
+|-----------|-----------------|---------|
+| `switch_type` | **変更不可** — SAI `create_switch()` は一度のみ | 変更には swss 完全再起動が必要 |
+| `synchronous_mode` | **変更不可** — orchagent 起動引数に依存 | 変更時は swss コンテナ再起動が必要 |
+| `mac` | **変更不可** — orchagent 起動引数 (`-m` フラグ) | 変更時は swss コンテナ再起動が必要 |
+| `buffer_model` フラグ | **mutable** — BufferMgr ConsumerStateTable で再適用 | buffermgrd 起動引数（`-a`/`-l`）は再起動しないと切り替わらない |
+| `create_only_config_db_buffers` | **mutable** — FlexCounterOrch ConsumerStateTable で再処理 | warm-reboot 後に自動 reconcile |
+| `suppress-fib-pending` | **mutable** — fpmsyncd が再購読 | warm-reboot 中の `enabled → disabled` 遷移でルートが一時的に offloaded にマーク |
+| `hostname` | **mutable** — hostcfgd が再処理 | boot 順序依存なし |
+
+詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-ordering.md`
+<!-- /ordering -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DEVICE_METADATA|localhost` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと Linux システム呼び出しを示す。
+
+### SET — `buffer_model`
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| 内部フラグ `dynamic_buffer_model = true` に更新（後続の BUFFER_POOL / BUFFER_PG / BUFFER_QUEUE / BUFFER_PROFILE 変化を APPL_DB に転写しない） | なし (フラグのみ) | `buffer_model = dynamic` |
+| 内部フラグ `dynamic_buffer_model = false` に更新（後続のバッファテーブルを APPL_DB に転写する） | なし (フラグのみ) | `buffer_model = traditional` またはその他 |
+
+> `BufferMgr::doBufferMetaTask()` は DB 書込を行わない。ただしフラグ変更後の BUFFER_* SET/DEL が APPL_DB `BUFFER_POOL_TABLE` / `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` / `BUFFER_PROFILE_TABLE` への転写の有無を決定する。
+
+evidence: `sonic-swss/cfgmgr/buffermgr.cpp:373-410,476-479`
+
+### SET — `create_only_config_db_buffers`
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| 内部フラグ `m_createOnlyConfigDbBuffers` 更新 → カウンタ設定分岐に影響 | なし (フラグのみ) | 値変化時 (`FlexCounterOrch`) |
+
+evidence: `sonic-swss/orchagent/flexcounterorch.cpp:488-523`
+
+### SET — `suppress-fib-pending`
+
+| 変化 | 操作 | 対象 DB / テーブル |
+|------|------|-----------------|
+| `disabled → enabled` | fpmsyncd が APPL_STATE_DB `ROUTE_TABLE` 受信チャネルを登録し抑制モードを有効化 | APPL_STATE_DB / `ROUTE_TABLE` (チャネル登録) |
+| `enabled → disabled` | `RouteSync::markRoutesOffloaded(db)` — APPL_DB の `APP_ROUTE_TABLE` 全エントリを走査し "offloaded" 応答を FRR に送信 | APPL_DB / `APP_ROUTE_TABLE` |
+
+> 無効化時のルート全スキャン・応答送信はルートが suppressed 状態に残るのを防ぐための遷移処理。
+
+evidence: `sonic-swss/fpmsyncd/fpmsyncd.cpp:260-304`; `sonic-swss/fpmsyncd/routesync.cpp:3291-3296`
+
+### SET — `hostname` / `timezone` / `syslog_with_osversion`
+
+これら 3 フィールドは `hostcfgd DeviceMetaCfg` が処理し、他 DB への書込ではなく Linux システム呼び出しに終始する:
+
+| フィールド | 副次操作 (Linux) | 条件 | evidence |
+|-----------|----------------|------|---------|
+| `hostname` | `sudo service hostname-config restart` → `/etc/hostname` 更新; `sudo monit reload` | 値変化かつ空でない | hostcfgd:1527-1532 |
+| `timezone` | `timedatectl set-timezone <tz>` → `/etc/localtime` symlink 更新 | 値変化かつ `None` でない | hostcfgd:1556 |
+| `syslog_with_osversion` | `systemctl restart rsyslog-config` → rsyslog.conf 再生成 | 値変化かつ `None` でない | hostcfgd:1600 |
+
+### DEL 操作
+
+| consumer | 挙動 |
+|---------|------|
+| BufferMgr | `dynamic_buffer_model = false` にリセット。DB 書込なし。 |
+| FlexCounterOrch | `op == SET_COMMAND` 条件不成立のためスキップ。DB 書込なし。 |
+| fpmsyncd | `op != SET_COMMAND` のため continue。suppress-fib-pending 遷移も起きない。 |
+| hostcfgd | DEL ハンドラなし。hostname / timezone / rsyslog 処理は SET 専用。 |
+
+### 副次書込サマリ
+
+**直接的な他 DB 書込が発生するケースは `suppress-fib-pending` 切替時のみ。** 他フィールドはすべて内部フラグ更新または Linux システム呼び出しに留まる。
+
+| フィールド | 直接書込先 |
+|-----------|---------|
+| `buffer_model` | なし（後続テーブルへの転写制御フラグ） |
+| `create_only_config_db_buffers` | なし（フラグのみ） |
+| `suppress-fib-pending` enabled→disabled | APPL_DB `APP_ROUTE_TABLE`（全ルート offloaded マーク） |
+| `hostname` / `timezone` / `syslog_with_osversion` | Linux ファイルシステム・systemd のみ |
+| その他全フィールド | なし（起動時読み取り専用; コンテナ再起動が必要） |
+
+<!-- 証跡: sonic-swss/cfgmgr/buffermgr.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/fpmsyncd/fpmsyncd.cpp, sonic-swss/fpmsyncd/routesync.cpp, sonic-host-services/scripts/hostcfgd -->
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: e22e287b939b -->
