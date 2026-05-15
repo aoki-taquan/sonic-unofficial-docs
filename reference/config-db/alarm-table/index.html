@@ -24050,6 +24050,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#publisher-events_publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        publisher 側 (events_publish 経路)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventd-zmq-broker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eventd 本体 / ZMQ broker 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alarm-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALARM 書込 / Redis 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eventd プロセス落ち時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#healthd-system-health_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        healthd (system-health) との独立性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35019,6 +35091,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#publisher-events_publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        publisher 側 (events_publish 経路)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventd-zmq-broker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eventd 本体 / ZMQ broker 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alarm-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALARM 書込 / Redis 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eventd プロセス落ち時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#healthd-system-health_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        healthd (system-health) との独立性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35117,10 +35261,10 @@
 
 <h1 id="alarm-event_db">ALARM テーブル (EVENT_DB)<a class="headerlink" href="#alarm-event_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><strong>ALARM テーブル</strong>は SONiC の Event/Alarm Framework において <strong>アクティブなアラーム（未クリア・未クリア状態のもの）</strong> を一時的に保持するテーブルである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><strong>ALARM テーブル</strong>は SONiC の Event/Alarm Framework において <strong>アクティブなアラーム（未クリア・未クリア状態のもの）</strong> を一時的に保持するテーブルである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">2</a></sup>。</p>
 <blockquote>
 <p><strong>注意</strong>: このテーブルは <strong>CONFIG_DB ではなく EVENT_DB</strong> (Redis DB index 6) に存在する。
-<code>schema.h</code> で <code>EVENT_CURRENT_ALARM_TABLE_NAME = "ALARM"</code> と定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。
+<code>schema.h</code> で <code>EVENT_CURRENT_ALARM_TABLE_NAME = "ALARM"</code> と定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">3</a></sup>。
 リブート時に内容はクリアされる（非永続）。</p>
 </blockquote>
 <p><code>eventd</code> コンテナ内の <strong>Alarm Consumer</strong> が以下の状態遷移でテーブルを管理する:</p>
@@ -35679,6 +35823,140 @@
 <!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,50-53,187,205-210,291; src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; src/system-health/health_checker/hardware_checker.py:7-8,298-302; src/system-health/health_checker/sysmonitor.py:39-41,152,217-219 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ALARM テーブルの書込パスは <code>App → events_publish() → ZMQ XSUB/XPUB → eventd Alarm Consumer → HSET/DEL EVENT_DB</code> という多段構成のため、障害箇所により挙動が大きく異なる。設計上 publisher 側は fire-and-forget で、subscriber 側 (eventd) は単体プロセスの可用性を優先してエラーをループ内で握り潰す。</p>
+<h3 id="publisher-events_publish">publisher 側 (events_publish 経路)<a class="headerlink" href="#publisher-events_publish" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eventd 未起動状態で <code>events_init_publisher()</code></td>
+<td>echo handshake が <code>EVENTS_SERVICE_TIMEOUT_MS_PUB</code> で timeout → publisher 取得失敗</td>
+<td><code>SWSS_LOG_ERROR</code> "Failed to init event service rc=%d"</td>
+<td><code>sonic-swss-common/common/events.cpp:97-109</code></td>
+</tr>
+<tr>
+<td>publisher 接続確立 (echo handshake) 前に publish</td>
+<td>ZMQ PUB 仕様により <strong>drop</strong> (subscriber 未接続)</td>
+<td>(publisher 側ログなし)</td>
+<td><code>events.cpp:103</code> コメント "Any message published before connection establishment is dropped."</td>
+</tr>
+<tr>
+<td><code>zmq_message_send</code> 失敗</td>
+<td><code>publish()</code> が非 0 rc を返却。再送ロジックなし (fire-and-forget)</td>
+<td><code>SWSS_LOG_ERROR</code> "failed to send for tag %s"</td>
+<td><code>events.cpp:160-163, 208-211</code></td>
+</tr>
+<tr>
+<td>str_data が <code>EVENT_MAXSZ</code> 超過</td>
+<td>警告ログのみで <strong>publish は継続</strong> (drop しない)</td>
+<td><code>SWSS_LOG_ERROR</code> "event size &gt; expected max. Still published."</td>
+<td><code>events.cpp:146-149</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="eventd-zmq-broker">eventd 本体 / ZMQ broker 側<a class="headerlink" href="#eventd-zmq-broker" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zmqproxy</code> の <code>zmq_bind</code> (XSUB/XPUB/CAPTURE) 失敗</td>
+<td><code>eventd_proxy::init()</code> が非 0 を返却 → eventd プロセス起動失敗</td>
+<td>"Failing to bind XSUB/XPUB to %s" / "failing to get ZMQ_XSUB/XPUB/PUB socket"</td>
+<td><code>sonic-buildimage/src/sonic-eventd/src/eventd.cpp:77-107</code></td>
+</tr>
+<tr>
+<td><code>event_receive</code> で例外</td>
+<td><code>rc=-1</code>・エラーログを出して <strong>ループ継続</strong> (heartbeat 経路で復帰試行)</td>
+<td><code>SWSS_LOG_ERROR</code> "Receive event failed with %s"</td>
+<td><code>eventd.cpp:265-274</code></td>
+</tr>
+<tr>
+<td><code>event_receive</code> rc &lt; 0 戻り</td>
+<td>同上・ループ継続・heartbeat publish 試行</td>
+<td><code>SWSS_LOG_ERROR</code> "event_receive failed with rc=%d"</td>
+<td><code>eventd.cpp:284-287</code></td>
+</tr>
+<tr>
+<td>heartbeat publish 失敗</td>
+<td>エラーログのみ・ループ継続</td>
+<td><code>SWSS_LOG_ERROR</code> "Failed to publish heartbeat rc=%d"</td>
+<td><code>eventd.cpp:291-294</code></td>
+</tr>
+<tr>
+<td>eventd shutdown 中の in-flight event</td>
+<td>キャッシュ内の数件は <strong>欠落許容</strong> (設計上の割り切り)</td>
+<td>コメント "A shutdown could lose messages in cache."</td>
+<td><code>eventd.cpp:302-308</code></td>
+</tr>
+<tr>
+<td>capture cache 書込で <code>bad_alloc</code></td>
+<td>例外を catch して <code>CAP_STATE_LAST</code> へ fallback (最終 1 件のみ保持)・ALARM 本体は影響なし</td>
+<td><code>SWSS_LOG_ERROR</code> "Cache save event failed with %s"</td>
+<td><code>eventd.cpp:518-526</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="alarm-redis">ALARM 書込 / Redis 側<a class="headerlink" href="#alarm-redis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Redis (EVENT_DB) 切断中の <code>HSET ALARM|&lt;id&gt;</code></td>
+<td>eventd 側で Redis 例外の明示捕捉なし → プロセス abort → supervisord の <code>supervisor-proc-exit-listener</code> がコンテナ再起動を発火</td>
+<td>eventd.cpp 全体で <code>RedisCommand</code> 例外の try/catch なし; <code>dockers/docker-eventd/supervisord.conf:47-57</code>, <code>dockers/docker-eventd/critical_processes:1</code></td>
+</tr>
+<tr>
+<td><code>stats_collector::start</code> で <code>COUNTERS_DB</code> connector 取得失敗</td>
+<td>例外を catch・<code>run_writer</code> スレッド未起動・<strong>ALARM 本体への書込は別経路のため影響なし</strong>。<code>COUNTERS_EVENTS</code> カウンタのみ停止</td>
+<td><code>eventd.cpp:177-184</code></td>
+</tr>
+<tr>
+<td>同一 <code>type-id</code>+<code>resource</code>+<code>text</code> の連続 RAISE_ALARM</td>
+<td>Alarm Consumer 内キャッシュで黙棄 (flooding 防止)・<code>ALARM_STATS</code> も増えない</td>
+<td>HLD §3.1.3</td>
+</tr>
+<tr>
+<td>CLEAR_ALARM を対応 RAISE なしで受信</td>
+<td>lookup map にエントリなし → DEL 発行せず no-op</td>
+<td>HLD §3.1.4.2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="eventd">eventd プロセス落ち時の挙動<a class="headerlink" href="#eventd" title="Permanent link">&para;</a></h3>
+<p>eventd の supervisord 設定は <code>autorestart=false</code> だが、<code>critical_processes</code> に <code>program:eventd</code> が登録されているため、<code>supervisor-proc-exit-listener-rs --container-name eventd</code> が PROCESS_STATE_EXITED イベントを受けて <strong>コンテナごと再起動</strong> を発火する設計である<sup id="fnref:d1"><a class="footnote-ref" href="#fn:d1">1</a></sup>。再起動中:</p>
+<ul>
+<li>publisher 側の <code>events_publish()</code> は ZMQ PUB ソケットの送信キューに積まれるが、subscriber (eventd) 未接続のため HWM 超過分は drop。再起動完了後に再 publish しないと該当 ALARM は失われる。</li>
+<li><code>COUNTERS_EVENTS</code> の <code>missed_internal</code> / <code>missed_to_cache</code> / <code>missed_by_slow_receiver</code> は eventd 内の <code>stats_collector</code> が周期書込するため、eventd 落ち中は <strong>カウンタも止まる</strong> (= 欠損が可視化されない)。</li>
+<li>リブート (cold/warm/fast) と同様、復旧後も ALARM テーブルは空のまま。アプリ側に再 RAISE を促す仕組みは Event/Alarm Framework 側には存在しない。</li>
+</ul>
+<h3 id="healthd-system-health_1">healthd (system-health) との独立性<a class="headerlink" href="#healthd-system-health_1" title="Permanent link">&para;</a></h3>
+<p><code>src/system-health/health_checker/sysmonitor.py</code> の healthd は購読対象が <code>STATE_DB:FEATURE</code> と systemd D-Bus のみで、<strong>ALARM テーブルを購読しない</strong>。従って ALARM 書込失敗・eventd 落ちは healthd の <code>SYSTEM_READY</code> / <code>ALL_SERVICE_STATUS</code> に直接の影響を与えない (コンテナ単位の検出は別経路)。</p>
+<p>詳細解析: <code>meta/_intermediate/cdb-flow/alarm-table-failure.md</code></p>
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:77-107,177-184,265-294,302-308,518-526; sonic-swss-common/common/events.cpp:97-109,146-149,160-163,208-211; sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57; sonic-buildimage/dockers/docker-eventd/critical_processes:1 -->
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -35718,11 +35996,14 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:d1">
+<p><code>sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57</code> および <code>dockers/docker-eventd/critical_processes:1</code>。<code>autorestart=false</code> + <code>critical_processes</code> 登録の組み合わせは「単体再起動はしないが、致命プロセスとして検出されたらコンテナ全体を再起動する」SONiC 共通パターン。&#160;<a class="footnote-backref" href="#fnref:d1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><code>SONiC/doc/event-alarm-framework/event-alarm-framework.md</code> Rev 0.3, Section 1 / 3.1.7 — ALARM テーブルの定義・スキーマ・redis 出力例。<a href="https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md">https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>SONiC/doc/event-alarm-framework/event-alarm-framework.md</code> Rev 0.3, Section 1 / 3.1.7 — ALARM テーブルの定義・スキーマ・redis 出力例。<a href="https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md">https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>sonic-swss-common/common/schema.h:552</code> — <code>#define EVENT_CURRENT_ALARM_TABLE_NAME "ALARM"</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>sonic-swss-common/common/schema.h:552</code> — <code>#define EVENT_CURRENT_ALARM_TABLE_NAME "ALARM"</code>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
