@@ -216,6 +216,24 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 詳細根拠は `meta/_intermediate/cdb-flow/app-route-platform.md` を参照。
 <!-- /platform -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`APPL_DB:ROUTE_TABLE` の SET/DEL に伴い、主購読者 `routeorch` および同居 orch (`CrmOrch`, `FlowCounterRouteOrch`) が以下の副次 DB エントリを書き込む。SAI `route_entry` 自体は本ページのデータフロー図に示した主作用 (ASIC_DB) のため除外する。
+
+| 副次 DB | テーブル/キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| APPL_STATE_DB | `ROUTE_TABLE\|<key>` | SET 時 `protocol=<value>` を書き、DEL 時は空 fvs でキーを削除 (`ResponsePublisher::publish`) | `sonic-swss/orchagent/routeorch.cpp:3185-3201` `publishRouteState()`、`orch.h:382` `ResponsePublisher m_publisher{"APPL_STATE_DB"}` |
+| STATE_DB | `ROUTE_TABLE\|<default-ip>` | デフォルトルート (`0.0.0.0/0`, `::/0`) の到達性状態 `state=ok` / `state=na` のみ更新 (個別プレフィクスは書かない) | `routeorch.cpp:126-127, 287-295` `m_stateDefaultRouteTb->set(ip, tuples)` |
+| COUNTERS_DB | `CRM:STATS` | `crm_stats_ipv4_route_used` / `crm_stats_ipv6_route_used` を inc/dec し周期的に DB へ反映 | `routeorch.cpp:148,168,257,280,2481-2488,2532-2536,2884-2888` `gCrmOrch->incCrmResUsedCounter(CRM_IPV4_ROUTE\|CRM_IPV6_ROUTE)` → `crmorch.cpp:400-401,1067-1091` |
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP`, `COUNTERS_ROUTE_TO_PATTERN_MAP` | flow-counter 有効時にプレフィクス↔counter OID マップを `set`/`hdel` | `flex_counter/flowcounterrouteorch.cpp:33-34,152-157,921-922`、`routeorch.cpp:282` `onRemoveMiscRouteEntry` 連動 |
+| STATE_DB (起動 1 回) | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | `support` / `counter_type` を SAI ケーパビリティ問合せ結果で広告 | `flex_counter/flowcounterrouteorch.cpp:169-178` |
+
+それ以外 (FLEX_COUNTER_DB, LOGLEVEL_DB, CONFIG_DB) への書込みは検出されなかった。
+
+> **Evidence**: `sonic-swss/orchagent/routeorch.cpp` (`publishRouteState` L3185-3201, `updateDefRouteState` L287-295, CRM inc/dec 各所), `orchagent/crmorch.cpp:400-401, 1067-1091`, `orchagent/flex_counter/flowcounterrouteorch.cpp:33-34, 152-178, 921-922`; 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/app-route-side.md` を参照。
+<!-- /side-effects -->
+
 ## 購読者
 
 - `routeorch::doRouteTask()` (`sonic-swss/orchagent/routeorch.cpp`): SAI `route_entry` の作成・更新・削除
