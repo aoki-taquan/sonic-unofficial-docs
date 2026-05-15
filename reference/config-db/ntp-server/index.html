@@ -35158,6 +35158,20 @@
 </tr>
 </tbody>
 </table>
+<!-- defaults -->
+<p><strong>コード由来のデフォルト</strong> (YANG <code>default</code> 句とは別経路で、<code>chrony.conf.j2</code> テンプレート/<code>minigraph.py</code>/<code>hostcfgd</code> 側が決定する暫定値):</p>
+<ul>
+<li><code>association_type</code>: テンプレート <code>{% set association_type = config.association_type | d('server') -%}</code> により DB キー不在時は <code>server</code> ディレクティブとして書き込まれる (<code>sonic-buildimage/files/image_config/chrony/chrony.conf.j2:26</code>)。YANG <code>default server</code> と同値だが Jinja2 側でも独立してフォールバックを担保。</li>
+<li><code>resolve_as</code>: テンプレート <code>{% set resolve_as = config.resolve_as | d(server) -%}</code> で DB キー不在時はループ変数 <code>server</code> (= NTP_SERVER テーブル key = ユーザが入力したサーバアドレス) をそのまま採用 (<code>chrony.conf.j2:27</code>)。さらに <code>association_type == 'pool'</code> の場合は <code>resolve_as</code> の値に関わらず <code>resolve_as = server</code> で上書きされ、pool は常に FQDN のまま使われる (<code>chrony.conf.j2:49-51</code>)。</li>
+<li><code>iburst</code>: テンプレートは <code>{% if config.iburst %}</code> で <strong>truthy 判定のみ</strong>を行い <code>| d(...)</code> を持たない (<code>chrony.conf.j2:37-39</code>)。DB キー不在なら <code>iburst</code> オプション付与なし。一方 <code>'on'</code> でも <code>'off'</code> でも文字列非空であれば <code>iburst</code> が付与されるテンプレート上の癖がある。実運用では minigraph.py が起動時に <code>iburst: 'on'</code> を一斉投入し (<code>sonic-buildimage/src/sonic-config-engine/minigraph.py:2646</code>)、YANG <code>default on</code> も合わさるため、実害は出にくい。</li>
+<li><code>minpoll</code> / <code>maxpoll</code>: <strong>CONFIG_DB モデル未実装</strong>。<code>chrony.conf.j2</code> にも <code>sonic-ntp.yang</code> <code>NTP_SERVER_LIST</code> にも該当 leaf が存在せず、chrony 側のデフォルト (<code>minpoll 6 / maxpoll 10</code> ≒ 64〜1024 秒) がそのまま使われる。SONiC からは制御不可。</li>
+<li><code>version</code>: テンプレートは <code>{% if config.version %}</code> で truthy 判定のみ。DB キー不在なら <code>version</code> オプション付与なし → chrony 側のデフォルト (NTPv4)。YANG <code>default 4</code> で DB 投入時には 4 が埋まる前提。</li>
+<li><code>admin_state</code>: テンプレートは <code>for server in NTP_SERVER if NTP_SERVER[server].admin_state != 'disabled'</code> (<code>chrony.conf.j2:20</code>)。DB キー不在なら <code>!= 'disabled'</code> が真と評価され、エントリは chrony.conf に含まれる (= 有効扱い)。YANG <code>default enabled</code> と同等の運用効果。</li>
+<li><code>key</code>: テンプレートは <code>global.authentication == 'enabled'</code> かつ <code>config.key</code> が truthy の場合のみ <code>key &lt;id&gt;</code> を付与 (<code>chrony.conf.j2:30-34</code>)。DB に <code>key</code> があっても NTP 認証が disabled なら chrony.conf には書かれない。</li>
+</ul>
+<p>派生メモ全体は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ntp-server-defaults.md"><code>meta/_intermediate/cdb-flow/ntp-server-defaults.md</code></a> を参照。</p>
+<!-- /defaults -->
+
 <h2 id="_4">関連サブテーブル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>NTP|global</code> (container, single-instance):<ul>
