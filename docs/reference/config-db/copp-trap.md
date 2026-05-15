@@ -225,6 +225,33 @@ show copp config
 
 > **スキャン証跡**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 強制先行条件
+
+| 順序 | 先行リソース | 後続 | 違反時の挙動 | evidence |
+|------|-------------|------|-------------|---------|
+| 1 | `PORT` 初期化完了（`allPortsReady()`） | COPP_TRAP の SAI 適用 | `CoppOrch::doTask()` が即 return。CONFIG_DB エントリはキューに保留され、ポート初期化完了後に一括処理 | `copporch.cpp:885` |
+| 2 | `COPP_GROUP|<name>` が CONFIG_DB に存在・処理済み | `COPP_TRAP` の APPL_DB 書き込み | `CoppMgr` が書き込みを保留（`checkTrapGroupPending`）、`CoppOrch` が `task_need_retry` を返して次ループで再試行 | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
+
+### 推奨先行条件
+
+| 順序 | 先行リソース | 後続 | 理由 | evidence |
+|------|-------------|------|------|---------|
+| 3 | `FEATURE|<name> state=enabled` | `always_enabled=false` の COPP_TRAP | feature 未存在だと `isTrapIdDisabled()=true` となり trap がインストールされない。後から feature を有効化すれば `doFeatureTask` で自動補完される | `coppmgr.cpp:90`, `coppmgr.cpp:173-191` |
+| 4 | COPP_TRAP の書き込み | COPP_GROUP の書き込み | コンストラクタ内で COPP_TRAP 処理（`m_coppTrapIdTrapGroupMap` 構築）が COPP_GROUP の APPL_DB 書き込みより先に実行されるため、逆順だと COPP_GROUP の `trap_ids` が空になる | `coppmgr.cpp:334-411` |
+
+### 特殊シーケンス
+
+| 操作 | 推奨順序 | 根拠 |
+|------|---------|------|
+| `trap_group` 変更 | DEL → SET | SET 単体でも動作するが、旧グループの `trap_ids` 更新処理に変数代入の順序上の懸念があるため DEL → SET が確実。`coppmgr.cpp:706-738` |
+| init_cfg 由来エントリの削除 | DEL は完全削除にならない | DEL コマンド後、`m_coppTrapInitCfg` に当該 key が存在する場合は init 値で自動復元される。`coppmgr.cpp:769-805` |
+| NULL フィールド SET による削除 | NULL SET → 通常 SET | NULL フィールドを含む SET は削除として機能する。再追加には別途通常 SET が必要。`coppmgr.cpp:580-595` |
+
+<!-- /ordering -->
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A)
 
