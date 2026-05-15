@@ -196,6 +196,74 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 
 <!-- /ordering -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+本ページが扱う STATE_DB 3 テーブルでは、テーブル名・フィールド名・状態文字列・ステージ文字列・真偽デフォルトのほぼ全てがソースコード側の `#define` または静的データに固定されている。CONFIG_DB / DEVICE_METADATA 等の外部入力で変わるのは `<table_name>` / `<rule_name>` の動的部分と、プラットフォーム分岐される `supported_L3V4V6` / `action_list` の値のみ。
+
+### STATE_DB テーブル名（`sonic-swss-common/common/schema.h`）
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `STATE_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | `schema.h:514` |
+| `STATE_ACL_RULE_TABLE_NAME` | `"ACL_RULE_TABLE"` | `schema.h:515` |
+| `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME` | `"ACL_STAGE_CAPABILITY_TABLE"` | `schema.h:418` |
+
+`AclOrch` コンストラクタの初期化子 (`aclorch.cpp:4200-4202`) でこの 3 マクロを直接 `Table` オブジェクトに渡しているため、STATE_DB 上の文字列キーは固定。
+
+### フィールド名マクロ（`sonic-swss/orchagent/aclorch.cpp`）
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `STATE_DB_ACL_ACTION_FIELD_IS_ACTION_LIST_MANDATORY` | `"is_action_list_mandatory"` | `aclorch.cpp:42` |
+| `STATE_DB_ACL_ACTION_FIELD_ACTION_LIST` | `"action_list"` | `aclorch.cpp:43` |
+| `STATE_DB_ACL_L3V4V6_SUPPORTED` | `"supported_L3V4V6"` | `aclorch.cpp:44` |
+
+`putAclActionCapabilityInDB()` (`aclorch.cpp:4089-4097`) でこれらを `fvVector.emplace_back` する。`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` 側の `status` フィールド名はマクロ化されておらず、`setAclTableStatus()` / `setAclRuleStatus()` 内で直接 `"status"` リテラルが使われる。
+
+### `status` 値ルックアップ（`aclObjectStatusLookup`）
+
+`aclorch.cpp:521-527` の静的 `map<AclObjectStatus, string>` で 4 値固定:
+
+| enum 値 | 書込み文字列 |
+|---------|--------------|
+| `AclObjectStatus::ACTIVE` | `"Active"` |
+| `AclObjectStatus::INACTIVE` | `"Inactive"` |
+| `AclObjectStatus::PENDING_CREATION` | `"Pending creation"` |
+| `AclObjectStatus::PENDING_REMOVAL` | `"Pending removal"` |
+
+`status` フィールドは `aclObjectStatusLookup.at(...)` 経由でしか書かれないため、これら 4 文字列以外が STATE_DB に出現することはない。
+
+### ステージ文字列（`sonic-swss/orchagent/acltable.h`）
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `STAGE_INGRESS` | `"INGRESS"` | `acltable.h:22` |
+| `STAGE_EGRESS` | `"EGRESS"` | `acltable.h:23` |
+
+`ACL_STAGE_CAPABILITY_TABLE` のキー (`m_aclStageCapabilityTable.set(stage_str, ...)`) と、`ACL_ACTIONS|<stage_str>` 形式の動的フィールド名構築 (`putAclActionCapabilityInDB()`) に使われる。インラインで `"INGRESS"` / `"EGRESS"` リテラルが書かれている箇所 (`aclorch.cpp:2599`, `4720`) も同値で意味的に等価。
+
+### capability の真偽デフォルト
+
+| 名前 | 値 | evidence | STATE_DB 反映先 |
+|------|----|----------|-----------------|
+| `AclActionCapabilities::isActionListMandatoryOnTableCreation` | `false` (メンバ初期化子) | `aclorch.h:143` 付近 | `is_action_list_mandatory` |
+| `m_L3V4V6Capability[stage]`（汎用プラットフォーム） | `false` | `aclorch.cpp:3489-3510` | `supported_L3V4V6` |
+| `m_L3V4V6Capability[stage]`（MRVL_PRST / MRVL_TL / VS 等） | `true` | 同上 | `supported_L3V4V6` |
+| `defaultAclActionsSupported[INGRESS]` | `{PACKET_ACTION, MIRROR_INGRESS, NO_NAT}` + mandatory=`false` | `aclorch.cpp:168-184` | `action_list` (SAI クエリ失敗時のフォールバック) |
+| `defaultAclActionsSupported[EGRESS]` | `{PACKET_ACTION}` + mandatory=`false` | `aclorch.cpp:185-196` | `action_list` (フォールバック) |
+
+`bool` → 文字列化は `boolalpha` (`aclorch.cpp:4087` 付近) または三項演算 `it.second ? "true" : "false"` (`aclorch.cpp:4094`) で行われ、STATE_DB には小文字 `"true"` / `"false"` が書かれる（`"True"` / `"1"` 等は出現しない）。
+
+### 起動時クリア対象テーブル名
+
+`removeAllAclTableStatus()` / `removeAllAclRuleStatus()` (`aclorch.cpp:6116`, `6128`) は上記 `STATE_ACL_TABLE_TABLE_NAME` / `STATE_ACL_RULE_TABLE_NAME` のキーを列挙して `del()` する。`STATE_ACL_STAGE_CAPABILITY_TABLE_NAME` は起動時クリアの対象外で、`init()` の capability 公開フローで上書きされる。
+
+!!! note "Pending creation の `c` は小文字固定"
+    `"Pending creation"` / `"Pending removal"` はいずれも語頭のみ大文字で 2 語目は小文字。consumer 側（`show acl table` 等）はこの大小区別を前提に文字列比較しているため、ソース改変時は `aclObjectStatusLookup` を変更すると CLI 表示と乖離する。
+
+<!-- /constants -->
+
 ## 購読者 (consumer)
 
 | プロセス / CLI | 参照テーブル | 用途 |
@@ -232,6 +300,100 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
     フィールド値はプラットフォーム SAI capability と `DEVICE_METADATA` の `platform` 文字列に静的に依存する。
 
 <!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+本ページが扱う STATE_DB 3 テーブル (`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`) に加え、`AclOrch` は ACL ルールに対する SAI カウンタ統計を有効化する際に **COUNTERS_DB** および **FLEX_COUNTER_DB** へ副次的なエントリを書き込む。SAI ACL `entry`/`counter` 自体の書込み (ASIC_DB 経由) は主作用のため除外する。
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| COUNTERS_DB | `COUNTERS:ACL_COUNTER_RULE_MAP` (hash) | `<table>:<rule>` → ACL counter SAI OID のマッピングを `hset` / `hdel` | `aclorch.cpp:25-26, 45, 6020-6048` `registerFlexCounter()` / `deregisterFlexCounter()` の `m_countersDb.hset(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier, counterOidStr)` および `hdel` |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE` / `FLEX_COUNTER_TABLE` 配下 (`ACL_COUNTER_FLEX_COUNTER_GROUP`) | `FlexCounterManager` 経由で polling interval / stats mode と counter id list (`SAI_ACL_COUNTER_ATTR_PACKETS` / `_BYTES` 等) を `set` / `clear` | `aclorch.cpp:4208-4214` `m_flex_counter_manager(ACL_COUNTER_FLEX_COUNTER_GROUP, StatsMode::READ, ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS, ACL_COUNTER_DEFAULT_ENABLED_STATE)`、L6040 `setCounterIdList()`、L6048 `clearCounterIdList()` |
+
+呼出しトリガは ACL ルール作成 (`registerFlexCounter` at L4982, L5153)、`updateAclRule` でのカウンタ有効/無効切替 (L5019, L5157)、テーブル / ルール削除時の deregister 連鎖 (L3001, L3095) など。APPL_DB / ASIC_DB / LOGLEVEL_DB / CONFIG_DB への直接書込みは検出されなかった (`ProducerStateTable` / `NotificationProducer` メンバは未保有)。
+
+> **Evidence**: `sonic-swss/orchagent/aclorch.cpp` L25-26 (`m_countersDb` / `m_countersTable`), L45 (`COUNTERS_ACL_COUNTER_RULE_MAP`), L4208-4214 (`m_flex_counter_manager` 初期化), L6020-6048 (`registerFlexCounter` / `deregisterFlexCounter`); 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/aclorch-state-side.md` を参照。
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`）は、ASIC / SAI capability および `platform` / `sub_platform` 環境変数によって書込み内容に差が出る。差は (a) `ACL_STAGE_CAPABILITY_TABLE` のフィールド値に直接現れる差、(b) `ACL_TABLE_TABLE.status` / `ACL_RULE_TABLE.status` の分布に間接的に現れる差、の 2 系統に整理できる。
+
+### プラットフォーム識別文字列 (orch.h:40-50)
+
+| 定数 | 値 |
+|------|----|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` (sub_platform) |
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` |
+| `NPS_PLATFORM_SUBSTRING` | `"nephos"` |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` |
+| `CLX_PLATFORM_SUBSTRING` | `"clounix"` |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` |
+
+### A. `ACL_STAGE_CAPABILITY_TABLE` フィールド値に現れる platform 差
+
+| フィールド | 決定経路 | プラットフォーム別の値 | evidence |
+|------------|---------|----------------------|----------|
+| `supported_L3V4V6` (INGRESS / EGRESS) | **静的比較** (`m_L3V4V6Capability`) | marvell-prestera / marvell-teralynx / vs → `"true"`、それ以外 → `"false"` | `aclorch.cpp:3515-3533, 4093-4099` |
+| `action_list` (INGRESS / EGRESS) | **SAI 動的照会** (`sai_query_attribute_enum_values_capability`) | SAI 成功 → ASIC が返す enum リスト（broadcom / mellanox / barefoot / cisco-8000 等は SDK バージョン依存）。SAI 失敗 → `defaultAclActionsSupported[stage]` ハードコードフォールバック (`aclorch.cpp:168-196`) | `aclorch.cpp:4017-4101, 4104-4118` |
+| `is_action_list_mandatory` (INGRESS / EGRESS) | SAI 動的照会 (`AclActionCapabilities::isActionListMandatoryOnTableCreation`) | SAI 戻り値の `boolalpha` 出力。フォールバック時は `"false"` 固定 (`aclorch.h:143` 初期値) | `aclorch.cpp:4056-4101`, `aclorch.h:138-148` |
+
+!!! note "init() 完了時点で必ず 1 回書かれる"
+    `AclOrch::init()` は SAI 照会の成否に関わらず、最終的に `putAclActionCapabilityInDB()` で `ACL_STAGE_CAPABILITY_TABLE|INGRESS` / `|EGRESS` の 2 キーを書く。SAI が capability を未実装 (VS / 一部 DPU SAI) でも `defaultAclActionsSupported` でフォールバックされるため、STATE_DB に 2 キー欠如することはない (`aclorch.cpp:3479-3481, 3708, 4017-4118`)。
+
+### B. `ACL_TABLE_TABLE.status` / `ACL_RULE_TABLE.status` に間接的に現れる platform 差
+
+`status` 値そのものは `"Active"` / `"Inactive"` / `"Pending creation"` / `"Pending removal"` の 4 種で platform に依存しないが、各値の発生条件は SAI capability で大きく変わる。代表例:
+
+| platform 条件 | STATE_DB に観測される事象 | evidence |
+|---------------|--------------------------|----------|
+| `type=MIRRORV6` を未知 platform で作成 | `ACL_TABLE_TABLE|<name>:status="Inactive"` | `aclorch.cpp:3489-3513, 3500-3541` |
+| `type=L3V4V6` を marvell-* / vs 以外で作成 | `ACL_TABLE_TABLE|<name>:status="Inactive"` (`validate()` reject) | `aclorch.cpp:2737-2745, 3515-3533` |
+| broadcom (非 DNX) `stage=EGRESS` + L4 range match ルール | `ACL_TABLE_TABLE` は `"Active"` だが配下 `ACL_RULE_TABLE` の range match ルールが `"Inactive"` (range フィールド付加されず) | `aclorch.cpp:2608-2628` |
+| mellanox / clounix で 17 個目以降の range オブジェクト | `ACL_RULE_TABLE|<table>|<rule>:status="Inactive"` (`return NULL`) | `aclorch.cpp:3370-3378`, `aclorch.h:109-110` |
+| SAI リソース枯渇 (全 ASIC 共通だが density により頻度差) | `ACL_RULE_TABLE|...|status="Pending creation"` → retry cache → 他ルール DEL 後に `"Active"` 上書き | `aclorch.cpp:5673-5692, 5710-5721` |
+| DTEL action ルールを barefoot / vs 以外で作成 | `DTelOrch` 非起動のため SAI 反映なし、`ACL_RULE_TABLE.status` は `"Inactive"` または該当 action 無視 | `orchdaemon.cpp:502-530` |
+| broadcom-dnx `type=PFCWD` | `ACL_TABLE_TABLE|<pfcwd>:status="Active"` (CONFIG_DB `ports` 無視 / SWITCH 単位バインド) | `aclorch.cpp:3811-3830` |
+
+### C. multi-asic / SmartSwitch 環境
+
+- multi-asic 構成では `AclOrch` が namespace (`asic0` / `asic1` / ...) ごとに独立起動し、STATE_DB の 3 テーブルも namespace ごとに独立する。
+- 同一 ASIC 種別が標準前提だが、heterogeneous Multi-NPU や SmartSwitch DPU では namespace 間で `platform` / `sub_platform` が異なる可能性があり、`ACL_STAGE_CAPABILITY_TABLE` の `supported_L3V4V6` / `action_list` が namespace 間で **食い違う** ケースがある。
+- `sonic-mgmt-common` (translib) は default namespace を参照する一方、`acl-loader` は namespace 引数を取るため、capability 値の参照先が読み手側で異なる点に注意。
+
+### D. 起動順序による中間状態 (`allPortsReady()` ガード)
+
+`aclorch.cpp:4276` — `doTask()` 冒頭で `gPortsOrch->allPortsReady()` が false の間は `doAclRuleTask()` に到達せず、`ACL_RULE_TABLE` への新規エントリ書込みが発生しない。
+
+- port 数が多い ASIC (broadcom-dnx 高密度シャーシ / cisco-8000 大規模ボード / mellanox 高 radix) では port enumeration に時間がかかり、`ACL_TABLE_TABLE` が `"Active"` を出した後も `ACL_RULE_TABLE` が空のままの中間状態が秒〜分続く。
+- VS / 小規模 broadcom では即座に解消されるため、観測される平均待ち時間が ASIC 規模に比例する。
+
+### platform 別 STATE_DB サマリ
+
+| プラットフォーム | `supported_L3V4V6` | `action_list` 取得経路 | DTEL action 反映 | MIRRORV6 reject | range 上限 |
+|----------------|--------------------|------------------------|------------------|-----------------|-----------|
+| broadcom (非 DNX) | `"false"` | SAI 動的 | no | no | SAI 依存 |
+| broadcom-dnx | `"false"` | SAI 動的 | no | no | SAI 依存 |
+| mellanox | `"false"` | SAI 動的 | no | no | **16** |
+| barefoot | `"false"` | SAI 動的 | **yes** | no | SAI 依存 |
+| cisco-8000 | `"false"` | SAI 動的 | no | no | SAI 依存 |
+| marvell-prestera | `"true"` | SAI 動的 | no | no | SAI 依存 |
+| marvell-teralynx | `"true"` | SAI 動的 | no | no | SAI 依存 |
+| nephos | `"false"` | SAI 動的 | no | no | SAI 依存 |
+| xsight | `"false"` | SAI 動的 | no | no | SAI 依存 |
+| clounix | `"false"` | SAI 動的 | no | no | **16** |
+| vs (virtual) | `"true"` | SAI or フォールバック | **yes** | no | SAI 依存 |
+| 未知 platform | `"false"` | フォールバック (`defaultAclActionsSupported`) | no | **yes** | SAI 依存 |
+
+> **スキャン証跡**: `AclOrch::init()` L3475–3720 / `queryAclActionCapability()` L4017–4054 / `putAclActionCapabilityInDB()` L4056–4101 / `initDefaultAclActionCapabilities()` L4104–4118 / `defaultAclActionsSupported` L168–196 / `removeAllAcl*Status()` L6116, L6128 / `setAcl*Status()` L6088, L6102 / `orch.h:40-50` / `aclorch.h:109-110, 138-148` / `orchdaemon.cpp:502-530` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/aclorch-state-platform.md`
+<!-- /platform -->
 
 ## 引用元
 
