@@ -427,3 +427,276 @@ CONFIG_DB `CRM` / COUNTERS_DB `CRM:STATS` のフィールド名はすべてハ�
 | `"crm_stats_mpls_inseg_available"` / `"crm_stats_mpls_nexthop_available"` | 324-325 | COUNTERS_DB available 値（SAI availability クエリ結果） |
 | `"crm_stats_mpls_inseg_used"` / `"crm_stats_mpls_nexthop_used"` | 370-371 | COUNTERS_DB used 値（`mplsrouteorch.cpp:754/917` で inc/dec） |
 <!-- /constants -->
+
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+APPL_DB `LABEL_ROUTE_TABLE` は `fpmsyncd::RouteSync::onLabelRouteMsg()` が書き、`RouteOrch::doLabelTask()`
+(`mplsrouteorch.cpp:34-417`) と `NhgOrch` の MPLS NH 分岐 (`nhgorch.cpp` `isLabeled()`)
+が購読する。bulker (`gLabelRouteBulker`) による SET の遅延適用、未解決依存 (NHG / IntfsOrch RIF /
+NeighOrch / VrfOrch) の `m_toSync` 残置 polling、ECMP の `addTempLabelRoute` 縮退、`m_resync` プロトコル、
+warm reboot 連動を踏まえて整理する[^mplsrorch][^mplsnhgorch][^mplsorderingmem].
+
+### 1. PortsOrch readiness ガード (NhgOrch 経由のみ)
+
+```cpp
+// nhgorch.cpp:41-44 — NhgOrch::doTask 冒頭
+if (!gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+`doLabelTask` 自身には直接の `allPortsReady` ガードはないが、`nexthop_group=<idx>` 経路は
+NhgOrch の `m_syncdNextHopGroups` を必要とするため連鎖的に PortsOrch 完了が前提となる。
+intf NH パスも `m_intfsOrch->getRouterIntfsId(alias)` (`mplsrouteorch.cpp:503,707`) が
+`SAI_NULL_OBJECT_ID` を返すと `addLabelRoute` / `addLabelRoutePost` で `return false` 残置になる。
+
+→ 順序依存: `PORT` → `INTERFACE` 系 RIF → `LABEL_ROUTE_TABLE`。
+
+### 2. VRF 先行ガード (VRF-aware key)
+
+```cpp
+// mplsrouteorch.cpp:107-119
+if (!key.compare(0, strlen(VRF_PREFIX), VRF_PREFIX))
+{
+    size_t found = key.find(':');
+    string vrf_name = key.substr(0, found);
+
+    if (!m_vrfOrch->isVRFexists(vrf_name))
+    {
+        it++;
+        continue;
+    }
+    vrf_id = m_vrfOrch->getVRFid(vrf_name);
+    label = to_uint<uint32_t>(key.substr(found+1));
+}
+```
+
+VrfOrch 未登録ならログなしで `it++` 残置 → VrfOrch が `CONFIG_DB:VRF` を消化するまで毎ループ retry。
+ただし現状の **fpmsyncd は非デフォルト VRF の MPLS ルートをそもそも書かない**
+(`routesync.cpp:2674-2681`、`SWSS_LOG_INFO("Unsupported Non-default VRF")` のみ)。
+この doLabelTask の VRF 残置パスは「外部から手書きで `LABEL_ROUTE_TABLE|Vrf...:` を書いた場合」のみ顕在化する。
+
+### 3. NHG 先行ガード (`nexthop_group` フィールド指定)
+
+```cpp
+// mplsrouteorch.cpp:255-267 (doLabelTask)
+try
+{
+    const NhgBase& nh_group = getNhg(nhg_index);
+    ctx.nhg = nh_group.getNhgKey();
+    ctx.using_temp_nhg = nh_group.isTemp();
+}
+catch (const std::out_of_range& e)
+{
+    SWSS_LOG_ERROR("Next hop group %s does not exist", nhg_index.c_str());
+    ++it;
+    continue;
+}
+```
+
+`addLabelRoute` 内にも race 対策の二重チェックがあり、NHG が消失していれば `return false` 残置
+(`mplsrouteorch.cpp:481-491`)。NhgOrch は項 1 の `allPortsReady` ガードを持つため、PortsOrch 完了が連鎖的な前提。
+
+→ 順序依存: `nexthop_group=<idx>` 経路は `NEXTHOP_GROUP_TABLE|<idx>` の NhgOrch 反映が先行必須。
+
+### 4. NeighOrch 先行 — single NH
+
+```cpp
+// mplsrouteorch.cpp:514-540 (addLabelRoute, single NH)
+if (m_neighOrch->hasNextHop(nexthop))
+{
+    ...
+}
+else
+{
+    SWSS_LOG_INFO("Failed to get next hop %s for %u, resolving neighbor", ...);
+    m_neighOrch->resolveNeighbor(nexthop);
+    return false;
+}
+```
+
+`resolveNeighbor` で ARP/ND をキックして `return false` → `m_toSync` 残置。`NEIGH_TABLE` 反映後の次サイクルで成立。
+
+→ 順序依存: 各 nexthop IP の `NEIGH_TABLE` 解決が先行必須。
+
+### 5. NeighOrch 先行 — ECMP (`addTempLabelRoute` 縮退)
+
+```cpp
+// mplsrouteorch.cpp:547-583 (addLabelRoute, ECMP)
+if (!hasNextHopGroup(nextHops))
+{
+    ...
+    for (auto it_nh = nextHops.getNextHops().begin(); ...)
+    {
+        if (!m_neighOrch->hasNextHop(nextHop))
+        {
+            SWSS_LOG_INFO("Failed to get next hop %s ... resolving neighbor", ...);
+            m_neighOrch->resolveNeighbor(nextHop);
+        }
+    }
+    ...
+    addTempLabelRoute(ctx, nextHops);
+    return false;
+}
+```
+
+未解決 NH を `resolveNeighbor` でキックしつつ、`addTempLabelRoute` (`mplsrouteorch.cpp:420-`) が
+**解決済み単独 NH を指すサブセット一時 inseg** を ASIC に install。元 ECMP は m_toSync 残置 →
+全 NH 解決後の次サイクルで本来の NHG に置換される。IP route 版 `addTempRoute` と同等の縮退ロジックを MPLS で複製。
+
+→ 順序依存（縮退あり）: 全 NH の NEIGH 解決が本来の ECMP 成立の前提。1 個以上解決済みなら部分縮退で疎通維持。
+
+### 6. RIF 先行 — intf NH
+
+```cpp
+// mplsrouteorch.cpp:501-510 (addLabelRoute)
+next_hop_id = m_intfsOrch->getRouterIntfsId(nexthop.alias);
+if (next_hop_id == SAI_NULL_OBJECT_ID)
+{
+    SWSS_LOG_INFO("Failed to get next hop %s for %u", ...);
+    return false;
+}
+```
+
+`addLabelRoutePost` (`mplsrouteorch.cpp:705-714`) にも同型ガード。RIF 未作成なら `return false` で残置 →
+`INTERFACE`/`VLAN_INTERFACE`/`PORTCHANNEL_INTERFACE` 反映後に成立。
+
+→ 順序依存: intf NH を含む MPLS ルートは IntfsOrch RIF 作成が先行必須。
+
+### 7. SRv6 PIC / RetryCache — MPLS では未使用
+
+`routeorch.cpp:192` の `createRetryCache(APP_ROUTE_TABLE_NAME);` は IP route 用で、
+`APP_LABEL_ROUTE_TABLE_NAME` に対する `createRetryCache` 呼出はない。`mplsrouteorch.cpp` 内に
+`RETRY_CST_*` / `contextIdExists` / `pic_context_id` 参照は 0 件。
+→ MPLS は明示 RetryCache を持たず、未成立は基本 `m_toSync` 残置 polling で吸収する。
+
+### 8. doLabelTask 内 bulk drain 順序
+
+`RouteOrch::doLabelTask` は SET / DEL を以下の固定順で処理する:
+
+1. **`resync` プロトコル** (`mplsrouteorch.cpp:63-95`): `key == "resync"` の SET で `m_syncdLabelRoutes`
+   全件を `DEL_COMMAND` として self-enqueue し `m_resync=true` にする。`m_resync=true` の間は
+   受信 op を `it++` 残置で待機し、`resync` complete (SET 以外) で flush。CLI / 上位ツールが
+   全 `LABEL_ROUTE_TABLE` を一括置換するためのフック (warm reboot で fpmsyncd が打つ運用ではない)。
+2. **SET / DEL ループ** (`mplsrouteorch.cpp:100-330`): `addLabelRoute` / `removeLabelRoute` は
+   `gLabelRouteBulker.create_entry()` / `set_entry_attribute()` / `remove_entry()`
+   (`mplsrouteorch.cpp:627,644,652,661,882`) で bulker に積むのみで ASIC 反映なし。
+   正常パス末尾も `return false` (項 12)。
+3. **NHG 上限近傍での早期 break** (`mplsrouteorch.cpp:313-316`):
+
+   ```cpp
+   if (m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount &&
+       gLabelRouteBulker.removing_entries_count() > 0)
+   {
+       break;
+   }
+   ```
+
+   SET ループを途中で抜けて bulker flush へ進み、NHG 解放を促す。
+4. **`gLabelRouteBulker.flush()`** (`mplsrouteorch.cpp:335`) — SET / DEL を一括 ASIC 反映。
+5. **post-process ループ** (`mplsrouteorch.cpp:340-406`): `addLabelRoutePost` / `removeLabelRoutePost`
+   を呼び、`m_syncdLabelRoutes` 更新と CRM (`CRM_MPLS_INSEG`) 反映を行う。失敗時は `it_prev++` で再評価。
+6. **NHG ref-count 整理** (`mplsrouteorch.cpp:408-415`): `m_bulkNhgReducedRefCnt` 巡回で参照数 0 の NHG を
+   `removeNextHopGroup`。
+
+bulker 内重複検出: 同 doLabelTask 内で同 label を 2 回 create しようとすると
+`SAI_STATUS_ITEM_ALREADY_EXISTS` が即時返り `ERROR` + `return false`
+(`mplsrouteorch.cpp:628-633`、retry なしで次サイクル評価)。
+注: IP route 版にある `m_publisher.flush()` (APPL_STATE_DB 通知) は **MPLS では存在しない**
+(`mplsrouteorch.cpp` 内 `m_publisher` 参照 0 件)。Phase B Side-effects と整合。
+
+→ タイミング依存: 同一 doLabelTask バッチ内の順序は固定。ConsumerStateTable 側で SET/DEL が
+merge されるため、バッチ間では最後の op のみが orchagent に届く。
+
+### 9. nhgorch 側: MPLS NH の遅延作成 (`isLabeled()` 分岐)
+
+```cpp
+// nhgorch.cpp:563-570 (NextHopGroupMember::createSaiObject)
+else if (isLabeled() && gNeighOrch->isNeighborResolved(m_key))
+{
+    NeighborContext ctx = NeighborContext(m_key);
+    if (gNeighOrch->addNextHop(ctx))
+    {
+        nh_id = gNeighOrch->getNextHopId(m_key);
+    }
+}
+```
+
+MPLS NH は **基底 IP neighbor が解決済になってから初めて** NeighOrch 経由で派生 NH を作成する。
+未解決なら `resolveNeighbor` 経路 (`nhgorch.cpp:583-585`) に落ち、`nh_id = SAI_NULL_OBJECT_ID` のまま
+返却 → 上位で retry。ref_count が 0 になった MPLS NH は `~NextHopGroupMember()` (`nhgorch.cpp:677-682`)
+で `removeMplsNextHop()` され、NeighOrch から除去される。
+
+→ 順序依存: MPLS NH (`push<N>`/`swap<N>`) は基底 IP の `NEIGH_TABLE` 反映が先行必須。
+create/remove は NhgOrch / RouteOrch 双方が観るが、SAI 反映は NeighOrch API に委譲される。
+
+### 10. SAI race / set 系 handle
+
+```cpp
+// mplsrouteorch.cpp:777-840 (addLabelRoutePost)
+status = *it_status++;
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to set label %u with next hop(s) %s", ...);
+    task_process_status handle_status = handleSaiSetStatus(SAI_API_MPLS, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+```
+
+IP route 版にある `SAI_STATUS_ITEM_NOT_FOUND` 専用補正 (DualToR tunnel route race) は MPLS には存在しない
+（MPLS 経路は DualToR tunnel 経由で書かれない）。SAI status は一律
+`handleSaiSetStatus(SAI_API_MPLS, ...)` / `handleSaiRemoveStatus(SAI_API_MPLS, ...)`
+(`mplsrouteorch.cpp:907-915`) に委譲され、`task_need_retry` / `task_failed` のいずれかに振り分けられる
+（Phase D で整理）。
+
+### 11. Warm reboot 順序
+
+`mplsrouteorch.cpp` / `nhgorch.cpp` 内に `warm` / `reconcile` / `WarmStart` の文字列は 0 件。warm reboot
+時の MPLS 経路順序は **fpmsyncd 側 + 通常起動順序** に依存する:
+
+- fpmsyncd は `WarmStartHelper::checkAndStart()` で warm-restart モードに入り、FRR 再接続後に
+  再 push される経路を restoration timer / eoiuHoldTimer 満了まで集約する (`fpmsyncd.cpp:153-172`、
+  IP route と共通)。
+- ただし `WarmStartHelper` 系の差分計算は **IP route テーブル前提**で組まれており、`onLabelRouteMsg()`
+  は通常 SET として doLabelTask に届く。MPLS 経路の warm reconcile は IP route ほど精緻ではない。
+- doLabelTask 側は項 8 の `resync` プロトコルで cold-restart 用の wholesale 置換に対応するが、
+  fpmsyncd は warm reboot 時に `resync` を打つ運用ではない。
+
+→ 順序依存: warm reboot 時の MPLS 経路は PortsOrch → IntfsOrch → NeighOrch → NhgOrch → RouteOrch の
+通常起動順序に依存し、未成立な依存があれば項 4-6 の retry / 項 5 の `addTempLabelRoute` 縮退が
+連発するため reconcile 時間に影響する。
+
+### 12. bulker 確定の遅延 (正常パスも `return false`)
+
+`addLabelRoute` の正常パス末尾 (`mplsrouteorch.cpp:664` 付近) も `return false` で `m_toSync` 残置のまま
+bulker flush を待つ。確定は項 8 の post-process ループで `addLabelRoutePost` が `m_syncdLabelRoutes`
+反映 + `gCrmOrch->incCrmResUsedCounter(CRM_MPLS_INSEG)` を実行して `m_toSync.erase` する。
+
+→ タイミング依存: 正常書込みでも 1 サイクル分の遅延（bulker 経由）が乗る。
+
+### 影響範囲のまとめ
+
+| 順序関係 | 必須先行 | 不成立時の挙動 |
+|---|---|---|
+| NHG 経路 (`nexthop_group`) | PortsOrch readiness (NhgOrch 経由) | `NhgOrch::doTask` 早期 return |
+| 非デフォルト VRF label | VrfOrch (`CONFIG_DB:VRF`) | `it++` 残置 (fpmsyncd は通常書かない) |
+| `nexthop_group` 指定 | NhgOrch (`NEXTHOP_GROUP_TABLE`) | `ERROR` + `++it` |
+| intf NH | IntfsOrch RIF (`INTERFACE` 系) | `return false` 残置 |
+| single NH | NeighOrch (`NEIGH_TABLE`) | `resolveNeighbor` + 残置 |
+| ECMP | 全 NH の NEIGH 解決 | `addTempLabelRoute` サブセット install + 残置 |
+| MPLS NH (`push`/`swap`) | 基底 IP `NEIGH_TABLE` 解決 → NhgOrch `isLabeled` 分岐 | retry |
+| ASIC NHG 上限 | NHG 解放 | bulker 早期 break + `addTempLabelRoute` |
+| 同一バッチ内重複 create | bulker flush 完了 | `SAI_STATUS_ITEM_ALREADY_EXISTS` で `return false` |
+| warm reboot | fpmsyncd `WarmStartHelper` + 通常起動順 | 通常 SET フロー (MPLS 専用 reconcile 差分なし) |
+
+詳細な grep 証跡は `meta/_intermediate/cdb-flow/appl-mpls-route-ordering.md` を参照[^mplsorderingmem].
+
+[^mplsrorch]: `sonic-net/sonic-swss` `orchagent/mplsrouteorch.cpp` (`RouteOrch::doLabelTask` / `addLabelRoute` / `addLabelRoutePost` / `addTempLabelRoute` / `removeLabelRoute*`)
+[^mplsnhgorch]: `sonic-net/sonic-swss` `orchagent/nhgorch.cpp` (`NextHopGroupMember::createSaiObject` `isLabeled()` 分岐 / `~NextHopGroupMember` の `removeMplsNextHop`)
+[^mplsorderingmem]: 順序依存スキャンの中間メモ: `meta/_intermediate/cdb-flow/appl-mpls-route-ordering.md`
+<!-- /ordering -->
