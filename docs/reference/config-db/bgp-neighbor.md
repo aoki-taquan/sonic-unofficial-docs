@@ -286,6 +286,64 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
 <!-- /handler-branching -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### BGP タイマー固定値（Jinja2 テンプレート）
+
+| 定数 | 値 | 対象 peer_type | ソース |
+|------|----|----------------|--------|
+| `timers connect` | **10** 秒 | 全 peer_type 共通 | `general/instance.conf.j2:11`、`internal/instance.conf.j2:7`、`voq_chassis/instance.conf.j2:14` |
+| keepalive スキップ閾値 | **60** 秒 | general (一致時はコマンド省略) | `general/instance.conf.j2:7` |
+| holdtime スキップ閾値 | **180** 秒 | general (一致時はコマンド省略) | `general/instance.conf.j2:8` |
+| keepalive 強制値 | **3** 秒 | internal | `internal/instance.conf.j2:6` |
+| holdtime 強制値 | **10** 秒 | internal | `internal/instance.conf.j2:6` |
+| keepalive 強制値 | **2** 秒 | voq_chassis | `voq_chassis/instance.conf.j2:13` |
+| holdtime 強制値 | **7** 秒 | voq_chassis | `voq_chassis/instance.conf.j2:13` |
+
+### BGP 上限値
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| `maximum-paths ibgp` IPv4 (constants.yml 実値) | **514** | `files/image_config/constants/constants.yml:29` |
+| `maximum-paths ibgp` IPv6 (constants.yml 実値) | **514** | `files/image_config/constants/constants.yml:30` |
+| `maximum-paths ibgp` Jinja2 fallback | **64** | `voq_chassis/instance.conf.j2:22,29` |
+| `allowas-in` | **1** | `general/peer-group.conf.j2`、`internal/peer-group.conf.j2`、`voq_chassis/peer-group.conf.j2` |
+| `ttl-security hops` (chassis-packet internal) | **1** | `internal/peer-group.conf.j2:8,22` |
+
+### Graceful Restart タイマー (ToRRouter 限定)
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| `bgp graceful-restart restart-time` | **240** 秒 (constants.yml: `restart_time: 240`) | `bgpd.main.conf.j2:119`、`constants.yml:24` |
+| `bgp graceful-restart select-defer-time` | **45** 秒 (Jinja2 `\| default(45)`) | `bgpd.main.conf.j2:122` |
+
+### 起動時待機・ポーリング定数 (Python)
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| FRR daemon 起動待ちタイムアウト | **20** 秒 | `main.py:47` (`wait_for_daemons(seconds=20)`) |
+| FRR daemon ポーリング sleep | **100** ms | `frr.py:30` (`time.sleep(0.1)`) |
+| mgmtd datastore 最大試行回数 | **10** 回 (≈5 秒) | `main.py:51` |
+| mgmtd vtysh timeout | **2** 秒 | `main.py:54` |
+| mgmtd ポーリング sleep | **500** ms | `main.py:64` (`time.sleep(0.5)`) |
+| `Runner.SELECT_TIMEOUT` (メインループ) | **1000** ms | `runner.py:21` |
+
+### BMP 接続定数 (frr_bmp/bmp 機能有効時)
+
+| 定数 | 値 | ソース |
+|------|----|--------|
+| BMP listen port | **5000** | `bgpd.main.conf.j2:136` |
+| `bmp connect` min-retry | **10000** ms | `bgpd.main.conf.j2:136` |
+| `bmp connect` max-retry | **15000** ms | `bgpd.main.conf.j2:136` |
+| `bmp stats interval` | **1000** ms | `bgpd.main.conf.j2:133` |
+| `bmp mirror buffer-limit` | **4294967214** bytes | `bgpd.main.conf.j2:130` |
+
+> **discrepancy**: `timers connect 10` は YANG `conn_retry` フィールドと独立してハードコード発行される。bgpcfgd 経路では `conn_retry` の値は FRR に渡らない（frrcfgd 経路のみ有効）。  
+> **discrepancy**: `internal` / `voq_chassis` peer_type では CONFIG_DB の `keepalive`/`holdtime` 値は完全に無視され、テンプレートの固定値 (3/10、2/7) が強制適用される。  
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-constants.md`
+
+<!-- /constants -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
