@@ -249,6 +249,58 @@ vtysh -c "show ip as-path-access-list"
 <!-- /ops-hint -->
 
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`AS_PATH_SET` テーブルは leafref 参照元 (`ROUTE_MAP.match_as_path`)・bgpd デーモン起動順・別経路 (`AsPathMgr`) の固定名予約という 3 系統の順序依存を持つ。`bgpcfgd` (`AsPathMgr` / `managers_as_path.py:7-66`) と `frrcfgd` (`frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011`) の全行精読と `bgpd.conf.db.j2:6-20`、`sonic-route-map.yang:263-268` のクロス読みで抽出。
+
+### 強制順序（破ると不整合・silent skip）
+
+| # | 順序 | 依存元 | 破った場合の挙動 |
+|---|------|--------|----------------|
+| 1 | `AS_PATH_SET|<name>` SET → `ROUTE_MAP|...` の `match_as_path:<name>` SET | leafref (`sonic-route-map.yang:263-268`) + `frrcfgd.py:1940` `match as-path {}` テンプレ | YANG 経路: validation reject。直書き経路: FRR 上で未定義 access-list 参照となり ROUTE_MAP は silent unmatch |
+| 5 | DEVICE_METADATA.type/subtype 設定 → `bgpcfgd` 再起動 → `AsPathMgr` 起動 → `DEVICE_METADATA.t2_group_asns` SET | `bgpcfgd/main.py:122-130` の起動 gate | type/subtype を後から変えても bgpcfgd を再起動しない限り AsPathMgr は (起動しない / 止まらない) |
+
+### 起動順（実装で吸収される一過性の窓）
+
+| # | 順序 | 依存元 | 吸収機構 |
+|---|------|--------|---------|
+| 3 | bgpd 起動時テンプレで `route_map.j2` (L9) → `AS_PATH_SET` ブロック (L11-20) の順 | `bgpd.conf.db.j2:6-20` | bgpd 内部の遅延解決。起動直後の極短時間のみ ROUTE_MAP `match as-path` が unmatch |
+| 4 | `bgpd` 起動完了 → `frrcfgd` の AS_PATH_SET ハンドラ呼出 | `frrcfgd.py:96` (`'AS_PATH_SET': ['bgpd']`) | supervisord 起動順 + `frrcfgd.py:2248-2253` の init キャッシュで再送 |
+
+### UPDATE 時の全置換シーケンス（差分追加なし）
+
+`hdl_aspath_set()` (`frrcfgd.py:1009-1020`) は SET / UPDATE / DEL いずれでも:
+
+1. 既存登録があれば `no bgp as-path access-list <name>` (L1014-1015)
+2. 続けて全メンバを `permit <regex>` で再追加 (L1016-1019)
+
+同一 `configure terminal` セッション内で発行されるが行単位で評価されるため、両ステップの間に bgpd の policy 評価が走ると一時的に access-list 不在 → ROUTE_MAP match 不成立。
+
+### 運用ルール
+
+| # | ルール | 根拠 |
+|---|--------|------|
+| 6 | `AS_PATH_SET|T2_GROUP_ASNS` という名前は予約 (`AsPathMgr` が独占) | `managers_as_path.py:7, 43, 52, 56, 65` — frrcfgd 経路と AsPathMgr 経路が同名 access-list を取り合い不安定化 |
+| 7 | DEL は `ROUTE_MAP.match_as_path` を先に → `AS_PATH_SET|<name>` を後 | `frrcfgd.py:3008-3009` の `no bgp as-path access-list <name>` 発行後、ROUTE_MAP `match_as_path` は silent skip 状態で残る |
+
+### 順序依存サマリ
+
+| # | 依存関係 | 区分 | 緩和策 |
+|---|----------|------|--------|
+| 1 | AS_PATH_SET SET → ROUTE_MAP `match_as_path` SET | 強制先行 | 順序遵守 |
+| 2 | UPDATE は全 no → 全 permit | 実装挙動（差分追加不可） | メンテ窓で実施 |
+| 3 | bgpd 起動: route_map.j2 → AS_PATH_SET レンダリング順 | 一過性窓（自然解消） | 運用無視可 |
+| 4 | bgpd 起動完了 → frrcfgd ハンドラ | supervisord + init キャッシュで吸収 | なし |
+| 5 | DEVICE_METADATA.type/subtype → bgpcfgd 再起動 → AsPathMgr 起動 | 強制先行（gate） | type/subtype 変更後 bgpcfgd 再起動 |
+| 6 | `T2_GROUP_ASNS` 名は予約 | 運用ルール | ユーザ AS_PATH_SET 名から除外 |
+| 7 | DEL: ROUTE_MAP match_as_path 先 → AS_PATH_SET 後 | 推奨 | 逆順でも DB 整合性は壊れない |
+
+<!-- evidence: managers_as_path.py:7,30-66; main.py:122-130; frrcfgd.py:96,1009-1020,1940,2248-2253,3005-3011; bgpd.conf.db.j2:6-20; sonic-route-map.yang:263-268 -->
+
+> 詳細根拠は `meta/_intermediate/cdb-flow/as-path-set-ordering.md` を参照
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
