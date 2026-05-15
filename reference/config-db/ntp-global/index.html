@@ -23590,6 +23590,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23624,7 +23652,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -34984,6 +35012,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35018,7 +35074,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35314,6 +35370,75 @@
 <p>NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_KEY を直接操作</p>
 <!-- /entry-points -->
 
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p><code>sonic-host-services/scripts/hostcfgd</code> の <code>NtpCfg</code> クラスと <code>sonic-buildimage/files/image_config/chrony/chrony.conf.j2</code> テンプレを精査し、CONFIG_DB に値が無いときの実効デフォルトを整理する。SONiC master は <code>ntpd</code> ではなく <strong>chrony</strong> を採用しているため、テンプレ実体は <code>chrony.conf.j2</code>（旧 HLD の <code>ntp.conf.j2</code> は不在）。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来 fallback</th>
+<th>実効デフォルト (未設定時)</th>
+<th>chrony.conf 反映</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src_intf</code></td>
+<td>なし</td>
+<td><code>handle_ntp_source_intf_chg</code> で <code>split(';')</code>→空、テンプレ <code>ns.source_intf=""</code> 初期化</td>
+<td><code>bindacqaddress</code> 行を発行せずカーネル経路選択</td>
+<td><code>bindacqaddress &lt;IP&gt;</code> (vrf!=mgmt 時のみ)</td>
+</tr>
+<tr>
+<td><code>vrf</code></td>
+<td>なし (<code>pattern "mgmt\|default"</code>)</td>
+<td>テンプレ <code>if vrf == 'mgmt'</code> 分岐のみ、未設定は falsy 扱い</td>
+<td>default VRF として動作、<code>bindacqaddress</code> 出力</td>
+<td>(条件分岐に使用)</td>
+</tr>
+<tr>
+<td><code>authentication</code></td>
+<td><code>disabled</code></td>
+<td>テンプレ <code>if global.authentication == 'enabled'</code> 判定</td>
+<td><code>disabled</code> (<code>keyfile</code>/<code>key</code> 行なし、<code>NTP_KEY</code> 未参照)</td>
+<td><code>keyfile /etc/chrony/chrony.keys</code> / <code>key &lt;N&gt;</code></td>
+</tr>
+<tr>
+<td><code>dhcp</code></td>
+<td><code>enabled</code></td>
+<td>テンプレ末尾の <code>sourcedir /run/chrony-dhcp</code> は常時出力</td>
+<td><code>enabled</code> (DHCP 配布 NTP サーバ採用)</td>
+<td>SmartSwitch のみ <code>allow</code> 判定に寄与</td>
+</tr>
+<tr>
+<td><code>server_role</code></td>
+<td><code>enabled</code></td>
+<td>SmartSwitch NPU (<code>device_metadata.type != 'SmartSwitchDPU'</code>) 限定で参照</td>
+<td><code>enabled</code> (通常スイッチではテンプレ未反映)</td>
+<td><code>allow</code> / <code>binddevice bridge-midplane</code> (SmartSwitch NPU のみ)</td>
+</tr>
+<tr>
+<td><code>admin_state</code></td>
+<td><code>enabled</code></td>
+<td>テンプレ・<code>NtpCfg</code> 共に未参照</td>
+<td><code>enabled</code> (chrony は常時起動、disabled でも停止しない)</td>
+<td>反映なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">補足<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>ntp.conf.j2</code> は実在しない</strong>: 実テンプレは <code>chrony.conf.j2</code>。<code>NtpCfg.CHRONY_RESTART = ['systemctl', 'restart', 'chrony']</code> (hostcfgd:1280) からも chrony 採用が確定。</li>
+<li><strong><code>vrf=mgmt</code> 時の挙動</strong>: <code>chrony.conf.j2:109</code> で <code>bindacqaddress</code> 発行を抑止し、カーネルの mgmt VRF routing に委ねる。現行テンプレは <code>interface eth0</code> ディレクティブを発行しない (handler-branching 表の文言は将来修正候補)。</li>
+<li><strong><code>admin_state=disabled</code> のデッドコード性</strong>: テンプレも <code>NtpCfg</code> も <code>admin_state</code> を分岐に使わないため、CONFIG_DB に <code>disabled</code> を書いても chrony は restart されるだけで停止しない。</li>
+<li><strong><code>trusted_key</code> は本テーブルに存在しない</strong>: <code>trusted</code> は <code>NTP_SERVER</code> / <code>NTP_KEY</code> の leaf (default <code>no</code>) であり <code>NTP|global</code> の管轄外。</li>
+<li><strong>差分検知</strong>: <code>ntp_global_update()</code> (hostcfgd:1344) は <code>cache == data</code> のとき no-op。<code>ntp_srv_key_update()</code> (hostcfgd:1383-1386) も同様。</li>
+</ul>
+<p>調査メモ詳細: <code>meta/_intermediate/cdb-flow/ntp-global-defaults.md</code></p>
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->
@@ -35322,7 +35447,7 @@
 <p>minigraph.py からの <code>NTP_GLOBAL</code> 自動派生はなし。<code>NTP_SERVER</code> のみ minigraph.py が自動設定する (iburst='on' 付き)。<code>NTP_GLOBAL</code> は CLI (<code>config ntp</code>) または <code>hostcfgd</code> のテンプレート生成で参照される。</p>
 <h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
 <p><code>NTP_GLOBAL</code> は orchagent では処理されない。<code>hostcfgd</code> が CONFIG_DB の <code>NTP</code>, <code>NTP_SERVER</code>, <code>NTP_KEY</code>, <code>LOOPBACK_INTERFACE</code> を購読し、<code>ntp.conf</code> テンプレートを再生成する (<code>hostcfgd:1278-1384</code>)。条件付き platform 登録なし。</p>
-<h3 id="_16">グレップカバレッジ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">グレップカバレッジ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
