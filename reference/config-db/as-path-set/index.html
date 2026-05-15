@@ -22298,6 +22298,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-aspathmgr-t2_group_asns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路 (AsPathMgr — 固定名 T2_GROUP_ASNS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-as_path_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路 (AS_PATH_SET テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 設計まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop-silent-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        silent drop / silent override 分類
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35068,6 +35129,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-aspathmgr-t2_group_asns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路 (AsPathMgr — 固定名 T2_GROUP_ASNS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-as_path_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路 (AS_PATH_SET テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry 設計まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop-silent-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        silent drop / silent override 分類
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35798,6 +35920,208 @@
 <p><strong>スキャン証跡</strong>: <code>managers_as_path.py</code> 全 67 行、<code>frrcfgd.py</code> AS_PATH_SET 関連箇所、<code>bgpd.conf.db.j2</code>、<code>sonic-routing-policy-sets.yang</code> action enum 定義部すべて読了。中間ファイル: <code>meta/_intermediate/cdb-flow/as-path-set-constants.md</code></p>
 </blockquote>
 <!-- /constants -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-bgpcfgd/bgpcfgd/managers_as_path.py</code> (AsPathMgr, <code>DEVICE_METADATA.localhost.t2_group_asns</code> 経路) と <code>sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> (AS_PATH_SET テーブル経路) の 2 経路を全行精読。retry セマンティクスは <code>bgpcfgd/manager.py</code> と <code>frrcfgd.py</code> ループに依存。</p>
+<h3 id="bgpcfgd-aspathmgr-t2_group_asns">bgpcfgd 経路 (AsPathMgr — 固定名 T2_GROUP_ASNS)<a class="headerlink" href="#bgpcfgd-aspathmgr-t2_group_asns" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key != "localhost"</code></td>
+<td><code>managers_as_path.py:31,61</code></td>
+<td>silent drop (<code>return True</code>)</td>
+<td>なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>data</code> に <code>t2_group_asns</code> キーなし</td>
+<td><code>managers_as_path.py:34-37</code></td>
+<td><code>new_asns=set()</code> → 既存 ASN を <strong>全削除</strong>として処理</td>
+<td><code>log_info</code> 削除毎</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>t2_group_asns=""</code> (空文字)</td>
+<td><code>managers_as_path.py:40</code></td>
+<td><code>"".split(",")</code> → <code>[""]</code> で <code>permit __</code> を push、FRR 側構文エラー</td>
+<td><code>log_info</code> ADD</td>
+<td>F3 経由 LOG_ERR</td>
+</tr>
+<tr>
+<td>再同期 regex (<code>bgp as-path access-list T2_GROUP_ASNS seq \d+ permit _(\d+)_</code>) マッチなし</td>
+<td><code>managers_as_path.py:43-49</code></td>
+<td><code>old_asns={}</code> → 既存削除フェーズ skip → FRR 側に重複残存 (silent leak)</td>
+<td>なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>cfg_mgr.update()</code> の vtysh <code>show running-config</code> 失敗</td>
+<td><code>frr.py:33-38</code></td>
+<td><code>log_crit</code> &amp; 空文字列返却。<code>get_text()</code> 空で既存削除全 skip</td>
+<td>LOG_CRIT</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>commit()</code> 段階で <code>vtysh -f</code> 失敗 (FRR daemon 不在等)</td>
+<td><code>frr.py:43-55</code></td>
+<td><code>log_err</code> 出力、tempfile (<code>g_debug=False</code> 時のみ削除) 残存可能性。<strong><code>set_handler</code> は push の戻り値しか見ないため成功扱い</strong></td>
+<td>LOG_ERR</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>set_handler</code> 構造的 retry 不在</td>
+<td><code>managers_as_path.py:58, 66</code></td>
+<td>常に <code>return True</code>。<code>Manager.handler</code> の <code>set_queue</code> には載らない (<code>manager.py:43-46</code>)</td>
+<td>—</td>
+<td><strong>retry なし(構造的)</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="frrcfgd-as_path_set">frrcfgd 経路 (AS_PATH_SET テーブル)<a class="headerlink" href="#frrcfgd-as_path_set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>args</code> 2 要素未満 (<code>name</code> / member list 欠落)</td>
+<td><code>frrcfgd.py:1010-1011</code></td>
+<td><code>return None</code> → 上位で <code>'failed to get upd cmd from value'</code> LOG_ERR、FRR 送信なし</td>
+<td>LOG_ERR</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>as_path_set_member</code> 空リスト (<code>len(args[1]) == 0</code>)</td>
+<td><code>frrcfgd.py:1016</code></td>
+<td>OP_DELETE 以外で <code>no bgp as-path access-list &lt;name&gt;</code> のみ実行、ADD ループ skip → <strong>silent な全消去</strong></td>
+<td>なし</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>OP_DELETE で <code>as_set_name</code> が <code>as_path_set_list</code> 未登録</td>
+<td><code>frrcfgd.py:1014</code></td>
+<td>cmd_list 空 → vtysh 呼び出しなし (silent skip)</td>
+<td>なし</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>startup スキャン時 <code>'as_path_set_member' in entry</code> False</td>
+<td><code>frrcfgd.py:2251</code></td>
+<td><code>as_path_set_list</code> 未登録 → 後続 DEL も silent skip</td>
+<td>なし</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>FRR コマンド (<code>permit &lt;regex&gt;</code>) rc != 0 — regex 構文不正等</td>
+<td><code>frrcfgd.py:763-766</code></td>
+<td><code>'failed running FRR command: &lt;cmd&gt;'</code> LOG_ERR &amp; <strong>同 SET 内の残りコマンドを break で打ち切り</strong>。<code>STAT_SUCC</code> 未付与</td>
+<td>LOG_ERR</td>
+<td>なし (再 SET 必要)</td>
+</tr>
+<tr>
+<td>bgpd socket 接続失敗 (初期化フェーズ)</td>
+<td><code>frrcfgd.py:185-198</code></td>
+<td>100ms 間隔で <strong>最大 100 回 (≒10 秒) リトライ</strong>後 <code>RuntimeError</code></td>
+<td>LOG_ERR + raise</td>
+<td><strong>あり (100 回)</strong></td>
+</tr>
+<tr>
+<td>bgpd socket 接続失敗 (main_loop 中)</td>
+<td><code>frrcfgd.py:194</code></td>
+<td><code>not main_loop</code> 条件で <strong>即座に諦め</strong></td>
+<td>LOG_ERR</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>bgpd への send / recv 失敗 (実行中切断)</td>
+<td><code>frrcfgd.py:263-271, 363-365</code></td>
+<td><code>socket writing failed</code> / <code>failed to send command to frr daemon</code> LOG_ERR → <code>run_vtysh_command</code> False → 上位で break</td>
+<td>LOG_ERR</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>bgpd 応答 ret_code != 0 (enable / vtysh)</td>
+<td><code>frrcfgd.py:212-215, 356</code></td>
+<td><code>enable command failed: ret_code=%d</code> / <code>failed running VTYSH command</code> LOG_ERR</td>
+<td>LOG_ERR</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>ignore_fail=True</code> 指定の vtysh コマンド</td>
+<td><code>frrcfgd.py:47-60, 759-762</code></td>
+<td>rc != 0 でも LOG_ERR 抑止し silent 成功扱い。AS_PATH_SET の hdl は tuple 返さないため通常該当せず</td>
+<td>なし</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>action: deny</code> 指定</td>
+<td><code>frrcfgd.py:1018</code>, <code>bgpd.conf.db.j2:16</code></td>
+<td><code>permit</code> ハードコードで <strong>silent override</strong>。<code>action</code> キーは読まれない</td>
+<td>なし</td>
+<td>n/a (DISCREPANCY)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="retry">retry 設計まとめ<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AsPathMgr (bgpcfgd)</strong>: <code>set_handler</code> が常に True を返すため、CONFIG_DB 監視ループからの自動再投入は <strong>完全に存在しない</strong>。<code>commit()</code> 失敗は LOG_ERR のみで永久に未反映。</li>
+<li><strong>frrcfgd</strong>: 個別 vtysh コマンド rc != 0 時は同 SET 内を break で打ち切るのみ。失敗 entry は <code>STAT_SUCC</code> に昇格せず、次回フルスキャン (<code>frrcfgd</code> 再起動 / 再 SET) で再評価。<strong>自動 retry は FRR daemon 接続のみ (起動時 100 回 / ≒10 秒)</strong>。</li>
+<li>どちらの経路も「永続化された失敗」を検知する telemetry がなく、運用上は <code>vtysh -c "show ip as-path-access-list"</code> と CONFIG_DB の照合が唯一の検出手段。</li>
+</ul>
+<h3 id="silent-drop-silent-override">silent drop / silent override 分類<a class="headerlink" href="#silent-drop-silent-override" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>該当ケース</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>silent drop (ログなし・無反映)</td>
+<td>非 <code>localhost</code> key, OP_DELETE で未登録名, member 欠落 entry, 再同期 regex 非マッチによる残骸</td>
+<td>CONFIG_DB と FRR 状態の乖離</td>
+</tr>
+<tr>
+<td>silent override</td>
+<td><code>action: deny</code> → <code>permit</code> に変換 (Phase E DISCREPANCY 再掲)</td>
+<td>YANG 上の意味と動作が乖離</td>
+</tr>
+<tr>
+<td>LOG_ERR + 後段 skip</td>
+<td><code>args</code> 不足, FRR コマンド rc != 0, socket send/recv 失敗, enable ret_code != 0, regex 不正</td>
+<td>syslog 監視必須</td>
+</tr>
+<tr>
+<td>LOG_CRIT</td>
+<td><code>vtysh show running-config</code> 失敗 (<code>FRR.get_config</code>)</td>
+<td>bgpcfgd 全 Manager に波及</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: managers_as_path.py:7,30-66; config.py:17-63; frr.py:33-55; manager.py:34-65; frrcfgd.py:47-60,185-198,263-271,354-365,1009-1020,2251,746,753-773 -->
+
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>managers_as_path.py</code> 全 67 行、<code>config.py</code> ConfigMgr 全体、<code>frr.py</code> get_config/write、<code>manager.py</code> handler/on_deps_change、<code>frrcfgd.py</code> の <code>g_run_command</code> / bgpd socket client / <code>run_command</code> / <code>hdl_aspath_set</code> / startup スキャン箇所すべて読了。中間ファイル: <code>meta/_intermediate/cdb-flow/as-path-set-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
 
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
