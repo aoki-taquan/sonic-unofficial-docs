@@ -353,4 +353,59 @@ YANG の `peer_type` フィールドは bgpcfgd 経路では **参照されな�
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md`
 <!-- /defaults -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### DEVICE_METADATA.bgp_asn 先行必須（最上位依存）
+
+`BGPPeerMgrBase` は `DEVICE_METADATA|localhost|bgp_asn` を依存 (`deps`) として登録する。この値が未設定のうちは `set_handler` が一切呼ばれない（Manager 基底クラスが deps 解決を待機）。bgp_asn を CONFIG_DB に書き込む前に BGP_NEIGHBOR を SET しても処理されない。<!-- evidence: managers_bgp.py:118-126 -->
+
+### LOOPBACK_INTERFACE|Loopback0 先行必須
+
+`add_peer()` は Loopback0 の IPv4 アドレスが `LOOPBACK_INTERFACE` ディレクトリに存在しない、かつ `DEVICE_METADATA.localhost.bgp_router_id` も未設定の場合 `return False`（再試行待ち）する。`LOOPBACK_INTERFACE|Loopback0|<ipv4_prefix>` を先に書き込むか、`bgp_router_id` を設定することが必要。<!-- evidence: managers_bgp.py:184-189 -->
+
+### local_addr が参照するインタフェース先行必須
+
+`local_addr` フィールドがある場合、対応する IP アドレスを持つインタフェースが `LOCAL|local_addresses` ディレクトリに未登録だと `add_peer` が `return False`。`local_addr` が未設定の場合は `log_warn` のみで追加を続行する（FRR が送信元を自動選択）。<!-- evidence: managers_bgp.py:194-202 -->
+
+### DEVICE_NEIGHBOR_METADATA 先行必須（use_neighbors_meta=true 環境）
+
+`general` タイプ（BGP_NEIGHBOR テーブル、`check_neig_meta=True`）かつ `constants.yml` の `bgp.use_neighbors_meta=true` が設定された環境では、`BGP_NEIGHBOR` の `name` フィールドが `DEVICE_NEIGHBOR_METADATA` に未登録だと `return False`。<!-- evidence: managers_bgp.py:128-143, 219-223 -->
+
+### BGP_GLOBALS 先行必須（frrcfgd 経路のみ）
+
+`frr_mgmt_framework_config = true` の環境（frrcfgd 経路）では、`BGP_GLOBALS|<vrf>` に `local_asn` が設定されていない状態で `BGP_NEIGHBOR|<vrf>|<neighbor>` を書き込むと frrcfgd はエントリを **サイレント無視**（LOG_DEBUG のみ）する。順序: `BGP_GLOBALS|<vrf>` (local_asn) → `BGP_NEIGHBOR|<vrf>|<neighbor>`。<!-- evidence: frrcfgd.py:2660-2666 -->
+
+### BGP_PEER_GROUP 先行必須（frrcfgd 経路 / peer_group_name 使用時）
+
+frrcfgd 経路で `peer_group_name` フィールドを持つ `BGP_NEIGHBOR` を SET する場合、対応する `BGP_PEER_GROUP|<vrf>|<pg_name>` が先に存在しなければならない。未存在の場合 `LOG_ERR: "invalid peer-group %s was referenced"` を出してスキップ（neighbor は未作成）。<!-- evidence: frrcfgd.py:2828-2832 -->
+
+### DEL → SET の短時間繰り返しによる session 一時断
+
+`del_handler` は `no neighbor <addr>` を FRR に即送し BGP NOTIFICATION を送信して session を即断する。DEL 直後に同一 neighbor を SET する場合、FRR は connect retry を開始する（bgpcfgd 経路では `timers connect 10` をハードコード発行）。BGP_GLOBALS レベルで `bgp graceful-restart` が設定されていても del_handler のフローは変わらない。<!-- evidence: managers_bgp.py:446-492, bgpd/templates/general/instance.conf.j2 -->
+
+### supervisord 起動順: bgpcfgd は bgpd 起動後に開始
+
+docker-fpm-frr 内の起動順: `rsyslogd` (p=1) → `zebra`/`mgmtd` (p=4) → `bgpd` (p=5) → `bgpcfgd` / `fpmsyncd` (p=6, `dependent_startup_wait_for=bgpd:running`)。bgpd が running になるまで bgpcfgd は起動せず FRR への BGP_NEIGHBOR 反映も始まらない。boot 時の BGP_NEIGHBOR 書込みは bgpcfgd 起動後まで遅延する。<!-- evidence: docker-fpm-frr/frr/supervisord/supervisord.conf.j2:167-179 -->
+
+### warm-restart: EOR 待機と自動 replay
+
+warm-reboot 時、`WARM_RESTART.bgp.bgp_eoiu = "true"` が設定されていると `bgp_eoiu_marker` が BGP EOR (End-of-RIB) 状態を監視し、STATE_DB の `BGP_STATE_TABLE|IPv4(IPv6)|eoiu|state=reached` を書き込むまで fpmsyncd が経路 reconcile を保留する（最大 120 秒タイムアウト）。bgpcfgd 自体はインメモリの `self.peers` を FRR running-config (`show bgp vrfs json`) から再読み込みして起動し、CONFIG_DB の全 BGP_NEIGHBOR エントリを replay して自動復元する。<!-- evidence: bgp_eoiu_marker.py:1-206, managers_bgp.py:571-597, supervisord.conf.j2:239-253 -->
+
+### 順序依存サマリ
+
+| # | 依存関係 | 対象パス | 違反時の挙動 |
+|---|----------|---------|------------|
+| 1 | `DEVICE_METADATA.localhost.bgp_asn` 先行 | bgpcfgd 全経路 | deps 未解決 → set_handler 呼ばれず（無限待機） |
+| 2 | `LOOPBACK_INTERFACE\|Loopback0\|<ipv4>` または `bgp_router_id` 先行 | bgpcfgd 経路 | `add_peer` return False（再試行待ち） |
+| 3 | `local_addr` 対応インタフェース先行 | bgpcfgd 経路 | `add_peer` return False（再試行待ち） |
+| 4 | `DEVICE_NEIGHBOR_METADATA\|<name>` 先行 | bgpcfgd / use_neighbors_meta=true 時 | return False（再試行待ち） |
+| 5 | `BGP_GLOBALS\|<vrf>` (local_asn) 先行 | frrcfgd 経路のみ | LOG_DEBUG / サイレント無視 |
+| 6 | `BGP_PEER_GROUP\|<vrf>\|<pg>` 先行 | frrcfgd 経路 / peer_group_name 使用時 | LOG_ERR / neighbor 未作成 |
+| 7 | DEL → SET 短時間繰り返し | 全経路 | BGP session 一時断（connect retry 10 秒） |
+| 8 | bgpd running → bgpcfgd 起動 | 起動時（supervisord） | bgpcfgd は bgpd 起動前に FRR 操作不可 |
+| 9 | warm-restart EOR 待機 | warm-reboot 時 | fpmsyncd が経路 reconcile を最大 120 秒保留 |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-ordering.md`
+<!-- /ordering -->
 <!-- glossary-links-injected: 9133f44230c2 -->
