@@ -289,6 +289,90 @@ YANG leafref が存在しないため、これら参照はいずれも実行時�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+APPL_DB `FDB_TABLE` の書込主体である `FdbOrch::doTask(Consumer&)` / `addFdbEntry()` / `removeFdbEntry()` (`sonic-swss/orchagent/fdborch.cpp`) を全行精読し、書込失敗・retry・silent-ignore 経路を抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-failure.md`。
+
+### 失敗パス一覧
+
+| # | トリガー | 検出箇所 | 結果 | retry / 救済 |
+|---|---------|---------|------|------|
+| 1 | `allPortsReady()` が false | `fdborch.cpp:711-714` | `doTask()` 冒頭 `return` で全 FDB イベント処理停止。`m_toSync` 滞留 | あり (Orch スケジューラ次回呼出で再評価。無限ポーリング) |
+| 2 | key の `<VlanName>` に対応する VLAN 未作成 | `fdborch.cpp:738-761` | SET は `it++` で次周回再試行。DEL は `deleteFdbEntryFromSavedFDB()` だけ実行して erase | SET: 自動ポーリング。DEL: 冪等成功 |
+| 3 | `port` 未作成 / `bridge_port_id == SAI_NULL_OBJECT_ID` | `addFdbEntry()` `fdborch.cpp:1297-1304` | `saved_fdb_entries[port_name]` に push し **`return true`** (`m_toSync` から消える) | あり (PortsOrch observer 経由 `updateVlanMember(add=true)` で**自動 replay**) |
+| 4 | `port` が VLAN メンバーでない (`isVlanMember()` 失敗) | `addFdbEntry()` `fdborch.cpp:1312-1319` | 同上 `saved_fdb_entries` に保留 → `return true` | あり (`updateVlanMember()` 通知で自動 replay) |
+| 5 | VXLAN_FDB_TABLE 経路で `remote_ip` 空 | `doTask()` `fdborch.cpp:838-841` | `m_toSync.erase` で **破棄** (保留せず) | なし。再投入が必要 |
+| 6 | VXLAN_FDB_TABLE 経路で VTEP / tunnel 未作成 | `doTask()` `fdborch.cpp:847-855` | 同上 `m_toSync.erase` で破棄 | なし。tunnel 先行作成必須 |
+| 7 | 不正な `type` 値 (`"dynamic"`/`"dynamic_local"`/`"static"` 以外) | `doTask()` `fdborch.cpp:830` `assert()` | **orchagent プロセスクラッシュ** (debug ビルド)。NDEBUG ビルドでは silent 通過し SAI 型 mapping で STATIC に倒れる | なし (fail-fast 設計) |
+| 8 | 不正な VNI (`stoi` 例外) | `doTask()` `fdborch.cpp:818-823` | `SWSS_LOG_INFO` → `vni=0; break`。後続処理続行 | なし (`vni=0` で投入) |
+| 9 | 不正な remote IP (parse 例外) | `doTask()` `fdborch.cpp:802-807` | `SWSS_LOG_NOTICE` → `break`。`remote_ip` 空のまま #5 に合流 | なし |
+| 10 | SAI `create_fdb_entry()` 失敗 (新規) | `addFdbEntry()` (L1519 周辺) | `SWSS_LOG_ERROR` → `handleSaiCreateStatus(SAI_API_FDB, ...)` | あり (一時エラー)。恒久エラーは `parseHandleSaiStatusFailure()` で process exit |
+| 11 | SAI `set_fdb_entry_attribute()` 失敗 (MAC update) | `addFdbEntry()` `fdborch.cpp:1505-1517` | 同上 `handleSaiSetStatus()` | あり (同上) |
+| 12 | SAI `remove_fdb_entry()` 失敗 | `removeFdbEntry()` `fdborch.cpp:1701-1710` | `SWSS_LOG_ERROR` → `handleSaiRemoveStatus()` (`FIXME` コメントあり) | 状況依存 |
+| 13 | DEL で `fdbData.origin != origin` (異 origin DEL) | `removeFdbEntry()` `fdborch.cpp:1666-1690` | `deleteFdbEntryFromSavedFDB()` のみ呼んで `return true` (**silently ignored**)。例外: MCLAG ピアポート oper-down 時のみ LEARN として削除続行 | なし (設計上の silent ignore) |
+| 14 | DEL で `m_entries` に未登録 MAC | `removeFdbEntry()` `fdborch.cpp:1646-1654` | `SWSS_LOG_INFO`。`saved_fdb_entries` クリーンアップして `return true` (冪等) | n/a |
+| 15 | DEL で `getPortByBridgePortId()` 失敗 | `removeFdbEntry()` `fdborch.cpp:1659-1663` | `SWSS_LOG_NOTICE` → `return false` (`m_toSync` 残置) | あり (次周回再試行) |
+| 16 | DEL で `getPort(bv_id, vlan)` 失敗 | `removeFdbEntry()` `fdborch.cpp:1640-1644` | `SWSS_LOG_NOTICE` → `return false` | あり |
+| 17 | 不明 op_type (SET/DEL 以外) | `doTask()` `fdborch.cpp:917-918` | `SWSS_LOG_ERROR` → `m_toSync.erase` で破棄 | なし |
+
+### VLAN/PORT 未準備時の自動 retry 構造
+
+VLAN 未解決の SET は `m_toSync` に残し続けて Orch 次周回で再評価される (`fdborch.cpp:738-761`)。
+PORT 未準備 / VLAN メンバー未満足の SET は `saved_fdb_entries[port_name]` に保留し、
+PortsOrch observer (`m_portsOrch->attach(this)` `fdborch.cpp:39`) からの `updateVlanMember(add=true)`
+通知で `addFdbEntry()` を再実行することで完了する (`fdborch.cpp:1240-1275`)。
+**明示的な sleep / backoff は存在せず**、orchagent の select-loop 駆動。
+
+```cpp
+// fdborch.cpp:1297-1320  (要約)
+if (!m_portsOrch->getPort(port_name, port) || (port.m_bridge_port_id == SAI_NULL_OBJECT_ID)) {
+    saved_fdb_entries[port_name].push_back({entry.mac, vlan.m_vlan_info.vlan_id, fdbData});
+    return true;       // m_toSync から消える (= 成功扱い)
+}
+if (!m_portsOrch->isVlanMember(vlan, port, end_point_ip)) {
+    saved_fdb_entries[port_name].push_back({...});
+    return true;
+}
+```
+
+VXLAN 経路 (`FDB_ORIGIN_VXLAN_ADVERTIZED`) のみ `saved_fdb_entries` 救済対象外で、
+`remote_ip` 空 / VTEP 未作成は `m_toSync.erase` で**破棄**される。BGP/EVPN による再 advertise 待ち。
+
+### SAI 失敗時の共通 handler
+
+`addFdbEntry()` / `removeFdbEntry()` は **FdbOrch 固有の retry queue を持たず**、
+Orch 基底クラスの `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus`
+に処理を委譲する。返り値:
+
+- `task_success` — 成功 / 無視可能
+- `task_need_retry` — `m_toSync` 残置で次周回再試行
+- `task_failed` — 当該イベント破棄
+- それ以外 → `parseHandleSaiStatusFailure()` で **`abort()` 相当のプロセス終了**
+
+### type 不一致による silent ignore
+
+CONFIG_DB / APPL_DB 経由で `type=static` のエントリを投入後、別 origin
+（例: `VXLAN_FDB_TABLE` から）で同じ MAC を DEL しても
+`removeFdbEntry()` L1666-1690 で `origin` 不一致と判定され、
+`SWSS_LOG_INFO` のみで成功扱いとなり実エントリは残存する。
+**投入と同じ origin から DEL する**ことが必須。APPL_DB を直接 DEL するクライアントは
+origin を区別できない点に注意。
+
+### 観測手段
+
+```bash
+# 失敗ログ抽出
+docker logs swss 2>&1 | grep -iE 'fdborch|Failed to (create|remove) FDB|Saving a fdb entry'
+
+# saved_fdb / warm restart 状態
+docker logs swss 2>&1 | grep -i 'saved.*fdb\|Add warm input FDB State'
+```
+
+`FdbOrch` は STATE_DB の `ERROR_*` 系には書込まないため、失敗の参照点は syslog のみ。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/schema.h:52` — `#define APP_FDB_TABLE_NAME "FDB_TABLE"`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
