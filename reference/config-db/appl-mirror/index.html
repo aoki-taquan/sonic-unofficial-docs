@@ -23963,7 +23963,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G) — ZMQ 経由の購読
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G) — ZMQ 経由の購読">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        転送経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis keyspace ベースとの差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンストラクタの構造的証拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -23974,7 +24024,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23985,7 +24035,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23996,7 +24046,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34425,7 +34475,57 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G) — ZMQ 経由の購読
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G) — ZMQ 経由の購読">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        転送経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis keyspace ベースとの差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コンストラクタの構造的証拠
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34436,7 +34536,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34447,7 +34547,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34458,7 +34558,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34496,7 +34596,7 @@
 <h1 id="appl_db-fixed_mirror_session_table-p4rt">APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)<a class="headerlink" href="#appl_db-fixed_mirror_session_table-p4rt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>APPL_DB FIXED_MIRROR_SESSION_TABLE</code> は <a href="../../glossary/#term-p4rt">P4RT</a> ランタイムが書き込む ERSPAN ミラーセッション定義テーブル。
-<code>p4orch</code> 内の <code>MirrorSessionManager</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> MIRROR_SESSION オブジェクトに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<code>p4orch</code> 内の <code>MirrorSessionManager</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> を購読し、<a href="../../glossary/#term-sai">SAI</a> MIRROR_SESSION オブジェクトに変換する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">6</a></sup>。</p>
 <p>通常の CONFIG_DB <code>MIRROR_SESSION</code> テーブルとは独立したパスであり、P4RT 経由のプログラムにのみ利用される。
 セッションタイプは常に <strong>ERSPAN (Enhanced Remote SPAN)</strong> に固定され、GRE トンネルパラメータをすべて明示的に指定する必要がある。</p>
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
@@ -34573,12 +34673,12 @@
 </tr>
 </tbody>
 </table>
-<p>全フィールドが必須。1 つでも欠けると <code>processAddRequest()</code> が <code>SWSS_RC_INVALID_PARAM</code> を返しセッションは作成されない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p>全フィールドが必須。1 つでも欠けると <code>processAddRequest()</code> が <code>SWSS_RC_INVALID_PARAM</code> を返しセッションは作成されない<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">7</a></sup>。</p>
 <h2 id="_3">制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>param/port</code> は物理ポート (<code>Port::Type::PHY</code>) のみ有効。VLAN / PortChannel は拒否される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</li>
-<li><code>action</code> は <code>mirror_as_ipv4_erspan</code> のみ有効。他の値は <code>SWSS_RC_INVALID_PARAM</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</li>
-<li>APPL_DB のキー形式は JSON エンコード。パース失敗時は <code>SWSS_RC_INVALID_PARAM</code><sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</li>
+<li><code>param/port</code> は物理ポート (<code>Port::Type::PHY</code>) のみ有効。VLAN / PortChannel は拒否される<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">8</a></sup>。</li>
+<li><code>action</code> は <code>mirror_as_ipv4_erspan</code> のみ有効。他の値は <code>SWSS_RC_INVALID_PARAM</code><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">9</a></sup>。</li>
+<li>APPL_DB のキー形式は JSON エンコード。パース失敗時は <code>SWSS_RC_INVALID_PARAM</code><sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">9</a></sup>。</li>
 <li>更新時は個別フィールドを部分的に送信できる (<code>has_*</code> フラグで管理)。</li>
 </ul>
 <!-- defaults -->
@@ -34653,36 +34753,114 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 <code>0x00</code> (= 0) は有効値として受け付けられるが、フィールド自体の省略は <code>has_ttl=false</code> / <code>has_tos=false</code> のまま ADD を発行することになり <code>SWSS_RC_INVALID_PARAM</code> が返る。</p>
 <!-- /defaults -->
 
-<h2 id="_4">購読者<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- pubsub -->
+<h2 id="phase-g-zmq">通信メカニズム (Phase G) — ZMQ 経由の購読<a class="headerlink" href="#phase-g-zmq" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/p4orch/p4orch.h L46 / p4orch.cpp L36-43, L80, L126-200 / orchagent/orchdaemon.cpp L848-849 / p4orch/mirror_session_manager.cpp L82, L111 -->
+
+<p><code>FIXED_MIRROR_SESSION_TABLE</code> は <strong>通常の redis ConsumerStateTable / keyspace 通知パスではなく、専用 ZMQ チャネル経由で配送される</strong>。
+これは CONFIG_DB <code>MIRROR_SESSION</code> を購読する <code>MirrorOrch</code>（<code>orchagent/mirrororch.cpp</code> — 通常の <code>Orch</code> + <code>ConsumerStateTable</code>）とは根本的に異なる通信モデルである<sup id="fnref:pubsub-1"><a class="footnote-ref" href="#fn:pubsub-1">1</a></sup>。</p>
+<h3 id="_4">転送経路<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>クラス / 実体</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>受信エンドポイント</td>
+<td><code>swss::ZmqServer</code> (<code>m_p4OrchZmqServer</code>, エンドポイント <code>m_p4OrchZmqServerEp</code>)</td>
+<td>P4RT クライアントからの ZMQ フレームを受信</td>
+</tr>
+<tr>
+<td>Orch 基底</td>
+<td><code>P4Orch : public ZmqOrch</code></td>
+<td>全 P4RT テーブルを 1 インスタンスで保有。<code>ZmqOrch(db, tableNames, zmqServer, orderedQueue=true, dbPersistence=false)</code> で初期化<sup id="fnref:pubsub-2"><a class="footnote-ref" href="#fn:pubsub-2">2</a></sup></td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>P4Orch::doTask(ConsumerBase &amp;consumer)</code></td>
+<td>バッチ受信時に <code>table_name == APP_P4RT_TABLE_NAME</code> を検証し、<code>m_p4TableToManagerMap</code> でテーブル別マネージャに振り分け<sup id="fnref:pubsub-3"><a class="footnote-ref" href="#fn:pubsub-3">3</a></sup></td>
+</tr>
+<tr>
+<td>ハンドラ</td>
+<td><code>p4orch::MirrorSessionManager</code></td>
+<td><code>APP_P4RT_MIRROR_SESSION_TABLE_NAME</code> (= <code>"FIXED_MIRROR_SESSION_TABLE"</code>) で登録<sup id="fnref:pubsub-4"><a class="footnote-ref" href="#fn:pubsub-4">4</a></sup></td>
+</tr>
+<tr>
+<td>応答パス</td>
+<td><code>ResponsePublisher m_publisher("APPL_DB", buffered=true, db_write_thread=true, zmqServer)</code></td>
+<td>処理結果ステータスを同じ <code>ZmqServer</code> 経由で P4RT に返す<sup id="fnref:pubsub-5"><a class="footnote-ref" href="#fn:pubsub-5">5</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h3 id="redis-keyspace">redis keyspace ベースとの差異<a class="headerlink" href="#redis-keyspace" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>p4orch</code> 内の <code>MirrorSessionManager</code> (<code>orchagent/p4orch/mirror_session_manager.cpp</code>)</li>
-<li>CONFIG_DB <code>MIRROR_SESSION</code> テーブルの <code>MirrorOrch</code> とは独立した別経路</li>
+<li><code>Consumer</code> / <code>ConsumerStateTable</code> の redis SUBSCRIBE / keyspace 通知は <strong>使わない</strong>。トリガは redis イベントではなく ZMQ フレーム受信である。</li>
+<li>そのため <code>redis-cli psubscribe '__keyspace@*__:FIXED_MIRROR_SESSION_TABLE*'</code> 等での観測はできない。</li>
+<li>P4RT クライアントは ZMQ ソケットに対して書き込み、orchagent 側 <code>ZmqServer</code> がキューに積み、<code>P4Orch::doTask</code> が同期的にドレインする。</li>
+<li>APPL_DB への書き込みは <code>ResponsePublisher</code> 経由で行われるが、これは下流リーダのための副作用であり、購読のトリガではない。</li>
 </ul>
-<h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="_5">コンストラクタの構造的証拠<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// orchagent/p4orch/p4orch.cpp:36-43</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">P4Orch</span><span class="o">::</span><span class="n">P4Orch</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">*</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">               </span><span class="n">ZmqServer</span><span class="o">*</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">VRFOrch</span><span class="o">*</span><span class="w"> </span><span class="n">vrfOrch</span><span class="p">,</span><span class="w"> </span><span class="n">CoppOrch</span><span class="o">*</span><span class="w"> </span><span class="n">coppOrch</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">ZmqOrch</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="cm">/*orderedQueue=*/</span><span class="nb">true</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">              </span><span class="cm">/*dbPersistence=*/</span><span class="nb">false</span><span class="p">),</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="n">m_zmqServer</span><span class="p">(</span><span class="n">zmqServer</span><span class="p">),</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="n">m_publisher</span><span class="p">(</span><span class="s">&quot;APPL_DB&quot;</span><span class="p">,</span><span class="w"> </span><span class="cm">/*bool buffered=*/</span><span class="nb">true</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">                  </span><span class="cm">/*db_write_thread=*/</span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>MirrorOrch</code>（CONFIG_DB 側）のコンストラクタは <code>Orch(confDbConnector.first, confDbConnector.second)</code> を呼ぶだけで <code>ZmqServer</code> を一切受け取らない。両経路は構造的に完全に独立している<sup id="fnref2:pubsub-1"><a class="footnote-ref" href="#fn:pubsub-1">1</a></sup>。</p>
+<!-- /pubsub -->
+
+<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>p4orch</code> 内の <code>MirrorSessionManager</code> (<code>orchagent/p4orch/mirror_session_manager.cpp</code>)。<code>P4Orch::doTask(ConsumerBase&amp;)</code> から ZMQ 経由で配送される</li>
+<li>CONFIG_DB <code>MIRROR_SESSION</code> テーブルの <code>MirrorOrch</code> とは独立した別経路（redis ConsumerStateTable ベース）</li>
+</ul>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../mirror-session/">CONFIG_DB MIRROR_SESSION</a> — 通常の SPAN/ERSPAN セッション設定 (CLI 経由)</li>
 <li>P4RT: <code>APP_P4RT_MIRROR_SESSION_TABLE_NAME = "FIXED_MIRROR_SESSION_TABLE"</code> (<code>sonic-swss-common/common/schema.h:70</code>)</li>
 </ul>
-<h2 id="_6">確認コマンド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># APPL_DB の FIXED_MIRROR_SESSION_TABLE を確認</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE*&#39;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE|{&quot;match/mirror_session_id&quot;:&quot;my_session&quot;}&#39;</span>
+<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># APPL_DB の FIXED_MIRROR_SESSION_TABLE を確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE*&#39;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE|{&quot;match/mirror_session_id&quot;:&quot;my_session&quot;}&#39;</span>
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:pubsub-1">
+<p>CONFIG_DB 側 <code>MirrorOrch</code> の通常 Orch 経路: <code>orchagent/mirrororch.cpp</code> L79-110. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/mirrororch.cpp#L79-L110">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/mirrororch.cpp#L79-L110</a>&#160;<a class="footnote-backref" href="#fnref:pubsub-1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:pubsub-1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pubsub-2">
+<p><code>P4Orch : public ZmqOrch</code>: <code>orchagent/p4orch/p4orch.h</code> L46. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/p4orch/p4orch.h#L46">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/p4orch/p4orch.h#L46</a>. コンストラクタ: <code>orchagent/p4orch/p4orch.cpp</code> L36-43.&#160;<a class="footnote-backref" href="#fnref:pubsub-2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pubsub-3">
+<p><code>P4Orch::doTask(ConsumerBase&amp;)</code> 振り分け: <code>orchagent/p4orch/p4orch.cpp</code> L126-200. <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/p4orch/p4orch.cpp#L126-L200">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/p4orch/p4orch.cpp#L126-L200</a>&#160;<a class="footnote-backref" href="#fnref:pubsub-3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pubsub-4">
+<p>ZmqServer 生成と <code>MirrorSessionManager</code> 登録: <code>orchagent/orchdaemon.cpp</code> L848-849, <code>orchagent/p4orch/p4orch.cpp</code> L80.&#160;<a class="footnote-backref" href="#fnref:pubsub-4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pubsub-5">
+<p>応答 publish: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L82, L111.&#160;<a class="footnote-backref" href="#fnref:pubsub-5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p><code>MirrorSessionManager</code> 説明: <code>orchagent/p4orch/mirror_session_manager.h</code> L69-70. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.h#L69-L70">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.h#L69-L70</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>MirrorSessionManager</code> 説明: <code>orchagent/p4orch/mirror_session_manager.h</code> L69-70. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.h#L69-L70">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.h#L69-L70</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>processAddRequest()</code> の必須フィールドチェック: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L339-363. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L339-L363">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L339-L363</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>processAddRequest()</code> の必須フィールドチェック: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L339-363. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L339-L363">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L339-L363</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>物理ポート制約: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L124-135. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>物理ポート制約: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L124-135. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p><code>deserializeP4MirrorSessionAppDbEntry()</code>: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L190-323. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p><code>deserializeP4MirrorSessionAppDbEntry()</code>: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L190-323. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

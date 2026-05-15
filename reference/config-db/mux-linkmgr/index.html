@@ -26944,6 +26944,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -26978,7 +27006,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35084,6 +35112,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールド暗黙デフォルト (Phase A — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="フィールド暗黙デフォルト (Phase A — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-67" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35118,7 +35174,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         グレップカバレッジ
@@ -35513,13 +35569,122 @@
 
 <!-- glossary-links-injected: b1f2d0ff40fd -->
 
+<!-- defaults -->
+<h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG はほぼすべての MUX_LINKMGR フィールドに <code>default</code> を持たない (例外: <code>oscillation_enabled = true</code>, <code>kill_radv = True</code>)。CONFIG_DB に該当キーが無い場合は <code>linkmgrd</code> (<code>sonic-linkmgrd/src/common/MuxConfig.h</code>) の <strong>C++ メンバ初期化子で焼かれた値</strong> がそのまま有効になる。詳細・派生注意点は <code>meta/_intermediate/cdb-flow/mux-linkmgr-defaults.md</code> を参照。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>container</th>
+<th>コード由来デフォルト</th>
+<th>出典 (linkmgrd)</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>interval_v4</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>100</code> ms</td>
+<td><code>MuxConfig.h:487</code> (<code>mTimeoutIpv4_msec</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>interval_v6</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>1000</code> ms</td>
+<td><code>MuxConfig.h:488</code> (<code>mTimeoutIpv6_msec</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>positive_signal_count</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>1</code></td>
+<td><code>MuxConfig.h:490</code> (<code>mPositiveStateChangeRetryCount</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>negative_signal_count</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>3</code></td>
+<td><code>MuxConfig.h:491</code> (<code>mNegativeStateChangeRetryCount</code>)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>suspend_timer</code></td>
+<td><code>LINK_PROBER</code></td>
+<td>setter は <code>500</code> ms 初期化、getter は <code>(neg+1)*interval_v4</code> を計算で返す</td>
+<td><code>MuxConfig.h:493,308</code></td>
+<td>setter 値はデッドストア疑い</td>
+</tr>
+<tr>
+<td><code>interval_pck_loss_count_update</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>300</code>、下限 <code>50</code> で clamp</td>
+<td><code>MuxConfig.h:492,131</code></td>
+<td><code>50</code> 未満は <code>50</code> に丸め</td>
+</tr>
+<tr>
+<td><code>use_well_known_mac</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>true</code> (Active-Active 経路の内部 bool)</td>
+<td><code>MuxConfig.h:506</code> (<code>mUseWellKnownMacActiveActive</code>)</td>
+<td>YANG enum <code>enabled</code>/<code>disabled</code> だがコードは <code>v == "enable"</code> で判定 — 文字列ミスマッチで常に false</td>
+</tr>
+<tr>
+<td><code>src_mac</code></td>
+<td><code>LINK_PROBER</code></td>
+<td><code>false</code> (= <code>VlanMac</code>)</td>
+<td><code>MuxConfig.h:508</code> (<code>mEnableUseTorMac</code>)</td>
+<td>DB 値は <code>v == "ToRMac"</code> のときのみ真</td>
+</tr>
+<tr>
+<td><code>oscillation_enabled</code></td>
+<td><code>TIMED_OSCILLATION</code></td>
+<td><code>true</code></td>
+<td><code>MuxConfig.h:497</code> (<code>mEnableTimedOscillationWhenNoHeartbeat</code>)</td>
+<td>YANG <code>default true</code> と一致</td>
+</tr>
+<tr>
+<td><code>interval_sec</code></td>
+<td><code>TIMED_OSCILLATION</code></td>
+<td><code>300</code> 秒、下限 <code>300</code> で clamp</td>
+<td><code>MuxConfig.h:498,338</code></td>
+<td><code>force=false</code> のため <code>300</code> 以下は丸め</td>
+</tr>
+<tr>
+<td><code>log_verbosity</code></td>
+<td><code>MUXLOGGER</code></td>
+<td><code>info</code></td>
+<td><code>MuxLogger.h:250</code> (<code>mLevel</code>)</td>
+<td>起動 CLI 既定は <code>debug</code> (<code>LinkMgrdMain.cpp:46</code>)</td>
+</tr>
+<tr>
+<td><code>kill_radv</code></td>
+<td><code>SERVICE_MGMT</code></td>
+<td>linkmgrd は処理せず (<code>DbInterface.cpp</code> に分岐なし)</td>
+<td>—</td>
+<td>YANG <code>default True</code> がコンフィグ生成系経由で効くのみ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">補足<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>processMuxLinkmgrConfigNotifiction()</code> (<code>DbInterface.cpp:1120-1214</code>) は <code>LINK_PROBER</code> / <code>MUXLOGGER</code> / <code>TIMED_OSCILLATION</code> の 3 キーのみ分岐を持つ。<code>SERVICE_MGMT</code> (<code>kill_radv</code>) はこの handler に到達しない。</li>
+<li><code>use_well_known_mac</code> フィールドの YANG enum (<code>enabled</code> / <code>disabled</code>) と linkmgrd 側の比較文字列 (<code>"enable"</code>) は末尾 <code>d</code> が不一致。CONFIG_DB に YANG どおり <code>enabled</code> を書いてもコードでは false に評価され、常に動的 MAC が使われる (実装バグ疑い)。</li>
+<li><code>interval_sec</code> / <code>interval_pck_loss_count_update</code> は setter 内で下限 clamp されるため、デフォルト未満の値を書いても期待どおりに反映されない。</li>
+<li><code>log_verbosity</code> は <code>MuxLogger::isLinkToSwssLogger()</code> が真の場合、<code>updateLogVerbosity(v)</code> は呼ばれず SwSS ログバックエンドの設定が優先される。</li>
+</ul>
+<!-- /defaults -->
+
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
 <p><code>MUX_LINKMGR</code> への自動派生はなし。init_cfg.json.j2 および minigraph.py からの直接書き込みなし。<code>linkmgrd</code> デーモンが起動時に <code>oscillation_enabled</code> / <code>kill_radv</code> のデフォルト値を CONFIG_DB に書き込む場合がある (<code>oscillation_enabled</code> デフォルト <code>true</code>、<code>kill_radv</code> デフォルト <code>True</code>)。</p>
 <h3 id="phase-7">Phase 7: 条件付き登録<a class="headerlink" href="#phase-7" title="Permanent link">&para;</a></h3>
 <p><code>MUX_LINKMGR</code> は orchagent では処理されない。<code>linkmgrd</code> (sonic-linkmgrd) が CONFIG_DB を直接購読する。orchdaemon.cpp の条件付き登録なし。</p>
-<h3 id="_17">グレップカバレッジ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">グレップカバレッジ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

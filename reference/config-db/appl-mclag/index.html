@@ -24379,7 +24379,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccp-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICCP 切断時の retry 構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write 失敗時の挙動 (iccpd 向け)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 書込失敗 (下流) との分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35280,7 +35352,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccp-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICCP 切断時の retry 構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write 失敗時の挙動 (iccpd 向け)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 書込失敗 (下流) との分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36403,12 +36547,139 @@ key 構造やフィールド値として CONFIG_DB の他テーブルのオブ�
 </blockquote>
 <!-- /cross-refs -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>APPL_DB MCLAG/ICCP 系テーブルの書込主体である <code>mclagsyncd</code> の失敗・retry 分岐を整理する<sup id="fnref17:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。</p>
+<h3 id="_11">失敗パス一覧<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>トリガー</th>
+<th>発生箇所</th>
+<th>結果</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ICCP セッション切断 (read EOF)</td>
+<td><code>readData()</code> <code>mclaglink.cpp:1883-1885</code> → <code>throw MclagConnectionClosedException</code></td>
+<td>outer <code>catch</code> で <code>MclagLink</code> 破棄 → 即 <code>accept()</code> 再呼出。書込済 APPL_DB エントリは保持</td>
+<td>あり (無限・即時、sleep 無し)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>read システムエラー / 不正メッセージ</td>
+<td><code>mclaglink.cpp:1886-1887, 1901-1902</code> → <code>throw system_error</code></td>
+<td><code>mclagsyncd.cpp:116-120</code> <code>catch (const exception&amp;)</code> → <strong><code>return 0</code></strong> でデーモン終了</td>
+<td>supervisord による再起動</td>
+</tr>
+<tr>
+<td>3</td>
+<td>iccpd 向け write バッファフル / 失敗</td>
+<td><code>mclagsyncdSendFdbEntries</code> 他 (<code>mclaglink.cpp:589-594, 617-620, 870-874, 897-900, 1057-1061, 1081-1084, 1150-1154, 1175-1178, 1256-1260, 1280-1283</code>)</td>
+<td><code>SWSS_LOG_ERROR</code> のみで処理続行。iccpd への通知が欠落</td>
+<td>なし (次イベント駆動)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>無効 op_type / 不明 mlag_id</td>
+<td><code>mclaglink.cpp:1302, 1348, 1363, 1404, 1419, 1452, 1466, 1498, 1575, 1590, 1625, 1639, 1678, 1691, 1725, 1738</code></td>
+<td><code>SWSS_LOG_ERROR("Invalid option type ...")</code> → <code>return</code>。当該メッセージのみスキップ</td>
+<td>なし (iccpd 再送待ち)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CONFIG_DB <code>DEVICE_METADATA.mac</code> 未取得</td>
+<td><code>mclagsyncdFetchSystemMacFromConfigdb</code> <code>mclaglink.cpp:127-128</code></td>
+<td><code>SWSS_LOG_ERROR</code> → <code>return</code>。<code>m_system_mac</code> 空</td>
+<td>outer loop 次回の再 fetch</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>setFdbEntry</code> で不明 <code>MCLAG_FDB_TYPE_*</code></td>
+<td><code>mclaglink.cpp:487-492</code></td>
+<td><code>fdb.type=""</code> のまま APPL_DB に書込 → 下流 <code>fdborch</code> で reject</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>7</td>
+<td>port 未準備 (下流)</td>
+<td><code>fdborch</code> 等が <code>m_portsOrch-&gt;getPort()</code> 失敗</td>
+<td><code>task_need_retry</code>。<code>mclagsyncd</code> 側 APPL_DB エントリは残る</td>
+<td>あり (orchagent <code>SELECT_TIMEOUT = 1000</code> ms 駆動)<sup id="fnref2:orch"><a class="footnote-ref" href="#fn:orch">5</a></sup></td>
+</tr>
+<tr>
+<td>8</td>
+<td>SAI 書込失敗 (下流)</td>
+<td><code>isolationGroupOrch</code> / <code>fdborch</code> / <code>aclOrch</code> の <code>handleSaiCreateStatus</code> 系</td>
+<td>一時エラーは <code>task_need_retry</code>、恒久は <code>task_failed</code>。<code>mclagsyncd</code> にはフィードバック無し</td>
+<td>下流 orch 依存</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>accept</code> / <code>socket</code> / <code>bind</code> / <code>listen</code> 失敗</td>
+<td><code>mclaglink.cpp:1755-1786, 1853-1854</code></td>
+<td><code>throw system_error</code> → outer catch で <code>return 0</code></td>
+<td>supervisord による再起動</td>
+</tr>
+</tbody>
+</table>
+<h3 id="iccp-retry">ICCP 切断時の retry 構造<a class="headerlink" href="#iccp-retry" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd.cpp:44-121</code> の外側 <code>while(1)</code> が retry loop を兼ねる:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="n">Select</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">        </span><span class="n">MclagLink</span><span class="w"> </span><span class="nf">mclag</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span><span class="w">             </span><span class="c1">// server socket bind/listen</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="n">mclag</span><span class="p">.</span><span class="n">mclagsyncdFetchSystemMacFromConfigdb</span><span class="p">();</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span><span class="n">mclag</span><span class="p">.</span><span class="n">accept</span><span class="p">();</span><span class="w">                  </span><span class="c1">// iccpd 接続待ち (blocking)</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">        </span><span class="c1">// ... 内側 select loop ...</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">MclagLink</span><span class="o">::</span><span class="n">MclagConnectionClosedException</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Connection lost, reconnecting...&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// 即時 retry</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">exception</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                                            </span><span class="c1">// デーモン終了</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>MclagConnectionClosedException</code> のみが retry 可能経路で、<strong>明示的な sleep / backoff は存在しない</strong><sup id="fnref18:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。
+TCP 切断直後に <code>accept()</code> がブロック復帰し新規接続を待つ。</p>
+<h3 id="write-iccpd">write 失敗時の挙動 (iccpd 向け)<a class="headerlink" href="#write-iccpd" title="Permanent link">&para;</a></h3>
+<p><code>m_connection_socket</code> への <code>::write()</code> が失敗しても <code>mclagsyncd</code> は <strong>例外を投げず</strong>、
+ログ出力のみで処理を続行する。例:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// mclaglink.cpp:589-594</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">write</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">::</span><span class="n">write</span><span class="p">(</span><span class="n">m_connection_socket</span><span class="p">,</span><span class="w"> </span><span class="n">infor_start</span><span class="p">,</span><span class="w"> </span><span class="n">msg_head</span><span class="o">-&gt;</span><span class="n">msg_len</span><span class="p">);</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">write</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">{</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;mclagsycnd update FDB to ICCPD Buffer full, write to m_connection_socket failed&quot;</span><span class="p">);</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>ピアが既に切断していた場合は次回の <code>readData()</code> で EOF/EPIPE が検出され、ケース #1 / #2 のフローに合流する。</p>
+<h3 id="sai">SAI 書込失敗 (下流) との分離<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> 自身は ASIC_DB / SAI を直接呼ばず、APPL_DB への一方向 write のみを行う (Phase F 副次 DB 書込節を参照)。
+従って SAI 書込失敗は下流 orch (<code>isolationGroupOrch</code> / <code>fdborch</code> / <code>aclOrch</code> / <code>portsOrch</code> / <code>intfsOrch</code> / <code>lagOrch</code>) 側で発生し、
+<code>mclagsyncd</code> にはフィードバックされない。APPL_DB エントリは下流が <code>task_failed</code> でも削除されず残る。</p>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE への記録<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> は失敗を <code>STATE_DB</code> の <code>ERROR_*</code> 系には書き込まない。
+<code>STATE_MCLAG_TABLE</code> の <code>oper_status=down</code> は iccpd からの <code>MCLAG_MSG_TYPE_SET_ICCP_STATE(down)</code> 受信時のみ。</p>
+<p>確認は <code>syslog</code> から:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>mclag<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;invalid|failed|exception|reconnecting&#39;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>mclag<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>mclagsyncd
+</span></code></pre></div>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/appl-mclag-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:link">
-<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
@@ -36420,7 +36691,7 @@ key 構造やフィールド値として CONFIG_DB の他テーブルのオブ�
 <p>iccpd CSM 初期化: <code>sonic-buildimage/src/iccpd/src/iccp_csm.c</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c</a>&#160;<a class="footnote-backref" href="#fnref:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:csm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:orch">
-<p>orchagent 消費側: <code>sonic-swss/orchagent/orchdaemon.cpp</code> (<code>SELECT_TIMEOUT = 1000</code> ms), <code>fdborch.cpp</code>, <code>isolationgrouporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>orchagent 消費側: <code>sonic-swss/orchagent/orchdaemon.cpp</code> (<code>SELECT_TIMEOUT = 1000</code> ms), <code>fdborch.cpp</code>, <code>isolationgrouporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:orch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:iccpcsm">
 <p>iccpd CSM ヘッダ定数 (<code>ICCP_TCP_PORT</code>, <code>MAX_ACCEPT_CONNETIONS</code>): <code>sonic-buildimage/src/iccpd/include/iccp_csm.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h</a>&#160;<a class="footnote-backref" href="#fnref:iccpcsm" title="Jump back to footnote 6 in the text">&#8617;</a></p>

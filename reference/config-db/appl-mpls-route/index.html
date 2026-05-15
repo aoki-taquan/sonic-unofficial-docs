@@ -24090,6 +24090,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34580,6 +34591,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34789,6 +34811,40 @@ Linux rt_protos 名（例: <code>"bgp"</code>, <code>"zebra"</code>, <code>"stat
 <ul>
 <li><code>fpmsyncd::RouteSync::onLabelRouteMsg()</code> (<code>sonic-swss/fpmsyncd/routesync.cpp</code>): カーネル netlink MPLS ルート受信時</li>
 </ul>
+<!-- side-effects -->
+<h2 id="db">副次 DB 書込<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>LABEL_ROUTE_TABLE</code> の SET / DEL に対して、<code>routeorch::doLabelTask()</code>
+(<code>orchagent/mplsrouteorch.cpp</code>) および <code>nhgorch</code> の MPLS NH 経路 (<code>isLabeled()</code> 分岐) は
+<strong>STATE_DB / COUNTERS_DB / APPL_STATE_DB への副次書き込みを一切行わない</strong>。
+副作用は SAI <code>inseg_entry</code> および MPLS NH (SAI <code>next_hop</code>) オブジェクトの ASIC 反映に閉じる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>m_stateDb</code> / <code>STATE_DB</code> 参照なし。<code>routeorch.cpp:294</code> の <code>m_stateDefaultRouteTb-&gt;set()</code> は IPv4/IPv6 デフォルトルート (<code>APP_ROUTE_TABLE_NAME</code>) 経路でのみ呼ばれ、<code>doTask</code> (<code>routeorch.cpp:618</code>) は <code>APP_LABEL_ROUTE_TABLE_NAME</code> のとき <code>doLabelTask</code> 呼出後 <code>return;</code> するため MPLS 経路には波及しない</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>FlexCounter</code> / <code>COUNTERS_DB</code> 参照なし。SAI <code>inseg_entry</code> 用カウンタは未統合</td>
+</tr>
+<tr>
+<td>APPL_STATE_DB</td>
+<td>なし</td>
+<td><code>routeorch.cpp:3201</code> の <code>m_publisher.publish(APP_ROUTE_TABLE_NAME, ...)</code> は <code>ROUTE_TABLE</code> キー固定で、<code>LABEL_ROUTE_TABLE</code> に対する APPL_STATE_DB ミラーは存在しない</td>
+</tr>
+</tbody>
+</table>
+<p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/appl-mpls-route-side.md</code> を参照。</p>
+<!-- /side-effects -->
 
 
 
