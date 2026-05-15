@@ -245,4 +245,47 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-swss/cfgmgr/intfmgr.cpp -->
+
+### SET 順序（必須）
+
+1. **gMacAddress 確定**: vlanmgrd は起動時に `gMacAddress`（スイッチ MAC）が確定するまで全 VLAN タスクを保留する (`vlanmgr.cpp:318-322`)。syncd/SAI が起動してスイッチ MAC が解決されるまで `VLAN` への SET は自動的にキューで待機する。
+2. **`VLAN` → `VLAN_MEMBER`**: `VLAN_MEMBER` の SET は `STATE_VLAN_TABLE` に対象 VLAN の `state=ok` エントリが存在することを確認してから処理される (`vlanmgr.cpp:642`)。先に `VLAN_MEMBER` を書いた場合は VLAN 処理完了まで自動リトライ待機する。
+3. **`VLAN` → `VLAN_INTERFACE`**: `VLAN_INTERFACE` の SET も intfmgr が `STATE_VLAN_TABLE` ready を確認してから処理される (`intfmgr.cpp:649-658, 1112-1117`)。`VLAN` を先に SET しておく必要がある。
+4. **PORT/LAG ready → `VLAN_MEMBER`**: `VLAN_MEMBER` の SET はメンバーポートが `STATE_PORT_TABLE`（物理ポート）または `STATE_LAG_TABLE`（LAG）に登録済みであることを確認する (`vlanmgr.cpp:491-514`)。portmgrd / teamd の ready 前は自動リトライ待機する。
+
+### DEL 順序（必須）
+
+1. **`VLAN_MEMBER` DEL → `VLAN` DEL**: VLAN を先に DEL すると `STATE_VLAN_TABLE` から対象エントリが即座に削除される。残存する `VLAN_MEMBER` タスクは `isVlanStateOk()` チェックが永遠に false になり孤立する (`vlanmgr.cpp:456-471`)。**必ず VLAN_MEMBER を全削除してから VLAN を削除すること**。
+
+### warm-reboot / restart 影響
+
+- **swss docker restart（warm-reboot）**: Linux カーネルのブリッジ・VLAN インタフェースはカーネル空間に残存するため、vlanmgrd は `ip link show Bridge` で存在を確認してブリッジ再作成をスキップする (`vlanmgr.cpp:64-75`)。STATE_DB の既存エントリと照合して重複作成を回避し、`WarmStart::REPLAYED` → `RECONCILED` に自動遷移する (`vlanmgr.cpp:371-378, 479-488`)。
+- **コールドリブート（全停止）**: カーネルブリッジが消えるため、CONFIG_DB の全 VLAN / VLAN_MEMBER が再処理される。上記 SET 順序制約が適用される。
+
+### 典型的な設定手順（CLI / sonic-db-cli 双方）
+
+```
+# 1. VLAN 作成
+SET VLAN|Vlan100  vlanid=100
+
+# 2. VLAN_INTERFACE 設定（任意）
+SET VLAN_INTERFACE|Vlan100  {}
+SET VLAN_INTERFACE|Vlan100|192.168.100.1/24  {}
+
+# 3. VLAN_MEMBER 追加（ポート ready 後）
+SET VLAN_MEMBER|Vlan100|Ethernet0  tagging_mode=untagged
+
+# 削除時は逆順
+DEL VLAN_MEMBER|Vlan100|Ethernet0
+DEL VLAN_INTERFACE|Vlan100|192.168.100.1/24
+DEL VLAN_INTERFACE|Vlan100
+DEL VLAN|Vlan100
+```
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
