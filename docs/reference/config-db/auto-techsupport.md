@@ -425,4 +425,57 @@ handle_coredump_cleanup → /var/core の max_core_limit 超過分削除
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `coredump_gen_handler` / `techsupport_cleanup` が読み書きする関連テーブル (Phase C)
+
+`AUTO_TECHSUPPORT|GLOBAL` の値を起点に動く host service スクリプト
+`coredump_gen_handler.py` / `techsupport_cleanup.py` は、共有モジュール
+`utilities_common/auto_techsupport_helper.py` を介して **CONFIG_DB の隣接テーブル**
+と **STATE_DB の dump info テーブル** を間接的に読み書きする。`AUTO_TECHSUPPORT|GLOBAL.state=enabled`
+だけで techsupport 起動が決まらず、container 単位のゲートと rate-limit 履歴の参照を経る。
+
+### CONFIG_DB 暗黙参照 (read)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| `AUTO_TECHSUPPORT_FEATURE\|<container>` | core 検出時 (Gate-2) | container 単位の `state` チェック。`disabled` または未設定なら techsupport 起動スキップ | `coredump_gen_handler.py:54-58` |
+| `AUTO_TECHSUPPORT_FEATURE\|<container>` | rate-limit 判定 | container 単位 `rate_limit_interval` を取得。`ValueError` / 未設定 → `0.0` (rate-limit 無効) | `auto_techsupport_helper.py:316-331` |
+
+`container` は `trim_masic_suffix()` (`auto_techsupport_helper.py:200-201`) で
+masic suffix を除去してから (`swss0` → `swss`) `AUTO_TECHSUPPORT_FEATURE|{}` キーに合成される。
+
+### STATE_DB 暗黙参照 — `AUTO_TECHSUPPORT_DUMP_INFO`
+
+Phase F (`side-effects`) で書込先として扱っているのと同テーブルだが、本スクリプトは
+**rate-limit 判定の入力**としても本テーブルを読み出す。読み書きの双方向に依存している点が Phase F 観点と異なる。
+
+| 操作 | キー / フィールド | 参照箇所 | 用途 |
+|---|---|---|---|
+| `db.keys(STATE_DB, "AUTO_TECHSUPPORT_DUMP_INFO*")` | 全件走査 | `auto_techsupport_helper.py:260` (`get_ts_map`) | container 別最終生成時刻を集計 |
+| `db.get_all(STATE_DB, <key>)` | `timestamp` / `container_name` | `auto_techsupport_helper.py:264-276` | container 名でグルーピングし `timestamp` を比較対象に |
+| `db.set(STATE_DB, ...)` | `timestamp` / `event_type` / `core_dump` / `container_name` | `auto_techsupport_helper.py:302-310` | 新規 techsupport 生成成功時に hset 相当で書込 |
+| `db.delete(STATE_DB, ...)` | `AUTO_TECHSUPPORT_DUMP_INFO\|<name>` | `techsupport_cleanup.py:13-18` | `max_techsupport_limit` 超過で物理削除されたエントリを除去 |
+
+> 本テーブルが空のとき、container 側 `rate_limit_interval > 0` でも常に「経過済」扱いとなる
+> (`auto_techsupport_helper.py:293`)。逆に同一 container の `timestamp` が現在時刻に近いと
+> 当該 container の techsupport 起動を抑制する。`container_name` フィールド欠落エントリは
+> グローバル枠として集計されない。
+
+### 関連 — しかし現状コードでは未参照のテーブル
+
+| テーブル | 関係性 | 現状の参照 | evidence |
+|---|---|---|---|
+| `FEATURE` (アプリ feature 有効化) | YANG コメント `TODO: Leafref once the FEATURE YANG is added` で参照予定とされる | `coredump_gen_handler.py` / `techsupport_cleanup.py` / `auto_techsupport_helper.py` のいずれも未参照。container 妥当性は `AUTO_TECHSUPPORT_FEATURE\|<container>` の存否のみで間接判定 | 上記 3 ファイルに `"FEATURE"` 単独文字列なし (`FEATURE = "AUTO_TECHSUPPORT_FEATURE\|{}"` のサブ文字列のみ) |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname` / `platform`) | `show techsupport` 出力には反映され得るが、本スクリプトの CONFIG_DB 参照経路には現れない | スクリプト 3 ファイル全行で `DEVICE_METADATA` / `hostname` / `localhost` の hit 0 | 同上 |
+
+### 範囲外 (誤解されやすい隣接)
+
+- `DOCKER_STATS` (STATE_DB): `memory_threshold_check.py` の別エントリポイントが参照する
+  per-container メモリ統計で、`coredump_gen_handler.py` / `techsupport_cleanup.py` 経路では未参照
+- `FEATURE` テーブル本体は `hostcfgd` の `FeatureHandler` が docker サービス on/off の起点として
+  使うのみで、auto-techsupport 起動判定には関与しない
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
