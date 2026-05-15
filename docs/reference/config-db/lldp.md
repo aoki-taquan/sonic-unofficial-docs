@@ -271,4 +271,45 @@ show lldp table
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順序依存
+
+### 依存関係マップ
+
+```
+PORT|<ifname>
+  └─► LLDP_PORT|<ifname>          （leafref: YANG バリデーション有効時は先行必須）
+
+DEVICE_METADATA|localhost
+  └─► lldpd 起動時 hostname 設定  （lldpd.conf.j2 テンプレート展開時）
+  └─► lldpmgrd ランタイム反映     （CONFIG_DB 購読、後追い自動更新）
+
+MGMT_INTERFACE|<ifname>|<prefix>
+  └─► Management Address TLV      （lldpd.conf.j2 + lldpmgrd ランタイム反映）
+
+APPL_DB: PORT_TABLE PortInitDone + PortConfigDone
+  └─► lldpcli resume              （LLDP PDU 送出開始のゲート）
+
+STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
+  └─► LLDP_PORT|<ifname> 反映    （up になるまで lldpcli configure ports はスキップ）
+```
+
+### 書込み順序ルール
+
+| 優先度 | ルール | 根拠 |
+|--------|--------|------|
+| 必須 | `PORT\|<ifname>` を先に書いてから `LLDP_PORT\|<ifname>` を書く | sonic-lldp.yang leafref 制約; lldpcli は存在しない linux netdev に対して失敗する |
+| 必須 | `DEVICE_METADATA\|localhost.hostname` を minigraph / sonic-cfggen で先に投入してから lldpd コンテナを起動する | lldpd.conf.j2 テンプレートが起動時に hostname を読む |
+| 推奨 | `MGMT_INTERFACE` を LLDP 設定より先に書く | 管理 IP を含む Management Address TLV を正しく送出するため |
+| 推奨 | `LLDP\|GLOBAL` を `LLDP_PORT\|<ifname>` より先に書く | グローバル設定が先に lldpd に届くことで設定の階層が明確になる（違反しても即時障害は軽微） |
+| 注意 | `lldpcli` コマンドが RETRY_LIMIT=5 回失敗するとポートが pending から除去される | PORT イベントが再度来るまで再適用されない; 正しいポート設定を確認してから LLDP_PORT を書くこと |
+
+### タイミング制約
+
+- **lldpd コンテナ起動前の CONFIG_DB 書込みは問題ない**。lldpmgrd は起動後に CONFIG_DB を購読して追いつく。
+- **lldpcli resume 前は LLDP PDU が送出されない**。`PortInitDone` + `PortConfigDone` の両イベントが APPL_DB に届くまで（最大 300 秒）lldpd は pause 状態。
+- **netdev が up になるまで LLDP_PORT のポートエイリアス設定は保留**される。ポートがリンクダウン状態で LLDP_PORT を書いても、リンクアップ後に自動適用される（RETRY_LIMIT 超過前に限る）。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 9d2a20a8f03b -->
