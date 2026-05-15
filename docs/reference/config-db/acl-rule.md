@@ -345,6 +345,73 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+ACL_RULE の処理は `AclOrch::init()` が起動時に環境変数 `platform` / `sub_platform` を読み取り、以下の capability を静的に決定する。MIRROR V6 / L3V4V6 / isCombinedMirrorV6 はすべて env var の **静的比較** で確定。META_DATA 系のみ SAI 動的照会 (`sai_query_attribute_capability`) を使う。
+
+### プラットフォーム識別文字列 (orch.h:40-50)
+
+| 定数 | 値 | プラットフォーム例 |
+|------|----|--------------------|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom XGS (non-DNX) |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` | Broadcom DNX/Jericho (sub_platform) |
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox Spectrum |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` | Intel Tofino (Barefoot) |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | Virtual Switch (テスト用) |
+| `NPS_PLATFORM_SUBSTRING` | `"nephos"` | Nephos |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` | Cisco Silicon One |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `CLX_PLATFORM_SUBSTRING` | `"clounix"` | Clounix |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` | Marvell Teralynx |
+
+### capability 差異一覧
+
+| capability | 有効プラットフォーム | 無効/制限プラットフォーム | 効果 | evidence |
+|---|---|---|---|---|
+| **MIRROR V6** (`isAclMirrorV6Supported`) | broadcom / cisco-8000 / mellanox / barefoot / marvell-prestera / marvell-teralynx / nephos / xsight / clounix / vs | それ以外（未知） | false → `type=MIRRORV6` の ACL_TABLE 作成を reject → IPv6 mirror ルール不可 | `aclorch.cpp:3489-3513` |
+| **isCombinedMirrorV6Table** | broadcom (非 DNX) / barefoot / marvell-teralynx / nephos / vs / その他 | mellanox / cisco-8000 / marvell-prestera / xsight / clounix / broadcom-dnx | true (統合) → `MIRROR` テーブル 1 枚で V4/V6 両対応。false (分離) → `MIRROR` と `MIRRORV6` を別々に作成必須 | `aclorch.cpp:3546-3560` |
+| **L3V4V6 テーブル** (`isAclL3V4V6TableSupported`) | marvell-prestera / marvell-teralynx / vs | それ以外 | false → `type=L3V4V6` の ACL_TABLE 作成を reject → IPv4/IPv6 混在 match ルール不可 | `aclorch.cpp:3515-3533, 2739-2742` |
+| **ACL range 上限** | — | mellanox: 16 / clounix: 16 | 上限超過時 `return NULL` (ERROR ログ) → range match ルールが INACTIVE | `aclorch.cpp:3373-3377, aclorch.h:109-110` |
+| **META_DATA / META_DATA_ACTION** | SAI 動的照会で全 3 属性が実装済みの場合 | SAI が未実装と返した場合 | false → META_DATA match / META_DATA_ACTION は無視 / rule INACTIVE | `aclorch.cpp:3563-3664, 5258-5267` |
+| **PFCWD OUT_PORT match** | broadcom-dnx (sub_platform) | それ以外 | DNX のみ PFCWD テーブルが `SAI_ACL_BIND_POINT_TYPE_SWITCH` + `OUT_PORT` match 対応 | `aclorch.cpp:3811-3830` |
+| **Egress range フィールド** | それ以外 (Egress で range 付加) | broadcom 非 DNX Egress | broadcom 非 DNX の Egress ACL テーブルは range フィールドを強制付加しない → Egress で L4 range match 不可 | `aclorch.cpp:2608-2628` |
+| **DTel 系 action** (`FLOW_OP` / `INT_SESSION` 等) | barefoot / vs | それ以外 | `DTelOrch` 非起動 → DTel action SAI 反映なし | `orchdaemon.cpp:502-530` |
+
+### プラットフォーム別サマリ
+
+| プラットフォーム | MIRROR V6 | Combined Mirror | L3V4V6 | DTel |
+|----------------|-----------|----------------|--------|------|
+| broadcom (非 DNX) | yes | yes (統合) | no | no |
+| broadcom-dnx | yes | no (分離) | no | no |
+| mellanox | yes | no (分離) | no | no |
+| barefoot | yes | yes (統合) | no | **yes** |
+| cisco-8000 | yes | no (分離) | no | no |
+| marvell-prestera | yes | no (分離) | **yes** | no |
+| marvell-teralynx | yes | yes (統合) | **yes** | no |
+| nephos | yes | yes (統合) | no | no |
+| xsight | yes | no (分離) | no | no |
+| clounix | yes | no (分離) | no | no |
+| vs (virtual) | yes | yes (統合) | **yes** | **yes** |
+| 未知 | **no** | yes (統合) | no | no |
+
+!!! note "isCombinedMirrorV6Table の運用上の注意"
+    `isCombinedMirrorV6Table=false` (mellanox / cisco-8000 / marvell-prestera 等) の環境では、
+    IPv6 パケット対象の mirror ルールを適用するには `type=MIRRORV6` の ACL_TABLE を **別途** 作成すること。
+    `MIRROR` テーブルのみを作成した場合、IPv6 mirror ルールが有効にならない (`aclorch.cpp:5811`)。
+
+!!! warning "L3V4V6 制限"
+    `type=L3V4V6` テーブルは marvell-prestera / marvell-teralynx / vs のみ有効。
+    それ以外の環境で ACL_TABLE に `type=L3V4V6` を設定すると、
+    テーブル作成時点で `isAclL3V4V6TableSupported()` が false → reject されルールも一切適用されない (`aclorch.cpp:2739-2742`)。
+
+!!! warning "DTel action の前提"
+    `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` 等の DTel 系 action は
+    barefoot / vs 以外では `DTelOrch` が起動しないため、設定しても SAI に反映されない (`orchdaemon.cpp:502-530`)。
+
+<!-- /platform -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
