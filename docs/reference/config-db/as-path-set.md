@@ -214,6 +214,73 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 詳細根拠は `meta/_intermediate/cdb-flow/as-path-set-platform.md` を参照。
 <!-- /platform -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`AS_PATH_SET` テーブルへの変更通知は **`frrcfgd` (sonic-frr-mgmt-framework) のみ** が受信する。`frrcfgd` は `ConfigDBConnector` を継承した独自 `ExtConfigDBConnector.subscribe()` + `listen()` で **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:*`)** を購読する。`swsscommon.SubscriberStateTable` (channel ベース PUBLISH/SUBSCRIBE) は frrcfgd 経路では使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
+
+補助経路として `bgpcfgd` の `AsPathMgr` が存在するが、こちらは `AS_PATH_SET` ではなく `DEVICE_METADATA` を **`swsscommon.SubscriberStateTable`** (channel ベース) 経由で購読し、`localhost.t2_group_asns` の値を読んで固定名 `T2_GROUP_ASNS` の access-list を生成する別経路 (Phase E `<!-- constants -->` 参照)。
+
+| 購読者 | 対象テーブル | 購読 API | 通信方式 | ハンドラ |
+|--------|------------|---------|---------|---------|
+| `frrcfgd` | `AS_PATH_SET` | `ExtConfigDBConnector.subscribe()` + `listen()` (keyspace 通知) | Redis `PSUBSCRIBE __keyspace@<dbId>__:*` | `bgp_table_handler_common` → `hdl_aspath_set` |
+| `bgpcfgd` `AsPathMgr` (条件付き) | `DEVICE_METADATA` (補助) | `swsscommon.SubscriberStateTable` + `Select` (channel ベース) | Redis channel PUBLISH/SUBSCRIBE | `AsPathMgr.set_handler` / `del_handler` |
+
+`orchagent` / `syncd` 等 APPL_DB/ASIC_DB レイヤは `AS_PATH_SET` を購読しない (SAI 非経由、`<!-- side-effects -->` 参照)。AsPathMgr は `DEVICE_METADATA[localhost]` の `type` (`SpineRouter`+`subtype=UpstreamLC` または `UpperSpineRouter`) でのみ bgpcfgd 起動時に登録される (`main.py:122-130`)。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ (frrcfgd 経路)
+
+```
+config route-map as-path-set add UPSTREAM_FILTER _65000_
+  ↓ HSET "AS_PATH_SET|UPSTREAM_FILTER" as_path_set_member@... "_65000_"
+Redis keyspace PUBLISH "__keyspace@4__:AS_PATH_SET|UPSTREAM_FILTER" "hset"
+  ↓ ExtConfigDBConnector.listen_thread() がパターンマッチ
+sub_msg_handler() → client.hgetall("AS_PATH_SET|UPSTREAM_FILTER")  ← 通知後に値を再取得
+raw_to_typed() で leaf-list を Python list 化
+  ↓ _ConfigDBConnector__fire("AS_PATH_SET", "UPSTREAM_FILTER", data)
+bgp_table_handler_common(table, key, data)
+  ↓ aspath_set_key_map → hdl_aspath_set()
+  ↓ vtysh -c "no bgp as-path access-list UPSTREAM_FILTER"   ← 先に全削除
+  ↓ vtysh -c "bgp as-path access-list UPSTREAM_FILTER permit _65000_"
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `client.hgetall(key)` で再取得 (`frrcfgd.py:1527-1528`)。
+- `data is None ? DEL : SET` の 2 値判定 (`ConfigDBConnector` 標準動作)。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- `listen_thread` は専用スレッドで動作 (`frrcfgd.py:1551`)。テーブルハンドラはすべて同スレッド内で逐次実行され、内部キュー `bgp_message` 経由で `__update_bgp` に直列化される。
+- 起動時は `subscribe_all()` (`frrcfgd.py:2359-2361`) 開始前に `config_db.get_table('AS_PATH_SET')` で一括スナップショットを取得し `as_path_set_member` キーを持つ entry のみ初期登録 (`frrcfgd.py:2249-2253`)。
+
+### channel 通知 → ハンドラ呼び出しの流れ (AsPathMgr 経路)
+
+```
+config device-metadata localhost t2_group_asns 65001,65002
+  ↓ HSET "DEVICE_METADATA|localhost" t2_group_asns "65001,65002"
+Redis channel PUBLISH (SubscriberStateTable 内部)
+  ↓ Runner.selector.select(1000ms) で起床
+subscriber.pop() → (key="localhost", op=SET, fvs={t2_group_asns:"65001,65002"})
+  ↓ Manager.handler → AsPathMgr.set_handler("localhost", {t2_group_asns:...})
+  ↓ cfg_mgr.update() で FRR running-config を読み戻し regex 差分計算
+  ↓ vtysh -c "bgp as-path access-list T2_GROUP_ASNS permit _<asn>_"  (新規分)
+  ↓ vtysh -c "no bgp as-path access-list T2_GROUP_ASNS seq <n> permit _<asn>_"  (不要分)
+```
+
+- `key != "localhost"` の入力は即 return (`managers_as_path.py:31, 61`)。実効入力は `DEVICE_METADATA|localhost` のみ。
+- `Runner` メインループはシングルスレッド (`runner.py:54-73`)。各 manager handler はメインスレッドで逐次実行され、ループ末尾で `cfg_manager.commit()` をまとめて発行する (`runner.py:71`)。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `AS_PATH_SET` 変更 (frrcfgd 経路) | FRR `bgpd` への vtysh `(no )bgp as-path access-list <name> permit <regex>` 送出のみ。`bgpd` プロセス restart **なし** | `frrcfgd.py:1015-1019` |
+| `DEVICE_METADATA.t2_group_asns` 変更 (AsPathMgr 経路) | FRR `bgpd` への vtysh コマンド送出のみ。プロセス restart なし | `managers_as_path.py:52, 56, 65` |
+| `DEVICE_METADATA.type` / `subtype` 変更 | `AsPathMgr` の登録は bgpcfgd 起動時に 1 回確定。 ランタイム変更で manager 追加・削除はされない | `bgpcfgd/main.py:122-130` |
+
+vtysh コマンド送出のみで BGP セッション自体は再起動されない。既存セッションへの反映は次回 UPDATE 送信時または `clear bgp ... soft in/out` 実施時。
+
+> **Evidence**: `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:96, 1009-1020, 1506-1555, 1977, 2116, 2249-2253, 2315, 2359-2361` (keyspace listen / subscribe / hdl_aspath_set / 起動スナップショット)、`sonic-bgpcfgd/bgpcfgd/runner.py:23-73` (`SubscriberStateTable` ループ)、`sonic-bgpcfgd/bgpcfgd/main.py:122-130` (`AsPathMgr` 登録 gate)、`sonic-bgpcfgd/bgpcfgd/managers_as_path.py:30-66` (`set_handler`/`del_handler`); 詳細分析 `meta/_intermediate/cdb-flow/as-path-set-pubsub.md`
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
