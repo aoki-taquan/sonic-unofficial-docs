@@ -24451,7 +24451,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC 別 isolation 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路別の細かい差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-multi-npu-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-ASIC (multi-NPU / chassis) 動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd 側はプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共通経路 (プラットフォーム差なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35424,7 +35496,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC 別 isolation 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        経路別の細かい差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-multi-npu-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-ASIC (multi-NPU / chassis) 動作
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd 側はプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共通経路 (プラットフォーム差なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36674,18 +36818,93 @@ TCP 切断直後に <code>accept()</code> がブロック復帰し新規接続�
 </blockquote>
 <!-- /failure -->
 
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>mclagsyncd</code> の APPL_DB 書込経路は <strong>ASIC 種別</strong> によって <code>ISOLATION_GROUP_TABLE</code> 経路と <code>ACL_TABLE_TABLE</code>/<code>ACL_RULE_TABLE</code> フォールバック経路に分岐する<sup id="fnref19:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。判定材料は CONFIG_DB の <code>DEVICE_METADATA|localhost.platform</code> ではなく <strong><code>asic_type</code></strong> で、<code>docker-iccpd/iccpd.sh:3</code> がコンテナ起動時に環境変数 <code>platform</code> として export し、<code>mclaglink.cpp:201</code> の <code>getenv("platform")</code> で読まれる。</p>
+<h3 id="asic-isolation">ASIC 別 isolation 経路<a class="headerlink" href="#asic-isolation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><code>asic_type</code></th>
+<th>APPL_DB 書込先</th>
+<th>下流 SAI オブジェクト</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>broadcom</code></td>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td><code>SAI_OBJECT_TYPE_ISOLATION_GROUP</code></td>
+</tr>
+<tr>
+<td><code>barefoot</code></td>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>centec</code></td>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>clounix</code></td>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>marvell-prestera</code></td>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>marvell-teralynx</code></td>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>mellanox</code> / <code>vs</code> / その他</td>
+<td><code>ACL_TABLE_TABLE</code>(<code>mclag</code>) + <code>ACL_RULE_TABLE</code>(<code>mclag:mclag</code>)</td>
+<td><code>SAI_OBJECT_TYPE_ACL_TABLE</code> (type=L3) + <code>SAI_OBJECT_TYPE_ACL_ENTRY</code> (PACKET_ACTION=DROP)</td>
+</tr>
+</tbody>
+</table>
+<p>許可リストは <code>mclaglink.h:54-59</code> の 6 つの <code>*_PLATFORM_SUBSTRING</code> で固定。新規 ASIC 対応にはコード追加が必要<sup id="fnref20:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。</p>
+<h3 id="_12">経路別の細かい差<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ISOLATION_GROUP 経路では <code>MEMBERS</code> から <code>Ethernet</code> プレフィクスを除外し PortChannel のみが格納される (<code>mclaglink.cpp:258</code>)。</li>
+<li>ACL フォールバック経路では <code>OUT_PORTS</code> から <code>PortChannel</code> プレフィクスを除外し Ethernet ポートのみが格納される (<code>mclaglink.cpp:352</code>)。<strong>分離対象オブジェクトの粒度が ASIC により逆転</strong>する点に注意。</li>
+<li>ISOLATION_GROUP 経路は ICCP セッション up かつリモート全断時に <code>MEMBERS=""</code> でエントリを保持するが、ACL フォールバック経路は <code>OUT_PORTS</code> 空で <code>ACL_TABLE_TABLE.mclag</code> 全体を DEL する (<code>mclaglink.cpp:311-318</code>)。</li>
+<li>ACL フォールバック経路では <code>type=L3</code> の ACL テーブルを 1 つ消費するため、ハードウェア L3 ACL リソース容量に影響する。</li>
+</ul>
+<h3 id="multi-asic-multi-npu-chassis">multi-ASIC (multi-NPU / chassis) 動作<a class="headerlink" href="#multi-asic-multi-npu-chassis" title="Permanent link">&para;</a></h3>
+<p><code>iccpd</code> / <code>mclagsyncd</code> は <strong>multi-asic を直接サポートしない</strong>:</p>
+<ul>
+<li><code>iccpd.service</code> (<code>sonic-buildimage/files/build_templates/iccpd.service.j2</code>) は per-namespace 起動ロジック無しで host 名前空間に 1 インスタンスのみ。デフォルトは <code>disable</code> (<code>sonic_debian_extension.j2:1093-1095</code>)。</li>
+<li>設定生成テンプレ <code>dockers/docker-iccpd/iccpd.j2</code> は host CONFIG_DB の <code>MC_LAG</code> テーブルと <code>DEVICE_METADATA['localhost']['mac']</code> のみを参照し <code>asic0</code>/<code>asic1</code> の per-namespace config を読まない。</li>
+<li><code>mclagsyncd</code> の <code>DBConnector</code> 生成は namespace 指定無し (<code>mclaglink.cpp:1796-1816</code>)。</li>
+</ul>
+<p>結論として T2/chassis などの multi-ASIC プラットフォームで MCLAG を構成しても、front-end ASIC 群への自動伝播は保証外。<strong>single-ASIC platform 上の利用が想定スコープ</strong>である。</p>
+<h3 id="iccpd_2">iccpd 側はプラットフォーム非依存<a class="headerlink" href="#iccpd_2" title="Permanent link">&para;</a></h3>
+<p>ICCP プロトコル実装 (<code>sonic-buildimage/src/iccpd/</code>) には ASIC 識別ロジックが無く、タイマー定数 (<code>CONNECT_INTERVAL_SEC=1</code>, <code>HEARTBEAT_TIMEOUT_SEC=15</code>, <code>TRANSIT_INTERVAL_SEC=1</code>、<code>scheduler.h:40-43</code>)・IPC 定数 (<code>MCLAG_DEFAULT_PORT=2626</code>, <code>ICCP_TCP_PORT=8888</code>) は全プラットフォーム共通<sup id="fnref4:sched"><a class="footnote-ref" href="#fn:sched">3</a></sup><sup id="fnref2:iccpcsm"><a class="footnote-ref" href="#fn:iccpcsm">6</a></sup>。</p>
+<h3 id="_13">共通経路 (プラットフォーム差なし)<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p><code>MCLAG_FDB_TABLE</code> / <code>LAG_TABLE</code> (<code>learn_mode</code> / <code>traffic_disable</code>) / <code>PORT_TABLE.learn_mode</code> / <code>INTF_TABLE.mac_addr</code> の 4 経路は ASIC 分岐を持たず全プラットフォームで同一の書込ロジックが動く (<code>mclaglink.cpp:380-461,1296-1318</code>)。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/appl-mclag-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
+
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:link">
-<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:sched">
-<p>keepalive/timeout 定数: <code>sonic-buildimage/src/iccpd/include/scheduler.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h</a>&#160;<a class="footnote-backref" href="#fnref:sched" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sched" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:sched" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>keepalive/timeout 定数: <code>sonic-buildimage/src/iccpd/include/scheduler.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h</a>&#160;<a class="footnote-backref" href="#fnref:sched" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sched" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:sched" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:sched" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:csm">
 <p>iccpd CSM 初期化: <code>sonic-buildimage/src/iccpd/src/iccp_csm.c</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c</a>&#160;<a class="footnote-backref" href="#fnref:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:csm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
@@ -36694,7 +36913,7 @@ TCP 切断直後に <code>accept()</code> がブロック復帰し新規接続�
 <p>orchagent 消費側: <code>sonic-swss/orchagent/orchdaemon.cpp</code> (<code>SELECT_TIMEOUT = 1000</code> ms), <code>fdborch.cpp</code>, <code>isolationgrouporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:orch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:iccpcsm">
-<p>iccpd CSM ヘッダ定数 (<code>ICCP_TCP_PORT</code>, <code>MAX_ACCEPT_CONNETIONS</code>): <code>sonic-buildimage/src/iccpd/include/iccp_csm.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h</a>&#160;<a class="footnote-backref" href="#fnref:iccpcsm" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>iccpd CSM ヘッダ定数 (<code>ICCP_TCP_PORT</code>, <code>MAX_ACCEPT_CONNETIONS</code>): <code>sonic-buildimage/src/iccpd/include/iccp_csm.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h</a>&#160;<a class="footnote-backref" href="#fnref:iccpcsm" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:iccpcsm" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 <li id="fn:mlacphdl">
 <p>iccpd↔mclagsyncd バッファ定数: <code>sonic-buildimage/src/iccpd/include/mlacp_link_handler.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/mlacp_link_handler.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/mlacp_link_handler.h</a>&#160;<a class="footnote-backref" href="#fnref:mlacphdl" title="Jump back to footnote 7 in the text">&#8617;</a></p>

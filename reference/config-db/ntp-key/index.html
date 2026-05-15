@@ -27206,6 +27206,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trusted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trusted の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd 側の default 補完
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35044,6 +35094,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trusted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trusted の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd 側の default 補完
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35359,6 +35459,62 @@
 <p><strong>スキャン証跡</strong>: hostcfgd:1285-1389 確認。NTP_KEY は YANG leafref による参照整合性チェックが主な制約であることを確認 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG default 宣言 (<code>type</code> = <code>md5</code> / <code>trusted</code> = <code>no</code>) に加えて、<code>hostcfgd</code> および <code>chrony.keys.j2</code> テンプレートでの取り扱いを整理する。NTP_KEY は Python 側 (<code>hostcfgd</code>) でフィールド単位の default 補完ロジックを持たず、テンプレート (<code>chrony.keys.j2</code>) の <code>if</code> フィルタが暗黙デフォルトを担う。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来挙動</th>
+<th>発生源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><strong><code>md5</code></strong></td>
+<td><code>chrony.keys.j2</code>: <code>type</code> が falsy なら鍵エントリ自体をスキップ。<code>upper</code> フィルタで <code>MD5</code>/<code>SHA1</code>/<code>SHA256</code>/<code>SHA384</code>/<code>SHA512</code> に正規化</td>
+<td><code>chrony.keys.j2:15-17</code> (<code>{% for keyid in NTP_KEY if NTP_KEY[keyid].type and NTP_KEY[keyid].value %}</code>) / <code>sonic-ntp.yang</code> typedef <code>key-type</code> の <code>default md5</code></td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td><strong><code>no</code></strong></td>
+<td><code>chrony.keys.j2</code> では <strong>未参照</strong> (dead field 相当)。<code>trusted_str</code> は <code>NTP_SERVER[*].trusted == 'yes'</code> のサーバから生成され、各 key 行末に共通付与される</td>
+<td><code>chrony.keys.j2:8-13</code> / <code>sonic-ntp.yang</code> <code>leaf trusted</code> の <code>default no</code></td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>なし (必須)</td>
+<td>falsy 値はテンプレで silent skip。<code>value \| b64decode</code> で base64 デコードして keyfile に書き出し</td>
+<td><code>chrony.keys.j2:15-16</code></td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>なし (key)</td>
+<td><code>range 1..65535</code> 範囲外は YANG が拒否。<code>NTP_SERVER_LIST/key</code> からの leafref 参照整合性</td>
+<td><code>sonic-ntp.yang</code> typedef <code>key-id</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="type"><code>type</code> の詳細<a class="headerlink" href="#type" title="Permanent link">&para;</a></h3>
+<p>YANG default <code>md5</code> により、CONFIG_DB に正規化された値は常に non-empty となる。CLI (<code>config ntp authentication-key add</code>) 経由では <code>--type</code> 省略時に <code>md5</code> が補完される。直接 <code>redis-cli</code> 書き込みで <code>type</code> を空にした場合、<code>chrony.keys.j2</code> の <code>if ... NTP_KEY[keyid].type ...</code> ガードでテンプレ展開からスキップされ、chrony keyfile に出力されない (silent drop) → 当該鍵での認証は機能しない。</p>
+<h3 id="trusted"><code>trusted</code> の詳細<a class="headerlink" href="#trusted" title="Permanent link">&para;</a></h3>
+<p>注意: <code>NTP_KEY.trusted</code> フィールドは <code>chrony.keys.j2</code> 内で <strong>参照されていない</strong>。chrony 視点での「信頼鍵」判定は <code>NTP_SERVER.trusted == 'yes'</code> を集約した <code>trusted_str</code> (key 行末カラム) で行われる。<code>NTP_KEY.trusted</code> の YANG default <code>no</code> は CONFIG_DB に値を残すのみで、生成される chrony keyfile に直接の差を生まない。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>{% set trusted_arr = [] -%}
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>{% for server in NTP_SERVER if NTP_SERVER[server].trusted == &#39;yes&#39; and
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>                               NTP_SERVER[server].resolve_as -%}
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    {% set _ = trusted_arr.append(NTP_SERVER[server].resolve_as) -%}
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>{% endfor -%}
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>{% set trusted_str = &#39; &#39; ~ trusted_arr|join(&#39;,&#39;) -%}
+</span></code></pre></div>
+<p>ドキュメント本文の運用ヒント (「<code>trusted=no</code> のキーで authenticate しようとして時刻同期が失敗する」) は CLI/UX レベルの設計意図に基づく記述で、テンプレ実装上は <code>NTP_KEY.trusted</code> の値による直接的な keyfile 差分は発生しない。</p>
+<h3 id="hostcfgd-default">hostcfgd 側の default 補完<a class="headerlink" href="#hostcfgd-default" title="Permanent link">&para;</a></h3>
+<p><code>NtpCfg</code> クラス (<code>hostcfgd:1278-1406</code>) は AAA 系のような <code>*_default</code> dict を持たず、DB の dict をそのまま Jinja2 context に渡す。<code>ntp_srv_key_update()</code> (<code>hostcfgd:1366-1406</code>) はキャッシュ比較で同一エントリの再生成をスキップするのみで、フィールド単位の補完は行わない。暗黙デフォルトは YANG (<code>md5</code> / <code>no</code>) とテンプレートの falsy フィルタが二重に担保している。</p>
+<p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-defaults.md</code>。</p>
+<!-- /defaults -->
 
 <div class="footnote">
 <hr />

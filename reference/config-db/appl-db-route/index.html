@@ -24161,6 +24161,155 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch-readiness-nhgorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortsOrch readiness ガード（NhgOrch のみ直接ガード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-vrf-vrf-aware-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. VRF 先行ガード（VRF-aware key）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-nexthop_group-nexthop_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. NEXTHOP_GROUP 先行ガード（nexthop_group フィールド指定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-neighorch-single-nh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. NeighOrch 先行 — single NH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-neighorch-ecmp-temproute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. NeighOrch 先行 — ECMP（部分縮退 + tempRoute）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-rif-directly-connected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. RIF 先行 — directly-connected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-srv6-pic-context_index-retrycache-park" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. SRv6 PIC context_index の RetryCache park
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-dotask-bulk-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. doTask 内 bulk drain 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-sai-race-sai_status_item_not_found-on-setdualtor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. SAI race: SAI_STATUS_ITEM_NOT_FOUND on set（DualToR）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-nhg-temproute-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. NHG 上限到達 → tempRoute サブセット install
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-warm-reboot-fpmsyncd-routeorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Warm reboot 順序（fpmsyncd 主導、routeorch は受動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        影響範囲のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24232,6 +24381,56 @@
     <span class="md-ellipsis">
       
         CRM リソース ↔ SAI 属性マップ (crmorch.cpp L74-L94)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        key / フィールド由来の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#side-ref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知 / side ref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        排他関係
       
     </span>
   </a>
@@ -35028,6 +35227,155 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch-readiness-nhgorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortsOrch readiness ガード（NhgOrch のみ直接ガード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-vrf-vrf-aware-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. VRF 先行ガード（VRF-aware key）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-nexthop_group-nexthop_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. NEXTHOP_GROUP 先行ガード（nexthop_group フィールド指定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-neighorch-single-nh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. NeighOrch 先行 — single NH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-neighorch-ecmp-temproute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. NeighOrch 先行 — ECMP（部分縮退 + tempRoute）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-rif-directly-connected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. RIF 先行 — directly-connected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-srv6-pic-context_index-retrycache-park" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. SRv6 PIC context_index の RetryCache park
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-dotask-bulk-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. doTask 内 bulk drain 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-sai-race-sai_status_item_not_found-on-setdualtor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. SAI race: SAI_STATUS_ITEM_NOT_FOUND on set（DualToR）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-nhg-temproute-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. NHG 上限到達 → tempRoute サブセット install
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-warm-reboot-fpmsyncd-routeorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Warm reboot 順序（fpmsyncd 主導、routeorch は受動）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        影響範囲のまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35099,6 +35447,56 @@
     <span class="md-ellipsis">
       
         CRM リソース ↔ SAI 属性マップ (crmorch.cpp L74-L94)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        key / フィールド由来の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#side-ref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知 / side ref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        排他関係
       
     </span>
   </a>
@@ -35284,7 +35682,7 @@
 
 <h2 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> は排他。両方を指定するとエラー<sup id="fnref6:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup>。</li>
+<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> は排他。両方を指定するとエラー<sup id="fnref8:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup>。</li>
 <li><code>blackhole</code> が <code>"true"</code> の場合、<code>nexthop</code> / <code>ifname</code> は不要かつ無視される。</li>
 <li>VRF-aware 経路の key は <code>Vrf&lt;name&gt;:</code> プレフィクスを含む（コロン区切り）。<code>Vrf</code> で始まらない VRF 名は <code>fpmsyncd</code> がエラーログを出して処理を中断する<sup id="fnref4:rsync"><a class="footnote-ref" href="#fn:rsync">1</a></sup>。</li>
 <li>EVPN IP Prefix 経路では <code>nexthop</code>・<code>vni_label</code>・<code>router_mac</code>・<code>ifname</code> が揃っていない場合は ROUTE_TABLE への書き込みをスキップする<sup id="fnref5:rsync"><a class="footnote-ref" href="#fn:rsync">1</a></sup>。</li>
@@ -35558,7 +35956,7 @@
 <li><code>m_maxNextHopGroupCount</code> は SAI <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> から取得し、<code>STATE_DB</code> の <code>SWITCH_CAPABILITY</code> に <code>MAX_NEXTHOP_GROUP_COUNT</code> として publish される (L60-L93)。</li>
 <li>上限到達時は前述の <strong>addTempRoute フォールバック</strong> により、解決済み 1 NH の経路が暫定書き込みされる（ECMP 機能は劣化するがトラフィック疎通は維持）。</li>
 <li>doTask ループ末尾 (L1096-L1101) では <code>m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() &gt;= m_maxNextHopGroupCount</code> かつ bulker に削除待ちが溜まっているとき <code>break</code> し、flush を優先してリソース解放を急ぐ。</li>
-<li>NhgOrch 側 (<code>nhgorch.cpp</code> L319-L362) も <code>gRouteOrch-&gt;getNhgCount() + NextHopGroup::getSyncedCount() &gt;= gRouteOrch-&gt;getMaxNhgCount()</code> のとき temp NHG を保持し続け、リソースが空くまで promotion を保留する<sup id="fnref2:nhgorch"><a class="footnote-ref" href="#fn:nhgorch">4</a></sup>。</li>
+<li>NhgOrch 側 (<code>nhgorch.cpp</code> L319-L362) も <code>gRouteOrch-&gt;getNhgCount() + NextHopGroup::getSyncedCount() &gt;= gRouteOrch-&gt;getMaxNhgCount()</code> のとき temp NHG を保持し続け、リソースが空くまで promotion を保留する<sup id="fnref4:nhgorch"><a class="footnote-ref" href="#fn:nhgorch">4</a></sup>。</li>
 </ul>
 <h3 id="sai-handlesaicreatestatus-handlesaisetstatus">SAI 呼び出し失敗の分岐 (<code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code>)<a class="headerlink" href="#sai-handlesaicreatestatus-handlesaisetstatus" title="Permanent link">&para;</a></h3>
 <p><code>routeorch.cpp</code> 各所で繰り返される定型:</p>
@@ -35685,9 +36083,273 @@
 <p>詳細な行番号付きグレップ証跡は <code>meta/_intermediate/cdb-flow/appl-db-route-failure.md</code> を参照<sup id="fnref:failuremem"><a class="footnote-ref" href="#fn:failuremem">6</a></sup>。</p>
 <!-- /failure -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>ROUTE_TABLE</code> は <code>fpmsyncd</code> / <code>bgpcfgd</code> が書き、<code>RouteOrch::doTask()</code>
+(<code>routeorch.cpp:605-1103</code>) と <code>NhgOrch::doTask()</code> (<code>nhgorch.cpp</code>) が購読する。
+両 Orch には ASIC 反映の前提となる依存テーブル（VRF / RIF / NEIGH / NHG / PIC_CONTEXT）
+が複数あり、未成立時は <code>m_toSync</code> 残置ポーリングか明示 RetryCache で吸収される。
+bulker による SET の遅延適用と、warm reboot 時の reconcile も加味して整理する<sup id="fnref4:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref2:nhgorch"><a class="footnote-ref" href="#fn:nhgorch">4</a></sup><sup id="fnref:orderingmem"><a class="footnote-ref" href="#fn:orderingmem">7</a></sup>.</p>
+<h3 id="1-portsorch-readiness-nhgorch">1. PortsOrch readiness ガード（NhgOrch のみ直接ガード）<a class="headerlink" href="#1-portsorch-readiness-nhgorch" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// nhgorch.cpp:41-44 — NhgOrch::doTask 冒頭</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">allPortsReady</span><span class="p">())</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>NhgOrch::doTask</code> は <code>allPortsReady()</code> が false の間、<code>NEXTHOP_GROUP_TABLE</code> 処理を即 return で
+保留する。<code>RouteOrch::doTask</code> 自体に直接ガードは無いが、<code>addRoute()</code> 内で
+<code>m_intfsOrch-&gt;getRouterIntfsId(alias) == SAI_NULL_OBJECT_ID</code> のとき <code>return false</code>
+（<code>routeorch.cpp:2086-2090</code>）になるため、結果として PortsOrch / IntfsOrch 初期化完了が
+ROUTE_TABLE 確定の前提となる。</p>
+<p>→ 順序依存: <code>PORT</code> 初期化 → <code>INTERFACE</code>/<code>VLAN_INTERFACE</code> の RIF → <code>ROUTE_TABLE</code>。</p>
+<h3 id="2-vrf-vrf-aware-key">2. VRF 先行ガード（VRF-aware key）<a class="headerlink" href="#2-vrf-vrf-aware-key" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// routeorch.cpp:706-715</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">key</span><span class="p">.</span><span class="n">compare</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">VRF_PREFIX</span><span class="p">),</span><span class="w"> </span><span class="n">VRF_PREFIX</span><span class="p">))</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="sc">&#39;:&#39;</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">vrf_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">found</span><span class="p">);</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_vrfOrch</span><span class="o">-&gt;</span><span class="n">isVRFexists</span><span class="p">(</span><span class="n">vrf_name</span><span class="p">))</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="n">it</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">    </span><span class="n">vrf_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_vrfOrch</span><span class="o">-&gt;</span><span class="n">getVRFid</span><span class="p">(</span><span class="n">vrf_name</span><span class="p">);</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="n">ip_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IpPrefix</span><span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">found</span><span class="o">+</span><span class="mi">1</span><span class="p">));</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>ROUTE_TABLE|Vrf&lt;name&gt;:&lt;prefix&gt;</code> で VrfOrch に当該 VRF が未登録のとき、ログなしで <code>it++</code> 残置 →
+VrfOrch が <code>CONFIG_DB:VRF</code> を消化するまで毎ループ retry。</p>
+<p>→ 順序依存: 非デフォルト VRF 経路は <code>VRF</code> 登録が先行必須。</p>
+<h3 id="3-nexthop_group-nexthop_group">3. NEXTHOP_GROUP 先行ガード（<code>nexthop_group</code> フィールド指定）<a class="headerlink" href="#3-nexthop_group-nexthop_group" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// routeorch.cpp:996-1015</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">try</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">NhgBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">nh_group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getNhg</span><span class="p">(</span><span class="n">nhg_index</span><span class="p">);</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="n">nhg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nh_group</span><span class="p">.</span><span class="n">getNhgKey</span><span class="p">();</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="n">ctx</span><span class="p">.</span><span class="n">using_temp_nhg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nh_group</span><span class="p">.</span><span class="n">isTemp</span><span class="p">();</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="p">}</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">out_of_range</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">)</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">{</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Next hop group %s does not exist&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">nhg_index</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="o">++</span><span class="n">it</span><span class="p">;</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>nexthop_group=&lt;idx&gt;</code> 指定で <code>NhgOrch::m_syncdNextHopGroups</code> 未登録 → <code>ERROR</code> + <code>++it</code> 残置。
+NhgOrch が <code>NEXTHOP_GROUP_TABLE</code> を消化するまで retry し続ける。NhgOrch 自身が項 1 の
+<code>allPortsReady</code> ガードを持つため、PortsOrch 完了が連鎖的な前提になる。</p>
+<p>→ 順序依存: <code>nexthop_group</code> 指定経路は <code>NEXTHOP_GROUP_TABLE|&lt;idx&gt;</code> の NhgOrch 反映が先行必須。</p>
+<h3 id="4-neighorch-single-nh">4. NeighOrch 先行 — single NH<a class="headerlink" href="#4-neighorch-single-nh" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// routeorch.cpp:2151-2155 (addRoute, single NH)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">else</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Failed to get next hop %s for %s, resolving neighbor&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">m_neighOrch</span><span class="o">-&gt;</span><span class="n">resolveNeighbor</span><span class="p">(</span><span class="n">nexthop</span><span class="p">);</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>hasNextHop(nexthop)</code> が false なら ARP/ND をキックして <code>return false</code> → <code>m_toSync</code> 残置。
+NEIGH_TABLE 反映後の次サイクルで成立。</p>
+<p>→ 順序依存: 各 nexthop IP の <code>NEIGH_TABLE</code> 解決が先行必須。</p>
+<h3 id="5-neighorch-ecmp-temproute">5. NeighOrch 先行 — ECMP（部分縮退 + tempRoute）<a class="headerlink" href="#5-neighorch-ecmp-temproute" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// routeorch.cpp:2194-2243 (addRoute, ECMP)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nextHops</span><span class="p">.</span><span class="n">getNextHops</span><span class="p">().</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">...)</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="p">{</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_neighOrch</span><span class="o">-&gt;</span><span class="n">hasNextHop</span><span class="p">(</span><span class="n">nextHop</span><span class="p">))</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">        </span><span class="c1">// overlay は createRemoteVtep/addTunnelNextHop, それ以外は resolveNeighbor</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">        </span><span class="n">m_neighOrch</span><span class="o">-&gt;</span><span class="n">resolveNeighbor</span><span class="p">(</span><span class="n">nextHop</span><span class="p">);</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="p">}</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">...</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="n">addTempRoute</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">nextHops</span><span class="p">);</span><span class="w">   </span><span class="c1">// L2240</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span></code></pre></div>
+<p>未解決 NH は <code>resolveNeighbor</code> をキックしつつ、<code>addTempRoute</code> (<code>routeorch.cpp:1947-1989</code>) が
+<strong>解決済み NH のみのサブセット</strong>で一時経路を ASIC に install する。元 ECMP は m_toSync 残置で、
+後続サイクルで本来の NHG に昇格。SRv6 NHG では tempRoute を作らず <code>return false</code>
+（<code>routeorch.cpp:2188-2200</code>）。</p>
+<p>→ 順序依存（縮退あり）: 全 NH の NEIGH 解決が ECMP 完成の前提。1 個以上解決済みなら部分縮退で
+疎通維持。</p>
+<h3 id="6-rif-directly-connected">6. RIF 先行 — directly-connected<a class="headerlink" href="#6-rif-directly-connected" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">// routeorch.cpp:2083-2090 (addRoute, intf NH)</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">next_hop_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_intfsOrch</span><span class="o">-&gt;</span><span class="n">getRouterIntfsId</span><span class="p">(</span><span class="n">nexthop</span><span class="p">.</span><span class="n">alias</span><span class="p">);</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">next_hop_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">{</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Failed to get next hop %s for %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>interface NH で IntfsOrch が RIF を未作成のとき <code>return false</code> 残置 →
+<code>INTERFACE</code>/<code>VLAN_INTERFACE</code>/<code>PORTCHANNEL_INTERFACE</code> 消化後の次サイクルで成立。</p>
+<p>→ 順序依存: directly-connected 経路は IntfsOrch RIF 作成が先行必須。</p>
+<h3 id="7-srv6-pic-context_index-retrycache-park">7. SRv6 PIC <code>context_index</code> の RetryCache park<a class="headerlink" href="#7-srv6-pic-context_index-retrycache-park" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// routeorch.cpp:2055-2060</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ctx</span><span class="p">.</span><span class="n">context_index</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">m_srv6Orch</span><span class="o">-&gt;</span><span class="n">contextIdExists</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">context_index</span><span class="p">))</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">{</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Context ID %s does not exist, move task entry to RetryCache&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="n">ctx</span><span class="p">.</span><span class="n">retry_cst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constraint</span><span class="p">(</span><span class="n">RETRY_CST_PIC</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">context_index</span><span class="p">);</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1">// routeorch.cpp:192</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">createRetryCache</span><span class="p">(</span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>pic_context_id</code> 指定で Srv6Orch 未登録のとき、<code>m_toSync</code> ポーリングではなく明示 RetryCache に park。
+Srv6Orch が <code>PIC_CONTEXT</code> を消化して <code>notifyRetry(RETRY_CST_PIC+&lt;id&gt;)</code> を呼ぶと再 enqueue される。</p>
+<p>→ 順序依存: SRv6 PIC 経路は <code>PIC_CONTEXT</code> 先行必須。RetryCache park で CPU 浪費を回避。</p>
+<h3 id="8-dotask-bulk-drain">8. doTask 内 bulk drain 順序<a class="headerlink" href="#8-dotask-bulk-drain" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch::doTask</code> は SET / DEL を以下の固定順で進める:</p>
+<ol>
+<li><strong>SET / DEL ループ</strong> (<code>routeorch.cpp:1023-1114</code>): 各エントリで <code>addRoute()</code> / <code>removeRoute()</code> を
+   呼ぶ。<code>addRoute()</code> は <code>gRouteBulker.create_entry()</code> / <code>set_entry_attribute()</code>
+   （<code>routeorch.cpp:2301 / 2318 / 2345 / 2354 / 2362 / 2371</code>）で bulker に積むのみで ASIC 反映なし。</li>
+<li><strong><code>gRouteBulker.flush()</code></strong> (<code>routeorch.cpp:1117</code>) — SET / DEL を一括 ASIC 反映。</li>
+<li><strong>post-process ループ</strong> (<code>routeorch.cpp:1120-1225</code>) — bulker の戻り status を見て
+   <code>addRoutePost</code> / <code>removeRoutePost</code> を呼び、<code>m_syncdRoutes</code> 更新と APPL_STATE_DB への
+   <code>publishRouteState</code> を行う。失敗時は <code>it_prev++</code> で再評価。</li>
+<li><strong><code>m_publisher.flush()</code></strong> (<code>routeorch.cpp:1231</code>) — APPL_STATE_DB notification を即時送出
+   （zebra への offload reply 遅延回避、<code>suppress-fib-pending</code> 連動）。</li>
+<li><strong>NHG ref-count 整理</strong> (<code>routeorch.cpp:1234-</code>) — <code>m_bulkNhgReducedRefCnt</code> を巡回して
+   参照数 0 の NHG を <code>removeNextHopGroup</code>。</li>
+<li><strong>NHG 上限近傍での早期 break</strong> (<code>routeorch.cpp:1094-1100</code>):</li>
+</ol>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_nextHopGroupCount</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">NhgOrch</span><span class="o">::</span><span class="n">getSyncedNhgCount</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_maxNextHopGroupCount</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="n">gRouteBulker</span><span class="p">.</span><span class="n">removing_entries_count</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="p">{</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>SET ループを途中で抜けて bulker flush → NHG 解放 → 次サイクルで残 SET を処理。</p>
+<p>bulker 内重複検出: 同 doTask 内で同 prefix を 2 回 create しようとすると
+<code>SAI_STATUS_ITEM_ALREADY_EXISTS</code> が即時返り <code>ERROR</code> + <code>return false</code>（<code>routeorch.cpp:2301-2306</code>、
+retry なし、次サイクルで再評価）。NHG member bulker（<code>gNextHopGroupMemberBulker</code>）は
+別ライフサイクルで <code>routeorch.cpp:1624 / 1732</code> の個別 flush 点で同期する。</p>
+<p>→ タイミング依存: 同一 doTask バッチ内の順序は固定。ConsumerStateTable 側で SET/DEL が
+merge されるため、バッチ間では最後の op のみが orchagent に届く（<code>routeorch.cpp:1088-1091</code> のコメント）。</p>
+<h3 id="9-sai-race-sai_status_item_not_found-on-setdualtor">9. SAI race: <code>SAI_STATUS_ITEM_NOT_FOUND</code> on set（DualToR）<a class="headerlink" href="#9-sai-race-sai_status_item_not_found-on-setdualtor" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// routeorch.cpp:2572-2581</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_STATUS_ITEM_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">{</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to set route ... not found&quot;</span><span class="p">);</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="n">m_syncdRoutes</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">vrf_id</span><span class="p">).</span><span class="n">erase</span><span class="p">(</span><span class="n">ipPrefix</span><span class="p">);</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>DualToR の tunnel route 削除直後に learned route が同 prefix を <code>set_route_entry_attribute</code>
+しようとして race。<code>m_syncdRoutes</code> を補正して <code>return false</code> し、次サイクルで「新規 create」として
+自動再投入される。</p>
+<p>→ タイミング依存: 同一 prefix への DEL→SET 連続発生時の自動補正パス。</p>
+<h3 id="10-nhg-temproute-install">10. NHG 上限到達 → tempRoute サブセット install<a class="headerlink" href="#10-nhg-temproute-install" title="Permanent link">&para;</a></h3>
+<p><code>addNextHopGroup</code> (<code>routeorch.cpp:1478-1485</code>) が
+<code>m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() &gt;= m_maxNextHopGroupCount</code> で false を返すと、
+<code>addTempRoute(ctx, nextHops)</code> (<code>routeorch.cpp:2240</code>) が解決済み 1 NH のサブセット tempRoute を
+install し、元 ECMP は m_toSync 残置。NhgOrch 側 (<code>nhgorch.cpp:319-362</code>) も同上限を見て
+temp NHG を保持し、リソースが空くまで promotion を保留する。</p>
+<p>→ タイミング依存: ASIC NHG リソース近傍では一時的に ECMP 縮退が観測される。</p>
+<h3 id="11-warm-reboot-fpmsyncd-routeorch">11. Warm reboot 順序（fpmsyncd 主導、routeorch は受動）<a class="headerlink" href="#11-warm-reboot-fpmsyncd-routeorch" title="Permanent link">&para;</a></h3>
+<p><code>routeorch.cpp</code> / <code>nhgorch.cpp</code> 自身には <code>warm</code> / <code>reconcile</code> の文字列は 0 件。warm reboot 時の
+順序は <strong>fpmsyncd 側</strong>で組まれる:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// fpmsyncd/fpmsyncd.cpp:153-172</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kt">bool</span><span class="w"> </span><span class="n">warmStartEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sync</span><span class="p">.</span><span class="n">getWarmStartHelper</span><span class="p">().</span><span class="n">checkAndStart</span><span class="p">();</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">warmStartEnabled</span><span class="p">)</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="p">{</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">warmRestartIval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sync</span><span class="p">.</span><span class="n">getWarmStartHelper</span><span class="p">().</span><span class="n">getRestartTimer</span><span class="p">();</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sync</span><span class="p">.</span><span class="n">getWarmStartHelper</span><span class="p">().</span><span class="n">runRestoration</span><span class="p">())</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">        </span><span class="n">warmStartTimer</span><span class="p">.</span><span class="n">start</span><span class="p">();</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="n">addSelectable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">warmStartTimer</span><span class="p">);</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<ul>
+<li>起動時 fpmsyncd は <code>WarmStartHelper::checkAndStart()</code> で warm-restart モードに入り、
+  既存 APPL_DB <code>ROUTE_TABLE</code> を退避（restoration）する。</li>
+<li>FRR (zebra) 再接続による経路再 push を <code>warmStartTimer</code> 満了 / <code>eoiuHoldTimer</code> 満了
+  （<code>fpmsyncd.cpp:196-238</code>）まで集約し、<code>onWarmStartEnd(applStateDb)</code> で「旧エントリ − 新エントリ」
+  の差分のみを <code>DEL</code> として routeorch に流す。</li>
+<li>routeorch から見ると warm reboot は通常の SET/DEL イベント列でしかなく、特別なフックは無い。
+  ただし「PortsOrch → IntfsOrch → NeighOrch → NhgOrch → RouteOrch」の起動順序が成立しないと、
+  項 1-6 の retry / temp 縮退が連発するため warm reconcile 時間に影響する。</li>
+</ul>
+<p>→ 順序依存: warm reboot は fpmsyncd <code>WarmStartHelper</code> が「FRR 再接続 → restoration →
+reconcile DEL flush」を順序づける。routeorch / nhgorch は通常時と同じ retry/temp ロジックで吸収。</p>
+<h3 id="_9">影響範囲のまとめ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序関係</th>
+<th>必須先行</th>
+<th>不成立時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NHG 経路（<code>nexthop_group</code>）</td>
+<td>PortsOrch readiness</td>
+<td><code>NhgOrch::doTask</code> 早期 return</td>
+</tr>
+<tr>
+<td>非デフォルト VRF prefix</td>
+<td>VrfOrch (<code>CONFIG_DB:VRF</code>)</td>
+<td><code>it++</code> 残置ポーリング</td>
+</tr>
+<tr>
+<td><code>nexthop_group</code> 指定</td>
+<td>NhgOrch (<code>NEXTHOP_GROUP_TABLE</code>)</td>
+<td><code>ERROR</code> ログ + <code>++it</code></td>
+</tr>
+<tr>
+<td>directly-connected</td>
+<td>IntfsOrch RIF (<code>INTERFACE</code> 系)</td>
+<td><code>return false</code> 残置</td>
+</tr>
+<tr>
+<td>single NH</td>
+<td>NeighOrch (<code>NEIGH_TABLE</code>)</td>
+<td><code>resolveNeighbor</code> + 残置</td>
+</tr>
+<tr>
+<td>ECMP</td>
+<td>全 NH の NEIGH 解決</td>
+<td>tempRoute サブセット install + 残置</td>
+</tr>
+<tr>
+<td>SRv6 PIC</td>
+<td>Srv6Orch (<code>PIC_CONTEXT</code>)</td>
+<td>RetryCache park (<code>RETRY_CST_PIC</code>)</td>
+</tr>
+<tr>
+<td>ASIC NHG 上限</td>
+<td>NHG 解放</td>
+<td>tempRoute install + bulker 早期 break</td>
+</tr>
+<tr>
+<td>同一 prefix DEL→SET race</td>
+<td>SAI 側完了</td>
+<td><code>m_syncdRoutes</code> 補正 → 次サイクル create</td>
+</tr>
+<tr>
+<td>同一バッチ内重複 create</td>
+<td>bulker flush 完了</td>
+<td><code>SAI_STATUS_ITEM_ALREADY_EXISTS</code> で <code>return false</code></td>
+</tr>
+<tr>
+<td>warm reboot</td>
+<td>fpmsyncd <code>WarmStartHelper</code></td>
+<td>restoration → timer → reconcile DEL flush</td>
+</tr>
+</tbody>
+</table>
+<p>詳細な grep 証跡は <code>meta/_intermediate/cdb-flow/appl-db-route-ordering.md</code> を参照<sup id="fnref2:orderingmem"><a class="footnote-ref" href="#fn:orderingmem">7</a></sup>.</p>
+<!-- /ordering -->
+
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
-<p><code>APPL_DB:ROUTE_TABLE</code> の SET/DEL に伴い、主購読者 <code>routeorch</code> および同居する <code>CrmOrch</code> / <code>FlowCounterRouteOrch</code> が以下の副次 DB エントリを書き込む。SAI <code>route_entry</code> 自体は本ページのデータフロー図で示した主作用 (ASIC_DB 反映) のため除外する<sup id="fnref4:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref3:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup><sup id="fnref:sidemem"><a class="footnote-ref" href="#fn:sidemem">7</a></sup>.</p>
+<p><code>APPL_DB:ROUTE_TABLE</code> の SET/DEL に伴い、主購読者 <code>routeorch</code> および同居する <code>CrmOrch</code> / <code>FlowCounterRouteOrch</code> が以下の副次 DB エントリを書き込む。SAI <code>route_entry</code> 自体は本ページのデータフロー図で示した主作用 (ASIC_DB 反映) のため除外する<sup id="fnref5:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref3:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup><sup id="fnref:sidemem"><a class="footnote-ref" href="#fn:sidemem">8</a></sup>.</p>
 <table>
 <thead>
 <tr>
@@ -35744,7 +36406,7 @@
 </table>
 <p>それ以外 (LOGLEVEL_DB / CONFIG_DB / CHASSIS_APP_DB / SNMP_OVERLAY_DB) への直接書込みは <code>routeorch.cpp</code> / <code>crmorch.cpp</code> / <code>flowcounterrouteorch.cpp</code> の grep で 0 件 (<code>routeorch</code> は CONFIG_DB を購読のみ)。</p>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/routeorch.cpp</code> (<code>publishRouteState</code> L3185-3201、<code>updateDefRouteState</code> L287-295、CRM <code>inc/decCrmResUsedCounter</code> 各所、<code>gFlowCounterRouteOrch-&gt;handleRoute*</code> L2708/L2996)、<code>orchagent/crmorch.cpp:400-401,1063-1113</code>、<code>orchagent/flex_counter/flowcounterrouteorch.cpp:33-35,123,152-178,916-923</code>。詳細なスキャン手順と grep ログは <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code> を参照<sup id="fnref2:sidemem"><a class="footnote-ref" href="#fn:sidemem">7</a></sup>。</p>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/routeorch.cpp</code> (<code>publishRouteState</code> L3185-3201、<code>updateDefRouteState</code> L287-295、CRM <code>inc/decCrmResUsedCounter</code> 各所、<code>gFlowCounterRouteOrch-&gt;handleRoute*</code> L2708/L2996)、<code>orchagent/crmorch.cpp:400-401,1063-1113</code>、<code>orchagent/flex_counter/flowcounterrouteorch.cpp:33-35,123,152-178,916-923</code>。詳細なスキャン手順と grep ログは <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code> を参照<sup id="fnref2:sidemem"><a class="footnote-ref" href="#fn:sidemem">8</a></sup>。</p>
 </blockquote>
 <!-- /side-effects -->
 
@@ -35752,7 +36414,7 @@
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
 <p><code>orchagent/routeorch.cpp</code> / <code>orchagent/orch.h</code> / <code>orchagent/crmorch.cpp</code> に固定された
 ハードコード定数の一覧。APPL_DB <code>ROUTE_TABLE</code> の購読側（<code>RouteOrch</code>）と
-CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文字列リテラルがここに集中する<sup id="fnref5:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref4:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup>。</p>
+CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文字列リテラルがここに集中する<sup id="fnref6:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref4:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup>。</p>
 <h3 id="ecmp-nhg-routeorchcpp-l37-l38">ECMP / NHG 上限 (<code>routeorch.cpp</code> L37-L38)<a class="headerlink" href="#ecmp-nhg-routeorchcpp-l37-l38" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -35915,6 +36577,112 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 </blockquote>
 <!-- /constants -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>ROUTE_TABLE</code> は YANG 未定義（APPL_DB は YANG 管理対象外）のため leafref は存在しない。<code>RouteOrch::doTask()</code> / <code>addRoute()</code> / <code>addNextHopGroup()</code> (<code>routeorch.cpp</code>) と <code>NhgOrch</code> (<code>nhgorch.cpp</code>) のコード精読により、以下の Orch / テーブルへの暗黙参照（存在確認 + OID 解決 + refcount + retry トリガ）が発生する<sup id="fnref7:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref3:nhgorch"><a class="footnote-ref" href="#fn:nhgorch">4</a></sup>。</p>
+<h3 id="key_1">key / フィールド由来の参照<a class="headerlink" href="#key_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF_TABLE</code> (VRFOrch)</td>
+<td>存在確認 + virtual_router OID + refcount</td>
+<td>key が <code>Vrf&lt;name&gt;:&lt;prefix&gt;</code> 形式（非デフォルト VRF）</td>
+<td><code>routeorch.cpp</code> L706–717 (<code>isVRFexists</code> / <code>getVRFid</code>)、L2013 (<code>increaseVrfRefCount</code>)、L2773 / L2993 (<code>decreaseVrfRefCount</code>)</td>
+</tr>
+<tr>
+<td><code>NEIGH_TABLE</code> (NeighOrch)</td>
+<td>next-hop OID + refcount + ARP/ND resolve トリガ</td>
+<td><code>nexthop</code> 非空かつ各 NH が IP NH（intf-only でない）</td>
+<td><code>routeorch.cpp</code> L1499–1510 (<code>hasNextHop</code> / <code>getNextHopId</code> / <code>addNextHop</code>)、L2094–2119（single NH）、L2151–2155 (<code>resolveNeighbor</code>)、L2197–2219（ECMP メンバ）</td>
+</tr>
+<tr>
+<td><code>INTF_TABLE</code> (IntfsOrch)</td>
+<td>RIF OID + refcount + サブネット判定</td>
+<td><code>ifname</code> 指定 / intf-only NH / コネクテッドルート判定</td>
+<td><code>routeorch.cpp</code> L968 (<code>getRouterIntfsAlias</code>)、L1045 (<code>isPrefixSubnet</code>)、L2083 / L2086–2090 (<code>getRouterIntfsId</code> — <code>SAI_NULL_OBJECT_ID</code> なら retry)、L2429</td>
+</tr>
+<tr>
+<td><code>PORT_TABLE</code> (PortsOrch)</td>
+<td>allPortsReady ブロック + inband skip + CPU port</td>
+<td>常時 + intf-only NH が inband port</td>
+<td><code>routeorch.cpp</code> L609 (<code>allPortsReady</code> — false で全 ROUTE 処理保留)、L243 (<code>getCpuPort</code>)、L2074 (<code>isInbandPort</code>)、L915–926（<code>eth0</code>/<code>docker0</code>/<code>Loopback*</code> 宛は ASIC から撤去）</td>
+</tr>
+<tr>
+<td><code>NEXTHOP_GROUP_TABLE</code> / <code>CLASS_BASED_NEXT_HOP_GROUP_TABLE</code> (NhgOrch / CbfNhgOrch)</td>
+<td>index 解決 + 共有 NHG OID + refcount + 上限</td>
+<td><code>nexthop_group</code> 非空（<code>nexthop</code>/<code>ifname</code> と排他）</td>
+<td><code>routeorch.cpp</code> L807–812（排他）、L838–839 / L996–1012 (<code>getNhg</code> — <code>out_of_range</code> で retry)、L1096 / L1424 / L1478（NHG 上限）、L2411 (<code>hasNhg</code> OR)、L2546 (<code>incNhgRefCount</code>)、<code>nhgorch.cpp</code> L319–362（temp NHG 保持と promotion）</td>
+</tr>
+<tr>
+<td><code>FG_NHG</code> / <code>FG_NHG_PREFIX</code> (FgNhgOrch)</td>
+<td>適用判定 + 専用 SAI NHG + ロールバック</td>
+<td><code>isRouteFineGrained(vrf_id, prefix, NHs)</code> が true</td>
+<td><code>routeorch.cpp</code> L529 / L597、L1424–1431（上限ガード）、L2028–2037 (<code>setFgNhg</code>)、L2403 / L2470–2477 (<code>removeFgNhg</code>)</td>
+</tr>
+<tr>
+<td><code>SRV6_SID_LIST_TABLE</code> / <code>SRV6_MY_SID_TABLE</code> (Srv6Orch)</td>
+<td>SRv6 NH OID + Agg ID + バルク削除</td>
+<td><code>segment</code> または <code>seg_src</code> 非空（<code>srv6_nh = true</code>）</td>
+<td><code>routeorch.cpp</code> L736–795（フラグ立て）、L1250 (<code>removeSrv6Nexthops</code>)、L2055 (<code>contextIdExists</code>)、L2100 / L2143 / L2169 (<code>srv6Nexthops</code>)、L2295 / L2352 (<code>getAggId</code>)、L2188–2200（temp route 非生成）</td>
+</tr>
+<tr>
+<td><code>VXLAN_TUNNEL</code> / remote VTEP (VxlanTunnelOrch + NeighOrch)</td>
+<td>L3 VNI 検証 + remote VTEP 作成 + tunnel NH</td>
+<td><code>vni_label</code> 非空（<code>overlay_nh = true</code>）かつ非 SRv6</td>
+<td><code>routeorch.cpp</code> L872 / L893–897 (<code>isL3VniVlan</code>)、L2127 (<code>createRemoteVtep</code>)、L2133 / L2208 (<code>addTunnelNextHop</code>)、L2128–2141（失敗時 retry）、L1781–1789（remove）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="side-ref">通知 / side ref<a class="headerlink" href="#side-ref" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>操作</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FlowCounterRouteOrch</code></td>
+<td>route flow counter 候補通知（refcount/OID なし）</td>
+<td>常時 + link-local prefix の add/remove</td>
+<td><code>routeorch.cpp</code> L259 (<code>onAddMiscRouteEntry</code>)、L282 (<code>onRemoveMiscRouteEntry</code>)、L2708 (<code>handleRouteAdd</code>)</td>
+</tr>
+<tr>
+<td><code>CRM_IPV4_ROUTE</code> / <code>CRM_IPV6_ROUTE</code> / <code>CRM_NEXTHOP_GROUP</code> / <code>CRM_NEXTHOP_GROUP_MEMBER</code> (CrmOrch)</td>
+<td>残量カウンタ inc/dec — 投入はブロックしない</td>
+<td>経路 / NHG / member の create / remove ごと</td>
+<td><code>routeorch.cpp</code> 各所 <code>gCrmOrch-&gt;incCrmResUsedCounter()</code> / <code>dec...</code>、SAI 枯渇は <code>handleSaiCreateStatus</code> で <code>task_failed</code> / <code>task_need_retry</code> に分岐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">排他関係<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> の同時指定はエラー（<code>routeorch.cpp</code> L807–812 — erase で打ち切り、retry なし）。</li>
+<li><code>segment</code> / <code>seg_src</code> (SRv6) と <code>vni_label</code> (VxLAN overlay) は実装上 <code>srv6_nh</code> と <code>overlay_nh</code> が排他的に分岐し、SRv6 NHG は temp route を作らず即 <code>return false</code>（L2188–2200）。</li>
+<li><code>blackhole = "true"</code> のとき <code>nexthop</code> / <code>ifname</code> は不要かつ無視される。</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">retry の本体は doTask の <code>m_toSync</code> 保留</p>
+<p>暗黙参照の欠落（VRF 未作成 / NEIGH 未解決 / NHG index 不在 / RIF 未作成 / L3 VNI 未紐付け / SRv6 NH 作成失敗 / Tunnel NH 作成失敗）はすべて <code>addRoute()</code> が <code>return false</code> を返し、doTask が <code>it++</code> で <code>m_toSync</code> 上に保留する。被参照側 Orch が当該オブジェクトを作成すると、次回 doTask 周回で install される（fpmsyncd 側は再送しない）。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title"><code>nhgorch.cpp</code> には platform 分岐なし</p>
+<p><code>nhgorch.cpp</code> / <code>nhgbase.cpp</code> は <code>SAI_NEXT_HOP_GROUP_TYPE_ECMP</code> (<code>nhgorch.cpp</code> L771–772) と <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT</code> を共通 API で発行するのみで、platform / switch_type の if 分岐は無い。NHG 上限は <code>routeorch</code> が起動時に算出する <code>m_maxNextHopGroupCount</code> を <code>gRouteOrch-&gt;getMaxNhgCount()</code> 経由で参照し、満員時は temp NHG として保持する。</p>
+</div>
+<p>詳細分析: <code>meta/_intermediate/cdb-flow/appl-db-route-cross-refs.md</code></p>
+<!-- /cross-refs -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -35922,13 +36690,13 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 <p>fpmsyncd RouteSync 実装: <code>sonic-swss/fpmsyncd/routesync.cpp</code>, <code>routesync.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rsync" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:rorch">
-<p>RouteOrch 実装: <code>sonic-swss/orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:rorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>RouteOrch 実装: <code>sonic-swss/orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:rorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:nhgorch">
-<p>NhgOrch 実装: <code>sonic-swss/orchagent/nhgorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/nhgorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/nhgorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>NhgOrch 実装: <code>sonic-swss/orchagent/nhgorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/nhgorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/nhgorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:crmorch">
 <p>CrmOrch 実装: <code>sonic-swss/orchagent/crmorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
@@ -35936,8 +36704,11 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 <li id="fn:failuremem">
 <p>失敗分岐の中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-failure.md</code>&#160;<a class="footnote-backref" href="#fnref:failuremem" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
+<li id="fn:orderingmem">
+<p>順序依存スキャンの中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-ordering.md</code>&#160;<a class="footnote-backref" href="#fnref:orderingmem" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:orderingmem" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
 <li id="fn:sidemem">
-<p>副次 DB 書込スキャンの中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code>&#160;<a class="footnote-backref" href="#fnref:sidemem" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sidemem" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+<p>副次 DB 書込スキャンの中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code>&#160;<a class="footnote-backref" href="#fnref:sidemem" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sidemem" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
