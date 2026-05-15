@@ -257,6 +257,45 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` 自体のスキーマ・暗黙デフ�
 詳細は `meta/_intermediate/cdb-flow/appl-vlan-platform.md` を参照。
 <!-- /platform -->
 
+<!-- failure -->
+## 書込失敗・retry 分岐
+
+VLAN_TABLE / VLAN_MEMBER_TABLE への書込みは複数経路で失敗し得る。一時失敗は retry、形式異常は即破棄という二段構えで、層ごとに判定基準が異なる[^vlanmgr][^portsorch]。
+
+### vlanmgrd 側
+
+| 失敗ケース | コード | 挙動 |
+|-----------|-------|-----|
+| `gMacAddress` 未確定 (スイッチ MAC 未到達) | `vlanmgr.cpp:316-322` (`isVlanMacOk`) | `doVlanTask()` 冒頭で即 return。`m_toSync` は erase されず次 tick で再評価（暗黙の retry） |
+| VLAN_MEMBER の port / LAG / VLAN が未準備 | `vlanmgr.cpp:642-647` (`isMemberStateOk` / `isVlanStateOk`) | `it++; continue;` で retry。コメント `Other than the case of member port/lag is not ready, no retry will be performed` (`L711`) |
+| `addHostVlanMember()` の `bridge vlan add` が PortChannel で失敗 | `vlanmgr.cpp:258-269` | LAG (`PortChannel*`) は race 想定で `return false` → 外側で retry。`Ethernet*` の場合は `EXEC_WITH_ERROR_THROW` で再実行し、2 度目失敗で例外伝播（catch なし） |
+| `setHostVlanMac()` の `bridge down → set mac → bridge up` 中間失敗 | `vlanmgr.cpp:198-231` | 例外伝播。Bridge が down のまま残留しデータプレーン断の可能性 |
+| key 形式不正 (`Vlan` プレフィクスなし / 非数値) | `vlanmgr.cpp:334-346`, `L605-621` | `SWSS_LOG_ERROR` + `erase(it)` で即破棄、retry なし。APPL_DB には何も書かれない |
+| 不正 `tagging_mode` 値 | `vlanmgr.cpp:658-665` | `erase(it)` で即破棄 |
+
+### portsorch (PortsOrch) 側
+
+| 失敗ケース | コード | 挙動 |
+|-----------|-------|-----|
+| `addVlan()` の `sai_vlan_api->create_vlan()` 失敗 | `portsorch.cpp:7392-7402` | `handleSaiCreateStatus(SAI_API_VLAN, status)` で SAI ステータス分類。retryable なら外側 `it++; continue;` で retry、非 retryable なら erase |
+| VLAN_TABLE DEL: FDB / ref count / メンバ / VNI / host_intf 残存 | `portsorch.cpp:7427-7461` | `removeVlan()` が `return false` → 外側 (`L5844-5847`) で `it++` retry。fdborch / intfsorch / vxlanorch の削除待ち |
+| VLAN_MEMBER: PORT / VLAN 未取得 | `portsorch.cpp:5900-5912` | `getPort()` 失敗で `it++; continue;` retry |
+| VLAN_MEMBER: 不正 `tagging_mode` | `portsorch.cpp:5924-5931` | `SWSS_LOG_ERROR` + `erase(it)` で即破棄 |
+| VLAN_MEMBER: `addBridgePort()` の `sai_bridge_api->create_bridge_port()` 失敗 | `portsorch.cpp:7258-7268` | `handleSaiCreateStatus(SAI_API_BRIDGE, status)` 経由で retry / failure 判定 |
+| VLAN_MEMBER: `addVlanMember()` の `sai_vlan_api->create_vlan_member()` 失敗 | `portsorch.cpp:7553-7563` | 同上 (`SAI_API_VLAN`) |
+| VLAN_MEMBER: `end_point_ip` 指定 + `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` capability 不在 | `portsorch.cpp:7515-7524` | `Flood group with end point ip is not supported` を吐き `return false`。外側で永続的に retry（前進せず stuck） |
+| VLAN_MEMBER: untagged 時の `setPortPvid()` 失敗 | `portsorch.cpp:7568-7574` | `return false` → 外側で retry |
+| VLAN_TABLE: `createVlanHostIntf()` 失敗 | `portsorch.cpp:5822-5828` | コメント `No need to fail` の通り retry せず erase。VLAN 本体は成功扱い |
+
+### retry セマンティクスの違い
+
+- 一時失敗 (PORT/LAG/VLAN 未準備、SAI retryable、bridge port race) は `it++; continue;` で `m_toSync` に残し次 tick で再試行。
+- 永続失敗 (key 形式不正、不正 tagging_mode、`Unknown operation`) は `erase(it)` で破棄。CONFIG_DB 側の不正エントリは検出されず残る（silent drop）。
+- 形式上 retryable だが永続 stuck になるケース: `end_point_ip` capability 不在の VLAN_MEMBER。capability は switch 初期化時に確定するため自然解消しない。
+
+詳細な分岐・呼び出し順は `meta/_intermediate/cdb-flow/appl-vlan-failure.md` を参照。
+<!-- /failure -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (cross-refs)
 
