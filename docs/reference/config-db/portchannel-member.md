@@ -303,3 +303,44 @@ DEL PORTCHANNEL|PortChannel0001
 > **スキャン証跡**: `teammgr.cpp:149-169` + `minigraph.py:2547` を確認、4 件分岐抽出。PORTCHANNEL_MEMBER は key-only テーブルであることを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> leafref として YANG スキーマで強制される参照に加え、orchagent `m_port_ref_count` 機構・teammgrd runtime ゲート・CLI ガード・YANG `must` 制約として PORTCHANNEL_MEMBER が関与する暗黙参照を網羅する。
+> 詳細証跡: `meta/_intermediate/cdb-flow/portchannel-member-cross-refs.md`
+
+### PORTCHANNEL_MEMBER が参照する下流テーブル / リソース
+
+| 対象 | 参照機構 | 効果 |
+|---|---|---|
+| `PORTCHANNEL` (`name`) | YANG leafref | 存在しない PORTCHANNEL 名は config-load で reject |
+| `PORT` (`port`) | YANG leafref | 存在しない PORT 名は config-load で reject |
+| `STATE_LAG_TABLE` | runtime ゲート (`TeamMgr::isLagStateOk`) | teamd が LAG を STATE_LAG_TABLE に登録するまで SET を保留 (`teammgr.cpp:89-102`) |
+| `STATE_PORT_TABLE` | runtime ゲート (`TeamMgr::doPortUpdateTask`) | ポートが `state=ok` になるまで enslave を保留 (`teammgr.cpp:67-87`) |
+| `STATE_MACSEC_INGRESS_SA_TABLE` | runtime ゲート (`isMACsecIngressSAOk`, MACsec 有効時のみ) | MACsec Ingress SA が ready になるまで enslave を保留 (`teammgr.cpp:362-366`) |
+| `DEVICE_METADATA|localhost|mac` | 起動時読み取り (teammgrd) | PortChannel の switch MAC 設定に使用; 欠如で teammgrd 起動失敗 (`teammgr.cpp:54-57`) |
+
+### PORTCHANNEL_MEMBER を参照する上流コンポーネント
+
+| 参照元 | 参照機構 | 効果 |
+|---|---|---|
+| `VLAN_MEMBER` | YANG `must` 制約 (`sonic-vlan.yang:302-304`) | ポートが PORTCHANNEL_MEMBER に存在する間、同一ポートの VLAN_MEMBER 追加を YANG バリデーションで禁止 |
+| `config vlan member add` (CLI) | `config/vlan.py:379` `get_table('PORTCHANNEL_MEMBER')` | ポートが PORTCHANNEL_MEMBER 在籍中は `ctx.fail()` で拒否 |
+| `config switchport mode` (CLI) | `config/switchport.py:44-47` `get_table('PORTCHANNEL_MEMBER')` | ポートが PORTCHANNEL_MEMBER 在籍中は `ctx.fail()` で拒否 |
+| `config stp` (CLI) | `config/stp.py:331` `get_table('PORTCHANNEL_MEMBER')` | LAG メンバーポートの判定に使用 |
+| `PORT` DEL guard | `m_port_ref_count` (portsorch.cpp:8205, 8253, 5649) | PORTCHANNEL_MEMBER 在籍中は対応 PORT の DEL を拒否 |
+| `multi_asic` (sonic-py-common) | `multi_asic.py:410,435` `get_keys('PORTCHANNEL_MEMBER')` | LAG メンバーの internal/backend 属性を伝播; マルチ ASIC 環境の backend LAG 判定に使用 |
+| `show interfaces portchannel` (CLI) | `show/interfaces/__init__.py:1141,1173` | メンバーポート一覧を表示 |
+
+### VLAN_MEMBER との相互排他 (詳細)
+
+同一物理ポートは PORTCHANNEL_MEMBER と VLAN_MEMBER に同時に登録できない。  
+制約は 2 層で実装されている:
+
+1. **YANG `must` 制約** (`sonic-vlan.yang:302`): config-load / `sonic-cfggen` 時に自動 reject
+2. **CLI ガード** (`config/vlan.py:379`): `config vlan member add` 実行時に即時 `ctx.fail()`
+
+LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポートを追加した後、LAG インタフェース名 (`PortChannel0001`) を `VLAN_MEMBER` に追加する。物理ポートを直接 VLAN_MEMBER に追加するのではない点に注意。
+
+<!-- /cross-refs -->
