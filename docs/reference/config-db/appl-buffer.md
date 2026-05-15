@@ -215,6 +215,77 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 > **証跡**: `bufferorch.h` L18-35 全行読了、`bufferorch.cpp` L391-1000 全行読了、`buffermgrdyn.cpp` L870-960 全行読了、`schema.h` BUFFER 定数確認済み。
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗・retry 挙動 (Phase D)
+
+`BufferOrch::doTask()` (`bufferorch.cpp` L2096-2129) は per-table handler が返す `task_process_status` を一括処理する。ステータスごとの最終挙動は以下のとおり[^buforch]。
+
+| ステータス | doTask の動作 | 残タスク処理 | ログ |
+|---|---|---|---|
+| `task_success` / `task_ignore` | `m_toSync` から該当エントリを erase | 次タスクへ継続 | なし |
+| `task_invalid_entry` | erase | 次タスクへ継続 | `LOG_ERROR ("Failed to process invalid buffer task")` |
+| `task_failed` | erase | **その回の doTask を `return` で打ち切り** | `LOG_ERROR ("Failed to process buffer task, drop it")` |
+| `task_need_retry` | erase せず `it++` で次回まで保留 | 次タスクへ継続 | `LOG_INFO ("Failed to process buffer task, retry it")` |
+| handler 未登録 | erase | 次タスクへ継続 | `LOG_ERROR ("No handler for key:%s found")` |
+
+> `task_failed` のみ doTask 関数全体を return で抜けるため、後続のキューイング済みタスクは次回ディスパッチまで処理されない。`task_invalid_entry` は LOG レベルが ERROR でも処理続行する点に注意。
+
+### 主要 handler ごとの retry / failed 条件
+
+| handler | retry になる条件 (`task_need_retry`) | failed になる条件 (`task_failed`) |
+|---|---|---|
+| `processBufferPool()` (L391-596) | 削除対象 pool が pending-remove / 削除対象 pool が他オブジェクト参照中 / SAI 一時エラー (`handleSaiSetStatus` 経由) | — (SAI 致命系のみ) |
+| `processBufferProfile()` (L602-888) | 削除対象 profile が pending-remove / `pool` 参照が `not_resolved` (= pool 未登録) / PG・Queue から参照中 | `pool` 参照 resolve その他失敗 / 数値フィールドのパース失敗 / `packet_discard_action` が `drop`/`trim` 以外 |
+| `processQueue()` (L914-1233) | `profile` 参照 `not_resolved` (= profile 未登録) / queue がロック中 (`LOG_WARN "...is locked, will retry"`, L1068-1070) | `profile` 参照 resolve その他失敗 |
+| `processPriorityGroup()` (L1305-1495) | `profile` 参照 `not_resolved` | `profile` resolve その他失敗 / 参照 profile が **trimming-eligible** (`SAI_BUFFER_PROFILE_PACKET_ADMISSION_FAIL_ACTION_DROP_AND_TRIM` を持つ profile を PG に貼ろうとした場合、L1382-1388) |
+| `processIngressBufferProfileList()` (L1663-) / `processEgressBufferProfileList()` (L1845-) | profile-list 内のいずれかの profile が `not_resolved` | profile-list resolve その他失敗 / list 内に trimming-eligible profile 混在 |
+
+### handler 内の特殊な 2 段 retry (profile only)
+
+`processBufferProfile()` L778-797 では、`sai_set_buffer_profile_attribute()` が失敗した場合に **bufferorch 自身が同じ attr で SAI をもう一度呼ぶ**:
+
+```cpp
+SWSS_LOG_NOTICE("Unable to modify buffer profile, ... will retry one more time", ...);
+sai_status = sai_buffer_api->set_buffer_profile_attribute(sai_object, &attribute);
+if (SAI_STATUS_SUCCESS != sai_status) {
+    SWSS_LOG_ERROR("Failed to modify buffer profile, ... will retry once", ...);
+    handle_status = handleSaiSetStatus(SAI_API_BUFFER, sai_status);
+    ...
+}
+```
+
+これは `task_need_retry` での次回 doTask 待ちとは別のループ内 retry で、SAI ベンダ実装の transient エラー吸収用。`processBufferPool()` 側にはこの即時 retry はなく、初回失敗で即 `handleSaiSetStatus()` に委譲する (L513-521)。
+
+### SAI 失敗の共通変換: `handleSaiSetStatus` / `handleSaiCreateStatus` / `handleSaiRemoveStatus`
+
+bufferorch は SAI 戻り値を直接 enum 化せず、`orch.cpp` 共通の `handleSai*Status()` を経由する。これらは `SAI_STATUS_SUCCESS` 以外を retry/failed/ignore/abort のいずれかに翻訳する。`SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` のみ bufferorch 側で先取りして `task_ignore` を返す (L508-512 / L773-777)。
+
+### 致命的でないが LOG_WARN を出す経路
+
+| 条件 | 挙動 | evidence |
+|---|---|---|
+| queue ロック中 | `task_need_retry` + `LOG_WARN ("Queue %zd on port %s is locked, will retry")` | `bufferorch.cpp:1068-1070` |
+| port link-up 後に queue/PG プロファイルを適用 | handler は処理続行 (警告のみ) | `bufferorch.cpp:1220-1227` |
+
+### 入力検証で `task_invalid_entry` になる主なケース
+
+- `type` が `ingress`/`egress` 以外 (`processBufferPool`, L457)
+- `mode` が `static`/`dynamic` 以外 (`processBufferPool`, L484)
+- key トークン数違反 (queue: 2 or 4, PG: 2, L920/L944/L1322)
+- port alias 未登録 (`processQueue` L1035 / profile-list L1113)
+- voq/queue index 範囲外 (L1053-1064)
+- op が SET/DEL 以外 (L593, L885, L1013, L1188)
+
+### 詳細マトリクス
+
+handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス、ディスパッチャ挙動表、grep カバレッジは中間ファイル参照:
+
+- `meta/_intermediate/cdb-flow/appl-buffer-failure.md`
+
+> **証跡**: `bufferorch.cpp` 全 2138 行のうち、`task_need_retry` × 12 / `task_failed` × 10 / `task_invalid_entry` × 17 / `task_ignore` × 3 / `handleSai*Status` × 9 hit を全件確認。`doTask()` の switch 句 (L2107-2128) も精読。
+
+<!-- /failure -->
+
 ## 引用元
 
 [^buforch]: `bufferorch.cpp` — `processBufferPool()` / `processBufferProfile()` / `processPriorityGroup()` / `processQueue()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp>
