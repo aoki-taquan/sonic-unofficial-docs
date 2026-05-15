@@ -209,6 +209,109 @@ PORT_TABLE:<port_name>
 
 <!-- /side-effects -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`PortsOrch` は APPL_DB `PORT_TABLE` に対する一連の書込みを「`PortConfigDone` → bulk port create → 個別属性適用 → `PortInitDone`」の段階遷移として処理する。さらに speed / FEC / autoneg / interface_type など SAI が admin-up 中に変更を許さない属性については **admin-down 前置 → 属性適用 → admin-status restore** の 3 ステップを内部で再現する[^portorder]。
+
+### 1. PortConfigDone → bulk create → PortInitDone の 3 段階遷移
+
+portsyncd は CONFIG_DB の `PORT` テーブルを APPL_DB `PORT_TABLE` に転写するとき、以下の順で 3 種類のキーを書く:
+
+1. `PORT_TABLE:<alias>` を全ポート分書く（並列可）
+2. `PORT_TABLE:PortConfigDone` に `count` フィールドを書く (`portsorch.cpp:4345` で `m_portTable->hget("PortConfigDone","count",value)`)
+3. `PORT_TABLE:PortInitDone` を書く (`portsorch.cpp:4613-4626`)
+
+PortsOrch 側の挙動:
+
+| イベント | 動作 | evidence |
+|---|---|---|
+| `PortConfigDone` 受信 | CONFIG_DB の `PORT` テーブルからレーンを集めて `addPortBulk()` + `initPortsBulk()` を一括実行、`m_portConfigState = PORT_CONFIG_DONE` に遷移 | `portsorch.cpp:4744-4752` |
+| 個別 `PORT_TABLE:<alias>` (PortConfigDone 前) | `taskMap` に保留 (`continue`)、PortConfigDone 受信後に再評価 | `portsorch.cpp:4772-4777` |
+| 個別 `PORT_TABLE:<alias>` (PortConfigDone 後) | breakout 等で追加されたポートを個別に `addPortBulk` で作成 | `portsorch.cpp:4754-4771` |
+| `PortInitDone` 受信 | `addSystemPorts()` を 1 回だけ実行、`m_initDone = true` に遷移 | `portsorch.cpp:4613-4626` |
+
+`isConfigDone()` (`PORT_CONFIG_DONE` 状態のみで判定) と `isInitDone()` (`m_initDone && m_pendingPortSet.empty()` の合算) は他 orch のゲートに使われる (`bufferorch.cpp:2079-2091` 等)。
+
+順序違反は `taskMap` で永続保留されるため最終的には収束するが、PortConfigDone より前に `PortInitDone` を書くと `m_initDone` が立っても本ポート処理がまだ走らないため `isInitDone()` は `m_pendingPortSet` のせいで false のままになる。
+
+### 2. gBufferOrch->isPortReady() ゲート (BUFFER_PG/QUEUE bind 完了が前提)
+
+`portsorch.cpp:4779-4789`: 各ポートの本設定 (autoneg / speed / FEC / MTU / TPID / serdes / admin_status) に進む前に `gBufferOrch->isPortReady(alias)` を確認し、false なら `m_pendingPortSet.emplace(alias)` で保留する。BufferOrch 側 (`bufferorch.cpp:254-275`) は `BUFFER_PG` / `BUFFER_QUEUE` の SAI bind 完了で `m_ready_list[port]=true` に更新する。
+
+→ **BUFFER_PG / BUFFER_QUEUE の SAI bind 完了 → PortsOrch のポート属性適用** の順序が硬い前提。違反時は当該ポートだけ `m_pendingPortSet` に積まれ続け、`isInitDone()` も false のまま後段全 orch が止まる。
+
+### 3. speed / FEC / autoneg / interface_type / adv_speeds の admin-down 前置
+
+SAI ベンダ実装はポートが admin up 中の属性変更を reject することがあるため、PortsOrch は次の属性について `setPortAdminStatus(p, false)` を内部で前置する:
+
+| 属性 | admin-down 条件 | evidence |
+|---|---|---|
+| `autoneg` | `p.m_admin_state_up` (常時) | `portsorch.cpp:4824-4839` |
+| `speed` | `p.m_admin_state_up && !p.m_autoneg` (autoneg OFF 時のみ) | `portsorch.cpp:5035-5050` |
+| `adv_speeds` | `p.m_admin_state_up && p.m_autoneg` (autoneg ON 時のみ) | `portsorch.cpp:5084-5099` |
+| `interface_type` | `p.m_admin_state_up && !p.m_autoneg` | `portsorch.cpp:5136-5151` |
+| `adv_interface_types` | `p.m_admin_state_up && p.m_autoneg` | `portsorch.cpp:5207-5222` |
+| `fec` | `p.m_admin_state_up` (常時) | `portsorch.cpp:5339-5354` |
+
+属性適用完了後 `portsorch.cpp:5499-5511` の「`Last step set port admin status`」セクションで `admin_status` を元値に restore する (`Restore admin status if the port was brought down` コメント)。
+
+→ 外部から見る APPL_DB `admin_status` フィールドは変化しないが、SAI レイヤでは一時的に DOWN を経由する。書込側は「admin_status と speed/FEC を同一 hset で投入してよい」「最終 admin_status は守られる」が契約。
+
+### 4. setPortAdminStatus と STATE_DB host_tx_ready の同期順
+
+`portsorch.cpp:2196-2256` の `setPortAdminStatus()`:
+
+| 遷移方向 | host_tx_ready 書き込みタイミング | 行 |
+|---|---|---|
+| admin **down** (state=false) | SAI `SAI_PORT_ATTR_ADMIN_STATE` を叩く**前**に `setHostTxReady(port, "false")` | L2202 (コメント L2219 「Update the host_tx_ready to false before setting admin_state, when admin state is false」) |
+| admin **up** (state=true) | SAI 呼び出し**成功後**に `setHostTxReady(port, "true")` | L2256 |
+| SAI 失敗 (どの方向でも) | host_tx_ready を `"false"` に書き戻し | L2222, L2236, L2248 |
+
+ポート初期化時 (L6723) と SAI からの host_tx_ready 通知 (L9724) でも同様に STATE_DB を更新する。
+
+→ **admin down 方向は host_tx_ready の DOWN 反映が先**（光モジュール側 TX を止めてから admin を落とす）、**admin up 方向は SAI 成功確認後**（ハードのリンク準備完了後に host_tx_ready を立てる）。
+
+### 5. warm reboot — APPL_DB スナップショットの完全性が必須
+
+`portsorch.cpp:4338-4395` `bake()`: warm restart 起動時、PortsOrch は APPL_DB `PORT_TABLE` を以下の条件で検証する。
+
+| 検証項目 | 失敗時 | evidence |
+|---|---|---|
+| `PortConfigDone:count` の存在 | `cleanPortTable()` で APPL_DB 一掃 → cold start fallback | `portsorch.cpp:4345, 4357-4361` |
+| `PortInitDone` キーの存在 | 同上 | `portsorch.cpp:4350, 4357-4361` |
+| `count` の値と APPL_DB のポートキー数 (`keys.size() - 2`) の一致 | invalid 扱い → cold start fallback | `portsorch.cpp:4364-4374` |
+
+検証通過後、残った全ポートキーを `m_pendingPortSet` に積み (`portsorch.cpp:4376-4384`)、各ポートが BUFFER ready + 属性再適用を完了するまで `isInitDone()` は false のままになる。
+
+oper_status / flap_count は warm 時に既存値を読み戻して継続する (`portsorch.cpp:6617-6647` / `6655-6656`)。`m_isWarmRestoreStage` (`portsorch.cpp:753` でコンストラクタ初期化、`6428` で `false` 化) を境にして cold path の `oper_status="down"` 初期書き込み (L6643) や `cleanPortTable()` (L4076) はスキップされる。
+
+→ **portsyncd が `PortConfigDone` / `PortInitDone` / count 一致を APPL_DB に書き終えてから orchagent を再起動**。順序違反は即 cold start フォールバックで warmboot 失敗扱いになる。
+
+### まとめ: 外部書込側の順序契約
+
+| 順序 | 操作 | 違反時 |
+|---|---|---|
+| 1 | 全ポートの `PORT_TABLE:<alias>` を書く (順不同可) | `PortConfigDone` 前なら保留 |
+| 2 | `PORT_TABLE:PortConfigDone` (`count`) を書く | `m_portConfigState` が上がらず保留が続く |
+| 3 | BufferOrch が `BUFFER_PG` / `BUFFER_QUEUE` を SAI bind し `isPortReady=true` になる | ポート属性適用が `m_pendingPortSet` で保留 |
+| 4 | `PORT_TABLE:PortInitDone` を書く | `m_initDone=false` のまま、後段全 orch が止まる |
+| 5 | warmboot 時: APPL_DB に `PortConfigDone` / `PortInitDone` / count 一致を残してから orchagent 再起動 | `cleanPortTable()` で APPL_DB 全削除 → cold start fallback |
+
+orchagent 内部では、admin-down 前置・属性適用・admin restore は `PortsOrch::doTask()` が自動再現するので、書込側は「admin_status と速度系属性を同時に書いてよい」「個別 hset で逐次投入してもよい」のいずれでも構わない。
+
+### 詳細
+
+行番号付きの完全スキャンノート・grep カバレッジは中間ファイル参照:
+
+- `meta/_intermediate/cdb-flow/appl-port-table-ordering.md`
+
+> **証跡**: `portsorch.cpp` の `m_portConfigState` / `PORT_CONFIG_DONE` (9 hit)、`m_initDone` / `PortInitDone` (5 hit)、`m_isWarmRestoreStage` / `WarmStart::isWarmStart` (3 hit)、`gBufferOrch->isPortReady` (1 hit)、`setPortAdminStatus(p, false)` を含む `Bring port down before applying` 系コメント (6 hit) を全件確認。
+
+[^portorder]: orchagent portsorch.cpp (Phase B 順序依存): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
+
+<!-- /ordering -->
+
 <!-- failure -->
 ## 失敗・retry 分岐 (Phase D)
 
