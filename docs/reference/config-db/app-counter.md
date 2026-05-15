@@ -203,6 +203,87 @@ FlowCounterRouteOrch は COUNTERS_DB への書き込みを 1 秒間隔のタイ�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence:
+     sonic-swss/orchagent/orchdaemon.cpp,
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp,
+     sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp -->
+
+### orchagent 起動時の生成順序
+
+`orchdaemon.cpp` で関連 Orch が以下の **固定順序** で生成される。順序は capability publish → enable 受理を成立させる前提となっており、コード上で逆転できない。
+
+| 行 | 処理 | 役割 |
+|----|------|------|
+| 253-254 | `gFlowCounterRouteOrch = new FlowCounterRouteOrch(...)` | コンストラクタ内で `initRouteFlowCounterCapability()` → SAI 問い合わせ → STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE\|route` 書込。`mFlexCounterUpdTimer` を capability=true のときのみ起動 (`flowcounterrouteorch.cpp:39-46`) |
+| 341 | `gCoppOrch = new CoppOrch(m_applDb, APP_COPP_TABLE_NAME)` | SAI HOSTIF trap object を生成し `m_syncdTrapIds` を構築 |
+| 625 | `new FlexCounterOrch(m_configDb, flex_counter_tables)` | **最後に生成**。doTask 内で `gCoppOrch` / `gFlowCounterRouteOrch` を参照するため、両者より後である必要がある |
+
+`flexcounterorch.cpp:311-323`（`FLOW_CNT_TRAP` enable 時）と `:324-336`（`FLOW_CNT_ROUTE` enable 時）は、いずれも先に生成された他 Orch の null チェック + capability ゲートで保護されている。`gFlowCounterRouteOrch->getRouteFlowCounterSupported()` が呼ばれた時点で `mRouteFlowCounterSupported` は確定済み (`flowcounterrouteorch.cpp:166-179` のコンストラクタ実行が完了済みのため)。
+
+### capability publish → POLL 開始の順序保証
+
+`mRouteFlowCounterSupported` は **コンストラクタで 1 回だけセットされる**（`flowcounterrouteorch.cpp:39` から `initRouteFlowCounterCapability()` を呼ぶ）。再評価する手段は orchagent 再起動のみ。よって `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` への `FLEX_COUNTER_STATUS=enable` が読まれる時点で capability は既に STATE_DB に publish 済みであり、ユーザーは `show flowcnt-route capabilities` で **enable 投入前に** `support` を確認できる。
+
+`generateRouteFlowStats()` (`flowcounterrouteorch.cpp:181-194`) は capability=false で early return するため、SAI 非対応 ASIC で enable しても counter は生成されない（no-op）。
+
+### 設定書き込み順序（運用）
+
+`FLOW_COUNTER_ROUTE_PATTERN` と `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` は別 Consumer・別 Orch が処理するため、**書き込み順は原理的に不問**。
+
+| 書き込み順 | 結果 |
+|---------|------|
+| `FLOW_COUNTER_ROUTE_PATTERN` SET → `FLOW_CNT_ROUTE` enable | `generateRouteFlowStats()` 実行時に `mRoutePatternSet` が populate 済みのため、その場で全パターンを bind |
+| `FLOW_CNT_ROUTE` enable → `FLOW_COUNTER_ROUTE_PATTERN` SET | enable 時点では `mRoutePatternSet` が空で no-op。後続の `addRoutePattern()` が同期で `createRouteFlowCounterByPattern()` を呼び bind する |
+| 同時 (race) | select() のイベント到着順に依存するが、最終状態は等価 |
+
+どちらの順でも `mFlexCounterUpdTimer` (1 秒) が次サイクルで `mPendingAddToFlexCntr` を flush するため、最初の counter 値が COUNTERS_DB に出るまで最大 `FLEX_COUNTER_UPD_INTERVAL` (1 秒) + `POLL_INTERVAL` (10000 ms) のラグ。
+
+### FLEX_COUNTER_UPD_TIMER の起動条件
+
+`mFlexCounterUpdTimer` は **capability=true のときだけ** `Orch::addExecutor` される (`flowcounterrouteorch.cpp:42-46`)。capability=false ASIC では `mPendingAddToFlexCntr` に積まれても永遠に flush されない（`addRoutePattern()` 自体が capability ガードで early return するため積まれもしないが）。
+
+### warm restart の 60 秒遅延
+
+`FLEX_COUNTER_DELAY_SEC = 60` (`flexcounterorch.cpp:44, 127-133`)。warm start 時のみ、`FLEX_COUNTER_TABLE|FLOW_CNT_*` の SET イベントは `m_toSync` に buffered され、60 秒後の `doTask(SelectableTimer&)` で `m_delayTimerExpired = true` になってから一括処理される (`flexcounterorch.cpp:156-159, 421-430`)。
+
+| 起動モード | `FLEX_COUNTER_TABLE` 処理開始 | `FLOW_COUNTER_ROUTE_PATTERN` 処理開始 |
+|---------|------------------------------|--------------------------------------|
+| cold start | port ready 直後 | orchagent 起動直後（port ready 不要） |
+| warm restart | port ready + 60 秒経過後 | orchagent 起動直後（遅延なし） |
+
+つまり warm restart では「pattern が先に bind され、その後 60 秒経って enable が反映されて syncd の POLL が start」という順序になる。
+
+### allPortsReady ゲート
+
+`flexcounterorch.cpp:164-172`:
+```cpp
+if (gPortsOrch && !gPortsOrch->allPortsReady()) { return; }
+if (gFabricPortsOrch && !gFabricPortsOrch->allPortsReady()) { return; }
+```
+
+`FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` も含めて、`FLEX_COUNTER_TABLE` への書込は **全ポート初期化完了まで `m_toSync` で待機**。`FlowCounterRouteOrch::doTask` 側には同ガード無し。
+
+### 順序依存サマリ
+
+| # | 期待順序 | 強制機構 | 違反可否 |
+|---|---------|---------|---------|
+| 1 | `FlowCounterRouteOrch` 生成 → `CoppOrch` 生成 → `FlexCounterOrch` 生成 | `orchdaemon.cpp:253,341,625` 静的順序 | 不可（コード固定） |
+| 2 | capability publish → `FLOW_CNT_ROUTE` enable 受理 | コンストラクタ内 1 回呼び (`flowcounterrouteorch.cpp:39`) | 不可 |
+| 3 | port ready → `FLEX_COUNTER_TABLE` 処理開始 | `allPortsReady` ガード (`flexcounterorch.cpp:164-172`) | 不可 |
+| 4 | warm restart: 60 秒経過 → `FLEX_COUNTER_TABLE` 処理開始 | `m_delayTimer` (`flexcounterorch.cpp:44,127-133,156-159`) | 不可（warm 時のみ） |
+| 5 | `FLEX_COUNTER_STATUS=enable` → `setFlexCounterGroupOperation()` → syncd POLL 開始 | 単一スレッド内の関数呼び出し順 (`flexcounterorch.cpp:316,329,380`) | 不可 |
+| 6 | `FLOW_COUNTER_ROUTE_PATTERN` SET と `FLOW_CNT_ROUTE` enable の前後関係 | なし（Consumer 独立） | 任意（最終状態は等価） |
+
+!!! warning "再評価不可な capability"
+    `mRouteFlowCounterSupported` は orchagent 起動時に 1 回だけ SAI 問い合わせされ、その後 STATE_DB と内部フラグに固定される。SAI ドライバを差し替える / ASIC 設定を変えるなどして capability が変動するケースでは、`FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` の enable/disable を切り替えるだけでは検出されず、**orchagent プロセス再起動が必要**。
+
+詳細な行番号インデックスは `meta/_intermediate/cdb-flow/app-counter-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
