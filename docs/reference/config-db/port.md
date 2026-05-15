@@ -770,3 +770,94 @@ if (!gBufferOrch->isPortReady(pCfg.key))
 2. 正しい値を再設定 (`config interface ...`)
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## PORT SET/DEL 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/port-side-effects.md`
+
+CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・portsyncd の実装精読から抽出した全副次書き込み。
+
+### portmgrd — APPL_DB への転送
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_appPortTable.set(alias, field_values)` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` | SET 時 常時 (`writeConfigToAppDb`) |
+| `m_appPortTable.set(alias, {mtu: "9100"})` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` field=`mtu` | 初回 SET かつ CONFIG_DB に `mtu` なし — 暗黙デフォルト注入 |
+| `m_appPortTable.set(alias, {admin_status: "down"})` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` field=`admin_status` | 初回 SET かつ CONFIG_DB に `admin_status` なし — 暗黙デフォルト注入 |
+| `m_appPortTable.del(alias)` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` | DEL 時 常時 |
+
+カーネル副作用: `ip link set <alias> mtu <N>` / `ip link set <alias> up/down`
+
+### PortsOrch — ポート新規作成時の COUNTERS_DB / FLEX_COUNTER_DB 書き込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `setCounterNameMap(alias, port_id)` | COUNTERS_DB / `COUNTERS_PORT_NAME_MAP` | `""` field=`<alias>` | 常時 (`portsorch.cpp:4118`) |
+| `m_portSerdesIdToPortIdTable->set(...)` | COUNTERS_DB / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `""` field=`<serdes_oid>` | port_serdes_id が有効な場合 |
+| `port_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortCountersState が有効な場合 |
+| `port_phy_attr_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_ATTR_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortPhyAttrCounterState が有効かつ PHY タイプ |
+| `port_phy_serdes_attr_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP:<serdes_oid>` | `<serdes_oid>` | PhySerdesAttrCountersState が有効かつ PHY・serdes_id 有効 |
+| `port_buffer_drop_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortBufferDropCountersState が有効な場合 |
+| `wred_port_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | WredPortCountersState が有効な場合 |
+| `addPortBufferQueueCounters(...)` | COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` 他 Queue マップ群 | `""` | QueueCountersState または QueueWatermarkCountersState が有効 |
+| `addPortBufferPgCounters(...)` | COUNTERS_DB / `COUNTERS_PG_NAME_MAP` 他 PG マップ群 | `""` | PgCountersState または PgWatermarkCountersState が有効 |
+
+SAI 呼び出し → ASIC_DB: `sai_port_api->create_ports()` でポート OID エントリ生成
+
+### PortsOrch — フィールド変更時の STATE_DB 書き込み
+
+| 操作 | 対象 DB / テーブル | フィールド | 条件 |
+|------|------------------|----------|------|
+| `m_portStateTable.set(alias, {supported_speeds})` | STATE_DB / `PORT_TABLE` | `supported_speeds` | SAI から速度能力リストを取得できた場合 (`initPortSupportedSpeeds`) |
+| `m_portStateTable.set(alias, {supported_fecs})` | STATE_DB / `PORT_TABLE` | `supported_fecs` | SAI から FEC 能力リストを取得できた場合 (`initPortSupportedFecModes`) |
+| `m_portStateTable.hset(alias, "host_tx_ready", ...)` | STATE_DB / `PORT_TABLE` | `host_tx_ready` | `admin_status` 変更時 — cmisModuleAsyncNotifSupported が false の場合 |
+| `m_portStateTable.hset(alias, "link_training_status", ...)` | STATE_DB / `PORT_TABLE` | `link_training_status` | `link_training` フィールド処理時 |
+| `m_portStateTable.hset(alias, "phy_ctrl_unreliable_los", ...)` | STATE_DB / `PORT_TABLE` | `phy_ctrl_unreliable_los` | `speed` 変更時に LOS 信頼性フラグ更新 |
+| `m_portStateTable.hdel(alias, "rmt_adv_speeds")` | STATE_DB / `PORT_TABLE` | `rmt_adv_speeds` | `autoneg` off 設定時にリモート広告速度をクリア |
+
+### PortsOrch — port_state_change 非同期通知受信時の副次書き込み
+
+syncd から `port_state_change` 通知を受けると、PortsOrch は以下を書き込む:
+
+| 操作 | 対象 DB / テーブル | フィールド | 条件 |
+|------|------------------|----------|------|
+| `m_portTable->set(alias, {oper_status})` | APPL_DB / `PORT_TABLE` | `oper_status` | 常時 (`updateDbPortOperStatus`) |
+| `m_portTable->hset(alias, "flap_count", count)` | APPL_DB / `PORT_TABLE` | `flap_count` | oper_status が DOWN に遷移した場合 (`updateDbPortFlapCount`) |
+| `m_portStateTable.hset(alias, "rmt_adv_speeds", ...)` | STATE_DB / `PORT_TABLE` | `rmt_adv_speeds` | autoneg on 時にリモート広告速度取得成功 |
+| `m_portStateTable.hset(alias, "link_training_status", ...)` | STATE_DB / `PORT_TABLE` | `link_training_status` | link_training 状態変化時 |
+
+> **注意**: `oper_status` は STATE_DB ではなく **APPL_DB** の `PORT_TABLE` に書き込まれる (`m_portTable` = APPL_DB APP_PORT_TABLE)。
+
+### PortsOrch — ポート削除時の COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| `delCounterNameMap(alias)` | COUNTERS_DB / `COUNTERS_PORT_NAME_MAP` field 削除 | 常時 (`portsorch.cpp:4312`) |
+| `m_portSerdesIdToPortIdTable->hdel(...)` | COUNTERS_DB / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | serdes_id が存在する場合 |
+| `port_stat_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` 削除 | PortCountersState が有効な場合 |
+| `port_buffer_drop_stat_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP:<oid>` 削除 | PortBufferDropCountersState が有効な場合 |
+| `wred_port_stat_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` 削除 | WredPortCountersState が有効な場合 |
+| `port_phy_attr_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_ATTR_FLEX_COUNTER_GROUP:<oid>` 削除 | PHY タイプの場合 |
+| `port_phy_serdes_attr_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP:<serdes_oid>` 削除 | PHY タイプかつ serdes_id 有効 |
+| `deletePortBufferQueueCounters(...)` | COUNTERS_DB / Queue マップ群 削除 | QueueCountersState が有効な場合 |
+| `deletePortBufferPgCounters(...)` | COUNTERS_DB / PG マップ群 削除 | PgCountersState が有効な場合 |
+| `m_stateBufferMaximumValueTable->del(alias)` | STATE_DB / `BUFFER_MAX_PARAM_TABLE` | 常時 |
+
+SAI 呼び出し → ASIC_DB: `sai_port_api->remove_port()` でポート OID エントリ削除。`PORT_SERDES` は `removePortSerdesAttribute()` で自動連動削除 (`portsorch.cpp:1526`)。
+
+### 副次書き込みサマリ表
+
+| DB | テーブル | 操作 |
+|----|---------|------|
+| APPL_DB | `PORT_TABLE` | SET (portmgrd 転送、opsorch oper_status・flap_count) / DEL (portmgrd) |
+| STATE_DB | `PORT_TABLE` | SET (supported_speeds、supported_fecs、host_tx_ready、link_training_status、phy_ctrl_unreliable_los、rmt_adv_speeds) / DEL (rmt_adv_speeds) |
+| STATE_DB | `BUFFER_MAX_PARAM_TABLE` | DEL (ポート削除時) |
+| COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` | SET (ポート作成時) / DEL (ポート削除時) |
+| COUNTERS_DB | `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | SET / DEL (serdes_id 有効時) |
+| COUNTERS_DB | Queue / PG マップ群 | SET / DEL (FlexCounter 有効時) |
+| FLEX_COUNTER_DB | PORT_STAT / PORT_PHY_ATTR / PORT_PHY_SERDES_ATTR / PORT_BUFFER_DROP / WRED_PORT グループ | SET / DEL (各 FlexCounter 状態に依存) |
+| ASIC_DB | PORT OID エントリ (syncd 経由) | create_ports (SET) / remove_port (DEL) |
+| ASIC_DB | PORT_SERDES OID エントリ | 自動作成 / 自動削除 |
+
+<!-- /side-effects -->
