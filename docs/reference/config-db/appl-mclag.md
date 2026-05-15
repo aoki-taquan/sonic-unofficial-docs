@@ -661,6 +661,131 @@ ICCP プロトコル実装 (`sonic-buildimage/src/iccpd/`) には ASIC 識別ロ
 > 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-platform.md`
 <!-- /platform -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`mclagsyncd` が APPL_DB に書く 7 テーブルは、上流 (CONFIG_DB の PORT/PORTCHANNEL/VLAN・iccpd ICCP セッション・ロール確定) との順序関係に強く依存する。CONFIG_DB を直接いじる運用や `swssconfig` 経由 replay で順序が乱れると、`fdborch` の retry ループに乗ったり、`INTF_TABLE.mac_addr` の取りこぼし・`LAG_TABLE.learn_mode` の `"disable"` 残留が発生する[^link]。
+
+### 依存 1: PORT / PORTCHANNEL / VLAN 先行（必須先行・部分自動回復）
+
+```
+CONFIG_DB PORT / PORTCHANNEL / VLAN / VLAN_MEMBER  SET  先行
+  ↓ (portsOrch.allPortsReady() == true)
+APPL_DB MCLAG_FDB_TABLE / ISOLATION_GROUP_TABLE / LAG_TABLE / PORT_TABLE / INTF_TABLE  SET
+```
+
+`mclagsyncd` の APPL_DB エントリは key / フィールド値として PORT・PORTCHANNEL・VLAN 名を文字列で保持する（Phase C 暗黙参照節を参照）。参照先未登録時は下流 orchagent (`fdborch` / `isolationGroupOrch` / `lagOrch` / `portsOrch` / `intfsOrch`) が `getPort()` 等で解決失敗し `task_need_retry` 扱いになる。`SELECT_TIMEOUT = 1000` ms tick で再試行されるが、`mclagsyncd` 自身にはフィードバックされない[^orch]。
+
+**違反時**: 下流側で 1 秒周期の retry ループに入り、最終的に PORT 解決後に消費される。ただし `mclagsyncd` 側の APPL_DB エントリは残ったまま。
+
+### 依存 2: iccpd ICCP セッション up → ロール確定 → `INTF_TABLE.mac_addr`（厳密順）
+
+```
+MCLAG_DOMAIN  SET
+  ↓
+iccpd 起動 + ピア TCP 接続 (ICCP_TCP_PORT=8888)
+  ↓
+iccpd 内部: MLACP_STATE_EXCHANGE 到達
+  ↓
+mclagsyncd: MCLAG_MSG_TYPE_SET_ICCP_STATE(up) 受信 → is_iccp_up = true
+  ↓
+mclagsyncd: MCLAG_MSG_TYPE_SET_ICCP_ROLE 受信 → STATE_MCLAG_TABLE.role 確定
+  ↓
+mclagsyncd: MCLAG_MSG_TYPE_SET_INTF_MAC 受信 → APPL_DB INTF_TABLE.mac_addr SET
+```
+
+iccpd は `MLACP(csm).current_state != MLACP_STATE_EXCHANGE` の間は MAC 同期・isolation 通知の各 send で early-return する（`mlacp_link_handler.c:145, 209, 1202, 1255, 1315` 等）。`mclagsyncd` 側でも `is_iccp_up = is_oper_up` の代入は `mclagsyncdSetIccpState()` 末尾 (`mclaglink.cpp:1355`) でしか起こらない。
+
+**違反時**: ロール確定前に `MCLAG_INTERFACE` を削除すると iccpd 側で MAC 復元送信が抑止され、`INTF_TABLE.mac_addr` のシステム MAC 上書きが取りこぼされる可能性。
+
+### 依存 3: `is_iccp_up` 状態による ISOLATION_GROUP の SET/DEL 分岐
+
+```
+is_iccp_up == true  かつ op_len == 0    → MEMBERS="" でエントリ保持 (set)
+is_iccp_up == false                     → del("MCLAG_ISO_GRP")
+通常時 (op_len > 0)                     → MEMBERS=PortChannel のみ (set)
+```
+
+`mclaglink.cpp:233-281` の `is_iccp_up` 分岐は ICCP up 通知 (`mclagsyncdSetIccpState()` L1355) より前に届いた isolation メッセージを「is_iccp_up==false」分岐で DEL 扱いにする。iccpd 側で `SET_ICCP_STATE(up)` → `SET_ISOLATION_GROUP` の順送出が暗黙前提。
+
+**違反時**: 再送・取りこぼし時に `ISOLATION_GROUP_TABLE|MCLAG_ISO_GRP` エントリが瞬間的に消滅する可能性。次の up 通知で復元される。
+
+### 依存 4: `LAG_TABLE.learn_mode` は `"disable" → "hardware"` の厳密遷移
+
+```
+MCLAG 起動時:
+  iccpd → mclagsyncd: MCLAG_SUB_OPTION_TYPE_MAC_LEARN_DISABLE
+    ↓
+  APPL_DB LAG_TABLE.learn_mode = "disable"
+ICCP セッション確立後:
+  iccpd → mclagsyncd: MCLAG_SUB_OPTION_TYPE_MAC_LEARN_ENABLE
+    ↓
+  APPL_DB LAG_TABLE.learn_mode = "hardware"
+```
+
+`mclaglink.cpp:393-407`。中間値（空・別文字列）は生成されない。
+
+**違反時**: ICCP 切断 → 再 EXCHANGE 間は学習が hardware に戻らず、ピア間 MAC 不可視期間が発生。
+
+### 依存 5: `LAG_TABLE.traffic_disable` はロール確定後限定
+
+```
+iccpd: MLACP_STATE_EXCHANGE  必須先行
+  ↓
+mclagsyncd: MCLAG_MSG_TYPE_SET_TRAFFIC_DIST_DISABLE / _ENABLE
+  ↓
+APPL_DB LAG_TABLE.traffic_disable = "true" / "false"
+```
+
+`mclaglink.cpp:1300-1310`。フィールド不在 = `lagOrch` のデフォルト `"false"`（分散有効）。
+
+**違反時**: `traffic_disable=true` 書込み後に PortChannel を削除すると SAI 側に分散無効残骸が残る可能性。
+
+### 依存 6: DEL 順序 — `MCLAG_INTERFACE` → `MCLAG_DOMAIN` → `PORTCHANNEL`（推奨）
+
+```
+MCLAG_INTERFACE / MCLAG_UNIQUE_IP  DEL  先行
+  ↓
+MCLAG_DOMAIN  DEL  （iccpd 切断 → STATE_MCLAG_TABLE auto cleanup）
+  ↓
+PORTCHANNEL / PORT  DEL
+```
+
+APPL_DB の `MCLAG_FDB_TABLE` / `INTF_TABLE.mac_addr` / `LAG_TABLE.learn_mode` は iccpd からの明示 DEL がない限り残る (`mclaglink.cpp:1480-1505`)。`MCLAG_INTERFACE` を残したまま `MCLAG_DOMAIN` を消して直後に `PORTCHANNEL` を消すと、`MCLAG_FDB_TABLE` 残骸が `fdborch` retry に乗り続ける。
+
+**違反時**: `fdborch` 内で `task_need_retry` ループ。orchagent 再起動の replay で消費される。
+
+### 依存 7: `mclagsyncd` 起動時 `DEVICE_METADATA.mac` 先行必須
+
+```
+CONFIG_DB DEVICE_METADATA|localhost.mac  SET  先行
+  ↓
+mclagsyncd 起動 → mclagsyncdFetchSystemMacFromConfigdb() (mclaglink.cpp:127-128)
+  ↓
+ICCP セッション開始
+```
+
+`mac` 空のまま起動した場合 `m_system_mac` 空で続行。outer `while(1)` retry で再 fetch するが、ICCP up 中の場合は再ハンドシェイクまで空伝播。
+
+**違反時**: 初期 ICCP セッションで `system_mac` 空伝播の事故が起きうる。
+
+### 推奨書込み順 / DEL 順
+
+| 操作 | 推奨順 | 根拠 |
+|---|---|---|
+| MCLAG 構築 | `PORT` → `VLAN` / `VLAN_MEMBER` → `PORTCHANNEL` / `PORTCHANNEL_MEMBER` → `DEVICE_METADATA.mac` → (mclagsyncd 起動) → `MCLAG_DOMAIN` → `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` | 依存 1, 2, 7 |
+| MCLAG 解体 | `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` → `MCLAG_DOMAIN` → `PORTCHANNEL` / `PORT` | 依存 6 |
+| `DEVICE_METADATA.mac` 変更 | `mclagsyncd` 停止 → CONFIG_DB 更新 → `mclagsyncd` 再起動 | 依存 7 |
+
+### 自動回復可否
+
+- 依存 1（PORT/PORTCHANNEL/VLAN 先行）: 下流 orchagent の `task_need_retry` で部分自動回復。
+- 依存 2-5（ICCP up / ロール確定）: 自動回復は iccpd の再 EXCHANGE 経由のみ。途中で `mclagsyncd` 再起動が走ると全エントリ再生成。
+- 依存 6-7（DEL 順 / system_mac）: 自動回復なし。手動再起動または明示 SET が必要。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-ordering.md`
+<!-- /ordering -->
+
 ## 引用元
 
 [^link]: mclagsyncd 実装: `sonic-swss/mclagsyncd/mclaglink.cpp`, `mclaglink.h`, `mclag.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
