@@ -209,6 +209,51 @@ PORT_TABLE:<port_name>
 
 <!-- /side-effects -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB の `PORT_TABLE` を `PortsOrch` が処理する際に、SAI OID 解決・依存ゲート・関連リソース列挙のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`PortsOrch` は CONFIG_DB `PORT` を**直接購読しない**（portsyncd 経由で APPL_DB に転写される）ため、CONFIG_DB 側 `PORT` は Direction A 入力として扱い、本ブロックには含めない。スキャン詳細は [`meta/_intermediate/cdb-flow/appl-port-table-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-cross-refs.md) を参照。
+
+### CONFIG_DB / APPL_DB BUFFER 設定（port-ready ゲート）
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| APPL_DB `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` (buffer 反映状態) | `gBufferOrch->isPortReady(alias)` 経由のゲート — 必須 | port SET 処理時、buffer 未反映なら `m_pendingPortSet` に保留し再試行 | `portsorch.cpp` L4779-4790, extern `gBufferOrch` L62 |
+
+### QUEUE / Priority Group OID 解決（COUNTERS_DB マップ生成の前提）
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| Port struct `port.m_queue_ids[]` (SAI `SAI_PORT_ATTR_QOS_QUEUE_LIST` 経由) | port 内 queue OID リストの解決 | `generateQueueMapPerPort()` 実行時、COUNTERS_DB queue マップ構築前提 | `portsorch.cpp` L3626 (`getQueueTypeAndIndex`), L8391-8446 |
+| Port struct `port.m_priority_group_ids[]` (SAI `SAI_PORT_ATTR_PRIORITY_GROUP_LIST` 経由) | PG OID リストの解決 | `generatePriorityGroupMapPerPort()` 実行時 | `portsorch.cpp` L8858-8884 |
+| FLEX_COUNTER_DB — `QUEUE_STAT_COUNTER` / `QUEUE_WATERMARK_STAT_COUNTER` / `PG_WATERMARK_STAT_COUNTER` / `PG_DROP_STAT_COUNTER` | flex counter 動的登録 | VoQ スイッチまたは該当 counter 群が有効な場合 | `portsorch.cpp` L4213-4242, L8505-8515, L872-892 |
+
+### `_GEARBOX_TABLE` (APPL_DB internal)
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| APPL_DB `_GEARBOX_TABLE` (key prefix で隔離された internal table) | `GearboxUtils::isGearboxEnabled()` 経由で読み出し、`m_gearboxPhyMap` 等を構築 | platform に gearbox 定義がある場合のみ | `portsorch.cpp` L775, L10374-10390 |
+| `_GEARBOX_TABLE` への書き戻し (`phy:<id>:ports:<index>`) | 書込（参照後の更新） | gearbox 環境で SAI 速度設定後 | `portsorch.cpp` L3421-3422 |
+
+### APPL_DB `SYSTEM_PORT_TABLE` (VoQ チャシス)
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| APPL_DB `SYSTEM_PORT_TABLE` (`APP_SYSTEM_PORT_TABLE_NAME`) | `m_systemPortTable->get(alias, fv)` で sysport config を取得 | VoQ チャシス構成（`gMySwitchType != "dpu"`）、SystemPort 列挙時 | `portsorch.cpp` L772, L10766, L11029-11038 |
+| SAI `SAI_SWITCH_ATTR_SYSTEM_PORT_LIST` ↔ APPL_DB `SYSTEM_PORT_TABLE` 突合 | `getSystemPorts()` / `addSystemPorts()` | 物理 PORT 初期化完了後 (PortInitDone 受信時) | `portsorch.cpp` L1047, L4620, L10766-10864 |
+| `gIntfsOrch->isLocalSystemPortIntf(alias)` | local sysport 判定（oper speed の STATE_DB 振り分け） | VoQ チャシスのみ | `portsorch.cpp` L9839 |
+
+### portsyncd / portmgrd 由来の前提ゲート
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| portsyncd 由来 `PortConfigDone` / `PortInitDone` notification | 初期化ゲート — 必須 | `m_initDone` / `m_portConfigState` が揃うまで `PORT_TABLE` の SET 通常処理は走らない | `portsorch.cpp` L4620, L1238 (`getPortConfigState`) |
+| CONFIG_DB `DEVICE_METADATA.localhost.switch_type` (`gMySwitchType`) | 分岐条件 (voq / dpu / 通常) | sysport 列挙・queue counter 強制有効化などの分岐 | `portsorch.cpp` L1043-1047, L8505-8515 |
+
+> CONFIG_DB `PORT` 自体・CONFIG_DB `BUFFER_*` 群は **Direction A 入力**（portsyncd / buffermgrd 中継）として扱い、本ブロックには含めない。CONFIG_DB 側の cross-refs は `port.md` / `appl-buffer.md` で扱う。
+
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗・retry 分岐 (Phase D)
 
