@@ -159,6 +159,81 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 
 - `orchagent` (`RouteOrch`): APPL_DB の `ROUTE_TABLE` を購読し、SAI `sai_route_entry_t` を作成・削除・更新する。
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / ZMQ)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-pubsub.md -->
+
+`ROUTE_TABLE` は **APPL_DB** テーブルであり、CONFIG_DB からの keyspace notification は使用しない。FRR (zebra) が FPM (Forwarding Plane Manager) プロトコル経由で送る netlink メッセージを `fpmsyncd` が受信し、直接 APPL_DB に書き込む構成。
+
+### fpmsyncd → APPL_DB (ProducerStateTable / ZmqProducerStateTable)
+
+`RouteSync` コンストラクタ (`routesync.cpp:154-158`) で `m_routeTable` を初期化する:
+
+```cpp
+m_zmqClient(create_local_zmq_client(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)),
+m_routeTable(createProducerStateTable(pipeline, APP_ROUTE_TABLE_NAME, true, m_zmqClient)),
+```
+
+`ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` (`DEVICE_METADATA|localhost` の `orch_northbond_route_zmq_enabled` フィールド) の値で 2 パスが切り替わる:
+
+| パス | `m_routeTable` 型 | Transport | デフォルト |
+|------|-----------------|-----------|-----------|
+| 通常 Redis | `ProducerStateTable` | Redis EVALSHA: `SADD KEY_SET + HSET + PUBLISH ROUTE_TABLE_CHANNEL@0 G` | ◎ |
+| ZMQ | `ZmqProducerStateTable` | ZMQ PUSH → `tcp://localhost:8100` + APPL_DB 永続化 | — |
+
+### APPL_DB → orchagent RouteOrch (ConsumerStateTable / ZmqConsumerStateTable)
+
+`RouteOrch` は `ZmqOrch` を継承する。orchagent 初期化 (`orchdaemon.cpp:334-337`) で ZMQ フラグを確認し、対応する Consumer を登録する:
+
+```cpp
+auto enable_route_zmq = get_feature_status(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false);
+auto route_zmq_server = enable_route_zmq ? m_zmqServer : nullptr;
+gRouteOrch = new RouteOrch(m_applDb, route_tables, ..., route_zmq_server);
+```
+
+`ZmqOrch::addConsumer()` (`zmqorch.cpp:59-68`) が ZMQ 有無で Consumer を選択:
+
+```
+[ZMQ 無効] ConsumerStateTable → SUBSCRIBE ROUTE_TABLE_CHANNEL@0 → pops.lua
+[ZMQ 有効] ZmqConsumerStateTable → ZMQ PULL ← tcp://localhost:8100
+→ RouteOrch::doTask(ConsumerBase&)
+```
+
+### ZMQ フィールド送信の差異
+
+- **通常 Redis パス**: 空値フィールドは APPL_DB に書き込まない（フィールド不在 = デフォルト値、orchagent 側でフォールバック）
+- **ZMQ パス**: 全フィールドを常に送信（フィールド不在が発生しないため orchagent の「フィールド不在=デフォルト」ロジックは使われない）
+
+### STATE_DB 書き込み
+
+RouteOrch は `STATE_DB:ROUTE_TABLE` に**デフォルト経路の有無**のみ書き込む (`routeorch.cpp:294`)。個別経路エントリのステータスは STATE_DB に書き込まれない。TTL は使用しない。
+
+### 経路フィルタ（fpmsyncd がスキップする経路）
+
+| 条件 | 動作 |
+|------|------|
+| 管理 VRF (`mgmt` プレフィックス) | スキップ（APPL_DB に書き込まない） |
+| nexthop が eth0 / docker0 / eth1-midplane | DEL メッセージに変換して送信（FRR 7.2→7.5 の挙動変化対策） |
+| EVPN Multipath SRv6 | サイレントスキップ |
+
+### 通信フロー全体図
+
+```
+FRR (zebra) --[FPM/netlink]--> fpmsyncd (RouteSync)
+  ↓ [通常] ProducerStateTable (EVALSHA: SADD KEY_SET + HSET + PUBLISH CHANNEL@0)
+  ↓ [ZMQ]  ZmqProducerStateTable (ZMQ PUSH tcp://localhost:8100 + APPL_DB 永続化)
+APPL_DB[ROUTE_TABLE|<prefix>]
+  ↓ [通常] ConsumerStateTable (SUBSCRIBE ROUTE_TABLE_CHANNEL@0 → pops.lua)
+  ↓ [ZMQ]  ZmqConsumerStateTable (ZMQ PULL tcp://localhost:8100)
+RouteOrch::doTask(ConsumerBase&) → SAI sai_route_api → ASIC
+
+STATE_DB[ROUTE_TABLE|<default-route>]
+  ← RouteOrch::set() (デフォルト経路の有無のみ、TTL なし)
+```
+
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `STATIC_ROUTE`（静的経路の設定元）、`VRF`
