@@ -24259,6 +24259,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pam-nss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PAM / NSS 設定ファイルパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PAM モジュール / セッションルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacacs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TACACS+ サーバデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radius" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RADIUS サーバデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ldap-ldappy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LDAP デフォルト (ldap.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux-logindef" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux login.def デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIPS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35422,6 +35516,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pam-nss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PAM / NSS 設定ファイルパス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PAM モジュール / セッションルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tacacs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TACACS+ サーバデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radius" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RADIUS サーバデフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ldap-ldappy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LDAP デフォルト (ldap.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux-logindef" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux login.def デフォルト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIPS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36242,6 +36430,337 @@
 <p>主購読者 <code>AaaCfg.aaa_update()</code> の副作用は <code>modify_conf_file()</code> 経由の PAM テンプレート再生成のみで、<code>/etc/pam.d/common-auth</code>・<code>/etc/nsswitch.conf</code>・<code>/etc/tacplus_nss.conf</code>・<code>/etc/pam_radius_auth.conf</code> 等のファイル書換に閉じる (<code>sonic-host-services/scripts/hostcfgd:641-648</code>)。</p>
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/aaa-side.md</code> を参照。</p>
 <!-- /side-effects -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>AAA</code> / <code>TACPLUS</code> / <code>TACPLUS_SERVER</code> / <code>RADIUS</code> / <code>RADIUS_SERVER</code> / <code>LDAP</code> / <code>LDAP_SERVER</code> テーブル群および <code>hostcfgd</code> 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は <code>sonic-host-services/scripts/hostcfgd</code> と <code>sonic-host-services/scripts/ldap.py</code>。</p>
+<h3 id="pam-nss">PAM / NSS 設定ファイルパス<a class="headerlink" href="#pam-nss" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PAM_AUTH_CONF</code></td>
+<td><code>/etc/pam.d/common-auth-sonic</code></td>
+<td>SONiC 専用 PAM auth 共通インクルード (テンプレートから再生成)</td>
+<td>hostcfgd L28</td>
+</tr>
+<tr>
+<td><code>PAM_PASSWORD_CONF</code></td>
+<td><code>/etc/pam.d/common-password</code></td>
+<td>パスワードポリシー PAM 設定</td>
+<td>hostcfgd L30</td>
+</tr>
+<tr>
+<td><code>NSS_TACPLUS_CONF</code></td>
+<td><code>/etc/tacplus_nss.conf</code></td>
+<td>libnss-tacplus 設定ファイル</td>
+<td>hostcfgd L34</td>
+</tr>
+<tr>
+<td><code>NSS_RADIUS_CONF</code></td>
+<td><code>/etc/radius_nss.conf</code></td>
+<td>libnss-radius 設定ファイル</td>
+<td>hostcfgd L36</td>
+</tr>
+<tr>
+<td><code>NSS_CONF</code></td>
+<td><code>/etc/nsswitch.conf</code></td>
+<td>NSS スイッチ設定 (<code>passwd:</code> 行を書換)</td>
+<td>hostcfgd L39</td>
+</tr>
+<tr>
+<td><code>LDAP_CONF</code></td>
+<td><code>/etc/ldap/ldap.conf</code></td>
+<td>LDAP クライアント設定</td>
+<td>hostcfgd L41</td>
+</tr>
+<tr>
+<td><code>NSLCD_CONF</code></td>
+<td><code>/etc/nslcd.conf</code></td>
+<td>nslcd デーモン設定</td>
+<td>hostcfgd L43</td>
+</tr>
+<tr>
+<td><code>PAM_SESSION_CONF</code></td>
+<td><code>/etc/pam.d/common-session</code></td>
+<td>PAM session 共通設定 (mkhomedir ルール挿入対象)</td>
+<td>hostcfgd L44</td>
+</tr>
+<tr>
+<td><code>PAM_SESSION_NONINT_CONF</code></td>
+<td><code>/etc/pam.d/common-session-noninteractive</code></td>
+<td>PAM session noninteractive</td>
+<td>hostcfgd L45</td>
+</tr>
+<tr>
+<td><code>ETC_PAMD_SSHD</code></td>
+<td><code>/etc/pam.d/sshd</code></td>
+<td>sshd PAM (<code>common-auth</code> インクルードを <code>common-auth-sonic</code> に書換)</td>
+<td>hostcfgd L50</td>
+</tr>
+<tr>
+<td><code>ETC_PAMD_LOGIN</code></td>
+<td><code>/etc/pam.d/login</code></td>
+<td>login PAM (同上の include 書換)</td>
+<td>hostcfgd L51</td>
+</tr>
+<tr>
+<td><code>ETC_LOGIN_DEF</code></td>
+<td><code>/etc/login.defs</code></td>
+<td>Linux パスワードエージング設定</td>
+<td>hostcfgd L52</td>
+</tr>
+<tr>
+<td><code>RADIUS_PAM_AUTH_CONF_DIR</code></td>
+<td><code>/etc/pam_radius_auth.d/</code></td>
+<td>サーバごと <code>{ip}_{auth_port}.conf</code> を 0600 で生成するディレクトリ</td>
+<td>hostcfgd L97, L829</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: SONiC は <code>/etc/pam.d/common-auth</code> (Debian 標準) を直接書換せず、<code>/etc/pam.d/common-auth-sonic</code> を生成して <code>sshd</code> / <code>login</code> の include 行のみ書き換える。これにより Debian の <code>pam-auth-update</code> 機構を回避している。</p>
+</blockquote>
+<h3 id="pam">PAM モジュール / セッションルール<a class="headerlink" href="#pam" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MKHOME_DIR_RULE</code></td>
+<td><code>session required pam_mkhomedir.so skel=/etc/skel/ umask=0022 silent</code></td>
+<td>リモート認証ユーザのホーム自動作成ルール (<code>common-session</code> 末尾の <code># end of pam-auth-update config</code> 直前に挿入)</td>
+<td>hostcfgd L46-47</td>
+</tr>
+<tr>
+<td><code>MKHOME_DIR_LIB</code></td>
+<td><code>pam_mkhomedir.so</code></td>
+<td>mkhomedir モジュール名 (ルール存在チェック)</td>
+<td>hostcfgd L48</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tacacs">TACACS+ サーバデフォルト<a class="headerlink" href="#tacacs" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TACPLUS_SERVER_PASSKEY_DEFAULT</code></td>
+<td><code>""</code> (空)</td>
+<td><code>TACPLUS_SERVER.passkey</code> 未指定時のデフォルト (= passkey なし)</td>
+<td>hostcfgd L87</td>
+</tr>
+<tr>
+<td><code>TACPLUS_SERVER_TIMEOUT_DEFAULT</code></td>
+<td><code>"5"</code> 秒</td>
+<td><code>TACPLUS_SERVER.timeout</code> 未指定時のデフォルト</td>
+<td>hostcfgd L88</td>
+</tr>
+<tr>
+<td><code>TACPLUS_SERVER_AUTH_TYPE_DEFAULT</code></td>
+<td><code>"pap"</code></td>
+<td><code>TACPLUS_SERVER.auth_type</code> 未指定時のデフォルト認証方式</td>
+<td>hostcfgd L89</td>
+</tr>
+<tr>
+<td>TACACS+ TCP ポート</td>
+<td><code>49</code> (YANG default)</td>
+<td><code>hostcfgd</code> 内にリテラル定数なし。CONFIG_DB <code>TACPLUS_SERVER.tcp_port</code> から直接 NSS/PAM テンプレートに渡される (IANA well-known)</td>
+<td>YANG: sonic-system-tacacs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="radius">RADIUS サーバデフォルト<a class="headerlink" href="#radius" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RADIUS_SERVER_AUTH_PORT_DEFAULT</code></td>
+<td><code>"1812"</code> (UDP)</td>
+<td><code>RADIUS_SERVER.auth_port</code> 未指定時 (RFC 2865)</td>
+<td>hostcfgd L92</td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER_PASSKEY_DEFAULT</code></td>
+<td><code>""</code> (空)</td>
+<td>RADIUS 共有秘密未指定時</td>
+<td>hostcfgd L93</td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER_RETRANSMIT_DEFAULT</code></td>
+<td><code>"3"</code></td>
+<td>再送回数デフォルト</td>
+<td>hostcfgd L94</td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER_TIMEOUT_DEFAULT</code></td>
+<td><code>"5"</code> 秒</td>
+<td>タイムアウトデフォルト</td>
+<td>hostcfgd L95</td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER_AUTH_TYPE_DEFAULT</code></td>
+<td><code>"pap"</code></td>
+<td>認証方式デフォルト</td>
+<td>hostcfgd L96</td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER_SKIP_MSG_AUTH</code></td>
+<td><code>False</code></td>
+<td>Message-Authenticator 属性スキップフラグ</td>
+<td>hostcfgd L98</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ldap-ldappy">LDAP デフォルト (ldap.py)<a class="headerlink" href="#ldap-ldappy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LdapCfg.PORT</code></td>
+<td><code>389</code> (TCP)</td>
+<td><code>LDAP_SERVER.port</code> 未指定時のデフォルト (RFC 4511)</td>
+<td>ldap.py L15</td>
+</tr>
+<tr>
+<td><code>LdapCfg.TIMEOUT_SEARCH</code></td>
+<td><code>5</code> 秒</td>
+<td><code>LDAP.search_timeout</code> デフォルト</td>
+<td>ldap.py L13</td>
+</tr>
+<tr>
+<td><code>LdapCfg.TIMEOUT_BIND</code></td>
+<td><code>5</code> 秒</td>
+<td><code>LDAP.bind_timeout</code> デフォルト</td>
+<td>ldap.py L14</td>
+</tr>
+<tr>
+<td><code>LdapCfg.VERSION</code></td>
+<td><code>'3'</code></td>
+<td>LDAP プロトコルバージョン</td>
+<td>ldap.py L12</td>
+</tr>
+<tr>
+<td><code>LdapCfg.BASE</code></td>
+<td><code>'ou=users,dc=example,dc=com'</code></td>
+<td>サンプル base_dn プレースホルダ (本番で必ず上書き)</td>
+<td>ldap.py L9</td>
+</tr>
+<tr>
+<td><code>LdapCfg.SCOPE</code></td>
+<td><code>"sub"</code></td>
+<td>デフォルト検索スコープ (subtree)</td>
+<td>ldap.py L16</td>
+</tr>
+<tr>
+<td><code>TLS1_2</code> cipher</td>
+<td><code>SECURE128:SECURE192:SECURE256:-VERS-TLS1.0:-VERS-DTLS1.0:-VERS-TLS1.1:-SHA1</code></td>
+<td>LDAPS TLS1.2 GnuTLS 暗号スイート (固定)</td>
+<td>ldap.py L4</td>
+</tr>
+<tr>
+<td><code>TLS1_3</code> cipher</td>
+<td><code>SECURE128:SECURE192:SECURE256:-VERS-TLS-ALL:-VERS-DTLS-ALL:+VERS-TLS1.3</code></td>
+<td>LDAPS TLS1.3 GnuTLS 暗号スイート (固定)</td>
+<td>ldap.py L5</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: LDAPS の well-known ポート <code>636</code> は定数化されていない。<code>LdapCfg.PORT = 389</code> のみ。LDAPS 使用時はユーザが <code>LDAP_SERVER.port</code> で明示 636 を指定する必要がある。<code>ldap_mode</code> (<code>ldap</code>/<code>ldaps</code>) は URI スキームのみ切替する (ldap.py L58)。</p>
+</blockquote>
+<h3 id="linux-logindef">Linux login.def デフォルト<a class="headerlink" href="#linux-logindef" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LINUX_DEFAULT_PASS_MAX_DAYS</code></td>
+<td><code>99999</code></td>
+<td>パスワードハードニング無効時の最大有効日数 (Debian 標準)</td>
+<td>hostcfgd L57</td>
+</tr>
+<tr>
+<td><code>LINUX_DEFAULT_PASS_WARN_AGE</code></td>
+<td><code>7</code></td>
+<td>パスワード期限切れ警告日数</td>
+<td>hostcfgd L58</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fips">FIPS<a class="headerlink" href="#fips" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FIPS_CONFIG_FILE</code></td>
+<td><code>/etc/sonic/fips.json</code></td>
+<td>FIPS モード設定ファイル</td>
+<td>hostcfgd L101</td>
+</tr>
+<tr>
+<td><code>OPENSSL_FIPS_CONFIG_FILE</code></td>
+<td><code>/etc/fips/fips_enable</code></td>
+<td>OpenSSL FIPS 有効化フラグ</td>
+<td>hostcfgd L102</td>
+</tr>
+<tr>
+<td><code>DEFAULT_FIPS_RESTART_SERVICES</code></td>
+<td><code>['ssh', 'telemetry.service', 'restapi']</code></td>
+<td>FIPS 切替時に再起動するサービス固定リスト</td>
+<td>hostcfgd L103</td>
+</tr>
+</tbody>
+</table>
+<p>詳細な定数一覧 (mkhomedir 正規表現、PAM_SESSION_LAST_LINE マーカ、SSH min/max 値、nslcd 制御等) は <code>meta/_intermediate/cdb-flow/aaa-constants.md</code> を参照。</p>
+<!-- /constants -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->
 

@@ -24057,6 +24057,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 固有の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_table-acl_table_type_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE 失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE_TABLE 失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB status 遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34815,6 +34876,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 固有の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_table-acl_table_type_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE 失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE_TABLE 失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB status 遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35300,6 +35422,202 @@ mclagsyncd は <code>stage</code> を未指定 → orchagent の C++ struct defa
 </tbody>
 </table>
 <!-- /defaults -->
+
+<hr />
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>APPL_DB の ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE / ACL_RULE_TABLE は <code>AclOrch::doTask(Consumer&amp;)</code> (<code>aclorch.cpp:4272-4299</code>) で CONFIG_DB 版と<strong>同一ハンドラ</strong>へ振り分けられる:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CFG_ACL_TABLE_TABLE_NAME</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">APP_ACL_TABLE_TABLE_NAME</span><span class="p">)</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="n">doAclTableTask</span><span class="p">(</span><span class="n">consumer</span><span class="p">);</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CFG_ACL_RULE_TABLE_NAME</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">APP_ACL_RULE_TABLE_NAME</span><span class="p">)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="n">doAclRuleTask</span><span class="p">(</span><span class="n">consumer</span><span class="p">);</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CFG_ACL_TABLE_TYPE_TABLE_NAME</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">APP_ACL_TABLE_TYPE_TABLE_NAME</span><span class="p">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="n">doAclTableTypeTask</span><span class="p">(</span><span class="n">consumer</span><span class="p">);</span>
+</span></code></pre></div>
+<p>したがって失敗分岐は CONFIG_DB 版 <a href="../acl-table/"><code>ACL_TABLE</code></a> / <a href="../acl-rule/"><code>ACL_RULE</code></a> とほぼ共通だが、APPL_DB 経路は次の 3 点が異なる。</p>
+<h3 id="appl_db">APPL_DB 固有の挙動<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<p><strong>(1) <code>allPortsReady()</code> 早期 return</strong> (<code>aclorch.cpp:4276-4279</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">allPortsReady</span><span class="p">())</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="p">{</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>起動直後 / port 構成変更直後に vnetorch・mclagsyncd・dashenifwdorch が APPL_DB へ書き込んだエントリは、<code>Consumer::m_toSync</code> に滞留し<strong>暗黙 retry</strong>される（erase されない・ログ出力なし・STATE_DB 書き込みなし）。</p>
+<p><strong>(2) <code>APP_ACL_RULE_TABLE</code> 用 RetryCache</strong> (<code>aclorch.cpp:4221-4222</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">createRetryCache</span><span class="p">(</span><span class="n">CFG_ACL_RULE_TABLE_NAME</span><span class="p">);</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">createRetryCache</span><span class="p">(</span><span class="n">APP_ACL_RULE_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p>ACL_RULE 系のみ <code>RetryCache</code> が用意されており、<code>ConsumerBase::addToRetry()</code> (<code>orch.cpp:169-178</code>) 経由で SAI リソース枯渇（<code>SAI_STATUS_TABLE_FULL</code> 等）時のタスクが退避され、resource 解放を待って再投入される。ACL_TABLE / ACL_TABLE_TYPE は対象外。</p>
+<p><strong>(3) <code>STAGE</code> 書き込み側ハードコード</strong>:</p>
+<ul>
+<li><code>vnetorch.cpp:3793</code> / <code>dashenifwdorch.cpp:637</code> が <code>STAGE_INGRESS</code> を固定書き込み</li>
+<li><code>mclagsyncd/mclaglink.cpp:325-336</code> は <code>STAGE</code> を書かず C++ 初期値 <code>ACL_STAGE_INGRESS</code> (<code>aclorch.h:543</code>) に依存</li>
+</ul>
+<p>すべて INGRESS 前提のため、<code>processAclTableStage()</code> (<code>aclorch.cpp:5838-5853</code>) で <code>ACL_STAGE_UNKNOWN</code> になる経路は APPL_DB 書き込み元プロセス経由では発生しない（CLI 等で直接 APPL_DB を書き換えた場合のみ）。</p>
+<h3 id="acl_table_table-acl_table_type_table">ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE 失敗パターン<a class="headerlink" href="#acl_table_table-acl_table_type_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>STATE_DB status</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allPortsReady() == false</code></td>
+<td><code>doTask()</code> L4276-4279</td>
+<td>早期 return</td>
+<td>変化なし</td>
+<td>port 準備完了まで暗黙 retry</td>
+</tr>
+<tr>
+<td><code>TYPE</code> 空文字</td>
+<td><code>processAclTableType()</code> L5819-5826</td>
+<td><code>bAllAttributesOk=false</code> → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>不明な属性名</td>
+<td><code>doAclTableTask()</code> L5415-5419</td>
+<td><code>bAllAttributesOk=false</code> → break → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>STAGE</code> 不正値（直接 APPL_DB を書いた場合のみ）</td>
+<td><code>processAclTableStage()</code> L5838-5853</td>
+<td><code>ACL_STAGE_UNKNOWN</code> → <code>validate()</code> false → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>PORTS</code> に未登録ポート</td>
+<td><code>processAclTablePorts()</code> L5786-5791</td>
+<td><code>pendingPortSet.emplace()</code> スキップ継続</td>
+<td>変化なし</td>
+<td><code>onPortReady()</code> で自動解消</td>
+</tr>
+<tr>
+<td><code>PORTS</code> に bind 不可ポート</td>
+<td><code>getAclBindPortId()</code> L5795-5799</td>
+<td><code>return false</code> → <code>bAllAttributesOk=false</code> → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>ユーザ定義 <code>TYPE</code> 未登録（vnetorch の VNET_TUNNEL_TERM 等）</td>
+<td><code>getAclTableType()</code> L5432-5437</td>
+<td><code>it++</code>（保留）</td>
+<td>変化なし</td>
+<td>ACL_TABLE_TYPE_TABLE 登録まで無制限</td>
+</tr>
+<tr>
+<td><code>type=L3V4V6</code> + ASIC 非サポート</td>
+<td><code>AclTable::validate()</code> L2737-2745</td>
+<td><code>validate()</code> false → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>action 非サポート（SAI capability 不足）</td>
+<td><code>AclTable::validate()</code> L2759-2766</td>
+<td><code>validate()</code> false → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>addAclTable()</code> SAI 失敗（MIRROR capability 欠如等）</td>
+<td><code>doAclTableTask()</code> L5474-5485</td>
+<td><code>it++</code>（retry）</td>
+<td><code>"Pending creation"</code></td>
+<td>無制限</td>
+</tr>
+<tr>
+<td><code>updateAclTable()</code> 失敗</td>
+<td><code>doAclTableTask()</code> L5465-5470</td>
+<td><code>it++</code>（retry）</td>
+<td>変化なし</td>
+<td>無制限</td>
+</tr>
+<tr>
+<td>ACL_TABLE_TYPE の <code>MATCHES</code>/<code>ACTIONS</code>/<code>BIND_POINTS</code> 欠落</td>
+<td><code>doAclTableTypeTask()</code> L5738</td>
+<td>type 未完成扱い → 関連 ACL_TABLE は保留</td>
+<td>変化なし</td>
+<td>type 補完まで無制限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl_rule_table_2">ACL_RULE_TABLE 失敗パターン<a class="headerlink" href="#acl_rule_table_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>親 ACL_TABLE 未登録</td>
+<td><code>doAclRuleTask()</code> 親探索</td>
+<td><code>it++</code>（保留）</td>
+<td>親 ACL_TABLE 作成まで無制限</td>
+</tr>
+<tr>
+<td>match キーが table type の <code>MATCHES</code> 外</td>
+<td><code>validateAddMatch()</code></td>
+<td>false → rule 不採用 → erase</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>action が table type の <code>ACTIONS</code> 外</td>
+<td><code>validateAddAction()</code></td>
+<td>false → rule 不採用 → erase</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>PRIORITY</code> が <code>m_minPriority</code> / <code>m_maxPriority</code> 範囲外</td>
+<td><code>setPriority()</code> L1656</td>
+<td>false → rule 不採用 → erase</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SAI <code>create_acl_entry</code> リソース枯渇</td>
+<td><code>createRule()</code></td>
+<td><code>addToRetry()</code> で <code>APP_ACL_RULE_TABLE_NAME</code> の RetryCache 投入</td>
+<td>リソース解放まで保留</td>
+</tr>
+<tr>
+<td>不明 op type</td>
+<td><code>doAclRuleTask()</code></td>
+<td>erase + <code>SWSS_LOG_ERROR</code></td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-status">STATE_DB status 遷移<a class="headerlink" href="#state_db-status" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>APPL_DB SET 受信
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>  ├─ allPortsReady()=false                       → 暗黙保留 (m_toSync 滞留)
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>  ├─ bAllAttributesOk=false or validate()=false  → &quot;Inactive&quot;        (erase, no retry)
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>  ├─ addAclTable() 失敗                          → &quot;Pending creation&quot; (it++, retry)
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>  └─ addAclTable() 成功                          → &quot;Active&quot;           (erase)
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>APPL_DB DEL 受信
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>  ├─ removeAclTable() 失敗                       → &quot;Pending removal&quot;  (it++, retry)
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>  └─ removeAclTable() 成功                       → STATE_DB エントリ削除
+</span></code></pre></div>
+<p>確認: <code>sonic-db-cli STATE_DB hgetall 'ACL_TABLE|&lt;table_name&gt;'</code></p>
+<p>エラーは <code>SWSS_LOG_ERROR</code> で syslog 出力。<code>ERROR_TABLE</code> への書き込みはなし。APPL_DB のエントリは失敗後も残り、書き込んだプロセス（vnetorch / mclagsyncd / dashenifwdorch）側が再 SET / DEL するまで orchagent からは復旧手段がない。</p>
+<blockquote>
+<p><strong>証跡</strong>: <code>AclOrch::doTask()</code> L4272-4299、<code>createRetryCache</code> 呼び出し L4221-4222、<code>doAclTableTask()</code> L5361-5518、<code>doAclRuleTask()</code> L5550-5710、<code>doAclTableTypeTask()</code> L5720-5770、<code>AclTable::validate()</code> L2725-2769、<code>processAclTableType()</code> L5819-5831、<code>processAclTableStage()</code> L5838-5853、<code>processAclTablePorts()</code> L5776-5807、<code>setAclTableStatus()</code> L6088-6093、<code>Orch::createRetryCache()</code> (<code>orch.cpp:149-152</code>)、<code>ConsumerBase::addToRetry()</code> (<code>orch.cpp:169-178</code>)。</p>
+</blockquote>
+<!-- /failure -->
 
 <hr />
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
