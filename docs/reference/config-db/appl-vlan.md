@@ -202,6 +202,82 @@ YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vla
 - **`priority_tagged` の bridge/SAI 乖離**: `priority_tagged` は vlanmgr.cpp:238 で `bridge vlan add ... pvid untagged`（`untagged` と同一）として処理されるが、portsorch は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` と区別する。ホスト転送と ASIC 転送で動作が乖離する。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> **調査根拠**: `cfgmgr/vlanmgr.cpp`, `orchagent/portsorch.cpp` 全行精読 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/appl-vlan-ordering.md`
+
+### 他テーブル先行必須 (CONFIG_DB → APPL_DB 段)
+
+`vlanmgrd::doVlanMemberTask()` は STATE_DB 経由で先行テーブルの完了を確認するまで CONFIG_DB `VLAN_MEMBER` を APPL_DB に書かない (`vlanmgr.cpp:642`)。違反時は `SWSS_LOG_DEBUG("not ready, delaying")` のみで `m_toSync` に保留され、外部からはエラーなしの無反応に見える。
+
+| 先行 | 理由 | 違反時挙動 |
+|---|---|---|
+| `DEVICE_METADATA\|localhost.mac` 確定 (`gMacAddress`) | `doVlanTask()` 入口で `isVlanMacOk()` 失敗時に全 VLAN_TABLE タスクを early return で保留 | `VLAN_TABLE` 自体が書かれず、連鎖して `VLAN_MEMBER` も `isVlanStateOk()` で弾かれる (`vlanmgr.cpp:311-322`) |
+| `VLAN\|Vlan<id>` → STATE_DB `VLAN_TABLE` `state=ok` | `isVlanStateOk(vlan_alias)` で STATE_DB 確認 | `VLAN_MEMBER` が `m_toSync` に retain。APPL_DB に書かれない (`vlanmgr.cpp:517-531, 642`) |
+| `PORT\|Ethernet<N>` → STATE_DB `PORT_TABLE` `state` フィールド | `isMemberStateOk(port_alias)` で STATE_DB 確認。`state` 欠落でも未準備扱い | 同上 retain (`vlanmgr.cpp:491-515, 642`) |
+| `PORTCHANNEL\|PortChannel<N>` → STATE_DB `LAG_TABLE` | LAG メンバ時は `LAG_TABLE` の存在チェック | 同上 retain (`vlanmgr.cpp:495-502`) |
+
+### APPL_DB → SAI 段 (portsorch)
+
+`PortsOrch::doVlanMemberTask()` (`portsorch.cpp:5857-`) は以下順序条件で SAI を呼ぶ:
+
+| 条件 | 出典 | 違反時挙動 |
+|---|---|---|
+| APPL_DB `VLAN_TABLE` が先に処理されて `m_portList[vlan_alias]` 登録済 | `portsorch.cpp:5896-5905` | `getPort(vlan_alias, vlan)` 失敗で `it++` retain。Debug ビルドでは L5896 assert で abort |
+| PORT/LAG が PortsOrch に既知 (`m_portList[port_alias]`) | `portsorch.cpp:5907-5912` | `it++` retain |
+| `addBridgePort(port) && addVlanMember(...)` の 2 段順序 (短絡評価で bridge port 先) | `portsorch.cpp:5940` | bridge port 失敗時は VLAN member 作成せず retain |
+| L3 化されていない (`port.m_rif_id == 0`) | `portsorch.cpp:7198-7202` | `addBridgePort` 拒否。`VLAN_MEMBER` と `INTERFACE` (L3) は同 port で排他 |
+
+### doTask 内テーブル順 (同一サイクル)
+
+`PortsOrch::doTask()` (`portsorch.cpp:6464-6479`) は consumer drain を以下固定順で呼ぶため、同一 sync サイクル内でも PORT → LAG → LAG_MEMBER → VLAN → VLAN_MEMBER の順序が保証される:
+
+```
+APP_PORT_TABLE → APP_LAG_TABLE → APP_LAG_MEMBER_TABLE
+              → APP_VLAN_TABLE → APP_VLAN_MEMBER_TABLE
+```
+
+### bridge / netdev コマンド順
+
+`vlanmgrd` が発行する Linux bridge コマンドにも順序がある:
+
+| 操作 | コマンド順 | 出典 |
+|---|---|---|
+| VLAN 追加 | `bridge vlan add vid <id> dev Bridge self` → `ip link add link Bridge name Vlan<id> ... type vlan id <id>` | `vlanmgr.cpp:123-135` |
+| VLAN 削除 | `ip link del Vlan<id>` → `bridge vlan del vid <id> dev Bridge self` | `vlanmgr.cpp:150-160` |
+| VLAN_MEMBER 追加 | `ip link set <port> master Bridge` → `bridge vlan del vid 1 dev <port>` → `bridge vlan add vid <id> dev <port> [pvid untagged]` | `vlanmgr.cpp:243-251` |
+
+### 推奨書込み順序
+
+```
+# 1. DEVICE_METADATA.localhost.mac    (gMacAddress 確定)
+# 2. PORT|EthernetN                   (STATE_DB.PORT_TABLE state=ok 待ち)
+# 3. (任意) PORTCHANNEL / PORTCHANNEL_MEMBER
+# 4. VLAN|VlanN                       (STATE_DB.VLAN_TABLE state=ok 待ち)
+# 5. VLAN_MEMBER|VlanN|EthernetN
+# 6. (任意) VLAN_INTERFACE|VlanN      (L3 化。VLAN_MEMBER が同 port にあると排他)
+```
+
+削除は逆順: VLAN_INTERFACE → VLAN_MEMBER → VLAN → PORT。
+
+### SET 後 DEL の順序依存
+
+| シナリオ | 問題 | 安全な手順 |
+|---|---|---|
+| `VLAN` をいきなり DEL (メンバー残存) | `vlanmgrd` は `removeHostVlan()` で `ip link del Vlan<id>` を実行 (`vlanmgr.cpp:456-470`)。kernel は配下 netdev を自動デタッチするが、APPL_DB `VLAN_MEMBER_TABLE` のエントリは個別 DEL されない限り残存し、portsorch 側で stale 状態になる | 先に `VLAN_MEMBER` を全て DEL してから `VLAN` を DEL |
+| `VLAN_MEMBER` DEL 後の bridge port 削除 | `PortsOrch::doVlanMemberTask()` DEL 経路は `removeVlanMember()` 成功 + `getBridgePortReferenceCount(port)==0` のときのみ `removeBridgePort()` を呼ぶ (逆順) | 同一 port を含む全 VLAN_MEMBER を DEL するまで bridge port は残る (これは自動。手動操作不要) |
+| `INTERFACE` 化済み port に VLAN_MEMBER を SET | `addBridgePort()` が `m_rif_id != 0` で `Cannot create bridge port, interface ... is a router port` 警告して拒否 (`portsorch.cpp:7198-7202`) | 先に `INTERFACE` (L3) 設定を解除してから VLAN_MEMBER を SET |
+
+### warm reboot
+
+- **vlanmgrd**: `WarmStart::isWarmStart()` 時 (`vlanmgr.cpp:41-75`) は CONFIG_DB から全 VLAN/VLAN_MEMBER キーを `m_vlanReplay` / `m_vlanMemberReplay` にキャッシュし、`ip link show Bridge` が成功する限り **Linux `Bridge` netdev・配下 VLAN netdev を破壊再作成しない**。docker warm restart 直後で STATE_DB に `state=ok` が残るが `m_vlans` 集合が空のケースは `addHostVlan()` をスキップして集合のみ補正 (`vlanmgr.cpp:371-378`) し二重作成を防ぐ。replay 集合が空になると `setWarmStartState("vlanmgrd", REPLAYED→RECONCILED)` を 2 段で発行 (`vlanmgr.cpp:479-488, 714-723`)。
+- **portsorch**: `bake()` で `addExistingData(APP_VLAN_TABLE_NAME)` → `addExistingData(APP_VLAN_MEMBER_TABLE_NAME)` を **この順** で呼び (`portsorch.cpp:4389-4390`)、APPL_DB に残っていた既存エントリを `m_toSync` に再注入する。`m_isWarmRestoreStage` (`portsorch.cpp:753, 6428`) は warm 完了で `onWarmBootEnd()` (`portsorch.cpp:6424-6443`) が false に落とす。SAI 側の既存 VLAN/bridge port オブジェクトとの突き合わせ運用なので、cold boot 時と異なり SAI 再作成は走らない。
+
+> **Evidence**: sonic-swss `cfgmgr/vlanmgr.cpp:41-75,123-160,233-322,371-488,491-531,642,667-700,714-723`; `orchagent/portsorch.cpp:753,4389-4390,5857-5965,5896,5907,5940,6424-6479,7189-7202`
+<!-- /ordering -->
+
 <!-- side-effects -->
 ## 副次 DB 書込（STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB）
 
