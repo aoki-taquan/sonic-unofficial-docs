@@ -365,4 +365,43 @@ show copp config
 - `always_enabled=true` の例: `lacp`、`arp`、`udld`、`ip2me`、`neighbor_miss`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/copporch.cpp`・`cfgmgr/coppmgr.cpp`
+
+### SET 処理
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| 未知の `trap_id` 文字列 (`trap_id_map.at()` が `out_of_range` 例外) | ERROR ログ → `task_invalid_entry` → エントリ破棄（恒久スキップ）、ループ継続 | `copporch.cpp:900-903` |
+| `getAttribsFromTrapGroup()` が false（不明フィールド等） | `task_invalid_entry` → 即時エントリ破棄 | `copporch.cpp:749-753` |
+| SAI `create_hostif_trap_group` 失敗 | ERROR ログ → `handleSaiCreateStatus()` 結果次第: `task_failed` → ループ中断、`task_need_retry` → リトライ | `copporch.cpp:780-788` |
+| SAI `create_hostif_trap` 失敗 | ERROR ログ → `parseHandleSaiStatusFailure()` → `task_failed` 伝播 → ループ中断 | `copporch.cpp:516-523` |
+| ポリサー作成失敗 (`trapGroupUpdatePolicer()` = false) | `task_failed` → `"Processing copp task item failed, exiting."` → ループ中断 | `copporch.cpp:796-800, 920-923` |
+| Genetlink hostif 重複作成 | ERROR ログ → `task_failed` → ループ中断 | `copporch.cpp:835-840` |
+| `trapGroupProcessTrapIdChange()` 失敗 | `task_failed` → ループ中断 | `copporch.cpp:853-856` |
+| NAT 非対応時の `snat_miss`/`dnat_miss` | NOTICE ログ → 当該 trap_id のみ `continue` スキップ（他は継続） | `copporch.cpp:401-406` |
+| SAI 非対応 trap_id (`isTrapIdSupported()=false`) | NOTICE ログ → 当該 trap_id のみスキップ（他は継続） | `copporch.cpp:408-413` |
+
+### DEL 処理
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| default trap group の削除試行 | WARN ログ → `task_ignore` → エントリ破棄（サイレント無視） | `copporch.cpp:861-865` |
+| `processTrapGroupDel()` 失敗 (SAI 削除失敗等) | `task_failed` → ループ中断 | `copporch.cpp:867-870` |
+
+### coppmgr 側
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| init cfg (`copp_cfg.json`) が不在 | ERROR ログ → `return`（デフォルトトラップなしで起動継続） | `coppmgr.cpp:26-30` |
+| `trap_group` / `trap_ids` ともに空かつ `always_enabled` も空 | 不完全設定として `erase(it)` → スキップ | `coppmgr.cpp:609-615` |
+
+### task_failed の影響範囲
+
+`task_failed` は `doTask()` でループを即時 `return` して中断する。プロセス強制終了はしないが、未処理エントリは次の `doTask()` 呼び出しまで停止する。`task_invalid_entry` は `erase(it)` のみでループ継続。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 7a3847939b09 -->
