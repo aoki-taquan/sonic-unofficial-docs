@@ -168,6 +168,78 @@ flowchart LR
 - CONFIG_DB: `FDB`（静的エントリのソース）、`VLAN`、`VLAN_MEMBER`
 - CLI: `show mac` (FDB テーブル表示)、`sonic-clear fdb all` (動的エントリクリア)
 
+<!-- cross-refs -->
+## 暗黙参照 (cross-table refs)
+
+`APPL_DB FDB_TABLE` は YANG 未定義のため leafref は持たないが、`FdbOrch` (orchagent) が他テーブル / 他 Orch から OID を解決して SAI に渡す**暗黙参照**を多数持つ。コード調査の詳細は `meta/_intermediate/cdb-flow/appl-fdb-cross-refs.md` に記録した。
+
+### 1. VLAN（key の `<VlanName>` — 必須依存）
+
+- **参照先**: CONFIG_DB `VLAN` / APPL_DB `VLAN_TABLE`
+- **方向**: 読み取り (`PortsOrch::getPort(VlanName)` → `vlan_oid`)
+- **参照元**: `fdborch.cpp:739`（key 分解後の VLAN 解決）, `fdborch.cpp:765`（`entry.bv_id = vlan.m_vlan_info.vlan_oid`）
+- **意味**: `Vlan<id>` を SAI `vlan_oid` に解決し、SAI FDB entry の `bv_id` に設定する。VLAN 未作成だと `m_toSync` に保留され、後で VLAN が作成されたタイミングで再試行される。
+- **ブロッキング**: `allPortsReady()` が false の間、`doTask()` は全 FDB 処理を停止する (`fdborch.cpp:711` / `fdborch.cpp:927`)。
+
+### 2. PORT / PORTCHANNEL（フィールド `port` — 実質必須）
+
+- **参照先**: `PORT` / `PORTCHANNEL`（および VXLAN tunnel 仮想 port）
+- **方向**: 読み取り (`PortsOrch::getPort(alias)` → `m_bridge_port_id`)
+- **参照元**: `fdborch.cpp:976`（PORT flush 操作）, `fdborch.cpp:1449`（`SAI_FDB_ENTRY_ATTR_BRIDGE_PORT_ID` 設定）
+- **意味**: `port` フィールドを `Port` オブジェクトに解決し、その `bridge_port_id` を SAI FDB entry に渡す。bridge port が未生成だと `addFdbEntry()` が失敗。SAI FDB イベント側でも `getPortByBridgePortId()` で逆解決される (`fdborch.cpp:297` / `340` / `438` / `564` / `698`)。
+
+### 3. VLAN_MEMBER（FDB flush 連動 — 購読）
+
+- **参照先**: `VLAN_MEMBER`（`PortsOrch` 経由）
+- **方向**: `SUBJECT_TYPE_VLAN_MEMBER_CHANGE` 購読
+- **参照元**: `fdborch.cpp:39`（`m_portsOrch->attach(this)`）, `fdborch.cpp:655`
+- **意味**: Port が VLAN から削除されると、その port × vlan に紐づく動的 FDB を SAI flush する。FDB エントリ自体が VLAN_MEMBER を read するわけではなく、`PortsOrch` のサブジェクト通知経由で flush 連動する。
+
+### 4. VXLAN_TUNNEL / VXLAN_EVPN_NVO（VXLAN_ADVERTIZED 起源のみ）
+
+- **参照先**: CONFIG_DB `VXLAN_TUNNEL` / `VXLAN_EVPN_NVO`（`VxlanTunnelOrch` / `EvpnNvoOrch` 管理）
+- **方向**: 読み取り (`getTunnelPortName(remote_ip)` / `getEVPNVtep()`)
+- **参照元**: `fdborch.cpp:834-857`, `fdborch.cpp:1467` / `1481`（`SAI_FDB_ENTRY_ATTR_ENDPOINT_IP`）
+- **意味**: write 元テーブルが `VXLAN_FDB_TABLE` のとき (`origin == FDB_ORIGIN_VXLAN_ADVERTIZED`)、`remote_ip` フィールドからリモート VTEP IP を取得して `VxlanTunnelOrch::getTunnelPortName()` でトンネル port 名に解決。`port` フィールドはこの解決値で上書きされる。DIP-tunnel 非対応モードでは `EvpnNvoOrch::getEVPNVtep()` で SIP tunnel を使用。VTEP / tunnel 未作成だと該当 FDB は `m_toSync` から erase されて無視される。
+
+### 5. STATE_DB FDB_TABLE（ローカル MAC の書き戻し）
+
+- **参照先**: STATE_DB `FDB_TABLE`（`m_fdbStateTable`）
+- **方向**: 書き込み
+- **参照元**: `fdborch.cpp:131-134`, `fdborch.cpp:1569-1582`
+- **意味**: ローカル学習 / 解決された MAC の `port` / `type` を STATE_DB に書き戻し、`show mac` / `fdbshow` CLI の表示ソースとする。MCLAG_ADVERTIZED 起源は除外。
+
+### 6. STATE_DB MCLAG_FDB_TABLE（MCLAG_ADVERTIZED 起源のみ）
+
+- **参照先**: STATE_DB `MCLAG_FDB_TABLE`（`m_mclagFdbStateTable`）
+- **方向**: 書き込み / 削除
+- **参照元**: `fdborch.cpp:872-878`（追加）, `fdborch.cpp:901-908`（削除）
+- **意味**: MCLAG ピアから advertise された MAC を STATE_DB に書き、`mclagsyncd` がピア同期に使う。`dynamic_local` に格上げされたタイミングで state エントリを削除し、broadcast 対象から外す。
+
+### 7. PortsOrch SUBJECT 通知 (`PORT_OPER_STATE_CHANGE` 等)
+
+- **参照先**: `PortsOrch` observer
+- **方向**: 購読
+- **参照元**: `fdborch.cpp:655-661`
+- **意味**: Port oper-down 等の物理層イベントを観察し、該当 port の動的 FDB を SAI flush する。
+
+### 参照関係サマリ
+
+```
+APPL_DB FDB_TABLE
+  |- [必須]  VLAN.name                       (key の <VlanName> -> vlan_oid)
+  |- [必須]  PORT / PORTCHANNEL              (port field -> bridge_port_id)
+  |- [購読]  VLAN_MEMBER                     (flush 連動)
+  |- [VXLAN] VXLAN_TUNNEL / VXLAN_EVPN_NVO  (VXLAN_ADVERTIZED 起源のみ — port 名置換 / endpoint IP)
+  |- [出力]  STATE_DB FDB_TABLE              (ローカル MAC の書き戻し)
+  |- [出力]  STATE_DB MCLAG_FDB_TABLE        (MCLAG_ADVERTIZED 起源のみ)
+  `- [購読]  PortsOrch SUBJECT_TYPE_*        (Port oper / VLAN member 変化に flush 連動)
+```
+
+YANG leafref が存在しないため、これら参照はいずれも実行時にコード経由で解決され、参照先テーブルの作成順序が崩れた場合は該当 FDB エントリが `m_toSync` 保留または erase される。
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/schema.h:52` — `#define APP_FDB_TABLE_NAME "FDB_TABLE"`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
