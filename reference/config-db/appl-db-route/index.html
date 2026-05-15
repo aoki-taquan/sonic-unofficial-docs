@@ -24161,6 +24161,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-e" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35017,6 +35028,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-e" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35262,7 +35284,7 @@
 
 <h2 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> は排他。両方を指定するとエラー<sup id="fnref5:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup>。</li>
+<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> は排他。両方を指定するとエラー<sup id="fnref6:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup>。</li>
 <li><code>blackhole</code> が <code>"true"</code> の場合、<code>nexthop</code> / <code>ifname</code> は不要かつ無視される。</li>
 <li>VRF-aware 経路の key は <code>Vrf&lt;name&gt;:</code> プレフィクスを含む（コロン区切り）。<code>Vrf</code> で始まらない VRF 名は <code>fpmsyncd</code> がエラーログを出して処理を中断する<sup id="fnref4:rsync"><a class="footnote-ref" href="#fn:rsync">1</a></sup>。</li>
 <li>EVPN IP Prefix 経路では <code>nexthop</code>・<code>vni_label</code>・<code>router_mac</code>・<code>ifname</code> が揃っていない場合は ROUTE_TABLE への書き込みをスキップする<sup id="fnref5:rsync"><a class="footnote-ref" href="#fn:rsync">1</a></sup>。</li>
@@ -35663,11 +35685,74 @@
 <p>詳細な行番号付きグレップ証跡は <code>meta/_intermediate/cdb-flow/appl-db-route-failure.md</code> を参照<sup id="fnref:failuremem"><a class="footnote-ref" href="#fn:failuremem">6</a></sup>。</p>
 <!-- /failure -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>APPL_DB:ROUTE_TABLE</code> の SET/DEL に伴い、主購読者 <code>routeorch</code> および同居する <code>CrmOrch</code> / <code>FlowCounterRouteOrch</code> が以下の副次 DB エントリを書き込む。SAI <code>route_entry</code> 自体は本ページのデータフロー図で示した主作用 (ASIC_DB 反映) のため除外する<sup id="fnref4:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref3:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup><sup id="fnref:sidemem"><a class="footnote-ref" href="#fn:sidemem">7</a></sup>.</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_STATE_DB</td>
+<td><code>ROUTE_TABLE\|&lt;key&gt;</code></td>
+<td>SET 時 <code>protocol=&lt;value&gt;</code> を書き、DEL 時は空 fvs でキーを削除 (<code>ResponsePublisher::publish</code>)。<code>m_publisher.setBuffered(true)</code> + <code>m_directDbWrite=true</code> のためバッチ flush で実 DB に書く</td>
+<td><code>sonic-swss/orchagent/routeorch.cpp:57-58,3185-3201</code> <code>publishRouteState()</code>; 呼び出し箇所 L923 / L1050 / L1090 / L2729 / L2970</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>ROUTE_TABLE\|0.0.0.0/0</code>, <code>ROUTE_TABLE\|::/0</code></td>
+<td>デフォルトルートの到達性状態のみ。<code>state=ok</code> (デフォルト経路が learned) / <code>state=na</code> (撤去) を書く。個別プレフィクスは書かない</td>
+<td><code>routeorch.cpp:126-127,130,156,287-295</code> <code>m_stateDefaultRouteTb-&gt;set(ip, tuples)</code> (<code>STATE_ROUTE_TABLE_NAME</code>)</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>CRM:STATS</code></td>
+<td><code>crm_stats_ipv4_route_used</code> / <code>crm_stats_ipv6_route_used</code> を <code>incCrmResUsedCounter</code> / <code>decCrmResUsedCounter</code> で更新し、CrmOrch の polling timer (<code>CRM_POLLING_INTERVAL_DEFAULT</code>) が <code>COUNTERS_CRM_TABLE</code> へ周期反映する。<code>available</code> 値は SAI クエリ結果 (<code>SAI_SWITCH_ATTR_AVAILABLE_IPV4/IPV6_ROUTE_ENTRY</code>)</td>
+<td><code>routeorch.cpp:148,168,257,280,2481-2488,2532-2536,2884-2888</code>; <code>crmorch.cpp:400-401,1063-1113</code> <code>m_countersCrmTable-&gt;set()</code></td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_ROUTE_NAME_MAP</code>, <code>COUNTERS_ROUTE_TO_PATTERN_MAP</code></td>
+<td>route flow-counter 有効パターン下で「prefix↔counter OID」「prefix↔pattern」の HSET / HDEL を行う。bind/unbind は flex counter timer 経過時 (<code>doTask(SelectableTimer)</code>) に反映</td>
+<td><code>flex_counter/flowcounterrouteorch.cpp:33-34,123-157,916-923</code> <code>mPrefixToCounterTable-&gt;set/hdel</code>, <code>mPrefixToPatternTable-&gt;set/hdel</code>; <code>routeorch.cpp:259,282,2708,2996</code> 連動呼出 (<code>gFlowCounterRouteOrch-&gt;onAdd/onRemoveMiscRouteEntry</code> / <code>handleRouteAdd/Remove</code>)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>FLOW_COUNTER_CAPABILITY_TABLE\|route</code></td>
+<td>起動時 1 回。<code>support="true"/"false"</code> を SAI ケーパビリティ問合せ結果として広告</td>
+<td><code>flex_counter/flowcounterrouteorch.cpp:166-178</code> <code>capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs)</code></td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|ROUTE_FLOW_COUNTER</code>, <code>FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER:&lt;counter_oid&gt;</code></td>
+<td>route flow-counter bind 時に <code>mRouteFlowCounterMgr.setCounterIdList()</code> でポーリング対象を登録、unbind 時に <code>clearCounterIdList()</code> で削除</td>
+<td><code>flex_counter/flowcounterrouteorch.cpp:35,123,923</code> <code>FlexCounterManager(ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP, ...)</code></td>
+</tr>
+<tr>
+<td>ASIC_DB (参考)</td>
+<td>SAI <code>route_entry</code>, <code>next_hop</code>, <code>next_hop_group</code>, <code>next_hop_group_member</code></td>
+<td>SAI Route / NextHop / NHG API 経由のハードウェア反映。<strong>副次ではなく主作用</strong></td>
+<td><code>routeorch.cpp</code> 全般。本ページ「データフロー」参照</td>
+</tr>
+</tbody>
+</table>
+<p>それ以外 (LOGLEVEL_DB / CONFIG_DB / CHASSIS_APP_DB / SNMP_OVERLAY_DB) への直接書込みは <code>routeorch.cpp</code> / <code>crmorch.cpp</code> / <code>flowcounterrouteorch.cpp</code> の grep で 0 件 (<code>routeorch</code> は CONFIG_DB を購読のみ)。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/routeorch.cpp</code> (<code>publishRouteState</code> L3185-3201、<code>updateDefRouteState</code> L287-295、CRM <code>inc/decCrmResUsedCounter</code> 各所、<code>gFlowCounterRouteOrch-&gt;handleRoute*</code> L2708/L2996)、<code>orchagent/crmorch.cpp:400-401,1063-1113</code>、<code>orchagent/flex_counter/flowcounterrouteorch.cpp:33-35,123,152-178,916-923</code>。詳細なスキャン手順と grep ログは <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code> を参照<sup id="fnref2:sidemem"><a class="footnote-ref" href="#fn:sidemem">7</a></sup>。</p>
+</blockquote>
+<!-- /side-effects -->
+
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
 <p><code>orchagent/routeorch.cpp</code> / <code>orchagent/orch.h</code> / <code>orchagent/crmorch.cpp</code> に固定された
 ハードコード定数の一覧。APPL_DB <code>ROUTE_TABLE</code> の購読側（<code>RouteOrch</code>）と
-CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文字列リテラルがここに集中する<sup id="fnref4:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref3:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup>。</p>
+CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文字列リテラルがここに集中する<sup id="fnref5:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref4:crmorch"><a class="footnote-ref" href="#fn:crmorch">5</a></sup>。</p>
 <h3 id="ecmp-nhg-routeorchcpp-l37-l38">ECMP / NHG 上限 (<code>routeorch.cpp</code> L37-L38)<a class="headerlink" href="#ecmp-nhg-routeorchcpp-l37-l38" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -35837,7 +35922,7 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 <p>fpmsyncd RouteSync 実装: <code>sonic-swss/fpmsyncd/routesync.cpp</code>, <code>routesync.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rsync" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:rorch">
-<p>RouteOrch 実装: <code>sonic-swss/orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>RouteOrch 実装: <code>sonic-swss/orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:rorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 3 in the text">&#8617;</a></p>
@@ -35846,10 +35931,13 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 <p>NhgOrch 実装: <code>sonic-swss/orchagent/nhgorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/nhgorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/nhgorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:nhgorch" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:crmorch">
-<p>CrmOrch 実装: <code>sonic-swss/orchagent/crmorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>CrmOrch 実装: <code>sonic-swss/orchagent/crmorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:crmorch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:failuremem">
 <p>失敗分岐の中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-failure.md</code>&#160;<a class="footnote-backref" href="#fnref:failuremem" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sidemem">
+<p>副次 DB 書込スキャンの中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code>&#160;<a class="footnote-backref" href="#fnref:sidemem" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sidemem" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
