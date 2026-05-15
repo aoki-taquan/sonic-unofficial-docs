@@ -404,4 +404,79 @@ show copp config
 
 <!-- /failure -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+<!-- evidence: meta/_intermediate/cdb-flow/copp-trap-pubsub.md -->
+
+### CONFIG_DB → CoppMgr (SubscriberStateTable / keyspace notification)
+
+`coppmgrd` は `Orch` 基底クラス経由で CONFIG_DB の `COPP_TRAP`・`COPP_GROUP`・`FEATURE` テーブルに対して `SubscriberStateTable` を登録し、Redis keyspace notification を PSUBSCRIBE する。
+
+```
+PSUBSCRIBE __keyspace@4__:COPP_TRAP|*
+PSUBSCRIBE __keyspace@4__:COPP_GROUP|*
+PSUBSCRIBE __keyspace@4__:FEATURE|*
+```
+
+| 項目 | 値 |
+|------|----|
+| 購読テーブル | `COPP_TRAP`、`COPP_GROUP`、`FEATURE` |
+| Consumer クラス | `Consumer` (wraps `SubscriberStateTable`) |
+| イベント起因 | hash 操作 (`hset`、`hdel`、`del`) |
+| Select タイムアウト | 1000 ms（タイムアウト時は pending タスクを `doTask()` で再試行） |
+| 初回起動 | コンストラクタが既存キーを `m_buffer` に先読みして missed event を回避 |
+
+### CoppMgr → APPL_DB (ProducerStateTable / PUBLISH)
+
+CoppMgr は `ProducerStateTable m_appCoppTable`（`coppmgr.h:71`）を通じて APPL_DB に書き込む。Lua スクリプト (`EVALSHA`) による原子的書き込み:
+
+1. `SADD COPP_TABLE_KEY_SET <group>` — 変更キーをセットに追加
+2. `HSET _COPP_TABLE:<group> trap_ids <value> ...` — 一時 hash に値を書き込む
+3. `PUBLISH COPP_TABLE_CHANNEL@0 G` — orchagent を wake-up する通知を送信
+
+**変換ポイント**: CONFIG_DB は 1 trap/key (`COPP_TRAP|<name>`) だが、APPL_DB は 1 group/key (`COPP_TABLE|<group>`) に再集計される。CoppMgr がこの変換を担う。
+
+### APPL_DB → CoppOrch (ConsumerStateTable / SUBSCRIBE)
+
+orchagent の `CoppOrch` は `ConsumerStateTable` で `COPP_TABLE_CHANNEL@0` を SUBSCRIBE し、`consumer_state_table_pops.lua` でバッチ取り出しを行う:
+
+```
+SUBSCRIBE COPP_TABLE_CHANNEL@0
+→ wake-up → EVALSHA pops.lua → SPOP KEY_SET + HGETALL _COPP_TABLE:<group>
+→ CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
+```
+
+ポートが初期化完了するまで (`!gPortsOrch->allPortsReady()`) タスクは保留される（`copporch.cpp:885`）。
+
+### STATE_DB へのステータス書き込み
+
+- **CoppMgr 書き込み成功時**: `STATE_DB[COPP_TRAP_TABLE|<name>] state=ok`
+- **CoppOrch SAI 適用後**: `STATE_DB[COPP_TRAP_TABLE|<name>] hw_status=<value>`（`updateTrapOperStatus()`）
+
+### FEATURE 変化との連動
+
+`doFeatureTask()` が `FEATURE` テーブルの変化を検知し、feature state 変化のたびに影響する `COPP_TRAP` を再評価して APPL_DB を更新する。`always_enabled=true` の trap は feature state に関わらず常時インストール（`coppmgr.cpp:90`）。
+
+### TTL
+
+APPL_DB・STATE_DB への書き込みはいずれも TTL なし (`DEFAULT_DB_TTL = -1`)。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB[COPP_TRAP|<name>]
+  ↓ SubscriberStateTable (PSUBSCRIBE __keyspace@4__:COPP_TRAP|*)
+coppmgrd :: CoppMgr::doCoppTrapTask()
+  ↓ ProducerStateTable (EVALSHA: SADD KEY_SET + HSET + PUBLISH COPP_TABLE_CHANNEL@0)
+  ↓ ※ 1 trap/key → 1 group/key に再集計
+APPL_DB[COPP_TABLE|<group>]
+  ↓ ConsumerStateTable (SUBSCRIBE COPP_TABLE_CHANNEL@0 → pops.lua)
+CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
+                                                       ↓
+                                           STATE_DB[COPP_TRAP_TABLE|<name>] hw_status
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 7a3847939b09 -->
