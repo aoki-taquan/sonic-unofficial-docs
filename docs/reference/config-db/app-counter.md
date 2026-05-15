@@ -194,6 +194,121 @@ FlowCounterRouteOrch は COUNTERS_DB への書き込みを 1 秒間隔のタイ�
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`FLEX_COUNTER_TABLE` と `FLOW_COUNTER_ROUTE_PATTERN` はどちらも orchagent 内の単一スレッドで消費される。両者は **Redis keyspace notification (PSUBSCRIBE)** で変更検出される `SubscriberStateTable` 経路を取る。`ConsumerStateTable` / `NotificationConsumer` は CONFIG_DB 側では**使用しない**。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|--------------------|
+| CLI/CONFIG_DB → orchagent | `SubscriberStateTable` | `__keyspace@{config_db_id}__:FLEX_COUNTER_TABLE\|*` |
+| CLI/CONFIG_DB → orchagent | `SubscriberStateTable` | `__keyspace@{config_db_id}__:FLOW_COUNTER_ROUTE_PATTERN\|*` |
+| FlowCounterRouteOrch 内部 | `SelectableTimer` (1 秒) | `FLEX_COUNTER_UPD_TIMER` (`flowcounterrouteorch.cpp:21,43-46`) |
+| orchagent → syncd | `ProducerTable` または SAI redis switch attr 直書き | FLEX_COUNTER_DB `FLEX_COUNTER_TABLE` / `FLEX_COUNTER_GROUP_TABLE` |
+| syncd → COUNTERS_DB | SAI generic counter polling | `COUNTERS:<oid>` (HSET) |
+
+### SubscriberStateTable の動作
+
+`FlexCounterOrch` (`orchdaemon.cpp:620-628`) と `FlowCounterRouteOrch` (`orchdaemon.cpp:251-254`) はいずれも `Orch(db, tableNames)` 基底経由で `Orch::addConsumer()` を呼ぶ (`orch.cpp:1186-1196`)。db が CONFIG_DB のため `SubscriberStateTable` ブランチが選択される:
+
+```
+PSUBSCRIBE __keyspace@{config_db_id}__:FLEX_COUNTER_TABLE|*
+PSUBSCRIBE __keyspace@{config_db_id}__:FLOW_COUNTER_ROUTE_PATTERN|*
+PSUBSCRIBE __keyspace@{config_db_id}__:DEVICE_METADATA|*    ← FlexCounterOrch が同居
+```
+
+keyspace 通知のペイロードは Redis 操作名 (`hset` / `del` / 等) のみ。フィールド値は通知後に `HGETALL` で別途取得する (`subscriberstatetable.cpp:95-`)。
+
+### 起動時スナップショット
+
+`SubscriberStateTable` ctor は PSUBSCRIBE 直後に `getKeys()` + `get()` で既存全エントリを `SET_COMMAND` として buffer に充填する (`subscriberstatetable.cpp:26-44`)。orchagent 起動時に存在する `FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN|*` はすべて遅延なく `doTask` に流れる。
+
+### Warm restart 遅延
+
+`FlexCounterOrch` のみ warm start 時に 60 秒の `FLEX_COUNTER_DELAY_SEC` タイマー (`flexcounterorch.cpp:44, 127-133`) が走り、満了まで `doTask(Consumer&)` は即 return する (`flexcounterorch.cpp:156-159`)。コールド起動時は遅延なし。`FlowCounterRouteOrch` には同等の遅延は無い。
+
+### doTask の処理フロー
+
+`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:145-410`) は `flexCounterGroupMap` (`flexcounterorch.cpp:65-99`) で CONFIG_DB key を内部 group 定数に変換する:
+
+| CONFIG_DB key | 内部 group constant |
+|---|---|
+| `FLOW_CNT_TRAP` | `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` |
+| `FLOW_CNT_ROUTE` | `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` |
+
+`FLEX_COUNTER_STATUS = enable` 受信時の副作用呼び出し:
+
+- `FLOW_CNT_TRAP` → `gCoppOrch->generateHostIfTrapCounterIdList()` (`flexcounterorch.cpp:311-323`)
+- `FLOW_CNT_ROUTE` → `gFlowCounterRouteOrch->generateRouteFlowStats()` (SAI 能力ガード付, `flexcounterorch.cpp:324-336`)
+
+どちらの key も最後に `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` が呼ばれ、FLEX_COUNTER_DB に enable/disable と polling interval が反映される (`saihelper.cpp:868-885, 918-962`)。
+
+`FlowCounterRouteOrch::doTask(Consumer&)` (`flowcounterrouteorch.cpp:55-97`) は `addRoutePattern(key, max_match_count)` / `removeRoutePattern(key)` を呼ぶのみ。実際の SAI route entry → flex counter 紐付けは `FLEX_COUNTER_UPD_TIMER` (1 秒) 経由で `doTask(SelectableTimer&)` (`flowcounterrouteorch.cpp:99-`) が行う。
+
+### 書き込み元 (Publisher 側)
+
+CONFIG_DB への書き込みは **直接 Redis HSET** (`ConfigDBConnector`) で行われ、`ProducerStateTable` は通らない:
+
+| 書き込み元 | 経路 |
+|---|---|
+| `counterpoll flowcnt-trap {enable\|disable\|interval}` | `counterpoll/main.py` → ConfigDBConnector.mod_entry → HSET |
+| `counterpoll flowcnt-route {enable\|disable\|interval}` | 同上 |
+| `config flowcnt-route pattern add/del` | `config/flow_counters.py` → ConfigDBConnector.set_entry → HSET/DEL |
+| `config_db.json` 初期投入 | sonic-cfggen による一括 HSET |
+
+HSET 完了で Redis が自動的に `__keyspace@{config_db_id}__:<key>` channel に `hset` メッセージを publish し、orchagent の SubscriberStateTable が拾う。
+
+### データフロー図
+
+```
+admin (counterpoll flowcnt-trap enable)
+  ↓ ConfigDBConnector.mod_entry()
+CONFIG_DB[FLEX_COUNTER_TABLE|FLOW_CNT_TRAP]
+  ↓ HSET + keyspace PUBLISH
+  ↓   channel: __keyspace@{config_db_id}__:FLEX_COUNTER_TABLE|FLOW_CNT_TRAP
+  ↓   message: "hset"
+orchagent select() ループ
+  ↓ SubscriberStateTable.pops() → HGETALL "FLEX_COUNTER_TABLE|FLOW_CNT_TRAP"
+FlexCounterOrch::doTask(Consumer&)
+  ├─ flexCounterGroupMap → HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP
+  ├─ gCoppOrch->generateHostIfTrapCounterIdList()
+  │    └─ bindTrapCounter() → SAI create_counter + set_hostif_trap_attribute
+  └─ setFlexCounterGroupOperation(group, "enable")
+       └─ ProducerTable(gFlexCounterGroupTable).set() / SAI redis switch attr
+FLEX_COUNTER_DB[FLEX_COUNTER_GROUP_TABLE|<group>]
+  ↓ syncd FlexCounter スレッドが受信
+syncd (FlexCounter)
+  ↓ 10 秒間隔で SAI get_counter_stats(SAI_COUNTER_STAT_PACKETS/BYTES)
+COUNTERS_DB[COUNTERS:<oid>]   ← HSET
+
+NotificationConsumer: なし
+ConsumerStateTable (CONFIG_DB 側): なし
+TTL / expire: なし
+```
+
+派生フロー (FLOW_COUNTER_ROUTE_PATTERN):
+
+```
+CONFIG_DB[FLOW_COUNTER_ROUTE_PATTERN|<prefix> or <vrf>|<prefix>]
+  ↓ keyspace notification
+FlowCounterRouteOrch::doTask(Consumer&) → addRoutePattern(key, max_match_count)
+  ↓
+mPendingAddToFlexCntr キュー
+  ↓ FLEX_COUNTER_UPD_TIMER (1 秒間隔, SelectableTimer)
+FlowCounterRouteOrch::doTask(SelectableTimer&)
+  ↓ VID→RID 解決 (VIDTORID HGET)
+  ↓ mRouteFlowCounterMgr.setCounterIdList()
+FLEX_COUNTER_DB → syncd → COUNTERS_DB
+```
+
+### 詳細ノート
+
+詳細な購読パターン・PSUBSCRIBE チャンネル・競合解析は中間メモを参照: `meta/_intermediate/cdb-flow/app-counter-pubsub.md`。
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
