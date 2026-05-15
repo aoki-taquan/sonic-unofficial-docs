@@ -295,6 +295,54 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 - `hostcfgd` はキャッシュと値が変化した場合のみ `systemctl restart banner-config` を発行 (重複再起動抑制) (`hostcfgd:2074`)
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 書込み順序依存
+
+### 依存関係マップ
+
+```
+config-setup.service (起動)
+  └─► database.service (Redis CONFIG_DB)
+        └─► banner-config.service (Requires + BindsTo)
+
+hostcfgd.load()  ─── 順次呼び出し ───
+  ├─► PASSW_HARDENING  → PAM common-password 書換え
+  ├─► SSH_SERVER       → sshd_config 書換え + sshd reload
+  ├─► (… 他テーブル …)
+  └─► BANNER_MESSAGE   → BannerCfg.load() → state/login/motd/logout 順
+        └─► systemctl restart banner-config (変化時のみ)
+              └─► banner-config.sh
+                    └─► /etc/issue.net → /etc/issue → /etc/motd → /etc/logout_message
+                          └─► sshd は接続毎に /etc/issue.net を再読込 (restart 不要)
+                          └─► pam_motd.so がログイン時に /etc/motd を再読込 (PAM reload 不要)
+```
+
+### 書込み順序ルール
+
+| 優先度 | ルール | 根拠 |
+|--------|--------|------|
+| 必須 | `config-setup.service` / `database.service` が起動済み (systemd 自動制御) | `banner-config.service`: `Requires=config-setup.service` / `BindsTo=database.service` |
+| 必須 | `state` フィールドを `login`/`motd`/`logout` と**同一バッチで**書く、または `state` を先に書く | `banner-config.sh:8` の `state == "enabled"` ガード。中間状態 `state=disabled` のままで他フィールドだけ書いてもファイルは更新されない |
+| 推奨 | `SSH_SERVER` を `BANNER_MESSAGE` より先に確定 | hostcfgd:2265 (`sshscfg.load`) → 2274 (`bannermsgcfg.load`) の load 順 |
+| 注意 | 4 フィールド同時更新は最大 4 回 `systemctl restart banner-config` を引き起こす | `BannerCfg.load()` は state/login/motd/logout を 1 行ずつ `banner_message()` に渡し、変化があるたびに restart (hostcfgd:2079-2082 + 2111) |
+| 不要 | sshd の再起動・reload | sshd は新規接続ごとに `/etc/issue.net` を読み直す。`BannerCfg` も sshd / PAM に一切タッチしない (hostcfgd:2044-2119) |
+| 不要 | PAM 設定ファイルの事前書換え | `pam_motd.so` は Debian イメージビルド時に既定で組み込み済み。Banner と AAA/PASSW_HARDENING の PAM 経路は独立 |
+
+### タイミング制約
+
+- **boot 時**: `banner-config.service` (`WantedBy=sonic.target`) は sonic.target ramp-up 中に oneshot で 1 度実行される。最初の SSH 接続が `banner-config.service` 完了より先に到達した場合は Debian デフォルト banner が出るのみで機能影響はない (`hostcfgd:2060-2061` のコメント参照)。
+- **runtime 変更**: CONFIG_DB 変更検知から `banner-config.sh` 完了まで O(秒)。`/etc/issue.net` → `/etc/issue` → `/etc/motd` → `/etc/logout_message` の個別書込み間に race window があり、新 banner + 旧 motd が短時間混在し得る (banner-config.sh:13-16)。
+- **冪等性**: `banner-config.sh` は同じファイルを上書きするだけなので、複数回 restart されても最終状態は CONFIG_DB の値と一致。
+
+### sshd / PAM の再起動が**不要**である根拠
+
+- `BannerCfg` (hostcfgd:2044-2119) 全体に `ssh` / `sshd` / `pam` / `reload` の参照なし。restart 対象は `banner-config` 単一 unit のみ (hostcfgd:2111)。
+- sshd は `Banner /etc/issue.net` ディレクティブに従い接続ごとにファイルを再読込する Debian 標準挙動。
+- `/etc/motd` は `pam_motd.so` がログインセッション開始時に都度読む。PAM スタックの再ロードは発生しない。
+
+詳細は `meta/_intermediate/cdb-flow/banner-message-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
