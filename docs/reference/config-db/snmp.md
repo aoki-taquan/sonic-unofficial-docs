@@ -273,4 +273,109 @@ YANG は `container CONTACT { leaf Contact { ... } }` と定義するが、CLI (
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### コンテナ起動時シーケンス
+
+docker-snmp コンテナは supervisord が以下の依存順序でプログラムを制御する:
+
+```
+1. rsyslogd 起動
+2. start.sh 実行 (rsyslogd:running 待機)
+   ├─ snmp_yml_to_configdb.py → CONFIG_DB に SNMP_COMMUNITY / SNMP|LOCATION を書き込み
+   └─ sonic-cfggen -d -t snmpd.conf.j2 → /etc/snmp/snmpd.conf 生成
+3. snmpd 起動 (start:exited 待機)
+4. snmp-subagent 起動 (snmpd:running 待機)
+```
+
+`snmpd` は `start.sh` の完了を待機する（`dependent_startup_wait_for=start:exited`）。`snmpd.conf.j2` のテンプレート展開は `start.sh` 内で行われるため、CONFIG_DB への書き込みが先行する。
+
+### snmp.yml → CONFIG_DB 注入の条件
+
+`snmp_yml_to_configdb.py` は `/etc/sonic/snmp.yml` から `SNMP|LOCATION` を注入するが、以下の優先ルールがある:
+
+| 条件 | 動作 |
+|------|------|
+| `/etc/sonic/snmp.yml` に `snmp_location` なし | `sys.exit(1)` → `start.sh` 失敗 → `snmpd` 未起動 |
+| CONFIG_DB に `SNMP|LOCATION` が既に存在する | yml からの書き込みをスキップ（**既存エントリが優先**） |
+| `SNMP|CONTACT` | `snmp_yml_to_configdb.py` は一切書き込まない。CLI 経由のみ |
+
+### CLI 書込みとサービス再起動
+
+CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に `systemctl restart snmp.service` を実行する（`config/main.py` L4488, L4607 等）。これにより docker-snmp コンテナが再起動し、`start.sh` シーケンスが再実行される。変更反映まで数秒〜十数秒の SNMP 断が発生する。
+
+### テーブル間の書込み順依存
+
+| # | 依存関係 | 強制度 | 備考 |
+|---|----------|--------|------|
+| 1 | `/etc/sonic/snmp.yml` の `snmp_location` 事前配置 → コンテナ起動成功 | **必須** | 欠如時は `sys.exit(1)` でコンテナ起動失敗 |
+| 2 | `SNMP_COMMUNITY` 設定 → SNMP アクセス可能 | **必須** | 未定義時はコミュニティ行なし → 全アクセス拒否 (`snmpd.conf.j2` L48) |
+| 3 | `SNMP|LOCATION` / `SNMP|CONTACT` CONFIG_DB 書き込み → snmpd.conf 展開 | 起動時に **順序保証済み** | supervisord `wait_for=start:exited` が保証 |
+| 4 | CLI `set_entry` 完了 → `systemctl restart snmp.service` | **CLI が自動実行** | 手動再起動不要 |
+| 5 | `SNMP|LOCATION` 既存エントリ → snmp.yml 上書きスキップ | **既存優先** | コンテナ再起動時に yml より DB が優先される |
+
+全フィールド（`SNMP|LOCATION`, `SNMP|CONTACT`, `SNMP_COMMUNITY`, `SNMP_AGENT_ADDRESS_CONFIG`, `SNMP_TRAP_CONFIG`）でランタイム動的更新は不可。変更反映には常に docker-snmp コンテナ再起動が必要。
+
+<!-- /ordering -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SNMP` テーブルおよび `docker-snmp` コンテナに存在する、CONFIG_DB で管理されないハードコード定数の一覧。
+
+### agentAddress フォールバック
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| デフォルト agentAddress (IPv4) | `udp:161` | `SNMP_AGENT_ADDRESS_CONFIG` 未定義時に全インターフェースを公開 | `snmpd.conf.j2` L32 |
+| デフォルト agentAddress (IPv6) | `udp6:161` | `SNMP_AGENT_ADDRESS_CONFIG` 未定義時に全インターフェースを公開 (IPv6) | `snmpd.conf.j2` L33 |
+
+### システム情報ハードコード
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `sysLocation` デフォルト | `"public"` | `SNMP.LOCATION` 未定義時のフォールバック (YANG に `default` なし) | `snmpd.conf.j2` L91 |
+| `sysContact` デフォルト | `"Azure Cloud Switch vteam <linuxnetdev@microsoft.com>"` | `SNMP.CONTACT` 未定義時の Microsoft/Azure 固有ハードコード | `snmpd.conf.j2` L96 |
+| `sysServices` | `72` | Application + End-to-End layers (固定値; CONFIG_DB で管理されない) | `snmpd.conf.j2` L100 |
+
+> **注意**: `sysLocation "public"` は community 名と同一文字列だが無関係。`sysServices 72` = 64 (applications) + 8 (end-to-end/IP)。本番では `SNMP.LOCATION` / `SNMP.CONTACT` を必ず CLI で設定すること。
+
+### AgentX 定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `agentXTimeout` | `5` 秒 | AgentX サブエージェント応答タイムアウト | `snmpd.conf.j2` L197 |
+| `agentXRetries` | `4` | AgentX 再試行回数 | `snmpd.conf.j2` L198 |
+| `agentxsocket` | `tcp:localhost:3161` | snmp-subagent 内部通信ソケット (固定ポート; コンテナ内部専用) | `snmpd.conf.j2` L207 |
+
+### ディスク・ロードアベレージ監視閾値 (固定)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| disk `/` 最小空き容量 | `10000` KB (≈ 9.8 MB) | `/` パーティション最小空き容量 | `snmpd.conf.j2` L119 |
+| disk `/var` 最小空き率 | `5%` | `/var` パーティション最小空き率 | `snmpd.conf.j2` L120 |
+| includeAllDisks 最小空き率 | `10%` | その他全ディスク最小空き率 | `snmpd.conf.j2` L121 |
+| load 1 分上限 | `12` | 1 分ロードアベレージ警告閾値 | `snmpd.conf.j2` L131 |
+| load 5 分上限 | `10` | 5 分ロードアベレージ警告閾値 | `snmpd.conf.j2` L131 |
+| load 15 分上限 | `5` | 15 分ロードアベレージ警告閾値 | `snmpd.conf.j2` L131 |
+
+これらの閾値は UCD-SNMP-MIB で監視され、CONFIG_DB からは変更できない。
+
+### SNMP Trap デフォルトポート
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| trap `DestPort` デフォルト | `"162"` | `config snmptrap modify --port` のデフォルト値 (RFC 3232 well-known ポート) | `config/main.py` L4222 |
+
+### snmp.yml 固定パス・キー
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| snmp.yml パス | `'/etc/sonic/snmp.yml'` | 起動時に読み込む yml ファイルの固定パス (不在時 sys.exit(1)) | `snmp_yml_to_configdb.py` L25 |
+| community yml キー | `snmp_rocommunity` / `snmp_rocommunities` / `snmp_rwcommunity` / `snmp_rwcommunities` | yml から読み取るコミュニティ設定キー名 | `snmp_yml_to_configdb.py` L23 |
+| location yml キー | `snmp_location` | yml から `SNMP.LOCATION` に注入するキー名 (不在時 sys.exit(1)) | `snmp_yml_to_configdb.py` L51 |
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: d5320e852f7a -->

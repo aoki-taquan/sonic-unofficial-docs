@@ -345,6 +345,38 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 <!-- /handler-branching -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ACL_RULE` は YANG 未定義のため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT\|<name>` (IN_PORTS / OUT_PORT / OUT_PORTS) | OID 解決（必須） | match フィールドにポート名を指定したとき。物理・LAG のみ受理、他は rule INACTIVE | `aclorch.cpp` L961–1034 (`gPortsOrch->getPort()`) |
+| `PORT\|<name>` / LAG (REDIRECT_ACTION) | OID 解決 | `REDIRECT_ACTION` 値がポート名・LAG 名と一致するとき | `aclorch.cpp` L2085–2099 (`getRedirectObjectId()` ステップ 1) |
+| `MIRROR_SESSION\|<name>` | 存在確認 + OID + refcount | `MIRROR_ACTION` / `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 指定時。SESSION 不在は rule INACTIVE、inactive は遅延 install | `aclorch.cpp` L2331–2401 (`AclRuleMirror::activate()`) |
+| `NEIGH`（NeighOrch） | OID + refcount | `REDIRECT_ACTION` 値が `<ip>@<intf>` 形式の next-hop のとき | `aclorch.cpp` L2102–2116 (`getRedirectObjectId()` ステップ 2) |
+| `ROUTE_TABLE`（RouteOrch 管理の NH group） | OID + refcount、自動生成 | `REDIRECT_ACTION` 値が NH group 形式のとき。不在なら RouteOrch が自動作成を試みる | `aclorch.cpp` L2138–2157 (`getRedirectObjectId()` ステップ 4) |
+| TunnelNhop（TunnelOrch） | OID 解決 | `REDIRECT_ACTION` 値がトンネル next-hop 形式のとき | `aclorch.cpp` L2118–2136 (`getRedirectObjectId()` ステップ 3) |
+| `ACL_TABLE\|<table_name>` | SAI OID 解決（必須） | 常時。ACL_TABLE が未作成なら `it++` で待機、作成後に自動再処理 | `aclorch.cpp` L5520–5565 (`doAclRuleTask()` ガード) |
+| `PORT`（PortsOrch 初期化完了） | 起動ブロック | 常時。`allPortsReady()` が false の間は全 ACL_RULE 処理をブロック | `aclorch.cpp` L4276 |
+| `POLICER`（acl_loader のみ） | 読み取り（表示用） | `aclshow` コマンド実行時。orchagent (`aclorch.cpp`) は ACL_RULE から POLICER を直接参照しない | `acl_loader/main.py` L254–266 (`read_policers_info()`) |
+
+!!! note "POLICER と ACL_RULE の関係"
+    標準 `aclorch.cpp` ベースの ACL_RULE には policer action フィールドが存在しない。
+    POLICER を ACL に組み合わせる場合は P4 orch (`p4orch/acl_util.cpp`) 経由となる。
+    `acl_loader` は `POLICER` テーブルを **表示目的のみ** で読み取る。
+
+!!! note "REDIRECT_ACTION の解決順序"
+    `getRedirectObjectId()` (`aclorch.cpp:2078`) は次の順で解決を試みる:
+    1. PortsOrch — PORT / LAG 名として解決
+    2. NeighOrch — `<ip>@<intf>` next-hop として解決
+    3. TunnelOrch — トンネル next-hop として解決
+    4. RouteOrch — next-hop group として解決（不在時は自動生成）
+    いずれも失敗すると `SAI_NULL_OBJECT_ID` → rule INACTIVE。
+
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
@@ -432,6 +464,43 @@ ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装か
     `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` を含む ACL_RULE の変更は `SET` のみでは適用されない。必ず `DEL` → `SET` の順で操作すること (`aclorch.cpp:2415-2420`)。
 
 <!-- /ordering -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|---|
+| `table_id` が空文字 | `doAclRuleTask()` | WARN ログ → `erase(it)` → 恒久スキップ | なし | `aclorch.cpp:5537-5541` |
+| `table_oid == SAI_NULL_OBJECT_ID` かつ CTRLPLANE テーブル | `doAclRuleTask()` | INFO ログ → `erase(it)` → 恒久スキップ | なし | `aclorch.cpp:5554-5561` |
+| `table_oid == SAI_NULL_OBJECT_ID` かつ ACL_TABLE 未作成 | `doAclRuleTask()` | INFO ログ → `it++`（テーブル作成まで待機・再試行） | なし | `aclorch.cpp:5563-5565` |
+| `AclRule::makeShared()` が例外送出 | `doAclRuleTask()` | ERROR ログ → `erase(it)` → **`return`（ループ全体即時中断）** | なし | `aclorch.cpp:5578-5582` |
+| 未知/不正な属性名（全 `validate*` が false） | `doAclRuleTask()` | ERROR ログ → `bAllAttributesOk=false` → break | `INACTIVE` | `aclorch.cpp:5628-5631` |
+| IPv4 match と IPv6 match 同一ルール混在 (`type=L3V4V6`) | `doAclRuleTask()` | ERROR ログ → `bAllAttributesOk=false` | `INACTIVE` | `aclorch.cpp:5656-5663` |
+| `validate()` 失敗 / `bAllAttributesOk=false` | `doAclRuleTask()` | ERROR ログ → `erase(it)` → 恒久スキップ | `INACTIVE` | `aclorch.cpp:5697-5701` |
+| SAI リソース枯渇 (`isSaiStatusResourceFull`) | `doAclRuleTask()` | WARN ログ → retry cache (`RETRY_CST_SAI_RESOURCE`) に退避 | `PENDING_CREATION` | `aclorch.cpp:5673-5693` |
+| retry cache 投入失敗 | `doAclRuleTask()` | ERROR ログ → `it++`（通常リトライキュー残留） | `PENDING_CREATION` | `aclorch.cpp:5688-5692` |
+| `addAclRule()` 失敗（リソース枯渇以外） | `doAclRuleTask()` | `it++`（次サイクルまで待機） | `PENDING_CREATION` | `aclorch.cpp:5695-5697` |
+| `AclTable::add()` → SAI `create_acl_entry` 失敗 | `AclRule::create()` | ERROR ログ → `AclRange::remove()` + `decreaseNextHopRefCount()` → `return false` | — | `aclorch.cpp:1344-1364` |
+| `create_acl_entry` → `SAI_STATUS_ITEM_ALREADY_EXISTS` | `AclRule::create()` | NOTICE ログ → `return true`（冪等・成功扱い） | `ACTIVE` | `aclorch.cpp:1348-1352` |
+| EGR_SET_DSCP ルール追加失敗 (`isUsingEgrSetDscp`) | `addAclRule()` | ERROR ログ → `return false`（メインルール未追加のまま中断） | `PENDING_CREATION` | `aclorch.cpp:4962-4964` |
+| `addAclRule()` 内でテーブル消失 (`table_oid == SAI_NULL_OBJECT_ID`) | `addAclRule()` | ERROR ログ → `return false` | `PENDING_CREATION` | `aclorch.cpp:4972-4975` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|---|
+| `removeAclRule()` が false（SAI 削除失敗） | `doAclRuleTask()` | `it++`（次サイクルまで待機） | `PENDING_REMOVAL` | `aclorch.cpp:5724-5727` |
+| 削除対象ルールが既に存在しない | `removeAclRule()` | NOTICE ログ → `return true`（冪等・成功扱い） | ステータス削除 | `aclorch.cpp:5010-5014` |
+| DEL 時 `table_oid == SAI_NULL_OBJECT_ID` | `removeAclRule()` | WARN ログ → `return true`（ルール不在とみなし成功） | ステータス削除 | `aclorch.cpp:5004-5006` |
+
+### 補足
+
+- **`makeShared` 例外の特殊性**: 他の失敗はすべて `it++` または `erase(it)` でループを継続するが、この経路のみ `return` でループ全体を即時中断する。
+- **retry cache 解放契機**: DEL 成功かつ `ruleExisted == true` の場合 `notifyRetry()` で `RETRY_CST_SAI_RESOURCE` 制約が解除され、park 中ルールが再処理対象になる (`aclorch.cpp:5720`)。
+- **STATE_DB 反映先**: `setAclRuleStatus()` → `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) の `status` フィールド (`aclorch.cpp:3479`)。
+
+<!-- /failure -->
 
 <!-- ref-triangle:start -->
 
@@ -587,4 +656,62 @@ Multi-ASIC: 各 namespace の `namespace_configdb` にも同じ操作を適用�
 - **STATE_DB 書き込み**: ルール作成/削除時に `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) へステータスを書き込む (`aclorch.cpp:3479`)。
 
 <!-- /runtime-trace -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`AclOrch` は `ACL_RULE` の SET/DEL 処理後に CONFIG_DB / APPL_DB 以外の 3 つの DB へ書き込む。
+
+### STATE_DB / `ACL_RULE_TABLE`
+
+ルールの検証・作成ステータスを書き込む。key 形式: `<table_name>|<rule_name>`。
+
+| トリガ | フィールド | 値 | evidence |
+|--------|------------|-----|----------|
+| `addAclRule()` 成功 | `status` | `"active"` | `aclorch.cpp:5670` |
+| SAI リソース枯渇 (retry キャッシュへ退避) | `status` | `"pending_creation"` | `aclorch.cpp:5683,5690,5696` |
+| その他の create 失敗 | `status` | `"pending_creation"` | `aclorch.cpp:5696` |
+| `bAllAttributesOk=false` / `validate()` 失敗 | `status` | `"inactive"` | `aclorch.cpp:5704` |
+| `removeAclRule()` 成功 (DEL) | — (エントリ削除) | — | `aclorch.cpp:5713` |
+
+テーブル名定数: `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` (`sonic-swss-common/common/schema.h:515`)。
+
+### COUNTERS_DB / `ACL_COUNTER_RULE_MAP`
+
+SAI ACL counter OID とルール識別子のマッピングを hash フィールドとして登録する。
+`registerFlexCounter()` → `m_countersDb.hset(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier, counterOidStr)`
+
+| トリガ | 操作 | フィールド | evidence |
+|--------|------|-----------|----------|
+| SAI counter 作成成功後 (SET) | `hset` | `<table_name>:<rule_name>` = counter OID | `aclorch.cpp:6041` |
+| `removeAclRule()` 成功後 (DEL) | `hdel` | `<table_name>:<rule_name>` | `aclorch.cpp:6047` |
+
+定数: `COUNTERS_ACL_COUNTER_RULE_MAP = "ACL_COUNTER_RULE_MAP"` (`aclorch.h:45`)。
+
+!!! note "createCounter フラグ"
+    `AclRulePacket` (L3/L3V6) はデフォルト `createCounter=true` のため登録される。
+    `AclRuleMirror` はデフォルト `createCounter=false` のため COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない (`aclorch.cpp:2295-2306`)。
+
+### FLEX_COUNTER_DB / `ACL_STAT_COUNTER:<counter_oid>`
+
+ACL stat counter の flex counter ポーリング設定を書き込む。
+`registerFlexCounter()` → `m_flex_counter_manager.setCounterIdList(oid, CounterType::ACL_COUNTER, attrs)` → `startFlexCounterPolling()` → `gFlexCounterTable->set(key, fvTuples)`
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|----------|
+| SAI counter 作成成功後 (SET) | `set` | `ACL_STAT_COUNTER:<oid>` | `ACL_COUNTER_ATTR_ID_LIST=<attrs>` | `aclorch.cpp:6040`, `saihelper.cpp:1047` |
+| `removeAclRule()` 成功後 (DEL) | `del` | `ACL_STAT_COUNTER:<oid>` | — | `aclorch.cpp:6048`, `flex_counter_manager.cpp:249` |
+
+定数: `ACL_COUNTER_FLEX_COUNTER_GROUP = "ACL_STAT_COUNTER"` (`aclorch.h:116`)。
+DB 番号: `FLEX_COUNTER_DB = 5` (`schema.h:18`)。
+
+!!! warning "ACL カウンタは初期無効"
+    `ACL_COUNTER_DEFAULT_ENABLED_STATE = false` のため、`AclOrch` 起動直後は FLEX_COUNTER_DB のポーリングが無効。`counterpoll acl enable` で有効化するまで stat は収集されない (`aclorch.cpp:48`)。
+
+### 副次書込なし
+
+- **APPL_DB**: `AclOrch` は CONFIG_DB を直接購読するため、中間 APPL_DB 書き込みは発生しない。
+- **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
+
+<!-- /side-effects -->
 <!-- glossary-links-injected: a78cb4c857bd -->

@@ -219,6 +219,65 @@ QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただ
 - 副作用: キューの WRED 変更は既存フロー中のパケットからリアルタイムに適用される。
 
 <!-- /runtime-trace -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+QUEUE テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → QosOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:QUEUE\|*` |
+| QosOrch → SAI | SAI API 直接呼び出し | `sai_scheduler_group_api` / `sai_queue_api` |
+
+### SubscriberStateTable の動作
+
+`QosOrch` は `Orch(db, tableNames)` 基底クラスの `addConsumer()` を通じて `CFG_QUEUE_TABLE_NAME` に対する `SubscriberStateTable` を生成する (`orch.cpp:1188-1190`)。CONFIG_DB の keyspace notification (`PSUBSCRIBE __keyspace@db__:QUEUE|*`) でエントリの変化を検出し、`pops()` で現在値を読み出す。初回起動時は `getKeys()` で既存エントリを先読みし、起動前の設定を取りこぼさない。
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を 1000 ms タイムアウトで実行する。イベント受信時は `Consumer::drain()` → `QosOrch::doTask(Consumer&)` が呼ばれる。
+
+`QosOrch::doTask()` (`qosorch.cpp:2231`) はカスタム実行順序を実装する:
+
+1. `SCHEDULER` / `WRED_PROFILE` などの参照先テーブルを先に drain
+2. `PORT_QOS_MAP` を drain
+3. 最後に `QUEUE` を drain（参照先が揃った状態で実行し `task_need_retry` を最小化）
+
+`doTask(Consumer&)` の冒頭では `gPortsOrch->allPortsReady()` チェックがあり、全ポート初期化完了まで処理を保留する。
+
+### retry メカニズム
+
+`scheduler` / `wred_profile` の参照先が未登録の場合は `task_need_retry` を返し、エントリは `m_toSync` に残留する。参照先テーブルの登録イベントが来ると doTask の実行順序制御により直ちに再試行される。解決不可な恒久エラーは `task_failed` で silent drop となる。
+
+### データフロー図
+
+```
+CONFIG_DB[QUEUE|<port>|<qindex>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:QUEUE|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → QosOrch::doTask()
+  ↓   [allPortsReady() チェック]
+  ↓   [実行順序: 参照先テーブル → PORT_QOS_MAP → QUEUE]
+  ↓ handleQueueTable()
+    ↓ applySchedulerToQueueSchedulerGroup()
+    ↓   → sai_scheduler_group_api
+    ↓     SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID
+    ↓ applyWredProfileToQueue()
+    ↓   → sai_queue_api
+    ↓     SAI_QUEUE_ATTR_WRED_PROFILE_ID
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -279,6 +338,109 @@ REST/gNMI 書き込み経路なし
 - Phase 8 コメントに記載の `dscp_to_tc_map` フィールドは QUEUE テーブルには存在しない。PORT_QOS_MAP テーブルのフィールドであり誤記。
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/queue-failure.md -->
+
+### retry パターン概要
+
+QUEUE テーブルの SET 処理は `QosOrch::handleQueueTable()` が `task_process_status` を返し、`Consumer` ベースのタスクキュー (`m_toSync`) で管理される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`task_need_retry`** | `scheduler` / `wred_profile` の参照先エントリ未作成 | `m_toSync` に残し次 doTask() で再試行。上限なし |
+| **`task_invalid_entry`** | key トークン数不正、`qindex` パース失敗、存在しないポート名、unknown op | エントリ削除。retry なし |
+| **`task_failed`** | queue index 超過、scheduler group 未検出、SAI 設定失敗、参照解決の内部エラー | エントリ削除。retry なし |
+
+### フィールド別 failure 詳細
+
+#### key トークン数不正
+
+非 VOQ で 2 トークン、VOQ で 4 トークンでない場合: `SWSS_LOG_ERROR "malformed key: ... Must contain N tokens"` → `task_invalid_entry`。(`qosorch.cpp:1772-1811`)
+
+#### `qindex` パース失敗
+
+整数または `X-Y` (`X < Y`) 以外の文字列: `SWSS_LOG_ERROR "Failed to parse range: ..."` → `task_invalid_entry`。YANG 型は `string` のため YANG レベルでは弾かれない。(`qosorch.cpp:1781-1811`, `orch.cpp:parseIndexRange`)
+
+#### `scheduler` 参照未解決
+
+- SCHEDULER エントリ未作成 (`not_resolved`): `SWSS_LOG_INFO "Missing or invalid scheduler reference"` → `task_need_retry`。SCHEDULER 登録後に自動再試行。(`qosorch.cpp:1822-1854`)
+- 内部エラー: `SWSS_LOG_ERROR "Resolving scheduler reference failed"` → `task_failed`。
+
+#### `wred_profile` 参照未解決
+
+`scheduler` と同一パターン。`SWSS_LOG_INFO "Missing or invalid wred profile reference"` → `task_need_retry`。WRED_PROFILE 登録後に自動再試行。(`qosorch.cpp:1856-1887`)
+
+#### 存在しないポート名
+
+`SWSS_LOG_ERROR "Port with alias: ... not found"` → `task_invalid_entry`。(`qosorch.cpp:1911-1915`)
+
+#### queue index 超過
+
+`port.m_queue_ids.size() <= queue_ind`: `SWSS_LOG_ERROR "Invalid queue index specified: N"` → `false` → `task_failed`。(`qosorch.cpp:1670-1674`, `1727-1731`, `1926-1929`)
+
+#### scheduler group 未検出
+
+`getSchedulerGroup()` が `SAI_NULL_OBJECT_ID` を返す: `SWSS_LOG_ERROR "Failed to find a scheduler group for port: X queue: N"` → `false` → `task_failed`。(`qosorch.cpp:1658-1663`, `1677-1682`)
+
+#### SAI 設定失敗
+
+- `sai_scheduler_group_api->set_scheduler_group_attribute` 失敗: `SWSS_LOG_ERROR "Failed applying scheduler profile: ... to scheduler group: ..., port: ..."` → `handleSaiSetStatus()` 経由で `task_need_retry` / `task_failed`。(`qosorch.cpp:1692-1700`)
+- `sai_queue_api->set_queue_attribute` 失敗: `SWSS_LOG_ERROR "Failed to set queue attribute: N"` → 同経路。(`qosorch.cpp:1737-1745`)
+
+### 部分適用の注意
+
+`scheduler` と `wred_profile` は独立して適用される (`qosorch.cpp:1922-1944`)。`scheduler` 適用成功後に `wred_profile` で `task_failed` が返ると、scheduler は SAI 書き込み済みのまま rollback されない。range 指定 (`X-Y`) の途中 index での失敗も同様に部分適用が残る。QosOrch は STATE_DB / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
+
+<!-- /failure -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/queue-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `PORT` (PortInitDone 済み) | `handleQueueTable` が `gPortsOrch->getPort()` でポート存在を確認。未存在時は `task_invalid_entry`（リトライなし、恒久スキップ） | `qosorch.cpp:1911-1914` |
+| `SCHEDULER` (`scheduler` フィールドがある場合) | `resolveFieldRefValue` で SCHEDULER OID を参照。未解決なら `task_need_retry`（自動リトライ） | `qosorch.cpp:1822-1835` |
+| `WRED_PROFILE` (`wred_profile` フィールドがある場合) | `resolveFieldRefValue` で WRED_PROFILE OID を参照。未解決なら `task_need_retry`（自動リトライ） | `qosorch.cpp:1857-1870` |
+
+!!! warning "PORT 未初期化は恒久スキップ"
+    `PORT` が PortInitDone 済みでない状態で QUEUE エントリを書いても `task_invalid_entry` となり
+    リトライキューに残らない。必ず `portsyncd` が PortInitDone を発行した後に投入すること。
+
+### フィールド解決順序
+
+`handleQueueTable` は `scheduler` → `wred_profile` の順に `resolveFieldRefValue` を呼び出す。
+`scheduler` が未解決の段階で `task_need_retry` を返すため、**SCHEDULER が未解決の間は
+WRED_PROFILE の確認・適用も保留される**。
+
+### DEL 時の順序制約
+
+DEL ハンドラは参照先（SCHEDULER / WRED_PROFILE）の存在チェックを行わず、SAI attribute を
+NULL OID に無条件設定して解除する。QUEUE DEL の前後に SCHEDULER / WRED_PROFILE を削除しても
+問題は生じない（逆参照エラーなし）。
+
+### 起動時シーケンス
+
+```
+portsyncd → PortConfigDone → PortInitDone
+  ↓
+allPortsReady() = true → QosOrch アンブロック
+  ↓
+SCHEDULER / WRED_PROFILE エントリが CONFIG_DB に存在
+  ↓
+QUEUE エントリを投入 → QosOrch が OID 解決 → SAI 適用
+```
+
+実運用では `config qos reload` が `qos_config.j2` テンプレートから
+SCHEDULER / WRED_PROFILE / QUEUE を一括生成するため、順序は sonic-cfggen が暗黙に担保する。
+
+<!-- /ordering -->
 
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)

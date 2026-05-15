@@ -374,3 +374,90 @@ minigraph.py および init_cfg.json.j2 からの `POLICER` 自動派生はな�
 `m_policerRefCounts[key] > 0` の間は DEL を `it++` で保留し続ける (`policerorch.cpp:563-568`)。参照カウントは MirrorOrch 等が `increaseRefCount()` / `decreaseRefCount()` で管理する。POLICER を削除するには、参照している MIRROR_SESSION / COPP_GROUP / PORT_STORM_CONTROL を先に DEL または参照解除する必要がある。
 
 <!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 根拠: `policerorch.cpp` L374-589 全行精読。evidence: `meta/_intermediate/cdb-flow/policer-failure.md`
+
+### SET (create) 失敗
+
+| ケース | コード箇所 | 挙動 | 結果 |
+|--------|-----------|------|------|
+| `METER_TYPE` / `MODE` 欠落 | `policerorch.cpp:491-495` | ERROR ログ出力後に **return せず** `create_policer()` を呼び続ける (silent-proceed バグ) | SAI エラー → `handleSaiCreateStatus` 判定へ |
+| SAI `create_policer()` 失敗 | `policerorch.cpp:500-508` | `handleSaiCreateStatus` が `task_need_retry` → `it++` (キュー保留・リトライ)。それ以外 → `erase(it)` (エントリ消失、再 SET 必要) | エラーログのみ残る |
+| 不明フィールド | `policerorch.cpp:478-483` | ERROR ログ + `continue` (当該フィールドをスキップして残りを処理) | `create_policer()` は呼ばれる |
+
+#### METER_TYPE / MODE 欠落の silent-proceed 詳細
+
+```
+// policerorch.cpp:491-495
+if (!meter_type || !mode)
+{
+    SWSS_LOG_ERROR("Failed to create policer %s, missing mandatory fields", key.c_str());
+}
+// ← return がない。次行の create_policer() が実行される
+sai_status_t status = sai_policer_api->create_policer(...);
+```
+
+欠落があっても `create_policer()` が呼ばれるため SAI エラーが発生する。その後 `handleSaiCreateStatus` の返値が `task_need_retry` 以外なら `erase(it)` されてエントリが消失する。
+
+### SET (update) 失敗
+
+| ケース | コード箇所 | 挙動 |
+|--------|-----------|------|
+| SAI `set_policer_attribute()` 失敗 | `policerorch.cpp:535-546` | `task_need_retry` → `it++` 保留。それ以外 → `erase(it)` (エントリ消失) |
+| create-only フィールドを UPDATE で送信 | `policerorch.cpp:527-533` | SAI に渡さずサイレント破棄 (エラーログなし) |
+
+### DEL 失敗
+
+| ケース | コード箇所 | ログレベル | 挙動 |
+|--------|-----------|-----------|------|
+| 存在しない policer の DEL | `policerorch.cpp:556-560` | ERROR | `erase(it)` (冪等的に消去) |
+| 参照カウント > 0 の DEL | `policerorch.cpp:563-568` | **INFO** | `it++` (永続保留・エラーにならない) |
+| SAI `remove_policer()` 失敗 | `policerorch.cpp:573-581` | ERROR | `task_need_retry` → `it++`。それ以外 → `erase(it)` |
+
+!!! warning "参照中の DEL はサイレントにブロックされる"
+    `m_policerRefCounts[key] > 0` のまま DEL を送ると `SWSS_LOG_INFO` (INFO レベル) のみで `it++` され続け、MIRROR_SESSION / COPP_GROUP / PORT_STORM_CONTROL が参照を解放するまで消えない。`show policer` 等で確認できないため「削除したはずなのに残っている」と見えることがある。
+
+### storm-control 経由の固有失敗
+
+| ケース | コード箇所 | task 返値 | 挙動 |
+|--------|-----------|----------|------|
+| Ethernet 以外のインターフェース | `policerorch.cpp:132-137` | `task_success` | `erase(it)` (再試行なし・エラーログのみ) |
+| ポート未発見 (`getPort` 失敗) | `policerorch.cpp:139-144` | `task_success` | 同上 |
+| CIR 欠落 | `policerorch.cpp:195-200` | `task_failed` | `erase(it)` (再試行なし) |
+| 不明 storm_type | `policerorch.cpp:218-220` | `task_failed` | 同上 |
+| `set_port_attribute` 失敗 | `policerorch.cpp:291-313` | `task_need_retry` | 作成済み SAI policer を即 `remove_policer` して `m_syncdPolicers` から削除 → 次ループで再作成 |
+
+!!! note "storm-control の set_port_attribute 失敗時のロールバック"
+    `create_policer()` 成功後に `set_port_attribute()` が失敗すると、SAI policer を `remove_policer()` で削除してから `task_need_retry` を返す。これにより次ループで最初から再作成を試みる。ただし `remove_policer()` が失敗した場合は SAI 上に孤立した policer が残る可能性がある (`policerorch.cpp:299-305` に TODO コメントあり)。
+
+<!-- /failure -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`POLICER` は YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
+
+> evidence: `meta/_intermediate/cdb-flow/policer-cross-refs.md`
+
+| 参照元テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `MIRROR_SESSION.policer` | POLICER を消費 (OID 取得 + refcount++) | `policer` フィールド指定時。POLICER 不在 → `task_need_retry`、追加後に自動再処理 | `mirrororch.cpp:432-441` (`policerExists()` / `increaseRefCount()`) |
+| `ACL_RULE` (標準 aclorch) | 表示目的のみ (読み取り) | `aclshow` コマンド実行時。orchagent の `aclorch.cpp` は POLICER を直接参照しない | `acl_loader/main.py:254-266` (`read_policers_info()`) |
+| `ACL_RULE` (P4 orch) | POLICER OID 取得 + ACL action 設定 | P4 ACL rule に policer action を指定したとき | `p4orch/acl_util.cpp` |
+| `COPP_GROUP` | 直接参照なし (インライン policer) | 常時。COPP_GROUP 自身に policer 属性をインライン定義し、CoppOrch が独立した SAI policer を生成。`POLICER` テーブルとはリンクしない | `copporch.cpp` `trapGroupAddPolicer()` |
+| `PORT_STORM_CONTROL` | 内部 SAI policer 生成 (POLICER テーブルとは独立) | PORT_STORM_CONTROL SET/DEL 時。PolicerOrch が兼務し、`handlePortStormControlTable()` にディスパッチ。`POLICER` テーブルへのエントリは生成しない | `policerorch.cpp:394-407`, `orchdaemon.cpp:396-402` |
+
+!!! note "COPP_GROUP と PORT_STORM_CONTROL は POLICER テーブルをキーで参照しない"
+    `COPP_GROUP` はポリサー属性をインラインで保持し、`POLICER` テーブルとは別物の SAI policer を生成する。
+    `PORT_STORM_CONTROL` は PolicerOrch 内部で SAI policer を生成するが、`POLICER` テーブルには書き込まない。
+    いずれも `POLICER` テーブルへの leafref / 外部キー参照は発生しない。
+
+!!! note "MIRROR_SESSION との参照カウント"
+    `MirrorOrch` が `increaseRefCount()` / `decreaseRefCount()` を対称的に呼ぶ。
+    MIRROR_SESSION を DEL せずに POLICER を削除しようとすると `m_policerRefCounts[key] > 0` のまま保留され続ける（`policerorch.cpp:563-568`）。
+    削除順序: MIRROR_SESSION (DEL) → POLICER (DEL) の順が必須。
+
+<!-- /cross-refs -->

@@ -284,4 +284,33 @@ SAI capability query（`sai_query_attribute_enum_values_capability`）が失敗�
 > **スキャン証跡**: coppmgr.cpp 全行、copporch.cpp L1-1500 読了、sonic-copp.yang 全行、copp_cfg.j2 全行。発見 9 件。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 初期化時の処理順序
+
+`coppmgrd` 起動時、コンストラクタ内で以下の順序で処理される。
+
+```
+parseInitFile()          # copp.json → m_coppGroupInitCfg / m_coppTrapInitCfg
+mergeConfig(COPP_TRAP)   # L334: TRAP を先にマージ → m_coppTrapIdTrapGroupMap 構築
+mergeConfig(COPP_GROUP)  # L372: GROUP をマージ — checkTrapGroupPending() が TRAP MAP を参照
+```
+
+**COPP_TRAP が COPP_GROUP より先に内部処理される**（`coppmgr.cpp:334,372`）。
+`COPP_GROUP` の `checkTrapGroupPending()` は `m_coppTrapIdTrapGroupMap`（COPP_TRAP 処理で構築）を参照するため、順序が逆転すると pending 判定が誤る。<!-- evidence: coppmgr.cpp L334,372,383 -->
+
+### CONFIG_DB への書込み順序（運用）
+
+| 操作 | 推奨順序 | 違反時の結果 |
+|------|---------|------------|
+| 新規追加 | `COPP_GROUP` → `COPP_TRAP` | COPP_TRAP なしでは `trap_ids` が空のまま APPL_DB に反映される（feature pending） |
+| 削除 | `COPP_TRAP` を先に削除 → `COPP_GROUP` を削除 | COPP_TRAP 残存時に COPP_GROUP DEL しても pending 状態のまま APPL_DB から削除されない |
+| `default` グループ | 削除不可 | `orchagent` が `task_ignore`（`copporch.cpp:861-864`） |
+
+### init_set スキップ
+
+`g_copp_init_set` に登録された key（`copp.json` 由来）は、最初の CONFIG_DB SET イベントを読み飛ばす（`coppmgr.cpp:855-860`）。`copp.json` デフォルト GROUP を上書きする場合は SET を 2 回送る必要はなく、通常の CONFIG_DB 書き込みで上書きできる（init 時に既にマージ済みのため）。
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 87fa713c3c5e -->
