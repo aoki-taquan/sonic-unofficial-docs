@@ -24112,6 +24112,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-dolabeltask-addlabelroute-addlabelroutepost-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (doLabelTask / addLabelRoute / addLabelRoutePost) における失敗・retry 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-removelabelroute-removelabelroutepost-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL (removeLabelRoute / removeLabelRoutePost) における失敗・retry 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhgorch-mpls-nh-islabeled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nhgorch (MPLS NH isLabeled() 分岐) における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34624,6 +34685,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-dolabeltask-addlabelroute-addlabelroutepost-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (doLabelTask / addLabelRoute / addLabelRoutePost) における失敗・retry 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-removelabelroute-removelabelroutepost-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL (removeLabelRoute / removeLabelRoutePost) における失敗・retry 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nhgorch-mpls-nh-islabeled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nhgorch (MPLS NH isLabeled() 分岐) における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34912,6 +35034,244 @@ CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。</p>
 </table>
 <p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/appl-mpls-route-platform.md</code> を参照。</p>
 <!-- /platform -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-net/sonic-swss/orchagent/mplsrouteorch.cpp</code>, <code>orchagent/nhgorch.cpp</code></p>
+<h3 id="set-dolabeltask-addlabelroute-addlabelroutepost-retry">SET (<code>doLabelTask</code> / <code>addLabelRoute</code> / <code>addLabelRoutePost</code>) における失敗・retry 経路<a class="headerlink" href="#set-dolabeltask-addlabelroute-addlabelroutepost-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の同時指定</td>
+<td><code>doLabelTask()</code> L165-171</td>
+<td>エントリを <code>m_toSync</code> から <strong>erase</strong> (drop)・retry なし</td>
+<td>LOG_ERROR ("Route %s has both nexthop_group and ips/aliases")</td>
+<td><code>mplsrouteorch.cpp:167-170</code></td>
+</tr>
+<tr>
+<td><code>ifname</code> が空かつ非 blackhole</td>
+<td><code>doLabelTask()</code> L193-198</td>
+<td>エントリを <strong>erase</strong> (drop)・retry なし</td>
+<td>LOG_WARN ("Skip the route ... empty ifname field.")</td>
+<td><code>mplsrouteorch.cpp:195-197</code></td>
+</tr>
+<tr>
+<td><code>op</code> が <code>SET_COMMAND</code> / <code>DEL_COMMAND</code> 以外</td>
+<td><code>doLabelTask()</code> L327-330</td>
+<td>LOG_ERROR</td>
+<td>LOG_ERROR ("Unknown operation type %s")</td>
+<td><code>mplsrouteorch.cpp:329</code></td>
+</tr>
+<tr>
+<td><code>nexthop_group</code> 指定だが NhgOrch に該当 NHG なし (doLabelTask)</td>
+<td><code>doLabelTask()</code> L256-267</td>
+<td>LOG_ERROR・<code>++it</code> で <strong>retry</strong></td>
+<td>LOG_ERROR ("Next hop group %s does not exist")</td>
+<td><code>mplsrouteorch.cpp:262-266</code></td>
+</tr>
+<tr>
+<td><code>nexthop_group</code> 指定で NHG が <code>addLabelRoute</code> 内で消失</td>
+<td><code>addLabelRoute()</code> L481-490 <code>catch(out_of_range)</code></td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>LOG_WARN ("Next hop group key %s does not exist")</td>
+<td><code>mplsrouteorch.cpp:486-490</code></td>
+</tr>
+<tr>
+<td>単一 NH が intf NH で RIF 未作成</td>
+<td><code>addLabelRoute()</code> L502-510</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>LOG_INFO ("Failed to get next hop %s for %u")</td>
+<td><code>mplsrouteorch.cpp:505-510</code></td>
+</tr>
+<tr>
+<td>単一 NH の IP neighbor 未解決</td>
+<td><code>addLabelRoute()</code> L534-540</td>
+<td><code>resolveNeighbor()</code> 発火後 <code>return false</code> → <strong>retry</strong></td>
+<td>LOG_INFO ("Failed to get next hop %s for %u")</td>
+<td><code>mplsrouteorch.cpp:536-540</code></td>
+</tr>
+<tr>
+<td>MPLS NH の <code>addNextHop()</code> 失敗</td>
+<td><code>addLabelRoute()</code> L523-531</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>(NeighOrch 側)</td>
+<td><code>mplsrouteorch.cpp:528-531</code></td>
+</tr>
+<tr>
+<td>ECMP NHG (<code>getSize() &gt; 1</code>) で <code>addNextHopGroup</code> 失敗</td>
+<td><code>addLabelRoute()</code> L550-583</td>
+<td>未解決メンバごとに <code>resolveNeighbor()</code> 発火・<code>addTempLabelRoute()</code> で一時ルート登録・<code>return false</code> → <strong>retry</strong></td>
+<td>LOG_INFO ("Failed to get next hop ... resolving neighbor")</td>
+<td><code>mplsrouteorch.cpp:550-583</code></td>
+</tr>
+<tr>
+<td><code>gLabelRouteBulker.create_entry</code> が <code>SAI_STATUS_ITEM_ALREADY_EXISTS</code></td>
+<td><code>addLabelRoute()</code> L628-633</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>LOG_ERROR ("Failed to create label route %u with next hop(s) %s")</td>
+<td><code>mplsrouteorch.cpp:628-633</code></td>
+</tr>
+<tr>
+<td>Post: <code>object_statuses</code> 空 (bulker 前で異常)</td>
+<td><code>addLabelRoutePost()</code> L677-681</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp:677-681</code></td>
+</tr>
+<tr>
+<td>Post: NhgOrch/CbfNhgOrch から NHG が消失</td>
+<td><code>addLabelRoutePost()</code> L687-694</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>LOG_WARN ("Failed to get next hop group with index %s")</td>
+<td><code>mplsrouteorch.cpp:689-693</code></td>
+</tr>
+<tr>
+<td>Post: 単一 NH が RIF/Neighbor で消失</td>
+<td><code>addLabelRoutePost()</code> L704-724</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>LOG_INFO ("Failed to get next hop %s for label %u")</td>
+<td><code>mplsrouteorch.cpp:707-723</code></td>
+</tr>
+<tr>
+<td>Post: ECMP NHG が消失 → 一時ルートで再 Post</td>
+<td><code>addLabelRoutePost()</code> L727-735</td>
+<td><code>addLabelRoutePost(ctx, tmp_next_hop)</code> 再帰呼出後 <code>return false</code> → <strong>retry</strong></td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp:729-735</code></td>
+</tr>
+<tr>
+<td>Post: SAI <code>create_entry</code> 失敗 (新規)</td>
+<td><code>addLabelRoutePost()</code> L742-752</td>
+<td>NHG &gt; 1 のとき <code>removeNextHopGroup()</code> で巻き戻し・<code>return false</code> → <strong>retry</strong></td>
+<td>LOG_ERROR ("Failed to create label %u with next hop(s) %s")</td>
+<td><code>mplsrouteorch.cpp:742-752</code></td>
+</tr>
+<tr>
+<td>Post: SAI <code>set</code> (PACKET_ACTION/NEXT_HOP_ID/blackhole) 失敗</td>
+<td><code>addLabelRoutePost()</code> L777-840</td>
+<td><code>handleSaiSetStatus(SAI_API_MPLS, status)</code> → <code>task_success</code> 以外なら <code>parseHandleSaiStatusFailure</code> で <strong>retry / abort</strong> 振り分け</td>
+<td>LOG_ERROR ("Failed to set label %u with ...")</td>
+<td><code>mplsrouteorch.cpp:777-840</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del-removelabelroute-removelabelroutepost-retry">DEL (<code>removeLabelRoute</code> / <code>removeLabelRoutePost</code>) における失敗・retry 経路<a class="headerlink" href="#del-removelabelroute-removelabelroutepost-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VRF に対応する route table が存在しない</td>
+<td><code>removeLabelRoute()</code> L859-864</td>
+<td><code>return true</code> → erase (silent success)</td>
+<td>LOG_INFO ("Failed to find route table, ...")</td>
+<td><code>mplsrouteorch.cpp:860-864</code></td>
+</tr>
+<tr>
+<td>該当 label の inseg エントリが存在しない</td>
+<td><code>removeLabelRoute()</code> L872-877</td>
+<td><code>return true</code> → erase (silent success)</td>
+<td>LOG_INFO ("Failed to find inseg entry, ...")</td>
+<td><code>mplsrouteorch.cpp:872-877</code></td>
+</tr>
+<tr>
+<td>Post: <code>object_statuses</code> 空 (bulker 前で異常)</td>
+<td><code>removeLabelRoutePost()</code> L896-900</td>
+<td><code>return false</code> → <strong>retry</strong></td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp:896-900</code></td>
+</tr>
+<tr>
+<td>Post: SAI <code>remove_entry</code> 失敗</td>
+<td><code>removeLabelRoutePost()</code> L906-915</td>
+<td><code>handleSaiRemoveStatus(SAI_API_MPLS, status)</code> で <strong>retry / abort</strong> 振り分け</td>
+<td>LOG_ERROR ("Failed to remove label:%u")</td>
+<td><code>mplsrouteorch.cpp:907-915</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="nhgorch-mpls-nh-islabeled">nhgorch (MPLS NH <code>isLabeled()</code> 分岐) における失敗経路<a class="headerlink" href="#nhgorch-mpls-nh-islabeled" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isLabeled() &amp;&amp; isNeighborResolved</code> で <code>gNeighOrch-&gt;addNextHop(ctx)</code> 失敗</td>
+<td><code>NextHopGroupMember::createSaiObject()</code> L563-570</td>
+<td><code>nh_id</code> は <code>SAI_NULL_OBJECT_ID</code> のまま返却 → 上位で <strong>retry</strong></td>
+<td>(NeighOrch 側)</td>
+<td><code>nhgorch.cpp:563-570</code></td>
+</tr>
+<tr>
+<td>MPLS NH 同期時、neighbor 未解決</td>
+<td><code>createSaiObject()</code> else L571-587</td>
+<td><code>resolveNeighbor()</code> 発火・<code>nh_id = SAI_NULL_OBJECT_ID</code> → 上位 <strong>retry</strong></td>
+<td>LOG_INFO ("Failed to get next hop %s, resolving neighbor")</td>
+<td><code>nhgorch.cpp:583-585</code></td>
+</tr>
+<tr>
+<td>NHG 全体の SAI create 失敗</td>
+<td><code>NextHopGroup::sync()</code> L784 付近</td>
+<td>LOG_ERROR・<code>return false</code> → <strong>retry</strong></td>
+<td>LOG_ERROR ("Failed to create next hop group %s, rv:%d")</td>
+<td><code>nhgorch.cpp:782-786</code></td>
+</tr>
+<tr>
+<td>MPLS NH メンバの SAI create 失敗</td>
+<td><code>NextHopGroup::sync()</code> L975 付近</td>
+<td>LOG_ERROR・<code>return false</code> → <strong>retry</strong></td>
+<td>LOG_ERROR ("Failed to create next hop group %s's member %s")</td>
+<td><code>nhgorch.cpp:975</code></td>
+</tr>
+<tr>
+<td>MPLS NH メンバ interface down</td>
+<td><code>NextHopGroup::sync()</code> L949 付近</td>
+<td>LOG_WARN・メンバ除外 (NHG は他メンバで継続)</td>
+<td>LOG_WARN ("Skip next hop %s ..., interface is down")</td>
+<td><code>nhgorch.cpp:949</code></td>
+</tr>
+<tr>
+<td>MPLS NH ref_count 0 で destructor</td>
+<td><code>~NextHopGroupMember()</code> L677-682</td>
+<td><code>removeMplsNextHop()</code> で NeighOrch から MPLS NH 除去</td>
+<td>なし</td>
+<td><code>nhgorch.cpp:677-682</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>retry vs drop</strong>: <code>doLabelTask</code> のループは <code>addLabelRoute</code> / <code>removeLabelRoute</code> が <code>true</code> を返したときのみ <code>m_toSync.erase(it)</code>。<code>false</code> 戻り値は <code>++it</code> で次サイクル <strong>retry</strong>。入力バリデーション失敗 (両方指定・ifname 空) のみ即 erase される。</li>
+<li><strong>bulker による非同期確定</strong>: <code>addLabelRoute</code> 正常パスの末尾も <code>return false</code> (L664)。これは bulker 登録のみの段階で、確定は <code>addLabelRoutePost</code> が <code>m_syncdLabelRoutes</code> 反映と <code>gCrmOrch-&gt;incCrmResUsedCounter(CRM_MPLS_INSEG)</code> 実行で行う。</li>
+<li><strong>neighbor 解決連動</strong>: retry 経路の多くは <code>m_neighOrch-&gt;resolveNeighbor()</code> を呼ぶため空回りせず、ARP/NDP 解決後の次サイクルで成功する。</li>
+<li><strong>一時ルート</strong>: ECMP NHG が一部メンバ未解決で作成不能な場合、<code>addTempLabelRoute()</code> で解決済み単独 NH を指す一時 inseg を登録し、全メンバ解決後の retry サイクルで本来の NHG に置換される。</li>
+<li><strong><code>handleSaiSetStatus</code> / <code>handleSaiRemoveStatus</code></strong> は SAI ステータスから <code>task_success</code> / <code>task_need_retry</code> / <code>task_failed</code> を導出する OrchAgent 共通ハンドラで、MPLS では <code>SAI_API_MPLS</code> を渡す。</li>
+</ul>
+<p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/appl-mpls-route-failure.md</code> を参照。</p>
+<!-- /failure -->
 
 
 
