@@ -533,6 +533,87 @@ key 構造やフィールド値として CONFIG_DB の他テーブルのオブ�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+APPL_DB MCLAG/ICCP 系テーブルの書込主体である `mclagsyncd` の失敗・retry 分岐を整理する[^link]。
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | ICCP セッション切断 (read EOF) | `readData()` `mclaglink.cpp:1883-1885` → `throw MclagConnectionClosedException` | outer `catch` で `MclagLink` 破棄 → 即 `accept()` 再呼出。書込済 APPL_DB エントリは保持 | あり (無限・即時、sleep 無し) |
+| 2 | read システムエラー / 不正メッセージ | `mclaglink.cpp:1886-1887, 1901-1902` → `throw system_error` | `mclagsyncd.cpp:116-120` `catch (const exception&)` → **`return 0`** でデーモン終了 | supervisord による再起動 |
+| 3 | iccpd 向け write バッファフル / 失敗 | `mclagsyncdSendFdbEntries` 他 (`mclaglink.cpp:589-594, 617-620, 870-874, 897-900, 1057-1061, 1081-1084, 1150-1154, 1175-1178, 1256-1260, 1280-1283`) | `SWSS_LOG_ERROR` のみで処理続行。iccpd への通知が欠落 | なし (次イベント駆動) |
+| 4 | 無効 op_type / 不明 mlag_id | `mclaglink.cpp:1302, 1348, 1363, 1404, 1419, 1452, 1466, 1498, 1575, 1590, 1625, 1639, 1678, 1691, 1725, 1738` | `SWSS_LOG_ERROR("Invalid option type ...")` → `return`。当該メッセージのみスキップ | なし (iccpd 再送待ち) |
+| 5 | CONFIG_DB `DEVICE_METADATA.mac` 未取得 | `mclagsyncdFetchSystemMacFromConfigdb` `mclaglink.cpp:127-128` | `SWSS_LOG_ERROR` → `return`。`m_system_mac` 空 | outer loop 次回の再 fetch |
+| 6 | `setFdbEntry` で不明 `MCLAG_FDB_TYPE_*` | `mclaglink.cpp:487-492` | `fdb.type=""` のまま APPL_DB に書込 → 下流 `fdborch` で reject | なし |
+| 7 | port 未準備 (下流) | `fdborch` 等が `m_portsOrch->getPort()` 失敗 | `task_need_retry`。`mclagsyncd` 側 APPL_DB エントリは残る | あり (orchagent `SELECT_TIMEOUT = 1000` ms 駆動)[^orch] |
+| 8 | SAI 書込失敗 (下流) | `isolationGroupOrch` / `fdborch` / `aclOrch` の `handleSaiCreateStatus` 系 | 一時エラーは `task_need_retry`、恒久は `task_failed`。`mclagsyncd` にはフィードバック無し | 下流 orch 依存 |
+| 9 | `accept` / `socket` / `bind` / `listen` 失敗 | `mclaglink.cpp:1755-1786, 1853-1854` | `throw system_error` → outer catch で `return 0` | supervisord による再起動 |
+
+### ICCP 切断時の retry 構造
+
+`mclagsyncd.cpp:44-121` の外側 `while(1)` が retry loop を兼ねる:
+
+```cpp
+while (1) {
+    try {
+        Select s;
+        MclagLink mclag(&s);             // server socket bind/listen
+        mclag.mclagsyncdFetchSystemMacFromConfigdb();
+        mclag.accept();                  // iccpd 接続待ち (blocking)
+        // ... 内側 select loop ...
+    }
+    catch (MclagLink::MclagConnectionClosedException &e) {
+        cout << "Connection lost, reconnecting..." << endl;  // 即時 retry
+    }
+    catch (const exception& e) {
+        return 0;                                            // デーモン終了
+    }
+}
+```
+
+`MclagConnectionClosedException` のみが retry 可能経路で、**明示的な sleep / backoff は存在しない**[^link]。
+TCP 切断直後に `accept()` がブロック復帰し新規接続を待つ。
+
+### write 失敗時の挙動 (iccpd 向け)
+
+`m_connection_socket` への `::write()` が失敗しても `mclagsyncd` は **例外を投げず**、
+ログ出力のみで処理を続行する。例:
+
+```cpp
+// mclaglink.cpp:589-594
+write = ::write(m_connection_socket, infor_start, msg_head->msg_len);
+if (write <= 0)
+{
+    SWSS_LOG_ERROR("mclagsycnd update FDB to ICCPD Buffer full, write to m_connection_socket failed");
+}
+```
+
+ピアが既に切断していた場合は次回の `readData()` で EOF/EPIPE が検出され、ケース #1 / #2 のフローに合流する。
+
+### SAI 書込失敗 (下流) との分離
+
+`mclagsyncd` 自身は ASIC_DB / SAI を直接呼ばず、APPL_DB への一方向 write のみを行う (Phase F 副次 DB 書込節を参照)。
+従って SAI 書込失敗は下流 orch (`isolationGroupOrch` / `fdborch` / `aclOrch` / `portsOrch` / `intfsOrch` / `lagOrch`) 側で発生し、
+`mclagsyncd` にはフィードバックされない。APPL_DB エントリは下流が `task_failed` でも削除されず残る。
+
+### STATE_DB / ERROR_TABLE への記録
+
+`mclagsyncd` は失敗を `STATE_DB` の `ERROR_*` 系には書き込まない。
+`STATE_MCLAG_TABLE` の `oper_status=down` は iccpd からの `MCLAG_MSG_TYPE_SET_ICCP_STATE(down)` 受信時のみ。
+
+確認は `syslog` から:
+
+```bash
+docker logs mclag 2>&1 | grep -iE 'invalid|failed|exception|reconnecting'
+journalctl -u mclag | grep mclagsyncd
+```
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-failure.md`
+<!-- /failure -->
+
 ## 引用元
 
 [^link]: mclagsyncd 実装: `sonic-swss/mclagsyncd/mclaglink.cpp`, `mclaglink.h`, `mclag.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
