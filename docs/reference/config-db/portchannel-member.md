@@ -224,6 +224,45 @@ db_migrator.py での PORTCHANNEL_MEMBER マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/cfgmgr/teammgr.cpp; sonic-swss/orchagent/portsorch.cpp -->
+
+### SET 順序（必須）
+
+1. **`PORTCHANNEL` → `PORTCHANNEL_MEMBER`**: `TeamMgr::doLagMemberTask()` は `isLagStateOk(lag)` で `STATE_LAG_TABLE` に対象 LAG のエントリが存在するかを確認し、存在しなければ当該タスクをキューに残してリトライ待機する (`teammgr.cpp:89-102, 357`)。`PORTCHANNEL` エントリを先に SET し、teamd が起動して `STATE_LAG_TABLE` に登録されるまで `PORTCHANNEL_MEMBER` の適用は自動的に保留される。
+2. **STATE_PORT_TABLE ready → `PORTCHANNEL_MEMBER`**: メンバーとなる物理ポートが `STATE_PORT_TABLE` に `state=ok` で登録されていることも同じチェックで確認される (`teammgr.cpp:67-87, 357`)。portmgrd が STATE_DB に書くまで自動リトライ待機する。
+3. **`VLAN_MEMBER` DEL → `PORTCHANNEL_MEMBER` SET（同一ポート）**: orchagent は `m_portVlanMember[port].size() > 0` の場合（VLAN_MEMBER に登録済みのポート）は LAG メンバー追加をスキップする (`portsorch.cpp:6337-6343`)。先に対象ポートを `VLAN_MEMBER` から削除してから `PORTCHANNEL_MEMBER` を SET すること。
+4. **MACsec Ingress SA ready → `PORTCHANNEL_MEMBER` SET（MACsec 有効時のみ）**: MACsec が設定されたポートの場合、`isMACsecIngressSAOk()` が true になるまで SET が保留される (`teammgr.cpp:362-366`)。
+
+### DEL 順序（推奨）
+
+1. **`PORTCHANNEL_MEMBER` DEL → `PORTCHANNEL` DEL**: PORTCHANNEL を先に DEL すると teamd プロセスが停止し、残存する `PORTCHANNEL_MEMBER` タスクが孤立するリスクがある。**先に全メンバーを DEL してから PORTCHANNEL を DEL すること**。
+
+### warm-reboot / restart 影響
+
+- **swss docker restart**: warm-start パスでは `TeamMgr` コンストラクタが `m_lagList` を再構築し、`doPortUpdateTask()` が STATE_PORT_TABLE の通知をトリガとして PORTCHANNEL_MEMBER を自動再 enslave する (`teammgr.cpp:439-473`)。
+- **teamdctl port add の IFF_UP 競合**: `addLagMember()` でポートを admin down にしてから enslave する際、portmgrd 等が並行して admin up を試みると `task_need_retry` で自動リトライする (`teammgr.cpp:769-781`)。通常は数回のリトライで収束する。
+
+### 典型的な設定手順
+
+```
+# 1. PORTCHANNEL 作成（admin_status, min_links 等）
+SET PORTCHANNEL|PortChannel0001  admin_status=up,min_links=1
+
+# 2. STATE_LAG_TABLE ready 待機（teamd 起動・LAG 作成後に自動）
+
+# 3. PORTCHANNEL_MEMBER 追加（PORT も STATE_PORT_TABLE ready 済みであること）
+SET PORTCHANNEL_MEMBER|PortChannel0001|Ethernet0  {}
+
+# 削除時は逆順
+DEL PORTCHANNEL_MEMBER|PortChannel0001|Ethernet0
+DEL PORTCHANNEL|PortChannel0001
+```
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 38b4c0ae7d80 -->
 
 <!-- derivation -->
