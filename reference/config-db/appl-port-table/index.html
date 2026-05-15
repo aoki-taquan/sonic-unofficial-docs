@@ -22122,6 +22122,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portconfigdone-bulk-create-portinitdone-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortConfigDone → bulk create → PortInitDone の 3 段階遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-gbufferorch-isportready-buffer_pgqueue-bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. gBufferOrch-&gt;isPortReady() ゲート (BUFFER_PG/QUEUE bind 完了が前提)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-speed-fec-autoneg-interface_type-adv_speeds-admin-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. speed / FEC / autoneg / interface_type / adv_speeds の admin-down 前置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-setportadminstatus-state_db-host_tx_ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. setPortAdminStatus と STATE_DB host_tx_ready の同期順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-warm-reboot-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. warm reboot — APPL_DB スナップショットの完全性が必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ: 外部書込側の順序契約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22266,7 +22360,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -22277,7 +22371,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -22288,7 +22382,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35188,6 +35282,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portconfigdone-bulk-create-portinitdone-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortConfigDone → bulk create → PortInitDone の 3 段階遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-gbufferorch-isportready-buffer_pgqueue-bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. gBufferOrch-&gt;isPortReady() ゲート (BUFFER_PG/QUEUE bind 完了が前提)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-speed-fec-autoneg-interface_type-adv_speeds-admin-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. speed / FEC / autoneg / interface_type / adv_speeds の admin-down 前置
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-setportadminstatus-state_db-host_tx_ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. setPortAdminStatus と STATE_DB host_tx_ready の同期順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-warm-reboot-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. warm reboot — APPL_DB スナップショットの完全性が必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ: 外部書込側の順序契約
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35332,7 +35520,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35343,7 +35531,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35354,7 +35542,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35392,7 +35580,7 @@
 <h1 id="appl_db-port_table">APPL_DB PORT_TABLE<a class="headerlink" href="#appl_db-port_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>APPL_DB PORT_TABLE</code> は物理ポートの実効設定と運用状態を保持する <a href="../../glossary/#term-appl_db">APPL_DB</a> テーブル。
-CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つのプロセスが書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>:</p>
+CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つのプロセスが書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">2</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">3</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">4</a></sup>:</p>
 <ol>
 <li><strong>portsyncd</strong> — 起動時に CONFIG_DB <code>PORT</code> テーブルの全フィールドを APPL_DB に転写する</li>
 <li><strong>portmgrd</strong> — CONFIG_DB の変更を監視し、<code>admin_status</code> / <code>mtu</code> の変更を APPL_DB に反映する。初回書き込み時はコード由来のデフォルト値を補完する</li>
@@ -35882,7 +36070,7 @@ CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つ�
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>注記</strong>: PortsOrch は APPL_DB <code>PORT_TABLE</code> を購読し、SAI を呼び出すと同時に複数の関連 DB に副次書き込みを行う。以下は <code>sonic-swss/orchagent/portsorch.cpp</code> の精読から検出した副次書込<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。詳細な操作行・コード行番号は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-side.md"><code>meta/_intermediate/cdb-flow/appl-port-table-side.md</code></a> を参照。</p>
+<p><strong>注記</strong>: PortsOrch は APPL_DB <code>PORT_TABLE</code> を購読し、SAI を呼び出すと同時に複数の関連 DB に副次書き込みを行う。以下は <code>sonic-swss/orchagent/portsorch.cpp</code> の精読から検出した副次書込<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">5</a></sup>。詳細な操作行・コード行番号は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-side.md"><code>meta/_intermediate/cdb-flow/appl-port-table-side.md</code></a> を参照。</p>
 </blockquote>
 <h3 id="_5">副次書込サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
@@ -35970,6 +36158,207 @@ CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つ�
 <li><strong>ASIC_DB</strong>: orchagent は SAI API を呼ぶだけで、ASIC_DB への直接書込は syncd が行う（SAI → syncd → ASIC_DB のチェーン）</li>
 </ul>
 <!-- /side-effects -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>PortsOrch</code> は APPL_DB <code>PORT_TABLE</code> に対する一連の書込みを「<code>PortConfigDone</code> → bulk port create → 個別属性適用 → <code>PortInitDone</code>」の段階遷移として処理する。さらに speed / FEC / autoneg / interface_type など SAI が admin-up 中に変更を許さない属性については <strong>admin-down 前置 → 属性適用 → admin-status restore</strong> の 3 ステップを内部で再現する<sup id="fnref:portorder"><a class="footnote-ref" href="#fn:portorder">1</a></sup>。</p>
+<h3 id="1-portconfigdone-bulk-create-portinitdone-3">1. PortConfigDone → bulk create → PortInitDone の 3 段階遷移<a class="headerlink" href="#1-portconfigdone-bulk-create-portinitdone-3" title="Permanent link">&para;</a></h3>
+<p>portsyncd は CONFIG_DB の <code>PORT</code> テーブルを APPL_DB <code>PORT_TABLE</code> に転写するとき、以下の順で 3 種類のキーを書く:</p>
+<ol>
+<li><code>PORT_TABLE:&lt;alias&gt;</code> を全ポート分書く（並列可）</li>
+<li><code>PORT_TABLE:PortConfigDone</code> に <code>count</code> フィールドを書く (<code>portsorch.cpp:4345</code> で <code>m_portTable-&gt;hget("PortConfigDone","count",value)</code>)</li>
+<li><code>PORT_TABLE:PortInitDone</code> を書く (<code>portsorch.cpp:4613-4626</code>)</li>
+</ol>
+<p>PortsOrch 側の挙動:</p>
+<table>
+<thead>
+<tr>
+<th>イベント</th>
+<th>動作</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortConfigDone</code> 受信</td>
+<td>CONFIG_DB の <code>PORT</code> テーブルからレーンを集めて <code>addPortBulk()</code> + <code>initPortsBulk()</code> を一括実行、<code>m_portConfigState = PORT_CONFIG_DONE</code> に遷移</td>
+<td><code>portsorch.cpp:4744-4752</code></td>
+</tr>
+<tr>
+<td>個別 <code>PORT_TABLE:&lt;alias&gt;</code> (PortConfigDone 前)</td>
+<td><code>taskMap</code> に保留 (<code>continue</code>)、PortConfigDone 受信後に再評価</td>
+<td><code>portsorch.cpp:4772-4777</code></td>
+</tr>
+<tr>
+<td>個別 <code>PORT_TABLE:&lt;alias&gt;</code> (PortConfigDone 後)</td>
+<td>breakout 等で追加されたポートを個別に <code>addPortBulk</code> で作成</td>
+<td><code>portsorch.cpp:4754-4771</code></td>
+</tr>
+<tr>
+<td><code>PortInitDone</code> 受信</td>
+<td><code>addSystemPorts()</code> を 1 回だけ実行、<code>m_initDone = true</code> に遷移</td>
+<td><code>portsorch.cpp:4613-4626</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>isConfigDone()</code> (<code>PORT_CONFIG_DONE</code> 状態のみで判定) と <code>isInitDone()</code> (<code>m_initDone &amp;&amp; m_pendingPortSet.empty()</code> の合算) は他 orch のゲートに使われる (<code>bufferorch.cpp:2079-2091</code> 等)。</p>
+<p>順序違反は <code>taskMap</code> で永続保留されるため最終的には収束するが、PortConfigDone より前に <code>PortInitDone</code> を書くと <code>m_initDone</code> が立っても本ポート処理がまだ走らないため <code>isInitDone()</code> は <code>m_pendingPortSet</code> のせいで false のままになる。</p>
+<h3 id="2-gbufferorch-isportready-buffer_pgqueue-bind">2. gBufferOrch-&gt;isPortReady() ゲート (BUFFER_PG/QUEUE bind 完了が前提)<a class="headerlink" href="#2-gbufferorch-isportready-buffer_pgqueue-bind" title="Permanent link">&para;</a></h3>
+<p><code>portsorch.cpp:4779-4789</code>: 各ポートの本設定 (autoneg / speed / FEC / MTU / TPID / serdes / admin_status) に進む前に <code>gBufferOrch-&gt;isPortReady(alias)</code> を確認し、false なら <code>m_pendingPortSet.emplace(alias)</code> で保留する。BufferOrch 側 (<code>bufferorch.cpp:254-275</code>) は <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> の SAI bind 完了で <code>m_ready_list[port]=true</code> に更新する。</p>
+<p>→ <strong>BUFFER_PG / BUFFER_QUEUE の SAI bind 完了 → PortsOrch のポート属性適用</strong> の順序が硬い前提。違反時は当該ポートだけ <code>m_pendingPortSet</code> に積まれ続け、<code>isInitDone()</code> も false のまま後段全 orch が止まる。</p>
+<h3 id="3-speed-fec-autoneg-interface_type-adv_speeds-admin-down">3. speed / FEC / autoneg / interface_type / adv_speeds の admin-down 前置<a class="headerlink" href="#3-speed-fec-autoneg-interface_type-adv_speeds-admin-down" title="Permanent link">&para;</a></h3>
+<p>SAI ベンダ実装はポートが admin up 中の属性変更を reject することがあるため、PortsOrch は次の属性について <code>setPortAdminStatus(p, false)</code> を内部で前置する:</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>admin-down 条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>autoneg</code></td>
+<td><code>p.m_admin_state_up</code> (常時)</td>
+<td><code>portsorch.cpp:4824-4839</code></td>
+</tr>
+<tr>
+<td><code>speed</code></td>
+<td><code>p.m_admin_state_up &amp;&amp; !p.m_autoneg</code> (autoneg OFF 時のみ)</td>
+<td><code>portsorch.cpp:5035-5050</code></td>
+</tr>
+<tr>
+<td><code>adv_speeds</code></td>
+<td><code>p.m_admin_state_up &amp;&amp; p.m_autoneg</code> (autoneg ON 時のみ)</td>
+<td><code>portsorch.cpp:5084-5099</code></td>
+</tr>
+<tr>
+<td><code>interface_type</code></td>
+<td><code>p.m_admin_state_up &amp;&amp; !p.m_autoneg</code></td>
+<td><code>portsorch.cpp:5136-5151</code></td>
+</tr>
+<tr>
+<td><code>adv_interface_types</code></td>
+<td><code>p.m_admin_state_up &amp;&amp; p.m_autoneg</code></td>
+<td><code>portsorch.cpp:5207-5222</code></td>
+</tr>
+<tr>
+<td><code>fec</code></td>
+<td><code>p.m_admin_state_up</code> (常時)</td>
+<td><code>portsorch.cpp:5339-5354</code></td>
+</tr>
+</tbody>
+</table>
+<p>属性適用完了後 <code>portsorch.cpp:5499-5511</code> の「<code>Last step set port admin status</code>」セクションで <code>admin_status</code> を元値に restore する (<code>Restore admin status if the port was brought down</code> コメント)。</p>
+<p>→ 外部から見る APPL_DB <code>admin_status</code> フィールドは変化しないが、SAI レイヤでは一時的に DOWN を経由する。書込側は「admin_status と speed/FEC を同一 hset で投入してよい」「最終 admin_status は守られる」が契約。</p>
+<h3 id="4-setportadminstatus-state_db-host_tx_ready">4. setPortAdminStatus と STATE_DB host_tx_ready の同期順<a class="headerlink" href="#4-setportadminstatus-state_db-host_tx_ready" title="Permanent link">&para;</a></h3>
+<p><code>portsorch.cpp:2196-2256</code> の <code>setPortAdminStatus()</code>:</p>
+<table>
+<thead>
+<tr>
+<th>遷移方向</th>
+<th>host_tx_ready 書き込みタイミング</th>
+<th>行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>admin <strong>down</strong> (state=false)</td>
+<td>SAI <code>SAI_PORT_ATTR_ADMIN_STATE</code> を叩く<strong>前</strong>に <code>setHostTxReady(port, "false")</code></td>
+<td>L2202 (コメント L2219 「Update the host_tx_ready to false before setting admin_state, when admin state is false」)</td>
+</tr>
+<tr>
+<td>admin <strong>up</strong> (state=true)</td>
+<td>SAI 呼び出し<strong>成功後</strong>に <code>setHostTxReady(port, "true")</code></td>
+<td>L2256</td>
+</tr>
+<tr>
+<td>SAI 失敗 (どの方向でも)</td>
+<td>host_tx_ready を <code>"false"</code> に書き戻し</td>
+<td>L2222, L2236, L2248</td>
+</tr>
+</tbody>
+</table>
+<p>ポート初期化時 (L6723) と SAI からの host_tx_ready 通知 (L9724) でも同様に STATE_DB を更新する。</p>
+<p>→ <strong>admin down 方向は host_tx_ready の DOWN 反映が先</strong>（光モジュール側 TX を止めてから admin を落とす）、<strong>admin up 方向は SAI 成功確認後</strong>（ハードのリンク準備完了後に host_tx_ready を立てる）。</p>
+<h3 id="5-warm-reboot-appl_db">5. warm reboot — APPL_DB スナップショットの完全性が必須<a class="headerlink" href="#5-warm-reboot-appl_db" title="Permanent link">&para;</a></h3>
+<p><code>portsorch.cpp:4338-4395</code> <code>bake()</code>: warm restart 起動時、PortsOrch は APPL_DB <code>PORT_TABLE</code> を以下の条件で検証する。</p>
+<table>
+<thead>
+<tr>
+<th>検証項目</th>
+<th>失敗時</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PortConfigDone:count</code> の存在</td>
+<td><code>cleanPortTable()</code> で APPL_DB 一掃 → cold start fallback</td>
+<td><code>portsorch.cpp:4345, 4357-4361</code></td>
+</tr>
+<tr>
+<td><code>PortInitDone</code> キーの存在</td>
+<td>同上</td>
+<td><code>portsorch.cpp:4350, 4357-4361</code></td>
+</tr>
+<tr>
+<td><code>count</code> の値と APPL_DB のポートキー数 (<code>keys.size() - 2</code>) の一致</td>
+<td>invalid 扱い → cold start fallback</td>
+<td><code>portsorch.cpp:4364-4374</code></td>
+</tr>
+</tbody>
+</table>
+<p>検証通過後、残った全ポートキーを <code>m_pendingPortSet</code> に積み (<code>portsorch.cpp:4376-4384</code>)、各ポートが BUFFER ready + 属性再適用を完了するまで <code>isInitDone()</code> は false のままになる。</p>
+<p>oper_status / flap_count は warm 時に既存値を読み戻して継続する (<code>portsorch.cpp:6617-6647</code> / <code>6655-6656</code>)。<code>m_isWarmRestoreStage</code> (<code>portsorch.cpp:753</code> でコンストラクタ初期化、<code>6428</code> で <code>false</code> 化) を境にして cold path の <code>oper_status="down"</code> 初期書き込み (L6643) や <code>cleanPortTable()</code> (L4076) はスキップされる。</p>
+<p>→ <strong>portsyncd が <code>PortConfigDone</code> / <code>PortInitDone</code> / count 一致を APPL_DB に書き終えてから orchagent を再起動</strong>。順序違反は即 cold start フォールバックで warmboot 失敗扱いになる。</p>
+<h3 id="_7">まとめ: 外部書込側の順序契約<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>順序</th>
+<th>操作</th>
+<th>違反時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>全ポートの <code>PORT_TABLE:&lt;alias&gt;</code> を書く (順不同可)</td>
+<td><code>PortConfigDone</code> 前なら保留</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>PORT_TABLE:PortConfigDone</code> (<code>count</code>) を書く</td>
+<td><code>m_portConfigState</code> が上がらず保留が続く</td>
+</tr>
+<tr>
+<td>3</td>
+<td>BufferOrch が <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> を SAI bind し <code>isPortReady=true</code> になる</td>
+<td>ポート属性適用が <code>m_pendingPortSet</code> で保留</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>PORT_TABLE:PortInitDone</code> を書く</td>
+<td><code>m_initDone=false</code> のまま、後段全 orch が止まる</td>
+</tr>
+<tr>
+<td>5</td>
+<td>warmboot 時: APPL_DB に <code>PortConfigDone</code> / <code>PortInitDone</code> / count 一致を残してから orchagent 再起動</td>
+<td><code>cleanPortTable()</code> で APPL_DB 全削除 → cold start fallback</td>
+</tr>
+</tbody>
+</table>
+<p>orchagent 内部では、admin-down 前置・属性適用・admin restore は <code>PortsOrch::doTask()</code> が自動再現するので、書込側は「admin_status と速度系属性を同時に書いてよい」「個別 hset で逐次投入してもよい」のいずれでも構わない。</p>
+<h3 id="_8">詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>行番号付きの完全スキャンノート・grep カバレッジは中間ファイル参照:</p>
+<ul>
+<li><code>meta/_intermediate/cdb-flow/appl-port-table-ordering.md</code></li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>portsorch.cpp</code> の <code>m_portConfigState</code> / <code>PORT_CONFIG_DONE</code> (9 hit)、<code>m_initDone</code> / <code>PortInitDone</code> (5 hit)、<code>m_isWarmRestoreStage</code> / <code>WarmStart::isWarmStart</code> (3 hit)、<code>gBufferOrch-&gt;isPortReady</code> (1 hit)、<code>setPortAdminStatus(p, false)</code> を含む <code>Bring port down before applying</code> 系コメント (6 hit) を全件確認。</p>
+</blockquote>
+<!-- /ordering -->
 
 <!-- cross-refs -->
 <h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
@@ -36115,7 +36504,7 @@ CONFIG_DB <code>PORT</code> テーブルとは別物であり、以下の 3 つ�
 <blockquote>
 <p><strong>注記</strong>: orchagent (PortsOrch) が APPL_DB <code>PORT_TABLE</code> を購読して SAI に反映する際、
 入力値の不正や SAI 失敗を 3 系統 (<code>task_success</code> / <code>task_need_retry</code> / <code>task_failed</code>) で扱う。
-詳細・コード行は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md"><code>meta/_intermediate/cdb-flow/appl-port-table-failure.md</code></a> を参照<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+詳細・コード行は <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md"><code>meta/_intermediate/cdb-flow/appl-port-table-failure.md</code></a> を参照<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">6</a></sup>。</p>
 </blockquote>
 <h3 id="eraseretry">永久失敗 (タスクを erase、retry なし)<a class="headerlink" href="#eraseretry" title="Permanent link">&para;</a></h3>
 <table>
@@ -36235,7 +36624,7 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。<
 </tr>
 </tbody>
 </table>
-<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># APPL_DB PORT_TABLE を直接参照</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT_TABLE:Ethernet0&#39;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -36246,29 +36635,32 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。<
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT_TABLE:Ethernet0&#39;</span><span class="w"> </span>oper_status
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span><span class="w"> </span>admin_status
 </span></code></pre></div>
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../port/"><code>PORT テーブル</code></a></li>
 <li>CLI: <code>show interfaces status</code>、<code>config interface</code></li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:portorder">
+<p>orchagent portsorch.cpp (Phase B 順序依存): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:portorder" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
 <li id="fn:1">
-<p>portsyncd portsyncd.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>portsyncd portsyncd.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/portsyncd/portsyncd.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p>portmgrd portmgr.h, portmgr.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>portmgrd portmgr.h, portmgr.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p>orchagent portsorch.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>orchagent portsorch.cpp: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>orchagent portsorch.cpp (副次 DB 書込): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>orchagent portsorch.cpp (副次 DB 書込): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>orchagent portsorch.cpp <code>doPortTask()</code> / <code>setPort*</code> 系失敗分岐 (Phase D): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <code>handleSaiSetStatus()</code>: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>orchagent portsorch.cpp <code>doPortTask()</code> / <code>setPort*</code> 系失敗分岐 (Phase D): <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp</a> および <code>handleSaiSetStatus()</code>: <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
