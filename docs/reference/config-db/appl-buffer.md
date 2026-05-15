@@ -286,6 +286,88 @@ handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BufferOrch` は APPL_DB の `BUFFER_*_TABLE` を購読して SAI に反映するのが主目的だが、**STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB** にも副次的に書き込む。SET/DEL ハンドラとは別経路で発火するものを含めて以下に整理する[^buforch]。
+
+### STATE_DB
+
+| 操作 | テーブル / キー | フィールド | トリガ | evidence |
+|------|----------------|-----------|--------|----------|
+| set | `BUFFER_MAX_PARAM_TABLE\|global` (定数 `STATE_BUFFER_MAXIMUM_VALUE_TABLE`) | `mmu_size` (bytes; `SAI_SWITCH_ATTR_MAX_BUFFER_SIZE` × 1024) | `BufferOrch` ctor の `getMMUSize()` で起動時 1 回のみ | `bufferorch.cpp:53-62, 206-230` |
+
+> SET/DEL ハンドラ自体は STATE_DB に書込まない。STATE_DB は MMU 全体サイズの公開専用。
+
+### COUNTERS_DB
+
+`CounterNameMapUpdater("COUNTERS_DB", COUNTERS_BUFFER_POOL_NAME_MAP)` を介して name→OID マップを更新する。
+
+| 操作 | テーブル / キー | 値 | 条件 | evidence |
+|------|----------------|----|------|----------|
+| HSET | `COUNTERS_BUFFER_POOL_NAME_MAP` | field=`<pool_name>` value=`<sai_object_id>` | `processBufferPool()` の SET で SAI `create_buffer_pool()` 成功直後 | `bufferorch.cpp:546` |
+| HDEL | `COUNTERS_BUFFER_POOL_NAME_MAP` | field=`<pool_name>` | `processBufferPool()` の DEL で `remove_buffer_pool()` 成功後 | `bufferorch.cpp:586` |
+
+BUFFER_PROFILE / PG / Queue / PROFILE_LIST には pool 相当の name map 書込みはない (PG/Queue の name map は PortsOrch 側で管理)。ただし `processQueue()` / `processPriorityGroup()` は profile attach/detach 成功直後に `FlexCounterOrch::isCreateOnlyConfigDbBuffers()` が true のとき `gPortsOrch->createPortBufferQueueCounters()` / `createPortBufferPgCounters()` (or remove 系) を呼び、PortsOrch 経由で COUNTERS_DB の `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` と FLEX_COUNTER_DB の queue/PG group を更新する (`bufferorch.cpp:1138-1152, 1513-1525`)。VOQ スイッチ (`gMySwitchType == "voq"`) ではこの経路はスキップされ FlexCounterOrch 側で一括登録される。
+
+### FLEX_COUNTER_DB
+
+`flex_counter_manager` の自由関数経由で `FLEX_COUNTER_GROUP_TABLE` / `FLEX_COUNTER_TABLE` を更新する。
+
+| 操作 | テーブル / キー | フィールド | 条件 | evidence |
+|------|----------------|-----------|------|----------|
+| set | `FLEX_COUNTER_GROUP_TABLE\|BUFFER_POOL_WATERMARK_STAT_COUNTER` | `POLL_INTERVAL`, `BUFFER_POOL_PLUGIN` (Lua sha) | `BufferOrch` ctor → `initFlexCounterGroupTable()`、起動時 1 回 | `bufferorch.cpp:232-251` |
+| set | 同上 | `STATS_MODE` = `STATS_AND_CLEAR` | `generateBufferPoolWatermarkCounterIdList()` 内、全 pool が watermark clear をサポート (`noWmClrCapability == 0`) | `bufferorch.cpp:332-336` |
+| set | `FLEX_COUNTER_TABLE\|BUFFER_POOL_WATERMARK_STAT_COUNTER:<sai_pool_oid>` | `BUFFER_POOL_COUNTER_ID_LIST`, `STATS_MODE` | `generateBufferPoolWatermarkCounterIdList()` で `m_buffer_type_maps[APP_BUFFER_POOL_TABLE_NAME]` の全 pool に対し 1 回ずつ。clear 非対応 pool だけ `STATS_MODE_READ` 個別設定 | `bufferorch.cpp:340-359` |
+| del | `FLEX_COUNTER_TABLE\|BUFFER_POOL_WATERMARK_STAT_COUNTER:<sai_pool_oid>` | キー全体 | `processBufferPool()` の DEL 経路、`m_isBufferPoolWatermarkCounterIdListGenerated` が true のときのみ | `bufferorch.cpp:276-284, 571` |
+
+`m_isBufferPoolWatermarkCounterIdListGenerated` フラグで FLEX_COUNTER のエコー再起動による多重登録を防止する。watermark Lua plugin (`watermark_bufferpool.lua`) は ctor で `loadRedisScript()` され、ハッシュ sha が group に登録される。
+
+### APPL_STATE_DB (ResponsePublisher)
+
+`Orch::m_publisher.publish()` 経由で APPL_STATE_DB の応答チャネルに成功応答を流す（データ書込みではなく ack 通知）:
+
+| 操作 | テーブル | 内容 | 条件 | evidence |
+|------|---------|------|------|----------|
+| publish | `BUFFER_POOL_TABLE` | `xoff=<value>` (force=true) | `processBufferPool()` SET 成功 かつ `xoff` 非空 (SHP 有効時) | `bufferorch.cpp:551-556` |
+| publish | `BUFFER_POOL_TABLE` | 空 fvs (force=true) | `processBufferPool()` DEL 成功 | `bufferorch.cpp:587-589` |
+| publish | `BUFFER_PROFILE_TABLE` | 全 fvs (force=true) | `processBufferProfile()` SET 成功 (新規 + 更新の両方) | `bufferorch.cpp:832, 880` |
+
+主に buffermgrdyn の SHP 計算同期 (`xoff` 確定の上位通知) と config-validator 連携に使われる。
+
+### 副次書込の発火順序 (BUFFER_POOL 新規 SET の例)
+
+1. APPL_DB から `BUFFER_POOL_TABLE|<name>` SET を consume
+2. `sai_buffer_api->create_buffer_pool()` → ASIC_DB
+3. in-memory map (`m_buffer_type_maps[APP_BUFFER_POOL_TABLE_NAME]`) を更新
+4. **COUNTERS_DB** `COUNTERS_BUFFER_POOL_NAME_MAP` に `<name>` → `<oid>` HSET
+5. (xoff 非空時) **APPL_STATE_DB** ResponsePublisher に publish
+6. (FlexCounterOrch から後段で呼出時) **FLEX_COUNTER_DB** の `FLEX_COUNTER_TABLE` に per-pool エントリを登録
+
+### 検証コマンド (実機 dump)
+
+```sh
+# STATE_DB MMU max
+redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|global'
+
+# COUNTERS_DB buffer pool name map
+redis-cli -n 2 hgetall COUNTERS_BUFFER_POOL_NAME_MAP
+
+# FLEX_COUNTER_DB
+redis-cli -n 5 keys 'FLEX_COUNTER_GROUP_TABLE|BUFFER_POOL_WATERMARK*'
+redis-cli -n 5 keys 'FLEX_COUNTER_TABLE|BUFFER_POOL_WATERMARK*'
+```
+
+### 詳細マトリクス
+
+完全な行番号付き分析・PortsOrch 間接経路の詳細・grep カバレッジは中間ファイル参照:
+
+- `meta/_intermediate/cdb-flow/appl-buffer-side.md`
+
+> **証跡**: `bufferorch.cpp` 内の `STATE_BUFFER_MAXIMUM_VALUE_TABLE` × 2 / `m_counterNameMapUpdater` × 3 / `setFlexCounterGroup*` × 2 / `startFlexCounterPolling` × 1 / `stopFlexCounterPolling` × 1 / `m_publisher.publish` × 4 / `createPortBufferQueueCounters` × 1 / `createPortBufferPgCounters` × 1 を全件確認。
+
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
