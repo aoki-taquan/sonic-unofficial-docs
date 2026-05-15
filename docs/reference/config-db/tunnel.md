@@ -411,4 +411,28 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `IPINIP` | `"IPINIP"` | `tunnelmgr.cpp` L17 | `tunnel_type` 比較用マクロ。`tunnel_type != IPINIP` でエラー判定 |
+| `TUNIF` | `"tun0"` | `tunnelmgr.cpp` L18 | Linux kernel IPinIP トンネル IF 名。固定。`ip tunnel add tun0 ...` で作成 |
+| `LOOPBACK_SRC` | `"Loopback3"` | `tunnelmgr.cpp` L19 | カーネルトンネルのローカル IP を取得する Loopback IF 名。`LOOPBACK_INTERFACE|Loopback3` が存在しない環境ではトンネル動作不可 |
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | `tunneldecaporch.cpp` L14 | Overlay loopback ルータインターフェースの MTU。`SAI_ROUTER_INTERFACE_ATTR_MTU` として SAI に渡す |
+| `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h` L21 | [MuxOrch](../../reference/glossary.md#term-muxorch) が固定参照する Dual-ToR トンネル名。TUNNEL テーブルのキーがこの値でない場合 MuxOrch はトンネルを見つけられずエラー |
+| `SubnetDecapConfig.tunnel` | `"IPINIP_SUBNET"` | `tunneldecaporch.h` L101 | サブネット decap 用 IPv4 トンネル内部識別子 |
+| `SubnetDecapConfig.tunnel_v6` | `"IPINIP_SUBNET_V6"` | `tunneldecaporch.h` L102 | サブネット decap 用 IPv6 トンネル内部識別子 |
+
+!!! warning "MuxTunnel0 固定名の制約"
+    [YANG](../../reference/glossary.md#term-yang) パターン `"MuxTunnel[0-9]+"` で複数エントリを許容しているが、
+    `MuxOrch` は `MuxTunnel0` をハードコードで参照する。
+    トンネル名を `MuxTunnel1` 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-constants.md`
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
