@@ -169,6 +169,33 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 - フィールド名は `"ACL_ACTIONS|" + stage_str`（`stage_str` = `"INGRESS"` または `"EGRESS"`）。
 - 値はサポートされるアクション名（`PACKET_ACTION`, `REDIRECT_ACTION`, `MIRROR_INGRESS_ACTION` 等）をカンマ区切りで列挙した文字列。
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`AclOrch` は CONFIG_DB / APP_DB の `ACL_TABLE` / `ACL_RULE` を SAI に反映した後、結果ステータスを STATE_DB 3 テーブルへ書き込む。SAI 操作の成否と親子関係（テーブル → ルール）に応じて、書込み順は orchagent 内部で自動調停されるが、consumer から観測しうる中間状態がいくつか存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `init()` での STATE_DB クリア → capability 公開 | 強制先行（クリア優先） | 起動直後は capability が公開されるまでテーブル / ルールのステータスは未確定 |
+| 2 | SAI capability クエリ成否に応じた 2 経路 → `ACL_STAGE_CAPABILITY_TABLE` 書込み | 1 回限り（init 内で確定） | クエリ失敗時は `defaultAclActionsSupported` のフォールバック値で公開 |
+| 3 | `ACL_TABLE` が `Active` 登録 → `ACL_RULE_TABLE` ステータス書込み許可 | **強制先行** | rule は `m_toSync` で再キューされ、テーブル登録後に書込まれる |
+| 4 | SAI 結果 → `ACL_TABLE_TABLE.status` 遷移 | 即時（中間状態あり） | consumer は `Pending creation` を一時的に観測しうる |
+| 5 | 他ルール DEL → retry cache の `Pending creation` ルール再評価 | 操作依存（非自明） | `notifyRetry()` が自動再キュー、成功時 `Active` 上書き |
+| 6 | SAI DEL 失敗 → `Pending removal` 滞留 | 即時（次回イテレーションで再試行） | 配下ルール削除後の再試行で自然解消 |
+| 7 | INGRESS / EGRESS capability 書込み | 独立 | init 完了前の同時読み出しは中間状態あり |
+
+### 主要な制約詳細
+
+**ACL_TABLE → ACL_RULE 親子順序 (依存 #3)**: `doAclRuleTask()` は `getTableById(table_id)` が `SAI_NULL_OBJECT_ID` を返す間、ルールを `m_toSync` に残したまま `it++; continue;` で再キューする。このため `ACL_RULE_TABLE|<table>|<rule>` の STATE_DB ステータスは、対応する `ACL_TABLE` が `addAclTable()` 成功で内部マップ `m_AclTables` に登録された後まで**書き込まれない**。CONFIG_DB 側でルールを先に投入しても、consumer から見た STATE_DB の出現順は常に「テーブル `Active` → ルール `Active`」となる（evidence: `aclorch.cpp:5548-5566`, `aclorch.cpp:5665-5706`）。
+
+**retry cache 経由の非自明な順序 (依存 #5)**: SAI リソース枯渇 (`isSaiStatusResourceFull()` が真) で `addAclRule()` が失敗した場合、`setAclRuleStatus(..., PENDING_CREATION)` を書いてから `consumer.addToRetry()` でルールを retry cache にパークし、`m_toSync` からは erase する。後続で**同一テーブル内の他ルールが** `removeAclRule()` 成功すると `notifyRetry()` が retry cache を再キューし、再度 `addAclRule()` が実行される。成功時に `setAclRuleStatus(..., ACTIVE)` で上書きされるため、操作者から見ると「無関係に見えるルール A の削除がルール B を `Pending creation` → `Active` に遷移させる」という非自明な順序関係が成立する（evidence: `aclorch.cpp:5673-5692`, `aclorch.cpp:5710-5721`）。
+
+**init() でのクリア → capability の順 (依存 #1, #2)**: `AclOrch::init()` は冒頭で `removeAllAclTableStatus()` / `removeAllAclRuleStatus()` を呼んで STATE_DB の旧テーブル/ルールステータスを全削除し、その後 `queryAclActionCapability()` を呼んで `ACL_STAGE_CAPABILITY_TABLE` を書き込む。SAI クエリが失敗した場合も `initDefaultAclActionCapabilities()` → `putAclActionCapabilityInDB()` の同 path でフォールバック値が公開されるため、`ACL_STAGE_CAPABILITY_TABLE` は init 完了時点で必ず 1 回書かれる（evidence: `aclorch.cpp:3479-3481`, `aclorch.cpp:3708`, `aclorch.cpp:4017-4037`, `aclorch.cpp:4104-4118`）。
+
+<!-- /ordering -->
+
 ## 購読者 (consumer)
 
 | プロセス / CLI | 参照テーブル | 用途 |
