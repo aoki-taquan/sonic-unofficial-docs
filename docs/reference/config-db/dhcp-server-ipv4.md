@@ -317,4 +317,47 @@ dhcpservd は stateless（CONFIG_DB から毎回全量 generate）。再起動�
 > **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100,190-270,381-465`; `dhcpservd.py:39-68,89-100`; `common/dhcp_db_monitor.py:160-347`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54-106,250-313,356-444`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `dhcp_cfggen.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-cross-refs.md`
+
+`DHCP_SERVER_IPV4` テーブルは YANG leafref を最小限しか持たないが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `VLAN\|<name>` | CONFIG_DB | 読み取り | なし | 実質必須 | dhcprelayd.py:97-98 |
+| `VLAN_INTERFACE\|<name>\|<prefix>` | CONFIG_DB | 読み取り (subnet / GW 取得) | なし | 実質必須 | dhcp_cfggen.py:432-433, 245-249, 258-259 |
+| `VLAN_MEMBER\|<vlan>\|<port>` | CONFIG_DB | 読み取り (ポート存在確認) | なし | PORT モード必須 | dhcp_cfggen.py:_parse_port() |
+| `FEATURE\|dhcp_server` | CONFIG_DB | 読み取り (feature 有効チェック) | なし | 必須 | dhcp_server.py:54 |
+| `DEVICE_METADATA\|localhost` (`dhcp_server` フィールド) | CONFIG_DB | 読み取り (全体有効化スイッチ) | なし | 必須 | dhcpservd 起動条件 |
+| `DHCP_RELAY` | CONFIG_DB | 排他制約 (同一 VLAN では relay が無効化される) | なし | 排他 | dhcprelayd.py:94-98 |
+
+### VLAN / VLAN_INTERFACE — 実質的な必須前提条件
+
+`dhcp_cfggen.generate()` は `VLAN_INTERFACE|<name>|<prefix>` から IPv4 サブネットを `ipaddress.ip_network()` で取得してから kea-dhcp4 設定を生成する (`dhcp_cfggen.py:432-433`)。VLAN_INTERFACE が存在しないと subnet 定義が生成されず DHCP DISCOVER に無応答。さらに option 54 (dhcp_server_id) 自動注入時 (`dhcp_cfggen.py:245-249`) および `--dup_gw_nm` フラグ時 (`dhcp_cfggen.py:258-259`) にも VLAN_INTERFACE の IPv4 アドレスを使用する。**YANG leafref は存在しないが実装上は必須の暗黙前提条件**。
+
+### VLAN_MEMBER — PORT モードのポート割当前提
+
+`_parse_port()` がポートの VLAN メンバー登録を確認する。未登録ポートは `"Port %s is not in %s"` LOG_WARNING でスキップされ、そのポートへの IP プール割当が行われない。
+
+### FEATURE|dhcp_server — CLI / デーモン起動の前提
+
+CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を確認し (`dhcp_server.py:54`)、`enabled` でなければ `ctx.fail()` で終了。dhcpservd 自体も feature 有効でなければ起動しない。
+
+### DEVICE_METADATA.localhost.dhcp_server — 全体有効化スイッチ
+
+`dhcp_server` フィールドが未設定または `disabled` だと dhcpservd が起動しないため、`DHCP_SERVER_IPV4.state` の設定は実質無効となる。
+
+### DHCP_RELAY — 同一 VLAN での排他制約
+
+`dhcprelayd.py:94-98` が `DHCP_SERVER_IPV4|<vlan>.state=enabled` を検出すると、その VLAN を `dhcrelay` 起動対象から除外する。DHCP_SERVER_IPV4 を有効化すると同一 VLAN の DHCP relay が自動的に無効化される。
+
+### SAI 参照
+
+なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザー空間の DHCP サーバであり SAI/ASIC に一切触れない。APPL_DB 中継もない。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 75921d013977 -->
