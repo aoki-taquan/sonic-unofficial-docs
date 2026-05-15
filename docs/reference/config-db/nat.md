@@ -363,3 +363,46 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 > **スキャン証跡**: `natorch.cpp:2904-2966` + `natmgr.cpp:7115-7260` を全行読了、6 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatGlobalTask L7105-7374 / sonic-swss/orchagent/natorch.cpp doNatGlobalTableTask L2904-2966, enableNatFeature L2534-2581, disableNatFeature L2583-2625 -->
+
+### NatMgr 層 (CONFIG_DB → APPL_DB)
+
+| 条件 | パターン | ログ | retry |
+|---|---|---|---|
+| key が `"Values"` 以外 | erase | `SWSS_LOG_ERROR "Invalid key %s format. No Values"` | なし |
+| `admin_mode` が `"enabled"`/`"disabled"` 以外 | erase | `SWSS_LOG_ERROR "Invalid admin_mode value %s, skipping %s"` | なし |
+| timeout 値が非整数文字列 | フィールド単位 skip (エントリ継続) | `SWSS_LOG_ERROR "Invalid tcp_timeout %s, skipping %s"` 等 | なし |
+| `nat_tcp_timeout` < 300 または > 432000 | erase | `SWSS_LOG_ERROR "Invalid tcp timeout value %d, skipping %s"` | なし |
+| `nat_udp_timeout` < 120 または > 600 | erase | `SWSS_LOG_ERROR "Invalid udp timeout value %d, skipping %s"` | なし |
+| `nat_timeout` < 300 または > 432000 | erase | `SWSS_LOG_ERROR "Invalid timeout value %d, skipping %s"` | なし |
+| 未知フィールドを含む | erase | `SWSS_LOG_ERROR "Invalid, skipping %s"` | なし |
+| 既知フィールドが 1 件もない | erase | `SWSS_LOG_ERROR "Invalid, skipping %s"` | なし |
+| フィールド重複 (同一 SET 内で 2 回以上) | erase | `SWSS_LOG_ERROR "Invalid admin_mode / nat_tcp_timeout …"` | なし |
+| `admin_mode=disabled` 中のタイムアウト変更 | 内部キャッシュのみ更新。APPL_DB 未伝播 (silent) | なし | — |
+| DEL_COMMAND かつ `admin_mode=disabled` | 内部変数をデフォルトにリセット。APPL_DB 書き込みなし (silent) | なし | — |
+
+**注意 — silent drop の罠**: `admin_mode=disabled` 状態でタイムアウトを変更した場合、APPL_DB には書かれない。`admin_mode=enabled` に切り替えると `enableNatFeature()` が非デフォルト値のみ APPL_DB に書き込む。デフォルト値 (600 / 86400 / 300) と同じ値への変更は `enableNatFeature()` 後も APPL_DB に届かない (`natmgr.cpp:5688-5704`)。
+
+### NatOrch 層 (APPL_DB → SAI)
+
+| 条件 | パターン | ログ | retry |
+|---|---|---|---|
+| key が `"Values"` 以外 (APPL_DB 直接操作) | erase | `SWSS_LOG_ERROR "Invalid key format. No Values: %s"` | なし |
+| `gIsNatSupported == false` (SAI_AVAILABLE_SNAT_ENTRY=0 のプラットフォーム) | `enableNatFeature()` で即 return。SAI 操作なし。`admin_mode` 内部変数も更新されない | `SWSS_LOG_NOTICE "NAT Feature is not supported in this Platform"` | — |
+| `SAI_SWITCH_ATTR_NAT_ENABLE=true` SAI 失敗 | `handleSaiSetStatus()` で対応 (SAI エラー種別によって abort / retry) | `SWSS_LOG_ERROR "Failed to enable NAT: %d"` | SAI 依存 |
+| `SAI_SWITCH_ATTR_NAT_ENABLE=false` SAI 失敗 | `handleSaiSetStatus()` で対応。内部 `admin_mode="disabled"` は SAI 失敗前に設定済みのため SAI と乖離しうる | `SWSS_LOG_ERROR "Failed to disable NAT: %d"` | SAI 依存 |
+| `admin_mode` が `"enabled"`/`"disabled"` 以外 (APPL_DB 直接書き込み) | `assert()` → **orchagent abort (SIGABRT)** | — | — |
+
+### STATE_DB / ERROR_TABLE への記録
+
+NatOrch / NatMgr ともに `ERROR_TABLE` への書き込みなし。失敗はすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。STATE_DB の `NAT_*` 関連テーブルへの失敗記録もなし。確認手段は `/var/log/syslog` のフィルタリングに限られる。
+
+```bash
+grep -E "natorch|natmgr" /var/log/syslog | grep -E "ERROR|WARN|Invalid|failed"
+```
+
+<!-- /failure -->
