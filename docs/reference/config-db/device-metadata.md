@@ -782,4 +782,76 @@ orchagent・cfgmgr・hostcfgd はいずれも DEVICE_METADATA を **読み取り
 
 <!-- /runtime-trace -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 起動時一括読み取りフィールド（create-only）
+
+`orchagent.sh` は swss コンテナ起動時に `DEVICE_METADATA|localhost` から以下のフィールドを順次読み取り、
+orchagent プロセスの起動引数を組み立てる。**全フィールドは orchagent コンテナ起動前に CONFIG_DB へ存在していること**が必須。
+
+| 読み取り順 | フィールド | 利用方法 | evidence |
+|-----------|-----------|---------|---------|
+| 1 | `mac` | `sonic-cfggen` の `swss_vars.j2` 展開 → `-m` フラグ | orchagent.sh:8-16 |
+| 2 | `switch_type` | `sonic-db-cli hget` → `-b` バッチサイズ決定 | orchagent.sh:22 |
+| 3 | `synchronous_mode` | `swss_vars.j2` 経由 → `-s` フラグ | orchagent.sh:37-41 |
+| 4 | `asic_id` | `swss_vars.j2` 経由 → `-i` フラグ | orchagent.sh:54-57 |
+| 5 | `async_swss_rec` | `sonic-db-cli hget` → `-A` フラグ | orchagent.sh:66-68 |
+| 6 | `subtype` | `sonic-db-cli hget` → ZMQ エンドポイント決定 | orchagent.sh:106 |
+| 7 | `ring_thread_enabled` | `sonic-db-cli hget` → `-R` フラグ | orchagent.sh:121 |
+
+boot 時は `config-setup` service が swss より先に起動し `config_db.json` を redis にロードする。
+`switch_type`/`synchronous_mode`/`mac` はコンテナ再起動でのみ切り替えられる（runtime 変更不可）。
+
+orchagent `main.cpp` 内では起動時に `getCfgSwitchType()` → `getCfgVoqMyInfo()` の順で hget し、
+`sai_switch_api->create_switch()` の引数として使用する（`switch_type` / `switch_id` / `max_cores`）。
+
+### ランタイム動的購読フィールド（mutable）
+
+| フィールド | consumer | 順序制約 | 副作用 |
+|-----------|---------|---------|-------|
+| `suppress-fib-pending` | fpmsyncd | 起動時 hget + SubscriberStateTable 購読。`enabled → disabled` ランタイム遷移時に既存保留ルートを `offloaded` にマーク | blackhole リスク軽減のため `synchronous_mode = enable` との同時設定が YANG `must` 制約 |
+| `buffer_model` | buffermgrd (BufferMgr) | BUFFER_POOL/BUFFER_PG より先に SET 推奨。逆順でも最終収束するが過渡的に APPL_DB へ転写が発生する | buffermgrd 起動引数（`-a` vs `-l`）の切り替えは swss 再起動が必要 |
+| `create_only_config_db_buffers` | FlexCounterOrch | コンストラクタ起動時に hget、以降は ConsumerStateTable で動的更新。warm-reboot 後も自動 reconcile | — |
+| `hostname` / `timezone` / `syslog_with_osversion` | hostcfgd | ConsumerStateTable 購読。ランタイム即時反映。boot 順序依存なし | `hostname` 変更は `service hostname-config restart` + `monit reload` を即時実行 |
+
+### bgpcfgd の依存待機（BGP_NEIGHBOR 処理の先行条件）
+
+`BGPPeerMgrBase` は `Directory` 機構を使い、以下が揃うまで `BGP_NEIGHBOR` SET 処理を保留する:
+
+```
+DEVICE_METADATA|localhost/bgp_asn     ← 必須（欠如時は return False で再試行）
+DEVICE_METADATA|localhost/type        ← 必須
+LOOPBACK_INTERFACE|Loopback0          ← 必須（IPv4 アドレス付き）
+BGP_DEVICE_GLOBAL/tsa_enabled         ← 必須
+BGP_DEVICE_GLOBAL/idf_isolation_state ← 必須
+DEVICE_METADATA|localhost/deployment_id ← use_deployment_id=true 環境のみ必須
+```
+
+推奨書込み順序:
+
+```
+1. DEVICE_METADATA|localhost  (bgp_asn, type, …)
+2. BGP_DEVICE_GLOBAL          (tsa_enabled, idf_isolation_state)
+3. LOOPBACK_INTERFACE|Loopback0|<ipv4_prefix>
+4. BGP_NEIGHBOR               (上記が揃うと処理開始)
+```
+
+evidence: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-143, 186-192`
+
+### warm-reboot / restart 影響
+
+| フィールド | warm-reboot 影響 | 順序制約 |
+|-----------|-----------------|---------|
+| `switch_type` | **変更不可** — SAI `create_switch()` は一度のみ | 変更には swss 完全再起動が必要 |
+| `synchronous_mode` | **変更不可** — orchagent 起動引数に依存 | 変更時は swss コンテナ再起動が必要 |
+| `mac` | **変更不可** — orchagent 起動引数 (`-m` フラグ) | 変更時は swss コンテナ再起動が必要 |
+| `buffer_model` フラグ | **mutable** — BufferMgr ConsumerStateTable で再適用 | buffermgrd 起動引数（`-a`/`-l`）は再起動しないと切り替わらない |
+| `create_only_config_db_buffers` | **mutable** — FlexCounterOrch ConsumerStateTable で再処理 | warm-reboot 後に自動 reconcile |
+| `suppress-fib-pending` | **mutable** — fpmsyncd が再購読 | warm-reboot 中の `enabled → disabled` 遷移でルートが一時的に offloaded にマーク |
+| `hostname` | **mutable** — hostcfgd が再処理 | boot 順序依存なし |
+
+詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-ordering.md`
+<!-- /ordering -->
+
 <!-- glossary-links-injected: e22e287b939b -->
