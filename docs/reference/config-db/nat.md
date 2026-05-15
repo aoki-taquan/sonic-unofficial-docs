@@ -431,6 +431,78 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)
+
+NAT テーブルの変更通知には **層 1 (natmgrd)** と **層 2 (NatOrch)** の 2 段階メカニズムがある。
+
+#### 層 1: natmgrd — CONFIG_DB を SubscriberStateTable で購読
+
+`natmgrd.cpp:109-121` の `cfg_tables` に列挙されたテーブルを `Orch::addConsumer()` 経由で登録する。`orch.cpp:1188-1194` の分岐により CONFIG_DB は **SubscriberStateTable** (keyspace PSUBSCRIBE) が使用される。
+
+購読チャンネルパターン (`subscriberstatetable.cpp:20-22`):
+
+```
+PSUBSCRIBE __keyspace@4__:NAT_GLOBAL|*
+PSUBSCRIBE __keyspace@4__:NAT_POOL|*
+PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
+PSUBSCRIBE __keyspace@4__:STATIC_NAT|*
+PSUBSCRIBE __keyspace@4__:STATIC_NAPT|*
+PSUBSCRIBE __keyspace@4__:INTERFACE|*  (nat_zone 変更)
+...
+```
+
+- DB 番号 4 は CONFIG_DB のデフォルト
+- glob パターンにより `NAT_GLOBAL|Values`・`NAT_POOL|<name>`・`NAT_BINDINGS|<name>` を捕捉
+
+#### 層 2: NatOrch — APPL_DB を ConsumerStateTable で購読
+
+`orchdaemon.cpp:457-465` で `APP_NAT_GLOBAL_TABLE_NAME` 等を優先度付きで登録。APPL_DB は `ConsumerStateTable` (ProducerStateTable チャンネル SUBSCRIBE) を使用する。チャンネル名は `table.h:94-96` の `getChannelName(db_id)` で `APP_NAT_GLOBAL_TABLE_CHANNEL@0` 形式になる。
+
+### イベント発火から SAI 適用までの流れ
+
+```
+CLI / REST が CONFIG_DB に HSET / HDEL / DEL
+  → Redis: __keyspace@4__:NAT_GLOBAL|Values 等に pmessage 発火
+  → SubscriberStateTable::readData() がhiredis 経由で受信
+  → m_keyspace_event_buffer に push
+  → SubscriberStateTable::pops()
+      "del" → DEL_COMMAND を設定
+      その他 → HGETALL でフィールド取得 + SET_COMMAND を設定
+  → natmgrd メインループ (SELECT_TIMEOUT=1000ms)
+      sel が Consumer → Consumer::execute() → NatMgr::doTask(Consumer&)
+          → doNatGlobalTask / doNatPoolTask / doNatBindingTask にディスパッチ
+      sel が タイムアウト → natmgr->doTask() でキューを再ドレイン
+  → NatMgr が ProducerStateTable::set() で APPL_DB に書き込み
+      → APP_NAT_GLOBAL_TABLE_CHANNEL@0 に PUBLISH
+  → NatOrch の ConsumerStateTable がイベント受信
+  → orchagent 統合ループ → NatOrch::doTask()
+      → doNatGlobalTableTask() → enableNatFeature() / disableNatFeature()
+  → sai_nat_api->create_nat_entry() / sai_switch_api->set_switch_attribute(SAI_SWITCH_ATTR_NAT_ENABLE)
+```
+
+### 初期スナップショット再生 (起動時)
+
+`SubscriberStateTable` のコンストラクタ (`subscriberstatetable.cpp:25-42`) は PSUBSCRIBE 後に `m_table.getKeys()` で既存 key を全件取得し `SET` イベントとして `m_buffer` に積む。`natmgrd` 再起動後もすべての既存 NAT 設定エントリが自動再処理される。
+
+### 非同期通知チャンネル
+
+通常の表テーブル経由とは別に、**NotificationConsumer / NotificationProducer** を使った 4 本の非同期チャンネルがある:
+
+| チャンネル | DB | 送信者 | 受信者 | 用途 |
+|---|---|---|---|---|
+| `SETTIMEOUTNAT` | APPL_DB | `NatOrch::setTimeoutNotifier` (`natorch.cpp:137`) | `natmgrd` の `timeoutNotificationsConsumer` (`natmgrd.cpp:149`) | NatOrch が conntrack timeout 変更を natmgrd へ通知 |
+| `FLUSHNATENTRIES` | APPL_DB | 外部 CLI (`show nat translate flush`) | `natmgrd` の `flushNotificationsConsumer` (`natmgrd.cpp:152`) | conntrack エントリ全フラッシュ要求 |
+| `FLUSHNATSTATISTICS` | APPL_DB | 外部プロセス | `NatOrch` の `m_flushNotificationsConsumer` (`natorch.cpp:84`) | NAT カウンタ全クリア要求 |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | `natmgrd` の `cleanupNotifier` (`natmgrd.cpp:86`) | `NatOrch` の `m_cleanupNotificationConsumer` (`natorch.cpp:89`) | natmgrd 終了時に Redis/ASIC の NAT エントリ全削除を依頼 |
+
+これらはすべて `swss::Select` の `Selectable` として登録され、通常の Consumer 処理と同じ select ループ内で処理される。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pubsub.md`
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
