@@ -1,10 +1,10 @@
 ---
-title: NTP テーブル群 (Phase A defaults)
-description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop を網羅した Phase A 調査ページ。"
+title: NTP テーブル群 (Phase A defaults + Phase D failure)
+description: "NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。"
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-15
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-ntp.yang
@@ -14,6 +14,12 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-buildimage
     path: files/build_templates/init_cfg.json.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: files/image_config/chrony/chrony.keys.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: files/image_config/chrony/chronyd-starter.sh
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-host-services
     path: scripts/hostcfgd
@@ -30,7 +36,7 @@ related:
     - sonic-ntp
 ---
 
-# NTP テーブル群 — コード由来デフォルト (Phase A)
+# NTP テーブル群 — コード由来デフォルト (Phase A) + 失敗挙動 (Phase D)
 
 > このページは `NTP` / `NTP_SERVER` / `NTP_KEY` 3 テーブルを横断して、YANG 定義・`init_cfg.json.j2`・`chrony.conf.j2` テンプレート・`hostcfgd` ハンドラの全行精読から得た**暗黙デフォルト**・**乖離**・**dead field**・**silent drop** を記録する。各テーブルの詳細は [`NTP (global)`](./ntp-global.md)・[`NTP_SERVER`](./ntp-server.md)・[`NTP_KEY`](./ntp-key.md) を参照。
 
@@ -185,6 +191,55 @@ YANG `must` 制約は DB 書き込み時のみ評価されるが、`chronyd-star
 | **template fallback** | `NTP_SERVER.resolve_as` | `\| d(server)` でアドレスキーにフォールバック |
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 詳細証跡は `meta/_intermediate/cdb-flow/ntp-failure.md` を参照。
+
+### hostcfgd NtpCfg ハンドラの失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `systemctl restart chrony` 失敗 (`handle_ntp_source_intf_chg`) | `hostcfgd:1324-1328` | `LOG_ERR` → `return`（キャッシュ更新なし・再試行なし） | `hostcfgd:1326-1329` |
+| `systemctl restart chrony` 失敗 (`ntp_global_update`) | `hostcfgd:1356-1361` | `LOG_ERR` → `return`（キャッシュ更新なし — CONFIG_DB 変更は適用済みだがキャッシュが旧値のまま残存） | `hostcfgd:1358-1361` |
+| `systemctl restart chrony` 失敗 (`ntp_srv_key_update`) | `hostcfgd:1397-1402` | `LOG_ERR` → `return`（キャッシュ更新なし → 次イベントで再処理保証） | `hostcfgd:1399-1402` |
+| `src_intf` に対応するサーバが未設定 | `hostcfgd:1315-1316` | `return`（no-op、サーバ登録後に反映） | `hostcfgd:1315-1316` |
+| `systemctl stop/start chrony` 失敗（MGMT_VRF_CONFIG 変更時） | `hostcfgd:1659-1665` | `CalledProcessError` → `LOG_ERR` → `return`（mgmt_vrf_enabled キャッシュ未更新） | `hostcfgd:1663-1666` |
+
+#### キャッシュ不整合リスク（ntp_global_update）
+
+`ntp_global_update` は `systemctl restart chrony` 失敗時にキャッシュを更新しない（L1364 の `self.cache[key] = data` は `return` で到達しない）。CONFIG_DB の値は既に変更済みのため、次回同フィールドに同一値が書かれた場合にキャッシュ差分なしと誤判定し no-op になる可能性がある（**経路依存不整合**）。
+
+### テンプレート失敗経路（サイレント動作）
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `NTP_SERVER.admin_state == 'disabled'` | そのサーバを `chrony.conf` から除外（サイレント除去） | `chrony.conf.j2:20` |
+| `NTP_KEY.type` または `NTP_KEY.value` が空 | そのキーをキーファイルからスキップ（サイレントスキップ） | `chrony.keys.j2:15` |
+| `NTP_KEY.value` が不正 Base64 | `b64decode` が誤ってデコード → 誤った鍵値を書き込む（サイレント誤動作） | `chrony.keys.j2:16` |
+| `NTP_SERVER.trusted == 'yes'` かつ `resolve_as` 未設定 | `trusted_str` に追加されない（サイレントドロップ） | `chrony.keys.j2:8-10` |
+| `NTP.authentication != 'enabled'` かつ `NTP_SERVER.key` 設定済み | `key` オプションが生成されない（サイレントドロップ） | `chrony.conf.j2:30-34` |
+| `NTP.authentication == 'enabled'` かつ `NTP_KEY` が空 | `keyfile` ディレクティブ追加されるが chrony.keys が空 → 認証エラーで chrony が起動失敗する可能性 | `chrony.conf.j2:124-128` |
+| `config.iburst == 'off'`（Jinja2 truthy 判定） | `iburst` オプションが生成される（意図に反する） | `chrony.conf.j2:37` |
+
+### chronyd-starter.sh の失敗経路
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| `sonic-db-cli` が `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` 読み取り失敗 | `VRF_ENABLED` が空 → default VRF で起動（安全フォールバック） | `chronyd-starter.sh:3-16` |
+| `sonic-db-cli` が `NTP|global.vrf` 読み取り失敗（`mgmtVrfEnabled=true` のとき） | `VRF_CONFIGURED` が空 → mgmt VRF で起動（意図しないフォールバック） | `chronyd-starter.sh:5-11` |
+| `ip vrf exec mgmt chronyd` 失敗（mgmt VRF 未設定） | `exec` 失敗 → chrony サービス起動不可（サービス障害） | `chronyd-starter.sh:11` |
+
+### 失敗の可観測性
+
+NTP 処理系は **STATE_DB への NTP ステータス書き込みを持たない**。失敗検知は以下のみで行う:
+
+- `journalctl -u chrony` — chrony サービスの起動失敗
+- `grep 'NtpCfg.*Failed' /var/log/syslog` — hostcfgd の `LOG_ERR` 出力
+- `chronyc tracking` / `chronyc sources` — 実際の同期状態確認
+
+<!-- /failure -->
 
 ## 関連ページ
 
