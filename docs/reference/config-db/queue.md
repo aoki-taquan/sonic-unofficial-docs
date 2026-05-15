@@ -573,4 +573,63 @@ VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加�
 <!-- 証跡: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/qosorch.cpp, sonic-swss/orchagent/flexcounterorch.cpp -->
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+QUEUE テーブル処理でコード内に固定された定数の一覧。`scheduler` / `wred_profile` 以外のフィールドは存在せず、フィールド数は最少クラスに属する。
+
+### フィールド名文字列定数 (`qosorch.h`)
+
+| 定数名 | 値 | 行 |
+|---|---|---|
+| `scheduler_field_name` | `"scheduler"` | `qosorch.h:22` |
+| `wred_profile_field_name` | `"wred_profile"` | `qosorch.h:39` |
+
+### key 区切り文字定数 (`orch.h`)
+
+| 定数名 | 値 | 用途 | 行 |
+|---|---|---|---|
+| `config_db_key_delimiter` | `'|'` | key トークン分割 | `orch.h:37` |
+| `range_specifier` | `'-'` | `qindex` 範囲 `X-Y` の区切り | `orch.h:36` |
+
+### key トークン数制約
+
+| 環境 | 要求トークン数 | 違反時の動作 |
+|---|---|---|
+| 非 [VOQ](../../reference/glossary.md#term-voq) | **2** (`ifname|qindex`) | `task_invalid_entry` (`qosorch.cpp:1801`) |
+| [VOQ](../../reference/glossary.md#term-voq) | **4** (`hostname|asic_name|ifname|qindex`) | `task_invalid_entry` (`qosorch.cpp:1774`) |
+
+### `parseIndexRange` 制約 (`orch.cpp:1024`)
+
+| 制約 | 値 |
+|---|---|
+| 単一インデックス | 符号なし整数 (`stoul`) |
+| 範囲形式 | `X-Y` で **X < Y** が必須。X >= Y は `task_invalid_entry` |
+| 型 | `sai_uint32_t` (uint32) |
+
+YANG 型は `string` のため YANG バリデーションでは弾かれないが、orchagent がエントリを捨てる。
+
+### SAI 属性 ID 定数
+
+| 定数名 | 用途 | ソース |
+|---|---|---|
+| `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` | scheduler を queue の scheduler group に設定 | `qosorch.cpp:1689` |
+| `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | WRED プロファイルを queue に設定 | `qosorch.cpp:1735` |
+| `SAI_NULL_OBJECT_ID` | フィールド削除時に NULL OID を設定して解除 | `qosorch.cpp:1842, 1877` |
+
+### ビルド時デフォルト queue 割当 (`qos_config.j2`)
+
+標準 L2/L3 ポート（非 DPC）:
+
+| qindex | `scheduler` | `wred_profile` |
+|---|---|---|
+| `3`, `4` | `"scheduler.1"` | `"AZURE_LOSSLESS"` |
+| `0`, `1`, `2`, `5`, `6` | `"scheduler.0"` | (なし) |
+
+DPC ポートは q3/q4 も `"scheduler.0"` (lossless なし)。VOQ remote port には scheduler 未適用。`SELECT_TIMEOUT` = `1000` ms（`orchdaemon.cpp:23`）。
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/queue-constants.md`
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: f9445b5b4106 -->
