@@ -420,4 +420,47 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> **調査根拠**: `supervisord.conf.j2`, `snmpd.conf.j2`, `sysDescription.j2`, `sonic_ax_impl/__main__.py`, `mibs/ietf/rfc4292.py`, `mibs/ietf/rfc1213.py`, `mibs/vendor/cisco/*.py`, `mibs/vendor/dell/force10.py` 全行精読 (2026-05-15)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-platform.md`
+
+### 差異 1: switch_type == 'chassis-packet' — snmp-subagent 動的更新周期
+
+`supervisord.conf.j2` L53–57
+
+| `DEVICE_METADATA.localhost.switch_type` | snmp-subagent 起動オプション | 効果 |
+|----------------------------------------|---------------------------|------|
+| `chassis-packet` | `--enable_dynamic_frequency` あり | ASIC 数・IF 数が多い chassis-packet 構成で CPU 使用率を抑制するため MIB 更新周期を負荷に応じて動的調整 |
+| その他 (`npu` / `voq` / `fabric` / `dpu` 等) | オプションなし | 固定周期 (`DEFAULT_UPDATE_FREQUENCY`) で更新 |
+
+`DEVICE_METADATA.localhost` が CONFIG_DB に存在しない場合はテンプレート展開が KeyError で失敗し docker-snmp コンテナが起動しない (全 switch_type 共通の前提条件)。
+
+### 差異 2: multi-ASIC 構成 — inetCidrRouteTable フィルタ (rfc4292)
+
+`sonic_ax_impl/mibs/ietf/rfc4292.py` L56–93
+
+| 構成 | 動作 |
+|------|------|
+| single-ASIC | デフォルト namespace のみ参照。内部ポートチャネルフィルタはノーオペレーション |
+| multi-ASIC | フロントエンド ASIC の namespace のみ経路取得。BackEnd ASIC namespace をスキップし、`INTERNAL_PORT` role のポートチャネルを inetCidrRouteTable から除外 |
+
+### 差異 3: multi-ASIC 構成 — ARP テーブル取得 (rfc1213)
+
+single-ASIC では NEIGH_TABLE のみ参照。multi-ASIC では host kernel ARP テーブルと各 namespace の NEIGH_TABLE を合算し、eth0 (管理 IF) を namespace ごとに除外する。
+
+### 差異 4: ベンダー固有 MIB — 全デプロイ共通登録
+
+以下の vendor MIB サブエージェントは **プラットフォーム条件なく全環境で登録される**。
+
+| MIB | 提供元テーブル |
+|-----|--------------|
+| `ciscoPfcExtMIB` / `ciscoSwitchQosMIB` / `ciscoEntityFruControlMIB` / Cisco `bgp4` | COUNTERS_DB / STATE_DB |
+| Dell Force10 `SSeriesMIB` (`.1.3.6.1.4.1.6027.3.10.1.2.9`) | `/proc` CPU・メモリ |
+
+Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な状態になる点に注意。`SNMP` CONFIG_DB テーブルとは直接連携しない。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
