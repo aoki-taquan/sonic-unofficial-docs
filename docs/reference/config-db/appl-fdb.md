@@ -529,6 +529,67 @@ flush 系の `SAI_FDB_FLUSH_ATTR_ENTRY_TYPE` は L949-950 / L1122-1123 / L1161-1
 
 <!-- /constants -->
 
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`FdbOrch` が APPL_DB `FDB_TABLE` を購読して SAI FDB を作成・削除する過程で発生する**副次的な DB 書込**を、
+`sonic-swss/orchagent/fdborch.cpp` の全行精読から抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-side.md`。
+
+### 書込み先一覧
+
+| # | 書込み先 DB / テーブル | キー | 主な書込ポイント | 条件 |
+|---|---|---|---|---|
+| 1 | STATE_DB `FDB_TABLE` (`m_fdbStateTable`) | `<VlanName>:<MAC>` | `fdborch.cpp:131-135` / `170` / `1576-1582` / `1592` / `1725` | ローカル学習 / `FDB_ORIGIN_LEARN` / `FDB_ORIGIN_PROVISIONED` 起源のみ。MCLAG/VXLAN advertise 由来 remote MAC は書かれない |
+| 2 | STATE_DB `MCLAG_FDB_TABLE` (`m_mclagFdbStateTable`) | `<VlanName>:<MAC>` | `fdborch.cpp:129` / `163` / `877` / `904` / `1600` / `1612` | `FDB_ORIGIN_MCLAG_ADVERTIZED` かつ `type != "dynamic_local"` のとき set。`dynamic_local` 格上げ / 他 origin へ置換 / MCLAG MAC 削除で del |
+| 3 | COUNTERS_DB `CRM` (`gCrmOrch` 経由) | `CRM_FDB_ENTRY` リソース利用数 | `fdborch.cpp:139` / `173` / `1617` / `1728` | 新規 MAC 追加で `incCrmResUsedCounter(CRM_FDB_ENTRY)`、削除で `decCrmResUsedCounter`。`CrmOrch` が COUNTERS_DB に**周期 publish** (直接 set ではない) |
+
+### コネクタ初期化
+
+`FdbOrch` コンストラクタ (`fdborch.cpp:28-32`) で 2 つの STATE_DB ハンドルを受け取る:
+
+```cpp
+// sonic-swss/orchagent/fdborch.cpp:28-32
+FdbOrch::FdbOrch(DBConnector* applDbConnector, vector<table_name_with_pri_t> appFdbTables,
+    TableConnector stateDbFdbConnector, TableConnector stateDbMclagFdbConnector, PortsOrch *port) :
+    Orch(applDbConnector, appFdbTables),
+    m_portsOrch(port),
+    m_fdbStateTable(stateDbFdbConnector.first, stateDbFdbConnector.second),
+    m_mclagFdbStateTable(stateDbMclagFdbConnector.first, stateDbMclagFdbConnector.second)
+```
+
+`orchdaemon.cpp:233-235` でテーブル名 `STATE_FDB_TABLE_NAME` (= `FDB_TABLE`) と
+`STATE_MCLAG_FDB_TABLE_NAME` (= `MCLAG_FDB_TABLE`) が STATE_DB に対して bind される。
+
+### 副次書込みフロー
+
+```mermaid
+flowchart LR
+  APPDB[("APPL_DB\nFDB_TABLE")]
+  FdbOrch["FdbOrch"]
+  SAIEv["SAI FDB event"]
+  STATEFDB[("STATE_DB\nFDB_TABLE")]
+  STATEMCLAG[("STATE_DB\nMCLAG_FDB_TABLE")]
+  CrmOrch["CrmOrch\nCRM_FDB_ENTRY"]
+  COUNTERS[("COUNTERS_DB\nCRM")]
+
+  APPDB --> FdbOrch
+  SAIEv --> FdbOrch
+  FdbOrch -->|"ローカル MAC のみ"| STATEFDB
+  FdbOrch -->|"MCLAG_ADVERTIZED のみ"| STATEMCLAG
+  FdbOrch -->|"inc/dec"| CrmOrch
+  CrmOrch -. "周期 publish" .-> COUNTERS
+```
+
+### 設計上の注意点
+
+- **VXLAN_ADVERTIZED 起源は STATE_DB へ書かれない**: remote MAC は `show mac` には現れない。`fdbshow` で remote MAC を見るには APPL_DB を直接照会する必要がある。
+- **`dynamic_local` の `type` 書換え**: `addFdbEntry()` (`fdborch.cpp:1578-1579`) は STATE_DB へ書く際に `dynamic_local` を `"dynamic"` に正規化する。CLI 表示の一貫性のため。
+- **COUNTERS_DB は直接 set されない**: `gCrmOrch->incCrmResUsedCounter()` は `CrmOrch` 内部のカウンタを更新するだけで、COUNTERS_DB への反映は `CrmOrch` の周期タイマー駆動。即時に `show crm resources fdb_entry` には反映されない場合がある。
+- **CRM_FDB_ENTRY の inc/dec 対称性**: `macUpdate == true` (既存 MAC の更新) では inc を呼ばない (`fdborch.cpp:1615-1618`)。port や type の変更ではカウンタは増えない。
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-swss-common/common/schema.h:52` — `#define APP_FDB_TABLE_NAME "FDB_TABLE"`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>

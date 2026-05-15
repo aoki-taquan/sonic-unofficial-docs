@@ -351,6 +351,278 @@ if (status != SAI_STATUS_SUCCESS)
 [^failuremem]: 失敗分岐の中間メモ: `meta/_intermediate/cdb-flow/appl-db-route-failure.md`
 <!-- /failure -->
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+APPL_DB `ROUTE_TABLE` は `fpmsyncd` / `bgpcfgd` が書き、`RouteOrch::doTask()`
+(`routeorch.cpp:605-1103`) と `NhgOrch::doTask()` (`nhgorch.cpp`) が購読する。
+両 Orch には ASIC 反映の前提となる依存テーブル（VRF / RIF / NEIGH / NHG / PIC_CONTEXT）
+が複数あり、未成立時は `m_toSync` 残置ポーリングか明示 RetryCache で吸収される。
+bulker による SET の遅延適用と、warm reboot 時の reconcile も加味して整理する[^rorch][^nhgorch][^orderingmem].
+
+### 1. PortsOrch readiness ガード（NhgOrch のみ直接ガード）
+
+```cpp
+// nhgorch.cpp:41-44 — NhgOrch::doTask 冒頭
+if (!gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+`NhgOrch::doTask` は `allPortsReady()` が false の間、`NEXTHOP_GROUP_TABLE` 処理を即 return で
+保留する。`RouteOrch::doTask` 自体に直接ガードは無いが、`addRoute()` 内で
+`m_intfsOrch->getRouterIntfsId(alias) == SAI_NULL_OBJECT_ID` のとき `return false`
+（`routeorch.cpp:2086-2090`）になるため、結果として PortsOrch / IntfsOrch 初期化完了が
+ROUTE_TABLE 確定の前提となる。
+
+→ 順序依存: `PORT` 初期化 → `INTERFACE`/`VLAN_INTERFACE` の RIF → `ROUTE_TABLE`。
+
+### 2. VRF 先行ガード（VRF-aware key）
+
+```cpp
+// routeorch.cpp:706-715
+if (!key.compare(0, strlen(VRF_PREFIX), VRF_PREFIX))
+{
+    size_t found = key.find(':');
+    string vrf_name = key.substr(0, found);
+
+    if (!m_vrfOrch->isVRFexists(vrf_name))
+    {
+        it++;
+        continue;
+    }
+    vrf_id = m_vrfOrch->getVRFid(vrf_name);
+    ip_prefix = IpPrefix(key.substr(found+1));
+}
+```
+
+`ROUTE_TABLE|Vrf<name>:<prefix>` で VrfOrch に当該 VRF が未登録のとき、ログなしで `it++` 残置 →
+VrfOrch が `CONFIG_DB:VRF` を消化するまで毎ループ retry。
+
+→ 順序依存: 非デフォルト VRF 経路は `VRF` 登録が先行必須。
+
+### 3. NEXTHOP_GROUP 先行ガード（`nexthop_group` フィールド指定）
+
+```cpp
+// routeorch.cpp:996-1015
+try
+{
+    const NhgBase& nh_group = getNhg(nhg_index);
+    nhg = nh_group.getNhgKey();
+    ctx.using_temp_nhg = nh_group.isTemp();
+}
+catch (const std::out_of_range& e)
+{
+    SWSS_LOG_ERROR("Next hop group %s does not exist", nhg_index.c_str());
+    ++it;
+    continue;
+}
+```
+
+`nexthop_group=<idx>` 指定で `NhgOrch::m_syncdNextHopGroups` 未登録 → `ERROR` + `++it` 残置。
+NhgOrch が `NEXTHOP_GROUP_TABLE` を消化するまで retry し続ける。NhgOrch 自身が項 1 の
+`allPortsReady` ガードを持つため、PortsOrch 完了が連鎖的な前提になる。
+
+→ 順序依存: `nexthop_group` 指定経路は `NEXTHOP_GROUP_TABLE|<idx>` の NhgOrch 反映が先行必須。
+
+### 4. NeighOrch 先行 — single NH
+
+```cpp
+// routeorch.cpp:2151-2155 (addRoute, single NH)
+else
+{
+    SWSS_LOG_INFO("Failed to get next hop %s for %s, resolving neighbor", ...);
+    m_neighOrch->resolveNeighbor(nexthop);
+    return false;
+}
+```
+
+`hasNextHop(nexthop)` が false なら ARP/ND をキックして `return false` → `m_toSync` 残置。
+NEIGH_TABLE 反映後の次サイクルで成立。
+
+→ 順序依存: 各 nexthop IP の `NEIGH_TABLE` 解決が先行必須。
+
+### 5. NeighOrch 先行 — ECMP（部分縮退 + tempRoute）
+
+```cpp
+// routeorch.cpp:2194-2243 (addRoute, ECMP)
+for (auto it = nextHops.getNextHops().begin(); ...)
+{
+    if (!m_neighOrch->hasNextHop(nextHop))
+    {
+        // overlay は createRemoteVtep/addTunnelNextHop, それ以外は resolveNeighbor
+        m_neighOrch->resolveNeighbor(nextHop);
+    }
+}
+...
+addTempRoute(ctx, nextHops);   // L2240
+return false;
+```
+
+未解決 NH は `resolveNeighbor` をキックしつつ、`addTempRoute` (`routeorch.cpp:1947-1989`) が
+**解決済み NH のみのサブセット**で一時経路を ASIC に install する。元 ECMP は m_toSync 残置で、
+後続サイクルで本来の NHG に昇格。SRv6 NHG では tempRoute を作らず `return false`
+（`routeorch.cpp:2188-2200`）。
+
+→ 順序依存（縮退あり）: 全 NH の NEIGH 解決が ECMP 完成の前提。1 個以上解決済みなら部分縮退で
+疎通維持。
+
+### 6. RIF 先行 — directly-connected
+
+```cpp
+// routeorch.cpp:2083-2090 (addRoute, intf NH)
+next_hop_id = m_intfsOrch->getRouterIntfsId(nexthop.alias);
+if (next_hop_id == SAI_NULL_OBJECT_ID)
+{
+    SWSS_LOG_INFO("Failed to get next hop %s for %s", ...);
+    return false;
+}
+```
+
+interface NH で IntfsOrch が RIF を未作成のとき `return false` 残置 →
+`INTERFACE`/`VLAN_INTERFACE`/`PORTCHANNEL_INTERFACE` 消化後の次サイクルで成立。
+
+→ 順序依存: directly-connected 経路は IntfsOrch RIF 作成が先行必須。
+
+### 7. SRv6 PIC `context_index` の RetryCache park
+
+```cpp
+// routeorch.cpp:2055-2060
+if (!ctx.context_index.empty() && !m_srv6Orch->contextIdExists(ctx.context_index))
+{
+    SWSS_LOG_INFO("Context ID %s does not exist, move task entry to RetryCache", ...);
+    ctx.retry_cst = make_constraint(RETRY_CST_PIC, ctx.context_index);
+    return false;
+}
+```
+
+```cpp
+// routeorch.cpp:192
+createRetryCache(APP_ROUTE_TABLE_NAME);
+```
+
+`pic_context_id` 指定で Srv6Orch 未登録のとき、`m_toSync` ポーリングではなく明示 RetryCache に park。
+Srv6Orch が `PIC_CONTEXT` を消化して `notifyRetry(RETRY_CST_PIC+<id>)` を呼ぶと再 enqueue される。
+
+→ 順序依存: SRv6 PIC 経路は `PIC_CONTEXT` 先行必須。RetryCache park で CPU 浪費を回避。
+
+### 8. doTask 内 bulk drain 順序
+
+`RouteOrch::doTask` は SET / DEL を以下の固定順で進める:
+
+1. **SET / DEL ループ** (`routeorch.cpp:1023-1114`): 各エントリで `addRoute()` / `removeRoute()` を
+   呼ぶ。`addRoute()` は `gRouteBulker.create_entry()` / `set_entry_attribute()`
+   （`routeorch.cpp:2301 / 2318 / 2345 / 2354 / 2362 / 2371`）で bulker に積むのみで ASIC 反映なし。
+2. **`gRouteBulker.flush()`** (`routeorch.cpp:1117`) — SET / DEL を一括 ASIC 反映。
+3. **post-process ループ** (`routeorch.cpp:1120-1225`) — bulker の戻り status を見て
+   `addRoutePost` / `removeRoutePost` を呼び、`m_syncdRoutes` 更新と APPL_STATE_DB への
+   `publishRouteState` を行う。失敗時は `it_prev++` で再評価。
+4. **`m_publisher.flush()`** (`routeorch.cpp:1231`) — APPL_STATE_DB notification を即時送出
+   （zebra への offload reply 遅延回避、`suppress-fib-pending` 連動）。
+5. **NHG ref-count 整理** (`routeorch.cpp:1234-`) — `m_bulkNhgReducedRefCnt` を巡回して
+   参照数 0 の NHG を `removeNextHopGroup`。
+6. **NHG 上限近傍での早期 break** (`routeorch.cpp:1094-1100`):
+
+   ```cpp
+   if (m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount &&
+       gRouteBulker.removing_entries_count() > 0)
+   {
+       break;
+   }
+   ```
+
+   SET ループを途中で抜けて bulker flush → NHG 解放 → 次サイクルで残 SET を処理。
+
+bulker 内重複検出: 同 doTask 内で同 prefix を 2 回 create しようとすると
+`SAI_STATUS_ITEM_ALREADY_EXISTS` が即時返り `ERROR` + `return false`（`routeorch.cpp:2301-2306`、
+retry なし、次サイクルで再評価）。NHG member bulker（`gNextHopGroupMemberBulker`）は
+別ライフサイクルで `routeorch.cpp:1624 / 1732` の個別 flush 点で同期する。
+
+→ タイミング依存: 同一 doTask バッチ内の順序は固定。ConsumerStateTable 側で SET/DEL が
+merge されるため、バッチ間では最後の op のみが orchagent に届く（`routeorch.cpp:1088-1091` のコメント）。
+
+### 9. SAI race: `SAI_STATUS_ITEM_NOT_FOUND` on set（DualToR）
+
+```cpp
+// routeorch.cpp:2572-2581
+if (status == SAI_STATUS_ITEM_NOT_FOUND)
+{
+    SWSS_LOG_ERROR("Failed to set route ... not found");
+    m_syncdRoutes.at(vrf_id).erase(ipPrefix);
+    return false;
+}
+```
+
+DualToR の tunnel route 削除直後に learned route が同 prefix を `set_route_entry_attribute`
+しようとして race。`m_syncdRoutes` を補正して `return false` し、次サイクルで「新規 create」として
+自動再投入される。
+
+→ タイミング依存: 同一 prefix への DEL→SET 連続発生時の自動補正パス。
+
+### 10. NHG 上限到達 → tempRoute サブセット install
+
+`addNextHopGroup` (`routeorch.cpp:1478-1485`) が
+`m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount` で false を返すと、
+`addTempRoute(ctx, nextHops)` (`routeorch.cpp:2240`) が解決済み 1 NH のサブセット tempRoute を
+install し、元 ECMP は m_toSync 残置。NhgOrch 側 (`nhgorch.cpp:319-362`) も同上限を見て
+temp NHG を保持し、リソースが空くまで promotion を保留する。
+
+→ タイミング依存: ASIC NHG リソース近傍では一時的に ECMP 縮退が観測される。
+
+### 11. Warm reboot 順序（fpmsyncd 主導、routeorch は受動）
+
+`routeorch.cpp` / `nhgorch.cpp` 自身には `warm` / `reconcile` の文字列は 0 件。warm reboot 時の
+順序は **fpmsyncd 側**で組まれる:
+
+```cpp
+// fpmsyncd/fpmsyncd.cpp:153-172
+bool warmStartEnabled = sync.getWarmStartHelper().checkAndStart();
+if (warmStartEnabled)
+{
+    time_t warmRestartIval = sync.getWarmStartHelper().getRestartTimer();
+    ...
+    if (sync.getWarmStartHelper().runRestoration())
+    {
+        warmStartTimer.start();
+        s.addSelectable(&warmStartTimer);
+    }
+}
+```
+
+- 起動時 fpmsyncd は `WarmStartHelper::checkAndStart()` で warm-restart モードに入り、
+  既存 APPL_DB `ROUTE_TABLE` を退避（restoration）する。
+- FRR (zebra) 再接続による経路再 push を `warmStartTimer` 満了 / `eoiuHoldTimer` 満了
+  （`fpmsyncd.cpp:196-238`）まで集約し、`onWarmStartEnd(applStateDb)` で「旧エントリ − 新エントリ」
+  の差分のみを `DEL` として routeorch に流す。
+- routeorch から見ると warm reboot は通常の SET/DEL イベント列でしかなく、特別なフックは無い。
+  ただし「PortsOrch → IntfsOrch → NeighOrch → NhgOrch → RouteOrch」の起動順序が成立しないと、
+  項 1-6 の retry / temp 縮退が連発するため warm reconcile 時間に影響する。
+
+→ 順序依存: warm reboot は fpmsyncd `WarmStartHelper` が「FRR 再接続 → restoration →
+reconcile DEL flush」を順序づける。routeorch / nhgorch は通常時と同じ retry/temp ロジックで吸収。
+
+### 影響範囲のまとめ
+
+| 順序関係 | 必須先行 | 不成立時の挙動 |
+|---|---|---|
+| NHG 経路（`nexthop_group`） | PortsOrch readiness | `NhgOrch::doTask` 早期 return |
+| 非デフォルト VRF prefix | VrfOrch (`CONFIG_DB:VRF`) | `it++` 残置ポーリング |
+| `nexthop_group` 指定 | NhgOrch (`NEXTHOP_GROUP_TABLE`) | `ERROR` ログ + `++it` |
+| directly-connected | IntfsOrch RIF (`INTERFACE` 系) | `return false` 残置 |
+| single NH | NeighOrch (`NEIGH_TABLE`) | `resolveNeighbor` + 残置 |
+| ECMP | 全 NH の NEIGH 解決 | tempRoute サブセット install + 残置 |
+| SRv6 PIC | Srv6Orch (`PIC_CONTEXT`) | RetryCache park (`RETRY_CST_PIC`) |
+| ASIC NHG 上限 | NHG 解放 | tempRoute install + bulker 早期 break |
+| 同一 prefix DEL→SET race | SAI 側完了 | `m_syncdRoutes` 補正 → 次サイクル create |
+| 同一バッチ内重複 create | bulker flush 完了 | `SAI_STATUS_ITEM_ALREADY_EXISTS` で `return false` |
+| warm reboot | fpmsyncd `WarmStartHelper` | restoration → timer → reconcile DEL flush |
+
+詳細な grep 証跡は `meta/_intermediate/cdb-flow/appl-db-route-ordering.md` を参照[^orderingmem].
+
+[^orderingmem]: 順序依存スキャンの中間メモ: `meta/_intermediate/cdb-flow/appl-db-route-ordering.md`
+<!-- /ordering -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -435,3 +707,43 @@ ROUTE_TABLE に関係する 4 リソースの紐付け:
 > 詳細スキャン証跡: `meta/_intermediate/cdb-flow/appl-db-route-constants.md`
 
 <!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB `ROUTE_TABLE` は YANG 未定義（APPL_DB は YANG 管理対象外）のため leafref は存在しない。`RouteOrch::doTask()` / `addRoute()` / `addNextHopGroup()` (`routeorch.cpp`) と `NhgOrch` (`nhgorch.cpp`) のコード精読により、以下の Orch / テーブルへの暗黙参照（存在確認 + OID 解決 + refcount + retry トリガ）が発生する[^rorch][^nhgorch]。
+
+### key / フィールド由来の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `VRF_TABLE` (VRFOrch) | 存在確認 + virtual_router OID + refcount | key が `Vrf<name>:<prefix>` 形式（非デフォルト VRF） | `routeorch.cpp` L706–717 (`isVRFexists` / `getVRFid`)、L2013 (`increaseVrfRefCount`)、L2773 / L2993 (`decreaseVrfRefCount`) |
+| `NEIGH_TABLE` (NeighOrch) | next-hop OID + refcount + ARP/ND resolve トリガ | `nexthop` 非空かつ各 NH が IP NH（intf-only でない） | `routeorch.cpp` L1499–1510 (`hasNextHop` / `getNextHopId` / `addNextHop`)、L2094–2119（single NH）、L2151–2155 (`resolveNeighbor`)、L2197–2219（ECMP メンバ） |
+| `INTF_TABLE` (IntfsOrch) | RIF OID + refcount + サブネット判定 | `ifname` 指定 / intf-only NH / コネクテッドルート判定 | `routeorch.cpp` L968 (`getRouterIntfsAlias`)、L1045 (`isPrefixSubnet`)、L2083 / L2086–2090 (`getRouterIntfsId` — `SAI_NULL_OBJECT_ID` なら retry)、L2429 |
+| `PORT_TABLE` (PortsOrch) | allPortsReady ブロック + inband skip + CPU port | 常時 + intf-only NH が inband port | `routeorch.cpp` L609 (`allPortsReady` — false で全 ROUTE 処理保留)、L243 (`getCpuPort`)、L2074 (`isInbandPort`)、L915–926（`eth0`/`docker0`/`Loopback*` 宛は ASIC から撤去） |
+| `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` (NhgOrch / CbfNhgOrch) | index 解決 + 共有 NHG OID + refcount + 上限 | `nexthop_group` 非空（`nexthop`/`ifname` と排他） | `routeorch.cpp` L807–812（排他）、L838–839 / L996–1012 (`getNhg` — `out_of_range` で retry)、L1096 / L1424 / L1478（NHG 上限）、L2411 (`hasNhg` OR)、L2546 (`incNhgRefCount`)、`nhgorch.cpp` L319–362（temp NHG 保持と promotion） |
+| `FG_NHG` / `FG_NHG_PREFIX` (FgNhgOrch) | 適用判定 + 専用 SAI NHG + ロールバック | `isRouteFineGrained(vrf_id, prefix, NHs)` が true | `routeorch.cpp` L529 / L597、L1424–1431（上限ガード）、L2028–2037 (`setFgNhg`)、L2403 / L2470–2477 (`removeFgNhg`) |
+| `SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` (Srv6Orch) | SRv6 NH OID + Agg ID + バルク削除 | `segment` または `seg_src` 非空（`srv6_nh = true`） | `routeorch.cpp` L736–795（フラグ立て）、L1250 (`removeSrv6Nexthops`)、L2055 (`contextIdExists`)、L2100 / L2143 / L2169 (`srv6Nexthops`)、L2295 / L2352 (`getAggId`)、L2188–2200（temp route 非生成） |
+| `VXLAN_TUNNEL` / remote VTEP (VxlanTunnelOrch + NeighOrch) | L3 VNI 検証 + remote VTEP 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ非 SRv6 | `routeorch.cpp` L872 / L893–897 (`isL3VniVlan`)、L2127 (`createRemoteVtep`)、L2133 / L2208 (`addTunnelNextHop`)、L2128–2141（失敗時 retry）、L1781–1789（remove） |
+
+### 通知 / side ref
+
+| 参照先 | 操作 | 条件 | 参照元 evidence |
+|--------|------|------|----------------|
+| `FlowCounterRouteOrch` | route flow counter 候補通知（refcount/OID なし） | 常時 + link-local prefix の add/remove | `routeorch.cpp` L259 (`onAddMiscRouteEntry`)、L282 (`onRemoveMiscRouteEntry`)、L2708 (`handleRouteAdd`) |
+| `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` / `CRM_NEXTHOP_GROUP` / `CRM_NEXTHOP_GROUP_MEMBER` (CrmOrch) | 残量カウンタ inc/dec — 投入はブロックしない | 経路 / NHG / member の create / remove ごと | `routeorch.cpp` 各所 `gCrmOrch->incCrmResUsedCounter()` / `dec...`、SAI 枯渇は `handleSaiCreateStatus` で `task_failed` / `task_need_retry` に分岐 |
+
+### 排他関係
+
+- `nexthop_group` と `nexthop` / `ifname` の同時指定はエラー（`routeorch.cpp` L807–812 — erase で打ち切り、retry なし）。
+- `segment` / `seg_src` (SRv6) と `vni_label` (VxLAN overlay) は実装上 `srv6_nh` と `overlay_nh` が排他的に分岐し、SRv6 NHG は temp route を作らず即 `return false`（L2188–2200）。
+- `blackhole = "true"` のとき `nexthop` / `ifname` は不要かつ無視される。
+
+!!! note "retry の本体は doTask の `m_toSync` 保留"
+    暗黙参照の欠落（VRF 未作成 / NEIGH 未解決 / NHG index 不在 / RIF 未作成 / L3 VNI 未紐付け / SRv6 NH 作成失敗 / Tunnel NH 作成失敗）はすべて `addRoute()` が `return false` を返し、doTask が `it++` で `m_toSync` 上に保留する。被参照側 Orch が当該オブジェクトを作成すると、次回 doTask 周回で install される（fpmsyncd 側は再送しない）。
+
+!!! note "`nhgorch.cpp` には platform 分岐なし"
+    `nhgorch.cpp` / `nhgbase.cpp` は `SAI_NEXT_HOP_GROUP_TYPE_ECMP` (`nhgorch.cpp` L771–772) と `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` を共通 API で発行するのみで、platform / switch_type の if 分岐は無い。NHG 上限は `routeorch` が起動時に算出する `m_maxNextHopGroupCount` を `gRouteOrch->getMaxNhgCount()` 経由で参照し、満員時は temp NHG として保持する。
+
+詳細分析: `meta/_intermediate/cdb-flow/appl-db-route-cross-refs.md`
+<!-- /cross-refs -->
