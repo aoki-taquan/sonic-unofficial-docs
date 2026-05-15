@@ -194,6 +194,26 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 > **スキャン証跡**: `managers_as_path.py` 全 67 行、`frrcfgd.py` AS_PATH_SET 関連箇所、`bgpd.conf.db.j2`、`sonic-routing-policy-sets.yang` action enum 定義部すべて読了。中間ファイル: `meta/_intermediate/cdb-flow/as-path-set-constants.md`
 <!-- /constants -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: AS_PATH_SET は FRR (`bgpd`) 制御プレーン上の AS path access-list で SAI 非経由。ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / VPP)・VOQ chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 | 影響なし | SAI 非経由 (FRR `bgpd` 内部 access-list)。orchagent / syncd 経由なし |
+| multi-asic (`asicN` namespace) | 各 namespace 独立・同一ロジック | `frrcfgd` は per-namespace 起動。AS_PATH_SET ハンドラ (`frrcfgd.py:1009-1020, 2998-3011`) に namespace 分岐なし |
+| `switch_type` (voq / chassis-packet) | 影響なし | `managers_as_path.py` 全 67 行・`frrcfgd.py` AS_PATH_SET ハンドラ部を `platform\|asic\|switch_type\|chassis\|sub_role\|namespace\|vendor` で grep して 0 ヒット |
+| `sub_role` (FrontEnd / BackEnd) | 影響なし | 同上で参照 0 |
+| `DEVICE_METADATA.type` / `subtype` | **AsPathMgr (T2_GROUP_ASNS 固定経路) の登録 gate のみ** — AS_PATH_SET テーブル自身には影響しない | `bgpcfgd/main.py:122-130` (`SpineRouter`+`UpstreamLC` または `UpperSpineRouter` のみ AsPathMgr 起動) |
+| ベンダー固有 hook | なし | `files/image_config/` / `files/build_templates/` を `as.?path.?set\|aspath_set` で grep して 0 ヒット |
+| テンプレート内分岐 (`bgpd.conf.db.j2`) | プラットフォーム条件なし | L11-20 AS_PATH_SET ブロックに `{% if platform/asic/chassis/switch_type %}` 0 |
+
+注意: `DEVICE_METADATA.type` / `subtype` は HW プラットフォームではなく **論理トポロジー role** で、`AsPathMgr` (T2_GROUP_ASNS 経路) の起動可否のみを左右する。ユーザが `AS_PATH_SET|<name>` を CONFIG_DB に直接入れる経路は role に関わらず常時 `frrcfgd` 経由で FRR に反映される。
+
+詳細根拠は `meta/_intermediate/cdb-flow/as-path-set-platform.md` を参照。
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
