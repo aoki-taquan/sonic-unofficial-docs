@@ -747,3 +747,177 @@ APPL_DB `ROUTE_TABLE` は YANG 未定義（APPL_DB は YANG 管理対象外）�
 
 詳細分析: `meta/_intermediate/cdb-flow/appl-db-route-cross-refs.md`
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+APPL_DB `ROUTE_TABLE` の主購読者 `RouteOrch` は **`ZmqOrch` を継承**しており、
+fpmsyncd → orchagent の経路通知を Redis pub/sub または **ZMQ ソケット** のどちらでも
+受け取れる二刀流の構成になっている[^rorch][^zmqorch][^orchdaemon]。
+
+### Consumer 構築: ZMQ 有効/無効で分岐
+
+`orchagent/orchdaemon.cpp:327-337` で `RouteOrch` を組み立てる際、
+フィーチャフラグ `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` の値で
+ZMQ サーバを渡すかどうかを切り替える:
+
+```cpp
+// orchagent/orchdaemon.cpp:327-337
+const int routeorch_pri = 5;
+vector<table_name_with_pri_t> route_tables = {
+    { APP_ROUTE_TABLE_NAME,        routeorch_pri },
+    { APP_LABEL_ROUTE_TABLE_NAME,  routeorch_pri }
+};
+
+// Enable the fpmsyncd service to send Route events to orchagent via the ZMQ channel.
+auto enable_route_zmq = get_feature_status(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false);
+auto route_zmq_sever = enable_route_zmq ? m_zmqServer : nullptr;
+
+gRouteOrch = new RouteOrch(m_applDb, route_tables, ..., route_zmq_sever);
+```
+
+優先度 `routeorch_pri = 5` で `APP_ROUTE_TABLE_NAME` (= `"ROUTE_TABLE"`) と
+`APP_LABEL_ROUTE_TABLE_NAME` の 2 テーブルを購読する。`RouteOrch::RouteOrch()`
+は `ZmqOrch(db, tableNames, zmqServer)` をベースクラス初期化子で呼ぶだけで、
+Consumer 本体は `ZmqOrch::addConsumer()` が組む。
+
+### `ZmqOrch::addConsumer` が `ZmqConsumer` / `Consumer` を生成
+
+`orchagent/zmqorch.cpp:59-72`:
+
+```cpp
+void ZmqOrch::addConsumer(DBConnector *db, string tableName, int pri,
+                          ZmqServer *zmqServer, bool orderedQueue, bool dbPersistence)
+{
+    if (zmqServer != nullptr)
+    {
+        addExecutor(new ZmqConsumer(
+            new ZmqConsumerStateTable(db, tableName, *zmqServer,
+                                      gBatchSize, pri, dbPersistence),
+            this, tableName, orderedQueue));
+    }
+    else
+    {
+        addExecutor(new Consumer(
+            new ConsumerStateTable(db, tableName, gBatchSize, pri),
+            this, tableName));
+    }
+}
+```
+
+| ZMQ フラグ | Executor | Selectable | データ経路 |
+|------------|----------|-----------|-----------|
+| 有効 (`route_zmq_sever != nullptr`) | `ZmqConsumer` | `ZmqConsumerStateTable` | fpmsyncd が ZMQ ソケットに送信 → orchagent が受信 |
+| 無効 (`nullptr`、デフォルト) | `Consumer` | `ConsumerStateTable` | fpmsyncd が APPL_DB に Lua スクリプトで書込 → Redis keyspace 通知で orchagent が pop |
+
+どちらのパスでも pop バッチサイズは `gBatchSize`（`orch.cpp:17` の
+グローバル変数。orchagent 起動引数で上書き可能。`ZmqConsumerStateTable`
+側の既定値は `DEFAULT_POP_BATCH_SIZE = 128`、`zmqconsumerstatetable.h:20`）[^zmqcst]。
+
+### SET 合体: `ConsumerStateTable` の Lua スクリプト
+
+非 ZMQ パスでは `ConsumerStateTable` が **同一 key への連続 SET を最終値のみ
+配信** する。`routeorch.cpp:1085-1092` のコメントが明示している:
+
+```
+The bulker is flushed once for each loop of doTask. There can be cases when
+the same route is set multiple times in the same doTask iteration. Those updates
+may have been consolidated by ConsumerStateTable leading to orchagent receiving
+only the last SET update.
+```
+
+これにより fpmsyncd が同じ prefix を高頻度で書き換えても、orchagent が
+受け取るのは各 doTask ループ単位で最新 1 件に圧縮される。DEL は別途
+`_DELS_` に積まれて配信される。ZMQ パスではこの圧縮はサーバ側の
+キューに依存する。
+
+### Batch: pop batch と SAI bulker の 2 段構成
+
+`RouteOrch::doTask(Consumer&)` (`routeorch.cpp:605-1103`) は 1 ループで
+**pop batch → 個別解析 → SAI bulker 投入 → bulker flush** の流れを取る:
+
+1. Consumer から `gBatchSize` 件ずつ pop し、`m_toSync` に積む。
+2. 各エントリを解釈し、`gRouteBulker.create_entry()` /
+   `set_entry_attribute()` / `remove_entry()` を呼んで bulker に登録
+   (`routeorch.cpp:2301, 2318, 2802` ほか)。
+3. ループ末尾 `routeorch.cpp:1117` で `gRouteBulker.flush();` —
+   `gMaxBulkSize` ごとに SAI へ一括投入。`gLabelRouteBulker` /
+   `gNextHopGroupMemberBulker` も同じタイミングで flush。
+
+SAI 側のエラーは `handleSaiCreateStatus` / `handleSaiSetStatus` で
+`task_need_retry` / `task_failed` に分岐し、retry の場合は `m_toSync` に
+残置されて次イベントで再投入される（詳細は本ページ「失敗・リトライ挙動」参照）。
+
+### 応答 publish: `ResponsePublisher` + APPL_STATE_DB
+
+`RouteOrch` は処理結果を `ResponsePublisher` (`m_publisher`) 経由で
+APPL_STATE_DB にミラー publish する:
+
+```cpp
+// orchagent/routeorch.cpp:57-58
+m_publisher.setBuffered(true);
+m_publisher.m_directDbWrite = true;
+```
+
+```cpp
+// orchagent/routeorch.cpp:3185-3201 publishRouteState()
+m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, replace);
+```
+
+| 設定 | 効果 |
+|------|------|
+| `setBuffered(true)` | 個々の publish をリングバッファに溜め、`flush()` でまとめて Redis に書き出す |
+| `m_directDbWrite = true` | notification チャネル経由ではなく **APPL_STATE_DB へ直接 HSET / DEL** を発行する |
+
+呼び出し箇所は `routeorch.cpp:923` (loopback/管理 IF 経路の擬似応答)
+`/1050` `/1090` (doTask 成功/失敗時) `/2729` `/2970` (addRoute / removeRoute 成功時)。
+DEL のときは空 `fvs` で publish され、`ResponsePublisher::publish()` が
+APPL_STATE_DB のキーごと削除する。
+
+flush は doTask 末尾の **`routeorch.cpp:1231` `m_publisher.flush();`**
+で 1 ループ 1 回だけ実行される。コメント:
+
+```
+Flush response publisher so route notifications reach fpmsyncd every batch.
+```
+
+fpmsyncd は APPL_DB と APPL_STATE_DB の差分を観測することで「未確定状態」
+（retry 中の経路）を識別できる設計になっている。
+
+### Retry キャッシュ
+
+`routeorch.cpp:192`:
+
+```cpp
+createRetryCache(APP_ROUTE_TABLE_NAME);
+```
+
+`Orch::createRetryCache()` (`orch.cpp:149-152`) が `RetryCache` インスタンスを
+`m_retryCaches[APP_ROUTE_TABLE_NAME]` に確保する。これは Consumer 層ではなく
+Orch 層のリトライ機構で、依存リソース（NHG / NEIGH / VRF / RIF）が未準備の
+タスクを後段イベントまで保留する。
+
+### まとめ
+
+| 軸 | 実装 / 値 |
+|----|----------|
+| Consumer クラス（ZMQ 有効） | `ZmqConsumer` + `ZmqConsumerStateTable` (`zmqorch.cpp:66`) |
+| Consumer クラス（ZMQ 無効） | `Consumer` + `ConsumerStateTable` (`zmqorch.cpp:71`) |
+| 切替フラグ | フィーチャフラグ `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` (`orchdaemon.cpp:334`) |
+| 購読対象 | `APP_ROUTE_TABLE_NAME` (= `"ROUTE_TABLE"`) と `APP_LABEL_ROUTE_TABLE_NAME` |
+| Priority | `5` (`orchdaemon.cpp:327`) |
+| pop batch | `gBatchSize` (`orch.cpp:17`)。ZmqConsumerStateTable 既定は `128` |
+| SAI bulker | `gRouteBulker` (route) / `gLabelRouteBulker` (mpls) / `gNextHopGroupMemberBulker` |
+| SAI bulker flush 周期 | doTask ループ末尾 `routeorch.cpp:1117` |
+| SET 合体 | `ConsumerStateTable` が同一 key の連続 SET を最終値に圧縮 |
+| 応答 publish 先 | APPL_STATE_DB（`ResponsePublisher`、`setBuffered(true)` + `m_directDbWrite=true`） |
+| 応答 publish flush 周期 | doTask ループ末尾 `routeorch.cpp:1231` |
+| Retry | `createRetryCache(APP_ROUTE_TABLE_NAME)` (`routeorch.cpp:192`) |
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/appl-db-route-pubsub.md`
+
+[^zmqorch]: ZmqOrch / ZmqConsumer 実装: `sonic-swss/orchagent/zmqorch.cpp`, `zmqorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/zmqorch.cpp>
+[^orchdaemon]: orchagent 起動シーケンス: `sonic-swss/orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^zmqcst]: ZmqConsumerStateTable 実装: `sonic-swss-common/common/zmqconsumerstatetable.h`, `zmqconsumerstatetable.cpp`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/zmqconsumerstatetable.h>
+
+<!-- /pubsub -->
