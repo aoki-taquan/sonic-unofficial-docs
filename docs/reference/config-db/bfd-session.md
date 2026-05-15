@@ -231,3 +231,73 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 - 依存 #3 は software ⇄ hardware の経路切替が運用中に発生する珍しいケース。通常は `BGP_DEVICE_GLOBAL` を最初に確定してから BFD_SESSION を投入する。
 - レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる ([例外条件・特殊挙動](#例外条件特殊挙動) 参照)。
 <!-- /ordering -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 経路を起動時に決定する。ACL 系のように `platform` / `sub_platform` 環境変数を静的比較する分岐は `bfdorch.cpp` には存在しない。差異の決定は SAI 実装 (`libsai*.so`) 側の `set_implemented` / `get_implemented` プロパティに完全依存する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-platform.md)。
+
+### 動的に照会される SAI capability
+
+| SAI 属性 | 照会タイミング | 影響 | evidence |
+|---|---|---|---|
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE` | `BgpGlobalStateOrch` 起動時 (1 回) | IPv4 hardware offload 可否 | `bfdorch.cpp:761, 767-793` |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE` | `BgpGlobalStateOrch` 起動時 (1 回) | IPv6 hardware offload 可否 | `bfdorch.cpp:764, 767-793` |
+| `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` | 最初の `create_bfd_session()` 時 | UP/DOWN 通知ハンドラ登録の可否 | `bfdorch.cpp:274-302` |
+
+`bfd_offload = (offload_supported(ipv4) && offload_supported(ipv6))` (`bfdorch.cpp:741`) — **IPv4 / IPv6 両方** が `get_implemented=true` かつ `OFFLOAD_TYPE != NONE` でなければ `bfd_offload=false` となり、`getSoftwareBfd()` が常に true を返して software BFD 経路に強制される。
+
+### capability 結果と経路の対応
+
+| SAI 照会結果 | `bfd_offload` | `getSoftwareBfd()` | 経路 | SAI 経由 | state 通知 |
+|---|---|---|---|---|---|
+| IPv4/IPv6 両方 capability あり + `OFFLOAD_TYPE != NONE` | true | false | **hardware BFD** | あり (`bfdorch` → SAI → ASIC) | SAI notify handler |
+| いずれかが `get_implemented=false` | false | true | **software BFD** | なし (STATE_DB のみ) | bgpcfgd `BfdMgr` polling |
+| いずれかが `OFFLOAD_TYPE_NONE` | false | true | software BFD | なし | 同上 |
+| `sai_query` 失敗 (ERROR ログ) | false | true | software BFD | なし | 同上 |
+| `BFD_SESSION_STATE_CHANGE_NOTIFY` の `set_implemented=false` | (hw 経路時) hardware だが**通知欠落** | — | hardware BFD (通知なし) | あり | **なし** (`BFD_SESSION_TABLE.state` 未更新, `bfdorch.cpp:286-290`) |
+
+### hardware ⇄ software 経路差 (デフォルト値・単位・API)
+
+| 項目 | hardware BFD (`bfdorch`) | software BFD (`bgpcfgd/BfdMgr`) | static route BFD (`staticroutebfd`) | evidence |
+|---|---|---|---|---|
+| `tx_interval` 既定 | 1000 ms | 200 ms | 50 ms (上書き) | `bfdorch.cpp:15` / `managers_bfd.py:14` / `staticroutebfd/main.py:101` |
+| `rx_interval` 既定 | 1000 ms | 200 ms | 50 ms | 同上 |
+| `multiplier` 既定 | 10 | 3 | 設定追従 | `bfdorch.cpp:17` / `managers_bfd.py:13` |
+| SAI 単位変換 | ms × 1000 → μs | FRR vtysh は ms をそのまま | — | `bfdorch.cpp:451-458` / `managers_bfd.py:146-148` |
+| multihop | `SAI_BFD_SESSION_ATTR_MULTIHOP=true` + `minimum-ttl 1` | FRR `multihop` キーワード | — | `bfdorch.cpp:472-475` / `managers_bfd.py:125-127, 151-152` |
+| VRF | `interface=="default"` のみ。`vrf != "default"` かつ `interface != "default"` は永続スキップ | FRR 側で peer 設定の VRF 指定可 | — | `bfdorch.cpp:498-503` |
+| state 通知 | SAI notification handler | FRR bfdd → bgpcfgd polling | — | `bfdorch.cpp:register_bfd_state_change_notification` |
+
+### ASIC ベンダー別の傾向 (経験則)
+
+`bfdorch.cpp` 自体はベンダー文字列を見ないが、SAI 実装による `BFD_SESSION_OFFLOAD_TYPE` capability の典型的な実装状況は以下:
+
+| ASIC / プラットフォーム | hardware BFD offload | 備考 |
+|---|---|---|
+| broadcom (XGS / 非 DNX) | あり (機種・SDK バージョン依存) | Trident / Tomahawk 系の一部で実装 |
+| broadcom-dnx (Jericho / Qumran) | あり | DNX SDK は BFD endpoint をサポート |
+| mellanox (Spectrum 系) | あり | Spectrum / Spectrum-2/3/4 で SAI BFD offload 実装 |
+| barefoot (Tofino) | 通常なし | P4 で実装可能だが標準 SAI 未含。**software BFD 前提** |
+| cisco-8000 (Silicon One) | あり | SAI BFD offload あり |
+| marvell-prestera / marvell-teralynx | 機種依存 | SAI が NONE を返すと software fallback |
+| nephos / xsight / clounix | 機種依存 | SAI 実装次第 |
+| vs (Virtual Switch) | **なし** | libsai が capability 未実装 → software BFD 強制 |
+
+!!! note "最終判定は SAI capability"
+    上表は一般的傾向で、最終の hw/sw 判定は起動時の `sai_query_attribute_capability` 戻り値が決める。
+    実機では `swssloglevel -l DEBUG -c bfdorch` で `"BFD offload type: %d"` ログ、
+    または `STATE_DB` の `SOFTWARE_BFD_SESSION_TABLE` 有無で確実に確認できる (`bfdorch.cpp:783`)。
+
+!!! warning "state 通知ハンドラ未対応プラットフォーム"
+    `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` の `set_implemented=false` を返す SAI 実装では
+    hardware BFD は動くものの UP/DOWN 通知が orchagent に届かず、
+    `BFD_SESSION_TABLE.state` が永久に更新されない (`bfdorch.cpp:286-290`)。
+    BGP 等の上位プロトコルが BFD 状態を参照する場合は事前に SAI capability 検証が必要。
+
+!!! warning "経路切替は起動時のみ確定"
+    `bfd_offload` は `BgpGlobalStateOrch` コンストラクタで **1 回だけ** 決定される (`bfdorch.cpp:741`) ため、
+    実行中に SAI capability が変わっても hw/sw 経路は切り替わらない。
+    経路を変更したい場合は orchagent (BfdOrch を含むコンテナ swss) の再起動が必要。
+
+<!-- /platform -->
