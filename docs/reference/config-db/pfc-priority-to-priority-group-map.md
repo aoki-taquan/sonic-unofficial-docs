@@ -91,6 +91,29 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来デフォルト
+
+> **注**: YANG モデル (`sonic-pfc-priority-priority-group-map.yang` revision 2021-04-15) には `default` 文が一切ない。以下はすべてコード由来デフォルトである。
+
+| フィールド | YANG default | コード由来デフォルト | 投入条件 | ソース |
+|-----------|-------------|---------------------|---------|--------|
+| `name` | なし | `"AZURE"` | `asic_type` が `mellanox` または `barefoot` のとき自動生成 | `qos_config.j2:163,405` |
+| `name` | なし | `"AZURE_DUALTOR"` | 同上かつ dualtor 構成で extra queues が存在するとき追加 | `qos_config.j2:398` |
+| `pfc_priority` | なし | `"3"`, `"4"` (AZURE map) | lossless traffic 優先度 2 本のみ | `qos_config.j2:406-407` |
+| `pfc_priority` | なし | `"2"`, `"3"`, `"4"`, `"6"` (AZURE_DUALTOR map) | dualtor 構成時のみ | `qos_config.j2:399-402` |
+| `pg` | なし | `pfc_priority` と同値 (identity mapping) | 上記いずれの場合も `pg = pfc_priority` | `qos_config.j2:399-407` |
+
+### 投入トリガー
+
+`config qos reload` 実行時に `sonic-cfggen` が `qos_config.j2` を展開し CONFIG_DB へ書き込む。`asic_type` が `mellanox` / `barefoot` 以外（例: broadcom, vs）では **PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルは生成されない**。ただし `QosOrch` は ASIC 種別に関わらずテーブルを購読するため、CONFIG_DB に entry がなければ SAI 呼び出しも発生しない。
+
+### priority 0-7 のうち 3 と 4 だけの理由
+
+RoCEv2 lossless クラスは TC 3 と TC 4 の 2 本が標準的な AZURE 構成。他の priority (0,1,2,5,6,7) は best-effort として PFC 対象外とするため PG mapping なし。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
