@@ -635,6 +635,62 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
 
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp,
+     sonic-swss/orchagent/copporch.cpp -->
+
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN` を変更すると、orchagent (`FlexCounterOrch` / `CoppOrch` / `FlowCounterRouteOrch`) が CONFIG_DB 自身ではなく **COUNTERS_DB / STATE_DB / FLEX_COUNTER_DB** に副次的に書込む。これらは `show flowcnt-*` / `counterpoll show` / SONiC counters API の情報源となる。
+
+### COUNTERS_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `COUNTERS_TRAP_NAME_MAP` (単一 hash) | field=trap 名 (例 `bgp`, `lldp`, `arp_request`), value=SAI generic counter OID | `FLOW_CNT_TRAP=enable` 受信時 / 個別 trap install 時 | CoppOrch (`bindTrapCounter()`) | `copporch.cpp:196, 1452-1456`; cleanup は `unbindTrapCounter()` で `HDEL` (`copporch.cpp:1494-1496`) |
+| `COUNTERS_ROUTE_NAME_MAP` (単一 hash) | field=`<vrf>\|<prefix>` または `<prefix>` (default VRF), value=SAI generic counter OID | route bind 成功時 (`FLEX_COUNTER_UPD_TIMER` 1 秒周期) | FlowCounterRouteOrch (`mPrefixToCounterTable->set("", ...)`) | `flowcounterrouteorch.cpp:33, 150-153`; cleanup は `removeRouteFlowCounterFromDB()` (`:921-922`) |
+| `COUNTERS_ROUTE_TO_PATTERN_MAP` (単一 hash) | field=個別ルート `<vrf>\|<prefix>`, value=マッチした `FLOW_COUNTER_ROUTE_PATTERN` key | route bind 成功時 | FlowCounterRouteOrch (`mPrefixToPatternTable->set`) | `flowcounterrouteorch.cpp:34, 155-158`; cleanup は `HDEL` (`:921`) |
+| `COUNTERS:<oid>` | `SAI_COUNTER_STAT_PACKETS` / `SAI_COUNTER_STAT_BYTES` | syncd の 10 秒ポーリング周期 (`POLL_INTERVAL` 既定) | syncd FlexCounter スレッド (間接副作用) | orchagent は書込まず FLEX_COUNTER_DB 経由 |
+
+### STATE_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FLOW_COUNTER_CAPABILITY_TABLE\|route` | `support` = `"true"` / `"false"` | FlowCounterRouteOrch コンストラクタ実行時に **1 回のみ** (SAI capability query 結果) | FlowCounterRouteOrch (`initRouteFlowCounterCapability()`) | `flowcounterrouteorch.cpp:166-179`, `flow_counter_handler.cpp:51-62` |
+
+`FLOW_CNT_TRAP` 側には STATE_DB capability エントリは書かれない (Phase H 参照)。`show flowcnt-route capabilities` はこのテーブルを読む。
+
+### FLEX_COUNTER_DB
+
+| テーブル / key | フィールド | 書込タイミング | 書込元 | evidence |
+|---|---|---|---|---|
+| `FLEX_COUNTER_GROUP_TABLE\|HOSTIF_TRAP_FLOW_COUNTER` | `FLEX_COUNTER_STATUS`, `POLL_INTERVAL`, `STATS_MODE` (=`STATS_MODE_READ`) | `FLEX_COUNTER_TABLE\|FLOW_CNT_TRAP` の `FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 変更時 | FlexCounterOrch → `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` (`ProducerTable` 経由) | `flexcounterorch.cpp:202-214, 380-392`, `saihelper.cpp:868-885, 918-962` |
+| `FLEX_COUNTER_GROUP_TABLE\|ROUTE_FLOW_COUNTER` | 同上 | `FLEX_COUNTER_TABLE\|FLOW_CNT_ROUTE` の変更時 (capability=true ASIC のみ) | FlexCounterOrch | 同上 |
+| `FLEX_COUNTER_TABLE:<counter_oid>` (per OID) | `COUNTER_IDS` = `SAI_COUNTER_STAT_PACKETS,SAI_COUNTER_STAT_BYTES`, `COUNTER_TYPE` | trap / route 個別の counter 紐付け時 (`setCounterIdList`) | FlexCounterManager (`flex_counter_manager.cpp`) | `flex_counter_manager.cpp:200-260`, `flow_counter_handler.cpp:10-13` |
+
+### 副次書込サマリ
+
+| 副次 DB | テーブル | トリガ | 書込主体 |
+|---|---|---|---|
+| COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | trap bind 時 | CoppOrch |
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | route bind 時 (1 秒タイマー) | FlowCounterRouteOrch |
+| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | route bind 時 | FlowCounterRouteOrch |
+| COUNTERS_DB | `COUNTERS:<oid>` | 10 秒周期 ポーリング | syncd (間接) |
+| STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | orch 起動時 1 回 | FlowCounterRouteOrch |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|<group>` | enable/disable / interval 変更時 | FlexCounterOrch |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE:<oid>` | counter 紐付け時 | FlexCounterManager |
+
+!!! warning "残置・リーク経路"
+    - `COUNTERS_TRAP_NAME_MAP` / `COUNTERS_ROUTE_NAME_MAP` は disable 時に `HDEL` されるが、SAI `remove_counter` 失敗時は **counter OID リーク** (`flow_counter_handler.cpp:32-38`)。
+    - `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE\|route` は **orchagent 再起動でのみ再評価**。SAI driver 差し替え後は再起動が必要。
+    - `COUNTERS_ROUTE_TO_PATTERN_MAP` のクリアはパターン削除経路でのみ走るため、route 単独の削除では古いエントリが残る可能性がある（次回 pattern 評価でクリーンアップ）。
+
+詳細根拠は `meta/_intermediate/cdb-flow/app-counter-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
