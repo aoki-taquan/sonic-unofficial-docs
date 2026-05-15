@@ -150,6 +150,59 @@ YANG optional / event profile 未指定時の実行時フォールバック。
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+ALARM テーブルは **CONFIG_DB ではなく EVENT_DB (Redis DB index 6)** に存在し、CONFIG_DB の派生テーブルとは異なる通信モデルで運用される。書き込みは ZMQ ベースのイベントフレームワーク経由、読み取りは HGETALL polling という非対称な構造を持つ。
+
+### 書き込み経路 — ZMQ XPUB/XSUB (Redis keyspace 通知非使用)
+
+```
+App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqproxy (eventd)
+                                                                  │
+                                                                  ▼
+                                                       eventd Alarm Consumer
+                                                                  │
+                                       ┌──────────────────────────┼──────────────────────────┐
+                                       ▼                          ▼                          ▼
+                              HSET EVENT_DB              HINCRBY EVENT_DB        DEL EVENT_DB (CLEAR時)
+                                ALARM|<id>                ALARM_STATS|state           ALARM|<id>
+```
+
+- `events_publish()` API は ZMQ PUB socket 経由で `zmqproxy` (eventd コンテナ内) に転送され、XPUB/XSUB プロキシが eventd メインループへ配信する (`sonic-eventd/src/eventd.cpp:240,419` 周辺)。
+- Alarm Consumer は受信した `action` フィールドで分岐し、Redis に **HSET / DEL を直接** 行う。Redis の `PUBLISH` チャネルは使わない。
+- 同一 type-id + resource + text の連続 RAISE は eventd 内キャッシュで重複抑止される (flooding 防止)。
+
+### 読み取り経路 — HGETALL polling (購読者なし)
+
+| 読者 | 取得方法 |
+|------|---------|
+| `show alarm` CLI | `sonic-db-cli EVENT_DB keys 'ALARM\|*'` + `hgetall` (1 回のスナップショット) |
+| OpenConfig gNMI/REST | translib が EVENT_DB を HGETALL してマッピング (HLD Section 3.1.6) |
+| pmon System LED | `ALARM_STATS\|state` を HGETALL し severity 別カウンタで LED 色を決定 |
+
+- ALARM テーブルに対する `SubscriberStateTable` / `ConsumerStateTable` / `NotificationProducer` の購読者は SONiC ソース内に **存在しない**。
+- これは ALARM テーブルが「ある瞬間のアクティブアラーム集合」というスナップショット型設計であり、差分通知より全件取得が自然な利用パターンであるため。
+- EVENT_DB は `notify-keyspace-events` がデフォルト無効で、Redis keyspace 通知に依存する購読者は想定されていない。
+
+### healthd (system-health) との関係
+
+`src/system-health/health_checker/sysmonitor.py:41,97` の healthd は ALARM テーブルを購読しない (購読対象は `STATE_DB:FEATURE` と systemd D-Bus のみ)。Event/Alarm Framework と healthd は独立したサブシステムである。
+
+### dbId / TTL / 永続性
+
+| 項目 | 値 |
+|------|---|
+| Redis DB index | 6 (EVENT_DB) |
+| 永続性 | 無 (cold/warm/fast reboot で全件消失) |
+| TTL | 無 (CLEAR_ALARM 受信時に eventd が明示 DEL) |
+| Redis 通知 | keyspace 通知は非使用 (購読者が居ないため) |
+| エントリ ID | `<32bit time_t><5桁連番>` を eventd Alarm Consumer が採番 |
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
