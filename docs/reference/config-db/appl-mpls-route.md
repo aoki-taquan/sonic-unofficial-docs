@@ -291,3 +291,96 @@ CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。
 
 詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-failure.md` を参照。
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mpls-route-constants.md`。
+
+### APPL_DB テーブル名マクロ（`schema.h`）
+
+| マクロ | 値 | 行 |
+|---|---|---|
+| `APP_LABEL_ROUTE_TABLE_NAME` | `"LABEL_ROUTE_TABLE"` | `sonic-swss-common/common/schema.h:48` |
+
+`routeorch::doTask` で `getTableName() == APP_LABEL_ROUTE_TABLE_NAME` のとき `doLabelTask` に分岐し、その後 `return;`（IPv4/IPv6 経路と排他）。
+
+### MPLS label 値範囲（`label.h`）
+
+| マクロ | 値 | 行 | 用途 |
+|---|---|---|---|
+| `LABEL_VALUE_MIN` | `0` | `label.h:15` | `to_uint<uint32_t>` 変換時の下限 |
+| `LABEL_VALUE_MAX` | `0xFFFFF` (1048575) | `label.h:16` | 同上の上限。20-bit MPLS label space (RFC 3032) |
+| `LABEL_DELIMITER` | `'/'` | `label.h:14` | label stack 区切り（`<label0>/<label1>/.../<labelN>`） |
+
+`LabelStack(const std::string&)` コンストラクタ（`label.h:47-49`）で `tokenize(str.substr(4), LABEL_DELIMITER)` 後、各要素を `to_uint<uint32_t>(i, LABEL_VALUE_MIN, LABEL_VALUE_MAX)` で変換。範囲外はパース時に例外。
+
+### MPLS outseg type 文字列リテラル（`label.h`）
+
+`LabelStack(const std::string&)` コンストラクタ（L23-50）と `to_string()`（L84-108）でハードコード:
+
+| 文字列 | SAI 値 | 行 |
+|---|---|---|
+| `"swap"` | `SAI_OUTSEG_TYPE_SWAP` | `label.h:33-35, 91-93` |
+| `"push"` | `SAI_OUTSEG_TYPE_PUSH` | `label.h:37-39, 95-97` |
+
+デフォルトコンストラクタは `SAI_OUTSEG_TYPE_SWAP` 初期化（L24）。`str.find("swap") == 0` / `str.find("push") == 0` で prefix 判定し、続く 4 文字以降を label stack としてパース。
+
+### key 区切り・プレフィクスマクロ（`nexthopkey.h`）
+
+| マクロ | 値 | 行 | 用途 |
+|---|---|---|---|
+| `LABELSTACK_DELIMITER` | `'+'` | `nexthopkey.h:17` | `<labelstack>+<ip>@<intf>` の MPLS / 非 MPLS 区切り（`mplsrouteorch.cpp:246`, `nexthopkey.h:186, 216`） |
+| `NH_DELIMITER` | `'@'` | `nexthopkey.h:18` | nexthop IP と intf alias の区切り（`mplsrouteorch.cpp:248`） |
+| `NHG_DELIMITER` | `','` | `nexthopkey.h:19` | ECMP NH カンマ区切り |
+| `VRF_PREFIX` | `"Vrf"` | `nexthopkey.h:20` | non-default VRF key 判定 |
+
+### APPL_DB フィールド名・値リテラル（`mplsrouteorch.cpp`）
+
+`doLabelTask()` の fv ループ（L143-160）でハードコード文字列をフィールド名として比較:
+
+| 文字列 | 行 | 用途 |
+|---|---|---|
+| `"mpls_nh"` | 145 | outgoing MPLS ラベル操作リスト |
+| `"mpls_pop"` | 148 | pop 段数 |
+| `"blackhole"` | 151 | `fvValue(i) == "true"` でブラックホール扱い |
+| `"weight"` | 154 | ECMP ネクストホップ重み |
+| `"nexthop_group"` | 157 | NhgOrch NHG インデックス |
+| `"true"` | 152 | `blackhole` の値判定（boolean string） |
+| `"na"` | `mplsrouteorch.cpp:244`, `nhgorch.cpp:230` | MPLS NH リスト要素が `"na"` のとき IP 転送（ラベルなし）扱いで `nhg_str` 構築から除外 |
+
+### SAI INSEG ENTRY 属性（`mplsrouteorch.cpp`）
+
+`addLabelRoutePost()` で INSEG entry 作成時に使用される SAI 属性 ID:
+
+| SAI 属性 | 行 | 値の出処 |
+|---|---|---|
+| `SAI_INSEG_ENTRY_ATTR_PACKET_ACTION` | L612, L640 | `SAI_PACKET_ACTION_FORWARD`（デフォルト、L625 コメント）/ `SAI_PACKET_ACTION_DROP`（blackhole） |
+| `SAI_INSEG_ENTRY_ATTR_NEXT_HOP_ID` | L617, L656 | NHG / 単一 NH SAI object id |
+| `SAI_INSEG_ENTRY_ATTR_NUM_OF_POP` | L621 | APPL_DB `mpls_pop` field を直接 map（デフォルト 0 = pop なし） |
+
+`SAI_API_MPLS` は SAI status ハンドラ呼び出し（`handleSaiSetStatus` / `handleSaiRemoveStatus`）の引数として L781, L794, L835, L910 で参照。
+
+### CRM resource ↔ SAI / 文字列マップ（`crmorch.cpp`）
+
+MPLS 経路は `CRM_MPLS_INSEG` と `CRM_MPLS_NEXTHOP` の 2 リソースに連動。`addLabelRoutePost` 成功時 `incCrmResUsedCounter(CRM_MPLS_INSEG)`（`mplsrouteorch.cpp:754`）、`removeLabelRoutePost` 成功時 `dec...`（L917）。
+
+| マップ | 行 | 内容 |
+|---|---|---|
+| `crmResTypeNameMap` | L46-47 | `CRM_MPLS_INSEG→"MPLS_INSEG"`, `CRM_MPLS_NEXTHOP→"MPLS_NEXTHOP"` |
+| `crmResSaiObjAttrMap` | L113-114 | `CRM_MPLS_INSEG→SAI_OBJECT_TYPE_INSEG_ENTRY`, `CRM_MPLS_NEXTHOP→SAI_OBJECT_TYPE_NEXT_HOP` |
+
+注: MPLS 系は IPv4/IPv6 route と異なり `crmResSaiAvailAttrMap`（`SAI_SWITCH_ATTR_AVAILABLE_*`）に該当エントリ**なし**。`available` は `sai_object_type_get_availability(SAI_OBJECT_TYPE_INSEG_ENTRY / NEXT_HOP)` で取得（`crmorch.cpp:904-908`）するため、精度はベンダ SAI 実装依存。
+
+### CRM threshold / counter 文字列キー
+
+CONFIG_DB `CRM` / COUNTERS_DB `CRM:STATS` のフィールド名はすべてハードコード文字列（`crmorch.cpp`）:
+
+| 文字列 | 行 | 用途 |
+|---|---|---|
+| `"mpls_inseg_threshold_type"` / `"mpls_nexthop_threshold_type"` | 179-180 | CONFIG_DB threshold 種別 |
+| `"mpls_inseg_low_threshold"` / `"mpls_nexthop_low_threshold"` | 225-226 | CONFIG_DB low 閾値 |
+| `"mpls_inseg_high_threshold"` / `"mpls_nexthop_high_threshold"` | 271-272 | CONFIG_DB high 閾値 |
+| `"crm_stats_mpls_inseg_available"` / `"crm_stats_mpls_nexthop_available"` | 324-325 | COUNTERS_DB available 値（SAI availability クエリ結果） |
+| `"crm_stats_mpls_inseg_used"` / `"crm_stats_mpls_nexthop_used"` | 370-371 | COUNTERS_DB used 値（`mplsrouteorch.cpp:754/917` で inc/dec） |
+<!-- /constants -->
