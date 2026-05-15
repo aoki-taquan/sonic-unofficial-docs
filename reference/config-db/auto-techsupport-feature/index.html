@@ -24434,6 +24434,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredump_gen_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガ経路 (coredump_gen_handler)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な特性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35100,6 +35150,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredump_gen_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トリガ経路 (coredump_gen_handler)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な特性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35431,6 +35531,85 @@
 </table>
 <p>書き込み時 default (<code>600</code>) と実行時 fallback (<code>0.0</code>) が<strong>乖離</strong>している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。</p>
 <!-- /defaults -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>AUTO_TECHSUPPORT_FEATURE</code> テーブルには<strong>常駐 subscriber が存在しない</strong>。<code>ConfigDBConnector.subscribe()</code> / <code>ConfigDBConnector.listen()</code> / <code>SubscriberStateTable</code> / <code>NotificationConsumer</code> のいずれの経路でも本テーブルを購読しているプロセスは確認できない。代わりに、外部イベントで起動される一発実行スクリプトが必要なフィールドを <strong>同期 <code>HGET</code> / <code>HGETALL</code></strong> で取りに行く方式が採用されている。</p>
+<table>
+<thead>
+<tr>
+<th>消費者</th>
+<th>起動方式</th>
+<th>DB アクセス API</th>
+<th>Redis primitive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>coredump_gen_handler.py</code></td>
+<td>kernel <code>core_pattern</code> → <code>coredump-compress</code> (パイプ受け) → <code>setsid</code> でバックグラウンド起動</td>
+<td><code>SonicV2Connector.get()</code></td>
+<td><code>HGET</code> (state / rate_limit_interval を都度取得)</td>
+</tr>
+<tr>
+<td><code>techsupport_cleanup.py</code></td>
+<td><code>generate_dump</code> の cleanup フック</td>
+<td><code>SonicV2Connector.get()</code></td>
+<td><code>HGET</code> (GLOBAL のみ参照、FEATURE は読まない)</td>
+</tr>
+<tr>
+<td><code>memory_threshold_check.py</code></td>
+<td><code>coredump_gen_handler</code> から起動 / <code>monit</code> 周期</td>
+<td><code>ConfigDBConnector.get_table()</code></td>
+<td><code>HGETALL</code> (全 feature を一括スナップショット)</td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td>常駐 daemon</td>
+<td>—</td>
+<td><strong>購読しない</strong> (<code>scripts/hostcfgd:2468-2528</code> に AUTO_TECHSUPPORT 系の <code>subscribe()</code> 呼び出しなし)</td>
+</tr>
+<tr>
+<td><code>featured</code></td>
+<td>常駐 daemon</td>
+<td>—</td>
+<td><strong>購読しない</strong> (FEATURE テーブルは購読するが AUTO_TECHSUPPORT_FEATURE は触らない)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="coredump_gen_handler">トリガ経路 (coredump_gen_handler)<a class="headerlink" href="#coredump_gen_handler" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>プロセスクラッシュ → kernel core_dump
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>/usr/local/bin/coredump-compress  (bash)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓ /bin/gzip -1 - &gt; /var/core/&lt;prefix&gt;core.gz
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  ↓ setsid python3 coredump_gen_handler.py &lt;core.gz&gt; &lt;container_name&gt; &amp;
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>coredump_gen_handler.py
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  ├─ db = SonicV2Connector(use_unix_socket_path=True); db.connect(CFG_DB/STATE_DB)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ├─ HGET &quot;AUTO_TECHSUPPORT|GLOBAL&quot;            state                  (= &quot;enabled&quot; 確認)
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  ├─ HGET &quot;AUTO_TECHSUPPORT_FEATURE|&lt;feat&gt;&quot;    state                  (= &quot;enabled&quot; 確認)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  └─ invoke_ts_command_rate_limited()
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>       ├─ HGET &quot;AUTO_TECHSUPPORT|GLOBAL&quot;            rate_limit_interval
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>       ├─ HGET &quot;AUTO_TECHSUPPORT_FEATURE|&lt;feat&gt;&quot;    rate_limit_interval
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>       ├─ verify_rate_limit_intervals (STATE_DB の前回 dump timestamp と比較)
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>       └─ /usr/local/bin/generate_dump  → 完了後 techsupport_cleanup.py
+</span></code></pre></div>
+<h3 id="_20">重要な特性<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>設定変更は即時反映されない</strong>。CLI で <code>state</code> や <code>rate_limit_interval</code> を変更しても、次回 core dump 発生 (= 次回 <code>coredump_gen_handler.py</code> 起動) まで旧値の影響範囲は残らないものの、reload は次イベント時の HGET で行われる (eventual reload)。</li>
+<li><strong>常駐 Python プロセスなし</strong>。core dump イベント時のみ <code>setsid</code> でバックグラウンド一発起動 → 終了するため CPU/メモリの常時消費はゼロ。</li>
+<li>keyspace 通知 (<code>__keyspace@&lt;dbId&gt;__:AUTO_TECHSUPPORT_FEATURE|*</code>) は Redis 側では発行されるが、購読クライアントが存在しないため捨てられる。</li>
+<li><code>techsupport_cleanup.py</code> は AUTO_TECHSUPPORT_FEATURE を参照せず、GLOBAL の <code>state</code> と <code>max_techsupport_limit</code> のみで cleanup 判定を行う。</li>
+<li>rate-limit 状態は CONFIG_DB ではなく <code>STATE_DB</code> の <code>AUTO_TECHSUPPORT_DUMP_INFO_TABLE</code> (前回 dump の timestamp) に保管される。</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">本文 <code>&lt;!-- runtime-trace --&gt;</code> ブロックとの差異</p>
+<p>本文の段階 1 に「<code>auto_techsupport_handler</code> が <code>hostcfgd</code> 内部のサブハンドラとして <code>AUTO_TECHSUPPORT_FEATURE</code> を購読する」旨の記述があるが、<code>sonic-host-services/scripts/hostcfgd:2468-2528</code> を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への <code>subscribe()</code> 呼び出しは確認できない。実装は hostcfgd と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプライン (本ページの Phase G 分析)。次回 verifier 巡回で本文修正候補。</p>
+</div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-utilities/scripts/coredump_gen_handler.py:1-82</code>; <code>sonic-utilities/scripts/techsupport_cleanup.py:1-59</code>; <code>sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338</code>; <code>sonic-utilities/scripts/coredump-compress:1-35</code>; <code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45</code>; <code>sonic-host-services/scripts/hostcfgd:2468-2528</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 
