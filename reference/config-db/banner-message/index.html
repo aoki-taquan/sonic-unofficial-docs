@@ -24412,6 +24412,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠（コード単位）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35000,6 +35039,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        根拠（コード単位）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35287,6 +35365,59 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>結論: プラットフォーム差なし</strong>（multi-asic / chassis / ベンダー固有 banner すべて該当なし）。</p>
+<p><code>BANNER_MESSAGE</code> はホスト名前空間限定のシングルトンテーブルで、購読者である <code>hostcfgd</code> <code>BannerCfg</code> と <code>banner-config.sh</code> はいずれも Linux ホスト上のテキストファイル (<code>/etc/issue</code> / <code>/etc/issue.net</code> / <code>/etc/motd</code> / <code>/etc/logout_message</code>) を書き換えるだけで、SAI / ASIC / chassis ハードウェアには一切タッチしない。</p>
+<h3 id="_19">根拠（コード単位）<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>差の有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>multi-asic (namespace 分岐)</td>
+<td>なし</td>
+<td><code>hostcfgd</code> <code>BannerCfg</code> クラス (<code>sonic-host-services/scripts/hostcfgd:2044-2114</code>) 全体に <code>namespace</code> / <code>asic_id</code> / <code>multi_asic</code> の参照・分岐なし。グローバル CONFIG_DB のみ参照</td>
+</tr>
+<tr>
+<td>chassis (VoQ / packet-chassis)</td>
+<td>なし</td>
+<td><code>banner-config.sh</code> は <code>sonic-db-cli CONFIG_DB HGET 'BANNER_MESSAGE|global' ...</code> を 4 回呼ぶだけ。<code>linecard</code> / <code>supervisor</code> / <code>database-chassis</code> 分岐なし (<code>sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:1-18</code>)</td>
+</tr>
+<tr>
+<td>ASIC ベンダー固有 (Broadcom/Mellanox/Marvell/…)</td>
+<td>なし</td>
+<td>SAI 非経由。Linux ファイル書き換えのみ。<code>platform/*/</code> 配下に <code>banner</code> 関連オーバーライドファイルなし</td>
+</tr>
+<tr>
+<td>ビルド時 platform 条件</td>
+<td>なし</td>
+<td><code>sonic_debian_extension.j2:652-654</code> で全プラットフォーム共通 (platform 別 <code>if</code> の外) に <code>banner-config.service</code> / <code>banner-config.sh</code> をコピー</td>
+</tr>
+<tr>
+<td>systemd template (<code>@.service</code>)</td>
+<td>なし</td>
+<td><code>banner-config.service</code> は単一 unit。<code>[Install] WantedBy=sonic.target</code> 固定 (<code>sonic-buildimage/files/image_config/bannerconfig/banner-config.service:1-14</code>)</td>
+</tr>
+<tr>
+<td>HLD 上の platform 言及</td>
+<td>なし</td>
+<td><code>SONiC/doc/banner/banner_hld.md</code> 全文に <code>asic</code> / <code>chassis</code> / <code>namespace</code> / <code>vendor</code> の言及なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">補足<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li>本判定の詳細は <code>meta/_intermediate/cdb-flow/banner-message-platform.md</code> を参照。</li>
+<li>multi-asic chassis (例: VoQ chassis supervisor + linecard 構成) においても <code>banner-config.service</code> はホスト側に 1 インスタンスのみ存在し、すべての SSH / console セッションで同じバナーが表示される。</li>
+</ul>
+<!-- /platform -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->
 

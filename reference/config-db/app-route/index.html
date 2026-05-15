@@ -23890,10 +23890,93 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Phase C)
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP グループ数: Mellanox 限定の補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-voq-chassis-128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP メンバ数: VOQ chassis で 128 に強制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6-evpn-overlay-asic-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRv6 / EVPN overlay ネクストホップ: ASIC SAI capability に依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM 集計: SAI 任意属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis での分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-vpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS / VPP プラットフォーム
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
       
     </span>
   </a>
@@ -34548,10 +34631,93 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-c" class="md-nav__link">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Phase C)
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-mellanox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP グループ数: Mellanox 限定の補正
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecmp-voq-chassis-128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECMP メンバ数: VOQ chassis で 128 に強制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#srv6-evpn-overlay-asic-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SRv6 / EVPN overlay ネクストホップ: ASIC SAI capability に依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM 集計: SAI 任意属性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis での分離
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-vpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS / VPP プラットフォーム
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
       
     </span>
   </a>
@@ -34776,86 +34942,91 @@ fpmsyncd の <code>getNextHopWt()</code> が weight を取得し、非空のと�
 <li>DEL 操作の前に暗黙的な DEL が走る（warm restart 非使用時）。これにより古いフィールドが Redis から消去される</li>
 <li><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の同時指定はエラー</li>
 </ul>
-<!-- cross-refs -->
-<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
-<p><code>ROUTE_TABLE</code> (APPL_DB) は YANG 未定義テーブル（APPL_DB は YANG 管理対象外）のため leafref は存在しない。
-以下はすべて <code>routeorch::doRouteTask()</code> から呼び出される実装レベルの暗黙参照。</p>
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>ROUTE_TABLE</code> の書込・購読フロー自体はプラットフォーム共通だが、ECMP 容量・overlay nexthop サポート・multi-asic 分離の 3 軸で差が出る。</p>
+<h3 id="ecmp-mellanox">ECMP グループ数: Mellanox 限定の補正<a class="headerlink" href="#ecmp-mellanox" title="Permanent link">&para;</a></h3>
+<p><code>routeorch.cpp</code> L73-L88 で <code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> を取得後、<code>getenv("platform")</code> に <code>MLNX_PLATFORM_SUBSTRING == "mellanox"</code> (<code>orch.h</code> L42) が含まれる場合のみ <code>m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE</code>（32）で補正する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// orchagent/routeorch.cpp:84-87</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">platform</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">strstr</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span><span class="w"> </span><span class="n">MLNX_PLATFORM_SUBSTRING</span><span class="p">))</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">m_maxNextHopGroupCount</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">DEFAULT_MAX_ECMP_GROUP_SIZE</span><span class="p">;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>DEFAULT_NUMBER_OF_ECMP_GROUPS = 128</code>（L37）、<code>DEFAULT_MAX_ECMP_GROUP_SIZE = 32</code>（L38）。Broadcom / Marvell / Cisco silicon-one / xsight 等は SAI 戻り値をそのまま採用する。算出値は <code>m_switchOrch-&gt;set_switch_capability()</code> 経由で STATE_DB <code>SWITCH_CAPABILITY</code> に公開され、<code>nexthop_group</code> の上限管理に使われる。</p>
+<h3 id="ecmp-voq-chassis-128">ECMP メンバ数: VOQ chassis で 128 に強制<a class="headerlink" href="#ecmp-voq-chassis-128" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "voq"</code>（<code>DEVICE_METADATA|localhost:switch_type</code>）かつ SAI が返す <code>SAI_SWITCH_ATTR_MAX_ECMP_MEMBER_COUNT &gt;= 128</code> のとき、<code>SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT</code> を 128 に書き戻す:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// orchagent/routeorch.cpp:109-122</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gMySwitchType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;voq&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">maxEcmpGroupSize</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">128</span><span class="p">)</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">maxEcmpGroupSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">s32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">maxEcmpGroupSize</span><span class="p">;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_switch_api</span><span class="o">-&gt;</span><span class="n">set_switch_attribute</span><span class="p">(</span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>switch_type=switch</code>（T0/T1 fixed）や <code>chassis-packet</code> line card では本書き換えは発生しない。</p>
+<h3 id="srv6-evpn-overlay-asic-sai-capability">SRv6 / EVPN overlay ネクストホップ: ASIC SAI capability に依存<a class="headerlink" href="#srv6-evpn-overlay-asic-sai-capability" title="Permanent link">&para;</a></h3>
+<p><code>routeorch.cpp</code> L736-L795 で APPL_DB の <code>vni_label</code> / <code>segment</code> / <code>seg_src</code> から <code>overlay_nh</code> / <code>srv6_nh</code> を立てるが、SAI 側で <code>SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP</code> / <code>SAI_NEXT_HOP_TYPE_SRV6_SIDLIST</code> / <code>SAI_OBJECT_TYPE_MY_SID_ENTRY</code> が未実装の ASIC は create_next_hop / create_my_sid_entry が <code>SAI_STATUS_NOT_SUPPORTED</code> を返し routeorch がエラーログを残す（L2130 / L2136）。community master では Broadcom DNX / Mellanox 一部 SKU で SRv6 が機能、VS / VPP はスタブ実装。</p>
+<h3 id="crm-sai">CRM 集計: SAI 任意属性<a class="headerlink" href="#crm-sai" title="Permanent link">&para;</a></h3>
+<p><code>crmorch.cpp</code> L76-L77 で <code>CRM_IPV4_ROUTE</code> / <code>CRM_IPV6_ROUTE</code> を <code>SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY</code> / <code>_IPV6_ROUTE_ENTRY</code> に紐付ける。SAI が当該属性を実装していない ASIC（古い SDK / VS / VPP の一部）では <code>crm_stats_ipv4_route_available</code> / <code>ipv6_route_available</code> が STATE_DB <code>CRM</code> に出ない。</p>
+<h3 id="multi-asic-voq-chassis">multi-asic / VOQ chassis での分離<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>routeorch</code> は <code>DBConnector</code> の namespace に従って <code>swss@asicN</code> Docker ごとに 1 インスタンス起動し、それぞれ独立した APPL_DB <code>ROUTE_TABLE</code> を購読する。fpmsyncd も <code>asicN</code> 単位で動作し、ASIC 間で <code>route_entry</code> / <code>next_hop_group</code> の名前空間は交わらない。chassis 全体の voq ルーティングは <code>CHASSIS_APP_DB</code>（redis index 12）+ <code>voqorch</code> 経由で同期されるため、<code>APPL_DB:ROUTE_TABLE</code> 自体に chassis-wide 同期機構はない。</p>
+<h3 id="vs-vpp">VS / VPP プラットフォーム<a class="headerlink" href="#vs-vpp" title="Permanent link">&para;</a></h3>
+<p><code>VS_PLATFORM_SUBSTRING="vs"</code> / <code>XS_PLATFORM_SUBSTRING="xsight"</code> (<code>orch.h</code> L46/L49) では SAI シム（libsaivs / libsaivpp）が ECMP / SRv6 / overlay の create を SUCCESS で返すが ASIC は無く実機転送はない。Mellanox 補正は走らず、SAI 既定値（多くは 128 〜 1024）が <code>m_maxNextHopGroupCount</code> になる。CRM の available 値もダミー。</p>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/app-route-platform.md</code> を参照。</p>
+<!-- /platform -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>APPL_DB:ROUTE_TABLE</code> の SET/DEL に伴い、主購読者 <code>routeorch</code> および同居 orch (<code>CrmOrch</code>, <code>FlowCounterRouteOrch</code>) が以下の副次 DB エントリを書き込む。SAI <code>route_entry</code> 自体は本ページのデータフロー図に示した主作用 (ASIC_DB) のため除外する。</p>
 <table>
 <thead>
 <tr>
-<th>参照先テーブル / Orch</th>
-<th>参照方向</th>
-<th>条件</th>
-<th>参照元 evidence</th>
+<th>副次 DB</th>
+<th>テーブル/キー</th>
+<th>書込内容</th>
+<th>根拠</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>VRF_TABLE</code>（VRFOrch）</td>
-<td>存在確認 + OID + refcount</td>
-<td>key が <code>Vrf*:&lt;prefix&gt;</code> 形式の非デフォルト VRF のとき。未登録なら <code>it++</code> で待機</td>
-<td><code>routeorch.cpp</code> L706–717 (<code>isVRFexists</code> / <code>getVRFid</code>), L2013, L2773 (refcount inc/dec)</td>
+<td>APPL_STATE_DB</td>
+<td><code>ROUTE_TABLE\|&lt;key&gt;</code></td>
+<td>SET 時 <code>protocol=&lt;value&gt;</code> を書き、DEL 時は空 fvs でキーを削除 (<code>ResponsePublisher::publish</code>)</td>
+<td><code>sonic-swss/orchagent/routeorch.cpp:3185-3201</code> <code>publishRouteState()</code>、<code>orch.h:382</code> <code>ResponsePublisher m_publisher{"APPL_STATE_DB"}</code></td>
 </tr>
 <tr>
-<td><code>NEIGH_TABLE</code>（NeighOrch）</td>
-<td>OID + refcount + 解決トリガ</td>
-<td><code>nexthop</code> 指定で IP next-hop（intf-only でない）のとき。未解決時は <code>resolveNeighbor()</code> で ARP/ND 要求 + <code>return false</code></td>
-<td><code>routeorch.cpp</code> L1499–1510 (<code>addNextHopGroup</code> 内), L2094–2119 (single NH), L2197–2219 (ECMP)</td>
+<td>STATE_DB</td>
+<td><code>ROUTE_TABLE\|&lt;default-ip&gt;</code></td>
+<td>デフォルトルート (<code>0.0.0.0/0</code>, <code>::/0</code>) の到達性状態 <code>state=ok</code> / <code>state=na</code> のみ更新 (個別プレフィクスは書かない)</td>
+<td><code>routeorch.cpp:126-127, 287-295</code> <code>m_stateDefaultRouteTb-&gt;set(ip, tuples)</code></td>
 </tr>
 <tr>
-<td><code>INTF_TABLE</code>（IntfsOrch）</td>
-<td>RIF OID + refcount + サブネット判定</td>
-<td><code>ifname</code> 指定 / intf-only NH のとき。RIF 未作成 (<code>SAI_NULL_OBJECT_ID</code>) なら <code>return false</code></td>
-<td><code>routeorch.cpp</code> L2083 (<code>getRouterIntfsId</code>), L1045 (<code>isPrefixSubnet</code>), L1362, L1384 (refcount)</td>
+<td>COUNTERS_DB</td>
+<td><code>CRM:STATS</code></td>
+<td><code>crm_stats_ipv4_route_used</code> / <code>crm_stats_ipv6_route_used</code> を inc/dec し周期的に DB へ反映</td>
+<td><code>routeorch.cpp:148,168,257,280,2481-2488,2532-2536,2884-2888</code> <code>gCrmOrch-&gt;incCrmResUsedCounter(CRM_IPV4_ROUTE\|CRM_IPV6_ROUTE)</code> → <code>crmorch.cpp:400-401,1067-1091</code></td>
 </tr>
 <tr>
-<td><code>PORT_TABLE</code>（PortsOrch）</td>
-<td>起動ブロック + Inband 判定</td>
-<td>常時。<code>allPortsReady()</code> が false の間は全 ROUTE_TABLE 処理ブロック。Inband port 宛 NH はスキップ</td>
-<td><code>routeorch.cpp</code> L609 (<code>allPortsReady</code>), L2074 (<code>isInbandPort</code>), L243 (<code>getCpuPort</code>)</td>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_ROUTE_NAME_MAP</code>, <code>COUNTERS_ROUTE_TO_PATTERN_MAP</code></td>
+<td>flow-counter 有効時にプレフィクス↔counter OID マップを <code>set</code>/<code>hdel</code></td>
+<td><code>flex_counter/flowcounterrouteorch.cpp:33-34,152-157,921-922</code>、<code>routeorch.cpp:282</code> <code>onRemoveMiscRouteEntry</code> 連動</td>
 </tr>
 <tr>
-<td>NhgOrch / CbfNhgOrch（NEXTHOP_GROUP / CBF_NEXT_HOP_GROUP_TABLE）</td>
-<td>存在確認 + 内部オブジェクト + refcount</td>
-<td><code>nexthop_group</code> 非空のとき。<code>nexthop</code>/<code>ifname</code> との同時指定はエラー erase</td>
-<td><code>routeorch.cpp</code> L810–814 (排他), L838–839, L2042–2057, L2411 (<code>hasNhg</code> OR チェック), L2546 (refcount)</td>
-</tr>
-<tr>
-<td>FgNhgOrch（FG_NHG / FG_NHG_PREFIX）</td>
-<td>適用判定 + 専用 NHG 構築</td>
-<td>プレフィクスが FG_NHG 設定にマッチするとき。通常 NHG 管理をバイパス</td>
-<td><code>routeorch.cpp</code> L2028–2037 (<code>isRouteFineGrained</code> / <code>setFgNhg</code>), L2403, L2475</td>
-</tr>
-<tr>
-<td>Srv6Orch（SRV6_SID_LIST_TABLE）</td>
-<td>存在確認 + SRv6 NH + Agg ID</td>
-<td><code>segment</code> または <code>seg_src</code> 非空（<code>srv6_nh = true</code>）のとき</td>
-<td><code>routeorch.cpp</code> L2055 (<code>contextIdExists</code>), L2100, L2143, L2169 (<code>srv6Nexthops</code>), L2295, L2352 (<code>getAggId</code>)</td>
-</tr>
-<tr>
-<td>VxlanTunnel / remote VTEP（NeighOrch tunnel NH）</td>
-<td>VTEP 作成 + tunnel NH</td>
-<td><code>vni_label</code> 非空（<code>overlay_nh = true</code>）かつ SRv6 でない場合</td>
-<td><code>routeorch.cpp</code> L872 (<code>isL3VniVlan</code>), L2127 (<code>createRemoteVtep</code>), L2133, L2208 (<code>addTunnelNextHop</code>)</td>
-</tr>
-<tr>
-<td>FlowCounterRouteOrch</td>
-<td>通知のみ</td>
-<td>route flow counter enable 時、ROUTE add/remove ごと</td>
-<td><code>routeorch.cpp</code> L259 (<code>onAddMiscRouteEntry</code>), L282, L2708 (<code>handleRouteAdd</code>)</td>
+<td>STATE_DB (起動 1 回)</td>
+<td><code>FLOW_COUNTER_CAPABILITY_TABLE\|route</code></td>
+<td><code>support</code> / <code>counter_type</code> を SAI ケーパビリティ問合せ結果で広告</td>
+<td><code>flex_counter/flowcounterrouteorch.cpp:169-178</code></td>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">排他関係</p>
-<p><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の同時指定はエラー (<code>routeorch.cpp</code> L810–814 で erase)。
-SRv6 NH (<code>segment</code>/<code>seg_src</code>) と VxLAN overlay NH (<code>vni_label</code>) も実装上排他（<code>srv6_nh</code> / <code>overlay_nh</code> フラグが排他分岐）。</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">NH 解決の遅延 install</p>
-<p>未解決 neighbor / 未作成 RIF / 未作成 VRF / 未登録 nexthop_group のいずれかがあれば <code>return false</code> または <code>it++</code> でリトライキューに残り、対応する Orch が該当オブジェクトを作成した時点で次回 <code>doRouteTask()</code> 実行時に自動 install される。再試行はイベント駆動ではなくテーブル sync の自然な再 polling による。</p>
-</div>
-<!-- /cross-refs -->
+<p>それ以外 (FLEX_COUNTER_DB, LOGLEVEL_DB, CONFIG_DB) への書込みは検出されなかった。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/routeorch.cpp</code> (<code>publishRouteState</code> L3185-3201, <code>updateDefRouteState</code> L287-295, CRM inc/dec 各所), <code>orchagent/crmorch.cpp:400-401, 1067-1091</code>, <code>orchagent/flex_counter/flowcounterrouteorch.cpp:33-34, 152-178, 921-922</code>; 詳細スキャンと grep 結果は <code>meta/_intermediate/cdb-flow/app-route-side.md</code> を参照。</p>
+</blockquote>
+<!-- /side-effects -->
 
 <h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
