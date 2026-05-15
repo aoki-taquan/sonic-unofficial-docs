@@ -24101,6 +24101,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34602,6 +34613,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34845,6 +34867,51 @@ Linux rt_protos 名（例: <code>"bgp"</code>, <code>"zebra"</code>, <code>"stat
 </table>
 <p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/appl-mpls-route-side.md</code> を参照。</p>
 <!-- /side-effects -->
+
+<!-- platform -->
+<h2 id="_8">プラットフォーム差<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> / <code>routeorch.cpp</code> の MPLS 経路を全文走査した結果、
+APPL_DB <code>LABEL_ROUTE_TABLE</code> の挙動はコミュニティ master 上で <strong>プラットフォーム非依存</strong>である。
+差は SAI ベンダ実装側 (INSEG entry サポートの有無、available count の提供) に閉じ、
+CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>差の有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI MPLS capability の runtime 問合せ</td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>sai_query_attribute_capability</code> / <code>sai_object_type_query</code> 参照 0 件。<code>SAI_API_MPLS</code> は <code>saihelper.cpp:220</code> で一律 <code>sai_api_query()</code> され、ベンダが未サポートなら orchagent 起動段階で失敗する。runtime での MPLS 有効/無効判定パスは存在しない</td>
+</tr>
+<tr>
+<td><code>SAI_SWITCH_ATTR_AVAILABLE_*</code> による上限取得</td>
+<td>なし</td>
+<td><code>crmorch.cpp:113</code> の <code>CRM_MPLS_INSEG</code> は <code>SAI_OBJECT_TYPE_INSEG_ENTRY</code> (object_type 経由)。IPv4/IPv6 route のような <code>SAI_SWITCH_ATTR_AVAILABLE_*</code> 属性は <code>crmorch.cpp</code> に存在せず、CRM <code>used</code>/<code>available</code> の精度はベンダ SAI 実装に依存</td>
+</tr>
+<tr>
+<td>switch type (voq/chassis/fabric) 分岐</td>
+<td>なし</td>
+<td><code>gMySwitchType</code> 参照は <code>routeorch.cpp:106-109</code> の <strong>IP route ECMP sizing 限定</strong>で、<code>doLabelTask</code> には伝搬しない。<code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>voq</code> / <code>chassis</code> / <code>fabric</code> 参照は 0 件</td>
+</tr>
+<tr>
+<td>multi-asic namespace 特殊化</td>
+<td>なし</td>
+<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> / <code>fpmsyncd/routesync.cpp::onLabelRouteMsg()</code> に <code>namespace</code> / <code>asic_id</code> 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行</td>
+</tr>
+<tr>
+<td>VRF 制限 (プラットフォーム非依存)</td>
+<td>あり</td>
+<td><code>fpmsyncd/routesync.cpp:2674-2681</code> で非デフォルト VRF (<code>master_index != 0</code>) は <code>SWSS_LOG_INFO("Unsupported Non-default VRF")</code> のみでスキップ。これは fpmsyncd 全体の制約で ASIC タイプとは無関係</td>
+</tr>
+</tbody>
+</table>
+<p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/appl-mpls-route-platform.md</code> を参照。</p>
+<!-- /platform -->
 
 
 

@@ -24367,6 +24367,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35233,6 +35244,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36260,6 +36282,64 @@ namespace 間の整合性 (例: 同一 <code>mirror_session_id</code> を複数 
 </span></code></pre></div>
 <p><code>MirrorSessionManager</code> は STATE_DB に独自エラーテーブルを書かない。失敗の参照点は syslog と P4RT 応答 status のみ。</p>
 <!-- /failure -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>FIXED_MIRROR_SESSION_TABLE</code> は P4RT 専用 APPL_DB テーブルで YANG モデルを持たない。以下はすべて実装レベルの暗黙参照。
+CONFIG_DB 側 <code>MIRROR_SESSION</code> (<code>MirrorOrch</code>) との <strong>差異 (= P4RT 経路に存在しない依存)</strong> を負の evidence として明示する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT\|&lt;alias&gt;</code> (<code>param/port</code>)</td>
+<td>OID 解決 + refcount（必須）</td>
+<td>常時。<code>gPortsOrch-&gt;getPort()</code> で解決、物理ポート (PHY) のみ受理。LAG/VLAN は <code>SWSS_RC_INVALID_PARAM</code>、未登録は <code>SWSS_RC_NOT_FOUND</code> で fail-fast</td>
+<td><code>mirror_session_manager.cpp</code> L125 (ADD 解決), L214 (deserialize 時の確認), L387 (<code>increasePortRefCount</code> ADD), L493 (UPDATE 新 port 解決), L518 (<code>increasePortRefCount</code> UPDATE)</td>
+</tr>
+<tr>
+<td><code>NEXTHOP</code> / <code>NEIGH</code> / <code>ROUTE_TABLE</code></td>
+<td><strong>参照なし（CONFIG_DB との差異）</strong></td>
+<td>—</td>
+<td><code>mirror_session_manager.cpp</code> 全文に <code>m_neighOrch</code> / <code>m_routeOrch</code> / <code>m_fdbOrch</code> 参照は 0 件。<code>Observer</code> 継承もなし。<code>param/dst_mac</code> を APPL_DB で直接受領する fail-fast 設計（対比: <code>mirrororch.cpp</code> L93-95, L517, L656-732 が動的解決機構を持つ）</td>
+</tr>
+<tr>
+<td><code>POLICER</code></td>
+<td><strong>参照なし（CONFIG_DB との差異）</strong></td>
+<td>—</td>
+<td><code>P4MirrorSessionAppDbEntry</code> (<code>p4orch_util.h</code> L253-279) に <code>policer</code> フィールドなし。<code>prepareSaiAttrs()</code> (<code>mirror_session_manager.cpp</code> L122-188) で <code>SAI_MIRROR_SESSION_ATTR_POLICER</code> を設定する箇所なし（対比: <code>mirrororch.cpp</code> L434-441, L1055 が <code>policerExists()</code> + <code>getPolicerOid()</code> で POLICER 先行を強制）</td>
+</tr>
+<tr>
+<td><code>ACL_RULE</code>（P4RT、被参照）</td>
+<td>refcount 監視（削除拒否）</td>
+<td>P4RT <code>ACL_RULE</code> が <code>mirror_session_id</code> を参照中の場合、<code>processDeleteRequest()</code> は <code>SWSS_RC_IN_USE</code> で削除拒否</td>
+<td><code>mirror_session_manager.cpp</code> L752-757 (<code>getRefCount()</code>), <code>p4orch/acl_rule_manager.cpp</code> L1403-1419 (ACL_RULE 側の <code>m_p4OidMapper-&gt;getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, ...)</code> 解決)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">neighbor / fdb / route 動的解決の不在</p>
+<p>CONFIG_DB ERSPAN は <code>dstIp</code> から <code>RouteOrch::attach()</code> で next-hop 解決を待ち、<code>NEIGH_CHANGE</code> / <code>FDB_CHANGE</code> / <code>NEXTHOP_CHANGE</code> / <code>LAG_MEMBER_CHANGE</code> の各 <code>SUBJECT_TYPE_*</code> 通知で <code>updateSession()</code> を回す動的解決機構を持つ (<code>mirrororch.cpp</code> L160-198, L760-808)。
+P4RT 経路は同等機構を<strong>持たず</strong>、<code>param/dst_mac</code> を直接受領する。トポロジ変化で MAC や next-hop が変わっても自動追従しないため、P4RT controller 側で UPDATE を発行する責務がある。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">POLICER 連携の不在</p>
+<p>CONFIG_DB <code>MIRROR_SESSION.policer</code> は <code>PolicerOrch::getPolicerOid()</code> を SAI 属性 <code>SAI_MIRROR_SESSION_ATTR_POLICER</code> に設定し、未登録時は <code>task_need_retry</code> で POLICER 先行を強制する。
+P4RT <code>FIXED_MIRROR_SESSION_TABLE</code> は APPL_DB スキーマレベルで <code>policer</code> フィールドを持たず、SAI POLICER attach も行わない。QoS 制御が必要な場合は P4RT ACL_RULE の meter (<code>p4orch/acl_rule_manager.cpp::getMeterSaiAttrs</code>) 側で実施する設計。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">ACL_RULE → MIRROR_SESSION の SET 順序</p>
+<p>P4RT <code>AclRuleManager</code> の mirror アクション処理 (<code>acl_rule_manager.cpp</code> L1403-1419) は CONFIG_DB <code>AclRuleMirror</code> のような遅延 activate 機構を持たない。
+<code>FIXED_MIRROR_SESSION_TABLE</code> SET の publish 成功確認 → ACL_RULE SET（mirror action 付き）の順で発行すること。逆順では ACL_RULE 側が <code>SWSS_RC_NOT_FOUND</code> で即失敗する。</p>
+</div>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/appl-mirror-cross-refs.md</code></p>
+<!-- /cross-refs -->
 
 <h2 id="_10">購読者<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
