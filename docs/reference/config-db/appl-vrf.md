@@ -296,6 +296,62 @@ VTEP 未設定で `vni > 0` の VRF エントリを APPL_DB に書くと VRFOrch
 詳細根拠は `meta/_intermediate/cdb-flow/appl-vrf-platform.md` を参照。
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`vrfmgrd` (`cfgmgr/vrfmgr.cpp`) と `VRFOrch` (`orchagent/vrforch.cpp`) には CONFIG_DB / YANG から変更できないソース直書きの定数・固定識別子が複数ある。APPL_DB `VRF_TABLE` 経由で運用上の上限・例外名を理解するために重要。
+
+### Linux カーネル VRF table_id プール
+
+`vrfmgr.cpp:12-15` の `#define` で確定するビルド時定数。
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `VRF_TABLE_START` | `1001` | data-plane VRF の Linux `ip route table` ID 開始値 (`vrfmgr.cpp:12`) |
+| `VRF_TABLE_END` | `5097` | 同終端 (半開区間、`for (i = START; i < END; i++)`、`vrfmgr.cpp:28`) |
+| `TABLE_LOCAL_PREF` | `1001` | vrfmgrd 起動時に `ip rule add pref 1001 table local` を実行する固定 priority (`vrfmgr.cpp:14, 103-104`) |
+| `MGMT_VRF_TABLE_ID` | `6000` | `mgmt` VRF 専用予約 table_id。data-plane プールと完全分離 (`vrfmgr.cpp:15, 180`) |
+
+- **同時に存在できる data-plane VRF の上限 = `5097 - 1001 = 4096` 個**。これ以上 `config vrf add` を試みると `VrfMgr::getFreeTable()` が `0` を返し (`vrfmgr.cpp:118-121`)、`setLink()` が `false` を返してエントリ作成が失敗する。CONFIG_DB / YANG 側にこの上限の表現はない。
+- `1001` は `TABLE_LOCAL_PREF` と数値が一致するが意味は別 (前者は table_id、後者は ip rule priority)。`vrfmgr.cpp:14` のコメント `// after l3mdev-table` が示すとおり、Linux カーネルの `l3mdev` 経路解決を VRF 個別 table より優先させる priority 設計。
+
+### `mgmt` 固定識別子
+
+`vrfmgr.cpp:16` の `#define MGMT_VRF "mgmt"` が以下 4 箇所で literal 比較に使われる:
+
+| コード位置 | 挙動 |
+|---|---|
+| `vrfmgr.cpp:74` | 起動時に Linux 上の既存 `mgmt` VRF device を削除対象から除外（`hostcfgd` が事前作成しているため） |
+| `vrfmgr.cpp:148` | `VrfMgr::delLink()` で `mgmt` の `ip link del` を skip し、table_id だけ `recycleTable()` |
+| `vrfmgr.cpp:176-183` | `VrfMgr::setLink()` で `mgmt` は `ip link add` を行わず、予約 `MGMT_VRF_TABLE_ID=6000` を `m_vrfTableMap` に登録するのみ |
+| `vrfmgr.cpp:262` | `MGMT_VRF_CONFIG_TABLE` event のキー（`vrf_global` 等）を無視して `vrfName = "mgmt"` で上書きし、APPL_DB には常に `VRF_TABLE\|mgmt` として書く |
+
+`mgmt` は YANG `sonic-vrf.yang` のキーパターン `Vrf[a-zA-Z0-9_-]+` には適合しないが、上記の特別経路により APPL_DB に書き込まれる**唯一の例外名**。ユーザーが `config vrf add mgmt` のような操作で再現することはできない。
+
+### orchagent 側の literal 定数
+
+`VRFOrch` (`vrforch.cpp`) には数値マクロは無いが、STATE_DB 書込時の固定文字列とフィールド名比較が複数:
+
+| literal | コード位置 | 役割 |
+|---|---|---|
+| `"state"` / `"ok"` | `vrforch.cpp:120, 150` | `m_stateVrfObjectTable.hset(vrfName, "state", "ok")`。`vrfmgrd::isVrfObjExist()` も同じ literal を読む |
+| `"mgmtVrfEnabled"` / `"in_band_mgmt_enabled"` | `vrforch.cpp:74` | explicit ignore 分岐 (`SAI 属性化せず continue`) のフィールド名比較 |
+| `"fallback"` | `vrforch.h:34` のみ | request schema には `REQ_T_BOOL` で登録されるが `addOperation` の分岐に存在せず silent drop される (dead field) |
+
+### 変更可能性まとめ
+
+| 定数 | APPL_DB / CONFIG_DB / YANG / CLI で変更可能か |
+|---|---|
+| `VRF_TABLE_START=1001` | 不可 (ビルド時固定) |
+| `VRF_TABLE_END=5097` (上限 4096 VRF) | 不可 |
+| `TABLE_LOCAL_PREF=1001` | 不可 (起動時に `ip rule` を実行するのみ。手動 `ip rule` 書換で一時変更は可能だが再起動で復元) |
+| `MGMT_VRF_TABLE_ID=6000` | 不可 |
+| `MGMT_VRF="mgmt"` | 不可 (VRF 名 rename 不能) |
+| STATE フィールド `"state"="ok"` | 不可 (orchagent と vrfmgrd の双方で同じ literal) |
+
+詳細な grep 履歴と派生事実は `meta/_intermediate/cdb-flow/appl-vrf-constants.md` を参照。
+<!-- /constants -->
+
 ## 関連ページ
 
 - [CONFIG_DB VRF テーブル](./vrf.md)
