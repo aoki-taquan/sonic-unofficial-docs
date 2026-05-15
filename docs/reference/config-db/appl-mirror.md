@@ -18,6 +18,9 @@ sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/mirrororch.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/p4orch/acl_rule_manager.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - MIRROR_SESSION
@@ -95,6 +98,116 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 `0x00` (= 0) は有効値として受け付けられるが、フィールド自体の省略は `has_ttl=false` / `has_tos=false` のまま ADD を発行することになり `SWSS_RC_INVALID_PARAM` が返る。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+`FIXED_MIRROR_SESSION_TABLE` は P4RT 経路で `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`) が直接処理する。CONFIG_DB `MIRROR_SESSION` を扱う `MirrorOrch` と異なり、**route/neighbor/fdb の動的解決機構を持たず**、`dst_mac` を APPL_DB フィールドとして直接受け取る fail-fast 設計になっている[^6]。リトライ機構や pending キューがないため、書込み順は P4RT クライアント側で正しく保証する必要がある。
+
+### 1. dst port readiness — PortsOrch::getPort() 先行必須（fail-fast、リトライなし）
+
+```cpp
+// mirror_session_manager.cpp:122-136 (prepareSaiAttrs)
+swss::Port port;
+if (!gPortsOrch->getPort(mirror_session_entry.port, port)) {
+  LOG_ERROR_AND_RETURN(ReturnCode(StatusCode::SWSS_RC_NOT_FOUND)
+                       << "Failed to get port info for port "
+                       << QuotedVar(mirror_session_entry.port));
+}
+if (port.m_type != Port::Type::PHY) {
+  LOG_ERROR_AND_RETURN(ReturnCode(StatusCode::SWSS_RC_INVALID_PARAM)
+                       << "Port " << QuotedVar(mirror_session_entry.port)
+                       << "'s type " << port.m_type
+                       << " is not physical and is invalid as destination "
+                          "port for mirror packet.");
+}
+```
+
+CONFIG_DB 側 `MirrorOrch::doTask()` は `gPortsOrch->allPortsReady()` が false なら `doTask()` 全体を即 return して後で再 drain される (`mirrororch.cpp:1571-1574`) が、`MirrorSessionManager::drain()` には **`allPortsReady()` ガードがない** (`mirror_session_manager.cpp:62-119`)。`m_entries.pop_front()` で即時取り出し、`prepareSaiAttrs()` が `SWSS_RC_NOT_FOUND` を返すと `m_publisher->publish()` で結果通知してそのまま破棄する。
+
+→ 順序依存: `param/port` で指定する物理ポートが PortsOrch に登録済みであること。port 未登録時の SET は `SWSS_RC_NOT_FOUND` で失敗確定し、自動再試行されない（P4RT クライアントが再送する必要がある）。
+
+### 2. PHY 型固定 — LAG / VLAN は SET しても回復不能
+
+`prepareSaiAttrs()` は `port.m_type != Port::Type::PHY` の場合 `SWSS_RC_INVALID_PARAM` を即返す。port の type は同一 alias で変動しないため、後から PHY に切り替わる遷移は存在しない。
+
+→ 順序依存ではなく**設計時の制約**。LAG/VLAN を `param/port` に指定したエントリは何度再送しても受理されない。
+
+### 3. drain() の head-of-line blocking — エラー発生で同一 drain 内の以降エントリが滞留
+
+```cpp
+// mirror_session_manager.cpp:114-118
+m_publisher->publish(APP_P4RT_TABLE_NAME, kfvKey(key_op_fvs_tuple),
+                     kfvFieldsValues(key_op_fvs_tuple), status,
+                     /*replace=*/true);
+if (!status.ok()) {
+  break;
+}
+```
+
+`drain()` のメインループは最初の失敗時点で `break` し、残った `m_entries` は `drainWithNotExecuted()` で「未実行」として publisher に返すだけ。同一 P4RT トランザクション内で複数セッションを SET する場合、**先頭エントリの失敗で後続セッションは全て未処理**になる。CONFIG_DB `MirrorOrch::doTask()` (`mirrororch.cpp:1576-1607`) が各エントリを独立に処理するのとは異なる。
+
+→ 順序依存（バッチ内）: P4RT クライアントは port readiness のばらつきがあるバッチを避け、エラーが出たロットは個別再送する。
+
+### 4. ACL_RULE での mirror_session_id 参照 — FIXED_MIRROR_SESSION_TABLE 先行必須
+
+```cpp
+// acl_rule_manager.cpp:1403-1419
+case SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS:
+case SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_EGRESS: {
+    sai_object_id_t mirror_session_oid;
+    std::string key = KeyGenerator::generateMirrorSessionKey(attr_value);
+    if (!m_p4OidMapper->getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, key, &mirror_session_oid))
+    {
+        return ReturnCode(StatusCode::SWSS_RC_NOT_FOUND)
+               << "Mirror session " << QuotedVar(attr_value) << " does not exist for "
+               << QuotedVar(acl_rule->acl_table_name);
+    }
+    ...
+}
+```
+
+P4RT ACL の `AclRuleManager` は mirror アクション処理で `m_p4OidMapper->getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, ...)` を呼び、未登録なら `SWSS_RC_NOT_FOUND` で即失敗する。CONFIG_DB 側 `AclRuleMirror::create()` は `SUBJECT_TYPE_MIRROR_SESSION_CHANGE` 通知（`mirrororch.cpp:1095-1096, 1110-1111`）で後から activate される pending 機構を持つが、**p4orch の `AclRuleManager` には同等の遅延 activate 機構がない**。
+
+→ 順序依存: P4RT クライアントは「`FIXED_MIRROR_SESSION_TABLE` SET → publish 成功確認 → `ACL_*_TABLE` SET（mirror action 付き）」の順で発行すること。
+
+### 5. processUpdateRequest の port 切替 — 新 port も readiness 必須・ref count 移管
+
+`processUpdateRequest()` で `param/port` が変わる場合、`gPortsOrch->getPort(new_port_name, new_port)` を呼び (`mirror_session_manager.cpp:493`)、失敗時は `SWSS_RC_NOT_FOUND` で即返り、SAI 属性更新も ref count 移管も行われず**旧 port が保持される**。成功時のみ `decreasePortRefCount(old)` → `increasePortRefCount(new)` の順で実行 (`mirror_session_manager.cpp:517-518`)。
+
+→ 順序依存: port 切替時は新 port が PortsOrch に登録済みであること。新 port 作成後に UPDATE を発行する。
+
+### 6. policer 先行依存は不在（CONFIG_DB との差異、要注意）
+
+`FIXED_MIRROR_SESSION_TABLE` には **`policer` フィールドが存在しない**。`P4MirrorSessionAppDbEntry` 構造体 (`p4orch_util.h:253-279`) は ttl/tos/src_ip/dst_ip/src_mac/dst_mac/port のみ保持し、`prepareSaiAttrs()` も `SAI_MIRROR_SESSION_ATTR_POLICER` を設定しない (`mirror_session_manager.cpp:122-188`)。
+
+CONFIG_DB 側 `MirrorOrch::createEntry()` (`mirrororch.cpp:432-443`) は `MIRROR_SESSION_POLICER` フィールドに対して `m_policerOrch->policerExists()` をチェックし、未登録なら `task_need_retry` で **POLICER 先行を強制する**が、FIXED_MIRROR_SESSION_TABLE 経路ではこの依存は**ない**。
+
+→ 含意: P4RT で QoS 制御が必要な場合は ACL_RULE の meter (`getMeterSaiAttrs`, `acl_rule_manager.cpp:124-`) 側で行う設計。MIRROR_SESSION への policer attach は P4RT 経路では対象外。
+
+### 7. routeOrch / neighbor / fdb 動的解決は不在（ERSPAN 固定、dst_mac 直接指定）
+
+CONFIG_DB ERSPAN セッションは `m_routeOrch->attach(this, entry.dstIp)` (`mirrororch.cpp:517`) で next hop 解決を待ち、`SUBJECT_TYPE_NEXTHOP_CHANGE` / `NEIGH_CHANGE` / `FDB_CHANGE` / `LAG_MEMBER_CHANGE` 通知で `updateSession()` を回す動的解決機構を持つ (`mirrororch.cpp:160-198, 760-808`)。
+
+P4RT 経路は `param/dst_mac` を **APPL_DB の必須フィールドとして直接受け取る** ため、neighbor / fdb / route の動的解決は行われない。`MirrorSessionManager` は `Observer` ではなく、PortsOrch/NeighOrch/FdbOrch/RouteOrch に attach もしない。
+
+→ 含意: P4RT クライアントは事前に dst MAC を解決して `param/dst_mac` で渡す責務を負う。トポロジ変化で MAC が変わった場合は `FIXED_MIRROR_SESSION_TABLE` の UPDATE を発行し直す必要がある（自動追従しない）。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | PORT 初期化 → `FIXED_MIRROR_SESSION_TABLE` SET (`param/port`) | 強制先行（fail-fast、リトライなし） | P4RT クライアント側で再送 |
+| 2 | port は PHY 型 | 設計時制約（LAG/VLAN 不可） | 設計時に PHY を選定 |
+| 3 | drain() head-of-line blocking | バッチ内順序注意 | エラー発生ロットは個別再送 |
+| 4 | `FIXED_MIRROR_SESSION_TABLE` SET 完了 → ACL_RULE (mirror action) | 強制先行（pending 機構なし） | クライアントが SET 順序を保証 |
+| 5 | 新 port PortsOrch 登録済み → UPDATE 発行 | 強制先行 | 新 port 作成後に UPDATE |
+| 6 | policer 先行依存は**不在** | (CONFIG_DB との差異) | QoS 制御は ACL meter で |
+| 7 | route/neighbor/fdb 動的解決は**不在** | (CONFIG_DB との差異) | クライアント側で `dst_mac` 再解決 |
+
+詳細スキャンノート: `meta/_intermediate/cdb-flow/appl-mirror-ordering.md`
+
+<!-- /ordering -->
 
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
@@ -221,3 +334,4 @@ sonic-db-cli APPL_DB hgetall 'FIXED_MIRROR_SESSION_TABLE|{"match/mirror_session_
 [^3]: 物理ポート制約: `orchagent/p4orch/mirror_session_manager.cpp` L124-135. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L124-L135>
 [^4]: `deserializeP4MirrorSessionAppDbEntry()`: `orchagent/p4orch/mirror_session_manager.cpp` L190-323. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323>
 [^5]: `MirrorEntry::MirrorEntry()` での GRE type platform 分岐: `orchagent/mirrororch.cpp` L57-77. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77>
+[^6]: `MirrorSessionManager::drain()` と `prepareSaiAttrs()` の書込み順依存: `orchagent/p4orch/mirror_session_manager.cpp` L62-188. CONFIG_DB 経路の `MirrorOrch::doTask()` (`orchagent/mirrororch.cpp` L1567-1611) と動的解決機構 (L160-198, L760-808) との対比は `meta/_intermediate/cdb-flow/appl-mirror-ordering.md` を参照。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188>
