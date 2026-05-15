@@ -297,6 +297,51 @@ App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqpro
 
 <!-- /pubsub -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+ALARM テーブルは EVENT_DB に存在し、CONFIG_DB 的な YANG `leafref` 制約は持たない。
+しかし「ALARM 行が成立する前提として暗黙的に存在しなければならないキー / テーブル」がコード上に固定参照として現れる。
+
+### event profile キー (`<source>.<tag>`) への暗黙参照
+
+ALARM 行の `type-id` / `severity` / `action` フィールドは、publisher が指定する `(source, tag)` を **event profile JSON のキー** として暗黙参照する。profile に該当キーが無いと eventd 側で severity / action が解決されず RAISE が無効化される (型なし string だがコードレベルで参照整合性が強制)。
+
+| publisher source | tag | 発火元 | evidence |
+|---|---|---|---|
+| `sonic-events-eventd` | `heartbeat` | eventd 自身 (2 秒周期) | `sonic-eventd/src/eventd.cpp:46-47,291` |
+| `sonic-events-host` | `process-not-running` | system-health `service_checker` | `system-health/health_checker/service_checker.py:15-16,380-384` |
+| `sonic-events-host` | `liquid-cooling-leak` | system-health `hardware_checker` | `system-health/health_checker/hardware_checker.py:7-8,298-302` |
+| `sonic-events-host` | `process-exited-unexpectedly` | supervisord proc-exit-listener | `sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener:44-45,145-149` |
+
+### CONFIG_DB / STATE_DB の暗黙間接依存 (healthd 経由)
+
+`eventd` プロセスは DEVICE_METADATA を直接読まないが (`src/sonic-eventd/src/` 配下 `grep "DEVICE_METADATA"` ヒット 0)、主要な ALARM publisher である **healthd (system-health)** は CONFIG_DB / STATE_DB の以下エントリに起動時依存する。これらが欠落すると `sonic-events-host` 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。
+
+| 参照元 | 参照先 | 種別 | 用途 | 参照箇所 |
+|---|---|---|---|---|
+| healthd `sysmonitor.py` | `CONFIG_DB:DEVICE_METADATA` (全フィールド) | get_table | device_config レンダリング | `sysmonitor.py:152,217-219` |
+| healthd `sysmonitor.py` | `STATE_DB:FEATURE` | SubscriberStateTable | 監視対象 feature の up/down 追従 | `sysmonitor.py:39-41` |
+| healthd `service_checker.py` | `CONFIG_DB:FEATURE` | get_table | プロセス監視対象の取捨選択 | `service_checker.py:321-323` |
+
+### `resource` フィールドの動的参照
+
+ALARM の `resource` フィールド (optional) は publisher アプリケーションが任意のリソース識別子 (例: `Ethernet0`, `PSU1`, `xcvrd:Ethernet24`) を入れる動的多態フィールド。参照先テーブル (`TRANSCEIVER_INFO` / `TEMPERATURE_INFO` / `PORT` 等) は固定されておらず、HLD §3.1.2 の OpenConfig `/components/component` 系パスへのマッピングのみが規約化されている。
+
+### 連動書込先 (Phase F 重複)
+
+| 連動書込先 | 関係 | 参照箇所 |
+|---|---|---|
+| `COUNTERS_DB:COUNTERS_EVENTS` | eventd が ALARM 含む event publish 経路全体のカウンタを 10ms 周期で flush | `eventd.h:18-20,87`, `eventd.cpp:50-53,187,205-210` |
+
+!!! note "AlarmConsumer 本体は master HEAD に未収載"
+    現スナップショット (`sonic-buildimage` SHA `9ea932ec...`) の `src/sonic-eventd/src/` は XPUB/XSUB proxy + heartbeat + stats のみで、HLD §3.1.x が言及する Alarm Consumer (RAISE/CLEAR/ACK/UNACK を ALARM テーブルへ反映する側) の実装ソースは未存在。`type-id` → event profile, `resource` → リソーステーブル の **書き込み側コード** からの参照確認は将来コミット待ち。本セクションは publisher 側 + healthd 側 + 連動書込先の 3 軸で構成している。
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-cross-refs.md`
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,50-53,187,205-210,291; src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; src/system-health/health_checker/hardware_checker.py:7-8,298-302; src/system-health/health_checker/sysmonitor.py:39-41,152,217-219 -->
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
