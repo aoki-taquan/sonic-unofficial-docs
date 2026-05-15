@@ -24523,7 +24523,123 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-port-portchannel-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: PORT / PORTCHANNEL / VLAN 先行（必須先行・部分自動回復）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-iccpd-iccp-up-intf_tablemac_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: iccpd ICCP セッション up → ロール確定 → INTF_TABLE.mac_addr（厳密順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-is_iccp_up-isolation_group-setdel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: is_iccp_up 状態による ISOLATION_GROUP の SET/DEL 分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-lag_tablelearn_mode-disable-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: LAG_TABLE.learn_mode は "disable" → "hardware" の厳密遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-lag_tabletraffic_disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: LAG_TABLE.traffic_disable はロール確定後限定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-del-mclag_interface-mclag_domain-portchannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 6: DEL 順序 — MCLAG_INTERFACE → MCLAG_DOMAIN → PORTCHANNEL（推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mclagsyncd-device_metadatamac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 7: mclagsyncd 起動時 DEVICE_METADATA.mac 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順 / DEL 順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自動回復可否
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35568,7 +35684,123 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-port-portchannel-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 1: PORT / PORTCHANNEL / VLAN 先行（必須先行・部分自動回復）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-iccpd-iccp-up-intf_tablemac_addr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 2: iccpd ICCP セッション up → ロール確定 → INTF_TABLE.mac_addr（厳密順）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-is_iccp_up-isolation_group-setdel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 3: is_iccp_up 状態による ISOLATION_GROUP の SET/DEL 分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-lag_tablelearn_mode-disable-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 4: LAG_TABLE.learn_mode は "disable" → "hardware" の厳密遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-lag_tabletraffic_disable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 5: LAG_TABLE.traffic_disable はロール確定後限定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-del-mclag_interface-mclag_domain-portchannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 6: DEL 順序 — MCLAG_INTERFACE → MCLAG_DOMAIN → PORTCHANNEL（推奨）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mclagsyncd-device_metadatamac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存 7: mclagsyncd 起動時 DEVICE_METADATA.mac 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨書込み順 / DEL 順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自動回復可否
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36753,7 +36985,7 @@ key 構造やフィールド値として CONFIG_DB の他テーブルのオブ�
 <td>port 未準備 (下流)</td>
 <td><code>fdborch</code> 等が <code>m_portsOrch-&gt;getPort()</code> 失敗</td>
 <td><code>task_need_retry</code>。<code>mclagsyncd</code> 側 APPL_DB エントリは残る</td>
-<td>あり (orchagent <code>SELECT_TIMEOUT = 1000</code> ms 駆動)<sup id="fnref2:orch"><a class="footnote-ref" href="#fn:orch">5</a></sup></td>
+<td>あり (orchagent <code>SELECT_TIMEOUT = 1000</code> ms 駆動)<sup id="fnref3:orch"><a class="footnote-ref" href="#fn:orch">5</a></sup></td>
 </tr>
 <tr>
 <td>8</td>
@@ -36893,12 +37125,121 @@ TCP 切断直後に <code>accept()</code> がブロック復帰し新規接続�
 </blockquote>
 <!-- /platform -->
 
-<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>mclagsyncd</code> が APPL_DB に書く 7 テーブルは、上流 (CONFIG_DB の PORT/PORTCHANNEL/VLAN・iccpd ICCP セッション・ロール確定) との順序関係に強く依存する。CONFIG_DB を直接いじる運用や <code>swssconfig</code> 経由 replay で順序が乱れると、<code>fdborch</code> の retry ループに乗ったり、<code>INTF_TABLE.mac_addr</code> の取りこぼし・<code>LAG_TABLE.learn_mode</code> の <code>"disable"</code> 残留が発生する<sup id="fnref21:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。</p>
+<h3 id="1-port-portchannel-vlan">依存 1: PORT / PORTCHANNEL / VLAN 先行（必須先行・部分自動回復）<a class="headerlink" href="#1-port-portchannel-vlan" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>CONFIG_DB PORT / PORTCHANNEL / VLAN / VLAN_MEMBER  SET  先行
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  ↓ (portsOrch.allPortsReady() == true)
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>APPL_DB MCLAG_FDB_TABLE / ISOLATION_GROUP_TABLE / LAG_TABLE / PORT_TABLE / INTF_TABLE  SET
+</span></code></pre></div>
+<p><code>mclagsyncd</code> の APPL_DB エントリは key / フィールド値として PORT・PORTCHANNEL・VLAN 名を文字列で保持する（Phase C 暗黙参照節を参照）。参照先未登録時は下流 orchagent (<code>fdborch</code> / <code>isolationGroupOrch</code> / <code>lagOrch</code> / <code>portsOrch</code> / <code>intfsOrch</code>) が <code>getPort()</code> 等で解決失敗し <code>task_need_retry</code> 扱いになる。<code>SELECT_TIMEOUT = 1000</code> ms tick で再試行されるが、<code>mclagsyncd</code> 自身にはフィードバックされない<sup id="fnref2:orch"><a class="footnote-ref" href="#fn:orch">5</a></sup>。</p>
+<p><strong>違反時</strong>: 下流側で 1 秒周期の retry ループに入り、最終的に PORT 解決後に消費される。ただし <code>mclagsyncd</code> 側の APPL_DB エントリは残ったまま。</p>
+<h3 id="2-iccpd-iccp-up-intf_tablemac_addr">依存 2: iccpd ICCP セッション up → ロール確定 → <code>INTF_TABLE.mac_addr</code>（厳密順）<a class="headerlink" href="#2-iccpd-iccp-up-intf_tablemac_addr" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>MCLAG_DOMAIN  SET
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  ↓
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>iccpd 起動 + ピア TCP 接続 (ICCP_TCP_PORT=8888)
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  ↓
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>iccpd 内部: MLACP_STATE_EXCHANGE 到達
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>  ↓
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>mclagsyncd: MCLAG_MSG_TYPE_SET_ICCP_STATE(up) 受信 → is_iccp_up = true
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>  ↓
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>mclagsyncd: MCLAG_MSG_TYPE_SET_ICCP_ROLE 受信 → STATE_MCLAG_TABLE.role 確定
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>  ↓
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>mclagsyncd: MCLAG_MSG_TYPE_SET_INTF_MAC 受信 → APPL_DB INTF_TABLE.mac_addr SET
+</span></code></pre></div>
+<p>iccpd は <code>MLACP(csm).current_state != MLACP_STATE_EXCHANGE</code> の間は MAC 同期・isolation 通知の各 send で early-return する（<code>mlacp_link_handler.c:145, 209, 1202, 1255, 1315</code> 等）。<code>mclagsyncd</code> 側でも <code>is_iccp_up = is_oper_up</code> の代入は <code>mclagsyncdSetIccpState()</code> 末尾 (<code>mclaglink.cpp:1355</code>) でしか起こらない。</p>
+<p><strong>違反時</strong>: ロール確定前に <code>MCLAG_INTERFACE</code> を削除すると iccpd 側で MAC 復元送信が抑止され、<code>INTF_TABLE.mac_addr</code> のシステム MAC 上書きが取りこぼされる可能性。</p>
+<h3 id="3-is_iccp_up-isolation_group-setdel">依存 3: <code>is_iccp_up</code> 状態による ISOLATION_GROUP の SET/DEL 分岐<a class="headerlink" href="#3-is_iccp_up-isolation_group-setdel" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>is_iccp_up == true  かつ op_len == 0    → MEMBERS=&quot;&quot; でエントリ保持 (set)
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>is_iccp_up == false                     → del(&quot;MCLAG_ISO_GRP&quot;)
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>通常時 (op_len &gt; 0)                     → MEMBERS=PortChannel のみ (set)
+</span></code></pre></div>
+<p><code>mclaglink.cpp:233-281</code> の <code>is_iccp_up</code> 分岐は ICCP up 通知 (<code>mclagsyncdSetIccpState()</code> L1355) より前に届いた isolation メッセージを「is_iccp_up==false」分岐で DEL 扱いにする。iccpd 側で <code>SET_ICCP_STATE(up)</code> → <code>SET_ISOLATION_GROUP</code> の順送出が暗黙前提。</p>
+<p><strong>違反時</strong>: 再送・取りこぼし時に <code>ISOLATION_GROUP_TABLE|MCLAG_ISO_GRP</code> エントリが瞬間的に消滅する可能性。次の up 通知で復元される。</p>
+<h3 id="4-lag_tablelearn_mode-disable-hardware">依存 4: <code>LAG_TABLE.learn_mode</code> は <code>"disable" → "hardware"</code> の厳密遷移<a class="headerlink" href="#4-lag_tablelearn_mode-disable-hardware" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>MCLAG 起動時:
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  iccpd → mclagsyncd: MCLAG_SUB_OPTION_TYPE_MAC_LEARN_DISABLE
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    ↓
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  APPL_DB LAG_TABLE.learn_mode = &quot;disable&quot;
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>ICCP セッション確立後:
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>  iccpd → mclagsyncd: MCLAG_SUB_OPTION_TYPE_MAC_LEARN_ENABLE
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    ↓
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>  APPL_DB LAG_TABLE.learn_mode = &quot;hardware&quot;
+</span></code></pre></div>
+<p><code>mclaglink.cpp:393-407</code>。中間値（空・別文字列）は生成されない。</p>
+<p><strong>違反時</strong>: ICCP 切断 → 再 EXCHANGE 間は学習が hardware に戻らず、ピア間 MAC 不可視期間が発生。</p>
+<h3 id="5-lag_tabletraffic_disable">依存 5: <code>LAG_TABLE.traffic_disable</code> はロール確定後限定<a class="headerlink" href="#5-lag_tabletraffic_disable" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>iccpd: MLACP_STATE_EXCHANGE  必須先行
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>  ↓
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>mclagsyncd: MCLAG_MSG_TYPE_SET_TRAFFIC_DIST_DISABLE / _ENABLE
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>  ↓
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>APPL_DB LAG_TABLE.traffic_disable = &quot;true&quot; / &quot;false&quot;
+</span></code></pre></div>
+<p><code>mclaglink.cpp:1300-1310</code>。フィールド不在 = <code>lagOrch</code> のデフォルト <code>"false"</code>（分散有効）。</p>
+<p><strong>違反時</strong>: <code>traffic_disable=true</code> 書込み後に PortChannel を削除すると SAI 側に分散無効残骸が残る可能性。</p>
+<h3 id="6-del-mclag_interface-mclag_domain-portchannel">依存 6: DEL 順序 — <code>MCLAG_INTERFACE</code> → <code>MCLAG_DOMAIN</code> → <code>PORTCHANNEL</code>（推奨）<a class="headerlink" href="#6-del-mclag_interface-mclag_domain-portchannel" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>MCLAG_INTERFACE / MCLAG_UNIQUE_IP  DEL  先行
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>  ↓
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>MCLAG_DOMAIN  DEL  （iccpd 切断 → STATE_MCLAG_TABLE auto cleanup）
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>  ↓
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>PORTCHANNEL / PORT  DEL
+</span></code></pre></div>
+<p>APPL_DB の <code>MCLAG_FDB_TABLE</code> / <code>INTF_TABLE.mac_addr</code> / <code>LAG_TABLE.learn_mode</code> は iccpd からの明示 DEL がない限り残る (<code>mclaglink.cpp:1480-1505</code>)。<code>MCLAG_INTERFACE</code> を残したまま <code>MCLAG_DOMAIN</code> を消して直後に <code>PORTCHANNEL</code> を消すと、<code>MCLAG_FDB_TABLE</code> 残骸が <code>fdborch</code> retry に乗り続ける。</p>
+<p><strong>違反時</strong>: <code>fdborch</code> 内で <code>task_need_retry</code> ループ。orchagent 再起動の replay で消費される。</p>
+<h3 id="7-mclagsyncd-device_metadatamac">依存 7: <code>mclagsyncd</code> 起動時 <code>DEVICE_METADATA.mac</code> 先行必須<a class="headerlink" href="#7-mclagsyncd-device_metadatamac" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>CONFIG_DB DEVICE_METADATA|localhost.mac  SET  先行
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>  ↓
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>mclagsyncd 起動 → mclagsyncdFetchSystemMacFromConfigdb() (mclaglink.cpp:127-128)
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>  ↓
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>ICCP セッション開始
+</span></code></pre></div>
+<p><code>mac</code> 空のまま起動した場合 <code>m_system_mac</code> 空で続行。outer <code>while(1)</code> retry で再 fetch するが、ICCP up 中の場合は再ハンドシェイクまで空伝播。</p>
+<p><strong>違反時</strong>: 初期 ICCP セッションで <code>system_mac</code> 空伝播の事故が起きうる。</p>
+<h3 id="del">推奨書込み順 / DEL 順<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>推奨順</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MCLAG 構築</td>
+<td><code>PORT</code> → <code>VLAN</code> / <code>VLAN_MEMBER</code> → <code>PORTCHANNEL</code> / <code>PORTCHANNEL_MEMBER</code> → <code>DEVICE_METADATA.mac</code> → (mclagsyncd 起動) → <code>MCLAG_DOMAIN</code> → <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code></td>
+<td>依存 1, 2, 7</td>
+</tr>
+<tr>
+<td>MCLAG 解体</td>
+<td><code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> → <code>MCLAG_DOMAIN</code> → <code>PORTCHANNEL</code> / <code>PORT</code></td>
+<td>依存 6</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.mac</code> 変更</td>
+<td><code>mclagsyncd</code> 停止 → CONFIG_DB 更新 → <code>mclagsyncd</code> 再起動</td>
+<td>依存 7</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_14">自動回復可否<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>依存 1（PORT/PORTCHANNEL/VLAN 先行）: 下流 orchagent の <code>task_need_retry</code> で部分自動回復。</li>
+<li>依存 2-5（ICCP up / ロール確定）: 自動回復は iccpd の再 EXCHANGE 経由のみ。途中で <code>mclagsyncd</code> 再起動が走ると全エントリ再生成。</li>
+<li>依存 6-7（DEL 順 / system_mac）: 自動回復なし。手動再起動または明示 SET が必要。</li>
+</ul>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/appl-mclag-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:link">
-<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
@@ -36910,7 +37251,7 @@ TCP 切断直後に <code>accept()</code> がブロック復帰し新規接続�
 <p>iccpd CSM 初期化: <code>sonic-buildimage/src/iccpd/src/iccp_csm.c</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c</a>&#160;<a class="footnote-backref" href="#fnref:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:csm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:orch">
-<p>orchagent 消費側: <code>sonic-swss/orchagent/orchdaemon.cpp</code> (<code>SELECT_TIMEOUT = 1000</code> ms), <code>fdborch.cpp</code>, <code>isolationgrouporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:orch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>orchagent 消費側: <code>sonic-swss/orchagent/orchdaemon.cpp</code> (<code>SELECT_TIMEOUT = 1000</code> ms), <code>fdborch.cpp</code>, <code>isolationgrouporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:orch" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:orch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:iccpcsm">
 <p>iccpd CSM ヘッダ定数 (<code>ICCP_TCP_PORT</code>, <code>MAX_ACCEPT_CONNETIONS</code>): <code>sonic-buildimage/src/iccpd/include/iccp_csm.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h</a>&#160;<a class="footnote-backref" href="#fnref:iccpcsm" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:iccpcsm" title="Jump back to footnote 6 in the text">&#8617;</a></p>
