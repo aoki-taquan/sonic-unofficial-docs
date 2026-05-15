@@ -468,3 +468,40 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタは存在しない。依存状態（teamd 起動環境、ポート STATE_DB 状態）が解消されると自然に成功する設計。無限リトライとなるため、恒久的な環境障害（teamd バイナリ不在、ネットワーク名前空間問題等）は外部から手動介入が必要。
 
 <!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-platform.md`
+
+### Mellanox — distribution-only モード非対応
+
+LAG メンバの enabled/disabled 状態を切り替えるとき、orchagent は `SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE` (collection) と `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` (distribution) の **2 属性を順に** SET する。Mellanox SAI は collection=false かつ distribution=true の "distribution-only" 中間状態をサポートしないため、操作順がプラットフォーム依存になっている (portsorch.cpp:6361-6382)。
+
+| 状態遷移 | Mellanox 向け操作順 | 理由 |
+|---------|-------------------|----|
+| disabled → enabled | collection を先に true → distribution を true | distribution-only 中間状態を回避 |
+| enabled → disabled | distribution を先に false → collection を false | distribution-only 中間状態を回避 |
+
+コードコメントに「distribution-only mode is not supported on Mellanox platform」と明記されている。
+
+### VoQ スイッチ — `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 追加属性
+
+通常スイッチでは `create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` を追加する (portsorch.cpp:7962-7991)。Multi-ASIC VoQ 構成では CHASSIS_APP_DB の `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。これにより通常スイッチと VoQ スイッチで `create_lag()` の属性セットが異なる[^plat1]。
+
+### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
+
+`setLagTpid()` は capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する (portsorch.cpp:8273-8277)。Q-in-Q TPID (0x9100/0x9200/0x88a8/0x88A8) をサポートしない ASIC では `SAI_STATUS_NOT_SUPPORTED` が返り SWSS_LOG_ERROR が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる[^plat1]。
+
+### プラットフォーム識別子 (orch.h)
+
+orchagent は `platform` 環境変数の部分文字列でベンダーを識別する。PORTCHANNEL 関連で確認されている主なプラットフォーム差:
+
+| 定数 | 値 | LAG 関連の影響 |
+|------|----|---------------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | distribution-only モード非対応（コメント明記） |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | `SAI_LAG_ATTR_TPID` SET が NO-OP / エラー |
+
+[^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+
+<!-- /platform -->
