@@ -306,6 +306,33 @@ minigraph.py からの `MIRROR_SESSION` 自動派生はなし (minigraph.py の�
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/orchagent/mirrororch.cpp`
+> 調査日: 2026-05-15
+
+### 他テーブル先行必須
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|-------------------|-----------|-----------|
+| `gPortsOrch->allPortsReady()` が true | `doTask()` 冒頭で false なら即 return。全ポート初期化完了まで一切処理されない | `mirrororch.cpp:1571-1574` |
+| `POLICER|<name>` が先に存在 | `policer` フィールド指定時に `policerExists()` が false → `task_need_retry`。POLICER 追加後に自動再試行 | `mirrororch.cpp:434-438` |
+| `PORT|<name>` (SPAN dst_port) が先に存在 | `activateSession()` 内で `getPort(dst_port)` 失敗 → ACTIVE 化不可 | `mirrororch.cpp:942-945` |
+| `PORT\|<name>` / `PORTCHANNEL\|<name>` (src_port) が先に存在 | `validateSrcPortList()` でポート名を解決。存在しない場合は `task_invalid_entry` (retry なし) | `mirrororch.cpp:446-450` |
+
+### ERSPAN dst_ip の非同期 ACTIVE 化
+
+ERSPAN セッション作成時は `m_routeOrch->attach(this, entry.dstIp)` で RouteOrch にアタッチし、CONFIG_DB 書込み直後はセッションが **INACTIVE**。対応するルート・ネイバーエントリが解決された後、NeighOrch / FdbOrch / PortsOrch からの Observer 通知を受けて `updateSession()` が呼ばれ **ACTIVE** 化する。
+
+### DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| MIRROR_SESSION DEL | 参照中の ACL_RULE / PBH 等を先に DEL。`refCount > 0` の間は `task_need_retry` | `mirrororch.cpp:539-543` |
+
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
