@@ -22490,6 +22490,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35201,6 +35212,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36123,6 +36145,58 @@
 <li><code>orchagent</code> の <code>AclOrch</code>: <a href="../../glossary/#term-sai">SAI</a> ACL table 生成、ポートへのバインド</li>
 <li><code>copporch</code>: <code>CTRLPLANE</code> 系の登録時に連動</li>
 </ul>
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>AclOrch</code> は <code>Orch</code> 基底クラス経由で <code>ACL_TABLE</code> を購読する。CONFIG_DB 起源のため <code>Orch::addConsumer()</code> の DB 種別分岐で <strong><code>SubscriberStateTable</code></strong> が選ばれ、Redis の <strong>keyspace 通知</strong> (<code>__keyspace@&lt;dbId&gt;__:ACL_TABLE:*</code> の PSUBSCRIBE) を購読する。channel ベースの <code>PUBLISH</code> は使用しない。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読クラス</td>
+<td><code>SubscriberStateTable</code> (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐)</td>
+</tr>
+<tr>
+<td>keyspace パターン</td>
+<td><code>__keyspace@4__:ACL_TABLE:*</code> (CONFIG_DB dbId=4)</td>
+</tr>
+<tr>
+<td>key 区切り</td>
+<td><code>ACL_TABLE\|&lt;table-name&gt;</code> (TableNameSeparator 既定 <code>\|</code>)</td>
+</tr>
+<tr>
+<td>POP_BATCH_SIZE</td>
+<td><code>TableConsumable::DEFAULT_POP_BATCH_SIZE</code> = <strong>128</strong> (<code>sonic-swss-common/common/table.h:164</code>)</td>
+</tr>
+<tr>
+<td>優先度 (<code>pri</code>)</td>
+<td>0 (<code>TableConnector</code> 既定)</td>
+</tr>
+<tr>
+<td>起動時スナップショット</td>
+<td><code>SubscriberStateTable</code> が既存エントリを SET イベントとして再配信</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>未設定 (CONFIG_DB は永続前提)</td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>Consumer::execute()</code> → <code>AclOrch::doTask(Consumer&amp;)</code> → <code>consumer.getTableName()</code> 分岐 → <code>doAclTableTask(consumer)</code></td>
+</tr>
+</tbody>
+</table>
+<p>参考: APPL_DB 側の <code>APP_ACL_TABLE</code> は同じ <code>AclOrch</code> インスタンスが扱うが、<code>Orch::addConsumer()</code> の <code>else</code> 分岐で <code>ConsumerStateTable</code> + <code>gBatchSize</code> が使われる点で CONFIG_DB 側と異なる。</p>
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:4197L (AclOrch::AclOrch via Orch(connectors)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (Orch::addConsumer DB 種別分岐) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:408L (TableConnector confDbAclTable) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>ACL_RULE</code>、<code>ACL_TABLE_TYPE</code>、<code>PORT</code>、<code>PORTCHANNEL</code>、<code>MIRROR_SESSION</code></li>

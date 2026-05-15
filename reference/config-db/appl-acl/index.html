@@ -24529,6 +24529,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-side-ref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み先（counter / 状態 — side ref）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35759,6 +35809,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_table_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule_table_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counter-side-ref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み先（counter / 状態 — side ref）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37294,6 +37394,153 @@ INACTIVE になる ASIC とそうでない ASIC が混在し得る。確認は�
 <p><strong>証跡</strong>: <code>AclOrch</code> コンストラクタ STATE_DB テーブル <code>aclorch.cpp:4199-4202</code>、<code>setAclTableStatus</code>/<code>removeAclTableStatus</code> <code>aclorch.cpp:6087-6099</code>、<code>setAclRuleStatus</code>/<code>removeAclRuleStatus</code> <code>aclorch.cpp:6102-6112</code>、<code>m_countersDb</code> <code>aclorch.cpp:25-26</code>、<code>registerFlexCounter</code>/<code>deregisterFlexCounter</code> <code>aclorch.cpp:6020-6049</code>、<code>COUNTERS_ACL_COUNTER_RULE_MAP</code> 定数 <code>aclorch.cpp:45</code>、Flex counter グループ定数 <code>aclorch.h:116</code> / <code>aclorch.cpp:47</code>、status 遷移呼出元 <code>aclorch.cpp:5462,5477,5483,5492,5501,5508,5670,5683,5690,5696,5704,5726</code>、register 呼出元 <code>aclorch.cpp:1515,1519,2444,3001,3095,4982,5019,5153,5157</code>。詳細分析 <code>meta/_intermediate/cdb-flow/appl-acl-side.md</code></p>
 </blockquote>
 <!-- /side-effects -->
+
+<hr />
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_TABLE_TYPE_TABLE</code> / <code>ACL_RULE_TABLE</code> は 3 テーブルとも YANG 未定義のため、leafref は存在しない。<code>AclOrch::doTask()</code> (<code>aclorch.cpp:4272-4299</code>) が CONFIG_DB と<strong>同一ハンドラ</strong>へ振り分ける結果、以下のテーブル / Orch / DB に対する暗黙参照が発生する。</p>
+<h3 id="acl_table_table_2">ACL_TABLE_TABLE の参照<a class="headerlink" href="#acl_table_table_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PORT\|EthernetN</code></td>
+<td>OID 解決（<code>SAI_ACL_BIND_POINT_TYPE_PORT</code>）</td>
+<td><code>PORTS</code> フィールドに物理ポート名を指定したとき</td>
+<td><code>aclorch.cpp</code> L5776-5807 (<code>processAclTablePorts()</code>)、L6056-6083 (<code>getAclBindPortId()</code>)</td>
+</tr>
+<tr>
+<td><code>PORTCHANNEL\|PortChannelN</code></td>
+<td>OID 解決（<code>SAI_ACL_BIND_POINT_TYPE_LAG</code>）</td>
+<td><code>PORTS</code> に LAG 名を指定したとき</td>
+<td><code>aclorch.cpp</code> L6073-6075、L103-107 (<code>aclBindPointTypeLookup</code>)</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE_TABLE\|&lt;type&gt;</code></td>
+<td>type 定義 lookup（必須先行）</td>
+<td><code>TYPE</code> がカスタム型のとき (<code>vnetorch</code> の <code>VNET_TUNNEL_TERM_ACL_TABLE_TYPE</code> 等)。事前定義型 (<code>L3</code>/<code>MIRROR</code> 等) は不要</td>
+<td><code>aclorch.cpp</code> L5380-5388、L5432 (<code>getAclTableType()</code>)</td>
+</tr>
+<tr>
+<td><code>PORT</code> 全体（PortsOrch 初期化完了）</td>
+<td>ブロッキング</td>
+<td>常時。<code>allPortsReady() == false</code> の間は APPL_DB エントリ全てが早期 return で保留</td>
+<td><code>aclorch.cpp</code> L4276-4279</td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl_rule_table_3">ACL_RULE_TABLE の参照<a class="headerlink" href="#acl_rule_table_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL_TABLE_TABLE\|&lt;table&gt;</code>（または CONFIG_DB <code>ACL_TABLE\|&lt;table&gt;</code>）</td>
+<td>SAI OID 解決（必須）</td>
+<td>常時。未作成なら <code>it++</code> で無限ポーリング再試行</td>
+<td><code>aclorch.cpp</code> L5548-5566 (<code>doAclRuleTask()</code> 親 table ガード)</td>
+</tr>
+<tr>
+<td><code>PORT\|&lt;name&gt;</code> / <code>PORTCHANNEL\|&lt;name&gt;</code></td>
+<td>OID 解決</td>
+<td>match の <code>IN_PORTS</code> / <code>OUT_PORT</code> / <code>OUT_PORTS</code>、または <code>REDIRECT_ACTION</code> 値が PORT/LAG 名と一致するとき</td>
+<td><code>aclorch.cpp</code> L961-1034 (match 系)、L2085-2099 (<code>getRedirectObjectId()</code> ステップ 1)</td>
+</tr>
+<tr>
+<td><code>NEIGH</code>（NeighOrch）</td>
+<td>next-hop OID + refcount</td>
+<td><code>REDIRECT_ACTION</code> 値が <code>&lt;ip&gt;@&lt;intf&gt;</code> 形式の next-hop のとき (<code>vnetorch</code> の VIP→NH redirect が該当)</td>
+<td><code>aclorch.cpp</code> L2102-2116 (<code>getRedirectObjectId()</code> ステップ 2)</td>
+</tr>
+<tr>
+<td>TunnelNhop（TunnelOrch）</td>
+<td>OID 解決</td>
+<td><code>REDIRECT_ACTION</code> 値がトンネル next-hop 形式のとき</td>
+<td><code>aclorch.cpp</code> L2118-2136 (ステップ 3)</td>
+</tr>
+<tr>
+<td><code>ROUTE_TABLE</code>（RouteOrch 管理の NH group）</td>
+<td>OID + refcount、不在時自動生成</td>
+<td><code>REDIRECT_ACTION</code> 値が NH group 形式のとき</td>
+<td><code>aclorch.cpp</code> L2138-2157 (ステップ 4)</td>
+</tr>
+<tr>
+<td><code>MIRROR_SESSION\|&lt;name&gt;</code></td>
+<td>存在確認 + OID + refcount（<strong>現書込み元では未発火</strong>）</td>
+<td><code>MIRROR_ACTION</code> / <code>MIRROR_INGRESS_ACTION</code> / <code>MIRROR_EGRESS_ACTION</code> 指定時。現状 <code>vnetorch</code> / <code>mclagsyncd</code> / <code>dashenifwdorch</code> は MIRROR action 未使用</td>
+<td><code>aclorch.cpp</code> L2295-2401 (<code>AclRuleMirror::activate()</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="counter-side-ref">書き込み先（counter / 状態 — side ref）<a class="headerlink" href="#counter-side-ref" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>操作</th>
+<th>キー / フィールド</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_DB</code> — <code>ACL_COUNTER_RULE_MAP</code></td>
+<td><code>HSET</code> / <code>HDEL</code></td>
+<td><code>&lt;table&gt;:&lt;rule&gt;</code> → SAI counter OID</td>
+<td><code>aclorch.cpp</code> L25-26、L45 (<code>COUNTERS_ACL_COUNTER_RULE_MAP</code>)、L6020-6051 (<code>registerFlexCounter</code> / <code>deregisterFlexCounter</code>)</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB</code></td>
+<td>ACL counter group ポーリング</td>
+<td>デフォルト 10000ms (<code>ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS</code>)</td>
+<td><code>aclorch.cpp</code> L47</td>
+</tr>
+<tr>
+<td><code>STATE_DB / ACL_TABLE</code></td>
+<td>status 書き込み (<code>Active</code>/<code>Inactive</code>/<code>Pending creation</code>/<code>Pending removal</code>)</td>
+<td><code>ACL_TABLE\|&lt;name&gt;</code></td>
+<td><code>aclorch.cpp</code> L6088-6093</td>
+</tr>
+<tr>
+<td><code>CRM_ACL_TABLE</code> / <code>CRM_ACL_ENTRY</code></td>
+<td>ASIC リソース残量カウンタ更新</td>
+<td>—</td>
+<td><code>aclorch.cpp</code> L1361, L1434, L2855, L4877</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">REDIRECT_ACTION の解決順序</p>
+<p><code>getRedirectObjectId()</code> (<code>aclorch.cpp:2078</code>) は次の固定順で解決を試みる:
+1. PortsOrch — PORT / LAG 名として解決
+2. NeighOrch — <code>&lt;ip&gt;@&lt;intf&gt;</code> next-hop として解決
+3. TunnelOrch — トンネル next-hop として解決
+4. RouteOrch — next-hop group として解決（不在時は自動生成）
+いずれも失敗すると <code>SAI_NULL_OBJECT_ID</code> → rule INACTIVE。<code>vnetorch</code> の VIP redirect は通常ステップ 2 (NEIGH) で解決される。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">MIRROR_SESSION への暗黙参照は現状未発火</p>
+<p>APPL_DB ACL を書き込む 3 プロセス (<code>vnetorch</code> / <code>mclagsyncd</code> / <code>dashenifwdorch</code>) はいずれも MIRROR action を使用しない (<code>vnetorch</code> = REDIRECT、<code>mclagsyncd</code> = DROP、<code>dashenifwdorch</code> = REDIRECT)。<code>MIRROR_SESSION</code> への参照は CLI 等で APPL_DB を直接書き換えた場合のみ発火する。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">未 ready PORT は非ブロッキング</p>
+<p><code>PORTS</code> に含まれる未登録ポートは <code>aclTable.pendingPortSet</code> に積まれ、PortsOrch の <code>SUBJECT_TYPE_PORT_CHANGE</code> 通知 (<code>aclorch.cpp:2884-2904</code>) で遅延バインドされる。テーブル本体は SAI 作成され <code>Active</code> ステータスを得る。</p>
+</div>
+<p>詳細分析: <code>meta/_intermediate/cdb-flow/appl-acl-cross-refs.md</code></p>
+<!-- /cross-refs -->
 
 <hr />
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>

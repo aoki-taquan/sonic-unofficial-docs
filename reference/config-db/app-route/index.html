@@ -24078,7 +24078,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-doroutetask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. doRouteTask 直下の早期失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-addroute-nhg-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. addRoute / NHG 解決失敗 (retry 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-sai-handlesaicreatestatus-handlesaisetstatus-handlesairemovestatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. SAI 失敗 → handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus 経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. CRM 閾値超過の観測 (失敗ではないが関連)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-state_db-appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. STATE_DB / APPL_STATE_DB への失敗反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出ロジック補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -24089,7 +24172,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み元
@@ -34913,7 +34996,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-doroutetask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. doRouteTask 直下の早期失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-addroute-nhg-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. addRoute / NHG 解決失敗 (retry 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-sai-handlesaicreatestatus-handlesaisetstatus-handlesairemovestatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. SAI 失敗 → handleSaiCreateStatus / handleSaiSetStatus / handleSaiRemoveStatus 経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-crm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. CRM 閾値超過の観測 (失敗ではないが関連)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-state_db-appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. STATE_DB / APPL_STATE_DB への失敗反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出ロジック補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34924,7 +35090,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み元
@@ -35390,11 +35556,224 @@ fpmsyncd の <code>getNextHopWt()</code> が weight を取得し、非空のと�
 </blockquote>
 <!-- /side-effects -->
 
-<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>ROUTE_TABLE</code> の主購読者 <code>routeorch::doRouteTask()</code> は <code>ConsumerStateTable</code> イベントを <code>m_toSync</code> に積み、各エントリを SAI route_entry に変換する。失敗時のフロー制御は <strong><code>m_toSync.erase()</code> (恒久スキップ) と <code>it++</code> (m_toSync 残置で次サイクル再試行) の 2 値</strong>、および <strong>SAI 呼び出し失敗時の <code>handleSaiCreateStatus</code>/<code>handleSaiSetStatus</code>/<code>handleSaiRemoveStatus</code> → <code>parseHandleSaiStatusFailure</code></strong> (<code>saihelper.cpp:745-762</code>) による分岐に集約される。<code>task_need_retry</code> なら呼び元が false を返し <code>m_toSync</code> 残置、<code>task_failed</code> なら true で恒久スキップ。</p>
+<h3 id="a-doroutetask">A. <code>doRouteTask</code> 直下の早期失敗<a class="headerlink" href="#a-doroutetask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>retry</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> 同時指定</td>
+<td>ERROR ログ → <code>m_toSync.erase</code></td>
+<td>なし</td>
+<td><code>routeorch.cpp:810-814</code></td>
+</tr>
+<tr>
+<td>VRF 未作成 (<code>!m_vrfOrch-&gt;isVRFexists</code>)</td>
+<td>ログなし → <code>it++</code></td>
+<td>あり (VRF 作成で自動回復)</td>
+<td><code>routeorch.cpp:706-715</code></td>
+</tr>
+<tr>
+<td><code>alsv.size()==0 &amp;&amp; !blackhole &amp;&amp; !srv6_nh</code> (ifname 空)</td>
+<td>WARN ログ → 既存ルートがあれば <code>removeRoute</code> 実行後 erase / なければ erase</td>
+<td>なし</td>
+<td><code>routeorch.cpp:855-882</code></td>
+</tr>
+<tr>
+<td>非 L3 VNI の overlay 受信</td>
+<td>WARN ログ → 同上の cleanup + erase</td>
+<td>なし</td>
+<td><code>routeorch.cpp:874, 918-920</code></td>
+</tr>
+<tr>
+<td>SRv6 segment / source 数不整合、router_mac / vni_label 不正</td>
+<td>ERROR ログ → <code>m_toSync.erase</code></td>
+<td>なし</td>
+<td><code>routeorch.cpp:937-989</code></td>
+</tr>
+<tr>
+<td><code>nexthop_group</code> の NhgOrch 未登録</td>
+<td>ERROR ログ → <code>++it</code></td>
+<td>あり (NHG_TABLE 投入で自動回復)</td>
+<td><code>routeorch.cpp:1004-1015</code></td>
+</tr>
+<tr>
+<td>不明 op</td>
+<td>ERROR <code>"Unknown operation type"</code> → <code>erase</code></td>
+<td>なし</td>
+<td><code>routeorch.cpp:1109-1112</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-addroute-nhg-retry">B. <code>addRoute</code> / NHG 解決失敗 (retry 経由)<a class="headerlink" href="#b-addroute-nhg-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>retry の契機</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>interface NH の RIF 未作成 (<code>getRouterIntfsId == SAI_NULL_OBJECT_ID</code>)</td>
+<td>INFO ログ → <code>addRoute</code> false → <code>m_toSync</code> 残置</td>
+<td>IntfsOrch が RIF を作成</td>
+<td><code>routeorch.cpp:2083-2090, 2429-2436</code></td>
+</tr>
+<tr>
+<td>neighbor 未解決 (single NH)</td>
+<td>INFO ログ → <code>m_neighOrch-&gt;resolveNeighbor(nexthop)</code> で ARP/ND 発火 → false</td>
+<td>NeighOrch が APPL_DB <code>NEIGH_TABLE</code> 経由で <code>m_syncdNextHops</code> に登録</td>
+<td><code>routeorch.cpp:2149-2155</code></td>
+</tr>
+<tr>
+<td>neighbor 未解決 (ECMP)</td>
+<td>全未解決 NH に <code>resolveNeighbor</code> → <code>addTempRoute()</code> で解決済み NH だけの一時ルート install → 元ルートは false</td>
+<td>全 NH 解決後にフルグループへ昇格</td>
+<td><code>routeorch.cpp:2194-2243</code></td>
+</tr>
+<tr>
+<td><code>NHFLAGS_IFDOWN</code> が立つ NH</td>
+<td>INFO <code>"Interface down for NH X, skip"</code> → ECMP は当該 NH 除外、Route 全体は false</td>
+<td>interface UP で NHFLAGS 解除</td>
+<td><code>routeorch.cpp:2106-2109, 1532-1535, 1707-1708</code></td>
+</tr>
+<tr>
+<td><code>next_hop_ids.size()==0</code> (active NH ゼロ)</td>
+<td>INFO <code>"Skipping creation of nexthop group as none of nexthop are active"</code> → <code>addNextHopGroup</code> false → <code>addRoute</code> false</td>
+<td>neighbor / IFDOWN 解除</td>
+<td><code>routeorch.cpp:1548-1551</code></td>
+</tr>
+<tr>
+<td><strong>NHG 上限到達</strong> (<code>m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() &gt;= m_maxNextHopGroupCount</code>)</td>
+<td>DEBUG ログ → <code>addNextHopGroup</code> false → <code>addTempRoute</code> で単一 NH サブセットを install、元 ECMP は <code>m_toSync</code> 残置。bulker 内に削除待ち NHG があれば flush して空き作成 (L1094-1100)</td>
+<td>他ルート DEL で NHG 解放</td>
+<td><code>routeorch.cpp:1424-1429, 1478-1483, 2237-2243</code></td>
+</tr>
+<tr>
+<td>SRv6 nexthop / VPN 作成失敗 (SAI NOT_SUPPORTED 含む)</td>
+<td>ERROR <code>"Failed to create SRV6 vpn"</code> / <code>"Failed to create SRV6 nexthop"</code> → false</td>
+<td>SRv6Orch / SAI 状態変化</td>
+<td><code>routeorch.cpp:2099-2147, 2168-2173</code></td>
+</tr>
+<tr>
+<td>EVPN remote VTEP / Tunnel NH 作成失敗</td>
+<td>ERROR → false</td>
+<td>VxlanOrch / EvpnOrch 状態</td>
+<td><code>routeorch.cpp:2126-2138, 2200-2213</code></td>
+</tr>
+<tr>
+<td>PIC <code>context_index</code> 未登録</td>
+<td>INFO <code>"Context ID X does not exist, move task entry to RetryCache"</code> → <code>ctx.retry_cst = make_constraint(RETRY_CST_PIC, context_index)</code> で <strong>RetryCache に park</strong> → false</td>
+<td><code>m_srv6Orch</code> 経由の <code>notifyRetry(RETRY_CST_PIC+context_index)</code> で <code>m_toSync</code> 再 enqueue</td>
+<td><code>routeorch.cpp:2055-2060, 192</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-sai-handlesaicreatestatus-handlesaisetstatus-handlesairemovestatus">C. SAI 失敗 → <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> / <code>handleSaiRemoveStatus</code> 経由<a class="headerlink" href="#c-sai-handlesaicreatestatus-handlesaisetstatus-handlesairemovestatus" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI <code>create_next_hop_group</code> 失敗</td>
+<td>ERROR ログ → <code>handleSaiCreateStatus(SAI_API_NEXT_HOP_GROUP)</code>。<code>task_need_retry</code>→false (retry)、<code>task_failed</code>→true (<code>addNextHopGroup</code> 失敗扱い→<code>addTempRoute</code>)</td>
+<td><code>routeorch.cpp:1435-1442, 1566-1574</code></td>
+</tr>
+<tr>
+<td>SAI <code>remove_next_hop_group</code> 失敗</td>
+<td>ERROR ログ → <code>handleSaiRemoveStatus(SAI_API_NEXT_HOP_GROUP)</code></td>
+<td><code>routeorch.cpp:1456-1463, 1752-1755</code></td>
+</tr>
+<tr>
+<td>SAI <code>create_route_entry</code> 失敗</td>
+<td>ERROR ログ → 同一バッチ内で <code>ctx.nhg_index.empty() &amp;&amp; nextHops.getSize()&gt;1</code> のとき <strong>newly-created NHG を <code>removeNextHopGroup</code> でロールバック</strong> → <code>handleSaiCreateStatus(SAI_API_ROUTE)</code></td>
+<td><code>routeorch.cpp:2511-2528</code></td>
+</tr>
+<tr>
+<td>SAI <code>set_route_entry_attribute</code> 失敗 (<code>SAI_STATUS_ITEM_NOT_FOUND</code>)</td>
+<td><code>m_syncdRoutes.at(vrf_id).erase(ipPrefix)</code> で内部 cache を補正 → false (次サイクルで「新規作成」パスへ)</td>
+<td><code>routeorch.cpp:2572-2581</code></td>
+</tr>
+<tr>
+<td>SAI <code>set_route_entry_attribute</code> 失敗 (その他)</td>
+<td>ERROR ログ → <code>handleSaiSetStatus(SAI_API_ROUTE)</code></td>
+<td><code>routeorch.cpp:2583-2589, 2657-2660, 2849-2853</code></td>
+</tr>
+<tr>
+<td>SAI <code>remove_route_entry</code> 失敗</td>
+<td>ERROR ログ → <code>handleSaiRemoveStatus(SAI_API_ROUTE)</code>。<strong>失敗時は <code>gCrmOrch-&gt;decCrmResUsedCounter(CRM_IPV4_ROUTE\|CRM_IPV6_ROUTE)</code> を通らない</strong> (L2882-2889 は成功時のみ)</td>
+<td><code>routeorch.cpp:2871-2879</code></td>
+</tr>
+<tr>
+<td><code>bulker.create_entry()</code> が <code>SAI_STATUS_ITEM_ALREADY_EXISTS</code> を返す (同一バッチ内重複)</td>
+<td>ERROR <code>"already exists in bulker"</code> → <code>addRoute</code> false → 上位 <code>it++</code> (残置)。次サイクル bulker クリア後再評価</td>
+<td><code>routeorch.cpp:2301-2307</code></td>
+</tr>
+<tr>
+<td>NHG メンバ作成失敗 (<code>nhgm_id == SAI_NULL_OBJECT_ID</code>)</td>
+<td>ERROR ログ → false 返却。<strong>NHG 自体は cleanup されずに残る</strong> (<code>// TODO: do we need to clean up?</code>)</td>
+<td><code>routeorch.cpp:1629-1635</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>isSaiStatusResourceFull()</code> (<code>saihelper.cpp:764-770</code>) は <code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> / <code>TABLE_FULL</code> / <code>NO_MEMORY</code> / <code>NV_STORAGE_FULL</code> を真とする。CRM 集計 (<code>CRM_IPV4_ROUTE</code> / <code>CRM_IPV6_ROUTE</code> の <code>used</code>) はあくまで観測値で、SAI のリソース枯渇を直接ブロックする経路ではない。ASIC ハードウェア限界は SAI が返す <code>TABLE_FULL</code> 等で初めて検出される。</p>
+<h3 id="d-crm">D. CRM 閾値超過の観測 (失敗ではないが関連)<a class="headerlink" href="#d-crm" title="Permanent link">&para;</a></h3>
+<p><code>crmorch.cpp:1168-1186</code> (<code>CRM_EXCEEDED_MSG_MAX=10</code>, L16):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">utilization</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">res</span><span class="p">.</span><span class="n">highThreshold</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">cnt</span><span class="p">.</span><span class="n">exceededLogCounter</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">CRM_EXCEEDED_MSG_MAX</span><span class="p">))</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;%s THRESHOLD_EXCEEDED for %s %u%% Used count %u free count %u&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">event_publish</span><span class="p">(</span><span class="n">g_events_handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;chk_crm_threshold&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">params</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="n">cnt</span><span class="p">.</span><span class="n">exceededLogCounter</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="p">}</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">utilization</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">res</span><span class="p">.</span><span class="n">lowThreshold</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">cnt</span><span class="p">.</span><span class="n">exceededLogCounter</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">...)</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">{</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;%s THRESHOLD_CLEAR ...&quot;</span><span class="p">);</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="n">cnt</span><span class="p">.</span><span class="n">exceededLogCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>CRM_IPV4_ROUTE</code> / <code>CRM_IPV6_ROUTE</code> が CONFIG_DB <code>CRM</code> の <code>ipv4_route_high_threshold</code> / <code>ipv6_route_high_threshold</code> を超えると <strong>WARN ログ + <code>chk_crm_threshold</code> イベント発火</strong> を最大 10 回。<code>used/available</code> 計算で <code>available==0</code> のとき <code>Exception occurred (div by Zero)</code> WARN を 1 回ログする (L1145-1147)。<strong>CRM は SAI 操作をブロックしない</strong>: ASIC リソース枯渇は SAI 戻り値経由でしか検出されず、CRM はあくまで運用監視のための「事前警告」レイヤである。</p>
+<h3 id="e-state_db-appl_state_db">E. STATE_DB / APPL_STATE_DB への失敗反映<a class="headerlink" href="#e-state_db-appl_state_db" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>publishRouteState()</code> (L3185-3201) は <strong><code>addRoute</code> 成功時のみ</strong> APPL_STATE_DB に <code>protocol</code> を書く。SAI 失敗で <code>addRoute</code> が false を返した場合、APPL_STATE_DB は更新されず、次サイクル再試行成功時にまとめて publish される</li>
+<li><code>removeRoute</code> 成功時のみ APPL_STATE_DB の当該 key を空 fvs で削除</li>
+<li>STATE_DB <code>ROUTE_TABLE</code> (default route only) は <code>updateDefRouteState()</code> (L287-295, L2856) で <code>state=ok</code>/<code>na</code> のみ更新。<strong>個別プレフィクスの失敗は STATE_DB には現れない</strong></li>
+<li><code>ERROR_TABLE</code> への書き込みは routeorch / nhgorch / crmorch のいずれにも存在しない (grep 結果)</li>
+</ul>
+<h3 id="_7">検出ロジック補足<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>NHG 上限到達は <code>addTempRoute</code> 経由でサブセットが install される</strong>: ECMP の一部 NH だけで一時的にトラフィックが流れる。読み手 (orchagent ログ / <code>show ip route</code>) からは「フルセット ECMP がなぜか縮退している」状態に見える</li>
+<li><strong>PIC RetryCache は唯一の明示的 retry-cache 利用箇所</strong> (<code>createRetryCache(APP_ROUTE_TABLE_NAME)</code>, L192)。それ以外の retry は全て <code>m_toSync</code> 残置による polling 型</li>
+<li><strong><code>SAI_STATUS_ITEM_NOT_FOUND</code> on set は DualToR の race 補正</strong>: tunnel route が削除された直後に learned route が同じ prefix を set しようとすると発生する。<code>m_syncdRoutes</code> cache を消して次サイクルで create にフォールバック</li>
+<li><strong><code>SAI_STATUS_ITEM_ALREADY_EXISTS</code> in bulker は same-batch 重複の防御</strong>: 通常運用では起きないが起きた場合 ERROR ログを残して retain。bulker は次サイクルで <code>flush</code> 後にリセット</li>
+<li><strong>CRM threshold 超過時の event publish は sonic-events 経由</strong>: <code>g_events_handle</code> に <code>chk_crm_threshold</code> イベントを通知し、Telemetry / sonic-eventd で再公開可能</li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>routeorch.cpp</code> 失敗パス 25 件 (L706-715, L810-814, L855-989, L1004-1015, L1109-1112, L1424-1483, L1532-1574, L1629-1635, L2055-2243, L2511-2589, L2657-2660, L2849-2879, L3185-3201)、<code>nhgorch.cpp</code> (L100, L142, L177, L211, L433, L784-789, L805, L940-975, L1044-1082)、<code>crmorch.cpp</code> (L16, L1145-1147, L1168-1186)、<code>saihelper.cpp</code> (L745-770)。詳細グレップは <code>meta/_intermediate/cdb-flow/app-route-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<h2 id="_8">購読者<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>routeorch::doRouteTask()</code> (<code>sonic-swss/orchagent/routeorch.cpp</code>): SAI <code>route_entry</code> の作成・更新・削除</li>
 </ul>
-<h2 id="_8">書き込み元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">書き込み元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>fpmsyncd::RouteSync::onRouteMsg()</code> (<code>sonic-swss/fpmsyncd/routesync.cpp</code>): カーネル netlink IPv4/IPv6 ルート受信時</li>
 <li><code>fpmsyncd::RouteSync::onSrv6Msg()</code> (<code>sonic-swss/fpmsyncd/routesync.cpp</code>): SRv6 VPN ルート受信時</li>
