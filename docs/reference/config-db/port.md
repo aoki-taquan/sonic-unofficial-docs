@@ -473,3 +473,59 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 > **スキャン証跡**: `portsorch.cpp` PORT 処理ロジックおよび `init_cfg.json.j2:29`、`minigraph.py:2621-2622` を確認、6 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> leafref として YANG スキーマで強制される参照に加え、orchagent コード上の `m_port_ref_count` 機構・macsecmgrd 直接購読・runtime orch ゲートとして PORT が関与する暗黙参照を網羅する。
+> 詳細証跡: `meta/_intermediate/cdb-flow/port-cross-refs.md`
+
+### PORT.name を leafref で参照するテーブル (27+)
+
+PORT エントリが存在しない状態でこれらのテーブルに書き込むと YANG バリデーション失敗になる。
+
+| カテゴリ | テーブル群 |
+|---|---|
+| L2 | `VLAN_MEMBER`, `PORTCHANNEL_MEMBER`, `MCLAG_INTF` |
+| L3 | `INTERFACE`, `BGP_NEIGHBOR`, `BGP_PEER_RANGE`, `NEIGH`, `ROUTE_MAP`, `FINE_GRAINED_ECMP` |
+| バッファ | `BUFFER_PG`, `BUFFER_QUEUE`, `BUFFER_PORT_INGRESS_PROFILE_LIST`, `BUFFER_PORT_EGRESS_PROFILE_LIST` |
+| QoS | `PORT_QOS_MAP`, `QUEUE`, `PFCWD`, `STORM_CONTROL`, `CABLE_LENGTH` |
+| セキュリティ | `MACSEC_PROFILE`(PORT.macsec の leafref), `ACL_TABLE`(port bind) |
+| 可視化・管理 | `MIRROR_SESSION`(dst_port), `SFLOW_SESSION`, `LLDP_PORT_TABLE`, `HIGH_FREQUENCY_TELEMETRY` |
+| 隣接・デバイス | `DEVICE_NEIGHBOR`, `MUX_CABLE` |
+| AAA | `RADIUS_SERVER`, `TACACS_SERVER`, `NTP_SERVER` |
+| その他 | `PBH_RULE`, `DHCPV4_RELAY`, `DHCP_SERVER_IPV4` |
+
+### orchagent ref_count を保持するコンポーネント
+
+`m_port_ref_count` が 0 でないと PORT DEL は拒否される (`portsorch.cpp:5649`)。
+
+| コンポーネント | 契機 | ソース |
+|---|---|---|
+| `intfsorch` | `INTERFACE` SET 時 | `intfsorch.cpp:498` |
+| `bufferorch` | `BUFFER_PG` SET 時 | `bufferorch.cpp:1175` |
+| `bufferorch` | `BUFFER_QUEUE` SET 時 | `bufferorch.cpp:1546` |
+| `portsorch` (sub-intf) | sub-interface 作成時 | `portsorch.cpp:2071` |
+| `portsorch` (bridge port) | VLAN_MEMBER 追加時 | `portsorch.cpp:2943` |
+| `portsorch` (LAG member) | PORTCHANNEL_MEMBER 追加時 | `portsorch.cpp:8205` |
+| P4 Router Interface Mgr | P4 RIF 作成時 | `p4orch/router_interface_manager.cpp:354` |
+| P4 ACL Rule Mgr | port bind 時 | `p4orch/acl_rule_manager.cpp:2077` |
+| P4 L3 Admit Mgr | L3 admit 設定時 | `p4orch/l3_admit_manager.cpp:283` |
+| P4 Mirror Session Mgr | ミラーセッション設定時 | `p4orch/mirror_session_manager.cpp:387` |
+| P4 L3 Multicast Mgr | マルチキャストレプリカ設定時 | `p4orch/l3_multicast_manager.cpp:1844` |
+
+### macsecmgrd の直接購読 (非 orch パターン)
+
+`macsecmgrd` は `CFG_PORT_TABLE_NAME` (`PORT`) を直接 SET/DEL で購読する。PORT エントリの `macsec` フィールドを読み取り `MACSEC_PROFILE` を参照して `wpa_supplicant` を起動する。`MACSEC_PROFILE` エントリが存在しない場合は silent early return (`macsecmgr.cpp:296-299,480,543-557`)。
+
+### runtime ゲート参照
+
+| 参照 | 方向 | 機構 | 備考 |
+|---|---|---|---|
+| `BUFFER_PG` / `BUFFER_QUEUE` | → PORT | `gBufferOrch->isPortReady()` で PORT ready 待機 | BUFFER 処理が完了するまで PORT HW 反映を保留 |
+| `MUX_CABLE` | ← / → PORT | linkmgrd が `PORT.mux_cable=true` を検知し MuxOrch へ通知 | minigraph.py が MUX_CABLE 存在時に自動派生 |
+| `STATE_PORT_TABLE` | PORT → STATE_DB | portsorch が oper_status / speed / flap_count を書き込む | warm reboot 復元時の引き継ぎ元 |
+| `PORT_SERDES` | PORT → | PORT DEL 時に自動連動削除 | `portsorch.cpp:1526` |
+| 他テーブル全体 | PORT → | `allPortsReady()` が true になるまで VLAN/INTERFACE/LAG/ACL orch の doTask() を保留 | 最後の PORT が初期化完了するとゲート解除 |
+
+<!-- /cross-refs -->
