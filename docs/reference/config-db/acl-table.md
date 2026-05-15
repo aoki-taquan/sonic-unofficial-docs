@@ -102,6 +102,30 @@ ACL_TABLE|<table_name>
 - `orchagent` の `AclOrch`: [SAI](../../reference/glossary.md#term-sai) ACL table 生成、ポートへのバインド
 - `copporch`: `CTRLPLANE` 系の登録時に連動
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`AclOrch` は `Orch` 基底クラス経由で `ACL_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:ACL_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:ACL_TABLE:*` (CONFIG_DB dbId=4) |
+| key 区切り | `ACL_TABLE\|<table-name>` (TableNameSeparator 既定 `\|`) |
+| POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (`TableConnector` 既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| TTL | 未設定 (CONFIG_DB は永続前提) |
+| ディスパッチ | `Consumer::execute()` → `AclOrch::doTask(Consumer&)` → `consumer.getTableName()` 分岐 → `doAclTableTask(consumer)` |
+
+参考: APPL_DB 側の `APP_ACL_TABLE` は同じ `AclOrch` インスタンスが扱うが、`Orch::addConsumer()` の `else` 分岐で `ConsumerStateTable` + `gBatchSize` が使われる点で CONFIG_DB 側と異なる。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:4197L (AclOrch::AclOrch via Orch(connectors)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (Orch::addConsumer DB 種別分岐) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:408L (TableConnector confDbAclTable) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `ACL_RULE`、`ACL_TABLE_TYPE`、`PORT`、`PORTCHANNEL`、`MIRROR_SESSION`
