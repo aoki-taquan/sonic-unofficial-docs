@@ -420,4 +420,48 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `dockers/docker-snmp/snmp_yml_to_configdb.py`, `start.sh`, `snmpd.conf.j2`, `sonic-snmpagent/src/sonic_ax_impl/main.py`, `mibs/__init__.py`, `mibs/ietf/rfc1213.py`, `sonic-utilities/config/main.py` 全行精読 (2026-05-15)
+> 詳細証跡: `meta/_intermediate/cdb-flow/snmp-pubsub.md`
+
+`SNMP` テーブル群は **「ランタイム購読なし・コンテナ再起動トリガー型」** で設計されている。`SubscriberStateTable` / `ConfigDBConnector.subscribe()` によるリアルタイム購読は実装されておらず、**起動時一括読み込み + CLI トリガーによる `docker-snmp` 再起動** で設定を反映する。
+
+### 購読メカニズム一覧
+
+| Consumer | メカニズム | 対象テーブル | タイミング |
+|----------|-----------|-------------|----------|
+| `snmp_yml_to_configdb.py` | `ConfigDBConnector.get_table()` (one-shot) | `SNMP_COMMUNITY`, `SNMP` | コンテナ起動時のみ |
+| `sonic-cfggen + snmpd.conf.j2` | `-d` 一括ダンプ → テンプレート展開 | 全 SNMP テーブル | コンテナ起動時のみ |
+| `sysNameUpdater` (snmp-subagent) | `get_all(CONFIG_DB, "DEVICE_METADATA\|localhost")` | `DEVICE_METADATA.hostname` | 起動時 `reinit_data()` のみ |
+| CLI (`config snmp *`) | 書き込み後 `systemctl restart snmp.service` | 全 SNMP テーブル (書き込み元) | CLI 実行毎 |
+
+### 詳細フロー
+
+**コンテナ起動時シーケンス**:
+
+1. `snmp_yml_to_configdb.py` が `/etc/sonic/snmp.yml` を読み、未設定のエントリのみ `set_entry()` で CONFIG_DB に書き込む (`SNMP_COMMUNITY`, `SNMP|LOCATION`)
+2. `sonic-cfggen -d -t snmpd.conf.j2` が CONFIG_DB 全 SNMP テーブルを一括読み込み → `/etc/snmp/snmpd.conf` を生成
+3. `snmpd` が生成された `snmpd.conf` を読み込んで起動
+4. `sonic-snmpagent` が snmpd に AgentX (TCP `localhost:3161`) で接続し MIB サブツリーを登録
+
+**CLI 変更時**:
+- `config snmp contact/location/community/user/trap *` はすべて CONFIG_DB 書き込み後に `systemctl reset-failed && restart snmp.service` を自動実行
+- `docker-snmp` コンテナが再起動し、上記起動シーケンスが再実行される
+- 変更反映まで数秒〜十数秒の SNMP 断が発生する
+
+### Redis Pub/Sub の使用状況
+
+`sonic-snmpagent` の MIB 実装は LLDP / トランシーバーセンサーで Redis native `psubscribe` (`__keyspace@{db}__:{pattern}`) を使用するが、**SNMP 設定テーブル自身は対象外**。
+
+| MIB | DB | 用途 |
+|-----|----|------|
+| `ieee802_1ab.py` (LLDP) | APPL_DB | LLDP Neighbor テーブル変化検知 |
+| `rfc2737.py` (物理テーブル) | STATE_DB | トランシーバー状態変化検知 |
+
+`SNMP`, `SNMP_COMMUNITY`, `SNMP_USER`, `SNMP_AGENT_ADDRESS_CONFIG`, `SNMP_TRAP_CONFIG` への keyspace notification 購読は実装されていない。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
