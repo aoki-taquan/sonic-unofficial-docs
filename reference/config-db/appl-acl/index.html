@@ -24118,6 +24118,150 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortsOrch readiness ガード（最優先）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acl_table_table-appl_db-acl_rule_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ACL_TABLE_TABLE 先行ガード（APPL_DB ACL_RULE_TABLE の SET）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-acl_table_type_table-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ACL_TABLE_TYPE_TABLE 先行ガード（カスタム TYPE 使用時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ports-port-readiness-pendingportset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PORTS フィールドの port readiness — pendingPortSet キャッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-retry-cache-sai-resource-full-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Retry cache 経路（SAI resource full）— CONFIG_DB と独立
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-set-del-mirror-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. SET → DEL 順序（MIRROR rule 内容変更）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#channel-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        channel PUBLISH → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -24129,7 +24273,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34937,6 +35081,150 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortsOrch readiness ガード（最優先）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-acl_table_table-appl_db-acl_rule_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ACL_TABLE_TABLE 先行ガード（APPL_DB ACL_RULE_TABLE の SET）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-acl_table_type_table-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ACL_TABLE_TYPE_TABLE 先行ガード（カスタム TYPE 使用時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ports-port-readiness-pendingportset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PORTS フィールドの port readiness — pendingPortSet キャッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-retry-cache-sai-resource-full-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Retry cache 経路（SAI resource full）— CONFIG_DB と独立
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-set-del-mirror-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. SET → DEL 順序（MIRROR rule 内容変更）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#channel-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        channel PUBLISH → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34948,7 +35236,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35620,13 +35908,223 @@ mclagsyncd は <code>stage</code> を未指定 → orchagent の C++ struct defa
 <!-- /failure -->
 
 <hr />
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_TABLE_TYPE_TABLE</code> / <code>ACL_RULE_TABLE</code> は CONFIG_DB 版と<strong>同一の <code>AclOrch::doTask()</code> ハンドラ</strong>で処理される (<code>aclorch.cpp:4283-4293</code>)。テーブル名で分岐せず CONFIG_DB / APPL_DB 双方を扱うため、書込み順依存も大部分が共通だが、APPL_DB 経路特有の挙動（独立 retry cache など）を含めて整理する。</p>
+<h3 id="1-portsorch-readiness">1. PortsOrch readiness ガード（最優先）<a class="headerlink" href="#1-portsorch-readiness" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// aclorch.cpp:4272-4279</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">AclOrch::doTask</span><span class="p">(</span><span class="n">Consumer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">consumer</span><span class="p">)</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="p">{</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ENTER</span><span class="p">();</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">allPortsReady</span><span class="p">())</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">        </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>gPortsOrch-&gt;allPortsReady()</code> が false の間、APPL_DB / CONFIG_DB すべての ACL テーブル処理が<strong>即 return</strong> で保留される。vnetorch・mclagsyncd・dashenifwdorch が起動直後に APPL_DB へ書き込んでも、PortsOrch が PORT 初期化を完了するまで AclOrch は何も処理しない。</p>
+<p>→ 順序依存: <code>PORT</code> テーブル初期化完了が ACL 全テーブルより<strong>先行必須</strong>。</p>
+<h3 id="2-acl_table_table-appl_db-acl_rule_table-set">2. ACL_TABLE_TABLE 先行ガード（APPL_DB ACL_RULE_TABLE の SET）<a class="headerlink" href="#2-acl_table_table-appl_db-acl_rule_table-set" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1">// aclorch.cpp:5548-5566 (doAclRuleTask)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">table_oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getTableById</span><span class="p">(</span><span class="n">table_id</span><span class="p">);</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">table_oid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SAI_NULL_OBJECT_ID</span><span class="p">)</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="p">{</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_ctrlAclTables</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">table_id</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m_ctrlAclTables</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">        </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Skip control plane ACL rule %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">        </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">        </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Wait for ACL table %s to be created&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">table_id</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>APPL_DB の <code>ACL_RULE_TABLE|&lt;table&gt;|&lt;rule&gt;</code> SET が先に届いても、対応する <code>ACL_TABLE_TABLE|&lt;table&gt;</code> が AclOrch で処理されて SAI ACL table OID が割り当てられるまで <code>it++</code> で<strong>毎イベントループ再試行</strong>される（無限ポーリング）。</p>
+<p>vnetorch (vnetorch.cpp:3797 → 3832) / mclagsyncd (mclaglink.cpp:336 → 372) / dashenifwdorch は自身は <code>ACL_TABLE_TABLE</code> → <code>ACL_RULE_TABLE</code> の順で <code>set()</code> するが、APPL_DB Producer/Consumer は順序を保証しないため、orchagent 側のこの待機ループで依存が解消される。</p>
+<p>→ 順序依存: 同一テーブル名の <code>ACL_TABLE_TABLE</code> エントリが AclOrch で処理済みであること。</p>
+<h3 id="3-acl_table_type_table-type">3. ACL_TABLE_TYPE_TABLE 先行ガード（カスタム TYPE 使用時）<a class="headerlink" href="#3-acl_table_type_table-type" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// aclorch.cpp:4291-4293</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CFG_ACL_TABLE_TYPE_TABLE_NAME</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">table_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">APP_ACL_TABLE_TYPE_TABLE_NAME</span><span class="p">)</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="p">{</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="n">doAclTableTypeTask</span><span class="p">(</span><span class="n">consumer</span><span class="p">);</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="p">}</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1">// aclorch.cpp:5432 (doAclTableTask)</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">auto</span><span class="w"> </span><span class="n">tableType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getAclTableType</span><span class="p">(</span><span class="n">tableTypeName</span><span class="p">);</span>
+</span></code></pre></div>
+<p>vnetorch のように <code>VNET_TUNNEL_TERM_ACL_TABLE_TYPE</code> というカスタム TYPE を使う場合、<code>ACL_TABLE_TYPE_TABLE</code> 側が先に AclOrch で処理されないと <code>ACL_TABLE_TABLE</code> の lookup が失敗し、テーブルが pending 状態に留まる。vnetorch.cpp は <code>acl_table_type_-&gt;set(...)</code> (L3781) を <code>acl_table_-&gt;set(...)</code> (L3797) より前に呼ぶ。</p>
+<p>→ 順序依存: カスタム TYPE 名を参照する場合は <code>ACL_TABLE_TYPE_TABLE|&lt;type&gt;</code> が先行必須。</p>
+<h3 id="4-ports-port-readiness-pendingportset">4. PORTS フィールドの port readiness — <code>pendingPortSet</code> キャッシュ<a class="headerlink" href="#4-ports-port-readiness-pendingportset" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1">// aclorch.cpp:5786-5790 (doAclTableTask 内)</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">))</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="p">{</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;Add unready port %s to pending list for ACL table %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="n">aclTable</span><span class="p">.</span><span class="n">pendingPortSet</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">alias</span><span class="p">);</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>APPL_DB 側書込み元が指定するポート（vnetorch の <code>ports_str</code>、mclagsyncd の <code>isolate_src_port</code>、dashenifwdorch の port リスト）が PortsOrch に未登録の場合、テーブル本体は SAI 作成されつつ未 ready port のみ <code>pendingPortSet</code> に積まれる。後続で PortsOrch から <code>SUBJECT_TYPE_PORT_CHANGE</code> 通知が <code>AclOrch::update()</code> (aclorch.cpp:4243-4247) に届くと、<code>AclTable::onUpdate()</code> (aclorch.cpp:2884-2904) で pending port が逐次バインドされる。</p>
+<p>→ 部分順序: 未 ready port は非ブロッキング（pending キューで遅延バインド）。</p>
+<h3 id="5-retry-cache-sai-resource-full-config_db">5. Retry cache 経路（SAI resource full）— CONFIG_DB と独立<a class="headerlink" href="#5-retry-cache-sai-resource-full-config_db" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">// aclorch.cpp:4220-4222 (コンストラクタ)</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">createRetryCache</span><span class="p">(</span><span class="n">CFG_ACL_RULE_TABLE_NAME</span><span class="p">);</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">createRetryCache</span><span class="p">(</span><span class="n">APP_ACL_RULE_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>AclOrch</code> コンストラクタが CONFIG_DB / APPL_DB の <code>ACL_RULE_TABLE</code> それぞれに<strong>独立した retry cache</strong> を初期化する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// aclorch.cpp:5673-5693 (doAclRuleTask, addAclRule 失敗時)</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isSaiStatusResourceFull</span><span class="p">(</span><span class="n">newRule</span><span class="o">-&gt;</span><span class="n">getLastSaiStatus</span><span class="p">()))</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="p">{</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;ACL rule %s in table %s failed due to resource exhaustion, parking for retry&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">cst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_constraint</span><span class="p">(</span><span class="n">RETRY_CST_SAI_RESOURCE</span><span class="p">,</span><span class="w"> </span><span class="n">table_id</span><span class="p">);</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">consumer</span><span class="p">.</span><span class="n">addToRetry</span><span class="p">(</span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">,</span><span class="w"> </span><span class="n">cst</span><span class="p">))</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">        </span><span class="n">setAclRuleStatus</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span><span class="w"> </span><span class="n">rule_id</span><span class="p">,</span><span class="w"> </span><span class="n">AclObjectStatus</span><span class="o">::</span><span class="n">PENDING_CREATION</span><span class="p">);</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">        </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">m_toSync</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>SAI resource 枯渇 (<code>SAI_STATUS_TABLE_FULL</code> 等) で <code>addAclRule()</code> が失敗した APPL_DB ルールは、APPL_DB 専用 retry cache に park され <code>PENDING_CREATION</code> ステータスが記録される。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// aclorch.cpp:5716-5721 (DEL 成功時)</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ruleExisted</span><span class="p">)</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">{</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">    </span><span class="n">notifyRetry</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">consumer</span><span class="p">.</span><span class="n">getTableName</span><span class="p">(),</span><span class="w"> </span><span class="n">make_constraint</span><span class="p">(</span><span class="n">RETRY_CST_SAI_RESOURCE</span><span class="p">,</span><span class="w"> </span><span class="n">table_id</span><span class="p">));</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>notifyRetry</code> の第 2 引数に <code>consumer.getTableName()</code> が渡されるため、<strong>CONFIG_DB の DEL は CONFIG_DB の retry のみ、APPL_DB の DEL は APPL_DB の retry のみ</strong>を起こす。CONFIG_DB / APPL_DB の retry cache は完全に独立で、片方のリソース解放が他方の park 済みルールを再投入することは<strong>ない</strong>。</p>
+<p>→ タイミング依存: 同一 APPL_DB テーブル内で <code>ACL_RULE_TABLE</code> の DEL が成功するまで、park 済みルールは復帰しない。</p>
+<h3 id="6-set-del-mirror-rule">6. SET → DEL 順序（MIRROR rule 内容変更）<a class="headerlink" href="#6-set-del-mirror-rule" title="Permanent link">&para;</a></h3>
+<p>MIRROR / MIRRORV6 rule は <code>AclRule::update()</code> 未実装 (<code>aclorch.cpp:1466</code> で <code>SWSS_LOG_ERROR</code> 後 <code>return false</code>)。APPL_DB 経由でも同じハンドラを通るため、MIRROR rule の内容変更は <code>DEL → SET</code> の 2 段操作が必須。L3 / L3V6 等の通常 rule は <code>set_acl_entry_attribute()</code> で mutable 更新される。</p>
+<h3 id="_9">順序依存サマリ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>依存項目</th>
+<th>スコープ</th>
+<th>解消メカニズム</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PortsOrch readiness</td>
+<td>CONFIG_DB / APPL_DB 共通</td>
+<td><code>doTask</code> 早期 return → event loop 再投入</td>
+<td>aclorch.cpp:4276</td>
+</tr>
+<tr>
+<td>ACL_TABLE → ACL_RULE</td>
+<td>共通（同一ハンドラ）</td>
+<td><code>doAclRuleTask</code> の <code>it++</code> 待機ループ</td>
+<td>aclorch.cpp:5548-5566</td>
+</tr>
+<tr>
+<td>ACL_TABLE_TYPE → ACL_TABLE</td>
+<td>共通</td>
+<td><code>doAclTableTask</code> で type lookup 失敗 → pending</td>
+<td>aclorch.cpp:5432</td>
+</tr>
+<tr>
+<td>PORTS の port readiness</td>
+<td>共通</td>
+<td><code>pendingPortSet</code> + <code>SUBJECT_TYPE_PORT_CHANGE</code></td>
+<td>aclorch.cpp:2884-2904, 5786-5790</td>
+</tr>
+<tr>
+<td>SAI resource full retry</td>
+<td>CONFIG_DB / APPL_DB <strong>独立</strong></td>
+<td><code>createRetryCache</code> x2、<code>notifyRetry</code> は consumer 限定</td>
+<td>aclorch.cpp:4220-4222, 5673-5721</td>
+</tr>
+<tr>
+<td>MIRROR rule 更新</td>
+<td>共通</td>
+<td>DEL → SET 必須</td>
+<td>aclorch.cpp:1466</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
+
+<hr />
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p>APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_TABLE_TYPE_TABLE</code> / <code>ACL_RULE_TABLE</code> への変更通知は、<code>AclOrch</code> が <strong><code>swss::ConsumerStateTable</code></strong> (channel ベース PUBLISH/SUBSCRIBE) で購読する。<code>Orch::addConsumer()</code> が DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB 以外（= APPL_DB）には <code>ConsumerStateTable</code> を割り当てる (<code>orch.cpp:1186-1196</code>)。CONFIG_DB 側 ACL 3 テーブルは <code>SubscriberStateTable</code> (keyspace 通知) を使うが、APPL_DB 側は <strong>channel ベース</strong>で <strong>keyspace 通知 (<code>__keyspace@&lt;dbId&gt;__:...</code>) は使わない</strong>。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1">// orch.cpp:1186-1196</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Orch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">)</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="p">{</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>購読テーブル</th>
+<th>バッチ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orchagent</code> (<code>AclOrch</code>)</td>
+<td><code>swss::ConsumerStateTable</code></td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td><code>gBatchSize</code> (default 128)</td>
+</tr>
+<tr>
+<td><code>orchagent</code> (<code>AclOrch</code>)</td>
+<td>同上</td>
+<td><code>ACL_TABLE_TYPE_TABLE</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>orchagent</code> (<code>AclOrch</code>)</td>
+<td>同上</td>
+<td><code>ACL_RULE_TABLE</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><code>gBatchSize</code> は <code>orchagent/main.cpp:459</code> で <code>DEFAULT_BATCH_SIZE = 128</code> に初期化され、<code>orchagent -b &lt;n&gt;</code> オプション (<code>main.cpp:478</code>) で上書き可能。書き込み側（<code>vnetorch</code> / <code>mclagsyncd</code> / <code>dashenifwdorch</code>）はいずれも <code>swss::ProducerStateTable::set()</code> で書き込み、内部で <code>&lt;TABLE&gt;_CHANNEL@&lt;dbId&gt;</code> への <code>PUBLISH</code> を発行する。CONFIG_DB と異なり TTL は使用されない。</p>
+<h3 id="channel-publish">channel PUBLISH → ハンドラ呼び出しの流れ<a class="headerlink" href="#channel-publish" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>vnetorch / mclagsyncd / dashenifwdorch
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>  ↓ ProducerStateTable::set(rule_name, fvs)
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>APPL_DB: HSET &quot;_ACL_RULE_TABLE:&lt;table&gt;:&lt;rule&gt;&quot; &lt;fields&gt;
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>  ↓ Redis PUBLISH &quot;ACL_RULE_TABLE_CHANNEL@0&quot; &quot;G&quot;
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>OrchDaemon main loop: m_select-&gt;select(&amp;s, 1000ms)  ← SELECT_TIMEOUT
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>  ↓ Consumer::execute() → ConsumerStateTable::pops()
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>AclOrch::doTask(consumer)  (aclorch.cpp:4272-4295)
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>  ↓ table_name で分岐
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>doAclRuleTask(consumer) / doAclTableTask(consumer) / doAclTableTypeTask(consumer)
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>  ↓ CONFIG_DB 版と同一ハンドラを共有
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a>SAI: sai_acl_api-&gt;create_acl_table / create_acl_entry
+</span></code></pre></div>
+<ul>
+<li><code>SELECT_TIMEOUT = 1000 ms</code> (<code>orchdaemon.cpp:22-23</code>)。1 秒ごとに wake up して retry / flush を回し、channel に PUBLISH があれば即座に wake up。</li>
+<li><code>doTask</code> ディスパッチ (<code>aclorch.cpp:4283-4292</code>) は <code>CFG_ACL_*</code> と <code>APP_ACL_*</code> を <strong>同一ハンドラ</strong> にまとめるため、フィールド意味論・priority 範囲・action / match セットは CONFIG_DB 版と完全に共有される。</li>
+<li>リトライキャッシュは <code>ACL_RULE_TABLE</code> 系統 (CONFIG_DB / APPL_DB) <strong>両方</strong> に作成される (<code>createRetryCache(APP_ACL_RULE_TABLE_NAME)</code>, <code>aclorch.cpp:4222</code>)。SAI リソース枯渇で失敗した APPL_DB ルールは park され、リソース解放時に再試行される。</li>
+</ul>
+<h3 id="_10">サービス再起動トリガー<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>なし。<code>AclOrch</code> は同一 orchagent プロセス内のハンドラであり、APPL_DB エントリの追加/削除は SAI ACL オブジェクトのライブ操作 (<code>sai_acl_api-&gt;create_acl_entry</code> / <code>remove_acl_entry</code>) のみで反映され、プロセス再起動・サービス restart を伴わない。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/orchdaemon.cpp:22-23,411-422,959</code> (TableConnector / SELECT_TIMEOUT / select ループ)、<code>sonic-swss/orchagent/orch.cpp:1186-1196</code> (<code>Orch::addConsumer()</code> DB ID 分岐)、<code>sonic-swss/orchagent/aclorch.cpp:4197-4222,4272-4295</code> (AclOrch コンストラクタ / retry cache / <code>doTask</code> ディスパッチ)、<code>sonic-swss/orchagent/main.cpp:59-60,459,478</code> (<code>DEFAULT_BATCH_SIZE = 128</code> と <code>-b</code> オプション)、<code>sonic-swss-common/common/schema.h:94-96</code> (テーブル名定数); 詳細分析 <code>meta/_intermediate/cdb-flow/appl-acl-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<hr />
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../acl-table/"><code>ACL_TABLE</code></a>、<a href="../acl-rule/"><code>ACL_RULE</code></a></li>
 <li>CLI: <a href="../../cli/show-acl/"><code>show acl</code></a>、<a href="../../cli/config-acl/"><code>config acl</code></a></li>
 <li>YANG: なし（YANG 未定義）</li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

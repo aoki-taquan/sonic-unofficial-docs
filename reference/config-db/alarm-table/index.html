@@ -23989,6 +23989,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#event-profile-sourcetag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        event profile キー (&lt;source&gt;.&lt;tag&gt;) への暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_db-healthd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / STATE_DB の暗黙間接依存 (healthd 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resource フィールドの動的参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        連動書込先 (Phase F 重複)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34897,6 +34958,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#event-profile-sourcetag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        event profile キー (&lt;source&gt;.&lt;tag&gt;) への暗黙参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_db-healthd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / STATE_DB の暗黙間接依存 (healthd 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resource フィールドの動的参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        連動書込先 (Phase F 重複)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35451,6 +35573,111 @@
 </table>
 <p>詳細解析: <code>meta/_intermediate/cdb-flow/alarm-table-pubsub.md</code></p>
 <!-- /pubsub -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>ALARM テーブルは EVENT_DB に存在し、CONFIG_DB 的な YANG <code>leafref</code> 制約は持たない。
+しかし「ALARM 行が成立する前提として暗黙的に存在しなければならないキー / テーブル」がコード上に固定参照として現れる。</p>
+<h3 id="event-profile-sourcetag">event profile キー (<code>&lt;source&gt;.&lt;tag&gt;</code>) への暗黙参照<a class="headerlink" href="#event-profile-sourcetag" title="Permanent link">&para;</a></h3>
+<p>ALARM 行の <code>type-id</code> / <code>severity</code> / <code>action</code> フィールドは、publisher が指定する <code>(source, tag)</code> を <strong>event profile JSON のキー</strong> として暗黙参照する。profile に該当キーが無いと eventd 側で severity / action が解決されず RAISE が無効化される (型なし string だがコードレベルで参照整合性が強制)。</p>
+<table>
+<thead>
+<tr>
+<th>publisher source</th>
+<th>tag</th>
+<th>発火元</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-events-eventd</code></td>
+<td><code>heartbeat</code></td>
+<td>eventd 自身 (2 秒周期)</td>
+<td><code>sonic-eventd/src/eventd.cpp:46-47,291</code></td>
+</tr>
+<tr>
+<td><code>sonic-events-host</code></td>
+<td><code>process-not-running</code></td>
+<td>system-health <code>service_checker</code></td>
+<td><code>system-health/health_checker/service_checker.py:15-16,380-384</code></td>
+</tr>
+<tr>
+<td><code>sonic-events-host</code></td>
+<td><code>liquid-cooling-leak</code></td>
+<td>system-health <code>hardware_checker</code></td>
+<td><code>system-health/health_checker/hardware_checker.py:7-8,298-302</code></td>
+</tr>
+<tr>
+<td><code>sonic-events-host</code></td>
+<td><code>process-exited-unexpectedly</code></td>
+<td>supervisord proc-exit-listener</td>
+<td><code>sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener:44-45,145-149</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db-state_db-healthd">CONFIG_DB / STATE_DB の暗黙間接依存 (healthd 経由)<a class="headerlink" href="#config_db-state_db-healthd" title="Permanent link">&para;</a></h3>
+<p><code>eventd</code> プロセスは DEVICE_METADATA を直接読まないが (<code>src/sonic-eventd/src/</code> 配下 <code>grep "DEVICE_METADATA"</code> ヒット 0)、主要な ALARM publisher である <strong>healthd (system-health)</strong> は CONFIG_DB / STATE_DB の以下エントリに起動時依存する。これらが欠落すると <code>sonic-events-host</code> 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。</p>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照先</th>
+<th>種別</th>
+<th>用途</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>healthd <code>sysmonitor.py</code></td>
+<td><code>CONFIG_DB:DEVICE_METADATA</code> (全フィールド)</td>
+<td>get_table</td>
+<td>device_config レンダリング</td>
+<td><code>sysmonitor.py:152,217-219</code></td>
+</tr>
+<tr>
+<td>healthd <code>sysmonitor.py</code></td>
+<td><code>STATE_DB:FEATURE</code></td>
+<td>SubscriberStateTable</td>
+<td>監視対象 feature の up/down 追従</td>
+<td><code>sysmonitor.py:39-41</code></td>
+</tr>
+<tr>
+<td>healthd <code>service_checker.py</code></td>
+<td><code>CONFIG_DB:FEATURE</code></td>
+<td>get_table</td>
+<td>プロセス監視対象の取捨選択</td>
+<td><code>service_checker.py:321-323</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="resource"><code>resource</code> フィールドの動的参照<a class="headerlink" href="#resource" title="Permanent link">&para;</a></h3>
+<p>ALARM の <code>resource</code> フィールド (optional) は publisher アプリケーションが任意のリソース識別子 (例: <code>Ethernet0</code>, <code>PSU1</code>, <code>xcvrd:Ethernet24</code>) を入れる動的多態フィールド。参照先テーブル (<code>TRANSCEIVER_INFO</code> / <code>TEMPERATURE_INFO</code> / <code>PORT</code> 等) は固定されておらず、HLD §3.1.2 の OpenConfig <code>/components/component</code> 系パスへのマッピングのみが規約化されている。</p>
+<h3 id="phase-f">連動書込先 (Phase F 重複)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>連動書込先</th>
+<th>関係</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_DB:COUNTERS_EVENTS</code></td>
+<td>eventd が ALARM 含む event publish 経路全体のカウンタを 10ms 周期で flush</td>
+<td><code>eventd.h:18-20,87</code>, <code>eventd.cpp:50-53,187,205-210</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">AlarmConsumer 本体は master HEAD に未収載</p>
+<p>現スナップショット (<code>sonic-buildimage</code> SHA <code>9ea932ec...</code>) の <code>src/sonic-eventd/src/</code> は XPUB/XSUB proxy + heartbeat + stats のみで、HLD §3.1.x が言及する Alarm Consumer (RAISE/CLEAR/ACK/UNACK を ALARM テーブルへ反映する側) の実装ソースは未存在。<code>type-id</code> → event profile, <code>resource</code> → リソーステーブル の <strong>書き込み側コード</strong> からの参照確認は将来コミット待ち。本セクションは publisher 側 + healthd 側 + 連動書込先の 3 軸で構成している。</p>
+</div>
+<p>詳細解析: <code>meta/_intermediate/cdb-flow/alarm-table-cross-refs.md</code></p>
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,50-53,187,205-210,291; src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; src/system-health/health_checker/hardware_checker.py:7-8,298-302; src/system-health/health_checker/sysmonitor.py:39-41,152,217-219 -->
+<!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
 
