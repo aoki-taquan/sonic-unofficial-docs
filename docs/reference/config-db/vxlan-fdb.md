@@ -109,6 +109,7 @@ VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2
 | `esi` | fdbsyncd 経由 | 常に空文字列（書き込まれない） | 書き込み元依存 | `fdbsync.cpp:658-664` |
 | `origin` | テーブル名 = `APP_VXLAN_FDB_TABLE_NAME` | `FDB_ORIGIN_VXLAN_ADVERTIZED` にハードコード | ハードコード | `fdborch.cpp:719-722` |
 | warm-restart 中 | `isWarmStartInProgress() == true` | APP_DB 直書きせず `insertToMap()` でキャッシュ蓄積、完了後に一括フラッシュ | warm-restart 遅延書き込み | `fdbsync.cpp:669-673` |
+| エントリ削除トリガー | `RTM_DELNEIGH` または state が `NUD_INCOMPLETE`/`NUD_FAILED` | `macDelVxlan()` を呼び APP_DB からエントリ削除 | netlink state ハードコード | `fdbsync.cpp:787-792` |
 
 ### 補足: `type` 判定ロジック詳細
 

@@ -195,6 +195,24 @@ warm-restart 中は `m_fdbTable.set()` の代わりに `insertToMap()` でキャ
 
 ---
 
+### 8. delete_key 判定 — NUD_INCOMPLETE / NUD_FAILED
+
+**根拠**: `fdbsync.cpp:787-792`
+```cpp
+int state = rtnl_neigh_get_state(neigh);
+if ((nlmsg_type == RTM_DELNEIGH) || (state == NUD_INCOMPLETE) ||
+    (state == NUD_FAILED))
+{
+    delete_key = true;
+}
+```
+
+`RTM_DELNEIGH` メッセージのほか、`NUD_INCOMPLETE`（ARP 解決中）または `NUD_FAILED`（ARP 失敗）の state の場合も `macDelVxlan()` が呼ばれエントリが削除される。EVPN MAC が消えた場合の主トリガー。
+
+**分類**: netlink state ハードコード（削除トリガー）
+
+---
+
 ## 要約テーブル
 
 | フィールド | 省略/条件 | 実挙動 | 分類 | 根拠 |
