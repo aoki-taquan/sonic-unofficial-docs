@@ -347,6 +347,103 @@ multi-asic non-VOQ (T2 chassis BGP-only 等) では `BUFFER_*` は各 `asicX` na
 
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`bufferorch.cpp` / `bufferorch.h` / `buffer/bufferschema.h` に固定された文字列・列挙値定数の一覧。フィールド名・列挙値文字列はすべて C++ ヘッダで `const string` として定義されており、CLI / YANG / API いずれの層でも同じ綴りを要求する。
+
+### フィールド名定数 (`bufferorch.h`)
+
+| 定数名 | 値 | 行 |
+|---|---|---|
+| `buffer_size_field_name` | `"size"` | `bufferorch.h:18` |
+| `buffer_pool_type_field_name` | `"type"` | `bufferorch.h:19` |
+| `buffer_pool_mode_field_name` | `"mode"` | `bufferorch.h:20` |
+| `buffer_pool_field_name` | `"pool"` | `bufferorch.h:21` |
+| `buffer_pool_xoff_field_name` | `"xoff"` | `bufferorch.h:24` |
+| `buffer_xon_field_name` / `buffer_xon_offset_field_name` / `buffer_xoff_field_name` | `"xon"` / `"xon_offset"` / `"xoff"` | `bufferorch.h:25-27` |
+| `buffer_dynamic_th_field_name` / `buffer_static_th_field_name` | `"dynamic_th"` / `"static_th"` | `bufferorch.h:28-29` |
+| `buffer_profile_field_name` / `buffer_profile_list_field_name` | `"profile"` / `"profile_list"` | `bufferorch.h:30, 34` |
+| `buffer_headroom_type_field_name` | `"headroom_type"` (bufferorch では dead field) | `bufferorch.h:35` |
+
+### 列挙値文字列 (`bufferorch.h`)
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `buffer_value_ingress` / `buffer_value_egress` / `buffer_value_both` | `"ingress"` / `"egress"` / `"both"` | `BUFFER_POOL.type` (`bufferorch.h:31-33`) |
+| `buffer_pool_mode_dynamic_value` / `buffer_pool_mode_static_value` | `"dynamic"` / `"static"` | `BUFFER_POOL.mode` (`bufferorch.h:22-23`) |
+
+`type` / `mode` は if-else 直接比較で、許容値以外は `task_invalid_entry` (`bufferorch.cpp:457, 484`)。
+
+### `packet_discard_action` 関連 (`buffer/bufferschema.h`)
+
+| 定数名 | 値 | 行 |
+|---|---|---|
+| `BUFFER_PROFILE_PACKET_DISCARD_ACTION` | `"packet_discard_action"` | `bufferschema.h:8` |
+| `BUFFER_PROFILE_PACKET_DISCARD_ACTION_DROP` | `"drop"` | `bufferschema.h:5` |
+| `BUFFER_PROFILE_PACKET_DISCARD_ACTION_TRIM` | `"trim"` | `bufferschema.h:6` |
+
+`drop` / `trim` 以外の値は `task_failed` (`bufferorch.cpp:743`)。
+
+### flex counter group 定数 (`bufferorch.h`)
+
+| 定数名 | 値 | 用途 | 行 |
+|---|---|---|---|
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | flex counter group 名 | `bufferorch.h:15` |
+| `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` (= 60 秒) | poll 間隔ミリ秒 | `bufferorch.h:16` |
+
+poll 間隔は 60 秒固定でランタイム変更不可。
+
+### ゼロプロファイル命名規約 — `_zero_` 部分文字列
+
+flex counter スキップ判定として、プロファイル名に `_zero_` を含むか否かを `find()` で評価する暗黙の命名契約がある。
+
+| 行 | 文脈 |
+|---|---|
+| `bufferorch.cpp:378` | `processBufferProfile()` 削除時の参照中ゼロプロファイル除外 |
+| `bufferorch.cpp:995, 1017` | `processQueue()` の counter 追加 / 旧プロファイル判定 |
+| `bufferorch.cpp:1400, 1421` | `processPriorityGroup()` の counter 追加 / 旧プロファイル判定 |
+
+`*_zero_*` 命名規約は YANG / CONFIG_DB スキーマには現れないが、ゼロプロファイル運用には必須。
+
+### スイッチタイプ判定リテラル
+
+`gMySwitchType` との比較に直接書かれている文字列。
+
+| 値 | 行 | 分岐内容 |
+|---|---|---|
+| `"dpu"` | `bufferorch.cpp:64` | `initBufferConstants()` をスキップ |
+| `"voq"` | `bufferorch.cpp:116, 132, 916, 1049, 1136, 1168, 2079` | VoQ 用 key 4 トークン形式 / remote port 扱い / queue counter スキップ |
+
+### 主要 SAI 属性 / 列挙値 ID 定数
+
+`bufferorch.cpp` から SAI に渡される代表的な定数。完全リストは中間ファイル参照。
+
+| SAI 定数 | 用途 | 行 |
+|---|---|---|
+| `SAI_BUFFER_POOL_ATTR_SIZE` / `_TYPE` / `_THRESHOLD_MODE` / `_XOFF_SIZE` | pool 4 属性 | `bufferorch.cpp:427, 460, 487, 493` |
+| `SAI_BUFFER_POOL_TYPE_{INGRESS,EGRESS,BOTH}` | `type` 列挙 SAI 値 | `bufferorch.cpp:445, 449, 453` |
+| `SAI_BUFFER_POOL_THRESHOLD_MODE_{DYNAMIC,STATIC}` | `mode` 列挙 SAI 値 | `bufferorch.cpp:476, 480` |
+| `SAI_BUFFER_PROFILE_ATTR_POOL_ID` / `BUFFER_SIZE` / `XON_TH` / `XON_OFFSET_TH` / `XOFF_TH` | profile 主要属性 | `bufferorch.cpp:661, 686, 668, 674, 680` |
+| `SAI_BUFFER_PROFILE_ATTR_THRESHOLD_MODE` / `SHARED_{DYNAMIC,STATIC}_TH` | threshold (mode は create-only) | `bufferorch.cpp:699, 704, 717, 722` |
+| `SAI_BUFFER_PROFILE_ATTR_PACKET_ADMISSION_FAIL_ACTION` + `_DROP` / `_DROP_AND_TRIM` | discard action | `bufferorch.cpp:728, 732, 736` |
+| `SAI_BUFFER_POOL_STAT_WATERMARK_BYTES` / `_XOFF_ROOM_WATERMARK_BYTES` | flex counter stat 2 種 | `bufferorch.cpp:31-32` |
+| `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` | pool/profile SET 時のみ先取り `task_ignore` 化 | `bufferorch.cpp:508, 773` |
+| `SAI_NULL_OBJECT_ID` | OID 未割当判定 (create 経路選択) | 各所 |
+
+### state DB / counters DB リテラル
+
+| リテラル / 定数 | 用途 | 行 |
+|---|---|---|
+| `STATE_BUFFER_MAXIMUM_VALUE_TABLE` (schema.h 由来) | STATE_DB のテーブル名 | `bufferorch.cpp:57` |
+| `"mmu_size"` (フィールド名) / `"global"` (key) | mmu 総量を STATE_DB に書き出す | `bufferorch.cpp:226-227` |
+| `COUNTERS_BUFFER_POOL_NAME_MAP` | pool name → OID マップ | `bufferorch.cpp:55` |
+| `"COUNTERS_DB"` (DB 名リテラル) | DBConnector 引数 | `bufferorch.cpp:55-56` |
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/appl-buffer-constants.md`
+
+<!-- /constants -->
+
 ## 引用元
 
 [^buforch]: `bufferorch.cpp` — `processBufferPool()` / `processBufferProfile()` / `processPriorityGroup()` / `processQueue()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp>
