@@ -26203,6 +26203,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default-sonic-db-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG default と sonic-db-cli の差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventd-interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eventd 側 interval の特殊値 (再掲・本ページ上部の値依存挙動マトリクスと整合)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考: SYSTEM_HEALTH 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34658,6 +34719,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yang-default-sonic-db-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG default と sonic-db-cli の差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventd-interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        eventd 側 interval の特殊値 (再掲・本ページ上部の値依存挙動マトリクスと整合)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system_health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考: SYSTEM_HEALTH 側
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35012,6 +35134,55 @@ process monitor は登録された <code>name</code> のプロセスから <code
 <ul>
 <li><code>sonic-heartbeat</code></li>
 </ul>
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<p>YANG (<code>sonic-heartbeat.yang</code>) には <code>default</code> 宣言が<strong>存在し</strong>、YANG validator 経由で書き込んだ場合は <code>heartbeat_interval=10000</code> ms / <code>alert_interval=60000</code> ms が暗黙適用される。<code>sonic-db-cli</code> 直接書き込みでは YANG default は注入されない。eventd 側は別経路 (GLOBAL_OPTION_HEARTBEAT JSON RPC) で interval を受け、初期値は <code>HEARTBEAT_INTERVAL_SECS=2</code> 秒 (<code>eventd.cpp:43</code>)。両者はスキーマ単位 (ms vs 秒) が異なるので混同しないこと。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>コード由来デフォルト</th>
+<th>発生源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>heartbeat_interval</code></td>
+<td><strong><code>10000</code></strong> ms</td>
+<td><code>10000</code> ms (YANG default 経由)</td>
+<td><code>sonic-heartbeat.yang</code> leaf <code>default "10000"</code></td>
+</tr>
+<tr>
+<td><code>alert_interval</code></td>
+<td><strong><code>60000</code></strong> ms</td>
+<td><code>60000</code> ms (YANG default 経由)</td>
+<td><code>sonic-heartbeat.yang</code> leaf <code>default "60000"</code></td>
+</tr>
+<tr>
+<td>(eventd 内部 <code>interval</code>)</td>
+<td>n/a</td>
+<td><strong><code>2</code></strong> 秒、<code>300</code> ms ステップに量子化</td>
+<td><code>eventd.cpp:43</code> <code>HEARTBEAT_INTERVAL_SECS=2</code> + <code>eventd.h:24</code> <code>STATS_HEARTBEAT_MIN=300</code></td>
+</tr>
+<tr>
+<td>(eventd <code>m_pause_heartbeat</code>)</td>
+<td>n/a</td>
+<td><strong><code>false</code></strong></td>
+<td><code>eventd.cpp:127</code> (atomic bool 初期化)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-default-sonic-db-cli">YANG default と sonic-db-cli の差異<a class="headerlink" href="#yang-default-sonic-db-cli" title="Permanent link">&para;</a></h3>
+<p>YANG default は libyang/sonic-mgmt-common の validation pass を通したときのみ補完される。<code>config_db.json</code> を直接書く / <code>sonic-db-cli HSET</code> で書く経路では <code>heartbeat_interval</code> キーが欠落したまま DB に格納される。コンシューマ (process monitor) 側がキー欠落をどう扱うかが実 fallback を決める。</p>
+<h3 id="eventd-interval">eventd 側 <code>interval</code> の特殊値 (再掲・本ページ上部の値依存挙動マトリクスと整合)<a class="headerlink" href="#eventd-interval" title="Permanent link">&para;</a></h3>
+<p><code>set_heartbeat_interval()</code> (<code>eventd.cpp:139-161</code>) は受け取った秒数を <code>STATS_HEARTBEAT_MIN</code> (300ms) 単位に切り上げ量子化する。<code>val=-1</code> は無効化 (<code>m_heartbeats_interval_cnt=0</code> で publish ループ skip)、<code>val&lt;-1</code> は invalid。<code>m_pause_heartbeat</code> は起動時 <code>false</code>、<code>heartbeat_ctrl(true)</code> 呼び出しでのみ pause する。CONFIG_DB に "suppress" / "pause" 相当のフィールドは存在しない。</p>
+<h3 id="hostcfgd">hostcfgd 側<a class="headerlink" href="#hostcfgd" title="Permanent link">&para;</a></h3>
+<p><code>sonic-host-services/scripts/hostcfgd</code> に <code>HEARTBEAT</code> テーブル handler は<strong>不在</strong>。CONFIG_DB → hostcfgd 経由のランタイム反映パスは無く、本テーブルの直接コンシューマは限定的。</p>
+<h3 id="system_health">参考: SYSTEM_HEALTH 側<a class="headerlink" href="#system_health" title="Permanent link">&para;</a></h3>
+<p><code>system-health/health_checker/config.py:12-13</code> の <code>DEFAULT_INTERVAL = 60</code> (秒) は <strong>SYSTEM_HEALTH テーブル</strong>の <code>polling_interval</code> 用 fallback であり、HEARTBEAT テーブルとは別系統。混同に注意。</p>
+<!-- /defaults -->
+
 <!-- ref-triangle:start -->
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

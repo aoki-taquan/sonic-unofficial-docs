@@ -22111,7 +22111,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-voq-chassis-cisco-8000" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VOQ chassis (Cisco 8000 系) の経路差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-capability-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI capability 動的判定 (ASIC ベンダ依存)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dynamic-static-buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. dynamic / static buffer model のベンダ別配布
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-pg-queue-index-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PG / queue index 上限は portsorch から借用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-multi-asic-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. multi-asic namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34944,7 +35027,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-voq-chassis-cisco-8000" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. VOQ chassis (Cisco 8000 系) の経路差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-capability-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI capability 動的判定 (ASIC ベンダ依存)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dynamic-static-buffer-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. dynamic / static buffer model のベンダ別配布
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-pg-queue-index-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. PG / queue index 上限は portsorch から借用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-multi-asic-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. multi-asic namespace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35454,12 +35620,147 @@
 </blockquote>
 <!-- /failure -->
 
-<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>BufferOrch</code> は単一バイナリで動作するが、(a) <code>gMySwitchType == "voq"</code> の chassis VOQ 経路、(b) SAI capability の動的判定、(c) ベンダ buffer pool Lua plugin、の 3 点でプラットフォーム差が生まれる<sup id="fnref3:buforch"><a class="footnote-ref" href="#fn:buforch">1</a></sup>。BUFFER_PG / BUFFER_QUEUE の <strong>PG/queue index → SAI oid マッピング自体は <code>portsorch</code> 側に閉じている</strong> ため、Broadcom / Mellanox の物理マップ差は bufferorch には現れない。</p>
+<h3 id="1-voq-chassis-cisco-8000">1. VOQ chassis (Cisco 8000 系) の経路差<a class="headerlink" href="#1-voq-chassis-cisco-8000" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>行</th>
+<th>差分</th>
+<th>non-VOQ</th>
+<th>VOQ (<code>gMySwitchType == "voq"</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L116/L132</td>
+<td>BUFFER_QUEUE_TABLE 初期化</td>
+<td><code>initBufferReadyList()</code></td>
+<td><code>initVoqBufferReadyList()</code> (system port ベース)</td>
+</tr>
+<tr>
+<td>L916</td>
+<td>BUFFER_QUEUE_TABLE key tokens</td>
+<td>2 (<code>&lt;port&gt;\|&lt;range&gt;</code>)</td>
+<td>4 (<code>&lt;host&gt;\|&lt;asic&gt;\|&lt;port&gt;\|&lt;range&gt;</code>)</td>
+</tr>
+<tr>
+<td>L1049</td>
+<td>queue id 解決</td>
+<td><code>port.m_queue_ids[ind]</code></td>
+<td><code>gPortsOrch-&gt;getPortVoQIds(port)[ind]</code></td>
+</tr>
+<tr>
+<td>L1066-1070</td>
+<td>queue lock retry</td>
+<td>あり (<code>task_need_retry</code>)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>L1134-1136</td>
+<td>Port Queue Counter 自動登録</td>
+<td>bufferorch が登録</td>
+<td><code>flexcounterorch</code> が一括登録するため bufferorch ではスキップ</td>
+</tr>
+<tr>
+<td>L1166-1168</td>
+<td>port ref counter 更新</td>
+<td>あり</td>
+<td>なし (system port は静的)</td>
+</tr>
+<tr>
+<td>L2079</td>
+<td><code>doTask()</code> 起動ガード</td>
+<td><code>isConfigDone()</code></td>
+<td><code>isInitDone()</code></td>
+</tr>
+</tbody>
+</table>
+<p>BUFFER_PG_TABLE には VOQ 分岐がなく、PG キーは VOQ chassis でも 2 トークン (<code>&lt;port&gt;\|&lt;range&gt;</code>)。</p>
+<h3 id="2-sai-capability-asic">2. SAI capability 動的判定 (ASIC ベンダ依存)<a class="headerlink" href="#2-sai-capability-asic" title="Permanent link">&para;</a></h3>
+<p>bufferorch は静的にベンダ名を判定せず、<strong>SAI 戻り値で実行時に capability を検出する</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>行</th>
+<th>NOT_IMPLEMENTED 時の挙動</th>
+<th>影響範囲</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clear_buffer_pool_stats</code></td>
+<td>L310-322</td>
+<td><code>noWmClrCapability</code> ビットマスクに記録 (32 プールまで)</td>
+<td>watermark clear API (pool 単位で個別)</td>
+</tr>
+<tr>
+<td><code>set_buffer_pool_attribute</code></td>
+<td>L506-512</td>
+<td><code>task_ignore</code></td>
+<td>BUFFER_POOL_TABLE 属性 SET</td>
+</tr>
+<tr>
+<td><code>set_buffer_profile_attribute</code></td>
+<td>L773-777</td>
+<td><code>task_ignore</code></td>
+<td><strong><code>xon_offset</code></strong> / <code>packet_discard_action=trim</code> 等 ASIC 非対応 attr</td>
+</tr>
+</tbody>
+</table>
+<p>→ <code>xon_offset</code> (<code>SAI_BUFFER_PROFILE_ATTR_XON_OFFSET_TH</code>) を非対応な ASIC では bufferorch が <code>task_ignore</code> で握り潰す。CONFIG_DB / APPL_DB に値が残っていてもハードウェアには反映されない (silent skip)。<code>packet_discard_action=trim</code> も同様で、加えて trimming-eligible profile を PG / profile-list に貼ろうとすると <code>task_failed</code> になる (L1382-1388 / L1728 / L1918)<sup id="fnref4:buforch"><a class="footnote-ref" href="#fn:buforch">1</a></sup>。</p>
+<h3 id="3-dynamic-static-buffer-model">3. dynamic / static buffer model のベンダ別配布<a class="headerlink" href="#3-dynamic-static-buffer-model" title="Permanent link">&para;</a></h3>
+<p><code>BUFFER_POOL_TABLE.size</code> が空の場合の挙動はビルド時の選択で変わる:</p>
+<table>
+<thead>
+<tr>
+<th>ベンダ</th>
+<th>model</th>
+<th>size 空時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mellanox SN シリーズ</td>
+<td>dynamic (<code>buffermgrdyn</code>)</td>
+<td><code>buffer_pool_mlnx.lua</code> が SAI MMU から逆算して APPL_DB に書き戻す</td>
+</tr>
+<tr>
+<td>Barefoot Tofino</td>
+<td>dynamic (<code>buffermgrdyn</code>)</td>
+<td><code>buffer_pool_bfn.lua</code></td>
+</tr>
+<tr>
+<td>Broadcom (多くの platform)</td>
+<td>static (<code>buffermgr</code>)</td>
+<td>CONFIG_DB を pass-through (空なら空のまま)</td>
+</tr>
+</tbody>
+</table>
+<p>dynamic vs static の選択は <code>device/&lt;vendor&gt;/&lt;platform&gt;/&lt;HWSKU&gt;/buffers_dynamic.json.j2</code> の配布有無で決まり、bufferorch 側は感知しない (APPL_DB の値を SAI に流すだけ)。</p>
+<h3 id="4-pg-queue-index-portsorch">4. PG / queue index 上限は portsorch から借用<a class="headerlink" href="#4-pg-queue-index-portsorch" title="Permanent link">&para;</a></h3>
+<p>bufferorch は PG / queue の SAI oid を <strong><code>portsorch</code> が <code>SAI_PORT_ATTR_INGRESS_PRIORITY_GROUP_LIST</code> / <code>SAI_PORT_ATTR_QOS_QUEUE_LIST</code> で取得済み</strong> の <code>port.m_priority_group_ids</code> / <code>port.m_queue_ids</code> を index アクセスするのみ。範囲外 (<code>m_queue_ids.size() &lt;= ind</code>) は <code>task_invalid_entry</code> (L1058-1061)。Broadcom (8 PG × 8 queue) と Mellanox (同 8/8 だが内部 buffer 構造が異なる) の物理マップ差は SAI ベンダ実装に閉じる。</p>
+<h3 id="5-multi-asic-namespace">5. multi-asic namespace<a class="headerlink" href="#5-multi-asic-namespace" title="Permanent link">&para;</a></h3>
+<p>multi-asic non-VOQ (T2 chassis BGP-only 等) では <code>BUFFER_*</code> は各 <code>asicX</code> namespace の独立 bufferorch インスタンスで処理される。VOQ chassis では <code>gMyHostName</code> / <code>gMyAsicName</code> と key の先頭 2 トークンを比較し (L1062-1064)、自 ASIC 配下を <code>local_port = true</code> として SAI bind、他 ASIC ぶんは ready list 管理のみ。</p>
+<h3 id="_8">詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>行番号付き完全マトリクスは中間ファイル参照:</p>
+<ul>
+<li><code>meta/_intermediate/cdb-flow/appl-buffer-platform.md</code></li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>bufferorch.cpp</code> の <code>gMySwitchType</code> 5 hit / <code>SAI_STATUS_NOT_IMPLEMENTED</code> 3 hit / <code>SAI_STATUS_NOT_SUPPORTED</code> 1 hit を全件確認。VOQ 分岐の L116/L132/L916/L1049/L1136/L1168/L2079、capability 経路の L310-322/L506-512/L773-777 を精読。</p>
+</blockquote>
+<!-- /platform -->
+
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:buforch">
-<p><code>bufferorch.cpp</code> — <code>processBufferPool()</code> / <code>processBufferProfile()</code> / <code>processPriorityGroup()</code> / <code>processQueue()</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:buforch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:buforch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>bufferorch.cpp</code> — <code>processBufferPool()</code> / <code>processBufferProfile()</code> / <code>processPriorityGroup()</code> / <code>processQueue()</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:buforch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:buforch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:buforch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:buforch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p><code>sonic-swss-common/common/schema.h</code> — <code>APP_BUFFER_*_TABLE_NAME</code> 定数. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>

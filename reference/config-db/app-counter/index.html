@@ -24432,7 +24432,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24443,7 +24504,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35677,7 +35738,68 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLEX_COUNTER_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35688,7 +35810,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36832,9 +36954,183 @@
 <p>詳細な参照経路・行番号は <code>meta/_intermediate/cdb-flow/app-counter-cross-refs.md</code> を参照。</p>
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp,
+     sonic-swss/orchagent/copporch.cpp -->
+
+<p><code>FLEX_COUNTER_TABLE|FLOW_CNT_TRAP</code> / <code>FLOW_CNT_ROUTE</code> および <code>FLOW_COUNTER_ROUTE_PATTERN</code> を変更すると、orchagent (<code>FlexCounterOrch</code> / <code>CoppOrch</code> / <code>FlowCounterRouteOrch</code>) が CONFIG_DB 自身ではなく <strong>COUNTERS_DB / STATE_DB / FLEX_COUNTER_DB</strong> に副次的に書込む。これらは <code>show flowcnt-*</code> / <code>counterpoll show</code> / SONiC counters API の情報源となる。</p>
+<h3 id="counters_db">COUNTERS_DB<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル / key</th>
+<th>フィールド</th>
+<th>書込タイミング</th>
+<th>書込元</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_TRAP_NAME_MAP</code> (単一 hash)</td>
+<td>field=trap 名 (例 <code>bgp</code>, <code>lldp</code>, <code>arp_request</code>), value=SAI generic counter OID</td>
+<td><code>FLOW_CNT_TRAP=enable</code> 受信時 / 個別 trap install 時</td>
+<td>CoppOrch (<code>bindTrapCounter()</code>)</td>
+<td><code>copporch.cpp:196, 1452-1456</code>; cleanup は <code>unbindTrapCounter()</code> で <code>HDEL</code> (<code>copporch.cpp:1494-1496</code>)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_ROUTE_NAME_MAP</code> (単一 hash)</td>
+<td>field=<code>&lt;vrf&gt;\|&lt;prefix&gt;</code> または <code>&lt;prefix&gt;</code> (default VRF), value=SAI generic counter OID</td>
+<td>route bind 成功時 (<code>FLEX_COUNTER_UPD_TIMER</code> 1 秒周期)</td>
+<td>FlowCounterRouteOrch (<code>mPrefixToCounterTable-&gt;set("", ...)</code>)</td>
+<td><code>flowcounterrouteorch.cpp:33, 150-153</code>; cleanup は <code>removeRouteFlowCounterFromDB()</code> (<code>:921-922</code>)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_ROUTE_TO_PATTERN_MAP</code> (単一 hash)</td>
+<td>field=個別ルート <code>&lt;vrf&gt;\|&lt;prefix&gt;</code>, value=マッチした <code>FLOW_COUNTER_ROUTE_PATTERN</code> key</td>
+<td>route bind 成功時</td>
+<td>FlowCounterRouteOrch (<code>mPrefixToPatternTable-&gt;set</code>)</td>
+<td><code>flowcounterrouteorch.cpp:34, 155-158</code>; cleanup は <code>HDEL</code> (<code>:921</code>)</td>
+</tr>
+<tr>
+<td><code>COUNTERS:&lt;oid&gt;</code></td>
+<td><code>SAI_COUNTER_STAT_PACKETS</code> / <code>SAI_COUNTER_STAT_BYTES</code></td>
+<td>syncd の 10 秒ポーリング周期 (<code>POLL_INTERVAL</code> 既定)</td>
+<td>syncd FlexCounter スレッド (間接副作用)</td>
+<td>orchagent は書込まず FLEX_COUNTER_DB 経由</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db">STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル / key</th>
+<th>フィールド</th>
+<th>書込タイミング</th>
+<th>書込元</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLOW_COUNTER_CAPABILITY_TABLE\|route</code></td>
+<td><code>support</code> = <code>"true"</code> / <code>"false"</code></td>
+<td>FlowCounterRouteOrch コンストラクタ実行時に <strong>1 回のみ</strong> (SAI capability query 結果)</td>
+<td>FlowCounterRouteOrch (<code>initRouteFlowCounterCapability()</code>)</td>
+<td><code>flowcounterrouteorch.cpp:166-179</code>, <code>flow_counter_handler.cpp:51-62</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>FLOW_CNT_TRAP</code> 側には STATE_DB capability エントリは書かれない (Phase H 参照)。<code>show flowcnt-route capabilities</code> はこのテーブルを読む。</p>
+<h3 id="flex_counter_db">FLEX_COUNTER_DB<a class="headerlink" href="#flex_counter_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル / key</th>
+<th>フィールド</th>
+<th>書込タイミング</th>
+<th>書込元</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|HOSTIF_TRAP_FLOW_COUNTER</code></td>
+<td><code>FLEX_COUNTER_STATUS</code>, <code>POLL_INTERVAL</code>, <code>STATS_MODE</code> (=<code>STATS_MODE_READ</code>)</td>
+<td><code>FLEX_COUNTER_TABLE\|FLOW_CNT_TRAP</code> の <code>FLEX_COUNTER_STATUS</code> / <code>POLL_INTERVAL</code> 変更時</td>
+<td>FlexCounterOrch → <code>setFlexCounterGroupOperation()</code> / <code>setFlexCounterGroupPollInterval()</code> (<code>ProducerTable</code> 経由)</td>
+<td><code>flexcounterorch.cpp:202-214, 380-392</code>, <code>saihelper.cpp:868-885, 918-962</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|ROUTE_FLOW_COUNTER</code></td>
+<td>同上</td>
+<td><code>FLEX_COUNTER_TABLE\|FLOW_CNT_ROUTE</code> の変更時 (capability=true ASIC のみ)</td>
+<td>FlexCounterOrch</td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_TABLE:&lt;counter_oid&gt;</code> (per OID)</td>
+<td><code>COUNTER_IDS</code> = <code>SAI_COUNTER_STAT_PACKETS,SAI_COUNTER_STAT_BYTES</code>, <code>COUNTER_TYPE</code></td>
+<td>trap / route 個別の counter 紐付け時 (<code>setCounterIdList</code>)</td>
+<td>FlexCounterManager (<code>flex_counter_manager.cpp</code>)</td>
+<td><code>flex_counter_manager.cpp:200-260</code>, <code>flow_counter_handler.cpp:10-13</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_15">副次書込サマリ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル</th>
+<th>トリガ</th>
+<th>書込主体</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_TRAP_NAME_MAP</code></td>
+<td>trap bind 時</td>
+<td>CoppOrch</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_ROUTE_NAME_MAP</code></td>
+<td>route bind 時 (1 秒タイマー)</td>
+<td>FlowCounterRouteOrch</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS_ROUTE_TO_PATTERN_MAP</code></td>
+<td>route bind 時</td>
+<td>FlowCounterRouteOrch</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td><code>COUNTERS:&lt;oid&gt;</code></td>
+<td>10 秒周期 ポーリング</td>
+<td>syncd (間接)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>FLOW_COUNTER_CAPABILITY_TABLE\|route</code></td>
+<td>orch 起動時 1 回</td>
+<td>FlowCounterRouteOrch</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>FLEX_COUNTER_GROUP_TABLE\|&lt;group&gt;</code></td>
+<td>enable/disable / interval 変更時</td>
+<td>FlexCounterOrch</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER_DB</td>
+<td><code>FLEX_COUNTER_TABLE:&lt;oid&gt;</code></td>
+<td>counter 紐付け時</td>
+<td>FlexCounterManager</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">残置・リーク経路</p>
+<ul>
+<li><code>COUNTERS_TRAP_NAME_MAP</code> / <code>COUNTERS_ROUTE_NAME_MAP</code> は disable 時に <code>HDEL</code> されるが、SAI <code>remove_counter</code> 失敗時は <strong>counter OID リーク</strong> (<code>flow_counter_handler.cpp:32-38</code>)。</li>
+<li><code>STATE_DB FLOW_COUNTER_CAPABILITY_TABLE\|route</code> は <strong>orchagent 再起動でのみ再評価</strong>。SAI driver 差し替え後は再起動が必要。</li>
+<li><code>COUNTERS_ROUTE_TO_PATTERN_MAP</code> のクリアはパターン削除経路でのみ走るため、route 単独の削除では古いエントリが残る可能性がある（次回 pattern 評価でクリーンアップ）。</li>
+</ul>
+</div>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/app-counter-side.md</code> を参照。</p>
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_15">関連リファレンス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_16">関連リファレンス<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../flex-counter-table/">CONFIG_DB FLEX_COUNTER_TABLE</a> — グループレベルの enable/disable・polling interval 設定</li>
 <li><a href="../debug-counter/">CONFIG_DB debug-counter</a></li>
@@ -36842,7 +37138,7 @@
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_16">引用元<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
