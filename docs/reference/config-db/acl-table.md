@@ -392,6 +392,57 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 前提: allPortsReady() ガード
+
+`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は即 return する。`ACL_TABLE` / `ACL_TABLE_TYPE` / `ACL_RULE` すべての処理が**完全にブロック**される。orchdaemon が PortsOrch の初期化完了を保証するため、通常は意識不要だが起動シーケンス中の早期書き込みは処理待ちになる。
+
+### ACL_TABLE_TYPE (ユーザ定義型) が先行必須
+
+`doAclTableTask()` L5432-5437: `getAclTableType()` が nullptr を返すと `it++; continue` で ACL_TABLE エントリを**保留キューに残す**。組み込み型（`L3`/`MIRROR`/`CTRLPLANE` 等）はコンストラクタ時点で登録済みのため不要。ユーザ定義型を使う場合のみ、`ACL_TABLE_TYPE|<name>` を ACL_TABLE SET より先に書き込むこと。
+
+```
+SET ACL_TABLE_TYPE|<type_name>  MATCHES=...,ACTIONS=...,BPOINT_TYPES=...
+SET ACL_TABLE|<table_name>      type=<type_name> stage=ingress ports=...
+SET ACL_RULE|<table_name>|<rule_name>  PRIORITY=...
+```
+
+### ports フィールドのポート未登録（自動遅延）
+
+未登録ポートは `pendingPortSet` に追加されるが ACL_TABLE 自体は作成される。`onPortReady()` コールバックで PORT 登録完了時に自動バインドされる (`aclorch.cpp:2884`)。erase はされないため設定は保持される。
+
+### ACL_RULE は ACL_TABLE 作成後に書き込む
+
+`doAclRuleTask()` L5552-5565: `table_oid == SAI_NULL_OBJECT_ID` の間は `it++; continue` で待機（自動 wait loop）。`ACL_TABLE` の SAI 作成完了後、次の orchagent ループで自動処理される。**先行して書き込んでも失われない**が、ACL_TABLE が作成されるまで SAI には反映されない。
+
+### type / stage 変更には DEL → SET が必要
+
+`doAclTableTask()` L5450-5454: 既存 table の `type` または `stage` が変更された場合、orchagent は内部で既存テーブルを削除してから再作成する（配下の ACL_RULE も消える）。変更前に `DEL ACL_RULE|<table>|*` を明示削除することを推奨。`ports` のみ変更する場合は `updateAclTable()` で差分適用されるため DEL 不要。
+
+### 安全な DEL 順序
+
+```
+DEL ACL_RULE|<table_name>|<rule_name>    # 配下ルールを先に削除（推奨）
+DEL ACL_TABLE|<table_name>               # テーブル削除（orchagent 内部でも clear() を呼ぶ）
+DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する場合は最後
+```
+
+`removeAclTable()` (`aclorch.cpp:4850`) は内部で `clear()` を呼び配下 ACL_RULE を自動削除するが、CONFIG_DB 上の `ACL_RULE` エントリは残る。orchagent 再起動後に孤立エントリが "Wait for ACL table" ループに入るため、CLI/REST 経由では ACL_RULE を先に明示削除する。
+
+| 依存関係 | 方向 | 緩和策 |
+|----------|------|--------|
+| allPortsReady() 完了 → ACL_TABLE 処理 | 強制先行 | orchdaemon が自動管理 |
+| ACL_TABLE_TYPE SET → ACL_TABLE SET（ユーザ定義型） | 論理的先行 | 保留キューで自動調停 |
+| PORT/PORTCHANNEL SET → ports バインド | 部分先行 | pendingPortSet + onPortReady() |
+| ACL_TABLE SET → ACL_RULE SET（SAI 反映） | 必須 | 自動 wait loop |
+| type/stage 変更: DEL → SET | 必須 | SET のみでも動作するが配下 ACL_RULE 消失 |
+| ACL_TABLE DEL → ACL_TABLE_TYPE DEL | 推奨 | 強制ではないが論理的に必要 |
+
+> **スキャン証跡**: `doAclTableTask()` L5346-5518 全行精読、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566 参照。
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 ## 起動経路 (Direction B: CFG → APPL → SAI)
 

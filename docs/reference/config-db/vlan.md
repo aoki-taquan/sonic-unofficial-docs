@@ -232,6 +232,49 @@ show vlan brief
 - 副作用: admin_status=down でもカーネルブリッジは作成される (`ip link set Vlan<N> down` が別途発行)。
 
 <!-- /runtime-trace -->
+
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み
+
+`CONFIG_DB VLAN` エントリの SET / DEL が引き起こす他 DB への書込み一覧。
+
+### vlanmgrd による書込み (cfgmgr/vlanmgr.cpp)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `m_appVlanTableProducer.set(key, fvVector)` | APPL_DB / `VLAN_TABLE` | `Vlan<id>` | 常時[^se1] |
+| SET: `m_stateVlanTable.set(key, [{state, ok}])` | STATE_DB / `VLAN_TABLE` | `Vlan<id>` | 常時[^se1] |
+| DEL: `m_appVlanTableProducer.del(key)` | APPL_DB / `VLAN_TABLE` | `Vlan<id>` | `m_vlans` 登録済みの場合[^se1] |
+| DEL: `m_stateVlanTable.del(key)` | STATE_DB / `VLAN_TABLE` | `Vlan<id>` | `m_vlans` 登録済みの場合[^se1] |
+
+APPL_DB に書き込まれるフィールド (`fvVector`): `admin_status`（省略時 `"up"`）、`mtu`（省略時 `9100`）、`mac`（省略時スイッチ MAC）、`host_ifname`。
+
+### orchagent (PortsOrch::addVlan/removeVlan) による書込み (orchagent/portsorch.cpp)
+
+APPL_DB `VLAN_TABLE` を受け取った VlanOrch が SAI 呼び出しを行い、syncd 経由で ASIC_DB へ書き込まれる。
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `sai_vlan_api->create_vlan(&vlan_oid, ...)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN:<oid>` | `SAI_VLAN_ATTR_VLAN_ID=<id>` | 常時[^se2] |
+| DEL: `sai_vlan_api->remove_vlan(vlan_oid)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN:<oid>` 削除 | `<oid>` | FDB/メンバー/VNI が空の場合のみ[^se2] |
+
+DEL の前提条件 (いずれかが満たされないと retry): FDB カウント 0、ポート参照カウント 0、メンバーポート 0、VXLAN VNI マッピングなし。
+
+### COUNTERS_DB
+
+VLAN SET/DEL 単体では **COUNTERS_DB への書込みはない**。VLAN に `VLAN_INTERFACE` (RIF) が紐づく場合は `IntfsOrch` が `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` を書き込むが、これは `INTERFACE` テーブルの副作用である。
+
+### カーネル操作 (DB 外)
+
+- SET: `ip link add Vlan<id> type bridge vlan_filtering 1` — Linux カーネルブリッジ作成
+- SET: `ip link set Vlan<id> up` / `down` — `admin_status` 反映
+- SET: `ip link set Vlan<id> address <mac>` — MAC 設定（`mac` フィールド指定時）
+- DEL: `ip link set Vlan<id> down; ip link del Vlan<id>` — ブリッジ削除
+
+[^se1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+[^se2]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
@@ -368,5 +411,38 @@ DEL VLAN|Vlan100
 | YANG `must` 違反 | 正しい値で再投入 | 手動 |
 
 <!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐
+
+### SAI Flood control capability — `COMBINED` 非対応 ASIC
+
+orchagent 起動時に `sai_query_attribute_enum_values_capability()` で UUC (Unknown Unicast) / BC (Broadcast) の flood control タイプを問い合わせる (portsorch.cpp:900-931)。`SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` をサポートしない ASIC では、VXLAN EVPN エンドポイント (`VLAN_MEMBER.end_point_ip`) を用いた flood group 設定がエラー終了する (portsorch.cpp:7517-7524)。VS (Virtual Switch) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返し `COMBINED` を返さないため、VS 環境では EVPN flood group は設定不可[^plat1]。
+
+### create_vlan() — SAI 属性最小化とベンダー SAI デフォルト依存
+
+`addVlan()` は `SAI_VLAN_ATTR_VLAN_ID` 1 属性のみで `create_vlan()` を呼び出す (portsorch.cpp:7392)。flooding control 属性は渡さず SAI プラットフォームデフォルトに委ねるため、VLAN 作成直後の flooding 挙動がベンダー SAI 実装依存となる[^plat1]。
+
+### SAI_HOSTIF_VLAN_TAG — ベンダー間の段階的サポート
+
+コードコメントに「`SAI_HOSTIF_VLAN_TAG_ORIGINAL` は全 ASIC ベンダーの libsai でサポートされる前」と明記 (portsorch.cpp:3043-3045)。現状 orchagent は VLAN メンバ追加時に `STRIP` / `KEEP` を条件で切り替えており、CPU ポートへのパケット受信時の VLAN タグ有無がベンダー実装で異なる可能性がある。
+
+### プラットフォーム識別子 (orch.h)
+
+orchagent は `platform` 環境変数の部分文字列でベンダーを識別する。VLAN 直接分岐ではないが、潜在的なベンダー特殊処理の根拠となる:
+
+| 定数 | 値 |
+|------|----|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` |
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` |
+
+[^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: 6981be1a469d -->
