@@ -22081,6 +22081,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#coredump_gen_handler-techsupport_cleanup-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — coredump_gen_handler / techsupport_cleanup が読み書きする関連テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — coredump_gen_handler / techsupport_cleanup が読み書きする関連テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 暗黙参照 (read)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-auto_techsupport_dump_info_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 暗黙参照 — AUTO_TECHSUPPORT_DUMP_INFO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 — しかし現状コードでは未参照のテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35322,6 +35383,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#coredump_gen_handler-techsupport_cleanup-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — coredump_gen_handler / techsupport_cleanup が読み書きする関連テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — coredump_gen_handler / techsupport_cleanup が読み書きする関連テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-read" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 暗黙参照 (read)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-auto_techsupport_dump_info_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 暗黙参照 — AUTO_TECHSUPPORT_DUMP_INFO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連 — しかし現状コードでは未参照のテーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36002,6 +36124,120 @@ Phase E は <strong>DB / YANG / init_cfg のいずれからも変更不可能な
 </div>
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/auto-techsupport-platform.md</code> を参照。</p>
 <!-- /platform -->
+
+<!-- cross-refs -->
+<h2 id="coredump_gen_handler-techsupport_cleanup-phase-c">暗黙参照 — <code>coredump_gen_handler</code> / <code>techsupport_cleanup</code> が読み書きする関連テーブル (Phase C)<a class="headerlink" href="#coredump_gen_handler-techsupport_cleanup-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>AUTO_TECHSUPPORT|GLOBAL</code> の値を起点に動く host service スクリプト
+<code>coredump_gen_handler.py</code> / <code>techsupport_cleanup.py</code> は、共有モジュール
+<code>utilities_common/auto_techsupport_helper.py</code> を介して <strong>CONFIG_DB の隣接テーブル</strong>
+と <strong>STATE_DB の dump info テーブル</strong> を間接的に読み書きする。<code>AUTO_TECHSUPPORT|GLOBAL.state=enabled</code>
+だけで techsupport 起動が決まらず、container 単位のゲートと rate-limit 履歴の参照を経る。</p>
+<h3 id="config_db-read">CONFIG_DB 暗黙参照 (read)<a class="headerlink" href="#config_db-read" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTO_TECHSUPPORT_FEATURE\|&lt;container&gt;</code></td>
+<td>core 検出時 (Gate-2)</td>
+<td>container 単位の <code>state</code> チェック。<code>disabled</code> または未設定なら techsupport 起動スキップ</td>
+<td><code>coredump_gen_handler.py:54-58</code></td>
+</tr>
+<tr>
+<td><code>AUTO_TECHSUPPORT_FEATURE\|&lt;container&gt;</code></td>
+<td>rate-limit 判定</td>
+<td>container 単位 <code>rate_limit_interval</code> を取得。<code>ValueError</code> / 未設定 → <code>0.0</code> (rate-limit 無効)</td>
+<td><code>auto_techsupport_helper.py:316-331</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>container</code> は <code>trim_masic_suffix()</code> (<code>auto_techsupport_helper.py:200-201</code>) で
+masic suffix を除去してから (<code>swss0</code> → <code>swss</code>) <code>AUTO_TECHSUPPORT_FEATURE|{}</code> キーに合成される。</p>
+<h3 id="state_db-auto_techsupport_dump_info_1">STATE_DB 暗黙参照 — <code>AUTO_TECHSUPPORT_DUMP_INFO</code><a class="headerlink" href="#state_db-auto_techsupport_dump_info_1" title="Permanent link">&para;</a></h3>
+<p>Phase F (<code>side-effects</code>) で書込先として扱っているのと同テーブルだが、本スクリプトは
+<strong>rate-limit 判定の入力</strong>としても本テーブルを読み出す。読み書きの双方向に依存している点が Phase F 観点と異なる。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>キー / フィールド</th>
+<th>参照箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>db.keys(STATE_DB, "AUTO_TECHSUPPORT_DUMP_INFO*")</code></td>
+<td>全件走査</td>
+<td><code>auto_techsupport_helper.py:260</code> (<code>get_ts_map</code>)</td>
+<td>container 別最終生成時刻を集計</td>
+</tr>
+<tr>
+<td><code>db.get_all(STATE_DB, &lt;key&gt;)</code></td>
+<td><code>timestamp</code> / <code>container_name</code></td>
+<td><code>auto_techsupport_helper.py:264-276</code></td>
+<td>container 名でグルーピングし <code>timestamp</code> を比較対象に</td>
+</tr>
+<tr>
+<td><code>db.set(STATE_DB, ...)</code></td>
+<td><code>timestamp</code> / <code>event_type</code> / <code>core_dump</code> / <code>container_name</code></td>
+<td><code>auto_techsupport_helper.py:302-310</code></td>
+<td>新規 techsupport 生成成功時に hset 相当で書込</td>
+</tr>
+<tr>
+<td><code>db.delete(STATE_DB, ...)</code></td>
+<td><code>AUTO_TECHSUPPORT_DUMP_INFO\|&lt;name&gt;</code></td>
+<td><code>techsupport_cleanup.py:13-18</code></td>
+<td><code>max_techsupport_limit</code> 超過で物理削除されたエントリを除去</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>本テーブルが空のとき、container 側 <code>rate_limit_interval &gt; 0</code> でも常に「経過済」扱いとなる
+(<code>auto_techsupport_helper.py:293</code>)。逆に同一 container の <code>timestamp</code> が現在時刻に近いと
+当該 container の techsupport 起動を抑制する。<code>container_name</code> フィールド欠落エントリは
+グローバル枠として集計されない。</p>
+</blockquote>
+<h3 id="_19">関連 — しかし現状コードでは未参照のテーブル<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>関係性</th>
+<th>現状の参照</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FEATURE</code> (アプリ feature 有効化)</td>
+<td>YANG コメント <code>TODO: Leafref once the FEATURE YANG is added</code> で参照予定とされる</td>
+<td><code>coredump_gen_handler.py</code> / <code>techsupport_cleanup.py</code> / <code>auto_techsupport_helper.py</code> のいずれも未参照。container 妥当性は <code>AUTO_TECHSUPPORT_FEATURE\|&lt;container&gt;</code> の存否のみで間接判定</td>
+<td>上記 3 ファイルに <code>"FEATURE"</code> 単独文字列なし (<code>FEATURE = "AUTO_TECHSUPPORT_FEATURE\|{}"</code> のサブ文字列のみ)</td>
+</tr>
+<tr>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a> (<code>localhost.hostname</code> / <code>platform</code>)</td>
+<td><code>show techsupport</code> 出力には反映され得るが、本スクリプトの CONFIG_DB 参照経路には現れない</td>
+<td>スクリプト 3 ファイル全行で <code>DEVICE_METADATA</code> / <code>hostname</code> / <code>localhost</code> の hit 0</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">範囲外 (誤解されやすい隣接)<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>DOCKER_STATS</code> (STATE_DB): <code>memory_threshold_check.py</code> の別エントリポイントが参照する
+  per-container メモリ統計で、<code>coredump_gen_handler.py</code> / <code>techsupport_cleanup.py</code> 経路では未参照</li>
+<li><code>FEATURE</code> テーブル本体は <code>hostcfgd</code> の <code>FeatureHandler</code> が docker サービス on/off の起点として
+  使うのみで、auto-techsupport 起動判定には関与しない</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/auto-techsupport-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
 
