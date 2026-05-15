@@ -84,6 +84,27 @@ VLAN|<name>
 - 関連 CLI: `config vlan` (add / del / member / dhcp_relay)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- constants -->
+## ハードコード定数
+
+| 定数 | 値 | 定義箇所 | 備考 |
+|------|-----|----------|------|
+| `DEFAULT_MTU_STR` | `"9100"` | vlanmgr.cpp:19 | MTU 省略時に APP_DB へ注入するデフォルト値（バイト）。Bridge 初期化にも適用 |
+| `DEFAULT_VLAN_ID` | `"1"` | vlanmgr.cpp:18 | Bridge 初期化時に削除する IEEE 802.1Q デフォルト VLAN（`bridge vlan del vid 1`）|
+| `DOT1Q_BRIDGE_NAME` | `"Bridge"` | vlanmgr.cpp:15 | Linux dot1q ブリッジデバイス名（固定文字列）|
+| `VLAN_PREFIX` | `"Vlan"` | vlanmgr.cpp:16 | VLAN インタフェース名プレフィクス。キー長チェックに `4` バイトとして使用 |
+| `VLAN_HLEN` | `4` | vlanmgr.cpp:20 | IEEE 802.1Q ヘッダ長（バイト）— 定義のみ・ファイル内未参照（dead define）|
+| `MAX_VALID_VLAN_ID` | `4094` | portsorch.cpp:82 | サブインタフェース VLAN ID 上限。YANG `range 2..4094` と一致 |
+| `DEFAULT_SYSTEM_PORT_MTU` | `9100` | portsorch.cpp:79 | portsorch 側の MTU 初期値。vlanmgr.cpp の `DEFAULT_MTU_STR` とは独立定義 |
+| UUC/BC flooding デフォルト | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | portsorch.cpp:7409-7410 | `create_vlan()` 時の初期 flooding 制御型。プラットフォーム SAI で上書き可能 |
+| YANG `vlanid` range | `2..4094` | sonic-vlan.yang:225 | YANG バリデーション範囲。`pattern` も同範囲を正規表現で表現 |
+| YANG `mtu` range | `1..9216` | sonic-vlan.yang:257 | MTU 許容範囲。`DEFAULT_MTU_STR=9100` はこの範囲内 |
+| YANG `description` length | `1..255` | sonic-vlan.yang:239 | 説明フィールド最大文字数 |
+| YANG `nat_zone` range | `0..3` (default `0`) | sonic-vlan.yang:105 | VLAN_INTERFACE の NAT ゾーン番号範囲 |
+| `arp_evict_nocarrier` 設定値 | `0` | vlanmgr.cpp:139 | VLAN IF 作成後に `/proc/sys/net/ipv4/conf/Vlan<N>/arp_evict_nocarrier` へ書き込む値 |
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
