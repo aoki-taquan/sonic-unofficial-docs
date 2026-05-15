@@ -551,6 +551,87 @@ multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値にな�
 
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G — subscribe 経路)
+
+`DEVICE_METADATA` への subscribe は 4 種類の低レベルメカニズムで実装されている。
+
+### メカニズム分類
+
+| # | メカニズム | 使用箇所 |
+|---|-----------|---------|
+| 1 | `SubscriberStateTable` (C++ 直接) | fpmsyncd |
+| 2 | `Orch` フレームワーク (`ConsumerStateTable`) | BufferMgr (buffermgrd)、FlexCounterOrch (orchagent) |
+| 3 | `ConfigDBConnector.subscribe()` (Python) | hostcfgd |
+| 4 | bgpcfgd `Runner` → `Directory.subscribe()` | BGPDataBaseMgr → BgpPeerMgr / DeviceGlobalCfgMgr / AsPathMgr / AdvertiseRouteMgr |
+
+### Consumer ごとの subscribe 詳細
+
+#### fpmsyncd — `SubscriberStateTable` (直接)
+
+- **API**: `SubscriberStateTable deviceMetadataTableSubscriber(&cfgDb, CFG_DEVICE_METADATA_TABLE_NAME)`
+- **Select 登録**: `s.addSelectable(&deviceMetadataTableSubscriber)` (FPM 接続確立後に動的登録)
+- **監視フィールド**: `suppress-fib-pending`。key = `localhost`、op = `SET_COMMAND` のみ処理
+- **効果**: `enabled` → `NotificationConsumer`（APPL_STATE_DB ルート応答チャネル）を新規作成して `addSelectable()`; `disabled` → `sync.markRoutesOffloaded(db)` 後に `removeSelectable()` して reset
+- **evidence**: `sonic-swss/fpmsyncd/fpmsyncd.cpp:82-83,145,252-315`
+
+#### BufferMgr (buffermgrd) — `Orch` フレームワーク
+
+- **API**: `new BufferMgr(&cfgDb, &applDb, pg_lookup_file, cfg_buffer_tables)` — `cfg_buffer_tables` に `CFG_DEVICE_METADATA_TABLE_NAME` を含む; `s.addSelectables(o->getSelectables())` で一括登録
+- **コールバック**: `BufferMgr::doTask(Consumer &)` → `doBufferMetaTask()`
+- **監視フィールド**: `buffer_model`
+- **効果**: `dynamic` → `dynamic_buffer_model = true` フラグを立て APPL_DB 書き込みをスキップ; それ以外 → BUFFER_POOL / BUFFER_PROFILE を APPL_DB に転写
+- **evidence**: `sonic-swss/cfgmgr/buffermgrd.cpp:200,216; cfgmgr/buffermgr.cpp:464-499`
+
+#### FlexCounterOrch (orchagent) — `Orch` フレームワーク
+
+- **API**: `new FlexCounterOrch(m_configDb, flex_counter_tables)` — `flex_counter_tables` に `CFG_DEVICE_METADATA_TABLE_NAME` を含む
+- **コールバック**: `FlexCounterOrch::doTask(Consumer &)` → `handleDeviceMetadataTable()`
+- **監視フィールド**: `create_only_config_db_buffers`
+- **効果**: `m_createOnlyConfigDbBuffers` フラグ更新 → `getQueueConfigurations()` のカウンタ設定分岐を制御
+- **evidence**: `sonic-swss/orchagent/orchdaemon.cpp:620-627; orchagent/flexcounterorch.cpp:106,149-152,488-521`
+
+#### hostcfgd — `ConfigDBConnector.subscribe()` (Python)
+
+- **API**: `self.config_db.subscribe(swsscommon.CFG_DEVICE_METADATA_TABLE_NAME, make_callback(self.device_metadata_handler))` — 内部で `SubscriberStateTable` を生成
+- **コールバック**: `device_metadata_handler()` → `hostname_update()` / `apply_timezone_if_needed()` / `rsyslog_config()` に委譲
+- **監視フィールド**: `hostname`、`timezone`、`syslog_with_osversion`、`syslog_counter`
+- **効果**: hostname 変更 → `service hostname-config restart` + `monit reload`; timezone 変更 → `timedatectl set-timezone` + `systemctl restart rsyslog`; syslog 変更 → `rsyslog-config.sh` 再実行
+- **evidence**: `sonic-host-services/scripts/hostcfgd:2492-2494,1485-1600`
+
+#### BGPDataBaseMgr (bgpcfgd) — `Runner` → `Directory.subscribe()`
+
+- **API**: `BGPDataBaseMgr(common_objs, "CONFIG_DB", swsscommon.CFG_DEVICE_METADATA_TABLE_NAME)` を `Runner.add_manager()` で登録 → `Runner` が `swsscommon.SubscriberStateTable` を生成し `swsscommon.Select.addSelectable()` で登録
+- **コールバック**: `BGPDataBaseMgr.set_handler()` → `Directory.put()` → 依存 Manager のコールバックを発火:
+    - `BgpPeerMgr`: `bgp_asn` / `type` / `bgp_router_id` / `frr_mgmt_framework_config` 等を受け取り FRR にピア設定を push
+    - `DeviceGlobalCfgMgr`: `type` (localhost/type) を受け取り `switch_role` を更新、TSA / IDF isolation 判定に使用
+    - `AsPathMgr`: `t2_group_asns` を受け取り FRR AS-path set を更新
+    - `AdvertiseRouteMgr`: `bgp_asn` 変更時に BGP route 広告設定を再構成
+- **監視フィールド**: `bgp_asn`、`type`、`t2_group_asns`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`bgp_router_id`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
+- **evidence**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:75; runner.py:29,49-55; managers_db.py:4-24; managers_bgp.py:119-143; managers_device_global.py:33; managers_as_path.py; managers_advertise_rt.py:26`
+
+### フィールド × consumer マトリクス
+
+| フィールド | fpmsyncd | BufferMgr | FlexCounterOrch | hostcfgd | bgpcfgd |
+|---|:---:|:---:|:---:|:---:|:---:|
+| `suppress-fib-pending` | ✓ | | | | ✓ |
+| `buffer_model` | | ✓ | | | |
+| `create_only_config_db_buffers` | | | ✓ | | |
+| `hostname` | | | | ✓ | |
+| `timezone` | | | | ✓ | |
+| `syslog_with_osversion` / `syslog_counter` | | | | ✓ | |
+| `bgp_asn` | | | | | ✓ |
+| `type` | | | | | ✓ |
+| `t2_group_asns` | | | | | ✓ |
+| `bgp_router_id` | | | | | ✓ |
+| `frr_mgmt_framework_config` | | | | | ✓ |
+| `bgp_adv_lo_prefix_as_128` | | | | | ✓ |
+
+> **注**: `orchagent main` は起動時に `switch_type`、`subtype`、`switch_id` を `hget` で一度のみ読み取る（subscribe なし）。runtime 変更は反映されない (`sonic-swss/orchagent/main.cpp:244,292,658`)。
+
+詳細トレース: `meta/_intermediate/cdb-flow/device-metadata-pubsub.md`
+<!-- /pubsub -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
