@@ -57,7 +57,6 @@ nav:
   - wred-profile.md
   - tunnel.md
   - tunnel-decap-table.md
-  - tunnel-state.md
   - vxlan-tunnel.md
   - vxlan-tunnel-map.md
   - crm.md
@@ -80,4 +79,5 @@ nav:
   - nhg.md
   - sflow.md
   - route-orch-event.md
+  - stp-state.md
   - ...
