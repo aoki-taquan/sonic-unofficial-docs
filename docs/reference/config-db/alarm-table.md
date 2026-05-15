@@ -150,6 +150,43 @@ YANG optional / event profile 未指定時の実行時フォールバック。
 
 <!-- /defaults -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ALARM テーブル自身は **EVENT_DB** への主たる書込先である。ここでは ALARM 系処理に付随して、ALARM テーブル以外の DB / テーブルへ書き込まれる事象を扱う。
+
+### COUNTERS_DB / `COUNTERS_EVENTS`
+
+eventd プロセス内の `stats_collector` が `event_publish()` 経路全体の累計カウンタを周期書込する。`RAISE_ALARM` action もこの経路を通るため、ALARM 発生時にもカウンタが進む。
+
+| トリガ | 操作 | キー | フィールド | 値 | evidence |
+|--------|------|------|-----------|-----|----------|
+| `event_publish()` 経由で event/alarm が流れ、`m_updated` フラグが立っていれば 10ms 周期で flush | `set` | `counter_keys[i]` (`published` / `missed_internal` / `missed_to_cache` / `missed_by_slow_receiver` / `latency_in_ms` 等) | `value` | uint64 累計値 | `sonic-eventd/src/eventd.cpp:178,186-187,205-210` |
+
+定数:
+
+- `COUNTERS_EVENTS_TABLE = "COUNTERS_EVENTS"` (`sonic-swss-common/common/schema.h:266`)
+- `EVENTS_STATS_FIELD_NAME = "value"` (`sonic-eventd/src/eventd.h:23`)
+
+!!! note "ALARM 固有カウンタではない"
+    `COUNTERS_EVENTS` は eventd の publish パス全体のサマリであり、`RAISE_ALARM` 単独の統計ではない。重要度別アクティブアラーム数は EVENT_DB の `ALARM_STATS` テーブルで保持される (本ページ「関連テーブル」節を参照)。
+
+### STATE_DB
+
+ALARM テーブル処理に伴う **STATE_DB への副次書込はなし**。
+
+根拠:
+
+- `sonic-buildimage/src/sonic-eventd/src/` 配下を `grep -rn "STATE_DB"` してもヒット 0 件 (テスト用 `database_config.json` を除く)
+- `sonic-buildimage/src/system-health/` の `SYSTEM_READY` / `ALL_SERVICE_STATUS` / `FAN_INFO` 等の STATE_DB 書込は System Health Monitoring サブシステム由来であり、Event/Alarm Framework の ALARM テーブル (EVENT_DB) の更新トリガとは独立している
+
+### その他 (FLEX_COUNTER_DB / APPL_DB / ASIC_DB)
+
+該当する副次書込は検出されず、なし。
+
+詳細分析: `meta/_intermediate/cdb-flow/alarm-table-side.md`
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 

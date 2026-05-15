@@ -383,4 +383,21 @@ aaa_handler(key="authentication", op=SET, data={login:"tacacs+,local"})
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528` (subscribe/listen/make_callback)、`hostcfgd:2289-2343` (各 *_handler)、`hostcfgd:399-417` (`AaaCfg.load()` 起動時スナップショット)、`hostcfgd:419-435` (`aaa_update`)、`hostcfgd:230-251` (`restart_service`/`handle_nslcd_service`)、`hostcfgd:483-493` (`notify_audisp_tacplus_reload_config`); 詳細分析 `meta/_intermediate/cdb-flow/aaa-pubsub.md`
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換え (PAM / NSS / nslcd / sssd / radiusd / sshd) に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `AaaCfg` 内に Producer/Table の書込呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:354-720` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1759-1821`) と `RestartWaiter` 用 (`hostcfgd:2160-2162`) のみで `AaaCfg` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。AAA は認証経路のため統計テーブルも存在しない |
+| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | SAI 非経由 (段階 3 トレース参照)。AAA テーブルを購読する mgrd/orchagent は `sonic-swss/` に存在しない |
+
+主購読者 `AaaCfg.aaa_update()` の副作用は `modify_conf_file()` 経由の PAM テンプレート再生成のみで、`/etc/pam.d/common-auth`・`/etc/nsswitch.conf`・`/etc/tacplus_nss.conf`・`/etc/pam_radius_auth.conf` 等のファイル書換に閉じる (`sonic-host-services/scripts/hostcfgd:641-648`)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-side.md` を参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->
