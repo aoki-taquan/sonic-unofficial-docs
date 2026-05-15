@@ -259,6 +259,40 @@ vtysh -c 'show bgp neighbor <ip>'
 > **スキャン証跡**: BGP_NEIGHBOR_AF は `bgp_table_handler_common` に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> YANG leafref で強制される構造的参照に加え、`frrcfgd.py` の `nbr_af_key_map` を介して FRR 設定文に展開される際に間接参照されるテーブル / オブジェクトを網羅する。
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-cross-refs.md`
+
+### BGP_NEIGHBOR_AF が参照する下流テーブル / リソース
+
+| 対象 | 参照機構 | 効果 |
+|---|---|---|
+| `BGP_NEIGHBOR` (`vrf_name`, `neighbor`) | YANG leafref (`sonic-bgp-neighbor.yang:124-126`) | 同一 VRF の `BGP_NEIGHBOR_LIST.neighbor` に存在しないキーは YANG バリデーションで reject |
+| `BGP_GLOBALS` (`vrf_name`) | YANG leafref (`sonic-bgp-neighbor.yang:117-119`) | 存在しない VRF は reject。さらに `frrcfgd.py:2658-2663` で `local_asn` 未設定 VRF への更新は LOG_DEBUG で silent skip |
+| `BGP_PEER_GROUP_AF` | 設定階層上の対 (`frrcfgd.py:2111-2112`) | 同一の `nbr_af_key_map` で処理される姉妹テーブル。peer-group 由来の AF 設定が neighbor AF の既定として継承される |
+| `ROUTE_MAP` (FRR 名前空間) | `route_map_in` / `route_map_out` / `default_rmap` / `unsuppress_map_name` 文字列値 (`frrcfgd.py:1899-1906`) | FRR で未定義の route-map 名を指すと `bgpd` 側で参照解決失敗。CONFIG_DB `ROUTE_MAP` テーブル経由で定義する |
+| `PREFIX_LIST` (FRR 名前空間) | `prefix_list_in` / `prefix_list_out` 文字列値 (`frrcfgd.py:1918-1919`) | FRR `ip prefix-list` 未定義名で参照解決失敗 |
+| AS-path access-list (FRR) | `filter_list_in` / `filter_list_out` 文字列値 (`frrcfgd.py:1914-1915`) | `bgp as-path access-list` 未定義名で参照解決失敗 |
+| `DEVICE_METADATA|localhost|bgp_asn` | bgpd テンプレ起動時条件 (`bgpd.main.conf.j2:94-95`) | `bgp_asn` 未設定または `none/null` の場合 `router bgp` ブロック自体が生成されず、BGP_NEIGHBOR_AF も無効化 |
+
+### BGP_NEIGHBOR_AF を参照する上流コンポーネント
+
+| 参照元 | 参照機構 | 効果 |
+|---|---|---|
+| `frrcfgd` (`BGPConfigDaemon`) | `bgp_table_handler_common` 購読 (`frrcfgd.py:91, 2306`) | CONFIG_DB の更新を FRR `address-family ... / neighbor <addr> ...` コマンド列へ変換 |
+| `frr-mgmt-framework` | running-config → CONFIG_DB 双方向同期 (`frrcfgd.py:2137`) | vtysh で投入された AF 設定を CONFIG_DB に書き戻す |
+| `sonic-mgmt-common` (gNMI/REST) | OpenConfig BGP neighbor afi-safis マッピング | northbound API 経由の neighbor AF 設定 |
+
+### 暗黙参照の特徴
+
+`BGP_NEIGHBOR_AF` は YANG leafref では `BGP_NEIGHBOR` と `BGP_GLOBALS` の 2 件しか宣言しないが、`frrcfgd.py:nbr_af_key_map` (L1895-1920) が値を FRR コマンドに展開する際、**route-map / prefix-list / filter-list / unsuppress-map の各オブジェクト名は FRR 側名前空間で解決される**ため、CONFIG_DB の `ROUTE_MAP` テーブルや FRR `vtysh` で先に定義しておく必要がある。これらは YANG では強制されない暗黙参照である。
+
+また、`local_asn` 未設定 VRF への BGP_NEIGHBOR_AF 更新は `frrcfgd.py:2660` で `ignore table {} update because local_asn for VRF {} was not configured` の LOG_DEBUG を出して silent skip する点に注意。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
