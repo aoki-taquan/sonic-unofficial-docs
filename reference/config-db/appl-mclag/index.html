@@ -24135,6 +24135,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 mclagsyncd の通信構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-keyspace-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocking-select-retry-interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主ループ — 永続 blocking select、明示 retry interval なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費側 orchagent の select タイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd 側タイマー（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34820,6 +34892,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mclagsyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 mclagsyncd の通信構造
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-keyspace-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blocking-select-retry-interval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主ループ — 永続 blocking select、明示 retry interval なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消費側 orchagent の select タイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iccpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        iccpd 側タイマー（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35301,12 +35445,126 @@
 <p>フォールバックは <code>mlacp_link_handler.c</code> L3108, L3120, L3137, L3142 で <code>-1</code> を検出した際にも同値がセットされる。</p>
 <!-- /defaults -->
 
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="mclagsyncd">書き込み側 mclagsyncd の通信構造<a class="headerlink" href="#mclagsyncd" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> は APPL_DB に対しては書き込み専用で、上流イベントを 3 系統から受け取る:</p>
+<ol>
+<li><strong>iccpd → mclagsyncd</strong>: Unix ドメインソケット経由の IPC (MCLAG_DEFAULT_PORT = 2626、<code>mclag.h:56</code>)</li>
+<li><strong>CONFIG_DB → mclagsyncd</strong>: <code>SubscriberStateTable</code> で keyspace notification を購読</li>
+<li><strong>STATE_DB → mclagsyncd</strong>: <code>SubscriberStateTable</code> で keyspace notification を購読</li>
+</ol>
+<p>APPL_DB への書き込みは 7 種類すべて <code>ProducerStateTable</code> 経由 (<code>mclaglink.cpp:1810-1816</code>)<sup id="fnref11:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。書き込みごとに各テーブルの <code>&lt;TABLE&gt;_CHANNEL@0</code> チャネルへ PUBLISH される。</p>
+<h3 id="subscriberstatetable-keyspace-psubscribe">購読方式: SubscriberStateTable + keyspace PSUBSCRIBE<a class="headerlink" href="#subscriberstatetable-keyspace-psubscribe" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd</code> は CONFIG_DB / STATE_DB の以下のテーブルを <code>SubscriberStateTable</code> で購読する。<code>SubscriberStateTable</code> は内部で Redis keyspace notification を PSUBSCRIBE する<sup id="fnref12:link"><a class="footnote-ref" href="#fn:link">1</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>購読元</th>
+<th>DB</th>
+<th>テーブル</th>
+<th>PSUBSCRIBE パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB</td>
+<td>4</td>
+<td><code>MCLAG</code> (MCLAG_DOMAIN)</td>
+<td><code>__keyspace@4__:MCLAG\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td>4</td>
+<td><code>MCLAG_INTERFACE</code></td>
+<td><code>__keyspace@4__:MCLAG_INTERFACE\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td>4</td>
+<td><code>MCLAG_UNIQUE_IP</code></td>
+<td><code>__keyspace@4__:MCLAG_UNIQUE_IP\|*</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>6</td>
+<td><code>FDB_TABLE</code></td>
+<td><code>__keyspace@6__:FDB_TABLE\|*</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>6</td>
+<td><code>VLAN_MEMBER_TABLE</code></td>
+<td><code>__keyspace@6__:VLAN_MEMBER_TABLE\|*</code></td>
+</tr>
+</tbody>
+</table>
+<p>実装位置: <code>mclagsyncd.cpp:41</code> (MCLAG_DOMAIN)、<code>mclaglink.cpp:912-921</code> (STATE_FDB / STATE_VLAN_MEMBER / MCLAG_INTF / MCLAG_UNIQUE_IP)。</p>
+<h3 id="blocking-select-retry-interval">主ループ — 永続 blocking select、明示 retry interval なし<a class="headerlink" href="#blocking-select-retry-interval" title="Permanent link">&para;</a></h3>
+<p><code>mclagsyncd.cpp:66-110</code> の主ループはタイムアウト無しの <code>s.select(&amp;temps)</code> で永続ブロックする<sup id="fnref13:link"><a class="footnote-ref" href="#fn:link">1</a></sup>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="n">Selectable</span><span class="w"> </span><span class="o">*</span><span class="n">temps</span><span class="p">;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">temps</span><span class="p">);</span><span class="w">                       </span><span class="c1">// タイムアウト指定なし = UINT_MAX</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="k">if</span><span class="w">      </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">mclag</span><span class="p">.</span><span class="n">getStateFdbTable</span><span class="p">())</span><span class="w">        </span><span class="n">mclag</span><span class="p">.</span><span class="n">processStateFdb</span><span class="p">(...);</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mclag_cfg_tbl</span><span class="p">)</span><span class="w">                  </span><span class="n">mclag</span><span class="p">.</span><span class="n">processMclagDomainCfg</span><span class="p">(</span><span class="n">entries</span><span class="p">);</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">mclag</span><span class="p">.</span><span class="n">getMclagIntfCfgTable</span><span class="p">())</span><span class="w">    </span><span class="n">mclag</span><span class="p">.</span><span class="n">mclagsyncdSendMclagIfaceCfg</span><span class="p">(</span><span class="n">entries</span><span class="p">);</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">mclag</span><span class="p">.</span><span class="n">getMclagUniqueCfgTable</span><span class="p">())</span><span class="w">  </span><span class="n">mclag</span><span class="p">.</span><span class="n">mclagsyncdSendMclagUniqueIpCfg</span><span class="p">(</span><span class="n">entries</span><span class="p">);</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">temps</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">mclag</span><span class="p">.</span><span class="n">getStateVlanMemberTable</span><span class="p">())</span><span class="w"> </span><span class="n">mclag</span><span class="p">.</span><span class="n">processStateVlanMember</span><span class="p">(...);</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="k">else</span><span class="w">                                                </span><span class="n">pipeline</span><span class="p">.</span><span class="n">flush</span><span class="p">();</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>リトライは IPC 切断時のみで、外側 <code>while(1)</code> が <code>MclagConnectionClosedException</code> を捕捉し即時 <code>accept()</code> を再呼び出しする。<strong>明示的な retry interval / sleep は存在しない</strong>。</p>
+<h3 id="orchagent-select">消費側 orchagent の select タイムアウト<a class="headerlink" href="#orchagent-select" title="Permanent link">&para;</a></h3>
+<p>書き込まれた APPL_DB エントリは orchagent が ConsumerStateTable で消費する (<code>SELECT_TIMEOUT = 1000</code> ms、<code>orchdaemon.cpp:23,959</code>)<sup id="fnref:orch"><a class="footnote-ref" href="#fn:orch">5</a></sup>:</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB テーブル</th>
+<th>消費 Orch</th>
+<th>バインド箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCLAG_FDB_TABLE</code></td>
+<td><code>FdbOrch</code> (<code>fdborch_pri</code>)</td>
+<td><code>orchdaemon.cpp:229</code>、<code>fdborch.cpp:724</code></td>
+</tr>
+<tr>
+<td><code>ISOLATION_GROUP_TABLE</code></td>
+<td><code>IsolationGroupOrch</code></td>
+<td><code>orchdaemon.cpp:542</code>、<code>isolationgrouporch.cpp:68</code></td>
+</tr>
+<tr>
+<td><code>LAG_TABLE</code> / <code>PORT_TABLE</code></td>
+<td><code>PortsOrch</code></td>
+<td>（汎用 APPL_DB 経路に相乗り）</td>
+</tr>
+<tr>
+<td><code>INTF_TABLE</code></td>
+<td><code>IntfsOrch</code></td>
+<td>（汎用 APPL_DB 経路に相乗り）</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code></td>
+<td><code>AclOrch</code></td>
+<td>（汎用 APPL_DB 経路に相乗り）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="iccpd">iccpd 側タイマー（参考）<a class="headerlink" href="#iccpd" title="Permanent link">&para;</a></h3>
+<p>iccpd 自身は subscribe ではなく自前のスケジューラで動作する。CONFIG_DB の <code>keepalive_interval</code> / <code>session_timeout</code> が空のときのみ iccpd 内で <code>CONNECT_INTERVAL_SEC = 1</code> 秒・<code>HEARTBEAT_TIMEOUT_SEC = 15</code> 秒 にフォールバックする<sup id="fnref2:sched"><a class="footnote-ref" href="#fn:sched">3</a></sup><sup id="fnref2:csm"><a class="footnote-ref" href="#fn:csm">4</a></sup>（詳細は上記「フィールドの暗黙デフォルト」節を参照）。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/appl-mclag-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
 <p>APPL_DB MCLAG/ICCP 関連テーブル群 (<code>MCLAG_FDB_TABLE</code> / <code>ISOLATION_GROUP_TABLE</code> /
 <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> / <code>LAG_TABLE</code> / <code>PORT_TABLE</code> / <code>INTF_TABLE</code>) の
 書込主体である <code>mclagsyncd</code> は、本 APPL_DB 書込に <strong>副次して</strong> <a href="../../glossary/#term-state_db">STATE_DB</a>
-側にも MCLAG 状態テーブルを書き込む。COUNTERS_DB は読取のみで書込は無い<sup id="fnref11:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。</p>
+側にも MCLAG 状態テーブルを書き込む。COUNTERS_DB は読取のみで書込は無い<sup id="fnref14:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -35414,16 +35672,19 @@
 <hr />
 <ol>
 <li id="fn:link">
-<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>mclagsyncd 実装: <code>sonic-swss/mclagsyncd/mclaglink.cpp</code>, <code>mclaglink.h</code>, <code>mclag.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp</a>&#160;<a class="footnote-backref" href="#fnref:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:link" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:link" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:sched">
-<p>keepalive/timeout 定数: <code>sonic-buildimage/src/iccpd/include/scheduler.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h</a>&#160;<a class="footnote-backref" href="#fnref:sched" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>keepalive/timeout 定数: <code>sonic-buildimage/src/iccpd/include/scheduler.h</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h</a>&#160;<a class="footnote-backref" href="#fnref:sched" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sched" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:csm">
-<p>iccpd CSM 初期化: <code>sonic-buildimage/src/iccpd/src/iccp_csm.c</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c</a>&#160;<a class="footnote-backref" href="#fnref:csm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>iccpd CSM 初期化: <code>sonic-buildimage/src/iccpd/src/iccp_csm.c</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c</a>&#160;<a class="footnote-backref" href="#fnref:csm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:csm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:orch">
+<p>orchagent 消費側: <code>sonic-swss/orchagent/orchdaemon.cpp</code> (<code>SELECT_TIMEOUT = 1000</code> ms), <code>fdborch.cpp</code>, <code>isolationgrouporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
