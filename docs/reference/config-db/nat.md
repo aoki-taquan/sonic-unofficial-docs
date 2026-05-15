@@ -504,3 +504,55 @@ grep -E "natorch|natmgr" /var/log/syslog | grep -E "ERROR|WARN|Invalid|failed"
 ```
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.h L62-73,L110-111 / sonic-swss/orchagent/natorch.h L37-39 / sonic-swss/orchagent/natorch.cpp L63-73,L2541-2544 / sonic-swss/orchagent/main.cpp L936-948 -->
+
+### タイムアウト境界定数 (`natmgr.h`)
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `NAT_TIMEOUT_MIN` | `300` | `nat_timeout` 最小値 (秒) |
+| `NAT_TIMEOUT_MAX` | `432000` | `nat_timeout` 最大値 (秒 / 5日) |
+| `NAT_TIMEOUT_DEFAULT` | `600` | `nat_timeout` ハードコードデフォルト (秒) |
+| `NAT_TCP_TIMEOUT_MIN` | `300` | `nat_tcp_timeout` 最小値 (秒) |
+| `NAT_TCP_TIMEOUT_MAX` | `432000` | `nat_tcp_timeout` 最大値 (秒 / 5日) |
+| `NAT_TCP_TIMEOUT_DEFAULT` | `86400` | `nat_tcp_timeout` ハードコードデフォルト (秒 / 1日) |
+| `NAT_UDP_TIMEOUT_MIN` | `120` | `nat_udp_timeout` 最小値 (秒) |
+| `NAT_UDP_TIMEOUT_MAX` | `600` | `nat_udp_timeout` 最大値 (秒) |
+| `NAT_UDP_TIMEOUT_DEFAULT` | `300` | `nat_udp_timeout` ハードコードデフォルト (秒) |
+| `NAT_TIMEOUT_LOW` | `0` | 内部ガード値 (YANG 外チェック — 0 以下を silent drop) |
+| `L4_PORT_MIN` | `1` | NAT pool `nat_port` 下限 (0 は silent drop) |
+| `L4_PORT_MAX` | `65535` | NAT pool `nat_port` 上限 |
+
+### SAI ポーリング周期定数 (`natorch.h`)
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | NAT エントリ統計・ヒットビット定期クエリ間隔 |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 | conntrack 老化チェックタイマー周期 (1日) |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | ヒットビットクエリ実効周期 = 5秒 × 6 = 30秒 |
+
+### SAI Capability チェック (`main.cpp:936-948`)
+
+- `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が `0` またはクエリ失敗 → `gIsNatSupported = false`
+- `enableNatFeature()` (`natorch.cpp:2541-2544`) は冒頭で `gIsNatSupported == false` を確認し即 return
+- **Silent fallback**: `admin_mode=enabled` が CONFIG_DB に書かれても SAI/ASIC 操作は行われない。`show nat config` は enabled と表示するが実態は非アクティブ
+- SAI クエリ失敗時のログは `SWSS_LOG_NOTICE` のみ（管理者通知なし）
+
+### NatOrch コンストラクタ hardcode デフォルト (`natorch.cpp:63-73`)
+
+YANG default と独立してコンストラクタ内でハードコードされており、全値が YANG default と一致する:
+
+| 変数 | 値 | YANG default |
+|------|-----|--------------|
+| `admin_mode` | `"disabled"` | `disabled` |
+| `timeout` | `600` | `600` |
+| `tcp_timeout` | `86400` | `86400` |
+| `udp_timeout` | `300` | `300` |
+
+> **注意**: `NAT_CONNTRACK_TIMEOUT_PERIOD = 86400` は `nat_tcp_timeout` のデフォルト値と同値だが意味が異なる。前者は conntrack タイマー起動間隔、後者は NAT セッション age-out 秒数。
+
+<!-- /constants -->
