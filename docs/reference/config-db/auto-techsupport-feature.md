@@ -171,6 +171,41 @@ invoke_ts_cmd(db, num_retry=0)
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:84,115-124,170-193,232-256,285-301,317-331`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md`
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md -->
+
+`AUTO_TECHSUPPORT_FEATURE` テーブル本体には常駐 subscriber が存在せず、書込みは「core dump 発生 → `coredump_gen_handler` 起動」「techsupport rotate → `techsupport_cleanup` 起動」のイベント駆動経路でのみ発生する。両 script (`sonic-utilities/scripts/coredump_gen_handler.py` / `techsupport_cleanup.py` / 共通実装 `utilities_common/auto_techsupport_helper.py`) を走査した結果、CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への書込みは無く、副次書込は **STATE_DB の `AUTO_TECHSUPPORT_DUMP_INFO` のみ** に閉じる。
+
+### 副次 DB 書込一覧
+
+| 経路 | 操作 | 対象 DB / テーブル | キー | フィールド / 値 | トリガ条件 | evidence |
+|------|------|-------------------|------|----------------|-----------|---------|
+| `coredump_gen_handler` → `invoke_ts_command_rate_limited` → `write_to_state_db` | `SET` (HSET 連発) | STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO\|<dump-name>` | `timestamp` = `str(int(time.time()))` | techsupport 生成成功 (`generate_dump` rc==0 かつ stdout から dump 名抽出成功) | `auto_techsupport_helper.py:305` |
+| 同上 | `SET` | 同上 | `event_type` = `"core"` または `"memory"` | 同上 (起動経路に応じて) | `auto_techsupport_helper.py:306` |
+| 同上 | `SET` | 同上 | `core_dump` = core dump ファイル名 (例 `python3.12345.gz`) | `event_type=core` かつ `event_data` 経由で渡された場合のみ | `auto_techsupport_helper.py:307-308` |
+| 同上 | `SET` | 同上 | `container` = feature/docker 名 (例 `swss`) | `container` 引数が非 None の場合のみ | `auto_techsupport_helper.py:309-310` |
+| `techsupport_cleanup` → `clean_state_db_entries` | `DEL` | STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO\|<dump-name>` | (key ごと削除) | `AUTO_TECHSUPPORT\|GLOBAL.state=enabled` かつ `max_techsupport_limit` が float 変換可能で `>0`、`cleanup_process` が返した `removed_files` の各 entry に対し 1:1 で実行 | `techsupport_cleanup.py:13-18` |
+
+### 不発火 (副次書込なし) の DB / 経路
+
+| DB / 経路 | 状態 | 根拠 |
+|-----------|------|------|
+| CONFIG_DB | **read-only** (本 script 経路) | `coredump_gen_handler.py` / `techsupport_cleanup.py` ともに `db.get(CFG_DB, ...)` のみ。`AUTO_TECHSUPPORT\|GLOBAL` / `AUTO_TECHSUPPORT_FEATURE\|<feat>` を参照するが書き戻さない |
+| APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB / ASIC_DB | 書込なし | 両 script は `db.connect(CFG_DB)` と `db.connect(STATE_DB)` のみ呼び出し、他 DB に接続しない (`coredump_gen_handler.py:69-71`, `techsupport_cleanup.py:52-54`) |
+| SAI / syncd | 経由しない | techsupport 収集は OS レベル diagnostic (kernel core, syslog, show コマンド出力) に閉じる。ASIC 触らず |
+| Notification / Pub-Sub (`NotificationProducer` / `ProducerStateTable` / `publish`) | 使用なし | grep で 0 ヒット。`SonicV2Connector` の素の `set` / `delete` のみ。Redis keyspace 通知は発火可能だが本 script 由来の購読クライアントは無い |
+
+### 特性
+
+- **STATE_DB 書込は techsupport 1 回成功につき 2〜4 field の HSET**。中断 (Redis 切断) で partial entry が残ると `get_ts_map` の `int(creation_time)` 変換失敗で rate-limit 計算から漏れる (Phase D 失敗パターン表と整合)。
+- **`AUTO_TECHSUPPORT_FEATURE` の field は副次書込の値には反映されない**。`container` / `event_type` / `core_dump` は実行コンテキスト由来、`timestamp` は wall clock。`AUTO_TECHSUPPORT_FEATURE.state` / `rate_limit_interval` は「書込みを行うか否か」の gate にのみ寄与する。
+- **DELETE 経路は GLOBAL の `max_techsupport_limit` 駆動**で、本テーブル (`AUTO_TECHSUPPORT_FEATURE`) のフィールドは参照されない。
+
+> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:69-71`; `sonic-utilities/scripts/techsupport_cleanup.py:13-18,52-54`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:43,57,60,302-310,334-337`; 詳細スキャン `meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md`
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
