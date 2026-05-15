@@ -18,6 +18,15 @@ sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/flexcounterorch.cpp
     ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flex_counter/flex_counter_manager.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flex_counter/flex_counter_stat_manager.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flex_counter/flow_counter_handler.cpp
+    ref: master
   - repo: sonic-net/sonic-utilities
     path: counterpoll/main.py
     ref: master
@@ -359,6 +368,74 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
 
 詳細根拠は `meta/_intermediate/cdb-flow/app-counter-platform.md` を参照。
 <!-- /platform -->
+
+<!-- failure -->
+## 失敗挙動・retry 経路 (Phase D)
+
+<!-- evidence:
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flex_counter_stat_manager.cpp,
+     sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp,
+     sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp -->
+
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` / `FLOW_COUNTER_ROUTE_PATTERN` の各設定が失敗するパスをコードから抽出した。FlexCounterOrch・FlexCounterManager・FlowCounterRouteOrch・FlowCounterHandler の 4 階層がそれぞれ独立に失敗を扱う。
+
+### FlexCounterOrch ディスパッチ層の失敗 (`flexcounterorch.cpp`)
+
+| 失敗条件 | 動作 | ログ | evidence |
+|---|---|---|---|
+| `FLEX_COUNTER_TABLE` の key が `flexCounterGroupMap` に未登録 (例: `FLOW_CNT_TRAP` を `FLOW_CNT_TRAPS` と typo) | エントリ即破棄。**retry なし** | `SWSS_LOG_NOTICE ("Invalid flex counter group input, %s")` | `flexcounterorch.cpp:183-188` |
+| 未対応フィールド (`FLEX_COUNTER_STATUS` / `POLL_INTERVAL` / bulk_chunk_size 系以外) | フィールド単位で無視、handler は失敗にしない | `SWSS_LOG_NOTICE ("Unsupported field %s")` | `flexcounterorch.cpp:396-399` |
+| `POLL_INTERVAL` の値検証 | orchagent では検証されない (文字列のまま syncd に転送)。数値不正や 0 は syncd 側 FlexCounter で握り潰される | (orchagent ログなし) | flexcounterorch は値を素通し |
+| `FLEX_COUNTER_STATUS` の値検証 | `enable` / `disable` 以外は syncd 側で `disable` 相当扱い | (orchagent ログなし) | 同上 |
+
+### FlexCounterManager / StatManager 層の失敗
+
+| 失敗条件 | 動作 | ログ | evidence |
+|---|---|---|---|
+| 既存 group の stats_mode / polling_interval / enabled と不一致で再 `createFlexCounterManager` | `NULL` 返却で manager 不発 | `SWSS_LOG_ERROR ("Stats mode mismatch ...")` 等 3 種 | `flex_counter_manager.cpp:71-88` |
+| `setCounterIdList` の counter_type 未登録 | `startFlexCounterPolling` を呼ばず早期 return → **COUNTERS_DB 更新が始まらない** | `SWSS_LOG_ERROR ("Could not update flex counter id list for group '%s': counter type not found.")` | `flex_counter_manager.cpp:212-217` |
+| `removeFlexCounterStat` で object_id 未登録 (二重削除 / race) | 後処理スキップ、例外なし | `SWSS_LOG_WARN ("Could not find flex stat '%s' on object '%s'")` | `flex_counter_stat_manager.cpp:66-72` |
+
+### FlowCounterHandler の SAI 失敗 (`flow_counter_handler.cpp`)
+
+| 失敗条件 | 動作 | ログ | evidence |
+|---|---|---|---|
+| `sai_counter_api->create_counter` が `SAI_STATUS_SUCCESS` 以外 | `false` 返却で route binding 中断。後段の pending list 経由で **タイマー再試行される** | `SWSS_LOG_WARN ("Failed to create generic counter")` | `flow_counter_handler.cpp:20-26` |
+| `sai_counter_api->remove_counter` 失敗 | orchagent ハッシュからは削除済みなので **counter OID リーク** | `SWSS_LOG_ERROR ("Failed to remove generic counter: ...")` | `flow_counter_handler.cpp:32-38` |
+| `sai_query_attribute_capability(SAI_ROUTE_ENTRY_ATTR_COUNTER_ID)` 失敗 / `set_implemented = false` | `mRouteFlowCounterSupported = false` で **以降 `FLOW_CNT_ROUTE` を `enable` にしても no-op**。`STATE_DB FLOW_COUNTER_CAPABILITY_TABLE` に `support=false` が書かれる | `SWSS_LOG_WARN ("Could not query route entry attribute ...")` + `SWSS_LOG_NOTICE ("Route flow counter is not supported on this platform")` | `flow_counter_handler.cpp:51-62`, `flowcounterrouteorch.cpp:165-178` |
+
+### FlowCounterRouteOrch (`FLOW_COUNTER_ROUTE_PATTERN`) の失敗
+
+| 失敗条件 | 動作 | ログ | evidence |
+|---|---|---|---|
+| `max_match_count = 0` を SET | **値を 30 (デフォルト) に silent fallback** | `SWSS_LOG_WARN ("Max match count for route pattern cannot be 0, set it to default value 30")` | `flowcounterrouteorch.cpp:80-86` |
+| `max_match_count` が非数値文字列 (CONFIG_DB 直接編集時のみ) | `std::stoul` の `std::invalid_argument` が doTask まで伝播 (catch なし) | (例外スタックトレース) | `flowcounterrouteorch.cpp:80` |
+| 既存パターンと overlap する key を SET | bind を実行せず `false` 返却。`mRoutePatternSet` には残るがカウンタは作られない | `SWSS_LOG_ERROR ("Configured route pattern %s is conflict with existing one %s")` | `flowcounterrouteorch.cpp:573-588` |
+| 存在しない pattern を DEL | early return | `SWSS_LOG_ERROR ("Trying to remove route pattern %s, but it does not exist")` | `flowcounterrouteorch.cpp:266-275` |
+| VRF/VNET 名が未解決 | bind 失敗で `mPendingAddToFlexCntr` に残置 → **1 秒タイマーで再試行** | `SWSS_LOG_NOTICE ("VRF/VNET name %s is not resolved")` | `flowcounterrouteorch.cpp:971-975` |
+| SAI `set_route_entry_attribute(COUNTER_ID)` 失敗 | 生成済み generic counter を巻き戻して `false` 返却 | `SWSS_LOG_WARN ("Failed to bind route entry vrf=%s prefix=%s to flow counter")` | `flowcounterrouteorch.cpp:476-483` |
+| SAI unbind 失敗 | warning のみで続行 | `SWSS_LOG_WARN ("Failed to unbind route entry vrf=%s prefix=%s from flow counter")` | `flowcounterrouteorch.cpp:501-506` |
+| マッチするルート数が `max_match_count` を超過 | 超過分は **silent drop** (bind されない) | (超過時のログなし、limit 変更時のみ `LOG_NOTICE`) | `flowcounterrouteorch.cpp:800-820` |
+
+### retry 経路まとめ
+
+| retry 種別 | トリガ | 仕組み |
+|---|---|---|
+| VRF 未解決時の route pattern 再 bind | `mPendingAddToFlexCntr` 非空 | `mFlexCounterUpdTimer` (1 秒周期, `FLEX_COUNTER_UPD_INTERVAL`) が `doTask(SelectableTimer&)` で再試行 |
+| SAI `create_counter` 失敗 | pending list に残る | 次回タイマーで再試行 |
+| SAI `set_route_entry_attribute` 失敗 | pending list から除去 | route が再通知されるか pattern を再 SET しない限り **自動 retry なし** |
+| `Invalid flex counter group input` (未知 group key) | エントリ erase | **retry なし** |
+| `FLOW_CNT_ROUTE` の `enable` が SAI 非対応 | `mRouteFlowCounterSupported = false` | 一度 capability が false 確定すると **再 query なし** (orchagent 再起動が必要) |
+
+!!! warning "ユーザー視点の代表的な失敗症状"
+    - **`FLEX_COUNTER_STATUS=enable` を書いたのにカウンタが現れない** — group key typo (`Invalid flex counter group input`)、SAI capability 不足、`max_match_count` 超過のいずれか。
+    - **`max_match_count=0` を設定したのに 30 になっている** — Phase D で挙動として確定 (silent fallback)。
+    - **VRF 作成直後に route flow counter が出ない** — 1 秒タイマーの再試行待ちで数秒のラグ。
+    - **`POLL_INTERVAL` に不正値を入れても何も起きない** — orchagent 段では検証されず syncd 側で握り潰される。
+
+<!-- /failure -->
 
 <!-- ref-triangle:start -->
 
