@@ -234,6 +234,74 @@ PORT_TABLE:<port_name>
 
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。YANG / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。詳細表と参照行は [`meta/_intermediate/cdb-flow/appl-port-table-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-constants.md) を参照。
+
+### admin_status / oper_status
+
+- `cfgmgr/portmgr.h:14` `#define DEFAULT_ADMIN_STATUS_STR "down"` — portmgrd が CONFIG_DB に `admin_status` が無いとき APPL_DB に注入する既定値
+- `orchagent/portsorch.h:48-55` `oper_status_strings` マップ: `SAI_PORT_OPER_STATUS_{UNKNOWN, UP, DOWN, TESTING, NOT_PRESENT}` ↔ `"unknown"` / `"up"` / `"down"` / `"testing"` / `"not present"`
+- 逆向き `string_oper_status` (`portsorch.h:57-64`) も同 5 値を持つため、`SAI_PORT_OPER_STATUS_UNKNOWN` を含めて warmboot 復元時に例外にならない
+- `cfgmgr/porthlpr.cpp:43-47` `portStatusMap`: `admin_status` は `"up"` / `"down"` 2 値固定 (それ以外は porthlpr がパース拒否)
+
+### mtu
+
+- `cfgmgr/portmgr.h:15` `#define DEFAULT_MTU_STR "9100"` — portmgrd の APPL_DB 注入既定値
+- `orchagent/port.h:27` `#define DEFAULT_MTU 1492` — orchagent 内 `Port::m_mtu` の初期値 (SAI default 1514 − header/FCS 22)。APPL_DB に書かれる `"9100"` とは別物
+- `orchagent/portsorch.cpp:79` `#define DEFAULT_SYSTEM_PORT_MTU 9100` — VOQ system port 初期化用
+- `orchagent/port/porthlpr.cpp:34-35` MTU 範囲 `[68, 9216]` (`minPortMtu` / `maxPortMtu`)
+
+### speed
+
+- `orchagent/port/porthlpr.cpp:31-32` 速度範囲 `[1, 1600000]` Mbps (`minPortSpeed` / `maxPortSpeed`)
+- 上限は 1.6 Tbps クラスの将来拡張に対応する
+
+### fec / fec override
+
+- `orchagent/port/porthlpr.cpp:77-83` `portFecMap`: `"none"` / `"rs"` / `"fc"` / `"auto"` → `SAI_PORT_FEC_MODE_{NONE, RS, FC, NONE}`
+- `porthlpr.cpp:92-98` `portFecOverrideMap`: `"none"/"rs"/"fc"` で明示指定 (`true`)、`"auto"` のみ SAI への明示設定を抑止 (`false`)
+- `porthlpr.cpp:85-90` 逆向きマップ `portFecRevMap` は `"auto"` を含まず 3 値のみ (STATE_DB 書き戻し用)
+
+### autoneg / link_training / pfc_asym
+
+- 3 フィールドとも APPL_DB の値は `"on"` / `"off"` 2 値固定
+- `orchagent/portsorch.cpp:174-178` `autoneg_mode_map`: `"on"` → `1`, `"off"` → `0`
+- `porthlpr.cpp:37-41` `portModeMap`: `"on"` / `"off"` → `true` / `false`
+- `porthlpr.cpp:100-104` `portPfcAsymMap`: `"on"` → `SAI_PORT_PRIORITY_FLOW_CONTROL_MODE_SEPARATE`, `"off"` → `..._COMBINED`
+
+### interface_type
+
+- `orchagent/port/porthlpr.cpp:49-75` `portInterfaceTypeMap` は **24 種類**: `none, cr, cr2, cr4, cr8, sr, sr2, sr4, sr8, lr, lr4, lr8, kr, kr4, kr8, caui, gmii, sfi, xlaui, kr2, caui4, xaui, xfi, xgmii`
+- `orchagent/portsorch.cpp:195-210` の `interface_type_map` は Gearbox 専用で **13 種類のみ** (`none, cr, cr4, cr8, sr, sr4, sr8, lr, lr4, lr8, kr, kr4, kr8`)
+- **通常ポートと gearbox 内部ポートで許容値が異なる**点に注意
+
+### role (内部ポート識別子)
+
+- `orchagent/port.h:158-165` `Port::Role` enum: `Ext` / `Int` / `Inb` / `Rec` / `Dpc`
+  - `Ext` = 外部 (フロントパネル) ポート
+  - `Int` = 内部ポート
+  - `Inb` = inband ポート (CPU 経由)
+  - `Rec` = recirculation ポート
+  - `Dpc` = SmartSwitch DPU Connect Port
+- `porthlpr.cpp:116-123` `portRoleMap` で 5 値以外を拒否
+
+### Port::Type (APPL_DB には書かれない内部分類)
+
+- `orchagent/port.h:145-156`: `CPU, PHY, MGMT, LOOPBACK, VLAN, LAG, TUNNEL, SUBPORT, SYSTEM, UNKNOWN`
+- `PORT_TABLE` のエントリは原則 `Type::PHY`、`PORTCHANNEL_TABLE` 経由が `LAG`、VOQ/Gearbox で `SYSTEM`
+- PortsOrch のハンドラ分岐で多用される (`portsorch.cpp:2953, 2972, 2990, 3037, 3920, 4122` 等)
+
+### Gearbox 命名 prefix
+
+- `orchagent/port/porthlpr.cpp:28-29`:
+  - `GB_LINE_PREFIX = "gb_line_"`
+  - `GB_SYSTEM_PREFIX = "gb_system_"`
+- Gearbox port 用の STATE_DB / COUNTERS_DB エントリ名に付与される
+
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
