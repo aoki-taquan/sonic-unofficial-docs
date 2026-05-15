@@ -309,6 +309,57 @@ FLEX_COUNTER_DB → syncd → COUNTERS_DB
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` の動作は、ハードコード定数（ポーリング間隔・stat リスト・`max_match_count` デフォルト）はプラットフォーム共通だが、**route flow counter は SAI capability ゲート**で機種差が大きく、**multi-asic / VOQ chassis** は asic 単位での独立制御になる。
+
+### Route flow counter の SAI capability ゲート
+
+`FlowCounterRouteOrch::initRouteFlowCounterCapability()` が起動時に `SAI_OBJECT_TYPE_ROUTE_ENTRY` の `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` を `sai_query_attribute_capability()` で問い合わせ、結果を `mRouteFlowCounterSupported` フラグと **STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE|FLOW_CNT_ROUTE` の `support` フィールド** に保存する:
+
+```cpp
+// flowcounterrouteorch.cpp:166-179
+mRouteFlowCounterSupported = FlowCounterHandler::queryRouteFlowCounterCapability();
+swss::Table capability_table(&state_db, STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME);
+fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true" : "false");
+capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
+```
+
+`mRouteFlowCounterSupported == false` の場合、`flowcounterrouteorch.cpp` 内の `generateRouteFlowStats()` / `addRoutePattern()` / `removeRoutePattern()` / `onRoutePatternChange()` ほか合計 10 箇所超の関数がすべて即 `return` する。さらに `flexcounterorch.cpp:324` の `FLOW_CNT_ROUTE` enable 受信処理も `getRouteFlowCounterSupported()` を AND 条件にしているため、**SAI 非対応 ASIC では `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` を `enable` にしても `FLOW_COUNTER_ROUTE_PATTERN` にパターンを書き込んでもカウンタは生成されない**。
+
+### ASIC 別の対応状況（community master）
+
+| ASIC / SAI 実装 | `set_implemented` | 備考 |
+|---|---|---|
+| Broadcom XGS (modern Broadcom SAI) | true 想定 | 一般的に対応 |
+| Mellanox / NVIDIA SDK (mlnx-sai) | true | community master で動作実績 |
+| Broadcom DNX / Marvell / Cisco silicon-one | SDK バージョン依存 | `show flowcnt-route capabilities` で要確認 |
+| **VS (libsaivs) / VPP (libsaivpp)** | **false** | SAI スタブが未実装応答 |
+
+ユーザー側からは `show flowcnt-route capabilities`（STATE_DB の `FLOW_COUNTER_CAPABILITY_TABLE` を読む）で `support: false` を確認できる。
+
+### Trap flow counter には capability ゲートなし
+
+`FLOW_CNT_TRAP` 側（`flexcounterorch.cpp:311-322`）には事前 capability チェックがない。SAI が `SAI_HOSTIF_TRAP_ATTR_COUNTER_ID` の set を `SAI_STATUS_NOT_SUPPORTED` で返した場合、copporch が個別 trap ごとに warn ログを残しつつ無視するのみで、**STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE` には trap 側のエントリは書かれない**。事前判定の手段がないため、`COUNTERS_DB:COUNTERS:oid:*` に値が現れるかを実機で確認する必要がある。
+
+### multi-asic / VOQ chassis
+
+`flexcounterorch` と `FlowCounterRouteOrch` は他 orch と同じく **swss@asicN コンテナごとに 1 インスタンス**起動する。`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` の enable/disable・`FLOW_COUNTER_ROUTE_PATTERN` のパターン定義はすべて **asic-namespace ごとの CONFIG_DB に独立**しており、chassis-wide に同期する仕組みは存在しない（`CHASSIS_APP_DB` に flow counter 系テーブルなし）。chassis 全 asic で有効化したい場合は asic-namespace の数だけ書き込みが必要。
+
+VOQ chassis 特例として `flexcounterorch.cpp:546` で `gMySwitchType == "voq"` のとき queue counter の生成方針が変わるが、**flow counter (`FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE`) の挙動には影響しない**。`CHASSIS_APP_DB` 経由で resolve される remote system port nexthop へのルートも、local `mRoutePatternSet` のパターンにマッチすれば通常通り counter が付く。
+
+### VS / VPP プラットフォーム
+
+VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため route flow counter は完全に no-op になる。trap flow counter は受理されカウンタオブジェクトが生え `COUNTERS_DB` にも値が出るが、SAI 側の dummy 実装で実トラフィックを反映しない。sonic-mgmt の `test_flow_counter_*` は VS では route 系を原則スキップする。
+
+### プラットフォーム共通の定数
+
+`HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS = 10000`、`ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS = 10000`、`ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT = 30`、`FLEX_COUNTER_UPD_INTERVAL = 1` 秒、generic counter の stat リスト (`SAI_COUNTER_STAT_PACKETS` / `_BYTES`) はベンダー側で上書きする手段がなく、全機種同一。
+
+詳細根拠は `meta/_intermediate/cdb-flow/app-counter-platform.md` を参照。
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
