@@ -319,4 +319,33 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`TUNNEL` が CONFIG_DB に書かれると `tunnelmgrd`・`tunneldecaporch` が以下のテーブルを暗黙的に参照する。
+`src_ip` → `PEER_SWITCH` は YANG leafref として明示されているが、他は実装コードのみに現れる暗黙依存。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PEER_SWITCH\|<name>.address_ipv4` | YANG leafref (必須検証) | `src_ip` フィールドに値を設定したとき。未登録 IP は CONFIG_DB 書き込み拒否 | `sonic-tunnel.yang` L50-52; `tunnelmgr.cpp` L112-127 (`m_peerIp` 取得) |
+| `LOOPBACK_INTERFACE\|Loopback3` | 読み取り（ハードコード） | 常時。`tun0` ローカル IP ソース (`#define LOOPBACK_SRC "Loopback3"`)。TUNNEL SET より先に prefix SET 必要 | `tunnelmgr.cpp` L19, L339, L405 |
+| `DSCP_TO_TC_MAP\|<name>` | OID 解決（`gQosOrch->resolveTunnelQosMap`） | `decap_dscp_to_tc_map` フィールドに値を指定したとき。未作成 map は `task_need_retry` 無限待機 | `tunneldecaporch.cpp` L215-221; `qosorch.cpp` L113 |
+| `TC_TO_PRIORITY_GROUP_MAP\|<name>` | OID 解決（`gQosOrch->resolveTunnelQosMap`） | `decap_tc_to_pg_map` フィールドに値を指定したとき。未作成 map は `task_need_retry` 無限待機 | `tunneldecaporch.cpp` L230-236; `qosorch.cpp` L114 |
+| `TC_TO_DSCP_MAP\|<name>` | OID 解決（`gQosOrch->resolveTunnelQosMap`） | `encap_tc_to_dscp_map` フィールドに値を指定したとき。OID は `tunnelTable` に記録。SAI 直接 push なし（muxorch が `getQosMapId()` で取得） | `tunneldecaporch.cpp` L245-257; `qosorch.cpp` L115 |
+| `TC_TO_QUEUE_MAP\|<name>` | OID 解決（`gQosOrch->resolveTunnelQosMap`） | `encap_tc_to_queue_map` フィールドに値を指定したとき。`encap_tc_to_dscp_map` と同様、muxorch 経由で利用 | `tunneldecaporch.cpp` L260-272; `qosorch.cpp` L116 |
+| `MUX_CABLE`（逆参照） | 下流が TUNNEL を読み取り | `MuxOrch` が MUX_CABLE SET 処理時に `TunnelDecapOrch::getDstIpAddresses()` / `getDscpMode()` / `getQosMapId()` を呼び出す。TUNNEL DEL 前に MUX_CABLE を先に DEL しないとエラー | `muxorch.cpp` L2348-2377 |
+
+!!! note "QoS map の事前作成必須"
+    `decap_dscp_to_tc_map` / `decap_tc_to_pg_map` に指定する QoS map が未作成の場合、
+    当該 TUNNEL エントリの処理が `task_need_retry` でスタックし続ける。
+    TUNNEL SET 前に対応する `DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` を作成すること。
+
+!!! note "LOOPBACK_INTERFACE|Loopback3 のハードコード依存"
+    `tunnelmgrd` は `Loopback3` をハードコードで参照する (`LOOPBACK_SRC = "Loopback3"`)。
+    Dual-ToR 環境では `LOOPBACK_INTERFACE|Loopback3|<ip/prefix>` の SET が
+    TUNNEL SET より先であることを確認すること。後から届いてもキャッシュ経由で
+    アドレスが付与されるが、カーネルトンネルの初期作成が遅延する可能性がある。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
