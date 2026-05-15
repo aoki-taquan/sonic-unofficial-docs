@@ -198,6 +198,63 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 
 <!-- /cdb-exceptions -->
 
+<!-- platform -->
+## プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
+
+`bfdorch` は `platform` / `sub_platform` 環境変数の static 比較を**行わず**、**SAI 動的 capability 照会**のみで ASIC 対応を判定する (他の orch とは設計が異なる)[^h1]。STATE_DB `BFD_SESSION_TABLE` への書込みが発生するか否かは、以下の組合せで決まる。
+
+### HW BFD 経路 vs SW BFD 経路
+
+| 条件 | `BFD_SESSION_TABLE` (STATE_DB) | `BFD_SOFTWARE_SESSION_TABLE` |
+|------|-------------------------------|------------------------------|
+| `BGP_DEVICE_GLOBAL.STATE.use_software_bfd == "true"` | **書込みなし** | `bfdorch::createSoftwareBfdSession()` 経由で書込み |
+| `use_software_bfd == "false"` (デフォルト) + ASIC が SAI BFD 対応 | 書込みあり | なし |
+| `use_software_bfd == "false"` + ASIC が SAI BFD 未対応 | **書込みなし** (create 失敗) | なし |
+
+### 動的照会される SAI capability
+
+`bfdorch` が起動時 / 初回 create 時に問い合わせる SAI 属性:
+
+| SAI 属性 | チェック対象 | 失敗時の挙動 |
+|---------|-------------|------------|
+| `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` (`set_implemented`) | BFD 状態変化通知の登録可否 | `create_bfd_session()` 全体が **fail**。STATE_DB エントリ作成自体が起こらない (`bfdorch.cpp:286-290, 309-313`) |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE` | IPv4 BFD オフロード対応 | `bgpcfgd` が SW BFD 経路を選択 → STATE_DB `BFD_SESSION_TABLE` は使われない (`bfdorch.cpp:761-790`) |
+| `SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE` | IPv6 BFD オフロード対応 | 同上 (IPv6 family のみ独立) |
+
+`SUPPORTED_IPV*_BFD_SESSION_OFFLOAD_TYPE` の値が `SAI_BFD_SESSION_OFFLOAD_TYPE_NONE` の場合も SW BFD 経路となる。IPv4 / IPv6 は独立に照会されるため、片方だけ HW 対応の ASIC では対応 family のセッションだけが STATE_DB に出現する。
+
+### `HW_LOOKUP_VALID` 分岐 (interface 指定の有無)
+
+`bfdorch.cpp:482-542` で `interface` フィールドが `"default"` か否かにより SAI 属性セットが分岐する。フィールド集合は同一だが ASIC 互換性に差がある。
+
+| `interface` | `SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID` | 追加必須 SAI 属性 |
+|-------------|----------------------------------------|------------------|
+| `"default"` | 省略 (SAI default = true) | `VIRTUAL_ROUTER` |
+| 具体ポート名 (例 `Ethernet0`) | `false` を明示セット | `PORT`, `SRC_MAC`, `DST_MAC` (CONFIG_DB の `dst_mac` 必須)。`vrf != "default"` は reject |
+
+ASIC によっては `HW_LOOKUP_VALID = false` を未サポートで `create_bfd_session()` 自体が失敗 → STATE_DB に書込みなし。
+
+### vendor 別の典型挙動
+
+| プラットフォーム | HW BFD オフロード | `BFD_SESSION_TABLE` 書込み | 備考 |
+|-----------------|------------------|---------------------------|------|
+| broadcom (TD/TH/JR) | あり (IPv4/IPv6) | あり | state 通知レイテンシ低 |
+| mellanox (Spectrum) | あり (IPv4/IPv6) | あり | `detect_multiplier × rx_interval` に従う |
+| cisco-8000 | あり (IPv4/IPv6) | あり | offload type 取得経路を通る |
+| barefoot (Tofino) | 実装依存 | 実装依存 | SAI capability 照会結果に従う |
+| marvell-prestera | 一部 SKU で SW のみ | SW モードでは**なし** | `use_software_bfd = true` で動くケースあり |
+| vs (シミュレーション) | なし | SW モードでは**なし** | テスト環境では FRR 経路 |
+
+上表は SAI 実装の現状を示すもので、`bfdorch.cpp` 内の明示的な vendor 文字列比較ではない。`bfdorch` は ASIC vendor を直接見ず、SAI capability 動的照会のみで分岐する点に注意。
+
+### 通知の async 配信タイミング差
+
+HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。broadcom 系は数百 μs 〜 ms 単位、mellanox 系は `detect_multiplier × rx_interval` に従う。`"Down" → "Up"` 遷移までの遅延が ASIC vendor 差で 1〜数百 ms 揺れる。STATE_DB を polling する consumer (例 `vnetorch`) は `Init` 状態を観測する可能性が vendor によって異なる。
+
+[^h1]: `sonic-swss/orchagent/bfdorch.cpp` (L116-205 use_software_bfd 分岐、L270-303 BFD 通知 capability 照会、L482-542 HW_LOOKUP_VALID 分岐、L755-791 BgpGlobalStateOrch::offload_supported)。`bfdorch.cpp` 全 841 行で `platform` / `sub_platform` の static 比較は 0 件。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
+
+<!-- /platform -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`BFD_SESSION`](bfd-session.md) — BFD セッション設定パラメータ
