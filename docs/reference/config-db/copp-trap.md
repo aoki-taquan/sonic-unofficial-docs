@@ -226,6 +226,53 @@ show copp config
 > **スキャン証跡**: `doTask` L880-935 + `processCoppTrap` L1164-1200 全行読了。4 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/copp-trap-constants.md`
+
+### フィールド名定数 (copporch.h)
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `copp_trap_id_list` | `"trap_ids"` | `copporch.h:26` | COPP_TRAP の trap_ids フィールド識別子 |
+| `copp_trap_action_field` | `"trap_action"` | `copporch.h:27` | COPP_GROUP の trap_action フィールド識別子 |
+| `copp_trap_priority_field` | `"trap_priority"` | `copporch.h:28` | COPP_GROUP の trap_priority フィールド識別子 |
+| `copp_queue_field` | `"queue"` | `copporch.h:30` | COPP_GROUP の queue フィールド識別子 |
+| `copp_policer_cbs_field` | `"cbs"` | `copporch.h:36` | policer の CBS フィールド識別子 |
+| `copp_policer_cir_field` | `"cir"` | `copporch.h:37` | policer の CIR フィールド識別子 |
+
+### ランタイム定数 (copporch.cpp)
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `default_trap_group` | `"default"` | `copporch.cpp:184` | デフォルトトラップグループ名 |
+| `default_trap_ids` | `SAI_HOSTIF_TRAP_TYPE_TTL_ERROR` | `copporch.cpp:185-187` | 起動時自動インストールされる trap (CONFIG_DB 記載なし) |
+| default trap priority | **1** | `copporch.cpp:357` | デフォルト trap の `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` 値 |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | **10000** ms | `copporch.cpp:189` | hostif trap カウンタポーリング間隔 |
+
+### ビルド時デフォルト値 (copp_cfg.j2)
+
+`copp_cfg.j2` が生成する `COPP_GROUP` の queue / trap_priority / cir / cbs 値。COPP_TRAP は `trap_group` 経由でこれらを間接参照する。
+
+| COPP_GROUP 名 | queue | trap_priority | cir (pps) | cbs (packets) |
+|--------------|-------|--------------|-----------|----------------|
+| `default` | **0** | — | **600** | **600** |
+| `queue4_group1` | **4** | **4** | **6000** | **6000** |
+| `queue4_group2` | **4** | **4** | **600** | **600** |
+| `queue4_group3` | **4** | **4** | **100** / **300**※ | **100** / **300**※ |
+| `queue1_group1` | **1** | **1** | **6000** | **6000** |
+| `queue1_group2` | **1** | **1** | **600** | **600** |
+| `queue1_group3` | **1** | **1** | **200** | **200** |
+| `queue2_group1` | **2** | **1** | **1000** | **1000** |
+
+※ `queue4_group3` の cir/cbs は `DEVICE_METADATA.localhost.type` に `'Mgmt'` が含まれる場合 **300**、含まれない場合 **100** (`copp_cfg.j2:36-43`)。
+
+!!! note "trap_priority はプラットフォーム依存"
+    Mellanox (`MLNX_PLATFORM_SUBSTRING`) および Marvell (`MRVL_PRST_PLATFORM_SUBSTRING`) では `processCoppTrap()` が `SAI_HOSTIF_TRAP_ATTR_TRAP_PRIORITY` を設定しない。これらプラットフォームでは `trap_priority` フィールドの値は実質 no-op となる (`copporch.cpp:1186-1194`)。
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
