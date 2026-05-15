@@ -212,3 +212,22 @@ APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask
 
 詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-side.md` を参照。
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差
+
+`mplsrouteorch.cpp` / `nhgorch.cpp` / `routeorch.cpp` の MPLS 経路を全文走査した結果、
+APPL_DB `LABEL_ROUTE_TABLE` の挙動はコミュニティ master 上で **プラットフォーム非依存**である。
+差は SAI ベンダ実装側 (INSEG entry サポートの有無、available count の提供) に閉じ、
+CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。
+
+| 観点 | 差の有無 | 根拠 |
+|---|---|---|
+| SAI MPLS capability の runtime 問合せ | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `sai_query_attribute_capability` / `sai_object_type_query` 参照 0 件。`SAI_API_MPLS` は `saihelper.cpp:220` で一律 `sai_api_query()` され、ベンダが未サポートなら orchagent 起動段階で失敗する。runtime での MPLS 有効/無効判定パスは存在しない |
+| `SAI_SWITCH_ATTR_AVAILABLE_*` による上限取得 | なし | `crmorch.cpp:113` の `CRM_MPLS_INSEG` は `SAI_OBJECT_TYPE_INSEG_ENTRY` (object_type 経由)。IPv4/IPv6 route のような `SAI_SWITCH_ATTR_AVAILABLE_*` 属性は `crmorch.cpp` に存在せず、CRM `used`/`available` の精度はベンダ SAI 実装に依存 |
+| switch type (voq/chassis/fabric) 分岐 | なし | `gMySwitchType` 参照は `routeorch.cpp:106-109` の **IP route ECMP sizing 限定**で、`doLabelTask` には伝搬しない。`mplsrouteorch.cpp` / `nhgorch.cpp` に `voq` / `chassis` / `fabric` 参照は 0 件 |
+| multi-asic namespace 特殊化 | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` / `fpmsyncd/routesync.cpp::onLabelRouteMsg()` に `namespace` / `asic_id` 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行 |
+| VRF 制限 (プラットフォーム非依存) | あり | `fpmsyncd/routesync.cpp:2674-2681` で非デフォルト VRF (`master_index != 0`) は `SWSS_LOG_INFO("Unsupported Non-default VRF")` のみでスキップ。これは fpmsyncd 全体の制約で ASIC タイプとは無関係 |
+
+詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-platform.md` を参照。
+<!-- /platform -->
