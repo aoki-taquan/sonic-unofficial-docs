@@ -346,6 +346,32 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 <!-- /derivation -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+`natmgrd` は `NAT_GLOBAL` / `NAT_POOL` / `NAT_BINDINGS` / `STATIC_NAT` / `STATIC_NAPT` に加え、以下のテーブルを購読または参照する。これらは frontmatter の `related:` には記載されていない暗黙依存である。
+
+| 参照先テーブル | DB | 方向 | 契機 | 備考 |
+|--------------|-----|------|------|------|
+| `INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | Ethernet ポートの NAT ゾーン番号を iptables mangle に変換 (`natmgr.cpp:7384-7586`) |
+| `PORTCHANNEL_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | LAG ポートの NAT ゾーン番号を iptables mangle に変換 (`natmgrd.cpp:116`) |
+| `VLAN_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | VLAN インタフェースの NAT ゾーン番号 (`natmgrd.cpp:117`) |
+| `LOOPBACK_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | Loopback の NAT ゾーン番号 (`natmgrd.cpp:118`) |
+| `STATIC_NAT` | CONFIG_DB | READ | 購読 | `admin_mode=enabled` かつ L3 intf ready のとき処理。`NAT_POOL.nat_ip` と重複する場合は silent drop |
+| `STATIC_NAPT` | CONFIG_DB | READ | 購読 | STATIC_NAT と同じ制御。キーは 5 パーツ必須 |
+| `ACL_TABLE` (`type=L3`, `stage=INGRESS`) | CONFIG_DB | READ | 購読 | Dynamic NAT の ACL バインディング用インタフェースをキャッシュ (`natmgr.cpp:7750-7900`) |
+| `ACL_RULE` | CONFIG_DB | READ | 購読 | Dynamic NAT iptables ルールの再評価 |
+| `STATE_PORT_TABLE` | STATE_DB | READ | NAT エントリ追加前 | Ethernet readiness ガード (`natmgr.cpp:119`) |
+| `STATE_LAG_TABLE` | STATE_DB | READ | NAT エントリ追加前 | PortChannel readiness ガード (`natmgr.cpp:108`) |
+| `STATE_VLAN_TABLE` | STATE_DB | READ | NAT エントリ追加前 | Vlan readiness ガード (`natmgr.cpp:100`) |
+| `STATE_INTERFACE_TABLE` | STATE_DB | READ | NAT エントリ追加前 | L3 インタフェース readiness ガード (`natmgr.cpp:139`) |
+| `APP_PORT_TABLE` (`PortInitDone`) | APPL_DB | READ | natmgrd 起動時 | ポート初期化完了まで全 NAT 処理をブロッキング待機 (`natmgr.cpp:76-92`) |
+| `NAT_POOL` (YANG leafref) | CONFIG_DB | READ | YANG バリデーション | `NAT_BINDINGS.nat_pool` → `NAT_POOL.name` の参照整合性 |
+
+> **注意**: `nat_zone` フィールドは INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE / LOOPBACK_INTERFACE の全インタフェース種別で定義され (`uint8`, range `0..3`)、NAT ゾーン番号はそのまま iptables の mark 値として設定されるが、`natmgr` 内部では `nat_zone_value + 1` が使用される（`natmgr.cpp:7513`）。
+
+<!-- /cross-refs -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
