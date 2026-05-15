@@ -308,4 +308,46 @@ BGP ASN は `constants['deployment_id_asn_map']['2']` から取得。未設定�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。`frrcfgd` の実装（`frrcfgd.py`）を全行精読して確認した。
+
+### 必須制約（違反すると silent drop）
+
+1. **`route_operation` を最初に書き込む** — 同一キー `ROUTE_MAP|<name>|<seq>` の処理で `route_operation` が内部キャッシュ（`self.route_map`）に登録されていない場合、後続の `match_*` / `set_*` フィールドは全て `route-map {} seq {} not found for update` エラーでスキップされる（FRR への反映なし）。
+
+2. **`match_prefix_set` / `match_next_hop_set` を書く前に `PREFIX_SET` を先に作成する** — frrcfgd は `PREFIX_SET.mode` (IPv4/IPv6) を参照して FRR コマンドの `match ip address prefix-list` / `match ipv6 address prefix-list` を選択する。`PREFIX_SET` が未登録の場合は AF が特定できず FRR コマンド未発行（silent drop）。
+
+3. **`route_operation` を permit → deny（またはその逆）に変更する場合は DEL → SET** — FRR では `route-map <name> permit <seq>` と `route-map <name> deny <seq>` は**別エントリ**として扱われる。SET 上書きでは古いエントリが残るため、`no route-map` で旧エントリを削除してから新規作成すること。
+
+### 推奨制約（違反すると FRR 側でエラーまたは運用影響）
+
+4. **`set_community_ref` を書く前に `COMMUNITY_SET` を先に作成する** — 参照先が未作成の場合 FRR `set community` コマンドが発行されない（silent drop）。
+
+5. **`match_as_path` を書く前に `AS_PATH_SET` を先に作成する** — 未作成の場合 FRR bgpd 側で無効参照エラーが発生し BGP ポリシーが機能しない。
+
+6. **`call_route_map` 参照先 route-map を先に作成する** — 参照先が未定義の場合 FRR は黙って素通り（ポリシー未適用）。
+
+7. **ROUTE_MAP を DEL する前に `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` の参照（`route_map_in` / `route_map_out`）を先に解除する** — 参照中の route-map を先に削除すると BGP フィルタが消えた状態でセッションが継続しトラフィックに影響する可能性がある。
+
+8. **`match_prefix_set` を参照している ROUTE_MAP エントリを更新する前に参照先 `PREFIX_SET` を削除しない** — PREFIX_SET DEL 後は frrcfgd の内部 AF キャッシュからエントリが消え、以降の ROUTE_MAP 更新で AF が特定できず silent drop になる。
+
+### 書込み順依存サマリ
+
+| # | 依存関係 | 方向 | 影響 |
+|---|----------|------|------|
+| 1 | `route_operation` → `match_*` / `set_*` | 同一エントリ内で先行必須 | silent drop |
+| 2 | `PREFIX_SET` → `match_prefix_set` / `match_next_hop_set` | PREFIX_SET 先行必須 | silent drop |
+| 3 | `route_operation` 変更: DEL → SET | DEL 後に SET | FRR に旧エントリ残留 |
+| 4 | `COMMUNITY_SET` → `set_community_ref` | 先行推奨 | silent drop |
+| 5 | `AS_PATH_SET` → `match_as_path` | 先行推奨 | FRR 無効参照 |
+| 6 | 参照先 route-map → `call_route_map` | 先行推奨 | FRR 素通り |
+| 7 | BGP_NEIGHBOR_AF 参照解除 → ROUTE_MAP DEL | 先行推奨 | BGP フィルタ消滅 |
+| 8 | ROUTE_MAP 参照除去 → PREFIX_SET DEL | 先行推奨 | subsequent update silent drop |
+
+> **スキャン証跡**: `frrcfgd.py` L2669-2676 (PREFIX_SET AF 解決), L3113-3133 (route_operation ガード), L3139-3148 (DEL 処理), L2875-2882 (COMMUNITY_SET), L2907-2908 (PREFIX_SET DEL)。詳細は `meta/_intermediate/cdb-flow/route-map-ordering.md` を参照。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 24dbb72211e3 -->
