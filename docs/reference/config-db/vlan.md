@@ -445,4 +445,57 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 
 <!-- /platform -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / ConsumerStateTable)
+
+### 購読方式
+
+`VLAN` テーブルの変更通知は **Redis channel PUBLISH/SUBSCRIBE** を用いた `swss::ConsumerStateTable` で伝達される。`SubscriberStateTable`（keyspace PSUBSCRIBE）・`NotificationConsumer`・TTL/expire 通知はいずれも使用しない。
+
+### ProducerStateTable → ConsumerStateTable フロー
+
+```text
+CLI / minigraph.py
+  └─ CONFIG_DB HSET VLAN|Vlan100 ...        ← 直接書き込み
+       └─ ConsumerStateTable (VLAN_CHANNEL@<dbId>) で vlanmgrd が受信
+            └─ SADD VLAN_KEY_SET "Vlan100"
+            └─ HSET _VLAN|Vlan100 <fields>   ← 一時ステートハッシュ
+            └─ PUBLISH VLAN_CHANNEL@<dbId> "G"   ← ペイロード固定 "G"
+
+vlanmgrd (swss::Select, timeout=1000ms)
+  └─ ConsumerStateTable::pops()
+       └─ EVALSHA consumer_state_table_pops.lua
+            └─ SPOP VLAN_KEY_SET (batch=128)
+            └─ HGETALL _VLAN|Vlan100  → HSET VLAN|Vlan100  → DEL _VLAN|Vlan100
+  └─ doVlanTask(consumer)
+       └─ SET: addHostVlan() → ip link add Vlan<N> type vlan
+              m_appVlanTableProducer.set(key, fvVector)
+                └─ PUBLISH APP_VLAN_TABLE_CHANNEL@<dbId> "G"
+              m_stateVlanTable.set(key, {state=ok})
+
+orchagent VlanOrch
+  └─ ConsumerStateTable(APP_VLAN_TABLE)
+       └─ SUBSCRIBE APP_VLAN_TABLE_CHANNEL@<dbId>
+  └─ sai_vlan_api->create_vlan(SAI_VLAN_ATTR_VLAN_ID, vlan_id)
+```
+
+### チャンネル / キー名
+
+| 名前 | 値 |
+|------|----|
+| vlanmgrd 受信チャンネル | `VLAN_CHANNEL@<cfgDbId>` |
+| orchagent 受信チャンネル | `APP_VLAN_TABLE_CHANNEL@<appDbId>` |
+| PUBLISH ペイロード | `"G"` (固定) |
+| KeySet | `VLAN_KEY_SET` |
+| DelKeySet | `VLAN_DEL_SET` |
+| 一時ステートハッシュ | `_VLAN|<key>` |
+
+### Select ループと retry
+
+- タイムアウト 1000ms (`SELECT_TIMEOUT`, vlanmgrd.cpp:22)
+- TIMEOUT 時は `vlanmgr.doTask()` で保留タスク（ポート未準備等）を再実行
+- ポートが STATE_DB に未登録の間は `it++`（スキップ）で retry; 対象が用意され次第 commit
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 6981be1a469d -->
