@@ -24047,6 +24047,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumerstatetable-gbatchsize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: ConsumerStateTable + gBatchSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch2-inheritance-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orch2 inheritance と Request パーサ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlantunnelorch-gdirectory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VxlanTunnelOrch との gDirectory 同期
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34857,6 +34907,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumerstatetable-gbatchsize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: ConsumerStateTable + gBatchSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orch2-inheritance-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orch2 inheritance と Request パーサ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlantunnelorch-gdirectory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VxlanTunnelOrch との gDirectory 同期
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35465,9 +35565,39 @@
 </div>
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/orchagent/vrforch.cpp</code>、<code>vrforch.h</code>、<code>orch.cpp</code>、<code>orchdaemon.cpp</code>
+中間メモ: <code>meta/_intermediate/cdb-flow/appl-vrf-pubsub.md</code></p>
+</blockquote>
+<h3 id="consumerstatetable-gbatchsize">購読方式: <code>ConsumerStateTable</code> + <code>gBatchSize</code><a class="headerlink" href="#consumerstatetable-gbatchsize" title="Permanent link">&para;</a></h3>
+<p><code>VRFOrch</code> は <code>orchdaemon.cpp:283</code> で <code>new VRFOrch(m_applDb, APP_VRF_TABLE_NAME, m_stateDb, STATE_VRF_OBJECT_TABLE_NAME)</code> として生成される。<code>Orch</code> 基底の <code>addConsumer()</code> は DB id を見て購読 Executor を選び分け、APPL_DB の場合は <code>ConsumerStateTable</code> 経路を取る (<code>orch.cpp:1186-1195</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">                              </span><span class="n">TableConsumable</span><span class="o">::</span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>VRF_TABLE</code> は APPL_DB 上のテーブルなので <strong><code>ConsumerStateTable</code> 側</strong>が使われる（CONFIG_DB の <code>SubscriberStateTable</code> 経路ではない）点に注意。バッチサイズ <code>gBatchSize</code> は <code>orch.cpp:17</code> の <code>int gBatchSize = 0;</code> で定義された orchagent プロセス global で、0 のときは内部既定が適用される。</p>
+<h3 id="orch2-inheritance-request">Orch2 inheritance と Request パーサ<a class="headerlink" href="#orch2-inheritance-request" title="Permanent link">&para;</a></h3>
+<p><code>vrforch.h:49</code> 時点で <code>class VRFOrch : public Orch2</code>。<code>Orch2</code> は <code>doTask(Consumer&amp;)</code> を override し、<code>request_parser.h</code> の <code>Request</code> で field/value を型付きパースして <code>addOperation(const Request&amp;)</code> / <code>delOperation(const Request&amp;)</code> へ dispatch する。Phase 6 で抽出した SAI 属性マッピング (<code>v4</code> / <code>v6</code> / <code>src_mac</code> / <code>vni</code> ほか) はすべてこの <code>addOperation</code> から呼ばれる。</p>
+<h3 id="vxlantunnelorch-gdirectory"><code>VxlanTunnelOrch</code> との <code>gDirectory</code> 同期<a class="headerlink" href="#vxlantunnelorch-gdirectory" title="Permanent link">&para;</a></h3>
+<p><code>vrforch.cpp:23</code> で <code>extern Directory&lt;Orch*&gt; gDirectory;</code> を取り込み、<code>addOperation</code> 内 (<code>vrforch.cpp:205-206</code>) で次の取得が行われる:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">EvpnNvoOrch</span><span class="o">*</span><span class="w">     </span><span class="n">evpn_orch</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">EvpnNvoOrch</span><span class="o">*&gt;</span><span class="p">();</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">VxlanTunnelOrch</span><span class="o">*</span><span class="w"> </span><span class="n">tunnel_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">VxlanTunnelOrch</span><span class="o">*&gt;</span><span class="p">();</span>
+</span></code></pre></div>
+<p><code>vni</code> フィールドが指定された場合のみ、<code>tunnel_orch</code> 側に L3 VNI ↔ VRF の対応を登録する。<code>gDirectory</code> は orchagent プロセス内 singleton レジストリで、Orch 間の直接参照を解決するための仕組み。<code>VxlanTunnelOrch</code> 未登録時 (VxLAN 機能無効ビルド) は <code>nullptr</code> が返り、<code>vni</code> 指定リクエストは失敗する。</p>
+<div class="admonition note">
+<p class="admonition-title">ConsumerStateTable と SubscriberStateTable の違い</p>
+<p><code>ConsumerStateTable</code> は producer 側 (<code>vrfmgrd</code>) の <code>ProducerStateTable::set/del</code> で書き込まれた <strong><code>_KEY_SET</code> 経由のイベント</strong> を消費する。一方 <code>SubscriberStateTable</code> は通常の Redis KEYSPACE 通知を購読する。APPL_DB は <code>Producer/ConsumerStateTable</code> ペアでバッチ化された pub/sub を行う設計のため、<code>vrfmgrd</code> (<code>vrfmgr.cpp</code> の <code>ProducerStateTable</code>) と <code>VRFOrch</code> (<code>ConsumerStateTable</code>) は対になっている<sup id="fnref3:vrforch"><a class="footnote-ref" href="#fn:vrforch">2</a></sup><sup id="fnref2:vrfmgr"><a class="footnote-ref" href="#fn:vrfmgr">1</a></sup>。</p>
+</div>
+<!-- /pubsub -->
+
 <h2 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>vni</code> を一度設定した VRF に別の VNI を設定しようとすると <code>VRFOrch::updateVrfVNIMap</code> が <code>"VRF is already mapped to vni"</code> エラーを返す。一旦 <code>vni=0</code> にリセットが必要<sup id="fnref3:vrforch"><a class="footnote-ref" href="#fn:vrforch">2</a></sup>。</li>
+<li><code>vni</code> を一度設定した VRF に別の VNI を設定しようとすると <code>VRFOrch::updateVrfVNIMap</code> が <code>"VRF is already mapped to vni"</code> エラーを返す。一旦 <code>vni=0</code> にリセットが必要<sup id="fnref4:vrforch"><a class="footnote-ref" href="#fn:vrforch">2</a></sup>。</li>
 <li><code>ref_count &gt; 0</code>（インタフェース・ルートが参照中）の VRF は削除できない (<code>vrforch.cpp:169-170</code>)。</li>
 <li>VRF 削除時は <code>STATE_VRF_OBJECT_TABLE</code> のエントリも削除される (<code>m_stateVrfObjectTable.del</code>、vrforch.cpp:193)。</li>
 </ul>
@@ -35479,22 +35609,22 @@
 </blockquote>
 <h3 id="vrfmgrd-pass-through">vrfmgrd の pass-through 挙動<a class="headerlink" href="#vrfmgrd-pass-through" title="Permanent link">&para;</a></h3>
 <p><code>vrfmgrd</code> (<code>vrfmgr.cpp:303</code>) は CONFIG_DB フィールドを加工せずそのまま APP_DB へ転送する。フィールド省略はそのまま省略として <code>VRFOrch</code> に届く。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">m_appVrfTableProducer</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">vrfName</span><span class="p">,</span><span class="w"> </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">m_appVrfTableProducer</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">vrfName</span><span class="p">,</span><span class="w"> </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
 </span></code></pre></div>
 <h3 id="vni-0"><code>vni</code> — コード由来デフォルト <code>0</code><a class="headerlink" href="#vni-0" title="Permanent link">&para;</a></h3>
 <p><code>VRFOrch::addOperation</code> の先頭で <code>uint32_t vni = 0</code> と初期化される (<code>vrforch.cpp:30</code>)。フィールド省略時または明示的 <code>vni=0</code> の場合、<code>vni != 0</code> 条件が成立せず <code>updateVrfVNIMap()</code> は呼ばれない。VNI マッピングなしが暗黙デフォルト。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">vni</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                              </span><span class="c1">// vrforch.cpp:30</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">...</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;vni&quot;</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">{</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">vni</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">getAttrUint</span><span class="p">(</span><span class="n">name</span><span class="p">));</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span><span class="w">  </span><span class="c1">// SAI attrs には追加しない</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">...</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vni</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">{</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">updateVrfVNIMap</span><span class="p">(</span><span class="n">vrf_name</span><span class="p">,</span><span class="w"> </span><span class="n">vni</span><span class="p">);</span><span class="w">    </span><span class="c1">// VNI マッピング処理</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">vni</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">                              </span><span class="c1">// vrforch.cpp:30</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="p">...</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;vni&quot;</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">vni</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">getAttrUint</span><span class="p">(</span><span class="n">name</span><span class="p">));</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span><span class="w">  </span><span class="c1">// SAI attrs には追加しない</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">...</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vni</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">{</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">updateVrfVNIMap</span><span class="p">(</span><span class="n">vrf_name</span><span class="p">,</span><span class="w"> </span><span class="n">vni</span><span class="p">);</span><span class="w">    </span><span class="c1">// VNI マッピング処理</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="v4-v6-sai-yang"><code>v4</code> / <code>v6</code> — SAI デフォルト依存 (YANG 未定義)<a class="headerlink" href="#v4-v6-sai-yang" title="Permanent link">&para;</a></h3>
 <p>フィールドが存在する場合は <code>SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE</code> / <code>ADMIN_V6_STATE</code> に変換されるが、CONFIG_DB <code>sonic-vrf.yang</code> に定義がなく通常の <code>config vrf add</code> では書き込まれない。省略時は SAI attrs に追加されないため SAI/ASIC 実装のデフォルト値が使用される。VNET テーブル経由で直接書き込む場合にのみ機能する残存コード。</p>
@@ -35530,12 +35660,12 @@
 <p>いずれも <code>request.getAttrPacketAction(name)</code> で SAI attrs に変換されるが、YANG 未定義のため通常 APP_DB に書き込まれない。</p>
 <h3 id="mgmtvrfenabled-in_band_mgmt_enabled-explicit-ignore"><code>mgmtVrfEnabled</code> / <code>in_band_mgmt_enabled</code> — explicit ignore<a class="headerlink" href="#mgmtvrfenabled-in_band_mgmt_enabled-explicit-ignore" title="Permanent link">&para;</a></h3>
 <p><code>VRFOrch</code> はこれらのフィールドを明示的に読み飛ばす。SAI 属性への変換も STATE_DB への書き込みも行わない。</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// vrforch.cpp:74-78</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;mgmtVrfEnabled&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;in_band_mgmt_enabled&quot;</span><span class="p">))</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">{</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;MGMT VRF field: %s ignored&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// vrforch.cpp:74-78</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;mgmtVrfEnabled&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;in_band_mgmt_enabled&quot;</span><span class="p">))</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;MGMT VRF field: %s ignored&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="fallback-dead-field-silent-drop-at-orchagent"><code>fallback</code> — dead field (silent drop at orchagent)<a class="headerlink" href="#fallback-dead-field-silent-drop-at-orchagent" title="Permanent link">&para;</a></h3>
 <p><code>vrforch.h:34</code> で <code>{ "fallback", REQ_T_BOOL }</code> として宣言されているが、<code>VRFOrch::addOperation</code> のすべての if/else チェーンに <code>"fallback"</code> の分岐が存在しない。結果として <code>else</code> ブランチに落ち <code>SWSS_LOG_ERROR("Logic error: Unknown attribute: %s")</code> が出力されてフィールドが破棄される。</p>
@@ -35647,17 +35777,17 @@
 </tbody>
 </table>
 <h3 id="_8">起動時シーケンス（典型）<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hostcfgd が mgmt VRF netdev を構成（mgmt のみ）
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>EvpnNvoOrch が VXLAN_EVPN_NVO 受信 → source VTEP 確立（L3 VNI を使う場合のみ）
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>VxlanTunnelOrch が VLAN-VNI map を構築（L3 VNI のデータプレーン反映が必要な場合）
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ↓
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>vrfmgrd が CONFIG_DB VRF / MGMT_VRF_CONFIG を受信
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  → Linux VRF netdev 作成（mgmt 以外）
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  → APPL_DB VRF_TABLE に pass-through
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  ↓
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_TABLE|&lt;vrf&gt;=ok
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hostcfgd が mgmt VRF netdev を構成（mgmt のみ）
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  ↓
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>EvpnNvoOrch が VXLAN_EVPN_NVO 受信 → source VTEP 確立（L3 VNI を使う場合のみ）
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  ↓
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>VxlanTunnelOrch が VLAN-VNI map を構築（L3 VNI のデータプレーン反映が必要な場合）
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>  ↓
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>vrfmgrd が CONFIG_DB VRF / MGMT_VRF_CONFIG を受信
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>  → Linux VRF netdev 作成（mgmt 以外）
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>  → APPL_DB VRF_TABLE に pass-through
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>  ↓
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_TABLE|&lt;vrf&gt;=ok
 </span></code></pre></div>
 <p>実運用では <code>config vrf add Vrfxxx</code> が <code>VRF</code> テーブルのみを書く（VNI 未設定）ため、EVPN VTEP / VLAN-VNI map 依存は L3 VNI 機能を使う場合のみ。</p>
 <!-- /ordering -->
@@ -35774,12 +35904,12 @@
 </table>
 <h3 id="evpn-vtep-silent-skip">EVPN VTEP 不在の silent skip 詳細<a class="headerlink" href="#evpn-vtep-silent-skip" title="Permanent link">&para;</a></h3>
 <p><code>vrforch.cpp:225-230</code>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">evpn_vtep_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evpn_orch</span><span class="o">-&gt;</span><span class="n">getEVPNVtep</span><span class="p">();</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">evpn_vtep_ptr</span><span class="p">)</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">{</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;updateVrfVNIMap unable to find EVPN VTEP&quot;</span><span class="p">);</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">evpn_vtep_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evpn_orch</span><span class="o">-&gt;</span><span class="n">getEVPNVtep</span><span class="p">();</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">evpn_vtep_ptr</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;updateVrfVNIMap unable to find EVPN VTEP&quot;</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>このパスでは <code>vrf_vni_map_table_[vrf_name] = vni</code> も <code>l3vni_table_[vni].vlan_id</code> も呼ばれず、<code>STATE_VRF_OBJECT_TABLE</code> <code>state=ok</code> 書き込みも前段で return しているため発生しない。新規作成パスでは <strong>SAI Virtual Router 自体は手前で既に成功している</strong> ため、<code>vrf_table_.find(vrf_name)</code> 以後の retry は update パス側 (<code>set_virtual_router_attribute</code>) に流れる。ログレベルが <code>NOTICE</code> のみで <code>ERROR</code> を出さないため運用上は <strong>silent skip</strong> と認識されやすい。</p>
 <h3 id="fallback">fallback 未処理<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h3>
@@ -35931,26 +36061,26 @@
 <p><code>SAI_OBJECT_TYPE_VIRTUAL_ROUTER</code> の create/remove は内部 map 操作のみで、4 属性すべて SUCCESS で受理する。実 ASIC が無いため packet action / src_mac は no-op。</p>
 <h3 id="vpp-libsaivpp-sonic-sairedisvslibvpp">VPP (<code>libsaivpp</code> / <code>sonic-sairedis/vslib/vpp</code>)<a class="headerlink" href="#vpp-libsaivpp-sonic-sairedisvslibvpp" title="Permanent link">&para;</a></h3>
 <p><code>SwitchVpp.cpp:1183-1187</code> で VRF remove は <code>removeVrf()</code> (<code>SwitchVppRif.cpp:1940-1955</code>) に分岐し、<code>m_switchConfig-&gt;m_useTapDevice == true</code> のとき <code>vpp_del_ip_vrf()</code> で VPP データプレーン側の VRF も同期削除する。<code>vpp_add_ip_vrf()</code> (<code>SwitchVppRif.cpp:1387-1419</code>) は <code>ip_vrf_add(vrf_id, "vrf_&lt;n&gt;", false)</code> で VPP VRF を作成し、<code>vpp_ip_flow_hash_set()</code> で 5-tuple ハッシュ (<code>SRC_IP|DST_IP|SRC_PORT|DST_PORT|PROTO</code>) を固定設定する:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// SwitchVppRif.cpp:1407-1418</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">vrf_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;vrf_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">vrf_id</span><span class="p">;</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">vrf_id</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ip_vrf_add</span><span class="p">(</span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">vrf_objMap</span><span class="p">[</span><span class="n">objectId</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">IpVrfInfo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">objectId</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">hash_mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VPP_IP_API_FLOW_HASH_SRC_IP</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">VPP_IP_API_FLOW_HASH_DST_IP</span><span class="w"> </span><span class="o">|</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">        </span><span class="n">VPP_IP_API_FLOW_HASH_SRC_PORT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">VPP_IP_API_FLOW_HASH_DST_PORT</span><span class="w"> </span><span class="o">|</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="n">VPP_IP_API_FLOW_HASH_PROTO</span><span class="p">;</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vpp_ip_flow_hash_set</span><span class="p">(</span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">hash_mask</span><span class="p">,</span><span class="w"> </span><span class="n">AF_INET</span><span class="p">);</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// SwitchVppRif.cpp:1407-1418</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">vrf_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;vrf_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">vrf_id</span><span class="p">;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">vrf_id</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ip_vrf_add</span><span class="p">(</span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">vrf_objMap</span><span class="p">[</span><span class="n">objectId</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">IpVrfInfo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">objectId</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_name</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">hash_mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VPP_IP_API_FLOW_HASH_SRC_IP</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">VPP_IP_API_FLOW_HASH_DST_IP</span><span class="w"> </span><span class="o">|</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="n">VPP_IP_API_FLOW_HASH_SRC_PORT</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">VPP_IP_API_FLOW_HASH_DST_PORT</span><span class="w"> </span><span class="o">|</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">        </span><span class="n">VPP_IP_API_FLOW_HASH_PROTO</span><span class="p">;</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vpp_ip_flow_hash_set</span><span class="p">(</span><span class="n">vrf_id</span><span class="p">,</span><span class="w"> </span><span class="n">hash_mask</span><span class="p">,</span><span class="w"> </span><span class="n">AF_INET</span><span class="p">);</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>VPP では VRF ハッシュマスクは APPL_DB / SAI 側から制御不可で 5-tuple 固定。4 capability 属性は VS と同じく no-op。</p>
 <h3 id="evpn-vtep-vni-0">EVPN VTEP 依存（<code>vni != 0</code> の前提条件）<a class="headerlink" href="#evpn-vtep-vni-0" title="Permanent link">&para;</a></h3>
 <p><code>vni != 0</code> を指定して L3 VNI を VRF にマップする場合、<code>VRFOrch::updateVrfVNIMap</code> (<code>vrforch.cpp:225-230</code>) は <code>EvpnNvoOrch::getEVPNVtep()</code> で <strong>CONFIG_DB <code>VXLAN_EVPN_NVO</code> 経由で作成済みの source VTEP</strong> を取得することを必須とする:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// vrforch.cpp:225-230</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">evpn_vtep_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evpn_orch</span><span class="o">-&gt;</span><span class="n">getEVPNVtep</span><span class="p">();</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">evpn_vtep_ptr</span><span class="p">)</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">{</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;updateVrfVNIMap unable to find EVPN VTEP&quot;</span><span class="p">);</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// vrforch.cpp:225-230</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">evpn_vtep_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evpn_orch</span><span class="o">-&gt;</span><span class="n">getEVPNVtep</span><span class="p">();</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">evpn_vtep_ptr</span><span class="p">)</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">{</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;updateVrfVNIMap unable to find EVPN VTEP&quot;</span><span class="p">);</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>VTEP 未設定で <code>vni &gt; 0</code> の VRF エントリを APPL_DB に書くと VRFOrch は failure 復路で抜け、<code>STATE_VRF_OBJECT_TABLE|&lt;vrfName&gt;</code> の <code>state=ok</code> 書き込みも <code>vrf_vni_map_table_[vrf_name] = vni</code> も発生しない。さらに <code>VxlanTunnelOrch::getVlanMappedToVni(vni)</code> が 0 を返す場合（VLAN-VNI map 未投入）、<code>updateL3VniStatus()</code> は呼ばれず L3 VNI は半設定状態となる。</p>
 <h3 id="_11">プラットフォーム影響まとめ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
@@ -36257,10 +36387,10 @@
 <hr />
 <ol>
 <li id="fn:vrfmgr">
-<p><code>sonic-swss/cfgmgr/vrfmgr.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vrfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vrfmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:vrfmgr" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-swss/cfgmgr/vrfmgr.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vrfmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/vrfmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:vrfmgr" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:vrfmgr" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:vrforch">
-<p><code>sonic-swss/orchagent/vrforch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>sonic-swss/orchagent/vrforch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:vrforch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p><code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 3 in the text">&#8617;</a></p>

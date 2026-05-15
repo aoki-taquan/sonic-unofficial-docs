@@ -28736,6 +28736,67 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        暗黙デフォルトとハードコード挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルトとハードコード挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. categories 未設定 → 全カテゴリ購読 (= 抑制なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-universal_set-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 起動時に全カテゴリ抑制 (= universal_set が空) なら SAI 登録自体をスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-max_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. max_events 未設定 → 古いイベント自動削除なし (上限なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-3600" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. イベント上限超過時の削除間隔は固定 3600 秒 (コンパイル時定数)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -28922,7 +28983,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -28933,7 +28994,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -34844,6 +34905,67 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
+        暗黙デフォルトとハードコード挙動
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙デフォルトとハードコード挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. categories 未設定 → 全カテゴリ購読 (= 抑制なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-universal_set-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 起動時に全カテゴリ抑制 (= universal_set が空) なら SAI 登録自体をスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-max_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. max_events 未設定 → 古いイベント自動削除なし (上限なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-3600" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. イベント上限超過時の削除間隔は固定 3600 秒 (コンパイル時定数)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         例外条件・特殊挙動
       
     </span>
@@ -35030,7 +35152,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト / ランタイム注入
@@ -35041,7 +35163,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         死活・デッドコード
@@ -35249,8 +35371,61 @@
 </table>
 <!-- /value-behavior -->
 
+<!-- defaults -->
+<h2 id="_13">暗黙デフォルトとハードコード挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-defaults.md -->
+
+<h3 id="1-categories">1. <code>categories</code> 未設定 → 全カテゴリ購読 (= 抑制なし)<a class="headerlink" href="#1-categories" title="Permanent link">&para;</a></h3>
+<p><code>switchorch.cpp:101-107</code> で「興味のあるカテゴリ集合」の初期値を全 4 カテゴリ (<code>software</code> / <code>firmware</code> / <code>cpu_hw</code> / <code>asic_hw</code>) で定義し、<code>registerAsicSdkHealthEventCategories</code> (<code>switchorch.cpp:1366-1408</code>) は <code>suppressed_category_list</code> が空の場合この <code>universal_set</code> をそのまま <a href="../../glossary/#term-sai">SAI</a> へ登録する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">sai_switch_asic_sdk_health_category_t</span><span class="o">&gt;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">switch_asic_sdk_health_event_category_universal_set</span><span class="w"> </span><span class="o">=</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_SW</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_FW</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_CPU_HW</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="n">SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">};</span>
+</span></code></pre></div>
+<p>→ CONFIG_DB に該当 severity 行がない、または <code>categories</code> が空 / 未設定の場合、<strong>抑制なし = 全イベントを購読</strong> が暗黙デフォルト。</p>
+<p>証跡: <code>sonic-swss/orchagent/switchorch.cpp:101-107, 1366-1408</code></p>
+<hr />
+<h3 id="2-universal_set-sai">2. 起動時に全カテゴリ抑制 (= <code>universal_set</code> が空) なら SAI 登録自体をスキップ<a class="headerlink" href="#2-universal_set-sai" title="Permanent link">&para;</a></h3>
+<p><code>switchorch.cpp:1390-1394</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isInitializing</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">interested_categories_set</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">SWSS_LOG_INFO</span><span class="p">(</span><span class="s">&quot;All categories are suppressed for severity %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="k">return</span><span class="p">;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>起動時 (<code>initAsicSdkHealthEventNotification</code> 経由) で <code>categories</code> に全 4 カテゴリを列挙している severity 行が存在する場合、SAI への登録自体が走らず、その severity の health event 通知ハンドラ自体が有効化されない。実行中 (<code>SET_COMMAND</code>) の更新では同条件でも登録は試行される。</p>
+<p>証跡: <code>sonic-swss/orchagent/switchorch.cpp:240-274, 1390-1394</code></p>
+<hr />
+<h3 id="3-max_events">3. <code>max_events</code> 未設定 → 古いイベント自動削除なし (上限なし)<a class="headerlink" href="#3-max_events" title="Permanent link">&para;</a></h3>
+<p><code>eliminate_events.lua:15-23</code>:</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">max_events</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kr">for</span><span class="w"> </span><span class="nv">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">#</span><span class="nv">severity_keys</span><span class="w"> </span><span class="kr">do</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">max_event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;HGET&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">severity_keys</span><span class="p">[</span><span class="nv">i</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;max_events&#39;</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nv">max_event</span><span class="w"> </span><span class="o">~=</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="kr">then</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="nv">max_events</span><span class="p">[</span><span class="nb">string.sub</span><span class="p">(</span><span class="nv">severity_keys</span><span class="p">[</span><span class="nv">i</span><span class="p">],</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">tonumber</span><span class="p">(</span><span class="nv">max_event</span><span class="p">)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="kr">end</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="kr">end</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nb">next</span><span class="w"> </span><span class="p">(</span><span class="nv">max_events</span><span class="p">)</span><span class="w"> </span><span class="kr">then</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="nv">result</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="kr">end</span>
+</span></code></pre></div>
+<p>どの severity 行にも <code>max_events</code> が無ければ Lua script は即 return。個別 severity 行で <code>max_events</code> が無い場合も後段 (<code>if max_events[severity] ~= nil then</code>) で削除対象から外れる。<strong>=「上限なし、無制限保持」が暗黙デフォルト</strong>。</p>
+<p>証跡: <code>sonic-swss/orchagent/eliminate_events.lua:15-23, 38, 46-59</code></p>
+<hr />
+<h3 id="4-3600">4. イベント上限超過時の削除間隔は固定 3600 秒 (コンパイル時定数)<a class="headerlink" href="#4-3600" title="Permanent link">&para;</a></h3>
+<p><code>switchorch.h:29</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">#define ASIC_SDK_HEALTH_EVENT_ELIMINATE_INTERVAL 3600</span>
+</span></code></pre></div>
+<p><code>max_events</code> を超えても <strong>即時削除されるわけではなく</strong>、3600 秒周期の <code>SelectableTimer</code> (<code>switchorch.cpp:287-291</code>) が走るまで超過したまま <code>STATE_DB</code> に保持される。CONFIG_DB から変更不可。</p>
+<p>証跡: <code>sonic-swss/orchagent/switchorch.h:29</code>, <code>switchorch.cpp:287-291</code></p>
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>key が空文字列</strong>: key が空の場合 <code>SWSS_LOG_ERROR("Failed to parse switch hash key: empty string")</code> → エントリ破棄。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>severity が未知の値</strong>: key に設定された severity が SAI の severity map に存在しない場合 <code>SWSS_LOG_ERROR("Unknown severity %s")</code> → エントリ破棄。有効値は SAI 定義の <code>fatal</code> / <code>warning</code> / <code>notice</code> 等のみ。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
@@ -35339,9 +35514,9 @@
 <p>db_migrator.py での SUPPRESS_ASIC_SDK_HEALTH_EVENT マイグレーションなし</p>
 <h3 id="build-time-default">ビルド時デフォルト (build-time default)<a class="headerlink" href="#build-time-default" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_14">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h3 id="_15">ハードコードデフォルト / ランタイム注入<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <p>なし</p>
-<h3 id="_15">死活・デッドコード<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_16">死活・デッドコード<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
 
