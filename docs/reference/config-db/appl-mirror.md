@@ -409,6 +409,35 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION*'
 
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`FIXED_MIRROR_SESSION_TABLE` は P4RT 専用 APPL_DB テーブルで YANG モデルを持たない。以下はすべて実装レベルの暗黙参照。
+CONFIG_DB 側 `MIRROR_SESSION` (`MirrorOrch`) との **差異 (= P4RT 経路に存在しない依存)** を負の evidence として明示する。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT\|<alias>` (`param/port`) | OID 解決 + refcount（必須） | 常時。`gPortsOrch->getPort()` で解決、物理ポート (PHY) のみ受理。LAG/VLAN は `SWSS_RC_INVALID_PARAM`、未登録は `SWSS_RC_NOT_FOUND` で fail-fast | `mirror_session_manager.cpp` L125 (ADD 解決), L214 (deserialize 時の確認), L387 (`increasePortRefCount` ADD), L493 (UPDATE 新 port 解決), L518 (`increasePortRefCount` UPDATE) |
+| `NEXTHOP` / `NEIGH` / `ROUTE_TABLE` | **参照なし（CONFIG_DB との差異）** | — | `mirror_session_manager.cpp` 全文に `m_neighOrch` / `m_routeOrch` / `m_fdbOrch` 参照は 0 件。`Observer` 継承もなし。`param/dst_mac` を APPL_DB で直接受領する fail-fast 設計（対比: `mirrororch.cpp` L93-95, L517, L656-732 が動的解決機構を持つ） |
+| `POLICER` | **参照なし（CONFIG_DB との差異）** | — | `P4MirrorSessionAppDbEntry` (`p4orch_util.h` L253-279) に `policer` フィールドなし。`prepareSaiAttrs()` (`mirror_session_manager.cpp` L122-188) で `SAI_MIRROR_SESSION_ATTR_POLICER` を設定する箇所なし（対比: `mirrororch.cpp` L434-441, L1055 が `policerExists()` + `getPolicerOid()` で POLICER 先行を強制） |
+| `ACL_RULE`（P4RT、被参照） | refcount 監視（削除拒否） | P4RT `ACL_RULE` が `mirror_session_id` を参照中の場合、`processDeleteRequest()` は `SWSS_RC_IN_USE` で削除拒否 | `mirror_session_manager.cpp` L752-757 (`getRefCount()`), `p4orch/acl_rule_manager.cpp` L1403-1419 (ACL_RULE 側の `m_p4OidMapper->getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, ...)` 解決) |
+
+!!! note "neighbor / fdb / route 動的解決の不在"
+    CONFIG_DB ERSPAN は `dstIp` から `RouteOrch::attach()` で next-hop 解決を待ち、`NEIGH_CHANGE` / `FDB_CHANGE` / `NEXTHOP_CHANGE` / `LAG_MEMBER_CHANGE` の各 `SUBJECT_TYPE_*` 通知で `updateSession()` を回す動的解決機構を持つ (`mirrororch.cpp` L160-198, L760-808)。
+    P4RT 経路は同等機構を**持たず**、`param/dst_mac` を直接受領する。トポロジ変化で MAC や next-hop が変わっても自動追従しないため、P4RT controller 側で UPDATE を発行する責務がある。
+
+!!! note "POLICER 連携の不在"
+    CONFIG_DB `MIRROR_SESSION.policer` は `PolicerOrch::getPolicerOid()` を SAI 属性 `SAI_MIRROR_SESSION_ATTR_POLICER` に設定し、未登録時は `task_need_retry` で POLICER 先行を強制する。
+    P4RT `FIXED_MIRROR_SESSION_TABLE` は APPL_DB スキーマレベルで `policer` フィールドを持たず、SAI POLICER attach も行わない。QoS 制御が必要な場合は P4RT ACL_RULE の meter (`p4orch/acl_rule_manager.cpp::getMeterSaiAttrs`) 側で実施する設計。
+
+!!! warning "ACL_RULE → MIRROR_SESSION の SET 順序"
+    P4RT `AclRuleManager` の mirror アクション処理 (`acl_rule_manager.cpp` L1403-1419) は CONFIG_DB `AclRuleMirror` のような遅延 activate 機構を持たない。
+    `FIXED_MIRROR_SESSION_TABLE` SET の publish 成功確認 → ACL_RULE SET（mirror action 付き）の順で発行すること。逆順では ACL_RULE 側が `SWSS_RC_NOT_FOUND` で即失敗する。
+
+詳細スキャンノート: `meta/_intermediate/cdb-flow/appl-mirror-cross-refs.md`
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `p4orch` 内の `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`)。`P4Orch::doTask(ConsumerBase&)` から ZMQ 経由で配送される
