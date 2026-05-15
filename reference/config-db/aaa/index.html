@@ -24248,6 +24248,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35400,6 +35411,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36182,6 +36204,44 @@
 <p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528</code> (subscribe/listen/make_callback)、<code>hostcfgd:2289-2343</code> (各 *_handler)、<code>hostcfgd:399-417</code> (<code>AaaCfg.load()</code> 起動時スナップショット)、<code>hostcfgd:419-435</code> (<code>aaa_update</code>)、<code>hostcfgd:230-251</code> (<code>restart_service</code>/<code>handle_nslcd_service</code>)、<code>hostcfgd:483-493</code> (<code>notify_audisp_tacplus_reload_config</code>); 詳細分析 <code>meta/_intermediate/cdb-flow/aaa-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB <code>AAA</code> テーブルの変更に伴って <code>hostcfgd</code> の <code>AaaCfg</code> ハンドラが副次的に書き込む DB エントリは <strong>存在しない</strong>。副作用はすべて Linux ホスト OS の設定ファイル書き換え (PAM / NSS / nslcd / sssd / radiusd / sshd) に閉じる。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>AaaCfg</code> 内に Producer/Table の書込呼出が 0 件 (<code>sonic-host-services/scripts/hostcfgd:354-720</code> を <code>set(</code>/<code>hset</code>/<code>Producer</code>/<code>Notification</code> で grep して 0 ヒット)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>hostcfgd</code> の <code>STATE_DB</code> 参照は <code>FipsCfg</code> (<code>hostcfgd:1759-1821</code>) と <code>RestartWaiter</code> 用 (<code>hostcfgd:2160-2162</code>) のみで <code>AaaCfg</code> は <code>state_db_conn</code> を保持しない</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+<td><code>hostcfgd</code> 全体に COUNTERS_DB 参照なし。AAA は認証経路のため統計テーブルも存在しない</td>
+</tr>
+<tr>
+<td>その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB)</td>
+<td>なし</td>
+<td>SAI 非経由 (段階 3 トレース参照)。AAA テーブルを購読する mgrd/orchagent は <code>sonic-swss/</code> に存在しない</td>
+</tr>
+</tbody>
+</table>
+<p>主購読者 <code>AaaCfg.aaa_update()</code> の副作用は <code>modify_conf_file()</code> 経由の PAM テンプレート再生成のみで、<code>/etc/pam.d/common-auth</code>・<code>/etc/nsswitch.conf</code>・<code>/etc/tacplus_nss.conf</code>・<code>/etc/pam_radius_auth.conf</code> 等のファイル書換に閉じる (<code>sonic-host-services/scripts/hostcfgd:641-648</code>)。</p>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/aaa-side.md</code> を参照。</p>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->
 
