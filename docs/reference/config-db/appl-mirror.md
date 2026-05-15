@@ -309,6 +309,106 @@ P4Orch::P4Orch(swss::DBConnector* db, std::vector<std::string> tableNames,
 
 <!-- /pubsub -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.cpp drain() L62-119 / deserializeP4MirrorSessionAppDbEntry() L190-323 / processAddRequest() L339-363 / createMirrorSession() L365-397 / processUpdateRequest() L399-480 / setPort() L482-524 / processDeleteRequest() L733-774 / prepareSaiAttrs() L122-188 -->
+
+APPL_DB `FIXED_MIRROR_SESSION_TABLE` の書込主体である `MirrorSessionManager::drain()` / `processAddRequest()` / `processUpdateRequest()` / `processDeleteRequest()` / `deserializeP4MirrorSessionAppDbEntry()` / `prepareSaiAttrs()` (`sonic-swss/orchagent/p4orch/mirror_session_manager.cpp`) を全行精読し、失敗・retry・CRITICAL 経路を抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-mirror-failure.md`。
+
+CONFIG_DB 側 `MirrorOrch` (`orchagent/mirrororch.cpp`) と比較すると、P4RT 経路は **Orch 共通の `m_toSync` 自動再試行機構を一切使わない fail-fast 設計**であり、port readiness / policer 未準備 / SAI 一時失敗のいずれも自動回復しない。再送責務は P4RT controller 側に集約される[^fail-1]。
+
+### 失敗パス一覧
+
+| # | トリガー | 検出箇所 | 結果 | retry / 救済 |
+|---|---------|---------|------|------|
+| 1 | APPL_DB key の JSON parse 例外 | `deserializeP4MirrorSessionAppDbEntry()` `mirror_session_manager.cpp:199-205` | `SWSS_RC_INVALID_PARAM`。`drain()` で publish 後 `break` | なし |
+| 2 | `action != "mirror_as_ipv4_erspan"` | 同 L307-313 | `SWSS_RC_INVALID_PARAM` | なし |
+| 3 | 未知フィールド (`controller_metadata` 以外) | 同 L315-319 | `SWSS_RC_INVALID_PARAM` | なし |
+| 4 | `param/src_ip` / `dst_ip` パース失敗 (`swss::IpAddress` 例外) | 同 L229-253 | `SWSS_RC_INVALID_PARAM` | なし |
+| 5 | `param/src_mac` / `dst_mac` パース失敗 | 同 L255-279 | `SWSS_RC_INVALID_PARAM` | なし |
+| 6 | `param/ttl` / `tos` パース失敗 (`std::stoul(value, 0, 16)` 例外) | 同 L281-305 | `SWSS_RC_INVALID_PARAM` | なし |
+| 7 | **`param/port` が PortsOrch 未登録**（port readiness 不足） | `deserializeP4MirrorSessionAppDbEntry()` L213-218、`prepareSaiAttrs()` L122-129 | `SWSS_RC_NOT_FOUND`。drain `break`。CONFIG_DB 側 `allPortsReady()` ガード相当が**存在しない**ため即失敗確定 | **なし** (P4RT クライアントが再送)。`m_toSync` 滞留は P4RT 経路では起きない |
+| 8 | `param/port` が非 PHY (LAG / VLAN) | 同 L219-225、L130-136 | `SWSS_RC_INVALID_PARAM` | なし (設計時制約。alias で port 種別固定) |
+| 9 | ADD 時の必須フィールド不足 (`has_*` のいずれか false) | `processAddRequest()` L344-360 | `SWSS_RC_INVALID_PARAM`。`createMirrorSession()` 未呼出 | なし |
+| 10 | ADD 時に OID マッパに同 key 既存 (内部不整合) | `createMirrorSession()` L370-375 | `RETURN_INTERNAL_ERROR_AND_RAISE_CRITICAL`。**CRITICAL state 通知** | なし (criticald 経由で orchagent restart) |
+| 11 | **SAI `create_mirror_session()` 失敗** | `createMirrorSession()` L381-384 | `CHECK_ERROR_AND_LOG_AND_RETURN` で `SWSS_LOG_ERROR` + ReturnCode 変換 return。ref count / OID マッパ / 内部テーブルは未更新 | **なし** (Orch 共通 `handleSaiCreateStatus` の `task_need_retry` 経路は使われない) |
+| 12 | UPDATE 時 `existing_mirror_session_entry == nullptr` または OID マッパに無い | `processUpdateRequest()` L406-415 | `RETURN_INTERNAL_ERROR_AND_RAISE_CRITICAL` | なし |
+| 13 | UPDATE 中間で SAI set 失敗 (port/src_ip/dst_ip/src_mac/dst_mac/ttl/tos のいずれか) | `processUpdateRequest()` L422-465 + 各 `set*()` の `CHECK_ERROR_AND_LOG_AND_RETURN` | `update_fail_in_middle = true` で残り SET スキップ。**`setMirrorSessionEntry(before_update, ...)` で前状態に rollback** (L467-477) | rollback あり |
+| 14 | UPDATE rollback 自体が失敗 | `processUpdateRequest()` L469-476 | `SWSS_RAISE_CRITICAL_STATE("Failed to recover ...")`。**SAI と内部キャッシュが乖離した不整合状態で継続** | なし (運用介入が必要) |
+| 15 | UPDATE で新 port が PortsOrch 未登録 | `setPort()` L492-497 | `SWSS_RC_NOT_FOUND`。SAI 属性更新も ref count 移管も行わず**旧 port を保持** | なし (新 port 作成後に UPDATE 再送) |
+| 16 | UPDATE で新 port が非 PHY | `setPort()` L498-504 | `SWSS_RC_INVALID_PARAM` | なし |
+| 17 | UPDATE 系 SAI `set_mirror_session_attribute()` 失敗 | 各 `set*()` の `CHECK_ERROR_AND_LOG_AND_RETURN` (L511, L541, L567, L593, L619, L644, L669) | ReturnCode 変換 return → #13 の rollback 経路に合流 | rollback あり |
+| 18 | DEL で内部テーブルに該当 key なし | `processDeleteRequest()` L737-743 | `SWSS_RC_NOT_FOUND`。**冪等成功扱いではなく失敗** (CONFIG_DB `MirrorOrch::deleteEntry()` の `SWSS_LOG_NOTICE` 成功扱いと対照的) | なし |
+| 19 | DEL で `m_p4OidMapper->getRefCount()` 失敗 | 同 L746-751 | `RETURN_INTERNAL_ERROR_AND_RAISE_CRITICAL` | なし |
+| 20 | **DEL で ref_count > 0**（ACL_RULE 等から参照中） | 同 L752-757 | `SWSS_RC_IN_USE`。SAI 削除も内部テーブル削除も行わない | なし (参照側 ACL_RULE 先削除が必要) |
+| 21 | DEL で SAI `remove_mirror_session()` 失敗 | 同 L760-762 | `CHECK_ERROR_AND_LOG_AND_RETURN` で ReturnCode return。ref count / OID マッパ / 内部テーブル**未削除のまま** | なし |
+| 22 | drain 中の不明 op (SET/DEL 以外) | `drain()` L106-109 | `SWSS_RC_INVALID_PARAM` | なし |
+| 23 | drain ロット内のエントリエラー (上記いずれか) | `drain()` L111-116 | publish 後 **`break`** で当該 drain ループを抜ける。残り `m_entries` は `drainWithNotExecuted()` で「未実行」として publisher に返却 | なし (head-of-line blocking) |
+
+### CONFIG_DB MirrorOrch との救済機構の差異
+
+| 救済機構 | CONFIG_DB MirrorOrch | P4RT MirrorSessionManager |
+|---|---|---|
+| `allPortsReady()` 前置 | あり (`mirrororch.cpp:1567-1574`、PORT 初期化完了まで `doTask()` 全体スキップ) | **なし** (即 `SWSS_RC_NOT_FOUND`) |
+| `task_need_retry` による `m_toSync` 残置 | あり (一時 SAI エラー等は次周回再試行) | **なし** (drain で `break`、未実行は publisher 通知のみ) |
+| NEXTHOP/NEIGH/FDB 解決待ち retry | あり (`mirrororch.cpp:160-198, 760-808`、`SUBJECT_TYPE_*_CHANGE` observer で `updateSession()`) | **なし** (`dst_mac` 直接受領の fail-fast) |
+| Policer 未準備時の `task_need_retry` | あり (`mirrororch.cpp:432-443`、POLICER 先行強制) | **なし** (policer フィールド自体が APPL_DB に無い) |
+| SAI mirror_session リソース availability チェック | あり (`mirrororch.cpp:357-379`、ADD 前に `sai_object_type_get_availability`) | **なし** (SAI create 失敗で初めて検出) |
+| ingress/egress mirror ASIC capability チェック | あり (`mirrororch.cpp:816-826`、`SwitchOrch::isPortIngressMirrorSupported()` で fail-fast) | **なし** (P4RT は session 単体作成のみ、bind は ACL_RULE 側) |
+
+つまり port readiness / policer 準備 / SAI 可用性 / neighbor 解決といった**動的な前提条件未充足を P4RT 経路は recover できず**、すべて P4RT controller 側の再送責務になる。
+
+### SAI 失敗の共通ハンドリング (`CHECK_ERROR_AND_LOG_AND_RETURN`)
+
+`mirror_session_manager.cpp` の SAI 呼出は全て `CHECK_ERROR_AND_LOG_AND_RETURN` マクロ経由で status を ReturnCode に変換し、`SWSS_LOG_ERROR` を出して呼出元へ return する。Orch 基底の `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus`（`task_need_retry` を返すパス）は**使われていない**。SAI が一時的に `SAI_STATUS_NOT_EXECUTED` 等を返しても自動再試行されず、`m_publisher->publish()` でエラー status を P4RT に返して終わる。
+
+### drain head-of-line blocking
+
+```cpp
+// mirror_session_manager.cpp:62-119  (要約)
+while (!m_entries.empty()) {
+    auto key_op_fvs_tuple = m_entries.front();
+    m_entries.pop_front();
+    ...
+    m_publisher->publish(APP_P4RT_TABLE_NAME, ..., status, /*replace=*/true);
+    if (!status.ok()) { break; }   // 最初の失敗で抜ける
+}
+drainWithNotExecuted();             // 残りは「未実行」publish のみ
+```
+
+同一 drain ロット内で N 個の `FIXED_MIRROR_SESSION_TABLE` SET をバッチ投入し、k 番目で失敗すると (k+1)〜N 番目は**実行されず**、未実行 publish が返るだけ。CONFIG_DB 側 `MirrorOrch::doTask()` (`mirrororch.cpp:1576-1607`) が各エントリを独立に `it++` で進めるのと異なり、**P4RT は順序保証 (`orderedQueue=true`) と引換えに head-of-line blocking を選択**している。
+
+### CRITICAL state を引き起こすパス
+
+| パス | 箇所 | 影響 |
+|---|---|---|
+| ADD 時に既に OID マッパに同 key | `createMirrorSession()` L370-375 | `RETURN_INTERNAL_ERROR_AND_RAISE_CRITICAL` |
+| UPDATE で `existing_mirror_session_entry == nullptr` / OID マッパ不在 | `processUpdateRequest()` L406-415 | 同上 |
+| UPDATE 中間失敗からの rollback 失敗 | 同 L469-476 | `SWSS_RAISE_CRITICAL_STATE`。SAI と内部キャッシュ乖離 |
+| DEL で `getRefCount()` 失敗 | `processDeleteRequest()` L746-751 | `RETURN_INTERNAL_ERROR_AND_RAISE_CRITICAL` |
+
+いずれも内部不整合の検出。発生時は criticald が orchagent restart を発火させる前提。
+
+### 観測手段
+
+```bash
+# 失敗ログ抽出
+docker logs swss 2>&1 | grep -iE 'MirrorSessionManager|FIXED_MIRROR_SESSION|Failed to (create|remove|set) (mirror|new) '
+
+# CRITICAL state
+docker logs swss 2>&1 | grep -iE 'CRITICAL|RaiseCritical|Failed to recover mirror session'
+
+# ASIC_DB 側の整合性
+redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION*'
+```
+
+`MirrorSessionManager` は STATE_DB に独自エラーテーブルを書かない。失敗の参照点は syslog と P4RT 応答 status のみ。
+
+[^fail-1]: `MirrorSessionManager::drain()` / `processAddRequest` / `processUpdateRequest` / `processDeleteRequest` の fail-fast 設計: `orchagent/p4orch/mirror_session_manager.cpp` L62-774. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L774>. CONFIG_DB 側 `MirrorOrch::doTask()` の `allPortsReady` 前置と `task_need_retry` 経路は `orchagent/mirrororch.cpp` L1567-1611 / L160-198 / L432-443 / L760-808 を参照。
+
+<!-- /failure -->
+
 ## 購読者
 
 - `p4orch` 内の `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`)。`P4Orch::doTask(ConsumerBase&)` から ZMQ 経由で配送される
