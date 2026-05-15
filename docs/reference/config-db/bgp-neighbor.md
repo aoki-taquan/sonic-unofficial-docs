@@ -420,4 +420,57 @@ deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay →
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-failure.md`
 <!-- /failure -->
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を用いて `BGP_NEIGHBOR` テーブルを購読する。`ConfigDBConnector.subscribe()` ではなく、**Redis keyspace notification の PSUBSCRIBE** で実装されている。
+
+購読チャンネルパターン (`subscriberstatetable.cpp:20-24`):
+
+```
+PSUBSCRIBE __keyspace@4__:BGP_NEIGHBOR|*
+```
+
+- DB 番号 4 は CONFIG_DB のデフォルト
+- glob パターンにより `BGP_NEIGHBOR|<neighbor>` (template 形式) と `BGP_NEIGHBOR|<vrf>|<neighbor>` (generic 形式) の両方を捕捉
+
+### イベント発火から FRR 適用までの流れ
+
+```
+CONFIG_DB への HSET / HDEL / DEL
+  → Redis: __keyspace@4__:BGP_NEIGHBOR|* に pmessage 発火
+  → SubscriberStateTable::readData() が hiredis 経由で受信
+  → SubscriberStateTable::pop()  ← HGETALL でフィールド値を取得し
+                                    KeyOpFieldsValuesTuple (key, op, fvs) を返却
+  → Runner.run() select ループ (タイムアウト 1000 ms)
+  → Manager.handler(key, op, data)
+      op == SET → BGPPeerMgrBase.set_handler()
+      op == DEL → BGPPeerMgrBase.del_handler()
+  → ConfigMgr.commit() → vtysh コマンド群をバッチ発行
+```
+
+### 依存関係ガードと set_queue リトライ
+
+`manager.py:34-53` の `handler()` は、`wait_for_all_deps=True` のとき全依存関係が揃うまで SET イベントを `set_queue` に退避する。依存関係は `BGPPeerMgrBase` のコンストラクタで登録される:
+
+| 依存キー | 意味 |
+|---------|------|
+| `DEVICE_METADATA.localhost/bgp_asn` | ローカル AS 番号 |
+| `DEVICE_METADATA.localhost/type` | デバイスロール |
+| `LOOPBACK_INTERFACE.Loopback0` | router-id 解決用 |
+| `BGP_DEVICE_GLOBAL.tsa_enabled` / `idf_isolation_state` | TSA / IDF 制御 |
+| `DEVICE_NEIGHBOR_METADATA` (check_neig_meta=True 時のみ) | 隣接メタデータ |
+
+### 初期スナップショット再生 (起動時)
+
+`SubscriberStateTable` コンストラクタは PSUBSCRIBE 後に `KEYS BGP_NEIGHBOR|*` で既存エントリを全件取得し、SET イベントとして内部バッファに積む。bgpcfgd 再起動後もすべての既存ピアが自動的に FRR に再投入される。
+
+### ProducerStateTable との関係
+
+CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込み側は `BGP_NEIGHBOR_CHANNEL@<db_id>` を PUBLISH する (table.h `getChannelName()`)。ConsumerStateTable はそのチャンネルを SUBSCRIBE するが、bgpcfgd の SubscriberStateTable は **keyspace notification** を使うため、書き込み元が ProducerStateTable か直接 HSET かを問わずイベントを受信できる。APPL_DB・STATE_DB は BGP_NEIGHBOR のパスには介在しない。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md`
+<!-- /pubsub -->
 <!-- glossary-links-injected: 9133f44230c2 -->
