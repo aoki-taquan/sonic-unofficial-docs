@@ -168,6 +168,39 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` 自体のスキーマ・暗黙デフ�
 詳細は `meta/_intermediate/cdb-flow/appl-vlan-platform.md` を参照。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (cross-refs)
+
+APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` は YANG 未定義のため、明示的な leafref は存在しない。
+しかしコード上、`vlanmgrd` および `PortsOrch::doVlanMemberTask()` 経路で以下のテーブル / リソースに
+暗黙依存する。
+
+### 参照関係マップ
+
+| 参照元 | 参照先テーブル / リソース | 解決経路 | 失敗時挙動 |
+|--------|---------------------------|----------|------------|
+| `VLAN_MEMBER_TABLE\|Vlan<id>\|EthernetN` | `APPL_DB\|PORT_TABLE` / `STATE_DB\|PORT_TABLE` | `PortsOrch::getPort(alias)` / `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:486-510`, `portsorch.cpp:5898-5912`) | `it++` で無限ポーリング再試行（PortsOrch）／ APPL_DB 書込み保留（vlanmgrd） |
+| `VLAN_MEMBER_TABLE\|Vlan<id>\|PortChannelN` | `STATE_DB\|LAG_TABLE` (`m_stateLagTable`) | `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:495`) ＋ `Port::LAG` OID 解決 (`portsorch.cpp:2049, 2627`) | LAG 未確立中は書込保留。bridge コマンド失敗時は LAG 削除レース判定で retry スキップ (`vlanmgr.cpp:260-272`) |
+| `VLAN_MEMBER_TABLE` フィールド `end_point_ip` | VxlanTunnelOrch + `vlan.m_vlan_info.l2mc_group_id` | `PortsOrch::addVlanMember` → `addVlanFloodGroups` (`portsorch.cpp:7511-7740`) | SAI capability 不足時 `Flood group with end point ip is not supported` で失敗 |
+| `doVlanPacFdbTask` (`VLAN_TABLE` 確立後) | `APPL_DB\|FDB_TABLE` (`m_appFdbTableProducer`) | `vlanmgr.cpp:776-841` (key=`Vlan<id>:<MAC>`) | `m_vlans.count(vlan_name)` 未登録なら FDB 注入保留 (`vlanmgr.cpp:806-811`) |
+| `VLAN_MEMBER_TABLE` SET → `STATE_DB\|VLAN_MEMBER_TABLE` 連鎖 | mclagsyncd 購読 (`STATE_VLAN_MEMBER_TABLE_NAME`, `mclaglink.cpp:915`) | `SubscriberStateTable` 経由で MCLAG peer へ伝播。ASIC_DB `SAI_OBJECT_TYPE_VLAN` 経由で BVID→VID 逆引き (`mclaglink.cpp:101-112`) | mclagsyncd は APPL_DB を直接購読しない（間接依存） |
+
+### 順序依存
+
+- `VLAN_TABLE` SET が先行しない VLAN_MEMBER は portsorch 側で `getPort(vlan_alias)` 失敗で保留される (`portsorch.cpp:5900-5905`)。
+- `VLAN_TABLE` 確立後でないと `doVlanPacFdbTask` の FDB 注入は `m_vlans.count()` ガードで保留される。
+- `end_point_ip` 付き VLAN_MEMBER は L2MC group OID (`vlan.m_vlan_info.l2mc_group_id`) が VLAN 作成時に確立されている必要があり、対応する VxLAN remote VTEP は VxlanTunnelOrch 経由で別途解決される。
+
+### MCLAG との関係
+
+`mclagsyncd` (`mclaglink.cpp`) は APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` を **直接購読しない**。
+代わりに `STATE_DB|VLAN_MEMBER_TABLE` (vlanmgrd が APPL_DB 書込と同時に書く state="ok" エントリ) を
+購読することで MCLAG peer 同期をトリガする。`portsorch.cpp` には `mclag` / `MCLAG` 識別子の
+直接参照は存在しない。
+
+詳細な evidence は `meta/_intermediate/cdb-flow/appl-vlan-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 書き込み主体
 
 | 書き込み元 | 対象テーブル | 経路 |
