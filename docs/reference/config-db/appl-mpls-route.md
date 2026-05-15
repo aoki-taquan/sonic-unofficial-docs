@@ -700,3 +700,72 @@ bulker flush を待つ。確定は項 8 の post-process ループで `addLabelR
 [^mplsnhgorch]: `sonic-net/sonic-swss` `orchagent/nhgorch.cpp` (`NextHopGroupMember::createSaiObject` `isLabeled()` 分岐 / `~NextHopGroupMember` の `removeMplsNextHop`)
 [^mplsorderingmem]: 順序依存スキャンの中間メモ: `meta/_intermediate/cdb-flow/appl-mpls-route-ordering.md`
 <!-- /ordering -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+APPL_DB `LABEL_ROUTE_TABLE` の購読者は `orchagent` 内の `RouteOrch::doLabelTask()` 一本。`RouteOrch` は `ZmqOrch` を継承し (`routeorch.cpp:44`)、`orchdaemon.cpp:327-337` で `APP_ROUTE_TABLE_NAME` と `APP_LABEL_ROUTE_TABLE_NAME` を `routeorch_pri = 5` で登録する。
+
+`ZmqOrch::addConsumer` は APPL_DB / DPU_APPL_DB を対象に、`zmqServer` の有無で executor 種別を切り替える:
+
+```cpp
+// sonic-swss/orchagent/zmqorch.cpp:59-72
+if (db->getDbId() == APPL_DB || db->getDbId() == DPU_APPL_DB)
+{
+    if (zmqServer != nullptr)
+        addExecutor(new ZmqConsumer(new ZmqConsumerStateTable(db, tableName, *zmqServer, gBatchSize, pri, dbPersistence), this, tableName, orderedQueue));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+`zmqServer` は `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature の状態で決まり、**デフォルト無効**（`get_feature_status(..., false)`、`orchdaemon.cpp:334`）。したがって標準構成では **`swss::ConsumerStateTable`**（APPL_DB channel ベース PUBLISH/SUBSCRIBE）で購読される。CONFIG_DB / STATE_DB に使う `SubscriberStateTable`（keyspace 通知 `__keyspace@<dbId>__:*`）は **APPL_DB 経路では使用しない**。
+
+| 購読者 | 購読 API | 購読テーブル | バッチ | 優先度 |
+|---|---|---|---|---|
+| `orchagent` (`RouteOrch::doLabelTask`) | `swss::ConsumerStateTable` (default) / `swss::ZmqConsumerStateTable` (feature 有効時) | `LABEL_ROUTE_TABLE` | `gBatchSize` (default 128) | 5 (`routeorch_pri`) |
+
+`gBatchSize` は `main.cpp:459` で `DEFAULT_BATCH_SIZE = 128` に初期化され、`orchagent -b <n>` (`main.cpp:478`) で上書き可能。書込み側 `fpmsyncd::RouteSync::onLabelRouteMsg()` は `ProducerStateTable::set(<label>, fvs)` で `_LABEL_ROUTE_TABLE:<label>` を `HSET` し、`LABEL_ROUTE_TABLE_CHANNEL@<dbId>` に `PUBLISH "G"` を発行する。TTL は使用されない。
+
+### channel PUBLISH → ハンドラ呼び出しの流れ
+
+```
+fpmsyncd::RouteSync::onLabelRouteMsg()    (kernel netlink RTM_NEWROUTE / family=MPLS 起因)
+  ↓ ProducerStateTable::set(<label>, fvs)
+APPL_DB: HSET "_LABEL_ROUTE_TABLE:<label>" <fields>
+  ↓ Redis PUBLISH "LABEL_ROUTE_TABLE_CHANNEL@0" "G"
+OrchDaemon main loop: m_select->select(&s, SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::execute() → ConsumerStateTable::pops()  (max gBatchSize)
+RouteOrch::doTask(consumer)
+  ↓ table_name == APP_LABEL_ROUTE_TABLE_NAME で分岐 (routeorch.cpp:616-619) → return;
+RouteOrch::doLabelTask(consumer)          (mplsrouteorch.cpp:34-417)
+  ↓ addLabelRoute / removeLabelRoute を gLabelRouteBulker に登録 → flush() で一括反映
+SAI: sai_mpls_api->create_inseg_entry / set_inseg_entry_attribute / remove_inseg_entry
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。channel PUBLISH 発生時は即時 wake up し、未受信時も 1 秒ごとに retry / bulker drain が回る。
+- `RouteOrch::doTask` は `APP_LABEL_ROUTE_TABLE_NAME` を検出すると `doLabelTask(consumer); return;` するため、IP route 用の `m_publisher.flush()` (`routeorch.cpp:1231`) には到達しない。
+- 同一 select サイクル内で複数 `LABEL_ROUTE_TABLE|<label>` の `SET` / `DEL` が発生しても `ConsumerStateTable` 側で **同一 key は最後の op のみに集約**される (`routeorch.cpp:1088-1090` のコメント "consolidated by ConsumerStateTable" と整合)。
+
+### ResponsePublisher (APPL_STATE_DB) は不在
+
+| 観点 | IP route (`APP_ROUTE_TABLE_NAME`) | MPLS route (`APP_LABEL_ROUTE_TABLE_NAME`) |
+|---|---|---|
+| `m_publisher.publish(...)` | あり (`routeorch.cpp:3185-3201`、`publishRouteState()`) | **なし** |
+| `m_publisher.flush()` | あり (`routeorch.cpp:1231`) | **なし**（`doLabelTask` から到達しない） |
+| APPL_STATE_DB ミラー | `APP_ROUTE_TABLE_NAME` 固定キー | なし |
+
+`mplsrouteorch.cpp` / `nhgorch.cpp` には `m_publisher` / `ResponsePublisher` / `APPL_STATE_DB` 参照が **0 件**。MPLS パスは ack channel を持たず、`fpmsyncd` 側にも APPL_STATE_DB 経由のフィードバック経路は実装されていない（Phase B Side-effects と整合）。
+
+### サービス再起動トリガー
+
+なし。`LABEL_ROUTE_TABLE` の SET/DEL は同一 orchagent プロセス内の `doLabelTask` で SAI `inseg_entry` のライブ操作 (`create_inseg_entry` / `remove_inseg_entry`) に変換される。systemd unit 再起動・サービス reload は伴わない。
+
+### ZMQ 経路（feature 有効時のみ）
+
+`ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature が有効なら `ZmqConsumerStateTable` が `LABEL_ROUTE_TABLE` を ZMQ TCP socket 経由（Redis をバイパス）で受信する。ハンドラ (`doLabelTask`) は共通で、APPL_DB 上のデータも `dbPersistence` 引数に従って永続化される。デフォルトでは無効なので、標準フローは Redis channel PUBLISH 経路。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23, 315-337` (`SELECT_TIMEOUT` / `route_tables` / ZMQ feature 切替 / `RouteOrch` 生成)、`sonic-swss/orchagent/routeorch.cpp:40-58, 614-619, 1088-1090, 1231, 3185-3201` (`ZmqOrch` 継承コンストラクタ / `doTask` 分岐 / `publishRouteState` は IP route 固定)、`sonic-swss/orchagent/zmqorch.cpp:41-72` (`ZmqOrch::addConsumer` の DB ID / `zmqServer` 分岐)、`sonic-swss/orchagent/mplsrouteorch.cpp:34-417` (`doLabelTask` / bulker / `m_publisher` 参照 0 件)、`sonic-swss/orchagent/main.cpp:59-60, 459, 478` (`DEFAULT_BATCH_SIZE = 128` / `-b` オプション)、`sonic-swss/fpmsyncd/routesync.cpp:2674-2732` (`onLabelRouteMsg` の `ProducerStateTable::set`)、`sonic-swss-common/common/schema.h:48` (`APP_LABEL_ROUTE_TABLE_NAME`); 詳細分析 `meta/_intermediate/cdb-flow/appl-mpls-route-pubsub.md`
+<!-- /pubsub -->

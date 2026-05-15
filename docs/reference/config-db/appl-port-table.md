@@ -234,6 +234,74 @@ PORT_TABLE:<port_name>
 
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。YANG / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。詳細表と参照行は [`meta/_intermediate/cdb-flow/appl-port-table-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-constants.md) を参照。
+
+### admin_status / oper_status
+
+- `cfgmgr/portmgr.h:14` `#define DEFAULT_ADMIN_STATUS_STR "down"` — portmgrd が CONFIG_DB に `admin_status` が無いとき APPL_DB に注入する既定値
+- `orchagent/portsorch.h:48-55` `oper_status_strings` マップ: `SAI_PORT_OPER_STATUS_{UNKNOWN, UP, DOWN, TESTING, NOT_PRESENT}` ↔ `"unknown"` / `"up"` / `"down"` / `"testing"` / `"not present"`
+- 逆向き `string_oper_status` (`portsorch.h:57-64`) も同 5 値を持つため、`SAI_PORT_OPER_STATUS_UNKNOWN` を含めて warmboot 復元時に例外にならない
+- `cfgmgr/porthlpr.cpp:43-47` `portStatusMap`: `admin_status` は `"up"` / `"down"` 2 値固定 (それ以外は porthlpr がパース拒否)
+
+### mtu
+
+- `cfgmgr/portmgr.h:15` `#define DEFAULT_MTU_STR "9100"` — portmgrd の APPL_DB 注入既定値
+- `orchagent/port.h:27` `#define DEFAULT_MTU 1492` — orchagent 内 `Port::m_mtu` の初期値 (SAI default 1514 − header/FCS 22)。APPL_DB に書かれる `"9100"` とは別物
+- `orchagent/portsorch.cpp:79` `#define DEFAULT_SYSTEM_PORT_MTU 9100` — VOQ system port 初期化用
+- `orchagent/port/porthlpr.cpp:34-35` MTU 範囲 `[68, 9216]` (`minPortMtu` / `maxPortMtu`)
+
+### speed
+
+- `orchagent/port/porthlpr.cpp:31-32` 速度範囲 `[1, 1600000]` Mbps (`minPortSpeed` / `maxPortSpeed`)
+- 上限は 1.6 Tbps クラスの将来拡張に対応する
+
+### fec / fec override
+
+- `orchagent/port/porthlpr.cpp:77-83` `portFecMap`: `"none"` / `"rs"` / `"fc"` / `"auto"` → `SAI_PORT_FEC_MODE_{NONE, RS, FC, NONE}`
+- `porthlpr.cpp:92-98` `portFecOverrideMap`: `"none"/"rs"/"fc"` で明示指定 (`true`)、`"auto"` のみ SAI への明示設定を抑止 (`false`)
+- `porthlpr.cpp:85-90` 逆向きマップ `portFecRevMap` は `"auto"` を含まず 3 値のみ (STATE_DB 書き戻し用)
+
+### autoneg / link_training / pfc_asym
+
+- 3 フィールドとも APPL_DB の値は `"on"` / `"off"` 2 値固定
+- `orchagent/portsorch.cpp:174-178` `autoneg_mode_map`: `"on"` → `1`, `"off"` → `0`
+- `porthlpr.cpp:37-41` `portModeMap`: `"on"` / `"off"` → `true` / `false`
+- `porthlpr.cpp:100-104` `portPfcAsymMap`: `"on"` → `SAI_PORT_PRIORITY_FLOW_CONTROL_MODE_SEPARATE`, `"off"` → `..._COMBINED`
+
+### interface_type
+
+- `orchagent/port/porthlpr.cpp:49-75` `portInterfaceTypeMap` は **24 種類**: `none, cr, cr2, cr4, cr8, sr, sr2, sr4, sr8, lr, lr4, lr8, kr, kr4, kr8, caui, gmii, sfi, xlaui, kr2, caui4, xaui, xfi, xgmii`
+- `orchagent/portsorch.cpp:195-210` の `interface_type_map` は Gearbox 専用で **13 種類のみ** (`none, cr, cr4, cr8, sr, sr4, sr8, lr, lr4, lr8, kr, kr4, kr8`)
+- **通常ポートと gearbox 内部ポートで許容値が異なる**点に注意
+
+### role (内部ポート識別子)
+
+- `orchagent/port.h:158-165` `Port::Role` enum: `Ext` / `Int` / `Inb` / `Rec` / `Dpc`
+  - `Ext` = 外部 (フロントパネル) ポート
+  - `Int` = 内部ポート
+  - `Inb` = inband ポート (CPU 経由)
+  - `Rec` = recirculation ポート
+  - `Dpc` = SmartSwitch DPU Connect Port
+- `porthlpr.cpp:116-123` `portRoleMap` で 5 値以外を拒否
+
+### Port::Type (APPL_DB には書かれない内部分類)
+
+- `orchagent/port.h:145-156`: `CPU, PHY, MGMT, LOOPBACK, VLAN, LAG, TUNNEL, SUBPORT, SYSTEM, UNKNOWN`
+- `PORT_TABLE` のエントリは原則 `Type::PHY`、`PORTCHANNEL_TABLE` 経由が `LAG`、VOQ/Gearbox で `SYSTEM`
+- PortsOrch のハンドラ分岐で多用される (`portsorch.cpp:2953, 2972, 2990, 3037, 3920, 4122` 等)
+
+### Gearbox 命名 prefix
+
+- `orchagent/port/porthlpr.cpp:28-29`:
+  - `GB_LINE_PREFIX = "gb_line_"`
+  - `GB_SYSTEM_PREFIX = "gb_system_"`
+- Gearbox port 用の STATE_DB / COUNTERS_DB エントリ名に付与される
+
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -273,6 +341,96 @@ PORT_TABLE:<port_name>
 
 <!-- /side-effects -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB の `PORT_TABLE` を `PortsOrch` が処理する際に、SAI OID 解決・依存ゲート・関連リソース列挙のために間接的に読み出す関連テーブル / Orch / DB を列挙する。`PortsOrch` は CONFIG_DB `PORT` を**直接購読しない**（portsyncd 経由で APPL_DB に転写される）ため、CONFIG_DB 側 `PORT` は Direction A 入力として扱い、本ブロックには含めない。スキャン詳細は [`meta/_intermediate/cdb-flow/appl-port-table-cross-refs.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-cross-refs.md) を参照。
+
+### CONFIG_DB / APPL_DB BUFFER 設定（port-ready ゲート）
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| APPL_DB `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` (buffer 反映状態) | `gBufferOrch->isPortReady(alias)` 経由のゲート — 必須 | port SET 処理時、buffer 未反映なら `m_pendingPortSet` に保留し再試行 | `portsorch.cpp` L4779-4790, extern `gBufferOrch` L62 |
+
+### QUEUE / Priority Group OID 解決（COUNTERS_DB マップ生成の前提）
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| Port struct `port.m_queue_ids[]` (SAI `SAI_PORT_ATTR_QOS_QUEUE_LIST` 経由) | port 内 queue OID リストの解決 | `generateQueueMapPerPort()` 実行時、COUNTERS_DB queue マップ構築前提 | `portsorch.cpp` L3626 (`getQueueTypeAndIndex`), L8391-8446 |
+| Port struct `port.m_priority_group_ids[]` (SAI `SAI_PORT_ATTR_PRIORITY_GROUP_LIST` 経由) | PG OID リストの解決 | `generatePriorityGroupMapPerPort()` 実行時 | `portsorch.cpp` L8858-8884 |
+| FLEX_COUNTER_DB — `QUEUE_STAT_COUNTER` / `QUEUE_WATERMARK_STAT_COUNTER` / `PG_WATERMARK_STAT_COUNTER` / `PG_DROP_STAT_COUNTER` | flex counter 動的登録 | VoQ スイッチまたは該当 counter 群が有効な場合 | `portsorch.cpp` L4213-4242, L8505-8515, L872-892 |
+
+### `_GEARBOX_TABLE` (APPL_DB internal)
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| APPL_DB `_GEARBOX_TABLE` (key prefix で隔離された internal table) | `GearboxUtils::isGearboxEnabled()` 経由で読み出し、`m_gearboxPhyMap` 等を構築 | platform に gearbox 定義がある場合のみ | `portsorch.cpp` L775, L10374-10390 |
+| `_GEARBOX_TABLE` への書き戻し (`phy:<id>:ports:<index>`) | 書込（参照後の更新） | gearbox 環境で SAI 速度設定後 | `portsorch.cpp` L3421-3422 |
+
+### APPL_DB `SYSTEM_PORT_TABLE` (VoQ チャシス)
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| APPL_DB `SYSTEM_PORT_TABLE` (`APP_SYSTEM_PORT_TABLE_NAME`) | `m_systemPortTable->get(alias, fv)` で sysport config を取得 | VoQ チャシス構成（`gMySwitchType != "dpu"`）、SystemPort 列挙時 | `portsorch.cpp` L772, L10766, L11029-11038 |
+| SAI `SAI_SWITCH_ATTR_SYSTEM_PORT_LIST` ↔ APPL_DB `SYSTEM_PORT_TABLE` 突合 | `getSystemPorts()` / `addSystemPorts()` | 物理 PORT 初期化完了後 (PortInitDone 受信時) | `portsorch.cpp` L1047, L4620, L10766-10864 |
+| `gIntfsOrch->isLocalSystemPortIntf(alias)` | local sysport 判定（oper speed の STATE_DB 振り分け） | VoQ チャシスのみ | `portsorch.cpp` L9839 |
+
+### portsyncd / portmgrd 由来の前提ゲート
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| portsyncd 由来 `PortConfigDone` / `PortInitDone` notification | 初期化ゲート — 必須 | `m_initDone` / `m_portConfigState` が揃うまで `PORT_TABLE` の SET 通常処理は走らない | `portsorch.cpp` L4620, L1238 (`getPortConfigState`) |
+| CONFIG_DB `DEVICE_METADATA.localhost.switch_type` (`gMySwitchType`) | 分岐条件 (voq / dpu / 通常) | sysport 列挙・queue counter 強制有効化などの分岐 | `portsorch.cpp` L1043-1047, L8505-8515 |
+
+> CONFIG_DB `PORT` 自体・CONFIG_DB `BUFFER_*` 群は **Direction A 入力**（portsyncd / buffermgrd 中継）として扱い、本ブロックには含めない。CONFIG_DB 側の cross-refs は `port.md` / `appl-buffer.md` で扱う。
+
+<!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗・retry 分岐 (Phase D)
+
+> **注記**: orchagent (PortsOrch) が APPL_DB `PORT_TABLE` を購読して SAI に反映する際、
+> 入力値の不正や SAI 失敗を 3 系統 (`task_success` / `task_need_retry` / `task_failed`) で扱う。
+> 詳細・コード行は [`meta/_intermediate/cdb-flow/appl-port-table-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md) を参照[^5]。
+
+### 永久失敗 (タスクを erase、retry なし)
+
+| 検出箇所 | 条件 | ログ |
+|----------|------|------|
+| `portsorch.cpp:5023` | `isSpeedSupported()==false` (STATE_DB `supported_speeds` リスト不一致) | `SWSS_LOG_ERROR("Unsupported port %s speed %u", ...)` |
+| `portsorch.cpp:5317` | auto FEC 指定だが platform が `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` 非対応 | `SWSS_LOG_ERROR("Auto FEC mode is not supported")` |
+| `portsorch.cpp:5323` | `isFecModeSupported()==false` (STATE_DB `supported_fecs` リスト不一致) | `SWSS_LOG_ERROR("Unsupported port %s FEC mode %s", ...)` |
+| `portsorch.cpp:3715` | `setPortLinkTraining()` で `port.m_type != Port::PHY` | (`task_failed` を返す) |
+| `setPort*()` 全般 | `handleSaiSetStatus()` が `task_failed` を返す (`SAI_STATUS_INSUFFICIENT_RESOURCES` 系以外の SAI エラー) | `SWSS_LOG_ERROR("Failed to set port %s ..., ...")` |
+
+- いずれも `doPortTask()` 側で `it = taskMap.erase(it); continue;` され、再試行されない
+- APPL_DB `PORT_TABLE:<alias>` 上のフィールドはそのまま残る一方、Port struct / SAI には反映されないため **APPL_DB と SAI の値が乖離** する状態が発生し得る
+
+### 一時失敗 (タスクを残し次回 `doTask()` で retry)
+
+| 検出箇所 | 条件 | 動作 |
+|----------|------|------|
+| `portsorch.cpp:5038, 5087, 5139, 5210, 5342` | speed / adv_speeds / interface_type / adv_interface_types / fec 変更前に `setPortAdminStatus(p, false)` が失敗 | `it++; continue;` で retry |
+| `portsorch.cpp:5362` | `setPortFec()` が `bool false` を返す (SAI `set_port_attribute(FEC_MODE)` 失敗) | `it++; continue;` で retry |
+| `setPort*()` 全般 | `handleSaiSetStatus()` が `task_need_retry` (`SAI_STATUS_INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` / `NV_STORAGE_FULL`) を返す | `it++; continue;` で retry |
+
+### admin transition (内部副作用)
+
+speed / adv_speeds / interface_type / adv_interface_types / fec を変更する際、
+ポートが admin up かつ条件 (autoneg off など) を満たすと PortsOrch は一旦 admin を DOWN にし、属性変更後に元の admin 状態を復元する設計だが、復元処理は別のタスクサイクル
+(`m_portList[p.m_alias] = p` で `m_admin_state_up = false` を記録) に委ねられる。
+このため変更途中で orchagent がクラッシュ・再起動すると、APPL_DB は admin up のまま実 SAI ポートは admin down に取り残される可能性がある。
+
+### oper / flap 系は失敗に非同期
+
+`set_port_attribute` 失敗とは独立に、`updateDbPortOperStatus()` (`portsorch.cpp:3920-3930`)
+および `updateDbPortFlapCount()` (`portsorch.cpp:3865-3890`) は SAI からの
+`port_oper_status_notification` で APPL_DB の `oper_status` / `flap_count` /
+`last_up_time` / `last_down_time` を更新し続ける。すなわち管理面 (admin/speed/fec) の
+SET が失敗してもデータ面の運用表示は最新値を反映する。
+
+<!-- /failure -->
+
 ## CONFIG_DB PORT との対応
 
 | 側面 | CONFIG_DB PORT | APPL_DB PORT_TABLE |
@@ -308,3 +466,4 @@ sonic-db-cli CONFIG_DB hget 'PORT|Ethernet0' admin_status
 [^2]: portmgrd portmgr.h, portmgr.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h>
 [^3]: orchagent portsorch.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
 [^4]: orchagent portsorch.cpp (副次 DB 書込): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+[^5]: orchagent portsorch.cpp `doPortTask()` / `setPort*` 系失敗分岐 (Phase D): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および `handleSaiSetStatus()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp>
