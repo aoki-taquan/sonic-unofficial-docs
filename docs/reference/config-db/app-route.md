@@ -161,32 +161,60 @@ fpmsyncd の `getNextHopWt()` が weight を取得し、非空のときのみ `f
 - DEL 操作の前に暗黙的な DEL が走る（warm restart 非使用時）。これにより古いフィールドが Redis から消去される
 - `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー
 
-<!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
 
-`ROUTE_TABLE` (APPL_DB) は YANG 未定義テーブル（APPL_DB は YANG 管理対象外）のため leafref は存在しない。
-以下はすべて `routeorch::doRouteTask()` から呼び出される実装レベルの暗黙参照。
+APPL_DB `ROUTE_TABLE` の書込・購読フロー自体はプラットフォーム共通だが、ECMP 容量・overlay nexthop サポート・multi-asic 分離の 3 軸で差が出る。
 
-| 参照先テーブル / Orch | 参照方向 | 条件 | 参照元 evidence |
-|----------------------|---------|------|----------------|
-| `VRF_TABLE`（VRFOrch） | 存在確認 + OID + refcount | key が `Vrf*:<prefix>` 形式の非デフォルト VRF のとき。未登録なら `it++` で待機 | `routeorch.cpp` L706–717 (`isVRFexists` / `getVRFid`), L2013, L2773 (refcount inc/dec) |
-| `NEIGH_TABLE`（NeighOrch） | OID + refcount + 解決トリガ | `nexthop` 指定で IP next-hop（intf-only でない）のとき。未解決時は `resolveNeighbor()` で ARP/ND 要求 + `return false` | `routeorch.cpp` L1499–1510 (`addNextHopGroup` 内), L2094–2119 (single NH), L2197–2219 (ECMP) |
-| `INTF_TABLE`（IntfsOrch） | RIF OID + refcount + サブネット判定 | `ifname` 指定 / intf-only NH のとき。RIF 未作成 (`SAI_NULL_OBJECT_ID`) なら `return false` | `routeorch.cpp` L2083 (`getRouterIntfsId`), L1045 (`isPrefixSubnet`), L1362, L1384 (refcount) |
-| `PORT_TABLE`（PortsOrch） | 起動ブロック + Inband 判定 | 常時。`allPortsReady()` が false の間は全 ROUTE_TABLE 処理ブロック。Inband port 宛 NH はスキップ | `routeorch.cpp` L609 (`allPortsReady`), L2074 (`isInbandPort`), L243 (`getCpuPort`) |
-| NhgOrch / CbfNhgOrch（NEXTHOP_GROUP / CBF_NEXT_HOP_GROUP_TABLE） | 存在確認 + 内部オブジェクト + refcount | `nexthop_group` 非空のとき。`nexthop`/`ifname` との同時指定はエラー erase | `routeorch.cpp` L810–814 (排他), L838–839, L2042–2057, L2411 (`hasNhg` OR チェック), L2546 (refcount) |
-| FgNhgOrch（FG_NHG / FG_NHG_PREFIX） | 適用判定 + 専用 NHG 構築 | プレフィクスが FG_NHG 設定にマッチするとき。通常 NHG 管理をバイパス | `routeorch.cpp` L2028–2037 (`isRouteFineGrained` / `setFgNhg`), L2403, L2475 |
-| Srv6Orch（SRV6_SID_LIST_TABLE） | 存在確認 + SRv6 NH + Agg ID | `segment` または `seg_src` 非空（`srv6_nh = true`）のとき | `routeorch.cpp` L2055 (`contextIdExists`), L2100, L2143, L2169 (`srv6Nexthops`), L2295, L2352 (`getAggId`) |
-| VxlanTunnel / remote VTEP（NeighOrch tunnel NH） | VTEP 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ SRv6 でない場合 | `routeorch.cpp` L872 (`isL3VniVlan`), L2127 (`createRemoteVtep`), L2133, L2208 (`addTunnelNextHop`) |
-| FlowCounterRouteOrch | 通知のみ | route flow counter enable 時、ROUTE add/remove ごと | `routeorch.cpp` L259 (`onAddMiscRouteEntry`), L282, L2708 (`handleRouteAdd`) |
+### ECMP グループ数: Mellanox 限定の補正
 
-!!! note "排他関係"
-    `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー (`routeorch.cpp` L810–814 で erase)。
-    SRv6 NH (`segment`/`seg_src`) と VxLAN overlay NH (`vni_label`) も実装上排他（`srv6_nh` / `overlay_nh` フラグが排他分岐）。
+`routeorch.cpp` L73-L88 で `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を取得後、`getenv("platform")` に `MLNX_PLATFORM_SUBSTRING == "mellanox"` (`orch.h` L42) が含まれる場合のみ `m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE`（32）で補正する:
 
-!!! note "NH 解決の遅延 install"
-    未解決 neighbor / 未作成 RIF / 未作成 VRF / 未登録 nexthop_group のいずれかがあれば `return false` または `it++` でリトライキューに残り、対応する Orch が該当オブジェクトを作成した時点で次回 `doRouteTask()` 実行時に自動 install される。再試行はイベント駆動ではなくテーブル sync の自然な再 polling による。
+```cpp
+// orchagent/routeorch.cpp:84-87
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;
+}
+```
 
-<!-- /cross-refs -->
+`DEFAULT_NUMBER_OF_ECMP_GROUPS = 128`（L37）、`DEFAULT_MAX_ECMP_GROUP_SIZE = 32`（L38）。Broadcom / Marvell / Cisco silicon-one / xsight 等は SAI 戻り値をそのまま採用する。算出値は `m_switchOrch->set_switch_capability()` 経由で STATE_DB `SWITCH_CAPABILITY` に公開され、`nexthop_group` の上限管理に使われる。
+
+### ECMP メンバ数: VOQ chassis で 128 に強制
+
+`gMySwitchType == "voq"`（`DEVICE_METADATA|localhost:switch_type`）かつ SAI が返す `SAI_SWITCH_ATTR_MAX_ECMP_MEMBER_COUNT >= 128` のとき、`SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に書き戻す:
+
+```cpp
+// orchagent/routeorch.cpp:109-122
+if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
+{
+    maxEcmpGroupSize = 128;
+    attr.id = SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT;
+    attr.value.s32 = maxEcmpGroupSize;
+    status = sai_switch_api->set_switch_attribute(gSwitchId, &attr);
+}
+```
+
+`switch_type=switch`（T0/T1 fixed）や `chassis-packet` line card では本書き換えは発生しない。
+
+### SRv6 / EVPN overlay ネクストホップ: ASIC SAI capability に依存
+
+`routeorch.cpp` L736-L795 で APPL_DB の `vni_label` / `segment` / `seg_src` から `overlay_nh` / `srv6_nh` を立てるが、SAI 側で `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` / `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` / `SAI_OBJECT_TYPE_MY_SID_ENTRY` が未実装の ASIC は create_next_hop / create_my_sid_entry が `SAI_STATUS_NOT_SUPPORTED` を返し routeorch がエラーログを残す（L2130 / L2136）。community master では Broadcom DNX / Mellanox 一部 SKU で SRv6 が機能、VS / VPP はスタブ実装。
+
+### CRM 集計: SAI 任意属性
+
+`crmorch.cpp` L76-L77 で `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` を `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` / `_IPV6_ROUTE_ENTRY` に紐付ける。SAI が当該属性を実装していない ASIC（古い SDK / VS / VPP の一部）では `crm_stats_ipv4_route_available` / `ipv6_route_available` が STATE_DB `CRM` に出ない。
+
+### multi-asic / VOQ chassis での分離
+
+`routeorch` は `DBConnector` の namespace に従って `swss@asicN` Docker ごとに 1 インスタンス起動し、それぞれ独立した APPL_DB `ROUTE_TABLE` を購読する。fpmsyncd も `asicN` 単位で動作し、ASIC 間で `route_entry` / `next_hop_group` の名前空間は交わらない。chassis 全体の voq ルーティングは `CHASSIS_APP_DB`（redis index 12）+ `voqorch` 経由で同期されるため、`APPL_DB:ROUTE_TABLE` 自体に chassis-wide 同期機構はない。
+
+### VS / VPP プラットフォーム
+
+`VS_PLATFORM_SUBSTRING="vs"` / `XS_PLATFORM_SUBSTRING="xsight"` (`orch.h` L46/L49) では SAI シム（libsaivs / libsaivpp）が ECMP / SRv6 / overlay の create を SUCCESS で返すが ASIC は無く実機転送はない。Mellanox 補正は走らず、SAI 既定値（多くは 128 〜 1024）が `m_maxNextHopGroupCount` になる。CRM の available 値もダミー。
+
+詳細根拠は `meta/_intermediate/cdb-flow/app-route-platform.md` を参照。
+<!-- /platform -->
 
 ## 購読者
 
