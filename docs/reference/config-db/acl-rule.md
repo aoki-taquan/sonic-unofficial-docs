@@ -464,6 +464,43 @@ ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装か
     `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` を含む ACL_RULE の変更は `SET` のみでは適用されない。必ず `DEL` → `SET` の順で操作すること (`aclorch.cpp:2415-2420`)。
 
 <!-- /ordering -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|---|
+| `table_id` が空文字 | `doAclRuleTask()` | WARN ログ → `erase(it)` → 恒久スキップ | なし | `aclorch.cpp:5537-5541` |
+| `table_oid == SAI_NULL_OBJECT_ID` かつ CTRLPLANE テーブル | `doAclRuleTask()` | INFO ログ → `erase(it)` → 恒久スキップ | なし | `aclorch.cpp:5554-5561` |
+| `table_oid == SAI_NULL_OBJECT_ID` かつ ACL_TABLE 未作成 | `doAclRuleTask()` | INFO ログ → `it++`（テーブル作成まで待機・再試行） | なし | `aclorch.cpp:5563-5565` |
+| `AclRule::makeShared()` が例外送出 | `doAclRuleTask()` | ERROR ログ → `erase(it)` → **`return`（ループ全体即時中断）** | なし | `aclorch.cpp:5578-5582` |
+| 未知/不正な属性名（全 `validate*` が false） | `doAclRuleTask()` | ERROR ログ → `bAllAttributesOk=false` → break | `INACTIVE` | `aclorch.cpp:5628-5631` |
+| IPv4 match と IPv6 match 同一ルール混在 (`type=L3V4V6`) | `doAclRuleTask()` | ERROR ログ → `bAllAttributesOk=false` | `INACTIVE` | `aclorch.cpp:5656-5663` |
+| `validate()` 失敗 / `bAllAttributesOk=false` | `doAclRuleTask()` | ERROR ログ → `erase(it)` → 恒久スキップ | `INACTIVE` | `aclorch.cpp:5697-5701` |
+| SAI リソース枯渇 (`isSaiStatusResourceFull`) | `doAclRuleTask()` | WARN ログ → retry cache (`RETRY_CST_SAI_RESOURCE`) に退避 | `PENDING_CREATION` | `aclorch.cpp:5673-5693` |
+| retry cache 投入失敗 | `doAclRuleTask()` | ERROR ログ → `it++`（通常リトライキュー残留） | `PENDING_CREATION` | `aclorch.cpp:5688-5692` |
+| `addAclRule()` 失敗（リソース枯渇以外） | `doAclRuleTask()` | `it++`（次サイクルまで待機） | `PENDING_CREATION` | `aclorch.cpp:5695-5697` |
+| `AclTable::add()` → SAI `create_acl_entry` 失敗 | `AclRule::create()` | ERROR ログ → `AclRange::remove()` + `decreaseNextHopRefCount()` → `return false` | — | `aclorch.cpp:1344-1364` |
+| `create_acl_entry` → `SAI_STATUS_ITEM_ALREADY_EXISTS` | `AclRule::create()` | NOTICE ログ → `return true`（冪等・成功扱い） | `ACTIVE` | `aclorch.cpp:1348-1352` |
+| EGR_SET_DSCP ルール追加失敗 (`isUsingEgrSetDscp`) | `addAclRule()` | ERROR ログ → `return false`（メインルール未追加のまま中断） | `PENDING_CREATION` | `aclorch.cpp:4962-4964` |
+| `addAclRule()` 内でテーブル消失 (`table_oid == SAI_NULL_OBJECT_ID`) | `addAclRule()` | ERROR ログ → `return false` | `PENDING_CREATION` | `aclorch.cpp:4972-4975` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|---|
+| `removeAclRule()` が false（SAI 削除失敗） | `doAclRuleTask()` | `it++`（次サイクルまで待機） | `PENDING_REMOVAL` | `aclorch.cpp:5724-5727` |
+| 削除対象ルールが既に存在しない | `removeAclRule()` | NOTICE ログ → `return true`（冪等・成功扱い） | ステータス削除 | `aclorch.cpp:5010-5014` |
+| DEL 時 `table_oid == SAI_NULL_OBJECT_ID` | `removeAclRule()` | WARN ログ → `return true`（ルール不在とみなし成功） | ステータス削除 | `aclorch.cpp:5004-5006` |
+
+### 補足
+
+- **`makeShared` 例外の特殊性**: 他の失敗はすべて `it++` または `erase(it)` でループを継続するが、この経路のみ `return` でループ全体を即時中断する。
+- **retry cache 解放契機**: DEL 成功かつ `ruleExisted == true` の場合 `notifyRetry()` で `RETRY_CST_SAI_RESOURCE` 制約が解除され、park 中ルールが再処理対象になる (`aclorch.cpp:5720`)。
+- **STATE_DB 反映先**: `setAclRuleStatus()` → `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) の `status` フィールド (`aclorch.cpp:3479`)。
+
+<!-- /failure -->
 
 <!-- ref-triangle:start -->
 
