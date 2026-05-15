@@ -107,6 +107,70 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 - `state=enabled` でも、`AUTO_TECHSUPPORT|GLOBAL.available_mem_threshold` と本エントリの `available_mem_threshold` が両方評価される
 <!-- /value-behavior -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md -->
+
+### 全体観
+
+本テーブルの消費パイプラインは OrchAgent ではなく Python ワンショットスクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py`) で構成され、`task_need_retry` / `task_invalid_entry` のような task 状態は存在しない。失敗時の挙動は次の 3 系統に集約される:
+
+1. **silent fallback**: `try/except ValueError` で数値変換失敗を吸収し、`0.0` 等に置換 (ログ出力なし)
+2. **early return + syslog**: `state != "enabled"` / disk チェック失敗等で NOTICE / ERR ログを出して即終了
+3. **再帰 retry**: `invoke_ts_cmd()` のみ `EXT_RETRY` (=4) で最大 `MAX_RETRY_LIMIT=2` 回の再呼び出し
+
+### 失敗パターン一覧
+
+| パターン | トリガ | retry | 挙動 | evidence |
+|---|---|---|---|---|
+| `state` 欠落 / 非 `enabled` (GLOBAL) | `AUTO_TECHSUPPORT\|GLOBAL.state` が空 or `disabled` | なし | NOTICE "auto_invoke_ts is disabled" → return | `coredump_gen_handler.py:47` |
+| `state` 欠落 / 非 `enabled` (FEATURE) | `AUTO_TECHSUPPORT_FEATURE\|<feat>.state` が空 or `disabled` | なし | NOTICE "auto-techsupport feature for <feat> is not enabled" → return | `coredump_gen_handler.py:55-57` |
+| **container offline / feature 名不一致** | `HGET` が None (キー不在) | なし | `None != "enabled"` で skip。エラーログなし (NOTICE のみ) | `coredump_gen_handler.py:54-55`, `auto_techsupport_helper.py:200-210` (`trim_masic_suffix`) |
+| `rate_limit_interval` 非数値 | `float()` で ValueError | なし | **silent fallback** `0.0` → cooloff 無効化 | `auto_techsupport_helper.py:325-331` |
+| `core_usage` (GLOBAL) 非数値 | `float()` で ValueError | なし | `0.0` → cleanup スキップ + NOTICE | `coredump_gen_handler.py:23-31` |
+| `max_techsupport_limit` 非数値 | `float()` で ValueError | なし | `0.0` → cleanup スキップ + NOTICE | `techsupport_cleanup.py:33-41` |
+| **core 上限超過 (disk full)** | `/var/core` 配下が `core_usage` 比率超過 | なし | `cleanup_process` で古い順 unlink。最新 1 ファイルは温存 | `auto_techsupport_helper.py:170-193` |
+| `cleanup_process` の `limit` 範囲外 | `0 < limit < 100` 外 | なし | ERR "core_usage_limit can only be between 1 and 100" → return。**cleanup されず disk full 継続** | `auto_techsupport_helper.py:172-174` |
+| `cleanup_process` の `OSError` | unlink 失敗 (権限・I/O) | なし (continue) | 失敗ファイルを飛ばして次へ。集計に反映されない | `auto_techsupport_helper.py:185-188` |
+| spurious invocation (core が古い) | `verify_recent_file_creation` が False | なし | INFO "Spurious Invocation" → return | `coredump_gen_handler.py:73-75`, `auto_techsupport_helper.py:115-124` |
+| `getmtime` 例外 | core / dump ファイル read 不可 | なし | `except Exception → return False` で silent skip | `auto_techsupport_helper.py:117-120` |
+| rate-limit 未経過 | `time.time() - last_creation < cooloff` | なし | NOTICE → skip。次回 core dump 発生時に自動再評価 (eventual progress) | `auto_techsupport_helper.py:285-301` |
+| **`generate_dump` lock 失敗 (`EXT_LOCKFAIL=2`)** | 別 techsupport が同時実行中 | なし | NOTICE "Another instance of techsupport running, aborting this" | `auto_techsupport_helper.py:240-241` |
+| **`generate_dump` retry 要求 (`EXT_RETRY=4`)** | `show techsupport` が内部リトライ要求 | **最大 2 回 再帰** | 上限超過で ERR "MAX_RETRY_LIMIT ... exceeded" | `auto_techsupport_helper.py:242-247`, `:84` (`MAX_RETRY_LIMIT=2`) |
+| **`generate_dump` その他 rc != 0** | subprocess 失敗、kill 等 | なし | ERR "show techsupport failed with exit code N" | `auto_techsupport_helper.py:248-249` |
+| dump 名 parse 失敗 | stdout に `sonic_dump_.*tar.*` パターン無し | なし | ERR "stdout ... doesn't have the dump name"。STATE_DB に書かれない | `auto_techsupport_helper.py:225-229`, `:251-253` |
+| `write_to_state_db` 途中切断 | Redis 切断 | なし | partial fields で STATE_DB に残存。`get_ts_map` の `int(creation_time)` 失敗で entry skip | `auto_techsupport_helper.py:303-310`, `:268-272` |
+
+### 再帰 retry 経路 (唯一の retry)
+
+```
+invoke_ts_cmd(db, num_retry=0)
+  ↓ subprocess_exec(["show", "techsupport", ...])
+  rc == EXT_RETRY (=4) かつ num_retry <= MAX_RETRY_LIMIT (=2)
+    ↓ return invoke_ts_cmd(db, num_retry+1)   # 再帰
+  上限超過 → syslog.LOG_ERR "MAX_RETRY_LIMIT for show techsupport invocation exceeded"
+```
+
+- 再帰 retry は `show techsupport` 本体に対するもので、`AUTO_TECHSUPPORT_FEATURE` の field 再評価には戻らない (rate-limit cooloff は最初の 1 回でしか評価されない)。
+- `EXT_LOCKFAIL` (=2) は再試行せず即 abort。複数 core dump 同時発生時に 2 個目以降は握り潰される設計。
+
+### 部分適用・冪等性
+
+- `cleanup_process` は incremental unlink。途中で `OSError` が出ても他ファイル削除は続行 → 部分削除が残存。
+- `write_to_state_db` は field ごとに `db.set` を呼ぶ。途中で Redis 接続切れが起きると `AUTO_TECHSUPPORT_DUMP_INFO|<name>` が partial fields のまま残る (timestamp あり / container 無し等)。これにより `get_ts_map` 内の `int(creation_time)` 変換失敗で entry が skip され、rate-limit 計算から漏れる。
+- `coredump_gen_handler` の `handle_core_dump_creation_event` と `handle_coredump_cleanup` は独立。前者が early return しても cleanup は実行される。
+
+### 重要な特性
+
+- **silent fallback の連鎖**: `rate_limit_interval` が "" / 非数値だと cooloff = 0 になり、core dump 連発時に techsupport が暴走する (運用上 `rate_limit_interval=0` 明示設定と区別がつかない)。
+- **disabled = cleanup 無効**: `AUTO_TECHSUPPORT|GLOBAL.state = disabled` だと core / techsupport 両方の cleanup もスキップされ、disk full に至る危険がある。
+- **container 名一致は前方一致ではなく完全一致**: `coredump_gen_handler.py:54` の `FEATURE.format(self.container)` は完全一致 `HGET` を行う。`trim_masic_suffix` で末尾数字を削った後の名前と一致しなければ即 skip。
+- **uncaught 例外**: `coredump_gen_handler.py` / `techsupport_cleanup.py` には top-level `try/except` がなく、`subprocess_exec` や Redis 接続で raise が起きるとプロセス異常終了。syslog に Python traceback が出るが、`coredump-compress` 側に rc が戻らないため kernel 側からは silent failure。
+
+> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:84,115-124,170-193,232-256,285-301,317-331`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md`
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -238,6 +302,49 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 書き込み時 default (`600`) と実行時 fallback (`0.0`) が**乖離**している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`AUTO_TECHSUPPORT_FEATURE` テーブルは **常駐 subscriber を持たない pull-on-event 型テーブル** (Phase G 参照) であり、CONFIG_DB 書込み時刻と handler 評価時刻が完全に分離している。順序依存はトランザクショナルではなく eventual だが、**GLOBAL → FEATURE の二段ゲート**、**FEATURE 行 → AUTO_TECHSUPPORT_FEATURE 行**、**container start → kernel `core_pattern` 経由の handler 起動** という 3 種の順序制約が存在する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `AUTO_TECHSUPPORT\|GLOBAL.state` → `AUTO_TECHSUPPORT_FEATURE.<feat>.state` | **強制先行** (handler 内の早期 return) | 設計上の仕様。GLOBAL を先に `enabled` にしてから FEATURE を整える |
+| 2 | `FEATURE\|<feat>` → `AUTO_TECHSUPPORT_FEATURE\|<feat>` (install 時) | install 時 `feature.py:register()` が順序保証 | runtime CLI ではこの順序は緩い (handler は FEATURE テーブル本体を見ない) |
+| 3 | `AUTO_TECHSUPPORT\|GLOBAL` 存在 → install 時の AUTO_TECHSUPPORT_FEATURE 自動生成 | **強制先行** (install 一発、後追い不可) | 手動 CLI `config auto-techsupport-feature add` で補完 |
+| 4 | container (docker) start → kernel `core_pattern` 経由 handler 起動 | プロセス外順序 (OS 側) | `TIME_BUF=20s` で古い core を弾く |
+| 5 | GLOBAL.rate_limit_interval → FEATURE.rate_limit_interval (二段評価) | 同期順 (GLOBAL が先に gate) | GLOBAL=0 で FEATURE 制限が無効化される点に注意 |
+| 6 | CONFIG_DB 変更 → `STATE_DB:AUTO_TECHSUPPORT_DUMP_INFO` の前回 dump timestamp | 非同期 (handler 完了後に更新) | `sonic-db-cli STATE_DB del 'AUTO_TECHSUPPORT_DUMP_INFO\|<feat>'` で強制リセット |
+| 7 | GLOBAL.state → tarball cleanup (FEATURE 非参照) | 順序依存なし (設計上の非対称) | 仕様。`techsupport_cleanup.py` は FEATURE 行を見ない |
+
+### 主要な制約詳細
+
+**GLOBAL → FEATURE の二段ゲート (依存 #1, #5)**: `CriticalProcCoreDumpHandle.handle_core_dump_creation_event()` (`coredump_gen_handler.py:46-58`) は **GLOBAL.state を最初に HGET** (47 行) し、`"enabled"` でなければ syslog NOTICE を出して即 return。FEATURE.state (55 行) は GLOBAL を通過した後でのみ評価される。`invoke_ts_command_rate_limited()` (60 行) も同様に GLOBAL.rate_limit_interval → FEATURE.rate_limit_interval の順で cool-off を判定する (`auto_techsupport_helper.py:300-338`)。GLOBAL を `disabled` のまま FEATURE 側を細かく設定しても **dead config** となる一方、GLOBAL.rate_limit_interval を `0` にすると FEATURE 側の制限値があっても GLOBAL 段階で素通りする可能性がある。
+
+**install 時の `AUTO_TECHSUPPORT_FEATURE` 自動生成 (依存 #3)**: `feature.py:register_auto_ts()` (178-196 行) は `infer_auto_ts_capability(init_cfg_conn)` で `AUTO_TECHSUPPORT|GLOBAL` を `init_cfg.json` から読み、GLOBAL エントリが不在または `state` が空の場合は `(False, "disabled")` を返して **AUTO_TECHSUPPORT_FEATURE エントリ自体を作成しない** (`feature.py:185-186` の log: `Skip adding AUTO_TECHSUPPORT_FEATURE table because no AUTO_TECHSUPPORT|GLOBAL entry is found`)。後から CLI で GLOBAL を追加しても install 時のスキップは**自動補完されない**。`init_cfg.json.j2` が GLOBAL ブロックを常時注入するため通常運用では発生しないが、カスタム image build で GLOBAL を削るとサイレントに feature override が無効化される。
+
+**container start → handler 起動順 (依存 #4)**: handler は常駐プロセスではなく、kernel `core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P` 経由でクラッシュ発生時にのみ `setsid python3 coredump_gen_handler.py &` が起動する (`sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`)。`verify_recent_file_creation()` (`coredump_gen_handler.py:73-75`) は `TIME_BUF=20` 秒以内に作成された core ファイルでなければ "Spurious Invocation" として即 return。container start 直後より前に発生した古い core はスコープ外で、`AUTO_TECHSUPPORT_FEATURE` への CONFIG_DB 書込みは container start とは完全に独立 (container 停止中でもエントリは保持される)。
+
+**FEATURE 行と AUTO_TECHSUPPORT_FEATURE 行の install 時順序 (依存 #2)**: `feature.py:register()` (66-83 行) は `conn.set_entry(FEATURE, name, new_cfg)` (80 行) → `register_auto_ts(name)` (82 行) の順で書く。`AUTO_TECHSUPPORT_FEATURE` は **FEATURE 書込み後**に追加される設計上の不変条件だが、runtime での handler 動作上は順序不問 (handler は FEATURE テーブル本体を直接参照せず、`AUTO_TECHSUPPORT_FEATURE|<container>` を HGET するのみ; `coredump_gen_handler.py:52-55`)。
+
+**STATE_DB の eventual 性 (依存 #6)**: rate-limit は `STATE_DB:AUTO_TECHSUPPORT_DUMP_INFO|<feat>` の前回 dump timestamp と現在時刻の差で判定する。timestamp 書込みは `generate_dump` 完了後に行われ、CONFIG_DB.AUTO_TECHSUPPORT_FEATURE の `rate_limit_interval` を runtime で短縮しても、直後の core dump は古い timestamp で評価される可能性がある。
+
+**FEATURE/GLOBAL の cleanup 非対称 (依存 #7)**: `techsupport_cleanup.py:21-44` は `AUTO_TECHSUPPORT|GLOBAL.state` と `max_techsupport_limit` のみ評価し、`AUTO_TECHSUPPORT_FEATURE` を**完全に無視する**。FEATURE.state を `enabled` のまま GLOBAL.state を `disabled` にすると tarball cleanup も停止し、生成済み techsupport が `/var/dump/` に溜まり続ける副作用が生じる。
+
+### キーパースペクティブ
+
+- 強制先行の核心は **GLOBAL → FEATURE の二段ゲート** (#1, #5)。FEATURE エントリだけを操作しても GLOBAL が gate を閉じていれば動作しない。
+- 「順序依存」のほとんどがトランザクショナルではなく **eventual** (次の core dump 発生時に最新値が HGET される)。CLI で AUTO_TECHSUPPORT_FEATURE を変更しても、handler は次回イベント発生まで休眠している。
+- install 時の自動生成は `init_cfg.json` の **build-time 静的設定** に依存しており、custom image で `AUTO_TECHSUPPORT|GLOBAL` を削ると後追い不能で feature override が消える (#3)。
+- cleanup と invocation の責任分界が GLOBAL/FEATURE で**非対称** (#7) という設計トレードオフを認識しておくと運用判断が容易。
+
+詳細解析: `meta/_intermediate/cdb-flow/auto-techsupport-feature-ordering.md`
+
+<!-- evidence: sonic-utilities/scripts/coredump_gen_handler.py:14-82; sonic-utilities/scripts/techsupport_cleanup.py:13-55; sonic-utilities/sonic_package_manager/service_creator/feature.py:60-200; sonic-utilities/utilities_common/auto_techsupport_helper.py:60,69,300-338; sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45 -->
+<!-- /ordering -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
@@ -302,42 +409,6 @@ coredump_gen_handler.py
 
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338`; `sonic-utilities/scripts/coredump-compress:1-35`; `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`; `sonic-host-services/scripts/hostcfgd:2468-2528`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md`
 <!-- /pubsub -->
-
-<!-- side-effects -->
-## 副次 DB 書込 (Phase F)
-
-> 詳細証跡: `meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md`
-
-`AUTO_TECHSUPPORT_FEATURE` テーブル自体は常駐 subscriber を持たないが、関連スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) が core dump および techsupport 生成イベントを起点に **STATE_DB `AUTO_TECHSUPPORT_DUMP_INFO`** へ書込みを行う。CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への副次書込みは存在しない。
-
-### core dump 発生 → techsupport 生成成功時 — STATE_DB へ SET
-
-経路: `coredump_gen_handler.py` → `invoke_ts_command_rate_limited()` → `write_to_state_db()`。AUTO_TECHSUPPORT\|GLOBAL.state と AUTO_TECHSUPPORT_FEATURE\|<feat>.state がともに `enabled` かつ rate-limit を満たした場合のみ発火。
-
-| 対象 DB / テーブル | キー | フィールド | 値 |
-|------------------|------|----------|----|
-| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | `<dump-name>` (例 `sonic_dump_DUT_20260515_123456`) | `timestamp` | `int(time.time())` (Unix epoch 秒、文字列化) |
-| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `event_type` | `core` または `memory` |
-| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `core_dump` | core dump ファイル名 (`event_type=core` 時のみ) |
-| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `container` | feature/docker 名 (例 `swss`) |
-
-### techsupport rotate 時 — STATE_DB から DELETE
-
-経路: `generate_dump` 完了 → `techsupport_cleanup.py` → `clean_state_db_entries()`。AUTO_TECHSUPPORT\|GLOBAL.state=`enabled` かつ `max_techsupport_limit>0` のときのみ、`/var/dump/` 配下を最古順で削除した結果に対応する STATE_DB エントリを 1:1 で除去する。**本処理は AUTO_TECHSUPPORT_FEATURE を参照しない** (GLOBAL の値のみ評価)。
-
-| 対象 DB / テーブル | 操作 | キー |
-|------------------|------|------|
-| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | `delete` | rotate された techsupport dump 名 |
-
-### 非該当 (副次書込なし)
-
-- CONFIG_DB: 両 script とも `db.get` のみで参照、書込みなし
-- APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB / ASIC_DB: 接続自体なし (`db.connect` は `CFG_DB` と `STATE_DB` のみ)
-- SAI 呼出: なし (techsupport は OS レベルの diagnostic 収集に閉じる)
-- Notification / Pub/Sub: なし (`SonicV2Connector` の素の `set`/`delete` のみで、keyspace 通知の購読クライアント不在)
-
-<!-- 証跡: sonic-utilities/scripts/coredump_gen_handler.py:69-78; sonic-utilities/scripts/techsupport_cleanup.py:13-18,52-55; sonic-utilities/utilities_common/auto_techsupport_helper.py:43-60,302-338 -->
-<!-- /side-effects -->
 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
@@ -414,5 +485,60 @@ kernel `core_pattern` 側 (`sonic-buildimage/files/image_config/sysctl/90-sonic.
 
 > **Evidence**: `sonic-utilities/utilities_common/auto_techsupport_helper.py:1-84`; `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/scripts/memory_threshold_check.py:1-30`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:22-26`; `sonic-utilities/scripts/coredump-compress:1-35`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-constants.md`
 <!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `coredump_gen_handler` パイプラインが読み出す関連テーブル (Phase C)
+
+`AUTO_TECHSUPPORT_FEATURE|<feat>` 単独では techsupport 起動可否は決定しない。`coredump_gen_handler.py` / `techsupport_cleanup.py` および共通ヘルパ `auto_techsupport_helper.py` は kernel `core_pattern` で起動されたあと、`AUTO_TECHSUPPORT|GLOBAL` を必ず先に評価し、さらに `FEATURE` テーブルの docker 名空間と STATE_DB 上の `AUTO_TECHSUPPORT_DUMP_INFO` を組み合わせて per-feature rate-limit を判定する。
+
+### グローバル共依存 — [`AUTO_TECHSUPPORT`](auto-techsupport.md) (key `GLOBAL`)
+
+`AUTO_TECHSUPPORT_FEATURE` 側の `state` / `rate_limit_interval` / `available_mem_threshold` は、GLOBAL の同名フィールドが**先に**評価されたうえで AND 条件として効く。GLOBAL.state が `disabled` なら FEATURE エントリの値に関わらず techsupport は起動しない。
+
+| 参照箇所 | API | フィールド | 用途 | evidence |
+|---|---|---|---|---|
+| `handle_coredump_cleanup` | `db.get(CFG_DB, AUTO_TS, CFG_STATE)` | `state` | core dump cleanup 全体の ON/OFF | `coredump_gen_handler.py:17` |
+| `handle_coredump_cleanup` | `db.get(CFG_DB, AUTO_TS, CFG_CORE_USAGE)` | `max_core_limit` | `/var/core` 容量しきい値 | `coredump_gen_handler.py:22` |
+| `CriticalProcCoreDumpHandle.handle_core_dump_creation_event` | `db.get(CFG_DB, AUTO_TS, CFG_STATE)` | `state` | FEATURE 評価前のグローバルゲート | `coredump_gen_handler.py:47` |
+| `handle_techsupport_creation_event` | `db.get(CFG_DB, AUTO_TS, CFG_STATE/CFG_MAX_TS)` | `state` / `max_techsupport_limit` | techsupport cleanup の ON/OFF と `/var/dump` 容量しきい値 | `techsupport_cleanup.py:27,32` |
+| `invoke_ts_command_rate_limited` | `db.get(CFG_DB, AUTO_TS, COOLOFF)` | `rate_limit_interval` | グローバル cool-off (per-feature 値と並列評価) | `auto_techsupport_helper.py:315` |
+| `get_since_arg` | `db.get(CFG_DB, AUTO_TS, CFG_SINCE)` | `since` | `show techsupport --since` 引数 | `auto_techsupport_helper.py:214` |
+| `MemoryChecker` | `cfg_db.get_table(AUTO_TECHSUPPORT)` | host 全体しきい値 | host 全体 memory チェック | `memory_threshold_check.py:117` |
+
+定数: `AUTO_TS = "AUTO_TECHSUPPORT|GLOBAL"` (`auto_techsupport_helper.py:46`)。
+
+### 暗黙 leafref — [`FEATURE`](feature.md) (docker テーブル)
+
+`AUTO_TECHSUPPORT_FEATURE` の key (`<feature_name>`) は `FEATURE` テーブルの `name` (docker 名) と同じ文字列空間を共有する。YANG コメントに `TODO: Leafref once the FEATURE YANG is added` とあり型レベルの強制はないが、handler は kernel から渡された `args.container` をそのまま `AUTO_TECHSUPPORT_FEATURE|{}` の key として組み立てる。
+
+| 参照箇所 | 形式 | 用途 | evidence |
+|---|---|---|---|
+| `CriticalProcCoreDumpHandle.handle_core_dump_creation_event` | `FEATURE_KEY = FEATURE.format(self.container)` | kernel 由来の container 名を AUTO_TECHSUPPORT_FEATURE key に変換 | `coredump_gen_handler.py:54-55` |
+| `invoke_ts_command_rate_limited` | `db.get(CFG_DB, FEATURE.format(container), COOLOFF)` | per-feature rate-limit 値の取得 | `auto_techsupport_helper.py:317-319` |
+| `MemoryChecker` | `cfg_db.get_table(AUTO_TECHSUPPORT_FEATURE)` + `startswith` 前方一致 | 全 feature の `available_mem_threshold` を一括取得しコンテナ名でルックアップ | `memory_threshold_check.py:118,144` |
+
+`trim_masic_suffix()` (`coredump_gen_handler.py:52`) で `swss0` → `swss` 等の masic suffix を剥がしてから FEATURE key を組み立てるため、AUTO_TECHSUPPORT_FEATURE のキーは masic suffix なしの形式 (= `FEATURE` テーブルと同形) で書く必要がある。`FEATURE` テーブル側の YANG が leafref を提供しないため、誤 docker 名を書いてもエラーにならず**該当エントリが黙って無視される** (handler 側は `db.get` で空値が返り `!= "enabled"` 判定で skip 扱い)。
+
+### STATE_DB 連動 — `AUTO_TECHSUPPORT_DUMP_INFO` (STATE_DB)
+
+per-feature `rate_limit_interval` の経過判定は CONFIG_DB 値だけでは決まらず、STATE_DB の前回 dump timestamp と現在時刻の差で判定される。techsupport 完了時に書き込み、cleanup 時に同期削除される。
+
+| 参照箇所 | API | キー | 用途 | evidence |
+|---|---|---|---|---|
+| `get_ts_map` | `db.keys(STATE_DB, TS_MAP+"*")` + `get_all` | `AUTO_TECHSUPPORT_DUMP_INFO\|<dump_name>` | container 別の前回 dump 時刻一覧を再構成 | `auto_techsupport_helper.py:260-279` |
+| `verify_rate_limit_intervals` | (`get_ts_map` 経由) | 同上 | per-feature cool-off 経過判定 | `auto_techsupport_helper.py:292-298` |
+| `write_to_state_db` | `db.set(STATE_DB, key, ...)` | 同上 | techsupport 完了時に timestamp / event_type / container を書き込み | `auto_techsupport_helper.py:302-310` |
+| `clean_state_db_entries` | `db.delete(STATE_DB, TS_MAP + "\|" + name)` | 同上 | tarball cleanup と同期して entry を削除 | `techsupport_cleanup.py:13-18` |
+
+定数: `TS_MAP = "AUTO_TECHSUPPORT_DUMP_INFO"` (`auto_techsupport_helper.py:60`)。
+
+### 範囲外 (誤解されやすい隣接)
+
+- **`hostcfgd` / `featured` daemon**: `<!-- pubsub -->` 解析の通り、`AUTO_TECHSUPPORT_FEATURE` を `subscribe()` する常駐プロセスは存在しない。`hostcfgd` register_callbacks に AUTO_TECHSUPPORT 系の購読呼び出しなし、`featured` も `FEATURE` のみ購読し本テーブルには触らない。
+- **`DEVICE_METADATA`**: `coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / `auto_techsupport_helper.py` を `DEVICE_METADATA` で grep して 0 ヒット。multi-asic 判定や hostname 解決は本パイプラインに存在しない。
+- **`CORE_DUMP_NAME_TO_CONTAINER_MAP`**: 現行 sonic-utilities master のコード上に該当 CONFIG_DB / STATE_DB テーブルは存在しない (`grep -rn "CORE_DUMP_NAME_TO_CONTAINER" .cache/sonic-sources/` で 0 ヒット)。kernel `core_pattern` → `coredump-compress %e %t %p %P` でユーザ空間に渡される `args.container` がコンテナ名→`FEATURE` key への暗黙マッピングを果たしており、DB レベルのテーブルとしては具現化されていない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-feature-cross-refs.md` を参照。
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
