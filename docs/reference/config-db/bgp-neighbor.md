@@ -353,4 +353,33 @@ YANG の `peer_type` フィールドは bgpcfgd 経路では **参照されな�
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md`
 <!-- /defaults -->
+
+<!-- side-effects -->
+## SET/DEL の副次 DB 書込
+
+### STATE_DB — `BGP_PEER_CONFIGURED_TABLE`
+
+`bgpcfgd`（`BGPPeerMgrBase.update_state_db()`）が SET/DEL の都度 STATE_DB へ書き込む。
+
+| 操作 | トリガー | key | 内容 |
+|------|---------|-----|------|
+| SET | `add_peer()` 成功後 | `<nbr>` (default VRF) / `<vrf>\|<nbr>` | CONFIG_DB の全フィールドを `sorted(data.items())` で格納 |
+| SET | `apply_admin_status()` FRR 適用成功後 | 同上 | admin_status 変更後の data |
+| SET | `change_ip_range()` 成功後（dynamic peer） | 同上 | ip_range 更新後の data |
+| DEL | `del_handler()` FRR 削除成功後 | 同上 | エントリ削除 |
+
+> **注意**: DEL 時に対象エントリが STATE_DB に存在しない場合は `log_warn` のみ（例外なし）。
+
+key 構成: VRF が `"default"` なら `<nbr>` のみ、それ以外は `<vrf>|<nbr>`。
+
+### APPL_DB — 書込なし
+
+`bgpcfgd` / `frrcfgd` いずれも APPL_DB への直接書込は行わない。BGP neighbor の反映は FRR vtysh 経由で完結。
+
+### FRR running-config への暗黙注入
+
+`apply_op()` 呼び出しごとに `bgp suppress-fib-pending` が BGP インスタンス設定として自動プレフィックスされる（`managers_bgp.py:502-506`）。CONFIG_DB フィールドには現れない副次効果。
+
+> **ソース**: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:271-300, 239, 353, 443, 487`; `sonic-swss-common/common/schema.h:511`
+<!-- /side-effects -->
 <!-- glossary-links-injected: 9133f44230c2 -->
