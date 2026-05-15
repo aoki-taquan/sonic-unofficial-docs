@@ -40,6 +40,7 @@ nav:
   - copp-group.md
   - copp-trap.md
   - debug-counter.md
+  - counters-state.md
   - mirror-session.md
   - policer.md
   - buffer-pg.md
