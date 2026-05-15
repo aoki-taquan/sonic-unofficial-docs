@@ -23890,6 +23890,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34537,6 +34548,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34754,6 +34776,87 @@ fpmsyncd の <code>getNextHopWt()</code> が weight を取得し、非空のと�
 <li>DEL 操作の前に暗黙的な DEL が走る（warm restart 非使用時）。これにより古いフィールドが Redis から消去される</li>
 <li><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の同時指定はエラー</li>
 </ul>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>ROUTE_TABLE</code> (APPL_DB) は YANG 未定義テーブル（APPL_DB は YANG 管理対象外）のため leafref は存在しない。
+以下はすべて <code>routeorch::doRouteTask()</code> から呼び出される実装レベルの暗黙参照。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / Orch</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF_TABLE</code>（VRFOrch）</td>
+<td>存在確認 + OID + refcount</td>
+<td>key が <code>Vrf*:&lt;prefix&gt;</code> 形式の非デフォルト VRF のとき。未登録なら <code>it++</code> で待機</td>
+<td><code>routeorch.cpp</code> L706–717 (<code>isVRFexists</code> / <code>getVRFid</code>), L2013, L2773 (refcount inc/dec)</td>
+</tr>
+<tr>
+<td><code>NEIGH_TABLE</code>（NeighOrch）</td>
+<td>OID + refcount + 解決トリガ</td>
+<td><code>nexthop</code> 指定で IP next-hop（intf-only でない）のとき。未解決時は <code>resolveNeighbor()</code> で ARP/ND 要求 + <code>return false</code></td>
+<td><code>routeorch.cpp</code> L1499–1510 (<code>addNextHopGroup</code> 内), L2094–2119 (single NH), L2197–2219 (ECMP)</td>
+</tr>
+<tr>
+<td><code>INTF_TABLE</code>（IntfsOrch）</td>
+<td>RIF OID + refcount + サブネット判定</td>
+<td><code>ifname</code> 指定 / intf-only NH のとき。RIF 未作成 (<code>SAI_NULL_OBJECT_ID</code>) なら <code>return false</code></td>
+<td><code>routeorch.cpp</code> L2083 (<code>getRouterIntfsId</code>), L1045 (<code>isPrefixSubnet</code>), L1362, L1384 (refcount)</td>
+</tr>
+<tr>
+<td><code>PORT_TABLE</code>（PortsOrch）</td>
+<td>起動ブロック + Inband 判定</td>
+<td>常時。<code>allPortsReady()</code> が false の間は全 ROUTE_TABLE 処理ブロック。Inband port 宛 NH はスキップ</td>
+<td><code>routeorch.cpp</code> L609 (<code>allPortsReady</code>), L2074 (<code>isInbandPort</code>), L243 (<code>getCpuPort</code>)</td>
+</tr>
+<tr>
+<td>NhgOrch / CbfNhgOrch（NEXTHOP_GROUP / CBF_NEXT_HOP_GROUP_TABLE）</td>
+<td>存在確認 + 内部オブジェクト + refcount</td>
+<td><code>nexthop_group</code> 非空のとき。<code>nexthop</code>/<code>ifname</code> との同時指定はエラー erase</td>
+<td><code>routeorch.cpp</code> L810–814 (排他), L838–839, L2042–2057, L2411 (<code>hasNhg</code> OR チェック), L2546 (refcount)</td>
+</tr>
+<tr>
+<td>FgNhgOrch（FG_NHG / FG_NHG_PREFIX）</td>
+<td>適用判定 + 専用 NHG 構築</td>
+<td>プレフィクスが FG_NHG 設定にマッチするとき。通常 NHG 管理をバイパス</td>
+<td><code>routeorch.cpp</code> L2028–2037 (<code>isRouteFineGrained</code> / <code>setFgNhg</code>), L2403, L2475</td>
+</tr>
+<tr>
+<td>Srv6Orch（SRV6_SID_LIST_TABLE）</td>
+<td>存在確認 + SRv6 NH + Agg ID</td>
+<td><code>segment</code> または <code>seg_src</code> 非空（<code>srv6_nh = true</code>）のとき</td>
+<td><code>routeorch.cpp</code> L2055 (<code>contextIdExists</code>), L2100, L2143, L2169 (<code>srv6Nexthops</code>), L2295, L2352 (<code>getAggId</code>)</td>
+</tr>
+<tr>
+<td>VxlanTunnel / remote VTEP（NeighOrch tunnel NH）</td>
+<td>VTEP 作成 + tunnel NH</td>
+<td><code>vni_label</code> 非空（<code>overlay_nh = true</code>）かつ SRv6 でない場合</td>
+<td><code>routeorch.cpp</code> L872 (<code>isL3VniVlan</code>), L2127 (<code>createRemoteVtep</code>), L2133, L2208 (<code>addTunnelNextHop</code>)</td>
+</tr>
+<tr>
+<td>FlowCounterRouteOrch</td>
+<td>通知のみ</td>
+<td>route flow counter enable 時、ROUTE add/remove ごと</td>
+<td><code>routeorch.cpp</code> L259 (<code>onAddMiscRouteEntry</code>), L282, L2708 (<code>handleRouteAdd</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">排他関係</p>
+<p><code>nexthop_group</code> と <code>nexthop</code>/<code>ifname</code> の同時指定はエラー (<code>routeorch.cpp</code> L810–814 で erase)。
+SRv6 NH (<code>segment</code>/<code>seg_src</code>) と VxLAN overlay NH (<code>vni_label</code>) も実装上排他（<code>srv6_nh</code> / <code>overlay_nh</code> フラグが排他分岐）。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">NH 解決の遅延 install</p>
+<p>未解決 neighbor / 未作成 RIF / 未作成 VRF / 未登録 nexthop_group のいずれかがあれば <code>return false</code> または <code>it++</code> でリトライキューに残り、対応する Orch が該当オブジェクトを作成した時点で次回 <code>doRouteTask()</code> 実行時に自動 install される。再試行はイベント駆動ではなくテーブル sync の自然な再 polling による。</p>
+</div>
+<!-- /cross-refs -->
+
 <h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>routeorch::doRouteTask()</code> (<code>sonic-swss/orchagent/routeorch.cpp</code>): SAI <code>route_entry</code> の作成・更新・削除</li>
