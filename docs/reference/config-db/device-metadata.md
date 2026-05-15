@@ -632,6 +632,108 @@ multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値にな�
 詳細トレース: `meta/_intermediate/cdb-flow/device-metadata-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## Phase H: プラットフォーム差分 (ASIC_VENDOR / switch_type / subtype / sub_role)
+
+> **用語**: `ASIC_VENDOR` はビルド時定数 (`sonic_asic_platform`: `mellanox`/`broadcom`/`barefoot`/`cisco-8000` 等)。`DEVICE_METADATA` フィールドではないが、`switch_type`/`subtype`/`sub_role` と組み合わせて J2 テンプレートおよび orchdaemon でベンダ固有分岐を形成する。
+
+### ASIC_VENDOR 伝搬経路
+
+```
+ビルド時 sonic_asic_platform
+  → docker_image_ctl.j2:792 : -e ASIC_VENDOR={{ sonic_asic_platform }}  (swss コンテナのみ)
+  → docker-init.j2:13       : sonic-cfggen -a '{"ASIC_VENDOR":"${ASIC_VENDOR:-unknown}"}'
+  → ipinip.json.j2 / switch.json.j2 などの J2 テンプレートで参照
+
+orchagent.sh 側は swss_vars.j2:2 が出力する "asic_type" を
+jq で読み取り export platform=<value> として利用。
+```
+
+### ASIC_VENDOR 分岐: IPinIP トンネルの DSCP モード
+
+| 条件 | `dscp_mode` | evidence |
+|------|-------------|---------|
+| `ASIC_VENDOR` に `"broadcom"` を含む かつ `type == LeafRouter` (is_broadcom_t1) | `"pipe"` | sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2:11-13,98-100 |
+| `ASIC_VENDOR` に `"broadcom"` を含む かつ LeafRouter 以外 | `"uniform"` | ipinip.json.j2:97-102 |
+| `ASIC_VENDOR` が broadcom 以外 (Mellanox 等) | `"pipe"` + `decap_dscp_to_tc_map: "AZURE"` (AZURE QoS map 存在時) | ipinip.json.j2:103-108 |
+
+### platform 分岐: PFC Watchdog Handler
+
+`orchdaemon.cpp:190` で `getenv("platform")` を読む。
+
+| platform 値 | PfcWd Handler | portStatIds 差異 | evidence |
+|-------------|--------------|-----------------|---------|
+| `mellanox` / `vs` | `PfcWdZeroBufferHandler` + `PfcWdLossyHandler` | `SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` (microsecond) | sonic-swss/orchagent/orchdaemon.cpp:635-672 |
+| `marvell-*` / `centec` / `barefoot` / `nephos` | `PfcWdZeroBufferHandler` or `PfcWdAclHandler` + `PfcWdLossyHandler` | `SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION` (無単位) | orchdaemon.cpp:674-731 |
+| `broadcom` | `PfcWdDlrHandler`/`PfcWdAclHandler` + `PfcWdLossyHandler` (pfcDlrInit 条件) | `SAI_PORT_STAT_PFC_*_ON2OFF_RX_PKTS` を追加 | orchdaemon.cpp:733-803 |
+| `cisco-8000` | `PfcWdSwOrch` with Cisco stat IDs | `SAI_PORT_STAT_PFC_*_RX_PKTS` のみ | orchdaemon.cpp:804-860 |
+| それ以外 / 未設定 | PfcWd なし | — | — |
+
+### platform 分岐: DTel (Dataplane Telemetry) 初期化
+
+| platform 値 | DTelOrch 初期化 | evidence |
+|-------------|----------------|---------|
+| `barefoot` / `vs` | `DTelOrch` を `m_orchList` に追加 | sonic-swss/orchagent/orchdaemon.cpp:503-524 |
+| それ以外 | DTelOrch 不使用 | orchdaemon.cpp:503 |
+
+### subtype 分岐: SmartSwitch DashEniFwdOrch
+
+| `subtype` 値 | 追加 Orch | evidence |
+|-------------|----------|---------|
+| `SmartSwitch` | `DashEniFwdOrch` を m_orchList に追加 | sonic-swss/orchagent/orchdaemon.cpp:613-618 |
+| それ以外 | 追加なし | — |
+
+### switch_type 分岐: OrchDaemon クラス選択
+
+| `switch_type` 値 | 起動クラス | evidence |
+|----------------|-----------|---------|
+| `fabric` | `FabricOrchDaemon` — 通常 OrchDaemon とは別クラス; portsyncd/neighsyncd 等の非 fabric プロセスを critical_processes から除外 | sonic-swss/orchagent/main.cpp:1009; sonic-buildimage/dockers/docker-orchagent/critical_processes.j2:2-4 |
+| それ以外 | 通常 `OrchDaemon` | main.cpp:1002-1009 |
+
+### switch_type 分岐: orchagent pop batch size (-b フラグ)
+
+| `LOCALHOST_SWITCHTYPE` 値 | `-b` 値 | evidence |
+|--------------------------|--------|---------|
+| `chassis-packet` | `128` (高速リンク通知用) | sonic-buildimage/dockers/docker-orchagent/orchagent.sh:23-25 |
+| `dpu` | `65536` (大量オブジェクト対応) | orchagent.sh:26-28 |
+| それ以外 | `1024` (デフォルト) | orchagent.sh:29-31 |
+
+### sub_role 分岐: startup_tsa_tsb.py — TSA 設定対象 ASIC
+
+| `sub_role` 値 | 挙動 | evidence |
+|-------------|------|---------|
+| `FrontEnd` | multi-ASIC 構成で TSA 有効かチェックして TSA コマンドを実行 | sonic-buildimage/files/scripts/startup_tsa_tsb.py:53-56 |
+| `BackEnd` / `Fabric` / その他 | multi-ASIC 時は TSA 設定をスキップ (FrontEnd のみが TSA 対象) | startup_tsa_tsb.py:53-57 |
+
+### sub_role 分岐: ipinip.json.j2 — loopback interface 集合
+
+| `sub_role` 値 | loopback interface リスト | evidence |
+|-------------|--------------------------|---------|
+| `FrontEnd` または `BackEnd` | `['Loopback0', 'Loopback4096']` — chassis 内部通信用 Loopback4096 を含む | sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2:22-26 |
+| それ以外 (npu 通常モード等) | `['Loopback0', 'Loopback2', 'Loopback3']` — 通常ルーティング loopback | ipinip.json.j2:25-26 |
+
+### switch_type 分岐: switch.json.j2 — SWITCH_TABLE 生成
+
+| 条件 | SWITCH_TABLE パラメータ | evidence |
+|------|-----------------------|---------|
+| `switch_type != "dpu"` | `ecmp_hash_seed`, `lag_hash_seed`, `fdb_aging_time: 600` を生成 | sonic-buildimage/dockers/docker-orchagent/switch.json.j2:35-38 |
+| `switch_type == "dpu"` | 上記 3 フィールドを生成しない | switch.json.j2:35 |
+| `switch_type != "chassis-packet"` かつ `!= "dpu"` | `ecmp_hash_offset`, `lag_hash_offset` を生成 | switch.json.j2:39-41 |
+
+### switch_type 分岐: arp_update 起動条件
+
+| 条件 | 挙動 | evidence |
+|------|------|---------|
+| VLAN テーブル存在 OR `switch_type == "chassis-packet"` | arp_update.conf を supervisor に追加 → arp_update 起動 | sonic-buildimage/dockers/docker-orchagent/docker-init.j2:38-40 |
+| それ以外 | arp_update 不起動 | docker-init.j2:38-40 |
+
+### asic_id 動的更新 (SmartSwitch Chassis)
+
+`docker-init.j2:53-67` で `/etc/sonic/chassisdb.conf` が存在する場合、`CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE|asic{N}` から PCI アドレスを取得し CONFIG_DB の `DEVICE_METADATA|localhost.asic_id` を runtime に書き込む。orchagent / hostcfgd 以外が DEVICE_METADATA を書き換える唯一の既知ケース。
+
+evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
+<!-- /platform -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
