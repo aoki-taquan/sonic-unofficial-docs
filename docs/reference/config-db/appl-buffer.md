@@ -474,6 +474,153 @@ redis-cli -n 5 keys 'FLEX_COUNTER_TABLE|BUFFER_POOL_WATERMARK*'
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+APPL_DB の 6 BUFFER テーブルは **`buffermgrd` (`buffermgrdyn` / `buffermgr`) が Producer、`orchagent` の `BufferOrch` が Consumer** という単一方向の Producer / Consumer 関係。すべて APPL_DB (db id = 0) 上で `ProducerStateTable` ↔ `ConsumerStateTable` の **PUBLISH/SUBSCRIBE 経路** を取る。keyspace notification (`PSUBSCRIBE __keyspace@N__:...`) は**使用しない**[^buforch].
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / 構造 |
+|---|---|---|
+| `buffermgrdyn` / `buffermgr` → APPL_DB | `ProducerStateTable` | `<TABLE>_KEY_SET` / `_KEY_DEL` ハッシュ + `<TABLE>_CHANNEL@0` PUBLISH |
+| APPL_DB → `BufferOrch` (6 テーブル全て) | `ConsumerStateTable` | `SUBSCRIBE <TABLE>_CHANNEL@0`、`pops()` Lua SCRIPT で最大 `gBatchSize` (既定 128) keys を一括取得 |
+| `BufferOrch` → APPL_STATE_DB (pool / profile のみ) | `ResponsePublisher` (Orch 基底) | `BUFFER_POOL_TABLE_RESPONSE_CHANNEL` / `BUFFER_PROFILE_TABLE_RESPONSE_CHANNEL` (上り ack) |
+
+### BufferOrch のコンストラクトと ConsumerStateTable 選択
+
+`orchdaemon.cpp:386-394` で 6 テーブルを vector に詰めて `BufferOrch(applDb, configDb, stateDb, tables)` を作る。`bufferorch.cpp:53` の初期化リストで `Orch(applDb, tableNames)` (`orch.cpp:97-103`) を呼び、各 table が `addConsumer(applDb, name, default_orch_pri=0)` に流れる。`orch.cpp:1186-1196` の分岐:
+
+```cpp
+if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+    addExecutor(new Consumer(new SubscriberStateTable(db, tableName, DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+else
+    addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+```
+
+APPL_DB は CONFIG_DB / STATE_DB / CHASSIS_APP_DB のいずれでもないため、6 テーブルとも **`ConsumerStateTable`** が選択される。`gBatchSize` は `orch.cpp:17` で `int gBatchSize = 0;`、`orchagent -b` フラグで上書き可。0 のとき swss-common 側の `DEFAULT_POP_BATCH_SIZE = 128` が適用され、1 回の `pops()` で最大 128 keys を取り出す。
+
+### `doTask()` の明示 drain 順序 — pool → profile → 残り
+
+6 テーブルとも `default_orch_pri = 0` で同優先度。Select の優先度では依存解決できないため、`BufferOrch::doTask()` (`bufferorch.cpp:2040-2073`) が **手動で drain 順を強制**する:
+
+```cpp
+auto pool_consumer = getExecutor(APP_BUFFER_POOL_TABLE_NAME);
+pool_consumer->drain();
+auto profile_consumer = getExecutor(APP_BUFFER_PROFILE_TABLE_NAME);
+profile_consumer->drain();
+for (auto &it : m_consumerMap) {           // PG / QUEUE / PROFILE_LIST_{INGRESS,EGRESS}
+    auto consumer = it.second.get();
+    if (consumer == profile_consumer) continue;
+    if (consumer == pool_consumer)    continue;
+    consumer->drain();
+}
+gPortsOrch->flushCounters();
+```
+
+これにより、同一 doTask 呼び出し内で **pool → profile → (pg / queue / profile-list)** の SAI 依存関係順に消化される。ベース `Orch::doTask()` の `m_consumerMap` イテレート実装をオーバーライドしている。Phase B (順依存) で詳述した固定 drain 順と同じ実装。
+
+### orchagent 主ループの select 周期
+
+`orchdaemon.cpp:23, 959`:
+
+```cpp
+#define SELECT_TIMEOUT 1000   // ミリ秒
+ret = m_select->select(&s, SELECT_TIMEOUT);
+```
+
+PUBLISH 受信ごとに `Select::select` が return → 該当 Consumer の `execute()` → `BufferOrch::doTask(Consumer&)` (`bufferorch.cpp:2075-2138`) が走る。1000 ms タイムアウト時は `BufferOrch::doTask()` (引数なし版) が呼ばれ、pipeline flush と合わせて全テーブルを drain する。
+
+### ガード — port 初期化未完時は m_toSync に積み残し
+
+`bufferorch.cpp:2079-2091` で port 初期化が終わっていない間は処理せず保留する (Phase B の readiness ゲートと同一):
+
+```cpp
+if (gMySwitchType == "voq") {
+    if (!gPortsOrch->isInitDone()) return;       // VOQ chassis
+} else if (!gPortsOrch->isConfigDone()) {
+    return;                                       // 非 VOQ
+}
+```
+
+PUBLISH 自体は受信して `m_toSync` に積まれるが、その回の `doTask` は早期 return し、次回 select 回まで保留される。
+
+### ResponsePublisher による上り ack (APPL_STATE_DB)
+
+`orch.h:382` の `ResponsePublisher m_publisher{"APPL_STATE_DB"}` を通じて、BufferOrch は **`BUFFER_POOL_TABLE` / `BUFFER_PROFILE_TABLE` のみ** SAI 反映完了を ack する (PG / Queue / PROFILE_LIST は ack なし、Phase F の副次書込と一致):
+
+| 行 | テーブル | 条件 | 内容 |
+|---|---|---|---|
+| `bufferorch.cpp:555` | `BUFFER_POOL_TABLE` | pool SET 成功 + `xoff` 非空 | `xoff=<value>` (force=true) |
+| `bufferorch.cpp:589` | `BUFFER_POOL_TABLE` | pool DEL 成功 | 空 fvs (force=true) |
+| `bufferorch.cpp:832` | `BUFFER_PROFILE_TABLE` | profile 新規 SET 成功 | 全 fvs (force=true) |
+| `bufferorch.cpp:880` | `BUFFER_PROFILE_TABLE` | profile 更新成功 | 全 fvs (force=true) |
+
+主用途は buffermgrdyn の SHP (`xoff`) 計算同期と config-validator 連携。
+
+### バッチ / リトライ / 優先度
+
+- **batch size**: `gBatchSize = 0` → swss-common `DEFAULT_POP_BATCH_SIZE = 128` keys/`pops()`
+- **priority**: 6 テーブルとも `default_orch_pri = 0` (`orch.h:59`) → Select は同優先度。依存順序は `doTask()` 内の手動 drain で担保
+- **retry**: `task_need_retry` 時は `m_toSync` から erase せず `it++` → 次回 select 回まで保留 (`bufferorch.cpp:2121-2123`)。明示 sleep / backoff なし
+- **task_failed**: その回の `doTask` を `return` で打ち切り (`bufferorch.cpp:2117-2120`)。後続の積み残しは次回ディスパッチで処理
+- **profile のみの即時 2 段 retry**: `processBufferProfile()` L778-797 で `sai_set_buffer_profile_attribute()` 失敗時に同 attr で 1 回だけ即時再呼び出し (ベンダ transient 吸収用)
+
+### Producer 側 — buffermgrd
+
+| エージェント | model | テーブル | 型 |
+|---|---|---|---|
+| `buffermgrdyn` | dynamic | 6 テーブルすべて | `ProducerStateTable` (`buffermgrdyn.cpp:42-47`, `buffermgrdyn.h:208,214`) |
+| `buffermgr` | static (pass-through) | 6 テーブルすべて | `ProducerStateTable` (`buffermgr.cpp:25-33`, `buffermgr.h:48,50`) |
+
+`ProducerStateTable::set/del` は `<TABLE>_KEY_SET` / `_KEY_DEL` ハッシュへ書き、`<TABLE>_CHANNEL@0` に PUBLISH (swss-common `producerstatetable.cpp`)。
+
+### 起動時スナップショット — ConsumerStateTable は KEYS 再生しない
+
+`ConsumerStateTable` ctor は `SubscriberStateTable` と違って **既存 keys の再生を行わない**。buffermgrd 側が起動時に CONFIG_DB を読んで `ProducerStateTable::set()` で APPL_DB に再投入し、その PUBLISH を BufferOrch が通常通り受信する。
+
+warm reboot 時のみ、`BufferOrch::initBufferReadyLists()` (`bufferorch.cpp:86-143`) が `Table::getKeys()` で APPL_DB の `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` を**直読み**して ready list を初期化する (Pub/Sub 経由ではない)。cold/fast start 時は CONFIG_DB の `BUFFER_PG` / `BUFFER_QUEUE` を直読み。
+
+### データフロー図
+
+```
+admin (config buffer ... / config_db.json 初期投入)
+  ↓ ConfigDBConnector.set_entry()
+CONFIG_DB[BUFFER_POOL / BUFFER_PROFILE / BUFFER_PG / BUFFER_QUEUE / BUFFER_PORT_*_PROFILE_LIST]
+  ↓ keyspace notification (PSUBSCRIBE __keyspace@4__:BUFFER_*|*)
+buffermgrdyn (dynamic) または buffermgr (static)
+  ├─ Lua plugin で size / xoff / xon / threshold 計算 (dynamic のみ)
+  └─ ProducerStateTable.set("<TABLE>", key, fvs)
+       ↓ HSET <TABLE>_KEY_SET ... + PUBLISH <TABLE>_CHANNEL@0
+APPL_DB[BUFFER_POOL_TABLE / BUFFER_PROFILE_TABLE / BUFFER_PG_TABLE /
+        BUFFER_QUEUE_TABLE / BUFFER_PORT_*_PROFILE_LIST_TABLE]
+  ↓ <TABLE>_CHANNEL@0 message
+orchagent select() ループ (SELECT_TIMEOUT = 1000 ms)
+  ↓ ConsumerStateTable.pops()  (gBatchSize=0 → 128 keys/回)
+BufferOrch::doTask()
+  ├─ pool_consumer->drain()       → processBufferPool()
+  │    └─ SAI create/set/remove + (xoff 非空時) m_publisher.publish(BUFFER_POOL_TABLE)
+  ├─ profile_consumer->drain()    → processBufferProfile()
+  │    └─ SAI create/set/remove + m_publisher.publish(BUFFER_PROFILE_TABLE)
+  └─ それ以外 (pg / queue / profile-list) を drain
+       └─ SAI set_ingress_priority_group_attribute / queue_attribute / port_attribute
+APPL_STATE_DB[BUFFER_POOL_TABLE / BUFFER_PROFILE_TABLE]  ← ResponsePublisher (ack)
+  ↓ <TABLE>_RESPONSE_CHANNEL
+buffermgrdyn が SHP 同期 / config-validator が反映確認
+
+NotificationConsumer: なし
+SubscriberStateTable (BufferOrch 内): なし — すべて ConsumerStateTable
+TTL / expire: なし
+```
+
+### 詳細ノート
+
+行番号付き完全マトリクス・PUBLISH チャネル列挙・warm reboot 経路は中間メモを参照: `meta/_intermediate/cdb-flow/appl-buffer-pubsub.md`。
+
+> **証跡**: `bufferorch.cpp:53` (`Orch(applDb, tableNames)`) → `orch.cpp:97-103, 1186-1196` (APPL_DB → ConsumerStateTable 分岐) → `bufferorch.cpp:2040-2073` (drain 順)、`m_publisher.publish` × 4 hit、`buffermgrdyn.h:208/214` + `buffermgr.h:48/50` (ProducerStateTable 型確認) を全件確認。
+
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
