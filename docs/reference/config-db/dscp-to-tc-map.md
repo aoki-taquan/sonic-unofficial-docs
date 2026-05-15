@@ -195,6 +195,34 @@ show qos map dscp-tc
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+対象テーブル: `DSCP_TO_TC_MAP`。Consumer: `QosOrch::handleDscpToTcTable()` / `handlePortQosMapTable()` (`qosorch.cpp`)。
+
+### SET 時の順序制約
+
+| # | 依存 | 方向 | 挙動 |
+|---|------|------|------|
+| 1 | `DSCP_TO_TC_MAP|<name>` SAI 作成 → `PORT_QOS_MAP|<port>` SET | 強制先行 | `resolveFieldRefValue()` 未解決で `task_need_retry`（自動再試行）|
+| 2 | `DSCP_TO_TC_MAP|<name>` 作成 → `PORT_QOS_MAP\|global` SET（Broadcom） | 強制先行 | 同上。db_migrator が自動生成するが複数マップ時は先頭 1 件（順序未定義）|
+| 3 | `DSCP_TO_TC_MAP|<name>` 作成 → `TUNNEL_DECAP_TABLE|<name>` SET | 強制先行 | `resolveTunnelQosMap()` 未解決で `task_need_retry`（未指定は silent skip） |
+| 4 | dscp 値は数値文字列のみ | 必須 | `stoi()` に例外処理なし。非数値 → `std::invalid_argument` → `task_failed` |
+
+> **推奨順序（SET）**: `DSCP_TO_TC_MAP|<name>` → `PORT_QOS_MAP|<port>` → `TUNNEL_DECAP_TABLE`（参照順に書く）。
+
+### DEL 時の順序制約
+
+| # | 依存 | 方向 | 挙動 |
+|---|------|------|------|
+| 3 | `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` 参照解除 → `DSCP_TO_TC_MAP|<name>` DEL | 強制先行 | 参照中は `m_pendingRemove=true` + `task_need_retry` ロック |
+| 5 | pending_remove 解消 → SET（再書き込み）可能 | 強制先行 | pending_remove 中の SET は即 `task_need_retry` |
+
+> **推奨順序（DEL）**: `PORT_QOS_MAP|<port>` の dscp_to_tc_map フィールド削除 → `DSCP_TO_TC_MAP|<name>` DEL。
+
+> **Evidence**: `qosorch.cpp:136-139,181-186,2021-2026,2124-2129`; `tunneldecaporch.cpp:217-221`; `db_migrator.py:700-715`
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・制約
 
