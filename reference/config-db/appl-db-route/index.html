@@ -24442,6 +24442,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 構築: ZMQ 有効/無効で分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqorchaddconsumer-zmqconsumer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqOrch::addConsumer が ZmqConsumer / Consumer を生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-consumerstatetable-lua" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 合体: ConsumerStateTable の Lua スクリプト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batch-pop-batch-sai-bulker-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch: pop batch と SAI bulker の 2 段構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-responsepublisher-appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        応答 publish: ResponsePublisher + APPL_STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retry キャッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35508,6 +35602,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 構築: ZMQ 有効/無効で分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqorchaddconsumer-zmqconsumer-consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqOrch::addConsumer が ZmqConsumer / Consumer を生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-consumerstatetable-lua" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 合体: ConsumerStateTable の Lua スクリプト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#batch-pop-batch-sai-bulker-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Batch: pop batch と SAI bulker の 2 段構成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-responsepublisher-appl_state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        応答 publish: ResponsePublisher + APPL_STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retry キャッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35682,7 +35870,7 @@
 
 <h2 id="_6">制約<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> は排他。両方を指定するとエラー<sup id="fnref8:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup>。</li>
+<li><code>nexthop_group</code> と <code>nexthop</code> / <code>ifname</code> は排他。両方を指定するとエラー<sup id="fnref9:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup>。</li>
 <li><code>blackhole</code> が <code>"true"</code> の場合、<code>nexthop</code> / <code>ifname</code> は不要かつ無視される。</li>
 <li>VRF-aware 経路の key は <code>Vrf&lt;name&gt;:</code> プレフィクスを含む（コロン区切り）。<code>Vrf</code> で始まらない VRF 名は <code>fpmsyncd</code> がエラーログを出して処理を中断する<sup id="fnref4:rsync"><a class="footnote-ref" href="#fn:rsync">1</a></sup>。</li>
 <li>EVPN IP Prefix 経路では <code>nexthop</code>・<code>vni_label</code>・<code>router_mac</code>・<code>ifname</code> が揃っていない場合は ROUTE_TABLE への書き込みをスキップする<sup id="fnref5:rsync"><a class="footnote-ref" href="#fn:rsync">1</a></sup>。</li>
@@ -36683,6 +36871,216 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 <p>詳細分析: <code>meta/_intermediate/cdb-flow/appl-db-route-cross-refs.md</code></p>
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p>APPL_DB <code>ROUTE_TABLE</code> の主購読者 <code>RouteOrch</code> は <strong><code>ZmqOrch</code> を継承</strong>しており、
+fpmsyncd → orchagent の経路通知を Redis pub/sub または <strong>ZMQ ソケット</strong> のどちらでも
+受け取れる二刀流の構成になっている<sup id="fnref8:rorch"><a class="footnote-ref" href="#fn:rorch">2</a></sup><sup id="fnref:zmqorch"><a class="footnote-ref" href="#fn:zmqorch">9</a></sup><sup id="fnref:orchdaemon"><a class="footnote-ref" href="#fn:orchdaemon">10</a></sup>。</p>
+<h3 id="consumer-zmq">Consumer 構築: ZMQ 有効/無効で分岐<a class="headerlink" href="#consumer-zmq" title="Permanent link">&para;</a></h3>
+<p><code>orchagent/orchdaemon.cpp:327-337</code> で <code>RouteOrch</code> を組み立てる際、
+フィーチャフラグ <code>ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</code> の値で
+ZMQ サーバを渡すかどうかを切り替える:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// orchagent/orchdaemon.cpp:327-337</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">routeorch_pri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">table_name_with_pri_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">route_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w">        </span><span class="n">routeorch_pri</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">APP_LABEL_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w">  </span><span class="n">routeorch_pri</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">};</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="c1">// Enable the fpmsyncd service to send Route events to orchagent via the ZMQ channel.</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="k">auto</span><span class="w"> </span><span class="n">enable_route_zmq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_feature_status</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="k">auto</span><span class="w"> </span><span class="n">route_zmq_sever</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enable_route_zmq</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">m_zmqServer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="n">gRouteOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RouteOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">route_tables</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">route_zmq_sever</span><span class="p">);</span>
+</span></code></pre></div>
+<p>優先度 <code>routeorch_pri = 5</code> で <code>APP_ROUTE_TABLE_NAME</code> (= <code>"ROUTE_TABLE"</code>) と
+<code>APP_LABEL_ROUTE_TABLE_NAME</code> の 2 テーブルを購読する。<code>RouteOrch::RouteOrch()</code>
+は <code>ZmqOrch(db, tableNames, zmqServer)</code> をベースクラス初期化子で呼ぶだけで、
+Consumer 本体は <code>ZmqOrch::addConsumer()</code> が組む。</p>
+<h3 id="zmqorchaddconsumer-zmqconsumer-consumer"><code>ZmqOrch::addConsumer</code> が <code>ZmqConsumer</code> / <code>Consumer</code> を生成<a class="headerlink" href="#zmqorchaddconsumer-zmqconsumer-consumer" title="Permanent link">&para;</a></h3>
+<p><code>orchagent/zmqorch.cpp:59-72</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">ZmqOrch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">,</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">                          </span><span class="n">ZmqServer</span><span class="w"> </span><span class="o">*</span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">orderedQueue</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">dbPersistence</span><span class="p">)</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="p">{</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">zmqServer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ZmqConsumer</span><span class="p">(</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ZmqConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">zmqServer</span><span class="p">,</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">                                      </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">,</span><span class="w"> </span><span class="n">dbPersistence</span><span class="p">),</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">            </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">orderedQueue</span><span class="p">));</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span>
+</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span>
+</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">            </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-18-17"><a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>ZMQ フラグ</th>
+<th>Executor</th>
+<th>Selectable</th>
+<th>データ経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有効 (<code>route_zmq_sever != nullptr</code>)</td>
+<td><code>ZmqConsumer</code></td>
+<td><code>ZmqConsumerStateTable</code></td>
+<td>fpmsyncd が ZMQ ソケットに送信 → orchagent が受信</td>
+</tr>
+<tr>
+<td>無効 (<code>nullptr</code>、デフォルト)</td>
+<td><code>Consumer</code></td>
+<td><code>ConsumerStateTable</code></td>
+<td>fpmsyncd が APPL_DB に Lua スクリプトで書込 → Redis keyspace 通知で orchagent が pop</td>
+</tr>
+</tbody>
+</table>
+<p>どちらのパスでも pop バッチサイズは <code>gBatchSize</code>（<code>orch.cpp:17</code> の
+グローバル変数。orchagent 起動引数で上書き可能。<code>ZmqConsumerStateTable</code>
+側の既定値は <code>DEFAULT_POP_BATCH_SIZE = 128</code>、<code>zmqconsumerstatetable.h:20</code>）<sup id="fnref:zmqcst"><a class="footnote-ref" href="#fn:zmqcst">11</a></sup>。</p>
+<h3 id="set-consumerstatetable-lua">SET 合体: <code>ConsumerStateTable</code> の Lua スクリプト<a class="headerlink" href="#set-consumerstatetable-lua" title="Permanent link">&para;</a></h3>
+<p>非 ZMQ パスでは <code>ConsumerStateTable</code> が <strong>同一 key への連続 SET を最終値のみ
+配信</strong> する。<code>routeorch.cpp:1085-1092</code> のコメントが明示している:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>The bulker is flushed once for each loop of doTask. There can be cases when
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>the same route is set multiple times in the same doTask iteration. Those updates
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>may have been consolidated by ConsumerStateTable leading to orchagent receiving
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>only the last SET update.
+</span></code></pre></div>
+<p>これにより fpmsyncd が同じ prefix を高頻度で書き換えても、orchagent が
+受け取るのは各 doTask ループ単位で最新 1 件に圧縮される。DEL は別途
+<code>_DELS_</code> に積まれて配信される。ZMQ パスではこの圧縮はサーバ側の
+キューに依存する。</p>
+<h3 id="batch-pop-batch-sai-bulker-2">Batch: pop batch と SAI bulker の 2 段構成<a class="headerlink" href="#batch-pop-batch-sai-bulker-2" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch::doTask(Consumer&amp;)</code> (<code>routeorch.cpp:605-1103</code>) は 1 ループで
+<strong>pop batch → 個別解析 → SAI bulker 投入 → bulker flush</strong> の流れを取る:</p>
+<ol>
+<li>Consumer から <code>gBatchSize</code> 件ずつ pop し、<code>m_toSync</code> に積む。</li>
+<li>各エントリを解釈し、<code>gRouteBulker.create_entry()</code> /
+   <code>set_entry_attribute()</code> / <code>remove_entry()</code> を呼んで bulker に登録
+   (<code>routeorch.cpp:2301, 2318, 2802</code> ほか)。</li>
+<li>ループ末尾 <code>routeorch.cpp:1117</code> で <code>gRouteBulker.flush();</code> —
+   <code>gMaxBulkSize</code> ごとに SAI へ一括投入。<code>gLabelRouteBulker</code> /
+   <code>gNextHopGroupMemberBulker</code> も同じタイミングで flush。</li>
+</ol>
+<p>SAI 側のエラーは <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> で
+<code>task_need_retry</code> / <code>task_failed</code> に分岐し、retry の場合は <code>m_toSync</code> に
+残置されて次イベントで再投入される（詳細は本ページ「失敗・リトライ挙動」参照）。</p>
+<h3 id="publish-responsepublisher-appl_state_db">応答 publish: <code>ResponsePublisher</code> + APPL_STATE_DB<a class="headerlink" href="#publish-responsepublisher-appl_state_db" title="Permanent link">&para;</a></h3>
+<p><code>RouteOrch</code> は処理結果を <code>ResponsePublisher</code> (<code>m_publisher</code>) 経由で
+APPL_STATE_DB にミラー publish する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">// orchagent/routeorch.cpp:57-58</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">m_publisher</span><span class="p">.</span><span class="n">setBuffered</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="n">m_publisher</span><span class="p">.</span><span class="n">m_directDbWrite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span></code></pre></div>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// orchagent/routeorch.cpp:3185-3201 publishRouteState()</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="n">m_publisher</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">fvs</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="p">);</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setBuffered(true)</code></td>
+<td>個々の publish をリングバッファに溜め、<code>flush()</code> でまとめて Redis に書き出す</td>
+</tr>
+<tr>
+<td><code>m_directDbWrite = true</code></td>
+<td>notification チャネル経由ではなく <strong>APPL_STATE_DB へ直接 HSET / DEL</strong> を発行する</td>
+</tr>
+</tbody>
+</table>
+<p>呼び出し箇所は <code>routeorch.cpp:923</code> (loopback/管理 IF 経路の擬似応答)
+<code>/1050</code> <code>/1090</code> (doTask 成功/失敗時) <code>/2729</code> <code>/2970</code> (addRoute / removeRoute 成功時)。
+DEL のときは空 <code>fvs</code> で publish され、<code>ResponsePublisher::publish()</code> が
+APPL_STATE_DB のキーごと削除する。</p>
+<p>flush は doTask 末尾の <strong><code>routeorch.cpp:1231</code> <code>m_publisher.flush();</code></strong>
+で 1 ループ 1 回だけ実行される。コメント:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Flush response publisher so route notifications reach fpmsyncd every batch.
+</span></code></pre></div>
+<p>fpmsyncd は APPL_DB と APPL_STATE_DB の差分を観測することで「未確定状態」
+（retry 中の経路）を識別できる設計になっている。</p>
+<h3 id="retry">Retry キャッシュ<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<p><code>routeorch.cpp:192</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">createRetryCache</span><span class="p">(</span><span class="n">APP_ROUTE_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>Orch::createRetryCache()</code> (<code>orch.cpp:149-152</code>) が <code>RetryCache</code> インスタンスを
+<code>m_retryCaches[APP_ROUTE_TABLE_NAME]</code> に確保する。これは Consumer 層ではなく
+Orch 層のリトライ機構で、依存リソース（NHG / NEIGH / VRF / RIF）が未準備の
+タスクを後段イベントまで保留する。</p>
+<h3 id="_11">まとめ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>軸</th>
+<th>実装 / 値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consumer クラス（ZMQ 有効）</td>
+<td><code>ZmqConsumer</code> + <code>ZmqConsumerStateTable</code> (<code>zmqorch.cpp:66</code>)</td>
+</tr>
+<tr>
+<td>Consumer クラス（ZMQ 無効）</td>
+<td><code>Consumer</code> + <code>ConsumerStateTable</code> (<code>zmqorch.cpp:71</code>)</td>
+</tr>
+<tr>
+<td>切替フラグ</td>
+<td>フィーチャフラグ <code>ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</code> (<code>orchdaemon.cpp:334</code>)</td>
+</tr>
+<tr>
+<td>購読対象</td>
+<td><code>APP_ROUTE_TABLE_NAME</code> (= <code>"ROUTE_TABLE"</code>) と <code>APP_LABEL_ROUTE_TABLE_NAME</code></td>
+</tr>
+<tr>
+<td>Priority</td>
+<td><code>5</code> (<code>orchdaemon.cpp:327</code>)</td>
+</tr>
+<tr>
+<td>pop batch</td>
+<td><code>gBatchSize</code> (<code>orch.cpp:17</code>)。ZmqConsumerStateTable 既定は <code>128</code></td>
+</tr>
+<tr>
+<td>SAI bulker</td>
+<td><code>gRouteBulker</code> (route) / <code>gLabelRouteBulker</code> (mpls) / <code>gNextHopGroupMemberBulker</code></td>
+</tr>
+<tr>
+<td>SAI bulker flush 周期</td>
+<td>doTask ループ末尾 <code>routeorch.cpp:1117</code></td>
+</tr>
+<tr>
+<td>SET 合体</td>
+<td><code>ConsumerStateTable</code> が同一 key の連続 SET を最終値に圧縮</td>
+</tr>
+<tr>
+<td>応答 publish 先</td>
+<td>APPL_STATE_DB（<code>ResponsePublisher</code>、<code>setBuffered(true)</code> + <code>m_directDbWrite=true</code>）</td>
+</tr>
+<tr>
+<td>応答 publish flush 周期</td>
+<td>doTask ループ末尾 <code>routeorch.cpp:1231</code></td>
+</tr>
+<tr>
+<td>Retry</td>
+<td><code>createRetryCache(APP_ROUTE_TABLE_NAME)</code> (<code>routeorch.cpp:192</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細スキャン証跡: <code>meta/_intermediate/cdb-flow/appl-db-route-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
 <div class="footnote">
 <hr />
 <ol>
@@ -36690,7 +37088,7 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 <p>fpmsyncd RouteSync 実装: <code>sonic-swss/fpmsyncd/routesync.cpp</code>, <code>routesync.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rsync" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rsync" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:rorch">
-<p>RouteOrch 実装: <code>sonic-swss/orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:rorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>RouteOrch 実装: <code>sonic-swss/orchagent/routeorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:rorch" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:rorch" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p>テーブル名定数: <code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 3 in the text">&#8617;</a></p>
@@ -36709,6 +37107,15 @@ CRM 観測側（<code>CrmOrch</code>）で振る舞いを決める数値・文�
 </li>
 <li id="fn:sidemem">
 <p>副次 DB 書込スキャンの中間メモ: <code>meta/_intermediate/cdb-flow/appl-db-route-side.md</code>&#160;<a class="footnote-backref" href="#fnref:sidemem" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:sidemem" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:zmqorch">
+<p>ZmqOrch / ZmqConsumer 実装: <code>sonic-swss/orchagent/zmqorch.cpp</code>, <code>zmqorch.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/zmqorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/zmqorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:zmqorch" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:orchdaemon">
+<p>orchagent 起動シーケンス: <code>sonic-swss/orchagent/orchdaemon.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orchdaemon" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:zmqcst">
+<p>ZmqConsumerStateTable 実装: <code>sonic-swss-common/common/zmqconsumerstatetable.h</code>, <code>zmqconsumerstatetable.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/zmqconsumerstatetable.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/zmqconsumerstatetable.h</a>&#160;<a class="footnote-backref" href="#fnref:zmqcst" title="Jump back to footnote 11 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
