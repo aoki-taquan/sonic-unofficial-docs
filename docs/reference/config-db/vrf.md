@@ -439,4 +439,125 @@ YANG `default 0` と一致。VNI 上限 `16777215` は YANG `range "0..16777215"
 
 <!-- /constants -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vrf-pubsub.md -->
+
+### Producer/Consumer ペア
+
+CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** と **ProducerStateTable/ConsumerStateTable** パターンで構成される。
+
+#### CONFIG_DB → vrfmgrd
+
+`vrfmgrd` は起動時に `Orch(cfgDb, tableNames)` コンストラクタ経由で `Orch::addConsumer()` を呼ぶ。CONFIG_DB（db_id=4）に対しては `SubscriberStateTable` が選択される（`orch.cpp:1186-1190`）。
+
+購読テーブル（`vrfmgrd.cpp:29-34`）:
+
+| テーブル | 用途 |
+|---------|------|
+| `VRF` | VRF インスタンス作成・削除 |
+| `VNET` | VNET (VRF ベース仮想ネットワーク) |
+| `VXLAN_EVPN_NVO` | EVPN NVO トンネル設定 |
+| `MGMT_VRF_CONFIG` | mgmt VRF 有効化制御 |
+
+`SubscriberStateTable` は Redis keyspace notification を使用する（`subscriberstatetable.cpp:20-24`）。
+
+```
+PSUBSCRIBE __keyspace@4__:VRF|*
+```
+
+イベント受信フロー:
+
+1. CONFIG_DB への `hset` / `hdel` / `del` を Redis が検知し keyspace 通知を発行
+2. `Select::select()` が fd を wake-up（タイムアウト 1000 ms）
+3. `readData()` が `redisGetReply()` でイベントをバッファへ蓄積
+4. `pops()` がイベントから key を抽出し `TABLE.get(key)` で現在値取得
+5. `Consumer::execute()` → `VrfMgr::doTask(Consumer&)` を呼び出し
+
+また起動時は `getKeys()` で既存エントリを全件スキャンし `m_buffer` に積み込み、warm restart 時のリプレイに対応する。
+
+#### vrfmgrd → APPL_DB
+
+処理完了後、`ProducerStateTable` で APPL_DB に書き込む（`vrfmgr.h:46`）。
+
+| Producer | 書き込み先 | 用途 |
+|---------|-----------|------|
+| `m_appVrfTableProducer` | `APPL_DB::VRF_TABLE` | VRF エントリ |
+| `m_appVnetTableProducer` | `APPL_DB::VNET_TABLE` | VNET エントリ |
+| `m_appVxlanVrfTableProducer` | `APPL_DB::VXLAN_VRF_TABLE` | VRF-VNI マッピング |
+
+Lua スクリプト（`EVALSHA`）がアトミックに実行（`vrfmgr.cpp:303`）:
+
+```
+SADD VRF_TABLE_KEY_SET <vrfName>
+HSET _VRF_TABLE:<vrfName> <fields>
+PUBLISH VRF_TABLE_CHANNEL@0 G
+```
+
+#### APPL_DB → orchagent (VRFOrch)
+
+`orchdaemon.cpp:283`:
+
+```cpp
+VRFOrch *vrf_orch = new VRFOrch(m_applDb, APP_VRF_TABLE_NAME,
+                                 m_stateDb, STATE_VRF_OBJECT_TABLE_NAME);
+```
+
+`VRFOrch` が `Orch2(appDb, APP_VRF_TABLE_NAME, request_)` を通じて `ConsumerStateTable` を使用する（`orch.cpp:1194`）。APPL_DB（db_id=0）への通知を購読:
+
+```
+SUBSCRIBE VRF_TABLE_CHANNEL@0
+```
+
+チャンネル通知で wake-up → `consumer_state_table_pops.lua`（`SPOP KEY_SET` + `HGETALL _VRF_TABLE:<key>`）→ `VRFOrch::addOperation()` / `delOperation()` → `sai_virtual_router_api`。
+
+### STATE_DB への書き込み
+
+| テーブル | 書き込み元 | タイミング | 操作 |
+|---------|-----------|-----------|------|
+| `STATE_VRF_TABLE\|<name>` | vrfmgrd | `setLink()` 成功直後 | `hset("state", "ok")` (`vrfmgr.cpp:288`) |
+| `STATE_VRF_TABLE\|<name>` | vrfmgrd | VRF DEL 実行時 | `del()` (`vrfmgr.cpp:339`) |
+| `STATE_VRF_OBJECT_TABLE\|<name>` | VRFOrch | SAI VR 作成成功 | `hset("state", "ok")` |
+| `STATE_VRF_OBJECT_TABLE\|<name>` | VRFOrch | SAI VR 削除完了 | `del()` |
+
+`vrfmgrd` は `isVrfObjExist()` で `STATE_VRF_OBJECT_TABLE` を読み取り専用参照し、orchagent 側 SAI オブジェクトが削除されるまで VRF DEL をブロックする（2 フェーズ非同期削除）。
+
+### select() ループと retry
+
+`vrfmgrd.cpp:49-84`（`SELECT_TIMEOUT = 1000 ms`）:
+
+```
+s.select(&sel, 1000 ms)
+  TIMEOUT → vrfmgr.doTask()   // 全 consumer のキューを再試行
+  EVENT   → c->execute()       // 該当 consumer を処理
+```
+
+VRF DEL 処理中に `isVrfObjExist()` が true（orchagent 未完了）の場合、`it++; continue;` でキューに残し次のループで再試行（タイムアウトなし・無制限待機）。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB[VRF|*]
+  │  keyspace notification: PSUBSCRIBE __keyspace@4__:VRF|*
+  ▼
+vrfmgrd::VrfMgr::doTask
+  │  (VRF / MGMT_VRF_CONFIG) ProducerStateTable::set/del
+  │  EVALSHA → SADD KEY_SET + HSET _VRF_TABLE:<key>
+  │            + PUBLISH VRF_TABLE_CHANNEL@0 G
+  ├─→ STATE_DB[VRF_TABLE|<name>]  hset(state=ok) / del
+  ▼
+APPL_DB[VRF_TABLE|*]
+  │  ConsumerStateTable: SUBSCRIBE VRF_TABLE_CHANNEL@0
+  │  consumer_state_table_pops.lua → SPOP + HGETALL
+  ▼
+orchagent::VRFOrch::addOperation / delOperation
+  │  sai_virtual_router_api::create / remove_virtual_router
+  ├─→ STATE_DB[VRF_OBJECT_TABLE|<name>]  hset(state=ok) / del
+  ▼
+SAI (ハードウェア VRF)
+```
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
