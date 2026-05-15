@@ -485,4 +485,53 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 詳細な定数一覧 (mkhomedir 正規表現、PAM_SESSION_LAST_LINE マーカ、SSH min/max 値、nslcd 制御等) は `meta/_intermediate/cdb-flow/aaa-constants.md` を参照。
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `AaaCfg` が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`hostcfgd` の `AaaCfg` ハンドラは `AAA` 単体ではなく、関連 7 テーブルを起動時に一括ロードし (`load_independent_config()` — hostcfgd:2222-2231)、`modify_conf_file()` 内で結合した dict から PAM / NSS テンプレ (`common-auth-sonic.j2` / `tacplus_nss.conf.j2` 等) を再生成する。さらに RADIUS `nas_ip` / `src_ip` / `nas_id` の動的解決のために、関連インタフェーステーブルを都度参照する。
+
+### 共依存テーブル (起動時 + subscribe で一括ロード)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| `TACPLUS` | load + subscribe | TACACS+ global (`passkey` / `auth_type` / `timeout` / `src_intf`) | hostcfgd:2224,2471 |
+| [`TACPLUS_SERVER`](tacplus-server.md) | load + subscribe | TACACS+ サーバ毎の `priority` / `tcp_port` / `passkey` | hostcfgd:2225,2472 |
+| [`RADIUS`](radius.md) | load + subscribe | RADIUS global (`nas_ip` / `nas_id` / `src_intf` / `statistics`) | hostcfgd:2226,2473 |
+| [`RADIUS_SERVER`](radius-server.md) | load + subscribe | RADIUS サーバ毎の `auth_port` / `passkey` / `retransmit` / `timeout` / `src_intf` | hostcfgd:2227,2474 |
+| `LDAP` | load + subscribe | LDAP global (`bind_dn` / `base_dn` / `bind_password`) — `is_ldap_config_complete()` の判定対象 | hostcfgd:2228,2475 |
+| [`LDAP_SERVER`](ldap-server.md) | load + subscribe | LDAP サーバ毎の `port` / `priority` — 空なら `nslcd` を mask | hostcfgd:2229,2476 |
+
+> 1 テーブルの変化でも `modify_conf_file()` は **7 テーブル分** の dict を結合し直して PAM/NSS テンプレを丸ごと再生成する。「中間状態」は事実上避けられないため、変更順序が重要 (Phase B `ordering` 参照)。
+
+### RADIUS の動的 IP / hostname 解決 (`get_interface_ip` 経由)
+
+`RADIUS` / `RADIUS_SERVER` の `src_intf` 指定や `nas_ip` 自動補完のため、`AaaCfg.get_interface_ip()` (hostcfgd:582-617) が間接的に以下のインタフェーステーブルを読み出す。
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `get_interface_ip("eth0")` | RADIUS `nas_ip` 未指定時に `eth0` の管理 IP を `nas_ip` として注入 | hostcfgd:600,670-674 |
+| `INTERFACE` | `get_interface_ip("Eth...")` | `RADIUS_SERVER.src_intf` が物理ポートのとき src_ip を解決 | hostcfgd:586,694 |
+| `VLAN_INTERFACE` | `get_interface_ip("Vlan...")` | `src_intf` が VLAN のとき | hostcfgd:593 |
+| `VLAN_SUB_INTERFACE` | `get_interface_ip` 分岐 | `src_intf` が VLAN sub-interface のとき | hostcfgd:588 |
+| `PORTCHANNEL_INTERFACE` | `get_interface_ip("Po...")` | `src_intf` が PortChannel のとき | hostcfgd:591 |
+| `LOOPBACK_INTERFACE` | `get_interface_ip("Loopback...")` | `src_intf` が Loopback のとき | hostcfgd:595 |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | `aaacfg.hostname_update()` | RADIUS `nas_id` 未指定時にホスト名で補完 | hostcfgd:566-577,683-686,2280,2406 |
+
+### 連動 subscribe (AAA 状態を間接更新)
+
+| テーブル | handler | AAA への影響 | evidence |
+|---|---|---|---|
+| `MGMT_INTERFACE` | `mgmt_intf_handler` → `aaacfg.handle_radius_nas_ip_chg()` | `eth0` IP 変化時に RADIUS `nas_ip` を再計算 | hostcfgd:2349,2485 |
+| `INTERFACE` / `VLAN_INTERFACE` / `VLAN_SUB_INTERFACE` / `PORTCHANNEL_INTERFACE` | 各 `*_intf_handler` | `src_intf` の IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2486-2489 |
+| [`DEVICE_METADATA`](device-metadata.md) | `device_metadata_handler` → `devmetacfg.hostname_update` → `aaacfg.hostname_update` | hostname 変化時に RADIUS `nas_id` を再生成 | hostcfgd:2406,2492 |
+| `MGMT_VRF_CONFIG` | `mgmt_vrf_handler` | 管理 VRF 切替で `eth0` 到達性が変わり nas_ip 解決に影響 | hostcfgd:2496 |
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- `FIPS`: 同 `hostcfgd` プロセス内の `FipsCfg` (hostcfgd:1753-1843) が独立購読。`AaaCfg` からの直接参照なし。OpenSSL FIPS フラグと `ssh`/`telemetry`/`restapi` の再起動を司るだけで、CONFIG_DB レベルで AAA と読み合わない。
+- `SSH_SERVER`: `PamLimitsCfg.update_config_file()` (hostcfgd:1422-1430) が `DEVICE_METADATA` と併読するのみ。`AaaCfg` の参照経路には現れない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->
