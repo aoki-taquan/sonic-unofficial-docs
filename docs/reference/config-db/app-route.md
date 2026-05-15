@@ -216,6 +216,75 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 詳細根拠は `meta/_intermediate/cdb-flow/app-route-platform.md` を参照。
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`routeorch` / `CrmOrch` のソースから抽出した APPL_DB `ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/app-route-constants.md`。
+
+### ECMP 上限デフォルト（`routeorch.cpp`）
+
+| マクロ | 値 | 行 | 用途 |
+|---|---|---|---|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | `routeorch.cpp:37` | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` 取得失敗時の `m_maxNextHopGroupCount` フォールバック |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | `routeorch.cpp:38` | Mellanox 補正の除数（SAI 戻り値をこの値で割る） |
+
+Mellanox 補正: `platform` に `MLNX_PLATFORM_SUBSTRING` を含むとき `m_maxNextHopGroupCount /= 32` （`routeorch.cpp:84-87`）。算出値は STATE_DB `SWITCH_CAPABILITY` の `MAX_NEXTHOP_GROUP_COUNT` に公開される（L90）。
+
+### VOQ chassis 強制値（マジック数 `128`）
+
+`routeorch.cpp:109-122`:
+
+- `gMySwitchType == "voq"` かつ `SAI_SWITCH_ATTR_MAX_ECMP_MEMBER_COUNT >= 128` の場合のみ、`SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を `128` に強制書き戻し（`#define` ではなくインラインリテラル）。`switch_type=switch` / `chassis-packet` では発火しない。
+
+### プラットフォーム識別子（`orch.h`）
+
+| マクロ | 値 | 行 |
+|---|---|---|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | `orch.h:42` |
+
+`getenv("platform")` の値（`DEVICE_METADATA|localhost.platform` 反映）と `strstr` で部分一致比較。routeorch.cpp 内で参照される唯一のプラットフォーム識別子。
+
+### key プレフィクスマクロ
+
+| マクロ | 値 | 行 | 用途 |
+|---|---|---|---|
+| `VRF_PREFIX` | `"Vrf"` | `nexthopkey.h:20` | `ROUTE_TABLE\|<vrf-name>:<prefix>` の VRF 部分判定（`routeorch.cpp:706, 1035`） |
+| `LOOPBACK_PREFIX` | `"Loopback"` | `routeorch.h:28` | `alias == "lo" \|\| alias.startsWith("Loopback")` 特別扱い（`routeorch.cpp:905`） |
+
+### デフォルトルート判定リテラル
+
+STATE_DB `ROUTE_TABLE` の更新対象を以下の prefix 文字列リテラルに限定（`routeorch.cpp:126-127, 287-295`）:
+
+| 文字列 | 用途 |
+|---|---|
+| `"0.0.0.0/0"` | IPv4 デフォルトルート（state 監視対象） |
+| `"::/0"` | IPv6 デフォルトルート（state 監視対象） |
+| `"ok"` / `"na"` | `state` フィールドの 2 値 |
+
+これら以外のプレフィクスは STATE_DB に書かない（個別ルートの到達性は APPL_STATE_DB のみ）。
+
+### CRM resource ↔ SAI 属性 / 文字列マップ（`crmorch.cpp`）
+
+| マップ | 行 | 内容 |
+|---|---|---|
+| `crmResTypeNameMap` | L28-31 | `CRM_IPV4_ROUTE→"IPV4_ROUTE"`, `CRM_IPV6_ROUTE→"IPV6_ROUTE"` |
+| `crmResSaiAvailAttrMap` | L74-77 | IPv4→`SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY`, IPv6→`..._IPV6_ROUTE_ENTRY` |
+| `crmResSaiObjAttrMap` | L95-98 | IPv4/IPv6 ともに `SAI_OBJECT_TYPE_ROUTE_ENTRY` |
+| `crmResAddrFamilyValMap` | L151-154 | `SAI_IP_ADDR_FAMILY_IPV4` / `_IPV6` |
+
+### CRM threshold / counter 文字列キー
+
+CONFIG_DB `CRM` フィールド名・COUNTERS_DB `CRM:STATS` フィールド名はすべてハードコード文字列（`crmorch.cpp`）:
+
+| 文字列 | 行 | 用途 |
+|---|---|---|
+| `"ipv4_route_threshold_type"` / `"ipv6_route_threshold_type"` | 163-164 | CONFIG_DB threshold 種別 |
+| `"ipv4_route_low_threshold"` / `"ipv6_route_low_threshold"` | 209-210 | CONFIG_DB low 閾値 |
+| `"ipv4_route_high_threshold"` / `"ipv6_route_high_threshold"` | 255-256 | CONFIG_DB high 閾値 |
+| `"crm_stats_ipv4_route_available"` / `"crm_stats_ipv6_route_available"` | 308-309 | COUNTERS_DB available 値（SAI クエリ結果） |
+| `"crm_stats_ipv4_route_used"` / `"crm_stats_ipv6_route_used"` | 354-355 | COUNTERS_DB used 値（routeorch L148/168/257/280 で inc/dec） |
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
