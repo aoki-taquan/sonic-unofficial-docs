@@ -22028,7 +22028,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#retry-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗・retry 挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗・retry 挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#handler-retry-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要 handler ごとの retry / failed 条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handler-2-retry-profile-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        handler 内の特殊な 2 段 retry (profile only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-handlesaisetstatus-handlesaicreatestatus-handlesairemovestatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 失敗の共通変換: handleSaiSetStatus / handleSaiCreateStatus / handleSaiRemoveStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log_warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        致命的でないが LOG_WARN を出す経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_invalid_entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        入力検証で task_invalid_entry になる主なケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34778,7 +34861,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#retry-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗・retry 挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗・retry 挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#handler-retry-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要 handler ごとの retry / failed 条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handler-2-retry-profile-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        handler 内の特殊な 2 段 retry (profile only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-handlesaisetstatus-handlesaicreatestatus-handlesairemovestatus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 失敗の共通変換: handleSaiSetStatus / handleSaiCreateStatus / handleSaiRemoveStatus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log_warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        致命的でないが LOG_WARN を出す経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_invalid_entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        入力検証で task_invalid_entry になる主なケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細マトリクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35149,12 +35315,151 @@
 </blockquote>
 <!-- /defaults -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="retry-phase-d">失敗・retry 挙動 (Phase D)<a class="headerlink" href="#retry-phase-d" title="Permanent link">&para;</a></h2>
+<p><code>BufferOrch::doTask()</code> (<code>bufferorch.cpp</code> L2096-2129) は per-table handler が返す <code>task_process_status</code> を一括処理する。ステータスごとの最終挙動は以下のとおり<sup id="fnref2:buforch"><a class="footnote-ref" href="#fn:buforch">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th>ステータス</th>
+<th>doTask の動作</th>
+<th>残タスク処理</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_success</code> / <code>task_ignore</code></td>
+<td><code>m_toSync</code> から該当エントリを erase</td>
+<td>次タスクへ継続</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>task_invalid_entry</code></td>
+<td>erase</td>
+<td>次タスクへ継続</td>
+<td><code>LOG_ERROR ("Failed to process invalid buffer task")</code></td>
+</tr>
+<tr>
+<td><code>task_failed</code></td>
+<td>erase</td>
+<td><strong>その回の doTask を <code>return</code> で打ち切り</strong></td>
+<td><code>LOG_ERROR ("Failed to process buffer task, drop it")</code></td>
+</tr>
+<tr>
+<td><code>task_need_retry</code></td>
+<td>erase せず <code>it++</code> で次回まで保留</td>
+<td>次タスクへ継続</td>
+<td><code>LOG_INFO ("Failed to process buffer task, retry it")</code></td>
+</tr>
+<tr>
+<td>handler 未登録</td>
+<td>erase</td>
+<td>次タスクへ継続</td>
+<td><code>LOG_ERROR ("No handler for key:%s found")</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>task_failed</code> のみ doTask 関数全体を return で抜けるため、後続のキューイング済みタスクは次回ディスパッチまで処理されない。<code>task_invalid_entry</code> は LOG レベルが ERROR でも処理続行する点に注意。</p>
+</blockquote>
+<h3 id="handler-retry-failed">主要 handler ごとの retry / failed 条件<a class="headerlink" href="#handler-retry-failed" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>handler</th>
+<th>retry になる条件 (<code>task_need_retry</code>)</th>
+<th>failed になる条件 (<code>task_failed</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>processBufferPool()</code> (L391-596)</td>
+<td>削除対象 pool が pending-remove / 削除対象 pool が他オブジェクト参照中 / SAI 一時エラー (<code>handleSaiSetStatus</code> 経由)</td>
+<td>— (SAI 致命系のみ)</td>
+</tr>
+<tr>
+<td><code>processBufferProfile()</code> (L602-888)</td>
+<td>削除対象 profile が pending-remove / <code>pool</code> 参照が <code>not_resolved</code> (= pool 未登録) / PG・Queue から参照中</td>
+<td><code>pool</code> 参照 resolve その他失敗 / 数値フィールドのパース失敗 / <code>packet_discard_action</code> が <code>drop</code>/<code>trim</code> 以外</td>
+</tr>
+<tr>
+<td><code>processQueue()</code> (L914-1233)</td>
+<td><code>profile</code> 参照 <code>not_resolved</code> (= profile 未登録) / queue がロック中 (<code>LOG_WARN "...is locked, will retry"</code>, L1068-1070)</td>
+<td><code>profile</code> 参照 resolve その他失敗</td>
+</tr>
+<tr>
+<td><code>processPriorityGroup()</code> (L1305-1495)</td>
+<td><code>profile</code> 参照 <code>not_resolved</code></td>
+<td><code>profile</code> resolve その他失敗 / 参照 profile が <strong>trimming-eligible</strong> (<code>SAI_BUFFER_PROFILE_PACKET_ADMISSION_FAIL_ACTION_DROP_AND_TRIM</code> を持つ profile を PG に貼ろうとした場合、L1382-1388)</td>
+</tr>
+<tr>
+<td><code>processIngressBufferProfileList()</code> (L1663-) / <code>processEgressBufferProfileList()</code> (L1845-)</td>
+<td>profile-list 内のいずれかの profile が <code>not_resolved</code></td>
+<td>profile-list resolve その他失敗 / list 内に trimming-eligible profile 混在</td>
+</tr>
+</tbody>
+</table>
+<h3 id="handler-2-retry-profile-only">handler 内の特殊な 2 段 retry (profile only)<a class="headerlink" href="#handler-2-retry-profile-only" title="Permanent link">&para;</a></h3>
+<p><code>processBufferProfile()</code> L778-797 では、<code>sai_set_buffer_profile_attribute()</code> が失敗した場合に <strong>bufferorch 自身が同じ attr で SAI をもう一度呼ぶ</strong>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">SWSS_LOG_NOTICE</span><span class="p">(</span><span class="s">&quot;Unable to modify buffer profile, ... will retry one more time&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">sai_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_buffer_api</span><span class="o">-&gt;</span><span class="n">set_buffer_profile_attribute</span><span class="p">(</span><span class="n">sai_object</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attribute</span><span class="p">);</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">SAI_STATUS_SUCCESS</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">sai_status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Failed to modify buffer profile, ... will retry once&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="n">handle_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">handleSaiSetStatus</span><span class="p">(</span><span class="n">SAI_API_BUFFER</span><span class="p">,</span><span class="w"> </span><span class="n">sai_status</span><span class="p">);</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>これは <code>task_need_retry</code> での次回 doTask 待ちとは別のループ内 retry で、SAI ベンダ実装の transient エラー吸収用。<code>processBufferPool()</code> 側にはこの即時 retry はなく、初回失敗で即 <code>handleSaiSetStatus()</code> に委譲する (L513-521)。</p>
+<h3 id="sai-handlesaisetstatus-handlesaicreatestatus-handlesairemovestatus">SAI 失敗の共通変換: <code>handleSaiSetStatus</code> / <code>handleSaiCreateStatus</code> / <code>handleSaiRemoveStatus</code><a class="headerlink" href="#sai-handlesaisetstatus-handlesaicreatestatus-handlesairemovestatus" title="Permanent link">&para;</a></h3>
+<p>bufferorch は SAI 戻り値を直接 enum 化せず、<code>orch.cpp</code> 共通の <code>handleSai*Status()</code> を経由する。これらは <code>SAI_STATUS_SUCCESS</code> 以外を retry/failed/ignore/abort のいずれかに翻訳する。<code>SAI_STATUS_ATTR_NOT_IMPLEMENTED_0</code> のみ bufferorch 側で先取りして <code>task_ignore</code> を返す (L508-512 / L773-777)。</p>
+<h3 id="log_warn">致命的でないが LOG_WARN を出す経路<a class="headerlink" href="#log_warn" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>queue ロック中</td>
+<td><code>task_need_retry</code> + <code>LOG_WARN ("Queue %zd on port %s is locked, will retry")</code></td>
+<td><code>bufferorch.cpp:1068-1070</code></td>
+</tr>
+<tr>
+<td>port link-up 後に queue/PG プロファイルを適用</td>
+<td>handler は処理続行 (警告のみ)</td>
+<td><code>bufferorch.cpp:1220-1227</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="task_invalid_entry">入力検証で <code>task_invalid_entry</code> になる主なケース<a class="headerlink" href="#task_invalid_entry" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>type</code> が <code>ingress</code>/<code>egress</code> 以外 (<code>processBufferPool</code>, L457)</li>
+<li><code>mode</code> が <code>static</code>/<code>dynamic</code> 以外 (<code>processBufferPool</code>, L484)</li>
+<li>key トークン数違反 (queue: 2 or 4, PG: 2, L920/L944/L1322)</li>
+<li>port alias 未登録 (<code>processQueue</code> L1035 / profile-list L1113)</li>
+<li>voq/queue index 範囲外 (L1053-1064)</li>
+<li>op が SET/DEL 以外 (L593, L885, L1013, L1188)</li>
+</ul>
+<h3 id="_7">詳細マトリクス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス、ディスパッチャ挙動表、grep カバレッジは中間ファイル参照:</p>
+<ul>
+<li><code>meta/_intermediate/cdb-flow/appl-buffer-failure.md</code></li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>bufferorch.cpp</code> 全 2138 行のうち、<code>task_need_retry</code> × 12 / <code>task_failed</code> × 10 / <code>task_invalid_entry</code> × 17 / <code>task_ignore</code> × 3 / <code>handleSai*Status</code> × 9 hit を全件確認。<code>doTask()</code> の switch 句 (L2107-2128) も精読。</p>
+</blockquote>
+<!-- /failure -->
+
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:buforch">
-<p><code>bufferorch.cpp</code> — <code>processBufferPool()</code> / <code>processBufferProfile()</code> / <code>processPriorityGroup()</code> / <code>processQueue()</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:buforch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>bufferorch.cpp</code> — <code>processBufferPool()</code> / <code>processBufferProfile()</code> / <code>processPriorityGroup()</code> / <code>processQueue()</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:buforch" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:buforch" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:schema">
 <p><code>sonic-swss-common/common/schema.h</code> — <code>APP_BUFFER_*_TABLE_NAME</code> 定数. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 2 in the text">&#8617;</a></p>
