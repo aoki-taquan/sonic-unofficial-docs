@@ -437,6 +437,39 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
 
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN` は **YANG leafref を一切持たない**（`sonic-flex_counter` / `sonic-flow_counter` どちらも leafref 未定義）。以下はすべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `COPP_TRAP` / `COPP_GROUP` (CONFIG_DB) | OID 解決 + counter 紐付け | `FLOW_CNT_TRAP` enable 受信時。CoppOrch の `m_syncdTrapIds` に登録済みの全 HOSTIF trap object に対し SAI counter を生成 | `flexcounterorch.cpp:311-323`, `copporch.cpp:530, 1513` (`generateHostIfTrapCounterIdList()`, `bindTrapCounter()`) |
+| `STATE_DB COPP_TRAP_TABLE` / `COUNTERS_DB COUNTERS_TRAP_NAME_MAP` | 書き込み（trap_name ↔ counter OID 逆引き map） | trap counter 紐付け成功時 | `copporch.cpp:196, 236` |
+| `APP_DB ROUTE_TABLE` / SAI route entry | 読み取り（prefix マッチング + route OID 解決） | `FLOW_CNT_ROUTE` enable かつ `FLOW_COUNTER_ROUTE_PATTERN` 登録時、または既存パターンに後追いで route 追加時 | `flowcounterrouteorch.cpp:55-97` (`doTask(Consumer&)`), `doTask(SelectableTimer&)` |
+| `CONFIG_DB VRF` / `VNET` | vrf_name → vrf_id 解決 | `FLOW_COUNTER_ROUTE_PATTERN` key が `<vrf>\|<prefix>` 形式のとき。VRF 削除でパターン自動 cleanup | `flowcounterrouteorch.cpp:956-973, 409-419, 446` |
+| `ASIC_DB VIDTORID` | 読み取り（VID → RID 解決） | `FLEX_COUNTER_UPD_TIMER` (1 秒) で counter を flex counter manager に登録する直前 | `flowcounterrouteorch.cpp:30-32` (`mVidToRidTable("VIDTORID")`) |
+| `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE` | 書き込み（自身が情報源） | FlowCounterRouteOrch 起動時 1 回。`route` key に `support: true\|false` | `flowcounterrouteorch.cpp:166-179`, `flow_counter_handler.cpp:51-62` |
+| `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` / `FLEX_COUNTER_TABLE` | 書き込み（orchagent → syncd 経路） | `FLEX_COUNTER_STATUS` / `POLL_INTERVAL` 変更時、および route/trap への counter 紐付け時 | `flexcounterorch.cpp:202-214, 380-392`, `saihelper.cpp:868-885,918-962` |
+| `COUNTERS_DB COUNTERS:<oid>` / `COUNTERS_ROUTE_NAME_MAP` | 書き込み（syncd → COUNTERS_DB） | ポーリング周期ごと (10 秒) / add-remove pattern 時 | `flowcounterrouteorch.cpp` (`mPrefixToRouteMap`, `mRouteFlowCounterMgr`) |
+| `CONFIG_DB DEVICE_METADATA` | 読み取り（同 Orch 同居） | `FlexCounterOrch` が `DEVICE_METADATA` も購読。`FLOW_CNT_*` 処理には直接影響しない | `flexcounterorch.cpp:106, 150` |
+
+!!! note "COPP_TRAP の事前 install が必要"
+    `FLOW_CNT_TRAP` を `enable` にしてカウンタが生えるのは `CoppOrch` が既に SAI HOSTIF trap object を作成済みの trap だけ。`COPP_TRAP` / `COPP_GROUP` が未投入のままでは counter 対象が空になる。通常は orchagent 起動時に `copp_cfg.json` 等で先行投入されるため問題ないが、ランタイムで trap を追加した場合は `FLOW_CNT_TRAP` を一旦 disable→enable する必要はなく、`bindTrapCounter()` が trap install 時に同期で呼ばれる。
+
+!!! note "VRF 修飾 prefix の遅延解決"
+    `FLOW_COUNTER_ROUTE_PATTERN|<vrf>\|<prefix>` を書き込んだ時点で `<vrf>` が `CONFIG_DB VRF` に未登録だと `"VRF/VNET name <name> is not resolved"` ログが出て当該パターンは内部の未解決リストに保留される。VRF が後から登録されると自動的に再評価される。VRF を削除すると当該パターンとそれに紐付いた全 counter が remove される。
+
+!!! warning "SAI capability ゲートで FLOW_CNT_ROUTE は ASIC 依存"
+    `FLOW_CNT_ROUTE` は `mRouteFlowCounterSupported`（`STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|FLOW_CNT_ROUTE/support`）が `true` の ASIC でしか動作しない。`false` の場合は `enable` も `FLOW_COUNTER_ROUTE_PATTERN` 投入も完全 no-op。事前確認は `show flowcnt-route capabilities`。
+
+!!! note "PORT_TABLE / ACL_RULE は参照しない"
+    flow counter は port 単位でも ACL 単位でもないため `PORT_TABLE` / `ACL_RULE` / `ACL_TABLE` への暗黙参照は無い。port counter は `PORT` group、ACL counter は `ACL` group が別系統で扱う。
+
+詳細な参照経路・行番号は `meta/_intermediate/cdb-flow/app-counter-cross-refs.md` を参照。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
