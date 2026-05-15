@@ -478,4 +478,68 @@ Phase F (`side-effects`) で書込先として扱っているのと同テーブ�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `coredump_gen_handler.py`, `techsupport_cleanup.py`, `utilities_common/auto_techsupport_helper.py` 全行精読 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/auto-techsupport-failure.md`
+
+### techsupport 起動失敗・retry (`auto_techsupport_helper.invoke_ts_cmd`)
+
+`show techsupport` を `subprocess_exec` 経由で起動した直後の `returncode` を分岐させる。Python レベルの `subprocess.TimeoutExpired` は raise されず、タイムアウトは `--global-timeout 60` (CLI 側) に委ねている (`auto_techsupport_helper.py:71,87-94`)。
+
+| 条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `rc == EXT_LOCKFAIL` (`2`) — flock 取得失敗 (別 instance 実行中) | retry なし・即時 abort・新規ダンプなし | `LOG_NOTICE "Another instance of techsupport running, aborting this. stderr: ..."` | `auto_techsupport_helper.py:239-240` |
+| `rc == EXT_RETRY` (`4`) かつ `num_retry <= MAX_RETRY_LIMIT` (`2`) | `invoke_ts_cmd(db, num_retry+1)` で再帰再試行 (最大 2 回追加) | なし | `auto_techsupport_helper.py:84,241-243` |
+| `rc == EXT_RETRY` かつ `num_retry > MAX_RETRY_LIMIT` | 打ち切り・新規ダンプなし | `LOG_ERR "MAX_RETRY_LIMIT for show techsupport invocation exceeded, stderr: ..."` | `auto_techsupport_helper.py:244-245` |
+| `rc != EXT_SUCCESS` かつ上記以外 (汎用失敗 / `--global-timeout 60` 経過後の非 0 含む) | retry なし・新規ダンプなし | `LOG_ERR "show techsupport failed with exit code {rc}, stderr: ..."` | `auto_techsupport_helper.py:246-247` |
+| `rc == EXT_SUCCESS` だが stdout に `sonic_dump_.*tar.*` マッチなし | 空文字返却 → `write_to_state_db()` 不呼出・STATE_DB 更新なし | `LOG_ERR "stdout of the 'show techsupport' cmd doesn't have the dump name"` ＋ `LOG_ERR "{cmd} was run, but no techsupport dump is found"` | `auto_techsupport_helper.py:228-229,250-251` |
+
+### rate-limit による skip (`verify_rate_limit_intervals`)
+
+`invoke_ts_command_rate_limited()` が `invoke_ts_cmd()` 呼出前に評価し、未経過なら起動自体をスキップ。
+
+| 条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `time.time() - mtime(<最新 ts_dump>) < GLOBAL.rate_limit_interval` | グローバル rate-limit 未経過 → `False` → techsupport スキップ | `syslog "Global rate_limit_interval period has not passed. Techsupport Invocation is skipped"` | `auto_techsupport_helper.py:285-290` |
+| `time.time() - <container 最古 entry> < FEATURE.rate_limit_interval` | コンテナ単位 rate-limit 未経過 → スキップ | `syslog "Per Container rate_limit_interval for {container} has not passed. Techsupport Invocation is skipped"` | `auto_techsupport_helper.py:292-298` |
+| `GLOBAL` / `FEATURE` の `rate_limit_interval` が `ValueError` (非数値) | `0.0` fallback → rate-limit 実質無効化 (skip ではなく無効化) | なし | `auto_techsupport_helper.py:323-331` |
+
+### state ガード・spurious invocation
+
+| 条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `AUTO_TECHSUPPORT\|GLOBAL.state != "enabled"` (未設定含む) | techsupport 起動も cleanup も全スキップ | `LOG_NOTICE "auto_invoke_ts is disabled. No cleanup is performed: core ..."` | `coredump_gen_handler.py:47-48` |
+| `AUTO_TECHSUPPORT_FEATURE\|<container>.state != "enabled"` | 当該 feature の techsupport 起動のみスキップ | `LOG_NOTICE "auto-techsupport feature for {container} is not enabled. ..."` | `coredump_gen_handler.py:55-57` |
+| core ファイルの mtime が `TIME_BUF` (`20` 秒) 以上前 | spurious invocation として早期 return | `LOG_INFO "Spurious Invocation. {file_path} is not created within last 20 sec"` | `coredump_gen_handler.py:73-74`, `auto_techsupport_helper.py:115-125` |
+| `os.path.getmtime(core_file)` が `Exception` (ファイル不在) | `verify_recent_file_creation()` が `False` → 同上 spurious 分岐 | なし | `auto_techsupport_helper.py:118-121` |
+
+### cleanup (disk full / max_core_limit / max_techsupport_limit) 失敗
+
+`cleanup_process()` は `/var/core` `/var/dump` 配下の disk 使用率を限界内に保つ。
+
+| 条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `max_core_limit` / `max_techsupport_limit` が `ValueError` (非数値) | `0.0` fallback → `if not limit` でガード → cleanup スキップ | `LOG_NOTICE "max-techsupport-limit argument is not set. ..."` / `"core-usage argument is not set. ..."` | `coredump_gen_handler.py:23-30`, `techsupport_cleanup.py:33-40` |
+| `limit` が `(0,100)` 範囲外 | cleanup 即時 return | `LOG_ERR "core_usage_limit can only be between 1 and 100, whereas the configured value is: {limit}"` | `auto_techsupport_helper.py:173-175` |
+| `os.remove(<oldest dump>)` が `OSError` (権限 / 既に削除済 / disk error) | `continue` で skip・raise しない | なし (silent) | `auto_techsupport_helper.py:193-194` |
+| `len(fs_stats) <= 1` (最新ダンプ 1 個のみ) | 最新は必ず保持 — 閾値未達成のままループ脱出 | `LOG_INFO "{deleted} deleted from {dir}"` (削除量 0 でも emit) | `auto_techsupport_helper.py:188,196` |
+| disk full で `show techsupport` 自体が失敗 | `invoke_ts_cmd()` の `rc != EXT_SUCCESS` 経路に流入 | `LOG_ERR "show techsupport failed with exit code ..."` | `auto_techsupport_helper.py:246-247` |
+
+### memory check 失敗 (`memory_threshold_check.py` 補助スクリプト)
+
+| 条件 | exit code | 挙動 | evidence |
+|---|---|---|---|
+| `available_mem_threshold` / `min_available_mem` が `float()` 変換失敗 | `EXIT_FAILURE` (`1`) | `MemoryCheckerException` raise → techsupport 不起動 | `memory_threshold_check.py:36-37,154-156,232-235` |
+| `/proc/meminfo` の `MemAvailable` 取得不能 (`KeyError`/`ValueError`) | `EXIT_FAILURE` (`1`) | 同上 | `memory_threshold_check.py:104-108` |
+| 空きメモリ < `min_available_mem` または < `available_mem_threshold` % | `EXIT_THRESHOLD_CROSSED` (`2`) | techsupport を起動しない通常スキップ (失敗ではなく抑止) | `memory_threshold_check.py:11-12,177,232` |
+
+### 部分成功の性質
+
+`cleanup_process()` は `OSError` を `continue` で握り潰し、削除成功分のみ `removed_files` リストに append する。`clean_state_db_entries()` は成功分のみ STATE_DB から `db.delete` するため、削除失敗ファイルに対応する `AUTO_TECHSUPPORT_DUMP_INFO|<name>` は次回 cleanup まで残存する (`auto_techsupport_helper.py:188-197`, `techsupport_cleanup.py:13-18,43-44`)。`invoke_ts_cmd()` の再帰 retry は `EXT_RETRY` 3 回 (初回 + `MAX_RETRY_LIMIT=2`) で必ず打ち切られる。`write_to_state_db()` は `new_file` が truthy のときのみ呼ばれ、起動失敗時には STATE_DB entry が作られないため、次回 rate-limit 判定は失敗を「未起動」として扱う (rate-limit リセットされない)。
+
+> **Evidence**: sonic-utilities `scripts/coredump_gen_handler.py:17,22-30,47-48,55-57,73-74`; `scripts/techsupport_cleanup.py:23,27-30,33-43`; `utilities_common/auto_techsupport_helper.py:71,74-78,81-84,87-94,115-125,171-197,232-254,282-299,313-337`; 補助: `scripts/memory_threshold_check.py:11-12,36-37,104-108,154-156,177,232-235`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
