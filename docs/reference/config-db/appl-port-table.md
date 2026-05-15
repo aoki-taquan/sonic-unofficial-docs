@@ -170,6 +170,138 @@ PORT_TABLE:<port_name>
 
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`APPL_DB PORT_TABLE` の **フィールド集合と書き込み挙動** は 3 つの軸でプラットフォーム/構成依存する: (1) SAI `sai_query_attribute_capability` の結果、(2) `device.metadata` の `switch_type` (`gMySwitchType`)、(3) `platform` 環境変数の Mellanox 判定。`speed` / `fec` 等のフィールド値そのものは portsyncd パススルーなので CONFIG_DB と同じだが、**SAI 適用可否・STATE_DB 派生値・追加フィールド有無** が差分として現れる。
+
+### 識別キー
+
+| 識別 | 取得元 | 値の例 |
+|------|--------|--------|
+| `gMySwitchType` | `device.metadata` の `switch_type` (`portsorch.cpp:69`) | `"switch"` (既定) / `"voq"` (VOQ chassis) / `"dpu"` (SmartSwitch DPU) |
+| `gMyAsicName` | namespace 名 (`portsorch.cpp:72`) | `"asic0"` `"asic1"` 等 (multi-asic / VOQ) |
+| `platform` env | `getenv("platform")` (`portsorch.cpp:691`) | `"mellanox"` 部分一致で `isMlnxPlatform()` true |
+| Gearbox 有無 | `gearbox_config.json` の有無 (`isGearboxEnabled()`) | line-side PHY 搭載 ASIC のみ true |
+
+### SAI capability 差異一覧
+
+| capability | 取得 | 結果 false 時の効果 | evidence |
+|---|---|---|---|
+| `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` | `sai_query_attribute_capability` (`portsorch.cpp:989-1000`) | `fec_override_sup = false` → autoneg fec override 反映なし | `portsorch.cpp:987, 989` |
+| `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` | `sai_query_attribute_capability` (`portsorch.cpp:1001-1010`) | `oper_fec_sup = false` → STATE_DB に `oper_fec` 書かれず | `portsorch.cpp:1001` |
+| `SAI_PORT_ATTR_SUPPORTED_SPEED` | `get_port_attribute` (`portsorch.cpp:3122-3158`) | `supported_speeds = ""` → STATE_DB 空 / speed バリデーション skip ("Unable to validate speed ... Not supported by platform" WARN) | `portsorch.cpp:3146` |
+| `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` | `get_port_attribute` (`portsorch.cpp:3225-3265`) | `m_portSupportedFecModes[...].supported = false` → `isFecModeSupported()` 常に true (FEC バリデーション無効化) | `portsorch.cpp:3245-3260` |
+| `SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE` | `get_port_attribute` (`portsorch.cpp:3179-3196`) | `port.m_cap_an = 1` フォールバック (互換性維持コメントあり) | `portsorch.cpp:3189-3191` |
+| `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` | **照会されず** (TODO) | `m_cap_lt = 1` 固定 → 非対応 ASIC で `link_training` を投げると SAI エラー | `portsorch.cpp:3197-3205` |
+
+### `gMySwitchType` 別挙動
+
+| 軸 | `switch` (既定) | `voq` (VOQ chassis) | `dpu` |
+|----|----------------|---------------------|-------|
+| FEC override / oper FEC capability 照会 | yes | yes | **no** (`portsorch.cpp:987`) |
+| `initializePortBufferMaximumParameters` | yes | yes | **no** (`portsorch.cpp:6449`) |
+| default VLAN / bridge port 削除 | no | **yes** (`portsorch.cpp:1496-1499`) | no |
+| `system_lag_alias = host\|asic\|lag` キー形式 | no | **yes** (`portsorch.cpp:7972`) | no |
+| `voqSyncAddLag` / `voqSyncDelLag` / `voqSyncLagMember` | no | **yes** (`portsorch.cpp:8039, 8116, 8213, 8261`) | no |
+| `SYSTEM_PORT_ATTR_QOS_NUMBER_OF_VOQS` 取得 | no | **yes** (`portsorch.cpp:6543-6580`) | no |
+| VOQ queue counter 強制 enable | no | **yes** (`portsorch.cpp:8485, 8510`) | no |
+| `gIntfsOrch->voqSyncIntfState` で asic 跨ぎ intf 状態同期 | no | **yes** (`portsorch.cpp:9841`) | no |
+
+### multi-asic / VOQ chassis での APPL_DB 配置
+
+`APPL_DB PORT_TABLE` は **各 asic namespace の独立した APPL_DB** に書かれる。chassis 全体で port を一覧する集約テーブルは APPL_DB には存在しない（必要なら `CHASSIS_APP_DB` を別経路で参照）。VOQ chassis のみ `system_lag` / `SYSTEM_PORT` を経由して asic 間 LAG / 状態同期が走り、LAG alias key が `"<hostname>|<asicname>|<lag>"` 形式に変わる。
+
+### Mellanox 固有分岐
+
+`isMlnxPlatform()` (`portsorch.cpp:689-704`) は `getenv("platform")` を `"mellanox"` で `strstr` 判定。`portsorch.cpp:6362-6379` のコメント「distribution-only mode is not supported on Mellanox platform」に従い、LAG member の collection / distribution toggle 順序を強制する。`PORT_TABLE` 自体のフィールド集合は不変だが、LAG メンバー化時の APPL_DB 遷移順序が変わる。
+
+### Gearbox 専用フィールド
+
+`system_oper_status` / `line_oper_status` は `isGearboxEnabled()` true の環境（line-side PHY 搭載 ASIC）でのみ書かれる。詳細は上記 Phase A 「コード由来の暗黙デフォルト」セクション参照。
+
+!!! warning "DPU では FEC override / oper FEC が照会されない"
+    `gMySwitchType == "dpu"` の環境では `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` / `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` を一切照会しない (`portsorch.cpp:987`)。STATE_DB の `oper_fec` は空のまま、CONFIG_DB に `fec` を設定しても autoneg override 経路は動かない。
+
+!!! warning "LT capability の固定値フォールバック"
+    `initPortCapLinkTraining()` は SAI 照会を実装しておらず常に `m_cap_lt = 1` で WARN を出す (`portsorch.cpp:3197-3205`)。LT 非対応 ASIC で `link_training=on` を設定すると SAI 適用時に失敗するが、APPL_DB `PORT_TABLE` の `link_training` 値はそのまま残る。
+
+!!! note "VOQ chassis では default VLAN が削除される"
+    `gMySwitchType == "voq"` の環境では `createPortBulk` 完了直後に `removeDefaultVlanMembers()` + `removeDefaultBridgePorts()` が走る (`portsorch.cpp:1496-1499`)。port が bridge port を持たない VOQ 設計のため、`PORT_TABLE` の `oper_status` UP 時に bridge port 経由の派生処理（FDB 等）が走らない点に注意。
+
+!!! note "APPL_DB は asic namespace ごとに分離"
+    multi-asic / VOQ chassis では `APPL_DB PORT_TABLE` は各 asic namespace に独立して存在する。`sonic-db-cli -n asic0 APPL_DB hgetall ...` のように namespace 指定で参照すること。chassis 全体で port を一覧するには `show interfaces status` を line card 単位で実行するか、`CHASSIS_APP_DB` を参照する。
+
+<!-- /platform -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。YANG / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。詳細表と参照行は [`meta/_intermediate/cdb-flow/appl-port-table-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-constants.md) を参照。
+
+### admin_status / oper_status
+
+- `cfgmgr/portmgr.h:14` `#define DEFAULT_ADMIN_STATUS_STR "down"` — portmgrd が CONFIG_DB に `admin_status` が無いとき APPL_DB に注入する既定値
+- `orchagent/portsorch.h:48-55` `oper_status_strings` マップ: `SAI_PORT_OPER_STATUS_{UNKNOWN, UP, DOWN, TESTING, NOT_PRESENT}` ↔ `"unknown"` / `"up"` / `"down"` / `"testing"` / `"not present"`
+- 逆向き `string_oper_status` (`portsorch.h:57-64`) も同 5 値を持つため、`SAI_PORT_OPER_STATUS_UNKNOWN` を含めて warmboot 復元時に例外にならない
+- `cfgmgr/porthlpr.cpp:43-47` `portStatusMap`: `admin_status` は `"up"` / `"down"` 2 値固定 (それ以外は porthlpr がパース拒否)
+
+### mtu
+
+- `cfgmgr/portmgr.h:15` `#define DEFAULT_MTU_STR "9100"` — portmgrd の APPL_DB 注入既定値
+- `orchagent/port.h:27` `#define DEFAULT_MTU 1492` — orchagent 内 `Port::m_mtu` の初期値 (SAI default 1514 − header/FCS 22)。APPL_DB に書かれる `"9100"` とは別物
+- `orchagent/portsorch.cpp:79` `#define DEFAULT_SYSTEM_PORT_MTU 9100` — VOQ system port 初期化用
+- `orchagent/port/porthlpr.cpp:34-35` MTU 範囲 `[68, 9216]` (`minPortMtu` / `maxPortMtu`)
+
+### speed
+
+- `orchagent/port/porthlpr.cpp:31-32` 速度範囲 `[1, 1600000]` Mbps (`minPortSpeed` / `maxPortSpeed`)
+- 上限は 1.6 Tbps クラスの将来拡張に対応する
+
+### fec / fec override
+
+- `orchagent/port/porthlpr.cpp:77-83` `portFecMap`: `"none"` / `"rs"` / `"fc"` / `"auto"` → `SAI_PORT_FEC_MODE_{NONE, RS, FC, NONE}`
+- `porthlpr.cpp:92-98` `portFecOverrideMap`: `"none"/"rs"/"fc"` で明示指定 (`true`)、`"auto"` のみ SAI への明示設定を抑止 (`false`)
+- `porthlpr.cpp:85-90` 逆向きマップ `portFecRevMap` は `"auto"` を含まず 3 値のみ (STATE_DB 書き戻し用)
+
+### autoneg / link_training / pfc_asym
+
+- 3 フィールドとも APPL_DB の値は `"on"` / `"off"` 2 値固定
+- `orchagent/portsorch.cpp:174-178` `autoneg_mode_map`: `"on"` → `1`, `"off"` → `0`
+- `porthlpr.cpp:37-41` `portModeMap`: `"on"` / `"off"` → `true` / `false`
+- `porthlpr.cpp:100-104` `portPfcAsymMap`: `"on"` → `SAI_PORT_PRIORITY_FLOW_CONTROL_MODE_SEPARATE`, `"off"` → `..._COMBINED`
+
+### interface_type
+
+- `orchagent/port/porthlpr.cpp:49-75` `portInterfaceTypeMap` は **24 種類**: `none, cr, cr2, cr4, cr8, sr, sr2, sr4, sr8, lr, lr4, lr8, kr, kr4, kr8, caui, gmii, sfi, xlaui, kr2, caui4, xaui, xfi, xgmii`
+- `orchagent/portsorch.cpp:195-210` の `interface_type_map` は Gearbox 専用で **13 種類のみ** (`none, cr, cr4, cr8, sr, sr4, sr8, lr, lr4, lr8, kr, kr4, kr8`)
+- **通常ポートと gearbox 内部ポートで許容値が異なる**点に注意
+
+### role (内部ポート識別子)
+
+- `orchagent/port.h:158-165` `Port::Role` enum: `Ext` / `Int` / `Inb` / `Rec` / `Dpc`
+  - `Ext` = 外部 (フロントパネル) ポート
+  - `Int` = 内部ポート
+  - `Inb` = inband ポート (CPU 経由)
+  - `Rec` = recirculation ポート
+  - `Dpc` = SmartSwitch DPU Connect Port
+- `porthlpr.cpp:116-123` `portRoleMap` で 5 値以外を拒否
+
+### Port::Type (APPL_DB には書かれない内部分類)
+
+- `orchagent/port.h:145-156`: `CPU, PHY, MGMT, LOOPBACK, VLAN, LAG, TUNNEL, SUBPORT, SYSTEM, UNKNOWN`
+- `PORT_TABLE` のエントリは原則 `Type::PHY`、`PORTCHANNEL_TABLE` 経由が `LAG`、VOQ/Gearbox で `SYSTEM`
+- PortsOrch のハンドラ分岐で多用される (`portsorch.cpp:2953, 2972, 2990, 3037, 3920, 4122` 等)
+
+### Gearbox 命名 prefix
+
+- `orchagent/port/porthlpr.cpp:28-29`:
+  - `GB_LINE_PREFIX = "gb_line_"`
+  - `GB_SYSTEM_PREFIX = "gb_system_"`
+- Gearbox port 用の STATE_DB / COUNTERS_DB エントリ名に付与される
+
+<!-- /constants -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
