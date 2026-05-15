@@ -321,4 +321,66 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 - **`trace` の無効化バグ**: `aaa_update()` に `trace` 更新ブロックが存在しないため `self.trace` は常に `False`。CONFIG_DB の `trace=True` は PAM テンプレートに反映されない。
 <!-- /failure -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: AAA は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | AAA は SAI 非経由。`hostcfgd` が Linux PAM / NSS 設定ファイルを直接書き換えるのみ (段階 3 トレース参照) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `AaaCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2166-2185`)。`is_multi_npu` 値は AAA 経路に渡されない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | AAA テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に PAM を再生成 |
+| ベンダー固有 PAM モジュール | なし | community master の PAM スタックは `pam_unix` / `pam_tacplus` / `pam_radius_auth` / `pam_ldap` の Debian 標準。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし (`ls files/image_config \| grep -iE 'aaa\|tacacs\|radius\|ldap\|pam\|nss'` が 0 ヒット) |
+| テンプレート内分岐 | プラットフォーム条件なし | `common-auth-sonic.j2` / `tacplus_nss.conf.j2` を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット。分岐は `AAA.login` / `failthrough` / `debug` / `trace` とサーバリストのみ |
+
+詳細根拠は `meta/_intermediate/cdb-flow/aaa-platform.md` を参照。
+<!-- /platform -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`AAA` テーブル（および関連 `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER`）への変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `AAA` | `aaa_handler` → `aaa_update` |
+| `hostcfgd` | 同上 | `TACPLUS` / `TACPLUS_SERVER` | `tacacs_global_handler` / `tacacs_server_handler` |
+| `hostcfgd` | 同上 | `RADIUS` / `RADIUS_SERVER` | `radius_global_handler` / `radius_server_handler` |
+| `hostcfgd` | 同上 | `LDAP` / `LDAP_SERVER` | `ldap_global_handler` / `ldap_server_handler` |
+
+`hostcfgd` 以外で `AAA` テーブルを購読するプロセスは存在しない (`pam_tacplus` / `pam_radius` / `pam_ldap` / `pam_unix` は PAM 設定ファイルを認証時に読むのみで Redis を購読しない)。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config aaa authentication login tacacs+,local
+  ↓ HSET "AAA|authentication" login "tacacs+,local"
+Redis keyspace PUBLISH "__keyspace@4__:AAA|authentication"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "AAA|authentication"  ← 通知後に値を再取得
+aaa_handler(key="authentication", op=SET, data={login:"tacacs+,local"})
+  ↓ AaaCfg.aaa_update() → modify_conf_file()
+  ↓ PAM/NSS テンプレ再生成 (/etc/pam.d/common-auth, /etc/tacplus_nss.conf, ...)
+  ↓ handle_nslcd_service(is_ldap_config_complete())  ← LDAP 状態変化時のみ
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `AaaCfg.load()` が `init_data['AAA']` / `TACPLUS*` / `RADIUS*` / `LDAP*` を一括スナップショットで適用する。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `AAA` / `LDAP*` 変更で `is_ldap_config_complete()` 真偽が変化 | `systemctl unmask/restart nslcd` または `stop/mask nslcd` | `handle_nslcd_service` — hostcfgd:241-251, 434-435 |
+| `TACPLUS_SERVER` 変更 | `audisp-tacplus` プロセスに `SIGHUP` (PAM ホット再読込) | `notify_audisp_tacplus_reload_config` — hostcfgd:483-493 |
+| PAM 設定ファイル書き換え | デーモン restart **なし** (PAM は次回ログイン時にファイルを読む) | `modify_conf_file` — hostcfgd:641-648 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528` (subscribe/listen/make_callback)、`hostcfgd:2289-2343` (各 *_handler)、`hostcfgd:399-417` (`AaaCfg.load()` 起動時スナップショット)、`hostcfgd:419-435` (`aaa_update`)、`hostcfgd:230-251` (`restart_service`/`handle_nslcd_service`)、`hostcfgd:483-493` (`notify_audisp_tacplus_reload_config`); 詳細分析 `meta/_intermediate/cdb-flow/aaa-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->
