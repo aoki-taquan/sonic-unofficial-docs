@@ -24062,6 +24062,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sai-capability-capability-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SAI capability への依存（capability query なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-fdb-aging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FDB aging の扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mclag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. MCLAG 連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. multi-asic / VOQ chassis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34818,6 +34890,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sai-capability-capability-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SAI capability への依存（capability query なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-fdb-aging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FDB aging の扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-mclag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. MCLAG 連動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. multi-asic / VOQ chassis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35268,6 +35412,129 @@
 <li><code>doTask()</code> L830 <code>assert(type == "dynamic" || type == "dynamic_local" || type == "static")</code> — 不正な <code>type</code> 値は <strong>orchagent プロセスをクラッシュ</strong>させる。Producer 側で値の妥当性を保証すること。</li>
 </ul>
 <!-- /ordering -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>fdborch.cpp</code> 全 1802 行を精読し、SAI capability への依存、MCLAG 連動、multi-asic / VOQ の観点でプラットフォーム差を抽出した。中間ノート: <code>meta/_intermediate/cdb-flow/appl-fdb-platform.md</code>。</p>
+<h3 id="1-sai-capability-capability-query">1. SAI capability への依存（capability query なし）<a class="headerlink" href="#1-sai-capability-capability-query" title="Permanent link">&para;</a></h3>
+<p>FdbOrch は SAI capability を<strong>事前 query せず</strong>、以下の attr / API を無条件に使う。一部の vendor SAI 実装で未サポートの場合、<code>create_fdb_entry</code> / <code>flush_fdb_entries</code> が <code>SAI_STATUS_NOT_SUPPORTED</code> を返し <code>handleSaiCreateStatus()</code> が task_failed を返すパスに入る。</p>
+<table>
+<thead>
+<tr>
+<th>SAI attr / API</th>
+<th>使用条件</th>
+<th>コード箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE = true</code></td>
+<td>origin が VXLAN_ADVERTIZED または MCLAG_ADVERTIZED <strong>かつ</strong> <code>type == "dynamic"</code> の MAC を SAI に登録するとき</td>
+<td><code>fdborch.cpp:1441-1448</code></td>
+</tr>
+<tr>
+<td><code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE = true</code>（AGE/MOVE 通知での再投入）</td>
+<td>MCLAG remote MAC が aging/move 通知で削除されるのを救済する経路</td>
+<td><code>fdborch.cpp:507-509</code>, <code>583-585</code></td>
+</tr>
+<tr>
+<td><code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE = false</code> への落とし込み</td>
+<td>origin が VXLAN_ADVERTIZED から local に切り替わったとき / dynamic から static へ昇格したとき</td>
+<td><code>fdborch.cpp:1487-1497</code></td>
+</tr>
+<tr>
+<td><code>SAI_FDB_FLUSH_ATTR_BRIDGE_PORT_ID</code> + <code>SAI_FDB_FLUSH_ATTR_BV_ID</code> + <code>SAI_FDB_FLUSH_ATTR_ENTRY_TYPE=DYNAMIC</code> の 3 attr 同時指定 flush</td>
+<td>port down / VLAN_MEMBER 削除 / FDB flush コマンド受信時</td>
+<td><code>fdborch.cpp:949-1170</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-fdb-aging">2. FDB aging の扱い<a class="headerlink" href="#2-fdb-aging" title="Permanent link">&para;</a></h3>
+<p>FDB aging time そのものは <strong>SwitchOrch</strong> が <code>SAI_SWITCH_ATTR_FDB_AGING_TIME</code> で一元管理する設計で、FdbOrch は aging 通知 (<code>SAI_FDB_EVENT_AGED</code>) を<strong>受信する側</strong>として動作する (<code>fdborch.cpp:421-545</code>)。</p>
+<p><code>dynamic_local</code>（MCLAG remote を ASIC 上ローカル扱いに格上げした状態）は意図的に <code>SAI_FDB_ENTRY_TYPE_DYNAMIC</code> で登録され、コメントに <code>aging enabled</code> と明記されている (<code>fdborch.cpp:1552-1556</code>)。これにより、ピア由来 MAC でも一定時間トラフィックが無ければ ASIC 側 aging により消える。</p>
+<p><strong>プラットフォーム差の注意</strong>:</p>
+<ul>
+<li>ASIC によっては aging 通知が<strong>個別 MAC 単位で発行されず</strong>、バルク flush 経由でのみ通知される実装がある。</li>
+<li><code>dynamic_local</code> の aging 有効化前提が成立しない vendor SAI では、MCLAG remote MAC が削除されず残る可能性がある。</li>
+</ul>
+<p>いずれも fdborch.cpp 側に capability 分岐は無く、ASIC 実装依存。</p>
+<h3 id="3-mclag">3. MCLAG 連動<a class="headerlink" href="#3-mclag" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>動作</th>
+<th>条件</th>
+<th>コード箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>port oper-down 時の自動 FDB flush を<strong>スキップ</strong></td>
+<td><code>gMlagOrch-&gt;isMlagInterface(port)</code> が true</td>
+<td><code>fdborch.cpp:1209-1213</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB MCLAG_FDB_TABLE</code> への書き戻し</td>
+<td>origin == <code>FDB_ORIGIN_MCLAG_ADVERTIZED</code> の add</td>
+<td><code>fdborch.cpp:872-878</code>, <code>1595-1602</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB MCLAG_FDB_TABLE</code> からの削除</td>
+<td>MCLAG remote の DEL / <code>dynamic_local</code> 格上げ / local 学習による origin 切替</td>
+<td><code>fdborch.cpp:901-908</code>, <code>1606-1612</code>, <code>124-129</code></td>
+</tr>
+<tr>
+<td>AGE 通知での MCLAG remote MAC 再投入</td>
+<td>aging 通知が来ても MCLAG origin の場合は <code>create_fdb_entry</code> を再実行</td>
+<td><code>fdborch.cpp:490-545</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>MCLAG 非対応プラットフォーム</strong>: <code>gMlagOrch</code> 自体は orchagent に常に生成されるが、MCLAG メンバーが登録されない場合 <code>isMlagInterface()</code> は常に false を返すだけ。<code>FDB_ORIGIN_MCLAG_ADVERTIZED</code> の origin もそもそも発生しない（<code>APP_MCLAG_FDB_TABLE_NAME</code> への書き込みが行われない）ため、MCLAG 関連の SAI attr (<code>ALLOW_MAC_MOVE</code>) も発行されない。実質 no-op で MCLAG 非対応 ASIC でも機能影響なし。</p>
+<h3 id="4-multi-asic-voq-chassis">4. multi-asic / VOQ chassis<a class="headerlink" href="#4-multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>fdborch.cpp</code> 内に <code>gMySwitchType</code> / <code>namespace</code> / <code>VOQ</code> / <code>chassis</code> / <code>fabric</code> への分岐は<strong>存在しない</strong>（全行 grep 結果 0 hit）。</p>
+<ul>
+<li><strong>multi-asic プラットフォーム</strong>: orchagent が asic 単位で独立プロセスとして起動するため、FdbOrch も asic ごとに独立して動作する。ASIC 間で FDB を共有・同期する処理は FdbOrch のスコープ外。</li>
+<li><strong>VOQ chassis</strong>: system-FDB（chassis 全体で MAC を共有する仕組み）は本 Orch ではなく <code>fpmsyncd</code> / chassis_app_db 系で処理される。<code>APPL_DB FDB_TABLE</code> 自体は asic-local。</li>
+</ul>
+<h3 id="5">5. プラットフォーム差サマリ<a class="headerlink" href="#5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>プラットフォーム差</th>
+<th>コード上の capability 分岐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MAC move (<code>ALLOW_MAC_MOVE</code>)</td>
+<td>vendor SAI で未サポートだと VXLAN/MCLAG dynamic MAC 登録が失敗</td>
+<td><strong>なし</strong>（無条件 attr 投入）</td>
+</tr>
+<tr>
+<td>FDB aging 通知</td>
+<td>通知粒度・aging 対象判定が ASIC 依存</td>
+<td><strong>なし</strong>（通知前提で記述）</td>
+</tr>
+<tr>
+<td>FDB flush の 3 attr 同時指定</td>
+<td>vendor SAI で組合せ制約あり得る</td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>MCLAG（port oper-down / state 書き戻し）</td>
+<td>MCLAG 非対応プラットフォームでは実質 no-op</td>
+<td><code>gMlagOrch-&gt;isMlagInterface()</code> の結果でのみ分岐</td>
+</tr>
+<tr>
+<td>multi-asic / VOQ</td>
+<td>asic 単位独立、横断同期なし</td>
+<td><strong>なし</strong>（fdborch.cpp は asic-local）</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
 
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
