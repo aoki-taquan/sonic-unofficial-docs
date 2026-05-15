@@ -313,4 +313,46 @@ mergeConfig(COPP_GROUP)  # L372: GROUP をマージ — checkTrapGroupPending() 
 `g_copp_init_set` に登録された key（`copp.json` 由来）は、最初の CONFIG_DB SET イベントを読み飛ばす（`coppmgr.cpp:855-860`）。`copp.json` デフォルト GROUP を上書きする場合は SET を 2 回送る必要はなく、通常の CONFIG_DB 書き込みで上書きできる（init 時に既にマージ済みのため）。
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | 未知フィールド名 | `parseTrapGroupAttribute()` → `task_failed` | `doTask()` ループ終了（後続 COPP 更新が停止） | なし |
+| 2 | SAI `create_hostif_trap_group` 恒久エラー | `handleSaiCreateStatus()` → `task_failed` | 同上（一時エラーは `task_need_retry` で無制限 retry） | なし/無制限 |
+| 3 | policer `meter`/`mode`/`color` 変更試行 | `trapGroupUpdatePolicer()` → `continue` | エラーログのみ。当該属性スキップ、他属性は更新継続 | — |
+| 4 | policer SAI set 恒久エラー | `handleSaiSetStatus()` → `task_failed` | `doTask()` ループ終了 | なし |
+| 5 | `genetlink_name` 二重登録 | `processCoppTrapGroup()` → `task_failed` | `doTask()` ループ終了 | なし |
+| 6 | `DEL` で `default` グループ削除試行 | `task_ignore` | WARN ログのみ。erase して続行 | — |
+| 7 | 未知 op type | `task_invalid_entry` | エラーログ。erase して次エントリへ | なし |
+| 8 | `out_of_range` / `exception` | `doCoppTask()` catch → `task_invalid_entry` | エラーログ。erase して次エントリへ | なし |
+| 9 | `copp_cfg.json` ファイル未検出 | `CoppMgr::parseInitFile()` | デフォルト CoPP ポリシーが適用されない | — |
+
+### task_failed 後の挙動
+
+`task_failed` が発生すると `doCoppTask()` の `doTask()` が即 `return` し、当該 Consumer の後続処理が停止する（orchagent プロセス自体は継続）。再起動（`systemctl restart swss`）が必要。<!-- evidence: copporch.cpp L920-923 -->
+
+```text
+SWSS_LOG_ERROR("Processing copp task item failed, exiting. ");
+return;
+```
+
+### 変更不可属性のスキップ挙動
+
+既存 policer の `meter_type` / `mode` / `color_source` を変更しようとすると、エラーログを出力して **`continue`** し他属性の更新を継続する。ハードウェアへの反映はゼロ。変更するにはエントリを **DEL → SET** で再作成する必要がある。<!-- evidence: copporch.cpp L1327-1350 trapGroupUpdatePolicer -->
+
+### STATE_DB / ERROR_TABLE への記録
+
+COPP_GROUP に関する `STATE_DB` への障害記録はなし。`syslog`（`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`）への出力のみ。CONFIG_DB のエントリは失敗後も残る。
+
+```bash
+# syslog 確認
+journalctl -u swss | grep -i copp
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/copp-group-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 87fa713c3c5e -->
