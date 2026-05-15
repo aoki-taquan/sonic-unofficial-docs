@@ -21963,6 +21963,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_status-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status は silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mtu-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mtu は silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback_action-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loopback_action 未設定時の動作は SAI 実装依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-if-portchannel_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback IF 専用フォールバック (PORTCHANNEL_INTERFACE には適用されない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他フィールドの silent skip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34863,6 +34946,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#admin_status-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        admin_status は silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mtu-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mtu は silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback_action-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loopback_action 未設定時の動作は SAI 実装依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback-if-portchannel_interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loopback IF 専用フォールバック (PORTCHANNEL_INTERFACE には適用されない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        他フィールドの silent skip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要 discrepancy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35439,6 +35605,93 @@
 </table>
 <p><em>vrf_name は VRF.name への leafref — 存在しない VRF は YANG validate で reject。</em></p>
 <!-- /value-behavior -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp / sonic-swss/cfgmgr/intfmgr.h -->
+
+<blockquote>
+<p><strong>詳細</strong>: <code>meta/_intermediate/cdb-flow/portchannel-interface-defaults.md</code></p>
+</blockquote>
+<p><code>PORTCHANNEL_INTERFACE</code> は <code>IntfMgr::doIntfGeneralTask()</code> が <code>INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> / <code>VLAN_INTERFACE</code> と共通処理する。intfmgr.cpp 冒頭のハードコード定数は以下:</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>PORTCHANNEL_INTERFACE への適用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_MTU_STR</code></td>
+<td><code>9100</code></td>
+<td>× (サブインタフェース fallback のみ — intfmgr.cpp:29,402,420)</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_DEFAULT_MTU_STR</code></td>
+<td><code>65536</code></td>
+<td>× (Loopback IF 専用 — intfmgr.cpp:28,201)</td>
+</tr>
+<tr>
+<td><code>MTU_INHERITANCE</code></td>
+<td><code>"0"</code></td>
+<td>× (sub-interface 親 MTU 継承の特殊値)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="admin_status-silent-drop"><code>admin_status</code> は silent drop<a class="headerlink" href="#admin_status-silent-drop" title="Permanent link">&para;</a></h3>
+<p><code>PORTCHANNEL_INTERFACE</code> 属性ロウに <code>admin_status</code> を書いても intfmgrd は反応しない。<code>adminStatus</code> 変数 (intfmgr.cpp:776,797-800) は <strong><code>is_lo</code> ブランチ (Loopback IF) でのみ参照</strong>され、PORTCHANNEL IF を含む非 loopback の <code>else</code> 節 (intfmgr.cpp:884-) では未使用。YANG 側でも <code>PORTCHANNEL_INTERFACE</code> 属性ロウに <code>admin_status</code> leaf 定義なし — LAG の admin up/down は <code>PORTCHANNEL</code> テーブルで管理する。</p>
+<h3 id="mtu-silent-drop"><code>mtu</code> は silent drop<a class="headerlink" href="#mtu-silent-drop" title="Permanent link">&para;</a></h3>
+<p>intfmgr.cpp:775 で <code>mtu = ""</code> 初期化されるが、PORTCHANNEL_INTERFACE 処理経路では <code>mtu</code> フィールドを読み取らない。MTU 変更は <code>PORTCHANNEL</code> テーブルで行う必要がある。<code>DEFAULT_MTU_STR = "9100"</code> は サブインタフェース (<code>PortChannel0001.10</code> 形式) の親 MTU 取得失敗時のフォールバック (intfmgr.cpp:400-402) としてのみ使用される。</p>
+<h3 id="loopback_action-sai"><code>loopback_action</code> 未設定時の動作は SAI 実装依存<a class="headerlink" href="#loopback_action-sai" title="Permanent link">&para;</a></h3>
+<p>intfmgr.cpp:825-828,893-898 は <code>loopback_action</code> フィールドが空なら APP_INTF_TABLE に push しない (silent skip)。SAI 側の初期値はベンダー実装依存で、概ね <code>forward</code> 相当だが明文化されない。</p>
+<h3 id="loopback-if-portchannel_interface">Loopback IF 専用フォールバック (PORTCHANNEL_INTERFACE には適用されない)<a class="headerlink" href="#loopback-if-portchannel_interface" title="Permanent link">&para;</a></h3>
+<p><code>is_lo</code> ブランチ (intfmgr.cpp:852-883) では <code>adminStatus.empty()</code> のとき <code>"up"</code> にフォールバックし、不正値 (<code>"up"</code>/<code>"down"</code> 以外) も警告付きで <code>"up"</code> に補正する。<strong>この補正は Loopback IF のみで PORTCHANNEL_INTERFACE には適用されない</strong>。</p>
+<h3 id="silent-skip">他フィールドの silent skip<a class="headerlink" href="#silent-skip" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>未設定時の挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vrf_name</code></td>
+<td>default VRF (Linux global namespace)</td>
+<td>intfmgr.cpp:789-792</td>
+</tr>
+<tr>
+<td><code>mac_addr</code></td>
+<td><code>DEVICE_METADATA.localhost.mac</code> のシステム MAC</td>
+<td>intfmgr.cpp:793-796</td>
+</tr>
+<tr>
+<td><code>mpls</code></td>
+<td>Linux netdev の MPLS 設定を変更しない</td>
+<td>intfmgr.cpp:809-812</td>
+</tr>
+<tr>
+<td><code>nat_zone</code></td>
+<td>natmgrd 側で zone <code>0</code> 扱い (intfmgr は補填せず)</td>
+<td>intfmgr.cpp:813-816</td>
+</tr>
+<tr>
+<td><code>ipv6_use_link_local_only</code></td>
+<td>Linux IPv6 システムデフォルト (YANG default <code>disable</code> と整合)</td>
+<td>intfmgr.cpp:817-820</td>
+</tr>
+</tbody>
+</table>
+<h3 id="discrepancy">主要 discrepancy<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong><code>admin_status</code> を書いても無視される</strong> — YANG schema にも leaf 定義がなく、intfmgrd も読まない。混同するとユーザは「反映されない」と感じる。</li>
+<li><strong><code>mtu</code> を書いても無視される</strong> — <code>PORTCHANNEL</code> テーブル側で管理。</li>
+<li><strong><code>loopback_action</code> 未設定時の SAI 初期値が不明</strong> — ベンダー実装依存で動作が変わる可能性。</li>
+</ol>
+<!-- /defaults -->
 
 <!-- cdb-exceptions -->
 <h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
