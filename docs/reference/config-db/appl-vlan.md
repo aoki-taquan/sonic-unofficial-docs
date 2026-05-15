@@ -405,6 +405,66 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` は YANG 未定義のため、明示�
 詳細な evidence は `meta/_intermediate/cdb-flow/appl-vlan-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+APPL_DB の `VLAN_TABLE` / `VLAN_MEMBER_TABLE` への変更通知は、`PortsOrch` が **`swss::ConsumerStateTable`** (channel ベース PUBLISH/SUBSCRIBE) で購読する。`Orch::addConsumer()` は DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB 以外（= APPL_DB）には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。VLAN 系 APPL_DB テーブルでは **keyspace 通知 (`__keyspace@<dbId>__:...`) は使わない** — channel ベースの `<TABLE>_CHANNEL@<dbId>` PUBLISH/SUBSCRIBE プロトコルが使われる。
+
+```cpp
+// orch.cpp:1186-1196 (抜粋)
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ..., pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+`orchdaemon.cpp:217-224` で `ports_tables` に `APP_VLAN_TABLE_NAME` / `APP_VLAN_MEMBER_TABLE_NAME` が登録され、`PortsOrch` コンストラクタ経由で `addConsumer()` に渡される。APPL_DB の DB ID は CONFIG_DB / STATE_DB / CHASSIS_APP_DB のいずれでもないため、`ConsumerStateTable` 経路が選択される。
+
+| 購読者 | 購読 API | 購読テーブル | 優先度 | バッチ |
+|--------|---------|--------------|--------|--------|
+| `orchagent` (`PortsOrch`) | `swss::ConsumerStateTable` | `VLAN_TABLE` | `portsorch_base_pri + 2` = 42 (`orchdaemon.cpp:220`) | `gBatchSize` (default 128) |
+| `orchagent` (`PortsOrch`) | 同上 | `VLAN_MEMBER_TABLE` | `portsorch_base_pri` = 40 (`orchdaemon.cpp:221`) | 同上 |
+
+`gBatchSize` は `orchagent/main.cpp` で `DEFAULT_BATCH_SIZE = 128` に初期化され、`orchagent -b <n>` オプションで上書き可能。書き込み側 `vlanmgrd` は `cfgmgr/vlanmgr.h:22` で `ProducerStateTable m_appVlanTableProducer, m_appVlanMemberTableProducer;` を保持し、`vlanmgr.cpp:33-34` で `APP_VLAN_TABLE_NAME` / `APP_VLAN_MEMBER_TABLE_NAME` 宛にバインドする。`ProducerStateTable::set()` 内部で `_<TABLE>` ハッシュ + `<TABLE>_CHANNEL@<dbId>` への `PUBLISH` が発行される。TTL は使用されない。
+
+### channel PUBLISH → ハンドラ呼び出しの流れ
+
+```
+vlanmgrd (cfgmgr/vlanmgr.cpp)
+  ↓ m_appVlanTableProducer.set(vlan_name, fvVector)
+APPL_DB: HSET "_VLAN_TABLE:Vlan100" admin_status up mtu 9100 ...
+  ↓ Redis PUBLISH "VLAN_TABLE_CHANNEL@0" "G"
+OrchDaemon main loop: m_select->select(&s, SELECT_TIMEOUT)
+  ↓ Consumer::execute() → ConsumerStateTable::pops()
+PortsOrch::doTask()  (portsorch.cpp:6464-6489)
+  ↓ tableOrder で固定順 drain (PORT → LAG → LAG_MEMBER → VLAN → VLAN_MEMBER)
+PortsOrch::doTask(Consumer&)  (portsorch.cpp:6492-6526)
+  ↓ table_name で分岐
+doVlanTask(consumer) / doVlanMemberTask(consumer)
+  ↓
+SAI: sai_vlan_api->create_vlan() / create_vlan_member()
+```
+
+- `PortsOrch::doTask()` (`portsorch.cpp:6464-6489`) は consumer drain を **固定順** `APP_PORT_TABLE → APP_LAG_TABLE → APP_LAG_MEMBER_TABLE → APP_VLAN_TABLE → APP_VLAN_MEMBER_TABLE` で呼ぶため、同一 select サイクル内でも VLAN_TABLE の処理が VLAN_MEMBER_TABLE より必ず先行する。
+- `PortsOrch::doTask(Consumer&)` (`portsorch.cpp:6492-6526`) では `if (!allPortsReady()) return;` ガードがあり (`portsorch.cpp:6513-6517`)、初期化未完了の間 VLAN 経路は一切呼ばれず `m_toSync` で保留される。
+- 書き込み側（`vlanmgrd`）と購読側（`PortsOrch`）は別プロセスのため、PUBLISH/SUBSCRIBE は Redis を介した IPC として動作する。
+
+### リトライキャッシュ・retry セマンティクス
+
+VLAN 経路には `createRetryCache()` のような明示的 retry キャッシュは存在しない（ACL 系と異なる）。代わりに `Consumer::m_toSync` に保留された未処理エントリが次の select サイクルで再評価される、Orch 基底クラスの汎用 retry に依存する。一時失敗（`PORT`/`LAG`/`VLAN` 未準備、SAI retryable）は `it++; continue;` で `m_toSync` 残置、永続失敗（key 形式不正・不正 `tagging_mode`）は `erase(it)` で破棄される（詳細は本ページ「書込失敗・retry 分岐」セクション参照）。
+
+### サービス再起動トリガー
+
+なし。`PortsOrch` は同一 orchagent プロセス内のハンドラであり、APPL_DB エントリの追加/削除は SAI VLAN オブジェクトのライブ操作 (`sai_vlan_api->create_vlan` / `remove_vlan` / `create_vlan_member` / `remove_vlan_member`) のみで反映され、プロセス再起動・サービス restart を伴わない。warm-restart 時は `addExistingData(APP_VLAN_TABLE_NAME)` / `addExistingData(APP_VLAN_MEMBER_TABLE_NAME)` (`portsorch.cpp:4389-4390`) で既存エントリを `m_toSync` に再注入する。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:215-224` (ports_tables 登録)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐 → ConsumerStateTable 選択)、`sonic-swss/orchagent/portsorch.cpp:4389-4390,6464-6526` (warm bake / doTask fixed-order drain / 分岐)、`sonic-swss/cfgmgr/vlanmgr.h:22-23`, `sonic-swss/cfgmgr/vlanmgr.cpp:33-34` (`ProducerStateTable` バインド)、`sonic-swss-common/common/schema.h:41-42` (テーブル名定数); 詳細分析 `meta/_intermediate/cdb-flow/appl-vlan-pubsub.md`
+<!-- /pubsub -->
+
 ## 書き込み主体
 
 | 書き込み元 | 対象テーブル | 経路 |
