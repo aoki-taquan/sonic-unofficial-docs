@@ -560,4 +560,58 @@ SAI (ハードウェア VRF)
 
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss-common/common/schema.h`
+
+`VRF` エントリの SET/DEL が CONFIG_DB 外の DB テーブルへ書き込む副次効果を網羅する。
+
+### vrfmgrd — SET 時の副次書込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_stateVrfTable.set(name, [{state:"ok"}])` | STATE_DB / `VRF_TABLE` | `<name>` field=`state` | Linux netdev 作成後、常時 (vrfmgr.cpp:289) |
+| `m_appVrfTableProducer.set(name, fields)` | APPL_DB / `VRF_TABLE` | `<name>` | VRF_TABLE または MGMT_VRF_CONFIG 経由 (vrfmgr.cpp:303) |
+| `m_appVxlanVrfTableProducer.set(key, [{vni,vrf}])` | APPL_DB / `VXLAN_VRF_TABLE` | `<tunnel>:evpn_map_<vni>_<vrf>` | `vni` 非ゼロ かつ EVPN NVO トンネル設定済み (vrfmgr.cpp:521) |
+
+カーネル副作用 (DB 外): `ip link add <name> type vrf table <id>` / `ip link set <name> up`。mgmt VRF では `ip link add` をスキップ。
+
+### vrfmgrd — DEL 時の副次書込み
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|------------------|------|------|
+| `m_appVrfTableProducer.del(name)` | APPL_DB / `VRF_TABLE` | `<name>` | STATE_DB に該当エントリが存在する場合 (vrfmgr.cpp:338) |
+| `m_stateVrfTable.del(name)` | STATE_DB / `VRF_TABLE` | `<name>` | 同上 (vrfmgr.cpp:339) |
+| `m_appVxlanVrfTableProducer.del(key)` | APPL_DB / `VXLAN_VRF_TABLE` | `<tunnel>:evpn_map_<vni>_<vrf>` | `vni` マッピングが存在する場合 (vrfmgr.cpp:524) |
+
+カーネル副作用: `ip link del <name>`。DEL 実行は orchagent が `VRF_OBJECT_TABLE` を消去するまで遅延する。
+
+### VRFOrch (orchagent) — APPL_DB VRF_TABLE 受信後の副次書込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_stateVrfObjectTable.hset(name, "state", "ok")` | STATE_DB / `VRF_OBJECT_TABLE` | `<name>` field=`state` | SAI create/set 成功後 (vrforch.cpp:120, 150) |
+| `m_stateVrfObjectTable.del(name)` | STATE_DB / `VRF_OBJECT_TABLE` | `<name>` | SAI remove 成功後 (vrforch.cpp:193) |
+
+SAI 副作用 (ASIC_DB 経由): `create_virtual_router` / `remove_virtual_router` / `set_virtual_router_attribute`。VNI 設定時は `VxlanTunnelOrch` を経由して ASIC_DB に VXLAN エントリが反映される。
+
+### STATE_DB テーブル役割まとめ
+
+| STATE_DB テーブル | 書込みプロセス | 削除プロセス | 役割 |
+|-----------------|-------------|------------|------|
+| `VRF_TABLE\|<name>` (`state=ok`) | vrfmgrd | vrfmgrd | intfmgrd の VRF readiness ガード |
+| `VRF_OBJECT_TABLE\|<name>` (`state=ok`) | VRFOrch | VRFOrch | vrfmgrd DEL の遅延同期ゲート |
+
+### 確認コマンド
+
+```bash
+sonic-db-cli STATE_DB hgetall 'VRF_TABLE|VrfRed'
+sonic-db-cli STATE_DB hgetall 'VRF_OBJECT_TABLE|VrfRed'
+sonic-db-cli APPL_DB hgetall 'VRF_TABLE:VrfRed'
+sonic-db-cli APPL_DB hgetall 'VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed'
+```
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
