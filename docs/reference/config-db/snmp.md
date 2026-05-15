@@ -273,4 +273,50 @@ YANG は `container CONTACT { leaf Contact { ... } }` と定義するが、CLI (
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### コンテナ起動時シーケンス
+
+docker-snmp コンテナは supervisord が以下の依存順序でプログラムを制御する:
+
+```
+1. rsyslogd 起動
+2. start.sh 実行 (rsyslogd:running 待機)
+   ├─ snmp_yml_to_configdb.py → CONFIG_DB に SNMP_COMMUNITY / SNMP|LOCATION を書き込み
+   └─ sonic-cfggen -d -t snmpd.conf.j2 → /etc/snmp/snmpd.conf 生成
+3. snmpd 起動 (start:exited 待機)
+4. snmp-subagent 起動 (snmpd:running 待機)
+```
+
+`snmpd` は `start.sh` の完了を待機する（`dependent_startup_wait_for=start:exited`）。`snmpd.conf.j2` のテンプレート展開は `start.sh` 内で行われるため、CONFIG_DB への書き込みが先行する。
+
+### snmp.yml → CONFIG_DB 注入の条件
+
+`snmp_yml_to_configdb.py` は `/etc/sonic/snmp.yml` から `SNMP|LOCATION` を注入するが、以下の優先ルールがある:
+
+| 条件 | 動作 |
+|------|------|
+| `/etc/sonic/snmp.yml` に `snmp_location` なし | `sys.exit(1)` → `start.sh` 失敗 → `snmpd` 未起動 |
+| CONFIG_DB に `SNMP|LOCATION` が既に存在する | yml からの書き込みをスキップ（**既存エントリが優先**） |
+| `SNMP|CONTACT` | `snmp_yml_to_configdb.py` は一切書き込まない。CLI 経由のみ |
+
+### CLI 書込みとサービス再起動
+
+CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に `systemctl restart snmp.service` を実行する（`config/main.py` L4488, L4607 等）。これにより docker-snmp コンテナが再起動し、`start.sh` シーケンスが再実行される。変更反映まで数秒〜十数秒の SNMP 断が発生する。
+
+### テーブル間の書込み順依存
+
+| # | 依存関係 | 強制度 | 備考 |
+|---|----------|--------|------|
+| 1 | `/etc/sonic/snmp.yml` の `snmp_location` 事前配置 → コンテナ起動成功 | **必須** | 欠如時は `sys.exit(1)` でコンテナ起動失敗 |
+| 2 | `SNMP_COMMUNITY` 設定 → SNMP アクセス可能 | **必須** | 未定義時はコミュニティ行なし → 全アクセス拒否 (`snmpd.conf.j2` L48) |
+| 3 | `SNMP|LOCATION` / `SNMP|CONTACT` CONFIG_DB 書き込み → snmpd.conf 展開 | 起動時に **順序保証済み** | supervisord `wait_for=start:exited` が保証 |
+| 4 | CLI `set_entry` 完了 → `systemctl restart snmp.service` | **CLI が自動実行** | 手動再起動不要 |
+| 5 | `SNMP|LOCATION` 既存エントリ → snmp.yml 上書きスキップ | **既存優先** | コンテナ再起動時に yml より DB が優先される |
+
+全フィールド（`SNMP|LOCATION`, `SNMP|CONTACT`, `SNMP_COMMUNITY`, `SNMP_AGENT_ADDRESS_CONFIG`, `SNMP_TRAP_CONFIG`）でランタイム動的更新は不可。変更反映には常に docker-snmp コンテナ再起動が必要。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
