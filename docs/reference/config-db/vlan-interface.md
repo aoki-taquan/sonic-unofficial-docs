@@ -153,6 +153,51 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 [^exc1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vlan.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vlan.yang>
 
+<!-- ordering -->
+## 書込み順依存
+
+> コード精読（`intfmgr.cpp` / `intfsorch.cpp`）から導出した書込み順序制約。順序違反は silent retry になるため注意。
+
+### SET 時の必須前提条件
+
+| 前提テーブル | 確認場所 | 理由 |
+|------------|---------|------|
+| `VLAN|Vlan<N>` + vlanmgrd STATE_VLAN_TABLE ready | `intfmgr.cpp:653-660` | `isIntfStateOk()` が STATE_VLAN_TABLE を参照。未登録なら retry |
+| `VRF|<name>` + vrfmgrd STATE_VRF_TABLE ready | `intfmgr.cpp:839-842` | `vrf_name` 指定時のみ。未登録なら `return false` で retry |
+| VNetOrch が `VNET|<name>` 処理済み | `intfsorch.cpp:933-939` | `vnet_name` 指定時のみ。orchagent 側チェック |
+| PortsOrch が VLAN ポートオブジェクト生成済み | `intfsorch.cpp:905` | APP_DB → SAI 経路のチェック。CONFIG_DB 書込みとは独立 |
+
+### 属性ロウ → IP プレフィクスロウ の順序
+
+1. `VLAN_INTERFACE|Vlan<N>` を SET → intfmgrd が STATE_INTERFACE_TABLE に `vrf` を書く
+2. STATE_INTERFACE_TABLE に alias エントリが存在する状態で `VLAN_INTERFACE|Vlan<N>|<ip_prefix>` を SET
+
+```
+CONFIG_DB: VLAN_INTERFACE|Vlan100  → (intfmgrd doIntfGeneralTask) → STATE_INTF_TABLE|Vlan100
+CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24  → (intfmgrd doIntfAddrTask, isIntfCreated check OK)
+```
+
+逆順で書いた場合は `isIntfCreated()` が false を返して retry キューに積まれる。最終的には収束するが遅れる。
+
+### DEL 時の必須順序
+
+1. `VLAN_INTERFACE|Vlan<N>|<ip_prefix>` をすべて DEL
+2. `VLAN_INTERFACE|Vlan<N>` を DEL
+
+属性ロウの DEL 時に `getIntfIpCount(alias) > 0` であれば `return false`（retry）。IP プレフィクスが残ったまま属性ロウを削除しようとしても適用されない（`intfmgr.cpp:1060-1063`）。
+
+### VRF 変更は 2 ステップ必須
+
+既存 VRF から別 VRF への直接変更は `isIntfChangeVrf()` が検出してエラーログを出し SAI には反映しない。
+
+```
+手順:
+  1. VLAN_INTERFACE|Vlan<N>  vrf_name=""   (unbind)
+  2. VLAN_INTERFACE|Vlan<N>  vrf_name=<new-VRF>  (rebind)
+```
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
