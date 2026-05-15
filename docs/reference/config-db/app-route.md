@@ -303,6 +303,91 @@ CONFIG_DB `CRM` フィールド名・COUNTERS_DB `CRM:STATS` フィールド名�
 > **Evidence**: `sonic-swss/orchagent/routeorch.cpp` (`publishRouteState` L3185-3201, `updateDefRouteState` L287-295, CRM inc/dec 各所), `orchagent/crmorch.cpp:400-401, 1067-1091`, `orchagent/flex_counter/flowcounterrouteorch.cpp:33-34, 152-178, 921-922`; 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/app-route-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+APPL_DB `ROUTE_TABLE` の主購読者 `routeorch::doRouteTask()` は `ConsumerStateTable` イベントを `m_toSync` に積み、各エントリを SAI route_entry に変換する。失敗時のフロー制御は **`m_toSync.erase()` (恒久スキップ) と `it++` (m_toSync 残置で次サイクル再試行) の 2 値**、および **SAI 呼び出し失敗時の `handleSaiCreateStatus`/`handleSaiSetStatus`/`handleSaiRemoveStatus` → `parseHandleSaiStatusFailure`** (`saihelper.cpp:745-762`) による分岐に集約される。`task_need_retry` なら呼び元が false を返し `m_toSync` 残置、`task_failed` なら true で恒久スキップ。
+
+### A. `doRouteTask` 直下の早期失敗
+
+| 失敗条件 | 結果 | retry | evidence |
+|---|---|---|---|
+| `nexthop_group` と `nexthop`/`ifname` 同時指定 | ERROR ログ → `m_toSync.erase` | なし | `routeorch.cpp:810-814` |
+| VRF 未作成 (`!m_vrfOrch->isVRFexists`) | ログなし → `it++` | あり (VRF 作成で自動回復) | `routeorch.cpp:706-715` |
+| `alsv.size()==0 && !blackhole && !srv6_nh` (ifname 空) | WARN ログ → 既存ルートがあれば `removeRoute` 実行後 erase / なければ erase | なし | `routeorch.cpp:855-882` |
+| 非 L3 VNI の overlay 受信 | WARN ログ → 同上の cleanup + erase | なし | `routeorch.cpp:874, 918-920` |
+| SRv6 segment / source 数不整合、router_mac / vni_label 不正 | ERROR ログ → `m_toSync.erase` | なし | `routeorch.cpp:937-989` |
+| `nexthop_group` の NhgOrch 未登録 | ERROR ログ → `++it` | あり (NHG_TABLE 投入で自動回復) | `routeorch.cpp:1004-1015` |
+| 不明 op | ERROR `"Unknown operation type"` → `erase` | なし | `routeorch.cpp:1109-1112` |
+
+### B. `addRoute` / NHG 解決失敗 (retry 経由)
+
+| 失敗条件 | 結果 | retry の契機 | evidence |
+|---|---|---|---|
+| interface NH の RIF 未作成 (`getRouterIntfsId == SAI_NULL_OBJECT_ID`) | INFO ログ → `addRoute` false → `m_toSync` 残置 | IntfsOrch が RIF を作成 | `routeorch.cpp:2083-2090, 2429-2436` |
+| neighbor 未解決 (single NH) | INFO ログ → `m_neighOrch->resolveNeighbor(nexthop)` で ARP/ND 発火 → false | NeighOrch が APPL_DB `NEIGH_TABLE` 経由で `m_syncdNextHops` に登録 | `routeorch.cpp:2149-2155` |
+| neighbor 未解決 (ECMP) | 全未解決 NH に `resolveNeighbor` → `addTempRoute()` で解決済み NH だけの一時ルート install → 元ルートは false | 全 NH 解決後にフルグループへ昇格 | `routeorch.cpp:2194-2243` |
+| `NHFLAGS_IFDOWN` が立つ NH | INFO `"Interface down for NH X, skip"` → ECMP は当該 NH 除外、Route 全体は false | interface UP で NHFLAGS 解除 | `routeorch.cpp:2106-2109, 1532-1535, 1707-1708` |
+| `next_hop_ids.size()==0` (active NH ゼロ) | INFO `"Skipping creation of nexthop group as none of nexthop are active"` → `addNextHopGroup` false → `addRoute` false | neighbor / IFDOWN 解除 | `routeorch.cpp:1548-1551` |
+| **NHG 上限到達** (`m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount`) | DEBUG ログ → `addNextHopGroup` false → `addTempRoute` で単一 NH サブセットを install、元 ECMP は `m_toSync` 残置。bulker 内に削除待ち NHG があれば flush して空き作成 (L1094-1100) | 他ルート DEL で NHG 解放 | `routeorch.cpp:1424-1429, 1478-1483, 2237-2243` |
+| SRv6 nexthop / VPN 作成失敗 (SAI NOT_SUPPORTED 含む) | ERROR `"Failed to create SRV6 vpn"` / `"Failed to create SRV6 nexthop"` → false | SRv6Orch / SAI 状態変化 | `routeorch.cpp:2099-2147, 2168-2173` |
+| EVPN remote VTEP / Tunnel NH 作成失敗 | ERROR → false | VxlanOrch / EvpnOrch 状態 | `routeorch.cpp:2126-2138, 2200-2213` |
+| PIC `context_index` 未登録 | INFO `"Context ID X does not exist, move task entry to RetryCache"` → `ctx.retry_cst = make_constraint(RETRY_CST_PIC, context_index)` で **RetryCache に park** → false | `m_srv6Orch` 経由の `notifyRetry(RETRY_CST_PIC+context_index)` で `m_toSync` 再 enqueue | `routeorch.cpp:2055-2060, 192` |
+
+### C. SAI 失敗 → `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` 経由
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| SAI `create_next_hop_group` 失敗 | ERROR ログ → `handleSaiCreateStatus(SAI_API_NEXT_HOP_GROUP)`。`task_need_retry`→false (retry)、`task_failed`→true (`addNextHopGroup` 失敗扱い→`addTempRoute`) | `routeorch.cpp:1435-1442, 1566-1574` |
+| SAI `remove_next_hop_group` 失敗 | ERROR ログ → `handleSaiRemoveStatus(SAI_API_NEXT_HOP_GROUP)` | `routeorch.cpp:1456-1463, 1752-1755` |
+| SAI `create_route_entry` 失敗 | ERROR ログ → 同一バッチ内で `ctx.nhg_index.empty() && nextHops.getSize()>1` のとき **newly-created NHG を `removeNextHopGroup` でロールバック** → `handleSaiCreateStatus(SAI_API_ROUTE)` | `routeorch.cpp:2511-2528` |
+| SAI `set_route_entry_attribute` 失敗 (`SAI_STATUS_ITEM_NOT_FOUND`) | `m_syncdRoutes.at(vrf_id).erase(ipPrefix)` で内部 cache を補正 → false (次サイクルで「新規作成」パスへ) | `routeorch.cpp:2572-2581` |
+| SAI `set_route_entry_attribute` 失敗 (その他) | ERROR ログ → `handleSaiSetStatus(SAI_API_ROUTE)` | `routeorch.cpp:2583-2589, 2657-2660, 2849-2853` |
+| SAI `remove_route_entry` 失敗 | ERROR ログ → `handleSaiRemoveStatus(SAI_API_ROUTE)`。**失敗時は `gCrmOrch->decCrmResUsedCounter(CRM_IPV4_ROUTE\|CRM_IPV6_ROUTE)` を通らない** (L2882-2889 は成功時のみ) | `routeorch.cpp:2871-2879` |
+| `bulker.create_entry()` が `SAI_STATUS_ITEM_ALREADY_EXISTS` を返す (同一バッチ内重複) | ERROR `"already exists in bulker"` → `addRoute` false → 上位 `it++` (残置)。次サイクル bulker クリア後再評価 | `routeorch.cpp:2301-2307` |
+| NHG メンバ作成失敗 (`nhgm_id == SAI_NULL_OBJECT_ID`) | ERROR ログ → false 返却。**NHG 自体は cleanup されずに残る** (`// TODO: do we need to clean up?`) | `routeorch.cpp:1629-1635` |
+
+`isSaiStatusResourceFull()` (`saihelper.cpp:764-770`) は `SAI_STATUS_INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` / `NV_STORAGE_FULL` を真とする。CRM 集計 (`CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` の `used`) はあくまで観測値で、SAI のリソース枯渇を直接ブロックする経路ではない。ASIC ハードウェア限界は SAI が返す `TABLE_FULL` 等で初めて検出される。
+
+### D. CRM 閾値超過の観測 (失敗ではないが関連)
+
+`crmorch.cpp:1168-1186` (`CRM_EXCEEDED_MSG_MAX=10`, L16):
+
+```cpp
+if ((utilization >= res.highThreshold) && (cnt.exceededLogCounter < CRM_EXCEEDED_MSG_MAX))
+{
+    SWSS_LOG_WARN("%s THRESHOLD_EXCEEDED for %s %u%% Used count %u free count %u", ...);
+    event_publish(g_events_handle, "chk_crm_threshold", &params);
+    cnt.exceededLogCounter++;
+}
+else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ...)
+{
+    SWSS_LOG_WARN("%s THRESHOLD_CLEAR ...");
+    cnt.exceededLogCounter = 0;
+}
+```
+
+`CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` が CONFIG_DB `CRM` の `ipv4_route_high_threshold` / `ipv6_route_high_threshold` を超えると **WARN ログ + `chk_crm_threshold` イベント発火** を最大 10 回。`used/available` 計算で `available==0` のとき `Exception occurred (div by Zero)` WARN を 1 回ログする (L1145-1147)。**CRM は SAI 操作をブロックしない**: ASIC リソース枯渇は SAI 戻り値経由でしか検出されず、CRM はあくまで運用監視のための「事前警告」レイヤである。
+
+### E. STATE_DB / APPL_STATE_DB への失敗反映
+
+- `publishRouteState()` (L3185-3201) は **`addRoute` 成功時のみ** APPL_STATE_DB に `protocol` を書く。SAI 失敗で `addRoute` が false を返した場合、APPL_STATE_DB は更新されず、次サイクル再試行成功時にまとめて publish される
+- `removeRoute` 成功時のみ APPL_STATE_DB の当該 key を空 fvs で削除
+- STATE_DB `ROUTE_TABLE` (default route only) は `updateDefRouteState()` (L287-295, L2856) で `state=ok`/`na` のみ更新。**個別プレフィクスの失敗は STATE_DB には現れない**
+- `ERROR_TABLE` への書き込みは routeorch / nhgorch / crmorch のいずれにも存在しない (grep 結果)
+
+### 検出ロジック補足
+
+- **NHG 上限到達は `addTempRoute` 経由でサブセットが install される**: ECMP の一部 NH だけで一時的にトラフィックが流れる。読み手 (orchagent ログ / `show ip route`) からは「フルセット ECMP がなぜか縮退している」状態に見える
+- **PIC RetryCache は唯一の明示的 retry-cache 利用箇所** (`createRetryCache(APP_ROUTE_TABLE_NAME)`, L192)。それ以外の retry は全て `m_toSync` 残置による polling 型
+- **`SAI_STATUS_ITEM_NOT_FOUND` on set は DualToR の race 補正**: tunnel route が削除された直後に learned route が同じ prefix を set しようとすると発生する。`m_syncdRoutes` cache を消して次サイクルで create にフォールバック
+- **`SAI_STATUS_ITEM_ALREADY_EXISTS` in bulker は same-batch 重複の防御**: 通常運用では起きないが起きた場合 ERROR ログを残して retain。bulker は次サイクルで `flush` 後にリセット
+- **CRM threshold 超過時の event publish は sonic-events 経由**: `g_events_handle` に `chk_crm_threshold` イベントを通知し、Telemetry / sonic-eventd で再公開可能
+
+> **証跡**: `routeorch.cpp` 失敗パス 25 件 (L706-715, L810-814, L855-989, L1004-1015, L1109-1112, L1424-1483, L1532-1574, L1629-1635, L2055-2243, L2511-2589, L2657-2660, L2849-2879, L3185-3201)、`nhgorch.cpp` (L100, L142, L177, L211, L433, L784-789, L805, L940-975, L1044-1082)、`crmorch.cpp` (L16, L1145-1147, L1168-1186)、`saihelper.cpp` (L745-770)。詳細グレップは `meta/_intermediate/cdb-flow/app-route-failure.md` を参照。
+
+<!-- /failure -->
+
 ## 購読者
 
 - `routeorch::doRouteTask()` (`sonic-swss/orchagent/routeorch.cpp`): SAI `route_entry` の作成・更新・削除
