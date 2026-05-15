@@ -290,4 +290,32 @@ show copp config
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`COPP_TRAP` エントリが処理される際に `coppmgr` / `CoppOrch` が暗黙的に参照する
+他テーブルを示す。YANG の `leafref` として定義された `trap_group` に加え、
+コードのみで表現された依存がある。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---|---|---|---|---|
+| `trap_group` | [`COPP_GROUP`](./copp-group.md) | `COPP_GROUP\|<name>` | グループ未登録の場合 `coppmgr` は APPL_DB 書き込みを保留。`CoppOrch` は `task_need_retry` を返して再試行 | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
+| `trap_ids` (各 trap_id) | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | feature の `state=disabled` の場合、対応 trap_id を APPL_DB から除外（`always_enabled=false` のみ対象） | `coppmgr.cpp:173-191` |
+| `always_enabled` | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | `true` の場合は feature state に関わらず常時インストール。未設定は `false` 扱い | `coppmgr.cpp:90` |
+
+### 解決タイミング
+
+- **COPP_GROUP**: SET 処理時に即座に参照確認。未解決は保留キューで管理され、GROUP 登録後に `doTask` 再実行で解消する。
+- **FEATURE**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、state 変更のたびに影響する COPP_TRAP を再評価・再書き込みする。
+
+### init_cfg 由来の暗黙初期化
+
+`coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`files/image_config/copp/copp_cfg.j2` の展開物）を
+読み込み、`COPP_TRAP` と `COPP_GROUP` の初期セットを `m_coppTrapInitCfg` / `m_coppGroupInitCfg` に保持する。
+ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:773-805`
+
+- 既定エントリ例: `bgp` → `trap_ids: bgp,bgpv6` / `trap_group: queue4_group1`
+- `always_enabled=true` の例: `lacp`、`arp`、`udld`、`ip2me`、`neighbor_miss`
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 7a3847939b09 -->
