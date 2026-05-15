@@ -424,3 +424,47 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 - warm reboot 後に `min_links` / `fallback` / `fast_rate` を変更するには cold リスタートが必要。
 
 <!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動・リトライ・リカバリ (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-failure.md`
+> ソース: `sonic-swss/cfgmgr/teammgr.cpp`
+
+### task_need_retry シナリオ
+
+| 失敗箇所 | 条件 | 戻り値 | ログ | リカバリ |
+|---|---|---|---|---|
+| `addLag()` — `teamd` 起動失敗 | `exec(teamd ...)` が非ゼロ終了 | `task_need_retry` | `SWSS_LOG_INFO "Failed to start port channel %s with teamd, retry..."` | `doLagTask()` が孤立 teamd プロセスを `removeLag()` でクリーンアップし、次ループで再試行 |
+| `addLagMember()` — `teamdctl port add` 失敗 + port admin-up | `exec()` 非ゼロ かつ `checkPortIffUp(member) == true` | `task_need_retry` | `SWSS_LOG_INFO "Failed to add %s to port channel %s, retry..."` | portmgrd との競合とみなし次ループで再試行 |
+
+### task_failed シナリオ
+
+| 失敗箇所 | 条件 | 戻り値 | ログ | リカバリ |
+|---|---|---|---|---|
+| `addLagMember()` — `teamdctl port add` 失敗 + port admin-down | `exec()` 非ゼロ かつ `checkPortIffUp(member) == false` | `task_failed` | `SWSS_LOG_ERROR "Failed to add %s to port channel %s"` | エントリ破棄。手動でポートを admin-up にして再設定が必要 |
+
+### 暗黙 continue (ログなし / INFO のみ) シナリオ
+
+| 待機条件 | コード箇所 | 解消トリガー |
+|---|---|---|
+| ポートの `STATE_DB` 状態が未準備 (`isPortStateOk()` false) | `teammgr.cpp:357` | PortsOrch が STATE_DB `PORT_TABLE` にエントリ書き込み |
+| LAG の `STATE_DB` 状態が未準備 (`isLagStateOk()` false) | `teammgr.cpp:357` | LagOrch が STATE_DB にエントリ書き込み |
+| MACsec 付きポートで Ingress SA 未確立 | `teammgr.cpp:362-365` | MACsec ハンドシェイク完了・SA 確立 |
+
+### doPortUpdateTask() — ポート再作成後の自動リカバリ
+
+ポートが削除・再作成（SFP 抜差し、netdev 再作成等）されると STATE_DB 更新通知で `doPortUpdateTask()` が呼ばれる。`findPortMaster()` で対応 LAG を特定し `addLagMember()` を自動再実行する（`teammgr.cpp:439-472`）。
+
+### removeLag() 失敗
+
+| 条件 | ログ | 備考 |
+|---|---|---|
+| `/var/run/teamd/<alias>.pid` 不在 | `SWSS_LOG_NOTICE "Failed to remove non-existent port channel %s pid..."` | 非存在 LAG の DEL は無害。false 返却 |
+| `kill(pid, SIGTERM)` 失敗 | `SWSS_LOG_ERROR "Failed to send SIGTERM to port channel %s pid %d: %s"` | teamd が異常終了済みの場合。手動でプロセス確認が必要 |
+
+### リトライ上限
+
+`teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタは存在しない。依存状態（teamd 起動環境、ポート STATE_DB 状態）が解消されると自然に成功する設計。無限リトライとなるため、恒久的な環境障害（teamd バイナリ不在、ネットワーク名前空間問題等）は外部から手動介入が必要。
+
+<!-- /failure -->
