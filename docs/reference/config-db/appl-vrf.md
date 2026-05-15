@@ -88,6 +88,46 @@ flowchart LR
     CONFIG_DB → APPL_DB → SAI の典型経路。vrfmgrd が APPL_DB 書き込み主体。
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/orchagent/vrforch.cpp`、`vrforch.h`、`orch.cpp`、`orchdaemon.cpp`
+> 中間メモ: `meta/_intermediate/cdb-flow/appl-vrf-pubsub.md`
+
+### 購読方式: `ConsumerStateTable` + `gBatchSize`
+
+`VRFOrch` は `orchdaemon.cpp:283` で `new VRFOrch(m_applDb, APP_VRF_TABLE_NAME, m_stateDb, STATE_VRF_OBJECT_TABLE_NAME)` として生成される。`Orch` 基底の `addConsumer()` は DB id を見て購読 Executor を選び分け、APPL_DB の場合は `ConsumerStateTable` 経路を取る (`orch.cpp:1186-1195`):
+
+```cpp
+if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB) {
+    addExecutor(new Consumer(new SubscriberStateTable(db, tableName,
+                              TableConsumable::DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+} else {
+    addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+`VRF_TABLE` は APPL_DB 上のテーブルなので **`ConsumerStateTable` 側**が使われる（CONFIG_DB の `SubscriberStateTable` 経路ではない）点に注意。バッチサイズ `gBatchSize` は `orch.cpp:17` の `int gBatchSize = 0;` で定義された orchagent プロセス global で、0 のときは内部既定が適用される。
+
+### Orch2 inheritance と Request パーサ
+
+`vrforch.h:49` 時点で `class VRFOrch : public Orch2`。`Orch2` は `doTask(Consumer&)` を override し、`request_parser.h` の `Request` で field/value を型付きパースして `addOperation(const Request&)` / `delOperation(const Request&)` へ dispatch する。Phase 6 で抽出した SAI 属性マッピング (`v4` / `v6` / `src_mac` / `vni` ほか) はすべてこの `addOperation` から呼ばれる。
+
+### `VxlanTunnelOrch` との `gDirectory` 同期
+
+`vrforch.cpp:23` で `extern Directory<Orch*> gDirectory;` を取り込み、`addOperation` 内 (`vrforch.cpp:205-206`) で次の取得が行われる:
+
+```cpp
+EvpnNvoOrch*     evpn_orch   = gDirectory.get<EvpnNvoOrch*>();
+VxlanTunnelOrch* tunnel_orch = gDirectory.get<VxlanTunnelOrch*>();
+```
+
+`vni` フィールドが指定された場合のみ、`tunnel_orch` 側に L3 VNI ↔ VRF の対応を登録する。`gDirectory` は orchagent プロセス内 singleton レジストリで、Orch 間の直接参照を解決するための仕組み。`VxlanTunnelOrch` 未登録時 (VxLAN 機能無効ビルド) は `nullptr` が返り、`vni` 指定リクエストは失敗する。
+
+!!! note "ConsumerStateTable と SubscriberStateTable の違い"
+    `ConsumerStateTable` は producer 側 (`vrfmgrd`) の `ProducerStateTable::set/del` で書き込まれた **`_KEY_SET` 経由のイベント** を消費する。一方 `SubscriberStateTable` は通常の Redis KEYSPACE 通知を購読する。APPL_DB は `Producer/ConsumerStateTable` ペアでバッチ化された pub/sub を行う設計のため、`vrfmgrd` (`vrfmgr.cpp` の `ProducerStateTable`) と `VRFOrch` (`ConsumerStateTable`) は対になっている[^vrforch][^vrfmgr]。
+<!-- /pubsub -->
+
 ## 制約
 
 - `vni` を一度設定した VRF に別の VNI を設定しようとすると `VRFOrch::updateVrfVNIMap` が `"VRF is already mapped to vni"` エラーを返す。一旦 `vni=0` にリセットが必要[^vrforch]。
