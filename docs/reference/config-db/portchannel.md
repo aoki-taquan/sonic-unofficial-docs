@@ -550,6 +550,81 @@ PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数
     にも同一 MTU を書き込む (`teammgr.cpp:517-529`)。
 
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-constants.md`
+> ソース: `sonic-swss/cfgmgr/portmgr.h`, `sonic-swss/cfgmgr/shellcmd.h`, `sonic-swss/cfgmgr/teammgr.cpp`
+
+### MTU デフォルト値
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `DEFAULT_MTU_STR` | `"9100"` | `portmgr.h:15` | LAG・メンバポートの MTU フォールバック値 |
+
+- LAG 作成時: `string mtu = DEFAULT_MTU_STR;` (`teammgr.cpp:252`) — YANG フィールドなし時は 9100 が適用。
+- メンバポート追加・削除後の再設定でも同様に `DEFAULT_MTU_STR` をフォールバックとして使用 (`teammgr.cpp:805,812,850`)。
+- **YANG-実装 discrepancy**: YANG の `mtu` range は 1..9216 だが、コードデフォルトは 9100 (< 9216)。
+
+### min_links フォールバック
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `min_links` 初期値 | `0` | `teammgr.cpp:248` | `min_links` フィールド省略時のフォールバック |
+
+- `min_links == 0` の場合、teamd conf に `min_ports` フィールドを出力しない (`teammgr.cpp:611`)。
+- teamd デフォルト: `min_ports` 未指定 → 1 ポートでも LAG が operational up。
+- minigraph.py による自動算出式: `ceil(メンバ数 × 0.75)` (`minigraph.py:969,971`)。
+
+### LACP タイマ (fast_rate / slow)
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `fast_rate` 初期値 | `false` | `teammgr.cpp:250` | `fast_rate` フィールド省略時フォールバック |
+
+- `fast_rate == false` の場合、teamd conf に `fast_rate` キーを出力しない (`teammgr.cpp:621`)。
+- teamd の LACP PDU 送受信間隔: デフォルト **30 秒** (slow rate)。`fast_rate: true` 時は **1 秒** (fast rate)。
+- LAG 作成後の `fast_rate` 変更は teamd 再起動まで無効 (`teammgr.cpp:258-259`)。
+
+### LACP key 生成定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| backward compat 値 | `0` | `teammgr.cpp:726` | `lacp_key` 未設定または空文字列時のフォールバック |
+| `"auto"` プレフィックス | `"1"` | `teammgr.cpp:709` | PortChannel 名末尾数字に "1" を前置してキー生成 |
+
+- 例: `PortChannel0001` → LACP key = `10001`。`PortChannel10` → LACP key = `110` (PortChannel010 との衝突回避)。
+- `lacp_key` 未設定 → LACP key = 0 → peer と不一致になる可能性。`db_migrator.py:1154-1157` が retroactive に `'auto'` を付与。
+
+### 管理状態デフォルト
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `DEFAULT_ADMIN_STATUS_STR` | `"down"` | `portmgr.h:14` | `admin_status` フィールド省略時フォールバック |
+
+- **YANG-実装 discrepancy**: YANG は `mandatory true` だが、実装は `"down"` でフォールバック動作する。
+
+### リトライ / スリープ定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| クリーンアップ間スリープ | `10` ms | `teammgr.cpp:183,227` | LAG 削除時の netlink バッファ溢れ防止 |
+| リトライ上限 | なし | — | `task_need_retry` は無限ループ。恒久障害は手動介入必要 |
+
+### バイナリパス (ハードコード)
+
+| 定数名 | 値 | 定義箇所 |
+|---|---|---|
+| `TEAMD_CMD` | `"/usr/bin/teamd"` | `shellcmd.h:13` |
+| `TEAMDCTL_CMD` | `"/usr/bin/teamdctl"` | `shellcmd.h:14` |
+| `IP_CMD` | `"/sbin/ip"` | `shellcmd.h:7` |
+| warm reboot dump path | `"/var/warmboot/teamd/"` | `teammgr.cpp:573` |
+| teamd PID ファイルパス | `"/var/run/teamd/<alias>.pid"` | `teammgr.cpp:659,187` |
+| `partner_system_id_offset` | `40` bytes | `teammgr.cpp:581` (LACP PDU 内パートナー MAC オフセット) |
+
+<!-- /constants -->
+
 <!-- platform -->
 ## プラットフォーム差・SAI capability 分岐
 
