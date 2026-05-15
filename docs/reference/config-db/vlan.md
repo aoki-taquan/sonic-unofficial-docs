@@ -232,6 +232,49 @@ show vlan brief
 - 副作用: admin_status=down でもカーネルブリッジは作成される (`ip link set Vlan<N> down` が別途発行)。
 
 <!-- /runtime-trace -->
+
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み
+
+`CONFIG_DB VLAN` エントリの SET / DEL が引き起こす他 DB への書込み一覧。
+
+### vlanmgrd による書込み (cfgmgr/vlanmgr.cpp)
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `m_appVlanTableProducer.set(key, fvVector)` | APPL_DB / `VLAN_TABLE` | `Vlan<id>` | 常時[^se1] |
+| SET: `m_stateVlanTable.set(key, [{state, ok}])` | STATE_DB / `VLAN_TABLE` | `Vlan<id>` | 常時[^se1] |
+| DEL: `m_appVlanTableProducer.del(key)` | APPL_DB / `VLAN_TABLE` | `Vlan<id>` | `m_vlans` 登録済みの場合[^se1] |
+| DEL: `m_stateVlanTable.del(key)` | STATE_DB / `VLAN_TABLE` | `Vlan<id>` | `m_vlans` 登録済みの場合[^se1] |
+
+APPL_DB に書き込まれるフィールド (`fvVector`): `admin_status`（省略時 `"up"`）、`mtu`（省略時 `9100`）、`mac`（省略時スイッチ MAC）、`host_ifname`。
+
+### orchagent (PortsOrch::addVlan/removeVlan) による書込み (orchagent/portsorch.cpp)
+
+APPL_DB `VLAN_TABLE` を受け取った VlanOrch が SAI 呼び出しを行い、syncd 経由で ASIC_DB へ書き込まれる。
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET: `sai_vlan_api->create_vlan(&vlan_oid, ...)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN:<oid>` | `SAI_VLAN_ATTR_VLAN_ID=<id>` | 常時[^se2] |
+| DEL: `sai_vlan_api->remove_vlan(vlan_oid)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN:<oid>` 削除 | `<oid>` | FDB/メンバー/VNI が空の場合のみ[^se2] |
+
+DEL の前提条件 (いずれかが満たされないと retry): FDB カウント 0、ポート参照カウント 0、メンバーポート 0、VXLAN VNI マッピングなし。
+
+### COUNTERS_DB
+
+VLAN SET/DEL 単体では **COUNTERS_DB への書込みはない**。VLAN に `VLAN_INTERFACE` (RIF) が紐づく場合は `IntfsOrch` が `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` を書き込むが、これは `INTERFACE` テーブルの副作用である。
+
+### カーネル操作 (DB 外)
+
+- SET: `ip link add Vlan<id> type bridge vlan_filtering 1` — Linux カーネルブリッジ作成
+- SET: `ip link set Vlan<id> up` / `down` — `admin_status` 反映
+- SET: `ip link set Vlan<id> address <mac>` — MAC 設定（`mac` フィールド指定時）
+- DEL: `ip link set Vlan<id> down; ip link del Vlan<id>` — ブリッジ削除
+
+[^se1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+[^se2]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
