@@ -233,6 +233,33 @@ show aaa
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`AaaCfg`) の `modify_conf_file()` はイベントごとに PAM / NSS / NSLCD 設定を**全部まとめて再生成**する。このため書き込み順序が中間状態の整合性に直結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | AAA は `load_independent_config()` で systemctl 完了前に適用される | 強制先行（他テーブルより早い） | 不在フィールドはデフォルト値で silent fallback |
+| 2 | `TACPLUS_SERVER` / `RADIUS_SERVER` / `LDAP_SERVER` を先書き → `AAA` 書き込み | 推奨（中間状態最小化） | runtime は `subscribe` 後追い自動更新 |
+| 3 | `LDAP\|global` (`bind_dn`/`base_dn`/`bind_password`) + `LDAP_SERVER` → `AAA` `login=ldap` | **先行必須**（欠如時 nslcd 停止） | LDAP 設定追加後 `ldap_global_update` が自動復旧 |
+| 4 | `TACPLUS\|global.passkey` → `AAA` `authorization` / db_migrator | **先行必須**（YANG reject + migrator が authorization 削除） | 手動 CLI 再設定 |
+| 5 | `AAA` DEL → デフォルト回帰 | 即時（待機ループなし） | `authentication_default` で `local` 回帰 |
+| 6 | `MGMT_INTERFACE` / `INTERFACE` → `RADIUS_SERVER` `src_intf` 解決 | 推奨先行 | 後追い `mgmt_intf_handler` で自動更新 |
+| 7 | `DEVICE_METADATA.hostname` → RADIUS `nas_id` | load フェーズ内は自動保証 | runtime 追加時は hostname 設定済みであること |
+
+### 主要な制約詳細
+
+**LDAP 先行必須 (依存 #3)**: `AAA|authentication.login = "ldap"` を書く前に `LDAP|global` (`bind_dn`, `base_dn`, `bind_password` の全フィールド) と `LDAP_SERVER` エントリを揃えること。`is_ldap_config_complete()` が `False` の状態で `aaa_update()` が呼ばれると `handle_nslcd_service(False)` が実行され nslcd が停止・mask される。後から LDAP global 設定が追加されると `ldap_global_update()` が自動復旧を試みる（evidence: `hostcfgd:437-442`, `hostcfgd:241-250`）。
+
+**TACPLUS passkey 先行必須 (依存 #4)**: `db_migrator.migrate_aaa()` は `TACPLUS|global.passkey` が空の場合に `AAA|authorization` を**削除**する。事後に passkey を設定しても authorization エントリは自動復元されない。また YANG must 制約により、`AAA|authentication.login` に `tacacs+` を含む場合は passkey が存在しなければ CLI 経由の書き込み自体が reject される（evidence: `db_migrator.py:869-900`, `sonic-system-aaa.yang:must`）。
+
+**中間状態に関する注意 (依存 #2)**: `AAA` を先に書いて `TACPLUS_SERVER` を後から追加する場合、`AAA` 書き込み時点では `servers_conf` が空になるため `common-auth-sonic` は TACACS+ サーバなしで生成される（実質 `local` 相当）。`TACPLUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になる。スイッチへの管理接続中に設定変更を行う際は影響に留意すること（evidence: `hostcfgd:641-870`）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
