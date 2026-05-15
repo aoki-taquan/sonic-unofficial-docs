@@ -360,4 +360,57 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・エラーパス (Phase D)
+
+> **調査根拠**: `dhcp_cfggen.py`, `dhcpservd.py`, `dhcprelayd.py`, `dhcp_server.py` 全行精読 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dhcp-server-ipv4-failure.md`
+
+### dhcpservd プロセス起動失敗 (即時 exit)
+
+| 条件 | ログ | 挙動 |
+|---|---|---|
+| `libdhcp_run_script.so` が未検出 | `LOG_ERR "Cannot find hook lib for kea-dhcp4"` | `sys.exit(1)` — kea-dhcp4 起動不可 |
+| `DEVICE_METADATA.localhost.hostname` 欠如 | `LOG_ERR "Cannot get hostname"` | Exception → プロセス終了 |
+| `/tmp/dhcpservd_ready` 書込み OSError | `LOG_ERR "Failed to write readiness flag ..., exiting"` | `sys.exit(1)` — kea-dhcp4 gate 解除されず |
+| `eth0` IPv4 アドレス取得 10 回失敗 (50s) | `LOG_ERR "Failed to get ip address of eth0 after 10 retries, exiting"` | `sys.exit(1)` |
+
+### dhcp_cfggen 設定生成スキップ (プロセス継続・部分設定欠落)
+
+| 条件 | ログ | 挙動 |
+|---|---|---|
+| `state` フィールド欠如 または `enabled` 以外 | なし (silent skip) | そのインタフェースを kea-dhcp4 設定から除外。DISCOVER 無応答 (`dhcp_cfggen.py:199`) |
+| PORT モードで `DHCP_SERVER_IPV4_PORT` エントリなし | `LOG_WARNING "Cannot get DHCP port config for {name}"` | pools 空のまま DISCOVER 無応答 (`dhcp_cfggen.py:204-207`) |
+| `VLAN_INTERFACE` に IPv4 アドレスなし | `LOG_WARNING "Interface {name} doesn't have IPv4 address"` | subnet 未定義 → DISCOVER 無応答 (`dhcp_cfggen.py:432-433`) |
+| ポートが `VLAN_MEMBER` 未登録 | `LOG_WARNING "Port {port} is not in {vlan}"` | そのポートへの IP プール割当なし (`dhcp_cfggen.py:424-426`) |
+| `ips` と `ranges` 同時指定 | `LOG_WARNING "Port config for {key} contains both ips and ranges, skip"` | そのポート設定をスキップ (`dhcp_cfggen.py:418-421`) |
+| 参照 range が `DHCP_SERVER_IPV4_RANGE` に未存在 | `LOG_WARNING "Range {name} is not in range table, skip"` | その range のプールをスキップ (`dhcp_cfggen.py:452-454`) |
+| range 要素数が 0 または 3 以上 | `LOG_WARNING "Length of {range} is {n}, which is invalid!"` | その range をスキップ (`dhcp_cfggen.py:332-334`) |
+| range の start > end | `LOG_WARNING "Start of {range} is greater than end, skip it"` | その range をスキップ (`dhcp_cfggen.py:338-340`) |
+| カスタムオプション名が未定義 | `LOG_WARNING "Customized option {opt} configured for {name} is not defined"` | そのオプションをスキップ (`dhcp_cfggen.py:213-215`) |
+| オプション ID がサポート外 | `LOG_ERR "Unsupported option: {id}"` | そのオプションをスキップ (`dhcp_cfggen.py:128-130`) |
+| 標準オプション `type` が期待型と不一致 | `LOG_WARNING "Option type [...] is not consistent ..., will honor expected type"` | 期待型を優先して処理継続（スキップなし）(`dhcp_cfggen.py:133-137`) |
+| オプション型が `SUPPORT_DHCP_OPTION_TYPE` 外 | `LOG_ERR "Unsupported type: {type}, currently only support ..."` | そのオプションをスキップ (`dhcp_cfggen.py:140-143`) |
+| オプション型と値が不整合 | `LOG_ERR "Option type [{type}] and value [{value}] are not consistent"` | そのオプションをスキップ (`dhcp_cfggen.py:144-147`) |
+| `type=string` かつ value が 253 文字超 | `LOG_ERR "String option value too long: {option_name}"` | そのオプションをスキップ (`dhcp_cfggen.py:148-150`) |
+
+### CLI 失敗
+
+| 条件 | 挙動 |
+|---|---|
+| `FEATURE\|dhcp_server.state != "enabled"` | `ctx.fail()` — 全 CLI サブコマンドが即時失敗。CONFIG_DB への書き込みなし (`dhcp_server.py:54`) |
+
+### 排他制御
+
+| 条件 | 挙動 |
+|---|---|
+| `DHCP_SERVER_IPV4\|<vlan>.state=enabled` 時に同一 VLAN の `DHCP_RELAY` が存在 | dhcprelayd がその VLAN を dhcrelay 起動対象から silent 除外 (`dhcprelayd.py:94-98`) |
+
+### 部分成功の性質
+
+複数 VLAN の DHCP_SERVER_IPV4 エントリのうち一部がスキップ条件を満たしても、他のエントリは正常に kea-dhcp4 設定へ組み込まれる。dhcp_cfggen の generate エラーは基本的にエントリ/オプション単位のスキップでプロセスを継続する。rollback はなく、スキップされたエントリは kea-dhcp4 設定に反映されないまま次回 generate まで維持される。
+
+> **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:128-150,199-215,332-340,418-434,452-454`; `dhcpservd.py:70-112,127-133`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 75921d013977 -->
