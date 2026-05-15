@@ -468,3 +468,49 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタは存在しない。依存状態（teamd 起動環境、ポート STATE_DB 状態）が解消されると自然に成功する設計。無限リトライとなるため、恒久的な環境障害（teamd バイナリ不在、ネットワーク名前空間問題等）は外部から手動介入が必要。
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-side-effects.md`
+> ソース: `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/orchagent/portsorch.cpp`
+
+PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数 DB へ連鎖的に書き込みを引き起こす。
+
+### SET 時の副次書き込み
+
+| DB | テーブル | キー / フィールド | 書き込み元 | 条件 |
+|----|---------|-----------------|-----------|------|
+| APPL_DB | `LAG_TABLE` | `<name>` field=`mtu` | teammgrd (`setLagMtu()`) | 常時 (デフォルト `9100`) |
+| APPL_DB | `LAG_TABLE` | `<name>` field=`tpid` | teammgrd (`setLagTpid()`) | `tpid` フィールドが存在する場合 |
+| APPL_DB | `LAG_TABLE` | `<name>` field=`learn_mode` | teammgrd (`setLagLearnMode()`) | `learn_mode` フィールドが存在する場合 |
+| APPL_DB | `PORT_TABLE` | `<member>` field=`mtu` | teammgrd (`setLagMtu()` 内) | LAG の全メンバポートへ MTU を伝播 |
+| APPL_DB | `LAG_TABLE` | `<name>` `{admin_status, oper_status, mtu}` | teamsyncd (RTM_NEWLINK 受信後) | teamd が Linux netdev を作成しカーネルイベント発生時 |
+| STATE_DB | `LAG_TABLE` | `<name>` `{admin_status, oper_status, mtu, state:"ok"}` | teamsyncd (`team_init()` 成功後) | 非 warm-reboot 時。STATE_DB 書き込みは `team_init()` 成功後のみ発生 |
+| COUNTERS_DB | `COUNTERS_LAG_NAME_MAP` | `""` field=`<name>=<oid>` | LagOrch (orchagent) | SAI LAG 作成成功時 |
+| CHASSIS_APP_DB | `SYSTEM_LAG_TABLE` | `<system_lag_alias>` `{lag_id, switch_id}` | LagOrch (`voqSyncAddLag()`) | VoQ マルチ ASIC 環境かつ Local LAG のみ |
+| ASIC_DB | LAG OID エントリ | `<oid>` | syncd (SAI 経由) | `sai_lag_api->create_lag()` |
+
+### DEL 時の副次書き込み
+
+| DB | テーブル | キー | 書き込み元 | 条件 |
+|----|---------|------|-----------|------|
+| APPL_DB | `LAG_MEMBER_TABLE` | `<name>:<member>` | teamsyncd (`removeLag()` 内) | 残存メンバを先に削除 |
+| APPL_DB | `LAG_TABLE` | `<name>` | teamsyncd (RTM_DELLINK 受信後) | 常時 |
+| STATE_DB | `LAG_TABLE` | `<name>` | teamsyncd | 非 warm-reboot 時 |
+| COUNTERS_DB | `COUNTERS_LAG_NAME_MAP` | `""` field=`<name>` | LagOrch (orchagent) | 常時 |
+| CHASSIS_APP_DB | `SYSTEM_LAG_TABLE` | `<system_lag_alias>` | LagOrch (`voqSyncDelLag()`) | VoQ マルチ ASIC 環境かつ Local LAG のみ |
+| ASIC_DB | LAG OID エントリ | `<oid>` | syncd (SAI 経由) | `sai_lag_api->remove_lag()` |
+
+!!! note "STATE_DB 書き込みのタイミング"
+    `STATE_DB|LAG_TABLE|<name>` への `state: ok` 書き込みは `teamsyncd` の `team_init()` 成功後のみ発生する。
+    これは `intfmgrd` 等の依存サービスが未完了 LAG に対して動作しないよう意図的に遅延される
+    (`teamsync.cpp:191-203`)。warm-reboot 中は `m_stateLagTablePreserved` にバッファされ
+    `apply_temp_view()` 完了後にまとめて書き込まれる。
+
+!!! note "MTU の LAG → メンバポート伝播"
+    `setLagMtu()` は LAG の `APPL_DB|LAG_TABLE` を更新するだけでなく、
+    `PORTCHANNEL_MEMBER` テーブルを参照して全メンバポートの `APPL_DB|PORT_TABLE`
+    にも同一 MTU を書き込む (`teammgr.cpp:517-529`)。
+
+<!-- /side-effects -->
