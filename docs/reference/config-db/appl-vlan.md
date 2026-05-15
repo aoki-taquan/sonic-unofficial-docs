@@ -84,6 +84,95 @@ VLAN_MEMBER_TABLE|<vlan_name>|<port_alias>
 | `tagging_mode` | string (`tagged`/`untagged`/`priority_tagged`) | CONFIG_DB のフィールドをそのまま転送 | CONFIG_DB 省略時は vlanmgrd が `"untagged"` で補完。portsorch も同じく `"untagged"` fallback |
 | `dynamic` | string (`yes`) | PAC 経路のみ注入 | YANG 定義なし・CONFIG_DB 非存在の隠しフィールド。`doVlanPacVlanMemberTask()` が PAC 制御メンバにのみ挿入する |
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` の書込み元 (`cfgmgr/vlanmgr.cpp`) と購読側 (`orchagent/portsorch.cpp` VLAN 経路) に存在する `#define` / SAI enum 由来のハードコード定数を列挙する。
+
+### テーブル名定数（schema.h）
+
+| 定数 | 値 | ソース |
+|---|---|---|
+| `APP_VLAN_TABLE_NAME` | `"VLAN_TABLE"` | `schema.h:41` |
+| `APP_VLAN_MEMBER_TABLE_NAME` | `"VLAN_MEMBER_TABLE"` | `schema.h:42` |
+
+### vlanmgr.cpp `#define` 定数
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `DOT1Q_BRIDGE_NAME` | `"Bridge"` | Linux dot1q ブリッジデバイス名（`ip link add Bridge ... type bridge` 固定） | `vlanmgr.cpp:15` |
+| `VLAN_PREFIX` | `"Vlan"` | `VLAN_TABLE` key の必須プレフィクス。`Vlan<id>` 形式以外は破棄 | `vlanmgr.cpp:16,128-130` |
+| `LAG_PREFIX` | `"PortChannel"` | LAG ポート判定用プレフィクス | `vlanmgr.cpp:17` |
+| `DEFAULT_VLAN_ID` | `"1"` (文字列) | Bridge 初期化時に `bridge vlan del vid 1 dev Bridge self` で IEEE 802.1Q デフォルト VLAN を削除 | `vlanmgr.cpp:18,98` |
+| `DEFAULT_MTU_STR` | `"9100"` | `VLAN_TABLE.mtu` 省略時の APPL_DB 注入値および Bridge MTU 初期値 | `vlanmgr.cpp:19,96,357,428` |
+| `VLAN_HLEN` | `4` | IEEE 802.1Q ヘッダ長 — 定義のみで参照箇所なし（dead define） | `vlanmgr.cpp:20` |
+
+### Linux bridge 設定リテラル
+
+| リテラル | 値 | 用途 | ソース |
+|---|---|---|---|
+| `vlan_filtering` | `1` | `ip link set Bridge type bridge vlan_filtering 1` 固定 | `vlanmgr.cpp:110` |
+| `no_linklocal_learn` | `1` | `ip link set Bridge type bridge no_linklocal_learn 1` 固定 | `vlanmgr.cpp:114` |
+| `arp_evict_nocarrier` | `0` | VLAN IF 作成直後に `/proc/sys/net/ipv4/conf/Vlan<id>/arp_evict_nocarrier` へ `0` を書込み | `vlanmgr.cpp:139` |
+
+これら 3 設定は VLAN 作成時に常時適用され、ASIC ベンダー非依存・全プラットフォーム共通。
+
+### portsorch.cpp `#define` 定数（VLAN 経路）
+
+| 定数 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `VLAN_PREFIX` | `"Vlan"` | `strncmp(key, "Vlan", 4)` で `VLAN_TABLE` key を検査、`vlan_alias` 組立 | `portsorch.cpp:80,5744,5755,5869,5893` |
+| `DEFAULT_VLAN_ID` | `1` (int) | デフォルト VLAN ID（vlanmgr の文字列版と別定義） | `portsorch.cpp:81` |
+| `MAX_VALID_VLAN_ID` | `4094` | サブインタフェース VLAN ID 上限チェック | `portsorch.cpp:82,2016` |
+
+### SAI 関連デフォルト（addVlan / addVlanMember）
+
+| SAI 属性 / enum | 値 | 用途 | ソース |
+|---|---|---|---|
+| `SAI_VLAN_ATTR_VLAN_ID` | key から抽出 | `create_vlan()` 必須引数 | `portsorch.cpp:7389` |
+| `uuc_flood_type` / `bc_flood_type` 初期値 | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | `addVlan()` の PortsOrch 内部状態初期化 | `portsorch.cpp:7409-7410` |
+| UUC/BC flood control フォールバック | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | SAI capability 未対応時に `COMBINED` 切替を抑止 | `portsorch.cpp:7800,7814,7835,7849` |
+| `tagging_mode` enum 初期化 | `SAI_VLAN_TAGGING_MODE_TAGGED` | `addVlanMember()` 内 SAI enum 変数の C++ 初期化値 | `portsorch.cpp:7540` |
+| `"untagged"` → SAI | `SAI_VLAN_TAGGING_MODE_UNTAGGED` | 文字列→enum マッピング | `portsorch.cpp:7543` |
+| `"tagged"` → SAI | `SAI_VLAN_TAGGING_MODE_TAGGED` | 同上 | `portsorch.cpp:7545` |
+| `"priority_tagged"` → SAI | `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` | 同上 | `portsorch.cpp:7547` |
+| `SAI_SWITCH_ATTR_DEFAULT_VLAN_ID` | switch 起動時に SAI のデフォルト VLAN OID を取得 → `m_defaultVlan_ObjId` 保持 | switch 初期化 | `portsorch.cpp:1019` |
+
+### VLAN ID 範囲（YANG ↔ コード）
+
+| 制約 | 値 | 出典 |
+|---|---|---|
+| YANG `VLAN.vlanid` range | `2..4094` | `sonic-vlan.yang` |
+| YANG `VLAN.name` pattern | `Vlan(2..4095)` 形式 | `sonic-vlan.yang` |
+| portsorch サブ IF 上限 | `MAX_VALID_VLAN_ID = 4094` | `portsorch.cpp:82,2016` |
+| vlanmgr 数値下限/上限チェック | なし（`Vlan` プレフィクス検査のみ） | `vlanmgr.cpp:128-130` |
+
+YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vlan1` は YANG pattern で弾かれ CONFIG_DB に到達できない設計に依存している。
+
+### 定数サマリ
+
+| カテゴリ | 定数 | 値 | 種別 |
+|---|---|---|---|
+| テーブル名 | `APP_VLAN_TABLE_NAME` / `APP_VLAN_MEMBER_TABLE_NAME` | `"VLAN_TABLE"` / `"VLAN_MEMBER_TABLE"` | `#define` (schema.h) |
+| name prefix | `VLAN_PREFIX` | `"Vlan"` | `#define` (vlanmgr / portsorch 両方) |
+| Linux bridge 名 | `DOT1Q_BRIDGE_NAME` | `"Bridge"` | `#define` (vlanmgr) |
+| デフォルト VLAN | `DEFAULT_VLAN_ID` | `"1"` (string) / `1` (int) | `#define` 二重定義 |
+| VLAN ID 上限 | `MAX_VALID_VLAN_ID` | `4094` | `#define` (portsorch) |
+| MTU default | `DEFAULT_MTU_STR` | `"9100"` | `#define` (vlanmgr) |
+| SAI flood default | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | enum | 初期化 / capability fallback |
+| SAI tagging fallback | `SAI_VLAN_TAGGING_MODE_TAGGED` | enum | C++ 変数初期化 |
+
+### 二重定義と非対称の注記
+
+1. **`DEFAULT_VLAN_ID` の二重定義**: vlanmgr `"1"` (string) と portsorch `1` (int) が別 `#define`。用途が異なるため実害なし。
+2. **`VLAN_PREFIX` の重複定義 + 長さ依存**: vlanmgr / portsorch でそれぞれ `"Vlan"` を `#define`。`strncmp(key, VLAN_PREFIX, 4)` がリテラル長 4 に依存しており、プレフィクス変更時は検査ロジックも要修正。
+3. **`tagging_mode` fallback の文字列/enum 非対称**: 文字列 fallback `"untagged"`（vlanmgr / portsorch とも）と SAI enum 初期化 `SAI_VLAN_TAGGING_MODE_TAGGED` が非対称。ただし文字列確定→enum マッピングの順序で上書きされるため実発火上は不整合なし。
+4. **`DEFAULT_MTU_STR = "9100"` と YANG `mtu range 1..9216`**: コード default 9100 は YANG 範囲内。Jumbo frame 最大 9216 まで設定可能だが、デフォルトは 9100 固定。
+5. **タイマー定数なし**: vlanmgr / portsorch VLAN 経路に sleep / usleep / timeout 定数は一切存在せず、member port/LAG 未 ready 時は次 select サイクルでの retry のみ。
+
+> **証跡**: テーブル名 `schema.h:41-42`、vlanmgr `#define` `vlanmgr.cpp:15-20`、Linux bridge リテラル `vlanmgr.cpp:96-139`、portsorch `#define` `portsorch.cpp:80-82`、`MAX_VALID_VLAN_ID` 検査 `portsorch.cpp:2016`、SAI 属性 `portsorch.cpp:1019,7389,7409-7410,7540-7547,7800-7849`。詳細分析 `meta/_intermediate/cdb-flow/appl-vlan-constants.md`
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
@@ -206,6 +295,39 @@ VLAN_TABLE / VLAN_MEMBER_TABLE への書込みは複数経路で失敗し得る�
 
 詳細な分岐・呼び出し順は `meta/_intermediate/cdb-flow/appl-vlan-failure.md` を参照。
 <!-- /failure -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (cross-refs)
+
+APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` は YANG 未定義のため、明示的な leafref は存在しない。
+しかしコード上、`vlanmgrd` および `PortsOrch::doVlanMemberTask()` 経路で以下のテーブル / リソースに
+暗黙依存する。
+
+### 参照関係マップ
+
+| 参照元 | 参照先テーブル / リソース | 解決経路 | 失敗時挙動 |
+|--------|---------------------------|----------|------------|
+| `VLAN_MEMBER_TABLE\|Vlan<id>\|EthernetN` | `APPL_DB\|PORT_TABLE` / `STATE_DB\|PORT_TABLE` | `PortsOrch::getPort(alias)` / `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:486-510`, `portsorch.cpp:5898-5912`) | `it++` で無限ポーリング再試行（PortsOrch）／ APPL_DB 書込み保留（vlanmgrd） |
+| `VLAN_MEMBER_TABLE\|Vlan<id>\|PortChannelN` | `STATE_DB\|LAG_TABLE` (`m_stateLagTable`) | `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:495`) ＋ `Port::LAG` OID 解決 (`portsorch.cpp:2049, 2627`) | LAG 未確立中は書込保留。bridge コマンド失敗時は LAG 削除レース判定で retry スキップ (`vlanmgr.cpp:260-272`) |
+| `VLAN_MEMBER_TABLE` フィールド `end_point_ip` | VxlanTunnelOrch + `vlan.m_vlan_info.l2mc_group_id` | `PortsOrch::addVlanMember` → `addVlanFloodGroups` (`portsorch.cpp:7511-7740`) | SAI capability 不足時 `Flood group with end point ip is not supported` で失敗 |
+| `doVlanPacFdbTask` (`VLAN_TABLE` 確立後) | `APPL_DB\|FDB_TABLE` (`m_appFdbTableProducer`) | `vlanmgr.cpp:776-841` (key=`Vlan<id>:<MAC>`) | `m_vlans.count(vlan_name)` 未登録なら FDB 注入保留 (`vlanmgr.cpp:806-811`) |
+| `VLAN_MEMBER_TABLE` SET → `STATE_DB\|VLAN_MEMBER_TABLE` 連鎖 | mclagsyncd 購読 (`STATE_VLAN_MEMBER_TABLE_NAME`, `mclaglink.cpp:915`) | `SubscriberStateTable` 経由で MCLAG peer へ伝播。ASIC_DB `SAI_OBJECT_TYPE_VLAN` 経由で BVID→VID 逆引き (`mclaglink.cpp:101-112`) | mclagsyncd は APPL_DB を直接購読しない（間接依存） |
+
+### 順序依存
+
+- `VLAN_TABLE` SET が先行しない VLAN_MEMBER は portsorch 側で `getPort(vlan_alias)` 失敗で保留される (`portsorch.cpp:5900-5905`)。
+- `VLAN_TABLE` 確立後でないと `doVlanPacFdbTask` の FDB 注入は `m_vlans.count()` ガードで保留される。
+- `end_point_ip` 付き VLAN_MEMBER は L2MC group OID (`vlan.m_vlan_info.l2mc_group_id`) が VLAN 作成時に確立されている必要があり、対応する VxLAN remote VTEP は VxlanTunnelOrch 経由で別途解決される。
+
+### MCLAG との関係
+
+`mclagsyncd` (`mclaglink.cpp`) は APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` を **直接購読しない**。
+代わりに `STATE_DB|VLAN_MEMBER_TABLE` (vlanmgrd が APPL_DB 書込と同時に書く state="ok" エントリ) を
+購読することで MCLAG peer 同期をトリガする。`portsorch.cpp` には `mclag` / `MCLAG` 識別子の
+直接参照は存在しない。
+
+詳細な evidence は `meta/_intermediate/cdb-flow/appl-vlan-cross-refs.md` を参照。
+<!-- /cross-refs -->
 
 ## 書き込み主体
 
