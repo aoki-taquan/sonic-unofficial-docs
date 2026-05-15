@@ -22,7 +22,6 @@ related:
   yang:
     - sonic-bgp-neighbor
     - sonic-bgp-common
-hard: 0
 ---
 
 # BGP_NEIGHBOR テーブル
@@ -586,4 +585,72 @@ CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込�
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム / SAI 差分
+
+BGP_NEIGHBOR は FRR (`bgpd`) 止まりで SAI に直接は到達しないが、`DEVICE_METADATA` の `switch_type`・`sub_role`・`type` によって Jinja2 テンプレートが切り替わり、FRR に発行されるコマンドが大きく異なる。
+
+### テーブル振り分け (switch_type による)
+
+`minigraph.py` が BGP セッションを以下に振り分ける:
+
+| 条件 | テーブル | admin_status |
+|------|---------|-------------|
+| `switch_type=voq` のシャーシ内部 iBGP | `BGP_VOQ_CHASSIS_NEIGHBOR` | 強制 `up` |
+| `switch_type=chassis-packet` のシャーシ内部 iBGP | `BGP_INTERNAL_NEIGHBOR` | 強制 `up` |
+| Multi-ASIC FrontEnd ↔ BackEnd 間 | `BGP_INTERNAL_NEIGHBOR` | 強制 `up` |
+| その他 | `BGP_NEIGHBOR` | 未設定 |
+
+ソース: `minigraph.py` L1324–1356
+
+### sub_role / switch_type による FRR テンプレート分岐 (internal peer_type)
+
+| 条件 | FRR 差異 |
+|------|---------|
+| `sub_role=BackEnd` または `switch_type=chassis-packet` | `neighbor X next-hop-self force` (IPv4/IPv6 AF) |
+| `switch_type=chassis-packet` | peer-group に `update-source Loopback4096` + `ttl-security hops 1` |
+| `sub_role=BackEnd` | peer-group AF で `route-reflector-client` |
+| `sub_role=BackEnd` | route-map に `set originator-id <Loopback4096 IP>` |
+| `switch_type=chassis-packet` (FrontEnd/UpstreamLC) | DEVICE_INTERNAL_FALLBACK_COMMUNITY ポリシー生成; `subtype=DownstreamLC` はタグなし |
+
+ソース: `bgpd/templates/internal/instance.conf.j2` L13–23; `peer-group.conf.j2` L6–25; `policies.conf.j2` L8–96
+
+### type / subtype による FRR テンプレート分岐 (general peer_type)
+
+| DEVICE_METADATA.type | FRR 差異 |
+|---------------------|---------|
+| `ToRRouter` | `allowas-in 1` (IPv4/IPv6) |
+| `LeafRouter` かつ BBR enabled | `allowas-in 1` |
+| `SpineRouter && subtype=UpstreamLC` または `UpperSpineRouter` | `table-map SELECTIVE_ROUTE_DOWNLOAD_V4/V6`; TO_BGP_PEER に anchor-route community 付与; `AsPathMgr` 有効化 |
+| `SpineChassisFrontendRouter` (iBGP) | `address-family l2vpn evpn` + `advertise-all-vni` |
+
+ソース: `bgpd/templates/general/peer-group.conf.j2` L7–33; `instance.conf.j2` L38–43; `policies.conf.j2` L40–55
+
+### VoQ chassis 専用 (voq_chassis peer_type)
+
+| 項目 | 値 / 動作 |
+|------|---------|
+| タイマー | timers 2/7 (general の 60/180 より短い) |
+| BGP ベストパス | `as-path multipath-relax` + `peer-type multipath-relax` |
+| マルチパス | `maximum-paths ibgp <N>` (constants から) |
+| アドパス | `addpath-tx-all-paths` |
+| `subtype=UpstreamLC` | `FROM_VOQ_CHASSIS_PEER` で DEVICE_INTERNAL_FALLBACK_COMMUNITY を deny |
+
+ソース: `bgpd/templates/voq_chassis/instance.conf.j2`; `peer-group.conf.j2`; `policies.conf.j2`
+
+### SAI への間接影響
+
+- **next-hop-self force** (BackEnd / chassis-packet): BGP 経路の nexthop が書き換えられ、orchagent の nexthop resolution が変わる
+- **addpath-tx-all-paths** (VoQ): 複数経路が APPL_DB に書き込まれ、SAI の ECMP グループ構成が異なる
+- **table-map SELECTIVE_ROUTE_DOWNLOAD** (UpstreamLC): FIB への再配布経路が選別される
+
+### ChassisAppDbMgr (is_chassis 限定)
+
+`device_info.is_chassis()` が True のときのみ `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` を購読し、スーパーバイザーの TSA (Traffic Shift Away) 状態を LineCard の `bgpcfgd` に伝播する。
+
+ソース: `bgpcfgd/main.py` L112–113; `managers_chassis_app_db.py`
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-platform.md`
+<!-- /platform -->
 <!-- glossary-links-injected: 9133f44230c2 -->
