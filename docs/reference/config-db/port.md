@@ -456,6 +456,84 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 
 <!-- /ordering -->
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-pubsub.md -->
+
+### CONFIG_DB → portmgrd (SubscriberStateTable / keyspace notification)
+
+`portmgrd` は `Orch` 基底クラス経由で `SubscriberStateTable` を登録し、Redis の keyspace notification を購読する。
+
+```
+PSUBSCRIBE __keyspace@{db_id}__:PORT|*
+```
+
+| 項目 | 値 |
+|------|----|
+| 購読テーブル | `PORT`、`SEND_TO_INGRESS_PORT_TABLE` |
+| Consumer クラス | `Consumer` (wraps `SubscriberStateTable`) |
+| イベント起因 | hash 操作 (`hset`、`hdel`、`del`) |
+| 初回起動 | コンストラクタが既存キーを `m_buffer` に先読みして missed event を回避 |
+| retry | `Select::TIMEOUT` (1000 ms) ごとに `doTask()` を呼び未処理タスクを再試行 |
+
+### portmgrd → APPL_DB (ProducerStateTable / PUBLISH)
+
+portmgrd は `ProducerStateTable` を使って APPL_DB に書き込む。書き込みは Lua スクリプト (`EVALSHA`) で原子的に実行される:
+
+1. `SADD PORT_TABLE_KEY_SET <key>` — 変更キーをセットに追加
+2. `HSET _PORT_TABLE:<key> <fields>` — 一時 hash に値を書き込む
+3. `PUBLISH PORT_TABLE_CHANNEL@0 G` — orchagent を wake-up する通知を送信
+
+### APPL_DB → orchagent PortsOrch (ConsumerStateTable / SUBSCRIBE)
+
+orchagent は `ConsumerStateTable` でチャンネルを SUBSCRIBE し、`consumer_state_table_pops.lua` でバッチ取り出しを行う:
+
+```
+SUBSCRIBE PORT_TABLE_CHANNEL@0
+→ wake-up → EVALSHA pops.lua → SPOP KEY_SET + HGETALL _PORT_TABLE:<key>
+→ PortsOrch::doTask(Consumer&)
+```
+
+### syncd → PortsOrch (NotificationConsumer / SUBSCRIBE)
+
+ポートの oper_status 変化は SAI → syncd → orchagent の非同期通知経路で伝達される。`NotificationConsumer` は keyspace notification ではなく通常の Redis SUBSCRIBE を使う:
+
+```
+SUBSCRIBE NOTIFICATIONS  (ASIC_DB)
+```
+
+| イベント | 送信元 | 意味 |
+|---------|--------|------|
+| `port_state_change` | syncd | SAI から通知されたポートの oper_status 変化 |
+| `port_host_tx_ready` | syncd | ホスト側 Tx ready 状態変化 |
+
+- `allPortsReady()` が false の間は `doTask(NotificationConsumer&)` は即時リターン（初期化完了待ち）
+- `pop()` が JSON デシリアライズして `(op, data, values)` に分解
+- `handleNotification()` が `updatePortOperStatus()` を呼び STATE_DB に oper_status を書き込む
+
+### TTL
+
+PORT テーブルの処理において TTL 付き書き込み (`EXPIRE`) は使用されない。`Table::set()` は常に `DEFAULT_DB_TTL = -1` を使い、`EXPIRE` コマンドを発行しない。STATE_DB への oper_status 書き込みも TTL なし。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB[PORT|*]
+  ↓ SubscriberStateTable (PSUBSCRIBE __keyspace@db__:PORT|*)
+portmgrd::doTask → writeConfigToAppDb()
+  ↓ ProducerStateTable (EVALSHA: SADD KEY_SET + HSET + PUBLISH CHANNEL@0)
+APPL_DB[PORT_TABLE|*]
+  ↓ ConsumerStateTable (SUBSCRIBE PORT_TABLE_CHANNEL@0 → pops.lua)
+PortsOrch::doTask(Consumer&) → SAI sai_port_api
+
+ASIC_DB[NOTIFICATIONS] ← syncd PUBLISH (port_state_change)
+  ↓ NotificationConsumer (SUBSCRIBE NOTIFICATIONS)
+PortsOrch::handleNotification() → STATE_DB[PORT_TABLE|Ethernet*]
+```
+
+<!-- /pubsub -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
