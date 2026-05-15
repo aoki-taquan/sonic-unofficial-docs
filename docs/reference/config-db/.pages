@@ -13,6 +13,7 @@ nav:
   - mgmt-vrf-config.md
   - port.md
   - appl-port-table.md
+  - appl-buffer.md
   - portchannel.md
   - portchannel-interface.md
   - portchannel-member.md
