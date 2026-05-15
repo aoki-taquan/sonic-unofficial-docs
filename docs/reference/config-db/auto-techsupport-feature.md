@@ -107,6 +107,70 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 - `state=enabled` でも、`AUTO_TECHSUPPORT|GLOBAL.available_mem_threshold` と本エントリの `available_mem_threshold` が両方評価される
 <!-- /value-behavior -->
 
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md -->
+
+### 全体観
+
+本テーブルの消費パイプラインは OrchAgent ではなく Python ワンショットスクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py`) で構成され、`task_need_retry` / `task_invalid_entry` のような task 状態は存在しない。失敗時の挙動は次の 3 系統に集約される:
+
+1. **silent fallback**: `try/except ValueError` で数値変換失敗を吸収し、`0.0` 等に置換 (ログ出力なし)
+2. **early return + syslog**: `state != "enabled"` / disk チェック失敗等で NOTICE / ERR ログを出して即終了
+3. **再帰 retry**: `invoke_ts_cmd()` のみ `EXT_RETRY` (=4) で最大 `MAX_RETRY_LIMIT=2` 回の再呼び出し
+
+### 失敗パターン一覧
+
+| パターン | トリガ | retry | 挙動 | evidence |
+|---|---|---|---|---|
+| `state` 欠落 / 非 `enabled` (GLOBAL) | `AUTO_TECHSUPPORT\|GLOBAL.state` が空 or `disabled` | なし | NOTICE "auto_invoke_ts is disabled" → return | `coredump_gen_handler.py:47` |
+| `state` 欠落 / 非 `enabled` (FEATURE) | `AUTO_TECHSUPPORT_FEATURE\|<feat>.state` が空 or `disabled` | なし | NOTICE "auto-techsupport feature for <feat> is not enabled" → return | `coredump_gen_handler.py:55-57` |
+| **container offline / feature 名不一致** | `HGET` が None (キー不在) | なし | `None != "enabled"` で skip。エラーログなし (NOTICE のみ) | `coredump_gen_handler.py:54-55`, `auto_techsupport_helper.py:200-210` (`trim_masic_suffix`) |
+| `rate_limit_interval` 非数値 | `float()` で ValueError | なし | **silent fallback** `0.0` → cooloff 無効化 | `auto_techsupport_helper.py:325-331` |
+| `core_usage` (GLOBAL) 非数値 | `float()` で ValueError | なし | `0.0` → cleanup スキップ + NOTICE | `coredump_gen_handler.py:23-31` |
+| `max_techsupport_limit` 非数値 | `float()` で ValueError | なし | `0.0` → cleanup スキップ + NOTICE | `techsupport_cleanup.py:33-41` |
+| **core 上限超過 (disk full)** | `/var/core` 配下が `core_usage` 比率超過 | なし | `cleanup_process` で古い順 unlink。最新 1 ファイルは温存 | `auto_techsupport_helper.py:170-193` |
+| `cleanup_process` の `limit` 範囲外 | `0 < limit < 100` 外 | なし | ERR "core_usage_limit can only be between 1 and 100" → return。**cleanup されず disk full 継続** | `auto_techsupport_helper.py:172-174` |
+| `cleanup_process` の `OSError` | unlink 失敗 (権限・I/O) | なし (continue) | 失敗ファイルを飛ばして次へ。集計に反映されない | `auto_techsupport_helper.py:185-188` |
+| spurious invocation (core が古い) | `verify_recent_file_creation` が False | なし | INFO "Spurious Invocation" → return | `coredump_gen_handler.py:73-75`, `auto_techsupport_helper.py:115-124` |
+| `getmtime` 例外 | core / dump ファイル read 不可 | なし | `except Exception → return False` で silent skip | `auto_techsupport_helper.py:117-120` |
+| rate-limit 未経過 | `time.time() - last_creation < cooloff` | なし | NOTICE → skip。次回 core dump 発生時に自動再評価 (eventual progress) | `auto_techsupport_helper.py:285-301` |
+| **`generate_dump` lock 失敗 (`EXT_LOCKFAIL=2`)** | 別 techsupport が同時実行中 | なし | NOTICE "Another instance of techsupport running, aborting this" | `auto_techsupport_helper.py:240-241` |
+| **`generate_dump` retry 要求 (`EXT_RETRY=4`)** | `show techsupport` が内部リトライ要求 | **最大 2 回 再帰** | 上限超過で ERR "MAX_RETRY_LIMIT ... exceeded" | `auto_techsupport_helper.py:242-247`, `:84` (`MAX_RETRY_LIMIT=2`) |
+| **`generate_dump` その他 rc != 0** | subprocess 失敗、kill 等 | なし | ERR "show techsupport failed with exit code N" | `auto_techsupport_helper.py:248-249` |
+| dump 名 parse 失敗 | stdout に `sonic_dump_.*tar.*` パターン無し | なし | ERR "stdout ... doesn't have the dump name"。STATE_DB に書かれない | `auto_techsupport_helper.py:225-229`, `:251-253` |
+| `write_to_state_db` 途中切断 | Redis 切断 | なし | partial fields で STATE_DB に残存。`get_ts_map` の `int(creation_time)` 失敗で entry skip | `auto_techsupport_helper.py:303-310`, `:268-272` |
+
+### 再帰 retry 経路 (唯一の retry)
+
+```
+invoke_ts_cmd(db, num_retry=0)
+  ↓ subprocess_exec(["show", "techsupport", ...])
+  rc == EXT_RETRY (=4) かつ num_retry <= MAX_RETRY_LIMIT (=2)
+    ↓ return invoke_ts_cmd(db, num_retry+1)   # 再帰
+  上限超過 → syslog.LOG_ERR "MAX_RETRY_LIMIT for show techsupport invocation exceeded"
+```
+
+- 再帰 retry は `show techsupport` 本体に対するもので、`AUTO_TECHSUPPORT_FEATURE` の field 再評価には戻らない (rate-limit cooloff は最初の 1 回でしか評価されない)。
+- `EXT_LOCKFAIL` (=2) は再試行せず即 abort。複数 core dump 同時発生時に 2 個目以降は握り潰される設計。
+
+### 部分適用・冪等性
+
+- `cleanup_process` は incremental unlink。途中で `OSError` が出ても他ファイル削除は続行 → 部分削除が残存。
+- `write_to_state_db` は field ごとに `db.set` を呼ぶ。途中で Redis 接続切れが起きると `AUTO_TECHSUPPORT_DUMP_INFO|<name>` が partial fields のまま残る (timestamp あり / container 無し等)。これにより `get_ts_map` 内の `int(creation_time)` 変換失敗で entry が skip され、rate-limit 計算から漏れる。
+- `coredump_gen_handler` の `handle_core_dump_creation_event` と `handle_coredump_cleanup` は独立。前者が early return しても cleanup は実行される。
+
+### 重要な特性
+
+- **silent fallback の連鎖**: `rate_limit_interval` が "" / 非数値だと cooloff = 0 になり、core dump 連発時に techsupport が暴走する (運用上 `rate_limit_interval=0` 明示設定と区別がつかない)。
+- **disabled = cleanup 無効**: `AUTO_TECHSUPPORT|GLOBAL.state = disabled` だと core / techsupport 両方の cleanup もスキップされ、disk full に至る危険がある。
+- **container 名一致は完全一致**: `coredump_gen_handler.py:54` の `FEATURE.format(self.container)` は完全一致 `HGET` を行う。`trim_masic_suffix` で末尾数字を削った後の名前と一致しなければ即 skip。
+- **uncaught 例外**: `coredump_gen_handler.py` / `techsupport_cleanup.py` には top-level `try/except` がなく、`subprocess_exec` や Redis 接続で raise が起きるとプロセス異常終了。syslog に Python traceback が出るが、`coredump-compress` 側に rc が戻らないため kernel 側からは silent failure。
+
+> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:84,115-124,170-193,232-256,285-301,317-331`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md`
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
