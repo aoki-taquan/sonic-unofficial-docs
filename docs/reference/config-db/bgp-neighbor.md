@@ -286,6 +286,30 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行全行読了。7 件分岐抽出。
 <!-- /handler-branching -->
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+BGP_NEIGHBOR の処理において YANG の leafref 定義を超えて実装上で参照される他テーブルを示す。
+
+| 参照先テーブル / フィールド | 参照方向 | 条件 | 参照元 evidence |
+|----------------------------|---------|------|----------------|
+| `DEVICE_METADATA\|localhost\|bgp_asn` | 読み取り（必須依存） | 常時。bgp_asn 未設定なら neighbor 追加を待機 | `managers_bgp.py` L119, L192; `frrcfgd.py` L2163 |
+| `DEVICE_METADATA\|localhost\|type` / `subtype` | 読み取り（条件分岐） | 常時。デバイスロール (ToRRouter / SpineRouter 等) でテンプレート分岐 | `managers_bgp.py` L120; Jinja2 templates |
+| `DEVICE_METADATA\|localhost\|deployment_id` | 読み取り（条件付き） | `bgp.use_deployment_id=true` のとき。community / routemap に埋め込み | `managers_bgp.py` L143 |
+| `LOOPBACK_INTERFACE\|Loopback0\|<prefix>` | 読み取り（ガード） | 常時。IPv4 未設定 かつ bgp_router_id 未設定 → `return False` | `managers_bgp.py` L121, L184–189, L216–218 |
+| `LOOPBACK_INTERFACE\|Loopback4096\|<prefix>` | 読み取り（条件付き） | `peer_type="internal"` のとき依存に追加 | `managers_bgp.py` L146 |
+| `DEVICE_NEIGHBOR_METADATA` | 読み取り（条件付き） | `bgp.use_neighbors_meta=true` のとき。`name` フィールドが未登録 → 待機 | `managers_bgp.py` L140, L220–224 |
+| `BGP_DEVICE_GLOBAL\|STATE\|tsa_enabled` | 読み取り（常時） | peer-group テンプレート生成時に TSA routemap を動的付与 | `managers_bgp.py` L122; `BGPPeerGroupMgr.update_pg()` |
+| `BGP_DEVICE_GLOBAL\|STATE\|idf_isolation_state` | 読み取り（常時） | peer-group テンプレート生成時に IDF isolation routemap を付与 | `managers_bgp.py` L123; `BGPPeerGroupMgr.update_pg()` |
+| `BGP_BBR\|all\|status` | 読み取り（常時） | Jinja2 テンプレートへ `CONFIG_DB__BGP_BBR` として渡し、BBR 設定を制御 | `managers_bgp.py` L206 |
+| `BGP_GLOBALS\|<vrf>\|local_asn` | 読み取り（frrcfgd パス） | `frr_mgmt_framework_config=true` のとき。VRF の ASN 解決に必須 | `frrcfgd.py` L2175–2178, L2450–2453 |
+| `BGP_PEER_GROUP\|<vrf>\|<pg_name>` | 存在確認（frrcfgd パス） | `peer_group_name` 指定時。存在しなければ `LOG_ERR` + drop | `frrcfgd.py` L2826–2830 |
+| `PORT\|<name>` / `PORTCHANNEL\|<name>` | 存在確認（interface 型 neighbor） | `neighbor` フィールドが IP でなくインタフェース名の場合 | YANG leafref; `frrcfgd.py` L2807 |
+| `INTERFACE`（ローカルアドレス一覧） | 読み取り（ガード） | `local_addr` 設定時。該当 IP が現存インタフェースになければ待機 | `managers_bgp.py` L124–125, `get_local_interface()` |
+
+> **注意**: `DEVICE_METADATA.frr_mgmt_framework_config` の値が `true` でない場合、BGP_GLOBALS / BGP_PEER_GROUP（frrcfgd パス）への参照は発生せず、代わりに bgpcfgd (テンプレートベース) が動作する。
+
+<!-- /cross-refs -->
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
@@ -411,4 +435,47 @@ YANG の `peer_type` フィールドは bgpcfgd 経路では **参照されな�
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md`
 <!-- /defaults -->
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+### retry キュー (`set_queue`) の仕組み
+
+`bgpcfgd` の全 Manager は `manager.py` 共通基底クラスが提供する **`set_queue`** ベースの retry 機構を持つ。
+
+`set_handler()` が `False` を返すと "NOT_READY" とみなし、イベント `(key, data)` を `set_queue` に追記して処理を後回しにする。依存関係 (Loopback0 IP / DEVICE_NEIGHBOR_METADATA など) が変化するたびに `on_deps_change()` が呼ばれ、キュー内の全イベントを再実行 (replay) する。成功すればキューから削除し、失敗なら次の deps 変化を待つ。retry 間隔・上限はなく、**依存関係変化ドリブン**で無期限 retry する。
+
+```
+CONFIG_DB SET → set_handler() → False → set_queue[]
+                                            ↑
+deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay → success / re-queue
+```
+
+### 主要な `return False` (retry) ケース
+
+| 条件 | ログ | retry トリガー |
+|------|------|---------------|
+| Loopback0 IPv4 未設定 かつ `bgp_router_id` 未設定 | `LOG_WARN "Loopback0 ipv4 address is not presented yet..."` | Loopback0 IP 付与 |
+| `local_addr` に対応するインタフェース未登録 | `LOG_DEBUG "Peer X wait for the corresponding interface to be set"` | インタフェース登録 |
+| `check_neig_meta=True` かつ `name` が DEVICE_NEIGHBOR_METADATA に未登録 | `LOG_INFO "DEVICE_NEIGHBOR_METADATA is not ready for neighbor X"` | DEVICE_NEIGHBOR_METADATA 到着 |
+
+### `return True` (retry なし・サイレント drop) ケース
+
+| 条件 | 効果 |
+|------|------|
+| Jinja2 テンプレートレンダリング失敗 | `LOG_ERR` を出して `return True`。FRR 操作なし、`self.peers` 未追加。**再試行なし** (`managers_bgp.py:246` のコメント参照) |
+| `update_peer()` で `admin_status` 以外のフィールド変更 | `LOG_ERR "Only 'admin_status' attribute is supported"` → `return True`。変更は適用されない |
+| frrcfgd: 参照先 peer-group 未存在 | `LOG_ERR "invalid peer-group %s was referenced"` → continue（skip） |
+| frrcfgd: interface 型 neighbor 生成失敗 | `LOG_ERR "failed to create neighbor of interface %s"` → continue（skip） |
+
+### DEL 失敗
+
+- 対象 peer が `self.peers` に未登録: `LOG_WARN + return`（no-op）
+- FRR への削除コマンド失敗: `LOG_ERR "Peer hasn't been removed"`、`self.peers` から除去されない → 次 SET で `update_peer()` 経路に入る（現行実装では `apply_op()` が常に `True` のため実際には未到達）
+
+### STATE_DB と FRR の一貫性
+
+`update_state_db()` (STATE_DB: `BGP_PEER_CONFIGURED_TABLE`) はコマンド発行 **成功後のみ** 呼ばれる。STATE_DB 更新自体が失敗した場合は `LOG_ERR` を出すが FRR 操作は既に `cfg_mgr.push()` 済みのため **FRR と STATE_DB の乖離が生じうる**。`ERROR_TABLE` への記録はなし。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-failure.md`
+<!-- /failure -->
 <!-- glossary-links-injected: 9133f44230c2 -->
