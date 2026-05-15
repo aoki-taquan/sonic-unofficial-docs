@@ -607,3 +607,109 @@ PORT エントリが存在しない状態でこれらのテーブルに書き込
 | 他テーブル全体 | PORT → | `allPortsReady()` が true になるまで VLAN/INTERFACE/LAG/ACL orch の doTask() を保留 | 最後の PORT が初期化完了するとゲート解除 |
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-failure.md -->
+
+### retry パターン概要
+
+PORT テーブルの SET 処理は `PortsOrch::doTask()` のタスクキュー (`taskMap`) で管理される。失敗時の挙動は以下の 4 パターンに分類される。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **保留** (`m_pendingPortSet`) | `gBufferOrch->isPortReady()` が false | BUFFER_PG/BUFFER_POOL が設定されるまで無制限保留 |
+| **`it++` 無制限リトライ** | MTU, TPID, setPortFec 失敗, setPortAdminStatus 一時 DOWN 失敗, portmgrd `portOk` 未確立 | 次 doTask() サイクルで再試行。上限なし |
+| **`task_need_retry` → `it++`** | SAI 一時エラー (autoneg / speed / adv_speeds / interface_type / adv_interface_types / link_training) | SAI が `task_need_retry` を返した場合に限りリトライ |
+| **`task_failed` → タスク削除** | autoneg/link_training 非サポート HW, fast_linkup 失敗, fec=auto 非サポート, fec 非サポートモード, link_training on non-PHY | CONFIG_DB の値は残るが実装に反映されない |
+
+### フィールド別 retry / failure 詳細
+
+#### `autoneg`
+
+- `m_cap_an < 1`（HW 非サポート確定）: `SWSS_LOG_ERROR "autoneg is not supported (cap=%d)"` → タスク削除（永続失敗）(`portsorch.cpp:4817-4822`)
+- autoneg 変更前 admin_status DOWN 失敗: `SWSS_LOG_ERROR "Failed to set port %s admin status DOWN to set port autoneg mode"` → `it++` 無制限リトライ (`portsorch.cpp:4827-4835`)
+- `setPortAutoNeg` 失敗: `task_need_retry` → it++ / `task_failed` → erase の二分岐 (`portsorch.cpp:4841-4856`)
+
+#### `link_training`
+
+- `m_cap_lt < 1`（HW 非サポート）: `SWSS_LOG_WARN "LT is not supported"` → タスク削除（autoneg と異なり WARN レベル）(`portsorch.cpp:4881-4886`)
+- `port.m_type != Port::PHY`（PHY 以外のポート）: `task_failed` を返しタスク削除 (`portsorch.cpp:3712-3716`)
+- `setPortLinkTraining` 失敗: `task_need_retry` / `task_failed` 分岐 (`portsorch.cpp:4889-4904`)
+
+#### `speed`
+
+- 変更前一時 DOWN 失敗: `SWSS_LOG_ERROR "Failed to set port %s admin status DOWN to set speed"` → `it++` (`portsorch.cpp:5040-5045`)
+- `setPortSpeed` 失敗: `task_need_retry` / `task_failed` 分岐 (`portsorch.cpp:5052-5067`)
+
+#### `fec`
+
+- `fec=auto` 設定時 `fec_override_sup == false`: `SWSS_LOG_ERROR "Auto FEC mode is not supported"` → タスク削除 (`portsorch.cpp:5317-5321`)
+- `isFecModeSupported()` が false: `SWSS_LOG_ERROR "Unsupported port %s FEC mode"` → タスク削除 (`portsorch.cpp:5323-5331`)
+- `setPortFec` 失敗: `it++` 無制限リトライ (`portsorch.cpp:5356-5364`)
+
+#### `mtu`
+
+- `setPortMtu` 失敗: `SWSS_LOG_ERROR "Failed to set port %s MTU to %u"` → `it++` 無制限リトライ (`portsorch.cpp:5257-5265`)
+
+#### `tpid`
+
+- `setPortTpid` 失敗: `SWSS_LOG_ERROR "Failed to set port %s TPID to 0x%x"` → `it++` 無制限リトライ (`portsorch.cpp:5292-5299`)
+
+#### `fast_linkup`
+
+- 失敗時: `SWSS_LOG_ERROR` + タスク削除。`task_need_retry` も永続失敗と同様に扱う (`portsorch.cpp:4929-4935`)
+
+#### `admin_status`
+
+- 最終ステップでの設定失敗: `SWSS_LOG_ERROR "Failed to set port %s admin status to %s"` → `it++` 無制限リトライ (`portsorch.cpp:5511-5518`)
+
+### admin_status restore replay
+
+speed/fec/autoneg 変更時に一時 DOWN したポートは次のサイクルで restore される:
+
+```
+// portsorch.cpp:5499-5504
+if (admin_status != p.m_admin_state_up && pCfg.admin_status.is_set == false)
+{
+    pCfg.admin_status.is_set = true;
+    pCfg.admin_status.value = admin_status;  // 元の admin_status を復元
+}
+```
+
+中途で `continue` した場合（他フィールドの失敗）はそのサイクルでは復元されず、ポートが DOWN のまま残る可能性がある。次の doTask() サイクルで pCfg が再処理された際に復元される。
+
+### portmgrd の失敗挙動
+
+| 操作 | 失敗条件 | 挙動 |
+|---|---|---|
+| `ip link set dev <alias> mtu` | `isPortStateOk=false` (ポート未登録) | `SWSS_LOG_WARN "Setting mtu to alias:%s netdev failed"` → `return false`。APP_DB 書き込みなし (`portmgr.cpp:43-44`) |
+| `ip link set dev <alias> mtu` | `isPortStateOk=true` かつコマンド失敗 | `SWSS_LOG_WARN "Setting mtu to alias:%s netdev failed (isPortStateOk=true)"` → `return false` (`portmgr.cpp:53-55`) |
+| `ip link set dev <alias> up/down` | `isPortStateOk=false` | `SWSS_LOG_WARN "Setting admin_status to alias:%s netdev failed"` → `return false` (`portmgr.cpp:76-77`) |
+| `ip link set dev <alias> up/down` | `isPortStateOk=true` かつコマンド失敗 | `throw runtime_error` → portmgrd プロセス abort → supervisor restart (`portmgr.cpp:81`) |
+
+portmgrd の `doTask()` は `setPortMtu` / `setPortAdminStatus` の戻り値を検査せずタスクを消去するため、netdev 側の失敗は **サイレント消去** される（PortsOrch 側の SAI 反映には影響しない）。
+
+### BUFFER 依存保留 (`m_pendingPortSet`)
+
+```
+// portsorch.cpp:4779-4784
+if (!gBufferOrch->isPortReady(pCfg.key))
+{
+    m_pendingPortSet.emplace(pCfg.key);  // 保留キューに追加
+    it++;
+    continue;
+}
+```
+
+`allPortsReady()` は `m_initDone && m_pendingPortSet.empty()` で判定される (`portsorch.cpp:1687`)。PORT の SAI 反映が保留中の間は VLAN/INTERFACE/PORTCHANNEL の orch もブロックされる。
+
+### 永続失敗後の対処
+
+`task_failed` でタスクが削除された場合、CONFIG_DB の値は残るが SAI には反映されない。
+復旧手順:
+1. `sonic-db-cli CONFIG_DB hdel 'PORT|<name>' <field>` でフィールドを削除
+2. 正しい値を再設定 (`config interface ...`)
+
+<!-- /failure -->
