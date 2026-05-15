@@ -22934,7 +22934,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-swsstable-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込 API: 素の swss::Table (Pub/Sub 非対応)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知チャンネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読側はすべて polling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループとの関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry とバッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35246,7 +35340,101 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-swsstable-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込 API: 素の swss::Table (Pub/Sub 非対応)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知チャンネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読側はすべて polling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループとの関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry とバッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        データフロー図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36323,7 +36511,128 @@
 </blockquote>
 <!-- /platform -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p>本ページが扱う STATE_DB 3 テーブル (<code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> / <code>ACL_STAGE_CAPABILITY_TABLE</code>) はいずれも <code>AclOrch</code> を<strong>唯一の書き手</strong>とする「書き出し専用のステータスレジスタ」であり、<code>ProducerStateTable</code> / <code>NotificationProducer</code> を介した PUBLISH 通知は発行されない。consumer 側 (<code>acl-loader</code> / <code>show acl table</code> / <code>show acl rule</code> / <code>sonic-mgmt-common</code> translib) は keyspace 通知を購読せず、CLI / REST/gNMI 起動契機の <strong>オンデマンド polling</strong> (<code>HGETALL</code> 相当) で読み出す。</p>
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>チャンネル/API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclOrch</code> → STATE_DB <code>ACL_TABLE_TABLE</code></td>
+<td><code>swss::Table::set()</code> / <code>del()</code> (素の HSET / HDEL / DEL)</td>
+<td>なし (PUBLISH 非発行)</td>
+</tr>
+<tr>
+<td><code>AclOrch</code> → STATE_DB <code>ACL_RULE_TABLE</code></td>
+<td><code>swss::Table::set()</code> / <code>del()</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>AclOrch</code> → STATE_DB <code>ACL_STAGE_CAPABILITY_TABLE</code></td>
+<td><code>swss::Table::set()</code> (init で 1 回)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>acl-loader</code> ← STATE_DB <code>ACL_STAGE_CAPABILITY_TABLE</code></td>
+<td><code>swsssdk.get_all()</code> (HGETALL polling)</td>
+<td>CLI 起動毎 1 回</td>
+</tr>
+<tr>
+<td><code>show acl table</code> / <code>show acl rule</code> ← STATE_DB</td>
+<td><code>swsssdk.get_table()</code> (HGETALL polling)</td>
+<td>CLI 起動毎 1 回</td>
+</tr>
+<tr>
+<td><code>sonic-mgmt-common</code> (translib) ← <code>ACL_STAGE_CAPABILITY_TABLE</code></td>
+<td>translib DB read (HGETALL)</td>
+<td>REST/gNMI capability クエリ毎</td>
+</tr>
+</tbody>
+</table>
+<h3 id="api-swsstable-pubsub">書込 API: 素の <code>swss::Table</code> (Pub/Sub 非対応)<a class="headerlink" href="#api-swsstable-pubsub" title="Permanent link">&para;</a></h3>
+<p><code>AclOrch</code> は STATE_DB の 3 テーブルを <code>swss::Table</code> メンバとして保有する（<code>aclorch.h:706-709</code>）:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// aclorch.h:706-709</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">Table</span><span class="w"> </span><span class="n">m_aclStageCapabilityTable</span><span class="p">;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">Table</span><span class="w"> </span><span class="n">m_aclTableStateTable</span><span class="p">;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">Table</span><span class="w"> </span><span class="n">m_aclRuleStateTable</span><span class="p">;</span>
+</span></code></pre></div>
+<p>初期化は <code>aclorch.cpp:4200-4202</code> で stateDb と STATE_DB スキーマ定数文字列を直結する。<code>ProducerStateTable</code> のような <code>_KEY_SET</code> + <code>PUBLISH &lt;TABLE&gt;_CHANNEL</code> 系の通知発行や、<code>NotificationProducer</code> 経由の ad-hoc channel <code>PUBLISH</code> は一切行わない。書込みは純粋な <code>HSET</code> / <code>HDEL</code> / <code>DEL</code> のみで、戻り値もない。</p>
+<p>主な書込ポイント:</p>
+<ul>
+<li><code>setAclTableStatus()</code> → <code>m_aclTableStateTable.set/del</code> (<code>aclorch.cpp:6092, 6098</code>)</li>
+<li><code>setAclRuleStatus()</code> → <code>m_aclRuleStateTable.set/del</code> (<code>aclorch.cpp:6106, 6112</code>)</li>
+<li><code>putAclActionCapabilityInDB()</code> → <code>m_aclStageCapabilityTable.set</code> (<code>aclorch.cpp:4101</code>, init 内で 1 回)</li>
+<li><code>removeAllAclTableStatus()</code> / <code>removeAllAclRuleStatus()</code> → <code>getKeys()</code> → loop <code>del()</code> (<code>aclorch.cpp:6116-6137</code>, 起動時のクリア)</li>
+</ul>
+<h3 id="_11">通知チャンネル<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;TABLE&gt;_CHANNEL</code> への <code>PUBLISH</code></td>
+<td><strong>発行されない</strong> (<code>ProducerStateTable</code> を保有しない)</td>
+</tr>
+<tr>
+<td><code>NotificationProducer</code> (<code>PUBLISH</code> to ad-hoc channel)</td>
+<td>なし (該当メンバ非保有)</td>
+</tr>
+<tr>
+<td><code>__keyspace@&lt;dbId&gt;__:...</code> keyspace 通知</td>
+<td>Redis サーバの <code>notify-keyspace-events</code> 設定次第で発火しうるが、STATE_DB ACL 系の正規 consumer はいずれも購読しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="polling">購読側はすべて polling<a class="headerlink" href="#polling" title="Permanent link">&para;</a></h3>
+<p>正規 consumer は keyspace 通知を購読せず、必要時にのみ <code>HGETALL</code> ベースで読み出す:</p>
+<ul>
+<li><code>acl-loader</code> (<code>sonic-utilities/acl_loader/main.py:88, 533-536</code>): <code>statedb.get_all(STATE_DB, "ACL_STAGE_CAPABILITY_TABLE|&lt;stage&gt;")</code> を実行時に 1 回</li>
+<li><code>show acl table</code> / <code>show acl rule</code>: CLI 起動時に sonic-py-swsssdk 経由で STATE_DB を読み出す（イベント駆動ではない）</li>
+<li><code>sonic-mgmt-common</code> (translib): REST/gNMI の capability クエリ受信時に translib DB read 経由で読み出す</li>
+</ul>
+<p>CONFIG_DB 側の <code>ACL_TABLE</code> / <code>ACL_RULE</code> が <code>AclOrch</code> 自身に <code>SubscriberStateTable</code> (keyspace 通知 + HGETALL) で受信される経路と異なり、STATE_DB 側は完全に非同期通知レス・polling 駆動。</p>
+<h3 id="select">select() ループとの関係<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<p><code>AclOrch</code> は STATE_DB 3 テーブルを<strong>書き手としてのみ</strong>保持し、<code>addConsumer()</code> / <code>addExecutor()</code> で consumer 登録しない（<code>orchdaemon.cpp:408-422</code> の <code>acl_table_connectors</code> には STATE_DB connector は含まれず CONFIG_DB 3 + APPL_DB 3 のみ）。<code>SELECT_TIMEOUT=1000ms</code> の orchdaemon select ループは STATE_DB 書込みには関与しない。CONFIG_DB / APPL_DB consumer 通知で wake した <code>doAclTableTask()</code> / <code>doAclRuleTask()</code> の末尾で <code>setAcl*Status()</code> が呼ばれる従属的な経路となる。</p>
+<h3 id="retry">retry とバッチ<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<ul>
+<li>STATE_DB 書込み層自体に retry / バッチ機構はない。<code>swss::Table::set</code> が Redis 切断で例外送出した場合は orchagent プロセス abort → systemd restart → <code>init()</code> 再実行で再構築。</li>
+<li>ACL ルール側の retry cache (<code>createRetryCache(CFG_ACL_RULE_TABLE_NAME)</code> / <code>APP_ACL_RULE_TABLE_NAME</code>) は CONFIG_DB / APPL_DB consumer に対するもので、retry 後に成功すると <code>setAclRuleStatus(ACTIVE)</code> で <code>"Pending creation"</code> → <code>"Active"</code> を上書きする。</li>
+</ul>
+<h3 id="_12">データフロー図<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB / APPL_DB (ACL_TABLE / ACL_RULE)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ SubscriberStateTable / ConsumerStateTable
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓ Consumer::execute() → AclOrch::doTask()
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  ↓   doAclTableTask() / doAclRuleTask() / doAclTableTypeTask()
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ↓     → SAI ACL API (create/remove_acl_table/entry)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ↓     → setAclTableStatus() / setAclRuleStatus()
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>STATE_DB[ACL_TABLE_TABLE / ACL_RULE_TABLE / ACL_STAGE_CAPABILITY_TABLE]
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  ← swss::Table::set/del() のみ (HSET/HDEL/DEL)
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  × PUBLISH &lt;TABLE&gt;_CHANNEL なし
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>  × NotificationProducer なし
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>consumer 側 (on-demand polling)
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>  acl-loader / show acl table|rule / sonic-mgmt-common (translib)
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    → swsssdk.get_all() / get_table()  ← HGETALL
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    (keyspace 通知購読なし)
+</span></code></pre></div>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/aclorch.h</code> L706-709（<code>Table</code> メンバ宣言、<code>ProducerStateTable</code>/<code>NotificationProducer</code> 非保有）、<code>aclorch.cpp</code> L4200-4202（STATE_DB Table 初期化）、L4087-4101（<code>putAclActionCapabilityInDB</code>）、L6088-6098（<code>setAclTableStatus</code>）、L6102-6112（<code>setAclRuleStatus</code>）、L6116-6137（<code>removeAllAcl*Status</code>）。<code>sonic-swss/orchagent/orchdaemon.cpp</code> L408-422（<code>acl_table_connectors</code> に STATE_DB 側 connector 不在）。<code>sonic-utilities/acl_loader/main.py</code> L88, L533-536（<code>get_all</code> polling）。<code>sonic-swss-common/common/schema.h</code>（<code>STATE_ACL_*_TABLE_NAME</code> 定義）。詳細解析は <code>meta/_intermediate/cdb-flow/aclorch-state-pubsub.md</code> を参照。</p>
+</blockquote>
+<!-- /pubsub -->
+
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
