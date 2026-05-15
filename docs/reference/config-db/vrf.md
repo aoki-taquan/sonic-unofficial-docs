@@ -406,4 +406,37 @@ if (vrf_table_[vrf_name].ref_count)
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`
+
+### Linux ルーティングテーブル ID 定数
+
+vrfmgrd は VRF ごとに Linux カーネルのルーティングテーブル ID を自動割り当てする。これらの値は CONFIG_DB フィールドに一切現れない内部定数。
+
+| 定数名 | 値 | 意味 | ソース |
+|--------|-----|------|--------|
+| `VRF_TABLE_START` | `1001` | 通常 VRF に割り当てる table ID の開始値 | `vrfmgr.cpp:12` |
+| `VRF_TABLE_END` | `5097` | 通常 VRF に割り当てる table ID の終端値（排他） | `vrfmgr.cpp:13` |
+| `TABLE_LOCAL_PREF` | `1001` | `ip rule` で local テーブルを移動する preference 値 | `vrfmgr.cpp:14` |
+| `MGMT_VRF_TABLE_ID` | `6000` | `mgmt` VRF 専用の固定 table ID（通常プール外） | `vrfmgr.cpp:15` |
+
+**最大同時 VRF 数**: `VRF_TABLE_END - VRF_TABLE_START = 4096`。超過すると `getFreeTable()` が `0` を返し、Linux VRF デバイス作成が失敗する（`vrfmgr.cpp:185-188`）。VRF 削除により `recycleTable()` でプールに返却される。
+
+### リトライ定数
+
+vrfmgrd にはタイムアウト定数が存在しない。VRF DEL 時のパッシブリトライは **タイムアウトなし・無制限**。`isVrfObjExist()` が `true` を返す（orchagent 側の SAI オブジェクトが残存する）間、Consumer キューをスキップして次回ループで再試行し続ける。
+
+### VNI デフォルト定数
+
+| 変数 | 値 | ソース |
+|------|-----|--------|
+| `uint32_t vni = 0`（vrfmgrd 初期化） | `0` | `vrfmgr.cpp:418` |
+| `uint32_t vni = 0`（orchagent 初期化） | `0` | `vrforch.cpp:30` |
+
+YANG `default 0` と一致。VNI 上限 `16777215` は YANG `range "0..16777215"` による制約であり、vrfmgr.cpp 内にマジックナンバーとして現れない。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
