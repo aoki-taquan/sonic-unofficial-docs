@@ -74,4 +74,5 @@ nav:
   - fg-nhg.md
   - nhg-table.md
   - sflow.md
+  - route-orch-event.md
   - ...
