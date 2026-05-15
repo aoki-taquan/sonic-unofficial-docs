@@ -215,6 +215,112 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 > **証跡**: `bufferorch.h` L18-35 全行読了、`bufferorch.cpp` L391-1000 全行読了、`buffermgrdyn.cpp` L870-960 全行読了、`schema.h` BUFFER 定数確認済み。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`BufferOrch` は SAI の隠れた依存ツリー（pool → profile → PG/Queue/ProfileList）に従って APPL_DB の `BUFFER_*_TABLE` を処理する。**外部から書き込む順序が逆でも `task_need_retry` で最終的には収束**するが、各 doTask が retry を出し続けるためログが暴れる。順序依存と PortsOrch readiness ゲートを以下に整理する[^buforch]。
+
+### 1. PortsOrch readiness ゲート (全 BUFFER_* 共通)
+
+`BufferOrch::doTask(Consumer&)` の冒頭で PortsOrch の初期化フラグをチェックし、未完了なら**全 BUFFER_* テーブルの処理が一括ブロック**される。`m_toSync` は erase されず保留されるため、PortsOrch 完了後に自動再ディスパッチされる。
+
+| 経路 | チェック | 行 |
+|---|---|---|
+| `gMySwitchType == "voq"` | `gPortsOrch->isInitDone()` が false なら return | `bufferorch.cpp:2079-2085` |
+| non-VOQ | `gPortsOrch->isConfigDone()` が false なら return | `bufferorch.cpp:2087-2091` |
+
+VOQ では system port が `init` フェーズで揃う設計に合わせて `isInitDone()` を使う。non-VOQ は `PORT_CONFIG_DONE` 受信時点で進む。
+
+### 2. orchagent 内の固定 drain 順 (Pool → Profile → 残り)
+
+`BufferOrch::doTask()` (no-arg, `bufferorch.cpp:2040-2073`) は consumer を以下の固定順で `drain()` する:
+
+1. `APP_BUFFER_POOL_TABLE_NAME` を `drain()` (L2057-2058)
+2. `APP_BUFFER_PROFILE_TABLE_NAME` を `drain()` (L2060-2061)
+3. 残り全 consumer (`BUFFER_QUEUE_TABLE` / `BUFFER_PG_TABLE` / `BUFFER_PORT_INGRESS_PROFILE_LIST_TABLE` / `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`) を順不同 `drain()` (L2063-2071)
+
+この順序は L2042-2053 のコメント「The hidden dependency tree」に対応する:
+
+```
+buffer pool
+└── buffer profile
+    ├── buffer port ingress profile list
+    ├── buffer port egress profile list
+    ├── buffer queue
+    └── buffer pq table
+```
+
+### 3. 参照解決の retry 条件 (順序違反時)
+
+外部書込が逆順だった場合、参照解決失敗で各 handler が `task_need_retry` を返す:
+
+| handler | retry 条件 | evidence |
+|---|---|---|
+| `processBufferProfile()` | `pool` 参照が `not_resolved` (= pool 未登録) | `bufferorch.cpp:602-888` |
+| `processQueue()` | `profile` 参照 `not_resolved` (= profile 未登録) | `bufferorch.cpp:914-1233` |
+| `processPriorityGroup()` | `profile` 参照 `not_resolved` | `bufferorch.cpp:1305-1495` |
+| `processIngressBufferProfileList()` / `processEgressBufferProfileList()` | list 内のいずれかの profile が `not_resolved` | `bufferorch.cpp:1663-, 1845-` |
+
+`task_need_retry` は `m_toSync` から erase されず次回 doTask で再評価される。同一イベントループ内では (2) の固定 drain 順により多くの場合一発で解決する。
+
+### 4. DEL の逆順依存 (削除は SET の逆順で)
+
+被参照中の pool / profile は削除できない:
+
+| handler | DEL retry 条件 | evidence |
+|---|---|---|
+| `processBufferPool()` | 当該 pool が profile から参照中 (`object_reference_map` 参照カウント) | `bufferorch.cpp:562-585` |
+| `processBufferProfile()` | 当該 profile が PG / Queue / ProfileList から参照中 | `bufferorch.cpp:860-878` |
+
+順序違反 (pool を先に消すなど) は `task_need_retry` で**永続保留**され、参照側が消えるまでループする。
+
+### 5. m_ready_list — BUFFER_PG/QUEUE 適用がポート初期化の前提
+
+`BufferOrch` はポート毎の buffer readiness を `m_port_ready_list_ref` / `m_ready_list` で追跡する。
+
+- ctor の `initBufferReadyLists()` (`bufferorch.cpp:86-143`) で CONFIG_DB (cold/fast start) または APPL_DB (warm reboot) の `BUFFER_PG` / `BUFFER_QUEUE` キーを走査し、ポート毎の未処理エントリを `m_port_ready_list_ref[port_name]` に登録、`m_ready_list[appldb_key] = false` で初期化。
+- `processPriorityGroup()` / `processQueue()` が SAI bind 成功後に `m_ready_list[appldb_key] = true` に更新。
+- `isPortReady(port_name)` (L254-275) は当該ポートの全 PG/Queue が true になった時点で `true` を返す。
+- PortsOrch は `isPortReady()` を見て後段のポート初期化 (`SAI_PORT_ATTR_ADMIN_STATE` 等) を進める。
+
+→ **BUFFER_PG / BUFFER_QUEUE の SAI bind 完了がポート Admin-up の前提**。dynamic buffer model の admin down ポートは buffermgrd からの明示削除通知で ready 扱いになる (L97-98 コメント参照)。
+
+### 6. warm reboot の初期 ready 充填
+
+`WarmStart::isWarmStart()` (L111) が true のとき、`initBufferReadyList()` は **APPL_DB 側**のキーから初期化する (L113-125)。warm reboot 後は buffermgrd が orchagent より遅れて起動するため、APPL_DB スナップショットが完成している前提で admin down ポートぶんが ready 扱いに自動的になる (L100-107 コメント)。cold start では CONFIG_DB 側 (L129-141) を走査する。
+
+### 7. flex counter group の遅延初期化
+
+- ctor で `initFlexCounterGroupTable()` (L232-252) が FLEX_COUNTER_DB に group / Lua sha を 1 回だけ登録。
+- `generateBufferPoolWatermarkCounterIdList()` (L286-362) は FlexCounterOrch が `FLEX_COUNTER_STATUS=enable` を受信したときに呼ばれる遅延初期化で、その時点で登録済みの全 BUFFER_POOL に対し flex counter polling を開始する (`m_isBufferPoolWatermarkCounterIdListGenerated` で多重実行ガード)。
+- 順序依存: **`BUFFER_POOL` SAI create → FlexCounterOrch enable** の順なら watermark counter が登録される。逆順 (pool 未登録で enable 受信) の場合、後続の `processBufferPool()` SET 経路では個別の `startFlexCounterPolling()` は呼ばれないため、watermark を載せるには FlexCounterOrch の enable 再送が必要。
+
+### 8. processBufferProfile の 2 段 retry (同一 doTask 内)
+
+`bufferorch.cpp:778-797`: `sai_set_buffer_profile_attribute()` 初回失敗時に bufferorch が**同一 doTask 内で同じ SAI 呼出を即時 retry** する。これは `task_need_retry` (次回 doTask 待ち) とは別経路で、SAI ベンダ実装の transient エラー吸収用。`processBufferPool()` 側にはこの即時 retry はない。
+
+### 9. profile_list bulk flush の発火順
+
+`doTask(Consumer&)` 末尾 (L2132-2135) で `m_bufferFlushHandlerMap` 登録テーブル (`BUFFER_PORT_INGRESS_PROFILE_LIST` / `BUFFER_PORT_EGRESS_PROFILE_LIST` / `BUFFER_PG` / `BUFFER_QUEUE`) は per-entry 処理後にまとめて bulk flush handler を呼ぶ。bulk handler 内で `sai_port_api->set_ports_attribute()` を一発で叩き、retry は post 処理で `consumer.m_toSync.emplace()` し直す (L2027-2034)。
+
+### まとめ: 外部書込側の順序契約
+
+| 順序 | 操作 | 違反時 |
+|---|---|---|
+| 1 | PortsOrch `isConfigDone()` (VOQ では `isInitDone()`) 完了を待つ | `doTask` 全体が return、全 BUFFER_* タスクが `m_toSync` に保留 |
+| 2 | `BUFFER_POOL_TABLE` SET → `BUFFER_PROFILE_TABLE` SET → `BUFFER_PG`/`BUFFER_QUEUE`/`PROFILE_LIST` SET | handler が `task_need_retry`、最終的には収束 (retry log 多発) |
+| 3 | DEL は SET の逆順: PG/Queue/ProfileList → Profile → Pool | 参照中の pool/profile は `task_need_retry` で永続保留 |
+
+### 詳細
+
+行番号付きの完全スキャンノート・grep カバレッジは中間ファイル参照:
+
+- `meta/_intermediate/cdb-flow/appl-buffer-ordering.md`
+
+> **証跡**: `bufferorch.cpp` の `isConfigDone` × 1 / `isInitDone` × 1 / `drain()` × 3 / `m_ready_list` × 16 / `m_port_ready_list_ref` × 7 / `WarmStart::isWarmStart` × 1 / `m_isBufferPoolWatermarkCounterIdListGenerated` × 3 を全件確認。`doTask(Consumer&)` (L2075-2138)、`doTask()` no-arg (L2040-2073)、`initBufferReadyLists()` (L86-143) を精読。
+
+<!-- /ordering -->
+
 <!-- failure -->
 ## 失敗・retry 挙動 (Phase D)
 
