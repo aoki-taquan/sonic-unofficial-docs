@@ -70,5 +70,6 @@ nav:
   - device-neighbor-metadata.md
   - neigh.md
   - fg-nhg.md
+  - nhg-table.md
   - sflow.md
   - ...
