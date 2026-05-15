@@ -291,4 +291,32 @@ TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLA
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### SET 操作の推奨順序
+
+| 順序 | テーブル / 操作 | 理由 |
+|------|----------------|------|
+| 1 | `LOOPBACK_INTERFACE\|Loopback3\|<ip>` SET | `tun0` ローカル IP ソース (ハードコード `Loopback3`) |
+| 2 | `PEER_SWITCH\|<name>` SET (`address_ipv4`) | `m_peerIp` 未設定時は Linux tunnel 未作成、**自動再処理なし** |
+| 3 | QoS map テーブル SET（`DSCP_TO_TC_MAP` 等） | 未作成 map を参照すると `task_need_retry` 無限ループ |
+| 4 | `TUNNEL\|MuxTunnel0` SET | 1-3 が揃ってから。`tunnel_type=IPINIP` 必須 |
+
+### 変更不可フィールド（DEL → SET が必要）
+
+- `ecn_mode` / `encap_ecn_mode`: SAI `create-only` 属性。既存トンネルへの変更 SET で `valid=false` となり、**SET 全体が無効化**される（他フィールドを含む）。変更には `TUNNEL` DEL 後に再 SET が必要。
+
+### DEL 操作の安全順序
+
+```
+DEL MUX_CABLE|*        # TUNNEL を参照する MUX_CABLE エントリを先に削除
+DEL TUNNEL|MuxTunnel0  # tunnelmgrd → APPL_DB DEL → tunneldecaporch → SAI DEL
+DEL PEER_SWITCH|*      # TUNNEL DEL の後
+```
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-ordering.md`
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
