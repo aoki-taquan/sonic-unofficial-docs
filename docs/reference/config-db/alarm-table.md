@@ -3,7 +3,7 @@ title: ALARM テーブル (EVENT_DB)
 description: "ALARM テーブル — SONiC Event/Alarm Framework が STATE_DB (EVENT_DB) に保持するアクティブアラーム一覧テーブル。eventd が書き込み、gNMI/REST/CLI が参照する。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-15
 sources:
   - repo: sonic-net/SONiC
     path: doc/event-alarm-framework/event-alarm-framework.md
@@ -341,6 +341,49 @@ ALARM の `resource` フィールド (optional) は publisher アプリケーシ
 
 <!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,50-53,187,205-210,291; src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; src/system-health/health_checker/hardware_checker.py:7-8,298-302; src/system-health/health_checker/sysmonitor.py:39-41,152,217-219 -->
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+ALARM テーブル本体 (EVENT_DB:ALARM の書込スキーマ・格納先・retention・通信モデル) は **全プラットフォームで同一**。eventd ソース (`sonic-buildimage/src/sonic-eventd/src/`) を `multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|platform|vendor` で grep してもヒット 0 件で、機種依存コードが存在しない。
+
+差分は (1) どの publisher が発火するか、(2) 期待コンテナ集合の展開、(3) System LED 書込ドライバの 3 点に局所化される。
+
+### eventd は per-asic スコープではない (host 単一インスタンス)
+
+`files/build_templates/init_cfg.json.j2:95-97` の `FEATURE` タプル `("eventd", "enabled", false, "enabled")` の第 3 要素 `false` が `has_per_asic_scope=False` を意味する。`service_checker.py:130-138` の per-asic コンテナ展開分岐 (`<container>0..N`) を eventd は通らない。multi-asic / VOQ chassis でも:
+
+- eventd コンテナは host namespace に 1 個のみ起動
+- ALARM テーブルは host EVENT_DB (Redis index 6) のみに存在し、`asic0..N` の Redis には存在しない
+- VOQ chassis では line card / supervisor 各 host が独立した EVENT_DB / ALARM テーブルを持ち、chassis 全体の集中 ALARM ストアは存在しない (HLD §3.1.7 にも記載なし)
+
+### publisher 側に残るプラットフォーム条件
+
+ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込先・形式は不変。
+
+| 条件 | プラットフォーム依存性 | evidence |
+|------|----------------------|----------|
+| `liquid-cooling-leak` (`sonic-events-host`) | liquid cooling 搭載機のみ発火 (該当 STATE_DB エントリが無ければ 0 件) | `system-health/health_checker/hardware_checker.py:7-8,298-302` |
+| `process-not-running` (`sonic-events-host`) | `CONFIG_DB:FEATURE.has_per_asic_scope=True` の機種では `<container>0..N` を期待コンテナとして展開 | `system-health/health_checker/service_checker.py:130-138` |
+| chassis supervisor / disaggregated chassis | `database-chassis` コンテナの稼働を追加チェック (RAISE 候補が増える) | `service_checker.py:144-146` |
+| ASIC 温度監視 (`TEMPERATURE_INFO\|ASIC*`) | STATE_DB に該当キーを書く platform plugin のある機種のみ判定が走る (※ ALARM 直接 raise ではなく `set_object_not_ok` 経由) | `hardware_checker.py:15,46-71` |
+
+### System LED 連動はドライバ依存
+
+`system-health/manager.py:75-79` の `chassis.set_status_led(color)` は `sonic-platform-common/sonic_platform_base/chassis_base.py` の抽象 API。ALARM_STATS severity 別カウンタ → LED 色のマッピング自体は機種共通だが、**最終的な LED ハードウェア書込は platform plugin (`device/<vendor>/<sku>/plugins/`) 実装依存**。`NotImplementedError` を握り潰すため、対応ドライバが無い VS や一部機種では LED 色付けが no-op となる。
+
+### スキーマ固定要素 (機種非依存)
+
+`sonic-swss-common/common/schema.h:551-554` の `#define EVENT_CURRENT_ALARM_TABLE_NAME "ALARM"` をはじめ、key フォーマット (`<32bit time_t><5桁連番>`)、フィールド集合、severity 列挙 5 値、retention (上限なし・非永続) はすべて build time 固定で platform 差し替え機構なし。`files/image_config/` に `eventd` / `alarm` / `event` ディレクトリは存在しない (event profile `default.json` も Docker image に焼き込み、機種別差し替えなし)。`files/build_templates/eventd.service.j2` も `{{docker_container_name}}` 1 変数のみで platform 分岐ゼロ。
+
+### ベンダー固有 ALARM publisher hook なし
+
+community master 内にベンダー固有 alarm publisher SDK や「platform plugin が ALARM テーブルへ直接書く」経路は存在しない。すべての RAISE_ALARM は `swsscommon.event_publish()` API → ZMQ → eventd 経由で集中処理される。ベンダー版 SONiC (NVIDIA / Edgecore / Cisco / AsterNOS 等) は本リポジトリのスコープ外。
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-platform.md`
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp (grep platform/asic/chassis = 0 hits); files/build_templates/init_cfg.json.j2:95-97; files/build_templates/eventd.service.j2; src/system-health/health_checker/service_checker.py:130-138,144-146; src/system-health/health_checker/hardware_checker.py:7-8,15,46-71,298-302; src/system-health/health_checker/manager.py:75-79; sonic-swss-common/common/schema.h:551-554 -->
+<!-- /platform -->
 
 <!-- failure -->
 ## 失敗挙動 (Phase D)
