@@ -939,4 +939,55 @@ DB 番号: `FLEX_COUNTER_DB = 5` (`schema.h:18`)。
 - **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
 
 <!-- /side-effects -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+CONFIG_DB の `ACL_RULE` への変更通知は、`AclOrch` が **`swss::SubscriberStateTable`** (Redis keyspace 通知ベース) で購読する。`Orch::addConsumer()` が DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB には `SubscriberStateTable` を、それ以外（APPL_DB 等）には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。APPL_DB 側 `ACL_RULE_TABLE` は channel ベース PUBLISH/SUBSCRIBE を使うが、CONFIG_DB 側は **keyspace 通知 `__keyspace@<dbId>__:ACL_RULE|*` への `PSUBSCRIBE`** で変更を検知する。
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, TableConsumable::DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+| 購読者 | 購読 API | 購読テーブル | バッチ |
+|--------|---------|--------------|--------|
+| `orchagent` (`AclOrch`) | `swss::SubscriberStateTable` | `ACL_RULE` | `TableConsumable::DEFAULT_POP_BATCH_SIZE` (128, ハードコード) |
+
+バッチサイズは `sonic-swss-common/common/table.h:164` の `DEFAULT_POP_BATCH_SIZE = 128` で固定され、`Orch::addConsumer()` がこの定数をハードコードで渡す (`orch.cpp:1190`)。APPL_DB 側で使われる `gBatchSize` (`orchagent -b <n>` で上書き可) は CONFIG_DB 側 `ACL_RULE` には**適用されない**。書き込み側 (CLI / `sonic-cfggen` / gNMI) は `swss::Table::set()` または `swsssdk` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config / sonic-cfggen / gNMI
+  ↓ Table::set("<table>|<rule>", fvs)
+CONFIG_DB: HSET "ACL_RULE|<table>|<rule>" <fields>
+  ↓ Redis keyspace event "__keyspace@4__:ACL_RULE|<table>|<rule>" "hset"
+OrchDaemon main loop: m_select->select(&s, 1000ms)  ← SELECT_TIMEOUT
+  ↓ Consumer::execute() → SubscriberStateTable::pops()
+    └─ HGETALL "ACL_RULE|<table>|<rule>" で値再取得
+AclOrch::doTask(consumer)  (aclorch.cpp:4272-4295)
+  ↓ table_name == CFG_ACL_RULE_TABLE_NAME で分岐
+AclOrch::doAclRuleTask(consumer)  (APPL_DB 版と同一ハンドラ)
+  ↓ create / update / remove
+SAI: sai_acl_api->create_acl_entry / set_acl_entry_attribute / remove_acl_entry
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。1 秒ごとに wake up して retry / flush を回し、keyspace 通知到着で即座に wake up。
+- `doTask` ディスパッチ (`aclorch.cpp:4283-4292`) は `CFG_ACL_RULE_TABLE_NAME` と `APP_ACL_RULE_TABLE_NAME` を **同一ハンドラ** にまとめるため、フィールド意味論・priority 範囲・action / match セットは APPL_DB 版と完全に共有される。
+- リトライキャッシュは `ACL_RULE` 系統 (CONFIG_DB / APPL_DB) **両方** に作成される (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)`, `aclorch.cpp:4221`)。SAI リソース枯渇や `MIRROR_SESSION` の activate 待ち等で失敗したルールは park され、依存解消時に再試行される。
+
+### サービス再起動トリガー
+
+なし。`AclOrch` は orchagent プロセス内のハンドラであり、`ACL_RULE` の追加・変更・削除は SAI ACL entry のライブ操作 (`sai_acl_api->create_acl_entry` / `set_acl_entry_attribute` / `remove_acl_entry`) のみで反映され、プロセス再起動・サービス restart を伴わない。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,408-422,533,959` (TableConnector / SELECT_TIMEOUT / `new AclOrch(...)` / select ループ)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/aclorch.cpp:4221-4222,4272-4295` (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)` / `doTask` ディスパッチ)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (`SubscriberStateTable` の `PSUBSCRIBE` + `HGETALL` 動作)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/schema.h` (`CFG_ACL_RULE_TABLE_NAME` 定数); 詳細分析 `meta/_intermediate/cdb-flow/acl-rule-pubsub.md`
+<!-- /pubsub -->
 <!-- glossary-links-injected: a78cb4c857bd -->
