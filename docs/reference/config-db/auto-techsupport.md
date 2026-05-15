@@ -153,6 +153,55 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
     これは DB 値が**完全に欠落**した場合のみ有効。通常は `init_cfg.json.j2` または YANG default の `10.0` が DB に書き込まれているため、コード定数 `0` は事実上発動しない。
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB / YANG / init_cfg.json.j2 のいずれからも変更不可能な、コード内固定値。
+`coredump_gen_handler.py` / `techsupport_cleanup.py` / 共有ライブラリ `auto_techsupport_helper.py` から抽出。
+
+### ファイルシステムパス (`auto_techsupport_helper.py` L33-39)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `CORE_DUMP_DIR` | `/var/core` | core dump 収集ディレクトリ。`max_core_limit` の base path |
+| `CORE_DUMP_PTRN` | `*.core.gz` | core dump ファイル glob (gzip 圧縮済のみ集計対象) |
+| `TS_DIR` | `/var/dump` | techsupport 出力ディレクトリ。`max_techsupport_limit` の base path |
+| `TS_PTRN_GLOB` | `sonic_dump_*tar*` | techsupport ファイル glob (cleanup 対象) |
+
+`CORE_DUMP_DIR` は `coredump_gen_handler.py:15,33,72`、`TS_DIR` は `techsupport_cleanup.py:22,25,43` で import 利用される。
+
+### 既定値・タイムアウト (`auto_techsupport_helper.py` L69-71)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `TIME_BUF` | `20` 秒 | rate-limit 判定の許容バッファ (`rate_limit_interval` 経過後 +20 秒の猶予) |
+| `SINCE_DEFAULT` | `"2 days ago"` | `since` 未設定 / `date` パース失敗時の二重 fallback |
+| `TS_GLOBAL_TIMEOUT` | `"60"` (秒) | `show techsupport` 実行のグローバルタイムアウト |
+
+### 終了コード・リトライ (`auto_techsupport_helper.py` L81-84)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `EXT_LOCKFAIL` | `2` | flock 取得失敗 (重複起動防止) の exit code |
+| `EXT_RETRY` | `4` | リトライ要求 exit code |
+| `EXT_SUCCESS` | `0` | 正常終了 exit code |
+| `MAX_RETRY_LIMIT` | `2` | techsupport 起動失敗時の最大リトライ回数 |
+
+### PATH 注入 (`auto_techsupport_helper.py` L74-78)
+
+クロスビルド (`CROSS_BUILD_ENVIRON=y`) 以外では subprocess 起動前に
+`/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:` を `PATH` 先頭に注入。
+`show techsupport` が依存する utilities をネイティブパスから発見させる。
+
+!!! note "Phase A の defaults 表との関係"
+    `state` / `rate_limit_interval` / `max_techsupport_limit` / `min_available_mem` / `since` の
+    既定値そのものは Phase A の「コード由来の暗黙デフォルト」表を参照。
+    Phase E は **DB / YANG / init_cfg のいずれからも変更不可能なリテラル**
+    (`/var/core`, `/var/dump`, `SINCE_DEFAULT`, `TS_GLOBAL_TIMEOUT`, `TIME_BUF` 等) のみを扱う。
+
+詳細は `meta/_intermediate/cdb-flow/auto-techsupport-constants.md` を参照。
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -248,5 +297,57 @@ global テーブル (single key `GLOBAL`) と feature テーブルを同一ハ�
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする host service スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) は、techsupport ダンプ生成および掃除の過程で **STATE_DB** に副次的な書込を行う。CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への書込は発生しない。
+
+| 副次 DB | 書込有無 | 書込キー / 操作 | 根拠 |
+|---|---|---|---|
+| STATE_DB | **あり** | `AUTO_TECHSUPPORT_DUMP_INFO\|<ts_dump_name>` (`hset` 相当) | `auto_techsupport_helper.py:302-310` (`write_to_state_db()` が `db.set(STATE_DB, key, TIMESTAMP, ...)`、`EVENT_TYPE`、event_data 各 key、`CONTAINER` を逐次書込) |
+| STATE_DB | **あり (削除)** | `AUTO_TECHSUPPORT_DUMP_INFO\|<name>` の `db.delete` | `techsupport_cleanup.py:13-18` (`clean_state_db_entries()` が `cleanup_process()` で削除されたダンプファイル毎に STATE_DB エントリを削除) |
+| APPL_DB | なし | — | 両スクリプト・helper 内に APPL_DB 参照なし (`auto_techsupport_helper.py` / `coredump_gen_handler.py` / `techsupport_cleanup.py` の `import` および `db.set`/`db.delete`/`Producer` を grep して 0 ヒット) |
+| CONFIG_DB | なし (読み取り専用) | — | `db.get(CFG_DB, AUTO_TS, ...)` / `db.get(CFG_DB, FEATURE.format(container), ...)` の **読み取り** のみで書込なし (`coredump_gen_handler.py:17,22,47,55` / `techsupport_cleanup.py:27,32` / `auto_techsupport_helper.py:315-321`) |
+| COUNTERS_DB | なし | — | techsupport ハンドラ群は SAI 非経由のため counter 系テーブルへの参照なし |
+| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | — | 段階 3 トレース参照: SAI 経路なし |
+
+### STATE_DB `AUTO_TECHSUPPORT_DUMP_INFO` エントリの構造
+
+`write_to_state_db()` が書き込むフィールドは以下の通り (`auto_techsupport_helper.py:60-67,302-310`):
+
+| フィールド | 値の型 / 例 | 用途 |
+|---|---|---|
+| `timestamp` | epoch 秒 (str) | `get_ts_map()` 経由で per-container rate-limit 判定に使用 (`auto_techsupport_helper.py:268-276,292-298`) |
+| `event_type` | `core` / `memory` | ダンプ契機 (`EVENT_TYPE_CORE` / `EVENT_TYPE_MEMORY`) |
+| `core_dump` | core ファイル名 (event=`core` の場合のみ) | `EVENT_TYPE_CORE` の event_data として渡される (`coredump_gen_handler.py:60`) |
+| `container_name` | docker コンテナ名 (省略可) | container 単位 rate-limit のキー (`auto_techsupport_helper.py:309-310`) |
+
+### 副次書込の発生タイミング
+
+- `coredump_gen_handler.py` 経由: critical process の core dump 検出 → `invoke_ts_command_rate_limited()` → `invoke_ts_cmd()` 成功時に `write_to_state_db()` が呼ばれ STATE_DB に新規エントリ追加。
+- `techsupport_cleanup.py` 経由: `max_techsupport_limit` 超過時に `cleanup_process()` が物理ファイル削除を返却し、`clean_state_db_entries()` が対応する STATE_DB エントリを `db.delete` で除去。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-side.md` を参照。
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差
+
+AUTO_TECHSUPPORT (GLOBAL) の挙動は ASIC ベンダー / VOQ chassis / namespace 構成に対して**ほぼ非依存**。実装上の配慮は multi-asic で container 名 (`swss0` / `syncd1` 等) を feature 名と照合する 1 箇所のみ。
+
+| 観点 | 影響 | 根拠 |
+|------|------|------|
+| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco / DASH) | なし | SAI 非経由。consumer 4 ファイルに vendor 分岐 0 hit |
+| multi-asic (`is_multi_npu() == True`) | key 構造は不変。container 名のみ `startswith` で前方一致 | `sonic-utilities/scripts/memory_threshold_check.py:204` |
+| VOQ chassis (supervisor + line card) | 各 host で独立動作 | `chassisdb` (`REDIS_CHASSIS_SERVER`) 非参照、host ごとに local CONFIG_DB と `/var/dump/` を扱う |
+| namespace (asic0..asicN) | 影響なし | 全 consumer が `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ接続 |
+| init_cfg / build template | 分岐なし | `enable_auto_tech_support` ビルド変数で `state` を切替えるのみ。ASIC/chassis 条件式なし |
+
+!!! note "sonic-host-services/scripts/ に consumer なし"
+    `grep -rli AUTO_TECHSUPPORT .cache/sonic-sources/sonic-host-services/` は 0 hit。実コンシューマは `sonic-utilities/scripts/{coredump_gen_handler,techsupport_cleanup,memory_threshold_check}.py` + `utilities_common/auto_techsupport_helper.py` に集約。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-platform.md` を参照。
+<!-- /platform -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
