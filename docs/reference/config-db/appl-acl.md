@@ -619,6 +619,153 @@ CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6`
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` への SET / DEL は、`AclOrch::doTask()` を経由して **STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB** に副次書込みを発火させる。CONFIG_DB 経路と同一の `AclOrch` インスタンスで処理されるため、副次書込みのメカニズムは CONFIG_DB 版と共通。本節は APPL_DB 経路で実発火するもののみを列挙する。
+
+### STATE_DB
+
+`AclOrch` コンストラクタ (`aclorch.cpp:4199-4202`) で `STATE_DB` 上に 3 テーブルを保持:
+
+| メンバ | テーブル | スキーマ定数 |
+|---|---|---|
+| `m_aclTableStateTable` | `ACL_TABLE_TABLE` | `STATE_ACL_TABLE_TABLE_NAME` (schema.h:514) |
+| `m_aclRuleStateTable` | `ACL_RULE_TABLE` | `STATE_ACL_RULE_TABLE_NAME` (schema.h:515) |
+| `m_aclStageCapabilityTable` | `ACL_STAGE_CAPABILITY_TABLE` | `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME` (schema.h:418) — 起動時 1 回のみ |
+
+#### `STATE_DB|ACL_TABLE_TABLE|<table_name>`
+
+`setAclTableStatus()` (`aclorch.cpp:6087-6093`) / `removeAclTableStatus()` (`aclorch.cpp:6096-6099`) が `status` フィールドのみを書込む:
+
+```cpp
+// aclorch.cpp:6087-6093
+void AclOrch::setAclTableStatus(string table_name, AclObjectStatus status)
+{
+    vector<FieldValueTuple> fvVector;
+    fvVector.emplace_back("status", aclObjectStatusLookup[status]);
+    m_aclTableStateTable.set(table_name, fvVector);
+}
+```
+
+| トリガ (APPL_DB SET/DEL 由来) | 呼出元 | `status` |
+|---|---|---|
+| `addAclTable()` 成功 | aclorch.cpp:5462 | `"Active"` |
+| `updateAclTable()` 成功 | aclorch.cpp:5477 | `"Active"` |
+| `addAclTable()` SAI 失敗 → retry | aclorch.cpp:5483 | `"Pending creation"` |
+| 属性 validate 失敗 → erase | aclorch.cpp:5492 | `"Inactive"` |
+| `removeAclTable()` 成功 (DEL) | aclorch.cpp:5501 | (エントリ削除) |
+| `removeAclTable()` 失敗 (DEL) | aclorch.cpp:5508 | `"Pending removal"` |
+
+#### `STATE_DB|ACL_RULE_TABLE|<table_name>|<rule_name>`
+
+`setAclRuleStatus()` (`aclorch.cpp:6102-6107`) / `removeAclRuleStatus()` (`aclorch.cpp:6110-6112`)。key 区切りはハンドラ内で `table_name + "|" + rule_name`。
+
+| トリガ | 呼出元 | `status` |
+|---|---|---|
+| `addAclRule()` 成功 | aclorch.cpp:5670 | `"Active"` |
+| SAI resource full → retry park 成功 | aclorch.cpp:5683 | `"Pending creation"` |
+| SAI resource full → retry park 失敗 | aclorch.cpp:5690 | `"Pending creation"` |
+| その他 `addAclRule()` 失敗 | aclorch.cpp:5696 | `"Pending creation"` |
+| ルール属性 validate 失敗 | aclorch.cpp:5704 | `"Inactive"` |
+| `removeAclRule()` 失敗 (DEL) | aclorch.cpp:5726 | `"Pending removal"` |
+
+### COUNTERS_DB
+
+`AclOrch` の static メンバ (`aclorch.cpp:25-26`):
+
+```cpp
+swss::DBConnector AclOrch::m_countersDb("COUNTERS_DB", 0);
+swss::Table AclOrch::m_countersTable(&m_countersDb, "COUNTERS");
+```
+
+#### `COUNTERS_DB|ACL_COUNTER_RULE_MAP` (HSET / HDEL)
+
+`registerFlexCounter()` / `deregisterFlexCounter()` (`aclorch.cpp:6020-6049`):
+
+```cpp
+// aclorch.cpp:6041
+m_countersDb.hset(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier, counterOidStr);
+// aclorch.cpp:6047
+m_countersDb.hdel(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier);
+```
+
+- key: 固定文字列 `"ACL_COUNTER_RULE_MAP"` (`aclorch.cpp:45`)
+- field: `ruleIdentifier = <table_id>:<rule_id>` (`getTableNameSeparator()=":"`, `aclorch.cpp:6053`)
+- value: SAI counter OID (serialize 済み 16 進文字列)
+
+発火経路 (APPL_DB SET 由来):
+
+| トリガ | 呼出元 |
+|---|---|
+| 新規ルール作成 (`addAclRule`) | aclorch.cpp:4982 |
+| 既存ルール更新で counter 追加 | aclorch.cpp:1515, 2444 |
+| ルール削除 (`removeAclRule` / DEL) | aclorch.cpp:5019, 5157, 3001, 3095 |
+| 既存ルール更新で counter 削除 | aclorch.cpp:1519 |
+
+各書込み元 (`vnetorch` / `mclagsyncd` / `dashenifwdorch`) は明示的に `RULE_COUNTER=false` を指定しないため、`m_createCounter=true` の経路に乗り COUNTERS_DB 登録が既定で発火する。
+
+### FLEX_COUNTER_DB
+
+`AclOrch::m_flex_counter_manager` (`aclorch.cpp:4208-4213`):
+
+```cpp
+m_flex_counter_manager(
+    ACL_COUNTER_FLEX_COUNTER_GROUP,       // "ACL_STAT_COUNTER" (aclorch.h:116)
+    StatsMode::READ,
+    ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS, // 10000 ms (aclorch.cpp:47)
+    ACL_COUNTER_DEFAULT_ENABLED_STATE
+)
+```
+
+#### `FLEX_COUNTER_DB|FLEX_COUNTER_TABLE|ACL_STAT_COUNTER:<counter_oid>` (HSET / DEL)
+
+`setCounterIdList()` / `clearCounterIdList()` (`flex_counter/flex_counter_manager.cpp:205, 235`) を `aclorch.cpp:6040, 6048` から呼出:
+
+```cpp
+// aclorch.cpp:6040
+m_flex_counter_manager.setCounterIdList(rule.getCounterOid(),
+                                        CounterType::ACL_COUNTER,
+                                        serializedCounterStatAttrs);
+// aclorch.cpp:6048
+m_flex_counter_manager.clearCounterIdList(rule.getCounterOid());
+```
+
+- key: `ACL_STAT_COUNTER:<sai_counter_oid>` (グループ名 + `:` + serialize OID)
+- field: SAI counter attribute ID 列 (`PACKETS`, `BYTES` 等を `sai_metadata_get_attr_metadata` + `sai_serialize_attr_id` で文字列化, `aclorch.cpp:6030-6038`)
+
+APPL_DB の新規ルール作成 / 削除と **COUNTERS_DB と同タイミング** で FLEX_COUNTER_DB エントリも追加 / 削除される。`FLEX_COUNTER_GROUP_TABLE|ACL_STAT_COUNTER` (polling interval 等) はコンストラクタ時の 1 回のみ書込まれ、APPL_DB SET/DEL では発火しない。
+
+### 書込み元プロセス別の副次効果
+
+| 書込み元 | 主要 type | STATE_DB | COUNTERS_DB | FLEX_COUNTER_DB |
+|---|---|---|---|---|
+| `vnetorch` (VNET_TUNNEL_TERM_*) | カスタム `VNET_TUNNEL_TERM` | ACL_TABLE_TABLE + ACL_RULE_TABLE status | ACL_COUNTER_RULE_MAP に登録 | ACL_STAT_COUNTER に counter OID 登録 |
+| `mclagsyncd` (mclag egress port isolate) | `L3` | 同上 | 同上 | 同上 |
+| `dashenifwdorch` (ENI fwd) | カスタム (ENI fwd) | 同上 | DPU 側で INACTIVE 化される場合は未発火 | 同上 |
+
+!!! warning "DPU 側の副次効果欠落"
+    `gMySwitchType == "dpu"` の orchagent では `m_minPriority = m_maxPriority = 0` のため (`aclorch.cpp:3686-3710`)、`PRIORITY != 0` の APPL_DB ルールは `setPriority()` が false を返し rule が INACTIVE になる。この場合 STATE_DB には `"Inactive"` が書込まれるが、`createCounter()` まで到達しないため **COUNTERS_DB / FLEX_COUNTER_DB は更新されない**。
+
+### 副次効果の確認コマンド
+
+```bash
+# STATE_DB
+sonic-db-cli STATE_DB hgetall 'ACL_TABLE_TABLE|<table_name>'
+sonic-db-cli STATE_DB hgetall 'ACL_RULE_TABLE|<table_name>|<rule_name>'
+
+# COUNTERS_DB
+sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
+
+# FLEX_COUNTER_DB
+sonic-db-cli FLEX_COUNTER_DB keys 'FLEX_COUNTER_TABLE:ACL_STAT_COUNTER:*'
+```
+
+> **証跡**: `AclOrch` コンストラクタ STATE_DB テーブル `aclorch.cpp:4199-4202`、`setAclTableStatus`/`removeAclTableStatus` `aclorch.cpp:6087-6099`、`setAclRuleStatus`/`removeAclRuleStatus` `aclorch.cpp:6102-6112`、`m_countersDb` `aclorch.cpp:25-26`、`registerFlexCounter`/`deregisterFlexCounter` `aclorch.cpp:6020-6049`、`COUNTERS_ACL_COUNTER_RULE_MAP` 定数 `aclorch.cpp:45`、Flex counter グループ定数 `aclorch.h:116` / `aclorch.cpp:47`、status 遷移呼出元 `aclorch.cpp:5462,5477,5483,5492,5501,5508,5670,5683,5690,5696,5704,5726`、register 呼出元 `aclorch.cpp:1515,1519,2444,3001,3095,4982,5019,5153,5157`。詳細分析 `meta/_intermediate/cdb-flow/appl-acl-side.md`
+<!-- /side-effects -->
+
+---
+
 ## 関連 CONFIG_DB / CLI
 
 - CONFIG_DB: [`ACL_TABLE`](acl-table.md)、[`ACL_RULE`](acl-rule.md)
