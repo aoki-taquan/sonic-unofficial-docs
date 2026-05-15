@@ -284,4 +284,41 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `key` が `authentication`/`authorization`/`accounting` 以外 | `aaa_update()` L419 | 内部状態更新なし・`modify_conf_file()` は呼ばれるが設定変化なし | なし | `hostcfgd:419-431` |
+| `failthrough` に `'True'`/`'true'` 以外の文字列 (`'yes'`/`'1'` 等) | `is_true()` L156 | `False` 扱い・"Failed to get bool value" を syslog ERR 出力 | LOG_ERR | `hostcfgd:160-162` |
+| `login=ldap` だが `bind_dn`/`bind_password`/`base_dn` のいずれかが空 | `is_ldap_config_complete()` L437 | `handle_nslcd_service(False)` → nslcd を stop & mask (LDAP 認証不能) | LOG_DEBUG ("nslcd: deactivating") | `hostcfgd:437-442, 246-251` |
+| `login=ldap` だが `LDAP_SERVER` エントリなし | `is_ldap_config_complete()` L442 | `self.ldap_servers` 空 → `False` → nslcd を stop & mask | LOG_DEBUG | `hostcfgd:442` |
+| PAM テンプレートレンダリング中に jinja2 例外発生 | `modify_conf_file()` L716-725 | 例外伝播・PAM ファイル未更新 | スタックトレース (未捕捉) | `hostcfgd:716-731` |
+| PAM 設定ファイル書き込み時 `open()` / `os.rename()` が `OSError` | `modify_conf_file()` L728-731 | 例外伝播・PAM ファイル未更新 (`.tmp` 残存の可能性) | スタックトレース (未捕捉) | `hostcfgd:728-731` |
+| `aaastatsd` サービスの start/stop が `CalledProcessError` | `modify_conf_file()` L846-851 | LOG_ERR のみ・後続の NSLCD 設定処理は継続 | LOG_ERR | `hostcfgd:846-851` |
+| NSLCD / LDAP conf 生成 (`generate_file_from_template`) で例外 | `generate_file_from_template()` L214 | LOG_ERR のみ・nslcd.conf / ldap.conf 未更新 | LOG_ERR ("Failed generate_file_from_template error=...") | `hostcfgd:214-216` |
+| LDAP conf ディレクトリ作成 (`os.makedirs`) 失敗 | `modify_conf_file()` L860-862 | LOG_ERR のみ・LDAP_CONF 生成試行は続く | LOG_ERR ("Error occurred when using cmd makedirs...") | `hostcfgd:860-862` |
+| `audisp-tacplus` への SIGHUP 送信失敗 (`os.kill` 例外) | `notify_audisp_tacplus_reload_config()` L490-493 | LOG_WARNING のみ・処理継続 | LOG_WARNING | `hostcfgd:490-493` |
+| `/etc/pam.d/sshd` / `/etc/pam.d/login` ファイルが欠如 | `check_file_not_empty()` L619-620 | LOG_ERR のみ・sed 変更未適用 | LOG_ERR ("file size check failed: {} is missing") | `hostcfgd:619-621` |
+| `nsswitch.conf` が存在しない | `modify_conf_file()` L755-783 | `os.path.isfile()` が False → sed 変更スキップ (silent skip) | なし | `hostcfgd:756, 763-783` |
+| `RADIUS_SERVER.src_intf` に対応する IP が解決できない | `modify_conf_file()` L697-700 | LOG_INFO → `src_ip` を削除して処理継続 | LOG_INFO ("src_intf has no usable IP addr.") | `hostcfgd:697-700` |
+
+### DEL / db_migrator における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `AAA` エントリ DEL 後 | `aaa_update()` dispatch | default dict (`login: local` / `disable`) に回帰 | `hostcfgd:357-366, 641-648` |
+| migration 時 `TACPLUS\|global.passkey` が空 | `migrate_aaa()` L869 | `AAA\|authorization` エントリを**削除**。passkey 後追い設定後も自動復元なし | `db_migrator.py:869-900` |
+
+### 補足
+
+- **PAM atomic 書き込み**: `.tmp` → `os.rename()` で atomic 置換。`os.rename()` 失敗時は `.tmp` が残存し PAM 設定変化なし。
+- **nslcd 自動復旧**: nslcd が mask された後に `ldap_global_update()` / `ldap_server_update()` が呼ばれると `handle_nslcd_service()` が再評価され、LDAP 設定が完全になった時点で unmask & start (`hostcfgd:547-564`)。
+- **`trace` の無効化バグ**: `aaa_update()` に `trace` 更新ブロックが存在しないため `self.trace` は常に `False`。CONFIG_DB の `trace=True` は PAM テンプレートに反映されない。
+<!-- /failure -->
+
 <!-- glossary-links-injected: 8d5a139c8eba -->
