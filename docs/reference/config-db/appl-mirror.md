@@ -309,6 +309,76 @@ P4Orch::P4Orch(swss::DBConnector* db, std::vector<std::string> tableNames,
 
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`APPL_DB FIXED_MIRROR_SESSION_TABLE` の SET / DEL に伴う副次 DB 書込は **APPL_STATE_DB への応答 publish 1 経路のみ**。CONFIG_DB 経路 `MirrorOrch` のような `STATE_DB MIRROR_SESSION_TABLE` への status 書込は **発火しない**[^side-1]。
+
+### APPL_STATE_DB — ResponsePublisher 経由のレスポンス
+
+`MirrorSessionManager` 自身は STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB に直接書込まない。唯一の副次書込は親 `P4Orch` が保持する `ResponsePublisher m_publisher` 経由の APPL_STATE_DB 応答テーブルへの publish である。
+
+```cpp
+// orchagent/p4orch/p4orch.cpp:38-43 (P4Orch constructor)
+m_publisher("APPL_DB", /*bool buffered=*/true,
+            /*db_write_thread=*/true, zmqServer)
+```
+
+```cpp
+// orchagent/p4orch/mirror_session_manager.cpp:82, 111
+m_publisher->publish(APP_P4RT_TABLE_NAME, kfvKey(key_op_fvs_tuple),
+                     kfvFieldsValues(key_op_fvs_tuple), status,
+                     /*replace=*/true);
+```
+
+| 発火点 | ハンドラ | publish 内容 |
+|---|---|---|
+| `drain()` 各エントリ処理完了 (`mirror_session_manager.cpp:82`) | processAddRequest / processUpdateRequest / processDeleteRequest 経由 | 元 APPL_DB key + 元 fields + `ReturnCode` (`SWSS_RC_SUCCESS` / `SWSS_RC_INVALID_PARAM` / `SWSS_RC_NOT_FOUND` 等) |
+| `drainWithNotExecuted()` 未実行エントリの返却 (`mirror_session_manager.cpp:111`) | drain() head-of-line blocking 後の残エントリ | 同上 + 未実行ステータス |
+
+- 宛先: **APPL_STATE_DB** のレスポンステーブル (`ResponsePublisher` 第 1 引数 `"APPL_DB"` は DBConnector 解決用で、実際の書込は APPL_STATE_DB スキーマに基づく)
+- 経路: ZMQ + buffered + 書込専用スレッド (`db_write_thread=true`) で非同期送出
+- 用途: P4RT クライアントがセッション作成成否を待つための同期点
+
+### STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB は **対象外**
+
+`mirror_session_manager.h` および `mirror_session_manager.cpp` には `STATE_DB` / `COUNTERS_DB` / `FLEX_COUNTER_DB` を扱う `DBConnector` / `Table` / `FlexCounterManager` メンバが**一切存在しない**。CONFIG_DB 経路 `MirrorOrch` が書く `STATE_DB MIRROR_SESSION_TABLE.status` (`"active"` / `"inactive"`) は P4RT 経路では発火しない。
+
+mirror session 単位の SAI カウンタは P4RT / CONFIG_DB の**どちらの経路でも** COUNTERS_DB / FLEX_COUNTER_DB に登録されない (mirror 連携カウンタは `ACL_*_TABLE` 側の ACL_COUNTER 経路で扱う)。
+
+### 副次効果としての非 DB 内部状態更新 (参考)
+
+DB 書込ではないが、`MirrorSessionManager` ハンドラは以下のプロセス内データ構造を更新する:
+
+- `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_MIRROR_SESSION, key, oid)` / `eraseOID(...)` — P4Orch 内の P4-key→SAI OID マッパ。`AclRuleManager` の mirror action 解決時に参照される (cf. ordering Phase B §4)
+- `gPortsOrch->increasePortRefCount(port)` / `decreasePortRefCount(port)` — UPDATE で port 切替時は old を decrease → new を increase の順 (`mirror_session_manager.cpp:517-518`)
+
+### 経路別の副次 DB 書込サマリ
+
+| 副次 DB | CONFIG_DB `MIRROR_SESSION` (`MirrorOrch`) | APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) |
+|---|---|---|
+| STATE_DB `MIRROR_SESSION_TABLE` | `status` を `"active"` / `"inactive"` で更新 | **書込みなし** |
+| APPL_STATE_DB レスポンス | 書込みなし | **`ResponsePublisher` で `ReturnCode` を publish** |
+| COUNTERS_DB | 書込みなし (session 単位カウンタなし) | 書込みなし |
+| FLEX_COUNTER_DB | 書込みなし | 書込みなし |
+
+### 副次効果の確認コマンド
+
+```bash
+# APPL_STATE_DB のレスポンステーブル (P4RT 応答)
+sonic-db-cli APPL_STATE_DB keys 'FIXED_MIRROR_SESSION_TABLE*'
+
+# STATE_DB MIRROR_SESSION_TABLE は P4RT 経路では更新されない (CONFIG_DB 経路のみ)
+sonic-db-cli STATE_DB keys 'MIRROR_SESSION_TABLE*'
+```
+
+> **証跡**: `P4Orch::m_publisher` 宣言 `orchagent/p4orch/p4orch.cpp:36-43`、`m_publisher->publish(...)` 呼出 `orchagent/p4orch/mirror_session_manager.cpp:82, 111`、STATE_DB / COUNTERS_DB Table メンバ不在 `orchagent/p4orch/mirror_session_manager.h` 全体、CONFIG_DB 経路 `STATE_DB MIRROR_SESSION_TABLE.status` 書込は `orchagent/mirrororch.cpp` 側の `MirrorOrch::setSessionState()` 経路。詳細分析: `meta/_intermediate/cdb-flow/appl-mirror-side.md`
+
+[^side-1]: `MirrorSessionManager` クラス定義 (`orchagent/p4orch/mirror_session_manager.h`) には STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB を扱う `Table` / `DBConnector` メンバが存在せず、`mirror_session_manager.cpp` も該当 API 呼出を行わない。唯一の副次 DB 書込は親 `P4Orch::m_publisher` (`ResponsePublisher`) 経由の APPL_STATE_DB 応答。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L82>
+
+<!-- /side-effects -->
+
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
@@ -408,6 +478,7 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION*'
 [^fail-1]: `MirrorSessionManager::drain()` / `processAddRequest` / `processUpdateRequest` / `processDeleteRequest` の fail-fast 設計: `orchagent/p4orch/mirror_session_manager.cpp` L62-774. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L774>. CONFIG_DB 側 `MirrorOrch::doTask()` の `allPortsReady` 前置と `task_need_retry` 経路は `orchagent/mirrororch.cpp` L1567-1611 / L160-198 / L432-443 / L760-808 を参照。
 
 <!-- /failure -->
+
 
 ## 購読者
 
