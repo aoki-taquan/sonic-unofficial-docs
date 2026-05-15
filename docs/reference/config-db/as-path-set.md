@@ -125,6 +125,75 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 - DEL 操作時: 既存 access-list を `no bgp as-path access-list <name>` で全削除してから再作成（`frrcfgd.py:1015`）
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`bgpcfgd` (`AsPathMgr`) と `frrcfgd` (sonic-frr-mgmt-framework) の両経路を全行精読して抽出した、AS_PATH_SET 処理に埋め込まれた固定リテラル・定数。SONiC レイヤには **regex 長やエントリ数の上限値は一切定義されていない**（FRR `bgpd` 内部の天井に委譲）。
+
+### action enum（YANG `routing-policy-action-type`）と実装乖離
+
+| enum 値 | 出典 | 実装上の扱い |
+|---|---|---|
+| `permit` | `sonic-routing-policy-sets.yang:30` | 両 consumer で**唯一発行されるリテラル**としてハードコード |
+| `deny` | `sonic-routing-policy-sets.yang:33` | コード経路が存在せず**完全無視**（DISCREPANCY） |
+
+- `bgpd.conf.db.j2:16` — `bgp as-path access-list {{key}} permit {{path}}` (リテラル `permit`)
+- `frrcfgd.py:1018` — `'{} permit {}'.format(as_set_name, asn)` (リテラル `permit`)
+
+### FRR コマンドテンプレート（文字列リテラル）
+
+| 用途 | リテラル | ソース |
+|---|---|---|
+| frrcfgd ADD (key_map) | `bgp as-path access-list {} permit {}` | `frrcfgd.py:1977` |
+| j2 経路 ADD | `bgp as-path access-list {{key}} permit {{path}}` | `bgpd.conf.db.j2:16` |
+| 全削除 (pre-update) | `no bgp as-path access-list <name>` | `frrcfgd.py:1015` |
+| AsPathMgr ADD | `bgp as-path access-list T2_GROUP_ASNS permit _<asn>_` | `managers_as_path.py:56` |
+| AsPathMgr DEL | `no bgp as-path access-list T2_GROUP_ASNS` | `managers_as_path.py:52,65` |
+
+### AsPathMgr (bgpcfgd) のハードコード識別子
+
+`AsPathMgr` は AS_PATH_SET テーブルではなく `DEVICE_METADATA[localhost].t2_group_asns` を購読し、**固定名 `T2_GROUP_ASNS` で 1 本だけ** access-list を生成する別経路を持つ。
+
+| 定数 | 値 | 役割 | ソース |
+|---|---|---|---|
+| `T2_GROUP_ASNS` | `"T2_GROUP_ASNS"` | AsPathMgr が生成する固定 access-list 名 | `managers_as_path.py:7` |
+| key フィルタ | 文字列 `"localhost"` 直比較 | DEVICE_METADATA の特定 key のみ処理 | `managers_as_path.py:31,61` |
+| 内部キー名 | 文字列 `"t2_group_asns"` 直比較 | data dict 抽出時の固定キー | `managers_as_path.py:35` |
+| ASN 区切り | `","` | `t2_group_asns` 値の split 区切り | `managers_as_path.py:40` |
+| ASN regex 埋込パターン | `_<asn>_` | FRR 正規表現として ASN を境界付きで埋める | `managers_as_path.py:56` |
+| 再同期用 regex | `r"bgp as-path access-list T2_GROUP_ASNS seq \d+ permit _(\d+)_"` | FRR 既存設定を読み戻す固定 regex | `managers_as_path.py:43` |
+
+### frrcfgd 経路のガード・バインド定数
+
+| 項目 | 値 | 役割 | ソース |
+|---|---|---|---|
+| daemon バインド | `'bgpd'` | AS_PATH_SET は bgpd のみへ送信 | `frrcfgd.py:96` |
+| 必須引数下限 | `len(args) < 2` で None 返却 | 不足時 FRR push 抑止 | `frrcfgd.py:1010-1011` |
+| 空リストガード | `len(args[1]) > 0` | 空メンバ時 ADD 発行抑止 | `frrcfgd.py:1016` |
+| 初期スキャン条件 | `'as_path_set_member' in entry` | startup 時、メンバキー持ち entry のみ登録 | `frrcfgd.py:2251` |
+
+### SONiC レイヤに存在しない上限
+
+| 項目 | SONiC 側上限 | 備考 |
+|---|---|---|
+| `name` 長 | **なし** | YANG `string`（length 制約なし） |
+| `as_path_set_member` 長（regex 文字列） | **なし** | YANG `string`（length 制約なし）、FRR `bgpd` 内部上限のみ |
+| メンバ数 (entry 数 / leaf-list 要素数) | **なし** | `aspath_set_key_map` / `as_path_set_list` は dict 無制限 |
+| AS_PATH_SET エントリ総数 | **なし** | 上記同様 |
+
+> regex 上限・entry 上限を SONiC コード内で探したが**該当する定数は存在しない**。長大 regex は FRR `bgpd` の内部パーサ上限と `vtysh` レスポンス遅延として運用上現れる。
+
+### 特記事項
+
+1. `action: deny` は YANG では定義済みだが両 consumer で `permit` がハードコードされ、`deny` を発行する経路がコード上**存在しない**。
+2. UPDATE 時は「先に `no bgp as-path access-list <name>` で全削除 → 再 ADD」シーケンス。差分追加はせず常に全置換（`frrcfgd.py:1015-1019`）。短時間ながら access-list 不在の窓が空く。
+3. AsPathMgr の再同期 regex (`managers_as_path.py:43`) は FRR `show running` の出力フォーマット（`seq <数> permit _<asn>_`）に強く依存。FRR バージョン差で破綻し得る脆い実装。
+
+<!-- evidence: managers_as_path.py:7,31,35,40,43,52,56,61,65; frrcfgd.py:96,1009-1020,1977,2251; bgpd.conf.db.j2:11-20; sonic-routing-policy-sets.yang:28-39,217-240 -->
+
+> **スキャン証跡**: `managers_as_path.py` 全 67 行、`frrcfgd.py` AS_PATH_SET 関連箇所、`bgpd.conf.db.j2`、`sonic-routing-policy-sets.yang` action enum 定義部すべて読了。中間ファイル: `meta/_intermediate/cdb-flow/as-path-set-constants.md`
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
