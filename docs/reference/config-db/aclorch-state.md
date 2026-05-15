@@ -452,6 +452,94 @@ STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TA
 > **スキャン証跡**: `AclOrch::init()` L3475–3720 / `queryAclActionCapability()` L4017–4054 / `putAclActionCapabilityInDB()` L4056–4101 / `initDefaultAclActionCapabilities()` L4104–4118 / `defaultAclActionsSupported` L168–196 / `removeAllAcl*Status()` L6116, L6128 / `setAcl*Status()` L6088, L6102 / `orch.h:40-50` / `aclorch.h:109-110, 138-148` / `orchdaemon.cpp:502-530` 全行精読。中間ファイル: `meta/_intermediate/cdb-flow/aclorch-state-platform.md`
 <!-- /platform -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+本ページが扱う STATE_DB 3 テーブル (`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`) はいずれも `AclOrch` を**唯一の書き手**とする「書き出し専用のステータスレジスタ」であり、`ProducerStateTable` / `NotificationProducer` を介した PUBLISH 通知は発行されない。consumer 側 (`acl-loader` / `show acl table` / `show acl rule` / `sonic-mgmt-common` translib) は keyspace 通知を購読せず、CLI / REST/gNMI 起動契機の **オンデマンド polling** (`HGETALL` 相当) で読み出す。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/API |
+|------|------|----------------|
+| `AclOrch` → STATE_DB `ACL_TABLE_TABLE` | `swss::Table::set()` / `del()` (素の HSET / HDEL / DEL) | なし (PUBLISH 非発行) |
+| `AclOrch` → STATE_DB `ACL_RULE_TABLE` | `swss::Table::set()` / `del()` | なし |
+| `AclOrch` → STATE_DB `ACL_STAGE_CAPABILITY_TABLE` | `swss::Table::set()` (init で 1 回) | なし |
+| `acl-loader` ← STATE_DB `ACL_STAGE_CAPABILITY_TABLE` | `swsssdk.get_all()` (HGETALL polling) | CLI 起動毎 1 回 |
+| `show acl table` / `show acl rule` ← STATE_DB | `swsssdk.get_table()` (HGETALL polling) | CLI 起動毎 1 回 |
+| `sonic-mgmt-common` (translib) ← `ACL_STAGE_CAPABILITY_TABLE` | translib DB read (HGETALL) | REST/gNMI capability クエリ毎 |
+
+### 書込 API: 素の `swss::Table` (Pub/Sub 非対応)
+
+`AclOrch` は STATE_DB の 3 テーブルを `swss::Table` メンバとして保有する（`aclorch.h:706-709`）:
+
+```cpp
+// aclorch.h:706-709
+Table m_aclStageCapabilityTable;
+Table m_aclTableStateTable;
+Table m_aclRuleStateTable;
+```
+
+初期化は `aclorch.cpp:4200-4202` で stateDb と STATE_DB スキーマ定数文字列を直結する。`ProducerStateTable` のような `_KEY_SET` + `PUBLISH <TABLE>_CHANNEL` 系の通知発行や、`NotificationProducer` 経由の ad-hoc channel `PUBLISH` は一切行わない。書込みは純粋な `HSET` / `HDEL` / `DEL` のみで、戻り値もない。
+
+主な書込ポイント:
+
+- `setAclTableStatus()` → `m_aclTableStateTable.set/del` (`aclorch.cpp:6092, 6098`)
+- `setAclRuleStatus()` → `m_aclRuleStateTable.set/del` (`aclorch.cpp:6106, 6112`)
+- `putAclActionCapabilityInDB()` → `m_aclStageCapabilityTable.set` (`aclorch.cpp:4101`, init 内で 1 回)
+- `removeAllAclTableStatus()` / `removeAllAclRuleStatus()` → `getKeys()` → loop `del()` (`aclorch.cpp:6116-6137`, 起動時のクリア)
+
+### 通知チャンネル
+
+| 経路 | 状態 |
+|------|------|
+| `<TABLE>_CHANNEL` への `PUBLISH` | **発行されない** (`ProducerStateTable` を保有しない) |
+| `NotificationProducer` (`PUBLISH` to ad-hoc channel) | なし (該当メンバ非保有) |
+| `__keyspace@<dbId>__:...` keyspace 通知 | Redis サーバの `notify-keyspace-events` 設定次第で発火しうるが、STATE_DB ACL 系の正規 consumer はいずれも購読しない |
+
+### 購読側はすべて polling
+
+正規 consumer は keyspace 通知を購読せず、必要時にのみ `HGETALL` ベースで読み出す:
+
+- `acl-loader` (`sonic-utilities/acl_loader/main.py:88, 533-536`): `statedb.get_all(STATE_DB, "ACL_STAGE_CAPABILITY_TABLE|<stage>")` を実行時に 1 回
+- `show acl table` / `show acl rule`: CLI 起動時に sonic-py-swsssdk 経由で STATE_DB を読み出す（イベント駆動ではない）
+- `sonic-mgmt-common` (translib): REST/gNMI の capability クエリ受信時に translib DB read 経由で読み出す
+
+CONFIG_DB 側の `ACL_TABLE` / `ACL_RULE` が `AclOrch` 自身に `SubscriberStateTable` (keyspace 通知 + HGETALL) で受信される経路と異なり、STATE_DB 側は完全に非同期通知レス・polling 駆動。
+
+### select() ループとの関係
+
+`AclOrch` は STATE_DB 3 テーブルを**書き手としてのみ**保持し、`addConsumer()` / `addExecutor()` で consumer 登録しない（`orchdaemon.cpp:408-422` の `acl_table_connectors` には STATE_DB connector は含まれず CONFIG_DB 3 + APPL_DB 3 のみ）。`SELECT_TIMEOUT=1000ms` の orchdaemon select ループは STATE_DB 書込みには関与しない。CONFIG_DB / APPL_DB consumer 通知で wake した `doAclTableTask()` / `doAclRuleTask()` の末尾で `setAcl*Status()` が呼ばれる従属的な経路となる。
+
+### retry とバッチ
+
+- STATE_DB 書込み層自体に retry / バッチ機構はない。`swss::Table::set` が Redis 切断で例外送出した場合は orchagent プロセス abort → systemd restart → `init()` 再実行で再構築。
+- ACL ルール側の retry cache (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)` / `APP_ACL_RULE_TABLE_NAME`) は CONFIG_DB / APPL_DB consumer に対するもので、retry 後に成功すると `setAclRuleStatus(ACTIVE)` で `"Pending creation"` → `"Active"` を上書きする。
+
+### データフロー図
+
+```
+CONFIG_DB / APPL_DB (ACL_TABLE / ACL_RULE)
+  ↓ SubscriberStateTable / ConsumerStateTable
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::execute() → AclOrch::doTask()
+  ↓   doAclTableTask() / doAclRuleTask() / doAclTableTypeTask()
+  ↓     → SAI ACL API (create/remove_acl_table/entry)
+  ↓     → setAclTableStatus() / setAclRuleStatus()
+STATE_DB[ACL_TABLE_TABLE / ACL_RULE_TABLE / ACL_STAGE_CAPABILITY_TABLE]
+  ← swss::Table::set/del() のみ (HSET/HDEL/DEL)
+  × PUBLISH <TABLE>_CHANNEL なし
+  × NotificationProducer なし
+
+consumer 側 (on-demand polling)
+  acl-loader / show acl table|rule / sonic-mgmt-common (translib)
+    → swsssdk.get_all() / get_table()  ← HGETALL
+    (keyspace 通知購読なし)
+```
+
+> **Evidence**: `sonic-swss/orchagent/aclorch.h` L706-709（`Table` メンバ宣言、`ProducerStateTable`/`NotificationProducer` 非保有）、`aclorch.cpp` L4200-4202（STATE_DB Table 初期化）、L4087-4101（`putAclActionCapabilityInDB`）、L6088-6098（`setAclTableStatus`）、L6102-6112（`setAclRuleStatus`）、L6116-6137（`removeAllAcl*Status`）。`sonic-swss/orchagent/orchdaemon.cpp` L408-422（`acl_table_connectors` に STATE_DB 側 connector 不在）。`sonic-utilities/acl_loader/main.py` L88, L533-536（`get_all` polling）。`sonic-swss-common/common/schema.h`（`STATE_ACL_*_TABLE_NAME` 定義）。詳細解析は `meta/_intermediate/cdb-flow/aclorch-state-pubsub.md` を参照。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-swss `orchagent/aclorch.cpp` — `setAclTableStatus()` L6088, `setAclRuleStatus()` L6102, `putAclActionCapabilityInDB()` L4056, `init()` L3475
