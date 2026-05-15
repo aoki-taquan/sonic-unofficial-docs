@@ -74,6 +74,56 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (`BannerCfg`) + `sonic-net/sonic-buildimage/files/image_config/bannerconfig/banner-config.sh`
+
+`BANNER_MESSAGE` は SAI 非経由のシングルトンテーブルで、書込側は **hostcfgd `BannerCfg`** (CONFIG_DB → `systemctl restart banner-config`) と **`banner-config.sh`** (`sonic-db-cli` で値取得 → `echo -e ... > /etc/issue` 等 4 ファイルを上書き) の 2 段構成。失敗経路は両層で評価する。
+
+### hostcfgd 側 (`BannerCfg.handler()` / `BannerCfg.load()`)
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `handler()` に渡された `data` が `dict` 型以外 | `BannerCfg.handler()` | silent return・キャッシュ更新も restart も発行されない | なし | `hostcfgd:2084` |
+| `data` 4 フィールド (`state`/`login`/`motd`/`logout`) がキャッシュと完全一致 | 差分判定 | `systemctl restart banner-config` をスキップ (重複再起動抑制) | なし | `hostcfgd:2074` |
+| `data` に上記 4 つ以外のフィールド | `BannerCfg.load()` の `.get()` 固定 4 キー | silent ignore (読まれず、shell にも届かない) | なし | `hostcfgd:2074-2077` |
+| `run_cmd(["systemctl", "restart", "banner-config"])` 非 0 終了 / `CalledProcessError` | `handler()` 内 `run_cmd` | LOG_ERR のみ・キャッシュ未更新 (次回変化時に再試行) | LOG_ERR `'BannerCfg: Failed to restart banner-config service'` | `hostcfgd:2111-2114` |
+| CONFIG_DB が空 / `BANNER_MESSAGE\|global` エントリ未生成 | `BannerCfg.load()` 起動時 | 全 4 キーを空 dict として処理・差分なければ no-op | LOG_INFO `'BannerCfg: load initial'` | `hostcfgd:2067, 2074-2077` |
+| `global` 以外のキー (`BANNER_MESSAGE\|foo` 等) | table handler dispatch | dispatch 対象キーは `global` 固定。他キーは silent ignore | なし | `hostcfgd:2259, 2443` |
+
+### banner-config.sh 側 (subprocess + ファイル書込)
+
+`banner-config.sh` は `#!/bin/bash -e` で起動するため、**いずれかのコマンドが非 0 終了した時点で即時 exit** する。
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `sonic-db-cli CONFIG_DB HGET 'BANNER_MESSAGE\|global' state` 非 0 (Redis 未起動 / `database.service` 停止) | `banner-config.sh:3` | `set -e` で即時 exit。`LOGIN` / `MOTD` / `LOGOUT` 取得も書込も全てスキップ | systemd journal の non-zero exit | `banner-config.sh:1, 3` |
+| `state="enabled"` で `echo -e "$LOGIN" > /etc/issue` が `Permission denied` / `Read-only filesystem` | `banner-config.sh:13` | `set -e` で即時 exit — 後続 `/etc/issue.net` / `/etc/motd` / `/etc/logout_message` への書込は**実行されない** (部分書込状態残存) | systemd journal のみ | `banner-config.sh:1, 13` |
+| 上記同様 `/etc/issue.net` 書込失敗 | `banner-config.sh:12` | 同上 — 後続 3 ファイル書込スキップ | systemd journal のみ | `banner-config.sh:1, 12` |
+| `state` が空文字列 (CONFIG_DB 未設定 / `disabled`) | `banner-config.sh:7` `[[ $STATE == "enabled" ]]` | False → 4 ファイル書換なし (silent no-op で正常終了) | なし | `banner-config.sh:7, 13-16` |
+| CONFIG_DB の `motd` 値で `\n` を二重エスケープ (Redis 上に `\\n` リテラル保存) | `banner-config.sh:14` `echo -e` 展開 | `echo -e` が LF に展開しないため、ファイルにリテラル `\n` 文字列が書かれる (silent 誤動作) | なし | `banner-config.sh:12-15` + ops-hint「よくある誤設定」 |
+| `state="enabled"` → `state="disabled"` 切替 | `banner-config.sh:7` | 早期 return で **何も書かない** → 前回 enabled 時の `/etc/issue` 等が**残存** (Debian デフォルトには復元されない) | なし | `banner-config.sh:7-16` |
+
+### systemd / 連動レイヤ
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `database.service` 停止で `BindsTo` 連鎖停止 | systemd | `banner-config.service` が inactive → `hostcfgd` の `systemctl restart` も一時的に失敗する可能性 | `banner-config.service:5-6` |
+| 前提 `config-setup.service` 未完了 / 失敗 | systemd | `Requires=` / `After=` で `banner-config` 起動が遅延 or 失敗 | `banner-config.service:3-4` |
+| `sshd_config` の `Banner /etc/issue.net` ディレクティブ無効化 | sshd 起動時 | `/etc/issue.net` が更新されても SSH banner が表示されない (banner-config 側はエラーなし) | constants 表「暗黙の前提」 |
+| `pam_motd.so` 無効化 / `~/.bash_logout` から `/etc/logout_message` 不参照 | PAM / shell | `/etc/motd` / `/etc/logout_message` 更新が表示に反映されない | constants 表「LOGOUT_BANNER_PATH」注記 |
+
+### 補足
+
+- **部分書込**: `banner-config.sh` の `set -e` により 4 ファイルのうち最初の失敗位置以降は書かれない。冪等性は次回 `systemctl restart` で 4 ファイル全再書込により担保される。
+- **自動 retry**: `hostcfgd` は `run_cmd` 失敗時にキャッシュを更新しないため、次回 CONFIG_DB 変化 (同じ値でも) で再 restart が走る。
+- **silent 誤動作**: `dict` 型外データ、`global` 以外のキー、`\n` 二重エスケープ、`state=disabled` 時のファイル残存はいずれもログを出さない。
+- **明示的 try/except なし**: `BannerCfg` クラスは明示的な `try/except` を持たず、例外ハンドリングは `run_cmd` 内部に委ねる。`raise` も無い。
+
+詳細な失敗経路 (grep カバレッジ、systemd unit 構成、PAM/sshd 連動経路) は `meta/_intermediate/cdb-flow/banner-message-failure.md` を参照。
+<!-- /failure -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
