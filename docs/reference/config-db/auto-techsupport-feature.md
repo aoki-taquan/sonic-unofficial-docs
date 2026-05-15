@@ -51,9 +51,9 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `state` | `enabled`/`disabled` (`stypes:admin_mode`) | なし | この feature でクラッシュした際の techsupport 起動可否 |
-| `available_mem_threshold` | decimal (0.0..99.99) | `10.0` | メモリ使用率しきい値。0 で無効化 |
-| `rate_limit_interval` | uint16 (秒) | なし | この feature の rate-limit。0 で明示的に無効化 |
+| `state` | `enabled`/`disabled` (`stypes:admin_mode`) | なし (YANG); install 時 `disabled` または GLOBAL 継承 | この feature でクラッシュした際の techsupport 起動可否 |
+| `available_mem_threshold` | decimal (0.0..99.99) | `10.0` (YANG + install 時); 欠落時は実行時 `0.0` へ fallback | メモリ使用率しきい値。0 で無効化 |
+| `rate_limit_interval` | uint16 (秒) | なし (YANG); install 時 `600`; 欠落時は実行時 `0.0` へ fallback | この feature の rate-limit。0 で明示的に無効化 |
 
 GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はここには存在せず、グローバル設定がそのまま適用される。
 
@@ -202,5 +202,40 @@ ls -lh /var/dump/
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A コード由来)
+
+YANG 宣言デフォルトに加え、Python コードが持つ fallback を per-field で記録する。
+
+### `state`
+
+| 段階 | 値 | ソース |
+|------|---|-------|
+| DB 書き込み時 (パッケージ install) | `disabled` (AUTO_TECHSUPPORT\|GLOBAL 不在時) / GLOBAL の `state` 値を引き継ぎ | `sonic_package_manager/service_creator/feature.py:22-26,159-197` |
+| 実行時 fallback (フィールド不在) | `None` → `!= "enabled"` 比較でスキップ扱い = `disabled` と同等 | `scripts/coredump_gen_handler.py:55` |
+
+`infer_auto_ts_capability()` が `AUTO_TECHSUPPORT|GLOBAL.state` を読み、値が空なら `(False, "disabled")` を返す。`False` の場合、`AUTO_TECHSUPPORT_FEATURE` エントリ自体が作成されない (`feature.py:185-186`)。
+
+### `available_mem_threshold`
+
+| 段階 | 値 | ソース |
+|------|---|-------|
+| YANG default | `10.0` | `sonic-auto_techsupport.yang:114` |
+| DB 書き込み時 (パッケージ install / ビルド) | `"10.0"` | `feature.py:26`; `init_cfg.json.j2` AUTO_TECHSUPPORT_FEATURE ブロック |
+| 実行時 fallback (フィールド欠落) | `0.0` → メモリチェック無効 | `memory_threshold_check.py:28` (`DEFAULT_MEMORY_AVAILABLE_FEATURE_THRESHOLD = 0`) |
+
+`Config.parse_value_from_db()` (memory_threshold_check.py:148-156) が `config.get("available_mem_threshold")` で falsy 値を得た場合に `0.0` を返す。float 変換失敗は `MemoryCheckerException` を raise し techsupport を起動しない。
+
+### `rate_limit_interval`
+
+| 段階 | 値 | ソース |
+|------|---|-------|
+| YANG default | なし (宣言なし) | `sonic-auto_techsupport.yang` |
+| DB 書き込み時 (パッケージ install / ビルド) | `"600"` (秒) | `feature.py:25`; `init_cfg.json.j2` |
+| 実行時 fallback (空文字 / フィールド欠落) | `0.0` → rate-limit 無効 (連続実行を許可) | `auto_techsupport_helper.py:328-331` (`except ValueError: container_cooloff = 0.0`) |
+
+書き込み時 default (`600`) と実行時 fallback (`0.0`) が**乖離**している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。
+<!-- /defaults -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->

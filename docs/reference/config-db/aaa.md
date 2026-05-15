@@ -233,6 +233,33 @@ show aaa
 - なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`AaaCfg`) の `modify_conf_file()` はイベントごとに PAM / NSS / NSLCD 設定を**全部まとめて再生成**する。このため書き込み順序が中間状態の整合性に直結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | AAA は `load_independent_config()` で systemctl 完了前に適用される | 強制先行（他テーブルより早い） | 不在フィールドはデフォルト値で silent fallback |
+| 2 | `TACPLUS_SERVER` / `RADIUS_SERVER` / `LDAP_SERVER` を先書き → `AAA` 書き込み | 推奨（中間状態最小化） | runtime は `subscribe` 後追い自動更新 |
+| 3 | `LDAP\|global` (`bind_dn`/`base_dn`/`bind_password`) + `LDAP_SERVER` → `AAA` `login=ldap` | **先行必須**（欠如時 nslcd 停止） | LDAP 設定追加後 `ldap_global_update` が自動復旧 |
+| 4 | `TACPLUS\|global.passkey` → `AAA` `authorization` / db_migrator | **先行必須**（YANG reject + migrator が authorization 削除） | 手動 CLI 再設定 |
+| 5 | `AAA` DEL → デフォルト回帰 | 即時（待機ループなし） | `authentication_default` で `local` 回帰 |
+| 6 | `MGMT_INTERFACE` / `INTERFACE` → `RADIUS_SERVER` `src_intf` 解決 | 推奨先行 | 後追い `mgmt_intf_handler` で自動更新 |
+| 7 | `DEVICE_METADATA.hostname` → RADIUS `nas_id` | load フェーズ内は自動保証 | runtime 追加時は hostname 設定済みであること |
+
+### 主要な制約詳細
+
+**LDAP 先行必須 (依存 #3)**: `AAA|authentication.login = "ldap"` を書く前に `LDAP|global` (`bind_dn`, `base_dn`, `bind_password` の全フィールド) と `LDAP_SERVER` エントリを揃えること。`is_ldap_config_complete()` が `False` の状態で `aaa_update()` が呼ばれると `handle_nslcd_service(False)` が実行され nslcd が停止・mask される。後から LDAP global 設定が追加されると `ldap_global_update()` が自動復旧を試みる（evidence: `hostcfgd:437-442`, `hostcfgd:241-250`）。
+
+**TACPLUS passkey 先行必須 (依存 #4)**: `db_migrator.migrate_aaa()` は `TACPLUS|global.passkey` が空の場合に `AAA|authorization` を**削除**する。事後に passkey を設定しても authorization エントリは自動復元されない。また YANG must 制約により、`AAA|authentication.login` に `tacacs+` を含む場合は passkey が存在しなければ CLI 経由の書き込み自体が reject される（evidence: `db_migrator.py:869-900`, `sonic-system-aaa.yang:must`）。
+
+**中間状態に関する注意 (依存 #2)**: `AAA` を先に書いて `TACPLUS_SERVER` を後から追加する場合、`AAA` 書き込み時点では `servers_conf` が空になるため `common-auth-sonic` は TACACS+ サーバなしで生成される（実質 `local` 相当）。`TACPLUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になる。スイッチへの管理接続中に設定変更を行う際は影響に留意すること（evidence: `hostcfgd:641-870`）。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
@@ -256,5 +283,121 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 - `accounting.login` の `'disable'` デフォルトは YANG default (`'local'`) と異なる点に注意。DB に `AAA|accounting` エントリが存在しない場合、hostcfgd は `'disable'` として振る舞う。
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-host-services/scripts/hostcfgd`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `key` が `authentication`/`authorization`/`accounting` 以外 | `aaa_update()` L419 | 内部状態更新なし・`modify_conf_file()` は呼ばれるが設定変化なし | なし | `hostcfgd:419-431` |
+| `failthrough` に `'True'`/`'true'` 以外の文字列 (`'yes'`/`'1'` 等) | `is_true()` L156 | `False` 扱い・"Failed to get bool value" を syslog ERR 出力 | LOG_ERR | `hostcfgd:160-162` |
+| `login=ldap` だが `bind_dn`/`bind_password`/`base_dn` のいずれかが空 | `is_ldap_config_complete()` L437 | `handle_nslcd_service(False)` → nslcd を stop & mask (LDAP 認証不能) | LOG_DEBUG ("nslcd: deactivating") | `hostcfgd:437-442, 246-251` |
+| `login=ldap` だが `LDAP_SERVER` エントリなし | `is_ldap_config_complete()` L442 | `self.ldap_servers` 空 → `False` → nslcd を stop & mask | LOG_DEBUG | `hostcfgd:442` |
+| PAM テンプレートレンダリング中に jinja2 例外発生 | `modify_conf_file()` L716-725 | 例外伝播・PAM ファイル未更新 | スタックトレース (未捕捉) | `hostcfgd:716-731` |
+| PAM 設定ファイル書き込み時 `open()` / `os.rename()` が `OSError` | `modify_conf_file()` L728-731 | 例外伝播・PAM ファイル未更新 (`.tmp` 残存の可能性) | スタックトレース (未捕捉) | `hostcfgd:728-731` |
+| `aaastatsd` サービスの start/stop が `CalledProcessError` | `modify_conf_file()` L846-851 | LOG_ERR のみ・後続の NSLCD 設定処理は継続 | LOG_ERR | `hostcfgd:846-851` |
+| NSLCD / LDAP conf 生成 (`generate_file_from_template`) で例外 | `generate_file_from_template()` L214 | LOG_ERR のみ・nslcd.conf / ldap.conf 未更新 | LOG_ERR ("Failed generate_file_from_template error=...") | `hostcfgd:214-216` |
+| LDAP conf ディレクトリ作成 (`os.makedirs`) 失敗 | `modify_conf_file()` L860-862 | LOG_ERR のみ・LDAP_CONF 生成試行は続く | LOG_ERR ("Error occurred when using cmd makedirs...") | `hostcfgd:860-862` |
+| `audisp-tacplus` への SIGHUP 送信失敗 (`os.kill` 例外) | `notify_audisp_tacplus_reload_config()` L490-493 | LOG_WARNING のみ・処理継続 | LOG_WARNING | `hostcfgd:490-493` |
+| `/etc/pam.d/sshd` / `/etc/pam.d/login` ファイルが欠如 | `check_file_not_empty()` L619-620 | LOG_ERR のみ・sed 変更未適用 | LOG_ERR ("file size check failed: {} is missing") | `hostcfgd:619-621` |
+| `nsswitch.conf` が存在しない | `modify_conf_file()` L755-783 | `os.path.isfile()` が False → sed 変更スキップ (silent skip) | なし | `hostcfgd:756, 763-783` |
+| `RADIUS_SERVER.src_intf` に対応する IP が解決できない | `modify_conf_file()` L697-700 | LOG_INFO → `src_ip` を削除して処理継続 | LOG_INFO ("src_intf has no usable IP addr.") | `hostcfgd:697-700` |
+
+### DEL / db_migrator における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | evidence |
+|---|---|---|---|
+| `AAA` エントリ DEL 後 | `aaa_update()` dispatch | default dict (`login: local` / `disable`) に回帰 | `hostcfgd:357-366, 641-648` |
+| migration 時 `TACPLUS\|global.passkey` が空 | `migrate_aaa()` L869 | `AAA\|authorization` エントリを**削除**。passkey 後追い設定後も自動復元なし | `db_migrator.py:869-900` |
+
+### 補足
+
+- **PAM atomic 書き込み**: `.tmp` → `os.rename()` で atomic 置換。`os.rename()` 失敗時は `.tmp` が残存し PAM 設定変化なし。
+- **nslcd 自動復旧**: nslcd が mask された後に `ldap_global_update()` / `ldap_server_update()` が呼ばれると `handle_nslcd_service()` が再評価され、LDAP 設定が完全になった時点で unmask & start (`hostcfgd:547-564`)。
+- **`trace` の無効化バグ**: `aaa_update()` に `trace` 更新ブロックが存在しないため `self.trace` は常に `False`。CONFIG_DB の `trace=True` は PAM テンプレートに反映されない。
+<!-- /failure -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: AAA は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | AAA は SAI 非経由。`hostcfgd` が Linux PAM / NSS 設定ファイルを直接書き換えるのみ (段階 3 トレース参照) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `AaaCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2166-2185`)。`is_multi_npu` 値は AAA 経路に渡されない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | AAA テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に PAM を再生成 |
+| ベンダー固有 PAM モジュール | なし | community master の PAM スタックは `pam_unix` / `pam_tacplus` / `pam_radius_auth` / `pam_ldap` の Debian 標準。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし (`ls files/image_config \| grep -iE 'aaa\|tacacs\|radius\|ldap\|pam\|nss'` が 0 ヒット) |
+| テンプレート内分岐 | プラットフォーム条件なし | `common-auth-sonic.j2` / `tacplus_nss.conf.j2` を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット。分岐は `AAA.login` / `failthrough` / `debug` / `trace` とサーバリストのみ |
+
+詳細根拠は `meta/_intermediate/cdb-flow/aaa-platform.md` を参照。
+<!-- /platform -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`AAA` テーブル（および関連 `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER`）への変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `AAA` | `aaa_handler` → `aaa_update` |
+| `hostcfgd` | 同上 | `TACPLUS` / `TACPLUS_SERVER` | `tacacs_global_handler` / `tacacs_server_handler` |
+| `hostcfgd` | 同上 | `RADIUS` / `RADIUS_SERVER` | `radius_global_handler` / `radius_server_handler` |
+| `hostcfgd` | 同上 | `LDAP` / `LDAP_SERVER` | `ldap_global_handler` / `ldap_server_handler` |
+
+`hostcfgd` 以外で `AAA` テーブルを購読するプロセスは存在しない (`pam_tacplus` / `pam_radius` / `pam_ldap` / `pam_unix` は PAM 設定ファイルを認証時に読むのみで Redis を購読しない)。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config aaa authentication login tacacs+,local
+  ↓ HSET "AAA|authentication" login "tacacs+,local"
+Redis keyspace PUBLISH "__keyspace@4__:AAA|authentication"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ HGETALL "AAA|authentication"  ← 通知後に値を再取得
+aaa_handler(key="authentication", op=SET, data={login:"tacacs+,local"})
+  ↓ AaaCfg.aaa_update() → modify_conf_file()
+  ↓ PAM/NSS テンプレ再生成 (/etc/pam.d/common-auth, /etc/tacplus_nss.conf, ...)
+  ↓ handle_nslcd_service(is_ldap_config_complete())  ← LDAP 状態変化時のみ
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `AaaCfg.load()` が `init_data['AAA']` / `TACPLUS*` / `RADIUS*` / `LDAP*` を一括スナップショットで適用する。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `AAA` / `LDAP*` 変更で `is_ldap_config_complete()` 真偽が変化 | `systemctl unmask/restart nslcd` または `stop/mask nslcd` | `handle_nslcd_service` — hostcfgd:241-251, 434-435 |
+| `TACPLUS_SERVER` 変更 | `audisp-tacplus` プロセスに `SIGHUP` (PAM ホット再読込) | `notify_audisp_tacplus_reload_config` — hostcfgd:483-493 |
+| PAM 設定ファイル書き換え | デーモン restart **なし** (PAM は次回ログイン時にファイルを読む) | `modify_conf_file` — hostcfgd:641-648 |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2454-2466,2468-2476,2528` (subscribe/listen/make_callback)、`hostcfgd:2289-2343` (各 *_handler)、`hostcfgd:399-417` (`AaaCfg.load()` 起動時スナップショット)、`hostcfgd:419-435` (`aaa_update`)、`hostcfgd:230-251` (`restart_service`/`handle_nslcd_service`)、`hostcfgd:483-493` (`notify_audisp_tacplus_reload_config`); 詳細分析 `meta/_intermediate/cdb-flow/aaa-pubsub.md`
+<!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS の設定ファイル書き換え (PAM / NSS / nslcd / sssd / radiusd / sshd) に閉じる。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `AaaCfg` 内に Producer/Table の書込呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:354-720` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
+| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1759-1821`) と `RestartWaiter` 用 (`hostcfgd:2160-2162`) のみで `AaaCfg` は `state_db_conn` を保持しない |
+| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。AAA は認証経路のため統計テーブルも存在しない |
+| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | SAI 非経由 (段階 3 トレース参照)。AAA テーブルを購読する mgrd/orchagent は `sonic-swss/` に存在しない |
+
+主購読者 `AaaCfg.aaa_update()` の副作用は `modify_conf_file()` 経由の PAM テンプレート再生成のみで、`/etc/pam.d/common-auth`・`/etc/nsswitch.conf`・`/etc/tacplus_nss.conf`・`/etc/pam_radius_auth.conf` 等のファイル書換に閉じる (`sonic-host-services/scripts/hostcfgd:641-648`)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-side.md` を参照。
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->

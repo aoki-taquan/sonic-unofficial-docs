@@ -240,4 +240,48 @@ vtysh -c 'show bgp summary'
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
 <!-- /handler-branching -->
+<!-- defaults -->
+## 暗黙デフォルト・コード由来の固定値 (Phase A)
+
+### フィールドごとの YANG default と実装 fallback
+
+| フィールド | YANG default | 実装デフォルト / fallback | 証跡 |
+|-----------|-------------|------------------------|------|
+| `name` | なし | `BGPMonitor` 固定 (YANG `must` 制約) | `sonic-bgp-monitor.yang:41` |
+| `asn` | なし | **使用されない** — FRR への `remote-as` は常に `DEVICE_METADATA/localhost/bgp_asn` を使用 | `instance.conf.j2:4` |
+| `holdtime` | なし | FRR のグローバルデフォルト (`hold-time 180`) に依存 | `sonic-bgp-common.yang` |
+| `keepalive` | なし | FRR のグローバルデフォルト (`keepalive 60`) に依存 | `sonic-bgp-common.yang` |
+| `local_addr` | なし | 欠如時: `log_warn` のみ、処理続行。FRR の `update-source` 未設定になる | `managers_bgp.py:194-195` |
+| `admin_status` | なし | 欠如しても peer 追加は続行。shutdown コマンドなし → `up` 相当 | `managers_bgp.py:set_handler` |
+| `nhopself` | なし | テンプレートで未参照 (FRR デフォルト動作) | `instance.conf.j2` |
+| `rrclient` | なし | テンプレートで未参照 (FRR デフォルト動作) | `instance.conf.j2` |
+
+### テンプレートハードコード値（CONFIG_DB 非依存）
+
+以下は CONFIG_DB のフィールドとは無関係に `bgpcfgd` が FRR に注入する固定値:
+
+| FRR コマンド | 注入条件 | 証跡 |
+|------------|---------|------|
+| `neighbor <addr> remote-as <bgp_asn>` | 常時。`bgp_asn` は DEVICE_METADATA 由来 | `instance.conf.j2:4` |
+| `neighbor <addr> peer-group BGPMON` | 常時 | `instance.conf.j2:5` |
+| `neighbor <addr> activate` (IPv4 + IPv6) | 常時 | `instance.conf.j2:7,9` |
+| `neighbor BGPMON update-source Loopback4096` | `switch_type=voq` または chassisdb.conf 存在時 | `peer-group.conf.j2:10` |
+| `neighbor BGPMON update-source <lo0_ipv4>` | Loopback0 IPv4 存在時（通常ケース） | `peer-group.conf.j2:12` |
+| `neighbor BGPMON maximum-prefix 1` | IPv4 AF に無条件 | `peer-group.conf.j2:20` |
+| `neighbor BGPMON send-community` | 無条件 | `peer-group.conf.j2:19` |
+| `route-map FROM_BGPMON deny 10` | 常時（全受信拒否） | `policies.conf.j2:4` |
+| `route-map TO_BGPMON permit 10` | 常時（全送信許可） | `policies.conf.j2:6` |
+| `bgp suppress-fib-pending` | 全 BGP context に無条件注入 | `managers_bgp.py:apply_op()` |
+
+### YANG vs 実装 discrepancy
+
+| フィールド | YANG 定義 | 実装挙動 | 乖離種別 |
+|-----------|---------|---------|---------|
+| `asn` | uint32、Optional | FRR の `remote-as` は DEVICE_METADATA の `bgp_asn` を使用。CONFIG_DB の `asn` は**参照されない** | **重大 discrepancy**: `asn` は dead field |
+| `admin_status` | Optional | 欠如時でも peer 追加続行 (`up` 相当) | soft — YANG は明示を推奨しない |
+| `local_addr` | Optional, inet:ip-address | 欠如時は warn のみ。`update-source` 未設定 | soft — YANG の optional と整合 |
+
+> **注意**: `BGP_MONITORS|<addr>|asn` を CONFIG_DB に設定しても、bgpcfgd は FRR peer の `remote-as` をローカル ASN (DEVICE_METADATA) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。
+
+<!-- /defaults -->
 <!-- glossary-links-injected: a1dd9e34d62e -->

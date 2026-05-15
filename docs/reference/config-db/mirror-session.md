@@ -128,6 +128,38 @@ show mirror_session
 ```
 <!-- /ops-hint -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorEntry constructor (L57-77) / mirrororch.cpp activateSession / sonic-mirror-session.yang -->
+
+| フィールド | YANG default | C++ 実装デフォルト | 種別 | 備考 |
+|-----------|-------------|-------------------|------|------|
+| `type` | `ERSPAN` | `""` (空文字) → ERSPAN 経路 | YANG default 一致 | `entry.type == "SPAN"` が false → ERSPAN 扱い |
+| `gre_type` | `0x88be` | `0x88be` (非 Mellanox) / **`0x8949` (Mellanox)** | **プラットフォーム依存 discrepancy** | `platform == MLNX_PLATFORM_SUBSTRING` で分岐 (`mirrororch.cpp:65-72`) |
+| `dscp` | (なし) | **`8`** (DSCP CS1 相当) | ハードコード fallback | SAI TOS = `8 << 2 = 32`。YANG に default なし |
+| `ttl` | (なし) | **`255`** | ハードコード fallback | YANG に default なし |
+| `queue` | (なし) | `0` | ハードコード fallback + SAI silent skip | `queue=0` のとき `SAI_MIRROR_SESSION_ATTR_TC` は SAI に push されない (`mirrororch.cpp:933`) → プラットフォーム global TC を使用 |
+| `direction` | `BOTH` | `""` (空文字) | **YANG-実装 discrepancy / silent drop** | `direction=""` は `configurePortMirrorSession()` の RX/TX/BOTH 判定にヒットしない → `src_port` があってもミラーリングが起動しない |
+| `m_maxNumTC` | - | SAI 取得失敗時 **`255`** | ハードコード fallback | queue バリデーションが実質無効化される |
+| VLAN outer `PRI` / `CFI` | - | **`0` / `0`** | ハードコード | ERSPAN nexthop が VLAN 経由のとき SAI に固定付与 (`mirrororch.cpp:996-1001`) |
+
+### 主要な discrepancy 詳細
+
+**`direction` 空文字 — 条件付き silent drop**:
+CONFIG_DB に `direction` フィールドがない場合、`MirrorEntry.direction = ""` となる。`configurePortMirrorSession()` (L897, L906) は `direction == "RX"`, `"TX"`, `"BOTH"` のいずれかの場合のみ `setUnsetPortMirror()` を呼ぶ。空文字はどれにもマッチしない。ただし CLI (`gather_session_info` L3207-3208) は `src_port` が指定されている場合に `direction` 省略を自動で `BOTH` に補完して CONFIG_DB に書き込む。`src_port` なしで `direction` も省略した場合は CONFIG_DB に `direction` キーが存在せず orchagent は `""` で処理するが、その場合 `src_port` もないため実害はない。REST や直接 DB 書き込みで `src_port` を設定しつつ `direction` を省略した場合は silent drop になる。
+
+**`greType` — Mellanox で YANG default と乖離**:
+YANG は `default 0x88be` を定義するが、コンストラクタは `platform == MLNX_PLATFORM_SUBSTRING` のとき `0x8949` を設定する。`gre_type` を省略すると Mellanox では `0x8949`、その他では `0x88be` が SAI に渡る。
+
+**`dscp` = 8 — YANG に default なし、コードで CS1 相当を暗黙付与**:
+YANG の `dscp` leaf に `default` 文はない。しかし C++ コンストラクタで `dscp=8` に初期化されるため、CONFIG_DB 省略時でも外側 GRE パケットに DSCP 8 (CS1) が付与される。QoS ポリシーとの意図しない乖離に注意。
+
+**`queue=0` — SAI_MIRROR_SESSION_ATTR_TC を push しない**:
+`activateSession()` L933 の `if (session.queue != 0)` 条件により、`queue=0`（デフォルト）のときは `SAI_MIRROR_SESSION_ATTR_TC` が SAI に送られない。コード内コメント「Some platforms don't support SAI_MIRROR_SESSION_ATTR_TC」が理由。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -273,3 +305,118 @@ minigraph.py からの `MIRROR_SESSION` 自動派生はなし (minigraph.py の�
 > **スキャン証跡**: `mirrororch.cpp:381-523` を全行読了、8 件分岐抽出。MIRROR_SESSION の minigraph.py 派生がコメントアウトされていることを実ソースで確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/orchagent/mirrororch.cpp`
+> 調査日: 2026-05-15
+
+### 他テーブル先行必須
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|-------------------|-----------|-----------|
+| `gPortsOrch->allPortsReady()` が true | `doTask()` 冒頭で false なら即 return。全ポート初期化完了まで一切処理されない | `mirrororch.cpp:1571-1574` |
+| `POLICER|<name>` が先に存在 | `policer` フィールド指定時に `policerExists()` が false → `task_need_retry`。POLICER 追加後に自動再試行 | `mirrororch.cpp:434-438` |
+| `PORT|<name>` (SPAN dst_port) が先に存在 | `activateSession()` 内で `getPort(dst_port)` 失敗 → ACTIVE 化不可 | `mirrororch.cpp:942-945` |
+| `PORT\|<name>` / `PORTCHANNEL\|<name>` (src_port) が先に存在 | `validateSrcPortList()` でポート名を解決。存在しない場合は `task_invalid_entry` (retry なし) | `mirrororch.cpp:446-450` |
+
+### ERSPAN dst_ip の非同期 ACTIVE 化
+
+ERSPAN セッション作成時は `m_routeOrch->attach(this, entry.dstIp)` で RouteOrch にアタッチし、CONFIG_DB 書込み直後はセッションが **INACTIVE**。対応するルート・ネイバーエントリが解決された後、NeighOrch / FdbOrch / PortsOrch からの Observer 通知を受けて `updateSession()` が呼ばれ **ACTIVE** 化する。
+
+### DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| MIRROR_SESSION DEL | 参照中の ACL_RULE / PBH 等を先に DEL。`refCount > 0` の間は `task_need_retry` | `mirrororch.cpp:539-543` |
+
+<!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`MIRROR_SESSION` が CONFIG_DB に書かれたとき、`MirrorOrch` が暗黙的に参照・依存する他テーブルを示す。YANG に leafref として明示されない依存も含む。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT\|<name>` (`dst_port`) | YANG leafref + OID 解決（必須） | `type = 'SPAN'` かつ `dst_port` に物理ポート名を指定。PortsOrch に存在しない場合 `activateSession()` が `false` を返す | YANG `sonic-mirror-session.yang` / `mirrororch.cpp:942-950` |
+| `PORT\|<name>` / `PORTCHANNEL\|<name>` (`src_port`) | 暗黙 OID 解決（必須） | `src_port` にポート名またはカンマ区切りリストを指定したとき。PHY / LAG のみ受理。VLAN 等は `task_invalid_entry` | `mirrororch.cpp:307-323` (`validateSrcPortList()`), `mirrororch.cpp:886-916` (`configurePortMirrorSession()`) |
+| `VLAN` / `FDB` (ERSPAN nexthop が VLAN SVI 経由) | 暗黙 VLAN OID + FDB 参照 | ERSPAN の `dst_ip` nexthop が VLAN L3 インタフェース経由のとき。FDB エントリがない間は INACTIVE で待機 | `mirrororch.cpp:711-743` (`getNeighborInfo()` `Port::VLAN` ケース), `mirrororch.cpp:981-1001` (SAI VLAN ヘッダ付与) |
+| `MIRROR_SESSION` ← `ACL_RULE` (被参照) | `refCount` による削除ガード | `ACL_RULE` が `MIRROR_*_ACTION` で当セッションを参照中。`refCount > 0` の状態でセッションを削除しようとすると `runtime_error` をスロー | `mirrororch.cpp:239-269` (refCount 管理), `mirrororch.cpp:539` (削除ガード), `aclorch.cpp:2376` (ACL 側 increaseRefCount) |
+| `DEVICE_METADATA\|localhost\|platform` (間接) | 環境変数経由（起動時のみ） | プロセス起動時の `$platform` 環境変数経由。`platform == MLNX_PLATFORM_SUBSTRING` のとき `gre_type` デフォルトが `0x8949`（Mellanox）、それ以外は `0x88be` | `mirrororch.cpp:57-72` (`MirrorEntry` コンストラクタ), `mirrororch.cpp:395` (`getenv("platform")`) |
+| `POLICER\|<name>` | YANG leafref + runtime 存在確認 | `policer` フィールド指定時。`m_policerOrch->policerExists()` が false なら `task_need_retry`。存在後に `increaseRefCount()` | YANG `sonic-mirror-session.yang` / `mirrororch.cpp:434-443` |
+
+!!! note "ACL_RULE と MIRROR_SESSION の参照方向"
+    `ACL_RULE` が `MIRROR_SESSION` を参照する（一方向）。`MIRROR_SESSION` 自身は `ACL_RULE` テーブルを読み取らないが、`refCount` で被参照数を追跡する。セッション削除時に ACL_RULE 等から参照中（`refCount > 0`）なら削除が失敗する。
+
+!!! note "VLAN 経由 ERSPAN の待機動作"
+    `dst_ip` の next-hop が VLAN SVI 上にある場合、FDB エントリの学習を待機してセッションが INACTIVE となる。`SUBJECT_TYPE_VLAN_MEMBER_CHANGE` / `SUBJECT_TYPE_FDB_CHANGE` イベントを受信後に再評価される（`mirrororch.cpp:179-196`）。
+
+!!! note "platform 間接参照と DEVICE_METADATA"
+    `MirrorEntry` の `gre_type` デフォルトはプロセス環境変数 `$platform` で決まり、`DEVICE_METADATA|localhost|platform` を `sonic-cfggen` が起動スクリプトに渡す。CONFIG_DB への直接アクセスではなく、コンテナ起動時の one-shot 参照。
+<!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp createEntry / deleteEntry / activateSession / setUnsetPortMirror -->
+
+### SET 処理 (createEntry) における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| セッション名が既に存在 | `task_duplicated` (処理なし) | NOTICE "Failed to create session %s: object already exists" | `mirrororch.cpp:391-392` |
+| `queue` 値が `m_maxNumTC` 以上 | `task_invalid_entry` | ERROR "Failed to get valid queue %s" | `mirrororch.cpp:428-429` |
+| `policer` 名指定かつ存在しない | `task_need_retry` (policer 追加後に自動再試行) | ERROR "Failed to get policer %s" | `mirrororch.cpp:436-438` |
+| `src_port` にポートが存在しない / PHY・LAG 以外 | `task_invalid_entry` (retry なし) | ERROR "Failed to locate Port/LAG %s" / "Not supported port %s" | `mirrororch.cpp:318-325` |
+| `src_port` の LAG メンバーと LAG 自身を同時指定 | `task_invalid_entry` | ERROR "Port %s in LAG %s is also part of src_port config %s" | `mirrororch.cpp:338-340` |
+| `src_port` の LAG が空 (メンバーなし) | `task_invalid_entry` | ERROR "Source LAG %s is empty. set mirror session to inactive" | `mirrororch.cpp:346-348` |
+| `dst_port` が PortsOrch に存在しない | `task_invalid_entry` | ERROR "Not supported port %s type %d" | `mirrororch.cpp:279-280` |
+| `dst_port` が PHY 以外 (VLAN / LAG 等) | `task_invalid_entry` | ERROR "Not supported port %s" | `mirrororch.cpp:284-285` |
+| `direction` が `RX`/`TX`/`BOTH` 以外の文字列 | `task_invalid_entry` | ERROR "Failed to get valid direction %s" | `mirrororch.cpp:467-468` |
+| 不明フィールドが含まれる | `task_invalid_entry` | ERROR "Failed to parse session %s configuration. Unknown attribute %s" | `mirrororch.cpp:478-479` |
+| フィールド値の数値変換で `std::exception` | `task_invalid_entry` | ERROR "Failed to parse session %s attribute %s error: %s." | `mirrororch.cpp:484-485` |
+| フィールド値の数値変換で不明例外 (`...`) | `task_failed` | ERROR "Failed to parse session %s attribute %s. Unknown error has been occurred" | `mirrororch.cpp:489-490` |
+| `src_ip` と `dst_ip` のアドレスファミリ不一致 | `task_invalid_entry` | ERROR "Address family of source and destination IPs is different" | `mirrororch.cpp:496-497` |
+| `isHwResourcesAvailable()` が false (SAI リソース枯渇) | `task_failed` | ERROR "Failed to create session %s: HW resources are not available" | `mirrororch.cpp:502-503` |
+
+### activateSession における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| SPAN: `dst_port` が PortsOrch に存在しない | `false` 返却 → INACTIVE 維持 | ERROR "Failed to locate Port/LAG %s" | `mirrororch.cpp:945-946` |
+| VoQ スイッチで recirc ポート取得失敗 | `false` 返却 | ERROR "Failed to get recirc port" | `mirrororch.cpp:966-967` |
+| policer OID 取得失敗 | `false` 返却 | ERROR "Failed to get policer %s" | `mirrororch.cpp:1057-1058` |
+| `sai_mirror_api->create_mirror_session()` がエラー | `session.status = false` → INACTIVE / SAI エラーハンドル | ERROR "Failed to activate mirroring session %s" | `mirrororch.cpp:1070-1077` |
+| `configurePortMirrorSession()` (src_port 設定) が false | `session.status = false`、`false` 返却 | ERROR "Failed to activate port mirror session %s" | `mirrororch.cpp:1087-1089` |
+| ASIC が ingress mirror 非対応 | `false` 返却 | ERROR "Port ingress mirror is not supported by the ASIC" | `mirrororch.cpp:819-820` |
+| ASIC が egress mirror 非対応 | `false` 返却 | ERROR "Port egress mirror is not supported by the ASIC" | `mirrororch.cpp:824-825` |
+| `sai_port_api->set_port_attribute()` がエラー | `parseHandleSaiStatusFailure` | ERROR "Failed to configure %s session on port %s..." | `mirrororch.cpp:856-877` |
+
+### DEL 処理 (deleteEntry) における失敗経路
+
+| 失敗条件 | 結果 | ログ出力 | evidence |
+|---|---|---|---|
+| 存在しないセッション名を DEL | `task_invalid_entry` | ERROR "Failed to remove non-existent mirror session %s" | `mirrororch.cpp:532-534` |
+| `refCount > 0` (ACL_RULE 等から参照中) | `task_need_retry` (参照解除後に自動再試行) | WARN "Failed to remove still referenced mirror session %s, retry..." | `mirrororch.cpp:541-543` |
+| `deactivateSession()` が false (SAI remove 失敗) | `task_failed` | ERROR "Failed to remove mirror session %s" | `mirrororch.cpp:550-551` |
+| `sai_mirror_api->remove_mirror_session()` がエラー | `parseHandleSaiStatusFailure` | ERROR "Failed to deactivate mirroring session %s" | `mirrororch.cpp:1127-1131` |
+
+### 失敗パターン分類
+
+| 分類 | 挙動 | 自動回復 |
+|---|---|---|
+| `task_duplicated` | 処理なし・キューに残す | - |
+| `task_invalid_entry` | キューから破棄 (永続的失敗) | なし |
+| `task_need_retry` | キューに残し再試行 | 依存リソース (POLICER 追加 / refCount 減少) 後に自動回復 |
+| `task_failed` | キューから破棄 / SAI エラー次第 | なし (HW リソース増加は不可) |
+| `false` (activateSession) | INACTIVE 状態維持 | RouteOrch/NeighOrch 等の変化による非同期回復 |
+
+!!! note "allPortsReady guard — silent 待機"
+    `doTask()` (`mirrororch.cpp:1571-1574`) は `gPortsOrch->allPortsReady()` が false の間は全エントリを処理せず早期 return する。ポート初期化完了前に CONFIG_DB に MIRROR_SESSION を書き込んでも orchagent は一切処理しない。エラーログは出ず silent 待機となる。
+
+!!! note "task_need_retry と task_invalid_entry の使い分け"
+    `policer` 未存在は `task_need_retry`（後から追加可能なため）。`src_port` のポート名解決失敗は `task_invalid_entry`（retry なし）。同じ「存在しないリソース」でも依存の性質で異なるステータスが返る点に注意。
+
+<!-- /failure -->

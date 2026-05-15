@@ -132,6 +132,53 @@ PORT_QOS_MAP|<PORT.name>
 
 <!-- /cdb-exceptions -->
 
+<!-- defaults -->
+## 暗黙デフォルト (Phase A)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-defaults.md -->
+
+### 共通前提
+
+YANG は全フィールドを optional とし `default` 文なし。エントリ未設定時は QosOrch が SAI 属性を変更しないため、**SAI 初期値 (= map なし / SAI_NULL_OBJECT_ID)** が維持される。
+
+### map 系フィールド (dscp_to_tc_map / tc_to_queue_map / tc_to_pg_map / pfc_to_queue_map / pfc_to_pg_map / tc_to_dscp_map / dot1p_to_tc_map / scheduler)
+
+| 起源 | デフォルト値 | ソース |
+|------|------------|--------|
+| YANG | (なし — optional leafref) | `sonic-port-qos-map.yang` 全行 |
+| ランタイム (未設定時) | SAI_NULL_OBJECT_ID (map 未バインド) | `qosorch.cpp:2119-2133` |
+| ランタイム (DEL 時) | SAI_NULL_OBJECT_ID を明示 set | `qosorch.cpp:2082-2097` |
+| ビルド時 `qos_config.j2` | `dscp_to_tc_map: "AZURE"`, `tc_to_queue_map: "AZURE"`, `tc_to_pg_map: "AZURE"`, `pfc_to_queue_map: "AZURE"`, `pfc_to_pg_map: "AZURE"` (ASIC 対応時) | `qos_config.j2:444-479` |
+
+backend/storage device の場合は `dscp_to_tc_map` の代わりに `dot1p_to_tc_map: "AZURE"` が付与される (`qos_config.j2:435`)。
+
+### pfc_enable
+
+| 起源 | デフォルト値 | ソース |
+|------|------------|--------|
+| YANG | (なし — optional) | `sonic-port-qos-map.yang:99-105` |
+| ランタイム (未設定時) | ローカル変数 `pfc_enable = 0`。`if (pfc_enable \|\| old_pfc_enable)` が false なら `setPortPfc` 未呼び出し → ポートの現状 PFC bitmap 維持 | `qosorch.cpp:2113,2213` |
+| ビルド時 `qos_config.j2` | 通常ポート: `LOSSLESS_TC` join (典型 `"3,4"`); DualToR uplink / extra_queues: `"2,3,4,6"`; DPC / SERVICE ポート: 付与なし | `qos_config.j2:466-470` |
+
+### pfcwd_sw_enable
+
+| 起源 | デフォルト値 | ソース |
+|------|------------|--------|
+| YANG | (なし — optional) | `sonic-port-qos-map.yang:107-113` |
+| ランタイム (未設定時) | ローカル変数 `pfcwd_sw_enable = 0` が **無条件に** `setPortPfcWatchdogStatus(..., 0)` へ渡される → **全 PFC watchdog が無効化される** (`pfc_enable` の条件付きスキップと非対称) | `qosorch.cpp:2114,2224` |
+| ビルド時 `qos_config.j2` | 通常ポート (non-DPC, non-SERVICE): `LOSSLESS_TC` join (典型 `"3,4"`); DPC / SERVICE ポート: 付与なし | `qos_config.j2:470` |
+
+!!! warning "pfcwd_sw_enable の非対称挙動"
+    `pfc_enable` はフィールド未設定かつ現在値 0 ならば SAI 呼び出しをスキップするが、`pfcwd_sw_enable` は未設定時も **0 として無条件に適用される**。PORT_QOS_MAP エントリを SET する際にこのフィールドを省略すると watchdog が 0 にリセットされる。
+
+### global エントリの dscp_to_tc_map (db_migrator 自動挿入)
+
+`migrate_port_qos_map_global()` が Broadcom ASIC 限定で `PORT_QOS_MAP|global` に `dscp_to_tc_map` を自動挿入する。値は `DSCP_TO_TC_MAP` テーブルの先頭キー (典型: `"AZURE"`)。既に `global` エントリが存在する場合はスキップ。
+
+ソース: `db_migrator.py:700-715`
+
+<!-- /defaults -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -285,4 +285,114 @@ vtysh -c 'show running-config bgpd'
 
 > **スキャン証跡**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
 <!-- /handler-branching -->
+
+<!-- defaults -->
+## Phase A: コード由来の暗黙デフォルト
+
+YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文を持つリーフが**ゼロ**（全フィールド optional）。以下は frrcfgd (`global_key_map` + Jinja2 テンプレート) のコードから判明した実行時 fallback。
+
+### FRR 組み込みデフォルトが暗黙適用されるフィールド
+
+| フィールド | CONFIG_DB 未設定時の動作 | FRR 組み込みデフォルト | evidence |
+|-----------|----------------------|---------------------|---------|
+| `fast_external_failover` | frrcfgd は何も送出しない | **有効 (true)** | `global_key_map` の `['true','false',True]` — 第3要素 `True` は DELETE 時に「FRR デフォルトの有効状態に戻す」ことを示す。J2 テンプレート L33 も `== 'false'` 時のみ `no bgp fast-external-failover` を発行 (`frrcfgd.py:1798`, `bgpd.conf.db.j2:33`) |
+| `rr_clnt_to_clnt_reflection` | frrcfgd は何も送出しない | **有効 (true)** | 同上パターン。J2 テンプレート L64 も `== 'false'` 時のみ `no bgp client-to-client reflection` を発行 (`frrcfgd.py:1801`, `bgpd.conf.db.j2:64`) |
+
+### 書き込み時デフォルト vs 実行時 fallback の乖離
+
+| フィールド | J2 テンプレート (bgpcfgd) の動作 | frrcfgd key_map の動作 | 乖離 |
+|-----------|-------------------------------|----------------------|------|
+| `default_ipv4_unicast` | 未設定時も `else` 節で `no bgp default ipv4-unicast` を発行 → **実質 false** | `['true','false']` — 未設定なら何も送出しない | **あり**: bgpcfgd 経由では未設定 = 無効扱いになる (`bgpd.conf.db.j2:46-50`) |
+
+### 複合制約: 両フィールドが揃わないと FRR コマンド未生成
+
+| フィールドセット | 制約 | 効果 | evidence |
+|----------------|------|------|---------|
+| `keepalive` + `holdtime` | `comb_attr_list={'keepalive','holdtime'}` — 片方のみでは集合全体を除去 | FRR タイマー未更新。両方セット時のみ `timers bgp <k> <h>` 発行 | `frrcfgd.py:3936, 1820` |
+| `max_delay` (必須) + `establish_wait` (optional) | `max_delay` がトリガー。`establish_wait` は存在すれば追記 | `max_delay` なしで `establish_wait` 単独は無意味 | `frrcfgd.py:1817`, `bgpd.conf.db.j2:76-83` |
+| `max_med_time` (必須) + `max_med_val` (optional) | `max_med_time` がトリガー | startup max-med は `max_med_time` が必須 | `frrcfgd.py:1816`, `bgpd.conf.db.j2:84-91` |
+| `max_med_admin` (必須 `true`) + `max_med_admin_val` (optional) | `max_med_admin == 'true'` がトリガー | admin max-med は `max_med_admin` が必須 | `frrcfgd.py:1821` |
+
+### YANG デフォルトが存在するフィールド（サブテーブル）
+
+| テーブル | フィールド | YANG default | evidence |
+|---------|-----------|-------------|---------|
+| `BGP_GLOBALS_AF` | `max_ebgp_paths` | **1** | `sonic-bgp-global.yang:345` |
+| `BGP_GLOBALS_AF` | `max_ibgp_paths` | **1** | `sonic-bgp-global.yang:354` |
+
+> **スキャン証跡**: `frrcfgd.py` `global_key_map` L1784-1821 全行読了、`get_command_cmn()` L374-413 全行読了、`bgpd.conf.db.j2` 全行読了、`sonic-bgp-global.yang` 全行読了。
+<!-- /defaults -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR vtysh に反映する。以下の書き込み順序・制約を守ること。
+
+### 依存関係サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `local_asn` を同一 SET に含む → 他フィールドも同時反映 | **必須** (単独 SET では残フィールドを skip) | なし |
+| 2 | `BGP_GLOBALS\|<vrf>` (`local_asn`) → `BGP_GLOBALS_AF` 等サブテーブル | **強制先行** (`local_asn` 未確立なら全 skip) | なし |
+| 3 | `default` VRF: `DEVICE_METADATA.bgp_asn` が代替 ASN 源 | 代替パス | `DEVICE_METADATA` を先行設定 |
+| 4 | `VRF\|<vrf>` → `BGP_GLOBALS\|<vrf>` → サブテーブル (非 default VRF) | **強制先行** | なし |
+| 5 | `local_asn` 変更: `DEL BGP_GLOBALS` → 再 SET | **必須** (UPDATE 不可) | メンテ窓で実施 |
+| 6 | `keepalive` + `holdtime` を同一 SET に含む | **必須** (片方のみは無効) | 両フィールドをセットで投入 |
+| 7 | サブテーブル DEL → `BGP_GLOBALS` DEL | **推奨** (CONFIG_DB 整合性) | FRR 側は VRF ごと削除するが DB 残留の恐れ |
+
+### 詳細
+
+**`local_asn` 必須 (依存 #1、#2)**
+
+`__update_bgp()` (`frrcfgd.py:2685-2727`) は `BGP_GLOBALS` の SET を受信すると最初に `local_asn` を処理して `self.bgp_asn[vrf]` に登録する。その後 `__get_vrf_asn(vrf)` が None を返す場合（`local_asn` が SET に含まれず、かつ未登録）は `continue` でスキップされる。
+
+```
+BGP_GLOBALS|<vrf>  ← local_asn を含む SET が必須
+  ↓ (local_asn 登録後に続行)
+BGP_GLOBALS_AF|<vrf>|<af>
+BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf>|<af>|<prefix>
+BGP_GLOBALS_AF_NETWORK|<vrf>|<af>|<prefix>
+BGP_GLOBALS_LISTEN_PREFIX|<vrf>|<prefix>
+```
+
+**`default` VRF の代替パス (依存 #3)**
+
+`default` VRF に限り、`DEVICE_METADATA|localhost|bgp_asn` が設定されていれば `BGP_GLOBALS|default` に `local_asn` が未設定でも他フィールド処理が継続される (`frrcfgd.py:2162-2166, 2442-2447`)。
+
+**非 default VRF の VRF 先行必須 (依存 #4)**
+
+VRF インスタンスを使う場合は `VRF|<vrf>` を CONFIG_DB に書いてから `BGP_GLOBALS|<vrf>` を書くこと (`frrcfgd.py:2449-2451`)。
+
+**`local_asn` 変更不可 (依存 #5)**
+
+既に設定済みの `local_asn` を UPDATE で変更しようとすると `'local_asn could not be modified'` の LOG_ERR が記録され変更が無視される (`frrcfgd.py:2694-2696`)。変更する場合は `DEL BGP_GLOBALS|<vrf>` でインスタンス全体を削除し、新しい `local_asn` で再度 SET する。
+
+**`keepalive` / `holdtime` の組み合わせ制約 (依存 #6)**
+
+`bgp_global_handler()` は `comb_attr_list=[{'keepalive', 'holdtime'}]` を指定しており、片方のみが含まれると集合全体が除外され `timers bgp <k> <h>` コマンドが生成されない (`frrcfgd.py:3935-3936`)。
+
+<!-- /ordering -->
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase C)
+
+BGP_GLOBALS ハンドラが実装上参照する、YANG leafref 以外の暗黙依存。
+
+### YANG 明示 leafref
+
+| フィールド | leafref 先 |
+|-----------|-----------|
+| `vrf_name` (BGP_GLOBALS_LIST) | union: `"default"` 固定 または `VRF.VRF_LIST.name` |
+| `vrf_name` (BGP_GLOBALS_AF_LIST など) | `BGP_GLOBALS.BGP_GLOBALS_LIST.vrf_name` |
+| `import_vrf` (BGP_GLOBALS_AF_LIST) | `BGP_GLOBALS.BGP_GLOBALS_LIST.vrf_name`（自 VRF 以外） |
+
+### 暗黙参照
+
+| 参照先テーブル / フィールド | 参照元 | 意味 |
+|---------------------------|--------|------|
+| `DEVICE_METADATA\|localhost\|bgp_asn` | `frrcfgd.py:2162-2166, 2445-2446` | `default` VRF で `BGP_GLOBALS.local_asn` 未設定時のフォールバック。`metadata_handler` が変更を購読する |
+| `DEVICE_METADATA\|localhost\|docker_routing_config_mode` | `frrcfgd.py:2167-2170` | `"unified"` モードのみ BGP_GLOBALS を vtysh でプログラムする。`separated` では挙動が異なる |
+| `VRF`（`vni` フィールド） | `frrcfgd.py:2271-2273, 2413-2440` | BGP_GLOBALS の vrf_name に対応する VRF の VNI マッピングを zebra に連携する |
+| `ROUTE_REDISTRIBUTE`（同 VRF） | `frrcfgd.py:2704` | `local_asn` 新規設定時に同 VRF の redistribution を強制再適用する |
+| `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF`（同 VRF） | `frrcfgd.py:2849-2853` | `local_asn` 確定後に pending の neighbor / neighbor-AF を再適用する |
+| `BGP_GLOBALS_EVPN_VNI` / `BGP_GLOBALS_EVPN_RT` / `BGP_GLOBALS_EVPN_VNI_RT` | `frrcfgd.py:2100-2103, 2659` | VRF-based テーブルとして `local_asn` の存在確認を共有する。未設定なら skip |
+<!-- /cross-refs -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->

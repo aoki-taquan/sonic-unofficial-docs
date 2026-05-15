@@ -2,8 +2,9 @@
 title: AS_PATH_SET テーブル
 description: "AS_PATH_SET テーブル — BGP の AS path access-list を CONFIG_DB に持たせるテーブル。sonic-routing-policy-sets.yang の AS_PATH_SET コンテナで定義され、ROUTE_MAP の match as-path 等から参照される。"
 area: reference
+hard: 0
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-14
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang
@@ -96,6 +97,33 @@ AS_PATH_SET|<name>
 - `as_path_set_member` (leaf-list string) — FRR AS path 正規表現文字列。`ordered-by user` で登録順が評価順になる。値自体は freeform (FRR 側が構文検証)
 - 更新時は差分ではなく全削除後に全再作成 (`bgpcfgd/managers_as_path.py:65`)
 <!-- /value-behavior -->
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+YANG `default` 文が存在しないフィールドでもコードが暗黙の値を強制する場合がある。以下は全行精読による per-field 調査結果。
+
+| フィールド | YANG default | コード実効デフォルト | パターン | 根拠 |
+|-----------|-------------|-------------------|---------|------|
+| `name` | なし（key） | なし（必須） | — | `frrcfgd.py:2999` key から直取得 |
+| `action` | なし | **常に `permit`（フィールド無視）** | hardcode literal | `bgpd.conf.db.j2:16`; `frrcfgd.py:1018` |
+| `as_path_set_member` | なし | 省略/空 → FRR push なし | `.get(..., None)` + `len > 0` guard | `frrcfgd.py:1016,2251,3005`; `bgpd.conf.db.j2:14` |
+
+### `action` フィールドの実装乖離
+
+`action`（`permit` / `deny`）は YANG スキーマに定義されているが、**両コンシューマで完全に無視されている**:
+
+- `bgpd.conf.db.j2:16` — `bgp as-path access-list {{key}} permit {{path}}` と `permit` をテンプレートにハードコード。`action` キーを参照しない
+- `frrcfgd.py:1018` — `'{} permit {}'.format(as_set_name, asn)` で `permit` をハードコード。`action` を key_map に含まない（`aspath_set_key_map` 参照）
+
+結果として `action: deny` を CONFIG_DB に投入しても FRR には `bgp as-path access-list <name> permit <regex>` が発行される。`deny` として機能させることはできない（コード変更が必要）。
+
+### `as_path_set_member` の空リスト挙動
+
+- キーが存在しない場合: `frrcfgd.py:2251` `if 'as_path_set_member' in entry:` ガード → `as_path_set_list` に未登録
+- 空リスト (`[]`) の場合: `frrcfgd.py:1016` `len(args[1]) > 0` ガード → FRR コマンド未発行
+- DEL 操作時: 既存 access-list を `no bgp as-path access-list <name>` で全削除してから再作成（`frrcfgd.py:1015`）
+<!-- /defaults -->
 
 <!-- ref-triangle:start -->
 

@@ -237,4 +237,58 @@ db_migrator.py での SCHEDULER マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来のデフォルト・暗黙挙動 (Phase A)
+
+> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` 全行精読 + `sonic-scheduler.yang` 照合 (2026-05-14)
+
+| フィールド | YANG default | qosorch 実装の実効デフォルト | 備考 |
+|-----------|-------------|--------------------------|------|
+| `type` | `WRR` | **SAI ベンダー依存** | フィールド省略時 SAI 属性を送信しない。YANG default は CONFIG_DB バリデーション層の宣言であり qosorch は適用しない |
+| `weight` | `1` | **SAI ベンダー依存** | 同上。`stoi()+(uint8_t)` キャスト、YANG `range "1..100"` はコード未検証 |
+| `priority` | なし | **dead field — エントリ全破棄** | `handleSchedulerTable` に処理分岐なし。`priority` を含む SET は `SWSS_LOG_ERROR("Unknown field:priority")` → `task_invalid_entry` でそのエントリの全フィールドが SAI 未反映になる |
+| `meter_type` | `bytes` | **SAI ベンダー依存**（省略時）; 不正値で **orchagent クラッシュ** | `scheduler_meter_map.at()` は `std::out_of_range` 未キャッチ。`type` フィールドの graceful エラーと異なり危険 |
+| `cir` / `cbs` / `pir` / `pbs` | なし | 省略時 SAI デフォルト (0 相当) | 存在時のみ設定。YANG `must` 制約 (pir≥cir 等) はコード未検証 |
+
+### dead field 詳細: `priority`
+
+`sonic-scheduler.yang` に `leaf priority { type uint8 { range "0..9"; } }` が定義されているが、`qosorch.h` に対応定数なく `handleSchedulerTable` の if-else チェーン (L1378–1438) にも分岐なし。`priority` フィールドを含む SCHEDULER エントリを CONFIG_DB に SET すると `Unknown field:priority` エラーで `task_invalid_entry` が返り、**そのエントリの type / weight / meter_type 等も含む全フィールドが SAI に反映されない**。回避策: `priority` フィールドを CONFIG_DB から除外する。
+
+### `meter_type` 不正値クラッシュリスク
+
+`"packets"` / `"bytes"` 以外の値を `meter_type` に設定すると `scheduler_meter_map.at()` が `std::out_of_range` 例外をスローし orchagent がクラッシュする。YANG enum で 2 値のみ許可されているため通常経路では発生しないが、直接 CONFIG_DB 書き込み時は要注意。
+
+<!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### ADD 時: SCHEDULER → QUEUE の順が必須
+
+`QUEUE` エントリの `scheduler` フィールドを書き込む前に、参照先の `SCHEDULER|<name>` エントリが存在していなければならない。`handleQueueTable`（`qosorch.cpp`）は `resolveFieldRefValue` で参照先を解決し、未登録の場合は `task_need_retry` を返してリトライする。SCHEDULER が存在しない間、QUEUE の SAI バインドは完了しない。[^3]
+
+```
+SCHEDULER|<name>  →  書く  →  QUEUE|<port>|<idx>  (scheduler フィールドあり)
+```
+
+### DEL 時: QUEUE 参照解除 → SCHEDULER 削除の順が必須
+
+QUEUE が参照している SCHEDULER を削除しようとすると、`handleSchedulerTable` の DEL ハンドラが `isObjectBeingReferenced` で参照を検出し `m_pendingRemove = true` にして `task_need_retry` を返す。SAI scheduler profile は QUEUE の参照が解除されるまで削除されない。[^3]
+
+```
+QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
+```
+
+### 再設定時: DEL 完了後に SET
+
+同一 SCHEDULER 名の DEL が `m_pendingRemove` 状態のまま SET を発行すると、SET も `task_need_retry` で保留される。QUEUE 参照の解除 → DEL 完了 → SET の順を守ること。[^3]
+
+### qos_config.j2 による自動担保
+
+`config qos reload` が使用する `qos_config.j2` テンプレートは SCHEDULER ブロック（行 343–383）を QUEUE ブロック（行 508–574）より先に配置するため、CLI 経由の一括適用では順序問題は発生しない。手動で個別エントリを投入する場合のみ上記の順序制約を意識する必要がある。[^3]
+
+[^3]: QosOrch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 96667c52d98d -->

@@ -292,4 +292,52 @@ vtysh -c 'show bgp neighbor <ip>'
 また、`local_asn` 未設定 VRF への BGP_NEIGHBOR_AF 更新は `frrcfgd.py:2660` で `ignore table {} update because local_asn for VRF {} was not configured` の LOG_DEBUG を出して silent skip する点に注意。
 
 <!-- /cross-refs -->
+
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+> 調査対象: `frrcfgd.py` `nbr_af_key_map`、`hdl_*` ハンドラ、`bgpd.conf.db.nbr_af.j2`
+
+### YANG default 節の状況
+
+`grouping sonic-bgp-cmn-af` の全 leaf に **YANG `default` 節は一切なし**。全フィールドが任意 (optional) で、DB に存在しなければ FRR コマンドは発行されない。
+
+### 暗黙 fallback 一覧
+
+| フィールド | DB 未設定時の実行時挙動 | ソース証跡 |
+|-----------|----------------------|-----------|
+| `allow_as_count` | `allow_as_in=true` かつ未設定 → `neighbor X allowas-in`（カウント省略）。FRR デフォルト **3** が適用される | `frrcfgd.py:1895` `nbr_af_key_map` + `nbr_af.j2:85-93` |
+| `admin_status` (ipv4_unicast) | `BGP_GLOBALS` に `local_asn` 書き込み時に `no bgp default ipv4-unicast` が発行される。`BGP_NEIGHBOR_AF` に `admin_status=up` を明示しないと ipv4-unicast が **非** activate のまま | `frrcfgd.py:2700` |
+| `default_rmap` | `send_default_route=true` かつ未設定 → `neighbor X default-originate`（route-map なし） | `frrcfgd.py:1899` (+プレフィックス) + `nbr_af.j2:54-59` |
+| `max_prefix_warning_threshold` | `max_prefix_limit` 設定済みかつ未設定 → `maximum-prefix <limit>`（閾値省略。FRR デフォルト 75%） | `frrcfgd.py:1901` (++プレフィックス) + `nbr_af.j2:68-78` |
+| `max_prefix_restart_interval` / `max_prefix_warning_only` | いずれも未設定 → `maximum-prefix <limit>` のみ（shutdown モード）| `frrcfgd.py:1902` (+プレフィックス) |
+| `send_community` | 未設定 → コマンド不発行。FRR デフォルト: 送信なし | `frrcfgd.py:1910` |
+| `weight` | 未設定 → コマンド不発行。FRR デフォルト: 0（weight なし） | `frrcfgd.py:1908` |
+
+### 複合必須制約 (comb_attr 相当)
+
+`BGP_NEIGHBOR_AF` は `bgp_table_handler_common` に `comb_attr_list=[]` で渡される（`frrcfgd.py:2306`）。
+ただし `nbr_af_key_map` 内の mandatory/optional 指定により以下の実質的な複合制約がある:
+
+| 制約 | 内容 |
+|------|------|
+| `max_prefix_limit` 必須 | `max_prefix_warning_threshold` / `max_prefix_restart_interval` / `max_prefix_warning_only` は `max_prefix_limit` が DB に存在しなければ FRR に反映されない |
+| `allow_as_in` 必須 | `allow_as_count` / `allow_as_origin` は `allow_as_in` がなければ意味をなさない |
+| `send_default_route` 必須 | `default_rmap` は `send_default_route=true` なしでも独立エントリとして発行される（L1900 に別エントリあり）が、`send_default_route=false` の場合は L1899 の `default_rmap` 付きコマンドは不発行 |
+
+### 書き込み経路依存の乖離
+
+| 乖離 | frrcfgd (REST/gNMI/CLI) | bgpcfgd Jinja2 テンプレートパス |
+|------|------------------------|--------------------------------|
+| `nexthop_self_force` の単独適用 | `nhself` なしで `next-hop-self force` コマンドが発行可能 | `nhself=true` が前提条件 (`nbr_af.j2:18-24`) |
+| `send_default_route=false` | `no neighbor X default-originate` を明示発行 | ブロックスキップのみ（`no` コマンド不発行） |
+
+### YANG vs 実装 discrepancy
+
+| 項目 | 内容 |
+|------|------|
+| `add_path_tx_all` / `add_path_tx_bestpath` | YANG `grouping sonic-bgp-cmn-af` に定義なし。`nbr_af.j2:95-100` に処理が残存する旧来フィールド。frrcfgd パスでは無視される |
+| `send_community='none'` vs 未設定 | DB 上の状態は異なるが FRR 上の効果は同一（送信なし）。`'none'` は `hdl_send_com` で `no send-community all` のみ発行、未設定はコマンド不発行 |
+
+<!-- /defaults -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->

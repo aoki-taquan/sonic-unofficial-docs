@@ -53,6 +53,27 @@ BANNER_MESSAGE|global
 | `motd`   | string | SONiC アスキーアート + 警告文 | ログイン直後に表示 |
 | `logout` | string | `""` | ログアウト時に表示 |
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.json.j2` を展開して DB に書く段階) に適用される。
+以下は **DB エントリ自体がない場合** のランタイム fallback を per-field で示す。
+
+| フィールド | YANG default | init_cfg.json.j2 | コード fallback (DB なし) |
+|-----------|-------------|-----------------|--------------------------|
+| `state`   | `disabled`  | `"disabled"`    | `hostcfgd` `.get("state", {})` → `{}` → `banner-config.sh` で `STATE=` (空文字列) → バナー無効と同等 |
+| `login`   | `"Debian GNU/Linux 11"` | `"Debian GNU/Linux 11"` | `.get("login", {})` → `{}` → `state=disabled` 時 no-op、`state=enabled` 時 `LOGIN=` (空文字列) → `/etc/issue` / `/etc/issue.net` 空白化 |
+| `motd`    | SONiC ASCII アート + 警告文 (多行) | 同一内容 | `.get("motd", {})` → `{}` → `state=enabled` 時 `MOTD=` → `/etc/motd` 空白化 |
+| `logout`  | `""` (空文字列) | `""` | `.get("logout", {})` → `{}` → `state=enabled` 時 `LOGOUT=` → `/etc/logout_message` 空白化 |
+
+**コード根拠**:
+- `hostcfgd` `BannerCfg.load()`: `sonic-host-services/scripts/hostcfgd:2069-2077`
+- `banner-config.sh` shell fallback: `sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:4-6`
+- `init_cfg.json.j2` 初期値: `sonic-buildimage/files/build_templates/init_cfg.json.j2:180-186`
+- YANG default: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-banner.yang:22-48`
+
+<!-- /defaults -->
+
 ## 購読者
 
 - `hostcfgd` (`host-services` パッケージ)。ConfigDBConnector で `BANNER_MESSAGE/global` を listen し、`/etc/issue`, `/etc/motd`, `/etc/issue.net` をテンプレ展開して書き換える

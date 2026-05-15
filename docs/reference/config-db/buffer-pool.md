@@ -259,4 +259,50 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
+
+### `xoff` — YANG default と実装 fallback が一致
+
+YANG: `default 0`。`buffermgrdyn.cpp` も `newSHPSize = "0"` で初期化 (L2523)。乖離なし。
+
+### `size` — 不在時は Lua plugin へサイレント委譲
+
+`size` フィールドが CONFIG_DB に存在しない場合、`buffermgrdyn.cpp` は `bufferPool.dynamic_size = true` を立て、**APPL_DB への書き込みを遅延**する。実効サイズは Mellanox/Barefoot の Lua plugin (`buffer_pool_mellanox.lua`) が MMU 使用量から逆算して APPL_DB へ書き込む。`buffermgrdyn.cpp` 自身は APPL_DB を更新しない (silent defer)。
+
+さらに `ingress_lossless_pool` は `dynamic_size=true` かつ `overSubscribeRatio` 非ゼロかつ SHP が size で有効でない場合、`dontUpdatePoolToDb=true` となり APPL_DB への直接書き込みが完全にスキップされる (`buffermgrdyn.cpp` L2555-2628)。
+
+### `type` — `both` は内部キャッシュで `EGRESS` 扱い (乖離)
+
+`buffermgrdyn.cpp` L2544-2549 の分岐:
+
+```cpp
+if (value == buffer_value_ingress)
+    bufferPool.direction = BUFFER_INGRESS;
+else
+    bufferPool.direction = BUFFER_EGRESS;  // "both" はここに落ちる
+```
+
+`type=both` を設定すると内部キャッシュの `direction` は `BUFFER_EGRESS` になる。raw 文字列はそのまま APPL_DB に転送されるため SAI 側では `SAI_BUFFER_POOL_TYPE_BOTH` を受け取るが、buffermgrdyn の headroom 計算では ingress 側プールとして参照されなくなる可能性がある。
+
+### `type` / `mode` — SAI では create-only 属性 (YANG に記述なし)
+
+`bufferorch.cpp` L437-441 / L467-471: 既存 SAI オブジェクトに対する更新操作では `type` と `mode` フィールドが**サイレントスキップ**される (LOG_INFO 出力のみ)。YANG にはこの制約が記述されていない。**プール作成後に `type` や `mode` を変更しても SAI には反映されない。**
+
+### `percentage` — bufferorch では dead field (LOG_ERROR + skip)
+
+`bufferorch.cpp` L497-501: `percentage` は不明フィールドとして `LOG_ERROR("Unknown pool field specified")` を出力し SAI に渡さない。`percentage` は Lua plugin (`buffer_pool_mellanox.lua`) のみが APPL_DB から読み取り実効サイズ計算に使用する。Lua plugin を持たないプラットフォームでは完全に無視される。
+
+### 書き込み経路別 field 扱い早見表
+
+| フィールド | buffermgr (static 専用) | buffermgrdyn (dynamic 専用) | bufferorch (SAI) |
+|-----------|------------------------|---------------------------|-----------------|
+| `type` | pass-through | cache (`both`→`EGRESS`) + forward | SAI (create-only、更新時スキップ) |
+| `mode` | pass-through | cache + forward | SAI (create-only、更新時スキップ) |
+| `size` | pass-through | `dynamic_size` フラグ制御 | `SAI_BUFFER_POOL_ATTR_SIZE` |
+| `xoff` | pass-through | SHP 計算トリガ | `SAI_BUFFER_POOL_ATTR_XOFF_SIZE` |
+| `percentage` | pass-through (無意味) | forward のみ (未読取) | LOG_ERROR + skip (SAI 非反映) |
+
+> **証跡**: `buffermgrdyn.cpp` L2509-2669 全行読了、`bufferorch.cpp` L391-596 全行読了、`buffermgr.cpp` L337-410 全行読了、`buffer_pool_mellanox.lua` L440-476 全行読了。
+<!-- /defaults -->
 <!-- glossary-links-injected: 44ea702536a5 -->

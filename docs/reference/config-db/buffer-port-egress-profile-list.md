@@ -226,4 +226,54 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPortEgressProfileListTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME, false)` に委譲。`keyWithIds=false`（PG/Queue と異なりインデックスなし）。2 件分岐抽出。
 <!-- /handler-branching -->
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+このテーブルには YANG `default` を持つフィールドがない。以下はコードトレースで判明した暗黙挙動。
+
+### `profile_list` フィールドの挙動
+
+| 条件 | 実際の挙動 | evidence |
+|------|-----------|---------|
+| YANG `default` | なし (leaf-list に default 文なし) | `sonic-buffer-port-egress-profile-list.yang` |
+| SET 時・ポートが admin-down (dynamic model) | CONFIG_DB 値でなくゼロプロファイルリストを APPL_DB に書き込む (silent substitution) | `buffermgrdyn.cpp:3418-3438` |
+| SET 時・buffer pool 未準備 (dynamic model) | APPL_DB に書かず `m_bufferObjectsPending=true` を立てて `task_success` 返却 (silent pending) | `buffermgrdyn.cpp:3408-3415` |
+| `profile_list` 以外のフィールドが来た場合 | `SWSS_LOG_ERROR("Unknown field %s")` + `continue` で silent drop | `buffermgrdyn.cpp:3401-3405` |
+| DEL 操作 | count=0 の空リストを SAI に送る (`attr.value.objlist.count = 0`) | `bufferorch.cpp:1939-1940` |
+
+### 書き込み経路依存の乖離 (static vs dynamic model)
+
+| 項目 | Static model (`buffermgr.cpp`) | Dynamic model (`buffermgrdyn.cpp`) |
+|------|-------------------------------|-------------------------------------|
+| direction 検証 | なし (CONFIG_DB 値をそのまま APPL_DB にコピー) | あり: ingress profile を egress list に指定 → `task_failed` (`checkBufferProfileDirection`) |
+| profile 存在検証 | なし (orchagent 段で retry) | あり: `m_bufferProfileLookup` 未登録 → `task_need_retry` |
+| admin-down 置換 | なし | あり: ゼロプロファイルリストに差し替え |
+| buffer pool guard | なし | あり: pool 未準備時 pending |
+
+Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一切動作しない (`buffermgr.cpp:476-480`: `SWSS_LOG_DEBUG("Dynamic buffer model enabled. Skipping further processing")`)。
+
+### orchagent 段の追加制約
+
+| 条件 | 挙動 | evidence |
+|------|------|---------|
+| `BUFFER_PROFILE.packet_discard_action == "trim"` のプロファイルを指定 | `task_failed` (`isTrimmingEligible=true` 検出) | `bufferorch.cpp:1907-1921` |
+| profile_list が既存キャッシュと同一 | SAI 呼び出しスキップ (`task_success` 即返却) | `bufferorch.cpp:1885-1890` |
+| Bulk SAI 呼び出し | `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` で一部ポート失敗が他ポートをブロックしない | `bufferorch.cpp:2009-2014` |
+
+### 複数ポートキー時の partial failure
+
+カンマ区切りポートリスト (`Ethernet0,Ethernet4`) のキーが来た場合、ポートごとに分解して処理する。途中でいずれかが `task_need_retry` を返すと即時 return し、後続ポートは未処理のまま残る (`buffermgrdyn.cpp:3546-3547`)。
+
+### Mellanox プラットフォーム注記
+
+`buffermgrdyn.cpp:handleSingleBufferPortProfileListEntry` の DEL パスには `// Not supported on Mellanox platform for now.` のコメントが存在する (L3443)。削除処理は動作するが、Mellanox での正式サポート状態について留意が必要。
+
+### YANG vs 実装 discrepancy
+
+| 項目 | YANG | 実装 |
+|------|------|------|
+| direction 制約 | 記述なし | dynamic model: ingress profile → egress list は `task_failed` |
+| trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
+| 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
+<!-- /defaults -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->

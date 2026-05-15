@@ -1,0 +1,134 @@
+---
+title: ROUTE_REDISTRIBUTE テーブル
+description: "ROUTE_REDISTRIBUTE テーブル — sonic-route-common モジュールが定義するルート再配布ポリシーテーブル。VRF・送信元プロトコル・宛先プロトコル・アドレスファミリの組み合わせで経路再配布を制御する。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-route-common.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db:
+    - ROUTE_REDISTRIBUTE
+    - ROUTE_MAP
+    - VRF
+  yang:
+    - sonic-route-common
+---
+
+# ROUTE_REDISTRIBUTE テーブル
+
+## 概要
+
+`ROUTE_REDISTRIBUTE` は [FRR](../../reference/glossary.md#term-frr) ルーティングデーモン間の経路再配布ポリシーを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル。[YANG](../../reference/glossary.md#term-yang) モジュール `sonic-route-common` が定義し、`frrcfgd` が購読して `vtysh` コマンドへ変換する[^1]。現在 `dst_protocol` は `bgp` のみサポートされており、`connected`・`static`・`ospf`・`ospf3` のいずれかのプロトコルを [BGP](../../reference/glossary.md#term-bgp) へ再配布する用途に限定されている[^2]。
+
+<!-- defaults -->
+## フィールドのコード由来デフォルト
+
+### デフォルト値一覧
+
+| フィールド | 型 | 既定値 | 省略可否 | コード根拠 |
+|-----------|-----|--------|---------|-----------|
+| `vrf_name` | string (key) | — | 必須 (key) | YANG key 定義[^1] |
+| `src_protocol` | string (key) | — | 必須 (key) | YANG key 定義[^1] |
+| `dst_protocol` | string (key) | — | 必須 (key) | YANG key 定義[^1] |
+| `addr_family` | string (key) | — | 必須 (key) | YANG key 定義[^1] |
+| `route_map` | leaf-list string | 省略可 (absent) | 任意 | YANG optional + `frrcfgd` L1979 `+route_map`[^2] |
+| `metric` | uint32 | 省略可 (absent) | 任意 | YANG optional + `frrcfgd` L1979 `++metric`[^2] |
+
+### 解説
+
+`metric` および `route_map` はどちらも YANG 上で任意フィールド（必須制約なし）。`frrcfgd` の `route_redist_key_map` では `++metric` / `+route_map` のプレフィクス表記により「フィールドが absent の場合は FRR コマンドへの引数出力をスキップ」する実装になっている[^2]。
+
+```python
+# frrcfgd.py L1979
+route_redist_key_map = [
+    (['protocol', '++metric', '+route_map'],
+     '{no:no-prefix}redistribute {} {:redist-metric} {:redist-route-map}',
+     hdl_route_redist_set)
+]
+```
+
+- `metric` 省略時 → FRR コマンド `redistribute connected` のみ（metric 句なし）
+- `route_map` 省略時 → FRR コマンドに `route-map` 句なし
+
+### テスト実例
+
+`sample_config_db.json` での最小構成:
+
+```json
+"ROUTE_REDISTRIBUTE": {
+    "default|connected|bgp|ipv4": {}
+}
+```
+
+`route_map` も `metric` も省略した状態が有効エントリ。
+
+<!-- /defaults -->
+
+## key 構造
+
+```text
+ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<addr_family>
+```
+
+| key 要素 | 取りうる値 |
+|---------|-----------|
+| `vrf_name` | `default` または `Vrf...` 形式の VRF 名 |
+| `src_protocol` | `connected` / `static` / `ospf` / `ospf3` |
+| `dst_protocol` | `bgp`（現在このみ） |
+| `addr_family` | `ipv4` / `ipv6` |
+
+## 主要フィールド
+
+| フィールド | 型 | 既定値 | 説明 |
+|-----------|----|--------|------|
+| `route_map` | string (leaf-list, max 1) | 省略可 | 再配布時に適用する [ROUTE_MAP](../../reference/glossary.md#term-route_map) フィルタ名 |
+| `metric` | uint32 | 省略可 | 再配布経路に付与するメトリック値 |
+
+## 制約
+
+- `dst_protocol` は `bgp` のみ有効。`frrcfgd` は `bgp` 以外を受け取るとエラーログを出力してスキップする[^2]。
+- `route_map` は最大 1 エントリ（YANG `max-elements 1`）[^1]。
+- IPv6 かつ `src_protocol=ospf3` の場合、`frrcfgd` が FRR コマンド生成時に `ospf6` へ内部変換する[^2]。
+- `vrf_name` は `default` または VRF テーブルへの leafref。
+
+## 購読者・処理フロー
+
+`frrcfgd`（`sonic-frr-mgmt-framework`）が `ROUTE_REDISTRIBUTE` テーブルを購読し、変更を以下のように FRR へ反映する[^2]。
+
+1. key を `vrf_name|src_protocol|dst_protocol|addr_family` の 4 要素に分解
+2. `router bgp <asn> vrf <vrf>` → `address-family <af> unicast` のコンテキストに移行
+3. `redistribute <src_proto> [metric <N>] [route-map <name>]` を発行
+4. 削除時は事前に `no redistribute <src_proto>` でリセットしてから再設定
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>ROUTE_REDISTRIBUTE")]
+  FRRCFGD["frrcfgd"]
+  CDB --> FRRCFGD
+  FRR["FRR bgpd<br/>redistribute"]
+  FRRCFGD --> FRR
+```
+
+!!! note "凡例"
+    CONFIG_DB から FRR までの典型経路を示すミニ図。
+<!-- /cdb-mermaid -->
+
+## 関連 CONFIG_DB / YANG
+
+- 関連 CONFIG_DB: `VRF`、`ROUTE_MAP`
+- 関連 YANG: `sonic-route-common`、`sonic-route-map`、`sonic-vrf`
+
+## 引用元
+
+[^1]: YANG 定義: `sonic-route-common.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-common.yang>
+[^2]: ハンドラ実装: `frrcfgd.py`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
