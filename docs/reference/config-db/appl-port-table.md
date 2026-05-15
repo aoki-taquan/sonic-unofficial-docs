@@ -534,6 +534,102 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。
 
 <!-- /failure -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **注記**: APPL_DB `PORT_TABLE` は `PortsOrch` が **`ConsumerStateTable`** で購読する（CONFIG_DB / STATE_DB のような keyspace 通知ベースの `SubscriberStateTable` ではない）。producer の `portsyncd` / `portmgrd` が `ProducerStateTable` で KEY_SET に key を push し、Lua スクリプトが Redis `PUBLISH` を叩く。詳細・行番号は [`meta/_intermediate/cdb-flow/appl-port-table-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-pubsub.md) を参照[^pubsub]。
+
+### 購読 API 種別と batch 設定
+
+| 項目 | 値 | evidence |
+|------|----|----------|
+| consumer 種別 | `ConsumerStateTable` (channel + KEY_SET ベース) | `orch.cpp:1185-1196` の `Orch::addConsumer()` で APPL_DB は else 側分岐 |
+| pop batch サイズ | `gBatchSize` (default **128**、`orchagent -b <N>` で可変、`0` で 30000 cap) | `main.cpp:95-105, 459, 478` / `orch.cpp:17, 913` |
+| Redis channel | `getChannelName(<APPL_DB id>)` — **DB 単位 1 channel** (テーブル単位ではない) | `producerstatetable.cpp:104-108` Lua `PUBLISH KEYS[1] ARGV[1]` |
+| 通知 payload | 固定文字列 `"G"` (差分は SPOP `_PORT_TABLE_KEY_SET` + HGETALL で取得) | 同上 |
+| TTL | なし (APPL_DB は永続) | — |
+| `PORT_TABLE` の priority | **45** (`portsorch_base_pri (=40) + 5`) | `orchdaemon.cpp:215-218` |
+
+`Orch::addConsumer()` (`orch.cpp:1185-1196`) は DB ID が `CONFIG_DB` / `STATE_DB` / `CHASSIS_APP_DB` のときのみ `SubscriberStateTable` を使い、それ以外（APPL_DB を含む）では `ConsumerStateTable` を使う。`PORT_TABLE` は APPL_DB なので後者経路。
+
+```cpp
+// orchagent/orchdaemon.cpp:215-232
+const int portsorch_base_pri = 40;
+vector<table_name_with_pri_t> ports_tables = {
+    { APP_PORT_TABLE_NAME,             portsorch_base_pri + 5 },  // 45
+    { APP_SEND_TO_INGRESS_PORT_TABLE_NAME, portsorch_base_pri + 5 },
+    { APP_VLAN_TABLE_NAME,             portsorch_base_pri + 2 },
+    { APP_VLAN_MEMBER_TABLE_NAME,      portsorch_base_pri     },
+    { APP_LAG_TABLE_NAME,              portsorch_base_pri + 4 },
+    { APP_LAG_MEMBER_TABLE_NAME,       portsorch_base_pri     },
+};
+gPortsOrch = new PortsOrch(m_applDb, m_stateDb, ports_tables, m_chassisAppDb);
+```
+
+`PORT_TABLE` の priority 45 は LAG_MEMBER / VLAN_MEMBER (40) より高く、同 cycle 内で PORT 系 SET が先に処理される（同 `doTask()` 内の `tableOrder` `{PORT, LAG, LAG_MEMBER, VLAN, VLAN_MEMBER}` (`portsorch.cpp:6467`) と整合）。
+
+### PortConfigDone / PortInitDone トリガ — 専用 channel ではなく PORT_TABLE 内の sentinel key
+
+`PortConfigDone` / `PortInitDone` は **`PORT_TABLE` 内の予約 key**であって、専用 channel や `NotificationProducer` ではない。portsyncd は通常の `ProducerStateTable::set()` でこれらの key を書き、orchagent は通常の `consumer.pops()` で受け取った `KeyOpFieldsValuesTuple` の `key` を文字列比較して検出する。
+
+```cpp
+// portsyncd/portsyncd.cpp:71, 134, 171-176
+ProducerStateTable p(&appl_db, APP_PORT_TABLE_NAME);
+p.set("PortInitDone", attrs);                              // L134
+static void notifyPortConfigDone(ProducerStateTable &p) {  // L171
+    FieldValueTuple finish_notice("count", to_string(g_portSet.size()));
+    p.set("PortConfigDone", { finish_notice });
+}
+```
+
+```cpp
+// orchagent/portsorch.cpp:4585-4626 (PortsOrch::doPortTask)
+if (key == "PortConfigDone") {
+    setPortConfigState(PORT_CONFIG_RECEIVED);
+    it = taskMap.begin();   // 保留中タスクを先頭から再評価
+    continue;
+}
+if (key == "PortInitDone") {
+    if (!m_initDone) { addSystemPorts(); m_initDone = true; }
+    it = taskMap.erase(it);
+    continue;
+}
+```
+
+`PortConfigDone` 受信前に届いた個別 `PORT_TABLE:<alias>` SET は `taskMap` に保留され (`portsorch.cpp:4772-4777`)、`PortConfigDone` 受信時に `it = taskMap.begin()` で先頭から再評価される。これにより「producer (portsyncd) は順不同で `PORT_TABLE:<alias>` を全件書いてから最後に `PortConfigDone` を書く」という契約が成立する（順序詳細は Phase B を参照）。
+
+### orchagent 自書き戻しは PUBLISH しない（自己ループ回避）
+
+`PortsOrch` は SAI 通知由来の `oper_status` / `flap_count` / `last_*_time` / Gearbox 状態を書き戻すために `m_portTable` を **`Table`（`ProducerStateTable` ではない素の Table）** として保持する:
+
+```cpp
+// orchagent/portsorch.cpp:770
+m_portTable = unique_ptr<Table>(new Table(db, APP_PORT_TABLE_NAME));
+// portsorch.cpp:3890, 3930, 6643, 6656, 11244, 11259
+m_portTable->set(port.m_alias, tuples);
+m_portTable->hset(port.m_alias, "oper_status", "down");
+m_portTable->hset(port.m_alias, "flap_count", flapCount);
+```
+
+`Table::hset` は `_PORT_TABLE_KEY_SET` を更新せず Redis の `PUBLISH` も発火しないため、orchagent 自身の `ConsumerStateTable` はこれらを検出しない。これは「自分の通知を自分で拾うループ」を回避する設計。逆に `portsyncd` / `portmgrd` の書き込みは `ProducerStateTable::set()` 経由で KEY_SET 投入 + PUBLISH を伴うため、orchagent consumer が次の `select()` cycle で即時拾う。
+
+### warm-restart 時の `addExistingData()`
+
+`bake()` で APPL_DB の整合性検証（`PortConfigDone:count` と `PortInitDone` の存在）を通過した後、`addExistingData(m_portTable.get())` (`portsorch.cpp:4386`) が APPL_DB に残っている全 `PORT_TABLE:*` キーを `m_toSync` に投入してから通常の `doTask()` ループに入る。warm 時は `ConsumerStateTable` 経由の通知を待たずに既存スナップショットをそのまま consumer の保留キューに流し込む形になる。
+
+### 追加 consumer（参考）
+
+| 追加購読 | DB | 種別 | 条件 | evidence |
+|---|---|---|---|---|
+| `STATE_TRANSCEIVER_INFO_TABLE` | STATE_DB | `SubscriberStateTable` | 常時 | `portsorch.cpp:984` |
+| CHASSIS_APP_DB system port table x2 | CHASSIS_APP_DB | `SubscriberStateTable` | VOQ chassis (`gMySwitchType == "voq"`) のみ | `portsorch.cpp:1086, 1091` |
+
+これらは `PORT_TABLE` 本体とは別 consumer。`PortsOrch::doTask(Consumer&)` (`portsorch.cpp:6498-6520`) で `table_name` 別に分岐ディスパッチされる。
+
+[^pubsub]: orchagent portsorch.cpp (Phase G 通信メカニズム): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および orch.cpp `Orch::addConsumer`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp> / sonic-swss-common: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp>
+
+<!-- /pubsub -->
+
 ## CONFIG_DB PORT との対応
 
 | 側面 | CONFIG_DB PORT | APPL_DB PORT_TABLE |
