@@ -368,6 +368,22 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 > **Evidence**: `sonic-host-services/scripts/featured:75-86,135,375-380,466,551-596`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17,228-237`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:113,117-124`; `sonic-utilities/sonic_package_manager/manifest.py:202-217`
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数
+
+`featured` スクリプト (`sonic-host-services/scripts/featured`) に埋め込まれた定数。
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `PORT_INIT_TIMEOUT_SEC` | `180` 秒 | `featured:24` | `delayed=True` フィーチャーの強制起動タイムアウト。PortInitDone を 180 秒待っても受信しない場合、`handle_port_table_timeout()` がすべての delayed フィーチャーを強制 enable する |
+| `WAIT_FOR_STABLE_TIMEOUT` | `60` 秒 | `featured:426` | `disable_feature()` が `systemctl stop` 前に `activating` 状態抜けを待つ最大時間。タイムアウト後は警告ログを出力して stop を続行する |
+| `WAIT_FOR_STABLE_POLL_INTERVAL` | `1` 秒 | `featured:427` | `wait_for_service_stable()` 内の `systemctl is-active` ポーリング間隔 |
+| `DEFAULT_SELECT_TIMEOUT` | `1000` ms | `featured:23` | メインイベントループの `selector.select()` タイムアウト。1 秒ごとに PORT_INIT タイムアウト判定を実施 |
+| `HOSTCFGD_MAX_PRI` | `10` | `featured:22` | FEATURE テーブル subscriber の select 優先度（PORT テーブルは `10-1=9`） |
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-24,426-427,630,644-648,654-661`; 詳細分析 `meta/_intermediate/cdb-flow/feature-constants.md`
+<!-- /constants -->
+
 <!-- cross-refs -->
 ## 暗黙参照マップ
 
