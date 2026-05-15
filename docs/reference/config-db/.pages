@@ -79,4 +79,5 @@ nav:
   - nhg-table.md
   - nhg.md
   - sflow.md
+  - route-orch-event.md
   - ...
