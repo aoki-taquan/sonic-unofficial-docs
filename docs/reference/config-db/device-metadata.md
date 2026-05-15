@@ -448,6 +448,109 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+DEVICE_METADATA フィールド値に基づいて分岐する処理の中で用いられる、起動タイマー・retry カウント・threshold の固定数値。
+
+### orchagent バッチ/bulk サイズ (`switch_type` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `-b` batch_size | `128` | `switch_type == 'chassis-packet'` | orchagent pop バッチサイズ。リンク通知の高速処理 | `docker-orchagent/orchagent.sh:24-26` |
+| `-b` batch_size | `65536` | `switch_type == 'dpu'` | DPU 高ボリューム処理向け大容量バッチ | `docker-orchagent/orchagent.sh:29` |
+| `-b` batch_size | `1024` | その他 (デフォルト) | 通常スイッチ標準バッチ | `docker-orchagent/orchagent.sh:32` |
+| `-k` bulk_size (ZMQ) | `65536` | `switch_type == 'dpu'` | ZMQ synchronous mode の最大 bulk limit | `docker-orchagent/orchagent.sh:39` |
+
+### SAI create_switch タイムアウト (`switch_type` 依存)
+
+基準値: `SAI_REDIS_DEFAULT_SYNC_OPERATION_RESPONSE_TIMEOUT = 60,000 ms`（`sonic-sairedis/lib/sairedis.h:46`）
+
+| 条件 | タイムアウト | 計算根拠 | evidence |
+|------|------------|---------|---------|
+| `switch_type IN ['voq','chassis-packet','dpu']` | `300,000 ms` | `5 × 60,000 ms` | `sonic-swss/orchagent/main.cpp:822` |
+| `switch_type == 'fabric'` | `600,000 ms` | `10 × 60,000 ms` | `sonic-swss/orchagent/main.cpp:825` |
+| その他 / デフォルト | `60,000 ms` | `1 × 基準値` | `sonic-swss/orchagent/main.cpp:829` |
+
+### BGP タイマー (`type` / `subtype` / `constants.yml` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `graceful_restart.restart_time` | `240` 秒 | `type == 'ToRRouter'` かつ `constants.bgp.graceful_restart.enabled == true` | FRR BGP graceful-restart タイマー | `constants.yml:24; bgpd.main.conf.j2:119` |
+| `graceful_restart.select_defer_time` | `45` 秒 (Jinja `default(45)`) | 同上、constants.yml に未定義のため fallback | BGP best-path 選択遅延タイマー | `bgpd.main.conf.j2:122` |
+| `coalesce-time` | `10,000` ms | `subtype == 'DualToR'` | BGP ルート集約タイマー (mux 切替時の収束遅延緩和) | `bgpd.main.conf.j2:111` |
+
+### BMP 接続タイマー (`FEATURE.frr_bmp/bmp.state == 'enabled'` 時)
+
+| 定数 | 値 | 用途 | evidence |
+|------|-----|------|---------|
+| `bmp stats interval` | `1,000` ms | BMP 統計送信間隔 | `bgpd.main.conf.j2:133` |
+| `bmp connect port` | `5000` | ローカル BMP コレクター接続先ポート | `bgpd.main.conf.j2:136` |
+| `bmp connect min-retry` | `10,000` ms | BMP 接続リトライ最小間隔 | `bgpd.main.conf.j2:136` |
+| `bmp connect max-retry` | `15,000` ms | BMP 接続リトライ最大間隔 | `bgpd.main.conf.j2:136` |
+| `bmp mirror buffer-limit` | `4,294,967,214` bytes | BMP ミラーバッファ上限 (≒ 4 GiB) | `bgpd.main.conf.j2:130` |
+
+### teamd retry count / sleep (`default_bgp_status` 依存)
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `DEFAULT_RETRY_COUNT` | `3` | 通常 / リセットパケット時 | LACPDU actor/partner retry_count フィールド値 | `teamd_increase_retry_count.py:31` |
+| `EXTENDED_RETRY_COUNT` | `5` | `default_bgp_status == 'up'` かつ 新バージョン対向時 | BGP up 状態で retry を延ばし PortChannel 安定化を待つ | `teamd_increase_retry_count.py:32,215` |
+| LACPDU 送信 sleep | `15` 秒 | retry count 変更パケット送信ループ | LACPDU ブロードキャスト間隔 | `teamd_increase_retry_count.py:225,327` |
+| peer 処理待ち sleep | `2` 秒 | リセットパケット送信前 | 対向デバイスの処理完了待機 | `teamd_increase_retry_count.py:297` |
+| LACP sniff timeout | `30` 秒 | sniffer 起動時 | LACPDU キャプチャ待機タイムアウト | `teamd_increase_retry_count.py:99` |
+
+### fpmsyncd warm-restart / flush タイマー (`suppress-fib-pending` 依存)
+
+| 定数 | 値 | 用途 | evidence |
+|------|-----|------|---------|
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | FRR routing stack warm-restart 完了待機 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:46` |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` 秒 | EOIU フラグ検出後 reconciliation 開始前 hold タイマー | `sonic-swss/fpmsyncd/fpmsyncd.cpp:51` |
+| `FLUSH_TIMEOUT` | `500` ms | route flush 間隔の上限 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:25` |
+| `SMALL_TRAFFIC` | `500` ルート | `remaining < 500` のとき即時 flush するトラフィック量閾値 | `sonic-swss/fpmsyncd/fpmsyncd.cpp:28` |
+| `FPM_MAX_MSG_LEN` | `16,384` bytes | FPM メッセージバッファ最大長 | `sonic-swss/fpmsyncd/fpm/fpm.h:95` |
+
+### bgpcfgd / bfdmon 起動定数
+
+| 定数 | 値 | 条件 | 用途 | evidence |
+|------|-----|------|------|---------|
+| `wait_for_daemons seconds` | `20` 秒 | bgpcfgd 起動時 | FRR daemons が vtysh に接続するまでの最大待機 | `bgpcfgd/main.py:47` |
+| `MAX_RETRY_ATTEMPTS` (bfdmon) | `3` | `switch_type != 'dpu'` | vtysh コマンド失敗時の BFD 情報取得リトライ上限 | `bfdmon/bfdmon.py:21` |
+| `SLEEP_TIME` (bfdmon) | `2` 秒 | 同上 | BFD ポーリングループ待機間隔 | `bfdmon/bfdmon.py:151` |
+| `HEART_BEAT_INTERVAL_MSECS_DEFAULT` | `10,000` ms | orchagent デフォルト | orchagent heartbeat 送信間隔 (`-I` で上書き可) | `sonic-swss/orchagent/main.cpp:75` |
+
+### ECMP hash_seed (`type` 別固定値)
+
+multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値になる。
+
+| `type` | `hash_seed` | `ecmp_hash_offset` | `lag_hash_offset` | `ordered_ecmp` | evidence |
+|--------|------------|------------------|-----------------|---------------|---------|
+| `ToRRouter` | `0` | `0` | `0` | `false` | `switch.json.j2:9` |
+| `LeafRouter` | `10` | `10` | `10` | `true` | `switch.json.j2:11-13` |
+| `SpineRouter` | `25` | `0` | `0` | `false` | `switch.json.j2:15` |
+| `FabricSpineRouter` | `40` | `0` | `0` | `false` | `switch.json.j2:16-17` |
+| `UpperSpineRouter` | `50` | `0` | `0` | `false` | `switch.json.j2:18-19` |
+| `LowerRegionalHub` | `60` | `0` | `0` | `false` | `switch.json.j2:20-21` |
+| `FabricRegionalHub` | `70` | `0` | `0` | `false` | `switch.json.j2:22-23` |
+| `UpperRegionalHub` | `80` | `0` | `0` | `false` | `switch.json.j2:24-25` |
+
+### constants.yml 参照値 (DEVICE_METADATA consumer が利用)
+
+| key | 値 | 用途 |
+|-----|-----|------|
+| `bgp.maximum_paths.ipv4` | `514` | IPv4 ECMP 最大パス数 |
+| `bgp.maximum_paths.ipv6` | `514` | IPv6 ECMP 最大パス数 |
+| `bgp.route_do_not_send_appdb_tag` | `202` | SpineRouter+UpstreamLC BGP route-map タグ |
+| `bgp.route_eligible_for_fallback_to_default_tag` | `203` | VoQ chassis BGP route-map タグ |
+| `bgp.internal_fallback_community` | `22222:22222` | SpineRouter+UpstreamLC route-map community |
+| `bgp.hide_internal_community` | `55555:55555` | FabricSpineRouter/LowerSpineRouter 等 HIDE_INTERNAL route-map |
+| `bgp.traffic_shift_community` | `12345:12345` | TSA/TSB isolation route-map community |
+| `bgp.internal_community` | `11111:11111` | internal BGP community |
+
+> **スキャン証跡**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`。確認した定数総数: 約 54 個。
+
+<!-- /constants -->
+
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
