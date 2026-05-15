@@ -23817,6 +23817,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-counters_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / COUNTERS_EVENTS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-appl_db-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        その他 (FLEX_COUNTER_DB / APPL_DB / ASIC_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34553,6 +34603,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters_db-counters_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB / COUNTERS_EVENTS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flex_counter_db-appl_db-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        その他 (FLEX_COUNTER_DB / APPL_DB / ASIC_DB)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34881,6 +34981,54 @@
 <li><strong>severity デフォルト不在</strong>: <code>severity</code> は event profile の <code>default.json</code> で開発者が必ず指定しなければならない。フォールバックは定義されていない。<code>INFORMATIONAL</code> は alarm には不可。</li>
 </ul>
 <!-- /defaults -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>ALARM テーブル自身は <strong>EVENT_DB</strong> への主たる書込先である。ここでは ALARM 系処理に付随して、ALARM テーブル以外の DB / テーブルへ書き込まれる事象を扱う。</p>
+<h3 id="counters_db-counters_events">COUNTERS_DB / <code>COUNTERS_EVENTS</code><a class="headerlink" href="#counters_db-counters_events" title="Permanent link">&para;</a></h3>
+<p>eventd プロセス内の <code>stats_collector</code> が <code>event_publish()</code> 経路全体の累計カウンタを周期書込する。<code>RAISE_ALARM</code> action もこの経路を通るため、ALARM 発生時にもカウンタが進む。</p>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>操作</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>値</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>event_publish()</code> 経由で event/alarm が流れ、<code>m_updated</code> フラグが立っていれば 10ms 周期で flush</td>
+<td><code>set</code></td>
+<td><code>counter_keys[i]</code> (<code>published</code> / <code>missed_internal</code> / <code>missed_to_cache</code> / <code>missed_by_slow_receiver</code> / <code>latency_in_ms</code> 等)</td>
+<td><code>value</code></td>
+<td>uint64 累計値</td>
+<td><code>sonic-eventd/src/eventd.cpp:178,186-187,205-210</code></td>
+</tr>
+</tbody>
+</table>
+<p>定数:</p>
+<ul>
+<li><code>COUNTERS_EVENTS_TABLE = "COUNTERS_EVENTS"</code> (<code>sonic-swss-common/common/schema.h:266</code>)</li>
+<li><code>EVENTS_STATS_FIELD_NAME = "value"</code> (<code>sonic-eventd/src/eventd.h:23</code>)</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">ALARM 固有カウンタではない</p>
+<p><code>COUNTERS_EVENTS</code> は eventd の publish パス全体のサマリであり、<code>RAISE_ALARM</code> 単独の統計ではない。重要度別アクティブアラーム数は EVENT_DB の <code>ALARM_STATS</code> テーブルで保持される (本ページ「関連テーブル」節を参照)。</p>
+</div>
+<h3 id="state_db">STATE_DB<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p>ALARM テーブル処理に伴う <strong>STATE_DB への副次書込はなし</strong>。</p>
+<p>根拠:</p>
+<ul>
+<li><code>sonic-buildimage/src/sonic-eventd/src/</code> 配下を <code>grep -rn "STATE_DB"</code> してもヒット 0 件 (テスト用 <code>database_config.json</code> を除く)</li>
+<li><code>sonic-buildimage/src/system-health/</code> の <code>SYSTEM_READY</code> / <code>ALL_SERVICE_STATUS</code> / <code>FAN_INFO</code> 等の STATE_DB 書込は System Health Monitoring サブシステム由来であり、Event/Alarm Framework の ALARM テーブル (EVENT_DB) の更新トリガとは独立している</li>
+</ul>
+<h3 id="flex_counter_db-appl_db-asic_db">その他 (FLEX_COUNTER_DB / APPL_DB / ASIC_DB)<a class="headerlink" href="#flex_counter_db-appl_db-asic_db" title="Permanent link">&para;</a></h3>
+<p>該当する副次書込は検出されず、なし。</p>
+<p>詳細分析: <code>meta/_intermediate/cdb-flow/alarm-table-side.md</code></p>
+<!-- /side-effects -->
 
 <!-- ref-triangle:start -->
 

@@ -24363,6 +24363,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -34790,6 +34818,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B — コード由来)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B — コード由来)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35242,6 +35298,71 @@
 <li>BFD_SESSION テーブルに対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。</li>
 </ul>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B — コード由来)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>bfdorch</code> (<code>sonic-swss/orchagent/bfdorch.cpp</code>) の <code>doTask()</code> / <code>create_bfd_session()</code> を精読して検出した順序依存・タイミング依存。詳細スキャンノート: <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-ordering.md"><code>meta/_intermediate/cdb-flow/bfd-session-ordering.md</code></a>。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策 / 備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>PORT|&lt;interface&gt;</code> 初期化完了 → BFD_SESSION SET (<code>interface != "default"</code>)</td>
+<td>強制先行</td>
+<td><code>gPortsOrch-&gt;getPort()</code> 失敗時 <code>doTask</code> が <code>it++</code> で次イベントループ周回で<strong>自動再試行</strong>。<code>bfdorch.cpp:485-488, 173-177</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>VRF|&lt;name&gt;</code> SAI 作成完了 → BFD_SESSION SET (<code>vrf != "default"</code>)</td>
+<td>強制先行</td>
+<td><code>VRFOrch::getVRFid()</code> が未登録時 <code>SAI_NULL_OBJECT_ID</code> を返し SAI create が失敗 → 次周回再試行。<code>bfdorch.cpp:530-541</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>BGP_DEVICE_GLOBAL.STATE.use_software_bfd</code> 確定 → BFD_SESSION SET</td>
+<td>推奨先行</td>
+<td>doTask は毎周回 <code>getSoftwareBfd()</code> を読む。途中で値が変わると hardware/software 経路を行き来し SAI セッションと STATE_DB エントリが二重に残る恐れあり。<code>bfdorch.cpp:114-138</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>TSA 状態遷移 ⇄ BFD_SESSION SET (<code>shutdown_bfd_during_tsa=true</code>)</td>
+<td>自動調停</td>
+<td><code>bfd_session_cache</code> に常にキャッシュされ、TSA 解除通知で replay。順序を意識する必要なし。<code>bfdorch.cpp:141-178, 220+</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>SwitchOrch (<code>gSwitchId</code> / <code>gVirtualRouterId</code>) 先行</td>
+<td>強制先行</td>
+<td>orchagent 起動順で自然満足 (BfdOrch は SwitchOrch より後段で生成)。<code>bfdorch.cpp:27, 533, 547</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>interface != "default"</code> と <code>vrf != "default"</code> の併用</td>
+<td>排他（順序ではない）</td>
+<td><code>"vrf is not supported when hardware lookup not valid"</code> で永続スキップ (<code>return true</code>、再試行されない)。<code>bfdorch.cpp:498-503</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>UDP 送信元ポート衝突時の自動 retry</td>
+<td>自動</td>
+<td><code>NUM_BFD_SRCPORT_RETRIES = 3</code> で再選択</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_15">補足<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li>依存 #1 / #2 は doTask が <strong>false 返却 → <code>it++</code> で次イベントループ周回再試行</strong>する設計のため、PORT / VRF が後追いで作成されても自動的に追従する。ただし orchagent ログには <code>Failed to locate port ...</code> が周回ごとに記録され続けるため、ログノイズを避けたい場合は PORT/VRF を先行投入することが望ましい。</li>
+<li>依存 #3 は software ⇄ hardware の経路切替が運用中に発生する珍しいケース。通常は <code>BGP_DEVICE_GLOBAL</code> を最初に確定してから BFD_SESSION を投入する。</li>
+<li>レコード内整合性 (<code>local_addr</code> 必須、<code>interface</code> と <code>dst_mac</code> の併用条件) は順序ではないが、不整合な SET は永続スキップされる (<a href="#例外条件特殊挙動">例外条件・特殊挙動</a> 参照)。</li>
+</ul>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

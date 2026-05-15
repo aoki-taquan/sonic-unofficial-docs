@@ -23199,6 +23199,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchh40-50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム識別文字列 (orch.h:40-50)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE 段の capability 差異一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別 ACL_TABLE 対応サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35860,6 +35910,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchh40-50" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム識別文字列 (orch.h:40-50)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE 段の capability 差異一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別 ACL_TABLE 対応サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37309,6 +37409,302 @@
 <p><strong>スキャン証跡</strong>: <code>acltable.h:1-76</code> 全行精読、<code>aclorch.h:62-63</code>、<code>aclorch.cpp:42-44,105-106,523-526,6088-6105</code>、<code>schema.h:94-95,514</code> 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。</p>
 </blockquote>
 <!-- /constants -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>ACL_TABLE</code> の作成可否・bind point・mandatory フィールドは ASIC ベンダーごとに大きく異なる。<code>AclOrch::init()</code> (<code>aclorch.cpp:3480-3720</code>) が起動時に環境変数 <code>platform</code> / <code>sub_platform</code> を読み取り、MIRROR / L3V4V6 / isCombinedMirrorV6 / range 上限を <strong>静的比較で決定</strong> する。META_DATA 系および stage capability (<code>is_action_list_mandatory</code> / <code>supported_L3V4V6</code>) のみ SAI 動的照会 (<code>sai_query_attribute_capability</code>) を用いる。</p>
+<h3 id="orchh40-50">プラットフォーム識別文字列 (orch.h:40-50)<a class="headerlink" href="#orchh40-50" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>プラットフォーム例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BRCM_PLATFORM_SUBSTRING</code></td>
+<td><code>"broadcom"</code></td>
+<td>Broadcom XGS (non-DNX)</td>
+</tr>
+<tr>
+<td><code>BRCM_DNX_PLATFORM_SUBSTRING</code></td>
+<td><code>"broadcom-dnx"</code></td>
+<td>Broadcom DNX/Jericho (sub_platform)</td>
+</tr>
+<tr>
+<td><code>MLNX_PLATFORM_SUBSTRING</code></td>
+<td><code>"mellanox"</code></td>
+<td>Mellanox Spectrum</td>
+</tr>
+<tr>
+<td><code>BFN_PLATFORM_SUBSTRING</code></td>
+<td><code>"barefoot"</code></td>
+<td>Intel Tofino (Barefoot)</td>
+</tr>
+<tr>
+<td><code>VS_PLATFORM_SUBSTRING</code></td>
+<td><code>"vs"</code></td>
+<td>Virtual Switch (テスト用)</td>
+</tr>
+<tr>
+<td><code>NPS_PLATFORM_SUBSTRING</code></td>
+<td><code>"nephos"</code></td>
+<td>Nephos</td>
+</tr>
+<tr>
+<td><code>CISCO_8000_PLATFORM_SUBSTRING</code></td>
+<td><code>"cisco-8000"</code></td>
+<td>Cisco Silicon One</td>
+</tr>
+<tr>
+<td><code>XS_PLATFORM_SUBSTRING</code></td>
+<td><code>"xsight"</code></td>
+<td>xsight</td>
+</tr>
+<tr>
+<td><code>CLX_PLATFORM_SUBSTRING</code></td>
+<td><code>"clounix"</code></td>
+<td>Clounix</td>
+</tr>
+<tr>
+<td><code>MRVL_PRST_PLATFORM_SUBSTRING</code></td>
+<td><code>"marvell-prestera"</code></td>
+<td>Marvell Prestera</td>
+</tr>
+<tr>
+<td><code>MRVL_TL_PLATFORM_SUBSTRING</code></td>
+<td><code>"marvell-teralynx"</code></td>
+<td>Marvell Teralynx</td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl_table-capability">ACL_TABLE 段の capability 差異一覧<a class="headerlink" href="#acl_table-capability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>capability</th>
+<th>有効プラットフォーム</th>
+<th>無効/制限プラットフォーム</th>
+<th>ACL_TABLE への影響</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>type=MIRRORV6 作成可否</strong> (<code>isAclMirrorV6Supported</code>)</td>
+<td>broadcom / cisco-8000 / mellanox / barefoot / marvell-prestera / marvell-teralynx / nephos / xsight / clounix / vs</td>
+<td>それ以外（未知）</td>
+<td>false → <code>type=MIRRORV6</code> の ACL_TABLE 作成を reject → STATE_DB <code>status="Inactive"</code></td>
+<td><code>aclorch.cpp:3489-3513, 3500-3541</code></td>
+</tr>
+<tr>
+<td><strong>isCombinedMirrorV6Table</strong></td>
+<td>broadcom (非 DNX) / barefoot / marvell-teralynx / nephos / vs / その他</td>
+<td>mellanox / cisco-8000 / marvell-prestera / xsight / clounix / broadcom-dnx</td>
+<td>true (統合) → <code>type=MIRROR</code> 1 枚で V4/V6 両対応。false (分離) → <code>MIRROR</code> / <code>MIRRORV6</code> を別 ACL_TABLE として作成必須</td>
+<td><code>aclorch.cpp:3546-3560, 5811</code></td>
+</tr>
+<tr>
+<td><strong>type=L3V4V6 作成可否</strong> (<code>isAclL3V4V6TableSupported</code>)</td>
+<td>marvell-prestera / marvell-teralynx / vs</td>
+<td>それ以外</td>
+<td>false → <code>AclTable::validate()</code> が reject → erase</td>
+<td><code>aclorch.cpp:3515-3533, 2737-2745</code></td>
+</tr>
+<tr>
+<td><strong>PFCWD bind point / mandatory match</strong></td>
+<td>broadcom-dnx: <code>SAI_ACL_BIND_POINT_TYPE_SWITCH</code> + <code>TC</code> + <code>OUT_PORT</code></td>
+<td>それ以外: <code>SAI_ACL_BIND_POINT_TYPE_PORT</code> + <code>TC</code> のみ</td>
+<td>broadcom-dnx では <code>type=PFCWD</code> の ACL_TABLE は SWITCH 単位バインド（<code>ports</code> フィールド無視）</td>
+<td><code>aclorch.cpp:3811-3830</code></td>
+</tr>
+<tr>
+<td><strong>Egress range フィールド強制付加</strong> (<code>addStageMandatoryRangeFields</code>)</td>
+<td>broadcom-dnx / mellanox / barefoot / marvell-* / cisco-8000 / nephos / xsight / clounix / vs</td>
+<td>broadcom (非 DNX) Egress のみ false</td>
+<td>broadcom 非 DNX の <code>stage=EGRESS</code> ACL_TABLE では <code>SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE</code> が付かず、配下 ACL_RULE の L4 range match 不可</td>
+<td><code>aclorch.cpp:2608-2628</code></td>
+</tr>
+<tr>
+<td><strong>META_DATA capability</strong></td>
+<td>SAI 動的照会で 3 属性すべて <code>set_implemented=true</code> の場合</td>
+<td>SAI が未実装と返した場合</td>
+<td>false → <code>ACL_TABLE_TYPE.MATCHES</code> に <code>META_DATA</code>、<code>ACTIONS</code> に <code>META_DATA_ACTION</code> を含むユーザ定義 type が SAI 反映されず、配下 ACL_RULE が INACTIVE</td>
+<td><code>aclorch.cpp:3563-3664</code></td>
+</tr>
+<tr>
+<td><strong>type=DTEL_FLOW_WATCHLIST</strong> (<code>DTelOrch</code> 起動)</td>
+<td>barefoot / vs</td>
+<td>それ以外</td>
+<td><code>DTelOrch</code> 非起動 → DTEL_FLOW_WATCHLIST テーブルが SAI にバインドする先なし</td>
+<td><code>orchdaemon.cpp:502-530</code>, <code>acltable.h:34</code></td>
+</tr>
+<tr>
+<td><strong>ACL range オブジェクト上限</strong> (配下 ACL_RULE への間接影響)</td>
+<td>—</td>
+<td>mellanox: 16 (<code>MLNX_MAX_RANGES_COUNT</code>) / clounix: 16 (<code>CLNX_MAX_RANGES_COUNT</code>)</td>
+<td>ACL_TABLE 段では制限なし。配下 ACL_RULE で 16 超 range を作ると <code>return NULL</code> → INACTIVE</td>
+<td><code>aclorch.cpp:3370-3378</code>, <code>aclorch.h:109-110</code></td>
+</tr>
+<tr>
+<td><strong>stage capability / action_list_mandatory</strong></td>
+<td>SAI 動的照会で stage ごとに取得</td>
+<td>—</td>
+<td><code>is_action_list_mandatory=true</code> の ASIC では <code>addMandatoryActions()</code> が <code>SAI_ACL_ACTION_TYPE_COUNTER</code> 等を自動付与 → STATE_DB <code>ACL_STAGE_CAPABILITY_TABLE</code> に記録</td>
+<td><code>aclorch.cpp:2563, 3690-3720, 4056-4101</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="acl_table_1">プラットフォーム別 ACL_TABLE 対応サマリ<a class="headerlink" href="#acl_table_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>MIRRORV6</th>
+<th>Combined Mirror</th>
+<th>L3V4V6</th>
+<th>PFCWD bind</th>
+<th>Egress range</th>
+<th>DTEL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>broadcom (非 DNX)</td>
+<td>yes</td>
+<td>yes (統合)</td>
+<td>no</td>
+<td>PORT</td>
+<td><strong>付加せず</strong></td>
+<td>no</td>
+</tr>
+<tr>
+<td>broadcom-dnx</td>
+<td>yes</td>
+<td>no (分離)</td>
+<td>no</td>
+<td><strong>SWITCH</strong></td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>mellanox</td>
+<td>yes</td>
+<td>no (分離)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>barefoot</td>
+<td>yes</td>
+<td>yes (統合)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td><strong>yes</strong></td>
+</tr>
+<tr>
+<td>cisco-8000</td>
+<td>yes</td>
+<td>no (分離)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>marvell-prestera</td>
+<td>yes</td>
+<td>no (分離)</td>
+<td><strong>yes</strong></td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>marvell-teralynx</td>
+<td>yes</td>
+<td>yes (統合)</td>
+<td><strong>yes</strong></td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>nephos</td>
+<td>yes</td>
+<td>yes (統合)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>xsight</td>
+<td>yes</td>
+<td>no (分離)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>clounix</td>
+<td>yes</td>
+<td>no (分離)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+<tr>
+<td>vs (virtual)</td>
+<td>yes</td>
+<td>yes (統合)</td>
+<td><strong>yes</strong></td>
+<td>PORT</td>
+<td>付加</td>
+<td><strong>yes</strong></td>
+</tr>
+<tr>
+<td>未知</td>
+<td><strong>no</strong></td>
+<td>yes (統合)</td>
+<td>no</td>
+<td>PORT</td>
+<td>付加</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">isCombinedMirrorV6Table の運用上の注意</p>
+<p><code>isCombinedMirrorV6Table=false</code> (mellanox / cisco-8000 / marvell-prestera / xsight / clounix / broadcom-dnx) の環境では、IPv6 mirror を有効にするには <code>type=MIRROR</code> と <code>type=MIRRORV6</code> の ACL_TABLE を <strong>別々に</strong> 作成する。<code>MIRROR</code> のみだと IPv6 mirror ACL_RULE が SAI に反映されない (<code>aclorch.cpp:5811</code>)。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">type=L3V4V6 制限</p>
+<p><code>type=L3V4V6</code> の ACL_TABLE は marvell-prestera / marvell-teralynx / vs のみ作成可。それ以外で SET すると <code>AclTable::validate()</code> の <code>isAclL3V4V6TableSupported()</code> が false → reject、STATE_DB <code>status="Inactive"</code>、erase される (<code>aclorch.cpp:2737-2745</code>)。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">broadcom (非 DNX) Egress + L4 range</p>
+<p>broadcom 非 DNX の <code>stage=EGRESS</code> ACL_TABLE では range フィールドが SAI 属性として強制付加されない (<code>aclorch.cpp:2608-2628</code>)。配下の ACL_RULE で <code>L4_SRC_PORT_RANGE</code> / <code>L4_DST_PORT_RANGE</code> match を使ってもハードウェアに降りない。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">type=PFCWD on broadcom-dnx</p>
+<p>broadcom-dnx (sub_platform) では <code>type=PFCWD</code> の ACL_TABLE が <code>SAI_ACL_BIND_POINT_TYPE_SWITCH</code> 単位でバインドされ、CONFIG_DB の <code>ports</code> フィールドが無視される (<code>aclorch.cpp:3811-3830</code>)。<code>OUT_PORT</code> match が追加で利用可能。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">multi-asic 環境</p>
+<p>multi-asic 構成では <code>config acl add table</code> が各 namespace の CONFIG_DB に同一エントリを書き込む。<code>AclOrch</code> も namespace ごとに独立起動し、STATE_DB <code>ACL_STAGE_CAPABILITY_TABLE</code> も namespace ごとに保存される。通常は同一 ASIC 種別が前提だが、SmartSwitch / heterogeneous Multi-NPU では namespace ごとに <code>sub_platform</code> が異なる可能性があり、ACL_TABLE 作成可否が namespace 間で差異を持つことがある。</p>
+</div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>AclOrch::init()</code> L3480-3720 / <code>initDefaultTableTypes()</code> L3724-3830 / <code>AclTable::validate()</code> L2725-2769 / <code>addStageMandatoryRangeFields()</code> L2608-2628 / <code>addMandatoryActions()</code> L2563 / <code>putAclActionCapabilityInDB()</code> L4056-4101 / <code>orchdaemon.cpp:502-530</code> / <code>orch.h:40-50</code> / <code>aclorch.h:109-110</code> 全行精読。中間ファイル: <code>meta/_intermediate/cdb-flow/acl-table-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>

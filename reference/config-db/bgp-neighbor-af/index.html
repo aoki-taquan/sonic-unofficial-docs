@@ -22626,6 +22626,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照マップ (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_neighbor_af_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_NEIGHBOR_AF が参照する下流テーブル / リソース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_neighbor_af_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_NEIGHBOR_AF を参照する上流コンポーネント
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照の特徴
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22671,7 +22721,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み経路依存の乖離
@@ -35195,6 +35245,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照マップ (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照マップ (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_neighbor_af_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_NEIGHBOR_AF が参照する下流テーブル / リソース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_neighbor_af_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_NEIGHBOR_AF を参照する上流コンポーネント
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照の特徴
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35240,7 +35340,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         書き込み経路依存の乖離
@@ -35658,6 +35758,91 @@
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照マップ (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>YANG leafref で強制される構造的参照に加え、<code>frrcfgd.py</code> の <code>nbr_af_key_map</code> を介して FRR 設定文に展開される際に間接参照されるテーブル / オブジェクトを網羅する。
+詳細証跡: <code>meta/_intermediate/cdb-flow/bgp-neighbor-af-cross-refs.md</code></p>
+</blockquote>
+<h3 id="bgp_neighbor_af_1">BGP_NEIGHBOR_AF が参照する下流テーブル / リソース<a class="headerlink" href="#bgp_neighbor_af_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>対象</th>
+<th>参照機構</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_NEIGHBOR</code> (<code>vrf_name</code>, <code>neighbor</code>)</td>
+<td>YANG leafref (<code>sonic-bgp-neighbor.yang:124-126</code>)</td>
+<td>同一 VRF の <code>BGP_NEIGHBOR_LIST.neighbor</code> に存在しないキーは YANG バリデーションで reject</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS</code> (<code>vrf_name</code>)</td>
+<td>YANG leafref (<code>sonic-bgp-neighbor.yang:117-119</code>)</td>
+<td>存在しない VRF は reject。さらに <code>frrcfgd.py:2658-2663</code> で <code>local_asn</code> 未設定 VRF への更新は LOG_DEBUG で silent skip</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP_AF</code></td>
+<td>設定階層上の対 (<code>frrcfgd.py:2111-2112</code>)</td>
+<td>同一の <code>nbr_af_key_map</code> で処理される姉妹テーブル。peer-group 由来の AF 設定が neighbor AF の既定として継承される</td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP</code> (FRR 名前空間)</td>
+<td><code>route_map_in</code> / <code>route_map_out</code> / <code>default_rmap</code> / <code>unsuppress_map_name</code> 文字列値 (<code>frrcfgd.py:1899-1906</code>)</td>
+<td>FRR で未定義の route-map 名を指すと <code>bgpd</code> 側で参照解決失敗。CONFIG_DB <code>ROUTE_MAP</code> テーブル経由で定義する</td>
+</tr>
+<tr>
+<td><code>PREFIX_LIST</code> (FRR 名前空間)</td>
+<td><code>prefix_list_in</code> / <code>prefix_list_out</code> 文字列値 (<code>frrcfgd.py:1918-1919</code>)</td>
+<td>FRR <code>ip prefix-list</code> 未定義名で参照解決失敗</td>
+</tr>
+<tr>
+<td>AS-path access-list (FRR)</td>
+<td><code>filter_list_in</code> / <code>filter_list_out</code> 文字列値 (<code>frrcfgd.py:1914-1915</code>)</td>
+<td><code>bgp as-path access-list</code> 未定義名で参照解決失敗</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA|localhost|bgp_asn</code></td>
+<td>bgpd テンプレ起動時条件 (<code>bgpd.main.conf.j2:94-95</code>)</td>
+<td><code>bgp_asn</code> 未設定または <code>none/null</code> の場合 <code>router bgp</code> ブロック自体が生成されず、BGP_NEIGHBOR_AF も無効化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp_neighbor_af_2">BGP_NEIGHBOR_AF を参照する上流コンポーネント<a class="headerlink" href="#bgp_neighbor_af_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照機構</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frrcfgd</code> (<code>BGPConfigDaemon</code>)</td>
+<td><code>bgp_table_handler_common</code> 購読 (<code>frrcfgd.py:91, 2306</code>)</td>
+<td>CONFIG_DB の更新を FRR <code>address-family ... / neighbor &lt;addr&gt; ...</code> コマンド列へ変換</td>
+</tr>
+<tr>
+<td><code>frr-mgmt-framework</code></td>
+<td>running-config → CONFIG_DB 双方向同期 (<code>frrcfgd.py:2137</code>)</td>
+<td>vtysh で投入された AF 設定を CONFIG_DB に書き戻す</td>
+</tr>
+<tr>
+<td><code>sonic-mgmt-common</code> (gNMI/REST)</td>
+<td>OpenConfig BGP neighbor afi-safis マッピング</td>
+<td>northbound API 経由の neighbor AF 設定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">暗黙参照の特徴<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<p><code>BGP_NEIGHBOR_AF</code> は YANG leafref では <code>BGP_NEIGHBOR</code> と <code>BGP_GLOBALS</code> の 2 件しか宣言しないが、<code>frrcfgd.py:nbr_af_key_map</code> (L1895-1920) が値を FRR コマンドに展開する際、<strong>route-map / prefix-list / filter-list / unsuppress-map の各オブジェクト名は FRR 側名前空間で解決される</strong>ため、CONFIG_DB の <code>ROUTE_MAP</code> テーブルや FRR <code>vtysh</code> で先に定義しておく必要がある。これらは YANG では強制されない暗黙参照である。</p>
+<p>また、<code>local_asn</code> 未設定 VRF への BGP_NEIGHBOR_AF 更新は <code>frrcfgd.py:2660</code> で <code>ignore table {} update because local_asn for VRF {} was not configured</code> の LOG_DEBUG を出して silent skip する点に注意。</p>
+<!-- /cross-refs -->
+
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <blockquote>
@@ -35737,7 +35922,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_16">書き込み経路依存の乖離<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_17">書き込み経路依存の乖離<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
