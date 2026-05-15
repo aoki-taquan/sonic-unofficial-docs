@@ -249,6 +249,42 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-utilities/config/main.py`
+
+### CREATE 順序
+
+| ステップ | 書込み対象 | 理由 |
+|---------|-----------|------|
+| 1 | `VXLAN_TUNNEL` | EVPN L3 VNI を使う場合のみ |
+| 2 | `VXLAN_TUNNEL_MAP` (VLAN-VNI エントリ) | `VRF.vni` の前提条件。CLI が存在確認 (main.py:7759) |
+| 3 | **`VRF\|<name>`** | Linux VRF デバイス作成。vrfmgrd が STATE_DB に `state=ok` を書く (vrfmgr.cpp:289) |
+| 4 | `VRF\|<name>.vni` (mod_entry) | VRF 作成後かつ VXLAN_TUNNEL_MAP 確認後に設定 (main.py:7774) |
+| 5 | `*_INTERFACE\|<port>` (vrf_name 指定) | intfmgrd が `isIntfStateOk(vrf_name)` で VRF の STATE_DB ready を確認してから処理 (intfmgr.cpp:839) |
+| 6 | `BGP_GLOBALS\|<vrf_name>` | Linux VRF デバイス作成後が推奨。逆順でも FRR 側で retry されるがタイムアウト依存になる |
+
+### DELETE 順序
+
+| ステップ | 書込み対象 | 理由 |
+|---------|-----------|------|
+| 1 | `SYSLOG_SERVER` (VRF 参照エントリ) | CLI が参照存在時に削除を拒否 (main.py:7712-7717) |
+| 2 | `BGP_GLOBALS\|<vrf_name>` DEL | FRR VRF 設定を先に解除 |
+| 3 | ROUTE テーブルの VRF 内全ルート DEL | routeorch が `decreaseVrfRefCount` を呼ぶまで ref_count が残る (routeorch.cpp:2773) |
+| 4 | `*_INTERFACE\|<port>` (vrf_name 参照ロウ) DEL | intfsorch が `decreaseVrfRefCount` を呼ぶ (intfsorch.cpp:640)。CLI は自動処理 (main.py:7729) |
+| 5 | `VRF\|<name>.vni` を 0 に SET | VNI マッピング解除 (vrfmgr.cpp:337)。CLI `del_vrf_vni_map` が自動実行 |
+| 6 | **`VRF\|<name>`** DEL | orchagent の ref_count が 0 になると VRFOrch が SAI VR を削除し STATE_VRF_OBJECT_TABLE を消去。vrfmgrd がそれを確認して Linux デバイスを削除 (vrfmgr.cpp:331-346) |
+
+### 重要な挙動
+
+- **ref_count ガード**: `VRF|<name>` DEL は orchagent 内で `vrf_table_[name].ref_count == 0` になるまで `delOperation` が `return false` を返し続ける (vrforch.cpp:169)。所属インタフェース・ルート・MPLS ルート・SRv6 SID をすべて削除してから VRF を DEL すること。
+- **STATE_DB ready 待機**: `*_INTERFACE` への `vrf_name` 指定は、vrfmgrd が `STATE_DB.VRF_TABLE|<name>` に `state=ok` を書くまで Consumer キューで待機する。逆順でも最終収束するが、VRF 作成が完了するまでインタフェース設定は適用されない。
+- **mgmt VRF 特例**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` による mgmt VRF は hostcfgd の初期化済みを前提とし、Linux VRF デバイス `ip link add` をスキップする (vrfmgr.cpp:176-183)。通常の `VRF` テーブル書込みとは別経路。
+- **VNI 変更制限**: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 `vni=0` に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。
+
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
