@@ -364,6 +364,42 @@ YANG スキーマに `default` 文が存在しないフィールドでも、cons
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-cross-refs.md`
+
+### PORTCHANNEL が参照するテーブル（→ 方向）
+
+| 参照先テーブル / DB | 参照箇所 | 理由 |
+|---|---|---|
+| `PORT` (CONFIG_DB) | `teammgr.cpp:32, 212-225` | `addLag()` でポート存在を確認。未存在時は `task_need_retry` で LAG 作成保留 |
+| `DEVICE_METADATA` (CONFIG_DB) | `teammgr.cpp:31,56,64` | システム MAC (`mac` フィールド) を読み込み LAG の hwaddr に使用。warm reboot 時も参照 |
+| `STATE_PORT_TABLE` (STATE_DB) | `teammgr.cpp:37,165` | ポート状態変化イベントを購読。ポートが STATE_DB に未登録だとメンバー追加が保留 |
+
+### PORTCHANNEL を参照するテーブル（← 方向）
+
+| 参照元テーブル | 参照箇所 | 制約内容 |
+|---|---|---|
+| `PORTCHANNEL_MEMBER` (CONFIG_DB) | `config/main.py:2890` | 非空 LAG の DEL を拒否。member 追加時も ACL/PBH バインドチェック (`main.py:2997-3010`) |
+| `PORTCHANNEL_INTERFACE` (CONFIG_DB) | orchagent LagOrch | L3 interface `ref_count > 0` のまま DEL すると `Failed to remove ref count %d LAG %s` エラー |
+| `VLAN_MEMBER` (CONFIG_DB) | `config/main.py:2886-2888` | LAG が VLAN に所属するまま DEL すると `has vlan {} configured` エラー |
+| `ACL_TABLE` (CONFIG_DB) | `config/main.py:2997-3002` | member ポートが ACL にバインド済みだと `portchannel member add` 拒否 (**YANG 制約なし**) |
+| `PBH` / PBH_TABLE (CONFIG_DB) | `config/main.py:3005-3010` | member ポートが PBH にバインド済みだと `portchannel member add` 拒否 (**YANG 制約なし**) |
+| `MCLAG_DOMAIN` / `MCLAG_INTERFACE` (CONFIG_DB) | `config/mclag.py:145,293` | `peer_link` に PortChannel 名を指定可。`mclag member add` で `if_type=PortChannel` として登録 |
+
+### STATE_DB 書込み（副作用）
+
+| 書込み先 | 用途 |
+|---|---|
+| `STATE_LAG_TABLE` (STATE_DB) | teammgrd が LAG up/down 状態を書込み。`show interfaces portchannel` が参照 |
+| `STATE_MACSEC_INGRESS_SA_TABLE` (STATE_DB) | `macsec` フィールドが設定されている場合に MACsec SA と連動 (`teammgr.cpp:116-117`) |
+
+!!! warning "YANG 未定義制約"
+    ACL_TABLE バインドチェック・PBH バインドチェック・VLAN_MEMBER ガードはいずれも CLI アドホックバリデーションであり、YANG スキーマには `must` / `leafref` 制約が存在しない (`# TODO: MISSING CONSTRAINT IN YANG MODEL`)。NETCONF/gNMI 経由で直接書き込む場合はこれらのガードが効かない。
+
+<!-- /cross-refs -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
