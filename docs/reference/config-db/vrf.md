@@ -249,4 +249,48 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang`
+
+### `STATE_VRF_TABLE` (STATE_DB) — readiness sentinel
+
+各 `*_INTERFACE` テーブルで `vrf_name` が指定されたとき、`intfmgrd` は `STATE_DB::STATE_VRF_TABLE` に VRF が登録済みであることを `isIntfStateOk(vrf_name)` で確認する（`intfmgr.cpp:671-684`）。未登録なら SET をスキップして Consumer キューに残す。orchagent 側も `isVRFexists(vrf_name)` で VRF OID 存在を確認する（`intfsorch.cpp:826-830`）。YANG leafref `VRF.name` は静的参照だが、この STATE_DB 依存は実行時ガードとして機能する。
+
+### `VRF_OBJECT_TABLE` (STATE_DB) — 削除同期 sentinel
+
+`orchagent/VRFOrch` が SAI Virtual Router 作成成功後に `STATE_VRF_OBJECT_TABLE|<name>` へ `state=ok` を書き込む。`vrfmgrd` は VRF 削除前に `isVrfObjExist()` でこのエントリを確認し、orchagent 側 SAI オブジェクトが残存する間は削除をリトライ待ちにする。VRF テーブル設定には一切現れない 2 フェーズ非同期削除の同期機構。
+
+### `MGMT_VRF_CONFIG` (CONFIG_DB) — mgmt VRF 特例制御
+
+`vrfmgrd` は `MGMT_VRF_CONFIG|vrf_global` の `mgmtVrfEnabled` と `in_band_mgmt_enabled` を参照し、いずれかが `false` のとき `VRF` テーブルへの SET を DEL として上書き処理する（`vrfmgr.cpp:257`）。`mgmt` VRF は通常プール（1001–5096）を使わず固定 ID `6000` を割り当てる（`vrfmgr.cpp:180-183`）。この制御ロジックは `VRF` テーブルフィールドには一切現れない。
+
+### `VXLAN_TUNNEL_MAP` (CONFIG_DB) — `vni` 設定の副作用 WRITE
+
+`VRF.vni` に非ゼロ値を設定すると、`vrfmgrd` が自動で `VXLAN_TUNNEL_MAP` に `evpn_map_<vni>_<vrf>` エントリを作成する（`vrfmgr.cpp:510`）。`vni=0` に戻すと対応エントリが削除される。`VRF` テーブルの `vni` フィールド変更が別テーブルを書き換えるという暗黙の副作用。
+
+### YANG leafref 被参照テーブル
+
+以下のテーブルは `vrf_name` フィールドで `VRF.name` を leafref 参照する。`VRF` エントリが削除されると orphan になり、各 consumer がエラーを返す。
+
+| 被参照テーブル | leafref フィールド | orphan 時の影響 |
+|--------------|------------------|---------------|
+| `INTERFACE` | `vrf_name` | intfmgrd / intfsorch が VRF not found エラー |
+| `VLAN_INTERFACE` | `vrf_name` | 同上 |
+| `PORTCHANNEL_INTERFACE` | `vrf_name` | 同上 |
+| `LOOPBACK_INTERFACE` | `vrf_name` | 同上 |
+| `VLAN_SUB_INTERFACE` | `vrf_name` | 同上 |
+| `BGP_GLOBALS` | key `<vrf_name>` | bgpcfgd が `"non-default VRF {} was not configured"` エラー |
+
+### key 埋め込み参照（leafref 非強制）
+
+`STATIC_ROUTE|<vrf_name>|<prefix>` および `PIM_GLOBALS|<vrf>|<af>` / `PIM_INTERFACE|<vrf>|<af>|<interface>` は key に VRF 名を直接埋め込む形式。YANG leafref による強制バリデーションはなく、VRF が存在しなくても CONFIG_DB への書き込みは成功するが、各 manager（staticroutemgrd、frr-mgmt-framework）が FRR への反映で失敗する。
+
+### Linux ルーティングテーブル ID（隠れたリソース上限）
+
+`vrfmgrd` は VRF 追加のたびに Linux カーネルのルーティングテーブル ID（`VRF_TABLE_START=1001` 〜 `VRF_TABLE_END=5097`）を消費する。CONFIG_DB フィールドに現れない外部リソースで、最大 4096 VRF を超えると `getFreeTable()=0` となり Linux VRF デバイス作成が失敗する。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
