@@ -297,6 +297,59 @@ App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqpro
 
 <!-- /pubsub -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+ALARM テーブルの書込パスは `App → events_publish() → ZMQ XSUB/XPUB → eventd Alarm Consumer → HSET/DEL EVENT_DB` という多段構成のため、障害箇所により挙動が大きく異なる。設計上 publisher 側は fire-and-forget で、subscriber 側 (eventd) は単体プロセスの可用性を優先してエラーをループ内で握り潰す。
+
+### publisher 側 (events_publish 経路)
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| eventd 未起動状態で `events_init_publisher()` | echo handshake が `EVENTS_SERVICE_TIMEOUT_MS_PUB` で timeout → publisher 取得失敗 | `SWSS_LOG_ERROR` "Failed to init event service rc=%d" | `sonic-swss-common/common/events.cpp:97-109` |
+| publisher 接続確立 (echo handshake) 前に publish | ZMQ PUB 仕様により **drop** (subscriber 未接続) | (publisher 側ログなし) | `events.cpp:103` コメント "Any message published before connection establishment is dropped." |
+| `zmq_message_send` 失敗 | `publish()` が非 0 rc を返却。再送ロジックなし (fire-and-forget) | `SWSS_LOG_ERROR` "failed to send for tag %s" | `events.cpp:160-163, 208-211` |
+| str_data が `EVENT_MAXSZ` 超過 | 警告ログのみで **publish は継続** (drop しない) | `SWSS_LOG_ERROR` "event size > expected max. Still published." | `events.cpp:146-149` |
+
+### eventd 本体 / ZMQ broker 側
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `zmqproxy` の `zmq_bind` (XSUB/XPUB/CAPTURE) 失敗 | `eventd_proxy::init()` が非 0 を返却 → eventd プロセス起動失敗 | "Failing to bind XSUB/XPUB to %s" / "failing to get ZMQ_XSUB/XPUB/PUB socket" | `sonic-buildimage/src/sonic-eventd/src/eventd.cpp:77-107` |
+| `event_receive` で例外 | `rc=-1`・エラーログを出して **ループ継続** (heartbeat 経路で復帰試行) | `SWSS_LOG_ERROR` "Receive event failed with %s" | `eventd.cpp:265-274` |
+| `event_receive` rc < 0 戻り | 同上・ループ継続・heartbeat publish 試行 | `SWSS_LOG_ERROR` "event_receive failed with rc=%d" | `eventd.cpp:284-287` |
+| heartbeat publish 失敗 | エラーログのみ・ループ継続 | `SWSS_LOG_ERROR` "Failed to publish heartbeat rc=%d" | `eventd.cpp:291-294` |
+| eventd shutdown 中の in-flight event | キャッシュ内の数件は **欠落許容** (設計上の割り切り) | コメント "A shutdown could lose messages in cache." | `eventd.cpp:302-308` |
+| capture cache 書込で `bad_alloc` | 例外を catch して `CAP_STATE_LAST` へ fallback (最終 1 件のみ保持)・ALARM 本体は影響なし | `SWSS_LOG_ERROR` "Cache save event failed with %s" | `eventd.cpp:518-526` |
+
+### ALARM 書込 / Redis 側
+
+| 失敗条件 | 結果 | evidence |
+|---|---|---|
+| Redis (EVENT_DB) 切断中の `HSET ALARM|<id>` | eventd 側で Redis 例外の明示捕捉なし → プロセス abort → supervisord の `supervisor-proc-exit-listener` がコンテナ再起動を発火 | eventd.cpp 全体で `RedisCommand` 例外の try/catch なし; `dockers/docker-eventd/supervisord.conf:47-57`, `dockers/docker-eventd/critical_processes:1` |
+| `stats_collector::start` で `COUNTERS_DB` connector 取得失敗 | 例外を catch・`run_writer` スレッド未起動・**ALARM 本体への書込は別経路のため影響なし**。`COUNTERS_EVENTS` カウンタのみ停止 | `eventd.cpp:177-184` |
+| 同一 `type-id`+`resource`+`text` の連続 RAISE_ALARM | Alarm Consumer 内キャッシュで黙棄 (flooding 防止)・`ALARM_STATS` も増えない | HLD §3.1.3 |
+| CLEAR_ALARM を対応 RAISE なしで受信 | lookup map にエントリなし → DEL 発行せず no-op | HLD §3.1.4.2 |
+
+### eventd プロセス落ち時の挙動
+
+eventd の supervisord 設定は `autorestart=false` だが、`critical_processes` に `program:eventd` が登録されているため、`supervisor-proc-exit-listener-rs --container-name eventd` が PROCESS_STATE_EXITED イベントを受けて **コンテナごと再起動** を発火する設計である[^d1]。再起動中:
+
+- publisher 側の `events_publish()` は ZMQ PUB ソケットの送信キューに積まれるが、subscriber (eventd) 未接続のため HWM 超過分は drop。再起動完了後に再 publish しないと該当 ALARM は失われる。
+- `COUNTERS_EVENTS` の `missed_internal` / `missed_to_cache` / `missed_by_slow_receiver` は eventd 内の `stats_collector` が周期書込するため、eventd 落ち中は **カウンタも止まる** (= 欠損が可視化されない)。
+- リブート (cold/warm/fast) と同様、復旧後も ALARM テーブルは空のまま。アプリ側に再 RAISE を促す仕組みは Event/Alarm Framework 側には存在しない。
+
+### healthd (system-health) との独立性
+
+`src/system-health/health_checker/sysmonitor.py` の healthd は購読対象が `STATE_DB:FEATURE` と systemd D-Bus のみで、**ALARM テーブルを購読しない**。従って ALARM 書込失敗・eventd 落ちは healthd の `SYSTEM_READY` / `ALL_SERVICE_STATUS` に直接の影響を与えない (コンテナ単位の検出は別経路)。
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-failure.md`
+
+[^d1]: `sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57` および `dockers/docker-eventd/critical_processes:1`。`autorestart=false` + `critical_processes` 登録の組み合わせは「単体再起動はしないが、致命プロセスとして検出されたらコンテナ全体を再起動する」SONiC 共通パターン。
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:77-107,177-184,265-294,302-308,518-526; sonic-swss-common/common/events.cpp:97-109,146-149,160-163,208-211; sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57; sonic-buildimage/dockers/docker-eventd/critical_processes:1 -->
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
