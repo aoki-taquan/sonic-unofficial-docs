@@ -189,3 +189,61 @@ APPL_DB `BFD_SESSION_TABLE` に対応する YANG schema は存在しない。す
 - `tx_interval` / `rx_interval` のデフォルトも経路で異なる: hardware=1000ms、bgpcfgd BfdMgr=200ms、static route BFD=50ms。
 - APPL_DB `BFD_SESSION_TABLE` に対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### bfdorch.cpp マクロ定義 (L15-23)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `BFD_SESSION_DEFAULT_TX_INTERVAL` | `1000` ms | `tx_interval` 未指定時のデフォルト送信間隔。SAI 投入時に ×1000 μs 変換 | `bfdorch.cpp:15` |
+| `BFD_SESSION_DEFAULT_RX_INTERVAL` | `1000` ms | `rx_interval` 未指定時のデフォルト最小受信間隔。SAI 投入時に ×1000 μs 変換 | `bfdorch.cpp:16` |
+| `BFD_SESSION_DEFAULT_DETECT_MULTIPLIER` | `10` | `multiplier` 未指定時のデフォルト検知乗数 (hardware BFD 経路) | `bfdorch.cpp:17` |
+| `BFD_SESSION_DEFAULT_TOS` | `192` (0xC0) | `tos` 未指定時のデフォルト IP TOS。DSCP 48 << 2 \| ECN 0 = 192 | `bfdorch.cpp:18-19` |
+| `BFD_SESSION_MILLISECOND_TO_MICROSECOND` | `1000` | ms → μs 変換係数 (SAI `MIN_TX` / `MIN_RX` 属性投入用) | `bfdorch.cpp:20` |
+| `BFD_SRCPORTINIT` | `49152` | UDP src port ローテーション開始値 (IANA ephemeral 範囲開始 = RFC 5881 §4 要求) | `bfdorch.cpp:21` |
+| `BFD_SRCPORTMAX` | `65536` | UDP src port ローテーション上限値 (exclusive)。実値域は `49152–65535` | `bfdorch.cpp:22` |
+| `NUM_BFD_SRCPORT_RETRIES` | `3` | SAI `create_bfd_session()` 失敗時の UDP src port 変更リトライ回数上限 | `bfdorch.cpp:23` |
+
+### bfdorch.cpp 範囲・パラメータ制約
+
+- **`tx_interval` / `rx_interval`**: 型は `uint32_t` (`bfdorch.cpp:343-344`)。明示的な範囲チェックなし (=0 や巨大値も SAI に流れる)。SAI 投入時に `×1000` するため、`UINT32_MAX / 1000 ≈ 4.29×10^6 ms` を超える値はマイクロ秒変換でオーバーフローする (実装側で未防御)。
+- **`multiplier`**: 型は `uint8_t` (`bfdorch.cpp:345`)。`to_uint<uint8_t>()` パース。範囲 `0–255`。256 以上の文字列指定は `to_uint` が例外を投げる (`bfdorch.cpp:370`)。
+- **`tos`**: 型は `uint8_t` (`bfdorch.cpp:346`)。範囲 `0–255` (= IP TOS フィールド 8bit 全域)。
+- **UDP src port**: `bfd_src_port()` が `static uint32_t port = BFD_SRCPORTINIT` を保持し post-increment。`port >= BFD_SRCPORTMAX` で `BFD_SRCPORTINIT` にラップ。よって有効範囲は **49152–65535** (16384 個)。プロセス再起動で 49152 にリセット。<!-- evidence: bfdorch.cpp:647-655 -->
+
+### SAI BFD 列挙マッピング (bfdorch.cpp L33-54)
+
+`session_type_map` / `session_type_lookup` の双方向マッピング:
+
+| `type` 文字列 | SAI 列挙 | デフォルト |
+|--------------|----------|----------|
+| `"demand_active"` | `SAI_BFD_SESSION_TYPE_DEMAND_ACTIVE` | - |
+| `"demand_passive"` | `SAI_BFD_SESSION_TYPE_DEMAND_PASSIVE` | - |
+| `"async_active"` | `SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE` | **デフォルト** (`bfdorch.cpp:340`) |
+| `"async_passive"` | `SAI_BFD_SESSION_TYPE_ASYNC_PASSIVE` | - |
+
+STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
+
+| SAI 状態 | 文字列 |
+|---------|--------|
+| `SAI_BFD_SESSION_STATE_ADMIN_DOWN` | `"Admin_Down"` |
+| `SAI_BFD_SESSION_STATE_DOWN` | `"Down"` (初期値) |
+| `SAI_BFD_SESSION_STATE_INIT` | `"Init"` |
+| `SAI_BFD_SESSION_STATE_UP` | `"Up"` |
+
+セッション作成直後の初期 state は `SAI_BFD_SESSION_STATE_DOWN` = `"Down"`。<!-- evidence: bfdorch.cpp:544, 567, 571 -->
+
+### その他の固定リテラル
+
+| 項目 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `encapsulation_type` 初期値 | `SAI_BFD_ENCAPSULATION_TYPE_NONE` | エンキャプ固定 (現状他値の経路なし) | `bfdorch.cpp:341` |
+| `multihop` 初期値 | `false` | `multihop` 未指定時 | `bfdorch.cpp:347` |
+| ローカル discriminator 開始値 | `1` (`bfd_gen_id()`) | RFC 5880 §6.8.1 要求の非ゼロ一意値。プロセス再起動で 1 に戻る | `bfdorch.cpp:643-645` |
+| Remote discriminator 初期値 | `0` | SAI `REMOTE_DISCRIMINATOR` 属性 (ピア発見前) | `bfdorch.cpp:430` |
+| VRF/Interface 既定値 | `"default"` | hardware lookup 有効モード判定 | `bfdorch.cpp:471, 520-528` |
+
+> **スキャン証跡**: `bfdorch.cpp` L1-60, L33-54, L340-475, L505-530, L580-655, L780-800 を読了。マクロ 8 件、SAI 列挙文字列マップ 4+4=8 件、初期値リテラル 5 件を抽出。中間ファイル: `meta/_intermediate/cdb-flow/bfd-orch-constants.md`
+<!-- /constants -->
