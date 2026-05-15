@@ -93,10 +93,58 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G) — ZMQ 経由の購読
+
+<!-- evidence: sonic-swss/orchagent/p4orch/p4orch.h L46 / p4orch.cpp L36-43, L80, L126-200 / orchagent/orchdaemon.cpp L848-849 / p4orch/mirror_session_manager.cpp L82, L111 -->
+
+`FIXED_MIRROR_SESSION_TABLE` は **通常の redis ConsumerStateTable / keyspace 通知パスではなく、専用 ZMQ チャネル経由で配送される**。
+これは CONFIG_DB `MIRROR_SESSION` を購読する `MirrorOrch`（`orchagent/mirrororch.cpp` — 通常の `Orch` + `ConsumerStateTable`）とは根本的に異なる通信モデルである[^pubsub-1]。
+
+### 転送経路
+
+| 層 | クラス / 実体 | 役割 |
+|----|--------------|------|
+| 受信エンドポイント | `swss::ZmqServer` (`m_p4OrchZmqServer`, エンドポイント `m_p4OrchZmqServerEp`) | P4RT クライアントからの ZMQ フレームを受信 |
+| Orch 基底 | `P4Orch : public ZmqOrch` | 全 P4RT テーブルを 1 インスタンスで保有。`ZmqOrch(db, tableNames, zmqServer, orderedQueue=true, dbPersistence=false)` で初期化[^pubsub-2] |
+| ディスパッチ | `P4Orch::doTask(ConsumerBase &consumer)` | バッチ受信時に `table_name == APP_P4RT_TABLE_NAME` を検証し、`m_p4TableToManagerMap` でテーブル別マネージャに振り分け[^pubsub-3] |
+| ハンドラ | `p4orch::MirrorSessionManager` | `APP_P4RT_MIRROR_SESSION_TABLE_NAME` (= `"FIXED_MIRROR_SESSION_TABLE"`) で登録[^pubsub-4] |
+| 応答パス | `ResponsePublisher m_publisher("APPL_DB", buffered=true, db_write_thread=true, zmqServer)` | 処理結果ステータスを同じ `ZmqServer` 経由で P4RT に返す[^pubsub-5] |
+
+### redis keyspace ベースとの差異
+
+- `Consumer` / `ConsumerStateTable` の redis SUBSCRIBE / keyspace 通知は **使わない**。トリガは redis イベントではなく ZMQ フレーム受信である。
+- そのため `redis-cli psubscribe '__keyspace@*__:FIXED_MIRROR_SESSION_TABLE*'` 等での観測はできない。
+- P4RT クライアントは ZMQ ソケットに対して書き込み、orchagent 側 `ZmqServer` がキューに積み、`P4Orch::doTask` が同期的にドレインする。
+- APPL_DB への書き込みは `ResponsePublisher` 経由で行われるが、これは下流リーダのための副作用であり、購読のトリガではない。
+
+### コンストラクタの構造的証拠
+
+```cpp
+// orchagent/p4orch/p4orch.cpp:36-43
+P4Orch::P4Orch(swss::DBConnector* db, std::vector<std::string> tableNames,
+               ZmqServer* zmqServer, VRFOrch* vrfOrch, CoppOrch* coppOrch)
+    : ZmqOrch(db, tableNames, zmqServer, /*orderedQueue=*/true,
+              /*dbPersistence=*/false),
+      m_zmqServer(zmqServer),
+      m_publisher("APPL_DB", /*bool buffered=*/true,
+                  /*db_write_thread=*/true, zmqServer)
+```
+
+`MirrorOrch`（CONFIG_DB 側）のコンストラクタは `Orch(confDbConnector.first, confDbConnector.second)` を呼ぶだけで `ZmqServer` を一切受け取らない。両経路は構造的に完全に独立している[^pubsub-1]。
+
+[^pubsub-1]: CONFIG_DB 側 `MirrorOrch` の通常 Orch 経路: `orchagent/mirrororch.cpp` L79-110. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/mirrororch.cpp#L79-L110>
+[^pubsub-2]: `P4Orch : public ZmqOrch`: `orchagent/p4orch/p4orch.h` L46. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/p4orch/p4orch.h#L46>. コンストラクタ: `orchagent/p4orch/p4orch.cpp` L36-43.
+[^pubsub-3]: `P4Orch::doTask(ConsumerBase&)` 振り分け: `orchagent/p4orch/p4orch.cpp` L126-200. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/p4orch/p4orch.cpp#L126-L200>
+[^pubsub-4]: ZmqServer 生成と `MirrorSessionManager` 登録: `orchagent/orchdaemon.cpp` L848-849, `orchagent/p4orch/p4orch.cpp` L80.
+[^pubsub-5]: 応答 publish: `orchagent/p4orch/mirror_session_manager.cpp` L82, L111.
+
+<!-- /pubsub -->
+
 ## 購読者
 
-- `p4orch` 内の `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`)
-- CONFIG_DB `MIRROR_SESSION` テーブルの `MirrorOrch` とは独立した別経路
+- `p4orch` 内の `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`)。`P4Orch::doTask(ConsumerBase&)` から ZMQ 経由で配送される
+- CONFIG_DB `MIRROR_SESSION` テーブルの `MirrorOrch` とは独立した別経路（redis ConsumerStateTable ベース）
 
 ## 関連リファレンス
 
