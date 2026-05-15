@@ -512,6 +512,65 @@ CONFIG_DB `CRM` フィールド名・COUNTERS_DB `CRM:STATS` フィールド名�
 > **Evidence**: `sonic-swss/orchagent/routeorch.cpp` (`publishRouteState` L3185-3201, `updateDefRouteState` L287-295, CRM inc/dec 各所), `orchagent/crmorch.cpp:400-401, 1067-1091`, `orchagent/flex_counter/flowcounterrouteorch.cpp:33-34, 152-178, 921-922`; 詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/app-route-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+APPL_DB `ROUTE_TABLE` は CONFIG_DB の `SubscriberStateTable` (keyspace 通知) ではなく、APPL_DB 系の **`ProducerStateTable` / `ConsumerStateTable`** 経路（channel = `ROUTE_TABLE_CHANNEL`）で同期される。`RouteOrch` は `ZmqOrch` を継承しており、CONFIG_DB `FEATURE` の `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` (既定 `false`) が `true` のときのみ Redis を経由せず **ZMQ TCP socket** に切り替わる。応答パスは `ResponsePublisher m_publisher{"APPL_STATE_DB"}` (`orch.h:382`) を介して APPL_STATE_DB へ書き込む。
+
+### 購読: `ZmqOrch::addConsumer` の分岐
+
+`routeorch.cpp:40-55` の初期化リストで `RouteOrch` は `ZmqOrch(db, tableNames, zmqServer)` を呼ぶ。`zmqServer` は `orchdaemon.cpp:334-337` で:
+
+```cpp
+auto enable_route_zmq = get_feature_status(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false);
+auto route_zmq_sever = enable_route_zmq ? m_zmqServer : nullptr;
+gRouteOrch = new RouteOrch(m_applDb, route_tables, ..., route_zmq_sever);
+```
+
+として決まる。`ZmqOrch::addConsumer` (`zmqorch.cpp:61-79`) は `APPL_DB` (db 0) について以下に分岐する:
+
+| `zmqServer` | 生成される Consumer | 通知プリミティブ |
+|---|---|---|
+| `nullptr` (既定 / ZMQ off) | `swss::ConsumerStateTable` (`gBatchSize`, pri=`routeorch_pri=5`) | Redis `ROUTE_TABLE_CHANNEL` への明示的 `PUBLISH` (ProducerStateTable LUA 由来) |
+| 非 null (ZMQ on) | `swss::ZmqConsumerStateTable` | ZMQ PAIR socket (`tcp://127.0.0.1:8100` 既定) |
+
+writer 側 `fpmsyncd::RouteSync` (`routesync.cpp:156`) も対称に切り替わる (`lib/orch_zmq_config.cpp:117-145` の `createProducerStateTable`)。ZMQ 有効時は `ZmqProducerStateTable` → `ZmqConsumerStateTable` の TCP ピアとなるため Redis LIST/PUBSUB を経由せず、fpmsyncd は空文字フィールドも常に送る（Phase D `<!-- defaults -->` で言及した挙動と一致）。`SubscriberStateTable` / `NotificationConsumer` はこのテーブルでは使われない。
+
+### 応答 publish: `ResponsePublisher` (APPL_STATE_DB)
+
+`RouteOrch` ctor (`routeorch.cpp:57-58`) で `m_publisher.setBuffered(true)` と `m_publisher.m_directDbWrite = true` を設定。`publishRouteState()` (`routeorch.cpp:3185-3201`) が:
+
+```cpp
+m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, /*replace=*/false);
+```
+
+を `routeorch.cpp:923, 1050, 1090, 2729, 2970` から呼ぶ。`ResponsePublisher::publish` (`response_publisher.cpp:96-150`):
+
+- 内部で `response_channel = "APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL"` を構築するが、`m_enable_db_write_and_notify` のデフォルトが `false` で `RouteOrch` はこれを有効化しないため、**NotificationProducer 経由の応答 channel publish は走らない**（P4Orch 等とは異なる挙動）。
+- `writeToDBInternal` (`response_publisher.cpp:172-204`) が `directDbWrite=true` の直書きパスで `APPL_STATE_DB:ROUTE_TABLE|<key>` を SET (`protocol=<value>`) または DEL する。
+- `m_publisher.flush()` は bulk `doTask` 末尾 (`routeorch.cpp:1231`) で叩かれる。
+
+| publish 引数 | RouteOrch での値 |
+|---|---|
+| `table` | `"ROUTE_TABLE"` (`APP_ROUTE_TABLE_NAME`) |
+| `key` | `<vrf>:<prefix>` または `<prefix>` |
+| `intent_attrs` | SET 時 `[("protocol", ctx.protocol)]`、DEL 時 `[]` |
+| `status` | bulk 結果の `ReturnCode` (SAI 成功時 ok) |
+| `replace` | `false` |
+
+### 通信パスまとめ
+
+| 役割 | クラス | 経路 | 根拠 |
+|---|---|---|---|
+| 書込 (既定) | `swss::ProducerStateTable` | Redis LUA + `PUBLISH ROUTE_TABLE_CHANNEL` | `fpmsyncd/routesync.cpp:156` |
+| 書込 (ZMQ on) | `swss::ZmqProducerStateTable` | ZMQ PAIR `tcp://127.0.0.1:8100` | `lib/orch_zmq_config.cpp:117-145` |
+| 購読 (既定) | `swss::ConsumerStateTable` | `SUBSCRIBE ROUTE_TABLE_CHANNEL` + SPOP/HGETALL | `zmqorch.cpp:71-73` |
+| 購読 (ZMQ on) | `swss::ZmqConsumerStateTable` | ZMQ socket | `zmqorch.cpp:65-68` |
+| 応答 | `ResponsePublisher` (`APPL_STATE_DB`) `directDbWrite=true` | APPL_STATE_DB 直接 HSET/DEL（応答 channel は無効化） | `orch.h:382`, `routeorch.cpp:57-58, 3185-3201`, `response_publisher.cpp:96-204` |
+
+詳細スキャンと根拠コードは `meta/_intermediate/cdb-flow/app-route-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 

@@ -372,3 +372,66 @@ if (status != SAI_STATUS_SUCCESS)
 
 [^sidemem]: 副次 DB 書込スキャンの中間メモ: `meta/_intermediate/cdb-flow/appl-db-route-side.md`
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`orchagent/routeorch.cpp` / `orchagent/orch.h` / `orchagent/crmorch.cpp` に固定された
+ハードコード定数の一覧。APPL_DB `ROUTE_TABLE` の購読側（`RouteOrch`）と
+CRM 観測側（`CrmOrch`）で振る舞いを決める数値・文字列リテラルがここに集中する[^rorch][^crmorch]。
+
+### ECMP / NHG 上限 (`routeorch.cpp` L37-L38)
+
+| 定数 | 値 | 用途 |
+|------|---|------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` 取得失敗時のフォールバック上限 |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox 補正で `m_maxNextHopGroupCount` を除算する係数 |
+
+補正後の値は STATE_DB `SWITCH_CAPABILITY|switch` テーブルの
+`MAX_NEXTHOP_GROUP_COUNT` フィールドに publish される（L89-L91）。
+
+### プラットフォーム判定文字列 (`orch.h` L42 / L46 / L49)
+
+| 定数 | 値 | 使用箇所 |
+|------|---|---------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | `routeorch.cpp` L84 で `getenv("platform")` に対し `strstr()` 部分一致 → ECMP group count を `/= 32` 補正 |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | ダミー SAI シム（libsaivs）の検出 |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight プラットフォーム検出 |
+
+### VOQ chassis 専用マジック値 (`routeorch.cpp` L109-L122)
+
+| リテラル | 用途 |
+|---------|------|
+| `"voq"` | `gMySwitchType` の比較対象。CONFIG_DB `DEVICE_METADATA|localhost:switch_type` 値 |
+| `128` (インライン) | `gMySwitchType == "voq"` かつ SAI 値が 128 以上のとき、`SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` をこの値で書き戻す（`#define` 化はされていない） |
+
+### CRM 既定値・上限 (`crmorch.cpp` L9-L17)
+
+| 定数 | 値 | 用途 |
+|------|---|------|
+| `CRM_POLLING_INTERVAL_DEFAULT` | `5 * 60` (= 300 秒) | CRM 既定ポーリング間隔 |
+| `CRM_THRESHOLD_LOW_DEFAULT` | `70` | 既定低位閾値 (%) |
+| `CRM_THRESHOLD_HIGH_DEFAULT` | `85` | 既定高位閾値 (%) |
+| `CRM_THRESHOLD_TYPE_DEFAULT` | `CRM_PERCENTAGE` | 既定の閾値判定方式 |
+| `CRM_EXCEEDED_MSG_MAX` | `10` | `THRESHOLD_EXCEEDED` syslog のスパム抑止上限。`exceededLogCounter` がこの値未満の間のみログ発火（L1168） |
+| `CRM_ACL_RESOURCE_COUNT` | `256` | CRM ACL リソース数の固定値 |
+| `CRM_POLLING_INTERVAL` | `"polling_interval"` | CONFIG_DB `CRM` テーブルのフィールド名 |
+| `CRM_COUNTERS_TABLE_KEY` | `"STATS"` | STATE_DB `CRM:STATS` のキー名 |
+
+### CRM リソース ↔ SAI 属性マップ (`crmorch.cpp` L74-L94)
+
+ROUTE_TABLE に関係する 4 リソースの紐付け:
+
+| `CrmResourceType` | リソース名文字列 | SAI 属性 |
+|-------------------|---------------|---------|
+| `CRM_IPV4_ROUTE` | `"IPV4_ROUTE"` | `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` |
+| `CRM_IPV6_ROUTE` | `"IPV6_ROUTE"` | `SAI_SWITCH_ATTR_AVAILABLE_IPV6_ROUTE_ENTRY` |
+| `CRM_NEXTHOP_GROUP` | `"NEXTHOP_GROUP"` | `SAI_SWITCH_ATTR_AVAILABLE_NEXT_HOP_GROUP_ENTRY` |
+| `CRM_NEXTHOP_GROUP_MEMBER` | `"NEXTHOP_GROUP_MEMBER"` | `SAI_SWITCH_ATTR_AVAILABLE_NEXT_HOP_GROUP_MEMBER_ENTRY` |
+
+リソース名文字列は STATE_DB `CRM:STATS` の counter キー
+（`crm_stats_ipv4_route_used` / `..._available` 等）の組み立てに使われる。
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/appl-db-route-constants.md`
+
+<!-- /constants -->
