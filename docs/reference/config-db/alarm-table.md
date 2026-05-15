@@ -207,6 +207,96 @@ ALARM テーブル内の `action` フィールドは常に `"RAISE"` (CLEAR は�
 <!-- evidence: sonic-swss-common/common/schema.h:551-554, SONiC/doc/event-alarm-framework/event-alarm-framework.md:136-144,346-348,480-499 -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ALARM テーブル自身は **EVENT_DB** への主たる書込先である。ここでは ALARM 系処理に付随して、ALARM テーブル以外の DB / テーブルへ書き込まれる事象を扱う。
+
+### COUNTERS_DB / `COUNTERS_EVENTS`
+
+eventd プロセス内の `stats_collector` が `event_publish()` 経路全体の累計カウンタを周期書込する。`RAISE_ALARM` action もこの経路を通るため、ALARM 発生時にもカウンタが進む。
+
+| トリガ | 操作 | キー | フィールド | 値 | evidence |
+|--------|------|------|-----------|-----|----------|
+| `event_publish()` 経由で event/alarm が流れ、`m_updated` フラグが立っていれば 10ms 周期で flush | `set` | `counter_keys[i]` (`published` / `missed_internal` / `missed_to_cache` / `missed_by_slow_receiver` / `latency_in_ms` 等) | `value` | uint64 累計値 | `sonic-eventd/src/eventd.cpp:178,186-187,205-210` |
+
+定数:
+
+- `COUNTERS_EVENTS_TABLE = "COUNTERS_EVENTS"` (`sonic-swss-common/common/schema.h:266`)
+- `EVENTS_STATS_FIELD_NAME = "value"` (`sonic-eventd/src/eventd.h:23`)
+
+!!! note "ALARM 固有カウンタではない"
+    `COUNTERS_EVENTS` は eventd の publish パス全体のサマリであり、`RAISE_ALARM` 単独の統計ではない。重要度別アクティブアラーム数は EVENT_DB の `ALARM_STATS` テーブルで保持される (本ページ「関連テーブル」節を参照)。
+
+### STATE_DB
+
+ALARM テーブル処理に伴う **STATE_DB への副次書込はなし**。
+
+根拠:
+
+- `sonic-buildimage/src/sonic-eventd/src/` 配下を `grep -rn "STATE_DB"` してもヒット 0 件 (テスト用 `database_config.json` を除く)
+- `sonic-buildimage/src/system-health/` の `SYSTEM_READY` / `ALL_SERVICE_STATUS` / `FAN_INFO` 等の STATE_DB 書込は System Health Monitoring サブシステム由来であり、Event/Alarm Framework の ALARM テーブル (EVENT_DB) の更新トリガとは独立している
+
+### その他 (FLEX_COUNTER_DB / APPL_DB / ASIC_DB)
+
+該当する副次書込は検出されず、なし。
+
+詳細分析: `meta/_intermediate/cdb-flow/alarm-table-side.md`
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+ALARM テーブルは **CONFIG_DB ではなく EVENT_DB (Redis DB index 6)** に存在し、CONFIG_DB の派生テーブルとは異なる通信モデルで運用される。書き込みは ZMQ ベースのイベントフレームワーク経由、読み取りは HGETALL polling という非対称な構造を持つ。
+
+### 書き込み経路 — ZMQ XPUB/XSUB (Redis keyspace 通知非使用)
+
+```
+App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqproxy (eventd)
+                                                                  │
+                                                                  ▼
+                                                       eventd Alarm Consumer
+                                                                  │
+                                       ┌──────────────────────────┼──────────────────────────┐
+                                       ▼                          ▼                          ▼
+                              HSET EVENT_DB              HINCRBY EVENT_DB        DEL EVENT_DB (CLEAR時)
+                                ALARM|<id>                ALARM_STATS|state           ALARM|<id>
+```
+
+- `events_publish()` API は ZMQ PUB socket 経由で `zmqproxy` (eventd コンテナ内) に転送され、XPUB/XSUB プロキシが eventd メインループへ配信する (`sonic-eventd/src/eventd.cpp:240,419` 周辺)。
+- Alarm Consumer は受信した `action` フィールドで分岐し、Redis に **HSET / DEL を直接** 行う。Redis の `PUBLISH` チャネルは使わない。
+- 同一 type-id + resource + text の連続 RAISE は eventd 内キャッシュで重複抑止される (flooding 防止)。
+
+### 読み取り経路 — HGETALL polling (購読者なし)
+
+| 読者 | 取得方法 |
+|------|---------|
+| `show alarm` CLI | `sonic-db-cli EVENT_DB keys 'ALARM\|*'` + `hgetall` (1 回のスナップショット) |
+| OpenConfig gNMI/REST | translib が EVENT_DB を HGETALL してマッピング (HLD Section 3.1.6) |
+| pmon System LED | `ALARM_STATS\|state` を HGETALL し severity 別カウンタで LED 色を決定 |
+
+- ALARM テーブルに対する `SubscriberStateTable` / `ConsumerStateTable` / `NotificationProducer` の購読者は SONiC ソース内に **存在しない**。
+- これは ALARM テーブルが「ある瞬間のアクティブアラーム集合」というスナップショット型設計であり、差分通知より全件取得が自然な利用パターンであるため。
+- EVENT_DB は `notify-keyspace-events` がデフォルト無効で、Redis keyspace 通知に依存する購読者は想定されていない。
+
+### healthd (system-health) との関係
+
+`src/system-health/health_checker/sysmonitor.py:41,97` の healthd は ALARM テーブルを購読しない (購読対象は `STATE_DB:FEATURE` と systemd D-Bus のみ)。Event/Alarm Framework と healthd は独立したサブシステムである。
+
+### dbId / TTL / 永続性
+
+| 項目 | 値 |
+|------|---|
+| Redis DB index | 6 (EVENT_DB) |
+| 永続性 | 無 (cold/warm/fast reboot で全件消失) |
+| TTL | 無 (CLEAR_ALARM 受信時に eventd が明示 DEL) |
+| Redis 通知 | keyspace 通知は非使用 (購読者が居ないため) |
+| エントリ ID | `<32bit time_t><5桁連番>` を eventd Alarm Consumer が採番 |
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-pubsub.md`
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

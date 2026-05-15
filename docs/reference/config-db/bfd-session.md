@@ -209,3 +209,25 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 - `tx_interval` / `rx_interval` のデフォルトも経路で異なる: hardware=1000ms、bgpcfgd BfdMgr=200ms、static route BFD=50ms。
 - BFD_SESSION テーブルに対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B — コード由来)
+
+`bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) の `doTask()` / `create_bfd_session()` を精読して検出した順序依存・タイミング依存。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-ordering.md)。
+
+| # | 依存関係 | 方向 | 緩和策 / 備考 |
+|---|----------|------|--------------|
+| 1 | `PORT|<interface>` 初期化完了 → BFD_SESSION SET (`interface != "default"`) | 強制先行 | `gPortsOrch->getPort()` 失敗時 `doTask` が `it++` で次イベントループ周回で**自動再試行**。`bfdorch.cpp:485-488, 173-177` |
+| 2 | `VRF|<name>` SAI 作成完了 → BFD_SESSION SET (`vrf != "default"`) | 強制先行 | `VRFOrch::getVRFid()` が未登録時 `SAI_NULL_OBJECT_ID` を返し SAI create が失敗 → 次周回再試行。`bfdorch.cpp:530-541` |
+| 3 | `BGP_DEVICE_GLOBAL.STATE.use_software_bfd` 確定 → BFD_SESSION SET | 推奨先行 | doTask は毎周回 `getSoftwareBfd()` を読む。途中で値が変わると hardware/software 経路を行き来し SAI セッションと STATE_DB エントリが二重に残る恐れあり。`bfdorch.cpp:114-138` |
+| 4 | TSA 状態遷移 ⇄ BFD_SESSION SET (`shutdown_bfd_during_tsa=true`) | 自動調停 | `bfd_session_cache` に常にキャッシュされ、TSA 解除通知で replay。順序を意識する必要なし。`bfdorch.cpp:141-178, 220+` |
+| 5 | SwitchOrch (`gSwitchId` / `gVirtualRouterId`) 先行 | 強制先行 | orchagent 起動順で自然満足 (BfdOrch は SwitchOrch より後段で生成)。`bfdorch.cpp:27, 533, 547` |
+| 6 | `interface != "default"` と `vrf != "default"` の併用 | 排他（順序ではない） | `"vrf is not supported when hardware lookup not valid"` で永続スキップ (`return true`、再試行されない)。`bfdorch.cpp:498-503` |
+| 7 | UDP 送信元ポート衝突時の自動 retry | 自動 | `NUM_BFD_SRCPORT_RETRIES = 3` で再選択 |
+
+### 補足
+
+- 依存 #1 / #2 は doTask が **false 返却 → `it++` で次イベントループ周回再試行**する設計のため、PORT / VRF が後追いで作成されても自動的に追従する。ただし orchagent ログには `Failed to locate port ...` が周回ごとに記録され続けるため、ログノイズを避けたい場合は PORT/VRF を先行投入することが望ましい。
+- 依存 #3 は software ⇄ hardware の経路切替が運用中に発生する珍しいケース。通常は `BGP_DEVICE_GLOBAL` を最初に確定してから BFD_SESSION を投入する。
+- レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる ([例外条件・特殊挙動](#例外条件特殊挙動) 参照)。
+<!-- /ordering -->
