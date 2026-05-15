@@ -212,6 +212,65 @@ SET APPL_DB FDB_TABLE:Vlan100:00:11:22:33:44:55  port=Ethernet0  type=static
 
 <!-- /ordering -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`fdborch.cpp` 全 1802 行を精読し、SAI capability への依存、MCLAG 連動、multi-asic / VOQ の観点でプラットフォーム差を抽出した。中間ノート: `meta/_intermediate/cdb-flow/appl-fdb-platform.md`。
+
+### 1. SAI capability への依存（capability query なし）
+
+FdbOrch は SAI capability を**事前 query せず**、以下の attr / API を無条件に使う。一部の vendor SAI 実装で未サポートの場合、`create_fdb_entry` / `flush_fdb_entries` が `SAI_STATUS_NOT_SUPPORTED` を返し `handleSaiCreateStatus()` が task_failed を返すパスに入る。
+
+| SAI attr / API | 使用条件 | コード箇所 |
+|----|----|----|
+| `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE = true` | origin が VXLAN_ADVERTIZED または MCLAG_ADVERTIZED **かつ** `type == "dynamic"` の MAC を SAI に登録するとき | `fdborch.cpp:1441-1448` |
+| `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE = true`（AGE/MOVE 通知での再投入） | MCLAG remote MAC が aging/move 通知で削除されるのを救済する経路 | `fdborch.cpp:507-509`, `583-585` |
+| `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE = false` への落とし込み | origin が VXLAN_ADVERTIZED から local に切り替わったとき / dynamic から static へ昇格したとき | `fdborch.cpp:1487-1497` |
+| `SAI_FDB_FLUSH_ATTR_BRIDGE_PORT_ID` + `SAI_FDB_FLUSH_ATTR_BV_ID` + `SAI_FDB_FLUSH_ATTR_ENTRY_TYPE=DYNAMIC` の 3 attr 同時指定 flush | port down / VLAN_MEMBER 削除 / FDB flush コマンド受信時 | `fdborch.cpp:949-1170` |
+
+### 2. FDB aging の扱い
+
+FDB aging time そのものは **SwitchOrch** が `SAI_SWITCH_ATTR_FDB_AGING_TIME` で一元管理する設計で、FdbOrch は aging 通知 (`SAI_FDB_EVENT_AGED`) を**受信する側**として動作する (`fdborch.cpp:421-545`)。
+
+`dynamic_local`（MCLAG remote を ASIC 上ローカル扱いに格上げした状態）は意図的に `SAI_FDB_ENTRY_TYPE_DYNAMIC` で登録され、コメントに `aging enabled` と明記されている (`fdborch.cpp:1552-1556`)。これにより、ピア由来 MAC でも一定時間トラフィックが無ければ ASIC 側 aging により消える。
+
+**プラットフォーム差の注意**:
+
+- ASIC によっては aging 通知が**個別 MAC 単位で発行されず**、バルク flush 経由でのみ通知される実装がある。
+- `dynamic_local` の aging 有効化前提が成立しない vendor SAI では、MCLAG remote MAC が削除されず残る可能性がある。
+
+いずれも fdborch.cpp 側に capability 分岐は無く、ASIC 実装依存。
+
+### 3. MCLAG 連動
+
+| 動作 | 条件 | コード箇所 |
+|----|----|----|
+| port oper-down 時の自動 FDB flush を**スキップ** | `gMlagOrch->isMlagInterface(port)` が true | `fdborch.cpp:1209-1213` |
+| `STATE_DB MCLAG_FDB_TABLE` への書き戻し | origin == `FDB_ORIGIN_MCLAG_ADVERTIZED` の add | `fdborch.cpp:872-878`, `1595-1602` |
+| `STATE_DB MCLAG_FDB_TABLE` からの削除 | MCLAG remote の DEL / `dynamic_local` 格上げ / local 学習による origin 切替 | `fdborch.cpp:901-908`, `1606-1612`, `124-129` |
+| AGE 通知での MCLAG remote MAC 再投入 | aging 通知が来ても MCLAG origin の場合は `create_fdb_entry` を再実行 | `fdborch.cpp:490-545` |
+
+**MCLAG 非対応プラットフォーム**: `gMlagOrch` 自体は orchagent に常に生成されるが、MCLAG メンバーが登録されない場合 `isMlagInterface()` は常に false を返すだけ。`FDB_ORIGIN_MCLAG_ADVERTIZED` の origin もそもそも発生しない（`APP_MCLAG_FDB_TABLE_NAME` への書き込みが行われない）ため、MCLAG 関連の SAI attr (`ALLOW_MAC_MOVE`) も発行されない。実質 no-op で MCLAG 非対応 ASIC でも機能影響なし。
+
+### 4. multi-asic / VOQ chassis
+
+`fdborch.cpp` 内に `gMySwitchType` / `namespace` / `VOQ` / `chassis` / `fabric` への分岐は**存在しない**（全行 grep 結果 0 hit）。
+
+- **multi-asic プラットフォーム**: orchagent が asic 単位で独立プロセスとして起動するため、FdbOrch も asic ごとに独立して動作する。ASIC 間で FDB を共有・同期する処理は FdbOrch のスコープ外。
+- **VOQ chassis**: system-FDB（chassis 全体で MAC を共有する仕組み）は本 Orch ではなく `fpmsyncd` / chassis_app_db 系で処理される。`APPL_DB FDB_TABLE` 自体は asic-local。
+
+### 5. プラットフォーム差サマリ
+
+| 観点 | プラットフォーム差 | コード上の capability 分岐 |
+|----|----|----|
+| MAC move (`ALLOW_MAC_MOVE`) | vendor SAI で未サポートだと VXLAN/MCLAG dynamic MAC 登録が失敗 | **なし**（無条件 attr 投入） |
+| FDB aging 通知 | 通知粒度・aging 対象判定が ASIC 依存 | **なし**（通知前提で記述） |
+| FDB flush の 3 attr 同時指定 | vendor SAI で組合せ制約あり得る | **なし** |
+| MCLAG（port oper-down / state 書き戻し） | MCLAG 非対応プラットフォームでは実質 no-op | `gMlagOrch->isMlagInterface()` の結果でのみ分岐 |
+| multi-asic / VOQ | asic 単位独立、横断同期なし | **なし**（fdborch.cpp は asic-local） |
+
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - CONFIG_DB: `FDB`（静的エントリのソース）、`VLAN`、`VLAN_MEMBER`
