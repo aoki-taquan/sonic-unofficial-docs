@@ -125,6 +125,55 @@ ACL_TABLE|<table_name>
 <!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5346L -->
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+ACL_TABLE の処理失敗は `doAclTableTask()` 内の `bAllAttributesOk` フラグと `validate()` の結果で分岐し、STATE_DB の `ACL_TABLE|<table_name>` テーブルに `status` フィールドで記録される。
+
+### SET 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB status | retry |
+|---|---|---|---|---|
+| `type` 空文字 | `processAclTableType()` L5823-5826 | `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
+| 不明な属性名 | `doAclTableTask()` L5415-5419 | `bAllAttributesOk=false` → break → erase | `"Inactive"` | なし |
+| `stage` が INGRESS/EGRESS 以外 | `processAclTableStage()` L5842-5848 | `ACL_STAGE_UNKNOWN` → `validate()` false → erase | `"Inactive"` | なし |
+| `ports` に bind 不可ポート（IN_PORTS/OUT_PORTS 等） | `getAclBindPortId()` L5795-5799 | `return false` → `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
+| `ports` に未登録ポート | `processAclTablePorts()` L5786-5791 | `pendingPortSet.emplace()` でスキップ継続（erase しない） | 変化なし | `onPortReady()` で自動解消 |
+| ユーザ定義 type 未登録 | `getAclTableType()` L5432-5437 | `it++`（保留） | 変化なし | ACL_TABLE_TYPE 登録まで無制限 |
+| `type=L3V4V6` + ASIC 非サポート | `AclTable::validate()` L2737-2745 | `validate()` false → erase | `"Inactive"` | なし |
+| action 非サポート | `AclTable::validate()` L2759-2766 | `validate()` false → erase | `"Inactive"` | なし |
+| `addAclTable()` SAI 失敗（MIRROR capability 欠如等） | `doAclTableTask()` L5480-5485 | `it++`（retry） | `"Pending creation"` | 無制限 |
+| `updateAclTable()` 失敗（ports 更新失敗） | `doAclTableTask()` L5467-5469 | `it++`（retry） | 変化なし | 無制限 |
+
+### DEL 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | STATE_DB status | retry |
+|---|---|---|---|---|
+| 配下 ACL_RULE の SAI 削除失敗 | `removeAclTable()` L4850-4855 | `return false` → `it++` | `"Pending removal"` | 無制限 |
+| `unbindAclTableFromSwitch()` 失敗 | `removeAclTable()` L4862-4867 | `return false` → `it++` | `"Pending removal"` | 無制限 |
+| SAI `deleteUnbindAclTable()` 失敗 | `removeAclTable()` L4869-4908 | `return false` → `it++` | `"Pending removal"` | 無制限 |
+| `removeEgrSetDscpTable()` 失敗（UNDERLAY 系） | `removeAclTable()` L4835-4840 | `return false` → `it++` | `"Pending removal"` | 無制限 |
+
+### STATE_DB status 遷移
+
+```
+SET 受信
+  ├─ bAllAttributesOk=false or validate()=false → "Inactive"  (erase, no retry)
+  ├─ addAclTable() 失敗                          → "Pending creation"  (it++, retry)
+  └─ addAclTable() 成功                          → "Active"   (erase)
+
+DEL 受信
+  ├─ removeAclTable() 失敗                       → "Pending removal"  (it++, retry)
+  └─ removeAclTable() 成功                       → STATUS_DB エントリ削除
+```
+
+確認コマンド: `sonic-db-cli STATE_DB hgetall 'ACL_TABLE|<table_name>'`
+
+エラーはすべて `SWSS_LOG_ERROR` でサイログ出力される。`ERROR_TABLE` への書き込みはなし。CONFIG_DB のエントリは失敗後も残る（orchagent は書き戻さない）。
+
+> **証跡**: `doAclTableTask()` L5361-5518 全行精読、`AclTable::validate()` L2725-2769、`processAclTableType()` L5819-5831、`processAclTableStage()` L5838-5853、`processAclTablePorts()` L5776-5807、`removeAclTable()` L4829-4910、`setAclTableStatus()` L6088-6093。
+<!-- /failure -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -474,4 +523,116 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 - **CRM 連携**: 作成/削除時に `gCrmOrch->incCrmAclUsedCounter()` / `decCrmAclUsedCounter()` (`aclorch.cpp:2855`)。
 
 <!-- /runtime-trace -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ACL_TABLE.ports` フィールドに記載されたインターフェース名は CONFIG_DB 上では文字列だが、
+`AclOrch` が `gPortsOrch->getPort()` と `getAclBindPortId()` を通じて以下のテーブルの
+エントリを**暗黙的に leafref 参照**する。YANG 定義がないため制約はコードのみで表現されている。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | SAI バインド種別 | 参照箇所 |
+|---|---|---|---|---|
+| `ports` | `PORT` | `PORT\|EthernetN` | `SAI_ACL_BIND_POINT_TYPE_PORT` | `aclorch.cpp:6062-6069` |
+| `ports` | `PORTCHANNEL` | `PORTCHANNEL\|PortChannelN` | `SAI_ACL_BIND_POINT_TYPE_LAG` | `aclorch.cpp:6073-6075` |
+| `ports` | `VLAN` | `VLAN\|VlanN` | `SAI_ACL_BIND_POINT_TYPE_VLAN` | `aclorch.cpp:6076-6078` |
+| `type` | `ACL_TABLE_TYPE` | `ACL_TABLE_TYPE\|<name>` | N/A (テーブル定義参照) | `aclorch.cpp:5380-5388` |
+
+### 解決タイミング
+
+- `ports` に指定したポートが PortsOrch 未登録の場合、`pendingPortSet` に保留され
+  PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2866-2901`)。
+- `type` にユーザ定義型を指定する場合は `ACL_TABLE_TYPE|<type>` が先に存在している必要がある。
+
+### 間接参照
+
+- `type=MIRROR`/`MIRRORV6` テーブルに紐づく `ACL_RULE` は `MIRROR_SESSION` テーブルを参照する
+  (`AclRuleMirror::validateAddMatch()`)。`ACL_TABLE` 自体は直接参照しない。
+<!-- /cross-refs -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+実装コードに直接定義されている文字列定数・enum 値を一覧化する。CONFIG_DB フィールド名やステータス値を正確に把握するための参照用。
+
+### フィールドキー定数
+
+| マクロ名 | CONFIG_DB フィールド名 | ソース |
+|---|---|---|
+| `ACL_TABLE_DESCRIPTION` | `"POLICY_DESC"` | `acltable.h:12` |
+| `ACL_TABLE_STAGE` | `"STAGE"` | `acltable.h:13` |
+| `ACL_TABLE_TYPE` | `"TYPE"` | `acltable.h:14` |
+| `ACL_TABLE_PORTS` | `"PORTS"` | `acltable.h:15` |
+| `ACL_TABLE_SERVICES` | `"SERVICES"` | `acltable.h:16` |
+| `ACL_TABLE_TYPE_MATCHES` | `"MATCHES"` | `acltable.h:18` (ACL_TABLE_TYPE サブテーブル) |
+| `ACL_TABLE_TYPE_BPOINT_TYPES` | `"BIND_POINTS"` | `acltable.h:19` (ACL_TABLE_TYPE サブテーブル) |
+| `ACL_TABLE_TYPE_ACTIONS` | `"ACTIONS"` | `acltable.h:20` (ACL_TABLE_TYPE サブテーブル) |
+
+### stage 値定数
+
+| マクロ名 | 文字列値 | SAI マッピング | ソース |
+|---|---|---|---|
+| `STAGE_INGRESS` | `"INGRESS"` | `SAI_ACL_STAGE_INGRESS` | `acltable.h:22` |
+| `STAGE_EGRESS` | `"EGRESS"` | `SAI_ACL_STAGE_EGRESS` | `acltable.h:23` |
+| `STAGE_PRE_INGRESS` | `"PRE_INGRESS"` | `SAI_ACL_STAGE_PRE_INGRESS` | `acltable.h:24` |
+
+!!! note
+    `PRE_INGRESS` は `aclStageLookup` map に含まれるが、`processAclTableStage()` の受理リストに入っておらず、`INGRESS` / `EGRESS` 以外は erase される。enum: `ACL_STAGE_UNKNOWN=0`, `ACL_STAGE_INGRESS=1`, `ACL_STAGE_EGRESS=2`, `ACL_STAGE_PRE_INGRESS=3` (`acltable.h:44-50`)。
+
+### type 値定数
+
+| マクロ名 | 文字列値 | ソース |
+|---|---|---|
+| `TABLE_TYPE_L3` | `"L3"` | `acltable.h:26` |
+| `TABLE_TYPE_L3V6` | `"L3V6"` | `acltable.h:27` |
+| `TABLE_TYPE_L3V4V6` | `"L3V4V6"` | `acltable.h:28` |
+| `TABLE_TYPE_MIRROR` | `"MIRROR"` | `acltable.h:29` |
+| `TABLE_TYPE_MIRRORV6` | `"MIRRORV6"` | `acltable.h:30` |
+| `TABLE_TYPE_MIRROR_DSCP` | `"MIRROR_DSCP"` | `acltable.h:31` |
+| `TABLE_TYPE_PFCWD` | `"PFCWD"` | `acltable.h:32` |
+| `TABLE_TYPE_CTRLPLANE` | `"CTRLPLANE"` | `acltable.h:33` |
+| `TABLE_TYPE_DTEL_FLOW_WATCHLIST` | `"DTEL_FLOW_WATCHLIST"` | `acltable.h:34` |
+| `TABLE_TYPE_MCLAG` | `"MCLAG"` | `acltable.h:35` |
+| `TABLE_TYPE_MUX` | `"MUX"` | `acltable.h:36` |
+| `TABLE_TYPE_DROP` | `"DROP"` | `acltable.h:37` |
+| `TABLE_TYPE_MARK_META` | `"MARK_META"` | `acltable.h:38` |
+| `TABLE_TYPE_MARK_META_V6` | `"MARK_METAV6"` | `acltable.h:39` |
+| `TABLE_TYPE_EGR_SET_DSCP` | `"EGR_SET_DSCP"` | `acltable.h:40` |
+| `TABLE_TYPE_UNDERLAY_SET_DSCP` | `"UNDERLAY_SET_DSCP"` | `acltable.h:41` |
+| `TABLE_TYPE_UNDERLAY_SET_DSCPV6` | `"UNDERLAY_SET_DSCPV6"` | `acltable.h:42` |
+
+!!! note "DTEL_FLOW_WATCHLIST"
+    `DTelOrch` は `platform==BFN|VS` のみ生成 (`orchdaemon.cpp:502-530`)。一般的な環境では使用不可。
+
+### バインドポイント型定数
+
+| マクロ名 | 文字列値 | SAI マッピング | ソース |
+|---|---|---|---|
+| `BIND_POINT_TYPE_PORT` | `"PORT"` | `SAI_ACL_BIND_POINT_TYPE_PORT` | `aclorch.h:62`, `aclorch.cpp:105` |
+| `BIND_POINT_TYPE_PORTCHANNEL` | `"PORTCHANNEL"` | `SAI_ACL_BIND_POINT_TYPE_LAG` | `aclorch.h:63`, `aclorch.cpp:106` |
+
+`ACL_TABLE_TYPE.BIND_POINTS` フィールドで使う文字列定数。`VLAN` / `SWITCH` はマクロなく直接 SAI 定数を使用。
+
+### STATE_DB ステータス値定数
+
+| enum 値 | `status` フィールド値 | ソース |
+|---|---|---|
+| `AclObjectStatus::ACTIVE` | `"Active"` | `aclorch.cpp:523` |
+| `AclObjectStatus::INACTIVE` | `"Inactive"` | `aclorch.cpp:524` |
+| `AclObjectStatus::PENDING_CREATION` | `"Pending creation"` | `aclorch.cpp:525` |
+| `AclObjectStatus::PENDING_REMOVAL` | `"Pending removal"` | `aclorch.cpp:526` |
+
+STATE_DB テーブル名: `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` (`schema.h:514`)。フィールド名: `"status"` (ハードコード, `aclorch.cpp:6091`)。
+
+### APP_DB / STATE_DB テーブル名定数
+
+| マクロ名 | 値 | DB | ソース |
+|---|---|---|---|
+| `APP_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | APP_DB | `schema.h:94` |
+| `APP_ACL_TABLE_TYPE_TABLE_NAME` | `"ACL_TABLE_TYPE_TABLE"` | APP_DB | `schema.h:95` |
+| `STATE_ACL_TABLE_TABLE_NAME` | `"ACL_TABLE_TABLE"` | STATE_DB | `schema.h:514` |
+
+> **スキャン証跡**: `acltable.h:1-76` 全行精読、`aclorch.h:62-63`、`aclorch.cpp:42-44,105-106,523-526,6088-6105`、`schema.h:94-95,514` 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。
+<!-- /constants -->
+
 <!-- glossary-links-injected: 9f69b0796e2c -->

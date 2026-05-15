@@ -345,6 +345,38 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 <!-- /handler-branching -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ACL_RULE` は YANG 未定義のため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `PORT\|<name>` (IN_PORTS / OUT_PORT / OUT_PORTS) | OID 解決（必須） | match フィールドにポート名を指定したとき。物理・LAG のみ受理、他は rule INACTIVE | `aclorch.cpp` L961–1034 (`gPortsOrch->getPort()`) |
+| `PORT\|<name>` / LAG (REDIRECT_ACTION) | OID 解決 | `REDIRECT_ACTION` 値がポート名・LAG 名と一致するとき | `aclorch.cpp` L2085–2099 (`getRedirectObjectId()` ステップ 1) |
+| `MIRROR_SESSION\|<name>` | 存在確認 + OID + refcount | `MIRROR_ACTION` / `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` 指定時。SESSION 不在は rule INACTIVE、inactive は遅延 install | `aclorch.cpp` L2331–2401 (`AclRuleMirror::activate()`) |
+| `NEIGH`（NeighOrch） | OID + refcount | `REDIRECT_ACTION` 値が `<ip>@<intf>` 形式の next-hop のとき | `aclorch.cpp` L2102–2116 (`getRedirectObjectId()` ステップ 2) |
+| `ROUTE_TABLE`（RouteOrch 管理の NH group） | OID + refcount、自動生成 | `REDIRECT_ACTION` 値が NH group 形式のとき。不在なら RouteOrch が自動作成を試みる | `aclorch.cpp` L2138–2157 (`getRedirectObjectId()` ステップ 4) |
+| TunnelNhop（TunnelOrch） | OID 解決 | `REDIRECT_ACTION` 値がトンネル next-hop 形式のとき | `aclorch.cpp` L2118–2136 (`getRedirectObjectId()` ステップ 3) |
+| `ACL_TABLE\|<table_name>` | SAI OID 解決（必須） | 常時。ACL_TABLE が未作成なら `it++` で待機、作成後に自動再処理 | `aclorch.cpp` L5520–5565 (`doAclRuleTask()` ガード) |
+| `PORT`（PortsOrch 初期化完了） | 起動ブロック | 常時。`allPortsReady()` が false の間は全 ACL_RULE 処理をブロック | `aclorch.cpp` L4276 |
+| `POLICER`（acl_loader のみ） | 読み取り（表示用） | `aclshow` コマンド実行時。orchagent (`aclorch.cpp`) は ACL_RULE から POLICER を直接参照しない | `acl_loader/main.py` L254–266 (`read_policers_info()`) |
+
+!!! note "POLICER と ACL_RULE の関係"
+    標準 `aclorch.cpp` ベースの ACL_RULE には policer action フィールドが存在しない。
+    POLICER を ACL に組み合わせる場合は P4 orch (`p4orch/acl_util.cpp`) 経由となる。
+    `acl_loader` は `POLICER` テーブルを **表示目的のみ** で読み取る。
+
+!!! note "REDIRECT_ACTION の解決順序"
+    `getRedirectObjectId()` (`aclorch.cpp:2078`) は次の順で解決を試みる:
+    1. PortsOrch — PORT / LAG 名として解決
+    2. NeighOrch — `<ip>@<intf>` next-hop として解決
+    3. TunnelOrch — トンネル next-hop として解決
+    4. RouteOrch — next-hop group として解決（不在時は自動生成）
+    いずれも失敗すると `SAI_NULL_OBJECT_ID` → rule INACTIVE。
+
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 

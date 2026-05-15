@@ -770,3 +770,184 @@ if (!gBufferOrch->isPortReady(pCfg.key))
 2. 正しい値を再設定 (`config interface ...`)
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## PORT SET/DEL 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/port-side-effects.md`
+
+CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・portsyncd の実装精読から抽出した全副次書き込み。
+
+### portmgrd — APPL_DB への転送
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `m_appPortTable.set(alias, field_values)` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` | SET 時 常時 (`writeConfigToAppDb`) |
+| `m_appPortTable.set(alias, {mtu: "9100"})` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` field=`mtu` | 初回 SET かつ CONFIG_DB に `mtu` なし — 暗黙デフォルト注入 |
+| `m_appPortTable.set(alias, {admin_status: "down"})` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` field=`admin_status` | 初回 SET かつ CONFIG_DB に `admin_status` なし — 暗黙デフォルト注入 |
+| `m_appPortTable.del(alias)` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` | DEL 時 常時 |
+
+カーネル副作用: `ip link set <alias> mtu <N>` / `ip link set <alias> up/down`
+
+### PortsOrch — ポート新規作成時の COUNTERS_DB / FLEX_COUNTER_DB 書き込み
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `setCounterNameMap(alias, port_id)` | COUNTERS_DB / `COUNTERS_PORT_NAME_MAP` | `""` field=`<alias>` | 常時 (`portsorch.cpp:4118`) |
+| `m_portSerdesIdToPortIdTable->set(...)` | COUNTERS_DB / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `""` field=`<serdes_oid>` | port_serdes_id が有効な場合 |
+| `port_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortCountersState が有効な場合 |
+| `port_phy_attr_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_ATTR_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortPhyAttrCounterState が有効かつ PHY タイプ |
+| `port_phy_serdes_attr_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP:<serdes_oid>` | `<serdes_oid>` | PhySerdesAttrCountersState が有効かつ PHY・serdes_id 有効 |
+| `port_buffer_drop_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortBufferDropCountersState が有効な場合 |
+| `wred_port_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | WredPortCountersState が有効な場合 |
+| `addPortBufferQueueCounters(...)` | COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` 他 Queue マップ群 | `""` | QueueCountersState または QueueWatermarkCountersState が有効 |
+| `addPortBufferPgCounters(...)` | COUNTERS_DB / `COUNTERS_PG_NAME_MAP` 他 PG マップ群 | `""` | PgCountersState または PgWatermarkCountersState が有効 |
+
+SAI 呼び出し → ASIC_DB: `sai_port_api->create_ports()` でポート OID エントリ生成
+
+### PortsOrch — フィールド変更時の STATE_DB 書き込み
+
+| 操作 | 対象 DB / テーブル | フィールド | 条件 |
+|------|------------------|----------|------|
+| `m_portStateTable.set(alias, {supported_speeds})` | STATE_DB / `PORT_TABLE` | `supported_speeds` | SAI から速度能力リストを取得できた場合 (`initPortSupportedSpeeds`) |
+| `m_portStateTable.set(alias, {supported_fecs})` | STATE_DB / `PORT_TABLE` | `supported_fecs` | SAI から FEC 能力リストを取得できた場合 (`initPortSupportedFecModes`) |
+| `m_portStateTable.hset(alias, "host_tx_ready", ...)` | STATE_DB / `PORT_TABLE` | `host_tx_ready` | `admin_status` 変更時 — cmisModuleAsyncNotifSupported が false の場合 |
+| `m_portStateTable.hset(alias, "link_training_status", ...)` | STATE_DB / `PORT_TABLE` | `link_training_status` | `link_training` フィールド処理時 |
+| `m_portStateTable.hset(alias, "phy_ctrl_unreliable_los", ...)` | STATE_DB / `PORT_TABLE` | `phy_ctrl_unreliable_los` | `speed` 変更時に LOS 信頼性フラグ更新 |
+| `m_portStateTable.hdel(alias, "rmt_adv_speeds")` | STATE_DB / `PORT_TABLE` | `rmt_adv_speeds` | `autoneg` off 設定時にリモート広告速度をクリア |
+
+### PortsOrch — port_state_change 非同期通知受信時の副次書き込み
+
+syncd から `port_state_change` 通知を受けると、PortsOrch は以下を書き込む:
+
+| 操作 | 対象 DB / テーブル | フィールド | 条件 |
+|------|------------------|----------|------|
+| `m_portTable->set(alias, {oper_status})` | APPL_DB / `PORT_TABLE` | `oper_status` | 常時 (`updateDbPortOperStatus`) |
+| `m_portTable->hset(alias, "flap_count", count)` | APPL_DB / `PORT_TABLE` | `flap_count` | oper_status が DOWN に遷移した場合 (`updateDbPortFlapCount`) |
+| `m_portStateTable.hset(alias, "rmt_adv_speeds", ...)` | STATE_DB / `PORT_TABLE` | `rmt_adv_speeds` | autoneg on 時にリモート広告速度取得成功 |
+| `m_portStateTable.hset(alias, "link_training_status", ...)` | STATE_DB / `PORT_TABLE` | `link_training_status` | link_training 状態変化時 |
+
+> **注意**: `oper_status` は STATE_DB ではなく **APPL_DB** の `PORT_TABLE` に書き込まれる (`m_portTable` = APPL_DB APP_PORT_TABLE)。
+
+### PortsOrch — ポート削除時の COUNTERS_DB / FLEX_COUNTER_DB クリーンアップ
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| `delCounterNameMap(alias)` | COUNTERS_DB / `COUNTERS_PORT_NAME_MAP` field 削除 | 常時 (`portsorch.cpp:4312`) |
+| `m_portSerdesIdToPortIdTable->hdel(...)` | COUNTERS_DB / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | serdes_id が存在する場合 |
+| `port_stat_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` 削除 | PortCountersState が有効な場合 |
+| `port_buffer_drop_stat_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP:<oid>` 削除 | PortBufferDropCountersState が有効な場合 |
+| `wred_port_stat_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` 削除 | WredPortCountersState が有効な場合 |
+| `port_phy_attr_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_ATTR_FLEX_COUNTER_GROUP:<oid>` 削除 | PHY タイプの場合 |
+| `port_phy_serdes_attr_manager.clearCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP:<serdes_oid>` 削除 | PHY タイプかつ serdes_id 有効 |
+| `deletePortBufferQueueCounters(...)` | COUNTERS_DB / Queue マップ群 削除 | QueueCountersState が有効な場合 |
+| `deletePortBufferPgCounters(...)` | COUNTERS_DB / PG マップ群 削除 | PgCountersState が有効な場合 |
+| `m_stateBufferMaximumValueTable->del(alias)` | STATE_DB / `BUFFER_MAX_PARAM_TABLE` | 常時 |
+
+SAI 呼び出し → ASIC_DB: `sai_port_api->remove_port()` でポート OID エントリ削除。`PORT_SERDES` は `removePortSerdesAttribute()` で自動連動削除 (`portsorch.cpp:1526`)。
+
+### 副次書き込みサマリ表
+
+| DB | テーブル | 操作 |
+|----|---------|------|
+| APPL_DB | `PORT_TABLE` | SET (portmgrd 転送、opsorch oper_status・flap_count) / DEL (portmgrd) |
+| STATE_DB | `PORT_TABLE` | SET (supported_speeds、supported_fecs、host_tx_ready、link_training_status、phy_ctrl_unreliable_los、rmt_adv_speeds) / DEL (rmt_adv_speeds) |
+| STATE_DB | `BUFFER_MAX_PARAM_TABLE` | DEL (ポート削除時) |
+| COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` | SET (ポート作成時) / DEL (ポート削除時) |
+| COUNTERS_DB | `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | SET / DEL (serdes_id 有効時) |
+| COUNTERS_DB | Queue / PG マップ群 | SET / DEL (FlexCounter 有効時) |
+| FLEX_COUNTER_DB | PORT_STAT / PORT_PHY_ATTR / PORT_PHY_SERDES_ATTR / PORT_BUFFER_DROP / WRED_PORT グループ | SET / DEL (各 FlexCounter 状態に依存) |
+| ASIC_DB | PORT OID エントリ (syncd 経由) | create_ports (SET) / remove_port (DEL) |
+| ASIC_DB | PORT_SERDES OID エントリ | 自動作成 / 自動削除 |
+
+<!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-platform.md -->
+
+### ベンダー識別とプラットフォーム文字列
+
+SWSS コンテナは起動時に環境変数 `platform` を受け取り、ベンダーごとの挙動を切り替える。`orch.h` で定義される文字列定数が判定に使われる。
+
+| 定数 | 値 | 代表ベンダー / ASIC |
+|------|----|-------------------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | NVIDIA Spectrum |
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom Trident/Tomahawk/Jericho |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` | Marvell Teralynx |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` | Cisco Silicon One |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | 仮想スイッチ (テスト用) |
+
+### SAI Capability クエリと非対応時の挙動
+
+PortsOrch はポート初期化時に SAI に対して各属性の対応状況を問い合わせる。SAI 非対応の場合は `STATE_DB` への書き込みをスキップするか、処理を中断する。
+
+| フィールド | SAI クエリ属性 | 非対応時の挙動 | STATE_DB 影響 |
+|-----------|-------------|------------|-------------|
+| `speed` | `SAI_PORT_ATTR_SUPPORTED_SPEED` | WARN ログ、バリデーションスキップ → 不正値は SAI が `SAI_STATUS_INVALID_PARAMETER` で検知 | `supported_speeds` フィールドなし |
+| `fec` | `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` | INFO ログ、スキップ | `supported_fecs` フィールドなし |
+| `autoneg` | `SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE` | デフォルト `m_cap_an=1`（有効扱い）。非対応確定時は ERROR + タスク破棄 | - |
+| `fast_linkup` | `SAI_PORT_ATTR_FAST_LINKUP_ENABLED` | NOTICE ログ「not supported on this platform」、設定値を無視 | - |
+| `pfc_asym` | `SAI_PORT_PRIORITY_FLOW_CONTROL_MODE` | WARN ログ「not supported: skipping」、設定値をスキップ | - |
+| `tpid` | `SAI_PORT_ATTR_TPID` | SAI 失敗 → `handleSaiSetStatus` でエラー処理 | - |
+
+#### FEC auto モードの制約
+
+`fec: auto` は `autoneg: on` が有効なときのみ機能する。autoneg が off の状態で `fec: auto` を設定すると `"Autoneg must be enabled for port fec mode auto to work"` と警告が出る (`portsorch.cpp:5335`)。
+
+### Mellanox (NVIDIA Spectrum) 固有の挙動
+
+`isMlnxPlatform()` 関数 (`portsorch.cpp:689`) が `platform` 環境変数から `"mellanox"` 部分文字列を検索し、以下の分岐を行う。
+
+| 挙動 | 条件 | 詳細 |
+|------|------|------|
+| NVIDIA 専用 trim 統計プラグイン追加 | `SAI_PORT_STAT_TRIM_PACKETS` / `TX_TRIM_PACKETS` 対応かつ `DROPPED_TRIM_PACKETS` 非対応 | FlexCounter に `nvdaPortTrimSha` プラグインを追加 (`portsorch.cpp:863`) |
+| LAG distribution-only モード非対応 | Mellanox 全プラットフォーム | LAG MEMBER enable 時: collection → distribution の順。disable 時: distribution → collection の順を強制 (`portsorch.cpp:6362,6379`) |
+
+### platform_asic ファイルと ASIC タイプ
+
+各プラットフォームディレクトリの `platform_asic` ファイルが ASIC タイプを示し、`orchdaemon.cpp:635,733` で初期化フローを分岐させる。
+
+| platform_asic 値 | 代表デバイス / 採用例 |
+|-----------------|-------------------|
+| `broadcom` | Arista 7050/7060 系 (Trident/Tomahawk)、Dell S/Z 系 |
+| `broadcom-dnx` | Arista 7280/7800 系 (Jericho2/3) |
+| `broadcom-legacy-th` | 旧世代 Arista (Tomahawk legacy) |
+| `mellanox` | NVIDIA Spectrum (MSN2700 等) |
+| `marvell-teralynx` | Supermicro SSE-T7132S |
+| `barefoot` | Arista 7170 (Intel Tofino P4) |
+
+### port_config.ini — プラットフォーム依存のレーン/速度定義
+
+各プラットフォームの `port_config.ini` が `sonic-cfggen` によって PORT テーブルのデフォルト値に変換される。フォーマットは共通だが値はプラットフォーム固有。
+
+```ini
+# Mellanox MSN2700 (ACS-MSN2700/port_config.ini)
+# name      lanes       alias  index
+Ethernet0   0,1,2,3     etp1   1
+
+# Broadcom BCM956960K (BCM956960K/port_config.ini)
+# name      lanes           alias               index  speed
+Ethernet0   1,2,3,4         Ethernet1/0/1       0      100000
+```
+
+- `lanes` はプラットフォームのレーンマッピングに完全依存。他プラットフォームへの移植不可。
+- Mellanox の `alias` は `etpN` 形式、Broadcom は `EthernetX/Y/Z` 形式など、ベンダーごとに異なる。
+
+### minigraph.py による FEC デフォルト自動設定 (100G 限定)
+
+```python
+# minigraph.py:2428-2433
+if linkmetas.get(alias, {}).get('FECDisabled', '').lower() == 'true':
+    port['fec'] = 'none'
+elif not port.get('fec') and port.get('speed') == '100000':
+    port['fec'] = 'rs'   # 100G ポートは自動で Reed-Solomon FEC を付与
+```
+
+- 100G ポートは `FECDisabled=true` の minigraph プロパティがない限り自動的に `fec: rs` が設定される。
+- 25G、40G、400G 等は明示指定が必要 (`port_config.ini` に記載するか `config interface fec` で変更)。
+
+<!-- /platform -->

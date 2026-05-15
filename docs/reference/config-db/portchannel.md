@@ -364,6 +364,42 @@ YANG スキーマに `default` 文が存在しないフィールドでも、cons
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照マップ (Phase C)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-cross-refs.md`
+
+### PORTCHANNEL が参照するテーブル（→ 方向）
+
+| 参照先テーブル / DB | 参照箇所 | 理由 |
+|---|---|---|
+| `PORT` (CONFIG_DB) | `teammgr.cpp:32, 212-225` | `addLag()` でポート存在を確認。未存在時は `task_need_retry` で LAG 作成保留 |
+| `DEVICE_METADATA` (CONFIG_DB) | `teammgr.cpp:31,56,64` | システム MAC (`mac` フィールド) を読み込み LAG の hwaddr に使用。warm reboot 時も参照 |
+| `STATE_PORT_TABLE` (STATE_DB) | `teammgr.cpp:37,165` | ポート状態変化イベントを購読。ポートが STATE_DB に未登録だとメンバー追加が保留 |
+
+### PORTCHANNEL を参照するテーブル（← 方向）
+
+| 参照元テーブル | 参照箇所 | 制約内容 |
+|---|---|---|
+| `PORTCHANNEL_MEMBER` (CONFIG_DB) | `config/main.py:2890` | 非空 LAG の DEL を拒否。member 追加時も ACL/PBH バインドチェック (`main.py:2997-3010`) |
+| `PORTCHANNEL_INTERFACE` (CONFIG_DB) | orchagent LagOrch | L3 interface `ref_count > 0` のまま DEL すると `Failed to remove ref count %d LAG %s` エラー |
+| `VLAN_MEMBER` (CONFIG_DB) | `config/main.py:2886-2888` | LAG が VLAN に所属するまま DEL すると `has vlan {} configured` エラー |
+| `ACL_TABLE` (CONFIG_DB) | `config/main.py:2997-3002` | member ポートが ACL にバインド済みだと `portchannel member add` 拒否 (**YANG 制約なし**) |
+| `PBH` / PBH_TABLE (CONFIG_DB) | `config/main.py:3005-3010` | member ポートが PBH にバインド済みだと `portchannel member add` 拒否 (**YANG 制約なし**) |
+| `MCLAG_DOMAIN` / `MCLAG_INTERFACE` (CONFIG_DB) | `config/mclag.py:145,293` | `peer_link` に PortChannel 名を指定可。`mclag member add` で `if_type=PortChannel` として登録 |
+
+### STATE_DB 書込み（副作用）
+
+| 書込み先 | 用途 |
+|---|---|
+| `STATE_LAG_TABLE` (STATE_DB) | teammgrd が LAG up/down 状態を書込み。`show interfaces portchannel` が参照 |
+| `STATE_MACSEC_INGRESS_SA_TABLE` (STATE_DB) | `macsec` フィールドが設定されている場合に MACsec SA と連動 (`teammgr.cpp:116-117`) |
+
+!!! warning "YANG 未定義制約"
+    ACL_TABLE バインドチェック・PBH バインドチェック・VLAN_MEMBER ガードはいずれも CLI アドホックバリデーションであり、YANG スキーマには `must` / `leafref` 制約が存在しない (`# TODO: MISSING CONSTRAINT IN YANG MODEL`)。NETCONF/gNMI 経由で直接書き込む場合はこれらのガードが効かない。
+
+<!-- /cross-refs -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -468,3 +504,85 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタは存在しない。依存状態（teamd 起動環境、ポート STATE_DB 状態）が解消されると自然に成功する設計。無限リトライとなるため、恒久的な環境障害（teamd バイナリ不在、ネットワーク名前空間問題等）は外部から手動介入が必要。
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-side-effects.md`
+> ソース: `sonic-swss/cfgmgr/teammgr.cpp`, `sonic-swss/teamsyncd/teamsync.cpp`, `sonic-swss/orchagent/portsorch.cpp`
+
+PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数 DB へ連鎖的に書き込みを引き起こす。
+
+### SET 時の副次書き込み
+
+| DB | テーブル | キー / フィールド | 書き込み元 | 条件 |
+|----|---------|-----------------|-----------|------|
+| APPL_DB | `LAG_TABLE` | `<name>` field=`mtu` | teammgrd (`setLagMtu()`) | 常時 (デフォルト `9100`) |
+| APPL_DB | `LAG_TABLE` | `<name>` field=`tpid` | teammgrd (`setLagTpid()`) | `tpid` フィールドが存在する場合 |
+| APPL_DB | `LAG_TABLE` | `<name>` field=`learn_mode` | teammgrd (`setLagLearnMode()`) | `learn_mode` フィールドが存在する場合 |
+| APPL_DB | `PORT_TABLE` | `<member>` field=`mtu` | teammgrd (`setLagMtu()` 内) | LAG の全メンバポートへ MTU を伝播 |
+| APPL_DB | `LAG_TABLE` | `<name>` `{admin_status, oper_status, mtu}` | teamsyncd (RTM_NEWLINK 受信後) | teamd が Linux netdev を作成しカーネルイベント発生時 |
+| STATE_DB | `LAG_TABLE` | `<name>` `{admin_status, oper_status, mtu, state:"ok"}` | teamsyncd (`team_init()` 成功後) | 非 warm-reboot 時。STATE_DB 書き込みは `team_init()` 成功後のみ発生 |
+| COUNTERS_DB | `COUNTERS_LAG_NAME_MAP` | `""` field=`<name>=<oid>` | LagOrch (orchagent) | SAI LAG 作成成功時 |
+| CHASSIS_APP_DB | `SYSTEM_LAG_TABLE` | `<system_lag_alias>` `{lag_id, switch_id}` | LagOrch (`voqSyncAddLag()`) | VoQ マルチ ASIC 環境かつ Local LAG のみ |
+| ASIC_DB | LAG OID エントリ | `<oid>` | syncd (SAI 経由) | `sai_lag_api->create_lag()` |
+
+### DEL 時の副次書き込み
+
+| DB | テーブル | キー | 書き込み元 | 条件 |
+|----|---------|------|-----------|------|
+| APPL_DB | `LAG_MEMBER_TABLE` | `<name>:<member>` | teamsyncd (`removeLag()` 内) | 残存メンバを先に削除 |
+| APPL_DB | `LAG_TABLE` | `<name>` | teamsyncd (RTM_DELLINK 受信後) | 常時 |
+| STATE_DB | `LAG_TABLE` | `<name>` | teamsyncd | 非 warm-reboot 時 |
+| COUNTERS_DB | `COUNTERS_LAG_NAME_MAP` | `""` field=`<name>` | LagOrch (orchagent) | 常時 |
+| CHASSIS_APP_DB | `SYSTEM_LAG_TABLE` | `<system_lag_alias>` | LagOrch (`voqSyncDelLag()`) | VoQ マルチ ASIC 環境かつ Local LAG のみ |
+| ASIC_DB | LAG OID エントリ | `<oid>` | syncd (SAI 経由) | `sai_lag_api->remove_lag()` |
+
+!!! note "STATE_DB 書き込みのタイミング"
+    `STATE_DB|LAG_TABLE|<name>` への `state: ok` 書き込みは `teamsyncd` の `team_init()` 成功後のみ発生する。
+    これは `intfmgrd` 等の依存サービスが未完了 LAG に対して動作しないよう意図的に遅延される
+    (`teamsync.cpp:191-203`)。warm-reboot 中は `m_stateLagTablePreserved` にバッファされ
+    `apply_temp_view()` 完了後にまとめて書き込まれる。
+
+!!! note "MTU の LAG → メンバポート伝播"
+    `setLagMtu()` は LAG の `APPL_DB|LAG_TABLE` を更新するだけでなく、
+    `PORTCHANNEL_MEMBER` テーブルを参照して全メンバポートの `APPL_DB|PORT_TABLE`
+    にも同一 MTU を書き込む (`teammgr.cpp:517-529`)。
+
+<!-- /side-effects -->
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-platform.md`
+
+### Mellanox — distribution-only モード非対応
+
+LAG メンバの enabled/disabled 状態を切り替えるとき、orchagent は `SAI_LAG_MEMBER_ATTR_INGRESS_DISABLE` (collection) と `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE` (distribution) の **2 属性を順に** SET する。Mellanox SAI は collection=false かつ distribution=true の "distribution-only" 中間状態をサポートしないため、操作順がプラットフォーム依存になっている (portsorch.cpp:6361-6382)。
+
+| 状態遷移 | Mellanox 向け操作順 | 理由 |
+|---------|-------------------|----|
+| disabled → enabled | collection を先に true → distribution を true | distribution-only 中間状態を回避 |
+| enabled → disabled | distribution を先に false → collection を false | distribution-only 中間状態を回避 |
+
+コードコメントに「distribution-only mode is not supported on Mellanox platform」と明記されている。
+
+### VoQ スイッチ — `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 追加属性
+
+通常スイッチでは `create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` を追加する (portsorch.cpp:7962-7991)。Multi-ASIC VoQ 構成では CHASSIS_APP_DB の `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。これにより通常スイッチと VoQ スイッチで `create_lag()` の属性セットが異なる[^plat1]。
+
+### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
+
+`setLagTpid()` は capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する (portsorch.cpp:8273-8277)。Q-in-Q TPID (0x9100/0x9200/0x88a8/0x88A8) をサポートしない ASIC では `SAI_STATUS_NOT_SUPPORTED` が返り SWSS_LOG_ERROR が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる[^plat1]。
+
+### プラットフォーム識別子 (orch.h)
+
+orchagent は `platform` 環境変数の部分文字列でベンダーを識別する。PORTCHANNEL 関連で確認されている主なプラットフォーム差:
+
+| 定数 | 値 | LAG 関連の影響 |
+|------|----|---------------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | distribution-only モード非対応（コメント明記） |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | `SAI_LAG_ATTR_TPID` SET が NO-OP / エラー |
+
+[^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+
+<!-- /platform -->
