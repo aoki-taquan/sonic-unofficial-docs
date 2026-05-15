@@ -148,6 +148,51 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` が有効な場合、全フィールド（空文字列のものを含む）を常に送信する。フィールド不在が発生しないため orchagent 側の「フィールド不在=デフォルト」ロジックは使われない。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-ordering.md -->
+
+### ADD 時: VRF 経路は VRF エントリが先行必須
+
+`Vrf` プレフィックスで始まる key（例: `Vrf-RED:192.168.1.0/24`）を持つ経路を書き込む前に、対応する VRF エントリが VRFOrch に登録されていなければならない。`m_vrfOrch->isVRFexists(vrf_name)` が false の場合、orchagent は経路を後回し（`it++; continue`）にして SAI プログラミングを行わない[^3]。
+
+```
+CONFIG_DB|VRF|<name>  →  VRFOrch が SAI に VRF 登録  →  APPL_DB|ROUTE_TABLE|<vrf_name>:<prefix>
+```
+
+### ADD 時: `nexthop_group` 指定経路は NhgOrch 登録が先行必須
+
+`nexthop_group` フィールドに NhgOrch 管理の NHG インデックスを指定する場合、`gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` がいずれも false なら `addRoutePre` が `return false` して後回しになる[^3]。
+
+```
+NEXTHOP_GROUP_TABLE エントリ登録  →  ROUTE_TABLE|<prefix> (nexthop_group: <index>)
+```
+
+### ADD 時: 通常 IP nexthop は NeighOrch 登録が先行必須
+
+nexthop が IP アドレスでインタフェース直結でない場合（非 `isIntfNextHop()`）、`m_neighOrch->hasNextHop()` が false なら `return false` で後回し。fpmsyncd 経由の通常フローでは zebra がネイバー解決後に ROUTE_TABLE に書くため問題は生じないが、APPL_DB を直接操作する場合は ARP/NDP 解決を先に確認すること[^3]。
+
+### ADD 時: EVPN overlay 経路は L3 VNI 登録が先行必須
+
+`vni_label` フィールドを持つ経路では、各 VNI に対して `m_vrfOrch->isL3VniVlan(vni)` を検査し、L3 VNI として登録されていなければ `it++; continue` で後回し[^3]。VXLAN_TUNNEL_MAP / VRF の L3 VNI 設定を先に完了してから EVPN Type-5 経路を書き込む。
+
+### ADD 時: インタフェース直結経路は RIF 登録が先行必須
+
+nexthop が `isIntfNextHop()` の場合、`m_intfsOrch->getRouterIntfsId(alias)` が `SAI_NULL_OBJECT_ID` ならば `return false` で後回し。`INTERFACE` / `PORTCHANNEL_INTERFACE` テーブルへの IP アドレス設定 → IntfsOrch が RIF を SAI 登録 → ROUTE_TABLE 書き込み、の順を守る[^3]。
+
+### DEL 時: 経路 DEL → 参照先オブジェクト DEL の順が必須
+
+NHG・VRF を先に DEL しようとするとリファレンスカウントが詰まり DEL が遅延する。推奨順序:
+
+```
+ROUTE_TABLE|<prefix> DEL
+  → NEXTHOP_GROUP_TABLE DEL（リファレンスカウント 0 後）
+  → VRF DEL
+```
+
+<!-- /ordering -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` は同時に存在できない（orchagent がエラー棄却）。
@@ -233,6 +278,92 @@ STATE_DB[ROUTE_TABLE|<default-route>]
 ```
 
 <!-- /pubsub -->
+
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-side.md -->
+
+`ROUTE_TABLE` エントリの SET / DEL が引き起こす他 DB への書込み一覧。`ROUTE_TABLE` は APPL_DB テーブルであるため、CONFIG_DB 直接の副作用はなく、すべて `orchagent (RouteOrch)` 経由で発生する。
+
+### STATE_DB `ROUTE_TABLE` — デフォルト経路の有無 (routeorch.cpp:287-294)
+
+`RouteOrch::updateDefRouteState()` がデフォルト経路 (`0.0.0.0/0` / `::/0`) の追加・削除時のみ書き込む[^se1]:
+
+```cpp
+string state = add ? "ok" : "na";
+m_stateDefaultRouteTb->set(ip, {{"state", state}});
+```
+
+| 操作 | 対象 DB / テーブル | キー | フィールド | 条件 |
+|------|-----------------|------|-----------|------|
+| SET | STATE_DB / `ROUTE_TABLE` | `0.0.0.0/0` または `::/0` | `state=ok` | デフォルト経路のみ |
+| DEL | STATE_DB / `ROUTE_TABLE` | `0.0.0.0/0` または `::/0` | `state=na` | デフォルト経路のみ |
+
+個別経路エントリのステータスは STATE_DB に書き込まれない。
+
+### APPL_STATE_DB `ROUTE_TABLE` — 経路処理ステータス (routeorch.cpp:3185-3201)
+
+`RouteOrch::publishRouteState()` が SAI 操作の成否に関わらず全経路に対して書き込む[^se1]:
+
+```cpp
+// ResponsePublisher m_publisher{"APPL_STATE_DB"};  (orch.h:382)
+if (ctx.is_set) {
+    fvs.emplace_back("protocol", ctx.protocol);
+}
+m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, replace);
+```
+
+| 操作 | 対象 DB / テーブル | キー | フィールド | 条件 |
+|------|-----------------|------|-----------|------|
+| SET | APPL_STATE_DB / `ROUTE_TABLE` | `<prefix>` / `<vrf>:<prefix>` | `protocol=<proto>` | SAI 操作後 常時[^se1] |
+| DEL | APPL_STATE_DB / `ROUTE_TABLE` | `<prefix>` / `<vrf>:<prefix>` | (エントリ削除) | SAI 操作後 常時[^se1] |
+
+### COUNTERS_DB — CRM リソースカウンタ (crmorch.cpp)
+
+`CrmOrch` の定期タイマー (`CRM_COUNTERS_POLL`) が `updateCrmCountersTable()` を呼び出し、経路 SET/DEL 毎に `incCrmResUsedCounter` / `decCrmResUsedCounter` で更新されたメモリ内カウンタを COUNTERS_DB に反映する[^se2]:
+
+| 操作 | 対象 DB / テーブル | キー | フィールド |
+|------|-----------------|------|-----------|
+| SET (IPv4) | COUNTERS_DB / `CRM` | `STATS` | `crm_stats_ipv4_route_used` 増加 |
+| SET (IPv6) | COUNTERS_DB / `CRM` | `STATS` | `crm_stats_ipv6_route_used` 増加 |
+| DEL (IPv4) | COUNTERS_DB / `CRM` | `STATS` | `crm_stats_ipv4_route_used` 減少 |
+| DEL (IPv6) | COUNTERS_DB / `CRM` | `STATS` | `crm_stats_ipv6_route_used` 減少 |
+
+`crm_stats_ipv{4,6}_route_available` は SAI ポーリング (`sai_object_type_get_availability`) で別途更新される。
+
+### COUNTERS_DB — Flow Counter マッピング (flowcounterrouteorch.cpp)
+
+ルートフロウカウンタが有効 (`FLEX_COUNTER_TABLE` でパターン設定済み) の場合のみ書き込む[^se3]:
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET | COUNTERS_DB / `COUNTERS_ROUTE_NAME_MAP` | `""` フィールド: `<vrf>:<prefix>` = `<counter_oid>` | フロウカウンタ有効時のみ |
+| SET | COUNTERS_DB / `COUNTERS_ROUTE_TO_PATTERN_MAP` | `""` フィールド: `<vrf>:<prefix>` = `<pattern>` | フロウカウンタ有効時のみ |
+| DEL | COUNTERS_DB / `COUNTERS_ROUTE_NAME_MAP` | `""` (該当フィールド削除) | フロウカウンタ有効時のみ |
+| DEL | COUNTERS_DB / `COUNTERS_ROUTE_TO_PATTERN_MAP` | `""` (該当フィールド削除) | フロウカウンタ有効時のみ |
+
+### STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE` — 起動時 1 回のみ (flowcounterrouteorch.cpp:174-178)
+
+| 操作 | 対象 DB / テーブル | キー | フィールド | タイミング |
+|------|-----------------|------|-----------|-----------|
+| SET | STATE_DB / `FLOW_COUNTER_CAPABILITY_TABLE` | `route` | `support=true/false` | orchagent 起動時 1 回のみ[^se3] |
+
+### 副作用サマリ
+
+| DB | テーブル | キー形式 | SET | DEL |
+|----|---------|---------|-----|-----|
+| STATE_DB | `ROUTE_TABLE` | `0.0.0.0/0` / `::/0` | `state=ok` | `state=na` |
+| APPL_STATE_DB | `ROUTE_TABLE` | `<prefix>` / `<vrf>:<prefix>` | `protocol=<proto>` 書込 | エントリ削除 |
+| COUNTERS_DB | `CRM` | `STATS` | `crm_stats_ipv{4,6}_route_used` 増加 | 減少 |
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | `""` | マップ追加 (条件付) | マップ削除 (条件付) |
+| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | `""` | マップ追加 (条件付) | マップ削除 (条件付) |
+| STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE` | `route` | `support=true/false` (起動時のみ) | — |
+
+[^se1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
+[^se2]: `orchagent/crmorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/crmorch.cpp>
+[^se3]: `orchagent/flex_counter/flowcounterrouteorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp>
+<!-- /side-effects -->
 
 ## 関連 CONFIG_DB / YANG / CLI
 

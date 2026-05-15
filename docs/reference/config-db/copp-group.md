@@ -398,4 +398,39 @@ journalctl -u swss | grep -i copp
 > **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L1-200, L330-370, `orch.h` L41-42、`copp_cfg.j2` 全行読了。定数 6+2+8 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-group-constants.md`
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`COPP_GROUP` エントリが処理される際に `coppmgr` / `CoppOrch` が暗黙的に関与する
+他テーブルの依存関係を示す。COPP_GROUP 自体は他テーブルへの leafref を持たないが、
+ビルド時テンプレートと逆方向の参照（COPP_TRAP → COPP_GROUP）が存在する。
+
+| 依存方向 | 参照元フィールド / 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|------------------------|--------------|--------------|---------|------|
+| 逆参照（被参照） | `COPP_TRAP.trap_group` | `COPP_GROUP`（本テーブル） | `COPP_GROUP\|<name>` | COPP_GROUP が SAI 未登録の場合、COPP_TRAP の APPL_DB 書き込みが保留される。COPP_GROUP を DEL すると紐付く COPP_TRAP が pending 状態になる | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
+| ビルド時依存 | `queue4_group3` の `cir`/`cbs` 初期値 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` | `type` フィールドに `'Mgmt'` が含まれる場合 `cir=cbs=300` pps、それ以外は `100` pps。`sonic-cfggen` によるテンプレート展開時に解決（実行時依存なし） | `copp_cfg.j2:37-43` |
+| 間接依存（COPP_TRAP 経由） | `COPP_GROUP` に属する `COPP_TRAP` の `trap_ids` | `FEATURE` | `FEATURE\|<feature-name>` | feature `state=disabled` の場合、そのグループ宛ての trap_id が APPL_DB `COPP_TABLE\|<group>` から除外される。`queue2_group1`（sflow/`sample_packet`）が典型例 | `coppmgr.cpp:173-191` |
+| init 依存（自動復元） | `COPP_GROUP` (全エントリ) | `/etc/sonic/copp_cfg.json` | — | 起動時に init セットをロード。ユーザー DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。`default` グループは DEL 自体が `task_ignore` で拒否 | `coppmgr.cpp:898-921`, `copporch.cpp:861-864` |
+
+### 解決タイミング
+
+- **COPP_TRAP → COPP_GROUP 依存**: COPP_TRAP の SET 処理時に即座に確認。未解決は
+  保留キューで管理され、COPP_GROUP 登録後の `doTask()` 再実行で解消。
+- **DEVICE_METADATA → cir/cbs**: ビルド時（`sonic-cfggen`）に解決済み。
+  実行時の DEVICE_METADATA 変化は COPP_GROUP に影響しない。
+- **FEATURE → trap_ids**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、
+  state 変更のたびに影響する COPP_TRAP の trap_ids を再評価・APPL_DB を更新。
+  COPP_GROUP エントリ自体は変化しない（APPL_DB 上の `trap_ids` リストが変化する）。
+
+### init_cfg 由来の暗黙初期化
+
+`coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`files/image_config/copp/copp_cfg.j2` の展開物）を
+読み込み、`COPP_GROUP` の初期セットを `m_coppGroupInitCfg` に保持する。
+ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
+自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:898-921`
+
+- 既定グループ例: `default`、`queue4_group1`（BGP/LLDP）、`queue2_group1`（sflow/genetlink）
+- `default` グループは `CoppOrch` 側でも削除を `task_ignore` で拒否する二重防護
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 87fa713c3c5e -->

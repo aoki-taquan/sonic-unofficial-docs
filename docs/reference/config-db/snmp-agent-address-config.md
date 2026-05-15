@@ -226,4 +226,42 @@ db_migrator.py での SNMP_AGENT_ADDRESS_CONFIG マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 1. 同一 (ip, port) 重複: DEL 先行が必須
+
+`unique "agent_ip port"` 制約（`sonic-snmp.yang` L171）により、同一 `(ip, port)` を異なる `vrf_name` で重複登録すると YANG バリデーションが拒否する。VRF を変更する場合は旧エントリを DEL してから新エントリを SET する。CLI は `get_keys` による事前重複チェックで YANG 層到達前に防ぐ（`config/main.py:4177-4182`）。
+
+### 2. MGMT_VRF_CONFIG が有効な場合は VRF 指定必須
+
+`config snmp agentaddress add <ip>` に `-v` オプションを省略した状態で `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'` が存在すると、CLI が "ManagementVRF is Enabled. Provide vrf." を出力して CONFIG_DB への書込みをブロックする（`config/main.py:4153-4157`）。Management VRF を使う場合は `-v mgmt` を明示する。
+
+### 3. IP アドレスが NIC に付与済みであること
+
+CLI は `netifaces.interfaces()` で agentip が実際にホスト NIC に付与されているかを確認する（`config/main.py:4160-4171`）。IP 未付与の場合は "IP address is not available" でリジェクトされる。
+
+### 4. VRF が実在してから agentaddress を設定
+
+`vrf_name` に `mgmt` / `Vrf<name>` を指定しても VRF がカーネルに存在しない場合、CONFIG_DB への書込みは成功するが snmpd が agentAddress バインドに失敗する。YANG は VRF 実在チェックを行わない。正しい順序: `config vrf add <vrf>` → `config snmp agentaddress add <ip> -v <vrf>`。
+
+### 5. SET 後は snmp コンテナ再起動が必要
+
+エントリを SET しても `systemctl restart snmp` でコンテナを再起動しなければ snmpd.conf は更新されない。CLI (`config snmp agentaddress add/del`) は書込み直後に自動で `os.system("systemctl restart snmp")` を呼ぶ（`config/main.py:4189`）。直接 `sonic-db-cli` で書き込む場合は手動で再起動が必要。
+
+### 6. minigraph 経路: MGMT_INTERFACE → SNMP_AGENT_ADDRESS_CONFIG
+
+`minigraph.py` は `MGMT_INTERFACE` / `LOOPBACK_INTERFACE` を解析した後に `SNMP_AGENT_ADDRESS_CONFIG` を生成する（L2308-2322）。multi-asic 環境では自動生成が行われず空辞書となる。
+
+| # | 依存関係 | 方向 | 違反時の挙動 |
+|---|----------|------|------------|
+| 1 | 旧エントリ DEL → 同 (ip,port) 新エントリ SET | **必須先行** | YANG unique 違反（SET 失敗） |
+| 2 | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` 時は `-v mgmt` 指定 | **CLI 強制** | CLI ブロック（DB 書込み不達） |
+| 3 | NIC への IP 付与 → `agentaddress add <ip>` | **CLI 強制** | "IP address is not available" 拒否 |
+| 4 | `config vrf add <vrf>` → `agentaddress add <ip> -v <vrf>` | **推奨先行** | DB 書込み成功、snmpd bind 失敗 |
+| 5 | SET 完了 → `systemctl restart snmp` | **必須後続** | snmpd.conf 未更新（旧設定継続） |
+| 6 | `MGMT_INTERFACE`/`LOOPBACK_INTERFACE` 先行 → minigraph 自動生成 | **minigraph 内部** | 空辞書（multi-asic では常時空） |
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->

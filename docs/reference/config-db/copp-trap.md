@@ -479,6 +479,65 @@ CoppOrch::doTask(Consumer&) → processCoppRule() → SAI sai_hostif_api
 
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書き込み (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/copp-trap-side.md`
+
+`COPP_TRAP` の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。
+
+### APPL_DB — COPP_TABLE
+
+| テーブル | キー形式 | 主要フィールド | 書き込み元 | タイミング |
+|---|---|---|---|---|
+| `COPP_TABLE` | `COPP_TABLE\|<group>` | `trap_ids`, `trap_action`, `trap_priority`, `queue`, `cir`, `cbs` 等 | `CoppMgr::doCoppTrapTask()` (coppmgr.cpp:511, 526) | COPP_TRAP SET 処理完了後 |
+
+**集約変換**: CONFIG_DB は 1 trap/key (`COPP_TRAP|<name>`) だが、APPL_DB は 1 group/key (`COPP_TABLE|<group>`) に再集計される。同一 `trap_group` に属する複数の COPP_TRAP が束ねられて 1 エントリになる。
+
+当該グループに属する全 trap が削除された場合は `m_appCoppTable.del(trap_group)` でエントリ自体が削除される（coppmgr.cpp:126）。
+
+### STATE_DB — COPP_TRAP_TABLE (state フィールド)
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<name>` | `state` | `ok` | `CoppMgr::setCoppTrapStateOk()` (coppmgr.cpp:589, 740, 803) | APPL_DB 書き込み成功後 |
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<name>` | `state` | (削除) | `CoppMgr::delCoppTrapStateOk()` (coppmgr.cpp:660, 700, 767) | COPP_TRAP DEL 処理後 |
+
+### STATE_DB — COPP_TRAP_TABLE (hw_status フィールド)
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<trap_name>` | `hw_status` | `installed` | `CoppOrch::updateTrapOperStatus()` (copporch.cpp:526) | SAI `sai_create_hostif_trap` 成功後 |
+| `COPP_TRAP_TABLE` | `COPP_TRAP_TABLE\|<trap_name>` | `hw_status` | `not-installed` | `CoppOrch::updateTrapOperStatus()` (copporch.cpp:1413) | SAI `sai_remove_hostif_trap` 後 |
+
+`state` フィールド（coppmgr 書き込み）と `hw_status` フィールド（CoppOrch 書き込み）は同一キーの別フィールドであり上書き競合はない。
+
+### STATE_DB — COPP_GROUP_TABLE (state フィールド)
+
+`COPP_TRAP` の処理中に影響する `trap_group` の状態も連動して更新される。
+
+| テーブル | キー形式 | フィールド | 値 | 書き込み元 | タイミング |
+|---|---|---|---|---|---|
+| `COPP_GROUP_TABLE` | `COPP_GROUP_TABLE\|<group>` | `state` | `ok` | `CoppMgr::setCoppGroupStateOk()` (coppmgr.cpp:512, 527, 734) | COPP_TRAP 処理で当該 group の APPL_DB 書き込み成功後 |
+| `COPP_GROUP_TABLE` | `COPP_GROUP_TABLE\|<group>` | `state` | (削除) | `CoppMgr::delCoppGroupStateOk()` (coppmgr.cpp:127) | 当該 group が空になった場合 |
+
+### STATE_DB — COPP_TRAP_CAPABILITY_TABLE (起動時 1 回)
+
+`CoppOrch` 起動時に SAI capability クエリ結果をプラットフォームサポート済み trap_id 一覧として書き込む。`COPP_TRAP` の変更契機ではなく起動時のみ実行される。
+
+| テーブル | キー | フィールド | 値 | 書き込み元 |
+|---|---|---|---|---|
+| `COPP_TRAP_CAPABILITY_TABLE` | `traps` | `trap_ids` | カンマ区切りサポート trap_id リスト | `CoppOrch::publishTrapIdsCapability()` (copporch.cpp:299) |
+
+```bash
+# 確認コマンド
+sonic-db-cli STATE_DB keys 'COPP_TRAP_TABLE|*'
+sonic-db-cli STATE_DB hgetall 'COPP_TRAP_TABLE|bgp'
+sonic-db-cli APPL_DB hgetall 'COPP_TABLE|queue4_group1'
+sonic-db-cli STATE_DB hgetall 'COPP_TRAP_CAPABILITY_TABLE|traps'
+```
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差 (SAI capability / vendor)
 

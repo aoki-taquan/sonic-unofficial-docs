@@ -348,4 +348,91 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・リトライ・リカバリ (Phase D)
+
+### tunnelmgr — SET 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | リトライ |
+|---|---|---|---|
+| `tunnel_type` が `IPINIP` 以外 | `doTunnelTask()` | APPL_DB 未通知。キャッシュには追加される | なし (恒久スキップ) |
+| `m_peerIp` 空 (PEER_SWITCH 未設定) | `doTunnelTask()` L258-261 | LOG_NOTICE → Linux tunnel 未作成。PEER_SWITCH 設定後に TUNNEL 再 SET が必要 | **自動再処理なし** |
+| `ip tunnel add` / `ip link set up` 失敗 | `configIpTunnel()` L391-416 | LOG_WARN のみ。関数は常に `true` を返すため APPL_DB 通知は実行。kernel IF なし状態で APPL_DB だけ設定される | なし |
+| `configIpTunnel()` が `false` を返す | `doTunnelTask()` L254-256 | `return false` → `m_toSync` にタスク残留、次サイクルでリトライ | **自動リトライ** (無限ループの可能性) |
+| 不明な operation type | `doTask()` L201-203 | LOG_ERROR → タスク消費 (恒久スキップ) | なし |
+
+### tunnelmgr — DEL 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | リトライ |
+|---|---|---|---|
+| DEL 対象が `m_tunnelCache` に存在しない | `doTunnelTask()` L299-302 | `SWSS_LOG_ERROR("Tunnel %s not found")` → `return true`（タスク消費） | なし (恒久スキップ) |
+| キャッシュにあるが `tunnel_type` が IPINIP 以外 | `doTunnelTask()` L312-314 | LOG_WARN → キャッシュ削除のみ、APPL_DB DEL は送られない | なし |
+
+### tunneldecaporch — SET 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | リトライ |
+|---|---|---|---|
+| `tunnel_type` が `IPINIP` 以外 | L127-131 | LOG_ERROR → `valid=false` → タスク消費 | なし |
+| `src_ip` が不正な IP 文字列 | L141-146 | LOG_ERROR → `valid=false` → タスク消費 | なし |
+| `dscp_mode` / `ttl_mode` が不正値 | L155-160, L202-207 | LOG_ERROR → `valid=false` → タスク消費 | なし |
+| `ecn_mode` が不正値 | L170-175 | LOG_ERROR → `valid=false` → タスク消費 | なし |
+| 既存トンネルへの `ecn_mode` 変更 (SAI create-only) | L177-182 | LOG_WARN → `valid=false` → **SET 全体無効化**（他フィールドを含む） | なし。DEL → 再 SET が必要 |
+| 既存トンネルへの `encap_ecn_mode` 変更 (SAI create-only) | L193-198 | LOG_NOTICE → `valid=false` → **SET 全体無効化** | なし。DEL → 再 SET が必要 |
+| `encap_ecn_mode` が `standard` 以外 | L187-191 | LOG_ERROR → `valid=false` → タスク消費 | なし |
+| 未知フィールド名 | L277-279 | LOG_ERROR → `valid=false` → タスク消費 | なし |
+| QoS map が未作成 (`decap_dscp_to_tc_map` 等) | L217-266 | LOG_NOTICE → `task_need_retry` → `it++` でタスクキュー残留 | **自動リトライ** (QoS map 作成後に再処理) |
+| `addDecapTunnel()` 失敗 (SAI create_tunnel 失敗) | L313 | LOG_ERROR → タスク消費。SAI エラー詳細は syncd ログで確認 | なし |
+
+### tunneldecaporch — DEL 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | リトライ |
+|---|---|---|---|
+| DEL 対象が存在しない | L325-327 | `SWSS_LOG_ERROR("Tunnel cannot be removed since it doesn't exist")` → タスク消費 | なし |
+
+### 重要な設計上の注意点
+
+- **`configIpTunnel()` は常に `true` を返す**: Linux kernel コマンドが失敗しても LOG_WARN のみ。kernel IF なし状態で APPL_DB だけ設定される可能性がある
+- **create-only 属性の罠**: `ecn_mode` / `encap_ecn_mode` は SAI create-only 属性。既存トンネルへの SET で `valid=false` となり**同一 SET 内の他フィールド更新も全て無効化**される
+- **PEER_SWITCH 先行設定必須**: `m_peerIp` 空の場合 Linux tunnel IF 未作成。PEER_SWITCH を後設定しても `tunnelmgrd` 自動再処理は発生しないため TUNNEL 再 SET が必要
+
+### 回復シナリオまとめ
+
+| 失敗ケース | 回復方法 | 自動か手動か |
+|-----------|---------|------------|
+| `tunnel_type` 不正 / 未知フィールド | 正しい値を再投入 | 手動 |
+| `m_peerIp` 空 (PEER_SWITCH 未設定) | PEER_SWITCH 設定後に TUNNEL 再 SET | 手動 |
+| `ip tunnel add` 失敗 (kernel エラー) | 根本原因解決後 `tunnelmgrd` 自動リトライ | 自動リトライ |
+| `ecn_mode` / `encap_ecn_mode` 変更 | `TUNNEL` DEL → 再 SET | 手動 |
+| QoS map 未作成 | QoS map SET 後 orchagent が自動再処理 | 自動 |
+| SAI `create_tunnel` 失敗 | syncd ログ確認後 再 SET | 手動 |
+| DEL 対象不存在 | 操作なし (確認のみ) | — |
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-failure.md`
+
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書きされている定数。`config_db.json` での設定変更は効果なく、変更にはコードのリコンパイルが必要。
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|----|---------|------|
+| `IPINIP` | `"IPINIP"` | `tunnelmgr.cpp` L17 | `tunnel_type` 比較用マクロ。`tunnel_type != IPINIP` でエラー判定 |
+| `TUNIF` | `"tun0"` | `tunnelmgr.cpp` L18 | Linux kernel IPinIP トンネル IF 名。固定。`ip tunnel add tun0 ...` で作成 |
+| `LOOPBACK_SRC` | `"Loopback3"` | `tunnelmgr.cpp` L19 | カーネルトンネルのローカル IP を取得する Loopback IF 名。`LOOPBACK_INTERFACE|Loopback3` が存在しない環境ではトンネル動作不可 |
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | `tunneldecaporch.cpp` L14 | Overlay loopback ルータインターフェースの MTU。`SAI_ROUTER_INTERFACE_ATTR_MTU` として SAI に渡す |
+| `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h` L21 | [MuxOrch](../../reference/glossary.md#term-muxorch) が固定参照する Dual-ToR トンネル名。TUNNEL テーブルのキーがこの値でない場合 MuxOrch はトンネルを見つけられずエラー |
+| `SubnetDecapConfig.tunnel` | `"IPINIP_SUBNET"` | `tunneldecaporch.h` L101 | サブネット decap 用 IPv4 トンネル内部識別子 |
+| `SubnetDecapConfig.tunnel_v6` | `"IPINIP_SUBNET_V6"` | `tunneldecaporch.h` L102 | サブネット decap 用 IPv6 トンネル内部識別子 |
+
+!!! warning "MuxTunnel0 固定名の制約"
+    [YANG](../../reference/glossary.md#term-yang) パターン `"MuxTunnel[0-9]+"` で複数エントリを許容しているが、
+    `MuxOrch` は `MuxTunnel0` をハードコードで参照する。
+    トンネル名を `MuxTunnel1` 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-constants.md`
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
