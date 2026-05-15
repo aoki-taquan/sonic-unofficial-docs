@@ -170,70 +170,6 @@ PORT_TABLE:<port_name>
 
 <!-- /defaults -->
 
-<!-- platform -->
-## プラットフォーム差 (Phase H)
-
-`APPL_DB PORT_TABLE` の **フィールド集合と書き込み挙動** は 3 つの軸でプラットフォーム/構成依存する: (1) SAI `sai_query_attribute_capability` の結果、(2) `device.metadata` の `switch_type` (`gMySwitchType`)、(3) `platform` 環境変数の Mellanox 判定。`speed` / `fec` 等のフィールド値そのものは portsyncd パススルーなので CONFIG_DB と同じだが、**SAI 適用可否・STATE_DB 派生値・追加フィールド有無** が差分として現れる。
-
-### 識別キー
-
-| 識別 | 取得元 | 値の例 |
-|------|--------|--------|
-| `gMySwitchType` | `device.metadata` の `switch_type` (`portsorch.cpp:69`) | `"switch"` (既定) / `"voq"` (VOQ chassis) / `"dpu"` (SmartSwitch DPU) |
-| `gMyAsicName` | namespace 名 (`portsorch.cpp:72`) | `"asic0"` `"asic1"` 等 (multi-asic / VOQ) |
-| `platform` env | `getenv("platform")` (`portsorch.cpp:691`) | `"mellanox"` 部分一致で `isMlnxPlatform()` true |
-| Gearbox 有無 | `gearbox_config.json` の有無 (`isGearboxEnabled()`) | line-side PHY 搭載 ASIC のみ true |
-
-### SAI capability 差異一覧
-
-| capability | 取得 | 結果 false 時の効果 | evidence |
-|---|---|---|---|
-| `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` | `sai_query_attribute_capability` (`portsorch.cpp:989-1000`) | `fec_override_sup = false` → autoneg fec override 反映なし | `portsorch.cpp:987, 989` |
-| `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` | `sai_query_attribute_capability` (`portsorch.cpp:1001-1010`) | `oper_fec_sup = false` → STATE_DB に `oper_fec` 書かれず | `portsorch.cpp:1001` |
-| `SAI_PORT_ATTR_SUPPORTED_SPEED` | `get_port_attribute` (`portsorch.cpp:3122-3158`) | `supported_speeds = ""` → STATE_DB 空 / speed バリデーション skip ("Unable to validate speed ... Not supported by platform" WARN) | `portsorch.cpp:3146` |
-| `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` | `get_port_attribute` (`portsorch.cpp:3225-3265`) | `m_portSupportedFecModes[...].supported = false` → `isFecModeSupported()` 常に true (FEC バリデーション無効化) | `portsorch.cpp:3245-3260` |
-| `SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE` | `get_port_attribute` (`portsorch.cpp:3179-3196`) | `port.m_cap_an = 1` フォールバック (互換性維持コメントあり) | `portsorch.cpp:3189-3191` |
-| `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` | **照会されず** (TODO) | `m_cap_lt = 1` 固定 → 非対応 ASIC で `link_training` を投げると SAI エラー | `portsorch.cpp:3197-3205` |
-
-### `gMySwitchType` 別挙動
-
-| 軸 | `switch` (既定) | `voq` (VOQ chassis) | `dpu` |
-|----|----------------|---------------------|-------|
-| FEC override / oper FEC capability 照会 | yes | yes | **no** (`portsorch.cpp:987`) |
-| `initializePortBufferMaximumParameters` | yes | yes | **no** (`portsorch.cpp:6449`) |
-| default VLAN / bridge port 削除 | no | **yes** (`portsorch.cpp:1496-1499`) | no |
-| `system_lag_alias = host\|asic\|lag` キー形式 | no | **yes** (`portsorch.cpp:7972`) | no |
-| `voqSyncAddLag` / `voqSyncDelLag` / `voqSyncLagMember` | no | **yes** (`portsorch.cpp:8039, 8116, 8213, 8261`) | no |
-| `SYSTEM_PORT_ATTR_QOS_NUMBER_OF_VOQS` 取得 | no | **yes** (`portsorch.cpp:6543-6580`) | no |
-| VOQ queue counter 強制 enable | no | **yes** (`portsorch.cpp:8485, 8510`) | no |
-| `gIntfsOrch->voqSyncIntfState` で asic 跨ぎ intf 状態同期 | no | **yes** (`portsorch.cpp:9841`) | no |
-
-### multi-asic / VOQ chassis での APPL_DB 配置
-
-`APPL_DB PORT_TABLE` は **各 asic namespace の独立した APPL_DB** に書かれる。chassis 全体で port を一覧する集約テーブルは APPL_DB には存在しない（必要なら `CHASSIS_APP_DB` を別経路で参照）。VOQ chassis のみ `system_lag` / `SYSTEM_PORT` を経由して asic 間 LAG / 状態同期が走り、LAG alias key が `"<hostname>|<asicname>|<lag>"` 形式に変わる。
-
-### Mellanox 固有分岐
-
-`isMlnxPlatform()` (`portsorch.cpp:689-704`) は `getenv("platform")` を `"mellanox"` で `strstr` 判定。`portsorch.cpp:6362-6379` のコメント「distribution-only mode is not supported on Mellanox platform」に従い、LAG member の collection / distribution toggle 順序を強制する。`PORT_TABLE` 自体のフィールド集合は不変だが、LAG メンバー化時の APPL_DB 遷移順序が変わる。
-
-### Gearbox 専用フィールド
-
-`system_oper_status` / `line_oper_status` は `isGearboxEnabled()` true の環境（line-side PHY 搭載 ASIC）でのみ書かれる。詳細は上記 Phase A 「コード由来の暗黙デフォルト」セクション参照。
-
-!!! warning "DPU では FEC override / oper FEC が照会されない"
-    `gMySwitchType == "dpu"` の環境では `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` / `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` を一切照会しない (`portsorch.cpp:987`)。STATE_DB の `oper_fec` は空のまま、CONFIG_DB に `fec` を設定しても autoneg override 経路は動かない。
-
-!!! warning "LT capability の固定値フォールバック"
-    `initPortCapLinkTraining()` は SAI 照会を実装しておらず常に `m_cap_lt = 1` で WARN を出す (`portsorch.cpp:3197-3205`)。LT 非対応 ASIC で `link_training=on` を設定すると SAI 適用時に失敗するが、APPL_DB `PORT_TABLE` の `link_training` 値はそのまま残る。
-
-!!! note "VOQ chassis では default VLAN が削除される"
-    `gMySwitchType == "voq"` の環境では `createPortBulk` 完了直後に `removeDefaultVlanMembers()` + `removeDefaultBridgePorts()` が走る (`portsorch.cpp:1496-1499`)。port が bridge port を持たない VOQ 設計のため、`PORT_TABLE` の `oper_status` UP 時に bridge port 経由の派生処理（FDB 等）が走らない点に注意。
-
-!!! note "APPL_DB は asic namespace ごとに分離"
-    multi-asic / VOQ chassis では `APPL_DB PORT_TABLE` は各 asic namespace に独立して存在する。`sonic-db-cli -n asic0 APPL_DB hgetall ...` のように namespace 指定で参照すること。chassis 全体で port を一覧するには `show interfaces status` を line card 単位で実行するか、`CHASSIS_APP_DB` を参照する。
-
-<!-- /platform -->
-
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -273,6 +209,51 @@ PORT_TABLE:<port_name>
 
 <!-- /side-effects -->
 
+<!-- failure -->
+## 失敗・retry 分岐 (Phase D)
+
+> **注記**: orchagent (PortsOrch) が APPL_DB `PORT_TABLE` を購読して SAI に反映する際、
+> 入力値の不正や SAI 失敗を 3 系統 (`task_success` / `task_need_retry` / `task_failed`) で扱う。
+> 詳細・コード行は [`meta/_intermediate/cdb-flow/appl-port-table-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-failure.md) を参照[^5]。
+
+### 永久失敗 (タスクを erase、retry なし)
+
+| 検出箇所 | 条件 | ログ |
+|----------|------|------|
+| `portsorch.cpp:5023` | `isSpeedSupported()==false` (STATE_DB `supported_speeds` リスト不一致) | `SWSS_LOG_ERROR("Unsupported port %s speed %u", ...)` |
+| `portsorch.cpp:5317` | auto FEC 指定だが platform が `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` 非対応 | `SWSS_LOG_ERROR("Auto FEC mode is not supported")` |
+| `portsorch.cpp:5323` | `isFecModeSupported()==false` (STATE_DB `supported_fecs` リスト不一致) | `SWSS_LOG_ERROR("Unsupported port %s FEC mode %s", ...)` |
+| `portsorch.cpp:3715` | `setPortLinkTraining()` で `port.m_type != Port::PHY` | (`task_failed` を返す) |
+| `setPort*()` 全般 | `handleSaiSetStatus()` が `task_failed` を返す (`SAI_STATUS_INSUFFICIENT_RESOURCES` 系以外の SAI エラー) | `SWSS_LOG_ERROR("Failed to set port %s ..., ...")` |
+
+- いずれも `doPortTask()` 側で `it = taskMap.erase(it); continue;` され、再試行されない
+- APPL_DB `PORT_TABLE:<alias>` 上のフィールドはそのまま残る一方、Port struct / SAI には反映されないため **APPL_DB と SAI の値が乖離** する状態が発生し得る
+
+### 一時失敗 (タスクを残し次回 `doTask()` で retry)
+
+| 検出箇所 | 条件 | 動作 |
+|----------|------|------|
+| `portsorch.cpp:5038, 5087, 5139, 5210, 5342` | speed / adv_speeds / interface_type / adv_interface_types / fec 変更前に `setPortAdminStatus(p, false)` が失敗 | `it++; continue;` で retry |
+| `portsorch.cpp:5362` | `setPortFec()` が `bool false` を返す (SAI `set_port_attribute(FEC_MODE)` 失敗) | `it++; continue;` で retry |
+| `setPort*()` 全般 | `handleSaiSetStatus()` が `task_need_retry` (`SAI_STATUS_INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` / `NV_STORAGE_FULL`) を返す | `it++; continue;` で retry |
+
+### admin transition (内部副作用)
+
+speed / adv_speeds / interface_type / adv_interface_types / fec を変更する際、
+ポートが admin up かつ条件 (autoneg off など) を満たすと PortsOrch は一旦 admin を DOWN にし、属性変更後に元の admin 状態を復元する設計だが、復元処理は別のタスクサイクル
+(`m_portList[p.m_alias] = p` で `m_admin_state_up = false` を記録) に委ねられる。
+このため変更途中で orchagent がクラッシュ・再起動すると、APPL_DB は admin up のまま実 SAI ポートは admin down に取り残される可能性がある。
+
+### oper / flap 系は失敗に非同期
+
+`set_port_attribute` 失敗とは独立に、`updateDbPortOperStatus()` (`portsorch.cpp:3920-3930`)
+および `updateDbPortFlapCount()` (`portsorch.cpp:3865-3890`) は SAI からの
+`port_oper_status_notification` で APPL_DB の `oper_status` / `flap_count` /
+`last_up_time` / `last_down_time` を更新し続ける。すなわち管理面 (admin/speed/fec) の
+SET が失敗してもデータ面の運用表示は最新値を反映する。
+
+<!-- /failure -->
+
 ## CONFIG_DB PORT との対応
 
 | 側面 | CONFIG_DB PORT | APPL_DB PORT_TABLE |
@@ -308,3 +289,4 @@ sonic-db-cli CONFIG_DB hget 'PORT|Ethernet0' admin_status
 [^2]: portmgrd portmgr.h, portmgr.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.h>
 [^3]: orchagent portsorch.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
 [^4]: orchagent portsorch.cpp (副次 DB 書込): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+[^5]: orchagent portsorch.cpp `doPortTask()` / `setPort*` 系失敗分岐 (Phase D): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および `handleSaiSetStatus()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp>
