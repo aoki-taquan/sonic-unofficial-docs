@@ -656,4 +656,62 @@ Multi-ASIC: 各 namespace の `namespace_configdb` にも同じ操作を適用�
 - **STATE_DB 書き込み**: ルール作成/削除時に `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) へステータスを書き込む (`aclorch.cpp:3479`)。
 
 <!-- /runtime-trace -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`AclOrch` は `ACL_RULE` の SET/DEL 処理後に CONFIG_DB / APPL_DB 以外の 3 つの DB へ書き込む。
+
+### STATE_DB / `ACL_RULE_TABLE`
+
+ルールの検証・作成ステータスを書き込む。key 形式: `<table_name>|<rule_name>`。
+
+| トリガ | フィールド | 値 | evidence |
+|--------|------------|-----|----------|
+| `addAclRule()` 成功 | `status` | `"active"` | `aclorch.cpp:5670` |
+| SAI リソース枯渇 (retry キャッシュへ退避) | `status` | `"pending_creation"` | `aclorch.cpp:5683,5690,5696` |
+| その他の create 失敗 | `status` | `"pending_creation"` | `aclorch.cpp:5696` |
+| `bAllAttributesOk=false` / `validate()` 失敗 | `status` | `"inactive"` | `aclorch.cpp:5704` |
+| `removeAclRule()` 成功 (DEL) | — (エントリ削除) | — | `aclorch.cpp:5713` |
+
+テーブル名定数: `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` (`sonic-swss-common/common/schema.h:515`)。
+
+### COUNTERS_DB / `ACL_COUNTER_RULE_MAP`
+
+SAI ACL counter OID とルール識別子のマッピングを hash フィールドとして登録する。
+`registerFlexCounter()` → `m_countersDb.hset(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier, counterOidStr)`
+
+| トリガ | 操作 | フィールド | evidence |
+|--------|------|-----------|----------|
+| SAI counter 作成成功後 (SET) | `hset` | `<table_name>:<rule_name>` = counter OID | `aclorch.cpp:6041` |
+| `removeAclRule()` 成功後 (DEL) | `hdel` | `<table_name>:<rule_name>` | `aclorch.cpp:6047` |
+
+定数: `COUNTERS_ACL_COUNTER_RULE_MAP = "ACL_COUNTER_RULE_MAP"` (`aclorch.h:45`)。
+
+!!! note "createCounter フラグ"
+    `AclRulePacket` (L3/L3V6) はデフォルト `createCounter=true` のため登録される。
+    `AclRuleMirror` はデフォルト `createCounter=false` のため COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない (`aclorch.cpp:2295-2306`)。
+
+### FLEX_COUNTER_DB / `ACL_STAT_COUNTER:<counter_oid>`
+
+ACL stat counter の flex counter ポーリング設定を書き込む。
+`registerFlexCounter()` → `m_flex_counter_manager.setCounterIdList(oid, CounterType::ACL_COUNTER, attrs)` → `startFlexCounterPolling()` → `gFlexCounterTable->set(key, fvTuples)`
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|----------|
+| SAI counter 作成成功後 (SET) | `set` | `ACL_STAT_COUNTER:<oid>` | `ACL_COUNTER_ATTR_ID_LIST=<attrs>` | `aclorch.cpp:6040`, `saihelper.cpp:1047` |
+| `removeAclRule()` 成功後 (DEL) | `del` | `ACL_STAT_COUNTER:<oid>` | — | `aclorch.cpp:6048`, `flex_counter_manager.cpp:249` |
+
+定数: `ACL_COUNTER_FLEX_COUNTER_GROUP = "ACL_STAT_COUNTER"` (`aclorch.h:116`)。
+DB 番号: `FLEX_COUNTER_DB = 5` (`schema.h:18`)。
+
+!!! warning "ACL カウンタは初期無効"
+    `ACL_COUNTER_DEFAULT_ENABLED_STATE = false` のため、`AclOrch` 起動直後は FLEX_COUNTER_DB のポーリングが無効。`counterpoll acl enable` で有効化するまで stat は収集されない (`aclorch.cpp:48`)。
+
+### 副次書込なし
+
+- **APPL_DB**: `AclOrch` は CONFIG_DB を直接購読するため、中間 APPL_DB 書き込みは発生しない。
+- **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
+
+<!-- /side-effects -->
 <!-- glossary-links-injected: a78cb4c857bd -->

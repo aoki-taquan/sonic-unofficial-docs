@@ -296,4 +296,53 @@ db_migrator.py での VLAN_INTERFACE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> **調査根拠**: `intfmgr.cpp`、`sonic-vlan.yang`、`dhcp4relay.cpp`、`config_interface.cpp`、`dhcp_cfggen.py`、`natconfig`、`neighbor_advertiser`、`filter_fdb_entries.py`、`xfmr_intf.go` 全行精読 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/vlan-interface-cross-refs.md`
+
+`VLAN_INTERFACE` は YANG leafref で `VLAN`・`VRF`・`VNET` を公式参照するほか、
+実行時に以下のテーブルを**暗黙的に参照または被参照**する。
+
+### 参照先 (VLAN_INTERFACE → 他テーブル)
+
+| 参照先テーブル | YANG leafref | 参照フィールド | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|
+| `VLAN\|<name>` | ✅ あり | `name` (key) | 必須 — 未処理なら `task_need_retry` | `intfmgr.cpp`; `sonic-vlan.yang` |
+| `VRF\|<name>` | ✅ あり | `vrf_name` | 条件付き — STATE_DB 未登録ならリトライ | `intfmgr.cpp`; `sonic-vlan.yang` |
+| `VNET\|<name>` | ✅ あり | `vnet_name` | 条件付き | `sonic-vlan.yang`; `orchagent` |
+
+#### VLAN — task_need_retry による依存
+
+`IntfsOrch` は VLAN_INTERFACE を処理する前に対応 VLAN テーブルが orchagent で完了済みである必要がある。
+VLAN が未解決の場合は `task_need_retry` を返し保留する (`orchagent/intfsorch.cpp`)。
+
+#### VRF — STATE_DB 経由の存在確認
+
+`vrf_name` が設定された場合、`intfmgrd` は STATE_DB `VRF_TABLE|<name>` の存在を確認してから処理する。
+VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリトライされる (`intfmgr.cpp`)。
+
+### 被参照 (他テーブル → VLAN_INTERFACE)
+
+| 参照元コンポーネント | 参照方法 | YANG leafref | 実装上の意味 | 証拠 |
+|---|---|---|---|---|
+| `DHCP_SERVER_IPV4` (dhcpservd) | `get_config_db_table('VLAN_INTERFACE')` 全量読み取り | なし | サブネット・GW を VLAN_INTERFACE から取得。IP がないと kea-dhcp4 設定生成不可 | `dhcp_cfggen.py:69` |
+| `DHCP_RELAY` (dhcp4relay) | `VLAN_INTERFACE\|<vlan>` から `vrf_name` 読み取り | なし | VRF 対応ソケット生成に使用。VLAN_INTERFACE.vrf_name がリレー VRF を決定 | `dhcp4relay.cpp:885` |
+| `DHCP_RELAY` (dhcp6relay) | `VLAN_INTERFACE\|<vlan>\|*` パターン検索 | なし | IPv6 プレフィックスが未登録なら `LOG_WARNING` でスキップ | `config_interface.cpp:130,135` |
+| NAT (`natconfig`) | VLAN_INTERFACE の `nat_zone` フィールドを走査 | なし | `nat_zone≥1` のとき natmgr がゾーンバインドを生成 | `natconfig:205`; `show/main.py:1609` |
+| `neighbor_advertiser` | `get_table('VLAN_INTERFACE')` で IP リスト取得 | なし | gratuitous ARP / ND 送出対象 IP を VLAN_INTERFACE から収集 | `neighbor_advertiser:101,172,212,289` |
+| FDB フィルタ (fdbutil) | `config_db_entries["VLAN_INTERFACE"]` 存在チェック | なし | VLAN が L3 有効化済みかを判定し FDB フィルタ動作を変える | `filter_fdb_entries.py:30-31` |
+| GCU サービス検証 | 変更差分を `old/upd_vlan_intf` として比較 | なし | VLAN_INTERFACE 変更時のサービス再起動要否判定 | `services_validator.py:163-164` |
+| OpenConfig REST/gNMI | `intfTN: "VLAN_INTERFACE"` にマッピング | なし | OpenConfig `interfaces/interface[type=vlan]` が VLAN_INTERFACE に対応 | `xfmr_intf.go:152,416-418` |
+
+### 解決タイミングまとめ
+
+1. **VLAN** が先に orchagent で確定している必要がある（`task_need_retry`）。
+2. **VRF** が STATE_DB に登録されるまで VLAN_INTERFACE の VRF バインドは保留される。
+3. DHCP relay/server コンテナは起動時・CONFIG_DB 変更通知時に VLAN_INTERFACE を再読み取りするため、**VLAN_INTERFACE への IP 追加は DHCP に即座に反映される**。
+4. neighbor_advertiser はデーモン常駐型で CONFIG_DB を購読。IP 変更は次の gratuitous ARP サイクルで反映される。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: b8bde3f9637a -->

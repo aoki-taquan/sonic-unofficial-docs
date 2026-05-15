@@ -322,6 +322,55 @@ YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文�
 
 > **スキャン証跡**: `frrcfgd.py` `global_key_map` L1784-1821 全行読了、`get_command_cmn()` L374-413 全行読了、`bgpd.conf.db.j2` 全行読了、`sonic-bgp-global.yang` 全行読了。
 <!-- /defaults -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR vtysh に反映する。以下の書き込み順序・制約を守ること。
+
+### 依存関係サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `local_asn` を同一 SET に含む → 他フィールドも同時反映 | **必須** (単独 SET では残フィールドを skip) | なし |
+| 2 | `BGP_GLOBALS\|<vrf>` (`local_asn`) → `BGP_GLOBALS_AF` 等サブテーブル | **強制先行** (`local_asn` 未確立なら全 skip) | なし |
+| 3 | `default` VRF: `DEVICE_METADATA.bgp_asn` が代替 ASN 源 | 代替パス | `DEVICE_METADATA` を先行設定 |
+| 4 | `VRF\|<vrf>` → `BGP_GLOBALS\|<vrf>` → サブテーブル (非 default VRF) | **強制先行** | なし |
+| 5 | `local_asn` 変更: `DEL BGP_GLOBALS` → 再 SET | **必須** (UPDATE 不可) | メンテ窓で実施 |
+| 6 | `keepalive` + `holdtime` を同一 SET に含む | **必須** (片方のみは無効) | 両フィールドをセットで投入 |
+| 7 | サブテーブル DEL → `BGP_GLOBALS` DEL | **推奨** (CONFIG_DB 整合性) | FRR 側は VRF ごと削除するが DB 残留の恐れ |
+
+### 詳細
+
+**`local_asn` 必須 (依存 #1、#2)**
+
+`__update_bgp()` (`frrcfgd.py:2685-2727`) は `BGP_GLOBALS` の SET を受信すると最初に `local_asn` を処理して `self.bgp_asn[vrf]` に登録する。その後 `__get_vrf_asn(vrf)` が None を返す場合（`local_asn` が SET に含まれず、かつ未登録）は `continue` でスキップされる。
+
+```
+BGP_GLOBALS|<vrf>  ← local_asn を含む SET が必須
+  ↓ (local_asn 登録後に続行)
+BGP_GLOBALS_AF|<vrf>|<af>
+BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf>|<af>|<prefix>
+BGP_GLOBALS_AF_NETWORK|<vrf>|<af>|<prefix>
+BGP_GLOBALS_LISTEN_PREFIX|<vrf>|<prefix>
+```
+
+**`default` VRF の代替パス (依存 #3)**
+
+`default` VRF に限り、`DEVICE_METADATA|localhost|bgp_asn` が設定されていれば `BGP_GLOBALS|default` に `local_asn` が未設定でも他フィールド処理が継続される (`frrcfgd.py:2162-2166, 2442-2447`)。
+
+**非 default VRF の VRF 先行必須 (依存 #4)**
+
+VRF インスタンスを使う場合は `VRF|<vrf>` を CONFIG_DB に書いてから `BGP_GLOBALS|<vrf>` を書くこと (`frrcfgd.py:2449-2451`)。
+
+**`local_asn` 変更不可 (依存 #5)**
+
+既に設定済みの `local_asn` を UPDATE で変更しようとすると `'local_asn could not be modified'` の LOG_ERR が記録され変更が無視される (`frrcfgd.py:2694-2696`)。変更する場合は `DEL BGP_GLOBALS|<vrf>` でインスタンス全体を削除し、新しい `local_asn` で再度 SET する。
+
+**`keepalive` / `holdtime` の組み合わせ制約 (依存 #6)**
+
+`bgp_global_handler()` は `comb_attr_list=[{'keepalive', 'holdtime'}]` を指定しており、片方のみが含まれると集合全体が除外され `timers bgp <k> <h>` コマンドが生成されない (`frrcfgd.py:3935-3936`)。
+
+<!-- /ordering -->
 <!-- cross-refs -->
 ## 暗黙テーブル参照 (Phase C)
 
