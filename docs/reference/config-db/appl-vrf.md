@@ -178,6 +178,67 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/appl-vrf-ordering.md`
+
+### SET 時の先行必須テーブル / 状態
+
+| 先行テーブル / 状態 | 理由 | ソース |
+|---|---|---|
+| `MGMT_VRF_CONFIG` の Linux mgmt VRF 作成 (`hostcfgd` 側) | `vrfmgrd::setLink` は `vrfName == "mgmt"` の場合 `ip link add` を呼ばず `MGMT_VRF_TABLE_ID = 6000` を予約するだけ。`hostcfgd` が先に Linux mgmt VRF を作っていない状態で書くと SAI Virtual Router は作成されるが Linux 側 netdev と不整合になる | `vrfmgr.cpp:13-16, 73-84, 164-201` |
+| `VXLAN_EVPN_NVO` (`vni != 0` の場合) | `updateVrfVNIMap` が `EvpnNvoOrch::getEVPNVtep()` を必須で参照。VTEP 未作成だと `false` 返却で `addOperation` 失敗、SAI VR は create 済みなのに `STATE_VRF_OBJECT_TABLE` と VNI map が抜ける半作成状態が残る | `vrforch.cpp:225-230` |
+| `VXLAN_TUNNEL_MAP` (VLAN-VNI map) (`vni != 0` の場合) | `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 のとき `updateL3VniStatus` が呼ばれず L3 VNI は半設定状態のまま保留される | `vrforch.cpp:233-241` |
+
+!!! warning "mgmt VRF は二系統の同期が必要"
+    `mgmt` VRF は `hostcfgd` (Linux mgmt VRF netdev) と `vrfmgrd` (`MGMT_VRF_CONFIG` 経由で APPL_DB `VRF_TABLE|mgmt`) の **二系統** で構成される。`vrfmgrd::doTask` は `mgmtVrfEnabled == true` かつ `in_band_mgmt_enabled == true` の両条件が揃わない限り `op` を `DEL_COMMAND` に書き換える (`vrfmgr.cpp:228-271`)。orchagent 側 `VRFOrch::addOperation` も `mgmtVrfEnabled` / `in_band_mgmt_enabled` フィールドを explicit ignore する (`vrforch.cpp:74-78`) ため、これらフィールドは SAI には絶対に到達しない。
+
+!!! warning "EVPN VTEP 先行は dead-letter 化しない"
+    `vni != 0` の VRF を `VXLAN_EVPN_NVO` 先行なしで書くと、SAI Virtual Router は create 成功するが (`vrforch.cpp:93-110`)、`updateVrfVNIMap` が `false` を返して `addOperation` が `false` で抜けるため `STATE_VRF_OBJECT_TABLE|<vrf>` が `ok` にならない。後から `VXLAN_EVPN_NVO` を投入すれば次 tick の update パス (`vrforch.cpp:123-152`) が成功し復旧する。半作成状態は一時的だが、その間 `vrfmgrd::isVrfObjExist()` は `false` を返す。
+
+### VRF と VNET の独立性
+
+`vrfmgrd` は CONFIG_DB の `VRF` / `MGMT_VRF_CONFIG` / `VNET` を購読し、それぞれ別 producer で APPL_DB に書く (`vrfmgr.cpp:22-26`):
+
+| CONFIG_DB | APPL_DB 行先 | 受信側 orchagent |
+|---|---|---|
+| `VRF` | `VRF_TABLE` (`m_appVrfTableProducer`) | `VRFOrch` |
+| `MGMT_VRF_CONFIG` | `VRF_TABLE` (`vrfName = "mgmt"` に固定) | `VRFOrch` (両フラグを ignore) |
+| `VNET` | `VNET_TABLE` (`m_appVnetTableProducer`) | `VnetOrch` (`VRFOrch` ではない) |
+
+`VRF` と `VNET` は **APPL_DB 上で別テーブル / 別 producer / 別 orchagent ハンドラ**であり、両者の書込順に依存関係はない。ただし Linux netdev table id (`VRF_TABLE_START..VRF_TABLE_END = 1001..5097`) は **共有プール**で、命名規則 (VNET は `Vnet_*`) により実際の衝突は回避される。
+
+なお `VRFOrch::addOperation` の `v4` / `v6` / `src_mac` / `*_action` 系フィールドは `VnetOrch` 経由で APPL_DB `VRF_TABLE` を直書きする非標準経路でのみ意味を持つ（YANG `sonic-vrf.yang` 未定義のため通常 `config vrf add` 経路では書かれない）。
+
+### DEL 時の順序制約
+
+| 順序制約 | 理由 | ソース |
+|---|---|---|
+| インタフェース / ルート → VRF の順 | `vrf_table_[vrf_name].ref_count > 0` の間 `delOperation` は `return false`（リトライキュー残置）。`STATE_VRF_OBJECT_TABLE|<vrf>` が消えず、`vrfmgrd::delLink` の Linux netdev 削除も走らない | `vrforch.cpp:169-170`、`vrfmgr.cpp:312-360` |
+| SAI remove → STATE_DB DEL → vrfmgrd delLink | `VRFOrch::delOperation` は最後に `m_stateVrfObjectTable.del` を呼ぶ (`vrforch.cpp:193`)。`vrfmgrd` 側は `isVrfObjExist()` が `false` を返すまで Linux netdev 削除を遅延（コメント `Delay delLink until vrf object deleted in orchagent`） | `vrforch.cpp:172-193`、`vrfmgr.cpp:312-360` |
+| `mgmt` VRF は Linux netdev 削除なし | `vrfmgr.cpp:73-76, 146-152` で `vrfName == "mgmt"` のとき table id だけ recycle し、`ip link del` は呼ばない | `vrfmgr.cpp:73-76, 146-152` |
+
+### 起動時シーケンス（典型）
+
+```
+hostcfgd が mgmt VRF netdev を構成（mgmt のみ）
+  ↓
+EvpnNvoOrch が VXLAN_EVPN_NVO 受信 → source VTEP 確立（L3 VNI を使う場合のみ）
+  ↓
+VxlanTunnelOrch が VLAN-VNI map を構築（L3 VNI のデータプレーン反映が必要な場合）
+  ↓
+vrfmgrd が CONFIG_DB VRF / MGMT_VRF_CONFIG を受信
+  → Linux VRF netdev 作成（mgmt 以外）
+  → APPL_DB VRF_TABLE に pass-through
+  ↓
+VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_TABLE|<vrf>=ok
+```
+
+実運用では `config vrf add Vrfxxx` が `VRF` テーブルのみを書く（VNI 未設定）ため、EVPN VTEP / VLAN-VNI map 依存は L3 VNI 機能を使う場合のみ。
+
+<!-- /ordering -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
