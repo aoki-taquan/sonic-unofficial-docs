@@ -24353,6 +24353,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aaacfg-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — AaaCfg が読み出す関連 CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — AaaCfg が読み出す関連 CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共依存テーブル (起動時 + subscribe で一括ロード)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radius-ip-hostname-get_interface_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RADIUS の動的 IP / hostname 解決 (get_interface_ip 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe-aaa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        連動 subscribe (AAA 状態を間接更新)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35610,6 +35671,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aaacfg-config_db-phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 — AaaCfg が読み出す関連 CONFIG_DB テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 — AaaCfg が読み出す関連 CONFIG_DB テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共依存テーブル (起動時 + subscribe で一括ロード)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radius-ip-hostname-get_interface_ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RADIUS の動的 IP / hostname 解決 (get_interface_ip 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe-aaa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        連動 subscribe (AAA 状態を間接更新)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外 (誤解されやすい隣接テーブル)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36761,6 +36883,162 @@
 </table>
 <p>詳細な定数一覧 (mkhomedir 正規表現、PAM_SESSION_LAST_LINE マーカ、SSH min/max 値、nslcd 制御等) は <code>meta/_intermediate/cdb-flow/aaa-constants.md</code> を参照。</p>
 <!-- /constants -->
+
+<!-- cross-refs -->
+<h2 id="aaacfg-config_db-phase-c">暗黙参照 — <code>AaaCfg</code> が読み出す関連 CONFIG_DB テーブル (Phase C)<a class="headerlink" href="#aaacfg-config_db-phase-c" title="Permanent link">&para;</a></h2>
+<p><code>hostcfgd</code> の <code>AaaCfg</code> ハンドラは <code>AAA</code> 単体ではなく、関連 7 テーブルを起動時に一括ロードし (<code>load_independent_config()</code> — hostcfgd:2222-2231)、<code>modify_conf_file()</code> 内で結合した dict から PAM / NSS テンプレ (<code>common-auth-sonic.j2</code> / <code>tacplus_nss.conf.j2</code> 等) を再生成する。さらに RADIUS <code>nas_ip</code> / <code>src_ip</code> / <code>nas_id</code> の動的解決のために、関連インタフェーステーブルを都度参照する。</p>
+<h3 id="subscribe">共依存テーブル (起動時 + subscribe で一括ロード)<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>参照タイミング</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TACPLUS</code></td>
+<td>load + subscribe</td>
+<td>TACACS+ global (<code>passkey</code> / <code>auth_type</code> / <code>timeout</code> / <code>src_intf</code>)</td>
+<td>hostcfgd:2224,2471</td>
+</tr>
+<tr>
+<td><a href="../tacplus-server/"><code>TACPLUS_SERVER</code></a></td>
+<td>load + subscribe</td>
+<td>TACACS+ サーバ毎の <code>priority</code> / <code>tcp_port</code> / <code>passkey</code></td>
+<td>hostcfgd:2225,2472</td>
+</tr>
+<tr>
+<td><a href="../radius/"><code>RADIUS</code></a></td>
+<td>load + subscribe</td>
+<td>RADIUS global (<code>nas_ip</code> / <code>nas_id</code> / <code>src_intf</code> / <code>statistics</code>)</td>
+<td>hostcfgd:2226,2473</td>
+</tr>
+<tr>
+<td><a href="../radius-server/"><code>RADIUS_SERVER</code></a></td>
+<td>load + subscribe</td>
+<td>RADIUS サーバ毎の <code>auth_port</code> / <code>passkey</code> / <code>retransmit</code> / <code>timeout</code> / <code>src_intf</code></td>
+<td>hostcfgd:2227,2474</td>
+</tr>
+<tr>
+<td><code>LDAP</code></td>
+<td>load + subscribe</td>
+<td>LDAP global (<code>bind_dn</code> / <code>base_dn</code> / <code>bind_password</code>) — <code>is_ldap_config_complete()</code> の判定対象</td>
+<td>hostcfgd:2228,2475</td>
+</tr>
+<tr>
+<td><a href="../ldap-server/"><code>LDAP_SERVER</code></a></td>
+<td>load + subscribe</td>
+<td>LDAP サーバ毎の <code>port</code> / <code>priority</code> — 空なら <code>nslcd</code> を mask</td>
+<td>hostcfgd:2229,2476</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>1 テーブルの変化でも <code>modify_conf_file()</code> は <strong>7 テーブル分</strong> の dict を結合し直して PAM/NSS テンプレを丸ごと再生成する。「中間状態」は事実上避けられないため、変更順序が重要 (Phase B <code>ordering</code> 参照)。</p>
+</blockquote>
+<h3 id="radius-ip-hostname-get_interface_ip">RADIUS の動的 IP / hostname 解決 (<code>get_interface_ip</code> 経由)<a class="headerlink" href="#radius-ip-hostname-get_interface_ip" title="Permanent link">&para;</a></h3>
+<p><code>RADIUS</code> / <code>RADIUS_SERVER</code> の <code>src_intf</code> 指定や <code>nas_ip</code> 自動補完のため、<code>AaaCfg.get_interface_ip()</code> (hostcfgd:582-617) が間接的に以下のインタフェーステーブルを読み出す。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>参照箇所</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../mgmt-interface/"><code>MGMT_INTERFACE</code></a></td>
+<td><code>get_interface_ip("eth0")</code></td>
+<td>RADIUS <code>nas_ip</code> 未指定時に <code>eth0</code> の管理 IP を <code>nas_ip</code> として注入</td>
+<td>hostcfgd:600,670-674</td>
+</tr>
+<tr>
+<td><code>INTERFACE</code></td>
+<td><code>get_interface_ip("Eth...")</code></td>
+<td><code>RADIUS_SERVER.src_intf</code> が物理ポートのとき src_ip を解決</td>
+<td>hostcfgd:586,694</td>
+</tr>
+<tr>
+<td><code>VLAN_INTERFACE</code></td>
+<td><code>get_interface_ip("Vlan...")</code></td>
+<td><code>src_intf</code> が VLAN のとき</td>
+<td>hostcfgd:593</td>
+</tr>
+<tr>
+<td><code>VLAN_SUB_INTERFACE</code></td>
+<td><code>get_interface_ip</code> 分岐</td>
+<td><code>src_intf</code> が VLAN sub-interface のとき</td>
+<td>hostcfgd:588</td>
+</tr>
+<tr>
+<td><code>PORTCHANNEL_INTERFACE</code></td>
+<td><code>get_interface_ip("Po...")</code></td>
+<td><code>src_intf</code> が PortChannel のとき</td>
+<td>hostcfgd:591</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE</code></td>
+<td><code>get_interface_ip("Loopback...")</code></td>
+<td><code>src_intf</code> が Loopback のとき</td>
+<td>hostcfgd:595</td>
+</tr>
+<tr>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a> (<code>localhost.hostname</code>)</td>
+<td><code>aaacfg.hostname_update()</code></td>
+<td>RADIUS <code>nas_id</code> 未指定時にホスト名で補完</td>
+<td>hostcfgd:566-577,683-686,2280,2406</td>
+</tr>
+</tbody>
+</table>
+<h3 id="subscribe-aaa">連動 subscribe (AAA 状態を間接更新)<a class="headerlink" href="#subscribe-aaa" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>handler</th>
+<th>AAA への影響</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MGMT_INTERFACE</code></td>
+<td><code>mgmt_intf_handler</code> → <code>aaacfg.handle_radius_nas_ip_chg()</code></td>
+<td><code>eth0</code> IP 変化時に RADIUS <code>nas_ip</code> を再計算</td>
+<td>hostcfgd:2349,2485</td>
+</tr>
+<tr>
+<td><code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>VLAN_SUB_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code></td>
+<td>各 <code>*_intf_handler</code></td>
+<td><code>src_intf</code> の IP 変化時に RADIUS <code>src_ip</code> を更新</td>
+<td>hostcfgd:2486-2489</td>
+</tr>
+<tr>
+<td><a href="../device-metadata/"><code>DEVICE_METADATA</code></a></td>
+<td><code>device_metadata_handler</code> → <code>devmetacfg.hostname_update</code> → <code>aaacfg.hostname_update</code></td>
+<td>hostname 変化時に RADIUS <code>nas_id</code> を再生成</td>
+<td>hostcfgd:2406,2492</td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_CONFIG</code></td>
+<td><code>mgmt_vrf_handler</code></td>
+<td>管理 VRF 切替で <code>eth0</code> 到達性が変わり nas_ip 解決に影響</td>
+<td>hostcfgd:2496</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_24">範囲外 (誤解されやすい隣接テーブル)<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>FIPS</code>: 同 <code>hostcfgd</code> プロセス内の <code>FipsCfg</code> (hostcfgd:1753-1843) が独立購読。<code>AaaCfg</code> からの直接参照なし。OpenSSL FIPS フラグと <code>ssh</code>/<code>telemetry</code>/<code>restapi</code> の再起動を司るだけで、CONFIG_DB レベルで AAA と読み合わない。</li>
+<li><code>SSH_SERVER</code>: <code>PamLimitsCfg.update_config_file()</code> (hostcfgd:1422-1430) が <code>DEVICE_METADATA</code> と併読するのみ。<code>AaaCfg</code> の参照経路には現れない。</li>
+</ul>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/aaa-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->
 

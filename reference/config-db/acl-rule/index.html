@@ -23408,6 +23408,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36296,6 +36346,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        keyspace 通知 → ハンドラ呼び出しの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -38530,6 +38630,63 @@ DB 番号: <code>FLEX_COUNTER_DB = 5</code> (<code>schema.h:18</code>)。</p>
 <li><strong>ASIC_DB</strong>: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。</li>
 </ul>
 <!-- /side-effects -->
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>ACL_RULE</code> への変更通知は、<code>AclOrch</code> が <strong><code>swss::SubscriberStateTable</code></strong> (Redis keyspace 通知ベース) で購読する。<code>Orch::addConsumer()</code> が DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB には <code>SubscriberStateTable</code> を、それ以外（APPL_DB 等）には <code>ConsumerStateTable</code> を割り当てる (<code>orch.cpp:1186-1196</code>)。APPL_DB 側 <code>ACL_RULE_TABLE</code> は channel ベース PUBLISH/SUBSCRIBE を使うが、CONFIG_DB 側は <strong>keyspace 通知 <code>__keyspace@&lt;dbId&gt;__:ACL_RULE|*</code> への <code>PSUBSCRIBE</code></strong> で変更を検知する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1">// orch.cpp:1186-1196</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Orch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">)</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">{</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">TableConsumable</span><span class="o">::</span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>購読テーブル</th>
+<th>バッチ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orchagent</code> (<code>AclOrch</code>)</td>
+<td><code>swss::SubscriberStateTable</code></td>
+<td><code>ACL_RULE</code></td>
+<td><code>TableConsumable::DEFAULT_POP_BATCH_SIZE</code> (128, ハードコード)</td>
+</tr>
+</tbody>
+</table>
+<p>バッチサイズは <code>sonic-swss-common/common/table.h:164</code> の <code>DEFAULT_POP_BATCH_SIZE = 128</code> で固定され、<code>Orch::addConsumer()</code> がこの定数をハードコードで渡す (<code>orch.cpp:1190</code>)。APPL_DB 側で使われる <code>gBatchSize</code> (<code>orchagent -b &lt;n&gt;</code> で上書き可) は CONFIG_DB 側 <code>ACL_RULE</code> には<strong>適用されない</strong>。書き込み側 (CLI / <code>sonic-cfggen</code> / gNMI) は <code>swss::Table::set()</code> または <code>swsssdk</code> 経由で <code>HSET</code> のみ行い、明示的な <code>PUBLISH</code> は発行しない。CONFIG_DB のため TTL は使用されない。</p>
+<h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>config / sonic-cfggen / gNMI
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  ↓ Table::set(&quot;&lt;table&gt;|&lt;rule&gt;&quot;, fvs)
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>CONFIG_DB: HSET &quot;ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; &lt;fields&gt;
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  ↓ Redis keyspace event &quot;__keyspace@4__:ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; &quot;hset&quot;
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>OrchDaemon main loop: m_select-&gt;select(&amp;s, 1000ms)  ← SELECT_TIMEOUT
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>  ↓ Consumer::execute() → SubscriberStateTable::pops()
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    └─ HGETALL &quot;ACL_RULE|&lt;table&gt;|&lt;rule&gt;&quot; で値再取得
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>AclOrch::doTask(consumer)  (aclorch.cpp:4272-4295)
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>  ↓ table_name == CFG_ACL_RULE_TABLE_NAME で分岐
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>AclOrch::doAclRuleTask(consumer)  (APPL_DB 版と同一ハンドラ)
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>  ↓ create / update / remove
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>SAI: sai_acl_api-&gt;create_acl_entry / set_acl_entry_attribute / remove_acl_entry
+</span></code></pre></div>
+<ul>
+<li><code>SELECT_TIMEOUT = 1000 ms</code> (<code>orchdaemon.cpp:22-23</code>)。1 秒ごとに wake up して retry / flush を回し、keyspace 通知到着で即座に wake up。</li>
+<li><code>doTask</code> ディスパッチ (<code>aclorch.cpp:4283-4292</code>) は <code>CFG_ACL_RULE_TABLE_NAME</code> と <code>APP_ACL_RULE_TABLE_NAME</code> を <strong>同一ハンドラ</strong> にまとめるため、フィールド意味論・priority 範囲・action / match セットは APPL_DB 版と完全に共有される。</li>
+<li>リトライキャッシュは <code>ACL_RULE</code> 系統 (CONFIG_DB / APPL_DB) <strong>両方</strong> に作成される (<code>createRetryCache(CFG_ACL_RULE_TABLE_NAME)</code>, <code>aclorch.cpp:4221</code>)。SAI リソース枯渇や <code>MIRROR_SESSION</code> の activate 待ち等で失敗したルールは park され、依存解消時に再試行される。</li>
+</ul>
+<h3 id="_22">サービス再起動トリガー<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p>なし。<code>AclOrch</code> は orchagent プロセス内のハンドラであり、<code>ACL_RULE</code> の追加・変更・削除は SAI ACL entry のライブ操作 (<code>sai_acl_api-&gt;create_acl_entry</code> / <code>set_acl_entry_attribute</code> / <code>remove_acl_entry</code>) のみで反映され、プロセス再起動・サービス restart を伴わない。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss/orchagent/orchdaemon.cpp:22-23,408-422,533,959</code> (TableConnector / SELECT_TIMEOUT / <code>new AclOrch(...)</code> / select ループ)、<code>sonic-swss/orchagent/orch.cpp:1186-1196</code> (<code>Orch::addConsumer()</code> DB ID 分岐)、<code>sonic-swss/orchagent/aclorch.cpp:4221-4222,4272-4295</code> (<code>createRetryCache(CFG_ACL_RULE_TABLE_NAME)</code> / <code>doTask</code> ディスパッチ)、<code>sonic-swss-common/common/subscriberstatetable.cpp:17,45-165</code> (<code>SubscriberStateTable</code> の <code>PSUBSCRIBE</code> + <code>HGETALL</code> 動作)、<code>sonic-swss-common/common/table.h:164</code> (<code>DEFAULT_POP_BATCH_SIZE = 128</code>)、<code>sonic-swss-common/common/schema.h</code> (<code>CFG_ACL_RULE_TABLE_NAME</code> 定数); 詳細分析 <code>meta/_intermediate/cdb-flow/acl-rule-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
 <!-- glossary-links-injected: a78cb4c857bd -->
 
 <div class="footnote">
