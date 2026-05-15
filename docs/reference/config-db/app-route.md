@@ -161,6 +161,33 @@ fpmsyncd の `getNextHopWt()` が weight を取得し、非空のときのみ `f
 - DEL 操作の前に暗黙的な DEL が走る（warm restart 非使用時）。これにより古いフィールドが Redis から消去される
 - `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ROUTE_TABLE` (APPL_DB) は YANG 未定義テーブル（APPL_DB は YANG 管理対象外）のため leafref は存在しない。
+以下はすべて `routeorch::doRouteTask()` から呼び出される実装レベルの暗黙参照。
+
+| 参照先テーブル / Orch | 参照方向 | 条件 | 参照元 evidence |
+|----------------------|---------|------|----------------|
+| `VRF_TABLE`（VRFOrch） | 存在確認 + OID + refcount | key が `Vrf*:<prefix>` 形式の非デフォルト VRF のとき。未登録なら `it++` で待機 | `routeorch.cpp` L706–717 (`isVRFexists` / `getVRFid`), L2013, L2773 (refcount inc/dec) |
+| `NEIGH_TABLE`（NeighOrch） | OID + refcount + 解決トリガ | `nexthop` 指定で IP next-hop（intf-only でない）のとき。未解決時は `resolveNeighbor()` で ARP/ND 要求 + `return false` | `routeorch.cpp` L1499–1510 (`addNextHopGroup` 内), L2094–2119 (single NH), L2197–2219 (ECMP) |
+| `INTF_TABLE`（IntfsOrch） | RIF OID + refcount + サブネット判定 | `ifname` 指定 / intf-only NH のとき。RIF 未作成 (`SAI_NULL_OBJECT_ID`) なら `return false` | `routeorch.cpp` L2083 (`getRouterIntfsId`), L1045 (`isPrefixSubnet`), L1362, L1384 (refcount) |
+| `PORT_TABLE`（PortsOrch） | 起動ブロック + Inband 判定 | 常時。`allPortsReady()` が false の間は全 ROUTE_TABLE 処理ブロック。Inband port 宛 NH はスキップ | `routeorch.cpp` L609 (`allPortsReady`), L2074 (`isInbandPort`), L243 (`getCpuPort`) |
+| NhgOrch / CbfNhgOrch（NEXTHOP_GROUP / CBF_NEXT_HOP_GROUP_TABLE） | 存在確認 + 内部オブジェクト + refcount | `nexthop_group` 非空のとき。`nexthop`/`ifname` との同時指定はエラー erase | `routeorch.cpp` L810–814 (排他), L838–839, L2042–2057, L2411 (`hasNhg` OR チェック), L2546 (refcount) |
+| FgNhgOrch（FG_NHG / FG_NHG_PREFIX） | 適用判定 + 専用 NHG 構築 | プレフィクスが FG_NHG 設定にマッチするとき。通常 NHG 管理をバイパス | `routeorch.cpp` L2028–2037 (`isRouteFineGrained` / `setFgNhg`), L2403, L2475 |
+| Srv6Orch（SRV6_SID_LIST_TABLE） | 存在確認 + SRv6 NH + Agg ID | `segment` または `seg_src` 非空（`srv6_nh = true`）のとき | `routeorch.cpp` L2055 (`contextIdExists`), L2100, L2143, L2169 (`srv6Nexthops`), L2295, L2352 (`getAggId`) |
+| VxlanTunnel / remote VTEP（NeighOrch tunnel NH） | VTEP 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ SRv6 でない場合 | `routeorch.cpp` L872 (`isL3VniVlan`), L2127 (`createRemoteVtep`), L2133, L2208 (`addTunnelNextHop`) |
+| FlowCounterRouteOrch | 通知のみ | route flow counter enable 時、ROUTE add/remove ごと | `routeorch.cpp` L259 (`onAddMiscRouteEntry`), L282, L2708 (`handleRouteAdd`) |
+
+!!! note "排他関係"
+    `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー (`routeorch.cpp` L810–814 で erase)。
+    SRv6 NH (`segment`/`seg_src`) と VxLAN overlay NH (`vni_label`) も実装上排他（`srv6_nh` / `overlay_nh` フラグが排他分岐）。
+
+!!! note "NH 解決の遅延 install"
+    未解決 neighbor / 未作成 RIF / 未作成 VRF / 未登録 nexthop_group のいずれかがあれば `return false` または `it++` でリトライキューに残り、対応する Orch が該当オブジェクトを作成した時点で次回 `doRouteTask()` 実行時に自動 install される。再試行はイベント駆動ではなくテーブル sync の自然な再 polling による。
+
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `routeorch::doRouteTask()` (`sonic-swss/orchagent/routeorch.cpp`): SAI `route_entry` の作成・更新・削除
