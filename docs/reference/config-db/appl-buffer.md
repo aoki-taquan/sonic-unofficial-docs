@@ -286,6 +286,67 @@ handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス
 
 <!-- /failure -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`BufferOrch` は単一バイナリで動作するが、(a) `gMySwitchType == "voq"` の chassis VOQ 経路、(b) SAI capability の動的判定、(c) ベンダ buffer pool Lua plugin、の 3 点でプラットフォーム差が生まれる[^buforch]。BUFFER_PG / BUFFER_QUEUE の **PG/queue index → SAI oid マッピング自体は `portsorch` 側に閉じている** ため、Broadcom / Mellanox の物理マップ差は bufferorch には現れない。
+
+### 1. VOQ chassis (Cisco 8000 系) の経路差
+
+| 行 | 差分 | non-VOQ | VOQ (`gMySwitchType == "voq"`) |
+|---|---|---|---|
+| L116/L132 | BUFFER_QUEUE_TABLE 初期化 | `initBufferReadyList()` | `initVoqBufferReadyList()` (system port ベース) |
+| L916 | BUFFER_QUEUE_TABLE key tokens | 2 (`<port>\|<range>`) | 4 (`<host>\|<asic>\|<port>\|<range>`) |
+| L1049 | queue id 解決 | `port.m_queue_ids[ind]` | `gPortsOrch->getPortVoQIds(port)[ind]` |
+| L1066-1070 | queue lock retry | あり (`task_need_retry`) | なし |
+| L1134-1136 | Port Queue Counter 自動登録 | bufferorch が登録 | `flexcounterorch` が一括登録するため bufferorch ではスキップ |
+| L1166-1168 | port ref counter 更新 | あり | なし (system port は静的) |
+| L2079 | `doTask()` 起動ガード | `isConfigDone()` | `isInitDone()` |
+
+BUFFER_PG_TABLE には VOQ 分岐がなく、PG キーは VOQ chassis でも 2 トークン (`<port>\|<range>`)。
+
+### 2. SAI capability 動的判定 (ASIC ベンダ依存)
+
+bufferorch は静的にベンダ名を判定せず、**SAI 戻り値で実行時に capability を検出する**。
+
+| 経路 | 行 | NOT_IMPLEMENTED 時の挙動 | 影響範囲 |
+|---|---|---|---|
+| `clear_buffer_pool_stats` | L310-322 | `noWmClrCapability` ビットマスクに記録 (32 プールまで) | watermark clear API (pool 単位で個別) |
+| `set_buffer_pool_attribute` | L506-512 | `task_ignore` | BUFFER_POOL_TABLE 属性 SET |
+| `set_buffer_profile_attribute` | L773-777 | `task_ignore` | **`xon_offset`** / `packet_discard_action=trim` 等 ASIC 非対応 attr |
+
+→ `xon_offset` (`SAI_BUFFER_PROFILE_ATTR_XON_OFFSET_TH`) を非対応な ASIC では bufferorch が `task_ignore` で握り潰す。CONFIG_DB / APPL_DB に値が残っていてもハードウェアには反映されない (silent skip)。`packet_discard_action=trim` も同様で、加えて trimming-eligible profile を PG / profile-list に貼ろうとすると `task_failed` になる (L1382-1388 / L1728 / L1918)[^buforch]。
+
+### 3. dynamic / static buffer model のベンダ別配布
+
+`BUFFER_POOL_TABLE.size` が空の場合の挙動はビルド時の選択で変わる:
+
+| ベンダ | model | size 空時の挙動 |
+|---|---|---|
+| Mellanox SN シリーズ | dynamic (`buffermgrdyn`) | `buffer_pool_mlnx.lua` が SAI MMU から逆算して APPL_DB に書き戻す |
+| Barefoot Tofino | dynamic (`buffermgrdyn`) | `buffer_pool_bfn.lua` |
+| Broadcom (多くの platform) | static (`buffermgr`) | CONFIG_DB を pass-through (空なら空のまま) |
+
+dynamic vs static の選択は `device/<vendor>/<platform>/<HWSKU>/buffers_dynamic.json.j2` の配布有無で決まり、bufferorch 側は感知しない (APPL_DB の値を SAI に流すだけ)。
+
+### 4. PG / queue index 上限は portsorch から借用
+
+bufferorch は PG / queue の SAI oid を **`portsorch` が `SAI_PORT_ATTR_INGRESS_PRIORITY_GROUP_LIST` / `SAI_PORT_ATTR_QOS_QUEUE_LIST` で取得済み** の `port.m_priority_group_ids` / `port.m_queue_ids` を index アクセスするのみ。範囲外 (`m_queue_ids.size() <= ind`) は `task_invalid_entry` (L1058-1061)。Broadcom (8 PG × 8 queue) と Mellanox (同 8/8 だが内部 buffer 構造が異なる) の物理マップ差は SAI ベンダ実装に閉じる。
+
+### 5. multi-asic namespace
+
+multi-asic non-VOQ (T2 chassis BGP-only 等) では `BUFFER_*` は各 `asicX` namespace の独立 bufferorch インスタンスで処理される。VOQ chassis では `gMyHostName` / `gMyAsicName` と key の先頭 2 トークンを比較し (L1062-1064)、自 ASIC 配下を `local_port = true` として SAI bind、他 ASIC ぶんは ready list 管理のみ。
+
+### 詳細
+
+行番号付き完全マトリクスは中間ファイル参照:
+
+- `meta/_intermediate/cdb-flow/appl-buffer-platform.md`
+
+> **証跡**: `bufferorch.cpp` の `gMySwitchType` 5 hit / `SAI_STATUS_NOT_IMPLEMENTED` 3 hit / `SAI_STATUS_NOT_SUPPORTED` 1 hit を全件確認。VOQ 分岐の L116/L132/L916/L1049/L1136/L1168/L2079、capability 経路の L310-322/L506-512/L773-777 を精読。
+
+<!-- /platform -->
+
 ## 引用元
 
 [^buforch]: `bufferorch.cpp` — `processBufferPool()` / `processBufferProfile()` / `processPriorityGroup()` / `processQueue()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp>
