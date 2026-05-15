@@ -23698,6 +23698,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来のデフォルト・暗黙挙動 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来のデフォルト・暗黙挙動 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fg_nhg_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FG_NHG テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fg_nhg_member_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FG_NHG_MEMBER テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34857,6 +34907,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来のデフォルト・暗黙挙動 (Phase A)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来のデフォルト・暗黙挙動 (Phase A)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fg_nhg_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FG_NHG テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fg_nhg_member_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FG_NHG_MEMBER テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-vs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG vs 実装
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35279,6 +35379,120 @@
 </tbody>
 </table>
 <!-- /value-behavior -->
+
+<!-- defaults -->
+<h2 id="phase-a">コード由来のデフォルト・暗黙挙動 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss/orchagent/fgnhgorch.cpp</code> <code>doTaskFgNhg()</code> L1673–1744 / <code>doTaskFgNhgMember()</code> L1969–2030 精読 + <code>sonic-fine-grained-ecmp.yang</code> 照合 (2026-05-15)</p>
+</blockquote>
+<h3 id="fg_nhg_2"><code>FG_NHG</code> テーブル<a class="headerlink" href="#fg_nhg_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>fgnhgorch 実装の実効デフォルト</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bucket_size</code></td>
+<td>なし</td>
+<td><strong>なし</strong>（0 で <code>SWSS_LOG_ERROR</code> → <code>return true</code> で破棄、再試行なし）</td>
+<td>実質必須。<code>bucket_size==0</code> はエラーで Consumer キューにも残らない</td>
+</tr>
+<tr>
+<td><code>match_mode</code></td>
+<td>なし</td>
+<td><strong><code>route-based</code></strong>（ローカル変数 <code>FGMatchMode::ROUTE_BASED</code> 初期値）</td>
+<td>不正値も <code>SWSS_LOG_WARN</code> の後 <code>route-based</code> にフォールバック</td>
+</tr>
+<tr>
+<td><code>max_next_hops</code></td>
+<td>なし</td>
+<td><strong><code>0</code></strong>（uint32_t 初期化値）</td>
+<td><code>match_mode==prefix-based</code> のときのみ参照。<code>0</code> で <code>SWSS_LOG_ERROR</code> だが処理は継続し SAI 動作が不定に</td>
+</tr>
+</tbody>
+</table>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// fgnhgorch.cpp L1680–1681</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">FGMatchMode</span><span class="w"> </span><span class="n">match_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FGMatchMode</span><span class="o">::</span><span class="n">ROUTE_BASED</span><span class="p">;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">max_next_hops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">...</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1">// L1685</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">bucket_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">...</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1">// L1703–1707  不正な match_mode はここで握り潰される</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fvValue</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;route-based&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="n">SWSS_LOG_WARN</span><span class="p">(</span><span class="s">&quot;Received unsupported match_mode %s, defaulted to route-based&quot;</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">                  </span><span class="n">fvValue</span><span class="p">(</span><span class="n">i</span><span class="p">).</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">...</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1">// L1722–1726  bucket_size 未指定は破棄</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bucket_size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Received bucket_size which is 0 for key %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">kfvKey</span><span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">c_str</span><span class="p">());</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">   </span><span class="c1">// 再試行なし</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title"><code>match_mode</code> のタイポは silent fallback</p>
+<p><code>match_mode</code> に <code>"nexthop-based"</code> / <code>"prefix-based"</code> / <code>"route-based"</code> 以外を書くと <code>SWSS_LOG_WARN</code> の後 <code>route-based</code> で登録される。typo はエラーにならず、意図しない FG 判定方式で動き続ける。</p>
+</div>
+<h3 id="fg_nhg_member_1"><code>FG_NHG_MEMBER</code> テーブル<a class="headerlink" href="#fg_nhg_member_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>YANG default</th>
+<th>fgnhgorch 実装の実効デフォルト</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FG_NHG</code></td>
+<td>なし</td>
+<td><strong>なし</strong>（空で <code>SWSS_LOG_ERROR</code> → <code>return true</code> で破棄）</td>
+<td>leafref 必須。空文字でエントリ破棄</td>
+</tr>
+<tr>
+<td><code>bank</code></td>
+<td>なし</td>
+<td><strong><code>0</code></strong>（uint32_t 初期化値）</td>
+<td>未指定の全メンバが bank 0 に集約されバンク再分配メカニズムが事実上無効化</td>
+</tr>
+<tr>
+<td><code>link</code></td>
+<td>なし</td>
+<td><strong><code>""</code> 空文字列</strong> → port-down 連動なし。<code>link_oper_state</code> は初期値 <code>LINK_UP</code> のまま固定</td>
+<td><code>link</code> を設定しないとリンクダウン時のメンバ自動除去が効かない</td>
+</tr>
+</tbody>
+</table>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// fgnhgorch.cpp L1976</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kt">bool</span><span class="w"> </span><span class="n">link_oper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LINK_UP</span><span class="p">;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">...</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1">// L1980–1982</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">string</span><span class="w"> </span><span class="n">fg_nhg_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="kt">uint32_t</span><span class="w"> </span><span class="n">bank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">string</span><span class="w"> </span><span class="n">link</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">...</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1">// L2025–2030  link 空時は oper-state 追跡なし</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">FGNextHopInfo</span><span class="w"> </span><span class="n">fg_nh_info</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">fg_nh_info</span><span class="p">.</span><span class="n">bank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bank</span><span class="p">;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">link</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="cm">/* PORT/PORTCHANNEL の oper-state 連動を登録 */</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title"><code>bank</code> 未指定は単一バンク化</p>
+<p><code>bank</code> フィールドを省略すると全メンバが bank 0 に入る。Fine-Grained ECMP の核となる「バンク単位の bucket 再分配」が機能せず、通常 ECMP に近い挙動となる。</p>
+</div>
+<h3 id="yang-vs">YANG vs 実装<a class="headerlink" href="#yang-vs" title="Permanent link">&para;</a></h3>
+<p><code>sonic-fine-grained-ecmp.yang</code> には <code>bucket_size</code> / <code>match_mode</code> / <code>max_next_hops</code> / <code>bank</code> のいずれにも <code>default</code> ステートメントが存在しない。デフォルト値は <strong>全て fgnhgorch のローカル変数初期値</strong> に依存しており、CONFIG_DB の他テーブルのように mgmt-framework / db_migrator から fill されることはない。</p>
+<p>詳細な調査ログ: <code>meta/_intermediate/cdb-flow/fg-nhg-defaults.md</code></p>
+<!-- /defaults -->
 
 <!-- cdb-exceptions -->
 <h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>

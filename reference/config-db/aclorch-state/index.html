@@ -22757,6 +22757,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-capability-acl_stage_capability_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI capability クエリ失敗 → フォールバック (ACL_STAGE_CAPABILITY_TABLE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-acl_table_table-doacltabletask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. ACL_TABLE_TABLE 書込みに至る失敗分岐 (doAclTableTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-acl_rule_table-doaclruletask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. ACL_RULE_TABLE 書込みに至る失敗分岐 (doAclRuleTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-retry-cache-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. retry cache 経由の遷移 (SAI リソース枯渇 → 解放)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-init-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. init() 起動時 STATE_DB クリアの例外扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出ロジック補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22851,7 +22934,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34986,6 +35069,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-capability-acl_stage_capability_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI capability クエリ失敗 → フォールバック (ACL_STAGE_CAPABILITY_TABLE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-acl_table_table-doacltabletask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. ACL_TABLE_TABLE 書込みに至る失敗分岐 (doAclTableTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-acl_rule_table-doaclruletask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. ACL_RULE_TABLE 書込みに至る失敗分岐 (doAclRuleTask)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-retry-cache-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. retry cache 経由の遷移 (SAI リソース枯渇 → 解放)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-init-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. init() 起動時 STATE_DB クリアの例外扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出ロジック補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35080,7 +35246,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35703,6 +35869,158 @@
 </div>
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>本ページの STATE_DB 3 テーブル (<code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> / <code>ACL_STAGE_CAPABILITY_TABLE</code>) は <code>AclOrch</code> のみが書き手で、<code>swss::Table::set/del</code> を直接呼ぶ（戻り値なし）。よって「STATE_DB 書込み自体の失敗」はアプリ層で観測できず、Redis 接続例外時は orchagent プロセスごと abort して systemd 再起動で自己回復する経路に集約される。本節は (A) SAI capability クエリ失敗時のフォールバック、(B/C) <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> ステータス書込みに至る失敗分岐、(D) SAI リソース枯渇時の retry cache 経由経路、(E) <code>init()</code> 起動時クリアの例外扱い、の 5 系統を整理する。</p>
+<h3 id="a-sai-capability-acl_stage_capability_table">A. SAI capability クエリ失敗 → フォールバック (<code>ACL_STAGE_CAPABILITY_TABLE</code>)<a class="headerlink" href="#a-sai-capability-acl_stage_capability_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB 反映</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT</code> 取得失敗</td>
+<td>WARN ログ → 両 stage で <code>initDefaultAclActionCapabilities()</code> → <code>putAclActionCapabilityInDB()</code>。retry なし、1 回で確定</td>
+<td><code>ACL_STAGE_CAPABILITY_TABLE|INGRESS</code> / <code>|EGRESS</code> に <code>defaultAclActionsSupported</code> のフォールバック値 (<code>action_list</code> = INGRESS: <code>PACKET_ACTION,MIRROR_INGRESS,NO_NAT</code> / EGRESS: <code>PACKET_ACTION</code>、<code>is_action_list_mandatory="false"</code>)</td>
+<td><code>aclorch.cpp:3984, 4028-4038, 4104-4118, 168-196</code></td>
+</tr>
+<tr>
+<td>stage 別 <code>SAI_SWITCH_ATTR_ACL_STAGE_INGRESS/_EGRESS</code> 取得失敗</td>
+<td>WARN ログ → 当該 stage のみフォールバック、他 stage は SAI 成功値</td>
+<td>片側フォールバック、片側 SAI 動的値</td>
+<td><code>aclorch.cpp:3999, 4016-4022</code></td>
+</tr>
+<tr>
+<td><code>sai_query_attribute_capability(SAI_SWITCH_ATTR_ACL_USER_META_DATA_RANGE)</code> 失敗</td>
+<td>WARN ログ → <code>m_aclMetaDataSupported=false</code> で続行</td>
+<td><code>action_list</code> から DSCP metadata action が除外される</td>
+<td><code>aclorch.cpp:3590, 4069-4072</code></td>
+</tr>
+<tr>
+<td><code>sai_query_attribute_capability</code> (<code>FIELD_ACL_USER_META</code> / <code>ACTION_SET_ACL_META_DATA</code>) 失敗</td>
+<td>WARN ログ → 関連 capability false で続行</td>
+<td><code>action_list</code> 内容に間接反映</td>
+<td><code>aclorch.cpp:3634, 3648</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">capability クエリは retry なし・1 回限り確定</p>
+<p><code>AclOrch::init()</code> 内で 1 回しか呼ばれず、SAI 一時失敗時もオンライン再試行はしない。orchagent プロセス寿命中、<code>ACL_STAGE_CAPABILITY_TABLE</code> の値はフォールバック確定のまま固定される。読み手 (<code>acl-loader</code> / <code>sonic-mgmt-common</code>) は orchagent 再起動まで古い値を参照する。</p>
+</div>
+<h3 id="b-acl_table_table-doacltabletask">B. <code>ACL_TABLE_TABLE</code> 書込みに至る失敗分岐 (<code>doAclTableTask</code>)<a class="headerlink" href="#b-acl_table_table-doacltabletask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB ステータス</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>addAclTable()</code> 失敗（SAI <code>create_acl_table</code> 失敗等）</td>
+<td>ERROR ログ → <code>setAclTableStatus(PENDING_CREATION)</code> → <code>it++</code>（次サイクル再試行）</td>
+<td><code>"Pending creation"</code></td>
+<td><code>aclorch.cpp:5474-5485</code></td>
+</tr>
+<tr>
+<td><code>updateAclTable()</code> 失敗</td>
+<td>ERROR ログ → <code>setAclTableStatus</code> 呼ばれず → <code>it++</code>（前ステータス保持）</td>
+<td>（前値保持）</td>
+<td><code>aclorch.cpp:5457-5470</code></td>
+</tr>
+<tr>
+<td>バリデーション失敗（不正設定: 未定義 type / stage 不一致 / port 解決不能等）</td>
+<td>ERROR ログ → <code>setAclTableStatus(INACTIVE)</code> → <code>erase(it)</code>（恒久スキップ）</td>
+<td><code>"Inactive"</code></td>
+<td><code>aclorch.cpp:5488-5495</code></td>
+</tr>
+<tr>
+<td><code>removeAclTable()</code> 失敗（配下ルール削除失敗 / SAI <code>remove_acl_table</code> 失敗）</td>
+<td><code>setAclTableStatus(PENDING_REMOVAL)</code> → <code>it++</code>（次サイクル再試行）</td>
+<td><code>"Pending removal"</code></td>
+<td><code>aclorch.cpp:5505-5510</code></td>
+</tr>
+<tr>
+<td>未知 op（SET/DEL 以外）</td>
+<td>ERROR ログ → <code>erase(it)</code></td>
+<td>（前値保持）</td>
+<td><code>aclorch.cpp:5512-5516</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-acl_rule_table-doaclruletask">C. <code>ACL_RULE_TABLE</code> 書込みに至る失敗分岐 (<code>doAclRuleTask</code>)<a class="headerlink" href="#c-acl_rule_table-doaclruletask" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>STATE_DB ステータス</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>親 <code>ACL_TABLE</code> 未作成 (<code>table_oid == SAI_NULL_OBJECT_ID</code>)</td>
+<td>INFO ログ → <code>it++</code>（テーブル作成待機、再キュー）</td>
+<td>（書込まれない）</td>
+<td><code>aclorch.cpp:5563-5565</code></td>
+</tr>
+<tr>
+<td>属性検証失敗 (<code>bAllAttributesOk=false</code>) または <code>newRule-&gt;validate()</code> 失敗</td>
+<td>ERROR ログ → <code>setAclRuleStatus(INACTIVE)</code> → <code>erase(it)</code>（恒久スキップ）</td>
+<td><code>"Inactive"</code></td>
+<td><code>aclorch.cpp:5700-5705</code></td>
+</tr>
+<tr>
+<td><code>addAclRule()</code> 失敗 + リソース枯渇 (<code>isSaiStatusResourceFull</code> 真) + retry cache 投入成功</td>
+<td>WARN ログ → <code>setAclRuleStatus(PENDING_CREATION)</code> → retry cache park → <code>erase(it)</code></td>
+<td><code>"Pending creation"</code></td>
+<td><code>aclorch.cpp:5673-5685</code></td>
+</tr>
+<tr>
+<td><code>addAclRule()</code> 失敗 + リソース枯渇だが retry cache 投入失敗</td>
+<td>ERROR ログ → <code>setAclRuleStatus(PENDING_CREATION)</code> → <code>it++</code></td>
+<td><code>"Pending creation"</code></td>
+<td><code>aclorch.cpp:5686-5692</code></td>
+</tr>
+<tr>
+<td><code>addAclRule()</code> 失敗（リソース枯渇以外、SAI <code>create_acl_entry</code> 一般失敗）</td>
+<td><code>setAclRuleStatus(PENDING_CREATION)</code> → <code>it++</code></td>
+<td><code>"Pending creation"</code></td>
+<td><code>aclorch.cpp:5694-5698</code></td>
+</tr>
+<tr>
+<td><code>removeAclRule()</code> 失敗</td>
+<td><code>setAclRuleStatus(PENDING_REMOVAL)</code> → <code>it++</code></td>
+<td><code>"Pending removal"</code></td>
+<td><code>aclorch.cpp:5722-5728</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="d-retry-cache-sai">D. retry cache 経由の遷移 (SAI リソース枯渇 → 解放)<a class="headerlink" href="#d-retry-cache-sai" title="Permanent link">&para;</a></h3>
+<p><code>isSaiStatusResourceFull()</code> が真で <code>addAclRule()</code> が失敗したルールは <code>RETRY_CST_SAI_RESOURCE+table_id</code> 制約付きで retry cache に park される。<strong>同一テーブル内の他ルール DEL</strong> が成功 (<code>ruleExisted==true</code>) すると <code>notifyRetry(this, tableName, RETRY_CST_SAI_RESOURCE+table_id)</code> で park 中ルールが <code>m_toSync</code> に再キューされ、再度 <code>addAclRule()</code> が走る。成功時に <code>setAclRuleStatus(ACTIVE)</code> で <code>"Pending creation"</code> → <code>"Active"</code> 上書き、再失敗時は <code>"Pending creation"</code> 維持。<code>ruleExisted==false</code> の場合は <code>notifyRetry()</code> が呼ばれず park 滞留が継続する（evidence: <code>aclorch.cpp:5673-5692, 5710-5721, 5670</code>）。</p>
+<h3 id="e-init-state_db">E. <code>init()</code> 起動時 STATE_DB クリアの例外扱い<a class="headerlink" href="#e-init-state_db" title="Permanent link">&para;</a></h3>
+<p><code>removeAllAclTableStatus()</code> / <code>removeAllAclRuleStatus()</code> は <code>m_aclTableStateTable.getKeys()</code> と <code>del(key)</code> を呼ぶ。Redis I/O エラー時、<code>swss::DBConnector</code> 系から <code>system_error</code> 例外が送出されうるが <code>AclOrch::init()</code> 側に try/catch はない。例外は orchdaemon まで伝播し orchagent プロセス abort、systemd で再起動 → 再 <code>init()</code> で再試行という自己回復経路を取る（evidence: <code>aclorch.cpp:3479-3481, 6116-6135</code>）。</p>
+<h3 id="_10">検出ロジック補足<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>status</code> 値は 5 状態</strong> (<code>"Active"</code> / <code>"Inactive"</code> / <code>"Pending creation"</code> / <code>"Pending removal"</code> / エントリ削除)。失敗経路では <code>"Inactive"</code> が恒久スキップ、<code>"Pending creation"</code> / <code>"Pending removal"</code> が再試行ループに対応する。</li>
+<li><strong><code>setAclTableStatus</code> / <code>setAclRuleStatus</code> / <code>putAclActionCapabilityInDB</code> の戻り値なし</strong>: <code>swss::Table::set/del</code> は void。Redis 失敗は例外として伝播し、orchagent プロセス再起動でのみ回復する。STATE_DB 不整合が永続することは設計上ない（再起動後 CONFIG_DB / APPL_DB 再投入で再構築）。</li>
+<li><strong>capability フォールバックの不可逆性</strong>: SAI が後から capability を返せるようになっても再クエリされない。<code>ACL_STAGE_CAPABILITY_TABLE</code> の値は orchagent プロセス寿命中固定。</li>
+<li><strong>retry cache の解放契機の非自明性</strong>: 「無関係に見えるルール A の DEL がルール B を <code>Pending creation</code> → <code>Active</code> に遷移させる」順序がある。Phase B（順序依存 #5）と表裏。</li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>queryAclActionCapability()</code> L3975-4054、<code>initDefaultAclActionCapabilities()</code> L4104-4118、<code>putAclActionCapabilityInDB()</code> L4056-4101、<code>doAclTableTask()</code> L5450-5518、<code>doAclRuleTask()</code> L5520-5734、<code>setAclTableStatus()</code> L6088-6093、<code>setAclRuleStatus()</code> L6102-6107、<code>removeAllAclTableStatus()</code> / <code>removeAllAclRuleStatus()</code> L6116-6135、<code>isSaiStatusResourceFull</code> L5673、<code>notifyRetry</code> L5720。詳細グレップ証跡は <code>meta/_intermediate/cdb-flow/aclorch-state-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
 <p>本ページが扱う STATE_DB 3 テーブル (<code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> / <code>ACL_STAGE_CAPABILITY_TABLE</code>) に加え、<code>AclOrch</code> は ACL ルールに対する SAI カウンタ統計を有効化する際に <strong>COUNTERS_DB</strong> および <strong>FLEX_COUNTER_DB</strong> へ副次的なエントリを書き込む。SAI ACL <code>entry</code>/<code>counter</code> 自体の書込み (ASIC_DB 経由) は主作用のため除外する。</p>
@@ -36005,7 +36323,7 @@
 </blockquote>
 <!-- /platform -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -24262,6 +24262,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 経路で発火する差分
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 経路では発火しない差分
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35225,6 +35264,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 経路で発火する差分
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 経路では発火しない差分
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36116,6 +36194,106 @@ mclagsyncd は <code>stage</code> を未指定 → orchagent の C++ struct defa
 <p><strong>Evidence</strong>: <code>sonic-swss/orchagent/orchdaemon.cpp:22-23,411-422,959</code> (TableConnector / SELECT_TIMEOUT / select ループ)、<code>sonic-swss/orchagent/orch.cpp:1186-1196</code> (<code>Orch::addConsumer()</code> DB ID 分岐)、<code>sonic-swss/orchagent/aclorch.cpp:4197-4222,4272-4295</code> (AclOrch コンストラクタ / retry cache / <code>doTask</code> ディスパッチ)、<code>sonic-swss/orchagent/main.cpp:59-60,459,478</code> (<code>DEFAULT_BATCH_SIZE = 128</code> と <code>-b</code> オプション)、<code>sonic-swss-common/common/schema.h:94-96</code> (テーブル名定数); 詳細分析 <code>meta/_intermediate/cdb-flow/appl-acl-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+
+<hr />
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>APPL_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_TABLE_TYPE_TABLE</code> / <code>ACL_RULE_TABLE</code> は <code>AclOrch::doTask()</code> (<code>aclorch.cpp:4283-4292</code>) で <strong>CONFIG_DB 版と同一ハンドラ</strong> へ振り分けられる。したがってプラットフォーム差は CONFIG_DB 版 <a href="../acl-rule/"><code>ACL_RULE</code></a> の「プラットフォーム差 (Phase H)」とほぼ完全に共通する。本節は APPL_DB 経路で<strong>実際に観測される</strong>差分のみを整理する。</p>
+<h3 id="appl_db_1">APPL_DB 経路で発火する差分<a class="headerlink" href="#appl_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>capability</th>
+<th>スコープ</th>
+<th>APPL_DB での実発火</th>
+<th>効果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ASIC action capability</strong> (<code>isAclActionSupported</code>)</td>
+<td>ASIC (SAI 動的照会)</td>
+<td>vnetorch の <code>REDIRECT_ACTION</code> / dashenifwdorch の REDIRECT 系</td>
+<td>SAI が action 未実装の ASIC では <code>validateAddAction()</code> が false → rule INACTIVE</td>
+<td><code>aclorch.cpp:1681-1688, 3987-4042, 5237-5246</code></td>
+</tr>
+<tr>
+<td><strong>ACL 優先度範囲</strong> (<code>m_minPriority</code> / <code>m_maxPriority</code>)</td>
+<td>ASIC (起動時 SAI 取得)</td>
+<td>全書込み元</td>
+<td>範囲外の <code>PRIORITY</code> で <code>setPriority()</code> false → rule INACTIVE</td>
+<td><code>aclorch.cpp:3687-3699, 1654-1661</code></td>
+</tr>
+<tr>
+<td><strong>SmartSwitch DPU 分岐</strong> (<code>gMySwitchType == "dpu"</code>)</td>
+<td>SmartSwitch DPU 側 orchagent</td>
+<td>dashenifwdorch (DPU 側) のみ</td>
+<td>DPU 側では priority 範囲取得と <code>queryAclActionCapability()</code> を <strong>スキップ</strong> → <code>m_minPriority = m_maxPriority = 0</code> のまま動作、action capability 未検証</td>
+<td><code>aclorch.cpp:3686-3710</code></td>
+</tr>
+<tr>
+<td><strong>multi-asic namespace</strong></td>
+<td>構成</td>
+<td>全書込み元 (namespace 毎に独立 orchagent)</td>
+<td>各 ASIC の SAI capability / 優先度範囲が異なれば、同一 APPL_DB エントリでも namespace ごとに異なる挙動</td>
+<td>構成上の派生 (<code>aclorch.cpp</code> 自体は namespace 非対応)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="appl_db_2">APPL_DB 経路では発火しない差分<a class="headerlink" href="#appl_db_2" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB 版で列挙される MIRROR V6 / <code>isCombinedMirrorV6Table</code> / <code>L3V4V6</code> / PFCWD OUT_PORT / Egress range / ACL range 上限 / META_DATA 動的 capability / DTel 系 action は、いずれも APPL_DB 書込み元プロセス (<code>vnetorch</code> / <code>mclagsyncd</code> / <code>dashenifwdorch</code>) が<strong>使用しない</strong>テーブルタイプ・match キー・action に紐付くため、APPL_DB 経路では発火しない。</p>
+<table>
+<thead>
+<tr>
+<th>書き込み元</th>
+<th>使用 <code>type</code></th>
+<th>使用 match / action</th>
+<th>影響する平台差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vnetorch</code></td>
+<td><code>VNET_TUNNEL_TERM</code> (custom type)</td>
+<td><code>MATCH_DST_IP</code> / <code>MATCH_TUNNEL_TERM</code> / <code>ACTION_REDIRECT_ACTION</code></td>
+<td>ASIC capability (REDIRECT support) のみ</td>
+</tr>
+<tr>
+<td><code>mclagsyncd</code></td>
+<td><code>L3</code></td>
+<td><code>IP_TYPE=ANY</code> / <code>OUT_PORTS</code> / <code>PACKET_ACTION=DROP</code></td>
+<td>実質なし (全 ASIC で DROP 対応)</td>
+</tr>
+<tr>
+<td><code>dashenifwdorch</code></td>
+<td>(ENI fwd custom)</td>
+<td>REDIRECT 系</td>
+<td>ASIC capability + DPU 分岐</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">SmartSwitch DPU 側で APPL_DB ACL を書く場合</p>
+<p><code>gMySwitchType == "dpu"</code> の orchagent では <code>AclOrch::init()</code> が
+<code>SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY</code> / <code>MAXIMUM_PRIORITY</code> を取得せず、
+<code>queryAclActionCapability()</code> も呼ばれない (<code>aclorch.cpp:3686</code>)。結果として
+<code>AclRule::m_minPriority = m_maxPriority = 0</code> の static 初期値のまま動作し、
+<code>PRIORITY</code> 値の範囲チェックが事実上「0 以外を全て拒否」する状態になる点に注意。
+<code>dashenifwdorch</code> が書き込む rule の <code>PRIORITY</code> が 0 でない場合、DPU 側では INACTIVE になる可能性がある。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">multi-asic 環境でのばらつき</p>
+<p>multi-asic シャーシでは ASIC ごとに SAI capability と priority 範囲が異なる場合があり、
+同じ vnetorch 設定でも namespace (<code>asic0</code> / <code>asic1</code> / ...) ごとに rule が
+INACTIVE になる ASIC とそうでない ASIC が混在し得る。確認は各 namespace の
+<code>sonic-db-cli -n asicN STATE_DB hgetall 'ACL_TABLE_TABLE|&lt;name&gt;'</code> で行う。</p>
+</div>
+<p>詳細な platform 識別文字列 (<code>BRCM_PLATFORM_SUBSTRING</code> 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 <a href="../acl-rule/#プラットフォーム差-phase-h"><code>ACL_RULE</code></a> を参照。</p>
+<blockquote>
+<p><strong>証跡</strong>: <code>AclOrch::init()</code> priority 範囲取得 <code>aclorch.cpp:3687-3699</code>、DPU 分岐 <code>aclorch.cpp:3686-3710</code>、<code>isAclActionSupported()</code> <code>aclorch.cpp:5237-5246</code>、<code>validateAddAction()</code> <code>aclorch.cpp:1681-1688</code>、<code>queryAclActionCapability()</code> <code>aclorch.cpp:3987-4042</code>、<code>setPriority()</code> 範囲チェック <code>aclorch.cpp:1654-1661</code>、書き込み元仕様 <code>vnetorch.cpp:3775-3837</code> / <code>mclaglink.cpp:325-373</code> / <code>dashenifwdorch.cpp:619-643</code>。詳細分析 <code>meta/_intermediate/cdb-flow/appl-acl-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <hr />
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
