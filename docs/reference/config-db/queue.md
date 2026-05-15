@@ -219,6 +219,65 @@ QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただ
 - 副作用: キューの WRED 変更は既存フロー中のパケットからリアルタイムに適用される。
 
 <!-- /runtime-trace -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+QUEUE テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → QosOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:QUEUE\|*` |
+| QosOrch → SAI | SAI API 直接呼び出し | `sai_scheduler_group_api` / `sai_queue_api` |
+
+### SubscriberStateTable の動作
+
+`QosOrch` は `Orch(db, tableNames)` 基底クラスの `addConsumer()` を通じて `CFG_QUEUE_TABLE_NAME` に対する `SubscriberStateTable` を生成する (`orch.cpp:1188-1190`)。CONFIG_DB の keyspace notification (`PSUBSCRIBE __keyspace@db__:QUEUE|*`) でエントリの変化を検出し、`pops()` で現在値を読み出す。初回起動時は `getKeys()` で既存エントリを先読みし、起動前の設定を取りこぼさない。
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を 1000 ms タイムアウトで実行する。イベント受信時は `Consumer::drain()` → `QosOrch::doTask(Consumer&)` が呼ばれる。
+
+`QosOrch::doTask()` (`qosorch.cpp:2231`) はカスタム実行順序を実装する:
+
+1. `SCHEDULER` / `WRED_PROFILE` などの参照先テーブルを先に drain
+2. `PORT_QOS_MAP` を drain
+3. 最後に `QUEUE` を drain（参照先が揃った状態で実行し `task_need_retry` を最小化）
+
+`doTask(Consumer&)` の冒頭では `gPortsOrch->allPortsReady()` チェックがあり、全ポート初期化完了まで処理を保留する。
+
+### retry メカニズム
+
+`scheduler` / `wred_profile` の参照先が未登録の場合は `task_need_retry` を返し、エントリは `m_toSync` に残留する。参照先テーブルの登録イベントが来ると doTask の実行順序制御により直ちに再試行される。解決不可な恒久エラーは `task_failed` で silent drop となる。
+
+### データフロー図
+
+```
+CONFIG_DB[QUEUE|<port>|<qindex>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:QUEUE|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → QosOrch::doTask()
+  ↓   [allPortsReady() チェック]
+  ↓   [実行順序: 参照先テーブル → PORT_QOS_MAP → QUEUE]
+  ↓ handleQueueTable()
+    ↓ applySchedulerToQueueSchedulerGroup()
+    ↓   → sai_scheduler_group_api
+    ↓     SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID
+    ↓ applyWredProfileToQueue()
+    ↓   → sai_queue_api
+    ↓     SAI_QUEUE_ATTR_WRED_PROFILE_ID
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
