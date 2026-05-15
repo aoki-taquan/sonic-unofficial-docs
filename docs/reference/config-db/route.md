@@ -148,6 +148,51 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` が有効な場合、全フィールド（空文字列のものを含む）を常に送信する。フィールド不在が発生しないため orchagent 側の「フィールド不在=デフォルト」ロジックは使われない。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-ordering.md -->
+
+### ADD 時: VRF 経路は VRF エントリが先行必須
+
+`Vrf` プレフィックスで始まる key（例: `Vrf-RED:192.168.1.0/24`）を持つ経路を書き込む前に、対応する VRF エントリが VRFOrch に登録されていなければならない。`m_vrfOrch->isVRFexists(vrf_name)` が false の場合、orchagent は経路を後回し（`it++; continue`）にして SAI プログラミングを行わない[^3]。
+
+```
+CONFIG_DB|VRF|<name>  →  VRFOrch が SAI に VRF 登録  →  APPL_DB|ROUTE_TABLE|<vrf_name>:<prefix>
+```
+
+### ADD 時: `nexthop_group` 指定経路は NhgOrch 登録が先行必須
+
+`nexthop_group` フィールドに NhgOrch 管理の NHG インデックスを指定する場合、`gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` がいずれも false なら `addRoutePre` が `return false` して後回しになる[^3]。
+
+```
+NEXTHOP_GROUP_TABLE エントリ登録  →  ROUTE_TABLE|<prefix> (nexthop_group: <index>)
+```
+
+### ADD 時: 通常 IP nexthop は NeighOrch 登録が先行必須
+
+nexthop が IP アドレスでインタフェース直結でない場合（非 `isIntfNextHop()`）、`m_neighOrch->hasNextHop()` が false なら `return false` で後回し。fpmsyncd 経由の通常フローでは zebra がネイバー解決後に ROUTE_TABLE に書くため問題は生じないが、APPL_DB を直接操作する場合は ARP/NDP 解決を先に確認すること[^3]。
+
+### ADD 時: EVPN overlay 経路は L3 VNI 登録が先行必須
+
+`vni_label` フィールドを持つ経路では、各 VNI に対して `m_vrfOrch->isL3VniVlan(vni)` を検査し、L3 VNI として登録されていなければ `it++; continue` で後回し[^3]。VXLAN_TUNNEL_MAP / VRF の L3 VNI 設定を先に完了してから EVPN Type-5 経路を書き込む。
+
+### ADD 時: インタフェース直結経路は RIF 登録が先行必須
+
+nexthop が `isIntfNextHop()` の場合、`m_intfsOrch->getRouterIntfsId(alias)` が `SAI_NULL_OBJECT_ID` ならば `return false` で後回し。`INTERFACE` / `PORTCHANNEL_INTERFACE` テーブルへの IP アドレス設定 → IntfsOrch が RIF を SAI 登録 → ROUTE_TABLE 書き込み、の順を守る[^3]。
+
+### DEL 時: 経路 DEL → 参照先オブジェクト DEL の順が必須
+
+NHG・VRF を先に DEL しようとするとリファレンスカウントが詰まり DEL が遅延する。推奨順序:
+
+```
+ROUTE_TABLE|<prefix> DEL
+  → NEXTHOP_GROUP_TABLE DEL（リファレンスカウント 0 後）
+  → VRF DEL
+```
+
+<!-- /ordering -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` は同時に存在できない（orchagent がエラー棄却）。
