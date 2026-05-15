@@ -957,4 +957,73 @@ evidence: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-143, 1
 詳細 trace: `meta/_intermediate/cdb-flow/device-metadata-ordering.md`
 <!-- /ordering -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`DEVICE_METADATA|localhost` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと Linux システム呼び出しを示す。
+
+### SET — `buffer_model`
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| 内部フラグ `dynamic_buffer_model = true` に更新（後続の BUFFER_POOL / BUFFER_PG / BUFFER_QUEUE / BUFFER_PROFILE 変化を APPL_DB に転写しない） | なし (フラグのみ) | `buffer_model = dynamic` |
+| 内部フラグ `dynamic_buffer_model = false` に更新（後続のバッファテーブルを APPL_DB に転写する） | なし (フラグのみ) | `buffer_model = traditional` またはその他 |
+
+> `BufferMgr::doBufferMetaTask()` は DB 書込を行わない。ただしフラグ変更後の BUFFER_* SET/DEL が APPL_DB `BUFFER_POOL_TABLE` / `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` / `BUFFER_PROFILE_TABLE` への転写の有無を決定する。
+
+evidence: `sonic-swss/cfgmgr/buffermgr.cpp:373-410,476-479`
+
+### SET — `create_only_config_db_buffers`
+
+| 操作 | 対象 DB / テーブル | 条件 |
+|------|------------------|------|
+| 内部フラグ `m_createOnlyConfigDbBuffers` 更新 → カウンタ設定分岐に影響 | なし (フラグのみ) | 値変化時 (`FlexCounterOrch`) |
+
+evidence: `sonic-swss/orchagent/flexcounterorch.cpp:488-523`
+
+### SET — `suppress-fib-pending`
+
+| 変化 | 操作 | 対象 DB / テーブル |
+|------|------|-----------------|
+| `disabled → enabled` | fpmsyncd が APPL_STATE_DB `ROUTE_TABLE` 受信チャネルを登録し抑制モードを有効化 | APPL_STATE_DB / `ROUTE_TABLE` (チャネル登録) |
+| `enabled → disabled` | `RouteSync::markRoutesOffloaded(db)` — APPL_DB の `APP_ROUTE_TABLE` 全エントリを走査し "offloaded" 応答を FRR に送信 | APPL_DB / `APP_ROUTE_TABLE` |
+
+> 無効化時のルート全スキャン・応答送信はルートが suppressed 状態に残るのを防ぐための遷移処理。
+
+evidence: `sonic-swss/fpmsyncd/fpmsyncd.cpp:260-304`; `sonic-swss/fpmsyncd/routesync.cpp:3291-3296`
+
+### SET — `hostname` / `timezone` / `syslog_with_osversion`
+
+これら 3 フィールドは `hostcfgd DeviceMetaCfg` が処理し、他 DB への書込ではなく Linux システム呼び出しに終始する:
+
+| フィールド | 副次操作 (Linux) | 条件 | evidence |
+|-----------|----------------|------|---------|
+| `hostname` | `sudo service hostname-config restart` → `/etc/hostname` 更新; `sudo monit reload` | 値変化かつ空でない | hostcfgd:1527-1532 |
+| `timezone` | `timedatectl set-timezone <tz>` → `/etc/localtime` symlink 更新 | 値変化かつ `None` でない | hostcfgd:1556 |
+| `syslog_with_osversion` | `systemctl restart rsyslog-config` → rsyslog.conf 再生成 | 値変化かつ `None` でない | hostcfgd:1600 |
+
+### DEL 操作
+
+| consumer | 挙動 |
+|---------|------|
+| BufferMgr | `dynamic_buffer_model = false` にリセット。DB 書込なし。 |
+| FlexCounterOrch | `op == SET_COMMAND` 条件不成立のためスキップ。DB 書込なし。 |
+| fpmsyncd | `op != SET_COMMAND` のため continue。suppress-fib-pending 遷移も起きない。 |
+| hostcfgd | DEL ハンドラなし。hostname / timezone / rsyslog 処理は SET 専用。 |
+
+### 副次書込サマリ
+
+**直接的な他 DB 書込が発生するケースは `suppress-fib-pending` 切替時のみ。** 他フィールドはすべて内部フラグ更新または Linux システム呼び出しに留まる。
+
+| フィールド | 直接書込先 |
+|-----------|---------|
+| `buffer_model` | なし（後続テーブルへの転写制御フラグ） |
+| `create_only_config_db_buffers` | なし（フラグのみ） |
+| `suppress-fib-pending` enabled→disabled | APPL_DB `APP_ROUTE_TABLE`（全ルート offloaded マーク） |
+| `hostname` / `timezone` / `syslog_with_osversion` | Linux ファイルシステム・systemd のみ |
+| その他全フィールド | なし（起動時読み取り専用; コンテナ再起動が必要） |
+
+<!-- 証跡: sonic-swss/cfgmgr/buffermgr.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/fpmsyncd/fpmsyncd.cpp, sonic-swss/fpmsyncd/routesync.cpp, sonic-host-services/scripts/hostcfgd -->
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: e22e287b939b -->
