@@ -597,6 +597,44 @@ else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ..
 
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `routeorch` が読み解く関連テーブル (Phase C)
+
+`APPL_DB:ROUTE_TABLE` は YANG 定義を持たない (APPL_DB は ProducerStateTable 経由の軽量経路で CONFIG_DB ではない) ため、`leafref` での明示参照はゼロ件。代わりに `RouteOrch::doRouteTask()` / `addRoutePost()` / `addNextHopGroup()` から呼ばれる **9 系統の Orch 間参照** が実装レベルの暗黙依存となる。
+
+### 主要 Orch / テーブル参照
+
+| 参照先 (Orch / テーブル) | フィールド / 条件 | 参照方向 | evidence |
+|---|---|---|---|
+| `VRFOrch` / `VRF_TABLE` (CONFIG_DB) | key の `<vrf-name>` (非デフォルト VRF) | 存在確認 + OID 解決 + refcount | `routeorch.cpp:706-717, 2013, 2773, 2993` (`isVRFexists` / `getVRFid` / `increaseVrfRefCount`) |
+| `NeighOrch` / `NEIGH_TABLE` (APPL_DB) | `nexthop` (IP next-hop) | OID 取得 + refcount + `resolveNeighbor()` トリガ | `routeorch.cpp:1499-1510, 2094-2119, 2197-2219` (`hasNextHop` / `getNextHopId` / `addNextHop`); refcount: `L1364, L1386, L1663, L1770, L1813` |
+| `IntfsOrch` / `INTF_TABLE` (APPL_DB) | `ifname` / intf-only NH | RIF OID 解決 + refcount + サブネット判定 | `routeorch.cpp:968, 1045, 2083, 2429` (`getRouterIntfsAlias` / `isPrefixSubnet` / `getRouterIntfsId`); refcount: `L1362, L1384` |
+| `PortsOrch` / `PORT_TABLE` (APPL_DB) | 常時 + intf-only NH の inband 判定 | `allPortsReady()` ガード + `isInbandPort` スキップ + CPU port | `routeorch.cpp:243, 609, 2074` |
+| `NhgOrch` / `CbfNhgOrch` (`NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE`) | `nexthop_group` フィールド | index 解決 + 排他チェック + refcount | `routeorch.cpp:810-814, 838-839, 1006-1012, 1096, 1424, 1478, 2042-2057, 2411, 2546` (`getNhg` / `getSyncedNhgCount` / `incNhgRefCount`) |
+| `FgNhgOrch` (`FG_NHG` / `FG_NHG_PREFIX`) | プレフィクスが Fine-Grained NHG 設定にマッチ | 専用 NHG 構築 (通常 NHG をバイパス) | `routeorch.cpp:529, 597, 2028-2037, 2403, 2475` (`isRouteFineGrained` / `setFgNhg` / `removeFgNhg`) |
+| `Srv6Orch` (`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE`) | `segment` / `seg_src` 非空 (`srv6_nh = true`) | SRv6 nexthop OID 生成 + 集約 ID 取得 | `routeorch.cpp:1250, 2055, 2100, 2143, 2169, 2295, 2352` (`srv6Nexthops` / `getAggId` / `contextIdExists`) |
+| `VxlanTunnelOrch` / remote VTEP | `vni_label` 非空 (`overlay_nh = true`) かつ SRv6 でない | L3 VNI 検証 + remote VTEP 作成 + tunnel NH 生成 | `routeorch.cpp:872, 2127, 2133, 2208` (`isL3VniVlan` / `createRemoteVtep` / `addTunnelNextHop`); 削除: `L1781-1789` |
+| `FlowCounterRouteOrch` | 常時 (ROUTE add/remove ごと) | 通知のみ (refcount / OID 無関係) | `routeorch.cpp:259, 282, 2708` (`onAddMiscRouteEntry` / `onRemoveMiscRouteEntry` / `handleRouteAdd`) |
+
+### refcount / 解決の semantics
+
+- **再試行 (`it++` パス)**: VRF 未登録、NHG index 未生成、未解決 IP NH (`resolveNeighbor()` で ARP/ND 発行)、RIF が `SAI_NULL_OBJECT_ID` のいずれかで `return false`。次回 `doRouteTask()` で再評価される。
+- **`NHFLAGS_IFDOWN` スキップ**: NH が IF down フラグ立ちのとき ECMP メンバーから除外 (`routeorch.cpp:1532, 1705, 1970`)。
+- **refcount 対称性**: ルート install 成功時に `increase*RefCount()`、削除時に `decrease*RefCount()` を必ず対称に呼ぶ。refcount=0 の MPLS / Tunnel NH は `removeMplsNextHop` / `removeTunnelNextHop` で除去される。
+
+### 排他関係
+
+- `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー (`routeorch.cpp:810-814` — `consumer.m_toSync.erase(it)` で完全に弾く)。
+- `segment` / `seg_src` (SRv6) と `vni_label` (VxLAN overlay) は同時指定不可 (実装上 `srv6_nh` と `overlay_nh` が排他分岐)。
+
+### 範囲外 (誤解されやすい隣接)
+
+- `STATIC_ROUTE` (CONFIG_DB) → `staticrouteorch` 経由で別途 APPL_DB `ROUTE_TABLE` に書く側 (`fpmsyncd` 経由でないパス) であり、`routeorch` から見れば本テーブルの同じ key 空間に流れ込むだけで cross-table 参照ではない。
+- `ROUTE_TABLE` (STATE_DB) — `0.0.0.0/0` / `::/0` のデフォルトルート到達性のみが書き込まれる side-effect であり、`routeorch` の読み取り対象ではない (Phase F 参照)。
+
+詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/app-route-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 購読者
 
 - `routeorch::doRouteTask()` (`sonic-swss/orchagent/routeorch.cpp`): SAI `route_entry` の作成・更新・削除
