@@ -377,6 +377,60 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+YANG 未定義テーブルのため、全定数はソースコードが正本。以下は `aclorch.h` / `aclorch.cpp` / `acl_loader/main.py` / `acl_app.go` から抽出した硬直定数一覧。
+
+### 数値・mask 定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `TCP_PROTOCOL_NUM` | `6` | `TCP_FLAGS` あり + `IP_PROTOCOL` 未指定時に自動付与する TCP プロトコル番号 | `aclorch.cpp:54` |
+| `MAC_EXACT_MATCH` | `"ff:ff:ff:ff:ff:ff"` | `INNER_SRC_MAC` / `INNER_DST_MAC` の SAI mask（完全一致固定） | `aclorch.cpp:56` |
+| `MAX_META_DATA_VALUE` | `4095` | `META_DATA` / `META_DATA_ACTION` 最大許容値（SAI range 上限クランプ） | `aclorch.cpp:52` |
+| `MLNX_MAX_RANGES_COUNT` | `16` | Mellanox プラットフォームの ACL range オブジェクト上限 | `aclorch.h:109` |
+| `CLNX_MAX_RANGES_COUNT` | `16` | Centec プラットフォームの ACL range オブジェクト上限 | `aclorch.h:110` |
+| `max_priority` (acl_loader デフォルト) | `10000` | `PRIORITY = max_priority − seq_id`（CLI 経路） | `acl_loader/main.py:93` |
+| `MAX_PRIORITY` (acl_app.go) | `65536` | `PRIORITY = MAX_PRIORITY − seqId`（REST/gNMI 経路） | `acl_app.go:56` |
+
+### タイマー定数
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|-----|------|--------|
+| `ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ACL stat counter flex counter ポーリング周期 | `aclorch.cpp:47` |
+| `ACL_COUNTER_DEFAULT_ENABLED_STATE` | `false` | ACL stat counter 初期状態（無効） | `aclorch.cpp:48` |
+
+### フィールド別 SAI mask 固定値
+
+SAI match field に投入される mask は CONFIG_DB には書かれず、C++ 内部でのみ付与される。
+
+| フィールド | mask 値 | ビット幅 | ソース |
+|-----------|---------|---------|--------|
+| `TCP_FLAGS` | `0x3F`（省略時フォールバック） | 6 bit | `aclorch.cpp:1061` |
+| `DSCP` | `0x3F`（省略時フォールバック） | 6 bit | `aclorch.cpp:1093` |
+| `IP_TYPE` | `0xFFFFFFFF` | 32 bit | `aclorch.cpp:1046` |
+| `ETHER_TYPE` / `L4_SRC_PORT` / `L4_DST_PORT` | `0xFFFF` | 16 bit | `aclorch.cpp:1067` |
+| `VLAN_ID` | `0xFFF` | 12 bit | `aclorch.cpp:1072` |
+| `IP_PROTOCOL` / `NEXT_HEADER` / `TC` / `ICMP_TYPE` / `ICMP_CODE` / `ICMPV6_TYPE` / `ICMPV6_CODE` | `0xFF` | 8 bit | `aclorch.cpp:1099,1151,1157` |
+| `TUNNEL_VNI` / `META_DATA` | `0xFFFFFFFF` | 32 bit | `aclorch.cpp:1162,1208` |
+| `INNER_ETHER_TYPE` / `INNER_L4_SRC_PORT` / `INNER_L4_DST_PORT` | `0xFFFF` | 16 bit | `aclorch.cpp:1168` |
+| `INNER_IP_PROTOCOL` | `0xFF` | 8 bit | `aclorch.cpp:1173` |
+| `INNER_SRC_MAC` / `INNER_DST_MAC` | `ff:ff:ff:ff:ff:ff` | 48 bit | `aclorch.cpp:957` |
+
+!!! note "TCP_FLAGS / DSCP mask は可変"
+    `<data>/<mask>` 形式で明示指定した場合は指定値が優先される。`0x3F` はあくまで省略時フォールバック。
+    例: `TCP_FLAGS = 0x02/0x02` と書けば mask は `0x02`（SYN bit のみ）。
+
+!!! note "PRIORITY 計算経路差異"
+    `acl_loader` (CLI) は `max_priority=10000`、REST/gNMI 経路の `acl_app.go` は `MAX_PRIORITY=65536` を使う。
+    同一 sequence_id でも経路によって CONFIG_DB に書かれる PRIORITY 値が異なる点に注意。
+
+!!! warning "ACL カウンタは初期無効"
+    `ACL_COUNTER_DEFAULT_ENABLED_STATE = false` のため、`AclOrch` 起動直後は ACL stat counter の flex counter が無効。`counterpoll acl enable` または `aclshow` 経由で有効化するまでカウンタ値は収集されない。
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 

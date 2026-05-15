@@ -352,6 +352,66 @@ DEL VLAN|Vlan100
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動・リトライ・リカバリ
+
+<!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp -->
+
+### 即時破棄 (no retry)
+
+不正な入力は `m_toSync` から即座に削除され、リトライされない。
+
+| 条件 | ログ |
+|------|------|
+| `Vlan` プレフィクスなし | `SWSS_LOG_ERROR("Invalid key format. No 'Vlan' prefix: %s")` |
+| `Vlan` 以降が数値でない | `SWSS_LOG_ERROR("Invalid key format. Not a number after 'Vlan' prefix: %s")` |
+| `VLAN_MEMBER` にメンバーポート部分なし | `SWSS_LOG_ERROR("Invalid key format. No member port is presented")` |
+| `tagging_mode` が不正値 | `SWSS_LOG_ERROR("Wrong tagging_mode '%s' for key: %s")` |
+| 不明な operation type | `SWSS_LOG_ERROR("Unknown operation type %s")` |
+| `DEL` で対象 VLAN が存在しない | `SWSS_LOG_ERROR("%s doesn't exist")` |
+
+### 遅延リトライ (iterator increment のみ)
+
+以下の条件ではエントリを `m_toSync` に残し、次ポーリングサイクルで自動再試行する。
+
+1. **MAC 未確定** — `gMacAddress` が未初期化の間、`doVlanTask` 全体を早期 return。MAC 確定後に自動再開 (`vlanmgr.cpp:318-321`)。
+2. **ポート/VLAN 未 ready** — `VLAN_MEMBER` 追加時、`isMemberStateOk(port_alias)` または `isVlanStateOk(vlan_alias)` が false の場合に遅延 (`vlanmgr.cpp:642-647`)。STATE_DB に対象ポート/VLAN が登録されるまで繰り返す。
+3. **PortChannel レースコンディション** — `addHostVlanMember` が PortChannel に対して `false` を返した場合（削除と追加のレース）、`SWSS_LOG_INFO("Netdevice for %s not ready, delaying")` を出力して遅延 (`vlanmgr.cpp:682-687`)。Ethernet は例外再スローで即時失敗。
+4. **FDB 静的エントリ: VLAN 未作成** — 対象 VLAN が `m_vlans` に登録されるまで FDB エントリを遅延 (`vlanmgr.cpp:791-795`)。
+
+### 例外スロー (EXEC_WITH_ERROR_THROW)
+
+以下の操作は失敗すると `std::runtime_error` をスローし、`vlanmgrd` プロセスがクラッシュする。supervisor が再起動する。
+
+- Linux bridge 初期化（コンストラクタ内 `ip link add Bridge up type bridge` など）
+- `addHostVlan`: `bridge vlan add` / `ip link add link Bridge ... type vlan`
+- `removeHostVlan`: `ip link del Vlan<N>`
+- `setHostVlanAdminState`: `ip link set Vlan<N> up/down`
+- `setHostVlanMac`: Bridge MAC 変更（down→変更→up）
+- `removeHostVlanMember`: `bridge vlan del`
+- Ethernet ポートへの `addHostVlanMember` 失敗（2 回目の `EXEC_WITH_ERROR_THROW`）
+
+`setHostVlanMtu` のみ例外をスローせず `false` を返す（MTU はホスト側 TODO 扱い）。
+
+### warm-restart リカバリ
+
+- 起動時に `m_vlanReplay` / `m_vlanMemberReplay` へ CONFIG_DB の全キーをキャッシュ。
+- 各エントリ処理完了ごとに消化し、両セットが空になった時点で `WarmStart::REPLAYED` → `RECONCILED` へ遷移。
+- STATE_DB に既存の VLAN は `m_vlans` に追加するのみで Linux bridge を再作成しない（トラフィック中断防止）。
+
+### 回復シナリオまとめ
+
+| 失敗ケース | 回復方法 | 自動か手動か |
+|-----------|---------|------------|
+| MAC 未確定 | MAC 確定後に自動再試行 | 自動 |
+| ポート未 ready | STATE_DB 更新後に自動再試行 | 自動 |
+| PortChannel レースコンディション | 次ポーリングで自動再試行 | 自動 |
+| キー形式不正 | CLI で正しいキーを再投入 | 手動 |
+| `ip link` 失敗 (bridge 操作) | vlanmgrd 再起動 (supervisor) | 自動（プロセス再起動） |
+| YANG `must` 違反 | 正しい値で再投入 | 手動 |
+
+<!-- /failure -->
+
 <!-- platform -->
 ## プラットフォーム差・SAI capability 分岐
 
@@ -384,5 +444,58 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 [^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
 
 <!-- /platform -->
+
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / ConsumerStateTable)
+
+### 購読方式
+
+`VLAN` テーブルの変更通知は **Redis channel PUBLISH/SUBSCRIBE** を用いた `swss::ConsumerStateTable` で伝達される。`SubscriberStateTable`（keyspace PSUBSCRIBE）・`NotificationConsumer`・TTL/expire 通知はいずれも使用しない。
+
+### ProducerStateTable → ConsumerStateTable フロー
+
+```text
+CLI / minigraph.py
+  └─ CONFIG_DB HSET VLAN|Vlan100 ...        ← 直接書き込み
+       └─ ConsumerStateTable (VLAN_CHANNEL@<dbId>) で vlanmgrd が受信
+            └─ SADD VLAN_KEY_SET "Vlan100"
+            └─ HSET _VLAN|Vlan100 <fields>   ← 一時ステートハッシュ
+            └─ PUBLISH VLAN_CHANNEL@<dbId> "G"   ← ペイロード固定 "G"
+
+vlanmgrd (swss::Select, timeout=1000ms)
+  └─ ConsumerStateTable::pops()
+       └─ EVALSHA consumer_state_table_pops.lua
+            └─ SPOP VLAN_KEY_SET (batch=128)
+            └─ HGETALL _VLAN|Vlan100  → HSET VLAN|Vlan100  → DEL _VLAN|Vlan100
+  └─ doVlanTask(consumer)
+       └─ SET: addHostVlan() → ip link add Vlan<N> type vlan
+              m_appVlanTableProducer.set(key, fvVector)
+                └─ PUBLISH APP_VLAN_TABLE_CHANNEL@<dbId> "G"
+              m_stateVlanTable.set(key, {state=ok})
+
+orchagent VlanOrch
+  └─ ConsumerStateTable(APP_VLAN_TABLE)
+       └─ SUBSCRIBE APP_VLAN_TABLE_CHANNEL@<dbId>
+  └─ sai_vlan_api->create_vlan(SAI_VLAN_ATTR_VLAN_ID, vlan_id)
+```
+
+### チャンネル / キー名
+
+| 名前 | 値 |
+|------|----|
+| vlanmgrd 受信チャンネル | `VLAN_CHANNEL@<cfgDbId>` |
+| orchagent 受信チャンネル | `APP_VLAN_TABLE_CHANNEL@<appDbId>` |
+| PUBLISH ペイロード | `"G"` (固定) |
+| KeySet | `VLAN_KEY_SET` |
+| DelKeySet | `VLAN_DEL_SET` |
+| 一時ステートハッシュ | `_VLAN|<key>` |
+
+### Select ループと retry
+
+- タイムアウト 1000ms (`SELECT_TIMEOUT`, vlanmgrd.cpp:22)
+- TIMEOUT 時は `vlanmgr.doTask()` で保留タスク（ポート未準備等）を再実行
+- ポートが STATE_DB に未登録の間は `it++`（スキップ）で retry; 対象が用意され次第 commit
+
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 6981be1a469d -->
