@@ -238,4 +238,52 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 書き込み時 default (`600`) と実行時 fallback (`0.0`) が**乖離**している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`AUTO_TECHSUPPORT_FEATURE` テーブルには**常駐 subscriber が存在しない**。`ConfigDBConnector.subscribe()` / `ConfigDBConnector.listen()` / `SubscriberStateTable` / `NotificationConsumer` のいずれの経路でも本テーブルを購読しているプロセスは確認できない。代わりに、外部イベントで起動される一発実行スクリプトが必要なフィールドを **同期 `HGET` / `HGETALL`** で取りに行く方式が採用されている。
+
+| 消費者 | 起動方式 | DB アクセス API | Redis primitive |
+|--------|---------|----------------|-----------------|
+| `coredump_gen_handler.py` | kernel `core_pattern` → `coredump-compress` (パイプ受け) → `setsid` でバックグラウンド起動 | `SonicV2Connector.get()` | `HGET` (state / rate_limit_interval を都度取得) |
+| `techsupport_cleanup.py` | `generate_dump` の cleanup フック | `SonicV2Connector.get()` | `HGET` (GLOBAL のみ参照、FEATURE は読まない) |
+| `memory_threshold_check.py` | `coredump_gen_handler` から起動 / `monit` 周期 | `ConfigDBConnector.get_table()` | `HGETALL` (全 feature を一括スナップショット) |
+| `hostcfgd` | 常駐 daemon | — | **購読しない** (`scripts/hostcfgd:2468-2528` に AUTO_TECHSUPPORT 系の `subscribe()` 呼び出しなし) |
+| `featured` | 常駐 daemon | — | **購読しない** (FEATURE テーブルは購読するが AUTO_TECHSUPPORT_FEATURE は触らない) |
+
+### トリガ経路 (coredump_gen_handler)
+
+```
+プロセスクラッシュ → kernel core_dump
+  ↓ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
+/usr/local/bin/coredump-compress  (bash)
+  ↓ /bin/gzip -1 - > /var/core/<prefix>core.gz
+  ↓ setsid python3 coredump_gen_handler.py <core.gz> <container_name> &
+coredump_gen_handler.py
+  ├─ db = SonicV2Connector(use_unix_socket_path=True); db.connect(CFG_DB/STATE_DB)
+  ├─ HGET "AUTO_TECHSUPPORT|GLOBAL"            state                  (= "enabled" 確認)
+  ├─ HGET "AUTO_TECHSUPPORT_FEATURE|<feat>"    state                  (= "enabled" 確認)
+  └─ invoke_ts_command_rate_limited()
+       ├─ HGET "AUTO_TECHSUPPORT|GLOBAL"            rate_limit_interval
+       ├─ HGET "AUTO_TECHSUPPORT_FEATURE|<feat>"    rate_limit_interval
+       ├─ verify_rate_limit_intervals (STATE_DB の前回 dump timestamp と比較)
+       └─ /usr/local/bin/generate_dump  → 完了後 techsupport_cleanup.py
+```
+
+### 重要な特性
+
+- **設定変更は即時反映されない**。CLI で `state` や `rate_limit_interval` を変更しても、次回 core dump 発生 (= 次回 `coredump_gen_handler.py` 起動) まで旧値の影響範囲は残らないものの、reload は次イベント時の HGET で行われる (eventual reload)。
+- **常駐 Python プロセスなし**。core dump イベント時のみ `setsid` でバックグラウンド一発起動 → 終了するため CPU/メモリの常時消費はゼロ。
+- keyspace 通知 (`__keyspace@<dbId>__:AUTO_TECHSUPPORT_FEATURE|*`) は Redis 側では発行されるが、購読クライアントが存在しないため捨てられる。
+- `techsupport_cleanup.py` は AUTO_TECHSUPPORT_FEATURE を参照せず、GLOBAL の `state` と `max_techsupport_limit` のみで cleanup 判定を行う。
+- rate-limit 状態は CONFIG_DB ではなく `STATE_DB` の `AUTO_TECHSUPPORT_DUMP_INFO_TABLE` (前回 dump の timestamp) に保管される。
+
+!!! warning "本文 `<!-- runtime-trace -->` ブロックとの差異"
+    本文の段階 1 に「`auto_techsupport_handler` が `hostcfgd` 内部のサブハンドラとして `AUTO_TECHSUPPORT_FEATURE` を購読する」旨の記述があるが、`sonic-host-services/scripts/hostcfgd:2468-2528` を実コード grep した範囲では AUTO_TECHSUPPORT / AUTO_TECHSUPPORT_FEATURE への `subscribe()` 呼び出しは確認できない。実装は hostcfgd と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプライン (本ページの Phase G 分析)。次回 verifier 巡回で本文修正候補。
+
+> **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338`; `sonic-utilities/scripts/coredump-compress:1-35`; `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`; `sonic-host-services/scripts/hostcfgd:2468-2528`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
