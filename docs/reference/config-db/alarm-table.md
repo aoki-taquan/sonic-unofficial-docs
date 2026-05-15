@@ -128,6 +128,46 @@ ALARM|<id>
 <!-- evidence: SONiC/doc/event-alarm-framework/event-alarm-framework.md:Section 3.1.3, 3.1.4.2 -->
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+ALARM テーブルは **EVENT_DB (Redis index 6) の push 配信テーブル** であり、CONFIG_DB 派生テーブルとは異なり ZMQ XPUB/XSUB 経由で書き込まれる。順序依存は次の 3 層に分かれる: **(a) eventd の socket bind / publisher の echo handshake 時系列**、**(b) publisher 側 (healthd 等) の CONFIG_DB / STATE_DB 起動時依存**、**(c) 同一 action 内での非トランザクショナルな複数 Redis 書込**。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | eventd の zmqproxy XSUB/XPUB/CAPTURE bind → publisher の echo handshake | **強制先行** (timeout 時 publisher 取得失敗 / handshake 前の publish は silent drop) | systemd 起動順 + `docker-eventd` ready 待ちで保証 |
+| 2 | event profile (`default.json`) に `(source, tag)` キー存在 → publisher の RAISE_ALARM 発火 | **強制先行** (image build 時に静的解決) | runtime での復旧不可 |
+| 3 | `CONFIG_DB:DEVICE_METADATA` / `FEATURE` + `STATE_DB:FEATURE` → healthd publisher 起動 | 推奨先行 (欠如時 `sonic-events-host` 系 RAISE 発火せず) | systemd `After=` + SubscriberStateTable 後追い |
+| 4 | COUNTERS_DB 起動 → eventd `stats_collector` `run_writer` thread | 緩い依存 (失敗時はカウンタのみ停止・ALARM 本体無影響) | 例外 catch で eventd 本体は継続 |
+| 5 | 同一 RAISE_ALARM 内 — `HSET ALARM` → `HINCRBY ALARM_STATS` | 同期順 (MULTI/EXEC 無し → Redis 切断瞬間に不整合可能) | eventd abort + コンテナ再起動で回帰 (テーブルは空から再開) |
+| 6 | eventd 自身の zmqproxy bind → heartbeat publisher 初期化 | プロセス内自己順序 | heartbeat 不在は ALARM 飢餓の早期検知信号 |
+| 7 | 対応 RAISE_ALARM (lookup map 構築) → CLEAR_ALARM 受信 | **対応先行必須** (RAISE 不在の CLEAR は no-op) | flooding 防止キャッシュで重複 RAISE 黙棄 / lookup map 永続化なし |
+
+### 主要な制約詳細
+
+**zmqproxy bind と echo handshake (依存 #1)**: `eventd_proxy::init()` (`sonic-eventd/src/eventd.cpp:77-107`) が ZMQ_XSUB → ZMQ_XPUB → ZMQ_PUB(capture) の順に `zmq_bind`。publisher 側 `events_init_publisher()` (`sonic-swss-common/common/events.cpp:97-109`) は echo socket で handshake を行い、`EVENTS_SERVICE_TIMEOUT_MS_PUB` 内に成立しなければ publisher 取得失敗 (`SWSS_LOG_ERROR "Failed to init event service rc=%d"`)。handshake 前に `event_publish()` を呼ぶと ZMQ PUB 仕様により **silent drop** され、RAISE_ALARM がカウントもログも残さず消える可能性がある (`events.cpp:103` コメント "Any message published before connection establishment is dropped.")。
+
+**event profile キー解決 (依存 #2)**: ALARM 行の `type-id` / `severity` / `action` は publisher が指定する `(source, tag)` を **event profile JSON のキー** として暗黙参照する。profile に該当キー (`sonic-events-eventd.heartbeat` / `sonic-events-host.process-not-running` / `sonic-events-host.liquid-cooling-leak` / `sonic-events-host.process-exited-unexpectedly` 等) が無いと severity / action が解決されず RAISE が無効化される。profile は image build 時に静的に確定する設計で、runtime での復旧不可。
+
+**healthd publisher の DB 先読み (依存 #3)**: healthd (`sysmonitor.py:39-41,152,217-219` / `service_checker.py:321-323`) は ALARM publish 前に `CONFIG_DB:DEVICE_METADATA` 全フィールド / `CONFIG_DB:FEATURE` (`get_table`) / `STATE_DB:FEATURE` (SubscriberStateTable) を読む。これらが欠落した状態で healthd が起動すると `sonic-events-host` 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。ALARM テーブル自体ではなく ALARM publisher の有効化条件であり、eventd 側はこの順序を強制しない。
+
+**同一 action 内の連続書込 (依存 #5)**: Alarm Consumer は RAISE_ALARM 受信で `HSET EVENT_DB ALARM|<id>` → `HINCRBY EVENT_DB ALARM_STATS|state <severity> 1` を順次同期発行するが、Redis MULTI/EXEC でラップされていない。ALARM HSET 成功 + ALARM_STATS HINCRBY 失敗 (Redis 切断瞬間など) という不整合が原理的に発生し得る。Phase D で述べた通り eventd 側で Redis 例外の明示捕捉はなく、発生時はプロセス abort → `supervisor-proc-exit-listener-rs` でコンテナ再起動。再起動後は ALARM テーブルが空から再開され、再 RAISE は publisher 側に依存する。pmon System LED は `ALARM_STATS` を読むため、瞬間不整合中は LED 色判定がずれる可能性 (実害は秒未満)。
+
+**CLEAR の対応 RAISE 先行 (依存 #7)**: Alarm Consumer は内部 lookup map (`<type-id, resource> → <id>`) を保持し、CLEAR_ALARM 受信時にここから `<id>` を解決して `DEL ALARM|<id>`。対応 RAISE が無いと no-op (HLD §3.1.4.2)。publisher 側リブートで内部状態を失い、再起動後に CLEAR_ALARM を送っても eventd 側 lookup map と一致せず、ALARM テーブル上の古い RAISE エントリが消えずに残る可能性。eventd 自身が落ちると lookup map も消えるため、逆方向 (RAISE 再送 → 重複行) も問題となる。lookup map 永続化は未実装で、運用上は `show alarm` 経由で人手 ACK/clear が必要。
+
+### キーパースペクティブ
+
+- ALARM テーブルは CONFIG_DB 派生テーブルではなく EVENT_DB の push 配信テーブルであるため、CONFIG_DB 系の「daemon が SubscriberStateTable で待つ → 順序が緩い」モデルが当てはまらない。
+- capability 公開順序という概念は ALARM 領域には存在しない (eventd 側で動的 capability ネゴシエーションをしないため)。代わりに event profile JSON の **image build 時静的解決** が同等の役割を果たす。
+- healthd と eventd は互いに購読しない独立サブシステムであり、ALARM フロー上は「healthd が publisher として一方向に流す」関係のみ。failure 伝播は systemd / supervisord 側の再起動経路で吸収される。
+
+詳細解析: `meta/_intermediate/cdb-flow/alarm-table-ordering.md`
+
+<!-- evidence: sonic-buildimage/src/sonic-eventd/src/eventd.cpp:46-47,77-107,177-184,205-210,265-294,291,518-526; sonic-swss-common/common/events.cpp:97-109,103; sonic-buildimage/src/system-health/health_checker/sysmonitor.py:39-41,152,217-219; sonic-buildimage/src/system-health/health_checker/service_checker.py:15-16,321-323,380-384; sonic-buildimage/dockers/docker-eventd/supervisord.conf:47-57; SONiC/doc/event-alarm-framework/event-alarm-framework.md:Section 3.1.2,3.1.3,3.1.4,3.1.4.2 -->
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
