@@ -194,6 +194,50 @@ YANG `default` 文が存在しないフィールドでもコードが暗黙の�
 > **スキャン証跡**: `managers_as_path.py` 全 67 行、`frrcfgd.py` AS_PATH_SET 関連箇所、`bgpd.conf.db.j2`、`sonic-routing-policy-sets.yang` action enum 定義部すべて読了。中間ファイル: `meta/_intermediate/cdb-flow/as-path-set-constants.md`
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `AS_PATH_SET` 経路が前提・連動する関連 CONFIG_DB テーブル (Phase C)
+
+`AS_PATH_SET` には 2 つの独立した consumer 経路 (`frrcfgd` 本体 / `bgpcfgd` の `AsPathMgr`) があり、それぞれ別テーブルを入り口・前提として利用する。`AS_PATH_SET` を単体で見ると見えない依存関係を以下に列挙する。
+
+### 別経路の購読入り口 (bgpcfgd `AsPathMgr` 専用)
+
+`bgpcfgd` の `AsPathMgr` は **`AS_PATH_SET` テーブルを購読しない**。代わりに `DEVICE_METADATA` を購読し、`localhost.t2_group_asns` leaf-list から固定名 `T2_GROUP_ASNS` の AS path access-list を独立に生成する (`bgpcfgd/main.py:129` で `AsPathMgr(common_objs, "CONFIG_DB", "DEVICE_METADATA")`)。
+
+| テーブル / フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.t2_group_asns`) | `AsPathMgr.set_handler()` / `del_handler()` で subscribe | `localhost` 行の `t2_group_asns` をカンマ split し、`bgp as-path access-list T2_GROUP_ASNS permit _<asn>_` を発行 | bgpcfgd/managers_as_path.py:31,35,40,56,61; bgpcfgd/main.py:129; sonic-device_metadata.yang:330 |
+
+> **名前衝突に注意**: `AS_PATH_SET|T2_GROUP_ASNS` 行を CONFIG_DB に投入すると、`frrcfgd` 経路 (`AS_PATH_SET` 購読) と `AsPathMgr` 経路 (`DEVICE_METADATA.t2_group_asns` 購読) が **同じ FRR access-list 名** へ書き込む。UPDATE 時の「先に `no bgp as-path access-list <name>` で全削除 → 再 ADD」シーケンス (`frrcfgd.py:1015-1019`) と `AsPathMgr` の差分追記 (`managers_as_path.py:51-57`) が競合し得る。固定名 `T2_GROUP_ASNS` は **予約名** として扱い `AS_PATH_SET` テーブルで使用しないのが安全。
+
+### 同一テーブルマップ上の消費者 (frrcfgd 共有)
+
+`AS_PATH_SET` は登録だけでは BGP UPDATE フィルタとして効果を持たず、`ROUTE_MAP` の `match as-path <name>` から名前参照されて初めて成立する。frrcfgd は `AS_PATH_SET` と `ROUTE_MAP` を **同一 `tbl_to_key_map` / 同一 `bgp_table_handler_common`** で処理する。
+
+| テーブル / フィールド | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| `ROUTE_MAP` (`match_as_path`) | `route_map_key_map` の `match_as_path` 行 | `[bgpd]{no:no-prefix}match as-path {}` で AS_PATH_SET の `name` (key) を文字列リテラル参照 | frrcfgd.py:86,1940,2113,2205-2211 |
+
+> **参照整合性チェックは無い**: frrcfgd / FRR どちらも `ROUTE_MAP.match_as_path` の値が `AS_PATH_SET` の `name` と一致するかを検証しない。AS_PATH_SET 削除後も `ROUTE_MAP` に古い名前が残ると、FRR 側で「未定義 access-list 参照」となり、UPDATE 評価時の match が事実上ヒットしない挙動になる。
+
+### bgpd プロセス前提 (グローバル daemon バインド)
+
+`AS_PATH_SET` ハンドラ (`hdl_aspath_set`) は `BGP_GLOBALS` を直接読み出さないが、生成される FRR コマンド (`bgp as-path access-list ...`) は **`bgpd` プロセスのグローバルコンフィグ** に投入され、`BGP_GLOBALS` で BGP インスタンスが起動している前提でしか実効性を持たない。
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| `BGP_GLOBALS` | `frrcfgd.py:2175` `get_table('BGP_GLOBALS')` + `frrcfgd.py:2296` `bgp_global_handler` subscribe | bgpd プロセスへのグローバル設定。`AS_PATH_SET` は `frrcfgd.py:96` で同じく `['bgpd']` バインドのため bgpd 起動前提を共有 | frrcfgd.py:81,96,2175,2296 |
+
+> bgpd が起動していない (BGP_GLOBALS 空) 環境でも `bgp as-path access-list` 自体は FRR の vtysh に受理されるが、参照側の BGP UPDATE 評価が走らないため access-list は無効化された状態になる。
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- [`COMMUNITY_SET`](./community-set.md) / [`PREFIX_SET`](./prefix-set.md) / `AS_PATH_LIST` (= `BGP_COMMUNITY_LIST`): いずれも `sonic-routing-policy-sets.yang` 配下の兄弟テーブル。`ROUTE_MAP` から並列に参照されるが、`AS_PATH_SET` ハンドラ (`hdl_aspath_set` — frrcfgd.py:1009-1020) からは読み出さない。本ページ冒頭の `関連 CONFIG_DB` に留め、Phase C には含めない。
+- `BGP_GLOBALS_AF` / `BGP_GLOBALS_LISTEN_PREFIX` / `BGP_NEIGHBOR` などの BGP 派生テーブル: `tbl_to_key_map` を共有するが `AS_PATH_SET` 経路は触らない。`BGP_GLOBALS` で代表させ個別記載しない。
+- `DEVICE_METADATA.localhost.hostname` / `localhost.bgp_asn`: 同じ `DEVICE_METADATA` テーブルだが `AsPathMgr` は `t2_group_asns` のみ参照 (`managers_as_path.py:35`)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/as-path-set-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
