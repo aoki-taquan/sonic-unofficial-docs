@@ -61,6 +61,7 @@ nav:
   - crm.md
   - dhcp-server-ipv4.md
   - dhcpv4-relay.md
+  - dpb.md
   - flex-counter-table.md
   - kdump.md
   - ldap-server.md
