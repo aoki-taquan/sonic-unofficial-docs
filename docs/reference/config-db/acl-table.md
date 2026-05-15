@@ -423,4 +423,31 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 - **CRM 連携**: 作成/削除時に `gCrmOrch->incCrmAclUsedCounter()` / `decCrmAclUsedCounter()` (`aclorch.cpp:2855`)。
 
 <!-- /runtime-trace -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`ACL_TABLE.ports` フィールドに記載されたインターフェース名は CONFIG_DB 上では文字列だが、
+`AclOrch` が `gPortsOrch->getPort()` と `getAclBindPortId()` を通じて以下のテーブルの
+エントリを**暗黙的に leafref 参照**する。YANG 定義がないため制約はコードのみで表現されている。
+
+| 参照元フィールド | 参照先テーブル | 参照先キー形式 | SAI バインド種別 | 参照箇所 |
+|---|---|---|---|---|
+| `ports` | `PORT` | `PORT\|EthernetN` | `SAI_ACL_BIND_POINT_TYPE_PORT` | `aclorch.cpp:6062-6069` |
+| `ports` | `PORTCHANNEL` | `PORTCHANNEL\|PortChannelN` | `SAI_ACL_BIND_POINT_TYPE_LAG` | `aclorch.cpp:6073-6075` |
+| `ports` | `VLAN` | `VLAN\|VlanN` | `SAI_ACL_BIND_POINT_TYPE_VLAN` | `aclorch.cpp:6076-6078` |
+| `type` | `ACL_TABLE_TYPE` | `ACL_TABLE_TYPE\|<name>` | N/A (テーブル定義参照) | `aclorch.cpp:5380-5388` |
+
+### 解決タイミング
+
+- `ports` に指定したポートが PortsOrch 未登録の場合、`pendingPortSet` に保留され
+  PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2866-2901`)。
+- `type` にユーザ定義型を指定する場合は `ACL_TABLE_TYPE|<type>` が先に存在している必要がある。
+
+### 間接参照
+
+- `type=MIRROR`/`MIRRORV6` テーブルに紐づく `ACL_RULE` は `MIRROR_SESSION` テーブルを参照する
+  (`AclRuleMirror::validateAddMatch()`)。`ACL_TABLE` 自体は直接参照しない。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 9f69b0796e2c -->
