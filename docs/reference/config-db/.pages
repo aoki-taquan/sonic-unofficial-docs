@@ -12,6 +12,7 @@ nav:
   - mgmt-port.md
   - mgmt-vrf-config.md
   - port.md
+  - appl-port-table.md
   - portchannel.md
   - portchannel-interface.md
   - portchannel-member.md
@@ -53,6 +54,7 @@ nav:
   - wred-profile.md
   - tunnel.md
   - tunnel-decap-table.md
+  - tunnel-state.md
   - vxlan-tunnel.md
   - vxlan-tunnel-map.md
   - crm.md
@@ -70,6 +72,7 @@ nav:
   - device-neighbor-metadata.md
   - neigh.md
   - fg-nhg.md
+  - nhg-table.md
   - nhg.md
   - sflow.md
   - ...
