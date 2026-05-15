@@ -149,6 +149,21 @@ if (session.direction == MIRROR_TX_DIRECTION || session.direction == MIRROR_BOTH
 
 MirrorOrch 初期化時に `SAI_SWITCH_ATTR_QOS_MAX_NUMBER_OF_TRAFFIC_CLASSES` を SAI から取得する。取得失敗時は `m_maxNumTC = 255`（`MIRROR_SESSION_DEFAULT_NUM_TC`）を使用し、`queue` バリデーション（`queue >= m_maxNumTC`）が実質無効化される[^2]。
 
+### STATE_DB MIRROR_SESSION_TABLE — ERSPAN 種別の書き込みフィールド
+
+`MirrorOrch::setSessionState()` (`mirrororch.cpp:579-637`) が活性化後に STATE_DB へ書き込む読み取り専用フィールド:
+
+| フィールド | 値の由来 | ERSPAN 固有挙動 |
+|-----------|---------|---------------|
+| `status` | `"active"` / `"inactive"` | dst_ip nexthop 解決完了まで `"inactive"` のまま |
+| `monitor_port` | nexthop 出口ポート alias | **voq switch では recirc port alias に置換**（非voq: neighbor port） |
+| `dst_mac` | neighbor の解決済み MAC | **voq switch では gMacAddress（ルータ MAC）に固定** |
+| `route_prefix` | RouteOrch が解決した dst_ip の prefix | 例: `192.168.1.0/24` |
+| `vlan_id` | nexthop が VLAN ポートの場合の VLAN ID | 非VLAN時は `"0"` |
+| `next_hop_ip` | RouteOrch が返す nexthop IP | 直接接続ルートでは dst_ip と同値になりうる |
+
+ウォームリブート時は `status`・`monitor_port`・`next_hop_ip` の 3 フィールドのみ読み戻す（`mirrororch.cpp:118-151`）。`dst_mac`・`route_prefix`・`vlan_id` は再計算される。
+
 <!-- /defaults -->
 
 ## セッション活性化タイミング
