@@ -25,6 +25,21 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/iccpd/src/iccp_csm.c
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/iccp_csm.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/mlacp_link_handler.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/system.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/iccpd/include/iccp_cli.h
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: src/sonic-yang-models/yang-models/sonic-mclag.yang
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
     - MCLAG_DOMAIN
@@ -262,6 +277,106 @@ csm->session_timeout = HEARTBEAT_TIMEOUT_SEC;  // = 15
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`mclagsyncd` および `iccpd` のソースコードから抽出した APPL_DB MCLAG/ICCP 経路に関わる主要ハードコード定数[^link][^sched][^csm][^iccpcsm][^mlacphdl][^iccpsys][^iccpcli][^mclagyang]。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mclag-constants.md`。
+
+### MCLAG ドメイン ID / タイマー範囲（YANG）
+
+| 制約 | 値 |
+|---|---|
+| `MCLAG_DOMAIN.domain_id` 範囲 | `1..4095` (uint16) |
+| `MCLAG_DOMAIN.keepalive_interval` | `1..60` 秒、YANG default `1` |
+| `MCLAG_DOMAIN.session_timeout` | `1..3600` 秒、YANG default `30` |
+| must 制約 | `(keepalive_interval * 3) <= session_timeout` |
+| ドメイン数 | `max-elements 1`（同時 1 ドメインのみ） |
+
+### IPC プロトコル（mclag.h）
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MCLAG_DEFAULT_IP` | `0x7f000006` (`127.0.0.6`) | mclagsyncd IPC listen アドレス（固定） |
+| `MCLAG_DEFAULT_PORT` | `2626` | iccpd ↔ mclagsyncd IPC ポート（固定） |
+| `MCLAG_MAX_MSG_LEN` | `4096` バイト | IPC メッセージ最大長 |
+| `MCLAG_PROTO_VERSION` | `1` | IPC プロトコルバージョン |
+| `ICCP_TCP_PORT` | `8888` | iccpd ↔ ピア iccpd TCP セッションポート（固定） |
+| `MAX_ACCEPT_CONNETIONS` | `20` | iccpd listen backlog 上限 |
+| `ICCP_MLAGSYNCD_RECV_MSG_BUFFER_SIZE` | `1048576` (= 4096 × 256) | iccpd→mclagsyncd 受信バッファ |
+| `MCLAG_MEMBER_NAME_STR_LEN` | `2048` | MEMBERS カンマ区切り文字列上限 |
+
+### タイマー定数（iccpd）
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `CONNECT_INTERVAL_SEC` | `1` 秒 | `keepalive_interval` 空時の iccpd 内 fallback |
+| `CONNECT_TIMEOUT_MSEC` | `100` ms | ピア接続 socket connect タイムアウト |
+| `HEARTBEAT_TIMEOUT_SEC` | `15` 秒 | `session_timeout` 空時の iccpd 内 fallback |
+| `TRANSIT_INTERVAL_SEC` | `1` 秒 | 状態遷移ポーリング間隔 |
+| `EPOLL_TIMEOUT_MSEC` | `100` ms | iccpd メインループ epoll タイムアウト |
+| `MLACP_LOCAL_IF_DOWN_TIMER` | `600` 秒 | ローカル IF down 後の保持タイマー |
+
+YANG default（`30` 秒）と iccpd 内 fallback（`15` 秒）の不一致に注意。CLI 経由設定では YANG default が CONFIG_DB に書かれるので fallback は発火しない。
+
+### ポート名・文字列長
+
+| 定数 | 値 | 用途 |
+|---|---|---|
+| `MAX_L_PORT_NAME` | `20` | mclagsyncd / iccpd 内ポート名バッファ長（共通） |
+| `ICCP_MAX_PORT_NAME` | `20` | show 表示用 |
+| `ICCP_MAX_IP_STR_LEN` / `INET_ADDRSTRLEN` | `16` | IPv4 文字列長 |
+| `PORTCHANNEL_PREFIX` | `"PortChannel"` | PortChannel 判定プレフィクス |
+| `VLAN_PREFIX` | `"Vlan"` | VLAN インタフェース名プレフィクス |
+| `MAX_BUFSIZE` | `4096` | 汎用バッファ |
+
+### プラットフォーム識別文字列（ISOLATION_GROUP 対応判定）
+
+`mclaglink.h` で定義され、`gMySwitchType` と部分一致比較される 6 つのプラットフォーム。これ以外は ACL フォールバック経路。
+
+| 定数 | 値 |
+|---|---|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` |
+| `CTC_PLATFORM_SUBSTRING` | `"centec"` |
+| `CLX_PLATFORM_SUBSTRING` | `"clounix"` |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` |
+
+### APPL_DB / STATE_DB 固定文字列リテラル
+
+| 文字列 | 用途 |
+|---|---|
+| `"active"` / `"standby"` | `STATE_MCLAG_TABLE.role` の 2 値 |
+| `"up"` / `"down"` | `oper_status`（ICCP セッション・remote IF） |
+| `"hardware"` / `"disable"` | `LAG_TABLE.learn_mode` / `PORT_TABLE.learn_mode` の 2 値 |
+| `"true"` / `"false"` | `LAG_TABLE.traffic_disable` |
+| `"static"` / `"dynamic"` / `"dynamic_local"` | `MCLAG_FDB_TABLE.type` |
+| `"MCLAG_ISO_GRP"` | `ISOLATION_GROUP_TABLE` 唯一の key（1 エントリ固定） |
+| `"Isolation group for MCLAG"` | `ISOLATION_GROUP_TABLE.DESCRIPTION` 固定 |
+| `"bridge-port"` | `ISOLATION_GROUP_TABLE.TYPE` 固定 |
+| `"Mclag egress port isolate acl"` | フォールバック `ACL_TABLE.policy_desc` |
+| `"L3"` / `"ANY"` / `"DROP"` | フォールバック ACL の type / IP_TYPE / PACKET_ACTION |
+| `"mclag"` / `"mclag:mclag"` | フォールバック ACL_TABLE / ACL_RULE key |
+
+### エラーコード
+
+| 定数 | 値 |
+|---|---|
+| `MCLAG_ERROR` | `-1` |
+| `MCLAG_ERROR_INVALID_TLV` | `-2` |
+| `ICCP_NLE_SEQ_MISMATCH` | `-16` |
+
+### 特記事項
+
+1. **IPC エンドポイントはハードコード**: `127.0.0.6:2626` (mclagsyncd) と `:8888` (iccpd ピア間) は再設定不可。
+2. **MCLAG ドメインは 1 個のみ**: YANG `max-elements 1` 制約により同時に 1 ドメインしか持てない。`domain_id` は `1..4095` の値だが、設定可能な実体は 1 つ。
+3. **`MCLAG_ISO_GRP` は単一キー**: `ISOLATION_GROUP_TABLE` のキーは常に `"MCLAG_ISO_GRP"` の 1 エントリのみで、複数の分離グループは持てない。
+4. **ポート名長 20 文字制限**: `MAX_L_PORT_NAME=20` を超えるカスタム命名は IPC で truncate されるおそれあり。
+5. **iccpd fallback と YANG default の不一致**: `session_timeout` の YANG default は `30` 秒だが iccpd 内 fallback は `15` 秒。CONFIG_DB に空値を直書きしたときのみ後者が発火する。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-constants.md`
+<!-- /constants -->
+
 <!-- pubsub -->
 ## Redis 通知メカニズム (Phase G)
 
@@ -362,6 +477,62 @@ APPL_DB MCLAG/ICCP 関連テーブル群 (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_T
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/appl-mclag-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`mclagsyncd` が APPL_DB に書き込む 7 テーブル (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_TABLE` /
+`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `LAG_TABLE` / `PORT_TABLE` / `INTF_TABLE`) は
+key 構造やフィールド値として CONFIG_DB の他テーブルのオブジェクト名 ([PORT](port.md) /
+[PORTCHANNEL](portchannel.md) / [VLAN](vlan.md) / `MCLAG_DOMAIN` / [FDB](fdb.md) など)
+を文字列として保持する。YANG 上の leafref 制約は存在せず、参照は `mclagsyncd` 自身
+または下流 orchagent (`fdborch` / `isolationGroupOrch` / `aclOrch` / `lagOrch` /
+`portOrch` / `intfOrch`) のコードでのみ表現される[^link]。
+
+| 参照元 (テーブル.key / フィールド) | 参照先テーブル | 参照先キー形式 | 解決主体 | 参照箇所 |
+|---|---|---|---|---|
+| `MCLAG_FDB_TABLE` key `Vlan<vid>:<mac>` | CONFIG_DB `VLAN` / STATE_DB `FDB_TABLE` | `VLAN\|Vlan<vid>` | iccpd / `fdborch` | `mclaglink.cpp:494` |
+| `MCLAG_FDB_TABLE.port` | CONFIG_DB `PORTCHANNEL` / `PORT` | `PORTCHANNEL\|<name>` / `PORT\|Ethernet<N>` | `fdborch` | `mclaglink.cpp:465-521` |
+| `ISOLATION_GROUP_TABLE.PORTS` | CONFIG_DB `PORT` | `PORT\|Ethernet<N>` | `isolationGroupOrch` | `mclaglink.cpp:237,274` |
+| `ISOLATION_GROUP_TABLE.MEMBERS` | CONFIG_DB `PORTCHANNEL` | `PORTCHANNEL\|PortChannel<N>` | `isolationGroupOrch` | `mclaglink.cpp:258` (Ethernet を除外) |
+| `ACL_TABLE_TABLE.mclag.ports` | CONFIG_DB `PORT` | `PORT\|Ethernet<N>` | `aclOrch` | `mclaglink.cpp` ACL 経路 |
+| `ACL_RULE_TABLE.mclag:mclag.OUT_PORTS` | CONFIG_DB `PORT` | `PORT\|Ethernet<N>` | `aclOrch` | `mclaglink.cpp:352,367` (PortChannel を除外) |
+| `LAG_TABLE` key | CONFIG_DB `PORTCHANNEL` | `PORTCHANNEL\|PortChannel<N>` | `lagOrch` / `portOrch` | `mclaglink.cpp:407` (`PORTCHANNEL_PREFIX` strncmp) |
+| `PORT_TABLE` key | CONFIG_DB `PORT` | `PORT\|Ethernet<N>` | `portOrch` | `mclaglink.cpp:416` (else 分岐) |
+| `INTF_TABLE` key | CONFIG_DB `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` | 同名 IF | `intfOrch` | `mclaglink.cpp:435-461` |
+| (購読) CONFIG_DB `MCLAG` (MCLAG_DOMAIN) | CONFIG_DB `MCLAG` | `MCLAG\|<mlag_id>` | iccpd (IPC 経由) | `mclagsyncd.cpp:41`、`mclaglink.cpp:655-892` |
+| (購読) CONFIG_DB `MCLAG_INTERFACE` | CONFIG_DB `MCLAG_INTERFACE` | `MCLAG_INTERFACE\|<mlag_id>\|<if>` | iccpd | `mclaglink.cpp:918` |
+| (購読) CONFIG_DB `MCLAG_UNIQUE_IP` | CONFIG_DB `MCLAG_UNIQUE_IP` | `MCLAG_UNIQUE_IP\|<vlan_if>` | iccpd | `mclaglink.cpp:921` |
+| (購読) STATE_DB `FDB_TABLE` | STATE_DB `FDB_TABLE` | `FDB_TABLE\|Vlan<vid>:<mac>` | `mclagsyncd` 自身 | `mclaglink.cpp:912` |
+| (購読) STATE_DB `VLAN_MEMBER_TABLE` | STATE_DB `VLAN_MEMBER_TABLE` | `VLAN_MEMBER_TABLE\|Vlan<vid>\|<member>` | `mclagsyncd` 自身 | `mclaglink.cpp:915,1183-1278` |
+
+### 解決タイミング・除外規則
+
+- `ISOLATION_GROUP_TABLE.MEMBERS` は iccpd から到着するカンマ区切りリストから
+  `Ethernet` で始まる名を除外した PortChannel のみが格納される (`mclaglink.cpp:258`)。
+  対称に ACL fallback の `ACL_RULE_TABLE.OUT_PORTS` は `PortChannel` を除外した
+  Ethernet のみ (`mclaglink.cpp:352`)。
+- `LAG_TABLE` / `PORT_TABLE` の振り分けは `learn_port` の prefix が
+  `PORTCHANNEL_PREFIX` (`"PortChannel"`) かどうか単独の `strncmp` 判定。VXLAN tunnel
+  ブランチはコメントアウト済みで実装外。
+- `INTF_TABLE` の key は iccpd 通知に従い PORT / PORTCHANNEL_INTERFACE /
+  VLAN_INTERFACE いずれの形でも届きうるため、参照先テーブルは複数候補。`intfOrch`
+  側で個別に解決される。
+- 購読 5 テーブル (`MCLAG` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` / `FDB_TABLE` /
+  `VLAN_MEMBER_TABLE`) は keyspace notification 経由で `SubscriberStateTable` が
+  PSUBSCRIBE する (詳細は上記「Redis 通知メカニズム」節を参照)。
+
+### 間接参照
+
+- `MCLAG_FDB_TABLE` → `fdborch` 経由で SAI FDB エントリ。PORT / PORTCHANNEL の
+  オブジェクト ID 解決は `fdborch` 内部で行うため `mclagsyncd` 側追加参照は不要。
+- `LAG_TABLE.learn_mode` / `PORT_TABLE.learn_mode` は `portOrch` 経由で SAI
+  `SAI_BRIDGE_PORT_ATTR_FDB_LEARNING_MODE` にマップ。
+- `INTF_TABLE.mac_addr` は `intfOrch` 経由で kernel netlink + SAI router interface に
+  反映される。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-cross-refs.md`
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^link]: mclagsyncd 実装: `sonic-swss/mclagsyncd/mclaglink.cpp`, `mclaglink.h`, `mclag.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
@@ -369,3 +540,8 @@ APPL_DB MCLAG/ICCP 関連テーブル群 (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_T
 [^sched]: keepalive/timeout 定数: `sonic-buildimage/src/iccpd/include/scheduler.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h>
 [^csm]: iccpd CSM 初期化: `sonic-buildimage/src/iccpd/src/iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
 [^orch]: orchagent 消費側: `sonic-swss/orchagent/orchdaemon.cpp` (`SELECT_TIMEOUT = 1000` ms), `fdborch.cpp`, `isolationgrouporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^iccpcsm]: iccpd CSM ヘッダ定数 (`ICCP_TCP_PORT`, `MAX_ACCEPT_CONNETIONS`): `sonic-buildimage/src/iccpd/include/iccp_csm.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h>
+[^mlacphdl]: iccpd↔mclagsyncd バッファ定数: `sonic-buildimage/src/iccpd/include/mlacp_link_handler.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/mlacp_link_handler.h>
+[^iccpsys]: iccpd 共通定数（`PORTCHANNEL_PREFIX` / `VLAN_PREFIX` / `MCLAG_ERROR`）: `sonic-buildimage/src/iccpd/include/system.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/system.h>
+[^iccpcli]: iccpd CLI キーワード定数: `sonic-buildimage/src/iccpd/include/iccp_cli.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_cli.h>
+[^mclagyang]: MCLAG YANG モデル（domain_id / keepalive_interval / session_timeout 範囲）: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
