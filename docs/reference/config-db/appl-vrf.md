@@ -296,6 +296,34 @@ VTEP 未設定で `vni > 0` の VRF エントリを APPL_DB に書くと VRFOrch
 詳細根拠は `meta/_intermediate/cdb-flow/appl-vrf-platform.md` を参照。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブルで、`vrfmgrd` が書き手・`VRFOrch` が読み手。`leafref` は存在しないため、エントリ生成タイミング・SAI Virtual Router 属性・L3 VNI マッピング成立・`ref_count` による削除防御は、すべて他テーブル / 他 Orch を実装レベルで暗黙に参照することで成立する。`sonic-swss/orchagent/vrforch.cpp` を精読し、依存先を以下に整理した。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `VRF` (CONFIG_DB) | 上流ソース。`vrfmgrd` が pass-through で APPL_DB `VRF_TABLE` を生成 | 常時 | `cfgmgr/vrfmgr.cpp:303` |
+| `VNET` (CONFIG_DB) / `VNET_TABLE` (APPL_DB) | `VNetOrch` が APPL_DB `VRF_TABLE` を直書きする非標準経路。YANG 未定義 4 属性 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) の唯一の実体投入経路 | `VNET_TUNNEL_ROUTES` を使うとき | `vrforch.cpp:48–67` の属性変換 if/else チェーン |
+| `VXLAN_EVPN_NVO` (CONFIG_DB) / `EvpnNvoOrch` | `getEVPNVtep()` で source VTEP を取得。未存在なら `task_failed` 復路で抜け、`vrf_vni_map_table_` も `STATE_VRF_OBJECT_TABLE` も更新されない | `vni != 0` のとき | `vrforch.cpp:205, 225–230` |
+| `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` (CONFIG_DB) / `VxlanTunnelOrch` | `getVlanMappedToVni(vni)` で VLAN を取得。`0` なら L3 VNI 半設定状態。後続で `VXLAN_TUNNEL_MAP` 投入時に `updateL3VniVlan()` で VE UP まで進む | `vni != 0` のとき | `vrforch.cpp:206, 233–240, 278` |
+| `*_INTERFACE` 系 (CONFIG_DB) / `IntfsOrch` | `IntfsOrch` が `m_vrfOrch->increaseVrfRefCount(vrf_id)` を呼び `ref_count` を増減 | インタフェースの `vrf_name` が当該 VRF を指すとき | `intfsorch.cpp:504, 848, 855` |
+| `ROUTE_TABLE` (APPL_DB) / `RouteOrch` | ルート登録時に `increaseVrfRefCount()` | 常時（学習・静的ルート問わず） | `routeorch.cpp:2013` |
+| `LABEL_ROUTE_TABLE` / `FG_NHG` / SRv6 / `TWAMP_SESSION` / P4Orch 系 | 各 Orch が `increaseVrfRefCount()` を呼ぶ | 該当機能の VRF 参照エントリ存在時 | `mplsrouteorch.cpp:474`, `fgnhgorch.cpp:1326`, `srv6orch.cpp:1639`, `twamporch.cpp:429`, `p4orch/router_interface_manager.cpp:355`, `p4orch/route_manager.cpp:700`, `p4orch/acl_rule_manager.cpp:1851, 2067`, `p4orch/ip_multicast_manager.cpp:775` |
+| `BGP_NEIGHBOR` / `BGP_GLOBALS` / `BGP_GLOBALS_AF` (CONFIG_DB) | 直接の DB 参照は無く、BGP セッションが学習したルートが FRR → `fpmsyncd` → APPL_DB `ROUTE_TABLE` → `RouteOrch` 経路で `ref_count` を増やす（間接参照） | 当該 VRF で BGP セッションが UP しルート学習中 | `routeorch.cpp:2013` 経路に集約。EVPN タイプ 5 経由の L3 VNI 学習ルートも同様 |
+| `VRF_OBJECT_TABLE` (STATE_DB) | `VRFOrch` が書き手、`vrfmgrd::isVrfObjExist()` が読み手。Linux VRF デバイス削除タイミングを制御 | 作成・更新成功時に `state=ok` 書込み、削除時に `del` | `vrforch.cpp:120, 150, 193` |
+| `FlowCounterRouteOrch` (`gFlowCounterRouteOrch`) | VR 作成 / 削除のたびに `onAddVR(router_id)` / `onRemoveVR(router_id)` を通知 | 常時 | `vrforch.cpp:25, 110, 184` |
+| SAI `gVirtualRouterId`（default VRF） | orchagent 起動時に確保されるデフォルト VR。`VRFOrch` を経由しない | 起動時 1 回 | APPL_DB `VRF_TABLE|default` は通常存在しない |
+
+!!! warning "EVPN VTEP 未設定で `vni != 0` を書くと L3 VNI 半設定状態"
+    `VXLAN_EVPN_NVO` 未投入のまま APPL_DB `VRF_TABLE|<vrf>` に `vni > 0` を書くと、`VRFOrch::updateVrfVNIMap()` は `getEVPNVtep()` で nullptr を受け取り `return false`。`vrf_vni_map_table_[vrf_name]` は更新されず、`STATE_VRF_OBJECT_TABLE|<vrf>` への `state=ok` も書き込まれない。`task_need_retry` で APPL_DB エントリは保留され、VTEP 投入後に再試行される。
+
+!!! note "`ref_count > 0` の VRF 削除はブロックされる"
+    `VRFOrch::delOperation()` (`vrforch.cpp:169–170`) は `vrf_table_[vrf_name].ref_count` が 0 でない限り `task_need_retry` を返す。インタフェース・各種ルート・SRv6 DT / TWAMP / P4 / FG_NHG のいずれかが当該 VRF を参照していると `config vrf del` 完了は保留される。BGP 学習ルートが残っているケースも同じ経路でブロックされる。
+
+詳細根拠は `meta/_intermediate/cdb-flow/appl-vrf-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 関連ページ
 
 - [CONFIG_DB VRF テーブル](./vrf.md)
