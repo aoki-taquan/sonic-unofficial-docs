@@ -235,6 +235,49 @@ CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。
 詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-platform.md` を参照。
 <!-- /platform -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `mplsrouteorch.cpp`, `nhgorch.cpp`, `routeorch.cpp` の MPLS 経路を全行精読 (2026-05-15)
+> 詳細証跡: `meta/_intermediate/cdb-flow/appl-mpls-route-cross-refs.md`
+
+`APPL_DB:LABEL_ROUTE_TABLE` は YANG モデルを持たないが、`routeorch::doLabelTask()` および `NhgOrch` の MPLS NH 分岐 (`isLabeled()`) を介して以下のオブジェクト/テーブルを実行時に暗黙参照する。
+
+| 参照先 | DB / Orch | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| NextHop (IP / MPLS) | NeighOrch → SAI `next_hop` | 実行時参照 | なし | 必須 | mplsrouteorch.cpp:514-540, nhgorch.cpp:544-585 |
+| NEIGH (ARP/NDP) | APPL_DB `NEIGH_TABLE` / kernel | 解決前提・未解決時は retry | なし | 必須 (非 intf NH) | mplsrouteorch.cpp:520, 538, 559 |
+| INTF (Router Interface) | IntfsOrch → SAI `router_interface` | 実行時参照 | なし | 必須 (intf NH) | mplsrouteorch.cpp:503, 707; nhgorch.cpp:542 |
+| NHG (NhgOrch / CbfNhgOrch) | APPL_DB `NEXT_HOP_GROUP_TABLE` | 実行時参照 (`nexthop_group` 指定時) | なし | 条件付き必須 | mplsrouteorch.cpp:157-170, 256-267, 483-490 |
+| VRF | VrfOrch (`CONFIG_DB:VRF`) | 実行時参照 (`Vrf<name>:` キー時) | なし | 条件付き必須 | mplsrouteorch.cpp:107-118, 474, 957 |
+
+### NEXTHOP / NEIGH — neighbor 解決連動の retry
+
+`addLabelRoute()` は非 intf NH について `m_neighOrch->hasNextHop()` / `getNextHopId()` で SAI NH OID を引き、未存在かつ MPLS NH の場合は IP neighbor 解決済みなら `m_neighOrch->addNextHop(ctx)` で MPLS NH を新規生成する (`mplsrouteorch.cpp:514-527`)。ARP/NDP 未解決時は `resolveNeighbor()` を発火して `return false`（retry サイクル）。NHG メンバ生成 (`nhgorch.cpp:563-585`) も同じパターンで NeighOrch 経由で解決を待つ。
+
+### INTF — directly connected NH の前提
+
+`nexthop.isIntfNextHop()` の場合は `m_intfsOrch->getRouterIntfsId(nexthop.alias)` で RIF OID を取得し、`SAI_NULL_OBJECT_ID` のときは retry (`mplsrouteorch.cpp:503-510, 707-723`)。RIF が出来上がるまで inseg は ASIC に反映されない。
+
+### NHG — NhgOrch / CbfNhgOrch 二段参照
+
+`nexthop_group=<index>` を指定したエントリは `getNhg(nhg_index)` (NhgOrch / CbfNhgOrch 双方) で `NhgBase` を取得し `nhg_key` を確定する。`nexthop_group` と `nexthop`/`ifname` の同時指定は LOG_ERROR で即 drop (`mplsrouteorch.cpp:165-170`)。NHG 未存在時は `++it` retry、Post で `out_of_range` を `catch` した場合も retry (`mplsrouteorch.cpp:483-490, 686-689`)。
+
+### VRF — `<vrf-name>:<label>` プレフィックス
+
+キーが `VRF_PREFIX`（`"Vrf"`）で始まるとき `m_vrfOrch->isVRFexists()` + `getVRFid()` で SAI VRF OID を取得 (`mplsrouteorch.cpp:107-118`)。**現状 fpmsyncd は非デフォルト VRF の MPLS ルートを生成しない** (`routesync.cpp:2674-2681`) ため、本暗黙参照は手動 APPL_DB 書込・サードパーティ FPM クライアント経由でのみ顕在化する。
+
+### SAI 参照
+
+- `inseg_entry` (`SAI_OBJECT_TYPE_INSEG_ENTRY`): label / num_of_pop / packet_action / next_hop_id を設定
+- `next_hop` / `next_hop_group` / `router_interface`: NeighOrch / NhgOrch / IntfsOrch 経由で間接利用
+
+### YANG leafref
+
+APPL_DB は YANG 非対応のため leafref は **存在しない**。本セクションの参照はすべて C++ 実装上の暗黙依存。
+
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
