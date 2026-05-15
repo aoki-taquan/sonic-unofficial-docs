@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop を網羅した Phase A 調査ページ。">
+        <meta name="description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。">
       
       
       
@@ -27,7 +27,7 @@
     
     
       
-        <title>NTP テーブル群 (Phase A defaults) - SONiC 非公式ドキュメント</title>
+        <title>NTP テーブル群 (Phase A defaults + Phase D failure) - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,16 +63,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="NTP テーブル群 (Phase A defaults) - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop を網羅した Phase A 調査ページ。" />
+<meta property="og:title" content="NTP テーブル群 (Phase A defaults + Phase D failure) - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="NTP テーブル群 (Phase A defaults) - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop を網羅した Phase A 調査ページ。" />
+<meta property="twitter:title" content="NTP テーブル群 (Phase A defaults + Phase D failure) - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop および hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動を網羅した調査ページ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp.png" />
 </head>
   
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ntp-phase-a" class="md-skip">
+        <a href="#ntp-phase-a-phase-d" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              NTP テーブル群 (Phase A defaults)
+              NTP テーブル群 (Phase A defaults + Phase D failure)
             
           </span>
         </div>
@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22185,6 +22375,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../copp-group/" class="md-nav__link">
         
   
@@ -22249,6 +22467,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -22829,6 +23075,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23165,6 +23439,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23173,6 +23503,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23249,6 +23663,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23257,6 +23755,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23333,6 +23999,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23341,6 +24035,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -23557,6 +24279,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -23697,6 +24447,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -23761,6 +24539,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -23949,6 +24755,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24041,6 +24931,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -24481,6 +25399,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -24489,6 +25435,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -24593,6 +25595,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -24677,6 +25707,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -24741,6 +25799,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -24901,6 +25987,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -24985,6 +26099,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25021,6 +26191,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25105,6 +26303,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25237,6 +26463,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25265,6 +26519,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25273,6 +26555,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -25477,7 +26787,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -25495,7 +26805,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -25688,7 +26998,179 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-ntpcfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd NtpCfg ハンドラの失敗経路
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hostcfgd NtpCfg ハンドラの失敗経路">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp_global_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キャッシュ不整合リスク（ntp_global_update）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テンプレート失敗経路（サイレント動作）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronyd-startersh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chronyd-starter.sh の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗の可観測性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-ntp_serverkey-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 先行必須 — NTP_SERVER.key leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-authenticationenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 先行推奨 — authentication=enabled 設定時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf_config-vrfmgmt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF_CONFIG 先行必須 — vrf=mgmt 設定時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_intfeth0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照インタフェース先行必須 — src_intf（eth0 以外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-ntp_server-ntp_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd: NTP_SERVER / NTP_KEY の合算処理タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ブート時の書込みシーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -25699,7 +27181,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -25753,6 +27235,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -25761,6 +27271,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -25817,6 +27355,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -25921,6 +27571,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -25929,6 +27635,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26041,6 +27803,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26257,6 +28047,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26397,6 +28215,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26509,6 +28383,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26565,6 +28467,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26573,6 +28531,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -26677,6 +28663,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -26685,6 +28699,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27209,6 +29251,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27217,6 +29343,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27273,6 +29427,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -32583,7 +34765,179 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-ntpcfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd NtpCfg ハンドラの失敗経路
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="hostcfgd NtpCfg ハンドラの失敗経路">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp_global_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        キャッシュ不整合リスク（ntp_global_update）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テンプレート失敗経路（サイレント動作）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chronyd-startersh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        chronyd-starter.sh の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗の可観測性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-ntp_serverkey-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 先行必須 — NTP_SERVER.key leafref
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ntp_key-authenticationenabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NTP_KEY 先行推奨 — authentication=enabled 設定時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf_config-vrfmgmt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF_CONFIG 先行必須 — vrf=mgmt 設定時
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src_intfeth0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照インタフェース先行必須 — src_intf（eth0 以外）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-ntp_server-ntp_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd: NTP_SERVER / NTP_KEY の合算処理タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ブート時の書込みシーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -32594,7 +34948,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -32629,7 +34983,7 @@
   
 
 
-<h1 id="ntp-phase-a">NTP テーブル群 — コード由来デフォルト (Phase A)<a class="headerlink" href="#ntp-phase-a" title="Permanent link">&para;</a></h1>
+<h1 id="ntp-phase-a-phase-d">NTP テーブル群 — コード由来デフォルト (Phase A) + 失敗挙動 (Phase D)<a class="headerlink" href="#ntp-phase-a-phase-d" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p>このページは <code>NTP</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code> 3 テーブルを横断して、YANG 定義・<code>init_cfg.json.j2</code>・<code>chrony.conf.j2</code> テンプレート・<code>hostcfgd</code> ハンドラの全行精読から得た<strong>暗黙デフォルト</strong>・<strong>乖離</strong>・<strong>dead field</strong>・<strong>silent drop</strong> を記録する。各テーブルの詳細は <a href="../ntp-global/"><code>NTP (global)</code></a>・<a href="../ntp-server/"><code>NTP_SERVER</code></a>・<a href="../ntp-key/"><code>NTP_KEY</code></a> を参照。</p>
 </blockquote>
@@ -32948,7 +35302,205 @@
 </table>
 <!-- /defaults -->
 
-<h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡は <code>meta/_intermediate/cdb-flow/ntp-failure.md</code> を参照。</p>
+</blockquote>
+<h3 id="hostcfgd-ntpcfg">hostcfgd NtpCfg ハンドラの失敗経路<a class="headerlink" href="#hostcfgd-ntpcfg" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>systemctl restart chrony</code> 失敗 (<code>handle_ntp_source_intf_chg</code>)</td>
+<td><code>hostcfgd:1324-1328</code></td>
+<td><code>LOG_ERR</code> → <code>return</code>（キャッシュ更新なし・再試行なし）</td>
+<td><code>hostcfgd:1326-1329</code></td>
+</tr>
+<tr>
+<td><code>systemctl restart chrony</code> 失敗 (<code>ntp_global_update</code>)</td>
+<td><code>hostcfgd:1356-1361</code></td>
+<td><code>LOG_ERR</code> → <code>return</code>（キャッシュ更新なし — CONFIG_DB 変更は適用済みだがキャッシュが旧値のまま残存）</td>
+<td><code>hostcfgd:1358-1361</code></td>
+</tr>
+<tr>
+<td><code>systemctl restart chrony</code> 失敗 (<code>ntp_srv_key_update</code>)</td>
+<td><code>hostcfgd:1397-1402</code></td>
+<td><code>LOG_ERR</code> → <code>return</code>（キャッシュ更新なし → 次イベントで再処理保証）</td>
+<td><code>hostcfgd:1399-1402</code></td>
+</tr>
+<tr>
+<td><code>src_intf</code> に対応するサーバが未設定</td>
+<td><code>hostcfgd:1315-1316</code></td>
+<td><code>return</code>（no-op、サーバ登録後に反映）</td>
+<td><code>hostcfgd:1315-1316</code></td>
+</tr>
+<tr>
+<td><code>systemctl stop/start chrony</code> 失敗（MGMT_VRF_CONFIG 変更時）</td>
+<td><code>hostcfgd:1659-1665</code></td>
+<td><code>CalledProcessError</code> → <code>LOG_ERR</code> → <code>return</code>（mgmt_vrf_enabled キャッシュ未更新）</td>
+<td><code>hostcfgd:1663-1666</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="ntp_global_update">キャッシュ不整合リスク（ntp_global_update）<a class="headerlink" href="#ntp_global_update" title="Permanent link">&para;</a></h4>
+<p><code>ntp_global_update</code> は <code>systemctl restart chrony</code> 失敗時にキャッシュを更新しない（L1364 の <code>self.cache[key] = data</code> は <code>return</code> で到達しない）。CONFIG_DB の値は既に変更済みのため、次回同フィールドに同一値が書かれた場合にキャッシュ差分なしと誤判定し no-op になる可能性がある（<strong>経路依存不整合</strong>）。</p>
+<h3 id="_3">テンプレート失敗経路（サイレント動作）<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NTP_SERVER.admin_state == 'disabled'</code></td>
+<td>そのサーバを <code>chrony.conf</code> から除外（サイレント除去）</td>
+<td><code>chrony.conf.j2:20</code></td>
+</tr>
+<tr>
+<td><code>NTP_KEY.type</code> または <code>NTP_KEY.value</code> が空</td>
+<td>そのキーをキーファイルからスキップ（サイレントスキップ）</td>
+<td><code>chrony.keys.j2:15</code></td>
+</tr>
+<tr>
+<td><code>NTP_KEY.value</code> が不正 Base64</td>
+<td><code>b64decode</code> が誤ってデコード → 誤った鍵値を書き込む（サイレント誤動作）</td>
+<td><code>chrony.keys.j2:16</code></td>
+</tr>
+<tr>
+<td><code>NTP_SERVER.trusted == 'yes'</code> かつ <code>resolve_as</code> 未設定</td>
+<td><code>trusted_str</code> に追加されない（サイレントドロップ）</td>
+<td><code>chrony.keys.j2:8-10</code></td>
+</tr>
+<tr>
+<td><code>NTP.authentication != 'enabled'</code> かつ <code>NTP_SERVER.key</code> 設定済み</td>
+<td><code>key</code> オプションが生成されない（サイレントドロップ）</td>
+<td><code>chrony.conf.j2:30-34</code></td>
+</tr>
+<tr>
+<td><code>NTP.authentication == 'enabled'</code> かつ <code>NTP_KEY</code> が空</td>
+<td><code>keyfile</code> ディレクティブ追加されるが chrony.keys が空 → 認証エラーで chrony が起動失敗する可能性</td>
+<td><code>chrony.conf.j2:124-128</code></td>
+</tr>
+<tr>
+<td><code>config.iburst == 'off'</code>（Jinja2 truthy 判定）</td>
+<td><code>iburst</code> オプションが生成される（意図に反する）</td>
+<td><code>chrony.conf.j2:37</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="chronyd-startersh">chronyd-starter.sh の失敗経路<a class="headerlink" href="#chronyd-startersh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-db-cli</code> が <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled</code> 読み取り失敗</td>
+<td><code>VRF_ENABLED</code> が空 → default VRF で起動（安全フォールバック）</td>
+<td><code>chronyd-starter.sh:3-16</code></td>
+</tr>
+<tr>
+<td><code>sonic-db-cli</code> が <code>NTP|global.vrf</code> 読み取り失敗（<code>mgmtVrfEnabled=true</code> のとき）</td>
+<td><code>VRF_CONFIGURED</code> が空 → mgmt VRF で起動（意図しないフォールバック）</td>
+<td><code>chronyd-starter.sh:5-11</code></td>
+</tr>
+<tr>
+<td><code>ip vrf exec mgmt chronyd</code> 失敗（mgmt VRF 未設定）</td>
+<td><code>exec</code> 失敗 → chrony サービス起動不可（サービス障害）</td>
+<td><code>chronyd-starter.sh:11</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">失敗の可観測性<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>NTP 処理系は <strong>STATE_DB への NTP ステータス書き込みを持たない</strong>。失敗検知は以下のみで行う:</p>
+<ul>
+<li><code>journalctl -u chrony</code> — chrony サービスの起動失敗</li>
+<li><code>grep 'NtpCfg.*Failed' /var/log/syslog</code> — hostcfgd の <code>LOG_ERR</code> 出力</li>
+<li><code>chronyc tracking</code> / <code>chronyc sources</code> — 実際の同期状態確認</li>
+</ul>
+<!-- /failure -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="ntp_key-ntp_serverkey-leafref">NTP_KEY 先行必須 — NTP_SERVER.key leafref<a class="headerlink" href="#ntp_key-ntp_serverkey-leafref" title="Permanent link">&para;</a></h3>
+<p><code>sonic-ntp.yang</code> L199-203 は <code>NTP_SERVER.&lt;server&gt;.key</code> を <code>NTP_KEY.id</code> への leafref として定義する。YANG バリデーション層は SET 時に参照先の存在を検証するため、<code>NTP_KEY|&lt;id&gt;</code> が未登録の状態で <code>NTP_SERVER|&lt;server&gt;.key=&lt;id&gt;</code> を書き込むと SET が拒否される。<!-- evidence: sonic-ntp.yang:199-203 --></p>
+<p>正しい順序: <code>NTP_KEY|&lt;id&gt;</code> SET → <code>NTP_SERVER|&lt;server&gt;.key=&lt;id&gt;</code> SET。</p>
+<p>DEL の逆順序: <code>NTP_SERVER</code> の <code>key</code> フィールドをクリアまたは <code>NTP_SERVER</code> エントリを DEL → <code>NTP_KEY|&lt;id&gt;</code> DEL。参照を残したまま <code>NTP_KEY</code> を先に DEL すると leafref が dangling になり DEL が失敗する。<!-- evidence: sonic-ntp.yang:199-203 --></p>
+<h3 id="ntp_key-authenticationenabled">NTP_KEY 先行推奨 — authentication=enabled 設定時<a class="headerlink" href="#ntp_key-authenticationenabled" title="Permanent link">&para;</a></h3>
+<p><code>chrony.conf.j2</code> L125-131 は <code>NTP.authentication == 'enabled'</code> のときのみ <code>NTP_SERVER.key</code> フィールドを <code>chrony.conf</code> に出力する。<code>NTP|global.authentication</code> を <code>enabled</code> に切り替えるタイミングで <code>NTP_KEY</code> が未登録だと、chrony.keys ファイルが空のまま chrony が再起動し認証が機能しない。<!-- evidence: chrony.conf.j2:125-131; hostcfgd:1331-1364 --></p>
+<p>正しい順序: <code>NTP_KEY|&lt;id&gt;</code> SET → <code>NTP|global.authentication=enabled</code> SET。</p>
+<h3 id="mgmt_vrf_config-vrfmgmt">MGMT_VRF_CONFIG 先行必須 — vrf=mgmt 設定時<a class="headerlink" href="#mgmt_vrf_config-vrfmgmt" title="Permanent link">&para;</a></h3>
+<p><code>sonic-ntp.yang</code> L127-129 の <code>must</code> 制約により、<code>NTP|global.vrf = 'mgmt'</code> を書き込む際に <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'</code> が未設定だと YANG <code>must</code> 違反として SET が拒否される。<!-- evidence: sonic-ntp.yang:127-129 --></p>
+<p>逆方向の依存: <code>MGMT_VRF_CONFIG.mgmtVrfEnabled</code> を <code>false</code> に戻す前に <code>NTP|global.vrf</code> を <code>default</code> に戻さないと、<code>chronyd-starter.sh</code> がランタイムに <code>ip vrf exec mgmt chronyd</code> で起動しようとして失敗する（YANG <code>must</code> はブート時以降の整合性を保証しない経路依存乖離）。<!-- evidence: hostcfgd:1331-1364 --></p>
+<h3 id="src_intfeth0">参照インタフェース先行必須 — src_intf（eth0 以外）<a class="headerlink" href="#src_intfeth0" title="Permanent link">&para;</a></h3>
+<p><code>src_intf</code> に <code>eth0</code> 以外のインタフェース名（<code>EthernetX</code>、<code>LoopbackX</code>、<code>PortChannelX</code> 等）を設定する場合、対応するインタフェーステーブル（<code>PORT|EthernetX</code>、<code>LOOPBACK_INTERFACE|LoopbackX</code> 等）が先行して存在しなければ leafref バリデーションが失敗する。<code>eth0</code> は <code>pattern 'eth0'</code> の string 型で leafref を迂回しており常に書き込み可能。<!-- evidence: sonic-ntp.yang:95-124 --></p>
+<h3 id="hostcfgd-ntp_server-ntp_key">hostcfgd: NTP_SERVER / NTP_KEY の合算処理タイミング<a class="headerlink" href="#hostcfgd-ntp_server-ntp_key" title="Permanent link">&para;</a></h3>
+<p><code>ntp_srv_key_handler</code> は <code>NTP_SERVER</code> または <code>NTP_KEY</code> のいずれかが変更されると、<strong>両テーブルを同時に全件読み取って</strong> chrony を再起動する。<code>NTP_KEY</code> SET イベントと <code>NTP_SERVER.key</code> SET イベントが別々に届く場合、1 回目の再起動では <code>NTP_SERVER.key</code> がまだ未設定の状態で chrony が起動するが、2 回目のイベントで正しく反映される。YANG leafref バリデーションが <code>NTP_KEY</code> 未存在時の <code>NTP_SERVER.key</code> SET を拒否するため、実運用上この race は防がれる。<!-- evidence: hostcfgd:2387-2391 --></p>
+<h3 id="_5">ブート時の書込みシーケンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><code>sonic-cfggen</code> が <code>init_cfg.json.j2</code> を展開して CONFIG_DB に <code>NTP|global</code> を書き込んだ後、<code>hostcfgd</code> が <code>load()</code> でスナップショットを一括取得する。<code>hostcfgd</code> の <code>load()</code> は chrony を再起動しない（ブート時の NTP 設定は chrony の起動設定ファイルから直接読み込まれる）。ブート後の最初の CONFIG_DB 変更イベントで初めて <code>chrony restart</code> が発火する。<!-- evidence: hostcfgd:1285-1310 --></p>
+<h3 id="_6">順序依存サマリ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>NTP_KEY\|&lt;id&gt;</code> 先行 → <code>NTP_SERVER\|&lt;server&gt;.key=&lt;id&gt;</code> SET</td>
+<td>YANG leafref 拒否（SET 失敗）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>NTP_SERVER.key</code> クリア 先行 → <code>NTP_KEY\|&lt;id&gt;</code> DEL</td>
+<td>YANG leafref dangling（DEL 失敗）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>NTP_KEY</code> 登録 先行 → <code>NTP\|global.authentication=enabled</code></td>
+<td>chrony 認証失敗（鍵なし起動）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>MGMT_VRF_CONFIG.mgmtVrfEnabled=true</code> 先行 → <code>NTP\|global.vrf=mgmt</code></td>
+<td>YANG must 違反（SET 失敗）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>NTP\|global.vrf=default</code> 先行 → <code>MGMT_VRF_CONFIG.mgmtVrfEnabled=false</code></td>
+<td>chronyd 起動失敗（mgmt VRF 不存在）</td>
+</tr>
+<tr>
+<td>6</td>
+<td>対応インタフェーステーブル 先行 → <code>NTP\|global.src_intf=&lt;intf&gt;</code> (eth0 以外)</td>
+<td>YANG leafref 拒否（SET 失敗）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/ntp-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../ntp-global/">CONFIG_DB: NTP (global)</a></li>
 <li><a href="../ntp-server/">CONFIG_DB: NTP_SERVER</a></li>
@@ -32956,7 +35508,7 @@
 <li><a href="../../yang/sonic-ntp/">YANG: sonic-ntp</a></li>
 <li><a href="../../cli/config-ntp/">CLI: config ntp</a></li>
 </ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22408,6 +22598,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp-jinja2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP タイマー固定値（Jinja2 テンプレート）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP 上限値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graceful-restart-torrouter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Graceful Restart タイマー (ToRRouter 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時待機・ポーリング定数 (Python)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmp-frr_bmpbmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BMP 接続定数 (frr_bmp/bmp 機能有効時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22501,6 +22774,360 @@
     <span class="md-ellipsis">
       
         peer_type と実テーブルのマッピング乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadatabgp_asn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA.bgp_asn 先行必須（最上位依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback_interfaceloopback0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOOPBACK_INTERFACE|Loopback0 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local_addr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        local_addr が参照するインタフェース先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device_neighbor_metadata-use_neighbors_metatrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_NEIGHBOR_METADATA 先行必須（use_neighbors_meta=true 環境）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS 先行必須（frrcfgd 経路のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_peer_group-frrcfgd-peer_group_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_PEER_GROUP 先行必須（frrcfgd 経路 / peer_group_name 使用時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-set-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL → SET の短時間繰り返しによる session 一時断
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisord-bgpcfgd-bgpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord 起動順: bgpcfgd は bgpd 起動後に開始
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-eor-replay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart: EOR 待機と自動 replay
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry-set_queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry キュー (set_queue) の仕組み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-false-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な return False (retry) ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-true-retry-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        return True (retry なし・サイレント drop) ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB と FRR の一貫性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-keyspace-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント発火から FRR 適用までの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係ガードと set_queue リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期スナップショット再生 (起動時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ProducerStateTable との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI 差分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI 差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル振り分け (switch_type による)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub_role-switch_type-frr-internal-peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sub_role / switch_type による FRR テンプレート分岐 (internal peer_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-subtype-frr-general-peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type / subtype による FRR テンプレート分岐 (general peer_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-voq_chassis-peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ chassis 専用 (voq_chassis peer_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI への間接影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisappdbmgr-is_chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ChassisAppDbMgr (is_chassis 限定)
       
     </span>
   </a>
@@ -22780,6 +23407,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../copp-group/" class="md-nav__link">
         
   
@@ -22844,6 +23499,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -23424,6 +24107,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23760,6 +24471,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23768,6 +24535,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23844,6 +24695,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23852,6 +24787,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23928,6 +25031,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23936,6 +25067,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -24152,6 +25311,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -24292,6 +25479,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -24356,6 +25571,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -24544,6 +25787,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24636,6 +25963,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -25076,6 +26431,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -25084,6 +26467,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -25188,6 +26627,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -25272,6 +26739,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -25336,6 +26831,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -25496,6 +27019,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -25580,6 +27131,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25616,6 +27223,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25700,6 +27335,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25832,6 +27495,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25860,6 +27551,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25868,6 +27587,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -26063,7 +27810,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -26112,6 +27859,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -26120,6 +27895,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -26176,6 +27979,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -26280,6 +28195,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -26288,6 +28259,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26400,6 +28427,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26616,6 +28671,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26756,6 +28839,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26868,6 +29007,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26924,6 +29091,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26932,6 +29155,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -27036,6 +29287,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -27044,6 +29323,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27568,6 +29875,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27576,6 +29967,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27632,6 +30051,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -33218,6 +35665,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp-jinja2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP タイマー固定値（Jinja2 テンプレート）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP 上限値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graceful-restart-torrouter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Graceful Restart タイマー (ToRRouter 限定)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時待機・ポーリング定数 (Python)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bmp-frr_bmpbmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BMP 接続定数 (frr_bmp/bmp 機能有効時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -33311,6 +35841,360 @@
     <span class="md-ellipsis">
       
         peer_type と実テーブルのマッピング乖離
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#device_metadatabgp_asn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_METADATA.bgp_asn 先行必須（最上位依存）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loopback_interfaceloopback0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOOPBACK_INTERFACE|Loopback0 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local_addr_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        local_addr が参照するインタフェース先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device_neighbor_metadata-use_neighbors_metatrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEVICE_NEIGHBOR_METADATA 先行必須（use_neighbors_meta=true 環境）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS 先行必須（frrcfgd 経路のみ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_peer_group-frrcfgd-peer_group_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_PEER_GROUP 先行必須（frrcfgd 経路 / peer_group_name 使用時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-set-session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL → SET の短時間繰り返しによる session 一時断
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisord-bgpcfgd-bgpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord 起動順: bgpcfgd は bgpd 起動後に開始
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warm-restart-eor-replay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        warm-restart: EOR 待機と自動 replay
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#retry-set_queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry キュー (set_queue) の仕組み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-false-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な return False (retry) ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-true-retry-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        return True (retry なし・サイレント drop) ケース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB と FRR の一貫性
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscriberstatetable-keyspace-psubscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント発火から FRR 適用までの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係ガードと set_queue リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期スナップショット再生 (起動時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ProducerStateTable との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI 差分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI 差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル振り分け (switch_type による)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub_role-switch_type-frr-internal-peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sub_role / switch_type による FRR テンプレート分岐 (internal peer_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-subtype-frr-general-peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type / subtype による FRR テンプレート分岐 (general peer_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-voq_chassis-peer_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ chassis 専用 (voq_chassis peer_type)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI への間接影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chassisappdbmgr-is_chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ChassisAppDbMgr (is_chassis 限定)
       
     </span>
   </a>
@@ -33858,6 +36742,304 @@
 <p><strong>スキャン証跡</strong>: <code>BGPPeerMgrBase</code> 597 行全行読了。7 件分岐抽出。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>BGP_NEIGHBOR の処理において YANG の leafref 定義を超えて実装上で参照される他テーブルを示す。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / フィールド</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost\|bgp_asn</code></td>
+<td>読み取り（必須依存）</td>
+<td>常時。bgp_asn 未設定なら neighbor 追加を待機</td>
+<td><code>managers_bgp.py</code> L119, L192; <code>frrcfgd.py</code> L2163</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost\|type</code> / <code>subtype</code></td>
+<td>読み取り（条件分岐）</td>
+<td>常時。デバイスロール (ToRRouter / SpineRouter 等) でテンプレート分岐</td>
+<td><code>managers_bgp.py</code> L120; Jinja2 templates</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost\|deployment_id</code></td>
+<td>読み取り（条件付き）</td>
+<td><code>bgp.use_deployment_id=true</code> のとき。community / routemap に埋め込み</td>
+<td><code>managers_bgp.py</code> L143</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE\|Loopback0\|&lt;prefix&gt;</code></td>
+<td>読み取り（ガード）</td>
+<td>常時。IPv4 未設定 かつ bgp_router_id 未設定 → <code>return False</code></td>
+<td><code>managers_bgp.py</code> L121, L184–189, L216–218</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE\|Loopback4096\|&lt;prefix&gt;</code></td>
+<td>読み取り（条件付き）</td>
+<td><code>peer_type="internal"</code> のとき依存に追加</td>
+<td><code>managers_bgp.py</code> L146</td>
+</tr>
+<tr>
+<td><code>DEVICE_NEIGHBOR_METADATA</code></td>
+<td>読み取り（条件付き）</td>
+<td><code>bgp.use_neighbors_meta=true</code> のとき。<code>name</code> フィールドが未登録 → 待機</td>
+<td><code>managers_bgp.py</code> L140, L220–224</td>
+</tr>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL\|STATE\|tsa_enabled</code></td>
+<td>読み取り（常時）</td>
+<td>peer-group テンプレート生成時に TSA routemap を動的付与</td>
+<td><code>managers_bgp.py</code> L122; <code>BGPPeerGroupMgr.update_pg()</code></td>
+</tr>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL\|STATE\|idf_isolation_state</code></td>
+<td>読み取り（常時）</td>
+<td>peer-group テンプレート生成時に IDF isolation routemap を付与</td>
+<td><code>managers_bgp.py</code> L123; <code>BGPPeerGroupMgr.update_pg()</code></td>
+</tr>
+<tr>
+<td><code>BGP_BBR\|all\|status</code></td>
+<td>読み取り（常時）</td>
+<td>Jinja2 テンプレートへ <code>CONFIG_DB__BGP_BBR</code> として渡し、BBR 設定を制御</td>
+<td><code>managers_bgp.py</code> L206</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS\|&lt;vrf&gt;\|local_asn</code></td>
+<td>読み取り（frrcfgd パス）</td>
+<td><code>frr_mgmt_framework_config=true</code> のとき。VRF の ASN 解決に必須</td>
+<td><code>frrcfgd.py</code> L2175–2178, L2450–2453</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP\|&lt;vrf&gt;\|&lt;pg_name&gt;</code></td>
+<td>存在確認（frrcfgd パス）</td>
+<td><code>peer_group_name</code> 指定時。存在しなければ <code>LOG_ERR</code> + drop</td>
+<td><code>frrcfgd.py</code> L2826–2830</td>
+</tr>
+<tr>
+<td><code>PORT\|&lt;name&gt;</code> / <code>PORTCHANNEL\|&lt;name&gt;</code></td>
+<td>存在確認（interface 型 neighbor）</td>
+<td><code>neighbor</code> フィールドが IP でなくインタフェース名の場合</td>
+<td>YANG leafref; <code>frrcfgd.py</code> L2807</td>
+</tr>
+<tr>
+<td><code>INTERFACE</code>（ローカルアドレス一覧）</td>
+<td>読み取り（ガード）</td>
+<td><code>local_addr</code> 設定時。該当 IP が現存インタフェースになければ待機</td>
+<td><code>managers_bgp.py</code> L124–125, <code>get_local_interface()</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: <code>DEVICE_METADATA.frr_mgmt_framework_config</code> の値が <code>true</code> でない場合、BGP_GLOBALS / BGP_PEER_GROUP（frrcfgd パス）への参照は発生せず、代わりに bgpcfgd (テンプレートベース) が動作する。</p>
+</blockquote>
+<!-- /cross-refs -->
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="bgp-jinja2">BGP タイマー固定値（Jinja2 テンプレート）<a class="headerlink" href="#bgp-jinja2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>対象 peer_type</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>timers connect</code></td>
+<td><strong>10</strong> 秒</td>
+<td>全 peer_type 共通</td>
+<td><code>general/instance.conf.j2:11</code>、<code>internal/instance.conf.j2:7</code>、<code>voq_chassis/instance.conf.j2:14</code></td>
+</tr>
+<tr>
+<td>keepalive スキップ閾値</td>
+<td><strong>60</strong> 秒</td>
+<td>general (一致時はコマンド省略)</td>
+<td><code>general/instance.conf.j2:7</code></td>
+</tr>
+<tr>
+<td>holdtime スキップ閾値</td>
+<td><strong>180</strong> 秒</td>
+<td>general (一致時はコマンド省略)</td>
+<td><code>general/instance.conf.j2:8</code></td>
+</tr>
+<tr>
+<td>keepalive 強制値</td>
+<td><strong>3</strong> 秒</td>
+<td>internal</td>
+<td><code>internal/instance.conf.j2:6</code></td>
+</tr>
+<tr>
+<td>holdtime 強制値</td>
+<td><strong>10</strong> 秒</td>
+<td>internal</td>
+<td><code>internal/instance.conf.j2:6</code></td>
+</tr>
+<tr>
+<td>keepalive 強制値</td>
+<td><strong>2</strong> 秒</td>
+<td>voq_chassis</td>
+<td><code>voq_chassis/instance.conf.j2:13</code></td>
+</tr>
+<tr>
+<td>holdtime 強制値</td>
+<td><strong>7</strong> 秒</td>
+<td>voq_chassis</td>
+<td><code>voq_chassis/instance.conf.j2:13</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp">BGP 上限値<a class="headerlink" href="#bgp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maximum-paths ibgp</code> IPv4 (constants.yml 実値)</td>
+<td><strong>514</strong></td>
+<td><code>files/image_config/constants/constants.yml:29</code></td>
+</tr>
+<tr>
+<td><code>maximum-paths ibgp</code> IPv6 (constants.yml 実値)</td>
+<td><strong>514</strong></td>
+<td><code>files/image_config/constants/constants.yml:30</code></td>
+</tr>
+<tr>
+<td><code>maximum-paths ibgp</code> Jinja2 fallback</td>
+<td><strong>64</strong></td>
+<td><code>voq_chassis/instance.conf.j2:22,29</code></td>
+</tr>
+<tr>
+<td><code>allowas-in</code></td>
+<td><strong>1</strong></td>
+<td><code>general/peer-group.conf.j2</code>、<code>internal/peer-group.conf.j2</code>、<code>voq_chassis/peer-group.conf.j2</code></td>
+</tr>
+<tr>
+<td><code>ttl-security hops</code> (chassis-packet internal)</td>
+<td><strong>1</strong></td>
+<td><code>internal/peer-group.conf.j2:8,22</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="graceful-restart-torrouter">Graceful Restart タイマー (ToRRouter 限定)<a class="headerlink" href="#graceful-restart-torrouter" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgp graceful-restart restart-time</code></td>
+<td><strong>240</strong> 秒 (constants.yml: <code>restart_time: 240</code>)</td>
+<td><code>bgpd.main.conf.j2:119</code>、<code>constants.yml:24</code></td>
+</tr>
+<tr>
+<td><code>bgp graceful-restart select-defer-time</code></td>
+<td><strong>45</strong> 秒 (Jinja2 <code>\| default(45)</code>)</td>
+<td><code>bgpd.main.conf.j2:122</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="python">起動時待機・ポーリング定数 (Python)<a class="headerlink" href="#python" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FRR daemon 起動待ちタイムアウト</td>
+<td><strong>20</strong> 秒</td>
+<td><code>main.py:47</code> (<code>wait_for_daemons(seconds=20)</code>)</td>
+</tr>
+<tr>
+<td>FRR daemon ポーリング sleep</td>
+<td><strong>100</strong> ms</td>
+<td><code>frr.py:30</code> (<code>time.sleep(0.1)</code>)</td>
+</tr>
+<tr>
+<td>mgmtd datastore 最大試行回数</td>
+<td><strong>10</strong> 回 (≈5 秒)</td>
+<td><code>main.py:51</code></td>
+</tr>
+<tr>
+<td>mgmtd vtysh timeout</td>
+<td><strong>2</strong> 秒</td>
+<td><code>main.py:54</code></td>
+</tr>
+<tr>
+<td>mgmtd ポーリング sleep</td>
+<td><strong>500</strong> ms</td>
+<td><code>main.py:64</code> (<code>time.sleep(0.5)</code>)</td>
+</tr>
+<tr>
+<td><code>Runner.SELECT_TIMEOUT</code> (メインループ)</td>
+<td><strong>1000</strong> ms</td>
+<td><code>runner.py:21</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bmp-frr_bmpbmp">BMP 接続定数 (frr_bmp/bmp 機能有効時)<a class="headerlink" href="#bmp-frr_bmpbmp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BMP listen port</td>
+<td><strong>5000</strong></td>
+<td><code>bgpd.main.conf.j2:136</code></td>
+</tr>
+<tr>
+<td><code>bmp connect</code> min-retry</td>
+<td><strong>10000</strong> ms</td>
+<td><code>bgpd.main.conf.j2:136</code></td>
+</tr>
+<tr>
+<td><code>bmp connect</code> max-retry</td>
+<td><strong>15000</strong> ms</td>
+<td><code>bgpd.main.conf.j2:136</code></td>
+</tr>
+<tr>
+<td><code>bmp stats interval</code></td>
+<td><strong>1000</strong> ms</td>
+<td><code>bgpd.main.conf.j2:133</code></td>
+</tr>
+<tr>
+<td><code>bmp mirror buffer-limit</code></td>
+<td><strong>4294967214</strong> bytes</td>
+<td><code>bgpd.main.conf.j2:130</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>discrepancy</strong>: <code>timers connect 10</code> は YANG <code>conn_retry</code> フィールドと独立してハードコード発行される。bgpcfgd 経路では <code>conn_retry</code> の値は FRR に渡らない（frrcfgd 経路のみ有効）。<br />
+<strong>discrepancy</strong>: <code>internal</code> / <code>voq_chassis</code> peer_type では CONFIG_DB の <code>keepalive</code>/<code>holdtime</code> 値は完全に無視され、テンプレートの固定値 (3/10、2/7) が強制適用される。<br />
+中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
 <!-- defaults -->
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <p>YANG には <code>default</code> 文が一切ない。フィールドごとのランタイム実効値はテンプレートやコードで決まる。</p>
@@ -33977,6 +37159,377 @@
 <p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md</code></p>
 </blockquote>
 <!-- /defaults -->
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="device_metadatabgp_asn">DEVICE_METADATA.bgp_asn 先行必須（最上位依存）<a class="headerlink" href="#device_metadatabgp_asn" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase</code> は <code>DEVICE_METADATA|localhost|bgp_asn</code> を依存 (<code>deps</code>) として登録する。この値が未設定のうちは <code>set_handler</code> が一切呼ばれない（Manager 基底クラスが deps 解決を待機）。bgp_asn を CONFIG_DB に書き込む前に BGP_NEIGHBOR を SET しても処理されない。<!-- evidence: managers_bgp.py:118-126 --></p>
+<h3 id="loopback_interfaceloopback0">LOOPBACK_INTERFACE|Loopback0 先行必須<a class="headerlink" href="#loopback_interfaceloopback0" title="Permanent link">&para;</a></h3>
+<p><code>add_peer()</code> は Loopback0 の IPv4 アドレスが <code>LOOPBACK_INTERFACE</code> ディレクトリに存在しない、かつ <code>DEVICE_METADATA.localhost.bgp_router_id</code> も未設定の場合 <code>return False</code>（再試行待ち）する。<code>LOOPBACK_INTERFACE|Loopback0|&lt;ipv4_prefix&gt;</code> を先に書き込むか、<code>bgp_router_id</code> を設定することが必要。<!-- evidence: managers_bgp.py:184-189 --></p>
+<h3 id="local_addr_1">local_addr が参照するインタフェース先行必須<a class="headerlink" href="#local_addr_1" title="Permanent link">&para;</a></h3>
+<p><code>local_addr</code> フィールドがある場合、対応する IP アドレスを持つインタフェースが <code>LOCAL|local_addresses</code> ディレクトリに未登録だと <code>add_peer</code> が <code>return False</code>。<code>local_addr</code> が未設定の場合は <code>log_warn</code> のみで追加を続行する（FRR が送信元を自動選択）。<!-- evidence: managers_bgp.py:194-202 --></p>
+<h3 id="device_neighbor_metadata-use_neighbors_metatrue">DEVICE_NEIGHBOR_METADATA 先行必須（use_neighbors_meta=true 環境）<a class="headerlink" href="#device_neighbor_metadata-use_neighbors_metatrue" title="Permanent link">&para;</a></h3>
+<p><code>general</code> タイプ（BGP_NEIGHBOR テーブル、<code>check_neig_meta=True</code>）かつ <code>constants.yml</code> の <code>bgp.use_neighbors_meta=true</code> が設定された環境では、<code>BGP_NEIGHBOR</code> の <code>name</code> フィールドが <code>DEVICE_NEIGHBOR_METADATA</code> に未登録だと <code>return False</code>。<!-- evidence: managers_bgp.py:128-143, 219-223 --></p>
+<h3 id="bgp_globals-frrcfgd">BGP_GLOBALS 先行必須（frrcfgd 経路のみ）<a class="headerlink" href="#bgp_globals-frrcfgd" title="Permanent link">&para;</a></h3>
+<p><code>frr_mgmt_framework_config = true</code> の環境（frrcfgd 経路）では、<code>BGP_GLOBALS|&lt;vrf&gt;</code> に <code>local_asn</code> が設定されていない状態で <code>BGP_NEIGHBOR|&lt;vrf&gt;|&lt;neighbor&gt;</code> を書き込むと frrcfgd はエントリを <strong>サイレント無視</strong>（LOG_DEBUG のみ）する。順序: <code>BGP_GLOBALS|&lt;vrf&gt;</code> (local_asn) → <code>BGP_NEIGHBOR|&lt;vrf&gt;|&lt;neighbor&gt;</code>。<!-- evidence: frrcfgd.py:2660-2666 --></p>
+<h3 id="bgp_peer_group-frrcfgd-peer_group_name">BGP_PEER_GROUP 先行必須（frrcfgd 経路 / peer_group_name 使用時）<a class="headerlink" href="#bgp_peer_group-frrcfgd-peer_group_name" title="Permanent link">&para;</a></h3>
+<p>frrcfgd 経路で <code>peer_group_name</code> フィールドを持つ <code>BGP_NEIGHBOR</code> を SET する場合、対応する <code>BGP_PEER_GROUP|&lt;vrf&gt;|&lt;pg_name&gt;</code> が先に存在しなければならない。未存在の場合 <code>LOG_ERR: "invalid peer-group %s was referenced"</code> を出してスキップ（neighbor は未作成）。<!-- evidence: frrcfgd.py:2828-2832 --></p>
+<h3 id="del-set-session">DEL → SET の短時間繰り返しによる session 一時断<a class="headerlink" href="#del-set-session" title="Permanent link">&para;</a></h3>
+<p><code>del_handler</code> は <code>no neighbor &lt;addr&gt;</code> を FRR に即送し BGP NOTIFICATION を送信して session を即断する。DEL 直後に同一 neighbor を SET する場合、FRR は connect retry を開始する（bgpcfgd 経路では <code>timers connect 10</code> をハードコード発行）。BGP_GLOBALS レベルで <code>bgp graceful-restart</code> が設定されていても del_handler のフローは変わらない。<!-- evidence: managers_bgp.py:446-492, bgpd/templates/general/instance.conf.j2 --></p>
+<h3 id="supervisord-bgpcfgd-bgpd">supervisord 起動順: bgpcfgd は bgpd 起動後に開始<a class="headerlink" href="#supervisord-bgpcfgd-bgpd" title="Permanent link">&para;</a></h3>
+<p>docker-fpm-frr 内の起動順: <code>rsyslogd</code> (p=1) → <code>zebra</code>/<code>mgmtd</code> (p=4) → <code>bgpd</code> (p=5) → <code>bgpcfgd</code> / <code>fpmsyncd</code> (p=6, <code>dependent_startup_wait_for=bgpd:running</code>)。bgpd が running になるまで bgpcfgd は起動せず FRR への BGP_NEIGHBOR 反映も始まらない。boot 時の BGP_NEIGHBOR 書込みは bgpcfgd 起動後まで遅延する。<!-- evidence: docker-fpm-frr/frr/supervisord/supervisord.conf.j2:167-179 --></p>
+<h3 id="warm-restart-eor-replay">warm-restart: EOR 待機と自動 replay<a class="headerlink" href="#warm-restart-eor-replay" title="Permanent link">&para;</a></h3>
+<p>warm-reboot 時、<code>WARM_RESTART.bgp.bgp_eoiu = "true"</code> が設定されていると <code>bgp_eoiu_marker</code> が BGP EOR (End-of-RIB) 状態を監視し、STATE_DB の <code>BGP_STATE_TABLE|IPv4(IPv6)|eoiu|state=reached</code> を書き込むまで fpmsyncd が経路 reconcile を保留する（最大 120 秒タイムアウト）。bgpcfgd 自体はインメモリの <code>self.peers</code> を FRR running-config (<code>show bgp vrfs json</code>) から再読み込みして起動し、CONFIG_DB の全 BGP_NEIGHBOR エントリを replay して自動復元する。<!-- evidence: bgp_eoiu_marker.py:1-206, managers_bgp.py:571-597, supervisord.conf.j2:239-253 --></p>
+<h3 id="_18">順序依存サマリ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>対象パス</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DEVICE_METADATA.localhost.bgp_asn</code> 先行</td>
+<td>bgpcfgd 全経路</td>
+<td>deps 未解決 → set_handler 呼ばれず（無限待機）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>LOOPBACK_INTERFACE\|Loopback0\|&lt;ipv4&gt;</code> または <code>bgp_router_id</code> 先行</td>
+<td>bgpcfgd 経路</td>
+<td><code>add_peer</code> return False（再試行待ち）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>local_addr</code> 対応インタフェース先行</td>
+<td>bgpcfgd 経路</td>
+<td><code>add_peer</code> return False（再試行待ち）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>DEVICE_NEIGHBOR_METADATA\|&lt;name&gt;</code> 先行</td>
+<td>bgpcfgd / use_neighbors_meta=true 時</td>
+<td>return False（再試行待ち）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>BGP_GLOBALS\|&lt;vrf&gt;</code> (local_asn) 先行</td>
+<td>frrcfgd 経路のみ</td>
+<td>LOG_DEBUG / サイレント無視</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>BGP_PEER_GROUP\|&lt;vrf&gt;\|&lt;pg&gt;</code> 先行</td>
+<td>frrcfgd 経路 / peer_group_name 使用時</td>
+<td>LOG_ERR / neighbor 未作成</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEL → SET 短時間繰り返し</td>
+<td>全経路</td>
+<td>BGP session 一時断（connect retry 10 秒）</td>
+</tr>
+<tr>
+<td>8</td>
+<td>bgpd running → bgpcfgd 起動</td>
+<td>起動時（supervisord）</td>
+<td>bgpcfgd は bgpd 起動前に FRR 操作不可</td>
+</tr>
+<tr>
+<td>9</td>
+<td>warm-restart EOR 待機</td>
+<td>warm-reboot 時</td>
+<td>fpmsyncd が経路 reconcile を最大 120 秒保留</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<h3 id="retry-set_queue">retry キュー (<code>set_queue</code>) の仕組み<a class="headerlink" href="#retry-set_queue" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> の全 Manager は <code>manager.py</code> 共通基底クラスが提供する <strong><code>set_queue</code></strong> ベースの retry 機構を持つ。</p>
+<p><code>set_handler()</code> が <code>False</code> を返すと "NOT_READY" とみなし、イベント <code>(key, data)</code> を <code>set_queue</code> に追記して処理を後回しにする。依存関係 (Loopback0 IP / DEVICE_NEIGHBOR_METADATA など) が変化するたびに <code>on_deps_change()</code> が呼ばれ、キュー内の全イベントを再実行 (replay) する。成功すればキューから削除し、失敗なら次の deps 変化を待つ。retry 間隔・上限はなく、<strong>依存関係変化ドリブン</strong>で無期限 retry する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>CONFIG_DB SET → set_handler() → False → set_queue[]
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>                                            ↑
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay → success / re-queue
+</span></code></pre></div>
+<h3 id="return-false-retry">主要な <code>return False</code> (retry) ケース<a class="headerlink" href="#return-false-retry" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ</th>
+<th>retry トリガー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loopback0 IPv4 未設定 かつ <code>bgp_router_id</code> 未設定</td>
+<td><code>LOG_WARN "Loopback0 ipv4 address is not presented yet..."</code></td>
+<td>Loopback0 IP 付与</td>
+</tr>
+<tr>
+<td><code>local_addr</code> に対応するインタフェース未登録</td>
+<td><code>LOG_DEBUG "Peer X wait for the corresponding interface to be set"</code></td>
+<td>インタフェース登録</td>
+</tr>
+<tr>
+<td><code>check_neig_meta=True</code> かつ <code>name</code> が DEVICE_NEIGHBOR_METADATA に未登録</td>
+<td><code>LOG_INFO "DEVICE_NEIGHBOR_METADATA is not ready for neighbor X"</code></td>
+<td>DEVICE_NEIGHBOR_METADATA 到着</td>
+</tr>
+</tbody>
+</table>
+<h3 id="return-true-retry-drop"><code>return True</code> (retry なし・サイレント drop) ケース<a class="headerlink" href="#return-true-retry-drop" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jinja2 テンプレートレンダリング失敗</td>
+<td><code>LOG_ERR</code> を出して <code>return True</code>。FRR 操作なし、<code>self.peers</code> 未追加。<strong>再試行なし</strong> (<code>managers_bgp.py:246</code> のコメント参照)</td>
+</tr>
+<tr>
+<td><code>update_peer()</code> で <code>admin_status</code> 以外のフィールド変更</td>
+<td><code>LOG_ERR "Only 'admin_status' attribute is supported"</code> → <code>return True</code>。変更は適用されない</td>
+</tr>
+<tr>
+<td>frrcfgd: 参照先 peer-group 未存在</td>
+<td><code>LOG_ERR "invalid peer-group %s was referenced"</code> → continue（skip）</td>
+</tr>
+<tr>
+<td>frrcfgd: interface 型 neighbor 生成失敗</td>
+<td><code>LOG_ERR "failed to create neighbor of interface %s"</code> → continue（skip）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 失敗<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<ul>
+<li>対象 peer が <code>self.peers</code> に未登録: <code>LOG_WARN + return</code>（no-op）</li>
+<li>FRR への削除コマンド失敗: <code>LOG_ERR "Peer hasn't been removed"</code>、<code>self.peers</code> から除去されない → 次 SET で <code>update_peer()</code> 経路に入る（現行実装では <code>apply_op()</code> が常に <code>True</code> のため実際には未到達）</li>
+</ul>
+<h3 id="state_db-frr">STATE_DB と FRR の一貫性<a class="headerlink" href="#state_db-frr" title="Permanent link">&para;</a></h3>
+<p><code>update_state_db()</code> (STATE_DB: <code>BGP_PEER_CONFIGURED_TABLE</code>) はコマンド発行 <strong>成功後のみ</strong> 呼ばれる。STATE_DB 更新自体が失敗した場合は <code>LOG_ERR</code> を出すが FRR 操作は既に <code>cfg_mgr.push()</code> 済みのため <strong>FRR と STATE_DB の乖離が生じうる</strong>。<code>ERROR_TABLE</code> への記録はなし。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="subscriberstatetable-keyspace-psubscribe">購読方式: SubscriberStateTable + keyspace PSUBSCRIBE<a class="headerlink" href="#subscriberstatetable-keyspace-psubscribe" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> は <code>swsscommon.SubscriberStateTable</code> を用いて <code>BGP_NEIGHBOR</code> テーブルを購読する。<code>ConfigDBConnector.subscribe()</code> ではなく、<strong>Redis keyspace notification の PSUBSCRIBE</strong> で実装されている。</p>
+<p>購読チャンネルパターン (<code>subscriberstatetable.cpp:20-24</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>PSUBSCRIBE __keyspace@4__:BGP_NEIGHBOR|*
+</span></code></pre></div>
+<ul>
+<li>DB 番号 4 は CONFIG_DB のデフォルト</li>
+<li>glob パターンにより <code>BGP_NEIGHBOR|&lt;neighbor&gt;</code> (template 形式) と <code>BGP_NEIGHBOR|&lt;vrf&gt;|&lt;neighbor&gt;</code> (generic 形式) の両方を捕捉</li>
+</ul>
+<h3 id="frr">イベント発火から FRR 適用までの流れ<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>CONFIG_DB への HSET / HDEL / DEL
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  → Redis: __keyspace@4__:BGP_NEIGHBOR|* に pmessage 発火
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  → SubscriberStateTable::readData() が hiredis 経由で受信
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  → SubscriberStateTable::pop()  ← HGETALL でフィールド値を取得し
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                                    KeyOpFieldsValuesTuple (key, op, fvs) を返却
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  → Runner.run() select ループ (タイムアウト 1000 ms)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  → Manager.handler(key, op, data)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>      op == SET → BGPPeerMgrBase.set_handler()
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>      op == DEL → BGPPeerMgrBase.del_handler()
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  → ConfigMgr.commit() → vtysh コマンド群をバッチ発行
+</span></code></pre></div>
+<h3 id="set_queue">依存関係ガードと set_queue リトライ<a class="headerlink" href="#set_queue" title="Permanent link">&para;</a></h3>
+<p><code>manager.py:34-53</code> の <code>handler()</code> は、<code>wait_for_all_deps=True</code> のとき全依存関係が揃うまで SET イベントを <code>set_queue</code> に退避する。依存関係は <code>BGPPeerMgrBase</code> のコンストラクタで登録される:</p>
+<table>
+<thead>
+<tr>
+<th>依存キー</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA.localhost/bgp_asn</code></td>
+<td>ローカル AS 番号</td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA.localhost/type</code></td>
+<td>デバイスロール</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE.Loopback0</code></td>
+<td>router-id 解決用</td>
+</tr>
+<tr>
+<td><code>BGP_DEVICE_GLOBAL.tsa_enabled</code> / <code>idf_isolation_state</code></td>
+<td>TSA / IDF 制御</td>
+</tr>
+<tr>
+<td><code>DEVICE_NEIGHBOR_METADATA</code> (check_neig_meta=True 時のみ)</td>
+<td>隣接メタデータ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">初期スナップショット再生 (起動時)<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p><code>SubscriberStateTable</code> コンストラクタは PSUBSCRIBE 後に <code>KEYS BGP_NEIGHBOR|*</code> で既存エントリを全件取得し、SET イベントとして内部バッファに積む。bgpcfgd 再起動後もすべての既存ピアが自動的に FRR に再投入される。</p>
+<h3 id="producerstatetable">ProducerStateTable との関係<a class="headerlink" href="#producerstatetable" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込み側は <code>BGP_NEIGHBOR_CHANNEL@&lt;db_id&gt;</code> を PUBLISH する (table.h <code>getChannelName()</code>)。ConsumerStateTable はそのチャンネルを SUBSCRIBE するが、bgpcfgd の SubscriberStateTable は <strong>keyspace notification</strong> を使うため、書き込み元が ProducerStateTable か直接 HSET かを問わずイベントを受信できる。APPL_DB・STATE_DB は BGP_NEIGHBOR のパスには介在しない。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai">プラットフォーム / SAI 差分<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
+<p>BGP_NEIGHBOR は FRR (<code>bgpd</code>) 止まりで SAI に直接は到達しないが、<code>DEVICE_METADATA</code> の <code>switch_type</code>・<code>sub_role</code>・<code>type</code> によって Jinja2 テンプレートが切り替わり、FRR に発行されるコマンドが大きく異なる。</p>
+<h3 id="switch_type">テーブル振り分け (switch_type による)<a class="headerlink" href="#switch_type" title="Permanent link">&para;</a></h3>
+<p><code>minigraph.py</code> が BGP セッションを以下に振り分ける:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>テーブル</th>
+<th>admin_status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type=voq</code> のシャーシ内部 iBGP</td>
+<td><code>BGP_VOQ_CHASSIS_NEIGHBOR</code></td>
+<td>強制 <code>up</code></td>
+</tr>
+<tr>
+<td><code>switch_type=chassis-packet</code> のシャーシ内部 iBGP</td>
+<td><code>BGP_INTERNAL_NEIGHBOR</code></td>
+<td>強制 <code>up</code></td>
+</tr>
+<tr>
+<td>Multi-ASIC FrontEnd ↔ BackEnd 間</td>
+<td><code>BGP_INTERNAL_NEIGHBOR</code></td>
+<td>強制 <code>up</code></td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>BGP_NEIGHBOR</code></td>
+<td>未設定</td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>minigraph.py</code> L1324–1356</p>
+<h3 id="sub_role-switch_type-frr-internal-peer_type">sub_role / switch_type による FRR テンプレート分岐 (internal peer_type)<a class="headerlink" href="#sub_role-switch_type-frr-internal-peer_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>FRR 差異</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sub_role=BackEnd</code> または <code>switch_type=chassis-packet</code></td>
+<td><code>neighbor X next-hop-self force</code> (IPv4/IPv6 AF)</td>
+</tr>
+<tr>
+<td><code>switch_type=chassis-packet</code></td>
+<td>peer-group に <code>update-source Loopback4096</code> + <code>ttl-security hops 1</code></td>
+</tr>
+<tr>
+<td><code>sub_role=BackEnd</code></td>
+<td>peer-group AF で <code>route-reflector-client</code></td>
+</tr>
+<tr>
+<td><code>sub_role=BackEnd</code></td>
+<td>route-map に <code>set originator-id &lt;Loopback4096 IP&gt;</code></td>
+</tr>
+<tr>
+<td><code>switch_type=chassis-packet</code> (FrontEnd/UpstreamLC)</td>
+<td>DEVICE_INTERNAL_FALLBACK_COMMUNITY ポリシー生成; <code>subtype=DownstreamLC</code> はタグなし</td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>bgpd/templates/internal/instance.conf.j2</code> L13–23; <code>peer-group.conf.j2</code> L6–25; <code>policies.conf.j2</code> L8–96</p>
+<h3 id="type-subtype-frr-general-peer_type">type / subtype による FRR テンプレート分岐 (general peer_type)<a class="headerlink" href="#type-subtype-frr-general-peer_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DEVICE_METADATA.type</th>
+<th>FRR 差異</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ToRRouter</code></td>
+<td><code>allowas-in 1</code> (IPv4/IPv6)</td>
+</tr>
+<tr>
+<td><code>LeafRouter</code> かつ BBR enabled</td>
+<td><code>allowas-in 1</code></td>
+</tr>
+<tr>
+<td><code>SpineRouter &amp;&amp; subtype=UpstreamLC</code> または <code>UpperSpineRouter</code></td>
+<td><code>table-map SELECTIVE_ROUTE_DOWNLOAD_V4/V6</code>; TO_BGP_PEER に anchor-route community 付与; <code>AsPathMgr</code> 有効化</td>
+</tr>
+<tr>
+<td><code>SpineChassisFrontendRouter</code> (iBGP)</td>
+<td><code>address-family l2vpn evpn</code> + <code>advertise-all-vni</code></td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>bgpd/templates/general/peer-group.conf.j2</code> L7–33; <code>instance.conf.j2</code> L38–43; <code>policies.conf.j2</code> L40–55</p>
+<h3 id="voq-chassis-voq_chassis-peer_type">VoQ chassis 専用 (voq_chassis peer_type)<a class="headerlink" href="#voq-chassis-voq_chassis-peer_type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値 / 動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>タイマー</td>
+<td>timers 2/7 (general の 60/180 より短い)</td>
+</tr>
+<tr>
+<td>BGP ベストパス</td>
+<td><code>as-path multipath-relax</code> + <code>peer-type multipath-relax</code></td>
+</tr>
+<tr>
+<td>マルチパス</td>
+<td><code>maximum-paths ibgp &lt;N&gt;</code> (constants から)</td>
+</tr>
+<tr>
+<td>アドパス</td>
+<td><code>addpath-tx-all-paths</code></td>
+</tr>
+<tr>
+<td><code>subtype=UpstreamLC</code></td>
+<td><code>FROM_VOQ_CHASSIS_PEER</code> で DEVICE_INTERNAL_FALLBACK_COMMUNITY を deny</td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>bgpd/templates/voq_chassis/instance.conf.j2</code>; <code>peer-group.conf.j2</code>; <code>policies.conf.j2</code></p>
+<h3 id="sai_1">SAI への間接影響<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>next-hop-self force</strong> (BackEnd / chassis-packet): BGP 経路の nexthop が書き換えられ、orchagent の nexthop resolution が変わる</li>
+<li><strong>addpath-tx-all-paths</strong> (VoQ): 複数経路が APPL_DB に書き込まれ、SAI の ECMP グループ構成が異なる</li>
+<li><strong>table-map SELECTIVE_ROUTE_DOWNLOAD</strong> (UpstreamLC): FIB への再配布経路が選別される</li>
+</ul>
+<h3 id="chassisappdbmgr-is_chassis">ChassisAppDbMgr (is_chassis 限定)<a class="headerlink" href="#chassisappdbmgr-is_chassis" title="Permanent link">&para;</a></h3>
+<p><code>device_info.is_chassis()</code> が True のときのみ <code>CHASSIS_APP_DB.BGP_DEVICE_GLOBAL</code> を購読し、スーパーバイザーの TSA (Traffic Shift Away) 状態を LineCard の <code>bgpcfgd</code> に伝播する。</p>
+<p>ソース: <code>bgpcfgd/main.py</code> L112–113; <code>managers_chassis_app_db.py</code></p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/bgp-neighbor-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 <!-- glossary-links-injected: 9133f44230c2 -->
 
 <div class="footnote">

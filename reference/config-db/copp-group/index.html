@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/copp-group/">
       
       
-        <link rel="prev" href="../acl-table/">
+        <link rel="prev" href="../aclorch-state/">
       
       
         <link rel="next" href="../copp-trap/">
@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22182,6 +22372,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -22764,6 +22982,117 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化時の処理順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への書込み順序（運用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_set スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_failed 後の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更不可属性のスキップ挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22816,6 +23145,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -23396,6 +23753,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23732,6 +24117,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23740,6 +24181,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23816,6 +24341,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23824,6 +24433,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23900,6 +24677,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23908,6 +24713,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -24124,6 +24957,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -24264,6 +25125,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -24328,6 +25217,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -24516,6 +25433,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24608,6 +25609,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -25048,6 +26077,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -25056,6 +26113,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -25160,6 +26273,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -25244,6 +26385,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -25308,6 +26477,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -25468,6 +26665,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -25552,6 +26777,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25588,6 +26869,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25672,6 +26981,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25804,6 +27141,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25832,6 +27197,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25840,6 +27233,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -26035,7 +27456,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -26084,6 +27505,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -26092,6 +27541,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -26148,6 +27625,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -26252,6 +27841,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -26260,6 +27905,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26372,6 +28073,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26588,6 +28317,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26728,6 +28485,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26840,6 +28653,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26896,6 +28737,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26904,6 +28801,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -27008,6 +28933,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -27016,6 +28969,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27540,6 +29521,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27548,6 +29613,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27604,6 +29697,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -33266,6 +35387,117 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期化時の処理順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への書込み順序（運用）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_set スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task_failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        task_failed 後の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更不可属性のスキップ挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -33705,6 +35937,143 @@
 <p><strong>スキャン証跡</strong>: coppmgr.cpp 全行、copporch.cpp L1-1500 読了、sonic-copp.yang 全行、copp_cfg.j2 全行。発見 9 件。</p>
 </blockquote>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="_17">初期化時の処理順序<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>coppmgrd</code> 起動時、コンストラクタ内で以下の順序で処理される。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>parseInitFile()          # copp.json → m_coppGroupInitCfg / m_coppTrapInitCfg
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>mergeConfig(COPP_TRAP)   # L334: TRAP を先にマージ → m_coppTrapIdTrapGroupMap 構築
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>mergeConfig(COPP_GROUP)  # L372: GROUP をマージ — checkTrapGroupPending() が TRAP MAP を参照
+</span></code></pre></div>
+<p><strong>COPP_TRAP が COPP_GROUP より先に内部処理される</strong>（<code>coppmgr.cpp:334,372</code>）。
+<code>COPP_GROUP</code> の <code>checkTrapGroupPending()</code> は <code>m_coppTrapIdTrapGroupMap</code>（COPP_TRAP 処理で構築）を参照するため、順序が逆転すると pending 判定が誤る。<!-- evidence: coppmgr.cpp L334,372,383 --></p>
+<h3 id="config_db">CONFIG_DB への書込み順序（運用）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>推奨順序</th>
+<th>違反時の結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新規追加</td>
+<td><code>COPP_GROUP</code> → <code>COPP_TRAP</code></td>
+<td>COPP_TRAP なしでは <code>trap_ids</code> が空のまま APPL_DB に反映される（feature pending）</td>
+</tr>
+<tr>
+<td>削除</td>
+<td><code>COPP_TRAP</code> を先に削除 → <code>COPP_GROUP</code> を削除</td>
+<td>COPP_TRAP 残存時に COPP_GROUP DEL しても pending 状態のまま APPL_DB から削除されない</td>
+</tr>
+<tr>
+<td><code>default</code> グループ</td>
+<td>削除不可</td>
+<td><code>orchagent</code> が <code>task_ignore</code>（<code>copporch.cpp:861-864</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="init_set">init_set スキップ<a class="headerlink" href="#init_set" title="Permanent link">&para;</a></h3>
+<p><code>g_copp_init_set</code> に登録された key（<code>copp.json</code> 由来）は、最初の CONFIG_DB SET イベントを読み飛ばす（<code>coppmgr.cpp:855-860</code>）。<code>copp.json</code> デフォルト GROUP を上書きする場合は SET を 2 回送る必要はなく、通常の CONFIG_DB 書き込みで上書きできる（init 時に既にマージ済みのため）。</p>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h3 id="_18">失敗パス一覧<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>トリガー</th>
+<th>発生箇所</th>
+<th>結果</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>未知フィールド名</td>
+<td><code>parseTrapGroupAttribute()</code> → <code>task_failed</code></td>
+<td><code>doTask()</code> ループ終了（後続 COPP 更新が停止）</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SAI <code>create_hostif_trap_group</code> 恒久エラー</td>
+<td><code>handleSaiCreateStatus()</code> → <code>task_failed</code></td>
+<td>同上（一時エラーは <code>task_need_retry</code> で無制限 retry）</td>
+<td>なし/無制限</td>
+</tr>
+<tr>
+<td>3</td>
+<td>policer <code>meter</code>/<code>mode</code>/<code>color</code> 変更試行</td>
+<td><code>trapGroupUpdatePolicer()</code> → <code>continue</code></td>
+<td>エラーログのみ。当該属性スキップ、他属性は更新継続</td>
+<td>—</td>
+</tr>
+<tr>
+<td>4</td>
+<td>policer SAI set 恒久エラー</td>
+<td><code>handleSaiSetStatus()</code> → <code>task_failed</code></td>
+<td><code>doTask()</code> ループ終了</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>genetlink_name</code> 二重登録</td>
+<td><code>processCoppTrapGroup()</code> → <code>task_failed</code></td>
+<td><code>doTask()</code> ループ終了</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>DEL</code> で <code>default</code> グループ削除試行</td>
+<td><code>task_ignore</code></td>
+<td>WARN ログのみ。erase して続行</td>
+<td>—</td>
+</tr>
+<tr>
+<td>7</td>
+<td>未知 op type</td>
+<td><code>task_invalid_entry</code></td>
+<td>エラーログ。erase して次エントリへ</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>out_of_range</code> / <code>exception</code></td>
+<td><code>doCoppTask()</code> catch → <code>task_invalid_entry</code></td>
+<td>エラーログ。erase して次エントリへ</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>copp_cfg.json</code> ファイル未検出</td>
+<td><code>CoppMgr::parseInitFile()</code></td>
+<td>デフォルト CoPP ポリシーが適用されない</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="task_failed">task_failed 後の挙動<a class="headerlink" href="#task_failed" title="Permanent link">&para;</a></h3>
+<p><code>task_failed</code> が発生すると <code>doCoppTask()</code> の <code>doTask()</code> が即 <code>return</code> し、当該 Consumer の後続処理が停止する（orchagent プロセス自体は継続）。再起動（<code>systemctl restart swss</code>）が必要。<!-- evidence: copporch.cpp L920-923 --></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SWSS_LOG_ERROR(&quot;Processing copp task item failed, exiting. &quot;);
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>return;
+</span></code></pre></div>
+<h3 id="_19">変更不可属性のスキップ挙動<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>既存 policer の <code>meter_type</code> / <code>mode</code> / <code>color_source</code> を変更しようとすると、エラーログを出力して <strong><code>continue</code></strong> し他属性の更新を継続する。ハードウェアへの反映はゼロ。変更するにはエントリを <strong>DEL → SET</strong> で再作成する必要がある。<!-- evidence: copporch.cpp L1327-1350 trapGroupUpdatePolicer --></p>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE への記録<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p>COPP_GROUP に関する <code>STATE_DB</code> への障害記録はなし。<code>syslog</code>（<code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code>）への出力のみ。CONFIG_DB のエントリは失敗後も残る。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># syslog 確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>swss<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>copp
+</span></code></pre></div>
+<blockquote>
+<p>中間調査ファイル: <code>meta/_intermediate/cdb-flow/copp-group-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
 
 <!-- glossary-links-injected: 87fa713c3c5e -->
 

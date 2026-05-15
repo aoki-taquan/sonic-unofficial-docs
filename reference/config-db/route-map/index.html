@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22708,6 +22898,189 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須制約（違反すると silent drop）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨制約（違反すると FRR 側でエラーまたは運用影響）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="frrcfgd の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vtysh-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. vtysh コマンド失敗 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-route_operation-match_-set_-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. route_operation 欠落 → match_* / set_* silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-del-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-set_metric_action-set_metric-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. set_metric_action + set_metric 未設定 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-set_asn-set_repeat_asn-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. set_asn 未設定で set_repeat_asn のみ → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-frr-100-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. FRR デーモン接続失敗 → 起動時 100 回 retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22760,6 +23133,34 @@
     
   
     ACL_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
   
 
     
@@ -22844,6 +23245,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -23424,6 +23853,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23760,6 +24217,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23768,6 +24281,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23844,6 +24441,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23852,6 +24533,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23928,6 +24777,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23936,6 +24813,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -24152,6 +25057,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -24292,6 +25225,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -24356,6 +25317,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -24544,6 +25533,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24636,6 +25709,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -25076,6 +26177,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -25084,6 +26213,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -25188,6 +26373,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -25272,6 +26485,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -25336,6 +26577,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -25496,6 +26765,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -25580,6 +26877,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25616,6 +26969,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25700,6 +27081,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25832,6 +27241,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25860,6 +27297,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25868,6 +27333,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -26063,7 +27556,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -26112,6 +27605,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -26120,6 +27641,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -26176,6 +27725,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -26280,6 +27941,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -26288,6 +28005,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26400,6 +28173,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26616,6 +28417,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26756,6 +28585,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26868,6 +28753,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26924,6 +28837,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26932,6 +28901,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -27036,6 +29033,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -27044,6 +29069,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27568,6 +29621,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27576,6 +29713,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27632,6 +29797,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -33322,6 +35515,189 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須制約（違反すると silent drop）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推奨制約（違反すると FRR 側でエラーまたは運用影響）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd の失敗パターン
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="frrcfgd の失敗パターン">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vtysh-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. vtysh コマンド失敗 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-route_operation-match_-set_-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. route_operation 欠落 → match_* / set_* silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-del-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-set_metric_action-set_metric-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. set_metric_action + set_metric 未設定 → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-set_asn-set_repeat_asn-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. set_asn 未設定で set_repeat_asn のみ → silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-frr-100-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. FRR デーモン接続失敗 → 起動時 100 回 retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -33770,6 +36146,296 @@
 <h3 id="set_community_ref-silent-drop"><code>set_community_ref</code> — 参照先未作成時 silent drop<a class="headerlink" href="#set_community_ref-silent-drop" title="Permanent link">&para;</a></h3>
 <p>参照先 <code>COMMUNITY_SET</code> が CONFIG_DB に存在しないか <code>is_configurable()</code> が False の場合、FRR コマンドが生成されない。COMMUNITY_SET を先に作成すること。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p>ROUTE_MAP テーブルへの書き込みには以下の順序制約がある。<code>frrcfgd</code> の実装（<code>frrcfgd.py</code>）を全行精読して確認した。</p>
+<h3 id="silent-drop">必須制約（違反すると silent drop）<a class="headerlink" href="#silent-drop" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong><code>route_operation</code> を最初に書き込む</strong> — 同一キー <code>ROUTE_MAP|&lt;name&gt;|&lt;seq&gt;</code> の処理で <code>route_operation</code> が内部キャッシュ（<code>self.route_map</code>）に登録されていない場合、後続の <code>match_*</code> / <code>set_*</code> フィールドは全て <code>route-map {} seq {} not found for update</code> エラーでスキップされる（FRR への反映なし）。</p>
+</li>
+<li>
+<p><strong><code>match_prefix_set</code> / <code>match_next_hop_set</code> を書く前に <code>PREFIX_SET</code> を先に作成する</strong> — frrcfgd は <code>PREFIX_SET.mode</code> (IPv4/IPv6) を参照して FRR コマンドの <code>match ip address prefix-list</code> / <code>match ipv6 address prefix-list</code> を選択する。<code>PREFIX_SET</code> が未登録の場合は AF が特定できず FRR コマンド未発行（silent drop）。</p>
+</li>
+<li>
+<p><strong><code>route_operation</code> を permit → deny（またはその逆）に変更する場合は DEL → SET</strong> — FRR では <code>route-map &lt;name&gt; permit &lt;seq&gt;</code> と <code>route-map &lt;name&gt; deny &lt;seq&gt;</code> は<strong>別エントリ</strong>として扱われる。SET 上書きでは古いエントリが残るため、<code>no route-map</code> で旧エントリを削除してから新規作成すること。</p>
+</li>
+</ol>
+<h3 id="frr">推奨制約（違反すると FRR 側でエラーまたは運用影響）<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong><code>set_community_ref</code> を書く前に <code>COMMUNITY_SET</code> を先に作成する</strong> — 参照先が未作成の場合 FRR <code>set community</code> コマンドが発行されない（silent drop）。</p>
+</li>
+<li>
+<p><strong><code>match_as_path</code> を書く前に <code>AS_PATH_SET</code> を先に作成する</strong> — 未作成の場合 FRR bgpd 側で無効参照エラーが発生し BGP ポリシーが機能しない。</p>
+</li>
+<li>
+<p><strong><code>call_route_map</code> 参照先 route-map を先に作成する</strong> — 参照先が未定義の場合 FRR は黙って素通り（ポリシー未適用）。</p>
+</li>
+<li>
+<p><strong>ROUTE_MAP を DEL する前に <code>BGP_NEIGHBOR_AF</code> / <code>BGP_PEER_GROUP_AF</code> の参照（<code>route_map_in</code> / <code>route_map_out</code>）を先に解除する</strong> — 参照中の route-map を先に削除すると BGP フィルタが消えた状態でセッションが継続しトラフィックに影響する可能性がある。</p>
+</li>
+<li>
+<p><strong><code>match_prefix_set</code> を参照している ROUTE_MAP エントリを更新する前に参照先 <code>PREFIX_SET</code> を削除しない</strong> — PREFIX_SET DEL 後は frrcfgd の内部 AF キャッシュからエントリが消え、以降の ROUTE_MAP 更新で AF が特定できず silent drop になる。</p>
+</li>
+</ol>
+<h3 id="_16">書込み順依存サマリ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>route_operation</code> → <code>match_*</code> / <code>set_*</code></td>
+<td>同一エントリ内で先行必須</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>PREFIX_SET</code> → <code>match_prefix_set</code> / <code>match_next_hop_set</code></td>
+<td>PREFIX_SET 先行必須</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>route_operation</code> 変更: DEL → SET</td>
+<td>DEL 後に SET</td>
+<td>FRR に旧エントリ残留</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>COMMUNITY_SET</code> → <code>set_community_ref</code></td>
+<td>先行推奨</td>
+<td>silent drop</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>AS_PATH_SET</code> → <code>match_as_path</code></td>
+<td>先行推奨</td>
+<td>FRR 無効参照</td>
+</tr>
+<tr>
+<td>6</td>
+<td>参照先 route-map → <code>call_route_map</code></td>
+<td>先行推奨</td>
+<td>FRR 素通り</td>
+</tr>
+<tr>
+<td>7</td>
+<td>BGP_NEIGHBOR_AF 参照解除 → ROUTE_MAP DEL</td>
+<td>先行推奨</td>
+<td>BGP フィルタ消滅</td>
+</tr>
+<tr>
+<td>8</td>
+<td>ROUTE_MAP 参照除去 → PREFIX_SET DEL</td>
+<td>先行推奨</td>
+<td>subsequent update silent drop</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L2669-2676 (PREFIX_SET AF 解決), L3113-3133 (route_operation ガード), L3139-3148 (DEL 処理), L2875-2882 (COMMUNITY_SET), L2907-2908 (PREFIX_SET DEL)。詳細は <code>meta/_intermediate/cdb-flow/route-map-ordering.md</code> を参照。</p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h3 id="frrcfgd">frrcfgd の失敗パターン<a class="headerlink" href="#frrcfgd" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は ROUTE_MAP の変換失敗をすべて <strong>syslog LOG_ERR + <code>continue</code></strong> で処理する。retry・rollback・STATE_DB 記録はない。</p>
+<h4 id="1-vtysh-silent-drop">1. vtysh コマンド失敗 → silent drop<a class="headerlink" href="#1-vtysh-silent-drop" title="Permanent link">&para;</a></h4>
+<p>FRR vtysh への <code>route-map &lt;name&gt; permit|deny &lt;seq&gt;</code> 発行が失敗した場合（<code>__run_command()</code> が false を返す）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>LOG_ERR: &#39;failed to configure route-map &lt;name&gt; seq &lt;seq&gt;&#39;
+</span></code></pre></div>
+<p>内部キャッシュ (<code>self.route_map</code>) は更新されず、以降の <code>match_*</code> / <code>set_*</code> フィールドも全スキップ。<strong>CONFIG_DB のエントリは残るが FRR には未反映。retry なし。</strong></p>
+<h4 id="2-route_operation-match_-set_-silent-drop">2. <code>route_operation</code> 欠落 → <code>match_*</code> / <code>set_*</code> silent drop<a class="headerlink" href="#2-route_operation-match_-set_-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>route_operation</code> が CONFIG_DB エントリに存在しない場合、内部キャッシュに当該シーケンスが登録されない。後続フィールドが届いても以下でスキップ:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>LOG_ERR: &#39;route-map &lt;name&gt; seq &lt;seq&gt; not found for update&#39;
+</span></code></pre></div>
+<p><strong>FRR への反映ゼロ。retry なし。<code>route_operation</code> を先に書き込んで再 SET が必要。</strong></p>
+<h4 id="3-del-frr">3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク<a class="headerlink" href="#3-del-frr" title="Permanent link">&para;</a></h4>
+<p>DEL イベント受信時に内部キャッシュが空の場合（frrcfgd 再起動後等）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>LOG_ERR: &#39;route-map &lt;name&gt; seq &lt;seq&gt; not found for delete&#39;
+</span></code></pre></div>
+<p>FRR への <code>no route-map</code> コマンドが発行されず、FRR 上にエントリが残存する。<strong><code>vtysh -c 'no route-map &lt;name&gt;'</code> で手動削除が必要。</strong></p>
+<h4 id="4-set_metric_action-set_metric-silent-drop">4. <code>set_metric_action</code> + <code>set_metric</code> 未設定 → silent drop<a class="headerlink" href="#4-set_metric_action-set_metric-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>METRIC_SET_VALUE</code> / <code>METRIC_ADD_VALUE</code> / <code>METRIC_SUBTRACT_VALUE</code> 指定時に <code>set_metric</code> が未設定の場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>LOG_ERR: &#39;handle_rmap_set_metric not set for &lt;args&gt;&#39;
+</span></code></pre></div>
+<p>handler が <code>None</code> を返し FRR <code>set metric</code> コマンド未発行。<strong>RTT 系 (<code>METRIC_SET_RTT</code> 等) は <code>set_metric</code> 不要のためこの問題は発生しない。</strong></p>
+<h4 id="5-set_asn-set_repeat_asn-silent-drop">5. <code>set_asn</code> 未設定で <code>set_repeat_asn</code> のみ → silent drop<a class="headerlink" href="#5-set_asn-set_repeat_asn-silent-drop" title="Permanent link">&para;</a></h4>
+<p><code>set_asn</code> が未設定の場合 handler が <code>None</code> を返し、FRR AS-path prepend コマンド未発行。LOG_ERR なし（完全 silent）。</p>
+<h4 id="6-frr-100-retry">6. FRR デーモン接続失敗 → 起動時 100 回 retry<a class="headerlink" href="#6-frr-100-retry" title="Permanent link">&para;</a></h4>
+<p>frrcfgd 起動時、FRR Unix socket (<code>/run/frr/&lt;daemon&gt;.vty</code>) への接続を <strong>2 秒間隔・最大 100 回（約 200 秒）</strong> リトライ。超過時は <code>RuntimeError('connect to FRR daemon failed')</code> でプロセス終了。実行中のコネクション断は retry なし（個別コマンド失敗として処理）。</p>
+<h3 id="_17">失敗パターンサマリ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>LOG_ERR</th>
+<th>FRR 反映</th>
+<th>retry</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vtysh コマンド失敗</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>continue でイベント破棄</td>
+</tr>
+<tr>
+<td><code>route_operation</code> 欠落</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>内部キャッシュ未登録</td>
+</tr>
+<tr>
+<td>DEL 時キャッシュ未登録</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>FRR ゴーストエントリ残存</td>
+</tr>
+<tr>
+<td><code>set_metric</code> 未設定</td>
+<td>あり</td>
+<td>なし</td>
+<td>なし</td>
+<td>handler が <code>None</code> 返却</td>
+</tr>
+<tr>
+<td><code>set_asn</code> 未設定</td>
+<td>なし</td>
+<td>なし</td>
+<td>なし</td>
+<td>完全 silent drop</td>
+</tr>
+<tr>
+<td>起動時デーモン接続失敗</td>
+<td>あり</td>
+<td>なし</td>
+<td>最大 100 回</td>
+<td>超過で RuntimeError</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は ROUTE_MAP の失敗を STATE_DB や ERROR_TABLE に<strong>記録しない</strong>。障害検知は syslog のみ。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>frr-mgmt-framework<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;route-map&#39;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show route-map&#39;</span>
+</span></code></pre></div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L47-63 (<code>g_run_command</code>), L181-218 (接続 retry), L502-504 (<code>handle_rmap_set_metric</code>), L3109-3148 (ROUTE_MAP handler), L1532-1534 (例外吸収)。詳細は <code>meta/_intermediate/cdb-flow/route-map-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>YANG leafref および frrcfgd 実装スキャンにより確認した参照先テーブル一覧。詳細抽出は <code>meta/_intermediate/cdb-flow/route-map-cross-refs.md</code> を参照。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>参照フィールド</th>
+<th>条件・備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../prefix-set/"><code>PREFIX_SET</code></a></td>
+<td>leafref (必須)</td>
+<td><code>match_prefix_set</code>, <code>match_next_hop_set</code></td>
+<td>frrcfgd が <code>PREFIX_SET.mode</code> を動的参照して IPv4/IPv6 AF を決定。PREFIX_SET 未作成時は FRR コマンド未発行 (silent drop)</td>
+</tr>
+<tr>
+<td><a href="../prefix-set/"><code>PREFIX_SET</code></a></td>
+<td>leafref (YANG のみ)</td>
+<td><code>match_ipv6_prefix_set</code></td>
+<td>YANG leafref あり、frrcfgd <code>route_map_key_map</code> 未実装 → dead field</td>
+</tr>
+<tr>
+<td><a href="../community-set/"><code>COMMUNITY_SET</code></a></td>
+<td>leafref (推奨事前作成)</td>
+<td><code>match_community</code>, <code>set_community_ref</code></td>
+<td>frrcfgd が <code>get_table('COMMUNITY_SET')</code> で全件参照。未作成時は FRR コマンド未発行</td>
+</tr>
+<tr>
+<td><code>EXTENDED_COMMUNITY_SET</code></td>
+<td>leafref (推奨事前作成)</td>
+<td><code>match_ext_community</code>, <code>set_ext_community_ref</code></td>
+<td>frrcfgd が <code>get_table('EXTENDED_COMMUNITY_SET')</code> で全件参照</td>
+</tr>
+<tr>
+<td><a href="../as-path-set/"><code>AS_PATH_SET</code></a></td>
+<td>leafref (推奨事前作成)</td>
+<td><code>match_as_path</code></td>
+<td>frrcfgd が <code>get_table('AS_PATH_SET')</code> で全件参照。未作成時 FRR 側で無効参照エラー</td>
+</tr>
+<tr>
+<td><a href="../route-map-set/"><code>ROUTE_MAP_SET</code></a></td>
+<td>leafref (推奨事前作成)</td>
+<td><code>call_route_map</code></td>
+<td>参照先 route-map 未定義時は FRR が素通り（ポリシー未適用）</td>
+</tr>
+<tr>
+<td><a href="../port/"><code>PORT</code></a></td>
+<td>leafref</td>
+<td><code>match_interface</code> (union), <code>match_neighbor</code> (union)</td>
+<td>物理ポート名で interface match / neighbor match</td>
+</tr>
+<tr>
+<td><a href="../portchannel/"><code>PORTCHANNEL</code></a></td>
+<td>leafref</td>
+<td><code>match_interface</code> (union), <code>match_neighbor</code> (union)</td>
+<td>LAG 名で interface match / neighbor match</td>
+</tr>
+<tr>
+<td><a href="../loopback-interface/"><code>LOOPBACK_INTERFACE</code></a></td>
+<td>leafref</td>
+<td><code>match_interface</code> (union)</td>
+<td>loopback 名で interface match。<code>match_neighbor</code> には非対応</td>
+</tr>
+<tr>
+<td><a href="../vrf/"><code>VRF</code></a></td>
+<td>leafref</td>
+<td><code>match_src_vrf</code></td>
+<td>union (<code>default</code> 固定文字列 または VRF leafref)。VRF 未作成時は FRR コマンド対象外</td>
+</tr>
+<tr>
+<td><a href="../bgp-neighbor-af/"><code>BGP_NEIGHBOR_AF</code></a></td>
+<td>逆参照（被参照）</td>
+<td><code>route_map_in</code>, <code>route_map_out</code></td>
+<td>BGP_NEIGHBOR_AF が ROUTE_MAP_SET.name を leafref で参照。frrcfgd が <code>neighbor {} route-map {} in/out</code> に変換</td>
+</tr>
+<tr>
+<td><a href="../bgp-peer-group-af/"><code>BGP_PEER_GROUP_AF</code></a></td>
+<td>逆参照（被参照）</td>
+<td><code>route_map_in</code>, <code>route_map_out</code></td>
+<td>BGP_PEER_GROUP_AF が ROUTE_MAP_SET.name を leafref で参照。BGP_NEIGHBOR_AF と同一 handler</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">VLAN は YANG でコメントアウト</p>
+<p><code>match_interface</code> / <code>match_neighbor</code> の VLAN union は <code>sonic-route-map.yang</code> 内でコメントアウト済み (<code>//type leafref vlan...</code>)。VLAN 名を指定してもコンパイルエラーまたは無視される。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">EXTENDED_COMMUNITY_SET ページ</p>
+<p><code>EXTENDED_COMMUNITY_SET</code> のスタンドアロン参照ページは未作成。frrcfgd は <code>COMMUNITY_SET</code> と <code>EXTENDED_COMMUNITY_SET</code> を同一 handler (<code>comm_set_handler</code>) で処理する。</p>
+</div>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 24dbb72211e3 -->
 

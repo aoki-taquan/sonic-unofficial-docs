@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22185,6 +22375,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../copp-group/" class="md-nav__link">
         
   
@@ -22249,6 +22467,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -22888,6 +23134,184 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortsOrch 初期化ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mirror_session-policer-attach-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MIRROR_SESSION への policer attach は SET 時のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-create-only-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. create-only フィールドの制約（UPDATE 時のサイレント破棄）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 参照カウントによる DEL ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (create) 失敗
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SET (create) 失敗">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#meter_type-mode-silent-proceed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        METER_TYPE / MODE 欠落の silent-proceed 詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (update) 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storm-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm-control 経由の固有失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -23408,6 +23832,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23744,6 +24196,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23752,6 +24260,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23828,6 +24420,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23836,6 +24512,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23912,6 +24756,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23920,6 +24792,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -24136,6 +25036,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -24276,6 +25204,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -24340,6 +25296,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -24528,6 +25512,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24620,6 +25688,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -25060,6 +26156,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -25068,6 +26192,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -25172,6 +26352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -25256,6 +26464,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -25320,6 +26556,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -25480,6 +26744,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -25564,6 +26856,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25600,6 +26948,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25684,6 +27060,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25816,6 +27220,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25844,6 +27276,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25852,6 +27312,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -26047,7 +27535,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -26096,6 +27584,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -26104,6 +27620,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -26160,6 +27704,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -26264,6 +27920,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -26272,6 +27984,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26384,6 +28152,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26600,6 +28396,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26740,6 +28564,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26852,6 +28732,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26908,6 +28816,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26916,6 +28880,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -27020,6 +29012,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -27028,6 +29048,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27552,6 +29600,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27560,6 +29692,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27616,6 +29776,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -33290,6 +35478,184 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="詳細">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PortsOrch 初期化ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mirror_session-policer-attach-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MIRROR_SESSION への policer attach は SET 時のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-create-only-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. create-only フィールドの制約（UPDATE 時のサイレント破棄）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 参照カウントによる DEL ブロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (create) 失敗
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SET (create) 失敗">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#meter_type-mode-silent-proceed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        METER_TYPE / MODE 欠落の silent-proceed 詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET (update) 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storm-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        storm-control 経由の固有失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -33847,6 +36213,292 @@
 <p><strong>スキャン証跡</strong>: <code>policerorch.cpp:374-520</code> を全行読了、6 件分岐抽出。PolicerOrch が PORT_STORM_CONTROL も兼務することを確認 — 誤読なし。</p>
 </blockquote>
 <!-- /handler-branching -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>policerorch.cpp</code> L374-589 全行精読、<code>mirrororch.cpp</code> L432-441、<code>orchdaemon.cpp</code> L396-402。evidence: <code>meta/_intermediate/cdb-flow/policer-ordering.md</code></p>
+</blockquote>
+<h3 id="_18">順序依存サマリ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>allPortsReady()</code> 完了 → POLICER 処理</td>
+<td>強制先行</td>
+<td>なし（PortsOrch 起動完了待ち）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>POLICER 作成 → MIRROR_SESSION SET (policer 指定時)</td>
+<td>推奨先行（未作成でも session 自体は作成されるが policer 未 attach）</td>
+<td>policer 作成後に session を DEL → SET で再設定</td>
+</tr>
+<tr>
+<td>3</td>
+<td>create-only フィールドは初回 SET に含める必須</td>
+<td>必須（後送り不可、サイレント破棄）</td>
+<td>再作成（DEL → SET）で変更</td>
+</tr>
+<tr>
+<td>4</td>
+<td>参照先（MIRROR_SESSION 等）DEL → POLICER DEL</td>
+<td>強制先行（参照残存中は SAI 削除がブロック）</td>
+<td>参照テーブルを先に DEL</td>
+</tr>
+<tr>
+<td>5</td>
+<td>PORT_STORM_CONTROL 依存ポートの PortsOrch 登録</td>
+<td>自動 retry で調停</td>
+<td><code>task_need_retry</code> により次のループで再試行</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SAI create / set 失敗 → 自動 retry</td>
+<td>自動（一時エラー時）</td>
+<td><code>task_need_retry</code> 機構</td>
+</tr>
+<tr>
+<td>7</td>
+<td>orchagent 再起動後 MIRROR_SESSION + POLICER replay 整合</td>
+<td>手動復旧が必要な場合あり</td>
+<td>MIRROR_SESSION の DEL → SET</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">詳細<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<h4 id="1-portsorch">1. PortsOrch 初期化ガード<a class="headerlink" href="#1-portsorch" title="Permanent link">&para;</a></h4>
+<p><code>doTask()</code> 冒頭 (<code>policerorch.cpp:379</code>) で <code>gPortsOrch-&gt;allPortsReady()</code> が false の間は即 return する。POLICER / PORT_STORM_CONTROL の両テーブル処理がブロックされるため、PortsOrch の起動完了前に書き込んだエントリは一括キューイングされ、ポート初期化完了後に処理される。</p>
+<h4 id="2-mirror_session-policer-attach-set">2. MIRROR_SESSION への policer attach は SET 時のみ<a class="headerlink" href="#2-mirror_session-policer-attach-set" title="Permanent link">&para;</a></h4>
+<p><code>MirrorOrch</code> は MIRROR_SESSION の SET 処理時にのみ <code>policerExists()</code> を確認し、存在する場合に <code>increaseRefCount()</code> を呼んで attach する (<code>mirrororch.cpp:432-441</code>)。POLICER が存在しない状態で MIRROR_SESSION を SET すると、session は作成されるが policer が attach されないまま動作する。後から POLICER を作成しても自動的な再 attach は発生しない。</p>
+<h4 id="3-create-only-update">3. create-only フィールドの制約（UPDATE 時のサイレント破棄）<a class="headerlink" href="#3-create-only-update" title="Permanent link">&para;</a></h4>
+<p>新規作成（<code>update = false</code>）時: <code>METER_TYPE</code> と <code>MODE</code> の両方が必要。欠落した場合は ERROR ログを出力した後に <code>create_policer()</code> を呼び続け SAI エラーとなる（<code>policerorch.cpp:491-495</code>）。<br />
+更新（<code>update = true</code>）時: <code>METER_TYPE</code> / <code>MODE</code> / <code>COLOR_SOURCE</code> / <code>*_PACKET_ACTION</code> はコードでフィルタして SAI に渡されない（<code>policerorch.cpp:527-533</code>）。これらの変更には DEL → SET による再作成が必要。</p>
+<h4 id="4-del">4. 参照カウントによる DEL ブロック<a class="headerlink" href="#4-del" title="Permanent link">&para;</a></h4>
+<p><code>m_policerRefCounts[key] &gt; 0</code> の間は DEL を <code>it++</code> で保留し続ける (<code>policerorch.cpp:563-568</code>)。参照カウントは MirrorOrch 等が <code>increaseRefCount()</code> / <code>decreaseRefCount()</code> で管理する。POLICER を削除するには、参照している MIRROR_SESSION / COPP_GROUP / PORT_STORM_CONTROL を先に DEL または参照解除する必要がある。</p>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>policerorch.cpp</code> L374-589 全行精読。evidence: <code>meta/_intermediate/cdb-flow/policer-failure.md</code></p>
+</blockquote>
+<h3 id="set-create">SET (create) 失敗<a class="headerlink" href="#set-create" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>コード箇所</th>
+<th>挙動</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>METER_TYPE</code> / <code>MODE</code> 欠落</td>
+<td><code>policerorch.cpp:491-495</code></td>
+<td>ERROR ログ出力後に <strong>return せず</strong> <code>create_policer()</code> を呼び続ける (silent-proceed バグ)</td>
+<td>SAI エラー → <code>handleSaiCreateStatus</code> 判定へ</td>
+</tr>
+<tr>
+<td>SAI <code>create_policer()</code> 失敗</td>
+<td><code>policerorch.cpp:500-508</code></td>
+<td><code>handleSaiCreateStatus</code> が <code>task_need_retry</code> → <code>it++</code> (キュー保留・リトライ)。それ以外 → <code>erase(it)</code> (エントリ消失、再 SET 必要)</td>
+<td>エラーログのみ残る</td>
+</tr>
+<tr>
+<td>不明フィールド</td>
+<td><code>policerorch.cpp:478-483</code></td>
+<td>ERROR ログ + <code>continue</code> (当該フィールドをスキップして残りを処理)</td>
+<td><code>create_policer()</code> は呼ばれる</td>
+</tr>
+</tbody>
+</table>
+<h4 id="meter_type-mode-silent-proceed">METER_TYPE / MODE 欠落の silent-proceed 詳細<a class="headerlink" href="#meter_type-mode-silent-proceed" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>// policerorch.cpp:491-495
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>if (!meter_type || !mode)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>{
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    SWSS_LOG_ERROR(&quot;Failed to create policer %s, missing mandatory fields&quot;, key.c_str());
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>}
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>// ← return がない。次行の create_policer() が実行される
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>sai_status_t status = sai_policer_api-&gt;create_policer(...);
+</span></code></pre></div>
+<p>欠落があっても <code>create_policer()</code> が呼ばれるため SAI エラーが発生する。その後 <code>handleSaiCreateStatus</code> の返値が <code>task_need_retry</code> 以外なら <code>erase(it)</code> されてエントリが消失する。</p>
+<h3 id="set-update">SET (update) 失敗<a class="headerlink" href="#set-update" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>コード箇所</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI <code>set_policer_attribute()</code> 失敗</td>
+<td><code>policerorch.cpp:535-546</code></td>
+<td><code>task_need_retry</code> → <code>it++</code> 保留。それ以外 → <code>erase(it)</code> (エントリ消失)</td>
+</tr>
+<tr>
+<td>create-only フィールドを UPDATE で送信</td>
+<td><code>policerorch.cpp:527-533</code></td>
+<td>SAI に渡さずサイレント破棄 (エラーログなし)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 失敗<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>コード箇所</th>
+<th>ログレベル</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存在しない policer の DEL</td>
+<td><code>policerorch.cpp:556-560</code></td>
+<td>ERROR</td>
+<td><code>erase(it)</code> (冪等的に消去)</td>
+</tr>
+<tr>
+<td>参照カウント &gt; 0 の DEL</td>
+<td><code>policerorch.cpp:563-568</code></td>
+<td><strong>INFO</strong></td>
+<td><code>it++</code> (永続保留・エラーにならない)</td>
+</tr>
+<tr>
+<td>SAI <code>remove_policer()</code> 失敗</td>
+<td><code>policerorch.cpp:573-581</code></td>
+<td>ERROR</td>
+<td><code>task_need_retry</code> → <code>it++</code>。それ以外 → <code>erase(it)</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">参照中の DEL はサイレントにブロックされる</p>
+<p><code>m_policerRefCounts[key] &gt; 0</code> のまま DEL を送ると <code>SWSS_LOG_INFO</code> (INFO レベル) のみで <code>it++</code> され続け、MIRROR_SESSION / COPP_GROUP / PORT_STORM_CONTROL が参照を解放するまで消えない。<code>show policer</code> 等で確認できないため「削除したはずなのに残っている」と見えることがある。</p>
+</div>
+<h3 id="storm-control">storm-control 経由の固有失敗<a class="headerlink" href="#storm-control" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>コード箇所</th>
+<th>task 返値</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ethernet 以外のインターフェース</td>
+<td><code>policerorch.cpp:132-137</code></td>
+<td><code>task_success</code></td>
+<td><code>erase(it)</code> (再試行なし・エラーログのみ)</td>
+</tr>
+<tr>
+<td>ポート未発見 (<code>getPort</code> 失敗)</td>
+<td><code>policerorch.cpp:139-144</code></td>
+<td><code>task_success</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td>CIR 欠落</td>
+<td><code>policerorch.cpp:195-200</code></td>
+<td><code>task_failed</code></td>
+<td><code>erase(it)</code> (再試行なし)</td>
+</tr>
+<tr>
+<td>不明 storm_type</td>
+<td><code>policerorch.cpp:218-220</code></td>
+<td><code>task_failed</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>set_port_attribute</code> 失敗</td>
+<td><code>policerorch.cpp:291-313</code></td>
+<td><code>task_need_retry</code></td>
+<td>作成済み SAI policer を即 <code>remove_policer</code> して <code>m_syncdPolicers</code> から削除 → 次ループで再作成</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">storm-control の set_port_attribute 失敗時のロールバック</p>
+<p><code>create_policer()</code> 成功後に <code>set_port_attribute()</code> が失敗すると、SAI policer を <code>remove_policer()</code> で削除してから <code>task_need_retry</code> を返す。これにより次ループで最初から再作成を試みる。ただし <code>remove_policer()</code> が失敗した場合は SAI 上に孤立した policer が残る可能性がある (<code>policerorch.cpp:299-305</code> に TODO コメントあり)。</p>
+</div>
+<!-- /failure -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>POLICER</code> は YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。</p>
+<blockquote>
+<p>evidence: <code>meta/_intermediate/cdb-flow/policer-cross-refs.md</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>参照元テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MIRROR_SESSION.policer</code></td>
+<td>POLICER を消費 (OID 取得 + refcount++)</td>
+<td><code>policer</code> フィールド指定時。POLICER 不在 → <code>task_need_retry</code>、追加後に自動再処理</td>
+<td><code>mirrororch.cpp:432-441</code> (<code>policerExists()</code> / <code>increaseRefCount()</code>)</td>
+</tr>
+<tr>
+<td><code>ACL_RULE</code> (標準 aclorch)</td>
+<td>表示目的のみ (読み取り)</td>
+<td><code>aclshow</code> コマンド実行時。orchagent の <code>aclorch.cpp</code> は POLICER を直接参照しない</td>
+<td><code>acl_loader/main.py:254-266</code> (<code>read_policers_info()</code>)</td>
+</tr>
+<tr>
+<td><code>ACL_RULE</code> (P4 orch)</td>
+<td>POLICER OID 取得 + ACL action 設定</td>
+<td>P4 ACL rule に policer action を指定したとき</td>
+<td><code>p4orch/acl_util.cpp</code></td>
+</tr>
+<tr>
+<td><code>COPP_GROUP</code></td>
+<td>直接参照なし (インライン policer)</td>
+<td>常時。COPP_GROUP 自身に policer 属性をインライン定義し、CoppOrch が独立した SAI policer を生成。<code>POLICER</code> テーブルとはリンクしない</td>
+<td><code>copporch.cpp</code> <code>trapGroupAddPolicer()</code></td>
+</tr>
+<tr>
+<td><code>PORT_STORM_CONTROL</code></td>
+<td>内部 SAI policer 生成 (POLICER テーブルとは独立)</td>
+<td>PORT_STORM_CONTROL SET/DEL 時。PolicerOrch が兼務し、<code>handlePortStormControlTable()</code> にディスパッチ。<code>POLICER</code> テーブルへのエントリは生成しない</td>
+<td><code>policerorch.cpp:394-407</code>, <code>orchdaemon.cpp:396-402</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">COPP_GROUP と PORT_STORM_CONTROL は POLICER テーブルをキーで参照しない</p>
+<p><code>COPP_GROUP</code> はポリサー属性をインラインで保持し、<code>POLICER</code> テーブルとは別物の SAI policer を生成する。
+<code>PORT_STORM_CONTROL</code> は PolicerOrch 内部で SAI policer を生成するが、<code>POLICER</code> テーブルには書き込まない。
+いずれも <code>POLICER</code> テーブルへの leafref / 外部キー参照は発生しない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">MIRROR_SESSION との参照カウント</p>
+<p><code>MirrorOrch</code> が <code>increaseRefCount()</code> / <code>decreaseRefCount()</code> を対称的に呼ぶ。
+MIRROR_SESSION を DEL せずに POLICER を削除しようとすると <code>m_policerRefCounts[key] &gt; 0</code> のまま保留され続ける（<code>policerorch.cpp:563-568</code>）。
+削除順序: MIRROR_SESSION (DEL) → POLICER (DEL) の順が必須。</p>
+</div>
+<!-- /cross-refs -->
 
 <div class="footnote">
 <hr />

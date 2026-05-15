@@ -16,7 +16,7 @@
         <link rel="prev" href="../acl-rule/">
       
       
-        <link rel="next" href="../copp-group/">
+        <link rel="next" href="../aclorch-state/">
       
       
         
@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22322,6 +22512,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB status 遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22693,6 +22933,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allportsready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: allPortsReady() ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE_TYPE (ユーザ定義型) が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ports フィールドのポート未登録（自動遅延）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE は ACL_TABLE 作成後に書き込む
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-stage-del-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type / stage 変更には DEL → SET が必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全な DEL 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-b-cfg-appl-sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22753,10 +23076,199 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        間接参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールドキー定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage 値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バインドポイント型定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ステータス値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB / STATE_DB テーブル名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -22833,6 +23345,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -23413,6 +23953,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23749,6 +24317,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23757,6 +24381,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23833,6 +24541,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23841,6 +24633,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23917,6 +24877,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23925,6 +24913,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -24141,6 +25157,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -24281,6 +25325,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -24345,6 +25417,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -24533,6 +25633,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24625,6 +25809,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -25065,6 +26277,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -25073,6 +26313,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -25177,6 +26473,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -25261,6 +26585,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -25325,6 +26677,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -25485,6 +26865,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -25569,6 +26977,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25605,6 +27069,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25689,6 +27181,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25821,6 +27341,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25849,6 +27397,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25857,6 +27433,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -26052,7 +27656,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -26101,6 +27705,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -26109,6 +27741,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -26165,6 +27825,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -26269,6 +28041,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -26277,6 +28105,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26389,6 +28273,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26605,6 +28517,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26745,6 +28685,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26857,6 +28853,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26913,6 +28937,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26921,6 +29001,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -27025,6 +29133,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -27033,6 +29169,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27557,6 +29721,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27565,6 +29813,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27621,6 +29897,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -32869,6 +35173,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB status 遷移
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -33240,6 +35594,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allportsready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前提: allPortsReady() ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_table_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_TABLE_TYPE (ユーザ定義型) が先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ports フィールドのポート未登録（自動遅延）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acl_rule-acl_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACL_RULE は ACL_TABLE 作成後に書き込む
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-stage-del-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type / stage 変更には DEL → SET が必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        安全な DEL 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-b-cfg-appl-sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -33289,6 +35726,167 @@
     <span class="md-ellipsis">
       
         段階 4: タイミング・副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        間接参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        フィールドキー定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stage_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stage 値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        type 値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バインドポイント型定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB ステータス値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_DB / STATE_DB テーブル名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB 書込み
       
     </span>
   </a>
@@ -33477,6 +36075,152 @@
 </table>
 <!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:5346L -->
 <!-- /cdb-exceptions -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ACL_TABLE の処理失敗は <code>doAclTableTask()</code> 内の <code>bAllAttributesOk</code> フラグと <code>validate()</code> の結果で分岐し、STATE_DB の <code>ACL_TABLE|&lt;table_name&gt;</code> テーブルに <code>status</code> フィールドで記録される。</p>
+<h3 id="set">SET 時の失敗パターン<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>STATE_DB status</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code> 空文字</td>
+<td><code>processAclTableType()</code> L5823-5826</td>
+<td><code>bAllAttributesOk=false</code> → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>不明な属性名</td>
+<td><code>doAclTableTask()</code> L5415-5419</td>
+<td><code>bAllAttributesOk=false</code> → break → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>stage</code> が INGRESS/EGRESS 以外</td>
+<td><code>processAclTableStage()</code> L5842-5848</td>
+<td><code>ACL_STAGE_UNKNOWN</code> → <code>validate()</code> false → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>ports</code> に bind 不可ポート（IN_PORTS/OUT_PORTS 等）</td>
+<td><code>getAclBindPortId()</code> L5795-5799</td>
+<td><code>return false</code> → <code>bAllAttributesOk=false</code> → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>ports</code> に未登録ポート</td>
+<td><code>processAclTablePorts()</code> L5786-5791</td>
+<td><code>pendingPortSet.emplace()</code> でスキップ継続（erase しない）</td>
+<td>変化なし</td>
+<td><code>onPortReady()</code> で自動解消</td>
+</tr>
+<tr>
+<td>ユーザ定義 type 未登録</td>
+<td><code>getAclTableType()</code> L5432-5437</td>
+<td><code>it++</code>（保留）</td>
+<td>変化なし</td>
+<td>ACL_TABLE_TYPE 登録まで無制限</td>
+</tr>
+<tr>
+<td><code>type=L3V4V6</code> + ASIC 非サポート</td>
+<td><code>AclTable::validate()</code> L2737-2745</td>
+<td><code>validate()</code> false → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td>action 非サポート</td>
+<td><code>AclTable::validate()</code> L2759-2766</td>
+<td><code>validate()</code> false → erase</td>
+<td><code>"Inactive"</code></td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>addAclTable()</code> SAI 失敗（MIRROR capability 欠如等）</td>
+<td><code>doAclTableTask()</code> L5480-5485</td>
+<td><code>it++</code>（retry）</td>
+<td><code>"Pending creation"</code></td>
+<td>無制限</td>
+</tr>
+<tr>
+<td><code>updateAclTable()</code> 失敗（ports 更新失敗）</td>
+<td><code>doAclTableTask()</code> L5467-5469</td>
+<td><code>it++</code>（retry）</td>
+<td>変化なし</td>
+<td>無制限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="del">DEL 時の失敗パターン<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>挙動</th>
+<th>STATE_DB status</th>
+<th>retry</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配下 ACL_RULE の SAI 削除失敗</td>
+<td><code>removeAclTable()</code> L4850-4855</td>
+<td><code>return false</code> → <code>it++</code></td>
+<td><code>"Pending removal"</code></td>
+<td>無制限</td>
+</tr>
+<tr>
+<td><code>unbindAclTableFromSwitch()</code> 失敗</td>
+<td><code>removeAclTable()</code> L4862-4867</td>
+<td><code>return false</code> → <code>it++</code></td>
+<td><code>"Pending removal"</code></td>
+<td>無制限</td>
+</tr>
+<tr>
+<td>SAI <code>deleteUnbindAclTable()</code> 失敗</td>
+<td><code>removeAclTable()</code> L4869-4908</td>
+<td><code>return false</code> → <code>it++</code></td>
+<td><code>"Pending removal"</code></td>
+<td>無制限</td>
+</tr>
+<tr>
+<td><code>removeEgrSetDscpTable()</code> 失敗（UNDERLAY 系）</td>
+<td><code>removeAclTable()</code> L4835-4840</td>
+<td><code>return false</code> → <code>it++</code></td>
+<td><code>"Pending removal"</code></td>
+<td>無制限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-status">STATE_DB status 遷移<a class="headerlink" href="#state_db-status" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SET 受信
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ├─ bAllAttributesOk=false or validate()=false → &quot;Inactive&quot;  (erase, no retry)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ├─ addAclTable() 失敗                          → &quot;Pending creation&quot;  (it++, retry)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  └─ addAclTable() 成功                          → &quot;Active&quot;   (erase)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>DEL 受信
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  ├─ removeAclTable() 失敗                       → &quot;Pending removal&quot;  (it++, retry)
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  └─ removeAclTable() 成功                       → STATUS_DB エントリ削除
+</span></code></pre></div>
+<p>確認コマンド: <code>sonic-db-cli STATE_DB hgetall 'ACL_TABLE|&lt;table_name&gt;'</code></p>
+<p>エラーはすべて <code>SWSS_LOG_ERROR</code> でサイログ出力される。<code>ERROR_TABLE</code> への書き込みはなし。CONFIG_DB のエントリは失敗後も残る（orchagent は書き戻さない）。</p>
+<blockquote>
+<p><strong>証跡</strong>: <code>doAclTableTask()</code> L5361-5518 全行精読、<code>AclTable::validate()</code> L2725-2769、<code>processAclTableType()</code> L5819-5831、<code>processAclTableStage()</code> L5838-5853、<code>processAclTablePorts()</code> L5776-5807、<code>removeAclTable()</code> L4829-4910、<code>setAclTableStatus()</code> L6088-6093。</p>
+</blockquote>
+<!-- /failure -->
 
 <!-- value-behavior -->
 <h2 id="_7">値依存挙動マトリクス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
@@ -34017,9 +36761,9 @@
 <li><code>ports</code> を空にすると ACL_RULE は <a href="../../glossary/#term-config_db">CONFIG_DB</a> に入っても hardware に降りない。</li>
 </ul>
 <h3 id="_16">確認コマンド<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_TABLE|EVERFLOW&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>acl<span class="w"> </span>table
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>aclshow<span class="w"> </span>-a
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_TABLE|EVERFLOW&#39;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>acl<span class="w"> </span>table
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>aclshow<span class="w"> </span>-a
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -34028,8 +36772,8 @@
 <p>CONFIG_DB の <code>ACL_TABLE</code> テーブルを書き込むコードパスを網羅する。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>sonic-utilities/config/main.py:8084-8123</code> — <code>config acl add table</code> / <code>config acl remove table</code></p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">config_db</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="s2">&quot;ACL_TABLE&quot;</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">table_info</span><span class="p">)</span>   <span class="c1"># 追加</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">config_db</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="s2">&quot;ACL_TABLE&quot;</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>          <span class="c1"># 削除</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">config_db</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="s2">&quot;ACL_TABLE&quot;</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">table_info</span><span class="p">)</span>   <span class="c1"># 追加</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">config_db</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="s2">&quot;ACL_TABLE&quot;</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>          <span class="c1"># 削除</span>
 </span></code></pre></div>
 <ul>
 <li>入力プロトコル: CLI 引数 (<code>table_name</code>, <code>table_type</code>, <code>-d desc</code>, <code>-p ports</code>, <code>-s stage</code>)</li>
@@ -34104,6 +36848,74 @@
 <p><code>orchagent</code> の <code>AclOrch</code> は ACL_TABLE を購読するのみ（書き込みなし）。</p>
 <!-- /entry-points -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="allportsready">前提: allPortsReady() ガード<a class="headerlink" href="#allportsready" title="Permanent link">&para;</a></h3>
+<p><code>AclOrch::doTask()</code> (<code>aclorch.cpp:4276</code>) は <code>gPortsOrch-&gt;allPortsReady()</code> が false の間は即 return する。<code>ACL_TABLE</code> / <code>ACL_TABLE_TYPE</code> / <code>ACL_RULE</code> すべての処理が<strong>完全にブロック</strong>される。orchdaemon が PortsOrch の初期化完了を保証するため、通常は意識不要だが起動シーケンス中の早期書き込みは処理待ちになる。</p>
+<h3 id="acl_table_type">ACL_TABLE_TYPE (ユーザ定義型) が先行必須<a class="headerlink" href="#acl_table_type" title="Permanent link">&para;</a></h3>
+<p><code>doAclTableTask()</code> L5432-5437: <code>getAclTableType()</code> が nullptr を返すと <code>it++; continue</code> で ACL_TABLE エントリを<strong>保留キューに残す</strong>。組み込み型（<code>L3</code>/<code>MIRROR</code>/<code>CTRLPLANE</code> 等）はコンストラクタ時点で登録済みのため不要。ユーザ定義型を使う場合のみ、<code>ACL_TABLE_TYPE|&lt;name&gt;</code> を ACL_TABLE SET より先に書き込むこと。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SET ACL_TABLE_TYPE|&lt;type_name&gt;  MATCHES=...,ACTIONS=...,BPOINT_TYPES=...
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>SET ACL_TABLE|&lt;table_name&gt;      type=&lt;type_name&gt; stage=ingress ports=...
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>SET ACL_RULE|&lt;table_name&gt;|&lt;rule_name&gt;  PRIORITY=...
+</span></code></pre></div>
+<h3 id="ports">ports フィールドのポート未登録（自動遅延）<a class="headerlink" href="#ports" title="Permanent link">&para;</a></h3>
+<p>未登録ポートは <code>pendingPortSet</code> に追加されるが ACL_TABLE 自体は作成される。<code>onPortReady()</code> コールバックで PORT 登録完了時に自動バインドされる (<code>aclorch.cpp:2884</code>)。erase はされないため設定は保持される。</p>
+<h3 id="acl_rule-acl_table">ACL_RULE は ACL_TABLE 作成後に書き込む<a class="headerlink" href="#acl_rule-acl_table" title="Permanent link">&para;</a></h3>
+<p><code>doAclRuleTask()</code> L5552-5565: <code>table_oid == SAI_NULL_OBJECT_ID</code> の間は <code>it++; continue</code> で待機（自動 wait loop）。<code>ACL_TABLE</code> の SAI 作成完了後、次の orchagent ループで自動処理される。<strong>先行して書き込んでも失われない</strong>が、ACL_TABLE が作成されるまで SAI には反映されない。</p>
+<h3 id="type-stage-del-set">type / stage 変更には DEL → SET が必要<a class="headerlink" href="#type-stage-del-set" title="Permanent link">&para;</a></h3>
+<p><code>doAclTableTask()</code> L5450-5454: 既存 table の <code>type</code> または <code>stage</code> が変更された場合、orchagent は内部で既存テーブルを削除してから再作成する（配下の ACL_RULE も消える）。変更前に <code>DEL ACL_RULE|&lt;table&gt;|*</code> を明示削除することを推奨。<code>ports</code> のみ変更する場合は <code>updateAclTable()</code> で差分適用されるため DEL 不要。</p>
+<h3 id="del_1">安全な DEL 順序<a class="headerlink" href="#del_1" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>DEL ACL_RULE|&lt;table_name&gt;|&lt;rule_name&gt;    # 配下ルールを先に削除（推奨）
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>DEL ACL_TABLE|&lt;table_name&gt;               # テーブル削除（orchagent 内部でも clear() を呼ぶ）
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>DEL ACL_TABLE_TYPE|&lt;type_name&gt;           # ユーザ定義 type を削除する場合は最後
+</span></code></pre></div>
+<p><code>removeAclTable()</code> (<code>aclorch.cpp:4850</code>) は内部で <code>clear()</code> を呼び配下 ACL_RULE を自動削除するが、CONFIG_DB 上の <code>ACL_RULE</code> エントリは残る。orchagent 再起動後に孤立エントリが "Wait for ACL table" ループに入るため、CLI/REST 経由では ACL_RULE を先に明示削除する。</p>
+<table>
+<thead>
+<tr>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>allPortsReady() 完了 → ACL_TABLE 処理</td>
+<td>強制先行</td>
+<td>orchdaemon が自動管理</td>
+</tr>
+<tr>
+<td>ACL_TABLE_TYPE SET → ACL_TABLE SET（ユーザ定義型）</td>
+<td>論理的先行</td>
+<td>保留キューで自動調停</td>
+</tr>
+<tr>
+<td>PORT/PORTCHANNEL SET → ports バインド</td>
+<td>部分先行</td>
+<td>pendingPortSet + onPortReady()</td>
+</tr>
+<tr>
+<td>ACL_TABLE SET → ACL_RULE SET（SAI 反映）</td>
+<td>必須</td>
+<td>自動 wait loop</td>
+</tr>
+<tr>
+<td>type/stage 変更: DEL → SET</td>
+<td>必須</td>
+<td>SET のみでも動作するが配下 ACL_RULE 消失</td>
+</tr>
+<tr>
+<td>ACL_TABLE DEL → ACL_TABLE_TYPE DEL</td>
+<td>推奨</td>
+<td>強制ではないが論理的に必要</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>doAclTableTask()</code> L5346-5518 全行精読、<code>doAclTableTypeTask()</code> L5738-5774、<code>removeAclTable()</code> L4829-4910、<code>processAclTablePorts()</code> L5776-5807、<code>doAclRuleTask()</code> L5520-5566 参照。</p>
+</blockquote>
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 <h2 id="direction-b-cfg-appl-sai">起動経路 (Direction B: CFG → APPL → SAI)<a class="headerlink" href="#direction-b-cfg-appl-sai" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
@@ -34152,6 +36964,482 @@
 <li><strong>CRM 連携</strong>: 作成/削除時に <code>gCrmOrch-&gt;incCrmAclUsedCounter()</code> / <code>decCrmAclUsedCounter()</code> (<code>aclorch.cpp:2855</code>)。</li>
 </ul>
 <!-- /runtime-trace -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>ACL_TABLE.ports</code> フィールドに記載されたインターフェース名は CONFIG_DB 上では文字列だが、
+<code>AclOrch</code> が <code>gPortsOrch-&gt;getPort()</code> と <code>getAclBindPortId()</code> を通じて以下のテーブルの
+エントリを<strong>暗黙的に leafref 参照</strong>する。YANG 定義がないため制約はコードのみで表現されている。</p>
+<table>
+<thead>
+<tr>
+<th>参照元フィールド</th>
+<th>参照先テーブル</th>
+<th>参照先キー形式</th>
+<th>SAI バインド種別</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ports</code></td>
+<td><code>PORT</code></td>
+<td><code>PORT\|EthernetN</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_PORT</code></td>
+<td><code>aclorch.cpp:6062-6069</code></td>
+</tr>
+<tr>
+<td><code>ports</code></td>
+<td><code>PORTCHANNEL</code></td>
+<td><code>PORTCHANNEL\|PortChannelN</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_LAG</code></td>
+<td><code>aclorch.cpp:6073-6075</code></td>
+</tr>
+<tr>
+<td><code>ports</code></td>
+<td><code>VLAN</code></td>
+<td><code>VLAN\|VlanN</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_VLAN</code></td>
+<td><code>aclorch.cpp:6076-6078</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>ACL_TABLE_TYPE</code></td>
+<td><code>ACL_TABLE_TYPE\|&lt;name&gt;</code></td>
+<td>N/A (テーブル定義参照)</td>
+<td><code>aclorch.cpp:5380-5388</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">解決タイミング<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ports</code> に指定したポートが PortsOrch 未登録の場合、<code>pendingPortSet</code> に保留され
+  PortsOrch の <code>SUBJECT_TYPE_PORT_CHANGE</code> 通知で再バインドを試みる (<code>aclorch.cpp:2866-2901</code>)。</li>
+<li><code>type</code> にユーザ定義型を指定する場合は <code>ACL_TABLE_TYPE|&lt;type&gt;</code> が先に存在している必要がある。</li>
+</ul>
+<h3 id="_18">間接参照<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>type=MIRROR</code>/<code>MIRRORV6</code> テーブルに紐づく <code>ACL_RULE</code> は <code>MIRROR_SESSION</code> テーブルを参照する
+  (<code>AclRuleMirror::validateAddMatch()</code>)。<code>ACL_TABLE</code> 自体は直接参照しない。</li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>実装コードに直接定義されている文字列定数・enum 値を一覧化する。CONFIG_DB フィールド名やステータス値を正確に把握するための参照用。</p>
+<h3 id="_19">フィールドキー定数<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>CONFIG_DB フィールド名</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL_TABLE_DESCRIPTION</code></td>
+<td><code>"POLICY_DESC"</code></td>
+<td><code>acltable.h:12</code></td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_STAGE</code></td>
+<td><code>"STAGE"</code></td>
+<td><code>acltable.h:13</code></td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE</code></td>
+<td><code>"TYPE"</code></td>
+<td><code>acltable.h:14</code></td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_PORTS</code></td>
+<td><code>"PORTS"</code></td>
+<td><code>acltable.h:15</code></td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_SERVICES</code></td>
+<td><code>"SERVICES"</code></td>
+<td><code>acltable.h:16</code></td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE_MATCHES</code></td>
+<td><code>"MATCHES"</code></td>
+<td><code>acltable.h:18</code> (ACL_TABLE_TYPE サブテーブル)</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE_BPOINT_TYPES</code></td>
+<td><code>"BIND_POINTS"</code></td>
+<td><code>acltable.h:19</code> (ACL_TABLE_TYPE サブテーブル)</td>
+</tr>
+<tr>
+<td><code>ACL_TABLE_TYPE_ACTIONS</code></td>
+<td><code>"ACTIONS"</code></td>
+<td><code>acltable.h:20</code> (ACL_TABLE_TYPE サブテーブル)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stage_2">stage 値定数<a class="headerlink" href="#stage_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>文字列値</th>
+<th>SAI マッピング</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STAGE_INGRESS</code></td>
+<td><code>"INGRESS"</code></td>
+<td><code>SAI_ACL_STAGE_INGRESS</code></td>
+<td><code>acltable.h:22</code></td>
+</tr>
+<tr>
+<td><code>STAGE_EGRESS</code></td>
+<td><code>"EGRESS"</code></td>
+<td><code>SAI_ACL_STAGE_EGRESS</code></td>
+<td><code>acltable.h:23</code></td>
+</tr>
+<tr>
+<td><code>STAGE_PRE_INGRESS</code></td>
+<td><code>"PRE_INGRESS"</code></td>
+<td><code>SAI_ACL_STAGE_PRE_INGRESS</code></td>
+<td><code>acltable.h:24</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>PRE_INGRESS</code> は <code>aclStageLookup</code> map に含まれるが、<code>processAclTableStage()</code> の受理リストに入っておらず、<code>INGRESS</code> / <code>EGRESS</code> 以外は erase される。enum: <code>ACL_STAGE_UNKNOWN=0</code>, <code>ACL_STAGE_INGRESS=1</code>, <code>ACL_STAGE_EGRESS=2</code>, <code>ACL_STAGE_PRE_INGRESS=3</code> (<code>acltable.h:44-50</code>)。</p>
+</div>
+<h3 id="type_2">type 値定数<a class="headerlink" href="#type_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>文字列値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TABLE_TYPE_L3</code></td>
+<td><code>"L3"</code></td>
+<td><code>acltable.h:26</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_L3V6</code></td>
+<td><code>"L3V6"</code></td>
+<td><code>acltable.h:27</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_L3V4V6</code></td>
+<td><code>"L3V4V6"</code></td>
+<td><code>acltable.h:28</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MIRROR</code></td>
+<td><code>"MIRROR"</code></td>
+<td><code>acltable.h:29</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MIRRORV6</code></td>
+<td><code>"MIRRORV6"</code></td>
+<td><code>acltable.h:30</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MIRROR_DSCP</code></td>
+<td><code>"MIRROR_DSCP"</code></td>
+<td><code>acltable.h:31</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_PFCWD</code></td>
+<td><code>"PFCWD"</code></td>
+<td><code>acltable.h:32</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_CTRLPLANE</code></td>
+<td><code>"CTRLPLANE"</code></td>
+<td><code>acltable.h:33</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_DTEL_FLOW_WATCHLIST</code></td>
+<td><code>"DTEL_FLOW_WATCHLIST"</code></td>
+<td><code>acltable.h:34</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MCLAG</code></td>
+<td><code>"MCLAG"</code></td>
+<td><code>acltable.h:35</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MUX</code></td>
+<td><code>"MUX"</code></td>
+<td><code>acltable.h:36</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_DROP</code></td>
+<td><code>"DROP"</code></td>
+<td><code>acltable.h:37</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MARK_META</code></td>
+<td><code>"MARK_META"</code></td>
+<td><code>acltable.h:38</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_MARK_META_V6</code></td>
+<td><code>"MARK_METAV6"</code></td>
+<td><code>acltable.h:39</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_EGR_SET_DSCP</code></td>
+<td><code>"EGR_SET_DSCP"</code></td>
+<td><code>acltable.h:40</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_UNDERLAY_SET_DSCP</code></td>
+<td><code>"UNDERLAY_SET_DSCP"</code></td>
+<td><code>acltable.h:41</code></td>
+</tr>
+<tr>
+<td><code>TABLE_TYPE_UNDERLAY_SET_DSCPV6</code></td>
+<td><code>"UNDERLAY_SET_DSCPV6"</code></td>
+<td><code>acltable.h:42</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">DTEL_FLOW_WATCHLIST</p>
+<p><code>DTelOrch</code> は <code>platform==BFN|VS</code> のみ生成 (<code>orchdaemon.cpp:502-530</code>)。一般的な環境では使用不可。</p>
+</div>
+<h3 id="_20">バインドポイント型定数<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>文字列値</th>
+<th>SAI マッピング</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BIND_POINT_TYPE_PORT</code></td>
+<td><code>"PORT"</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_PORT</code></td>
+<td><code>aclorch.h:62</code>, <code>aclorch.cpp:105</code></td>
+</tr>
+<tr>
+<td><code>BIND_POINT_TYPE_PORTCHANNEL</code></td>
+<td><code>"PORTCHANNEL"</code></td>
+<td><code>SAI_ACL_BIND_POINT_TYPE_LAG</code></td>
+<td><code>aclorch.h:63</code>, <code>aclorch.cpp:106</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>ACL_TABLE_TYPE.BIND_POINTS</code> フィールドで使う文字列定数。<code>VLAN</code> / <code>SWITCH</code> はマクロなく直接 SAI 定数を使用。</p>
+<h3 id="state_db">STATE_DB ステータス値定数<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>enum 値</th>
+<th><code>status</code> フィールド値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AclObjectStatus::ACTIVE</code></td>
+<td><code>"Active"</code></td>
+<td><code>aclorch.cpp:523</code></td>
+</tr>
+<tr>
+<td><code>AclObjectStatus::INACTIVE</code></td>
+<td><code>"Inactive"</code></td>
+<td><code>aclorch.cpp:524</code></td>
+</tr>
+<tr>
+<td><code>AclObjectStatus::PENDING_CREATION</code></td>
+<td><code>"Pending creation"</code></td>
+<td><code>aclorch.cpp:525</code></td>
+</tr>
+<tr>
+<td><code>AclObjectStatus::PENDING_REMOVAL</code></td>
+<td><code>"Pending removal"</code></td>
+<td><code>aclorch.cpp:526</code></td>
+</tr>
+</tbody>
+</table>
+<p>STATE_DB テーブル名: <code>STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"</code> (<code>schema.h:514</code>)。フィールド名: <code>"status"</code> (ハードコード, <code>aclorch.cpp:6091</code>)。</p>
+<h3 id="app_db-state_db">APP_DB / STATE_DB テーブル名定数<a class="headerlink" href="#app_db-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>値</th>
+<th>DB</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_ACL_TABLE_TABLE_NAME</code></td>
+<td><code>"ACL_TABLE_TABLE"</code></td>
+<td>APP_DB</td>
+<td><code>schema.h:94</code></td>
+</tr>
+<tr>
+<td><code>APP_ACL_TABLE_TYPE_TABLE_NAME</code></td>
+<td><code>"ACL_TABLE_TYPE_TABLE"</code></td>
+<td>APP_DB</td>
+<td><code>schema.h:95</code></td>
+</tr>
+<tr>
+<td><code>STATE_ACL_TABLE_TABLE_NAME</code></td>
+<td><code>"ACL_TABLE_TABLE"</code></td>
+<td>STATE_DB</td>
+<td><code>schema.h:514</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>acltable.h:1-76</code> 全行精読、<code>aclorch.h:62-63</code>、<code>aclorch.cpp:42-44,105-106,523-526,6088-6105</code>、<code>schema.h:94-95,514</code> 確認。全マクロ 17 個 + enum 4 値 + STATUS 4 値 + テーブル名 3 件抽出。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>ACL_TABLE</code> の SET/DEL を受けた <code>AclOrch</code> は CONFIG_DB のほか STATE_DB と COUNTERS_DB に以下を書き込む。</p>
+<h3 id="state_db_1">STATE_DB 書込み<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET → <code>addAclTable()</code> 成功</td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td><code>&lt;table_name&gt;</code></td>
+<td><code>status</code></td>
+<td><code>"Active"</code></td>
+</tr>
+<tr>
+<td>SET → <code>addAclTable()</code> 失敗 (retry)</td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td><code>&lt;table_name&gt;</code></td>
+<td><code>status</code></td>
+<td><code>"Pending creation"</code></td>
+</tr>
+<tr>
+<td>SET → <code>bAllAttributesOk=false</code> or <code>validate()=false</code></td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td><code>&lt;table_name&gt;</code></td>
+<td><code>status</code></td>
+<td><code>"Inactive"</code></td>
+</tr>
+<tr>
+<td>DEL → <code>removeAclTable()</code> 失敗 (retry)</td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td><code>&lt;table_name&gt;</code></td>
+<td><code>status</code></td>
+<td><code>"Pending removal"</code></td>
+</tr>
+<tr>
+<td>DEL → <code>removeAclTable()</code> 成功</td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td><code>&lt;table_name&gt;</code></td>
+<td>—</td>
+<td>エントリ削除</td>
+</tr>
+<tr>
+<td>AclOrch 起動時 (<code>init()</code>)</td>
+<td><code>ACL_TABLE_TABLE</code></td>
+<td>全キー</td>
+<td>—</td>
+<td>全エントリ一括削除 (<code>removeAllAclTableStatus()</code>)</td>
+</tr>
+<tr>
+<td>AclOrch 起動時 SAI capability query 後</td>
+<td><code>ACL_STAGE_CAPABILITY_TABLE</code></td>
+<td><code>"INGRESS"</code> / <code>"EGRESS"</code></td>
+<td><code>is_action_list_mandatory</code>, <code>action_list</code>, <code>supported_L3V4V6</code></td>
+<td>ASIC 問い合わせ結果</td>
+</tr>
+</tbody>
+</table>
+<p><code>ACL_TABLE_TABLE</code> テーブル名定数: <code>STATE_ACL_TABLE_TABLE_NAME</code> (<code>schema.h:514</code>)
+<code>ACL_STAGE_CAPABILITY_TABLE</code> テーブル名定数: <code>STATE_ACL_STAGE_CAPABILITY_TABLE_NAME</code> (<code>schema.h:418</code>)</p>
+<p>確認コマンド:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_TABLE_TABLE|&lt;table_name&gt;&#39;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_STAGE_CAPABILITY_TABLE|INGRESS&#39;</span>
+</span></code></pre></div>
+<h3 id="counters_db">COUNTERS_DB 書込み<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<p>ACL_TABLE 自体は COUNTERS_DB に直接書き込まない。ただし ACL_TABLE に紐づく <strong>ACL_RULE</strong> の作成/削除時に以下が連動する。</p>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>テーブル</th>
+<th>キー</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACL_RULE 作成 (<code>registerFlexCounter()</code>)</td>
+<td><code>ACL_COUNTER_RULE_MAP</code></td>
+<td><code>&lt;table_name&gt;:&lt;rule_name&gt;</code></td>
+<td>SAI counter OID 文字列</td>
+</tr>
+<tr>
+<td>ACL_RULE 削除 (<code>deregisterFlexCounter()</code>)</td>
+<td><code>ACL_COUNTER_RULE_MAP</code></td>
+<td><code>&lt;table_name&gt;:&lt;rule_name&gt;</code></td>
+<td>エントリ削除</td>
+</tr>
+<tr>
+<td>ACL テーブル作成</td>
+<td>CRM カウンタ (<code>COUNTERS_DB</code>)</td>
+<td>—</td>
+<td><code>incCrmAclUsedCounter(CRM_ACL_TABLE)</code> (<code>aclorch.cpp:2855</code>)</td>
+</tr>
+<tr>
+<td>ACL テーブル削除</td>
+<td>CRM カウンタ (<code>COUNTERS_DB</code>)</td>
+<td>—</td>
+<td><code>decCrmAclUsedCounter(CRM_ACL_TABLE)</code> (<code>aclorch.cpp:4877</code>)</td>
+</tr>
+<tr>
+<td>ACL_RULE 作成</td>
+<td>CRM カウンタ (<code>COUNTERS_DB</code>)</td>
+<td>テーブル OID 配下</td>
+<td><code>incCrmAclTableUsedCounter(CRM_ACL_ENTRY)</code> + <code>CRM_ACL_COUNTER</code></td>
+</tr>
+<tr>
+<td>ACL_RULE 削除</td>
+<td>CRM カウンタ (<code>COUNTERS_DB</code>)</td>
+<td>テーブル OID 配下</td>
+<td><code>decCrmAclTableUsedCounter(CRM_ACL_ENTRY)</code> + <code>CRM_ACL_COUNTER</code></td>
+</tr>
+</tbody>
+</table>
+<p>FlexCounter 連動: ACL_RULE 作成時に <code>FLEX_COUNTER_DB / ACL_STAT_COUNTER</code> グループへ counter OID を登録し、FlexCounter デーモンが定期的に SAI カウンタをポーリングして <code>COUNTERS_DB / COUNTERS</code> に統計値を書き込む。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span>ACL_COUNTER_RULE_MAP
+</span></code></pre></div>
+<blockquote>
+<p><strong>証跡</strong>: <code>setAclTableStatus()</code> L6088-6098、<code>removeAllAclTableStatus()</code> L6119-6125、<code>putAclActionCapabilityInDB()</code> L4056-4101、<code>registerFlexCounter()</code> L6020-6042、<code>deregisterFlexCounter()</code> L6044-6048、<code>incCrmAclUsedCounter()</code> L2855、<code>decCrmAclUsedCounter()</code> L4877。全行精読 + <code>schema.h:418,514</code> 確認。</p>
+</blockquote>
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 9f69b0796e2c -->
 
 <div class="footnote">

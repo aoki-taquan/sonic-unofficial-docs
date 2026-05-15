@@ -21169,6 +21169,140 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -21521,6 +21655,62 @@
     
   
     PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-port-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB PORT_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BUFFER_* テーブル群
   
 
     
@@ -22172,6 +22362,444 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CREATE 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DELETE 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_vrf_table-state_db-readiness-sentinel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_VRF_TABLE (STATE_DB) — readiness sentinel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_object_table-state_db-sentinel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF_OBJECT_TABLE (STATE_DB) — 削除同期 sentinel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf_config-config_db-mgmt-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF_CONFIG (CONFIG_DB) — mgmt VRF 特例制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_map-config_db-vni-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_MAP (CONFIG_DB) — vni 設定の副作用 WRITE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG leafref 被参照テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        key 埋め込み参照（leafref 非強制）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux ルーティングテーブル ID（隠れたリソース上限）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・回復 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・回復 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd 側の失敗処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd DEL のパッシブリトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-vrforch-task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (VRFOrch) の task_need_retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count ガード (DEL ブロック)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-id_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux ルーティングテーブル ID 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNI デフォルト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Producer/Consumer ペア">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → vrfmgrd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd → APPL_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-orchagent-vrforch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → orchagent (VRFOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信フロー全体図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd — SET 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd — DEL 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrforch-orchagent-appl_db-vrf_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRFOrch (orchagent) — APPL_DB VRF_TABLE 受信後の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB テーブル役割まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -22636,6 +23264,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../aclorch-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL orchagent STATE_DB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../copp-group/" class="md-nav__link">
         
   
@@ -22700,6 +23356,34 @@
     
   
     DEBUG_COUNTER テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB カウンタ能力テーブル
   
 
     
@@ -23280,6 +23964,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BREAKOUT_CFG テーブル (DPB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../flex-counter-table/" class="md-nav__link">
         
   
@@ -23616,6 +24328,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../nhg-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEXTHOP_GROUP_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sflow/" class="md-nav__link">
         
   
@@ -23624,6 +24392,90 @@
     
   
     SFLOW テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-orch-event/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RouteOrch event / notification (ResponsePublisher + NextHopObserver)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB STP_TABLE（STP 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errordb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
   
 
     
@@ -23700,6 +24552,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../app-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アプリケーション フローカウンタ設定
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB ACL テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../appl-db-route/" class="md-nav__link">
         
   
@@ -23708,6 +24644,174 @@
     
   
     APPL_DB ROUTE_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-fdb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FDB_TABLE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mclag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB MCLAG/ICCP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-mpls-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LABEL_ROUTE_TABLE (APPL_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vlan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appl-vrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE テーブル
   
 
     
@@ -23784,6 +24888,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bfd-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB BFD_SESSION_TABLE (bfdorch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bfd-session/" class="md-nav__link">
         
   
@@ -23792,6 +24924,34 @@
     
   
     BFD_SESSION テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bfd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BFD_SESSION_TABLE (STATE_DB)
   
 
     
@@ -24008,6 +25168,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../bgp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 状態テーブル (NEIGH_STATE_TABLE / BGP_PEER_CONFIGURED_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../bmp/" class="md-nav__link">
         
   
@@ -24148,6 +25336,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../cbf-nhg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLASS_BASED_NEXT_HOP_GROUP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../certs/" class="md-nav__link">
         
   
@@ -24212,6 +25428,34 @@
     
   
     CHASSIS_MODULE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chassis-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PASS_THROUGH_ROUTE_TABLE テーブル（ChassisOrch）
   
 
     
@@ -24400,6 +25644,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../copp-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COPP port-binding (genetlink フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB COPP 状態テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counter-buffer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB バッファ / ウォーターマーク カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../counters-flex/" class="md-nav__link">
         
   
@@ -24492,6 +25820,34 @@
     
   
     COUNTERS_DB キュー / PG カウンタテーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../counters-rif/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB RIF カウンタ
   
 
     
@@ -24932,6 +26288,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dpu-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU カウンタ (ENI / DASH_METER) テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dpu-eni/" class="md-nav__link">
         
   
@@ -24940,6 +26324,62 @@
     
   
     DPU / ENI / VDPU / REMOTE_DPU テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dpu-state-detail/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DPU_STATE フィールド詳細 (CHASSIS_STATE_DB) — デフォルト・更新条件
   
 
     
@@ -25044,6 +26484,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dscp-to-pg-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSCP_TO_PG_MAP テーブル（非実在）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../erspan/" class="md-nav__link">
         
   
@@ -25128,6 +26596,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../extended-monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    イベント/アラーム拡張監視設定 (extended-monitor)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../fabric-monitor/" class="md-nav__link">
         
   
@@ -25192,6 +26688,34 @@
     
   
     FDB テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../feature-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FEATURE (STATE_DB)
   
 
     
@@ -25352,6 +26876,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../gnmi-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TELEMETRY_CONNECTIONS テーブル (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../gnmi/" class="md-nav__link">
         
   
@@ -25436,6 +26988,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../image-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC イメージバージョン情報 (sonic_version.yml)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ip-mcast-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IP マルチキャストルート (P4RT)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ipv6-link-local/" class="md-nav__link">
         
   
@@ -25472,6 +27080,34 @@
     
   
     LLDP_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lldp-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
   
 
     
@@ -25556,6 +27192,34 @@
     
   
     LOSSLESS_TRAFFIC_PATTERN テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../macsec-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PORT (macsec フィールド)
   
 
     
@@ -25688,6 +27352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../mux-cable-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../mux-linkmgr/" class="md-nav__link">
         
   
@@ -25716,6 +27408,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../nat-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB NAT テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nat-bindings/" class="md-nav__link">
         
   
@@ -25724,6 +27444,34 @@
     
   
     NAT_BINDINGS テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nat-counters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB NAT カウンタテーブル群
   
 
     
@@ -25919,7 +27667,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults)
+    NTP テーブル群 (Phase A defaults + Phase D failure)
   
 
     
@@ -25968,6 +27716,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../orchagent-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB orchagent 共通テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../passw-hardening/" class="md-nav__link">
         
   
@@ -25976,6 +27752,34 @@
     
   
     PASSW_HARDENING テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pbh-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB PBH_CAPABILITIES テーブル
   
 
     
@@ -26032,6 +27836,118 @@
     
   
     PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pfcwd-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PFC_WD 状態フィールド (COUNTERS_DB)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-watermark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE — PG_WATERMARK エントリ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PIM_GLOBALS / PIM_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pin-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    P4RT テーブル (PINS p4rt 設定)
   
 
     
@@ -26136,6 +28052,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../portchannel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB LAG_TABLE (PortChannel 状態)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portchannel-status/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB LAG_TABLE (portchannel ステータス)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ports-status/" class="md-nav__link">
         
   
@@ -26144,6 +28116,62 @@
     
   
     PORT_TABLE ステータスフィールド（STATE_DB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    COUNTERS_DB QUEUE カウンタ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../queue-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QUEUE_COUNTER_CAPABILITIES (STATE_DB)
   
 
     
@@ -26256,6 +28284,34 @@
     
   
     RESTAPI テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_STATE_DB ROUTE_TABLE (route offload cache)
   
 
     
@@ -26472,6 +28528,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../scheduler-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../smart-switch-dpu/" class="md-nav__link">
         
   
@@ -26612,6 +28696,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../srv6-applb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB SRV6テーブル (SRV6_MY_SID_TABLE / SRV6_SID_LIST_TABLE)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../srv6-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_TABLE SRV6 (SRv6 カウンタ)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../srv6-my-locators/" class="md-nav__link">
         
   
@@ -26724,6 +28864,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-config-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH_SERVER テーブル — base フィールドデフォルト
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ssh-config/" class="md-nav__link">
         
   
@@ -26780,6 +28948,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../ssh-sftp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH SFTP サブシステム
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-bgp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB BGP 関連テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../state-db-port/" class="md-nav__link">
         
   
@@ -26788,6 +29012,34 @@
     
   
     STATE_DB PORT_TABLE（ポート状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state-flex-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FLEX_COUNTER_DB — ランタイム状態フィールド
   
 
     
@@ -26892,6 +29144,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../stp-iccp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STP / ICCP 連携 — コード由来デフォルト詳細
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../stp-mst/" class="md-nav__link">
         
   
@@ -26900,6 +29180,34 @@
     
   
     STP_MST_INST / STP_MST_PORT テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stp-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
   
 
     
@@ -27424,6 +29732,90 @@
   
   
     <li class="md-nav__item">
+      <a href="../tunnel-port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VXLAN トンネルポート (Port::TUNNEL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunnel-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TUNNEL STATE_DB テーブル群
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vlan-state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    STATE_DB VLAN_TABLE（VLAN 状態テーブル）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../vlan-sub-interface/" class="md-nav__link">
         
   
@@ -27432,6 +29824,34 @@
     
   
     VLAN_SUB_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vnet-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル
   
 
     
@@ -27488,6 +29908,34 @@
     
   
     VOQ_INBAND_INTERFACE テーブル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vrf-orch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APPL_DB VRF_TABLE (VRFOrch)
   
 
     
@@ -33034,6 +35482,444 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CREATE 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DELETE 順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_vrf_table-state_db-readiness-sentinel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_VRF_TABLE (STATE_DB) — readiness sentinel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_object_table-state_db-sentinel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF_OBJECT_TABLE (STATE_DB) — 削除同期 sentinel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_vrf_config-config_db-mgmt-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MGMT_VRF_CONFIG (CONFIG_DB) — mgmt VRF 特例制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlan_tunnel_map-config_db-vni-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VXLAN_TUNNEL_MAP (CONFIG_DB) — vni 設定の副作用 WRITE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG leafref 被参照テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-leafref" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        key 埋め込み参照（leafref 非強制）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux ルーティングテーブル ID（隠れたリソース上限）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・回復 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・回復 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd 側の失敗処理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd DEL のパッシブリトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-vrforch-task_need_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchagent (VRFOrch) の task_need_retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ref_count-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ref_count ガード (DEL ブロック)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linux-id_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux ルーティングテーブル ID 定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        リトライ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vni" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNI デフォルト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producerconsumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer/Consumer ペア
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Producer/Consumer ペア">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db-vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → vrfmgrd
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd → APPL_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-orchagent-vrforch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → orchagent (VRFOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() ループと retry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信フロー全体図
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd — SET 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-del_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd — DEL 時の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrforch-orchagent-appl_db-vrf_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRFOrch (orchagent) — APPL_DB VRF_TABLE 受信後の副次書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB テーブル役割まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認コマンド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -33332,6 +36218,687 @@
 <h3 id="orchagent-yang-config_db">orchagent 内部フィールド (YANG 未定義・CONFIG_DB 非経由)<a class="headerlink" href="#orchagent-yang-config_db" title="Permanent link">&para;</a></h3>
 <p><code>vrforch.h</code> には <code>v4</code>/<code>v6</code>/<code>src_mac</code>/<code>ttl_action</code>/<code>ip_opt_action</code>/<code>l3_mc_action</code> が宣言されており、orchagent で SAI 属性に変換される実装がある。しかし <strong>YANG <code>sonic-vrf.yang</code> には存在せず</strong>、通常の <code>config vrf add</code> で CONFIG_DB に書かれることはない。VNET テーブル経由で APP_DB に直接書き込まれた場合のみ機能する残存コード。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp</code>, <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-utilities/config/main.py</code></p>
+</blockquote>
+<h3 id="create">CREATE 順序<a class="headerlink" href="#create" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>書込み対象</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>VXLAN_TUNNEL</code></td>
+<td>EVPN L3 VNI を使う場合のみ</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>VXLAN_TUNNEL_MAP</code> (VLAN-VNI エントリ)</td>
+<td><code>VRF.vni</code> の前提条件。CLI が存在確認 (main.py:7759)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong><code>VRF\|&lt;name&gt;</code></strong></td>
+<td>Linux VRF デバイス作成。vrfmgrd が STATE_DB に <code>state=ok</code> を書く (vrfmgr.cpp:289)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>VRF\|&lt;name&gt;.vni</code> (mod_entry)</td>
+<td>VRF 作成後かつ VXLAN_TUNNEL_MAP 確認後に設定 (main.py:7774)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>*_INTERFACE\|&lt;port&gt;</code> (vrf_name 指定)</td>
+<td>intfmgrd が <code>isIntfStateOk(vrf_name)</code> で VRF の STATE_DB ready を確認してから処理 (intfmgr.cpp:839)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>BGP_GLOBALS\|&lt;vrf_name&gt;</code></td>
+<td>Linux VRF デバイス作成後が推奨。逆順でも FRR 側で retry されるがタイムアウト依存になる</td>
+</tr>
+</tbody>
+</table>
+<h3 id="delete">DELETE 順序<a class="headerlink" href="#delete" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>書込み対象</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>SYSLOG_SERVER</code> (VRF 参照エントリ)</td>
+<td>CLI が参照存在時に削除を拒否 (main.py:7712-7717)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>BGP_GLOBALS\|&lt;vrf_name&gt;</code> DEL</td>
+<td>FRR VRF 設定を先に解除</td>
+</tr>
+<tr>
+<td>3</td>
+<td>ROUTE テーブルの VRF 内全ルート DEL</td>
+<td>routeorch が <code>decreaseVrfRefCount</code> を呼ぶまで ref_count が残る (routeorch.cpp:2773)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>*_INTERFACE\|&lt;port&gt;</code> (vrf_name 参照ロウ) DEL</td>
+<td>intfsorch が <code>decreaseVrfRefCount</code> を呼ぶ (intfsorch.cpp:640)。CLI は自動処理 (main.py:7729)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>VRF\|&lt;name&gt;.vni</code> を 0 に SET</td>
+<td>VNI マッピング解除 (vrfmgr.cpp:337)。CLI <code>del_vrf_vni_map</code> が自動実行</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong><code>VRF\|&lt;name&gt;</code></strong> DEL</td>
+<td>orchagent の ref_count が 0 になると VRFOrch が SAI VR を削除し STATE_VRF_OBJECT_TABLE を消去。vrfmgrd がそれを確認して Linux デバイスを削除 (vrfmgr.cpp:331-346)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_16">重要な挙動<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>ref_count ガード</strong>: <code>VRF|&lt;name&gt;</code> DEL は orchagent 内で <code>vrf_table_[name].ref_count == 0</code> になるまで <code>delOperation</code> が <code>return false</code> を返し続ける (vrforch.cpp:169)。所属インタフェース・ルート・MPLS ルート・SRv6 SID をすべて削除してから VRF を DEL すること。</li>
+<li><strong>STATE_DB ready 待機</strong>: <code>*_INTERFACE</code> への <code>vrf_name</code> 指定は、vrfmgrd が <code>STATE_DB.VRF_TABLE|&lt;name&gt;</code> に <code>state=ok</code> を書くまで Consumer キューで待機する。逆順でも最終収束するが、VRF 作成が完了するまでインタフェース設定は適用されない。</li>
+<li><strong>mgmt VRF 特例</strong>: <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true</code> による mgmt VRF は hostcfgd の初期化済みを前提とし、Linux VRF デバイス <code>ip link add</code> をスキップする (vrfmgr.cpp:176-183)。通常の <code>VRF</code> テーブル書込みとは別経路。</li>
+<li><strong>VNI 変更制限</strong>: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 <code>vni=0</code> に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。</li>
+</ul>
+<!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp</code>, <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vrf.yang</code></p>
+</blockquote>
+<h3 id="state_vrf_table-state_db-readiness-sentinel"><code>STATE_VRF_TABLE</code> (STATE_DB) — readiness sentinel<a class="headerlink" href="#state_vrf_table-state_db-readiness-sentinel" title="Permanent link">&para;</a></h3>
+<p>各 <code>*_INTERFACE</code> テーブルで <code>vrf_name</code> が指定されたとき、<code>intfmgrd</code> は <code>STATE_DB::STATE_VRF_TABLE</code> に VRF が登録済みであることを <code>isIntfStateOk(vrf_name)</code> で確認する（<code>intfmgr.cpp:671-684</code>）。未登録なら SET をスキップして Consumer キューに残す。orchagent 側も <code>isVRFexists(vrf_name)</code> で VRF OID 存在を確認する（<code>intfsorch.cpp:826-830</code>）。YANG leafref <code>VRF.name</code> は静的参照だが、この STATE_DB 依存は実行時ガードとして機能する。</p>
+<h3 id="vrf_object_table-state_db-sentinel"><code>VRF_OBJECT_TABLE</code> (STATE_DB) — 削除同期 sentinel<a class="headerlink" href="#vrf_object_table-state_db-sentinel" title="Permanent link">&para;</a></h3>
+<p><code>orchagent/VRFOrch</code> が SAI Virtual Router 作成成功後に <code>STATE_VRF_OBJECT_TABLE|&lt;name&gt;</code> へ <code>state=ok</code> を書き込む。<code>vrfmgrd</code> は VRF 削除前に <code>isVrfObjExist()</code> でこのエントリを確認し、orchagent 側 SAI オブジェクトが残存する間は削除をリトライ待ちにする。VRF テーブル設定には一切現れない 2 フェーズ非同期削除の同期機構。</p>
+<h3 id="mgmt_vrf_config-config_db-mgmt-vrf"><code>MGMT_VRF_CONFIG</code> (CONFIG_DB) — mgmt VRF 特例制御<a class="headerlink" href="#mgmt_vrf_config-config_db-mgmt-vrf" title="Permanent link">&para;</a></h3>
+<p><code>vrfmgrd</code> は <code>MGMT_VRF_CONFIG|vrf_global</code> の <code>mgmtVrfEnabled</code> と <code>in_band_mgmt_enabled</code> を参照し、いずれかが <code>false</code> のとき <code>VRF</code> テーブルへの SET を DEL として上書き処理する（<code>vrfmgr.cpp:257</code>）。<code>mgmt</code> VRF は通常プール（1001–5096）を使わず固定 ID <code>6000</code> を割り当てる（<code>vrfmgr.cpp:180-183</code>）。この制御ロジックは <code>VRF</code> テーブルフィールドには一切現れない。</p>
+<h3 id="vxlan_tunnel_map-config_db-vni-write"><code>VXLAN_TUNNEL_MAP</code> (CONFIG_DB) — <code>vni</code> 設定の副作用 WRITE<a class="headerlink" href="#vxlan_tunnel_map-config_db-vni-write" title="Permanent link">&para;</a></h3>
+<p><code>VRF.vni</code> に非ゼロ値を設定すると、<code>vrfmgrd</code> が自動で <code>VXLAN_TUNNEL_MAP</code> に <code>evpn_map_&lt;vni&gt;_&lt;vrf&gt;</code> エントリを作成する（<code>vrfmgr.cpp:510</code>）。<code>vni=0</code> に戻すと対応エントリが削除される。<code>VRF</code> テーブルの <code>vni</code> フィールド変更が別テーブルを書き換えるという暗黙の副作用。</p>
+<h3 id="yang-leafref">YANG leafref 被参照テーブル<a class="headerlink" href="#yang-leafref" title="Permanent link">&para;</a></h3>
+<p>以下のテーブルは <code>vrf_name</code> フィールドで <code>VRF.name</code> を leafref 参照する。<code>VRF</code> エントリが削除されると orphan になり、各 consumer がエラーを返す。</p>
+<table>
+<thead>
+<tr>
+<th>被参照テーブル</th>
+<th>leafref フィールド</th>
+<th>orphan 時の影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INTERFACE</code></td>
+<td><code>vrf_name</code></td>
+<td>intfmgrd / intfsorch が VRF not found エラー</td>
+</tr>
+<tr>
+<td><code>VLAN_INTERFACE</code></td>
+<td><code>vrf_name</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>PORTCHANNEL_INTERFACE</code></td>
+<td><code>vrf_name</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE</code></td>
+<td><code>vrf_name</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>VLAN_SUB_INTERFACE</code></td>
+<td><code>vrf_name</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>BGP_GLOBALS</code></td>
+<td>key <code>&lt;vrf_name&gt;</code></td>
+<td>bgpcfgd が <code>"non-default VRF {} was not configured"</code> エラー</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-leafref">key 埋め込み参照（leafref 非強制）<a class="headerlink" href="#key-leafref" title="Permanent link">&para;</a></h3>
+<p><code>STATIC_ROUTE|&lt;vrf_name&gt;|&lt;prefix&gt;</code> および <code>PIM_GLOBALS|&lt;vrf&gt;|&lt;af&gt;</code> / <code>PIM_INTERFACE|&lt;vrf&gt;|&lt;af&gt;|&lt;interface&gt;</code> は key に VRF 名を直接埋め込む形式。YANG leafref による強制バリデーションはなく、VRF が存在しなくても CONFIG_DB への書き込みは成功するが、各 manager（staticroutemgrd、frr-mgmt-framework）が FRR への反映で失敗する。</p>
+<h3 id="linux-id">Linux ルーティングテーブル ID（隠れたリソース上限）<a class="headerlink" href="#linux-id" title="Permanent link">&para;</a></h3>
+<p><code>vrfmgrd</code> は VRF 追加のたびに Linux カーネルのルーティングテーブル ID（<code>VRF_TABLE_START=1001</code> 〜 <code>VRF_TABLE_END=5097</code>）を消費する。CONFIG_DB フィールドに現れない外部リソースで、最大 4096 VRF を超えると <code>getFreeTable()=0</code> となり Linux VRF デバイス作成が失敗する。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・リトライ・回復 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp</code>, <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss/orchagent/saihelper.cpp</code></p>
+</blockquote>
+<h3 id="vrfmgrd">vrfmgrd 側の失敗処理<a class="headerlink" href="#vrfmgrd" title="Permanent link">&para;</a></h3>
+<p>vrfmgrd は失敗時に基本的にエントリを即破棄する。唯一の例外は VRF DEL 時のパッシブリトライ。</p>
+<table>
+<thead>
+<tr>
+<th>失敗シナリオ</th>
+<th>コード参照</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux netdev 作成失敗 (<code>ip link add</code> エラー / テーブル枯渇)</td>
+<td>vrfmgr.cpp:281-284</td>
+<td><code>SWSS_LOG_ERROR("Failed to create vrf netdev %s")</code> → エントリ破棄。リトライなし</td>
+</tr>
+<tr>
+<td>テーブル枯渇 (4096 VRF 超過)</td>
+<td>vrfmgr.cpp:185-188</td>
+<td><code>getFreeTable()</code> が 0 を返す → <code>setLink()</code> false → エントリ破棄。既存 VRF 削除後に再投入が必要</td>
+</tr>
+<tr>
+<td>VNI マップ設定失敗</td>
+<td>vrfmgr.cpp:295-301</td>
+<td><code>SWSS_LOG_ERROR("VRF VNI Map Config Failed")</code> → エントリ破棄</td>
+</tr>
+<tr>
+<td>VNI 重複</td>
+<td>vrfmgr.cpp:441-443</td>
+<td><code>SWSS_LOG_ERROR("vni %d is already mapped to vrf %s")</code> → 即破棄</td>
+</tr>
+<tr>
+<td>VNI 上書き禁止</td>
+<td>vrfmgr.cpp:461-463</td>
+<td><code>SWSS_LOG_ERROR("vrf %s is already mapped to vni %d")</code> → 即破棄。<code>vni=0</code> リセット後に再設定が必要</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vrfmgrd-del">vrfmgrd DEL のパッシブリトライ<a class="headerlink" href="#vrfmgrd-del" title="Permanent link">&para;</a></h3>
+<p>VRF 削除時、orchagent が SAI VR を削除するまで vrfmgrd はループをスキップしてキュー内で待機し続ける。これが唯一のリトライ機構。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// vrfmgr.cpp:331-334: VRFOrch の STATE_DB 消去を待つ</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isVrfObjExist</span><span class="p">(</span><span class="n">vrfName</span><span class="p">))</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">it</span><span class="o">++</span><span class="p">;</span><span class="w">   </span><span class="c1">// erase せず次回ループで再試行</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="k">continue</span><span class="p">;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<ul>
+<li><code>isVrfObjExist()</code> は <code>STATE_DB.VRF_OBJECT_TABLE|&lt;vrfName&gt;</code> を参照</li>
+<li>VRFOrch が <code>m_stateVrfObjectTable.del(vrfName)</code> を呼ぶまで無制限に待機</li>
+<li>タイムアウトなし</li>
+</ul>
+<h3 id="orchagent-vrforch-task_need_retry">orchagent (VRFOrch) の task_need_retry<a class="headerlink" href="#orchagent-vrforch-task_need_retry" title="Permanent link">&para;</a></h3>
+<p><code>VRFOrch::addOperation</code> の SAI create / set 失敗、<code>delOperation</code> の SAI remove 失敗は <code>handleSai*Status</code> → <code>parseHandleSaiStatusFailure</code> を通じてリトライ判定される。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>parseHandleSaiStatusFailure(task_need_retry) → false  → Consumer キューに残留、次回再試行
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>parseHandleSaiStatusFailure(task_failed)     → true   → エントリ破棄
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>SAI ステータス</th>
+<th>create/set</th>
+<th>remove</th>
+<th>実効挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> / <code>TABLE_FULL</code> / <code>NO_MEMORY</code> / <code>NV_STORAGE_FULL</code></td>
+<td><code>task_need_retry</code></td>
+<td><code>task_success</code> (警告のみ)</td>
+<td>create/set: 自動再試行</td>
+</tr>
+<tr>
+<td><code>SAI_STATUS_OBJECT_IN_USE</code></td>
+<td><code>task_success</code> (警告のみ)</td>
+<td><code>task_need_retry</code></td>
+<td>remove: <code>OBJECT_IN_USE</code> 解消まで自動再試行</td>
+</tr>
+<tr>
+<td>その他エラー</td>
+<td><code>task_failed</code></td>
+<td><code>task_failed</code></td>
+<td>エントリ破棄 + <code>handleSaiFailure</code> 呼び出し</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ref_count-del">ref_count ガード (DEL ブロック)<a class="headerlink" href="#ref_count-del" title="Permanent link">&para;</a></h3>
+<p>orchagent は VRF に参照カウンタを持ち、ゼロになるまで DEL をブロックする。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// vrforch.cpp:169-170</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vrf_table_</span><span class="p">[</span><span class="n">vrf_name</span><span class="p">].</span><span class="n">ref_count</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">  </span><span class="c1">// Consumer キューに残留</span>
+</span></code></pre></div>
+<ul>
+<li><code>intfsorch.cpp:640</code> (インタフェース削除) / <code>routeorch.cpp:2773</code> (ルート削除) が <code>decreaseVrfRefCount</code> を呼ぶ</li>
+<li>所属インタフェース・ルート・MPLS ルート・SRv6 SID を先にすべて削除すること</li>
+</ul>
+<h3 id="_17">失敗挙動まとめ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>シナリオ</th>
+<th>発生場所</th>
+<th>リトライ</th>
+<th>回復操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>netdev 作成失敗</td>
+<td>vrfmgrd</td>
+<td>なし</td>
+<td>CONFIG_DB 再投入</td>
+</tr>
+<tr>
+<td>4096 VRF 超過</td>
+<td>vrfmgrd</td>
+<td>なし</td>
+<td>既存 VRF 削除後に再投入</td>
+</tr>
+<tr>
+<td>VNI 重複</td>
+<td>vrfmgrd</td>
+<td>なし</td>
+<td>重複 VNI 解除後に再設定</td>
+</tr>
+<tr>
+<td>VNI 上書き</td>
+<td>vrfmgrd</td>
+<td>なし</td>
+<td><code>vni=0</code> リセット → 新 VNI 設定</td>
+</tr>
+<tr>
+<td>VRF DEL (orchagent 未削除)</td>
+<td>vrfmgrd</td>
+<td>passive (無制限)</td>
+<td>orchagent の ref_count ゼロを待つ</td>
+</tr>
+<tr>
+<td>SAI create リソース不足</td>
+<td>orchagent</td>
+<td>task_need_retry (自動)</td>
+<td>リソース解放後に自動回復</td>
+</tr>
+<tr>
+<td>SAI remove OBJECT_IN_USE</td>
+<td>orchagent</td>
+<td>task_need_retry (自動)</td>
+<td>参照オブジェクト削除後に自動回復</td>
+</tr>
+<tr>
+<td>ref_count &gt; 0 で VRF DEL</td>
+<td>orchagent</td>
+<td>passive (無制限)</td>
+<td>インタフェース・ルートを先に削除</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp</code></p>
+</blockquote>
+<h3 id="linux-id_1">Linux ルーティングテーブル ID 定数<a class="headerlink" href="#linux-id_1" title="Permanent link">&para;</a></h3>
+<p>vrfmgrd は VRF ごとに Linux カーネルのルーティングテーブル ID を自動割り当てする。これらの値は CONFIG_DB フィールドに一切現れない内部定数。</p>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>意味</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF_TABLE_START</code></td>
+<td><code>1001</code></td>
+<td>通常 VRF に割り当てる table ID の開始値</td>
+<td><code>vrfmgr.cpp:12</code></td>
+</tr>
+<tr>
+<td><code>VRF_TABLE_END</code></td>
+<td><code>5097</code></td>
+<td>通常 VRF に割り当てる table ID の終端値（排他）</td>
+<td><code>vrfmgr.cpp:13</code></td>
+</tr>
+<tr>
+<td><code>TABLE_LOCAL_PREF</code></td>
+<td><code>1001</code></td>
+<td><code>ip rule</code> で local テーブルを移動する preference 値</td>
+<td><code>vrfmgr.cpp:14</code></td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_TABLE_ID</code></td>
+<td><code>6000</code></td>
+<td><code>mgmt</code> VRF 専用の固定 table ID（通常プール外）</td>
+<td><code>vrfmgr.cpp:15</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>最大同時 VRF 数</strong>: <code>VRF_TABLE_END - VRF_TABLE_START = 4096</code>。超過すると <code>getFreeTable()</code> が <code>0</code> を返し、Linux VRF デバイス作成が失敗する（<code>vrfmgr.cpp:185-188</code>）。VRF 削除により <code>recycleTable()</code> でプールに返却される。</p>
+<h3 id="_18">リトライ定数<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p>vrfmgrd にはタイムアウト定数が存在しない。VRF DEL 時のパッシブリトライは <strong>タイムアウトなし・無制限</strong>。<code>isVrfObjExist()</code> が <code>true</code> を返す（orchagent 側の SAI オブジェクトが残存する）間、Consumer キューをスキップして次回ループで再試行し続ける。</p>
+<h3 id="vni">VNI デフォルト定数<a class="headerlink" href="#vni" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uint32_t vni = 0</code>（vrfmgrd 初期化）</td>
+<td><code>0</code></td>
+<td><code>vrfmgr.cpp:418</code></td>
+</tr>
+<tr>
+<td><code>uint32_t vni = 0</code>（orchagent 初期化）</td>
+<td><code>0</code></td>
+<td><code>vrforch.cpp:30</code></td>
+</tr>
+</tbody>
+</table>
+<p>YANG <code>default 0</code> と一致。VNI 上限 <code>16777215</code> は YANG <code>range "0..16777215"</code> による制約であり、vrfmgr.cpp 内にマジックナンバーとして現れない。</p>
+<!-- /constants -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/vrf-pubsub.md -->
+
+<h3 id="producerconsumer">Producer/Consumer ペア<a class="headerlink" href="#producerconsumer" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB から SAI までの全通信は Redis の <strong>keyspace notification</strong> と <strong>ProducerStateTable/ConsumerStateTable</strong> パターンで構成される。</p>
+<h4 id="config_db-vrfmgrd">CONFIG_DB → vrfmgrd<a class="headerlink" href="#config_db-vrfmgrd" title="Permanent link">&para;</a></h4>
+<p><code>vrfmgrd</code> は起動時に <code>Orch(cfgDb, tableNames)</code> コンストラクタ経由で <code>Orch::addConsumer()</code> を呼ぶ。CONFIG_DB（db_id=4）に対しては <code>SubscriberStateTable</code> が選択される（<code>orch.cpp:1186-1190</code>）。</p>
+<p>購読テーブル（<code>vrfmgrd.cpp:29-34</code>）:</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF</code></td>
+<td>VRF インスタンス作成・削除</td>
+</tr>
+<tr>
+<td><code>VNET</code></td>
+<td>VNET (VRF ベース仮想ネットワーク)</td>
+</tr>
+<tr>
+<td><code>VXLAN_EVPN_NVO</code></td>
+<td>EVPN NVO トンネル設定</td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_CONFIG</code></td>
+<td>mgmt VRF 有効化制御</td>
+</tr>
+</tbody>
+</table>
+<p><code>SubscriberStateTable</code> は Redis keyspace notification を使用する（<code>subscriberstatetable.cpp:20-24</code>）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>PSUBSCRIBE __keyspace@4__:VRF|*
+</span></code></pre></div>
+<p>イベント受信フロー:</p>
+<ol>
+<li>CONFIG_DB への <code>hset</code> / <code>hdel</code> / <code>del</code> を Redis が検知し keyspace 通知を発行</li>
+<li><code>Select::select()</code> が fd を wake-up（タイムアウト 1000 ms）</li>
+<li><code>readData()</code> が <code>redisGetReply()</code> でイベントをバッファへ蓄積</li>
+<li><code>pops()</code> がイベントから key を抽出し <code>TABLE.get(key)</code> で現在値取得</li>
+<li><code>Consumer::execute()</code> → <code>VrfMgr::doTask(Consumer&amp;)</code> を呼び出し</li>
+</ol>
+<p>また起動時は <code>getKeys()</code> で既存エントリを全件スキャンし <code>m_buffer</code> に積み込み、warm restart 時のリプレイに対応する。</p>
+<h4 id="vrfmgrd-appl_db">vrfmgrd → APPL_DB<a class="headerlink" href="#vrfmgrd-appl_db" title="Permanent link">&para;</a></h4>
+<p>処理完了後、<code>ProducerStateTable</code> で APPL_DB に書き込む（<code>vrfmgr.h:46</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>Producer</th>
+<th>書き込み先</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_appVrfTableProducer</code></td>
+<td><code>APPL_DB::VRF_TABLE</code></td>
+<td>VRF エントリ</td>
+</tr>
+<tr>
+<td><code>m_appVnetTableProducer</code></td>
+<td><code>APPL_DB::VNET_TABLE</code></td>
+<td>VNET エントリ</td>
+</tr>
+<tr>
+<td><code>m_appVxlanVrfTableProducer</code></td>
+<td><code>APPL_DB::VXLAN_VRF_TABLE</code></td>
+<td>VRF-VNI マッピング</td>
+</tr>
+</tbody>
+</table>
+<p>Lua スクリプト（<code>EVALSHA</code>）がアトミックに実行（<code>vrfmgr.cpp:303</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>SADD VRF_TABLE_KEY_SET &lt;vrfName&gt;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>HSET _VRF_TABLE:&lt;vrfName&gt; &lt;fields&gt;
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>PUBLISH VRF_TABLE_CHANNEL@0 G
+</span></code></pre></div>
+<h4 id="appl_db-orchagent-vrforch">APPL_DB → orchagent (VRFOrch)<a class="headerlink" href="#appl_db-orchagent-vrforch" title="Permanent link">&para;</a></h4>
+<p><code>orchdaemon.cpp:283</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">VRFOrch</span><span class="w"> </span><span class="o">*</span><span class="n">vrf_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VRFOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">APP_VRF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">                                 </span><span class="n">m_stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">STATE_VRF_OBJECT_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>VRFOrch</code> が <code>Orch2(appDb, APP_VRF_TABLE_NAME, request_)</code> を通じて <code>ConsumerStateTable</code> を使用する（<code>orch.cpp:1194</code>）。APPL_DB（db_id=0）への通知を購読:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>SUBSCRIBE VRF_TABLE_CHANNEL@0
+</span></code></pre></div>
+<p>チャンネル通知で wake-up → <code>consumer_state_table_pops.lua</code>（<code>SPOP KEY_SET</code> + <code>HGETALL _VRF_TABLE:&lt;key&gt;</code>）→ <code>VRFOrch::addOperation()</code> / <code>delOperation()</code> → <code>sai_virtual_router_api</code>。</p>
+<h3 id="state_db">STATE_DB への書き込み<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>書き込み元</th>
+<th>タイミング</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_VRF_TABLE\|&lt;name&gt;</code></td>
+<td>vrfmgrd</td>
+<td><code>setLink()</code> 成功直後</td>
+<td><code>hset("state", "ok")</code> (<code>vrfmgr.cpp:288</code>)</td>
+</tr>
+<tr>
+<td><code>STATE_VRF_TABLE\|&lt;name&gt;</code></td>
+<td>vrfmgrd</td>
+<td>VRF DEL 実行時</td>
+<td><code>del()</code> (<code>vrfmgr.cpp:339</code>)</td>
+</tr>
+<tr>
+<td><code>STATE_VRF_OBJECT_TABLE\|&lt;name&gt;</code></td>
+<td>VRFOrch</td>
+<td>SAI VR 作成成功</td>
+<td><code>hset("state", "ok")</code></td>
+</tr>
+<tr>
+<td><code>STATE_VRF_OBJECT_TABLE\|&lt;name&gt;</code></td>
+<td>VRFOrch</td>
+<td>SAI VR 削除完了</td>
+<td><code>del()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>vrfmgrd</code> は <code>isVrfObjExist()</code> で <code>STATE_VRF_OBJECT_TABLE</code> を読み取り専用参照し、orchagent 側 SAI オブジェクトが削除されるまで VRF DEL をブロックする（2 フェーズ非同期削除）。</p>
+<h3 id="select-retry">select() ループと retry<a class="headerlink" href="#select-retry" title="Permanent link">&para;</a></h3>
+<p><code>vrfmgrd.cpp:49-84</code>（<code>SELECT_TIMEOUT = 1000 ms</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>s.select(&amp;sel, 1000 ms)
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  TIMEOUT → vrfmgr.doTask()   // 全 consumer のキューを再試行
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  EVENT   → c-&gt;execute()       // 該当 consumer を処理
+</span></code></pre></div>
+<p>VRF DEL 処理中に <code>isVrfObjExist()</code> が true（orchagent 未完了）の場合、<code>it++; continue;</code> でキューに残し次のループで再試行（タイムアウトなし・無制限待機）。</p>
+<h3 id="_19">通信フロー全体図<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>CONFIG_DB[VRF|*]
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  │  keyspace notification: PSUBSCRIBE __keyspace@4__:VRF|*
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>  ▼
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>vrfmgrd::VrfMgr::doTask
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>  │  (VRF / MGMT_VRF_CONFIG) ProducerStateTable::set/del
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>  │  EVALSHA → SADD KEY_SET + HSET _VRF_TABLE:&lt;key&gt;
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>  │            + PUBLISH VRF_TABLE_CHANNEL@0 G
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>  ├─→ STATE_DB[VRF_TABLE|&lt;name&gt;]  hset(state=ok) / del
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>  ▼
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>APPL_DB[VRF_TABLE|*]
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>  │  ConsumerStateTable: SUBSCRIBE VRF_TABLE_CHANNEL@0
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>  │  consumer_state_table_pops.lua → SPOP + HGETALL
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>  ▼
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>orchagent::VRFOrch::addOperation / delOperation
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>  │  sai_virtual_router_api::create / remove_virtual_router
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>  ├─→ STATE_DB[VRF_OBJECT_TABLE|&lt;name&gt;]  hset(state=ok) / del
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>  ▼
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>SAI (ハードウェア VRF)
+</span></code></pre></div>
+<!-- /pubsub -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp</code>, <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss-common/common/schema.h</code></p>
+</blockquote>
+<p><code>VRF</code> エントリの SET/DEL が CONFIG_DB 外の DB テーブルへ書き込む副次効果を網羅する。</p>
+<h3 id="vrfmgrd-set">vrfmgrd — SET 時の副次書込み<a class="headerlink" href="#vrfmgrd-set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象 DB / テーブル</th>
+<th>キー / フィールド</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_stateVrfTable.set(name, [{state:"ok"}])</code></td>
+<td>STATE_DB / <code>VRF_TABLE</code></td>
+<td><code>&lt;name&gt;</code> field=<code>state</code></td>
+<td>Linux netdev 作成後、常時 (vrfmgr.cpp:289)</td>
+</tr>
+<tr>
+<td><code>m_appVrfTableProducer.set(name, fields)</code></td>
+<td>APPL_DB / <code>VRF_TABLE</code></td>
+<td><code>&lt;name&gt;</code></td>
+<td>VRF_TABLE または MGMT_VRF_CONFIG 経由 (vrfmgr.cpp:303)</td>
+</tr>
+<tr>
+<td><code>m_appVxlanVrfTableProducer.set(key, [{vni,vrf}])</code></td>
+<td>APPL_DB / <code>VXLAN_VRF_TABLE</code></td>
+<td><code>&lt;tunnel&gt;:evpn_map_&lt;vni&gt;_&lt;vrf&gt;</code></td>
+<td><code>vni</code> 非ゼロ かつ EVPN NVO トンネル設定済み (vrfmgr.cpp:521)</td>
+</tr>
+</tbody>
+</table>
+<p>カーネル副作用 (DB 外): <code>ip link add &lt;name&gt; type vrf table &lt;id&gt;</code> / <code>ip link set &lt;name&gt; up</code>。mgmt VRF では <code>ip link add</code> をスキップ。</p>
+<h3 id="vrfmgrd-del_1">vrfmgrd — DEL 時の副次書込み<a class="headerlink" href="#vrfmgrd-del_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象 DB / テーブル</th>
+<th>キー</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_appVrfTableProducer.del(name)</code></td>
+<td>APPL_DB / <code>VRF_TABLE</code></td>
+<td><code>&lt;name&gt;</code></td>
+<td>STATE_DB に該当エントリが存在する場合 (vrfmgr.cpp:338)</td>
+</tr>
+<tr>
+<td><code>m_stateVrfTable.del(name)</code></td>
+<td>STATE_DB / <code>VRF_TABLE</code></td>
+<td><code>&lt;name&gt;</code></td>
+<td>同上 (vrfmgr.cpp:339)</td>
+</tr>
+<tr>
+<td><code>m_appVxlanVrfTableProducer.del(key)</code></td>
+<td>APPL_DB / <code>VXLAN_VRF_TABLE</code></td>
+<td><code>&lt;tunnel&gt;:evpn_map_&lt;vni&gt;_&lt;vrf&gt;</code></td>
+<td><code>vni</code> マッピングが存在する場合 (vrfmgr.cpp:524)</td>
+</tr>
+</tbody>
+</table>
+<p>カーネル副作用: <code>ip link del &lt;name&gt;</code>。DEL 実行は orchagent が <code>VRF_OBJECT_TABLE</code> を消去するまで遅延する。</p>
+<h3 id="vrforch-orchagent-appl_db-vrf_table">VRFOrch (orchagent) — APPL_DB VRF_TABLE 受信後の副次書込み<a class="headerlink" href="#vrforch-orchagent-appl_db-vrf_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>対象 DB / テーブル</th>
+<th>キー / フィールド</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>m_stateVrfObjectTable.hset(name, "state", "ok")</code></td>
+<td>STATE_DB / <code>VRF_OBJECT_TABLE</code></td>
+<td><code>&lt;name&gt;</code> field=<code>state</code></td>
+<td>SAI create/set 成功後 (vrforch.cpp:120, 150)</td>
+</tr>
+<tr>
+<td><code>m_stateVrfObjectTable.del(name)</code></td>
+<td>STATE_DB / <code>VRF_OBJECT_TABLE</code></td>
+<td><code>&lt;name&gt;</code></td>
+<td>SAI remove 成功後 (vrforch.cpp:193)</td>
+</tr>
+</tbody>
+</table>
+<p>SAI 副作用 (ASIC_DB 経由): <code>create_virtual_router</code> / <code>remove_virtual_router</code> / <code>set_virtual_router_attribute</code>。VNI 設定時は <code>VxlanTunnelOrch</code> を経由して ASIC_DB に VXLAN エントリが反映される。</p>
+<h3 id="state_db_1">STATE_DB テーブル役割まとめ<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>STATE_DB テーブル</th>
+<th>書込みプロセス</th>
+<th>削除プロセス</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF_TABLE\|&lt;name&gt;</code> (<code>state=ok</code>)</td>
+<td>vrfmgrd</td>
+<td>vrfmgrd</td>
+<td>intfmgrd の VRF readiness ガード</td>
+</tr>
+<tr>
+<td><code>VRF_OBJECT_TABLE\|&lt;name&gt;</code> (<code>state=ok</code>)</td>
+<td>VRFOrch</td>
+<td>VRFOrch</td>
+<td>vrfmgrd DEL の遅延同期ゲート</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">確認コマンド<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VRF_TABLE|VrfRed&#39;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VRF_OBJECT_TABLE|VrfRed&#39;</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VRF_TABLE:VrfRed&#39;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed&#39;</span>
+</span></code></pre></div>
+<!-- /side-effects -->
 
 <!-- glossary-links-injected: e2892b76fd9a -->
 
