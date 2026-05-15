@@ -27999,6 +27999,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-161udp-net-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        port 空文字 → 実効 161/udp（テンプレ + net-snmp 既定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#0-udp161-udp6161-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エントリ 0 件時 → udp:161 + udp6:161 のハードコード fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name-default-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name 空文字 → 実効 default VRF（テンプレ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#udp-udp6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロトコル (udp / udp6) の自動選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 側の補助挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28133,7 +28205,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         CLI
@@ -34968,6 +35040,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-161udp-net-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        port 空文字 → 実効 161/udp（テンプレ + net-snmp 既定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#0-udp161-udp6161-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        エントリ 0 件時 → udp:161 + udp6:161 のハードコード fallback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf_name-default-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrf_name 空文字 → 実効 default VRF（テンプレ）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#udp-udp6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロトコル (udp / udp6) の自動選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI 側の補助挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35102,7 +35246,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
+  <a href="#cli_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         CLI
@@ -35448,6 +35592,30 @@
 </table>
 <!-- /value-behavior -->
 
+<!-- defaults -->
+<h2 id="fallback">コード由来の暗黙デフォルト・Fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h2>
+<p><code>SNMP_AGENT_ADDRESS_CONFIG</code> は hostcfgd を経由せず、<code>docker-snmp</code> の Jinja2 テンプレート (<code>dockers/docker-snmp/snmpd.conf.j2</code>) が CONFIG_DB を直接読んで <code>snmpd.conf</code> を生成する。このため「コード由来デフォルト」はテンプレートのレンダリングロジックと net-snmp 既定値の組み合わせで決まる。YANG <code>sonic-snmp.yang</code> 側に <code>default</code> 宣言は無く、空文字許容 (<code>pattern ''</code>) のみ。</p>
+<h3 id="port-161udp-net-snmp"><code>port</code> 空文字 → 実効 161/udp（テンプレ + net-snmp 既定）<a class="headerlink" href="#port-161udp-net-snmp" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2:28-29</code> の for ループは <code>{% if port %}:{{ port }}{% endif %}</code> で port 指定が空ならコロンサフィックスを省略する。生成される行は <code>agentAddress udp:[&lt;ip&gt;]</code> となり、net-snmp は port 省略時に <strong>161/udp</strong> にバインドする。YANG <code>default</code> 宣言は無いため、161 という値は完全にコード（テンプレ + net-snmp）由来。</p>
+<h3 id="0-udp161-udp6161-fallback">エントリ 0 件時 → <code>udp:161</code> + <code>udp6:161</code> のハードコード fallback<a class="headerlink" href="#0-udp161-udp6161-fallback" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2:31-34</code> の <code>{% else %}</code> 分岐:</p>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="x">agentAddress udp:161</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="x">agentAddress udp6:161</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+</span></code></pre></div>
+<p>テーブルにエントリが 1 件もない場合、IPv4 と IPv6 の両方で 161/udp listen が <strong>テンプレ内ハードコード</strong> で出力される。CONFIG_DB / YANG にこの fallback を示すフィールドは無く、ソース上はこの 2 行が唯一の真実源。</p>
+<h3 id="vrf_name-default-vrf"><code>vrf_name</code> 空文字 → 実効 default VRF（テンプレ）<a class="headerlink" href="#vrf_name-default-vrf" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2:29</code> の <code>{% if vrf %}@{{ vrf }}{% endif %}</code> により <code>vrf</code> が空文字なら <code>@&lt;vrf&gt;</code> サフィックスが省略され、snmpd はカーネル default routing namespace（= default VRF）でリッスンする。「空文字 = default VRF」というセマンティクスは YANG 側に明示宣言が無く、テンプレと net-snmp の挙動でのみ担保される。ただし <code>MGMT_VRF_CONFIG.mgmtVrfEnabled=true</code> の状態では CLI (<code>config/main.py:4153-4157</code>) が <code>-v</code> 省略を <strong>CLI 層で拒否</strong> するため、この「vrf 空 → default」経路が成立するのは Management VRF 無効時のみ。</p>
+<h3 id="udp-udp6">プロトコル (<code>udp</code> / <code>udp6</code>) の自動選択<a class="headerlink" href="#udp-udp6" title="Permanent link">&para;</a></h3>
+<p><code>snmpd.conf.j2:19-25</code> の <code>protocol(ip_addr)</code> macro が <code>agent_ip</code> を <code>split('%')[0]</code> した上で <code>|ipv6</code> Jinja2 フィルタで判定し、IPv6 リテラルなら <code>udp6</code>、それ以外なら <code>udp</code> を返す。CONFIG_DB / YANG にプロトコル種別フィールドは存在せず、<strong>完全にテンプレ macro 由来の派生</strong>。link-local アドレスの zone id (<code>%eth0</code> 等) は判定前に除去されるため誤判定しない。</p>
+<h3 id="cli">CLI 側の補助挙動<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<p><code>sonic-utilities/config/main.py:4139-4140</code> で <code>-p</code> / <code>-v</code> には click <code>default=</code> が <strong>宣言されておらず</strong>、省略時は CONFIG_DB key に空文字部分 (<code>&lt;ip&gt;||</code> 等) が格納される。実効値はすべてテンプレ側で補完される設計。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2:19-34</code> (テンプレ macro + for/else 分岐)、<code>sonic-utilities/config/main.py:4137-4190</code> (CLI 側 click default 不在)、<code>sonic-host-services/scripts/hostcfgd</code> (grep で <code>SNMP_AGENT_ADDRESS</code> ヒット 0 件 = 非経由)。詳細は <code>meta/_intermediate/cdb-flow/snmp-agent-address-config-defaults.md</code> を参照。</p>
+</blockquote>
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 <h2 id="_15">例外条件・特殊挙動<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35531,7 +35699,7 @@
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
 <p>SNMP_AGENT_ADDRESS_CONFIG テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。</p>
-<h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
+<h3 id="cli_1">CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>config snmp agentaddress add/del ...</code> — <code>config/main.py</code> が <code>set_entry('SNMP_AGENT_ADDRESS_CONFIG', key, {})</code> を呼ぶ (sonic-utilities/config/main.py:4142–4186)</li>
 </ul>
