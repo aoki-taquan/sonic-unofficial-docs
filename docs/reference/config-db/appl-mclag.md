@@ -262,6 +262,71 @@ csm->session_timeout = HEARTBEAT_TIMEOUT_SEC;  // = 15
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 書き込み側 mclagsyncd の通信構造
+
+`mclagsyncd` は APPL_DB に対しては書き込み専用で、上流イベントを 3 系統から受け取る:
+
+1. **iccpd → mclagsyncd**: Unix ドメインソケット経由の IPC (MCLAG_DEFAULT_PORT = 2626、`mclag.h:56`)
+2. **CONFIG_DB → mclagsyncd**: `SubscriberStateTable` で keyspace notification を購読
+3. **STATE_DB → mclagsyncd**: `SubscriberStateTable` で keyspace notification を購読
+
+APPL_DB への書き込みは 7 種類すべて `ProducerStateTable` 経由 (`mclaglink.cpp:1810-1816`)[^link]。書き込みごとに各テーブルの `<TABLE>_CHANNEL@0` チャネルへ PUBLISH される。
+
+### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
+
+`mclagsyncd` は CONFIG_DB / STATE_DB の以下のテーブルを `SubscriberStateTable` で購読する。`SubscriberStateTable` は内部で Redis keyspace notification を PSUBSCRIBE する[^link]:
+
+| 購読元 | DB | テーブル | PSUBSCRIBE パターン |
+|--------|----|---------|-------------------|
+| CONFIG_DB | 4 | `MCLAG` (MCLAG_DOMAIN) | `__keyspace@4__:MCLAG\|*` |
+| CONFIG_DB | 4 | `MCLAG_INTERFACE` | `__keyspace@4__:MCLAG_INTERFACE\|*` |
+| CONFIG_DB | 4 | `MCLAG_UNIQUE_IP` | `__keyspace@4__:MCLAG_UNIQUE_IP\|*` |
+| STATE_DB | 6 | `FDB_TABLE` | `__keyspace@6__:FDB_TABLE\|*` |
+| STATE_DB | 6 | `VLAN_MEMBER_TABLE` | `__keyspace@6__:VLAN_MEMBER_TABLE\|*` |
+
+実装位置: `mclagsyncd.cpp:41` (MCLAG_DOMAIN)、`mclaglink.cpp:912-921` (STATE_FDB / STATE_VLAN_MEMBER / MCLAG_INTF / MCLAG_UNIQUE_IP)。
+
+### 主ループ — 永続 blocking select、明示 retry interval なし
+
+`mclagsyncd.cpp:66-110` の主ループはタイムアウト無しの `s.select(&temps)` で永続ブロックする[^link]:
+
+```cpp
+while (true) {
+    Selectable *temps;
+    s.select(&temps);                       // タイムアウト指定なし = UINT_MAX
+    if      (temps == mclag.getStateFdbTable())        mclag.processStateFdb(...);
+    else if (temps == &mclag_cfg_tbl)                  mclag.processMclagDomainCfg(entries);
+    else if (temps == mclag.getMclagIntfCfgTable())    mclag.mclagsyncdSendMclagIfaceCfg(entries);
+    else if (temps == mclag.getMclagUniqueCfgTable())  mclag.mclagsyncdSendMclagUniqueIpCfg(entries);
+    else if (temps == mclag.getStateVlanMemberTable()) mclag.processStateVlanMember(...);
+    else                                                pipeline.flush();
+}
+```
+
+リトライは IPC 切断時のみで、外側 `while(1)` が `MclagConnectionClosedException` を捕捉し即時 `accept()` を再呼び出しする。**明示的な retry interval / sleep は存在しない**。
+
+### 消費側 orchagent の select タイムアウト
+
+書き込まれた APPL_DB エントリは orchagent が ConsumerStateTable で消費する (`SELECT_TIMEOUT = 1000` ms、`orchdaemon.cpp:23,959`)[^orch]:
+
+| APPL_DB テーブル | 消費 Orch | バインド箇所 |
+|----------------|----------|------------|
+| `MCLAG_FDB_TABLE` | `FdbOrch` (`fdborch_pri`) | `orchdaemon.cpp:229`、`fdborch.cpp:724` |
+| `ISOLATION_GROUP_TABLE` | `IsolationGroupOrch` | `orchdaemon.cpp:542`、`isolationgrouporch.cpp:68` |
+| `LAG_TABLE` / `PORT_TABLE` | `PortsOrch` | （汎用 APPL_DB 経路に相乗り） |
+| `INTF_TABLE` | `IntfsOrch` | （汎用 APPL_DB 経路に相乗り） |
+| `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` | `AclOrch` | （汎用 APPL_DB 経路に相乗り） |
+
+### iccpd 側タイマー（参考）
+
+iccpd 自身は subscribe ではなく自前のスケジューラで動作する。CONFIG_DB の `keepalive_interval` / `session_timeout` が空のときのみ iccpd 内で `CONNECT_INTERVAL_SEC = 1` 秒・`HEARTBEAT_TIMEOUT_SEC = 15` 秒 にフォールバックする[^sched][^csm]（詳細は上記「フィールドの暗黙デフォルト」節を参照）。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-pubsub.md`
+<!-- /pubsub -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -303,3 +368,4 @@ APPL_DB MCLAG/ICCP 関連テーブル群 (`MCLAG_FDB_TABLE` / `ISOLATION_GROUP_T
 [^schema]: テーブル名定数: `sonic-swss-common/common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 [^sched]: keepalive/timeout 定数: `sonic-buildimage/src/iccpd/include/scheduler.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/scheduler.h>
 [^csm]: iccpd CSM 初期化: `sonic-buildimage/src/iccpd/src/iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
+[^orch]: orchagent 消費側: `sonic-swss/orchagent/orchdaemon.cpp` (`SELECT_TIMEOUT = 1000` ms), `fdborch.cpp`, `isolationgrouporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
