@@ -22393,6 +22393,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffer_profile_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_PROFILE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_queue_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_QUEUE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pg_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_PG_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_port_ingressegress_profile_list_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_PORT_INGRESS/EGRESS_PROFILE_LIST_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pool_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_POOL_TABLE の参照（および全テーブル共通の前提）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35508,6 +35580,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#buffer_profile_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_PROFILE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_queue_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_QUEUE_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pg_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_PG_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_port_ingressegress_profile_list_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_PORT_INGRESS/EGRESS_PROFILE_LIST_TABLE の参照
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buffer_pool_table_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BUFFER_POOL_TABLE の参照（および全テーブル共通の前提）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36600,6 +36744,180 @@
 <p>詳細スキャン証跡: <code>meta/_intermediate/cdb-flow/appl-buffer-constants.md</code></p>
 </blockquote>
 <!-- /constants -->
+
+<hr />
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p>APPL_DB の <code>BUFFER_*_TABLE</code> 群を <code>BufferOrch</code> が処理する際に SAI OID 解決のために間接的に読み出す関連テーブル / Orch / DB を列挙する。<code>BufferOrch</code> は CONFIG_DB を<strong>直接購読しない</strong>ため、CONFIG_DB 側 <code>BUFFER_*</code> は <code>buffermgrd</code> 経由の Direction A 入力として扱われる（本ブロックには含めない）。</p>
+<h3 id="buffer_profile_table_1">BUFFER_PROFILE_TABLE の参照<a class="headerlink" href="#buffer_profile_table_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_POOL_TABLE\|&lt;pool&gt;</code></td>
+<td>OID 解決 (<code>resolveFieldRefValue</code>)</td>
+<td><code>pool</code> フィールド指定の <code>SET</code>。プール未作成だと <code>field_not_resolved</code> で task 再試行</td>
+<td><code>bufferorch.cpp</code> L640-650</td>
+</tr>
+<tr>
+<td><code>m_buffer_type_maps[BUFFER_POOL]</code> の object reference map</td>
+<td>削除時の逆引き</td>
+<td>profile 削除時に pool 側 refcount を減算、参照中の pool は <code>m_pendingRemove</code> で削除保留</td>
+<td><code>bufferorch.cpp</code> L560-585, L821</td>
+</tr>
+</tbody>
+</table>
+<h3 id="buffer_queue_table">BUFFER_QUEUE_TABLE の参照<a class="headerlink" href="#buffer_queue_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_PROFILE_TABLE\|&lt;profile&gt;</code></td>
+<td>OID 解決 (<code>resolveFieldRefValue</code>)</td>
+<td><code>profile</code> フィールド指定の <code>SET</code>。未作成なら task 再試行</td>
+<td><code>bufferorch.cpp</code> L961-992</td>
+</tr>
+<tr>
+<td><code>PORT\|&lt;name&gt;</code> (PortsOrch)</td>
+<td><code>gPortsOrch-&gt;getPort(port_name, port)</code></td>
+<td>key の port トークン。未 ready なら <code>field_not_ready</code> で再試行</td>
+<td><code>bufferorch.cpp</code> L1033, L1111</td>
+</tr>
+<tr>
+<td><code>getPortVoQIds(port)</code> (PortsOrch)</td>
+<td>VoQ id 列の取得</td>
+<td><code>isSwitchTypeVoq()</code> 真のとき。VoQ スイッチでは port 単位 queue ではなく VoQ id を SAI に渡す</td>
+<td><code>bufferorch.cpp</code> L1051</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB</code> — <code>QUEUE_STAT_COUNTER</code> / <code>QUEUE_WATERMARK_STAT_COUNTER</code></td>
+<td>flex counter 動的登録</td>
+<td>非 VoQ かつ <code>FlexCounterOrch::isCreateOnlyConfigDbBuffers()</code> 真、かつ queue/watermark counter 有効時</td>
+<td><code>bufferorch.cpp</code> L1135-1158</td>
+</tr>
+</tbody>
+</table>
+<h3 id="buffer_pg_table">BUFFER_PG_TABLE の参照<a class="headerlink" href="#buffer_pg_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_PROFILE_TABLE\|&lt;profile&gt;</code></td>
+<td>OID 解決 (<code>resolveFieldRefValue</code>)</td>
+<td><code>profile</code> フィールド指定の <code>SET</code></td>
+<td><code>bufferorch.cpp</code> L1339-1397</td>
+</tr>
+<tr>
+<td><code>PORT\|&lt;name&gt;</code> (PortsOrch)</td>
+<td><code>gPortsOrch-&gt;getPort(port_name, port)</code></td>
+<td>key の port トークン。未 ready なら再試行</td>
+<td><code>bufferorch.cpp</code> L1431, L1488</td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB</code> — <code>PG_STAT_COUNTER</code> / <code>PG_WATERMARK_STAT_COUNTER</code></td>
+<td>flex counter 動的登録</td>
+<td><code>FlexCounterOrch::isCreateOnlyConfigDbBuffers()</code> 真、かつ PG/watermark counter 有効時</td>
+<td><code>bufferorch.cpp</code> L1513-1531</td>
+</tr>
+<tr>
+<td>CONFIG_DB <code>BUFFER_PG</code> / APPL_DB <code>BUFFER_PG_TABLE</code></td>
+<td>warm-reboot 時の復旧スキャン</td>
+<td>コンストラクタが既存設定有無を確認し、queue 既定値を保留</td>
+<td><code>bufferorch.cpp</code> L113-141</td>
+</tr>
+</tbody>
+</table>
+<h3 id="buffer_port_ingressegress_profile_list_table_1">BUFFER_PORT_INGRESS/EGRESS_PROFILE_LIST_TABLE の参照<a class="headerlink" href="#buffer_port_ingressegress_profile_list_table_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUFFER_PROFILE_TABLE\|&lt;profile&gt;</code> (複数)</td>
+<td>OID 解決ループ</td>
+<td><code>profile_list</code> カンマ区切り要素を逐次 <code>resolveFieldRefValue</code> で解決</td>
+<td><code>bufferorch.cpp</code> L1672-1739, L1862-1929</td>
+</tr>
+<tr>
+<td><code>PORT\|&lt;name&gt;</code> (PortsOrch)</td>
+<td><code>gPortsOrch-&gt;getPort()</code></td>
+<td>port 単位 <code>SET_PORT_ATTRIBUTE</code> 発行のため。未 ready なら再試行</td>
+<td><code>bufferorch.cpp</code> L1762, L1952</td>
+</tr>
+</tbody>
+</table>
+<h3 id="buffer_pool_table_1">BUFFER_POOL_TABLE の参照（および全テーブル共通の前提）<a class="headerlink" href="#buffer_pool_table_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLEX_COUNTER_DB</code> — <code>BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td>flex counter group 登録 / 削除</td>
+<td><code>generateBufferPoolWatermarkCounterIdList()</code> 発火時</td>
+<td><code>bufferorch.cpp</code> L247, L281, L316-348</td>
+</tr>
+<tr>
+<td>PortsOrch 初期化 (<code>isInitDone()</code> / <code>isConfigDone()</code>)</td>
+<td>ブロッキング</td>
+<td>常時。PortsOrch 未完了なら handler 全体が早期 return</td>
+<td><code>bufferorch.cpp</code> L22</td>
+</tr>
+<tr>
+<td><code>m_buffer_type_maps</code> object reference graph</td>
+<td>削除時整合性</td>
+<td>profile→pool / queue→profile / pg→profile / profile_list→profile の 4 種参照関係。参照中は <code>m_pendingRemove</code> で削除保留</td>
+<td><code>bufferorch.cpp</code> L35-48, L560-585, L837-872</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">VoQ スイッチの queue 解決</p>
+<p><code>BUFFER_QUEUE_TABLE</code> の SAI 反映は通常 port 単位の queue id を取るが、<code>gPortsOrch-&gt;isSwitchTypeVoq()</code> が真のときは <code>getPortVoQIds(port)</code> で system-wide な VoQ id リストに切り替わる (<code>bufferorch.cpp:1051</code>)。VoQ スイッチでは queue counter 自動登録 (<code>bufferorch.cpp:1135-1158</code>) もスキップされる。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">FlexCounter 連動は条件付き</p>
+<p><code>FlexCounterOrch::isCreateOnlyConfigDbBuffers()</code> が真のときのみ、APPL_DB <code>BUFFER_QUEUE_TABLE</code> / <code>BUFFER_PG_TABLE</code> の SET が FLEX_COUNTER_DB への counter 登録を駆動する。本フラグは CONFIG_DB の <code>FLEX_COUNTER_TABLE</code> で切替えられる (<code>bufferorch.cpp:1138-1158, L1513-1531</code>)。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">buffermgrd 側 CONFIG_DB 参照は本ブロック対象外</p>
+<p>CONFIG_DB の <code>BUFFER_POOL</code> / <code>BUFFER_PROFILE</code> / <code>BUFFER_PG</code> / <code>BUFFER_QUEUE</code> / <code>DEVICE_METADATA.localhost.buffer_model</code> / <code>PORT</code> / <code>PORT_QOS_MAP</code> 等は <code>buffermgrd</code> (<code>buffermgrdyn</code> / <code>buffermgr</code>) が読み出して APPL_DB に変換する。<code>bufferorch</code> から直接参照されるのは warm-reboot 復旧スキャン (<code>bufferorch.cpp:129-141</code>) のみ。</p>
+</div>
+<p>詳細分析: <code>meta/_intermediate/cdb-flow/appl-buffer-cross-refs.md</code></p>
+<!-- /cross-refs -->
 
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="footnote">
