@@ -23963,6 +23963,183 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dst-port-readiness-portsorchgetport-fail-fast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. dst port readiness — PortsOrch::getPort() 先行必須（fail-fast、リトライなし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-phy-lag-vlan-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PHY 型固定 — LAG / VLAN は SET しても回復不能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-drain-head-of-line-blocking-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. drain() の head-of-line blocking — エラー発生で同一 drain 内の以降エントリが滞留
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-acl_rule-mirror_session_id-fixed_mirror_session_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ACL_RULE での mirror_session_id 参照 — FIXED_MIRROR_SESSION_TABLE 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-processupdaterequest-port-port-readiness-ref-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. processUpdateRequest の port 切替 — 新 port も readiness 必須・ref count 移管
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-policer-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. policer 先行依存は不在（CONFIG_DB との差異、要注意）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-routeorch-neighbor-fdb-erspan-dst_mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. routeOrch / neighbor / fdb 動的解決は不在（ERSPAN 固定、dst_mac 直接指定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p4rt-vs-config_db-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4RT 経路 vs CONFIG_DB 経路の capability 差異一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gre-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別 GRE type の取り扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitor_port-dst_mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スイッチタイプ別の monitor_port / dst_mac 差し替え
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-ASIC (namespace) サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discrepancy_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の discrepancy (重要)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-g-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23975,7 +24152,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         転送経路
@@ -23997,7 +24174,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         コンストラクタの構造的証拠
@@ -24013,7 +24190,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -24024,7 +24201,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -24035,7 +24212,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -24046,7 +24223,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34475,6 +34652,183 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存・タイミング依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存・タイミング依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-dst-port-readiness-portsorchgetport-fail-fast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. dst port readiness — PortsOrch::getPort() 先行必須（fail-fast、リトライなし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-phy-lag-vlan-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. PHY 型固定 — LAG / VLAN は SET しても回復不能
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-drain-head-of-line-blocking-drain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. drain() の head-of-line blocking — エラー発生で同一 drain 内の以降エントリが滞留
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-acl_rule-mirror_session_id-fixed_mirror_session_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ACL_RULE での mirror_session_id 参照 — FIXED_MIRROR_SESSION_TABLE 先行必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-processupdaterequest-port-port-readiness-ref-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. processUpdateRequest の port 切替 — 新 port も readiness 必須・ref count 移管
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-policer-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. policer 先行依存は不在（CONFIG_DB との差異、要注意）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-routeorch-neighbor-fdb-erspan-dst_mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. routeOrch / neighbor / fdb 動的解決は不在（ERSPAN 固定、dst_mac 直接指定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p4rt-vs-config_db-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4RT 経路 vs CONFIG_DB 経路の capability 差異一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gre-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム別 GRE type の取り扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitor_port-dst_mac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        スイッチタイプ別の monitor_port / dst_mac 差し替え
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-namespace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-ASIC (namespace) サポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discrepancy_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        既知の discrepancy (重要)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-g-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34487,7 +34841,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         転送経路
@@ -34509,7 +34863,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         コンストラクタの構造的証拠
@@ -34525,7 +34879,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34536,7 +34890,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34547,7 +34901,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -34558,7 +34912,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34753,13 +35107,275 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 <code>0x00</code> (= 0) は有効値として受け付けられるが、フィールド自体の省略は <code>has_ttl=false</code> / <code>has_tos=false</code> のまま ADD を発行することになり <code>SWSS_RC_INVALID_PARAM</code> が返る。</p>
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>FIXED_MIRROR_SESSION_TABLE</code> は P4RT 経路で <code>MirrorSessionManager</code> (<code>orchagent/p4orch/mirror_session_manager.cpp</code>) が直接処理する。CONFIG_DB <code>MIRROR_SESSION</code> を扱う <code>MirrorOrch</code> と異なり、<strong>route/neighbor/fdb の動的解決機構を持たず</strong>、<code>dst_mac</code> を APPL_DB フィールドとして直接受け取る fail-fast 設計になっている<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">11</a></sup>。リトライ機構や pending キューがないため、書込み順は P4RT クライアント側で正しく保証する必要がある。</p>
+<h3 id="1-dst-port-readiness-portsorchgetport-fail-fast">1. dst port readiness — PortsOrch::getPort() 先行必須（fail-fast、リトライなし）<a class="headerlink" href="#1-dst-port-readiness-portsorchgetport-fail-fast" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// mirror_session_manager.cpp:122-136 (prepareSaiAttrs)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">swss</span><span class="o">::</span><span class="n">Port</span><span class="w"> </span><span class="n">port</span><span class="p">;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">getPort</span><span class="p">(</span><span class="n">mirror_session_entry</span><span class="p">.</span><span class="n">port</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="n">LOG_ERROR_AND_RETURN</span><span class="p">(</span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">                       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Failed to get port info for port &quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">                       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">QuotedVar</span><span class="p">(</span><span class="n">mirror_session_entry</span><span class="p">.</span><span class="n">port</span><span class="p">));</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_type</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Port</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">PHY</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="n">LOG_ERROR_AND_RETURN</span><span class="p">(</span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_INVALID_PARAM</span><span class="p">)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">                       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Port &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">QuotedVar</span><span class="p">(</span><span class="n">mirror_session_entry</span><span class="p">.</span><span class="n">port</span><span class="p">)</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">                       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;&#39;s type &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">port</span><span class="p">.</span><span class="n">m_type</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">                       </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; is not physical and is invalid as destination &quot;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">                          </span><span class="s">&quot;port for mirror packet.&quot;</span><span class="p">);</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>CONFIG_DB 側 <code>MirrorOrch::doTask()</code> は <code>gPortsOrch-&gt;allPortsReady()</code> が false なら <code>doTask()</code> 全体を即 return して後で再 drain される (<code>mirrororch.cpp:1571-1574</code>) が、<code>MirrorSessionManager::drain()</code> には <strong><code>allPortsReady()</code> ガードがない</strong> (<code>mirror_session_manager.cpp:62-119</code>)。<code>m_entries.pop_front()</code> で即時取り出し、<code>prepareSaiAttrs()</code> が <code>SWSS_RC_NOT_FOUND</code> を返すと <code>m_publisher-&gt;publish()</code> で結果通知してそのまま破棄する。</p>
+<p>→ 順序依存: <code>param/port</code> で指定する物理ポートが PortsOrch に登録済みであること。port 未登録時の SET は <code>SWSS_RC_NOT_FOUND</code> で失敗確定し、自動再試行されない（P4RT クライアントが再送する必要がある）。</p>
+<h3 id="2-phy-lag-vlan-set">2. PHY 型固定 — LAG / VLAN は SET しても回復不能<a class="headerlink" href="#2-phy-lag-vlan-set" title="Permanent link">&para;</a></h3>
+<p><code>prepareSaiAttrs()</code> は <code>port.m_type != Port::Type::PHY</code> の場合 <code>SWSS_RC_INVALID_PARAM</code> を即返す。port の type は同一 alias で変動しないため、後から PHY に切り替わる遷移は存在しない。</p>
+<p>→ 順序依存ではなく<strong>設計時の制約</strong>。LAG/VLAN を <code>param/port</code> に指定したエントリは何度再送しても受理されない。</p>
+<h3 id="3-drain-head-of-line-blocking-drain">3. drain() の head-of-line blocking — エラー発生で同一 drain 内の以降エントリが滞留<a class="headerlink" href="#3-drain-head-of-line-blocking-drain" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// mirror_session_manager.cpp:114-118</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">m_publisher</span><span class="o">-&gt;</span><span class="n">publish</span><span class="p">(</span><span class="n">APP_P4RT_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">kfvKey</span><span class="p">(</span><span class="n">key_op_fvs_tuple</span><span class="p">),</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">                     </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">key_op_fvs_tuple</span><span class="p">),</span><span class="w"> </span><span class="n">status</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">                     </span><span class="cm">/*replace=*/</span><span class="nb">true</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>drain()</code> のメインループは最初の失敗時点で <code>break</code> し、残った <code>m_entries</code> は <code>drainWithNotExecuted()</code> で「未実行」として publisher に返すだけ。同一 P4RT トランザクション内で複数セッションを SET する場合、<strong>先頭エントリの失敗で後続セッションは全て未処理</strong>になる。CONFIG_DB <code>MirrorOrch::doTask()</code> (<code>mirrororch.cpp:1576-1607</code>) が各エントリを独立に処理するのとは異なる。</p>
+<p>→ 順序依存（バッチ内）: P4RT クライアントは port readiness のばらつきがあるバッチを避け、エラーが出たロットは個別再送する。</p>
+<h3 id="4-acl_rule-mirror_session_id-fixed_mirror_session_table">4. ACL_RULE での mirror_session_id 参照 — FIXED_MIRROR_SESSION_TABLE 先行必須<a class="headerlink" href="#4-acl_rule-mirror_session_id-fixed_mirror_session_table" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// acl_rule_manager.cpp:1403-1419</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">case</span><span class="w"> </span><span class="no">SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">case</span><span class="w"> </span><span class="no">SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_EGRESS</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">sai_object_id_t</span><span class="w"> </span><span class="n">mirror_session_oid</span><span class="p">;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">KeyGenerator</span><span class="o">::</span><span class="n">generateMirrorSessionKey</span><span class="p">(</span><span class="n">attr_value</span><span class="p">);</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_p4OidMapper</span><span class="o">-&gt;</span><span class="n">getOID</span><span class="p">(</span><span class="n">SAI_OBJECT_TYPE_MIRROR_SESSION</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mirror_session_oid</span><span class="p">))</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">               </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Mirror session &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">QuotedVar</span><span class="p">(</span><span class="n">attr_value</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; does not exist for &quot;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">               </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">QuotedVar</span><span class="p">(</span><span class="n">acl_rule</span><span class="o">-&gt;</span><span class="n">acl_table_name</span><span class="p">);</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>P4RT ACL の <code>AclRuleManager</code> は mirror アクション処理で <code>m_p4OidMapper-&gt;getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, ...)</code> を呼び、未登録なら <code>SWSS_RC_NOT_FOUND</code> で即失敗する。CONFIG_DB 側 <code>AclRuleMirror::create()</code> は <code>SUBJECT_TYPE_MIRROR_SESSION_CHANGE</code> 通知（<code>mirrororch.cpp:1095-1096, 1110-1111</code>）で後から activate される pending 機構を持つが、<strong>p4orch の <code>AclRuleManager</code> には同等の遅延 activate 機構がない</strong>。</p>
+<p>→ 順序依存: P4RT クライアントは「<code>FIXED_MIRROR_SESSION_TABLE</code> SET → publish 成功確認 → <code>ACL_*_TABLE</code> SET（mirror action 付き）」の順で発行すること。</p>
+<h3 id="5-processupdaterequest-port-port-readiness-ref-count">5. processUpdateRequest の port 切替 — 新 port も readiness 必須・ref count 移管<a class="headerlink" href="#5-processupdaterequest-port-port-readiness-ref-count" title="Permanent link">&para;</a></h3>
+<p><code>processUpdateRequest()</code> で <code>param/port</code> が変わる場合、<code>gPortsOrch-&gt;getPort(new_port_name, new_port)</code> を呼び (<code>mirror_session_manager.cpp:493</code>)、失敗時は <code>SWSS_RC_NOT_FOUND</code> で即返り、SAI 属性更新も ref count 移管も行われず<strong>旧 port が保持される</strong>。成功時のみ <code>decreasePortRefCount(old)</code> → <code>increasePortRefCount(new)</code> の順で実行 (<code>mirror_session_manager.cpp:517-518</code>)。</p>
+<p>→ 順序依存: port 切替時は新 port が PortsOrch に登録済みであること。新 port 作成後に UPDATE を発行する。</p>
+<h3 id="6-policer-config_db">6. policer 先行依存は不在（CONFIG_DB との差異、要注意）<a class="headerlink" href="#6-policer-config_db" title="Permanent link">&para;</a></h3>
+<p><code>FIXED_MIRROR_SESSION_TABLE</code> には <strong><code>policer</code> フィールドが存在しない</strong>。<code>P4MirrorSessionAppDbEntry</code> 構造体 (<code>p4orch_util.h:253-279</code>) は ttl/tos/src_ip/dst_ip/src_mac/dst_mac/port のみ保持し、<code>prepareSaiAttrs()</code> も <code>SAI_MIRROR_SESSION_ATTR_POLICER</code> を設定しない (<code>mirror_session_manager.cpp:122-188</code>)。</p>
+<p>CONFIG_DB 側 <code>MirrorOrch::createEntry()</code> (<code>mirrororch.cpp:432-443</code>) は <code>MIRROR_SESSION_POLICER</code> フィールドに対して <code>m_policerOrch-&gt;policerExists()</code> をチェックし、未登録なら <code>task_need_retry</code> で <strong>POLICER 先行を強制する</strong>が、FIXED_MIRROR_SESSION_TABLE 経路ではこの依存は<strong>ない</strong>。</p>
+<p>→ 含意: P4RT で QoS 制御が必要な場合は ACL_RULE の meter (<code>getMeterSaiAttrs</code>, <code>acl_rule_manager.cpp:124-</code>) 側で行う設計。MIRROR_SESSION への policer attach は P4RT 経路では対象外。</p>
+<h3 id="7-routeorch-neighbor-fdb-erspan-dst_mac">7. routeOrch / neighbor / fdb 動的解決は不在（ERSPAN 固定、dst_mac 直接指定）<a class="headerlink" href="#7-routeorch-neighbor-fdb-erspan-dst_mac" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB ERSPAN セッションは <code>m_routeOrch-&gt;attach(this, entry.dstIp)</code> (<code>mirrororch.cpp:517</code>) で next hop 解決を待ち、<code>SUBJECT_TYPE_NEXTHOP_CHANGE</code> / <code>NEIGH_CHANGE</code> / <code>FDB_CHANGE</code> / <code>LAG_MEMBER_CHANGE</code> 通知で <code>updateSession()</code> を回す動的解決機構を持つ (<code>mirrororch.cpp:160-198, 760-808</code>)。</p>
+<p>P4RT 経路は <code>param/dst_mac</code> を <strong>APPL_DB の必須フィールドとして直接受け取る</strong> ため、neighbor / fdb / route の動的解決は行われない。<code>MirrorSessionManager</code> は <code>Observer</code> ではなく、PortsOrch/NeighOrch/FdbOrch/RouteOrch に attach もしない。</p>
+<p>→ 含意: P4RT クライアントは事前に dst MAC を解決して <code>param/dst_mac</code> で渡す責務を負う。トポロジ変化で MAC が変わった場合は <code>FIXED_MIRROR_SESSION_TABLE</code> の UPDATE を発行し直す必要がある（自動追従しない）。</p>
+<h3 id="_4">順序依存サマリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>PORT 初期化 → <code>FIXED_MIRROR_SESSION_TABLE</code> SET (<code>param/port</code>)</td>
+<td>強制先行（fail-fast、リトライなし）</td>
+<td>P4RT クライアント側で再送</td>
+</tr>
+<tr>
+<td>2</td>
+<td>port は PHY 型</td>
+<td>設計時制約（LAG/VLAN 不可）</td>
+<td>設計時に PHY を選定</td>
+</tr>
+<tr>
+<td>3</td>
+<td>drain() head-of-line blocking</td>
+<td>バッチ内順序注意</td>
+<td>エラー発生ロットは個別再送</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>FIXED_MIRROR_SESSION_TABLE</code> SET 完了 → ACL_RULE (mirror action)</td>
+<td>強制先行（pending 機構なし）</td>
+<td>クライアントが SET 順序を保証</td>
+</tr>
+<tr>
+<td>5</td>
+<td>新 port PortsOrch 登録済み → UPDATE 発行</td>
+<td>強制先行</td>
+<td>新 port 作成後に UPDATE</td>
+</tr>
+<tr>
+<td>6</td>
+<td>policer 先行依存は<strong>不在</strong></td>
+<td>(CONFIG_DB との差異)</td>
+<td>QoS 制御は ACL meter で</td>
+</tr>
+<tr>
+<td>7</td>
+<td>route/neighbor/fdb 動的解決は<strong>不在</strong></td>
+<td>(CONFIG_DB との差異)</td>
+<td>クライアント側で <code>dst_mac</code> 再解決</td>
+</tr>
+</tbody>
+</table>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/appl-mirror-ordering.md</code></p>
+<!-- /ordering -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>FIXED_MIRROR_SESSION_TABLE</code> を処理する <code>MirrorSessionManager</code> は <strong><code>getenv("platform")</code> を一切参照せず</strong>、GRE type / IP header version / encapsulation type / session type をすべて C++ 定数としてハードコードする (<code>mirror_session_manager.h:20-21</code>、<code>mirror_session_manager.cpp::prepareSaiAttrs()</code>)。
+一方 CONFIG_DB 側 <code>MirrorOrch</code> は <code>mirrororch.cpp:65-72</code> で <code>platform == MLNX_PLATFORM_SUBSTRING</code> のときに GRE type を <code>0x8949</code> に切り替える等、複数のプラットフォーム / スイッチタイプ分岐を持つ。
+このため同一 ASIC 上で CONFIG_DB 経路と P4RT 経路を併用すると、Mellanox 等で <strong>経路によって SAI 属性値が異なる discrepancy</strong> が発生する。</p>
+<h3 id="p4rt-vs-config_db-capability">P4RT 経路 vs CONFIG_DB 経路の capability 差異一覧<a class="headerlink" href="#p4rt-vs-config_db-capability" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>capability</th>
+<th>CONFIG_DB MIRROR_SESSION (MirrorOrch)</th>
+<th>APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GRE protocol type</strong></td>
+<td>mellanox は <code>0x8949</code>、それ以外は <code>0x88be</code> (<code>platform</code> env で分岐、<code>gre_type</code> フィールドで上書き可)</td>
+<td><strong><code>0x88be</code> ハードコード</strong> (上書き不可)</td>
+<td><code>mirrororch.cpp:57-77</code> / <code>mirror_session_manager.h:21</code></td>
+</tr>
+<tr>
+<td><strong>IP header version</strong></td>
+<td>IPv4 / IPv6 を <code>src_ip</code> / <code>dst_ip</code> のアドレスファミリで自動判定</td>
+<td><strong><code>4</code> ハードコード</strong> (IPv6 ERSPAN 不可)</td>
+<td><code>mirrororch.cpp:1005-1049</code> / <code>mirror_session_manager.h:20</code></td>
+</tr>
+<tr>
+<td><strong>VoQ スイッチ向け monitor_port 差し替え</strong></td>
+<td><code>gMySwitchType == "voq"</code> かつ ERSPAN のとき <strong>recirc port</strong> に強制差し替え</td>
+<td>差し替えなし (<code>param/port</code> をそのまま使用)</td>
+<td><code>mirrororch.cpp:592-598, 961-973, 1193-1205</code></td>
+</tr>
+<tr>
+<td><strong>VoQ スイッチ向け DST_MAC 差し替え</strong></td>
+<td><code>voq</code> かつ ERSPAN のとき <strong><code>gMacAddress</code></strong> に差し替え</td>
+<td>差し替えなし (<code>param/dst_mac</code> をそのまま使用)</td>
+<td><code>mirrororch.cpp:609-615, 1037-1044, 1153-1159</code></td>
+</tr>
+<tr>
+<td><strong>ingress/egress mirror ASIC capability</strong></td>
+<td>bind 前に <code>SwitchOrch::isPortIngressMirrorSupported()</code> / <code>isPortEgressMirrorSupported()</code> で fail-fast</td>
+<td>チェックなし (P4RT はポート bind を行わない)</td>
+<td><code>mirrororch.cpp:816-826</code></td>
+</tr>
+<tr>
+<td><strong>SAI mirror_session リソース枯渇チェック</strong></td>
+<td>ADD 前に <code>sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)</code> を呼ぶ</td>
+<td>チェックなし (SAI create 失敗で初めて検出)</td>
+<td><code>mirrororch.cpp:357-379</code></td>
+</tr>
+<tr>
+<td><strong>SAI_MIRROR_SESSION_ATTR_TC サポート差</strong></td>
+<td><code>queue=0</code> のとき TC 属性を付加しない (TC 非対応 ASIC への配慮)</td>
+<td>TC 属性そのものを APP_DB スキーマに持たず、常に SAI デフォルト</td>
+<td><code>mirrororch.cpp:931-938</code></td>
+</tr>
+<tr>
+<td><strong>Policer 連携</strong></td>
+<td><code>policer</code> フィールドで <code>PolicerOrch::getPolicerOid()</code> を解決し <code>SAI_MIRROR_SESSION_ATTR_POLICER</code> に設定</td>
+<td><strong>policer フィールド非対応</strong> (連携不可)</td>
+<td><code>mirrororch.cpp:1052-1064</code> / <code>p4orch_util.h::P4MirrorSessionAppDbEntry</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="gre-type">プラットフォーム別 GRE type の取り扱い<a class="headerlink" href="#gre-type" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>CONFIG_DB MIRROR_SESSION デフォルト</th>
+<th>APPL_DB FIXED_MIRROR_SESSION_TABLE</th>
+<th>同一 ASIC で経路併用時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mellanox (Spectrum)</td>
+<td><code>gre_type = 0x8949</code></td>
+<td><code>0x88be</code> 固定</td>
+<td><strong>discrepancy あり</strong>: SAI に渡る値が経路で異なる</td>
+</tr>
+<tr>
+<td>broadcom (XGS / DNX)</td>
+<td><code>gre_type = 0x88be</code></td>
+<td><code>0x88be</code> 固定</td>
+<td>一致</td>
+</tr>
+<tr>
+<td>barefoot / cisco-8000 / marvell-* / nephos / clounix / xsight</td>
+<td><code>gre_type = 0x88be</code></td>
+<td><code>0x88be</code> 固定</td>
+<td>一致</td>
+</tr>
+<tr>
+<td>(CLI で <code>gre_type</code> 明示上書き)</td>
+<td>任意値</td>
+<td>上書き不可</td>
+<td>上書き値次第で discrepancy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitor_port-dst_mac">スイッチタイプ別の monitor_port / dst_mac 差し替え<a class="headerlink" href="#monitor_port-dst_mac" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th><code>DEVICE_METADATA.localhost.switch_type</code></th>
+<th>CONFIG_DB ERSPAN monitor_port</th>
+<th>CONFIG_DB ERSPAN DST_MAC</th>
+<th>P4RT FIXED_MIRROR_SESSION</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>voq</code> (分散シャーシ — Cisco 8000 等)</td>
+<td><strong>recirc port</strong> に強制差し替え</td>
+<td><strong><code>gMacAddress</code></strong> (router MAC)</td>
+<td>差し替えなし。<code>switch_type=voq</code> で実用可否は未定義</td>
+</tr>
+<tr>
+<td><code>switch</code> (一般スタンドアロン)</td>
+<td><code>neighborInfo.portId</code> (ARP/NDP 解決)</td>
+<td><code>neighborInfo.mac</code></td>
+<td><code>param/port</code> / <code>param/dst_mac</code> をそのまま使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-asic-namespace">Multi-ASIC (namespace) サポート<a class="headerlink" href="#multi-asic-namespace" title="Permanent link">&para;</a></h3>
+<p><code>MirrorSessionManager</code> 自体に multi-asic 固有の分岐コードはない。multi-asic シャーシ (Broadcom DNX / Cisco 8000) では asic namespace ごとに orchagent と APPL_DB インスタンスが起動するため、P4RT controller 側で asic を選択して APPL_DB に書き込む必要がある。
+namespace 間の整合性 (例: 同一 <code>mirror_session_id</code> を複数 asic に作成するか) は orchagent / SAI レベルでは強制されず、上位 P4RT controller の責務となる<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">10</a></sup>。</p>
+<h3 id="discrepancy_1">既知の discrepancy (重要)<a class="headerlink" href="#discrepancy_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Mellanox での GRE type 不整合</strong>: P4RT 経由で ERSPAN セッションを作ると <code>0x88be</code> が SAI に渡るが、Mellanox Spectrum は通常 <code>0x8949</code> を期待する。CONFIG_DB 経路 (<code>MirrorOrch</code>) は <code>platform</code> env で正しく <code>0x8949</code> を選択するため、<strong>Mellanox 上で P4RT ERSPAN を使うとハードウェアが期待しない GRE type で encap される可能性がある</strong>。</li>
+<li><strong>IPv6 outer ヘッダ非対応</strong>: P4RT 側は IP header version を <code>4</code> にハードコードするため、<code>src_ip</code> / <code>dst_ip</code> に IPv6 を渡しても IPv4 ヘッダバージョンが設定される。CONFIG_DB 側はアドレスファミリで自動判定する。</li>
+<li><strong>policer 連携の機能差</strong>: CONFIG_DB 経路では <code>MIRROR_SESSION.policer</code> で rate limiter を付けられるが、P4RT 経路は policer フィールドそのものが存在せず、ASIC が policer 連携をサポートしていても <strong>P4RT 経由では利用不可</strong>。</li>
+<li><strong>VoQ シャーシでの monitor_port 不整合</strong>: <code>switch_type=voq</code> 環境では CONFIG_DB 経路は ERSPAN の monitor_port を recirc port に差し替えるが、P4RT 経路は差し替えない。<strong>P4RT FIXED_MIRROR_SESSION_TABLE は VoQ シャーシ向けに設計されていない</strong>。</li>
+</ul>
+<p>詳細は <code>meta/_intermediate/cdb-flow/appl-mirror-platform.md</code> を参照。</p>
+<!-- /platform -->
+
 <!-- pubsub -->
 <h2 id="phase-g-zmq">通信メカニズム (Phase G) — ZMQ 経由の購読<a class="headerlink" href="#phase-g-zmq" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/orchagent/p4orch/p4orch.h L46 / p4orch.cpp L36-43, L80, L126-200 / orchagent/orchdaemon.cpp L848-849 / p4orch/mirror_session_manager.cpp L82, L111 -->
 
 <p><code>FIXED_MIRROR_SESSION_TABLE</code> は <strong>通常の redis ConsumerStateTable / keyspace 通知パスではなく、専用 ZMQ チャネル経由で配送される</strong>。
 これは CONFIG_DB <code>MIRROR_SESSION</code> を購読する <code>MirrorOrch</code>（<code>orchagent/mirrororch.cpp</code> — 通常の <code>Orch</code> + <code>ConsumerStateTable</code>）とは根本的に異なる通信モデルである<sup id="fnref:pubsub-1"><a class="footnote-ref" href="#fn:pubsub-1">1</a></sup>。</p>
-<h3 id="_4">転送経路<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_5">転送経路<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -34803,35 +35419,35 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 <li>P4RT クライアントは ZMQ ソケットに対して書き込み、orchagent 側 <code>ZmqServer</code> がキューに積み、<code>P4Orch::doTask</code> が同期的にドレインする。</li>
 <li>APPL_DB への書き込みは <code>ResponsePublisher</code> 経由で行われるが、これは下流リーダのための副作用であり、購読のトリガではない。</li>
 </ul>
-<h3 id="_5">コンストラクタの構造的証拠<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// orchagent/p4orch/p4orch.cpp:36-43</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">P4Orch</span><span class="o">::</span><span class="n">P4Orch</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">*</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">               </span><span class="n">ZmqServer</span><span class="o">*</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">VRFOrch</span><span class="o">*</span><span class="w"> </span><span class="n">vrfOrch</span><span class="p">,</span><span class="w"> </span><span class="n">CoppOrch</span><span class="o">*</span><span class="w"> </span><span class="n">coppOrch</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">ZmqOrch</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="cm">/*orderedQueue=*/</span><span class="nb">true</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">              </span><span class="cm">/*dbPersistence=*/</span><span class="nb">false</span><span class="p">),</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="n">m_zmqServer</span><span class="p">(</span><span class="n">zmqServer</span><span class="p">),</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="n">m_publisher</span><span class="p">(</span><span class="s">&quot;APPL_DB&quot;</span><span class="p">,</span><span class="w"> </span><span class="cm">/*bool buffered=*/</span><span class="nb">true</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">                  </span><span class="cm">/*db_write_thread=*/</span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">)</span>
+<h3 id="_6">コンストラクタの構造的証拠<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// orchagent/p4orch/p4orch.cpp:36-43</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">P4Orch</span><span class="o">::</span><span class="n">P4Orch</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">*</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">               </span><span class="n">ZmqServer</span><span class="o">*</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">VRFOrch</span><span class="o">*</span><span class="w"> </span><span class="n">vrfOrch</span><span class="p">,</span><span class="w"> </span><span class="n">CoppOrch</span><span class="o">*</span><span class="w"> </span><span class="n">coppOrch</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">ZmqOrch</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="cm">/*orderedQueue=*/</span><span class="nb">true</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">              </span><span class="cm">/*dbPersistence=*/</span><span class="nb">false</span><span class="p">),</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">      </span><span class="n">m_zmqServer</span><span class="p">(</span><span class="n">zmqServer</span><span class="p">),</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">      </span><span class="n">m_publisher</span><span class="p">(</span><span class="s">&quot;APPL_DB&quot;</span><span class="p">,</span><span class="w"> </span><span class="cm">/*bool buffered=*/</span><span class="nb">true</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">                  </span><span class="cm">/*db_write_thread=*/</span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>MirrorOrch</code>（CONFIG_DB 側）のコンストラクタは <code>Orch(confDbConnector.first, confDbConnector.second)</code> を呼ぶだけで <code>ZmqServer</code> を一切受け取らない。両経路は構造的に完全に独立している<sup id="fnref2:pubsub-1"><a class="footnote-ref" href="#fn:pubsub-1">1</a></sup>。</p>
 <!-- /pubsub -->
 
-<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>p4orch</code> 内の <code>MirrorSessionManager</code> (<code>orchagent/p4orch/mirror_session_manager.cpp</code>)。<code>P4Orch::doTask(ConsumerBase&amp;)</code> から ZMQ 経由で配送される</li>
 <li>CONFIG_DB <code>MIRROR_SESSION</code> テーブルの <code>MirrorOrch</code> とは独立した別経路（redis ConsumerStateTable ベース）</li>
 </ul>
-<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../mirror-session/">CONFIG_DB MIRROR_SESSION</a> — 通常の SPAN/ERSPAN セッション設定 (CLI 経由)</li>
 <li>P4RT: <code>APP_P4RT_MIRROR_SESSION_TABLE_NAME = "FIXED_MIRROR_SESSION_TABLE"</code> (<code>sonic-swss-common/common/schema.h:70</code>)</li>
 </ul>
-<h2 id="_8">確認コマンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># APPL_DB の FIXED_MIRROR_SESSION_TABLE を確認</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE*&#39;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE|{&quot;match/mirror_session_id&quot;:&quot;my_session&quot;}&#39;</span>
+<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># APPL_DB の FIXED_MIRROR_SESSION_TABLE を確認</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE*&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FIXED_MIRROR_SESSION_TABLE|{&quot;match/mirror_session_id&quot;:&quot;my_session&quot;}&#39;</span>
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>
@@ -34861,6 +35477,12 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 </li>
 <li id="fn:4">
 <p><code>deserializeP4MirrorSessionAppDbEntry()</code>: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L190-323. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p><code>MirrorEntry::MirrorEntry()</code> での GRE type platform 分岐: <code>orchagent/mirrororch.cpp</code> L57-77. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p><code>MirrorSessionManager::drain()</code> と <code>prepareSaiAttrs()</code> の書込み順依存: <code>orchagent/p4orch/mirror_session_manager.cpp</code> L62-188. CONFIG_DB 経路の <code>MirrorOrch::doTask()</code> (<code>orchagent/mirrororch.cpp</code> L1567-1611) と動的解決機構 (L160-198, L760-808) との対比は <code>meta/_intermediate/cdb-flow/appl-mirror-ordering.md</code> を参照。 <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 11 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

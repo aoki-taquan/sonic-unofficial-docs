@@ -24222,6 +24222,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35257,6 +35268,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35941,6 +35963,94 @@
 </ul>
 </div>
 <!-- /failure -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>FLEX_COUNTER_TABLE|FLOW_CNT_TRAP</code> / <code>FLOW_CNT_ROUTE</code> および <code>FLOW_COUNTER_ROUTE_PATTERN</code> は <strong>YANG leafref を一切持たない</strong>（<code>sonic-flex_counter</code> / <code>sonic-flow_counter</code> どちらも leafref 未定義）。以下はすべて実装レベルの暗黙参照。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_TRAP</code> / <code>COPP_GROUP</code> (CONFIG_DB)</td>
+<td>OID 解決 + counter 紐付け</td>
+<td><code>FLOW_CNT_TRAP</code> enable 受信時。CoppOrch の <code>m_syncdTrapIds</code> に登録済みの全 HOSTIF trap object に対し SAI counter を生成</td>
+<td><code>flexcounterorch.cpp:311-323</code>, <code>copporch.cpp:530, 1513</code> (<code>generateHostIfTrapCounterIdList()</code>, <code>bindTrapCounter()</code>)</td>
+</tr>
+<tr>
+<td><code>STATE_DB COPP_TRAP_TABLE</code> / <code>COUNTERS_DB COUNTERS_TRAP_NAME_MAP</code></td>
+<td>書き込み（trap_name ↔ counter OID 逆引き map）</td>
+<td>trap counter 紐付け成功時</td>
+<td><code>copporch.cpp:196, 236</code></td>
+</tr>
+<tr>
+<td><code>APP_DB ROUTE_TABLE</code> / SAI route entry</td>
+<td>読み取り（prefix マッチング + route OID 解決）</td>
+<td><code>FLOW_CNT_ROUTE</code> enable かつ <code>FLOW_COUNTER_ROUTE_PATTERN</code> 登録時、または既存パターンに後追いで route 追加時</td>
+<td><code>flowcounterrouteorch.cpp:55-97</code> (<code>doTask(Consumer&amp;)</code>), <code>doTask(SelectableTimer&amp;)</code></td>
+</tr>
+<tr>
+<td><code>CONFIG_DB VRF</code> / <code>VNET</code></td>
+<td>vrf_name → vrf_id 解決</td>
+<td><code>FLOW_COUNTER_ROUTE_PATTERN</code> key が <code>&lt;vrf&gt;\|&lt;prefix&gt;</code> 形式のとき。VRF 削除でパターン自動 cleanup</td>
+<td><code>flowcounterrouteorch.cpp:956-973, 409-419, 446</code></td>
+</tr>
+<tr>
+<td><code>ASIC_DB VIDTORID</code></td>
+<td>読み取り（VID → RID 解決）</td>
+<td><code>FLEX_COUNTER_UPD_TIMER</code> (1 秒) で counter を flex counter manager に登録する直前</td>
+<td><code>flowcounterrouteorch.cpp:30-32</code> (<code>mVidToRidTable("VIDTORID")</code>)</td>
+</tr>
+<tr>
+<td><code>STATE_DB FLOW_COUNTER_CAPABILITY_TABLE</code></td>
+<td>書き込み（自身が情報源）</td>
+<td>FlowCounterRouteOrch 起動時 1 回。<code>route</code> key に <code>support: true\|false</code></td>
+<td><code>flowcounterrouteorch.cpp:166-179</code>, <code>flow_counter_handler.cpp:51-62</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE</code> / <code>FLEX_COUNTER_TABLE</code></td>
+<td>書き込み（orchagent → syncd 経路）</td>
+<td><code>FLEX_COUNTER_STATUS</code> / <code>POLL_INTERVAL</code> 変更時、および route/trap への counter 紐付け時</td>
+<td><code>flexcounterorch.cpp:202-214, 380-392</code>, <code>saihelper.cpp:868-885,918-962</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB COUNTERS:&lt;oid&gt;</code> / <code>COUNTERS_ROUTE_NAME_MAP</code></td>
+<td>書き込み（syncd → COUNTERS_DB）</td>
+<td>ポーリング周期ごと (10 秒) / add-remove pattern 時</td>
+<td><code>flowcounterrouteorch.cpp</code> (<code>mPrefixToRouteMap</code>, <code>mRouteFlowCounterMgr</code>)</td>
+</tr>
+<tr>
+<td><code>CONFIG_DB DEVICE_METADATA</code></td>
+<td>読み取り（同 Orch 同居）</td>
+<td><code>FlexCounterOrch</code> が <code>DEVICE_METADATA</code> も購読。<code>FLOW_CNT_*</code> 処理には直接影響しない</td>
+<td><code>flexcounterorch.cpp:106, 150</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">COPP_TRAP の事前 install が必要</p>
+<p><code>FLOW_CNT_TRAP</code> を <code>enable</code> にしてカウンタが生えるのは <code>CoppOrch</code> が既に SAI HOSTIF trap object を作成済みの trap だけ。<code>COPP_TRAP</code> / <code>COPP_GROUP</code> が未投入のままでは counter 対象が空になる。通常は orchagent 起動時に <code>copp_cfg.json</code> 等で先行投入されるため問題ないが、ランタイムで trap を追加した場合は <code>FLOW_CNT_TRAP</code> を一旦 disable→enable する必要はなく、<code>bindTrapCounter()</code> が trap install 時に同期で呼ばれる。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">VRF 修飾 prefix の遅延解決</p>
+<p><code>FLOW_COUNTER_ROUTE_PATTERN|&lt;vrf&gt;\|&lt;prefix&gt;</code> を書き込んだ時点で <code>&lt;vrf&gt;</code> が <code>CONFIG_DB VRF</code> に未登録だと <code>"VRF/VNET name &lt;name&gt; is not resolved"</code> ログが出て当該パターンは内部の未解決リストに保留される。VRF が後から登録されると自動的に再評価される。VRF を削除すると当該パターンとそれに紐付いた全 counter が remove される。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">SAI capability ゲートで FLOW_CNT_ROUTE は ASIC 依存</p>
+<p><code>FLOW_CNT_ROUTE</code> は <code>mRouteFlowCounterSupported</code>（<code>STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|FLOW_CNT_ROUTE/support</code>）が <code>true</code> の ASIC でしか動作しない。<code>false</code> の場合は <code>enable</code> も <code>FLOW_COUNTER_ROUTE_PATTERN</code> 投入も完全 no-op。事前確認は <code>show flowcnt-route capabilities</code>。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">PORT_TABLE / ACL_RULE は参照しない</p>
+<p>flow counter は port 単位でも ACL 単位でもないため <code>PORT_TABLE</code> / <code>ACL_RULE</code> / <code>ACL_TABLE</code> への暗黙参照は無い。port counter は <code>PORT</code> group、ACL counter は <code>ACL</code> group が別系統で扱う。</p>
+</div>
+<p>詳細な参照経路・行番号は <code>meta/_intermediate/cdb-flow/app-counter-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
 
 <!-- ref-triangle:start -->
 
