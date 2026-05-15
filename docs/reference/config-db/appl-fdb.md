@@ -212,6 +212,94 @@ SET APPL_DB FDB_TABLE:Vlan100:00:11:22:33:44:55  port=Ethernet0  type=static
 
 <!-- /ordering -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+APPL_DB の `FDB_TABLE` / `VXLAN_FDB_TABLE` / `MCLAG_FDB_TABLE` への変更通知は、`FdbOrch` が **`swss::ConsumerStateTable`** (channel ベース PUBLISH/SUBSCRIBE) で購読する。`Orch::addConsumer()` が DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB 以外（= APPL_DB）には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。**keyspace 通知 (`__keyspace@<dbId>__:...`) は使わない**。
+
+```cpp
+// sonic-swss/orchagent/orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ..., pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+```cpp
+// sonic-swss/orchagent/orchdaemon.cpp:226-235  (FdbOrch bind)
+vector<table_name_with_pri_t> app_fdb_tables = {
+    { APP_FDB_TABLE_NAME,        FdbOrch::fdborch_pri },
+    { APP_VXLAN_FDB_TABLE_NAME,  FdbOrch::fdborch_pri },
+    { APP_MCLAG_FDB_TABLE_NAME,  FdbOrch::fdborch_pri }
+};
+gFdbOrch = new FdbOrch(m_applDb, app_fdb_tables, stateDbFdb, stateMclagDbFdb, gPortsOrch);
+```
+
+| 購読者 | 購読 API | 購読テーブル | 優先度 | バッチ |
+|--------|---------|--------------|--------|--------|
+| `orchagent` (`FdbOrch`) | `swss::ConsumerStateTable` | `FDB_TABLE` | `fdborch_pri = 20` | `gBatchSize` (default 128) |
+| `orchagent` (`FdbOrch`) | 同上 | `VXLAN_FDB_TABLE` | 同上 | 同上 |
+| `orchagent` (`FdbOrch`) | 同上 | `MCLAG_FDB_TABLE` | 同上 | 同上 |
+
+`FdbOrch::fdborch_pri = 20` は `fdborch.cpp:25` で固定。`gBatchSize` は `main.cpp:459` で `DEFAULT_BATCH_SIZE = 128`、`orchagent -b <n>` (`main.cpp:478`) で上書き可能。書き込み側 (`fdbsyncd` / `swssconfig` / `vlanmgr` / `vxlanmgr` 等) はいずれも `swss::ProducerStateTable::set()` で書き込み、内部で `<TABLE>_CHANNEL@<dbId>` への `PUBLISH "G"` を発行する。TTL は使用されない。
+
+### channel PUBLISH → ハンドラ呼び出しの流れ
+
+```
+fdbsyncd / swssconfig / vlanmgr (PAC) / vxlanmgr (EVPN)
+  ↓ ProducerStateTable::set(<vlan>:<mac>, fvs)
+APPL_DB: HSET "_FDB_TABLE:<vlan>:<mac>" port=<...> type=<...>
+  ↓ Redis PUBLISH "FDB_TABLE_CHANNEL@0" "G"
+OrchDaemon main loop: m_select->select(&s, SELECT_TIMEOUT)
+  ↓ Consumer::execute() → ConsumerStateTable::pops()
+FdbOrch::doTask(Consumer&)  (fdborch.cpp:707-)
+  ↓ consumer.getTableName() で origin を分岐
+addFdbEntry() / removeFdbEntry()
+  ↓
+SAI: sai_fdb_api->create_fdb_entry / remove_fdb_entry
+```
+
+- `doTask(Consumer&)` 冒頭 `fdborch.cpp:711-714` で `m_portsOrch->allPortsReady()` が false の間は **全 FDB イベント処理を停止** し、`m_toSync` に滞留させる。
+- 3 つの APPL_DB テーブルは個別の `Consumer` executor として登録されるが、`doTask` 実装は共通で、`consumer.getTableName()` (`fdborch.cpp:718-727`) により `FDB_ORIGIN_PROVISIONED` / `FDB_ORIGIN_VXLAN_ADVERTIZED` / `FDB_ORIGIN_MCLAG_ADVERTIZED` に分岐する。
+
+### PortsOrch observer (プロセス内通知パス)
+
+channel PUBLISH 以外に、`FdbOrch` は `PortsOrch` の **C++ レベル observer** として登録される (`fdborch.cpp:39` `m_portsOrch->attach(this)`)。Redis を経由しないプロセス内コールバックで、`FdbOrch::update()` (`fdborch.cpp:648-672`) が以下 2 種類の `SubjectType` をディスパッチする。
+
+| `SubjectType` | ディスパッチ先 | 主な役割 |
+|---|---|---|
+| `SUBJECT_TYPE_VLAN_MEMBER_CHANGE` | `updateVlanMember()` | `saved_fdb_entries[port_name]` に保留された SET の **自動 replay** / VLAN_MEMBER 削除時の FDB 一括 flush |
+| `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` | `updatePortOperState()` | port oper-down 時の動的 FDB flush（MCLAG メンバーは除外） |
+
+`FdbOrch` 自身も `notify(SUBJECT_TYPE_FDB_CHANGE, ...)` / `notify(SUBJECT_TYPE_FDB_FLUSH_CHANGE, ...)` (`fdborch.cpp:199, 391, 415, 544, 619, 1199, 1626, 1736`) で `NeighOrch` 等の下流 Orch に通知する。
+
+### NotificationConsumer 経路
+
+`FdbOrch` コンストラクタ (`fdborch.cpp:40-48`) は `ConsumerStateTable` 以外に 2 つの `NotificationConsumer` も executor 化する。
+
+| Notification チャンネル | DB | 用途 |
+|---|---|---|
+| `FLUSHFDBREQUEST` | APPL_DB | `sonic-clear fdb all` 等の flush 要求受信 |
+| `NOTIFICATIONS` | ASIC_DB | SAI からの FDB event (LEARN / AGED / MOVE / FLUSHED) 受信 |
+
+いずれも Redis `SUBSCRIBE` channel ベースで、OrchDaemon の `Select` ループに別 Executor として参加する。
+
+### warm-restart 時 — `bake()`
+
+`FdbOrch::bake()` (`fdborch.cpp:51-65`) は warm-restart 復帰時に **STATE_DB `FDB_TABLE` の内容を `APP_FDB_TABLE_NAME` consumer の `m_toSync` に直接再充填**する経路を持つ (`refillToSync(&m_fdbStateTable)`)。`VXLAN_FDB_TABLE` / `MCLAG_FDB_TABLE` 側には bake パスなし。
+
+### サービス再起動トリガー
+
+なし。`FdbOrch` は同一 orchagent プロセス内のハンドラであり、APPL_DB エントリの追加/削除は SAI FDB オブジェクトのライブ操作のみで反映され、プロセス再起動・サービス restart を伴わない。port oper-state / VLAN_MEMBER 変化は PortsOrch observer 経由でハンドラに到達する。
+
+> **Evidence**: `sonic-swss/orchagent/fdborch.cpp:25, 27-49, 51-65, 648-672, 707-727` (優先度・コンストラクタ・bake・observer・doTask)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/orchdaemon.cpp:226-235` (`app_fdb_tables` bind と `FdbOrch` 生成)、`sonic-swss/orchagent/main.cpp:459, 478` (`DEFAULT_BATCH_SIZE = 128` と `-b` オプション)、`sonic-swss-common/common/schema.h:52, 87, 118` (テーブル名定数); 詳細分析 `meta/_intermediate/cdb-flow/appl-fdb-pubsub.md`
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
