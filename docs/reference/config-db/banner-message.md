@@ -222,6 +222,59 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 <!-- evidence: sonic-net/sonic-host-services/scripts/hostcfgd:2084L -->
 <!-- /cdb-exceptions -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `BannerCfg` が間接的に駆動する依存 (Phase C)
+
+`BANNER_MESSAGE` はシングルトンテーブルで、CONFIG_DB レベルでは**他テーブルへの暗黙参照を持たない** (`AAA` のような共依存テーブル群は存在しない)。一方で、`hostcfgd` の `BannerCfg` ハンドラは `systemctl restart banner-config` 経由で `/usr/bin/banner-config.sh` を再実行させ、結果として **OS 側のテキストファイル経由** で sshd / getty / PAM / shell logout と暗黙連携する。本ブロックではこれら「配送経路ベースの依存」と systemd unit 依存をまとめる。
+
+### CONFIG_DB レベル
+
+`BannerCfg` (`hostcfgd:2044-2114`) の subscribe 対象は `BANNER_MESSAGE` のみ (hostcfgd:2443)。他 CONFIG_DB テーブルの `get_keys` / `get_table` も呼ばない。
+
+ただし `banner-config.sh` が `systemctl restart banner-config` で呼ばれる際、shell 側が改めて `sonic-db-cli CONFIG_DB HGET 'BANNER_MESSAGE|global' ...` を 4 回実行する**二重読み出し**経路が存在する。`hostcfgd` が dict を渡すのではなく、shell 再実行時点での Redis 上の最新値を取り直す。
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| `BANNER_MESSAGE` (`global` の `state`/`login`/`motd`/`logout`) | `banner_handler` subscribe + `banner-config.sh` の HGET 再取得 | `hostcfgd` が dict 受領 → cache 比較 → 変化時に `systemctl restart banner-config` → shell 側が Redis 上の最新値を 4 HGET で改めて読む | hostcfgd:2074-2077,2111,2443 / banner-config.sh:3,9-11 |
+
+> 純粋な暗黙参照 CONFIG_DB テーブルは **なし**。シングルトン自己完結。
+
+### OS 側 (テキストファイル経由) の暗黙連携
+
+`banner-config.sh` が生成する 4 ファイルは、別プロセスがそれぞれ独立に読み出す。`BANNER_MESSAGE` から見ると **配送経路ベースの暗黙依存** にあたる。
+
+| 配送先ファイル | 読み出し側 | 前提 | evidence |
+|---|---|---|---|
+| `/etc/issue.net` | `sshd` (OpenSSH) | `sshd_config` に `Banner /etc/issue.net` ディレクティブが有効化されている (SONiC イメージビルド時の前提) | banner-config.sh:13 |
+| `/etc/issue` | `getty` (`agetty`) — コンソールログインプロンプト | Debian `agetty` 標準動作 (`--issue-file` デフォルト `/etc/issue`) | banner-config.sh:14 |
+| `/etc/motd` | `pam_motd.so` (`/etc/pam.d/sshd` / `/etc/pam.d/login` の `session optional pam_motd.so`) | PAM stack に `pam_motd` が含まれていること (Debian デフォルト) | banner-config.sh:15 |
+| `/etc/logout_message` | 各ユーザ shell の `~/.bash_logout` / `/etc/skel/.bash_logout` 等 | SONiC 独自パス。Debian 標準にないため、profile 側で明示的に cat する設定が必要 | banner-config.sh:16 |
+
+> いずれも `echo -e "$VAR" > path` による **truncate 上書き**。`state=disabled` に戻しても元の Debian 標準内容は復元されない (Phase E 定数ブロックの「副作用」参照)。
+
+### systemd unit 依存
+
+`BannerCfg` の `systemctl restart banner-config` (hostcfgd:2111) を起点に、`banner-config.service` の以下 unit 依存が間接的に効く。
+
+| 依存対象 unit | 関係 | 効果 | evidence |
+|---|---|---|---|
+| `banner-config.service` | hostcfgd → `restart` | shell スクリプト再実行のための oneshot unit | banner-config.service:11 / hostcfgd:2111 |
+| `database.service` | `BindsTo` | Redis 停止時に banner-config も停止 (`sonic-db-cli` 失敗を回避) | banner-config.service:5 |
+| `config-setup.service` | `Requires` + `After` | 初期 CONFIG_DB ロード後に banner-config が走る (cold boot race 回避) | banner-config.service:3-4 |
+| `sonic.target` | `BindsTo` + `WantedBy` | SONiC スタック停止時に同時停止、起動時に有効化 | banner-config.service:6,14 |
+
+> cold boot 時の初回 banner 反映は `hostcfgd` の `BannerCfg.load()` (hostcfgd:2057-2082) では `restart` を呼ばず、systemd 側で `banner-config.service` が `WantedBy=sonic.target` により独立に oneshot 起動する経路に依存する。
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- **`SSH_SERVER`**: `hostcfgd` `SshCfg` が購読するが、`Banner` ディレクティブの値 (`/etc/issue.net` パス) はビルド時固定で CONFIG_DB に流れない。`BannerCfg` と CONFIG_DB レベルの読み合いはない。両者は「`sshd_config` の `Banner` 有効化」というビルド時前提だけで間接的に繋がる
+- **`AAA` / `TACPLUS` / `RADIUS` / `LDAP`**: PAM stack を共有するが、`pam_motd` 制御は別 PAM 設定で `BannerCfg` から触らない
+- **`DEVICE_METADATA.localhost.hostname`**: banner 文字列はリテラル展開 (`echo -e`) のみで、hostname を埋め込む処理は `banner-config.sh` に存在しない (getty/login 側の `\h` escape は使えない)
+- **`FIPS`**: sshd の暗号方針には影響するが banner には無関係
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/banner-message-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
