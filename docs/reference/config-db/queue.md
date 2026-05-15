@@ -280,4 +280,69 @@ REST/gNMI 書き込み経路なし
 
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/queue-platform.md -->
+
+### VoQ シャーシ vs 非 VoQ — 処理パスの違い
+
+`gMySwitchType == "voq"` で scheduler 適用と [WRED](../../reference/glossary.md#term-wred) 適用の両方が独立した実装パスに分岐する。
+
+#### key トークン数
+
+| モード | key 形式 | トークン数 |
+|--------|----------|-----------|
+| 非 [VOQ](../../reference/glossary.md#term-voq) | `<ifname>\|<qindex>` | 2 |
+| [VOQ](../../reference/glossary.md#term-voq) | `<hostname>\|<asic_name>\|<ifname>\|<qindex>` | 4 |
+
+トークン数の不一致は `task_invalid_entry` で即時破棄。
+
+#### リモートシステムポートのスキップ
+
+[VOQ](../../reference/glossary.md#term-voq) 環境では、エントリが **リモートシステムポート** (`SAI_SYSTEM_PORT_TYPE_REMOTE`) に対応する場合、scheduler 適用を skip して即 `true` を返す。ローカルポートのみ [SAI](../../reference/glossary.md#term-sai) scheduler 適用が実行される。
+
+```
+qosorch.cpp:applySchedulerToQueueSchedulerGroup
+  if (gMySwitchType == "voq")
+    if (port.m_system_port_info.type == SAI_SYSTEM_PORT_TYPE_REMOTE)
+      return true   // no-op
+    → system port から local port を解決してから scheduler 適用
+```
+
+#### WRED 適用で使う queue OID
+
+| モード | queue OID の取得元 |
+|--------|------------------|
+| 非 [VOQ](../../reference/glossary.md#term-voq) | `port.m_queue_ids` (egress queue リスト) |
+| [VOQ](../../reference/glossary.md#term-voq) | `getPortVoQIds()` → `SAI_SYSTEM_PORT_ATTR_QOS_VOQ_LIST` から取得した VoQ OID リスト |
+
+[VOQ](../../reference/glossary.md#term-voq) の VoQ 数はプラットフォームの [SAI](../../reference/glossary.md#term-sai) 実装が返す値に依存し、SONiC 側でハードコードしていない。
+
+---
+
+### vendor SAI — WRED 閾値更新の制約
+
+一部ベンダーの SAI 実装では、WRED の `min_threshold` / `max_threshold` を 1 属性ずつ SET する制約上、中間状態で `min > max` となりサニティチェックが失敗するケースがある。SONiC は「違反する属性を 2nd half リストに分離して適用順を制御する」ワークアラウンドを実装済み (`qosorch.cpp:595-632`)。
+
+---
+
+### ビルド時 QUEUE デフォルト — プラットフォーム分岐 (`qos_config.j2`)
+
+`config qos reload` / ビルド時 JSON 生成は以下の優先順位で分岐する。
+
+| 優先度 | 条件 | q3/q4 の設定 |
+|--------|------|------------|
+| 1 | `switch_type = voq` ([VOQ](../../reference/glossary.md#term-voq) シャーシ) | `SYSTEM_PORT_ALL` に `wred_profile=AZURE_LOSSLESS`; `SYSTEM_PORT_ACTIVE` のみ `scheduler=scheduler.1` |
+| 2 | SKU カスタム関数 (`generate_direction_based_queue_per_sku` 等) | SKU 定義に委譲 |
+| 3a | `resource_type = ComputeAI` | q3: `scheduler.2`+LOSSLESS, q4: `scheduler.3`+LOSSLESS |
+| 3b | DPC ポート (`PORT_DPC` 所属) | `scheduler.0` のみ — lossless なし |
+| 3c | apollo resource_type | q4: `scheduler.2`+LOSSLESS |
+| 3d | 標準 + `port_names_list_extra_queues` | q2/q6 も `scheduler.1`+LOSSLESS |
+| 3e | 標準 (それ以外) | q3/q4: `scheduler.1`+LOSSLESS |
+
+DPC (Direct Port Connect) ポートは q3/q4 の lossless 設定を省略する点がビルド時の重要な差異。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: f9445b5b4106 -->
