@@ -27691,6 +27691,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log_level-fallback-trace-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_level — コード fallback trace (YANG 宣言なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-enablehttpfalse-allow_insecure-fallback-yang-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -enablehttp=false — allow_insecure 未設定時 fallback (YANG default と整合)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client_auth-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        client_auth — true 必須の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-framework-client_auth-code-only-fallback-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt-framework 側 CLIENT_AUTH — code-only fallback user
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-framework-tls-cert-path-code-only-tmpcertpem-tmpkeypem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt-framework 側 TLS cert path — code-only /tmp/cert.pem /tmp/key.pem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34941,6 +35013,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log_level-fallback-trace-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_level — コード fallback trace (YANG 宣言なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-enablehttpfalse-allow_insecure-fallback-yang-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        -enablehttp=false — allow_insecure 未設定時 fallback (YANG default と整合)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client_auth-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        client_auth — true 必須の起動ガード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-framework-client_auth-code-only-fallback-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt-framework 側 CLIENT_AUTH — code-only fallback user
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-framework-tls-cert-path-code-only-tmpcertpem-tmpkeypem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt-framework 側 TLS cert path — code-only /tmp/cert.pem /tmp/key.pem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35374,6 +35518,24 @@
 </tbody>
 </table>
 <!-- /value-behavior -->
+
+<!-- defaults -->
+<h2 id="fallback">コード由来の暗黙デフォルト・Fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h2>
+<p><code>RESTAPI</code> テーブルは YANG <code>sonic-restapi.yang</code> で <code>client_auth=true</code> / <code>allow_insecure=false</code> の宣言的 default を持つが、起動ラッパスクリプト (<code>restapi.sh</code> / <code>rest-server.sh</code>) が <strong>YANG 未宣言の追加 fallback</strong> を持つ。CONFIG_DB absent でも以下の値が <code>go-server-server</code> / <code>rest_server</code> の引数に注入される。</p>
+<h3 id="log_level-fallback-trace-yang"><code>log_level</code> — コード fallback <code>trace</code> (YANG 宣言なし)<a class="headerlink" href="#log_level-fallback-trace-yang" title="Permanent link">&para;</a></h3>
+<p><code>docker-sonic-restapi/restapi.sh:33-38</code> が <code>LOG_LEVEL</code> 空のとき <code>-loglevel=trace</code> を付与する。YANG <code>sonic-restapi.yang:68-</code> の <code>log_level</code> leaf には <code>default</code> 宣言がないため、ラッパ層でのみ担保される code-only fallback。<code>RESTAPI|config</code> を空のまま <code>restapi</code> を有効化すると、本番でも詳細ログ (<code>trace</code>) が出続ける。</p>
+<h3 id="-enablehttpfalse-allow_insecure-fallback-yang-default"><code>-enablehttp=false</code> — <code>allow_insecure</code> 未設定時 fallback (YANG default と整合)<a class="headerlink" href="#-enablehttpfalse-allow_insecure-fallback-yang-default" title="Permanent link">&para;</a></h3>
+<p><code>restapi.sh:13-17</code> は <code>allow_insecure != 'true'</code> のすべてのケース (CONFIG_DB absent 含む) で <code>-enablehttp=false</code> を付与。YANG <code>default false</code> (<code>sonic-restapi.yang:77</code>) と二重で一致。</p>
+<h3 id="client_auth-true"><code>client_auth</code> — <code>true</code> 必須の起動ガード<a class="headerlink" href="#client_auth-true" title="Permanent link">&para;</a></h3>
+<p><code>restapi.sh:10</code> は <code>$client_auth == 'true'</code> のときのみ cert ロードへ進む。YANG <code>default true</code> (<code>sonic-restapi.yang:64</code>) と整合するが、もし <code>RESTAPI|config:client_auth=false</code> を投入すると <code>go-server-server</code> は起動せず無限 <code>sleep 60</code> ループに入る（code-only の起動ガード挙動）。</p>
+<h3 id="mgmt-framework-client_auth-code-only-fallback-user">mgmt-framework 側 <code>CLIENT_AUTH</code> — code-only fallback <code>user</code><a class="headerlink" href="#mgmt-framework-client_auth-code-only-fallback-user" title="Permanent link">&para;</a></h3>
+<p><code>docker-sonic-mgmt-framework/rest-server.sh:20,29-31</code> は <code>REST_SERVER</code> (mgmt_vars 経由) から <code>client_auth</code> を読めない場合 <code>"user"</code> (ユーザ認証モード) を 2 段階で fallback する (<code>jq -r '.client_auth // "user"'</code> + 後段の <code>[ -z "$CLIENT_AUTH" ]</code> 再代入)。YANG にこの default 宣言はなく、Phase 8 表の <code>client_auth==user_auth</code> 分岐の前提となる値。</p>
+<h3 id="mgmt-framework-tls-cert-path-code-only-tmpcertpem-tmpkeypem">mgmt-framework 側 TLS cert path — code-only <code>/tmp/cert.pem</code> <code>/tmp/key.pem</code><a class="headerlink" href="#mgmt-framework-tls-cert-path-code-only-tmpcertpem-tmpkeypem" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh:45-50</code> は <code>SERVER_CRT</code> / <code>SERVER_KEY</code> 共に未設定の場合、<code>/usr/sbin/generate_cert --host="localhost,127.0.0.1"</code> で自己署名証明書を生成し <code>/tmp/cert.pem</code> / <code>/tmp/key.pem</code> を引数注入する。CONFIG_DB / YANG いずれにもパス default は無く、本 fallback はラッパ層のみで担保される。再起動ごとに新証明書が再生成される点に注意。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>dockers/docker-sonic-restapi/restapi.sh:10,13-17,33-38</code>、<code>dockers/docker-sonic-mgmt-framework/rest-server.sh:20,29-31,45-50</code>、<code>src/sonic-yang-models/yang-models/sonic-restapi.yang:62-77</code>。<code>sonic-buildimage</code> SHA <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>。詳細は <code>meta/_intermediate/cdb-flow/restapi-defaults.md</code> を参照。</p>
+</blockquote>
+<!-- /defaults -->
 
 <!-- cdb-exceptions -->
 <h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>

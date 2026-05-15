@@ -22381,7 +22381,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        強制順序（破ると不整合・silent skip）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動順（実装で吸収される一過性の窓）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UPDATE 時の全置換シーケンス（差分追加なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -22509,7 +22581,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -22520,7 +22592,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -35079,7 +35151,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#silent-skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        強制順序（破ると不整合・silent skip）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動順（実装で吸収される一過性の窓）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UPDATE 時の全置換シーケンス（差分追加なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        運用ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -35207,7 +35351,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -35218,7 +35362,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_22" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -35736,8 +35880,152 @@
 </span></code></pre></div>
 <!-- /ops-hint -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>AS_PATH_SET</code> テーブルは leafref 参照元 (<code>ROUTE_MAP.match_as_path</code>)・bgpd デーモン起動順・別経路 (<code>AsPathMgr</code>) の固定名予約という 3 系統の順序依存を持つ。<code>bgpcfgd</code> (<code>AsPathMgr</code> / <code>managers_as_path.py:7-66</code>) と <code>frrcfgd</code> (<code>frrcfgd.py:96, 1009-1020, 2248-2253, 3005-3011</code>) の全行精読と <code>bgpd.conf.db.j2:6-20</code>、<code>sonic-route-map.yang:263-268</code> のクロス読みで抽出。</p>
+<h3 id="silent-skip">強制順序（破ると不整合・silent skip）<a class="headerlink" href="#silent-skip" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>順序</th>
+<th>依存元</th>
+<th>破った場合の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>AS_PATH_SET|&lt;name&gt;</code> SET → <code>ROUTE_MAP|...</code> の <code>match_as_path:&lt;name&gt;</code> SET</td>
+<td>leafref (<code>sonic-route-map.yang:263-268</code>) + <code>frrcfgd.py:1940</code> <code>match as-path {}</code> テンプレ</td>
+<td>YANG 経路: validation reject。直書き経路: FRR 上で未定義 access-list 参照となり ROUTE_MAP は silent unmatch</td>
+</tr>
+<tr>
+<td>5</td>
+<td>DEVICE_METADATA.type/subtype 設定 → <code>bgpcfgd</code> 再起動 → <code>AsPathMgr</code> 起動 → <code>DEVICE_METADATA.t2_group_asns</code> SET</td>
+<td><code>bgpcfgd/main.py:122-130</code> の起動 gate</td>
+<td>type/subtype を後から変えても bgpcfgd を再起動しない限り AsPathMgr は (起動しない / 止まらない)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">起動順（実装で吸収される一過性の窓）<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>順序</th>
+<th>依存元</th>
+<th>吸収機構</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>bgpd 起動時テンプレで <code>route_map.j2</code> (L9) → <code>AS_PATH_SET</code> ブロック (L11-20) の順</td>
+<td><code>bgpd.conf.db.j2:6-20</code></td>
+<td>bgpd 内部の遅延解決。起動直後の極短時間のみ ROUTE_MAP <code>match as-path</code> が unmatch</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>bgpd</code> 起動完了 → <code>frrcfgd</code> の AS_PATH_SET ハンドラ呼出</td>
+<td><code>frrcfgd.py:96</code> (<code>'AS_PATH_SET': ['bgpd']</code>)</td>
+<td>supervisord 起動順 + <code>frrcfgd.py:2248-2253</code> の init キャッシュで再送</td>
+</tr>
+</tbody>
+</table>
+<h3 id="update">UPDATE 時の全置換シーケンス（差分追加なし）<a class="headerlink" href="#update" title="Permanent link">&para;</a></h3>
+<p><code>hdl_aspath_set()</code> (<code>frrcfgd.py:1009-1020</code>) は SET / UPDATE / DEL いずれでも:</p>
+<ol>
+<li>既存登録があれば <code>no bgp as-path access-list &lt;name&gt;</code> (L1014-1015)</li>
+<li>続けて全メンバを <code>permit &lt;regex&gt;</code> で再追加 (L1016-1019)</li>
+</ol>
+<p>同一 <code>configure terminal</code> セッション内で発行されるが行単位で評価されるため、両ステップの間に bgpd の policy 評価が走ると一時的に access-list 不在 → ROUTE_MAP match 不成立。</p>
+<h3 id="_18">運用ルール<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>ルール</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td><code>AS_PATH_SET|T2_GROUP_ASNS</code> という名前は予約 (<code>AsPathMgr</code> が独占)</td>
+<td><code>managers_as_path.py:7, 43, 52, 56, 65</code> — frrcfgd 経路と AsPathMgr 経路が同名 access-list を取り合い不安定化</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEL は <code>ROUTE_MAP.match_as_path</code> を先に → <code>AS_PATH_SET|&lt;name&gt;</code> を後</td>
+<td><code>frrcfgd.py:3008-3009</code> の <code>no bgp as-path access-list &lt;name&gt;</code> 発行後、ROUTE_MAP <code>match_as_path</code> は silent skip 状態で残る</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">順序依存サマリ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>区分</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>AS_PATH_SET SET → ROUTE_MAP <code>match_as_path</code> SET</td>
+<td>強制先行</td>
+<td>順序遵守</td>
+</tr>
+<tr>
+<td>2</td>
+<td>UPDATE は全 no → 全 permit</td>
+<td>実装挙動（差分追加不可）</td>
+<td>メンテ窓で実施</td>
+</tr>
+<tr>
+<td>3</td>
+<td>bgpd 起動: route_map.j2 → AS_PATH_SET レンダリング順</td>
+<td>一過性窓（自然解消）</td>
+<td>運用無視可</td>
+</tr>
+<tr>
+<td>4</td>
+<td>bgpd 起動完了 → frrcfgd ハンドラ</td>
+<td>supervisord + init キャッシュで吸収</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>5</td>
+<td>DEVICE_METADATA.type/subtype → bgpcfgd 再起動 → AsPathMgr 起動</td>
+<td>強制先行（gate）</td>
+<td>type/subtype 変更後 bgpcfgd 再起動</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>T2_GROUP_ASNS</code> 名は予約</td>
+<td>運用ルール</td>
+<td>ユーザ AS_PATH_SET 名から除外</td>
+</tr>
+<tr>
+<td>7</td>
+<td>DEL: ROUTE_MAP match_as_path 先 → AS_PATH_SET 後</td>
+<td>推奨</td>
+<td>逆順でも DB 整合性は壊れない</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: managers_as_path.py:7,30-66; main.py:122-130; frrcfgd.py:96,1009-1020,1940,2248-2253,3005-3011; bgpd.conf.db.j2:6-20; sonic-route-map.yang:263-268 -->
+
+<blockquote>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/as-path-set-ordering.md</code> を参照</p>
+</blockquote>
+<!-- /ordering -->
+
 <!-- runtime-trace -->
-<h2 id="_17">実コンテナ動作トレース<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_20">実コンテナ動作トレース<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>bgpcfgd</code> (<code>sonic-bgpcfgd</code>) が CONFIG_DB の <code>AS_PATH_SET</code> テーブルを購読する。</p>
 <p><code>bgpcfgd</code> は <code>ConfigDBConnector.listen()</code> で <code>BGP_PEER_RANGE</code>/<code>BGP_GLOBALS</code> 等と合わせて購読。</p>
@@ -35775,11 +36063,11 @@
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_18">ハードコードデフォルト<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_21">ハードコードデフォルト<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_19">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<h3 id="_22">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>

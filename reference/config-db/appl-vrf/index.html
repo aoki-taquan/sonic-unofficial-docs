@@ -24512,7 +24512,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pub-sub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム / pub-sub (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム / pub-sub (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumerstatetable-pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: ConsumerStateTable (バッチ pop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producer-vrfmgrd-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer 側: vrfmgrd の ProducerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バッチ駆動と dispatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlantunnelorch-evpnnvoorch-portsorch-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VxlanTunnelOrch / EvpnNvoOrch / PortsOrch との連携 (pub/sub ではない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet_table-vrforch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_TABLE は VRFOrch の購読対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バッチサイズ / 優先度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35322,7 +35405,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pub-sub-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム / pub-sub (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム / pub-sub (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumerstatetable-pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: ConsumerStateTable (バッチ pop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producer-vrfmgrd-producerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer 側: vrfmgrd の ProducerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dispatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バッチ駆動と dispatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vxlantunnelorch-evpnnvoorch-portsorch-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VxlanTunnelOrch / EvpnNvoOrch / PortsOrch との連携 (pub/sub ではない)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet_table-vrforch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET_TABLE は VRFOrch の購読対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        バッチサイズ / 優先度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36246,7 +36412,92 @@
 <p>詳細な grep 履歴と派生事実は <code>meta/_intermediate/cdb-flow/appl-vrf-constants.md</code> を参照。</p>
 <!-- /constants -->
 
-<h2 id="_13">関連ページ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<!-- pubsub -->
+<h2 id="pub-sub-phase-g">通信メカニズム / pub-sub (Phase G)<a class="headerlink" href="#pub-sub-phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/orchagent/vrforch.{cpp,h}</code>、<code>sonic-swss/orchagent/orch.{cpp,h}</code>、<code>sonic-swss/cfgmgr/vrfmgr.cpp</code>。証跡: <code>meta/_intermediate/cdb-flow/appl-vrf-pubsub.md</code>。</p>
+</blockquote>
+<h3 id="consumerstatetable-pop">購読方式: ConsumerStateTable (バッチ pop)<a class="headerlink" href="#consumerstatetable-pop" title="Permanent link">&para;</a></h3>
+<p><code>VRFOrch</code> は <code>Orch2</code> を継承し、コンストラクタで APPL_DB の <code>DBConnector</code> と <code>APP_VRF_TABLE_NAME = "VRF_TABLE"</code> を渡す<sup id="fnref:vrforch_h_g"><a class="footnote-ref" href="#fn:vrforch_h_g">5</a></sup>。<code>Orch</code> の基底コンストラクタは DB ID に応じて consumer の種類を切り替えており、<strong>APPL_DB の場合は <code>ConsumerStateTable</code> が選択される</strong><sup id="fnref:orch_consumer_g"><a class="footnote-ref" href="#fn:orch_consumer_g">4</a></sup>。CONFIG_DB / STATE_DB / CHASSIS_APP_DB なら <code>SubscriberStateTable</code>、それ以外は <code>ConsumerStateTable</code> という分岐になっている。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// orch.cpp:1188-1195</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">TableConsumable</span><span class="o">::</span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">}</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">else</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="p">{</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>したがって <code>VRF_TABLE</code> は <strong><code>ConsumerStateTable</code> + <code>gBatchSize</code> (デフォルト 128)</strong> で購読される。Redis Lua スクリプトが <code>VRF_TABLE_KEY_SET</code> を atomically drain し、<code>Consumer::execute()</code> 経由で <code>getConsumerTable()-&gt;pops()</code> (<code>orch.cpp:556</code>) を駆動する。</p>
+<div class="admonition warning">
+<p class="admonition-title">本ページ「購読者」節の表現について</p>
+<p>冒頭の概要・購読者節では「<code>SubscriberStateTable</code> で購読」と表現しているが、これは正確には <strong><code>ConsumerStateTable</code></strong> が正しい。APPL_DB 用テーブルは keyspace notification (<code>SubscriberStateTable</code>) ではなく <code>&lt;TABLE&gt;_KEY_SET</code> を介したバッチ pop で消費される。</p>
+</div>
+<h3 id="producer-vrfmgrd-producerstatetable">Producer 側: vrfmgrd の ProducerStateTable<a class="headerlink" href="#producer-vrfmgrd-producerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>vrfmgrd</code> (<code>vrfmgr.cpp:303</code>) は <code>m_appVrfTableProducer.set(vrfName, kfvFieldsValues(t))</code> で書き込む。<code>ProducerStateTable::set()</code> は Lua スクリプトにより hash 本体の HSET と <code>&lt;TABLE&gt;_KEY_SET</code> への SADD を同一トランザクションで行い、<code>ConsumerStateTable::pops()</code> 側と整合する。</p>
+<h3 id="dispatch">バッチ駆動と dispatch<a class="headerlink" href="#dispatch" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>OrchDaemon</code> の <code>Select::select()</code> が <code>Consumer</code> の readiness を検出</li>
+<li><code>Consumer::execute()</code> が <code>pops(*entries)</code> を呼び、Redis から最大 <code>gBatchSize</code> 件まで pop</li>
+<li>pop した KV を <code>m_toSync</code> map にマージ (同一 key の上書きで重複削減)</li>
+<li><code>Orch2::doTask(Consumer&amp;)</code> (<code>orch.cpp:1226</code>) が <code>m_toSync</code> をループし、<code>kfvOp(t)</code> に応じて <code>VRFOrch::addOperation()</code> / <code>delOperation()</code> (<code>vrforch.cpp:27, 157</code>) を 1 件ずつ呼ぶ</li>
+<li>各エントリは <code>Request::parse()</code> でフィールド型検証 (<code>request_description</code> (<code>vrforch.h:25-40</code>) に従う) を受けてから処理本体に入る</li>
+</ol>
+<h3 id="vxlantunnelorch-evpnnvoorch-portsorch-pubsub">VxlanTunnelOrch / EvpnNvoOrch / PortsOrch との連携 (pub/sub ではない)<a class="headerlink" href="#vxlantunnelorch-evpnnvoorch-portsorch-pubsub" title="Permanent link">&para;</a></h3>
+<p>VNI マッピング処理 (<code>VRFOrch::updateVrfVNIMap</code>、<code>vrforch.cpp:200-247</code>) は <strong>APPL_DB pub/sub ではなく <code>gDirectory</code> レジストリ経由の同期メソッド呼び出し</strong> で他 Orch と連携する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// vrforch.cpp:205-206, 233, 239</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">EvpnNvoOrch</span><span class="o">*</span><span class="w"> </span><span class="n">evpn_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">EvpnNvoOrch</span><span class="o">*&gt;</span><span class="p">();</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">VxlanTunnelOrch</span><span class="o">*</span><span class="w"> </span><span class="n">tunnel_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gDirectory</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">VxlanTunnelOrch</span><span class="o">*&gt;</span><span class="p">();</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">...</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">vlan_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tunnel_orch</span><span class="o">-&gt;</span><span class="n">getVlanMappedToVni</span><span class="p">(</span><span class="n">vni</span><span class="p">);</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">updateL3VniStatus</span><span class="p">(</span><span class="n">vlan_id</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+</span></code></pre></div>
+<p>つまり <code>VRF_TABLE</code> の <code>vni</code> フィールド変化は次の流れで処理される:</p>
+<ol>
+<li>APPL_DB <code>VRF_TABLE</code> → <code>ConsumerStateTable</code> で pop</li>
+<li><code>VRFOrch::addOperation()</code> 内で <code>EvpnNvoOrch::getEVPNVtep()</code> を直接コール (EVPN VTEP が未確立なら処理スキップ)</li>
+<li><code>VxlanTunnelOrch::getVlanMappedToVni(vni)</code> を直接コールして対応 VLAN を取得</li>
+<li><code>PortsOrch::updateL3VniStatus(vlan_id, true/false)</code> を直接コールして L3 VNI 状態を更新</li>
+</ol>
+<p><code>VxlanTunnelOrch</code> 側は別途 APPL_DB <code>VXLAN_TUNNEL_MAP_TABLE</code> を自身の <code>ConsumerStateTable</code> で購読しているが、<code>VRFOrch</code> とはイベント経路として独立。両者は <strong>Orch 起動順 (<code>gDirectory</code> 登録順)</strong> と <strong>VNI ↔ VLAN マップの可用性</strong> によってのみ結合する。</p>
+<h3 id="vnet_table-vrforch">VNET_TABLE は VRFOrch の購読対象外<a class="headerlink" href="#vnet_table-vrforch" title="Permanent link">&para;</a></h3>
+<p>APPL_DB <code>VNET_TABLE</code> は <code>VnetOrch</code> (<code>orchagent/vnetorch.cpp</code>) が独立した Executor として購読し、VNET 単位での Virtual Router 作成を独自経路で行う。<code>VRFOrch</code> は <code>VRF_TABLE</code> 単体のみを購読する。本ページは <code>VRF_TABLE</code> のスコープに閉じる。</p>
+<h3 id="_13">バッチサイズ / 優先度<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+<th>出所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>consumer 種別</td>
+<td><code>ConsumerStateTable</code></td>
+<td><code>orch.cpp:1194</code></td>
+</tr>
+<tr>
+<td>バッチサイズ</td>
+<td><code>gBatchSize</code> (デフォルト 128、<code>--batch-size</code> で上書き可)</td>
+<td>orchagent グローバル</td>
+</tr>
+<tr>
+<td>優先度</td>
+<td><code>default_orch_pri</code> (省略時)</td>
+<td><code>orch.h</code>、<code>vrforch.h:52-56</code> で pri 引数未指定</td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>Orch2::doTask(Consumer&amp;)</code> → <code>addOperation</code> / <code>delOperation</code></td>
+<td><code>orch.cpp:1226</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<h2 id="_14">関連ページ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vrf/">CONFIG_DB VRF テーブル</a></li>
 <li><a href="../state-vrf/">STATE_DB VRF テーブル</a></li>
@@ -36264,6 +36515,12 @@
 </li>
 <li id="fn:schema">
 <p><code>sonic-swss-common/common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:schema" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:orch_consumer_g">
+<p><code>sonic-swss/orchagent/orch.cpp:1188-1195</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:orch_consumer_g" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:vrforch_h_g">
+<p><code>sonic-swss/orchagent/vrforch.h:52-56</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vrforch.h</a>&#160;<a class="footnote-backref" href="#fnref:vrforch_h_g" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
