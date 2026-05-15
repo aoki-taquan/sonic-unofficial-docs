@@ -329,4 +329,81 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動・リトライ・回復 (Phase D)
+
+> 調査日 2026-05-15。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/saihelper.cpp`
+
+### vrfmgrd 側の失敗処理
+
+vrfmgrd は失敗時に基本的にエントリを即破棄する。唯一の例外は VRF DEL 時のパッシブリトライ。
+
+| 失敗シナリオ | コード参照 | 挙動 |
+|------------|-----------|------|
+| Linux netdev 作成失敗 (`ip link add` エラー / テーブル枯渇) | vrfmgr.cpp:281-284 | `SWSS_LOG_ERROR("Failed to create vrf netdev %s")` → エントリ破棄。リトライなし |
+| テーブル枯渇 (4096 VRF 超過) | vrfmgr.cpp:185-188 | `getFreeTable()` が 0 を返す → `setLink()` false → エントリ破棄。既存 VRF 削除後に再投入が必要 |
+| VNI マップ設定失敗 | vrfmgr.cpp:295-301 | `SWSS_LOG_ERROR("VRF VNI Map Config Failed")` → エントリ破棄 |
+| VNI 重複 | vrfmgr.cpp:441-443 | `SWSS_LOG_ERROR("vni %d is already mapped to vrf %s")` → 即破棄 |
+| VNI 上書き禁止 | vrfmgr.cpp:461-463 | `SWSS_LOG_ERROR("vrf %s is already mapped to vni %d")` → 即破棄。`vni=0` リセット後に再設定が必要 |
+
+### vrfmgrd DEL のパッシブリトライ
+
+VRF 削除時、orchagent が SAI VR を削除するまで vrfmgrd はループをスキップしてキュー内で待機し続ける。これが唯一のリトライ機構。
+
+```cpp
+// vrfmgr.cpp:331-334: VRFOrch の STATE_DB 消去を待つ
+if (!isVrfObjExist(vrfName))
+{
+    it++;   // erase せず次回ループで再試行
+    continue;
+}
+```
+
+- `isVrfObjExist()` は `STATE_DB.VRF_OBJECT_TABLE|<vrfName>` を参照
+- VRFOrch が `m_stateVrfObjectTable.del(vrfName)` を呼ぶまで無制限に待機
+- タイムアウトなし
+
+### orchagent (VRFOrch) の task_need_retry
+
+`VRFOrch::addOperation` の SAI create / set 失敗、`delOperation` の SAI remove 失敗は `handleSai*Status` → `parseHandleSaiStatusFailure` を通じてリトライ判定される。
+
+```
+parseHandleSaiStatusFailure(task_need_retry) → false  → Consumer キューに残留、次回再試行
+parseHandleSaiStatusFailure(task_failed)     → true   → エントリ破棄
+```
+
+| SAI ステータス | create/set | remove | 実効挙動 |
+|--------------|-----------|--------|---------|
+| `SAI_STATUS_INSUFFICIENT_RESOURCES` / `TABLE_FULL` / `NO_MEMORY` / `NV_STORAGE_FULL` | `task_need_retry` | `task_success` (警告のみ) | create/set: 自動再試行 |
+| `SAI_STATUS_OBJECT_IN_USE` | `task_success` (警告のみ) | `task_need_retry` | remove: `OBJECT_IN_USE` 解消まで自動再試行 |
+| その他エラー | `task_failed` | `task_failed` | エントリ破棄 + `handleSaiFailure` 呼び出し |
+
+### ref_count ガード (DEL ブロック)
+
+orchagent は VRF に参照カウンタを持ち、ゼロになるまで DEL をブロックする。
+
+```cpp
+// vrforch.cpp:169-170
+if (vrf_table_[vrf_name].ref_count)
+    return false;  // Consumer キューに残留
+```
+
+- `intfsorch.cpp:640` (インタフェース削除) / `routeorch.cpp:2773` (ルート削除) が `decreaseVrfRefCount` を呼ぶ
+- 所属インタフェース・ルート・MPLS ルート・SRv6 SID を先にすべて削除すること
+
+### 失敗挙動まとめ
+
+| シナリオ | 発生場所 | リトライ | 回復操作 |
+|---------|---------|---------|---------|
+| netdev 作成失敗 | vrfmgrd | なし | CONFIG_DB 再投入 |
+| 4096 VRF 超過 | vrfmgrd | なし | 既存 VRF 削除後に再投入 |
+| VNI 重複 | vrfmgrd | なし | 重複 VNI 解除後に再設定 |
+| VNI 上書き | vrfmgrd | なし | `vni=0` リセット → 新 VNI 設定 |
+| VRF DEL (orchagent 未削除) | vrfmgrd | passive (無制限) | orchagent の ref_count ゼロを待つ |
+| SAI create リソース不足 | orchagent | task_need_retry (自動) | リソース解放後に自動回復 |
+| SAI remove OBJECT_IN_USE | orchagent | task_need_retry (自動) | 参照オブジェクト削除後に自動回復 |
+| ref_count > 0 で VRF DEL | orchagent | passive (無制限) | インタフェース・ルートを先に削除 |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: e2892b76fd9a -->
