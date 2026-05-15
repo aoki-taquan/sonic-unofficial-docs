@@ -195,6 +195,73 @@ show ip interfaces
 <!-- /ops-hint -->
 
 
+<!-- pubsub -->
+## 通信メカニズム (Redis Pub/Sub)
+
+VLAN_INTERFACE テーブルは **2 系統の異なる購読方式** で伝搬する。
+
+### CONFIG_DB → intfmgrd (SubscriberStateTable / keyspace notification)
+
+`intfmgrd` は起動時に `Orch(cfgDb, tableNames)` を経由して `CFG_VLAN_INTF_TABLE_NAME`（`"VLAN_INTERFACE"`）を登録する。`Orch::addConsumer()` は CONFIG_DB (db_id=4) を検出すると `SubscriberStateTable` を選択し、以下の `PSUBSCRIBE` を発行する[^ps1][^ps2]。
+
+```
+PSUBSCRIBE __keyspace@4__:VLAN_INTERFACE|*
+```
+
+- CONFIG_DB の `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_INTERFACE|Vlan100 …` を書き込むと Redis が自動で `PUBLISH __keyspace@4__:VLAN_INTERFACE|Vlan100 hset` を発行する
+- `SubscriberStateTable::pops()` がイベントチャンネルからキーを取り出し、`HGETALL VLAN_INTERFACE|Vlan100` で現在値を取得して `KeyOpFieldsValuesTuple` に変換する
+- `op = "hset"` → `SET_COMMAND`、`op = "del"` → `DEL_COMMAND`
+
+### intfmgrd → APPL_DB (ProducerStateTable / channel PUBLISH)
+
+`IntfMgr` は `ProducerStateTable m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` を保持する[^ps1]。書き込み時は Lua スクリプトをアトミック実行する：
+
+```
+EVALSHA <luaSet>
+  SADD INTF_TABLE_KEY_SET "Vlan100"
+  HSET _INTF_TABLE|Vlan100 field1 val1 …
+  PUBLISH INTF_TABLE_CHANNEL@0 "G"
+```
+
+PUBLISH ペイロードは固定文字列 `"G"`。
+
+### APPL_DB → orchagent (ConsumerStateTable / channel SUBSCRIBE)
+
+`orchagent` の `IntfsOrch` は APPL_DB (db_id=0) に対して `ConsumerStateTable` を使用し `INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` する[^ps2][^ps3]。`consumer_state_table_pops.lua` が `SPOP INTF_TABLE_KEY_SET` → `HGETALL _INTF_TABLE|key` → 本体ハッシュへコピーをアトミック実行する。
+
+### STATE_DB への書き戻し
+
+`intfmgrd` は処理完了後に STATE_DB `STATE_INTERFACE_TABLE` へ TTL なしで書き込む：
+
+| タイミング | 操作 |
+|-----------|------|
+| L3 IF 設定完了 | `hset(alias, "vrf", vrf_name)` |
+| IP アドレス追加完了 | `hset(alias+"\|"+pfx, "state", "ok")` |
+| IP / IF 削除 | `del(...)` |
+
+**hSetWithTTL は使用されない。**
+
+### 特性まとめ
+
+| 特性 | 内容 |
+|------|------|
+| CONFIG_DB → intfmgrd | Redis PSUBSCRIBE (keyspace notification) |
+| keyspace pattern | `__keyspace@4__:VLAN_INTERFACE\|*` |
+| intfmgrd → APPL_DB | Redis PUBLISH/SUBSCRIBE (channel ベース) |
+| Publish チャンネル | `INTF_TABLE_CHANNEL@0`、ペイロード固定 `"G"` |
+| APPL_DB → orchagent | ConsumerStateTable + `SUBSCRIBE` |
+| NotificationConsumer | **不使用** |
+| TTL / keyevent expire | **不使用** |
+| Select タイムアウト | 1000ms → `intfmgr.doTask()` で未処理タスクを再試行 |
+| warm-restart | `buildIntfReplayList()` で起動時に既存 STATE_DB をスキャン |
+| chassis (VOQ) | `SubscriberStateTable(chassisAppDb, CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME)` で追加購読 |
+
+[^ps1]: `sonic-swss/cfgmgr/intfmgr.cpp` / `intfmgr.h` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^ps2]: `sonic-swss/orchagent/orch.cpp` L1186-1195 (`Orch::addConsumer`) <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orch.cpp>
+[^ps3]: `sonic-swss/orchagent/orchdaemon.cpp` L296 / `intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
+
+<!-- /pubsub -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
