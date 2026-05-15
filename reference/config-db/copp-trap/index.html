@@ -23261,6 +23261,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書き込み (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書き込み (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-copp_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — COPP_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_trap_table-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_TRAP_TABLE (state フィールド)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_trap_table-hw_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_TRAP_TABLE (hw_status フィールド)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_group_table-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_GROUP_TABLE (state フィールド)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_trap_capability_table-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_TRAP_CAPABILITY_TABLE (起動時 1 回)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sai-capability-vendor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35838,6 +35910,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書き込み (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書き込み (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-copp_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB — COPP_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_trap_table-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_TRAP_TABLE (state フィールド)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_trap_table-hw_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_TRAP_TABLE (hw_status フィールド)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_group_table-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_GROUP_TABLE (state フィールド)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-copp_trap_capability_table-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — COPP_TRAP_CAPABILITY_TABLE (起動時 1 回)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sai-capability-vendor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36780,6 +36924,160 @@
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>                                           STATE_DB[COPP_TRAP_TABLE|&lt;name&gt;] hw_status
 </span></code></pre></div>
 <!-- /pubsub -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書き込み (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>証跡: <code>meta/_intermediate/cdb-flow/copp-trap-side.md</code></p>
+</blockquote>
+<p><code>COPP_TRAP</code> の SET/DEL 処理は CONFIG_DB 以外の以下 DB・テーブルへも書き込みを行う。</p>
+<h3 id="appl_db-copp_table">APPL_DB — COPP_TABLE<a class="headerlink" href="#appl_db-copp_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー形式</th>
+<th>主要フィールド</th>
+<th>書き込み元</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_TABLE</code></td>
+<td><code>COPP_TABLE\|&lt;group&gt;</code></td>
+<td><code>trap_ids</code>, <code>trap_action</code>, <code>trap_priority</code>, <code>queue</code>, <code>cir</code>, <code>cbs</code> 等</td>
+<td><code>CoppMgr::doCoppTrapTask()</code> (coppmgr.cpp:511, 526)</td>
+<td>COPP_TRAP SET 処理完了後</td>
+</tr>
+</tbody>
+</table>
+<p><strong>集約変換</strong>: CONFIG_DB は 1 trap/key (<code>COPP_TRAP|&lt;name&gt;</code>) だが、APPL_DB は 1 group/key (<code>COPP_TABLE|&lt;group&gt;</code>) に再集計される。同一 <code>trap_group</code> に属する複数の COPP_TRAP が束ねられて 1 エントリになる。</p>
+<p>当該グループに属する全 trap が削除された場合は <code>m_appCoppTable.del(trap_group)</code> でエントリ自体が削除される（coppmgr.cpp:126）。</p>
+<h3 id="state_db-copp_trap_table-state">STATE_DB — COPP_TRAP_TABLE (state フィールド)<a class="headerlink" href="#state_db-copp_trap_table-state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー形式</th>
+<th>フィールド</th>
+<th>値</th>
+<th>書き込み元</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_TRAP_TABLE</code></td>
+<td><code>COPP_TRAP_TABLE\|&lt;name&gt;</code></td>
+<td><code>state</code></td>
+<td><code>ok</code></td>
+<td><code>CoppMgr::setCoppTrapStateOk()</code> (coppmgr.cpp:589, 740, 803)</td>
+<td>APPL_DB 書き込み成功後</td>
+</tr>
+<tr>
+<td><code>COPP_TRAP_TABLE</code></td>
+<td><code>COPP_TRAP_TABLE\|&lt;name&gt;</code></td>
+<td><code>state</code></td>
+<td>(削除)</td>
+<td><code>CoppMgr::delCoppTrapStateOk()</code> (coppmgr.cpp:660, 700, 767)</td>
+<td>COPP_TRAP DEL 処理後</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-copp_trap_table-hw_status">STATE_DB — COPP_TRAP_TABLE (hw_status フィールド)<a class="headerlink" href="#state_db-copp_trap_table-hw_status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー形式</th>
+<th>フィールド</th>
+<th>値</th>
+<th>書き込み元</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_TRAP_TABLE</code></td>
+<td><code>COPP_TRAP_TABLE\|&lt;trap_name&gt;</code></td>
+<td><code>hw_status</code></td>
+<td><code>installed</code></td>
+<td><code>CoppOrch::updateTrapOperStatus()</code> (copporch.cpp:526)</td>
+<td>SAI <code>sai_create_hostif_trap</code> 成功後</td>
+</tr>
+<tr>
+<td><code>COPP_TRAP_TABLE</code></td>
+<td><code>COPP_TRAP_TABLE\|&lt;trap_name&gt;</code></td>
+<td><code>hw_status</code></td>
+<td><code>not-installed</code></td>
+<td><code>CoppOrch::updateTrapOperStatus()</code> (copporch.cpp:1413)</td>
+<td>SAI <code>sai_remove_hostif_trap</code> 後</td>
+</tr>
+</tbody>
+</table>
+<p><code>state</code> フィールド（coppmgr 書き込み）と <code>hw_status</code> フィールド（CoppOrch 書き込み）は同一キーの別フィールドであり上書き競合はない。</p>
+<h3 id="state_db-copp_group_table-state">STATE_DB — COPP_GROUP_TABLE (state フィールド)<a class="headerlink" href="#state_db-copp_group_table-state" title="Permanent link">&para;</a></h3>
+<p><code>COPP_TRAP</code> の処理中に影響する <code>trap_group</code> の状態も連動して更新される。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー形式</th>
+<th>フィールド</th>
+<th>値</th>
+<th>書き込み元</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_GROUP_TABLE</code></td>
+<td><code>COPP_GROUP_TABLE\|&lt;group&gt;</code></td>
+<td><code>state</code></td>
+<td><code>ok</code></td>
+<td><code>CoppMgr::setCoppGroupStateOk()</code> (coppmgr.cpp:512, 527, 734)</td>
+<td>COPP_TRAP 処理で当該 group の APPL_DB 書き込み成功後</td>
+</tr>
+<tr>
+<td><code>COPP_GROUP_TABLE</code></td>
+<td><code>COPP_GROUP_TABLE\|&lt;group&gt;</code></td>
+<td><code>state</code></td>
+<td>(削除)</td>
+<td><code>CoppMgr::delCoppGroupStateOk()</code> (coppmgr.cpp:127)</td>
+<td>当該 group が空になった場合</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db-copp_trap_capability_table-1">STATE_DB — COPP_TRAP_CAPABILITY_TABLE (起動時 1 回)<a class="headerlink" href="#state_db-copp_trap_capability_table-1" title="Permanent link">&para;</a></h3>
+<p><code>CoppOrch</code> 起動時に SAI capability クエリ結果をプラットフォームサポート済み trap_id 一覧として書き込む。<code>COPP_TRAP</code> の変更契機ではなく起動時のみ実行される。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>値</th>
+<th>書き込み元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COPP_TRAP_CAPABILITY_TABLE</code></td>
+<td><code>traps</code></td>
+<td><code>trap_ids</code></td>
+<td>カンマ区切りサポート trap_id リスト</td>
+<td><code>CoppOrch::publishTrapIdsCapability()</code> (copporch.cpp:299)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 確認コマンド</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COPP_TRAP_TABLE|*&#39;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TRAP_TABLE|bgp&#39;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TABLE|queue4_group1&#39;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;COPP_TRAP_CAPABILITY_TABLE|traps&#39;</span>
+</span></code></pre></div>
+<!-- /side-effects -->
 
 <!-- platform -->
 <h2 id="sai-capability-vendor">プラットフォーム差 (SAI capability / vendor)<a class="headerlink" href="#sai-capability-vendor" title="Permanent link">&para;</a></h2>

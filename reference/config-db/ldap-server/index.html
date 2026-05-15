@@ -23661,6 +23661,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35122,6 +35161,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35569,6 +35647,58 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>hostcfgd</code> (<code>AaaCfg</code>) の <code>modify_conf_file()</code> はイベントごとに PAM / NSS / NSLCD 設定を<strong>全部まとめて再生成</strong>する。<code>is_ldap_config_complete()</code> が全条件を満たすまで <code>nslcd</code> は起動しない。書き込み順序が nslcd の可用性に直結する。</p>
+<h3 id="_16">検出された順序依存<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>LDAP\|global</code>（<code>bind_dn</code> / <code>base_dn</code> / <code>bind_password</code>）+ <code>LDAP_SERVER</code> エントリ → <code>AAA</code> <code>login=ldap</code></td>
+<td><strong>先行必須</strong>（欠如時 nslcd 停止）</td>
+<td>後から設定追加で自動復旧（<code>ldap_global_update</code> / <code>aaa_update</code> が再評価）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>LDAP_SERVER</code> → <code>LDAP\|global</code> → <code>AAA</code> の順で書き込む</td>
+<td>推奨（中間 nslcd 停止回避）</td>
+<td>逆順でも最終的に自動復旧するが nslcd 停止期間が生じる</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>LDAP_SERVER</code> の <code>priority</code> 重複 → フェイルオーバ順序不定</td>
+<td>運用上の注意</td>
+<td>priority 値の一意性を運用ルールで担保</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>LDAP\|global</code> 未設定時の <code>LDAP_SERVER</code> 単体 → <code>LdapCfg</code> fallback 値（<code>example.com</code> 等）が使われる</td>
+<td>設計上の前提</td>
+<td><code>LDAP_SERVER</code> 追加前に <code>LDAP\|global</code> を設定済みにする</td>
+</tr>
+<tr>
+<td>5</td>
+<td>load フェーズ内は AAA バッチで一括処理 → 中間状態なし</td>
+<td>自動保証（対策不要）</td>
+<td><code>AaaCfg.load()</code> が全テーブルを読んだ後に <code>modify_conf_file()</code> を 1 回のみ呼ぶ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">主要な制約詳細<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><strong>LDAP 先行必須 (依存 #1)</strong>: <code>is_ldap_config_complete()</code> は <code>LDAP|global</code> の <code>bind_dn</code> / <code>base_dn</code> / <code>bind_password</code> が全て設定済みかつ <code>LDAP_SERVER</code> エントリが 1 件以上存在し <code>AAA|authentication.login</code> に <code>ldap</code> を含む場合のみ <code>True</code> を返す。いずれかが欠けた状態で <code>aaa_update()</code> が呼ばれると <code>handle_nslcd_service(False)</code> が実行され nslcd が停止・mask される（evidence: <code>hostcfgd:437-442</code>, <code>hostcfgd:241-250</code>）。</p>
+<p><strong>mergeWith による前提 (依存 #4)</strong>: <code>modify_conf_file()</code> は <code>server = ldap_global.copy(); server.update(self.ldap_servers[addr])</code> で各サーバ設定を構築する。<code>LDAP|global</code> が未設定の場合は <code>LdapCfg</code> のクラス属性 fallback（<code>BASE = 'ou=users,dc=example,dc=com'</code> など）が使われるため、<code>LDAP_SERVER</code> のみ先に書いた状態では nslcd 設定が example.com のデフォルト値になる（evidence: <code>hostcfgd:650-651</code>, <code>hostcfgd:706-713</code>, <code>ldap.py:8-18</code>）。</p>
+<p><strong>priority ソートの安定性 (依存 #3)</strong>: <code>ldapsrvs_conf</code> は <code>sorted(..., key=lambda t: int(t['priority']), reverse=True)</code> で降順ソートされる。Python の <code>sorted()</code> は安定ソートだが、同一 priority 値の場合は CONFIG_DB からの取得順（Redis 依存）になるため書き込み順が保証されない（evidence: <code>hostcfgd:706-713</code>）。</p>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 32758c44ab11 -->
 

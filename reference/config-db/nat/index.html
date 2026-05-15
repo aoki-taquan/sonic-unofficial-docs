@@ -27312,6 +27312,156 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB への副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB への副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flush" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLUSH 通知による副次効果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-subscriberstatetable-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-natmgrd-config_db-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        層 1: natmgrd — CONFIG_DB を SubscriberStateTable で購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-natorch-appl_db-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        層 2: NatOrch — APPL_DB を ConsumerStateTable で購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント発火から SAI 適用までの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期スナップショット再生 (起動時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非同期通知チャンネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27350,6 +27500,67 @@
     <span class="md-ellipsis">
       
         STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#natmgrh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムアウト境界定数 (natmgr.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-natorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ポーリング周期定数 (natorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-maincpp936-948" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Capability チェック (main.cpp:936-948)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#natorch-hardcode-natorchcpp63-73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NatOrch コンストラクタ hardcode デフォルト (natorch.cpp:63-73)
       
     </span>
   </a>
@@ -35417,6 +35628,156 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB への副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#counters_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COUNTERS_DB への副次書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flush" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLUSH 通知による副次効果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-subscriberstatetable-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-natmgrd-config_db-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        層 1: natmgrd — CONFIG_DB を SubscriberStateTable で購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-natorch-appl_db-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        層 2: NatOrch — APPL_DB を ConsumerStateTable で購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント発火から SAI 適用までの流れ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        初期スナップショット再生 (起動時)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        非同期通知チャンネル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35455,6 +35816,67 @@
     <span class="md-ellipsis">
       
         STATE_DB / ERROR_TABLE への記録
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#natmgrh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイムアウト境界定数 (natmgr.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-natorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI ポーリング周期定数 (natorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-capability-maincpp936-948" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI Capability チェック (main.cpp:936-948)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#natorch-hardcode-natorchcpp63-73" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NatOrch コンストラクタ hardcode デフォルト (natorch.cpp:63-73)
       
     </span>
   </a>
@@ -36233,6 +36655,197 @@
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 -->
+
+<h3 id="appl_db">APPL_DB への副次書込<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<p><code>NatMgr</code> (<code>natmgrd</code> コンテナ) が CONFIG_DB 変更を受けて以下の APPL_DB テーブルへ書込を行う。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル名</th>
+<th>キー形式</th>
+<th>書込フィールド</th>
+<th>書込条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_GLOBAL_TABLE</code></td>
+<td><code>Values</code></td>
+<td><code>admin_mode</code>, <code>nat_tcp_timeout</code> <em>, <code>nat_udp_timeout</code> </em>, <code>nat_timeout</code> *</td>
+<td><code>admin_mode</code> 変更時、または timeout 変更時 (NAT 有効時のみ)</td>
+</tr>
+<tr>
+<td><code>NAT_TABLE</code></td>
+<td><code>&lt;global_ip&gt;</code></td>
+<td><code>translated_ip</code>, <code>nat_type</code>, <code>entry_type</code>, <code>twice_nat_id</code></td>
+<td><code>admin_mode=enabled</code> かつ L3 インタフェース ready 時に STATIC_NAT エントリ追加</td>
+</tr>
+<tr>
+<td><code>NAT_DNAT_POOL_TABLE</code></td>
+<td><code>&lt;dest_ip&gt;</code></td>
+<td><code>NULL: NULL</code></td>
+<td>DNAT pool エントリ参照カウント &gt; 0 時に追加</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<ul>
+<li><code>nat_tcp_timeout</code> / <code>nat_udp_timeout</code> / <code>nat_timeout</code> はデフォルト値 (86400 / 300 / 600) の場合は書込されない (<code>enableNatFeature()</code> の条件ガード: <code>natmgr.cpp:5684-5704</code>)。</li>
+</ul>
+</blockquote>
+<h3 id="state_db">STATE_DB への書込<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<p><code>NatMgr</code> / <code>NatOrch</code> はいずれも STATE_DB への<strong>書込は行わない</strong>。STATE_DB は <code>STATE_PORT_TABLE</code> / <code>STATE_LAG_TABLE</code> / <code>STATE_VLAN_TABLE</code> / <code>STATE_INTERFACE_TABLE</code> の readiness ガードとして<strong>読み取り専用</strong>で参照される (<code>natmgr.cpp:100-139</code>)。</p>
+<h3 id="counters_db">COUNTERS_DB への副次書込<a class="headerlink" href="#counters_db" title="Permanent link">&para;</a></h3>
+<p><code>NatOrch</code> (<code>orchagent</code> コンテナ) が以下の COUNTERS_DB テーブルへ書込を行う。</p>
+<table>
+<thead>
+<tr>
+<th>テーブル名</th>
+<th>キー形式</th>
+<th>書込フィールド</th>
+<th>書込タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNTERS_GLOBAL_NAT</code></td>
+<td><code>Values</code></td>
+<td><code>MAX_NAT_ENTRIES</code>, <code>TIMEOUT</code>, <code>UDP_TIMEOUT</code>, <code>TCP_TIMEOUT</code></td>
+<td>NatOrch コンストラクタ起動時 (SAI 値取得後)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_GLOBAL_NAT</code></td>
+<td><code>Values</code></td>
+<td><code>STATIC_NAT_ENTRIES</code>, <code>STATIC_NAPT_ENTRIES</code>, <code>STATIC_TWICE_NAT_ENTRIES</code>, <code>STATIC_TWICE_NAPT_ENTRIES</code>, <code>DYNAMIC_NAT_ENTRIES</code>, <code>DYNAMIC_NAPT_ENTRIES</code>, <code>DYNAMIC_TWICE_NAT_ENTRIES</code>, <code>DYNAMIC_TWICE_NAPT_ENTRIES</code>, <code>SNAT_ENTRIES</code>, <code>DNAT_ENTRIES</code></td>
+<td>エントリ追加/削除ごとにカウント更新</td>
+</tr>
+<tr>
+<td><code>COUNTERS_NAT</code></td>
+<td><code>&lt;global_ip&gt;</code></td>
+<td><code>NAT_TRANSLATIONS_PKTS</code>, <code>NAT_TRANSLATIONS_BYTES</code></td>
+<td>hitbit クエリタイマー (5 秒周期)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_NAPT</code></td>
+<td><code>&lt;proto&gt;:&lt;ip&gt;:&lt;port&gt;</code></td>
+<td><code>NAT_TRANSLATIONS_PKTS</code>, <code>NAT_TRANSLATIONS_BYTES</code></td>
+<td>hitbit クエリタイマー (5 秒周期)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_TWICE_NAT</code></td>
+<td><code>&lt;src_ip&gt;:&lt;dst_ip&gt;</code></td>
+<td><code>NAT_TRANSLATIONS_PKTS</code>, <code>NAT_TRANSLATIONS_BYTES</code></td>
+<td>hitbit クエリタイマー (5 秒周期)</td>
+</tr>
+<tr>
+<td><code>COUNTERS_TWICE_NAPT</code></td>
+<td><code>&lt;proto&gt;:&lt;src_ip&gt;:&lt;src_port&gt;:&lt;dst_ip&gt;:&lt;dst_port&gt;</code></td>
+<td><code>NAT_TRANSLATIONS_PKTS</code>, <code>NAT_TRANSLATIONS_BYTES</code></td>
+<td>hitbit クエリタイマー (5 秒周期)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flush">FLUSH 通知による副次効果<a class="headerlink" href="#flush" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>FLUSHNATSTATISTICS</code> 通知 (APPL_DB) 受信時: <code>COUNTERS_NAT</code> / <code>COUNTERS_NAPT</code> / <code>COUNTERS_TWICE_NAT</code> / <code>COUNTERS_TWICE_NAPT</code> の全エントリのカウンタを 0 にリセット (<code>natorch.cpp:3955-4038</code>)</li>
+<li><code>NAT_DB_CLEANUP_NOTIFICATION</code> 通知 (APPL_DB) 受信時: dynamic NAT エントリを全削除し対応 <code>COUNTERS_*</code> エントリも削除</li>
+</ul>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="2-subscriberstatetable-consumerstatetable">購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)<a class="headerlink" href="#2-subscriberstatetable-consumerstatetable" title="Permanent link">&para;</a></h3>
+<p>NAT テーブルの変更通知には <strong>層 1 (natmgrd)</strong> と <strong>層 2 (NatOrch)</strong> の 2 段階メカニズムがある。</p>
+<h4 id="1-natmgrd-config_db-subscriberstatetable">層 1: natmgrd — CONFIG_DB を SubscriberStateTable で購読<a class="headerlink" href="#1-natmgrd-config_db-subscriberstatetable" title="Permanent link">&para;</a></h4>
+<p><code>natmgrd.cpp:109-121</code> の <code>cfg_tables</code> に列挙されたテーブルを <code>Orch::addConsumer()</code> 経由で登録する。<code>orch.cpp:1188-1194</code> の分岐により CONFIG_DB は <strong>SubscriberStateTable</strong> (keyspace PSUBSCRIBE) が使用される。</p>
+<p>購読チャンネルパターン (<code>subscriberstatetable.cpp:20-22</code>):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>PSUBSCRIBE __keyspace@4__:NAT_GLOBAL|*
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>PSUBSCRIBE __keyspace@4__:NAT_POOL|*
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>PSUBSCRIBE __keyspace@4__:STATIC_NAT|*
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>PSUBSCRIBE __keyspace@4__:STATIC_NAPT|*
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>PSUBSCRIBE __keyspace@4__:INTERFACE|*  (nat_zone 変更)
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>...
+</span></code></pre></div>
+<ul>
+<li>DB 番号 4 は CONFIG_DB のデフォルト</li>
+<li>glob パターンにより <code>NAT_GLOBAL|Values</code>・<code>NAT_POOL|&lt;name&gt;</code>・<code>NAT_BINDINGS|&lt;name&gt;</code> を捕捉</li>
+</ul>
+<h4 id="2-natorch-appl_db-consumerstatetable">層 2: NatOrch — APPL_DB を ConsumerStateTable で購読<a class="headerlink" href="#2-natorch-appl_db-consumerstatetable" title="Permanent link">&para;</a></h4>
+<p><code>orchdaemon.cpp:457-465</code> で <code>APP_NAT_GLOBAL_TABLE_NAME</code> 等を優先度付きで登録。APPL_DB は <code>ConsumerStateTable</code> (ProducerStateTable チャンネル SUBSCRIBE) を使用する。チャンネル名は <code>table.h:94-96</code> の <code>getChannelName(db_id)</code> で <code>APP_NAT_GLOBAL_TABLE_CHANNEL@0</code> 形式になる。</p>
+<h3 id="sai">イベント発火から SAI 適用までの流れ<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CLI / REST が CONFIG_DB に HSET / HDEL / DEL
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  → Redis: __keyspace@4__:NAT_GLOBAL|Values 等に pmessage 発火
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  → SubscriberStateTable::readData() がhiredis 経由で受信
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  → m_keyspace_event_buffer に push
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  → SubscriberStateTable::pops()
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>      &quot;del&quot; → DEL_COMMAND を設定
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>      その他 → HGETALL でフィールド取得 + SET_COMMAND を設定
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  → natmgrd メインループ (SELECT_TIMEOUT=1000ms)
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>      sel が Consumer → Consumer::execute() → NatMgr::doTask(Consumer&amp;)
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>          → doNatGlobalTask / doNatPoolTask / doNatBindingTask にディスパッチ
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>      sel が タイムアウト → natmgr-&gt;doTask() でキューを再ドレイン
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  → NatMgr が ProducerStateTable::set() で APPL_DB に書き込み
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>      → APP_NAT_GLOBAL_TABLE_CHANNEL@0 に PUBLISH
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  → NatOrch の ConsumerStateTable がイベント受信
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  → orchagent 統合ループ → NatOrch::doTask()
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>      → doNatGlobalTableTask() → enableNatFeature() / disableNatFeature()
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>  → sai_nat_api-&gt;create_nat_entry() / sai_switch_api-&gt;set_switch_attribute(SAI_SWITCH_ATTR_NAT_ENABLE)
+</span></code></pre></div>
+<h3 id="_17">初期スナップショット再生 (起動時)<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<p><code>SubscriberStateTable</code> のコンストラクタ (<code>subscriberstatetable.cpp:25-42</code>) は PSUBSCRIBE 後に <code>m_table.getKeys()</code> で既存 key を全件取得し <code>SET</code> イベントとして <code>m_buffer</code> に積む。<code>natmgrd</code> 再起動後もすべての既存 NAT 設定エントリが自動再処理される。</p>
+<h3 id="_18">非同期通知チャンネル<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p>通常の表テーブル経由とは別に、<strong>NotificationConsumer / NotificationProducer</strong> を使った 4 本の非同期チャンネルがある:</p>
+<table>
+<thead>
+<tr>
+<th>チャンネル</th>
+<th>DB</th>
+<th>送信者</th>
+<th>受信者</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SETTIMEOUTNAT</code></td>
+<td>APPL_DB</td>
+<td><code>NatOrch::setTimeoutNotifier</code> (<code>natorch.cpp:137</code>)</td>
+<td><code>natmgrd</code> の <code>timeoutNotificationsConsumer</code> (<code>natmgrd.cpp:149</code>)</td>
+<td>NatOrch が conntrack timeout 変更を natmgrd へ通知</td>
+</tr>
+<tr>
+<td><code>FLUSHNATENTRIES</code></td>
+<td>APPL_DB</td>
+<td>外部 CLI (<code>show nat translate flush</code>)</td>
+<td><code>natmgrd</code> の <code>flushNotificationsConsumer</code> (<code>natmgrd.cpp:152</code>)</td>
+<td>conntrack エントリ全フラッシュ要求</td>
+</tr>
+<tr>
+<td><code>FLUSHNATSTATISTICS</code></td>
+<td>APPL_DB</td>
+<td>外部プロセス</td>
+<td><code>NatOrch</code> の <code>m_flushNotificationsConsumer</code> (<code>natorch.cpp:84</code>)</td>
+<td>NAT カウンタ全クリア要求</td>
+</tr>
+<tr>
+<td><code>NAT_DB_CLEANUP_NOTIFICATION</code></td>
+<td>APPL_DB</td>
+<td><code>natmgrd</code> の <code>cleanupNotifier</code> (<code>natmgrd.cpp:86</code>)</td>
+<td><code>NatOrch</code> の <code>m_cleanupNotificationConsumer</code> (<code>natorch.cpp:89</code>)</td>
+<td>natmgrd 終了時に Redis/ASIC の NAT エントリ全削除を依頼</td>
+</tr>
+</tbody>
+</table>
+<p>これらはすべて <code>swss::Select</code> の <code>Selectable</code> として登録され、通常の Consumer 処理と同じ select ループ内で処理される。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/nat-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
 <!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatGlobalTask L7105-7374 / sonic-swss/orchagent/natorch.cpp doNatGlobalTableTask L2904-2966, enableNatFeature L2534-2581, disableNatFeature L2583-2625 -->
@@ -36362,9 +36975,157 @@
 </table>
 <h3 id="state_db-error_table">STATE_DB / ERROR_TABLE への記録<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
 <p>NatOrch / NatMgr ともに <code>ERROR_TABLE</code> への書き込みなし。失敗はすべて syslog (<code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code>) のみ。STATE_DB の <code>NAT_*</code> 関連テーブルへの失敗記録もなし。確認手段は <code>/var/log/syslog</code> のフィルタリングに限られる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;natorch|natmgr&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;ERROR|WARN|Invalid|failed&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;natorch|natmgr&quot;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;ERROR|WARN|Invalid|failed&quot;</span>
 </span></code></pre></div>
 <!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/natmgr.h L62-73,L110-111 / sonic-swss/orchagent/natorch.h L37-39 / sonic-swss/orchagent/natorch.cpp L63-73,L2541-2544 / sonic-swss/orchagent/main.cpp L936-948 -->
+
+<h3 id="natmgrh">タイムアウト境界定数 (<code>natmgr.h</code>)<a class="headerlink" href="#natmgrh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_TIMEOUT_MIN</code></td>
+<td><code>300</code></td>
+<td><code>nat_timeout</code> 最小値 (秒)</td>
+</tr>
+<tr>
+<td><code>NAT_TIMEOUT_MAX</code></td>
+<td><code>432000</code></td>
+<td><code>nat_timeout</code> 最大値 (秒 / 5日)</td>
+</tr>
+<tr>
+<td><code>NAT_TIMEOUT_DEFAULT</code></td>
+<td><code>600</code></td>
+<td><code>nat_timeout</code> ハードコードデフォルト (秒)</td>
+</tr>
+<tr>
+<td><code>NAT_TCP_TIMEOUT_MIN</code></td>
+<td><code>300</code></td>
+<td><code>nat_tcp_timeout</code> 最小値 (秒)</td>
+</tr>
+<tr>
+<td><code>NAT_TCP_TIMEOUT_MAX</code></td>
+<td><code>432000</code></td>
+<td><code>nat_tcp_timeout</code> 最大値 (秒 / 5日)</td>
+</tr>
+<tr>
+<td><code>NAT_TCP_TIMEOUT_DEFAULT</code></td>
+<td><code>86400</code></td>
+<td><code>nat_tcp_timeout</code> ハードコードデフォルト (秒 / 1日)</td>
+</tr>
+<tr>
+<td><code>NAT_UDP_TIMEOUT_MIN</code></td>
+<td><code>120</code></td>
+<td><code>nat_udp_timeout</code> 最小値 (秒)</td>
+</tr>
+<tr>
+<td><code>NAT_UDP_TIMEOUT_MAX</code></td>
+<td><code>600</code></td>
+<td><code>nat_udp_timeout</code> 最大値 (秒)</td>
+</tr>
+<tr>
+<td><code>NAT_UDP_TIMEOUT_DEFAULT</code></td>
+<td><code>300</code></td>
+<td><code>nat_udp_timeout</code> ハードコードデフォルト (秒)</td>
+</tr>
+<tr>
+<td><code>NAT_TIMEOUT_LOW</code></td>
+<td><code>0</code></td>
+<td>内部ガード値 (YANG 外チェック — 0 以下を silent drop)</td>
+</tr>
+<tr>
+<td><code>L4_PORT_MIN</code></td>
+<td><code>1</code></td>
+<td>NAT pool <code>nat_port</code> 下限 (0 は silent drop)</td>
+</tr>
+<tr>
+<td><code>L4_PORT_MAX</code></td>
+<td><code>65535</code></td>
+<td>NAT pool <code>nat_port</code> 上限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-natorchh">SAI ポーリング周期定数 (<code>natorch.h</code>)<a class="headerlink" href="#sai-natorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NAT_HITBIT_N_CNTRS_QUERY_PERIOD</code></td>
+<td><code>5</code> 秒</td>
+<td>NAT エントリ統計・ヒットビット定期クエリ間隔</td>
+</tr>
+<tr>
+<td><code>NAT_CONNTRACK_TIMEOUT_PERIOD</code></td>
+<td><code>86400</code> 秒</td>
+<td>conntrack 老化チェックタイマー周期 (1日)</td>
+</tr>
+<tr>
+<td><code>NAT_HITBIT_QUERY_MULTIPLE</code></td>
+<td><code>6</code></td>
+<td>ヒットビットクエリ実効周期 = 5秒 × 6 = 30秒</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-capability-maincpp936-948">SAI Capability チェック (<code>main.cpp:936-948</code>)<a class="headerlink" href="#sai-capability-maincpp936-948" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY</code> が <code>0</code> またはクエリ失敗 → <code>gIsNatSupported = false</code></li>
+<li><code>enableNatFeature()</code> (<code>natorch.cpp:2541-2544</code>) は冒頭で <code>gIsNatSupported == false</code> を確認し即 return</li>
+<li><strong>Silent fallback</strong>: <code>admin_mode=enabled</code> が CONFIG_DB に書かれても SAI/ASIC 操作は行われない。<code>show nat config</code> は enabled と表示するが実態は非アクティブ</li>
+<li>SAI クエリ失敗時のログは <code>SWSS_LOG_NOTICE</code> のみ（管理者通知なし）</li>
+</ul>
+<h3 id="natorch-hardcode-natorchcpp63-73">NatOrch コンストラクタ hardcode デフォルト (<code>natorch.cpp:63-73</code>)<a class="headerlink" href="#natorch-hardcode-natorchcpp63-73" title="Permanent link">&para;</a></h3>
+<p>YANG default と独立してコンストラクタ内でハードコードされており、全値が YANG default と一致する:</p>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>値</th>
+<th>YANG default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin_mode</code></td>
+<td><code>"disabled"</code></td>
+<td><code>disabled</code></td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>600</code></td>
+<td><code>600</code></td>
+</tr>
+<tr>
+<td><code>tcp_timeout</code></td>
+<td><code>86400</code></td>
+<td><code>86400</code></td>
+</tr>
+<tr>
+<td><code>udp_timeout</code></td>
+<td><code>300</code></td>
+<td><code>300</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: <code>NAT_CONNTRACK_TIMEOUT_PERIOD = 86400</code> は <code>nat_tcp_timeout</code> のデフォルト値と同値だが意味が異なる。前者は conntrack タイマー起動間隔、後者は NAT セッション age-out 秒数。</p>
+</blockquote>
+<!-- /constants -->
 
 <div class="footnote">
 <hr />

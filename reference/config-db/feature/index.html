@@ -22052,6 +22052,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#featured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        featured イベントループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35432,6 +35471,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#featured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        featured イベントループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36211,6 +36289,61 @@
 </tbody>
 </table>
 <!-- /cross-refs -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>FEATURE</code> テーブルへの変更通知は <strong><code>SubscriberStateTable</code> (keyspace PSUBSCRIBE)</strong> で配信される。<code>ConsumerStateTable</code>（channel ベース PUBLISH/SUBSCRIBE）は使用しない。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>PSUBSCRIBE パターン</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>featured</code> (<code>FeatureDaemon</code>)</td>
+<td><code>swsscommon.SubscriberStateTable</code></td>
+<td><code>__keyspace@&lt;dbId&gt;__:FEATURE\|*</code></td>
+<td>全フィーチャーの state/scope/auto_restart 制御</td>
+</tr>
+<tr>
+<td><code>dhcprelayd</code> (<code>DhcpServerFeatureStateChecker</code>)</td>
+<td><code>swsscommon.SubscriberStateTable</code></td>
+<td><code>__keyspace@&lt;dbId&gt;__:FEATURE\|*</code></td>
+<td><code>dhcp_server</code> エントリの <code>state</code> 変化のみ検出</td>
+</tr>
+<tr>
+<td><code>route_check.py</code></td>
+<td><code>get_table</code> (HGETALL)</td>
+<td>購読なし</td>
+<td>起動時スナップショット (<code>bgp</code> の state 確認)</td>
+</tr>
+</tbody>
+</table>
+<p><code>containercfgd</code> は <code>FEATURE</code> テーブルを直接購読せず、<code>SYSLOG_CONFIG_FEATURE</code> テーブルのみを <code>ConfigDBConnector.listen()</code> で購読する。</p>
+<h3 id="featured">featured イベントループ<a class="headerlink" href="#featured" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB HSET &quot;FEATURE|bgp&quot; state enabled
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ keyspace PUBLISH &quot;__keyspace@&lt;dbId&gt;__:FEATURE|bgp&quot;  &quot;hset&quot;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>featured SubscriberStateTable.pops()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓ HGETALL &quot;FEATURE|bgp&quot;  ← 通知後に別途フィールド取得
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>feature_handler.handler(key=&quot;bgp&quot;, op=SET, data={state:enabled,...})
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ↓ enable_feature(bgp)  →  systemctl start bgp.service
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ↓ STATE_DB HSET &quot;FEATURE|bgp&quot; state enabled
+</span></code></pre></div>
+<ul>
+<li>keyspace 通知のペイロードは操作名 (<code>hset</code>/<code>del</code> 等) のみ。フィールド値は HGETALL で取得する。</li>
+<li><code>featured</code> は <code>FEATURE_TBL</code> (pri=10) と <code>PORT_TBL</code> (pri=9) を同一 <code>swsscommon.Select</code> で多重化する。</li>
+<li>ポーリング間隔: <code>DEFAULT_SELECT_TIMEOUT = 1000 ms</code>。TIMEOUT 時に <code>delayed</code> フィーチャーの PORT_INIT タイムアウト判定を実施。</li>
+<li>起動時は <code>render_all_feature_states()</code> が <code>get_table()</code> で全エントリをスナップショット処理してから Subscribe ループを開始する。</li>
+</ul>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/featured:22-23,600-678</code>; <code>sonic-swss-common/common/subscriberstatetable.cpp:17-165</code>; <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
 
 <!-- glossary-links-injected: 92d0997ed33c -->
 

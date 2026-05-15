@@ -22800,6 +22800,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-vrf-hostcfgd-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt VRF — hostcfgd 初期化前提の Linux デバイス作成スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux-id_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux ルーティングテーブル ID プール — 全プラットフォーム共通定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet-sai-virtual-router-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback-asic-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fallback フィールド — 全 ASIC で silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-vpp-sai-linux-vpp-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS / VPP SAI — Linux + VPP の二重 VRF 管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpn-l3-vni-vni-vtep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN L3 VNI (vni フィールド) — VTEP 設定必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35920,6 +36003,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt-vrf-hostcfgd-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt VRF — hostcfgd 初期化前提の Linux デバイス作成スキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux-id_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linux ルーティングテーブル ID プール — 全プラットフォーム共通定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnet-sai-virtual-router-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback-asic-silent-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fallback フィールド — 全 ASIC で silent drop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vs-vpp-sai-linux-vpp-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VS / VPP SAI — Linux + VPP の二重 VRF 管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evpn-l3-vni-vni-vtep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EVPN L3 VNI (vni フィールド) — VTEP 設定必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36899,6 +37065,25 @@
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed&#39;</span>
 </span></code></pre></div>
 <!-- /side-effects -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-15。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp</code>, <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-sairedis/vslib/vpp/SwitchVpp.cpp</code>, <code>sonic-sairedis/vslib/vpp/SwitchVppRif.cpp</code>, <code>sonic-host-services/scripts/hostcfgd</code></p>
+</blockquote>
+<h3 id="mgmt-vrf-hostcfgd-linux">mgmt VRF — hostcfgd 初期化前提の Linux デバイス作成スキップ<a class="headerlink" href="#mgmt-vrf-hostcfgd-linux" title="Permanent link">&para;</a></h3>
+<p><code>vrfName == "mgmt"</code> の場合、<code>vrfmgrd</code> は <code>ip link add ... type vrf table &lt;id&gt;</code> を実行しない（<code>vrfmgr.cpp:176-183</code>）。<code>hostcfgd</code> が <code>systemctl restart interfaces-config</code> 経由で Linux の管理 VRF を事前に初期化している前提であり、固定テーブル ID <code>6000</code> を通常プール（1001–5096）外に割り当てる。管理インタフェース（<code>eth0</code>）の有無はハードウェア形態に依存するが、vrfmgrd のコードパスはプラットフォーム共通。</p>
+<h3 id="linux-id_2">Linux ルーティングテーブル ID プール — 全プラットフォーム共通定数<a class="headerlink" href="#linux-id_2" title="Permanent link">&para;</a></h3>
+<p>テーブル ID 範囲（<code>VRF_TABLE_START=1001</code>〜<code>VRF_TABLE_END=5097</code>、最大 4096 VRF）はハードウェア ASIC とは無関係な Linux カーネルリソース。一部の組み込み Linux 構成（SmartSwitch DPU 等）ではカーネルのルーティングテーブル最大数設定が異なる場合があるが、vrfmgrd の定数は変更されない。</p>
+<h3 id="vnet-sai-virtual-router-asic">VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存<a class="headerlink" href="#vnet-sai-virtual-router-asic" title="Permanent link">&para;</a></h3>
+<p>orchagent は <code>v4</code>/<code>v6</code>/<code>src_mac</code>/<code>ttl_action</code>/<code>ip_opt_action</code>/<code>l3_mc_action</code> を SAI VR 属性に変換できるが、これらは CONFIG_DB <code>VRF</code> テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（<code>vrforch.cpp:38-84</code>）。<code>SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS</code> 等の対応は ASIC ベンダーにより異なる。SAI capability query は実施されておらず、非サポート ASIC に渡した場合の挙動はベンダー SAI 実装依存。</p>
+<h3 id="fallback-asic-silent-drop"><code>fallback</code> フィールド — 全 ASIC で silent drop<a class="headerlink" href="#fallback-asic-silent-drop" title="Permanent link">&para;</a></h3>
+<p>YANG に定義された <code>fallback</code> フィールドは <code>vrfmgrd</code> が APPL_DB へ pass-through するが、<code>orchagent/VRFOrch::addOperation</code> にハンドラが存在しない（<code>vrforch.cpp:80-82</code> の <code>else</code> ブランチで <code>SWSS_LOG_ERROR("Logic error: Unknown attribute")</code> → 破棄）。Linux カーネル・SAI・FRR のいずれにも影響しない dead field であり、ASIC の種類にかかわらず常に無視される。</p>
+<h3 id="vs-vpp-sai-linux-vpp-vrf">VS / VPP SAI — Linux + VPP の二重 VRF 管理<a class="headerlink" href="#vs-vpp-sai-linux-vpp-vrf" title="Permanent link">&para;</a></h3>
+<p>VPP（Vector Packet Processing）SAI バックエンドを使う VS プラットフォームでは、SAI VR create が VPP API <code>ip_vrf_add()</code> を呼び出し、ECMP フローハッシュも設定する（<code>SwitchVppRif.cpp:1403-1414</code>）。標準 VS（<code>SwitchStateBase</code>）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの ASIC_DB 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。</p>
+<h3 id="evpn-l3-vni-vni-vtep">EVPN L3 VNI (<code>vni</code> フィールド) — VTEP 設定必須<a class="headerlink" href="#evpn-l3-vni-vni-vtep" title="Permanent link">&para;</a></h3>
+<p><code>VRF.vni</code> に非ゼロ値を設定した場合、<code>VRFOrch::updateVrfVNIMap</code> が EVPN NVO（VTEP）の存在を確認し、未設定なら <code>return false</code> でエントリを破棄する（<code>vrforch.cpp:225-230</code>）。VXLAN EVPN を動作させる ASIC（Broadcom TD3/TH2, Mellanox SN シリーズ等）と、EVPN をサポートしない環境（VTEP 設定なし、または EVPN 非対応プラットフォーム）では <code>vni</code> フィールドの有効性が異なる。VTEP 未設定環境では <code>VRF.vni</code> は常に無効。</p>
+<!-- /platform -->
 
 <!-- glossary-links-injected: e2892b76fd9a -->
 

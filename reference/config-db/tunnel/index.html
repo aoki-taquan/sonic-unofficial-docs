@@ -23481,6 +23481,111 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・リカバリ (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・リカバリ (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnelmgr-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnelmgr — SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnelmgr-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnelmgr — DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunneldecaporch-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunneldecaporch — SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunneldecaporch-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunneldecaporch — DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な設計上の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        回復シナリオまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35322,6 +35427,111 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・リトライ・リカバリ (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・リトライ・リカバリ (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tunnelmgr-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnelmgr — SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnelmgr-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnelmgr — DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunneldecaporch-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunneldecaporch — SET 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunneldecaporch-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunneldecaporch — DEL 失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        重要な設計上の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        回復シナリオまとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35837,6 +36047,367 @@
 <p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-ordering.md</code></p>
 </blockquote>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>TUNNEL</code> が CONFIG_DB に書かれると <code>tunnelmgrd</code>・<code>tunneldecaporch</code> が以下のテーブルを暗黙的に参照する。
+<code>src_ip</code> → <code>PEER_SWITCH</code> は YANG leafref として明示されているが、他は実装コードのみに現れる暗黙依存。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PEER_SWITCH\|&lt;name&gt;.address_ipv4</code></td>
+<td>YANG leafref (必須検証)</td>
+<td><code>src_ip</code> フィールドに値を設定したとき。未登録 IP は CONFIG_DB 書き込み拒否</td>
+<td><code>sonic-tunnel.yang</code> L50-52; <code>tunnelmgr.cpp</code> L112-127 (<code>m_peerIp</code> 取得)</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_INTERFACE\|Loopback3</code></td>
+<td>読み取り（ハードコード）</td>
+<td>常時。<code>tun0</code> ローカル IP ソース (<code>#define LOOPBACK_SRC "Loopback3"</code>)。TUNNEL SET より先に prefix SET 必要</td>
+<td><code>tunnelmgr.cpp</code> L19, L339, L405</td>
+</tr>
+<tr>
+<td><code>DSCP_TO_TC_MAP\|&lt;name&gt;</code></td>
+<td>OID 解決（<code>gQosOrch-&gt;resolveTunnelQosMap</code>）</td>
+<td><code>decap_dscp_to_tc_map</code> フィールドに値を指定したとき。未作成 map は <code>task_need_retry</code> 無限待機</td>
+<td><code>tunneldecaporch.cpp</code> L215-221; <code>qosorch.cpp</code> L113</td>
+</tr>
+<tr>
+<td><code>TC_TO_PRIORITY_GROUP_MAP\|&lt;name&gt;</code></td>
+<td>OID 解決（<code>gQosOrch-&gt;resolveTunnelQosMap</code>）</td>
+<td><code>decap_tc_to_pg_map</code> フィールドに値を指定したとき。未作成 map は <code>task_need_retry</code> 無限待機</td>
+<td><code>tunneldecaporch.cpp</code> L230-236; <code>qosorch.cpp</code> L114</td>
+</tr>
+<tr>
+<td><code>TC_TO_DSCP_MAP\|&lt;name&gt;</code></td>
+<td>OID 解決（<code>gQosOrch-&gt;resolveTunnelQosMap</code>）</td>
+<td><code>encap_tc_to_dscp_map</code> フィールドに値を指定したとき。OID は <code>tunnelTable</code> に記録。SAI 直接 push なし（muxorch が <code>getQosMapId()</code> で取得）</td>
+<td><code>tunneldecaporch.cpp</code> L245-257; <code>qosorch.cpp</code> L115</td>
+</tr>
+<tr>
+<td><code>TC_TO_QUEUE_MAP\|&lt;name&gt;</code></td>
+<td>OID 解決（<code>gQosOrch-&gt;resolveTunnelQosMap</code>）</td>
+<td><code>encap_tc_to_queue_map</code> フィールドに値を指定したとき。<code>encap_tc_to_dscp_map</code> と同様、muxorch 経由で利用</td>
+<td><code>tunneldecaporch.cpp</code> L260-272; <code>qosorch.cpp</code> L116</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE</code>（逆参照）</td>
+<td>下流が TUNNEL を読み取り</td>
+<td><code>MuxOrch</code> が MUX_CABLE SET 処理時に <code>TunnelDecapOrch::getDstIpAddresses()</code> / <code>getDscpMode()</code> / <code>getQosMapId()</code> を呼び出す。TUNNEL DEL 前に MUX_CABLE を先に DEL しないとエラー</td>
+<td><code>muxorch.cpp</code> L2348-2377</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">QoS map の事前作成必須</p>
+<p><code>decap_dscp_to_tc_map</code> / <code>decap_tc_to_pg_map</code> に指定する QoS map が未作成の場合、
+当該 TUNNEL エントリの処理が <code>task_need_retry</code> でスタックし続ける。
+TUNNEL SET 前に対応する <code>DSCP_TO_TC_MAP</code> / <code>TC_TO_PRIORITY_GROUP_MAP</code> を作成すること。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">LOOPBACK_INTERFACE|Loopback3 のハードコード依存</p>
+<p><code>tunnelmgrd</code> は <code>Loopback3</code> をハードコードで参照する (<code>LOOPBACK_SRC = "Loopback3"</code>)。
+Dual-ToR 環境では <code>LOOPBACK_INTERFACE|Loopback3|&lt;ip/prefix&gt;</code> の SET が
+TUNNEL SET より先であることを確認すること。後から届いてもキャッシュ経由で
+アドレスが付与されるが、カーネルトンネルの初期作成が遅延する可能性がある。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動・リトライ・リカバリ (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h3 id="tunnelmgr-set">tunnelmgr — SET 失敗経路<a class="headerlink" href="#tunnelmgr-set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_type</code> が <code>IPINIP</code> 以外</td>
+<td><code>doTunnelTask()</code></td>
+<td>APPL_DB 未通知。キャッシュには追加される</td>
+<td>なし (恒久スキップ)</td>
+</tr>
+<tr>
+<td><code>m_peerIp</code> 空 (PEER_SWITCH 未設定)</td>
+<td><code>doTunnelTask()</code> L258-261</td>
+<td>LOG_NOTICE → Linux tunnel 未作成。PEER_SWITCH 設定後に TUNNEL 再 SET が必要</td>
+<td><strong>自動再処理なし</strong></td>
+</tr>
+<tr>
+<td><code>ip tunnel add</code> / <code>ip link set up</code> 失敗</td>
+<td><code>configIpTunnel()</code> L391-416</td>
+<td>LOG_WARN のみ。関数は常に <code>true</code> を返すため APPL_DB 通知は実行。kernel IF なし状態で APPL_DB だけ設定される</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>configIpTunnel()</code> が <code>false</code> を返す</td>
+<td><code>doTunnelTask()</code> L254-256</td>
+<td><code>return false</code> → <code>m_toSync</code> にタスク残留、次サイクルでリトライ</td>
+<td><strong>自動リトライ</strong> (無限ループの可能性)</td>
+</tr>
+<tr>
+<td>不明な operation type</td>
+<td><code>doTask()</code> L201-203</td>
+<td>LOG_ERROR → タスク消費 (恒久スキップ)</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunnelmgr-del">tunnelmgr — DEL 失敗経路<a class="headerlink" href="#tunnelmgr-del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEL 対象が <code>m_tunnelCache</code> に存在しない</td>
+<td><code>doTunnelTask()</code> L299-302</td>
+<td><code>SWSS_LOG_ERROR("Tunnel %s not found")</code> → <code>return true</code>（タスク消費）</td>
+<td>なし (恒久スキップ)</td>
+</tr>
+<tr>
+<td>キャッシュにあるが <code>tunnel_type</code> が IPINIP 以外</td>
+<td><code>doTunnelTask()</code> L312-314</td>
+<td>LOG_WARN → キャッシュ削除のみ、APPL_DB DEL は送られない</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunneldecaporch-set">tunneldecaporch — SET 失敗経路<a class="headerlink" href="#tunneldecaporch-set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_type</code> が <code>IPINIP</code> 以外</td>
+<td>L127-131</td>
+<td>LOG_ERROR → <code>valid=false</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>src_ip</code> が不正な IP 文字列</td>
+<td>L141-146</td>
+<td>LOG_ERROR → <code>valid=false</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>dscp_mode</code> / <code>ttl_mode</code> が不正値</td>
+<td>L155-160, L202-207</td>
+<td>LOG_ERROR → <code>valid=false</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>ecn_mode</code> が不正値</td>
+<td>L170-175</td>
+<td>LOG_ERROR → <code>valid=false</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>既存トンネルへの <code>ecn_mode</code> 変更 (SAI create-only)</td>
+<td>L177-182</td>
+<td>LOG_WARN → <code>valid=false</code> → <strong>SET 全体無効化</strong>（他フィールドを含む）</td>
+<td>なし。DEL → 再 SET が必要</td>
+</tr>
+<tr>
+<td>既存トンネルへの <code>encap_ecn_mode</code> 変更 (SAI create-only)</td>
+<td>L193-198</td>
+<td>LOG_NOTICE → <code>valid=false</code> → <strong>SET 全体無効化</strong></td>
+<td>なし。DEL → 再 SET が必要</td>
+</tr>
+<tr>
+<td><code>encap_ecn_mode</code> が <code>standard</code> 以外</td>
+<td>L187-191</td>
+<td>LOG_ERROR → <code>valid=false</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>未知フィールド名</td>
+<td>L277-279</td>
+<td>LOG_ERROR → <code>valid=false</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>QoS map が未作成 (<code>decap_dscp_to_tc_map</code> 等)</td>
+<td>L217-266</td>
+<td>LOG_NOTICE → <code>task_need_retry</code> → <code>it++</code> でタスクキュー残留</td>
+<td><strong>自動リトライ</strong> (QoS map 作成後に再処理)</td>
+</tr>
+<tr>
+<td><code>addDecapTunnel()</code> 失敗 (SAI create_tunnel 失敗)</td>
+<td>L313</td>
+<td>LOG_ERROR → タスク消費。SAI エラー詳細は syncd ログで確認</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tunneldecaporch-del">tunneldecaporch — DEL 失敗経路<a class="headerlink" href="#tunneldecaporch-del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>リトライ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEL 対象が存在しない</td>
+<td>L325-327</td>
+<td><code>SWSS_LOG_ERROR("Tunnel cannot be removed since it doesn't exist")</code> → タスク消費</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">重要な設計上の注意点<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>configIpTunnel()</code> は常に <code>true</code> を返す</strong>: Linux kernel コマンドが失敗しても LOG_WARN のみ。kernel IF なし状態で APPL_DB だけ設定される可能性がある</li>
+<li><strong>create-only 属性の罠</strong>: <code>ecn_mode</code> / <code>encap_ecn_mode</code> は SAI create-only 属性。既存トンネルへの SET で <code>valid=false</code> となり<strong>同一 SET 内の他フィールド更新も全て無効化</strong>される</li>
+<li><strong>PEER_SWITCH 先行設定必須</strong>: <code>m_peerIp</code> 空の場合 Linux tunnel IF 未作成。PEER_SWITCH を後設定しても <code>tunnelmgrd</code> 自動再処理は発生しないため TUNNEL 再 SET が必要</li>
+</ul>
+<h3 id="_18">回復シナリオまとめ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>回復方法</th>
+<th>自動か手動か</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_type</code> 不正 / 未知フィールド</td>
+<td>正しい値を再投入</td>
+<td>手動</td>
+</tr>
+<tr>
+<td><code>m_peerIp</code> 空 (PEER_SWITCH 未設定)</td>
+<td>PEER_SWITCH 設定後に TUNNEL 再 SET</td>
+<td>手動</td>
+</tr>
+<tr>
+<td><code>ip tunnel add</code> 失敗 (kernel エラー)</td>
+<td>根本原因解決後 <code>tunnelmgrd</code> 自動リトライ</td>
+<td>自動リトライ</td>
+</tr>
+<tr>
+<td><code>ecn_mode</code> / <code>encap_ecn_mode</code> 変更</td>
+<td><code>TUNNEL</code> DEL → 再 SET</td>
+<td>手動</td>
+</tr>
+<tr>
+<td>QoS map 未作成</td>
+<td>QoS map SET 後 orchagent が自動再処理</td>
+<td>自動</td>
+</tr>
+<tr>
+<td>SAI <code>create_tunnel</code> 失敗</td>
+<td>syncd ログ確認後 再 SET</td>
+<td>手動</td>
+</tr>
+<tr>
+<td>DEL 対象不存在</td>
+<td>操作なし (確認のみ)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書きされている定数。<code>config_db.json</code> での設定変更は効果なく、変更にはコードのリコンパイルが必要。</p>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IPINIP</code></td>
+<td><code>"IPINIP"</code></td>
+<td><code>tunnelmgr.cpp</code> L17</td>
+<td><code>tunnel_type</code> 比較用マクロ。<code>tunnel_type != IPINIP</code> でエラー判定</td>
+</tr>
+<tr>
+<td><code>TUNIF</code></td>
+<td><code>"tun0"</code></td>
+<td><code>tunnelmgr.cpp</code> L18</td>
+<td>Linux kernel IPinIP トンネル IF 名。固定。<code>ip tunnel add tun0 ...</code> で作成</td>
+</tr>
+<tr>
+<td><code>LOOPBACK_SRC</code></td>
+<td><code>"Loopback3"</code></td>
+<td><code>tunnelmgr.cpp</code> L19</td>
+<td>カーネルトンネルのローカル IP を取得する Loopback IF 名。<code>LOOPBACK_INTERFACE|Loopback3</code> が存在しない環境ではトンネル動作不可</td>
+</tr>
+<tr>
+<td><code>OVERLAY_RIF_DEFAULT_MTU</code></td>
+<td><code>9100</code></td>
+<td><code>tunneldecaporch.cpp</code> L14</td>
+<td>Overlay loopback ルータインターフェースの MTU。<code>SAI_ROUTER_INTERFACE_ATTR_MTU</code> として SAI に渡す</td>
+</tr>
+<tr>
+<td><code>MUX_TUNNEL</code></td>
+<td><code>"MuxTunnel0"</code></td>
+<td><code>tunneldecaporch.h</code> L21</td>
+<td><a href="../../glossary/#term-muxorch">MuxOrch</a> が固定参照する Dual-ToR トンネル名。TUNNEL テーブルのキーがこの値でない場合 MuxOrch はトンネルを見つけられずエラー</td>
+</tr>
+<tr>
+<td><code>SubnetDecapConfig.tunnel</code></td>
+<td><code>"IPINIP_SUBNET"</code></td>
+<td><code>tunneldecaporch.h</code> L101</td>
+<td>サブネット decap 用 IPv4 トンネル内部識別子</td>
+</tr>
+<tr>
+<td><code>SubnetDecapConfig.tunnel_v6</code></td>
+<td><code>"IPINIP_SUBNET_V6"</code></td>
+<td><code>tunneldecaporch.h</code> L102</td>
+<td>サブネット decap 用 IPv6 トンネル内部識別子</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">MuxTunnel0 固定名の制約</p>
+<p><a href="../../glossary/#term-yang">YANG</a> パターン <code>"MuxTunnel[0-9]+"</code> で複数エントリを許容しているが、
+<code>MuxOrch</code> は <code>MuxTunnel0</code> をハードコードで参照する。
+トンネル名を <code>MuxTunnel1</code> 等にすると MuxOrch が対象を見つけられず Dual-ToR が機能しない。</p>
+</div>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
 
 <!-- glossary-links-injected: ae9e20070353 -->
 

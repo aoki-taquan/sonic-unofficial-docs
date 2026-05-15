@@ -24137,6 +24137,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-db_migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL / db_migrator における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35178,6 +35228,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 処理における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del-db_migrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL / db_migrator における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        補足
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35687,6 +35787,147 @@
 <li><code>accounting.login</code> の <code>'disable'</code> デフォルトは YANG default (<code>'local'</code>) と異なる点に注意。DB に <code>AAA|accounting</code> エントリが存在しない場合、hostcfgd は <code>'disable'</code> として振る舞う。</li>
 </ul>
 <!-- /defaults -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p>ソース: <code>sonic-net/sonic-host-services/scripts/hostcfgd</code></p>
+<h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ出力</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key</code> が <code>authentication</code>/<code>authorization</code>/<code>accounting</code> 以外</td>
+<td><code>aaa_update()</code> L419</td>
+<td>内部状態更新なし・<code>modify_conf_file()</code> は呼ばれるが設定変化なし</td>
+<td>なし</td>
+<td><code>hostcfgd:419-431</code></td>
+</tr>
+<tr>
+<td><code>failthrough</code> に <code>'True'</code>/<code>'true'</code> 以外の文字列 (<code>'yes'</code>/<code>'1'</code> 等)</td>
+<td><code>is_true()</code> L156</td>
+<td><code>False</code> 扱い・"Failed to get bool value" を syslog ERR 出力</td>
+<td>LOG_ERR</td>
+<td><code>hostcfgd:160-162</code></td>
+</tr>
+<tr>
+<td><code>login=ldap</code> だが <code>bind_dn</code>/<code>bind_password</code>/<code>base_dn</code> のいずれかが空</td>
+<td><code>is_ldap_config_complete()</code> L437</td>
+<td><code>handle_nslcd_service(False)</code> → nslcd を stop &amp; mask (LDAP 認証不能)</td>
+<td>LOG_DEBUG ("nslcd: deactivating")</td>
+<td><code>hostcfgd:437-442, 246-251</code></td>
+</tr>
+<tr>
+<td><code>login=ldap</code> だが <code>LDAP_SERVER</code> エントリなし</td>
+<td><code>is_ldap_config_complete()</code> L442</td>
+<td><code>self.ldap_servers</code> 空 → <code>False</code> → nslcd を stop &amp; mask</td>
+<td>LOG_DEBUG</td>
+<td><code>hostcfgd:442</code></td>
+</tr>
+<tr>
+<td>PAM テンプレートレンダリング中に jinja2 例外発生</td>
+<td><code>modify_conf_file()</code> L716-725</td>
+<td>例外伝播・PAM ファイル未更新</td>
+<td>スタックトレース (未捕捉)</td>
+<td><code>hostcfgd:716-731</code></td>
+</tr>
+<tr>
+<td>PAM 設定ファイル書き込み時 <code>open()</code> / <code>os.rename()</code> が <code>OSError</code></td>
+<td><code>modify_conf_file()</code> L728-731</td>
+<td>例外伝播・PAM ファイル未更新 (<code>.tmp</code> 残存の可能性)</td>
+<td>スタックトレース (未捕捉)</td>
+<td><code>hostcfgd:728-731</code></td>
+</tr>
+<tr>
+<td><code>aaastatsd</code> サービスの start/stop が <code>CalledProcessError</code></td>
+<td><code>modify_conf_file()</code> L846-851</td>
+<td>LOG_ERR のみ・後続の NSLCD 設定処理は継続</td>
+<td>LOG_ERR</td>
+<td><code>hostcfgd:846-851</code></td>
+</tr>
+<tr>
+<td>NSLCD / LDAP conf 生成 (<code>generate_file_from_template</code>) で例外</td>
+<td><code>generate_file_from_template()</code> L214</td>
+<td>LOG_ERR のみ・nslcd.conf / ldap.conf 未更新</td>
+<td>LOG_ERR ("Failed generate_file_from_template error=...")</td>
+<td><code>hostcfgd:214-216</code></td>
+</tr>
+<tr>
+<td>LDAP conf ディレクトリ作成 (<code>os.makedirs</code>) 失敗</td>
+<td><code>modify_conf_file()</code> L860-862</td>
+<td>LOG_ERR のみ・LDAP_CONF 生成試行は続く</td>
+<td>LOG_ERR ("Error occurred when using cmd makedirs...")</td>
+<td><code>hostcfgd:860-862</code></td>
+</tr>
+<tr>
+<td><code>audisp-tacplus</code> への SIGHUP 送信失敗 (<code>os.kill</code> 例外)</td>
+<td><code>notify_audisp_tacplus_reload_config()</code> L490-493</td>
+<td>LOG_WARNING のみ・処理継続</td>
+<td>LOG_WARNING</td>
+<td><code>hostcfgd:490-493</code></td>
+</tr>
+<tr>
+<td><code>/etc/pam.d/sshd</code> / <code>/etc/pam.d/login</code> ファイルが欠如</td>
+<td><code>check_file_not_empty()</code> L619-620</td>
+<td>LOG_ERR のみ・sed 変更未適用</td>
+<td>LOG_ERR ("file size check failed: {} is missing")</td>
+<td><code>hostcfgd:619-621</code></td>
+</tr>
+<tr>
+<td><code>nsswitch.conf</code> が存在しない</td>
+<td><code>modify_conf_file()</code> L755-783</td>
+<td><code>os.path.isfile()</code> が False → sed 変更スキップ (silent skip)</td>
+<td>なし</td>
+<td><code>hostcfgd:756, 763-783</code></td>
+</tr>
+<tr>
+<td><code>RADIUS_SERVER.src_intf</code> に対応する IP が解決できない</td>
+<td><code>modify_conf_file()</code> L697-700</td>
+<td>LOG_INFO → <code>src_ip</code> を削除して処理継続</td>
+<td>LOG_INFO ("src_intf has no usable IP addr.")</td>
+<td><code>hostcfgd:697-700</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="del-db_migrator">DEL / db_migrator における失敗経路<a class="headerlink" href="#del-db_migrator" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AAA</code> エントリ DEL 後</td>
+<td><code>aaa_update()</code> dispatch</td>
+<td>default dict (<code>login: local</code> / <code>disable</code>) に回帰</td>
+<td><code>hostcfgd:357-366, 641-648</code></td>
+</tr>
+<tr>
+<td>migration 時 <code>TACPLUS\|global.passkey</code> が空</td>
+<td><code>migrate_aaa()</code> L869</td>
+<td><code>AAA\|authorization</code> エントリを<strong>削除</strong>。passkey 後追い設定後も自動復元なし</td>
+<td><code>db_migrator.py:869-900</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_22">補足<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>PAM atomic 書き込み</strong>: <code>.tmp</code> → <code>os.rename()</code> で atomic 置換。<code>os.rename()</code> 失敗時は <code>.tmp</code> が残存し PAM 設定変化なし。</li>
+<li><strong>nslcd 自動復旧</strong>: nslcd が mask された後に <code>ldap_global_update()</code> / <code>ldap_server_update()</code> が呼ばれると <code>handle_nslcd_service()</code> が再評価され、LDAP 設定が完全になった時点で unmask &amp; start (<code>hostcfgd:547-564</code>)。</li>
+<li><strong><code>trace</code> の無効化バグ</strong>: <code>aaa_update()</code> に <code>trace</code> 更新ブロックが存在しないため <code>self.trace</code> は常に <code>False</code>。CONFIG_DB の <code>trace=True</code> は PAM テンプレートに反映されない。</li>
+</ul>
+<!-- /failure -->
 
 <!-- glossary-links-injected: 8d5a139c8eba -->
 

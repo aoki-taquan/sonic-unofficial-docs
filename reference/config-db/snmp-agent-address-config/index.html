@@ -28214,6 +28214,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ip-port-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 同一 (ip, port) 重複: DEL 先行が必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mgmt_vrf_config-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MGMT_VRF_CONFIG が有効な場合は VRF 指定必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ip-nic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. IP アドレスが NIC に付与済みであること
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vrf-agentaddress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VRF が実在してから agentaddress を設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-set-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SET 後は snmp コンテナ再起動が必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-minigraph-mgmt_interface-snmp_agent_address_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. minigraph 経路: MGMT_INTERFACE → SNMP_AGENT_ADDRESS_CONFIG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35100,6 +35183,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ip-port-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 同一 (ip, port) 重複: DEL 先行が必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mgmt_vrf_config-vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MGMT_VRF_CONFIG が有効な場合は VRF 指定必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ip-nic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. IP アドレスが NIC に付与済みであること
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-vrf-agentaddress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. VRF が実在してから agentaddress を設定
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-set-snmp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SET 後は snmp コンテナ再起動が必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-minigraph-mgmt_interface-snmp_agent_address_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. minigraph 経路: MGMT_INTERFACE → SNMP_AGENT_ADDRESS_CONFIG
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35382,6 +35548,70 @@
 <h3 id="_17">死活・デッドコード<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <p>なし</p>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="1-ip-port-del">1. 同一 (ip, port) 重複: DEL 先行が必須<a class="headerlink" href="#1-ip-port-del" title="Permanent link">&para;</a></h3>
+<p><code>unique "agent_ip port"</code> 制約（<code>sonic-snmp.yang</code> L171）により、同一 <code>(ip, port)</code> を異なる <code>vrf_name</code> で重複登録すると YANG バリデーションが拒否する。VRF を変更する場合は旧エントリを DEL してから新エントリを SET する。CLI は <code>get_keys</code> による事前重複チェックで YANG 層到達前に防ぐ（<code>config/main.py:4177-4182</code>）。</p>
+<h3 id="2-mgmt_vrf_config-vrf">2. MGMT_VRF_CONFIG が有効な場合は VRF 指定必須<a class="headerlink" href="#2-mgmt_vrf_config-vrf" title="Permanent link">&para;</a></h3>
+<p><code>config snmp agentaddress add &lt;ip&gt;</code> に <code>-v</code> オプションを省略した状態で <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'</code> が存在すると、CLI が "ManagementVRF is Enabled. Provide vrf." を出力して CONFIG_DB への書込みをブロックする（<code>config/main.py:4153-4157</code>）。Management VRF を使う場合は <code>-v mgmt</code> を明示する。</p>
+<h3 id="3-ip-nic">3. IP アドレスが NIC に付与済みであること<a class="headerlink" href="#3-ip-nic" title="Permanent link">&para;</a></h3>
+<p>CLI は <code>netifaces.interfaces()</code> で agentip が実際にホスト NIC に付与されているかを確認する（<code>config/main.py:4160-4171</code>）。IP 未付与の場合は "IP address is not available" でリジェクトされる。</p>
+<h3 id="4-vrf-agentaddress">4. VRF が実在してから agentaddress を設定<a class="headerlink" href="#4-vrf-agentaddress" title="Permanent link">&para;</a></h3>
+<p><code>vrf_name</code> に <code>mgmt</code> / <code>Vrf&lt;name&gt;</code> を指定しても VRF がカーネルに存在しない場合、CONFIG_DB への書込みは成功するが snmpd が agentAddress バインドに失敗する。YANG は VRF 実在チェックを行わない。正しい順序: <code>config vrf add &lt;vrf&gt;</code> → <code>config snmp agentaddress add &lt;ip&gt; -v &lt;vrf&gt;</code>。</p>
+<h3 id="5-set-snmp">5. SET 後は snmp コンテナ再起動が必要<a class="headerlink" href="#5-set-snmp" title="Permanent link">&para;</a></h3>
+<p>エントリを SET しても <code>systemctl restart snmp</code> でコンテナを再起動しなければ snmpd.conf は更新されない。CLI (<code>config snmp agentaddress add/del</code>) は書込み直後に自動で <code>os.system("systemctl restart snmp")</code> を呼ぶ（<code>config/main.py:4189</code>）。直接 <code>sonic-db-cli</code> で書き込む場合は手動で再起動が必要。</p>
+<h3 id="6-minigraph-mgmt_interface-snmp_agent_address_config">6. minigraph 経路: MGMT_INTERFACE → SNMP_AGENT_ADDRESS_CONFIG<a class="headerlink" href="#6-minigraph-mgmt_interface-snmp_agent_address_config" title="Permanent link">&para;</a></h3>
+<p><code>minigraph.py</code> は <code>MGMT_INTERFACE</code> / <code>LOOPBACK_INTERFACE</code> を解析した後に <code>SNMP_AGENT_ADDRESS_CONFIG</code> を生成する（L2308-2322）。multi-asic 環境では自動生成が行われず空辞書となる。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>違反時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>旧エントリ DEL → 同 (ip,port) 新エントリ SET</td>
+<td><strong>必須先行</strong></td>
+<td>YANG unique 違反（SET 失敗）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>MGMT_VRF_CONFIG.mgmtVrfEnabled=true</code> 時は <code>-v mgmt</code> 指定</td>
+<td><strong>CLI 強制</strong></td>
+<td>CLI ブロック（DB 書込み不達）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>NIC への IP 付与 → <code>agentaddress add &lt;ip&gt;</code></td>
+<td><strong>CLI 強制</strong></td>
+<td>"IP address is not available" 拒否</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>config vrf add &lt;vrf&gt;</code> → <code>agentaddress add &lt;ip&gt; -v &lt;vrf&gt;</code></td>
+<td><strong>推奨先行</strong></td>
+<td>DB 書込み成功、snmpd bind 失敗</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SET 完了 → <code>systemctl restart snmp</code></td>
+<td><strong>必須後続</strong></td>
+<td>snmpd.conf 未更新（旧設定継続）</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>MGMT_INTERFACE</code>/<code>LOOPBACK_INTERFACE</code> 先行 → minigraph 自動生成</td>
+<td><strong>minigraph 内部</strong></td>
+<td>空辞書（multi-asic では常時空）</td>
+</tr>
+</tbody>
+</table>
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
 

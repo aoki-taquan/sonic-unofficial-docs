@@ -23093,6 +23093,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#copporchh-copporchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        copporch.h / copporch.cpp 固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム判定文字列 (orch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp_cfgj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        copp_cfg.j2 デフォルト値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_cfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_cfg 由来の暗黙初期化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35498,6 +35587,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#copporchh-copporchcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        copporch.h / copporch.cpp 固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム判定文字列 (orch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copp_cfgj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        copp_cfg.j2 デフォルト値
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解決タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#init_cfg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        init_cfg 由来の暗黙初期化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36074,6 +36252,229 @@
 <p>中間調査ファイル: <code>meta/_intermediate/cdb-flow/copp-group-failure.md</code></p>
 </blockquote>
 <!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="copporchh-copporchcpp">copporch.h / copporch.cpp 固定値<a class="headerlink" href="#copporchh-copporchcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default_trap_group</code></td>
+<td><code>"default"</code></td>
+<td>デフォルトグループ名リテラル。DEL 拒否判定に使用</td>
+<td><code>copporch.cpp:184</code></td>
+</tr>
+<tr>
+<td><code>default_trap_ids</code></td>
+<td><code>{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}</code></td>
+<td>起動時に強制登録される trap ID リスト</td>
+<td><code>copporch.cpp:185-187</code></td>
+</tr>
+<tr>
+<td>TTL_ERROR <code>trap_priority</code></td>
+<td><code>1</code></td>
+<td><code>initDefaultTrapIds()</code> で SAI に設定するハードコード優先度。Mellanox/Marvell ではスキップ</td>
+<td><code>copporch.cpp:357</code></td>
+</tr>
+<tr>
+<td><code>HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS</code></td>
+<td><code>10000</code> ms</td>
+<td>HostIF trap FlexCounter ポーリング間隔 (10 秒)</td>
+<td><code>copporch.cpp:189</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_UPD_INTERVAL</code></td>
+<td><code>1</code> 秒</td>
+<td>FlexCounter 更新タイマー間隔</td>
+<td><code>copporch.cpp:37</code></td>
+</tr>
+<tr>
+<td><code>HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP</code></td>
+<td><code>"HOSTIF_TRAP_FLOW_COUNTER"</code></td>
+<td>FlexCounter グループ名 (COUNTERS_DB キー)</td>
+<td><code>copporch.h:23</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="orchh">プラットフォーム判定文字列 (orch.h)<a class="headerlink" href="#orchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MLNX_PLATFORM_SUBSTRING</code></td>
+<td><code>"mellanox"</code></td>
+<td>Mellanox プラットフォーム判定。<code>trap_priority</code> 設定をスキップ</td>
+</tr>
+<tr>
+<td><code>MRVL_PRST_PLATFORM_SUBSTRING</code></td>
+<td><code>"marvell-prestera"</code></td>
+<td>Marvell Prestera 判定。同様に <code>trap_priority</code> をスキップ</td>
+</tr>
+</tbody>
+</table>
+<p><code>platform</code> 環境変数に上記文字列が含まれる場合、TTL_ERROR および通常 COPP グループの <code>trap_priority</code> は SAI に渡されない (silent drop)。<!-- evidence: copporch.cpp:354,1189; orch.h:41-42 --></p>
+<h3 id="copp_cfgj2">copp_cfg.j2 デフォルト値<a class="headerlink" href="#copp_cfgj2" title="Permanent link">&para;</a></h3>
+<p><code>sonic-buildimage</code> の Jinja2 テンプレートが生成する初期 COPP グループのハードコード pps 値:</p>
+<table>
+<thead>
+<tr>
+<th>グループ</th>
+<th>queue</th>
+<th>cir = cbs (pps)</th>
+<th>trap_action</th>
+<th>trap_priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default</code></td>
+<td>0</td>
+<td>600</td>
+<td>(未設定→SAI 実装依存)</td>
+<td>(未設定)</td>
+</tr>
+<tr>
+<td><code>queue4_group1</code></td>
+<td>4</td>
+<td>6000</td>
+<td><code>trap</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>queue4_group2</code></td>
+<td>4</td>
+<td>600</td>
+<td><code>copy</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>queue4_group3</code></td>
+<td>4</td>
+<td><strong>100</strong> (Mgmt 型: <strong>300</strong>)</td>
+<td><code>trap</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>queue1_group1</code></td>
+<td>1</td>
+<td>6000</td>
+<td><code>trap</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>queue1_group2</code></td>
+<td>1</td>
+<td>600</td>
+<td><code>trap</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>queue1_group3</code></td>
+<td>1</td>
+<td>200</td>
+<td><code>trap</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>queue2_group1</code></td>
+<td>2</td>
+<td>1000</td>
+<td><code>trap</code></td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><code>queue4_group3</code> は <code>DEVICE_METADATA['localhost']['type']</code> に <code>'Mgmt'</code> を含む場合のみ <code>cir=cbs=300</code>、それ以外 <code>100</code>。<!-- evidence: copp_cfg.j2:37-43 --></p>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>copporch.h</code> 全行、<code>copporch.cpp</code> L1-200, L330-370, <code>orch.h</code> L41-42、<code>copp_cfg.j2</code> 全行読了。定数 6+2+8 件抽出。中間ファイル: <code>meta/_intermediate/cdb-flow/copp-group-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>COPP_GROUP</code> エントリが処理される際に <code>coppmgr</code> / <code>CoppOrch</code> が暗黙的に関与する
+他テーブルの依存関係を示す。COPP_GROUP 自体は他テーブルへの leafref を持たないが、
+ビルド時テンプレートと逆方向の参照（COPP_TRAP → COPP_GROUP）が存在する。</p>
+<table>
+<thead>
+<tr>
+<th>依存方向</th>
+<th>参照元フィールド / 参照元</th>
+<th>参照先テーブル</th>
+<th>参照先キー形式</th>
+<th>依存内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逆参照（被参照）</td>
+<td><code>COPP_TRAP.trap_group</code></td>
+<td><code>COPP_GROUP</code>（本テーブル）</td>
+<td><code>COPP_GROUP\|&lt;name&gt;</code></td>
+<td>COPP_GROUP が SAI 未登録の場合、COPP_TRAP の APPL_DB 書き込みが保留される。COPP_GROUP を DEL すると紐付く COPP_TRAP が pending 状態になる</td>
+<td><code>coppmgr.cpp:62-79</code>, <code>copporch.cpp:584</code></td>
+</tr>
+<tr>
+<td>ビルド時依存</td>
+<td><code>queue4_group3</code> の <code>cir</code>/<code>cbs</code> 初期値</td>
+<td><code>DEVICE_METADATA</code></td>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td><code>type</code> フィールドに <code>'Mgmt'</code> が含まれる場合 <code>cir=cbs=300</code> pps、それ以外は <code>100</code> pps。<code>sonic-cfggen</code> によるテンプレート展開時に解決（実行時依存なし）</td>
+<td><code>copp_cfg.j2:37-43</code></td>
+</tr>
+<tr>
+<td>間接依存（COPP_TRAP 経由）</td>
+<td><code>COPP_GROUP</code> に属する <code>COPP_TRAP</code> の <code>trap_ids</code></td>
+<td><code>FEATURE</code></td>
+<td><code>FEATURE\|&lt;feature-name&gt;</code></td>
+<td>feature <code>state=disabled</code> の場合、そのグループ宛ての trap_id が APPL_DB <code>COPP_TABLE\|&lt;group&gt;</code> から除外される。<code>queue2_group1</code>（sflow/<code>sample_packet</code>）が典型例</td>
+<td><code>coppmgr.cpp:173-191</code></td>
+</tr>
+<tr>
+<td>init 依存（自動復元）</td>
+<td><code>COPP_GROUP</code> (全エントリ)</td>
+<td><code>/etc/sonic/copp_cfg.json</code></td>
+<td>—</td>
+<td>起動時に init セットをロード。ユーザー DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。<code>default</code> グループは DEL 自体が <code>task_ignore</code> で拒否</td>
+<td><code>coppmgr.cpp:898-921</code>, <code>copporch.cpp:861-864</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">解決タイミング<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>COPP_TRAP → COPP_GROUP 依存</strong>: COPP_TRAP の SET 処理時に即座に確認。未解決は
+  保留キューで管理され、COPP_GROUP 登録後の <code>doTask()</code> 再実行で解消。</li>
+<li><strong>DEVICE_METADATA → cir/cbs</strong>: ビルド時（<code>sonic-cfggen</code>）に解決済み。
+  実行時の DEVICE_METADATA 変化は COPP_GROUP に影響しない。</li>
+<li><strong>FEATURE → trap_ids</strong>: <code>doFeatureTask()</code> が FEATURE テーブルの変化を購読し、
+  state 変更のたびに影響する COPP_TRAP の trap_ids を再評価・APPL_DB を更新。
+  COPP_GROUP エントリ自体は変化しない（APPL_DB 上の <code>trap_ids</code> リストが変化する）。</li>
+</ul>
+<h3 id="init_cfg">init_cfg 由来の暗黙初期化<a class="headerlink" href="#init_cfg" title="Permanent link">&para;</a></h3>
+<p><code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>files/image_config/copp/copp_cfg.j2</code> の展開物）を
+読み込み、<code>COPP_GROUP</code> の初期セットを <code>m_coppGroupInitCfg</code> に保持する。
+ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
+自動復元される（実質「DEL = init リセット」）。<code>coppmgr.cpp:898-921</code></p>
+<ul>
+<li>既定グループ例: <code>default</code>、<code>queue4_group1</code>（BGP/LLDP）、<code>queue2_group1</code>（sflow/genetlink）</li>
+<li><code>default</code> グループは <code>CoppOrch</code> 側でも削除を <code>task_ignore</code> で拒否する二重防護</li>
+</ul>
+<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 87fa713c3c5e -->
 
