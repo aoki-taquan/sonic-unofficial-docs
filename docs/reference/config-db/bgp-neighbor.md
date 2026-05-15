@@ -353,4 +353,48 @@ YANG の `peer_type` フィールドは bgpcfgd 経路では **参照されな�
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-defaults.md`
 <!-- /defaults -->
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+### retry キュー (`set_queue`) の仕組み
+
+`bgpcfgd` の全 Manager は `manager.py` 共通基底クラスが提供する **`set_queue`** ベースの retry 機構を持つ。
+
+`set_handler()` が `False` を返すと "NOT_READY" とみなし、イベント `(key, data)` を `set_queue` に追記して処理を後回しにする。依存関係 (Loopback0 IP / DEVICE_NEIGHBOR_METADATA など) が変化するたびに `on_deps_change()` が呼ばれ、キュー内の全イベントを再実行 (replay) する。成功すればキューから削除し、失敗なら次の deps 変化を待つ。retry 間隔・上限はなく、**依存関係変化ドリブン**で無期限 retry する。
+
+```
+CONFIG_DB SET → set_handler() → False → set_queue[]
+                                            ↑
+deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay → success / re-queue
+```
+
+### 主要な `return False` (retry) ケース
+
+| 条件 | ログ | retry トリガー |
+|------|------|---------------|
+| Loopback0 IPv4 未設定 かつ `bgp_router_id` 未設定 | `LOG_WARN "Loopback0 ipv4 address is not presented yet..."` | Loopback0 IP 付与 |
+| `local_addr` に対応するインタフェース未登録 | `LOG_DEBUG "Peer X wait for the corresponding interface to be set"` | インタフェース登録 |
+| `check_neig_meta=True` かつ `name` が DEVICE_NEIGHBOR_METADATA に未登録 | `LOG_INFO "DEVICE_NEIGHBOR_METADATA is not ready for neighbor X"` | DEVICE_NEIGHBOR_METADATA 到着 |
+
+### `return True` (retry なし・サイレント drop) ケース
+
+| 条件 | 効果 |
+|------|------|
+| Jinja2 テンプレートレンダリング失敗 | `LOG_ERR` を出して `return True`。FRR 操作なし、`self.peers` 未追加。**再試行なし** (`managers_bgp.py:246` のコメント参照) |
+| `update_peer()` で `admin_status` 以外のフィールド変更 | `LOG_ERR "Only 'admin_status' attribute is supported"` → `return True`。変更は適用されない |
+| frrcfgd: 参照先 peer-group 未存在 | `LOG_ERR "invalid peer-group %s was referenced"` → continue（skip） |
+| frrcfgd: interface 型 neighbor 生成失敗 | `LOG_ERR "failed to create neighbor of interface %s"` → continue（skip） |
+
+### DEL 失敗
+
+- 対象 peer が `self.peers` に未登録: `LOG_WARN + return`（no-op）
+- FRR への削除コマンド失敗: `LOG_ERR "Peer hasn't been removed"`、`self.peers` から除去されない → 次 SET で `update_peer()` 経路に入る（現行実装では `apply_op()` が常に `True` のため実際には未到達）
+
+### STATE_DB と FRR の一貫性
+
+`update_state_db()` (STATE_DB: `BGP_PEER_CONFIGURED_TABLE`) はコマンド発行 **成功後のみ** 呼ばれる。STATE_DB 更新自体が失敗した場合は `LOG_ERR` を出すが FRR 操作は既に `cfg_mgr.push()` 済みのため **FRR と STATE_DB の乖離が生じうる**。`ERROR_TABLE` への記録はなし。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-failure.md`
+<!-- /failure -->
+
 <!-- glossary-links-injected: 9133f44230c2 -->
