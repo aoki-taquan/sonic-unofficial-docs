@@ -396,4 +396,50 @@ QUEUE テーブルの SET 処理は `QosOrch::handleQueueTable()` が `task_proc
 
 <!-- /failure -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/queue-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `PORT` (PortInitDone 済み) | `handleQueueTable` が `gPortsOrch->getPort()` でポート存在を確認。未存在時は `task_invalid_entry`（リトライなし、恒久スキップ） | `qosorch.cpp:1911-1914` |
+| `SCHEDULER` (`scheduler` フィールドがある場合) | `resolveFieldRefValue` で SCHEDULER OID を参照。未解決なら `task_need_retry`（自動リトライ） | `qosorch.cpp:1822-1835` |
+| `WRED_PROFILE` (`wred_profile` フィールドがある場合) | `resolveFieldRefValue` で WRED_PROFILE OID を参照。未解決なら `task_need_retry`（自動リトライ） | `qosorch.cpp:1857-1870` |
+
+!!! warning "PORT 未初期化は恒久スキップ"
+    `PORT` が PortInitDone 済みでない状態で QUEUE エントリを書いても `task_invalid_entry` となり
+    リトライキューに残らない。必ず `portsyncd` が PortInitDone を発行した後に投入すること。
+
+### フィールド解決順序
+
+`handleQueueTable` は `scheduler` → `wred_profile` の順に `resolveFieldRefValue` を呼び出す。
+`scheduler` が未解決の段階で `task_need_retry` を返すため、**SCHEDULER が未解決の間は
+WRED_PROFILE の確認・適用も保留される**。
+
+### DEL 時の順序制約
+
+DEL ハンドラは参照先（SCHEDULER / WRED_PROFILE）の存在チェックを行わず、SAI attribute を
+NULL OID に無条件設定して解除する。QUEUE DEL の前後に SCHEDULER / WRED_PROFILE を削除しても
+問題は生じない（逆参照エラーなし）。
+
+### 起動時シーケンス
+
+```
+portsyncd → PortConfigDone → PortInitDone
+  ↓
+allPortsReady() = true → QosOrch アンブロック
+  ↓
+SCHEDULER / WRED_PROFILE エントリが CONFIG_DB に存在
+  ↓
+QUEUE エントリを投入 → QosOrch が OID 解決 → SAI 適用
+```
+
+実運用では `config qos reload` が `qos_config.j2` テンプレートから
+SCHEDULER / WRED_PROFILE / QUEUE を一括生成するため、順序は sonic-cfggen が暗黙に担保する。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: f9445b5b4106 -->
