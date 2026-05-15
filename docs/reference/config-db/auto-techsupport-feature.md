@@ -238,6 +238,23 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 書き込み時 default (`600`) と実行時 fallback (`0.0`) が**乖離**している。フィールドが意図せず消えた場合、rate-limit 無効で動作する点に注意。
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | SAI 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ参照、`asicN` namespace を iterate しない。container 名の asic suffix (`swss0`/`syncd1` 等) は feature 名との `startswith` 前方一致で吸収 |
+| VOQ chassis (supervisor + line card) | 各 host で独立適用 | chassisdb (REDIS_CHASSIS_SERVER) 非参照。各 line card host で独立にローカル CONFIG_DB を見てローカル `/var/dump/` に techsupport を生成。chassis 全体集中機構なし |
+| namespace (asic0..asicN) | 影響なし | `coredump_gen_handler.py` / `techsupport_cleanup.py` / `auto_techsupport_helper.py` のいずれにも namespace 引数なし。すべて host namespace の `unix:///var/run/redis/redis.sock` に接続 |
+| ベンダー固有 hook | なし | `AUTO_TECHSUPPORT_FEATURE` schema / handler に vendor 分岐なし。`generate_dump` 内の `show platform summary` 等 vendor 依存コマンドは別 entity (本テーブル field 解釈には影響しない) |
+| init_cfg / build template | 分岐なし | `init_cfg.json.j2` の AUTO_TECHSUPPORT_FEATURE ブロックは `{% for feature in FEATURE %}` のみで platform 条件式なし |
+
+詳細根拠と grep ログは `meta/_intermediate/cdb-flow/auto-techsupport-feature-platform.md` を参照。
+<!-- /platform -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
@@ -286,10 +303,46 @@ coredump_gen_handler.py
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:300-338`; `sonic-utilities/scripts/coredump-compress:1-35`; `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`; `sonic-host-services/scripts/hostcfgd:2468-2528`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-pubsub.md`
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md`
+
+`AUTO_TECHSUPPORT_FEATURE` テーブル自体は常駐 subscriber を持たないが、関連スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) が core dump および techsupport 生成イベントを起点に **STATE_DB `AUTO_TECHSUPPORT_DUMP_INFO`** へ書込みを行う。CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への副次書込みは存在しない。
+
+### core dump 発生 → techsupport 生成成功時 — STATE_DB へ SET
+
+経路: `coredump_gen_handler.py` → `invoke_ts_command_rate_limited()` → `write_to_state_db()`。AUTO_TECHSUPPORT\|GLOBAL.state と AUTO_TECHSUPPORT_FEATURE\|<feat>.state がともに `enabled` かつ rate-limit を満たした場合のみ発火。
+
+| 対象 DB / テーブル | キー | フィールド | 値 |
+|------------------|------|----------|----|
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | `<dump-name>` (例 `sonic_dump_DUT_20260515_123456`) | `timestamp` | `int(time.time())` (Unix epoch 秒、文字列化) |
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `event_type` | `core` または `memory` |
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `core_dump` | core dump ファイル名 (`event_type=core` 時のみ) |
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | 同上 | `container` | feature/docker 名 (例 `swss`) |
+
+### techsupport rotate 時 — STATE_DB から DELETE
+
+経路: `generate_dump` 完了 → `techsupport_cleanup.py` → `clean_state_db_entries()`。AUTO_TECHSUPPORT\|GLOBAL.state=`enabled` かつ `max_techsupport_limit>0` のときのみ、`/var/dump/` 配下を最古順で削除した結果に対応する STATE_DB エントリを 1:1 で除去する。**本処理は AUTO_TECHSUPPORT_FEATURE を参照しない** (GLOBAL の値のみ評価)。
+
+| 対象 DB / テーブル | 操作 | キー |
+|------------------|------|------|
+| STATE_DB / `AUTO_TECHSUPPORT_DUMP_INFO` | `delete` | rotate された techsupport dump 名 |
+
+### 非該当 (副次書込なし)
+
+- CONFIG_DB: 両 script とも `db.get` のみで参照、書込みなし
+- APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB / ASIC_DB: 接続自体なし (`db.connect` は `CFG_DB` と `STATE_DB` のみ)
+- SAI 呼出: なし (techsupport は OS レベルの diagnostic 収集に閉じる)
+- Notification / Pub/Sub: なし (`SonicV2Connector` の素の `set`/`delete` のみで、keyspace 通知の購読クライアント不在)
+
+<!-- 証跡: sonic-utilities/scripts/coredump_gen_handler.py:69-78; sonic-utilities/scripts/techsupport_cleanup.py:13-18,52-55; sonic-utilities/utilities_common/auto_techsupport_helper.py:43-60,302-338 -->
+<!-- /side-effects -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`AUTO_TECHSUPPORT_FEATURE` を消費する Python パイプライン (`coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / 共通ヘルパ `auto_techsupport_helper.py`) と、パッケージ install 時の初期値を担う `feature.py` に存在する、CONFIG_DB に格納されないハードコード定数の一覧。
+`AUTO_TECHSUPPORT_FEATURE` を消費する Python パイプライン (`coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / 共通ヘルパ `auto_techsupport_helper.py`) と、パッケージ install 時の初期値を担う `feature.py` に存在する CONFIG_DB に格納されないハードコード定数の一覧。
 
 ### 1. ファイルシステムパス / パターン (`auto_techsupport_helper.py:33-39`)
 
