@@ -614,6 +614,53 @@ journalctl -u mclag | grep mclagsyncd
 > 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-failure.md`
 <!-- /failure -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`mclagsyncd` の APPL_DB 書込経路は **ASIC 種別** によって `ISOLATION_GROUP_TABLE` 経路と `ACL_TABLE_TABLE`/`ACL_RULE_TABLE` フォールバック経路に分岐する[^link]。判定材料は CONFIG_DB の `DEVICE_METADATA|localhost.platform` ではなく **`asic_type`** で、`docker-iccpd/iccpd.sh:3` がコンテナ起動時に環境変数 `platform` として export し、`mclaglink.cpp:201` の `getenv("platform")` で読まれる。
+
+### ASIC 別 isolation 経路
+
+| `asic_type` | APPL_DB 書込先 | 下流 SAI オブジェクト |
+|---|---|---|
+| `broadcom` | `ISOLATION_GROUP_TABLE` | `SAI_OBJECT_TYPE_ISOLATION_GROUP` |
+| `barefoot` | `ISOLATION_GROUP_TABLE` | 同上 |
+| `centec` | `ISOLATION_GROUP_TABLE` | 同上 |
+| `clounix` | `ISOLATION_GROUP_TABLE` | 同上 |
+| `marvell-prestera` | `ISOLATION_GROUP_TABLE` | 同上 |
+| `marvell-teralynx` | `ISOLATION_GROUP_TABLE` | 同上 |
+| `mellanox` / `vs` / その他 | `ACL_TABLE_TABLE`(`mclag`) + `ACL_RULE_TABLE`(`mclag:mclag`) | `SAI_OBJECT_TYPE_ACL_TABLE` (type=L3) + `SAI_OBJECT_TYPE_ACL_ENTRY` (PACKET_ACTION=DROP) |
+
+許可リストは `mclaglink.h:54-59` の 6 つの `*_PLATFORM_SUBSTRING` で固定。新規 ASIC 対応にはコード追加が必要[^link]。
+
+### 経路別の細かい差
+
+- ISOLATION_GROUP 経路では `MEMBERS` から `Ethernet` プレフィクスを除外し PortChannel のみが格納される (`mclaglink.cpp:258`)。
+- ACL フォールバック経路では `OUT_PORTS` から `PortChannel` プレフィクスを除外し Ethernet ポートのみが格納される (`mclaglink.cpp:352`)。**分離対象オブジェクトの粒度が ASIC により逆転**する点に注意。
+- ISOLATION_GROUP 経路は ICCP セッション up かつリモート全断時に `MEMBERS=""` でエントリを保持するが、ACL フォールバック経路は `OUT_PORTS` 空で `ACL_TABLE_TABLE.mclag` 全体を DEL する (`mclaglink.cpp:311-318`)。
+- ACL フォールバック経路では `type=L3` の ACL テーブルを 1 つ消費するため、ハードウェア L3 ACL リソース容量に影響する。
+
+### multi-ASIC (multi-NPU / chassis) 動作
+
+`iccpd` / `mclagsyncd` は **multi-asic を直接サポートしない**:
+
+- `iccpd.service` (`sonic-buildimage/files/build_templates/iccpd.service.j2`) は per-namespace 起動ロジック無しで host 名前空間に 1 インスタンスのみ。デフォルトは `disable` (`sonic_debian_extension.j2:1093-1095`)。
+- 設定生成テンプレ `dockers/docker-iccpd/iccpd.j2` は host CONFIG_DB の `MC_LAG` テーブルと `DEVICE_METADATA['localhost']['mac']` のみを参照し `asic0`/`asic1` の per-namespace config を読まない。
+- `mclagsyncd` の `DBConnector` 生成は namespace 指定無し (`mclaglink.cpp:1796-1816`)。
+
+結論として T2/chassis などの multi-ASIC プラットフォームで MCLAG を構成しても、front-end ASIC 群への自動伝播は保証外。**single-ASIC platform 上の利用が想定スコープ**である。
+
+### iccpd 側はプラットフォーム非依存
+
+ICCP プロトコル実装 (`sonic-buildimage/src/iccpd/`) には ASIC 識別ロジックが無く、タイマー定数 (`CONNECT_INTERVAL_SEC=1`, `HEARTBEAT_TIMEOUT_SEC=15`, `TRANSIT_INTERVAL_SEC=1`、`scheduler.h:40-43`)・IPC 定数 (`MCLAG_DEFAULT_PORT=2626`, `ICCP_TCP_PORT=8888`) は全プラットフォーム共通[^sched][^iccpcsm]。
+
+### 共通経路 (プラットフォーム差なし)
+
+`MCLAG_FDB_TABLE` / `LAG_TABLE` (`learn_mode` / `traffic_disable`) / `PORT_TABLE.learn_mode` / `INTF_TABLE.mac_addr` の 4 経路は ASIC 分岐を持たず全プラットフォームで同一の書込ロジックが動く (`mclaglink.cpp:380-461,1296-1318`)。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/appl-mclag-platform.md`
+<!-- /platform -->
+
 ## 引用元
 
 [^link]: mclagsyncd 実装: `sonic-swss/mclagsyncd/mclaglink.cpp`, `mclaglink.h`, `mclag.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
