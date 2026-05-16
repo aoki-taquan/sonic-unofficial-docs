@@ -533,3 +533,56 @@ CONFIG_DB MGMT_INTERFACE 変化
 [^F1]: `sonic-host-services/scripts/hostcfgd` L1637, L1661. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
 <!-- /phase-f -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`MGMT_INTERFACE` の処理は `interfaces.j2` テンプレート（`sonic-buildimage`）と `IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) の 2 箇所でプラットフォーム・構成差を持つ。
+
+### A. SmartSwitch DPU — eth0 DHCP フォールバック抑制
+
+`interfaces.j2` L144-158: `MGMT_INTERFACE` が空の場合、通常は `auto eth0 / iface eth0 inet dhcp metric 202` を生成する。ただし以下の条件が **両方** 成立するときはこのブロックを生成しない。
+
+| 条件フィールド | 値 |
+|---|---|
+| `DEVICE_METADATA['localhost']['subtype']` | `"SmartSwitch"` |
+| `DEVICE_METADATA['localhost']['switch_type']` | `"dpu"` |
+
+DPU ノードで `MGMT_INTERFACE` エントリが存在しない場合、`eth0` には何も設定されない（DHCP も静的も不生成）。
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:144-158`
+
+### B. MGMT_VRF_CONFIG による vrf_table 分岐
+
+`interfaces.j2` 内で `vrf_table` 変数が条件分岐し、すべての policy routing rule の向き先テーブルが変わる。
+
+| `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled` | vrf_table 値 | eth0 vrf バインド | DHCP fallback 時の追加設定 |
+|---|---|---|---|
+| `"true"` | `6000` | `vrf mgmt` | `vrf mgmt` スタンザを追加 |
+| それ以外 (未設定含む) | `default` | なし | なし |
+
+`mgmtVrfEnabled=true` 時:
+- mgmt VRF デバイス (`auto mgmt / iface mgmt / vrf-table 6000`) とループバック `lo-m` が生成される（`interfaces.j2` L9-18）
+- `IntfMgr::isIntfStateOk("mgmt")` が `STATE_VRF_TABLE` に "mgmt" エントリが現れるまで `doIntfAddrTask` の処理を保留する（`intfmgr.cpp:677-684`）
+- `ip link set eth0 master mgmt` で eth0 が mgmt VRF に接続される（`intfmgr.cpp:setIntfVrf:149-164`）
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:9-18,88-91,144-158`; `sonic-swss/cfgmgr/intfmgr.cpp:26,677-684`
+
+### C. VoQ (`switch_type=voq`) — IPv6 アドレスメトリック付加
+
+`intfmgr.cpp:70-111`: 起動時に `DEVICE_METADATA.localhost.switch_type` を読み込み、`mySwitchType` に格納する。`mySwitchType == "voq"` の場合、`setIntfIp` の IPv6 `ip -6 address add` コマンドに `metric 256` を付加する。これは VoQ システムで eBGP/iBGP 経路の ECMP グループを揃えるためのハードコード値。通常スイッチ（`switch_type` 未設定）では metric は付加されない。
+
+| `switch_type` 値 | IPv6 addr add メトリック |
+|---|---|
+| `"voq"` | `metric 256` |
+| それ以外 / 未設定 | なし |
+
+> **evidence**: `sonic-swss/cfgmgr/intfmgr.cpp:70-74,93-111`
+
+### D. BMC インターフェース (SmartSwitch 系付加設定)
+
+`interfaces.j2` L33-38: `DEVICE_METADATA['bmc']` キーが存在し `bmc_if_name` / `bmc_if_addr` / `bmc_net_mask` フィールドを持つ場合、BMC 専用の静的 IF ブロックを `eth0` 設定より前に生成する。MGMT_INTERFACE テーブル自体は変化しないが、管理ネットワーク設定ファイルに追加セクションが挿入される。
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:33-38`
+
+<!-- /platform -->
