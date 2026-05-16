@@ -368,4 +368,49 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 `frrcfgd.py:81` が `BGP_GLOBALS` を bgpd 管理テーブルとして登録しており、`BGP_PEER_RANGE` が有効になる前提として `BGP_GLOBALS` で BGP router インスタンスが確立済みである必要がある。また `BGP_GLOBALS_LISTEN_PREFIX` テーブル (frrcfgd.py:92) が `bgp listen range` を frrcfgd 経由でも管理できる別パスを提供しており、bgpcfgd と二重管理の構造になっている。
 
 <!-- /cross-refs -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `bgpcfgd/managers_bgp.py`、`frrcfgd/frrcfgd.py`、`dynamic/policies.conf.j2`、`dynamic/instance.conf.j2` 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-peer-range-constants.md`
+
+### FRR コマンド literal
+
+| コマンド | 固定度 | 証拠 |
+|---------|--------|------|
+| `bgp listen range <prefix> peer-group <name>` | 構造固定（prefix・name のみ可変） | `dynamic/instance.conf.j2` L13-14 |
+| `no bgp listen range <prefix> peer-group <name>` | 構造固定 | `managers_bgp.py:109`、`del_handler()` L467 |
+| `bgp listen limit <N>` | N は `max_dynamic_neighbors` フィールドで制御可（frrcfgd 経由） | `frrcfgd.py:1802` |
+| `bgp suppress-fib-pending` | 常時固定・無効化手段なし | `managers_bgp.py:502` |
+
+`bgp listen limit` は bgpcfgd パスでは直接操作せず、`frrcfgd` の `BGP_GLOBALS.max_dynamic_neighbors` フィールド経由でのみ設定可能（FRR デフォルト 100）。
+
+### 固定 route-map 名
+
+`dynamic/policies.conf.j2` と `dynamic/instance.conf.j2` が以下の route-map 名をリテラルにハードコードする。CONFIG_DB フィールドでの上書き手段はない。
+
+| route-map 名 | 方向 | FRR アクション | ソース |
+|-------------|------|--------------|--------|
+| `FROM_BGP_SPEAKER` | inbound (`in`) | `permit 10`（全経路許可） | `policies.conf.j2` L4、`instance.conf.j2` L9 |
+| `TO_BGP_SPEAKER` | outbound (`out`) | `deny 1`（全経路拒否） | `policies.conf.j2` L6、`instance.conf.j2` L10 |
+
+### 固定 neighbor 属性（dynamic peer-group 全エントリ共通）
+
+以下は `dynamic/instance.conf.j2` にハードコードされ、`BGP_PEER_RANGE` の全エントリに無条件で適用される。
+
+| FRR コマンド | 固定値 |
+|------------|--------|
+| `neighbor <name> passive` | 常時有効 |
+| `neighbor <name> ebgp-multihop 255` | TTL 255 固定 |
+| `neighbor <name> soft-reconfiguration inbound` | 常時有効 |
+| `neighbor <name> route-map FROM_BGP_SPEAKER in` | route-map 名固定 |
+| `neighbor <name> route-map TO_BGP_SPEAKER out` | route-map 名固定 |
+| `address-family ipv4/ipv6` + `neighbor <name> activate` | 両 AF 常時有効化 |
+
+### デフォルト peer-group 名・interface 名
+
+- **`Loopback1`**: `src_address` フィールド未設定時の update-source fallback。`instance.conf.j2` にリテラルでハードコード。`Loopback0` や別名への変更不可。
+- **`dynamic/peer-group.conf.j2`**: dynamic タイプの peer-group テンプレートは実質空（コメントのみ）。peer-group 属性はすべて `instance.conf.j2` 側で定義済み。
+<!-- /constants -->
 <!-- glossary-links-injected: 9543a3643673 -->
