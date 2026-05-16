@@ -193,6 +193,79 @@ ROUTE_TABLE|<prefix> DEL
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-cross-refs.md -->
+
+`RouteOrch` (`orchagent/routeorch.cpp`) が ROUTE_TABLE エントリを処理する際に参照・更新する他テーブル/Orch の一覧。フィールドに明示されていない暗黙依存関係を示す。
+
+### NEIGHBOR (APPL_DB) — NeighOrch 経由
+
+nexthop IP アドレスが存在する場合、RouteOrch は `m_neighOrch->hasNextHop()` で隣接解決済みかを確認し、`getNextHopId()` で SAI nexthop OID を取得する[^cr1]。
+
+```cpp
+if (m_neighOrch->hasNextHop(it))
+    next_hop_id = m_neighOrch->getNextHopId(it);
+else
+{
+    m_neighOrch->addNextHop(ctx);
+    next_hop_id = m_neighOrch->getNextHopId(it);
+}
+```
+
+`isNeighborResolved()` も確認し、未解決の場合は `return false` で経路プログラミングを後回しにする[^cr1]。参照カウント (`increaseNextHopRefCount` / `decreaseNextHopRefCount`) により NEIGH_TABLE エントリの生存期間が RouteOrch によって保護される。
+
+### NEXTHOP_GROUP (APPL_DB) — NhgOrch / CbfNhgOrch 経由
+
+`nexthop_group` フィールドに NHG インデックスが設定されている場合、`gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` でいずれかが所有していなければ `return false` となり後回しになる[^cr1]。
+
+```cpp
+if (!gNhgOrch->hasNhg(ctx.nhg_index) && !gCbfNhgOrch->hasNhg(ctx.nhg_index))
+{
+    SWSS_LOG_INFO("Failed to get next hop group with index %s", ctx.nhg_index.c_str());
+    return false;
+}
+```
+
+`getNhg(nhg_index)` が `out_of_range` 例外を投げた場合も `++it; continue` で後回し。**NEXTHOP_GROUP_TABLE エントリが NhgOrch に登録される前に `nexthop_group` フィールドを持つ経路を書いても SAI プログラミングは行われない**。
+
+### VRF (CONFIG_DB) — VRFOrch 経由
+
+`Vrf` プレフィックスを持つキー（例: `Vrf-RED:10.0.0.0/24`）の経路は `m_vrfOrch->isVRFexists(vrf_name)` を確認し、false であれば `it++; continue` で後回し[^cr1]。SAI 経路登録後は `m_vrfOrch->increaseVrfRefCount(vrf_id)` で参照カウントを保護する。
+
+EVPN L3 VNI を持つ経路では `m_vrfOrch->isL3VniVlan(vni)` も確認する。未登録の場合はやはり後回し。
+
+### MUX_CABLE (CONFIG_DB) — MuxOrch 経由
+
+Dual-ToR 環境では RouteOrch が `gDirectory.get<MuxOrch*>()` で MuxOrch を取得し、mux tunnel nexthop を NHG から除外するロジックを適用する[^cr1]。
+
+```cpp
+MuxOrch* mux_orch = gDirectory.get<MuxOrch*>();
+sai_object_id_t mux_tunnel_nh_id = mux_orch->getTunnelNextHopId();
+```
+
+複数 nexthop で mux nexthop が含まれる場合は SAI への書き込みを省略し、`mux_orch->updateRoute(ipPrefix)` に委譲する:
+
+```cpp
+if (mux_orch->isMuxNexthops(nextHops))
+    mux_orch->updateRoute(ipPrefix);
+```
+
+MuxOrch が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が失敗) は orchagent が異常終了する可能性がある。
+
+### 暗黙参照サマリ
+
+| 参照先 | DB | テーブル / Orch | 参照方法 | 方向 |
+|--------|-----|----------------|---------|------|
+| NEIGHBOR | APPL_DB | `NEIGH_TABLE` / NeighOrch | `hasNextHop()` / `getNextHopId()` | READ (依存・後回し) |
+| NEXTHOP_GROUP | APPL_DB | `NEXTHOP_GROUP_TABLE` / NhgOrch | `gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` | READ (依存・後回し) |
+| VRF | CONFIG_DB | `VRF` / VRFOrch | `isVRFexists()` / `getVRFid()` | READ (依存・後回し) |
+| MUX_CABLE | CONFIG_DB | `MUX_CABLE` / MuxOrch | `isMuxNexthops()` / `updateRoute()` | WRITE (通知・委譲) |
+
+[^cr1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
+<!-- /cross-refs -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` は同時に存在できない（orchagent がエラー棄却）。
