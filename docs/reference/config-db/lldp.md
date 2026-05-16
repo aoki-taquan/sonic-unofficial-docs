@@ -128,6 +128,45 @@ grouping `lldp_mode_config` を `uses`:
 
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `lldpmgrd` が読み出す関連テーブル (Phase C)
+
+`lldpmgrd` は `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**。LLDP の実際の動作を制御するのは以下の暗黙参照テーブルである（根拠: `dockers/docker-lldp/lldpmgrd` および `lldpd.conf.j2`）。
+
+### CONFIG_DB: 購読テーブル (SubscriberStateTable)
+
+| テーブル | handler | 用途 | evidence |
+|---|---|---|---|
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost`) | `lldp_process_device_table_event()` | `chassis_hostname` / `hostname` フィールドを読み取り `lldpcli configure system hostname <name>` を発行。ランタイムの hostname 変化を追従する | lldpmgrd:308,320-322 |
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `lldp_process_mgmt_info_change()` | 管理 IP (IPv4 優先、次点 IPv6) の変化を検知して `lldpcli configure system ip management pattern <ip>` を更新 | lldpmgrd:305,317-319 |
+
+### APPL_DB: 購読テーブル
+
+| テーブル | handler | 用途 | evidence |
+|---|---|---|---|
+| `APPL_DB: PORT_TABLE` | `lldp_process_port_table_event()` | `PortInitDone` / `PortConfigDone` イベントで `lldpcli resume` を制御。ポート `oper_status=up` を検知して `lldpcli configure ports <ifname>` をキューから実行 | lldpmgrd:301,259-273 |
+
+### CONFIG_DB / STATE_DB: 読み取りテーブル (Table.get / getKeys)
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| [`PORT`](port.md) (`alias`, `description`) | `generate_pending_lldp_config_cmd_for_port()` | ポートエイリアス (`portidsubtype local <alias>`) と description を lldpcli コマンドに埋め込む。alias 未設定時はポート名で代替 | lldpmgrd:75,148-164 |
+| `STATE_DB: PORT_TABLE` (`netdev_oper_status`) | `is_port_up()` | ポートが `up` になるまで lldpcli コマンドをキューイングし、up 後に発行 | lldpmgrd:78,122-134 |
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `lldp_get_mgmt_ip()` — `mgmt_table.getKeys()` | DEL イベント時に残存する管理 IP を再決定するためのフォールバック検索 | lldpmgrd:76,206-226 |
+
+### 起動時テンプレート参照 (`lldpd.conf.j2`)
+
+コンテナ起動時に `sonic-cfggen` が展開する Jinja2 テンプレートが読み取るテーブル。
+
+| テーブル | 用途 | evidence |
+|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | IPv4/IPv6 アドレス抽出 → `configure system ip management pattern <ip>` | lldpd.conf.j2:2-28 |
+| [`MGMT_PORT`](mgmt-port.md) | eth0 の `alias` が存在すれば `configure ports eth0 lldp portidsubtype local <alias>` に使用 | lldpd.conf.j2:17-21 |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | 起動時の `configure system hostname <name>` 生成 | lldpd.conf.j2:29 |
+
+> `LLDP|GLOBAL` / `LLDP_PORT|<ifname>` への書き込みは lldpmgrd に到達しない（構造的 no-op）。実質的に LLDP の送出内容を制御するのは上記の暗黙参照テーブルである（詳細は `<!-- failure -->` および `<!-- defaults -->` ブロック参照）。
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
