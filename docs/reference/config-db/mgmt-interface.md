@@ -483,6 +483,39 @@ IPv4 link-local アドレスは APPL_DB へ転送されない（`intfmgr.cpp:113
 
 <!-- /ordering -->
 
+<!-- constants-phaseE -->
+## ハードコード定数 (Phase E / intfmgr)
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp L24-29, sonic-buildimage/src/sonic-config-engine/minigraph.py L2874,2880 -->
+
+`IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) が保持する主要ハードコード定数。
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `DEFAULT_MTU_STR` | **9100** | 通常インターフェースの MTU フォールバック値。`mtu` フィールドが CONFIG_DB に存在しない・空の場合に適用 (`intfmgr.cpp:402`) |
+| `LOOPBACK_DEFAULT_MTU_STR` | **65536** | Loopback インターフェース (`Loopback*`) 作成時の固定 MTU (`intfmgr.cpp:201`) |
+| `MTU_INHERITANCE` | **"0"** | サブインターフェースが親 MTU を継承することを示すセンチネル値 (`intfmgr.cpp:24`) |
+| `VRF_MGMT` | **"mgmt"** | 管理 VRF 名のハードコード文字列。`MGMT_VRF_CONFIG.mgmtVrfEnabled=true` 時に `ip route add ... table mgmt` へ渡される (`intfmgr.cpp:26`) |
+
+### `eth0` プレフィックスハードコード (minigraph.py)
+
+`minigraph.py:2874,2880` にて、管理インターフェース名として `"eth0"` がリテラルでハードコードされている。
+
+```python
+# minigraph.py:2874
+results['MGMT_INTERFACE'].update({('eth0', mgmt_prefix): {'gwaddr': gwaddr}})
+# minigraph.py:2880
+results['MGMT_INTERFACE'].update({('eth0', mgmt_prefix_v6): {'gwaddr': gwaddr_v6}})
+```
+
+XML `ManagementIPInterfaces` に記載されたインターフェース名に関わらず、MGMT_INTERFACE キーの第1要素は常に `eth0` で固定される。複数管理 IF (`eth1` 等) は minigraph 経由では CONFIG_DB に設定されない。
+
+### デフォルト MTU と管理 IF の関係
+
+> **注意**: MGMT_INTERFACE テーブル自体には `mtu` フィールドが YANG で定義されていない。`DEFAULT_MTU_STR=9100` は `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 等の通常 IF に適用されるものであり、管理 IF (`eth0`) の MTU は kernel / platform デフォルト（通常 **1500**）に依存する。管理 IF の MTU を変更するには `ip link set eth0 mtu <value>` を直接実行するか、プラットフォーム固有の設定が必要。
+
+<!-- /constants-phaseE -->
+
 <!-- phase-f -->
 ## 副次 DB 書込 (Phase F)
 

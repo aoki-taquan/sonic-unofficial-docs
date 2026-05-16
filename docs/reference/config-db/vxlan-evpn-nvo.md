@@ -140,6 +140,37 @@ EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除
 [^exc1]: `sonic-swss/cfgmgr/vxlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vxlanmgr.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-vxlan.yang>
 
+<!-- platform -->
+## プラットフォーム差異 (EVPN 対応 ASIC)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:1256-1274, 1701-1724, 1807-1822, 903, 356-370 -->
+
+`VXLAN_EVPN_NVO` が参照する source VTEP（`VXLAN_TUNNEL`）の実際の ASIC 動作は、`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability` で `SAI_TUNNEL_ATTR_PEER_MODE` を問い合わせた結果で決まる。
+
+| 差異ポイント | P2P モード (DIP サポートあり) | P2MP モード (DIP サポートなし) |
+|---|---|---|
+| SAI ケーパビリティクエリ失敗時 | `is_dip_tunnel_supported = true` へ自動 fallback | — |
+| リモート VTEP ごとのトンネル | 動的 DIP トンネルを個別生成 | 生成しない (IP 参照カウントのみ) |
+| SIP トンネル削除タイミング | DIP カウントが 0 になるまで延期 | 参照カウント 0 で即時可能 |
+| ブリッジポート | VTEP ごとに個別作成 | SIP 単一ブリッジポートを共有 |
+| FDB/flooding | DIP トンネルポート経由 | P2MP + L2MC グループ (IMET ルート) 経由 |
+| EVPN DIP トンネル SAI mode | `SAI_TUNNEL_PEER_MODE_P2P` | 使用しない |
+| CLI 静的トンネル SAI mode | `SAI_TUNNEL_PEER_MODE_P2MP` | 同左 |
+
+### P2P モード詳細 (DIP トンネルサポートあり)
+
+EVPN ルート受信時に `addTunnelUser()` (vxlanorch.cpp:1701) が `createDynamicDIPTunnel(remote_vtep, usr)` を呼び出し、SAI `create_tunnel()` を `SAI_TUNNEL_PEER_MODE_P2P` + `SAI_TUNNEL_ATTR_ENCAP_DST_IP` で実行する。EVPN 動的 DIP トンネル生成時 (`TNL_CREATION_SRC_EVPN`) は `p2p = true` が明示される (vxlanorch.cpp:903)。
+
+### P2MP モード詳細 (DIP トンネルサポートなし)
+
+`addTunnelUser()` は DIP トンネルを生成せず、リモート VTEP の IP 参照カウントを更新するのみ。FDB フラッディングは P2MP SIP トンネルブリッジポートと IMET ルートの L2MC グループメンバーで実現する (vxlanorch.cpp コメント: `"P2MP scenario where P2MP tunnel port is used for FDB learning"`)。
+
+### SmartSwitch / DPU
+
+`vxlanorch.cpp` に SmartSwitch DPU 固有の分岐コードは存在しない。EVPN NVO テーブルは NPU 通常モード向けのみであり、DPU 側のオーバーレイスタックとの連携は orchagent 実装外となる。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -274,6 +305,55 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:147-155,403-411,846-848,1430-1436,1638,1656,1663,1689,1696,2779-2811 -->
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込（Phase F）
+
+`EvpnNvoOrch::addOperation()` 自体は `source_vtep_ptr` の格納のみで DB・SAI への直接書込を行わない。副次書込は後続の EVPN ルート処理で VTEP トンネルが生成される際に連鎖的に発生する。
+
+### SAI: `create_tunnel_map`（`sai_tunnel_api`）
+
+VTEP トンネル初回作成時（`VxlanTunnel::createMapperHw()`）に SAI tunnel_map オブジェクトを作成する。
+
+- **SAI API**: `sai_tunnel_api->create_tunnel_map()` (vxlanorch.cpp:141)
+- **作成されるマップ型**:
+  - `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID` / `VLAN_ID_TO_VNI`
+  - `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID` / `VIRTUAL_ROUTER_ID_TO_VNI`
+  - `SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF` / `BRIDGE_IF_TO_VNI`
+- **トリガー**: VNI ↔ VLAN/VRF/Bridge マッピング登録時（`VXLAN_TUNNEL_MAP` テーブル処理）
+
+### SAI: `create_tunnel`（`sai_tunnel_api`）
+
+- **SAI API**: `sai_tunnel_api->create_tunnel()` (vxlanorch.cpp:399)
+- **主要属性**: `SAI_TUNNEL_ATTR_TYPE=SAI_TUNNEL_TYPE_VXLAN`、`DECAP_MAPPERS`/`ENCAP_MAPPERS`（上記 map OID 一覧）、`ENCAP_SRC_IP`（VTEP IP）、`PEER_MODE`（P2MP: VTEP、P2P: EVPN 動的トンネル）
+- **トリガー**: `VxlanTunnel::createTunnelHw()` (vxlanorch.cpp:885)
+
+### SAI: `create_tunnel_map_entry`（`sai_tunnel_api`）
+
+- **SAI API**: `sai_tunnel_api->create_tunnel_map_entry()` (vxlanorch.cpp:211)
+- VNI ↔ VLAN/VRF/Bridge ペアごとに 1 呼び出し
+- **トリガー**: `addEncapMapperEntry()` / `addDecapMapperEntry()` 経由 (vxlanorch.cpp:551-560)
+
+### STATE_DB: `VXLAN_TUNNEL_TABLE`
+
+EVPN 動的トンネル（`TNL_CREATION_SRC_EVPN`）が作成されると STATE_DB に書き込まれる。
+
+```cpp
+// sonic-swss/orchagent/vxlanorch.cpp:1935-1944
+fvVector.emplace_back("src_ip", (sip.to_string()).c_str());
+fvVector.emplace_back("dst_ip", (dip.to_string()).c_str());
+fvVector.emplace_back("tnl_src", "EVPN");
+fvVector.emplace_back("operstatus", "down");
+m_stateVxlanTable.set(tunnel_name, fvVector);
+```
+
+- **テーブル名**: `"VXLAN_TUNNEL_TABLE"` (`STATE_VXLAN_TUNNEL_TABLE_NAME`, schema.h:435)
+- **キー形式**: `<tunnel_name>`（EVPN 動的トンネル名）
+- **書込フィールド**: `src_ip`、`dst_ip`、`tnl_src="EVPN"`、`operstatus="down"`
+- **削除**: トンネル削除時に `m_stateVxlanTable.del(tunnel_name)` (vxlanorch.cpp:1953)
+- **コード**: `VxlanTunnelOrch::addRemoveStateTableEntry()` (vxlanorch.cpp:1913)
+
+<!-- /side-effects -->
 
 <!-- cross-refs -->
 ## 暗黙参照 (Phase C / vxlanorch.cpp)
