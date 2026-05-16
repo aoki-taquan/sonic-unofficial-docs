@@ -148,6 +148,34 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 | `"true"` | キャッシュ登録 + create_bfd_session() 実行 | キャッシュ登録 + notify_session_state_down() のみ (SAI 作成なし) | `bfdorch.cpp:156-169` |
 <!-- /value-behavior -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`BfdOrch` は CONFIG_DB の `BFD_SESSION` を **直接購読しない**。`orchdaemon.cpp:243` で APPL_DB + `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` を渡して生成されるため、`Orch::addConsumer()` の DB 種別分岐で **`ConsumerStateTable`** (channel ベースの Producer/Consumer 方式) が選ばれる。CONFIG_DB → APPL_DB の橋渡しは別コンポーネント (`bgpcfgd`、`staticroutebfd`、`DashHaOrch` 等) が担う。さらに `BfdOrch` は **2 つ目の Executor** として ASIC_DB 上の `NotificationConsumer` (channel `NOTIFICATIONS`、op `bfd_session_state_change`) を持ち、SAI からの state 通知を受ける。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-pubsub.md)。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス (設定経路) | `ConsumerStateTable` (APPL_DB / `Orch::addConsumer` の `else` 分岐) |
+| 購読対象 | `BFD_SESSION_TABLE` (APPL_DB)、key 区切り `:` |
+| channel | `BFD_SESSION_TABLE_CHANNEL` (ProducerStateTable / ConsumerStateTable が暗黙生成) |
+| POP_BATCH_SIZE | `gBatchSize` (orchagent グローバル、既定 128。CLI `--batchsize` で上書き可) |
+| 優先度 (`pri`) | 0 (`Orch::Orch(db, tableName)` の `default_orch_pri`) |
+| 起動時スナップショット | LIST 上の未処理エントリのみ。Redis 既存キーの `HGETALL` 再配信なし (cold-start は ctor で STATE_DB を `del`) |
+| TTL | 未設定 (APPL_DB / STATE_DB ともに永続) |
+| ディスパッチ | `Consumer::execute()` → `BfdOrch::doTask(Consumer&)` (`bfdorch.cpp:111-217`)、`use_software_bfd` で hardware/software 経路分岐 |
+| 2nd Executor (state 通知) | `NotificationConsumer` on ASIC_DB channel `NOTIFICATIONS`、op `"bfd_session_state_change"` → `doTask(NotificationConsumer&)` → STATE_DB `BFD_SESSION_TABLE.state` 更新 |
+| 失敗時挙動 | `create_bfd_session()` false → `it++` で次イベントループ周回で**自動再試行** |
+
+注意: APPL_DB `BFD_SESSION_TABLE` を直接書き込むのが hardware 経路への正規ルート。CONFIG_DB `BFD_SESSION` を `sonic-db-cli` で直書きしても `BfdOrch` には届かない (`sonic-cfggen` 等の橋渡しが必要)。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:243L (gBfdOrch = new BfdOrch(m_applDb, APP_BFD_SESSION_TABLE_NAME, ...)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/bfdorch.cpp:58L (BfdOrch::BfdOrch — Orch(db, tableName) 継承) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/bfdorch.cpp:63L (NotificationConsumer on ASIC_DB NOTIFICATIONS channel) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/bfdorch.cpp:111L (BfdOrch::doTask(Consumer&)) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (Orch::addConsumer DB 種別分岐 → APPL_DB は ConsumerStateTable) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/schema.h:120L (APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE") -->
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
