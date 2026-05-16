@@ -147,6 +147,32 @@ YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な defaul
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込順依存 (Phase B)
+
+BUFFER_QUEUE エントリを正しく適用するには、以下の依存テーブルが先に登録されている必要がある。
+
+| 依存テーブル | 理由 | 違反時の挙動 | evidence |
+|---|---|---|---|
+| `BUFFER_POOL` | `buffermgrd`（動的）が `updateBufferObjectToDb()` 冒頭で `m_bufferPoolReady` フラグを確認。プール未登録なら APPL_DB 書き込みを保留し `m_bufferObjectsPending = true` をセット。 | APPL_DB への転送がデファーされる（サイレント保留） | `buffermgrdyn.cpp:933-936` |
+| `BUFFER_PROFILE` | `buffermgrd`（動的）が `checkBufferProfileDirection()` で `m_bufferProfileLookup` を検索。未登録なら `task_need_retry` を返し処理を延期。 | `task_need_retry` → Consumer が再試行 | `buffermgrdyn.cpp:3282-3286` |
+| `BUFFER_PROFILE` | `orchagent` `BufferOrch` が `resolveFieldRefValue()` で APPL_DB 上のプロファイル参照を解決。未登録なら `task_need_retry`。 | `task_need_retry` → orchagent が再試行 | `bufferorch.cpp:961-970` |
+| `PORT` | `buffermgrd`（動的）が `m_portInfoLookup[port]` を参照。`PORT_ADMIN_DOWN` 時は admin-up 後に APPL_DB 書き込み。`max_queues` 未通知ポートは reserved buffer 処理が保留。 | admin-up 待ちまたは保留 | `buffermgrdyn.cpp:3344-3350` |
+| `PORT` | `orchagent` が `gPortsOrch->getPort()` でポートを取得。未登録なら `task_invalid_entry` を返す。 | `task_invalid_entry` → エントリ破棄 | `bufferorch.cpp:1033-1038` |
+
+### VOQ シャーシ特別扱い
+
+VOQ モード（`gMySwitchType == "voq"`）の場合、key は 4 トークン形式
+`<hostname>|<asic_name>|<port>|<qindex>` を要求する。
+`hostname` と `asic_name` が自ノードと一致する場合のみ local port として SAI に適用し、
+一致しない場合は SAI 書き込みをスキップする（他ノード向けエントリのため）。
+key が 4 トークンでない場合は即 `task_invalid_entry`。
+
+- evidence: `sonic-swss/orchagent/bufferorch.cpp:918-940`
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-ordering.md` を参照。
+<!-- /ordering -->
+
 ## 購読者
 
 - `buffermgrd`: [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送
@@ -305,6 +331,114 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 > **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。BUFFER_PG と同一パスを共有。2 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+BUFFER_QUEUE テーブルの変更は以下のチェーンで伝搬する。
+
+### 購読チェーン
+
+```
+CONFIG_DB (BUFFER_QUEUE)
+  └─ SubscriberStateTable ← buffermgrd (dynamic / static)
+       └─ ProducerStateTable → APPL_DB (APP_BUFFER_QUEUE_TABLE)
+            └─ ConsumerStateTable ← orchagent BufferOrch
+                 └─ sai_queue_api (bulk SET) → ASIC_DB / SAI
+```
+
+### CONFIG_DB 購読 (buffermgrd)
+
+`BufferMgrDynamic` は `Orch(tables)` 基底クラス経由で CONFIG_DB の `BUFFER_QUEUE` テーブルを **SubscriberStateTable** として購読する。
+`buffermgrd.cpp:174-186` にて `vector<TableConnector>` に `TableConnector(&cfgDb, CFG_BUFFER_QUEUE_TABLE_NAME)` を含めて登録。
+イベント受信後 `doTask(Consumer&)` → `handleBufferQueueTable` → `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` の順にディスパッチされる。
+
+最終的に `updateBufferObjectToDb(key, profile, add, BUFFER_QUEUE)` が
+`m_applBufferObjectTables[BUFFER_QUEUE]` (= `ProducerStateTable(applDb, APP_BUFFER_QUEUE_TABLE_NAME)`) を介して APPL_DB へ書き込む。
+
+| デーモン | DB | テーブル | 方式 | evidence |
+|---|---|---|---|---|
+| `buffermgrd` (dynamic) | CONFIG_DB | `BUFFER_QUEUE` | SubscriberStateTable | `buffermgrd.cpp:180` |
+| `buffermgrd` (static) | CONFIG_DB | `BUFFER_QUEUE` | SubscriberStateTable | `buffermgr.cpp:499` |
+
+### APPL_DB 購読 (orchagent BufferOrch)
+
+`BufferOrch` は `Orch(applDb, tableNames)` 基底クラス経由で APPL_DB の `APP_BUFFER_QUEUE_TABLE` を **ConsumerStateTable** として購読する。
+`orchdaemon.cpp:386-394` にて `vector<string> buffer_tables` に `APP_BUFFER_QUEUE_TABLE_NAME` を含めて `BufferOrch` コンストラクタへ渡す。
+
+`doTask(Consumer&)` (`bufferorch.cpp:2075`) が `processQueue` / `processQueueBulk` をディスパッチし、
+`sai_queue_api->set_queues_attribute()` bulk API で SAI queue buffer attribute を書き込む。
+
+| デーモン | DB | テーブル | 方式 | evidence |
+|---|---|---|---|---|
+| `orchagent` (BufferOrch) | APPL_DB | `APP_BUFFER_QUEUE_TABLE` | ConsumerStateTable | `orchdaemon.cpp:389` |
+
+### ASIC_DB notification
+
+BUFFER_QUEUE フローで bufferorch が ASIC_DB 通知を直接購読する仕組みは存在しない。
+SAI への書き込みは syncd が ASIC_DB に転送し、結果は SAI return code で受け取る通常フロー。
+（BUFFER_POOL_WATERMARK に対する `SubscriberStateTable` は存在するが BUFFER_QUEUE とは無関係: `bufferorch.cpp:290`）
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-pubsub.md` を参照。
+<!-- /pubsub -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`
+
+### queue index 範囲
+
+| モード | key トークン数 | 範囲上限チェック | evidence |
+|---|---|---|---|
+| 非 VOQ | 2 (`<port>\|<qindex>`) | `port.m_queue_ids.size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:943, 1061-1064` |
+| VOQ シャーシ | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:918, 1052-1055` |
+
+YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?`）。実際の上限は SAI / プラットフォームが提供する queue 数次第。
+
+### SAI 識別子
+
+| 定数 | 用途 | evidence |
+|---|---|---|
+| `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | queue に buffer profile を SET する属性 ID | `bufferorch.cpp:1021` |
+| `SAI_NULL_OBJECT_ID` | DEL 時または解決失敗時にセットするヌル OID | `bufferorch.cpp:1005` |
+| `SAI_OBJECT_TYPE_QUEUE` | `SaiAttrWrapper` への object_type 指定 | `bufferorch.cpp:1082` |
+
+queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反映される (`bufferorch.cpp:1269`)。
+
+### フィールド名文字列定数
+
+| 定数変数 | ハードコード値 | evidence |
+|---|---|---|
+| `buffer_profile_field_name` | `"profile"` | `bufferorch.cpp:30` |
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `bufferorch.cpp:22` |
+| `buffer_pool_mode_static_value` | `"static"` | `bufferorch.cpp:23` |
+
+### `_zero_` profile 判定文字列
+
+- 文字列リテラル: `"_zero_"` (ハードコード)
+- `buffer_profile_name.find("_zero_") == std::string::npos` で zero profile 判定 (`bufferorch.cpp:995, 1017, 1400, 1421`)
+- zero profile 時は FlexCounter の queue counter 追加・削除をスキップ
+- zero profile 情報の JSON フィールド名 (buffermgrdyn.cpp):
+
+| JSON フィールド | 用途 | evidence |
+|---|---|---|
+| `"queues_to_apply_zero_profile"` | zero profile を適用する queue インデックスリスト | `buffermgrdyn.cpp:283` |
+| `"egress_zero_profile"` | queue 向け zero profile 名（未指定時は pool の `zero_profile_name` を自動採用） | `buffermgrdyn.cpp:287, 333-334` |
+
+### `m_partiallyAppliedQueues` セット
+
+- 型: `std::set<std::string>`（key 文字列のセット）
+- queue lock 中 (`port.m_queue_lock[ind] == true`) に `task_need_retry` した key を保持
+- ロック解除後: profile 未変更でも登録 key が存在すれば SAI 更新を強制、その後 `erase` (`bufferorch.cpp:979-986`)
+- VOQ モードでは lock チェック自体が存在しないため当セットへの登録は発生しない
+
+### gMySwitchType 比較文字列
+
+- `"voq"` (ハードコード): `bufferorch.cpp:116, 916, 1049` で VOQ モード判定に使用
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-constants.md` を参照。
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
@@ -349,6 +483,47 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 
 詳細は `meta/_intermediate/cdb-flow/buffer-queue-failure.md` を参照。
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BUFFER_QUEUE` エントリの SET / DEL 処理は CONFIG_DB および APPL_DB への書き込み以外に、以下の副次的な DB 書き込みを発生させる。
+
+### COUNTERS_DB — キューカウンタマップ
+
+`BufferOrch::processQueuePost()` が SAI 呼び出し成功後に `gPortsOrch->createPortBufferQueueCounters()` / `removePortBufferQueueCounters()` を呼び出し、COUNTERS_DB 内の以下のマップを更新する（非 VOQ スイッチかつ `isCreateOnlyConfigDbBuffers()` が true の場合のみ）。
+
+| COUNTERS_DB テーブル | 操作 | 内容 | evidence |
+|---|---|---|---|
+| `COUNTERS_QUEUE_NAME_MAP` | SET / DEL | `"<port>:<queueIndex>"` → SAI queue OID のマッピング追加・削除 | `portsorch.cpp:8749, 8789` |
+| `COUNTERS_QUEUE_PORT_MAP` | SET / DEL | SAI queue OID → SAI port OID のマッピング追加・削除 | `portsorch.cpp:8750, 8790` |
+| `COUNTERS_QUEUE_INDEX_MAP` | SET / DEL | SAI queue OID → 実 queue インデックス のマッピング追加・削除 | `portsorch.cpp:8751, 8796` |
+| `COUNTERS_QUEUE_TYPE_MAP` | SET / DEL | SAI queue OID → queue type 文字列 のマッピング追加・削除 | `portsorch.cpp:8752, 8797` |
+
+**トリガー条件**: profile 変化あり（zero profile への変更・からの変更）かつ `getQueueCountersState()` または `getQueueWatermarkCountersState()` が true。
+
+### FLEX_COUNTER_DB — queue stat / watermark / WRED カウンタ登録
+
+同 `createPortBufferQueueCounters()` が FlexCounterOrch 状態に応じて以下のエントリを FLEX_COUNTER_DB に追加・削除する。
+
+| FLEX_COUNTER_DB グループ | 操作 | トリガー条件 | evidence |
+|---|---|---|---|
+| `QUEUE_STAT_COUNTER` | SET (add) / DEL | `getQueueCountersState() == true` かつ SET 操作でカウンタ未存在 | `portsorch.cpp:8730-8732` |
+| `QUEUE_WATERMARK_STAT_COUNTER` | SET (add) / DEL | `getQueueWatermarkCountersState() == true` | `portsorch.cpp:8734-8736` |
+| `WRED_ECN_QUEUE_STAT_COUNTER` | SET (add) / DEL | `getWredQueueCountersState() == true` | `portsorch.cpp:8738-8740` |
+
+### VOQ 例外
+
+`gMySwitchType == "voq"` の場合、`flexcounterorch` が全 VOQ の queue カウンタを一括登録するため、上記 COUNTERS_DB / FLEX_COUNTER_DB 書き込みは **スキップ** される。
+
+> `bufferorch.cpp:1134-1136`: *"For VOQ chassis, flexcounterorch adds the Queue Counters for all egress and VOQ queues ... irrespective of BUFFER_QUEUE configuration."*
+
+### zero profile 例外
+
+profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カウンタ追加は行わない。既存カウンタがあれば削除する。`bufferorch.cpp:1017, 1020`
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-side.md` を参照。
+<!-- /side-effects -->
 
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
