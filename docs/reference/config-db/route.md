@@ -376,7 +376,8 @@ STATE_DB[ROUTE_TABLE|<default-route>]
 <!-- side-effects -->
 ## SET/DEL 副次 DB 書込み
 
-<!-- evidence: meta/_intermediate/cdb-flow/route-side.md -->
+<!-- evidence: meta/_intermediate/cdb-flow/route-side-effects.md -->
+<!-- evidence-alt: meta/_intermediate/cdb-flow/route-side.md -->
 
 `ROUTE_TABLE` エントリの SET / DEL が引き起こす他 DB への書込み一覧。`ROUTE_TABLE` は APPL_DB テーブルであるため、CONFIG_DB 直接の副作用はなく、すべて `orchagent (RouteOrch)` 経由で発生する。
 
