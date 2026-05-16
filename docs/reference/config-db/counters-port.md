@@ -293,6 +293,74 @@ gearbox 有効環境では `gb_port_stat_manager` が `GB_COUNTERS_DB` に別途
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/counters-port-ordering.md`
+
+### SET 時の先行必須テーブル / イベント
+
+| 先行必須テーブル / イベント | 理由 | ソース |
+|---|---|---|
+| `APP_DB PORT_TABLE\|PortInitDone` | `FlexCounterOrch::doTask()` が冒頭で `gPortsOrch->allPortsReady()` を確認し、`false` の間は全リターン。エントリは `m_toSync` に保留され PortInitDone 後に自動処理される | `flexcounterorch.cpp:164-166` / `portsorch.cpp:1685-1687` |
+| `FLEX_COUNTER_TABLE\|PORT FLEX_COUNTER_STATUS=enable` | enable 受信時に `gPortsOrch->generatePortCounterMap()` を呼び `COUNTER_ID_LIST` を syncd へ登録。enable 前は syncd へポーリング登録されず `COUNTERS:<oid>` が更新されない | `flexcounterorch.cpp:235-240` |
+| SAI PHY ポート作成完了（`portsorch` による `m_portList` 登録） | `generatePortCounterMap()` は `m_portList` をイテレートし `m_type != PHY` をスキップ。ポートが未作成の場合は登録対象なし | `portsorch.cpp:9112-9117` |
+
+!!! warning "PortInitDone 前の enable は保留される"
+    `FLEX_COUNTER_TABLE|PORT` への `FLEX_COUNTER_STATUS=enable` を `PortInitDone` より先に書いても
+    `flexcounterorch` は何もしない。エントリは `m_toSync` に留まり、`PortInitDone` 後の次 Consumer tick
+    で自動的に処理される。
+
+### フィールド解決順序
+
+`generatePortCounterMap()` が呼ばれると以下の順で syncd へ登録される（`portsorch.cpp:9109-9128`）:
+
+1. **`port_stat_manager.setCounterIdList()`** — 物理ポートに `port_stat_ids[]`（RFC2863 + 拡張）を登録
+2. **`gb_port_stat_manager.setCounterIdList()`** — Gearbox 有効ポートに `gbport_stat_ids[]` を登録（`m_system_side_id` / `m_line_side_id`）
+
+`m_isPortCounterMapGenerated` フラグにより、`generatePortCounterMap()` は一度成功した後は noop（冪等）。
+
+### counterpoll enable 後に追加されたポートの扱い
+
+enable 済み状態で `portsorch` が新規 PHY ポートを作成した場合、`flex_counters_orch->getPortCountersState()` が `true` であれば即座に `port_stat_manager.setCounterIdList()` を呼ぶ（`portsorch.cpp:4143-4148`）。`generatePortCounterMap()` は経由しない。
+
+- **enable 前に存在したポート**: `generatePortCounterMap()` で一括登録
+- **enable 後に追加されたポート**: ポート作成時に即時登録
+
+どちらの経路でも `COUNTERS_PORT_NAME_MAP` への `<alias>:<OID>` 書き込みはポート作成時に常時行われる（counterpoll の enable/disable に依存しない）。
+
+### Warm Start 時の遅延
+
+Warm Start の場合、`FlexCounterOrch` ctor は `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマを起動し、満了まで `doTask()` が全リターンする（`flexcounterorch.cpp:127-136`, `155-158`）。通常起動では即時 `m_delayTimerExpired = true`（`flexcounterorch.cpp:137`）。
+
+### DEL 時の挙動
+
+`FLEX_COUNTER_TABLE|PORT FLEX_COUNTER_STATUS=disable` を受信すると syncd はポーリングを停止する。`COUNTERS_DB:COUNTERS:<oid>` のハッシュは**削除されず**、最後の値が残留する。ポート削除時は `COUNTERS_PORT_NAME_MAP` から当該エントリが除去される（`portsorch.cpp:4312`）。
+
+### 起動時シーケンス
+
+```
+portsyncd → APP_DB:PORT_TABLE|PortInitDone
+  ↓
+portsorch: m_initDone = true → allPortsReady() = true
+  ↓
+flexcounterorch: doTask() ブロック解除
+  ↓
+FLEX_COUNTER_TABLE|PORT に FLEX_COUNTER_STATUS=enable が届く
+  (counterpoll コマンドまたは起動時設定)
+  ↓
+gPortsOrch->generatePortCounterMap()
+  ↓ for each PHY port in m_portList:
+      port_stat_manager.setCounterIdList(m_port_id, PORT, port_stat_ids[])
+      gb_port_stat_manager.setCounterIdList(...)  ← gearbox 有効時のみ
+  ↓
+syncd: FlexCounter が COUNTER_ID_LIST を受信 → 1 s ごとポーリング開始
+  ↓
+COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
+```
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
