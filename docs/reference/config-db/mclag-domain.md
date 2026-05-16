@@ -440,3 +440,79 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 > **hard=0**: すべての推奨デフォルトは YANG `default` 文由来。iccpd 内部の定数 (`MCLAG_DEFAULT_PORT 2626` 等) は CONFIG_DB フィールドとは無関係。
 <!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclaglink.cpp / sonic-swss/mclagsyncd/mclaglink.h -->
+
+### MlagOrch (orchagent) 側のプラットフォーム差
+
+`MlagOrch` は **ASIC 識別ロジックを持たない**。`mlagorch.cpp` 全行 (250 行) に `getenv("platform")` / `m_platform` / SAI 直接呼び出しは 0 件。`addIslInterface()` / `addMlagInterface()` は Subject 通知 (`SUBJECT_TYPE_MLAG_ISL_CHANGE` / `SUBJECT_TYPE_MLAG_INTF_CHANGE`) のみを broadcast し、実際の SAI 操作は `FdbOrch` 側が担う。CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` フィールド値はすべてのプラットフォームで共通。
+
+### SAI bridge_port capability と FDB 解決
+
+`mclagsyncd::getBridgePortIdToAttrPortIdMap()` (`mclaglink.cpp:74-99`) が ASIC_DB の `SAI_OBJECT_TYPE_BRIDGE_PORT` を走査し、ポート OID を解決する。
+
+```cpp
+// mclaglink.cpp:87-92
+auto attr_port_id = hash.find("SAI_BRIDGE_PORT_ATTR_PORT_ID");
+if (attr_port_id == hash.end())
+{
+    attr_port_id = hash.find("SAI_BRIDGE_PORT_ATTR_TUNNEL_ID");
+    if (attr_port_id == hash.end())
+        continue;  // 両 attr 不在 → FDB エントリをスキップ
+}
+```
+
+| ASIC 種別 | bridge_port 解決経路 | 影響 |
+|---|---|---|
+| Broadcom / Mellanox (通常ポート) | `SAI_BRIDGE_PORT_ATTR_PORT_ID` (一次) | 正常解決 |
+| VxLAN トンネルポート系 | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` (フォールバック) | 正常解決 |
+| capability 未実装 ASIC | 両 attr 不在 → `continue` | APPL_DB への FDB 伝播スキップ |
+
+### Broadcom / Mellanox MCLAG port isolation 対応差
+
+`mclagsyncd::setPortIsolate()` (`mclaglink.cpp:190-282` / `284-378`) は **環境変数 `platform`** を `getenv()` で取得し、APPL_DB 書込先を 2 経路に分岐させる。`platform` は `docker-iccpd/iccpd.sh` がコンテナ起動時に `asic_type` から設定する。
+
+```cpp
+// mclaglink.h:54-59
+#define BRCM_PLATFORM_SUBSTRING   "broadcom"
+#define BFN_PLATFORM_SUBSTRING    "barefoot"
+#define CTC_PLATFORM_SUBSTRING    "centec"
+#define CLX_PLATFORM_SUBSTRING    "clounix"
+#define MRVL_PRST_PLATFORM_SUBSTRING "marvell-prestera"
+#define MRVL_TL_PLATFORM_SUBSTRING   "marvell-teralynx"
+```
+
+| `platform` 値 | APPL_DB 書込先 | 除外ポート | SAI 経路 |
+|---|---|---|---|
+| `broadcom` / `barefoot` / `centec` / `clounix` / `marvell-prestera` / `marvell-teralynx` | `ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` (TYPE=bridge-port) | MEMBERS から `Ethernet` 系を除外 | `SAI_OBJECT_TYPE_ISOLATION_GROUP` |
+| `mellanox` / `vs` / その他未定義 | `ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` (type=L3, PACKET_ACTION=DROP) | OUT_PORTS から `PortChannel` 系を除外 | `SAI_OBJECT_TYPE_ACL_TABLE` / `ACL_ENTRY` |
+
+ACL fallback (`mellanox` 等) では L3 ACL リソースを 1 テーブル消費する点に注意。
+
+#### 削除挙動差
+
+| 条件 | ISOLATION_GROUP 経路 (Broadcom 等) | ACL fallback (Mellanox 等) |
+|---|---|---|
+| ICCP up + リモート全 I/F down | MEMBERS を空にしてエントリ **保持** | — |
+| ICCP down / dst port 空 (`op_len==0`) | `ISOLATION_GROUP_TABLE` DEL | `ACL_TABLE_TABLE\|mclag` DEL |
+
+### kernel bridge との連携差
+
+MCLAG は kernel bridge (`brX`) を iccpd が直接操作しない設計。FDB 同期は `APPL_DB FDB_TABLE` → `fdborch` → `sai_fdb_api` の経路のみを使う。`fdbsyncd` が netlink で kernel bridge FDB 変化を監視して APPL_DB に反映する点は Broadcom / Mellanox とも共通。`SUBJECT_TYPE_MLAG_ISL_CHANGE` 受信後の FdbOrch による FDB flush スキップ制御 (`fdborch.cpp:1209-1212`) も全プラットフォーム共通。
+
+### まとめ
+
+| 観点 | platform 差 |
+|---|---|
+| `MlagOrch` (CONFIG_DB → orchagent) | **差なし**（ASIC 識別コード 0 件） |
+| CONFIG_DB `MCLAG_DOMAIN` フィールド値 | 全プラットフォーム共通 |
+| `getBridgePortIdToAttrPortIdMap()` (FDB 解決) | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` フォールバックあり（VxLAN 系で差が出る可能性） |
+| port isolation (mclagsyncd) | `broadcom`/`barefoot`/`centec`/`clounix`/`marvell-*` → `ISOLATION_GROUP_TABLE`、`mellanox`/その他 → ACL fallback |
+| kernel bridge 連携 | 全プラットフォーム共通 (`fdbsyncd` 経由) |
+| multi-ASIC (chassis / T2) | サポート外（host 名前空間 CONFIG_DB のみ参照） |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/mclag-domain-platform.md`
+<!-- /platform -->
