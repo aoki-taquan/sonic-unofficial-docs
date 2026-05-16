@@ -856,11 +856,14 @@ evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
 | `buffermgrd.sh` (L5-13) | `buffer_model` | `dynamic` → `buffermgrd -a asic_table.json`。それ以外 → `buffermgrd -l pg_profile_lookup.ini` | sonic-buildimage/dockers/docker-orchagent/buffermgrd.sh:5-13 |
 | `vlanmgrd` (L56-61) | `mac` | VLAN インタフェースのシステム MAC として設定。未設定は `runtime_error` で起動失敗 | sonic-swss/cfgmgr/vlanmgrd.cpp:56-61 |
 | `teammgrd` (L54-57) | `mac` | PortChannel の switch MAC として使用。未設定は起動失敗 | sonic-swss/cfgmgr/teammgr.cpp:54-57 |
+| `stpmgrd` (L81-88) | `mac` | STP Bridge ID に使用するシステム MAC として設定。未設定は起動失敗 | sonic-swss/cfgmgr/stpmgrd.cpp:81-88 |
+| `vxlanmgrd` (L65-72) | `mac` | VXLAN トンネルの内部 switch MAC として設定。未設定は起動失敗 | sonic-swss/cfgmgr/vxlanmgrd.cpp:65-72 |
+| `buffermgrdyn` (L87) | `platform` | Mellanox プラットフォームのみ: モデル番号 (SN 番号) を抽出して XON 値など ASIC 固有パラメータを決定 | sonic-swss/cfgmgr/buffermgrdyn.cpp:85,87-95 |
 | `nbrmgrd` (L73-78) | `switch_type` | `voq` のとき SYSTEM_NEIGH を購読し VoQ リモートネイバー用 static route をカーネルに設定 | sonic-swss/cfgmgr/nbrmgr.cpp:73-78 |
 | `intfmgrd` (L71-74) | `switch_type` | `mySwitchType` に格納。インタフェース設定の switch_type 分岐に使用 | sonic-swss/cfgmgr/intfmgr.cpp:71-74 |
 | `bgpcfgd` (main.py:122-130) | `type`, `subtype` | `SpineRouter+UpstreamLC` または `UpperSpineRouter` のとき `AsPathMgr` を起動時に登録 | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:122-130 |
 
-> **起動失敗トリガー**: `mac` フィールド欠如は vlanmgrd / teammgrd を即時 crash させる。`switch_type=voq` 時の `switch_id` / `max_cores` / `hostname` / `asic_name` 欠如は orchagent の VoQ 初期化失敗 (`SWSS_LOG_ERROR`) を引き起こす。
+> **起動失敗トリガー**: `mac` フィールド欠如は vlanmgrd / teammgrd / stpmgrd / vxlanmgrd を即時 crash させる。`switch_type=voq` 時の `switch_id` / `max_cores` / `hostname` / `asic_name` 欠如は orchagent の VoQ 初期化失敗 (`SWSS_LOG_ERROR`) を引き起こす。
 
 ### ランタイム購読 (subscribe / ConsumerStateTable)
 
