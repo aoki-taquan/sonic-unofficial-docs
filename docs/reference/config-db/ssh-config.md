@@ -282,4 +282,49 @@ YANG default と hostcfgd コード由来の fallback をまとめる。`SshServ
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### hostcfgd 起動シーケンス
+
+`hostcfgd` が起動してから `SSH_SERVER` 変更を安定して反映するまでの順序:
+
+1. **`__init__` フェーズ** — `PamLimitsCfg.update_config_file()` が最初に呼ばれるが、`SSH_SERVER` エントリが存在しなければ早期 return。`SshServer.__init__()` は `self.policies = {}` のみ（ファイル書き込みなし）。
+2. **`load()` フェーズ** — `wait_till_system_init_done()` で systemd target 完了を待機後:
+   - `sshscfg.load(ssh_server)` → `set_policies()` が `/etc/ssh/sshd_config` を更新 → `systemctl restart ssh`
+   - `pamLimitsCfg.update_config_file()`（2 回目）が `/etc/security/limits.conf` を更新
+3. **ランタイムフェーズ** — `CONFIG_DB` 変更を `ssh_handler` が受信 → `sshscfg.policies_update()` → `pamLimitsCfg.update_config_file()` の順で逐次実行
+
+```python
+# hostcfgd L2265, L2277 (load フェーズ)
+self.sshscfg.load(ssh_server)          # sshd_config 更新 + systemctl restart ssh
+self.pamLimitsCfg.update_config_file() # PAM limits 更新 (max_sessions 確定)
+
+# hostcfgd L2297-2299 (ランタイム: ssh_handler)
+self.sshscfg.policies_update(key, data)
+self.pamLimitsCfg.update_config_file()
+```
+
+### フィールドごとの書込み先と処理順
+
+| フィールド | 書込み先 | 処理パス |
+|-----------|---------|---------|
+| `authentication_retries` | `/etc/ssh/sshd_config` (`MaxAuthTries`) | `set_policies()` → `SSH_CONFIG_NAMES` マッピング |
+| `login_timeout` | `/etc/ssh/sshd_config` (`LoginGraceTime`) | 同上 |
+| `ports` | `/etc/ssh/sshd_config` (`Port`) | `handle_ports_set()` 経由（既存行削除→挿入） |
+| `inactivity_timeout` | `/etc/ssh/sshd_config` (`ClientAliveInterval`) | 分→秒変換（`× 60`）後に書込み |
+| `max_sessions` | `/etc/security/limits.conf` (`maxsyslogins`) | `set_policies()` 内で `continue` → `PamLimitsCfg` が処理 |
+| `password_authentication` | `/etc/ssh/sshd_config` (`PasswordAuthentication`) | boolean → `yes`/`no` 変換後に書込み |
+| `permit_root_login` | `/etc/ssh/sshd_config` (`PermitRootLogin`) | 変換なし |
+| `ciphers` / `kex_algorithms` / `macs` | `/etc/ssh/sshd_config` | leaf-list → カンマ区切り文字列変換後に書込み |
+
+### 注意事項
+
+- **起動直後の PAM limits 未確定ウィンドウ**: `load()` フェーズで `sshscfg.load()` 完了前は `max_sessions` 制限が PAM に反映されていない可能性がある（`__init__` 時点での `PamLimitsCfg` 実行は SSH_SERVER 不在の場合スキップされる）。
+- **原子性欠如**: `ssh_handler` は `sshd_config` 更新と PAM limits 更新をトランザクションなしで逐次実行する。ディスクフル等で PAM limits 更新のみ失敗した場合、両設定が不整合になる。
+- **sshd 検証ゲート**: `sshd -T -f <tmp>` が非ゼロを返した場合、全フィールドの変更をロールバック（`tmp` ファイル削除）。フィールド単位の部分適用はなく、すべて適用 or すべて棄却。
+- **`DEVICE_METADATA|localhost` 連動**: `PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両エントリ不在時に早期 return（L1430）。通常の SONiC デプロイでは影響なし。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
