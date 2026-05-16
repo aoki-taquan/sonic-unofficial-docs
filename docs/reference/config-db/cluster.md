@@ -142,6 +142,51 @@ leaf cluster {
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — cluster フィールドの daemon 参照状況 (Phase C)
+
+`cluster` フィールドは **daemon に直接消費されない metadata-only フィールド**である。
+以下は実コードを横断して確認した参照一覧と、混同しやすい隣接フィールドとの関係を示す。
+
+### daemon / スクリプトによる参照
+
+| コンポーネント | cluster 参照 | 実際に参照するフィールド | evidence |
+|-------------|------------|----------------------|---------|
+| `orchagent` | **なし** | `switch_type`, `mac`, `switch_id`, `max_cores`, `subtype` | sonic-swss/orchagent/main.cpp:244-355 |
+| `bgpcfgd` | **なし** | `type`, `subtype` | sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:122-130 |
+| `swss_vars.j2` | **なし** | `asic_id`, `mac`, `synchronous_mode`, `switch_type` 等 | sonic-buildimage/files/build_templates/swss_vars.j2 |
+| `nbrmgrd` | **なし** | `switch_type` | sonic-swss/cfgmgr/nbrmgr.cpp:73-78 |
+| `intfmgrd` | **なし** | `switch_type` | sonic-swss/cfgmgr/intfmgr.cpp:71-74 |
+| `vlanmgrd` | **なし** | `mac` | sonic-swss/cfgmgr/vlanmgrd.cpp:56-61 |
+
+> **結論**: `cluster` フィールドを起動時・ランタイムに読み出す daemon は現時点で存在しない。
+> フィールドはデータセンター運用ツール（外部スクリプト・NMS 等）が `sonic-db-cli` / gNMI 経由で参照することを想定した識別子として設計されている。
+
+### DEVICE_METADATA 内での同時書き込みフィールド
+
+`minigraph.py` は同一パスで以下フィールドを `DEVICE_METADATA|localhost` に書き込む（minigraph.py:2161-2176）。
+`cluster` は他のフィールドと**独立**して書き込まれ、相互に依存しない。
+
+| フィールド | 書き込み条件 |
+|-----------|------------|
+| `chassis_hostname` | chassis 構成時 |
+| `deployment_id` | `is not None` check |
+| `cluster` | truthy check（`""` はスキップ） |
+| `slice_type` | 非空かつ chassis 構成時 |
+
+### DEVICE_NEIGHBOR_METADATA との共同書き込み
+
+`parse_devices()` (minigraph.py:804-826) は `cluster`・`deployment_id`・`hwsku`・`type` 等を同一 `device_data` dict に格納してから `devices[name]` に代入する。フィールド間の書き込み依存はない。
+
+### CHASSIS_APP_DB との非連携（確認済み）
+
+`cluster` フィールドは CONFIG_DB の `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` にのみ存在し、CHASSIS_APP_DB への伝播コードは存在しない。VOQ 構成の `SYSTEM_NEIGH` / `SYSTEM_PORT` 等も `cluster` を参照しない。
+
+### sonic-bgp-global.yang の rr_cluster_id との混同注意
+
+`sonic-bgp-global.yang` には `rr_cluster_id`（BGP Route Reflector Cluster ID）および `ibgp_equal_cluster_length` が存在するが、これらは **`BGP_GLOBALS` テーブルのフィールド**であり、`DEVICE_METADATA.cluster` / `DEVICE_NEIGHBOR_METADATA.cluster` とは完全に別物である（evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-bgp-global.yang:115,406）。
+<!-- /cross-refs -->
+
 ## 書き込み入り口 (Direction A)
 
 対象テーブル: `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` の `cluster` フィールド
