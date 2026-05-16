@@ -688,3 +688,66 @@ DEL NAT_POOL|<name>        # pool を後に削除
 `natmgr.cpp:removeNatPool()` は pool 削除時に参照している binding を自動的に無効化するが、CONFIG_DB 上の `NAT_BINDINGS` エントリは残る。CLI 経由では先に `config nat remove binding` を実行する。
 
 <!-- /ordering -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`, `sonic-swss/orchagent/orch.h`
+> 調査日: 2026-05-16
+
+### gIsNatSupported — SAI capability query による HW NAT の有効/無効
+
+起動時 `main.cpp:935-948` で `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を query し、返り値が `0` の場合は NAT HW オフロード非対応と判定して `gIsNatSupported = false` のまま維持する。`enableNatFeature()` (`natorch.cpp:2541-2544`) は `gIsNatSupported == false` なら即 return し、`SAI_SWITCH_ATTR_NAT_ENABLE` を set しない。
+
+```cpp
+// main.cpp:936-947
+attr.id = SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY;
+status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status == SAI_STATUS_SUCCESS && attr.value.u32 != 0) {
+    gIsNatSupported = true;
+}
+// natorch.cpp:2541-2544
+if (gIsNatSupported == false) {
+    SWSS_LOG_NOTICE("NAT Feature is not supported in this Platform");
+    return;  // SAI_SWITCH_ATTR_NAT_ENABLE は set されない
+}
+```
+
+| ASIC / 環境 | `gIsNatSupported` | HW NAT 動作 |
+|------------|-------------------|------------|
+| NAT HW オフロード対応 ASIC | `true` | `SAI_SWITCH_ATTR_NAT_ENABLE=true` が設定され SNAT/DNAT エントリが ASIC に投入 |
+| NAT 非対応 ASIC (`AVAILABLE_SNAT_ENTRY=0` を返す) | `false` | `enableNatFeature()` は即 return。CONFIG_DB への書込みは成功するが ASIC 反映なし |
+| VS (virtual switch) | `true` (`AVAILABLE_SNAT_ENTRY=100`) | HW NAT 動作するが実際のパケット変換は software で実施 |
+
+### gNhTrackingSupported — Broadcom プラットフォームのみ DNAT nexthop 待ち
+
+`natorch.cpp:144-148` で `getenv("platform")` が `BRCM_PLATFORM_SUBSTRING`（= `"broadcom"`、`orch.h:43` 定義）を含む場合のみ `gNhTrackingSupported = true` に設定する。
+
+```cpp
+// natorch.cpp:144-148
+char *platform = getenv("platform");
+if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
+{
+    gNhTrackingSupported = true;
+}
+SWSS_LOG_NOTICE("DNAT nexthop tracking is %s",
+    ((gNhTrackingSupported == true) ? "enabled" : "disabled"));
+```
+
+| プラットフォーム | `gNhTrackingSupported` | DNAT 追加時の挙動 |
+|----------------|----------------------|-----------------|
+| Broadcom | `true` | nexthop (L3 隣接) が未解決なら `addDnatToNhCache()` でキャッシュ待機。NeighborOrch から解決通知を受け取り次第 `addHwDnatEntry()` を呼ぶ |
+| 非 Broadcom (Marvell / Cisco / その他) | `false` | nexthop 解決を待たずに即時 `addHwDnatEntry()` を呼ぶ |
+
+`enableNatFeature()` でも同様 (`natorch.cpp:2570-2573`): Broadcom 環境のみ `m_neighOrch->attach(this)` を実行して NeighborOrch の通知購読を開始する。
+
+### natmgr — カーネル iptables は platform 非依存、fullcone はカーネルモジュール依存
+
+`natmgr.cpp` はカーネルの netfilter (`iptables -t nat`) を操作しており、`platform` 環境変数を参照しない。Dynamic NAT プール設定時に `--fullcone` オプション (`natmgr.cpp:1164, 1268`) をルールに付与するが、これはカーネルが `xt_FULLCONENAT` モジュールをロードしている場合にのみ有効。モジュール未ロード環境では iptables コマンドが失敗するが、natmgr はエラーを無視して処理を続行するため、フルコーン NAT が静かに無効化されるリスクがある。
+
+### maxAllowedSNatEntries — プラットフォームごとの SNAT 上限
+
+`natorch.cpp:111-121`: `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` の返り値を `maxAllowedSNatEntries` として保持する。現状のコードではエントリ追加時に上限チェックは行っておらず、HW 容量超過時は SAI 実装がエラーを返す形になっている。ログには上限値が出力される (`natorch.cpp:2549`)。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-platform.md`
+<!-- /platform -->
