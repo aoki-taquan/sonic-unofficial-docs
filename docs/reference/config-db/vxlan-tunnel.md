@@ -452,4 +452,28 @@ DIP トンネル（動的 EVPN remote）が残存している間は SIP トン�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`orchagent/vxlanorch.cpp` の静的解析から抽出した、`VXLAN_TUNNEL` が暗黙的に依存するテーブル・オブジェクト一覧。
+
+| 参照先テーブル/オブジェクト | 参照種別 | 依存方向 | コード根拠 |
+|---------------------------|---------|---------|-----------|
+| `VRF` (VRFOrch) | VRF SAI OID 解決 | VXLAN_TUNNEL → VRF | `vxlanorch.cpp:2095,2286,2311` — `VRFOrch::getVRFid(vrf_name)` で VRF OID を取得し SAI tunnel-map entry に設定 |
+| `VXLAN_TUNNEL_MAP` | L2 VNI-VLAN マッピング | VXLAN_TUNNEL → VXLAN_TUNNEL_MAP | `vxlanorch.cpp:2110,2120` — tunnel 作成後に `addVlanMappedToVni()` で VLAN-VNI 対応を登録; map 未登録時は tunnel inactive |
+| `VXLAN_EVPN_NVO` | VTEP EVPN バインド | VXLAN_TUNNEL → EVPN_NVO | `vxlanorch.cpp:2780-2784` — `EvpnNvoOrch::addOperation()` が `source_vtep` leafref で VXLAN_TUNNEL.name を参照; NVO 残留時はトンネル削除失敗 |
+| `VLAN` (PortsOrch) | VLAN OID 検索 | VXLAN_TUNNEL_MAP → VLAN | `vxlanorch.cpp:2030,2145,2483` — `gPortsOrch->getVlanByVlanId(vlan_id)` で VLAN オブジェクトを取得; VLAN 未作成時は `SWSS_LOG_WARN` でスキップ |
+| SAI `VNI_TO_VLAN_ID` / `VLAN_ID_TO_VNI` map | SAI トンネルマップ | 内部 | `vxlanorch.cpp:40-54,759-760` — TUNNEL_MAP_T_VLAN 用の encap/decap map pair を SAI に生成 |
+| SAI `VNI_TO_VRID` / `VRID_TO_VNI` map | SAI トンネルマップ (L3) | 内部 | `vxlanorch.cpp:42-60,767-768` — TUNNEL_MAP_T_VIRTUAL_ROUTER 用 map pair; VRF-VNI バインド時に有効化 |
+| `VxlanVrfMapOrch` (VXLAN_VRF_MAP) | VRF-VNI マッピング登録 | VXLAN_TUNNEL → VRF-VNI | `vxlanorch.cpp:2250-2335` — VRF が存在しない場合は pending; 存在確認は `vrf_orch->isVRFexists()` |
+
+### 依存解決の順序制約
+
+1. `VXLAN_TUNNEL` エントリが先に存在しないと `VXLAN_EVPN_NVO` の `source_vtep` 解決が失敗する (`vxlanorch.cpp:2784`)。
+2. `VLAN` が PortsOrch に登録されていないと `VXLAN_TUNNEL_MAP` の VNI-VLAN 紐付けがスキップされる (`vxlanorch.cpp:2030`)。
+3. `VRF` が VRFOrch に登録されていないと `VXLAN_VRF_MAP` の addOperation が pending になる (`vxlanorch.cpp:2290`)。
+4. EVPN NVO / VLAN MAP の削除より前に `VXLAN_TUNNEL` を削除すると `SWSS_LOG_WARN` + リトライ待ちになる (`vxlanorch.cpp:109,112`)。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->
