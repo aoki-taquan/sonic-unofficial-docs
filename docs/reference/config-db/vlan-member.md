@@ -81,6 +81,51 @@ VLAN_MEMBER|<vlan_name>|<port>
 - 関連 CLI: `config vlan member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- failure -->
+## 書込失敗・retry 分岐
+
+`vlanmgrd` (`vlanmgr.cpp`) が VLAN_MEMBER エントリを処理する際の失敗挙動は「即時破棄」「遅延リトライ」「例外スロー」の 3 パターンに分類される[^fail]。
+
+### 1. 即時破棄 (no retry)
+
+| 失敗条件 | 検出箇所 | ログ出力 |
+|---------|---------|---------|
+| キーに `Vlan` プレフィクスなし | `doVlanMemberTask` L605-609 | `SWSS_LOG_ERROR("Invalid key format. No 'Vlan' prefix: %s")` |
+| キーにメンバーポート部分がない | `doVlanMemberTask` L621-625 | `SWSS_LOG_ERROR("Invalid key format. No member port is presented: %s")` |
+| `tagging_mode` が `untagged`/`tagged`/`priority_tagged` 以外 | `doVlanMemberTask` L658-665 | `SWSS_LOG_ERROR("Wrong tagging_mode '%s' for key: %s")` |
+| 不明な `operation type` | `doVlanMemberTask` L709 | `SWSS_LOG_ERROR("Unknown operation type %s")` |
+| consumer pipe 内の重複キー | `processUntaggedVlanMembers` L584 | `SWSS_LOG_WARN("Duplicate key %s found in table:%s")` |
+
+破棄後は CONFIG_DB 側に誤エントリが残留するが `vlanmgrd` は再通知しない（silent drop）。
+
+### 2. 遅延リトライ (iterator increment のみ)
+
+| 失敗条件 | 検出箇所 | ログ出力 |
+|---------|---------|---------|
+| PORT/LAG が `STATE_DB` に未登録 (`isMemberStateOk()` が false) | `doVlanMemberTask` L642-645 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
+| VLAN が `STATE_VLAN_TABLE` に未登録 (`isVlanStateOk()` が false) | `doVlanMemberTask` L642-645 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
+| PortChannel の `addHostVlanMember()` が `false` を返す (LAG 削除レース) | `doVlanMemberTask` L683-686 | `SWSS_LOG_INFO("Netdevice for %s not ready, delaying")` |
+| PAC 経路でポート/VLAN が未 ready | `doVlanPacVlanMemberTask` L866-870 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
+
+条件が解消され次第（ポート初期化完了・VLAN 作成完了）自動的に再試行される。
+
+### 3. kernel bridge コマンド失敗と SAI 失敗
+
+| 失敗ケース | コード | 挙動 |
+|---------|------|------|
+| PortChannel の `bridge vlan add` 失敗 | `addHostVlanMember` L258-265 | `return false` → 呼び出し元で `it++` retry（LAG 削除レース想定） |
+| Ethernet の `bridge vlan add` 失敗（2 回目） | `addHostVlanMember` L267-269 | 例外再スロー → `vlanmgrd` クラッシュ → supervisor 再起動 |
+| `sai_vlan_api->create_vlan_member()` 失敗 (orchagent) | `portsorch.cpp` `handleSaiCreateStatus` | retryable なら `it++`、非 retryable なら `erase(it)` |
+| orchagent 側の PORT/VLAN 未解決 | `portsorch.cpp` `getPort()` 失敗 | `it++; continue;` で保留 |
+
+PortChannel は bridge コマンド失敗を `return false` で吸収しリトライするが、Ethernet はハードエラー扱いで `vlanmgrd` 再起動となる非対称設計。
+
+詳細は `meta/_intermediate/cdb-flow/vlan-member-failure.md` を参照。
+
+[^fail]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+
+<!-- /failure -->
+
 <!-- constants -->
 ## ハードコード定数
 
