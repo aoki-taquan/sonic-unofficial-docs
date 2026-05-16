@@ -300,6 +300,59 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-queue-map-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
+
+### TC / queue インデックス範囲
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| TC 最小値 | `0` | `tc_type` YANG typedef 下限 |
+| TC 最大値 | `7` | `tc_type` YANG typedef 上限 |
+| queue インデックス最小値 | `0` | `sai_qos_map_t.value.queue_index` 下限 |
+| queue インデックス最大値 | プラットフォーム依存 | SAI / ASIC が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は `0..9` だが実装はチェックしない |
+
+### デフォルトマップ名
+
+| 定数 | 値 | 箇所 |
+|------|----|------|
+| デフォルトマップ名 | `"AZURE"` | `qos_config.j2` フォールバック定義。テスト: `qosorch_ut.cpp` L648, L683, L943 |
+| アップリンク用マップ名 | `"AZURE_UPLINK"` | `generate_tc_to_queue_map` 関数が `tunnel_qos_remap_enable=true` 時に生成 |
+
+### SAI 定数
+
+| 定数 | 値 | 箇所 |
+|------|----|------|
+| `SAI_QOS_MAP_ATTR_TYPE` | `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` | `addQosItem()` L458 にハードコード |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | — | `convertFieldValuesToAttributes()` L442 |
+| `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | — | PORT_QOS_MAP バインド時に使用 (L64) |
+
+### フィールド名定数 (qosorch.h)
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `tc_to_queue_field_name` | `"tc_to_queue_map"` | PORT_QOS_MAP フィールド名 |
+| `encap_tc_to_queue_field_name` | `"encap_tc_to_queue_map"` | トンネルアップリンク用フィールド名 |
+
+### デフォルト恒等写像
+
+`qos_config.j2` フォールバック時の TC→queue 対応（マップ名 `AZURE`）:
+
+```
+TC 0 → queue 0
+TC 1 → queue 1
+TC 2 → queue 2
+TC 3 → queue 3
+TC 4 → queue 4
+TC 5 → queue 5
+TC 6 → queue 6
+TC 7 → queue 7
+```
+
+<!-- /constants -->
+
 <!-- ordering -->
 ## 適用順序依存 (Phase B)
 
@@ -377,3 +430,50 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 <!-- /failure -->
 
 <!-- glossary-links-injected: 16a5b728a75a -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `TC_TO_QUEUE_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_QUEUE_MAP|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)
+  → m_qos_handler_map[CFG_TC_TO_QUEUE_MAP_TABLE_NAME]
+  → QosOrch::handleTcToQueueTable()
+  → TcToQueueMapHandler::processWorkItem()
+  → addQosItem(): sai_qos_map_api->create_qos_map() [SAI_QOS_MAP_TYPE_TC_TO_QUEUE]
+```
+
+`QosOrch::doTask()` は `TC_TO_QUEUE_MAP` を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（`qosorch.cpp:2231-2252`）。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable` (keyspace `PSUBSCRIBE`) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handleTcToQueueTable()` → `TcToQueueMapHandler` |
+| channel PUBLISH | 使わない |
+| TTL | 未使用 |
+
+<!-- /pubsub -->
