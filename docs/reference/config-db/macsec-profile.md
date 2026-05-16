@@ -44,6 +44,72 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### MACsecMgr — CONFIG_DB Consumer 登録
+
+`MACsecMgr::MACsecMgr(cfgDb, stateDb, tables)` が `Orch(cfgDb, tables)` で次のテーブルを Consumer 登録する。
+
+| テーブル | DB | 目的 |
+|---|---|---|
+| `CFG_MACSEC_PROFILE_TABLE_NAME` ("MACSEC_PROFILE") | CONFIG_DB | MKA プロファイル設定 (CAK/CKN/cipher_suite/policy 等) |
+| `CFG_PORT_TABLE_NAME` ("PORT") | CONFIG_DB | ポートの `macsec` フィールドでプロファイル名参照 |
+
+`doTask()` の TaskMap:
+
+| テーブル | op | メソッド |
+|---|---|---|
+| `MACSEC_PROFILE` | SET | `loadProfile()` — プロファイルをキャッシュ |
+| `MACSEC_PROFILE` | DEL | `removeProfile()` — プロファイルを削除 |
+| `PORT` | SET | `enableMACsec()` — wpa_supplicant 起動・設定投入 |
+| `PORT` | DEL | `disableMACsec()` — wpa_supplicant 停止 |
+
+### wpa_supplicant 経路
+
+`enableMACsec()` が per-port の `wpa_supplicant` を `fork/exec` し、`wpa_cli` コマンドで MKA パラメータ (CAK/CKN/cipher_suite/rekey_period 等) を投入する。`wpa_supplicant` が MKA ネゴシエーションを行い MACsec SA を確立する。
+
+```
+/sbin/wpa_supplicant -s /var/run/<port>  (per-port ソケット)
+  └─ wpa_cli set_network <id> key_mgmt NONE
+  └─ wpa_cli set_network <id> ca_cert / psk (CAK/CKN)
+  └─ wpa_cli set_network <id> mka_rekey_period <N>
+  └─ wpa_cli set_network <id> macsec_policy / macsec_replay_protect
+```
+
+### APP_DB Publish → MACsecOrch → SAI
+
+`wpa_supplicant` の MKA 完了後、APP_DB の MACsec テーブルに書き込まれ `MACsecOrch` が SAI `sai_macsec_api` を呼び出す。
+
+| SAI API | 操作 |
+|---|---|
+| `create_macsec()` / `remove_macsec()` | ingress/egress MACsec オブジェクト |
+| `create_macsec_port()` / `remove_macsec_port()` | ポート MACsec |
+| `create_macsec_flow()` / `remove_macsec_flow()` | フロー |
+| `create_macsec_sc()` / `remove_macsec_sc()` | Secure Channel |
+| `create_macsec_sa()` / `remove_macsec_sa()` | Secure Association |
+
+### 通信フロー
+
+```
+CONFIG_DB MACSEC_PROFILE|<name>  (SET)
+  └─ macsecmgrd  MACsecMgr::loadProfile()
+
+CONFIG_DB PORT|<port>.macsec = <profile>  (SET)
+  └─ macsecmgrd  MACsecMgr::enableMACsec()
+       ├─ fork/exec /sbin/wpa_supplicant  (MKA ネゴシエーション)
+       │    └─ wpa_cli で CAK/CKN/cipher_suite 投入
+       └─ APP_DB APP_MACSEC_PORT_TABLE / *SC_TABLE / *SA_TABLE
+            └─ [orchagent] MACsecOrch::doTask()
+                 └─ sai_macsec_api->create_macsec_sa() 等
+
+ASIC_DB NOTIFICATIONS  (POST 完了通知)
+  └─ MACsecOrch::doTask(NotificationConsumer &)
+       └─ handleNotification() → 初期化継続
+```
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text
