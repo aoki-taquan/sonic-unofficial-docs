@@ -330,4 +330,31 @@ TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を�
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`TUNNEL_DECAP_TABLE` エントリが APPL_DB に書かれると `tunneldecaporch` が以下のテーブル / リソースを暗黙的に参照する。
+YANG leafref は存在せず、すべて実装コードのみに現れる暗黙依存。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `gVirtualRouterId`（デフォルト VRF OID） | 読み取り（ハードコード） | TUNNEL_DECAP_TABLE SET 処理時、常時。overlay loopback RIF と tunnel term entry が常にデフォルト VRF に紐付く | `tunneldecaporch.cpp` L23, L742 (`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`), L922 (`SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID`) |
+| `DSCP_TO_TC_MAP\|<name>` | OID 解決（`gQosOrch->resolveTunnelQosMap`） | `decap_dscp_to_tc_map` フィールドに値を指定したとき。未作成 map は `task_need_retry` 無限待機 | `tunneldecaporch.cpp` L215-221; `qosorch.cpp` L113 |
+| `MUX_CABLE`（逆参照） | 下流が TUNNEL_DECAP_TABLE を読み取り | `MuxOrch` が MUX_CABLE SET 処理時に `TunnelDecapOrch::getQosMapId()` を呼び出し `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` の OID を取得して MUX トンネル encap QoS を設定する | `tunneldecaporch.cpp` L103, L1450-1465; `muxorch.cpp` L2348-2377 |
+
+!!! note "デフォルト VRF への固定依存"
+    `tunneldecaporch` は overlay RIF / tunnel term entry を常に `gVirtualRouterId`（デフォルト VRF）に紐付ける。
+    VRF フィールドは存在せず、VRF 分離したデカプセルトンネルは現行実装では作成できない。
+
+!!! note "DSCP_TO_TC_MAP の事前作成必須"
+    `decap_dscp_to_tc_map` に指定する QoS map が未作成の場合、当該 TUNNEL_DECAP_TABLE エントリの処理が
+    `task_need_retry` でスタックし続ける。TUNNEL_DECAP_TABLE SET 前に `DSCP_TO_TC_MAP` を作成すること。
+
+!!! note "MUX_CABLE 削除順序"
+    TUNNEL_DECAP_TABLE エントリを DEL する前に `MUX_CABLE|*` の設定を先に削除すること。
+    `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は muxorch の QoS 設定専用の暗黙インターフェースであり、
+    TUNNEL_DECAP_TABLE DEL 後に muxorch が OID を参照するとエラーになる。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
