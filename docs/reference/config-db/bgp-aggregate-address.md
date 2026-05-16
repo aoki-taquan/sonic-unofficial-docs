@@ -285,4 +285,63 @@ YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1313 -->
 <!-- /platform -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | 不正な prefix (`/` 無し / `strict=True` でない) | `validate_prefix()` → `set_handler` L65-72 | `STATE_DB` に `state=inactive`、FRR 未投入 | なし |
+| 2 | FRR push 失敗 (`vtysh -f` rc != 0) | `FRR.write()` → `ConfigMgr.commit()` False | ログ出力のみ。エントリ単位の rollback なし | なし |
+| 3 | `bbr-required=true` かつ BBR 状態不明 / disabled | `set_handler` L78-83 | `state=inactive`、FRR 未投入 | イベント駆動 (`on_bbr_change`) |
+| 4 | BBR `disabled`→`enabled` 遷移 | `on_bbr_change` L46-56 | 全 `bbr-required=true` エントリを再投入 | (これ自体が唯一の retry トリガ) |
+| 5 | `DEVICE_METADATA.localhost.bgp_asn` 未取得 | `address_set_handler` L93 (dict 参照) | `KeyError` が上位に伝播 | なし |
+| 6 | DEL で `state=inactive` | `del_handler` L140-142 | FRR への no コマンド skip、STATE_DB のみ削除 | — |
+| 7 | ROUTE_MAP 不在で `policy` 参照 (frrcfgd 経路) | `hdl_af_aggregate` → bgpd 構文エラー | syslog DEBUG のみ、bgpd 未反映、ROUTE_MAP 後追い定義で自動再投入なし | なし |
+| 8 | bgpd vty socket 接続失敗 (起動時) | `__create_frr_client` L184-200 | 2秒間隔で 100 回 retry、超過で `RuntimeError` | 100 回 / 2秒 |
+| 9 | bgpd コマンド送信中の socket error | `__proc_command` L261-265 | 当該コマンド false、syslog ERR、CONFIG_DB は残存 | なし |
+
+### retry の唯一の自動トリガ
+
+`AggregateAddressMgr` に周期 retry は存在せず、唯一の自動再投入トリガは `BGP_BBR/STATUS` の状態遷移を観測する `on_bbr_change()` のみ。BBR `enabled` 遷移時に `bbr-required=true` の inactive エントリが全件再投入される (`managers_aggregate_address.py:46-56`)。<!-- evidence: managers_aggregate_address.py L46-63 -->
+
+### FRR push 失敗時の実装ギャップ
+
+`address_set_handler()` は内部で FRR の commit 結果を確認せず常に `True` を返す (L136)。結果として `set_handler` L85 の分岐で `set_address_state(..., ACTIVE)` が記録されるため、**`vtysh -f` レベルで構文エラーや投入失敗が起きても STATE_DB は `active` のまま**となる。実際の失敗検出は `ConfigMgr.commit()` → `FRR.write()` のログ出力 (`frr.py:50-51`) に限定される。
+
+```text
+log_err("ConfigMgr::commit(): can't push configuration from file='%s', rc='%d', stdout='%s', stderr='%s'" % err_tuple)
+```
+
+### ROUTE_MAP 順序依存
+
+`frr-mgmt-framework` の `hdl_af_aggregate()` は `ROUTE_MAP` テーブルの存在検証を行わず、`{5:aggr-policy}` をそのまま `route-map <name>` に展開して bgpd に流し込む (`frrcfgd.py:928-930, 1313-1328`)。route-map 未定義のまま `BGP_GLOBALS_AF_AGGREGATE_ADDR` に `policy=<name>` を SET すると bgpd 側で構文エラーになるが、frr-mgmt-framework は ack 待ちのみで再投入トリガを持たない。**ROUTE_MAP を後から定義しても aggregate-address は自動再投入されない**ため、ユーザー側で aggregate-address エントリを SET し直す必要がある。
+
+### bgpd ソケット失敗時の retry 戦略
+
+起動時 `/run/frr/<daemon>.vty` への connect は 2 秒間隔で最大 100 回 retry (`frrcfgd.py:186-200`)。超過すると `RuntimeError('connect to FRR daemon failed')` で frrcfgd 自体が起動失敗し、`BGP_GLOBALS_AF_AGGREGATE_ADDR` を含む全 BGP テーブル更新が反映されない。**運用中の socket error (送信途中) には自動再接続が無く**、frrcfgd プロセス再起動が必要 (`__proc_command` L261-265 は当該コマンドのみ skip)。
+
+### STATE_DB / syslog への記録
+
+- `STATE_DB.BGP_AGGREGATE_ADDRESS|<prefix>` に `state=active|inactive` を記録 (`set_address_state` L209-216)
+- FRR push 失敗・socket error 等はすべて syslog のみ
+- ERROR_TABLE への記録はなし
+
+```bash
+# 状態確認
+sonic-db-cli STATE_DB hgetall 'BGP_AGGREGATE_ADDRESS|10.0.0.0/24'
+# 失敗ログ
+journalctl -u bgp | grep -iE 'aggregate|frr daemon'
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/bgp-aggregate-address-failure.md`
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:65 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:46 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/frr.py:42 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:181 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1313 -->
+<!-- /failure -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
