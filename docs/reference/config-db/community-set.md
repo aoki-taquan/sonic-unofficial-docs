@@ -213,4 +213,38 @@ vtysh -c 'show bgp community-list'
 
 > **スキャン証跡**: `hdl_com_set` L981-1006 全行読了。match_action ('all' vs 'any') による分岐が核心。4 件抽出。
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## Phase F: 副次 DB 書込・FRR 設定書込 (Direction B)
+
+対象スクリプト: `frrcfgd` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`)
+
+### FRR bgpd への vtysh 書込
+
+`frrcfgd` は CONFIG_DB の `COMMUNITY_SET` エントリを読み取り、`g_run_command()` 経由で `vtysh` コマンドを `bgpd` へ送信する。この書込は CONFIG_DB への往路ではなく、FRR デーモン内部の running-config（`/etc/frr/frr.conf` 相当）への副次書込である。
+
+| 書込先 | 操作 | 発行コマンド例 | 発行条件 | evidence |
+|---|---|---|---|---|
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp community-list standard <name> permit <community>'` | `op != OP_DELETE` かつ `match_action == 'any'` — member ごと個別発行 | `frrcfgd.py:1000-1006` |
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp community-list standard <name> permit <m1> <m2> ...'` | `op != OP_DELETE` かつ `match_action == 'all'` — 全 member を 1 行で発行 | `frrcfgd.py:993-999` |
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp community-list expanded <name> permit <pattern>'` | `set_type == 'EXPANDED'` — 正規表現 community | `frrcfgd.py:986` |
+| FRR `bgpd` running-config | DELETE | `vtysh -c 'configure terminal' -c 'no bgp community-list <type> <name>'` | `op == OP_DELETE` | `frrcfgd.py:989-990` |
+| FRR `bgpd` running-config | SET | `vtysh -c 'configure terminal' -c 'bgp extcommunity-list ...'` | `EXTENDED_COMMUNITY_SET` テーブルの場合（同ハンドラ） | `frrcfgd.py:1975` |
+
+### bgpcfgd の役割
+
+`bgpcfgd` は `COMMUNITY_SET` テーブルを直接購読せず、Jinja2 テンプレート (`bgpd.conf.db.comm_list.j2`) 経由で `bgpd.conf` を生成する起動時パス (`bgpcfgd`) と、ランタイム変更を処理する `frrcfgd` の二段構成。ランタイムの副次書込は `frrcfgd` のみが担う。
+
+### 副次 DB 書込なし (CONFIG_DB / STATE_DB / APPL_DB)
+
+| DB | 操作 | 結論 |
+|---|---|---|
+| CONFIG_DB | なし | `frrcfgd` は `COMMUNITY_SET` を読取専用で消費。自テーブルへの逆書込なし |
+| STATE_DB | なし | community-list に対応する STATE_DB エントリは存在しない |
+| APPL_DB | なし | FRR BGP policy は APPL_DB を経由しない |
+
+### 失敗時挙動
+
+- `g_run_command()` が失敗（vtysh 返値非ゼロ）した場合: `syslog LOG_ERR` を出力し `continue`（再試行なし）。FRR と CONFIG_DB の設定乖離が生じる可能性がある。<!-- evidence: frrcfgd.py:47-62, 2879-2881 -->
+<!-- /side-effects -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
