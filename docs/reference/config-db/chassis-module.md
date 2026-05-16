@@ -153,6 +153,32 @@ chassisd が起動していない場合は 10 秒タイムアウト後に強制�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`chassisd` は CONFIG_DB の `CHASSIS_MODULE` テーブルを購読し platform API に反映する。SmartSwitch と非 SmartSwitch で起動シーケンスと CHASSIS_APP_DB 連携が大きく異なる。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `CHASSIS_MODULE\|DPU*` エントリ → chassisd 起動 (SmartSwitch) | **起動前に存在必須** | エントリ不在時は DPU がデフォルト down で起動 |
+| 2 | ラインカード down → CHASSIS_APP_DB クリーンアップ | **30 分遅延** | 旧 SYSTEM_NEIGH / SYSTEM_LAG エントリが最大 30 分残存 |
+| 3 | supervisor のみ ConfigManagerTask を起動 | アーキテクチャ固定 | ラインカード上 chassisd は CHASSIS_MODULE を subscribe しない |
+| 4 | `admin_status` 書き込み → DPU 電源変化 (SmartSwitch) | 非同期スレッド実行 | STATE_DB 反映は最大 10 秒遅延; DPU midplane 復旧タイムアウト 360 秒 |
+| 5 | DEL → `MODULE_ADMIN_UP` (非 SmartSwitch) / `MODULE_ADMIN_DOWN` (SmartSwitch) | 即時 | プラットフォームにより逆の意味になる |
+| 6 | `admin_status: down` 書き込み → `swss@<asic>.service` 停止 (FABRIC-CARD) | 最大 10 秒待機後に強制実行 | chassisd 未起動時は 10 秒後に強制停止 |
+
+### 主要な制約詳細
+
+**SmartSwitch 起動前エントリ必須 (依存 #1)**: `ChassisdDaemon.run()` は SmartSwitch の場合 `set_initial_dpu_admin_state()` を `SmartSwitchConfigManagerTask` 起動より**前**に実行する。この時点で `CHASSIS_MODULE|DPU*` エントリが CONFIG_DB に存在しない場合、`get_module_admin_status()` が `MODULE_STATUS_EMPTY` を返し、DPU は `MODULE_ADMIN_DOWN` (電源 off) として起動される。`sonic-config-engine` によるテンプレート展開フェーズで事前に書き込むこと（evidence: `chassisd:1364-1405, 1412-1437`）。
+
+**CHASSIS_APP_DB クリーンアップの遅延 (依存 #2)**: モジュールが offline になってから `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD = 30` 分後に CHASSIS_APP_DB (redis_chassis.server:6380, DB index 12) の `SYSTEM_NEIGH`, `SYSTEM_INTERFACE`, `SYSTEM_LAG_MEMBER_TABLE`, `SYSTEM_LAG_TABLE` エントリが削除される。ラインカード再起動シナリオでは旧エントリが約 30 分間 CHASSIS_APP_DB に残るため、`voqutil` 等の参照ツールが古い情報を返す可能性がある（evidence: `chassisd:593-680, 90`）。
+
+**非同期スレッドの注意 (依存 #4)**: SmartSwitch の `SmartSwitchModuleConfigUpdater.module_config_update()` は `set_admin_state_gracefully()` を別スレッドで非同期実行する。CONFIG_DB への `admin_status` 書き込みから実際の DPU 電源変化まで不定の遅延が生じる。STATE_DB の `CHASSIS_MODULE_TABLE.oper_status` 反映は 10 秒ポーリング (`CHASSIS_INFO_UPDATE_PERIOD_SECS=10`) に依存する（evidence: `chassisd:248-256, 89`）。
+
+<!-- /ordering -->
+
 ## 制約
 
 - `name` (key) は大文字小文字を厳密に区別する (`LINE-CARD`, `FABRIC-CARD`, `DPU` は大文字必須)

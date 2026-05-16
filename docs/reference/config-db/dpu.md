@@ -133,6 +133,31 @@ YANG `default` 文はいずれのフィールドにも存在しない。以下�
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`DPU` テーブルは SmartSwitch 起動シーケンスの基点となる。orchagent / caclmgrd / sonic-gnmi / chassisd が参照するため、書き込みタイミングが各コンポーネントの初期化に影響する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `DPU` テーブル書き込み → chassisd 起動 / `CHASSIS_MODULE` 設定 | **DPU 先行推奨** | 逆順時は chassisd 起動時に DPU 情報が不完全になる可能性 |
+| 2 | `DPU.state` + `DPU.pa_ipv4` の同時書き込み → orchagent ENI ルール生成 | **同時書き込み必須** | 欠如フィールドがあると orchagent が request reject |
+| 3 | `DPU.swbus_port` 存在 → caclmgrd iptables ルール生成 | **書き込み時に同時に含める必要** | 欠如時は当該 DPU を完全スキップ（iptables ルールなし） |
+| 4 | `DPU.gnmi_port` → sonic-gnmi DPU proxy 接続先決定 | 任意（フォールバックあり） | 欠如時は `50052` を試行; ポート不一致で接続失敗 |
+| 5 | `DPU` テーブル ↔ CHASSIS_APP_DB | **連携なし** | SmartSwitch と VOQ 構成は独立した DB セット |
+
+### 主要な制約詳細
+
+**orchagent 必須フィールドの同時書き込み (依存 #2)**: `DashEniFwdOrch` の `dpu_table_desc.required_attributes` に `state` と `pa_ipv4` が含まれる。これらのフィールドが欠如した状態で `DPU` エントリが書き込まれると、ENI フォワーディングルールが生成されない。`DPU` エントリは `state`、`pa_ipv4` を含む完全な状態で一度に書き込むこと（evidence: `sonic-swss/orchagent/dash/dashenifwdorch.h:134-137`）。
+
+**caclmgrd の swbus_port チェック (依存 #3)**: `caclmgrd` は `swbus_port` フィールドが存在しない場合、`"Received DPU configuration without swbus_port. Ignore it."` を出力して当該 DPU 設定を**完全スキップ**する。DPU-to-DPU swbus 通信のための iptables ルールが生成されないため、SmartSwitch 環境では `swbus_port` を必ず含めること（evidence: `sonic-host-services/scripts/caclmgrd:~1100`）。
+
+**CHASSIS_APP_DB との非連携 (依存 #5)**: SmartSwitch DPU テーブルは CONFIG_DB にのみ存在する。CHASSIS_APP_DB (`redis_chassis.server:6380`) は VOQ 構成のラインカード間 `SYSTEM_NEIGH` / `SYSTEM_LAG` 共有に使用されるが、SmartSwitch の `SmartSwitchModuleUpdater` はこれを使用しない（evidence: `chassisd:688-862`）。
+
+<!-- /ordering -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
