@@ -269,4 +269,68 @@ show buffer pg
 
 > **スキャン証跡**: `handleBufferObjectTables` L3502-3553 全行読了。`handleBufferPgTable` は共通ルーターを経由。4 件分岐抽出。
 <!-- /handler-branching -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### PG インデックス範囲
+
+| 定数 | 値 | 根拠 |
+|------|----|------|
+| 最大 PG 数 (per port) | **8**（インデックス `0`–`7`）| `buffermgrdyn.cpp` L1336: `(1 << maximum_buffer_objects[BUFFER_PG]) - 1`; STATE_DB `BUFFER_MAX_PARAM` が 8 を報告 |
+| key の `pg_num` 許容パターン | `[0-7]((-)[0-7])?` | `sonic-buffer-pg.yang` pg_num leaf |
+| `pg_num` 内部型 | `uint8_t` にキャスト | `buffermgr.cpp` L197 |
+
+### プロファイル名パターン (動的モード)
+
+`buffermgrdyn.cpp` L481–525 `getDynamicProfileName()` が生成する命名規則:
+
+```
+pg_lossless_<speed>_<cable>_profile               # MTU=9100 (デフォルト)
+pg_lossless_<speed>_<cable>_mtu<mtu>_profile      # 非デフォルト MTU
+pg_lossless_<speed>_<cable>_th<threshold>_profile # カスタム threshold
+pg_lossless_<speed>_<cable>_<gearbox>_profile     # gearbox モデル付き
+pg_lossless_<speed>_<cable>_8lane_profile         # Mellanox 8-lane ポート
+```
+
+デフォルト MTU ハードコード: `DEFAULT_MTU_STR = "9100"` (`buffermgrdyn.h` L15)。MTU がこの値に一致する場合は `_mtu` サフィックスが付かない。
+
+静的モード (`buffermgr.cpp` L183–184): `pg_lossless_<speed>_<cable>_profile` のみ。
+
+### pool 名定数
+
+| マクロ | 値 | 定義 |
+|--------|----|------|
+| `INGRESS_LOSSLESS_PG_POOL_NAME` | `"ingress_lossless_pool"` | `buffermgrdyn.h` L14 / `buffermgr.h` L13 |
+
+### DB テーブル名
+
+| 定数 | 値 | 定義 |
+|------|----|------|
+| `APP_BUFFER_PG_TABLE_NAME` | `"BUFFER_PG_TABLE"` | `sonic-swss-common/common/schema.h` L161 |
+| `CFG_BUFFER_PG_TABLE_NAME` | `"BUFFER_PG"` | `buffermgr.cpp` L140 (文字列参照) |
+
+### SAI 識別子
+
+| SAI ID | 用途 | evidence |
+|--------|------|---------|
+| `SAI_INGRESS_PRIORITY_GROUP_ATTR_BUFFER_PROFILE` | PG へのバッファプロファイル設定 | `bufferorch.cpp` L1425 |
+| `SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP` | PG オブジェクト型識別子 | `bufferorch.cpp` L1458 |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` | xoff 使用量 watermark 統計 | `portsorch.cpp` L412 |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` | shared buffer watermark 統計 | `portsorch.cpp` L413 |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_DROPPED_PACKETS` | PG drop counter 統計 | `portsorch.cpp` L418 |
+
+### FlexCounter グループ名
+
+`portsorch.h` L36–40 で定義。
+
+| マクロ | 値 | ポーリング間隔 |
+|--------|----|----|
+| `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` | 60,000 ms |
+| `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_DROP_STAT_COUNTER"` | 10,000 ms |
+
+CONFIG_DB `FLEX_COUNTER_TABLE` キー: `PG_WATERMARK` / `PG_DROP` (`flexcounterorch.cpp` L53–54)。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-constants.md`
+
+<!-- /constants -->
 <!-- glossary-links-injected: 566f959873ea -->
