@@ -93,6 +93,24 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 | 未存在タグの `remove` | `task_success` (idempotent、警告ログのみ) |
 <!-- /cdb-exceptions -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。`DASH_PREFIX_TAG_TABLE` 自体は他テーブルを参照しないが、ACL 系テーブルから参照される側として双方向依存がある。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `DASH_ACL_RULE_TABLE` の `src_tag` / `dst_tag` フィールド (参照される側) | 存在確認 + prefix 展開 | ACL rule 作成時に `src_tag` / `dst_tag` にタグ名が指定されたとき。タグ不在なら rule が `task_need_retry` で待機; タグ存在時は `getPrefixes()` で SAI ACL エントリに展開 | `dashaclgroupmgr.cpp` L393–409 (存在確認), L316–327 (`getPrefixes()` 呼び出し) |
+| `DASH_ACL_GROUP_TABLE` (group_id ベースの refcount 追跡) | 逆参照 (参照される側) | ACL rule が group にバインドされるとき `attachTags()` → `DashTagMgr::attach(tag_id, group_id)` で `m_groups` に group_id を追加。rule 削除時は `detachTags()` → `detach()` で削除 | `dashaclgroupmgr.cpp` L558–575, `dashtagmgr.cpp` L112–137 |
+
+!!! note "削除ガードの仕組み"
+    タグが `m_groups` に 1 件以上の group_id を保持している間（= ACL rule から参照中）、`DashTagMgr::remove()` は `task_need_retry` を返す。参照先の全 ACL rule が削除されて `m_groups` が空になると DEL が成功する（`dashtagmgr.cpp` L84–88）。
+
+!!! note "タグ先行作成が必要なケース"
+    ACL rule が `src_tag` / `dst_tag` を指定して先に届いた場合でも、対応タグが `m_tag_table` に存在しなければ rule は `task_need_retry` で保留される。タグを先に作成するか、コントローラが順序を保証する必要がある（`dashaclgroupmgr.cpp` L393–409）。
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
