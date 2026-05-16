@@ -280,4 +280,42 @@ show qos map dscp-tc
 - Tunnel decap 経路 (`tunneldecaporch.cpp:832-836`): `dscp_to_tc_map_id == SAI_NULL_OBJECT_ID` 時はトンネル作成時に設定しない（silent skip）
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`
+
+### PORT_QOS_MAP への参照
+
+`DSCP_TO_TC_MAP|<name>` は `PORT_QOS_MAP|<port>` の `dscp_to_tc_map` フィールドから名前参照される。
+`QosOrch::handlePortQosMapTable()` が `resolveFieldRefValue()` で DSCP_TO_TC_MAP オブジェクトを解決し、`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` としてポートへバインドする（`qosorch.cpp:100,103`）。
+
+`PORT_QOS_MAP|global`（スイッチレベル）では `handleGlobalQosMap()` が `applyDscpToTcMapToSwitch(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP, id)` を呼び出して SAI スイッチ属性として設定する（`qosorch.cpp:1988,2030-2032`）。
+
+| 参照元 | フィールド | SAI 属性 | ソース行 |
+|--------|-----------|----------|---------|
+| `PORT_QOS_MAP\|<port>` | `dscp_to_tc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:61,100` |
+| `PORT_QOS_MAP\|global` | `dscp_to_tc_map` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | `qosorch.cpp:1956,1988,2030` |
+
+### SWITCH_TABLE (スイッチ capability) への参照
+
+スイッチレベル適用前に `gSwitchOrch->querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` で対応可否を問い合わせる。
+未対応の場合は適用をスキップ（エラーなし）。スイッチ能力テーブル `SWITCH_TABLE` に格納された capability 情報を参照している（`qosorch.cpp:1955-1961`）。
+
+| 参照先 | 用途 | ソース行 |
+|--------|------|---------|
+| `SWITCH_TABLE` (capability) | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` サポート確認 | `qosorch.cpp:1956` |
+
+### TC_TO_QUEUE_MAP との関係
+
+`PORT_QOS_MAP` は `dscp_to_tc_map` と `tc_to_queue_map` を同一エントリで保持し、DSCP→TC→Queue の 2 段マッピングを形成する。
+`qos_to_ref_table_map` に両テーブルが同列で登録されており、`PORT_QOS_MAP` SET 時は両マップが未解決なら `task_need_retry` となる（`qosorch.cpp:103,1332`）。
+
+| 参照元 | フィールド | 関連テーブル | ソース行 |
+|--------|-----------|-------------|---------|
+| `PORT_QOS_MAP\|<port>` | `tc_to_queue_map` | `TC_TO_QUEUE_MAP` | `qosorch.cpp:64,103` |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,64,81,84,100,103,1329,1332,1955-1956,1988,2030-2032`
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 9e94f614fc2c -->
