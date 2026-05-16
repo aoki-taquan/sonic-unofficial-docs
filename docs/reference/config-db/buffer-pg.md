@@ -297,4 +297,54 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-ordering.md`
 
 <!-- /ordering -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+### buffermgrdyn.cpp — handleSingleBufferPgEntry / refreshPgsForPort
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `profile` 参照が空文字（`profileName.empty()`） | `task_invalid_entry`（エントリ drop、ルックアップもクリア） | `SWSS_LOG_ERROR("BUFFER_PG: Invalid format of reference to profile: %s")` | `buffermgrdyn.cpp:3133` |
+| 参照 BUFFER_PROFILE が未登録（`m_bufferProfileLookup` に存在しない） | `task_need_retry`（次イベントで再試行） | `SWSS_LOG_INFO("Profile %s hasn't been configured yet, skip")` | `buffermgrdyn.cpp:3144-3151` |
+| 参照 BUFFER_PROFILE の direction が egress | `task_failed`（永続 drop） | `SWSS_LOG_ERROR("Egress buffer profile configured on PG %s")` | `buffermgrdyn.cpp:3156-3163` |
+| lossy PG の累積 headroom がリソース上限超過 | `task_failed` | `SWSS_LOG_ERROR("Unable to configure lossy PG %s, accumulative headroom size exceeds the limit")` | `buffermgrdyn.cpp:3170-3171` |
+| `profile` 以外の不明フィールドが SET で到達 | `task_invalid_entry` | `SWSS_LOG_ERROR("BUFFER_PG: Invalid field %s")` | `buffermgrdyn.cpp:3180` |
+| PORT が `PORT_READY` でない（speed/cable_length 未設定）— 動的計算時 | 対象 PG をスキップ（silent skip、retry なし） | `SWSS_LOG_INFO("Nothing to be done for %s since port is not ready")` | `buffermgrdyn.cpp:1485-1487` |
+| cable_length = `"0m"` かつ lossless PG | APPL_DB から lossless PG を削除（バッファ回収） | `SWSS_LOG_INFO("No lossless profile found for port %s when cable length is set to '0m'.")` | `buffermgrdyn.cpp:1492-1509` |
+| 動的 headroom 計算（`allocateProfile()`）失敗 | `task_failed` | `allocateProfile()` 内部で `SWSS_LOG_ERROR` | `buffermgrdyn.cpp:1530-1534` |
+| 動的計算後の累積 headroom がリソース上限超過 | `task_failed`（profile を release） | `SWSS_LOG_ERROR("Update speed (%s) and cable length (%s) for port %s failed, accumulative headroom size exceeds the limit")` | `buffermgrdyn.cpp:1541-1546` |
+| PORT admin down 時の SET | APPL_DB 書き込みをスキップし内部状態のみ保持。PORT up 時に再適用（silent defer） | なし | `buffermgrdyn.cpp:3198-3202` |
+| zero profile が pool に未設定 | LOG_ERROR のみ・処理継続（SAI call なし） | `SWSS_LOG_ERROR("Zero profile is not provided for pool %s ...")` | `buffermgrdyn.cpp:384` |
+
+### buffermgr.cpp — doSpeedUpdateTask
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| cable_length 未設定 | `task_need_retry` | `SWSS_LOG_INFO("...Cable length is not set")` | `buffermgr.cpp:155` |
+| `admin_status` 未取得 | `task_need_retry` | `SWSS_LOG_INFO("pfc_enable status is not available for port %s")` | `buffermgr.cpp:170` |
+| `PORT_QOS_MAP.pfc_enable` 未設定 | `task_success`（silent skip、pfc_enable 設定時に再ハンドル） | `SWSS_LOG_INFO("pfc_enable status is not available for port %s")` | `buffermgr.cpp:175-179` |
+| speed + cable_length が lookup table に未定義 | `task_invalid_entry`（永続 drop） | `SWSS_LOG_ERROR("No PG profile configured for speed %s and cable length %s")` | `buffermgr.cpp:240` |
+| lossless pool が未作成 | `task_need_retry` | `SWSS_LOG_INFO("PG lossless pool is not yet created")` | `buffermgr.cpp:258` |
+| PORT admin down（mellanox/barefoot）かつデフォルトプロファイル | CONFIG_DB の BUFFER_PG を削除（バッファ回収） | `SWSS_LOG_NOTICE("Removing PG %s from port %s which is administrative down")` | `buffermgr.cpp:228` |
+| PORT admin down かつ非デフォルトプロファイル | 削除せず silent skip | `SWSS_LOG_NOTICE("won't reclaim buffer")` | `buffermgr.cpp:231` |
+| PG ID が `uint8_t` に変換不可 | 該当 PG ID を silent skip・ループ継続 | なし | `buffermgr.cpp:197` |
+
+### bufferorch.cpp — processPriorityGroup / processPriorityGroupPost
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| key が 2 トークンでない | `task_invalid_entry` | `SWSS_LOG_ERROR("malformed key:%s. Must contain 2 tokens")` | `bufferorch.cpp:1324` |
+| pg_range パース失敗 | `task_invalid_entry` | `SWSS_LOG_ERROR("Failed to obtain pg range values")` | `bufferorch.cpp:1330` |
+| BUFFER_PROFILE 参照が未解決 | `task_need_retry` | `SWSS_LOG_INFO("Missing or invalid pg profile reference specified")` | `bufferorch.cpp:1347` |
+| BUFFER_PROFILE 参照がその他エラーで解決失敗 | `task_failed` | `SWSS_LOG_ERROR("Resolving pg profile reference failed")` | `bufferorch.cpp:1350-1351` |
+| BUFFER_PROFILE が trimming eligible | `task_failed` | `SWSS_LOG_ERROR("...buffer profile(%s) is trimming eligible")` | `bufferorch.cpp:759-763` |
+| ポート名が PortsOrch に未登録 | `task_invalid_entry` | `SWSS_LOG_ERROR("Port with alias:%s not found")` | `bufferorch.cpp:1035` |
+| PG インデックスがポートの PG 数超過 | `task_invalid_entry` | `SWSS_LOG_ERROR("Invalid pg index specified:%zd")` | `bufferorch.cpp:1063` |
+| SAI `set_attribute` が非 SUCCESS を返却 | `handleSaiSetStatus()` に委譲（retry 可能か判定） | `SWSS_LOG_ERROR("Failed to set port:%s pg:%zd buffer profile attribute, status:%d")` | `bufferorch.cpp:1507-1512` |
+| DEL 対象が APPL_DB に存在しない | SAI call をスキップして `task_success` | `SWSS_LOG_INFO("...doesn't not exist, don't need to notfiy SAI")` | `bufferorch.cpp:1409-1413` |
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-failure.md`
+
+<!-- /failure -->
 <!-- glossary-links-injected: 566f959873ea -->
