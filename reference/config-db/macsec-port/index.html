@@ -26806,6 +26806,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存・起動順 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="順序依存・起動順 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portmacsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT.macsec 有効化の前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロファイル切替時の順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロファイル削除の順序ロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-macsec-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI MACsec オブジェクト作成順 (macsecorch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35210,6 +35271,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序依存・起動順 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="順序依存・起動順 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portmacsec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT.macsec 有効化の前提条件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロファイル切替時の順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プロファイル削除の順序ロック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-macsec-macsecorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI MACsec オブジェクト作成順 (macsecorch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35493,6 +35615,60 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">順序依存・起動順 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp enableMACsec(), isPortStateOk(), removeProfile() -->
+
+<h3 id="portmacsec">PORT.macsec 有効化の前提条件<a class="headerlink" href="#portmacsec" title="Permanent link">&para;</a></h3>
+<p><code>PORT|&lt;ifname&gt;</code> の <code>macsec</code> フィールド SET イベントで <code>MACsecMgr::enableMACsec()</code> が呼ばれるが、以下の <strong>2 条件をすべて満たすまで <code>task_need_retry</code> を返し続ける</strong>。</p>
+<ol>
+<li><strong><code>MACSEC_PROFILE</code> が先にロードされていること</strong></li>
+<li><code>m_profiles.find(profile_name)</code> が失敗（プロファイル未登録）→ <code>task_need_retry</code></li>
+<li><code>MACSEC_PROFILE|&lt;name&gt;</code> の SET イベントが <code>loadProfile()</code> で処理され、メモリキャッシュに格納されてから初めて有効になる。</li>
+<li>
+<p>証跡: <code>cfgmgr/macsecmgr.cpp:488-495</code></p>
+</li>
+<li>
+<p><strong>PORT が STATE_DB で ready 状態であること</strong></p>
+</li>
+<li><code>isPortStateOk(port_name)</code> が <code>STATE_PORT_TABLE_NAME</code> から <code>state == "ok"</code> かつ <code>netdev_oper_status == "up"</code> を確認する。</li>
+<li>どちらか一方でも未達の場合は <code>task_need_retry</code>。</li>
+<li>証跡: <code>cfgmgr/macsecmgr.cpp:500-503, 614-631</code></li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB MACSEC_PROFILE|&lt;name&gt;  ← 先に存在必須
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ (loadProfile 完了)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>STATE_DB PORT_TABLE|&lt;ifname&gt;.state == &quot;ok&quot; &amp;&amp; netdev_oper_status == &quot;up&quot;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓ (両条件が揃ってから)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>enableMACsec() → wpa_supplicant 起動 → MKA セッション確立
+</span></code></pre></div>
+<h3 id="_19">プロファイル切替時の順序<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p>ポートに既に MACsec が有効な状態で別のプロファイルを設定した場合:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>disableMACsec()  ← 旧プロファイル解除・wpa_supplicant 停止
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>enableMACsec()   ← 新プロファイルで wpa_supplicant を再起動・MKA 再確立
+</span></code></pre></div>
+<p>切替中に brief traffic interrupt が発生する。<code>disableMACsec()</code> が失敗した場合は新プロファイルの有効化に進まず <code>task_failed</code> を返す。
+証跡: <code>cfgmgr/macsecmgr.cpp:519-527</code></p>
+<h3 id="_20">プロファイル削除の順序ロック<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<p><code>MACSEC_PROFILE</code> の DEL イベントで <code>removeProfile()</code> が呼ばれた際、当該プロファイルを参照しているポートが 1 つでも残っている間は <code>task_need_retry</code> を返し削除を拒否する。すべてのポートで <code>disableMACsec()</code> が完了してから削除が成立する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>MACSEC_PROFILE|&lt;name&gt; DEL
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>removeProfile() — m_macsec_ports に当該 profile_name 参照ポートが存在するか検査
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  ├─ 存在あり → task_need_retry (全ポート disableMACsec 完了まで待機)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  └─ 存在なし → m_profiles.erase() → task_success
+</span></code></pre></div>
+<p>証跡: <code>cfgmgr/macsecmgr.cpp:452-466</code></p>
+<h3 id="sai-macsec-macsecorch">SAI MACsec オブジェクト作成順 (macsecorch)<a class="headerlink" href="#sai-macsec-macsecorch" title="Permanent link">&para;</a></h3>
+<p>APPL_DB 経由で <code>MACsecOrch</code> が SAI オブジェクトを生成する順序は厳密に定義されており、前段オブジェクトが未作成の場合は <code>task_need_retry</code> で待機する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>1. MACsec Switch Object  (initMACsecObject)   ← スイッチ単位で 1 回のみ
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>2. MACsec Port Object    (createMACsecPort)   ← PORT ごと
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>3. MACsec SC Object      (createMACsecSC)     ← Secure Channel ごと
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>4. MACsec SA Object      (createMACsecSA)     ← Secure Association ごと
+</span></code></pre></div>
+<p>削除は逆順 (SA → SC → Port → Switch) で行われる。</p>
+<p>詳細分析: <a href="../../../../meta/_intermediate/cdb-flow/macsec-port-ordering.md"><code>meta/_intermediate/cdb-flow/macsec-port-ordering.md</code></a></p>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

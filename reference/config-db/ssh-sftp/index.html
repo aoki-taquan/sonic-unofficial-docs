@@ -28407,7 +28407,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-sftp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd 起動シーケンスと SFTP の関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -28418,7 +28457,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -28457,7 +28496,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -28468,7 +28507,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34731,7 +34770,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hostcfgd-sftp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hostcfgd 起動シーケンスと SFTP の関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        要点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -34742,7 +34820,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34781,7 +34859,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34792,7 +34870,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34928,8 +35006,60 @@
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang (SFTP leaf なし) -->
 <!-- /defaults -->
 
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>SSH_SFTP</code> テーブルは存在せず CONFIG_DB 経由の書込み経路はない。<code>Subsystem sftp</code> 行は OS テンプレートに固定されており、<code>hostcfgd</code> の更新ループ外に位置する。</p>
+<h3 id="hostcfgd-sftp">hostcfgd 起動シーケンスと SFTP の関係<a class="headerlink" href="#hostcfgd-sftp" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>OS 起動 (OpenSSH パッケージ)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ /etc/ssh/sshd_config 配置
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       └─ Subsystem sftp /usr/lib/openssh/sftp-server 行が静的に存在
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>hostcfgd 起動
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  │
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ├─ SshServer.__init__()              # policies = {} のみ
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  ├─ load(init_data)
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  │   └─ sshscfg.load(ssh_server)     # SSH_SERVER|POLICIES があれば set_policies()
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  │       ├─ copy2(sshd_config → sshd_config.tmp)
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  │       │   ※ Subsystem sftp 行はコピー元に存在するためそのまま引き継がれる
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>  │       ├─ SSH_CONFIG_NAMES の各フィールドを書き換え
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  │       │   ※ Subsystem キーは SSH_CONFIG_NAMES に存在しないため書き換えなし
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  │       ├─ sshd -T -f sshd_config.tmp  (バリデーション)
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>  │       └─ OK → rename tmp→本番、systemctl restart ssh
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>  │           └─ Subsystem sftp 行はそのまま保持される
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>  │
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>  └─ subscribe(&#39;SSH_SERVER&#39;, ssh_handler)
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>      └─ 変更時も同様: set_policies() は Subsystem 行を変更しない
+</span></code></pre></div>
+<h3 id="_4">要点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SFTP 行の永続性</strong></td>
+<td><code>set_policies()</code> は <code>copy2(SSH_CONFG, SSH_CONFG_TMP)</code> でコピー元の Subsystem 行を引き継ぐため、SSH_SERVER 設定更新のたびに SFTP 行も保持される</td>
+</tr>
+<tr>
+<td><strong>バリデーションゲート</strong></td>
+<td><code>sshd -T -f &lt;tmp&gt;</code> は Subsystem 行を含む全設定を検証するが、SFTP 設定自体は変更されないためバリデーション失敗要因にはならない</td>
+</tr>
+<tr>
+<td><strong>起動順序依存なし</strong></td>
+<td>SFTP は OS テンプレート由来のため、hostcfgd の起動タイミングや SSH_SERVER テーブルの有無に関わらず常時有効</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1161 (SshServer.set_policies — copy2 でコピー後に SSH_CONFIG_NAMES のみ書き換え) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES に Subsystem キーなし) -->
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
-<h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -34959,22 +35089,22 @@
 <!-- /cdb-exceptions -->
 
 <!-- ops-hint -->
-<h2 id="_5">運用ヒント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="sftp">SFTP 動作確認<a class="headerlink" href="#sftp" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># sshd_config の Subsystem 行確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>grep<span class="w"> </span>Subsystem<span class="w"> </span>/etc/ssh/sshd_config
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># SFTP 接続テスト</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>sftp<span class="w"> </span>user@&lt;switch-ip&gt;
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 暗号スイート確認</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>sshd<span class="w"> </span>-T<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;cipher\|kex\|mac&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># sshd_config の Subsystem 行確認</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>grep<span class="w"> </span>Subsystem<span class="w"> </span>/etc/ssh/sshd_config
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># SFTP 接続テスト</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sftp<span class="w"> </span>user@&lt;switch-ip&gt;
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># 暗号スイート確認</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>sudo<span class="w"> </span>sshd<span class="w"> </span>-T<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;cipher\|kex\|mac&quot;</span>
 </span></code></pre></div>
 <h3 id="sftp_1">SFTP 無効化方法<a class="headerlink" href="#sftp_1" title="Permanent link">&para;</a></h3>
 <p>CONFIG_DB 経由では SFTP を無効化できない。直接 sshd_config を編集する場合:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># /etc/ssh/sshd_config から Subsystem sftp 行をコメントアウト</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/^Subsystem.*sftp.*/#&amp;/&#39;</span><span class="w"> </span>/etc/ssh/sshd_config
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>ssh
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># /etc/ssh/sshd_config から Subsystem sftp 行をコメントアウト</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sudo<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/^Subsystem.*sftp.*/#&amp;/&#39;</span><span class="w"> </span>/etc/ssh/sshd_config
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>ssh
 </span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">注意</p>
@@ -34984,14 +35114,14 @@
 
 <!-- ref-triangle:start -->
 
-<h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../ssh-server/">CONFIG_DB: SSH_SERVER テーブル</a></li>
 <li><a href="../../yang/sonic-ssh-server/">YANG: <code>sonic-ssh-server</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -26173,6 +26173,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の先行必須テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の順序制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35288,6 +35327,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SET 時の先行必須テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DEL 時の順序制約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35676,6 +35754,77 @@
 <li>なし</li>
 </ul>
 <!-- /entry-points -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/exp-to-fc-map-ordering.md</code></p>
+</blockquote>
+<p>対象テーブル: <code>EXP_TO_FC_MAP</code>。Consumer: <code>QosOrch::handleExpToFcTable()</code> / <code>QosOrch::handlePortQosMapTable()</code> (<code>qosorch.cpp</code>)。</p>
+<h3 id="set">SET 時の先行必須テーブル<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存</th>
+<th>方向</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>EXP_TO_FC_MAP\|&lt;name&gt;</code> SAI 作成 → <code>PORT_QOS_MAP\|&lt;port&gt;</code> SET</td>
+<td>強制先行</td>
+<td><code>resolveFieldRefValue()</code> が未解決で <code>task_need_retry</code>（自動再試行）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SAI 起動 / <code>NhgMapOrch::getMaxNumFcs()</code> 完了 → <code>EXP_TO_FC_MAP</code> SET</td>
+<td>暗黙先行</td>
+<td><code>max_num_fcs = -1</code>（初期値）の状態で FC 値を渡すと全エントリが <code>task_invalid_entry</code> で reject される</td>
+</tr>
+<tr>
+<td>3</td>
+<td>EXP キー値は <code>"0"</code>..<code>"7"</code> の整数文字列</td>
+<td>必須形式</td>
+<td><code>stoi()</code> 失敗 or 範囲外（負数・8以上）は <code>task_invalid_entry</code>（エントリ全体が reject）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>推奨順序（SET）</strong>: orchagent 起動・SAI 準備完了後 → <code>EXP_TO_FC_MAP|&lt;name&gt;</code> → <code>PORT_QOS_MAP|&lt;port&gt;</code> の <code>exp_to_fc_map</code> フィールド設定</p>
+</blockquote>
+<h3 id="del">DEL 時の順序制約<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存</th>
+<th>方向</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>PORT_QOS_MAP\|&lt;port&gt;</code> の <code>exp_to_fc_map</code> 参照解除 → <code>EXP_TO_FC_MAP\|&lt;name&gt;</code> DEL</td>
+<td>強制先行</td>
+<td>参照中は <code>m_pendingRemove=true</code> + <code>task_need_retry</code> ロック (<code>qosorch.cpp:181-186</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>pending_remove 解消後のみ SET 可能</td>
+<td>強制先行</td>
+<td>pending_remove 中の SET は即 <code>task_need_retry</code> を返す (<code>qosorch.cpp:136-139</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>推奨順序（DEL）</strong>: <code>PORT_QOS_MAP|&lt;port&gt;</code> の <code>exp_to_fc_map</code> フィールド削除 → <code>EXP_TO_FC_MAP|&lt;name&gt;</code> DEL</p>
+<p><strong>Evidence</strong>: <code>qosorch.cpp:124-201</code> (QosMapHandler::processWorkItem); <code>qosorch.cpp:2046-2134</code> (handlePortQosMapTable); <code>qosorch.cpp:1132-1213</code> (ExpToFcMapHandler)</p>
+</blockquote>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />
