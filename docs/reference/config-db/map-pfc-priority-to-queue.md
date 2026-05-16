@@ -275,6 +275,25 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 
 <!-- /derivation -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`MAP_PFC_PRIORITY_TO_QUEUE` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
+
+| 参照方向 | 参照元テーブル | フィールド | SAI 属性 | evidence |
+|---------|-------------|-----------|---------|---------|
+| 被参照 (referenced by) | `PORT_QOS_MAP` | `pfc_to_queue_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | `qosorch.cpp:69,108` |
+| 参照管理 | `handlePortQosMapTable` | SET 時 object_id 解決 / DEL 時参照解除 | — | `qosorch.cpp:2046,2077,2108,2133` |
+| SWITCH レベル適用 | なし | PFC マップは SWITCH 直接適用なし | — | `qosorch.cpp:1956` |
+
+- `PORT_QOS_MAP.pfc_to_queue_map` に map 名を設定すると、`QosOrch` が `MAP_PFC_PRIORITY_TO_QUEUE` の SAI オブジェクト ID を解決してポートへ適用する (`SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP`)。
+- `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
+- `SWITCH` への直接適用は `DSCP_TO_TC_MAP` (`PORT_QOS_MAP|global` 経路) のみで、PFC 系マップは非対象。
+
+> 詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
@@ -339,3 +358,23 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 | `sai_qos_map_api->remove_qos_map()` | MAP 削除（`qosorch.cpp:220`） |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp PfcToQueueHandler::addQosItem (L1011-1035) / QosOrch::handlePortQosMapTable (L2186-2205) -->
+
+`MAP_PFC_PRIORITY_TO_QUEUE` テーブルの変更時、`QosOrch` (`PfcToQueueHandler`) は直接 DB API を呼び出さない。すべての副次書込は SAI API 経由で syncd が仲介する形で ASIC_DB に反映される。
+
+| 副次 DB | 書込契機 | 書込内容 | evidence |
+|---|---|---|---|
+| ASIC_DB (syncd 経由) | マップ作成/更新時 | `SAI_OBJECT_TYPE_QOS_MAP` オブジェクト新規作成 (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE`) | `qosorch.cpp:1021,1029` |
+| ASIC_DB (syncd 経由) | `PORT_QOS_MAP.pfc_to_queue_map` から参照時 | ポートオブジェクト (`SAI_OBJECT_TYPE_PORT`) の属性 `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` を qos_map OID で更新 | `qosorch.cpp:69,2193` |
+| APPL_DB | — | 書込なし | — |
+| STATE_DB | — | 書込なし | — |
+| COUNTERS_DB | — | 書込なし | — |
+| APPL_STATE_DB | — | 書込なし | — |
+
+**補足**: `PORT_QOS_MAP` 側の `handlePortQosMapTable()` が複数ポートをループし、各ポートに `set_port_attribute` を呼ぶ。マップ削除時には OID に `SAI_NULL_OBJECT_ID` を設定して属性をクリアする。
+
+<!-- /side-effects -->
