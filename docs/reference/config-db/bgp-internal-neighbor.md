@@ -180,6 +180,57 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 - 関連 YANG: `sonic-bgp-internal-neighbor`、`sonic-bgp-common`
 - 関連 CLI: マルチ ASIC 環境では `show ip bgp summary` / `vtysh -c 'show bgp neighbor'`
 
+<!-- ordering -->
+## 書込み順依存（CONFIG_DB への投入順序）
+
+`BGP_INTERNAL_NEIGHBOR` エントリを CONFIG_DB に書き込む際、以下の順序依存が `bgpcfgd` の実装（`managers_bgp.py`）および `frrcfgd.py` から検出されている。
+
+### 1. DEVICE_METADATA 先行必須
+
+`BGPPeerMgrBase` は `deps` リストに `DEVICE_METADATA|localhost.bgp_asn` と `DEVICE_METADATA|localhost.type` を登録する（`managers_bgp.py` L118-120）。これらが未充足の間はテーブルイベント自体がハンドラに届かない。さらに `add_peer()` は `bgp_asn` を直接参照する（L192）。
+
+**順序依存**: `DEVICE_METADATA|localhost.bgp_asn` と `.type` は `BGP_INTERNAL_NEIGHBOR` より先行して CONFIG_DB に存在しなければならない。
+
+### 2. BGP_GLOBALS.local_asn 先行必須（FRR レイヤ）
+
+`frrcfgd` は `BGP_GLOBALS.local_asn` 受信時に `router bgp <ASN>` インスタンスを FRR bgpd に生成する（`frrcfgd.py` L2700-2703）。`local_asn` が未設定の VRF に対する BGP 設定はすべてスキップされる（L2659-2662）。`bgpcfgd` テンプレートが生成する FRR コマンドも `router bgp <ASN>` コンテキスト内で実行されるため、FRR 側に該当 ASN のインスタンスが先に存在していることが前提となる。
+
+**推奨順序**: `BGP_GLOBALS|default.local_asn` → `BGP_INTERNAL_NEIGHBOR`
+
+### 3. PORT / PORTCHANNEL / INTERFACE 先行必須（local_addr 解決）
+
+`add_peer()` はフィールド `local_addr` に対応するインターフェースを `get_local_interface()` で解決する（`managers_bgp.py` L198-201）。`LOCAL.interfaces` スロットに対応エントリが未登録の場合は `return False`（再試行待ち）となり、peer 確立が延期される。deps にも `("LOCAL", "local_addresses", "")` と `("LOCAL", "interfaces", "")` が含まれる（L124-125）。
+
+**順序依存**: `BGP_INTERNAL_NEIGHBOR.local_addr` が指す IP アドレスに対応する `INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE` エントリが先行していること。
+
+### 4. Loopback0 / Loopback4096 先行必須
+
+- **Loopback0**（L121）: deps 宣言。`add_peer()` は Loopback0 の IPv4 アドレスを取得できず、かつ `DEVICE_METADATA.bgp_router_id` も未設定の場合は `return False`（L184-189）。
+- **Loopback4096**（L145-146）: `peer_type == 'internal'` 専用の deps。`policies.conf.j2` L7 でも `originator-id` 設定のため参照される（`sub_role == 'BackEnd'` 時）。
+
+**順序依存**: `LOOPBACK_INTERFACE|Loopback0|<IPv4>` および `LOOPBACK_INTERFACE|Loopback4096|<IPv4>` が `BGP_INTERNAL_NEIGHBOR` エントリより先行していること（マルチ ASIC 環境では minigraph が自動生成する）。
+
+### 5. bgpcfgd ハンドラ起動順（post_dependencies_init）
+
+`BGPPeerMgrBase` は `post_dependencies_init_complete = False` で初期化される（L101）。deps（DEVICE_METADATA, Loopback0, Loopback4096）が充足された後の最初の `set_handler` 呼び出し時に `post_dependencies_init()` が実行され、追加 loopback リストを拡張する（L181-182, L245-268）。この一回性初期化は最初の `add_peer()` 前に完了する。
+
+### 6. bgpd ソケット待ち（frrcfgd 起動時）
+
+`frrcfgd` は起動時に `/run/frr/bgpd.vty` 等の FRR デーモンソケットに接続するまで最大 100 回 × 2秒 = 200秒 リトライする（`frrcfgd.py` L183-200）。bgpd ソケットが存在しない間は、frrcfgd・bgpcfgd とも FRR への設定投入を開始できない。コンテナ起動直後の数秒間は CONFIG_DB にエントリが存在しても FRR への反映が遅延する。
+
+### 順序依存サマリ
+
+| # | 先行必須エントリ | 影響 | 緩和策 |
+|---|----------------|------|--------|
+| 1 | `DEVICE_METADATA|localhost.bgp_asn` / `.type` | deps 未充足でイベント保留 | minigraph が同時書き込み |
+| 2 | `BGP_GLOBALS|default.local_asn`（FRR レイヤ） | bgpd router インスタンス未生成 | frrcfgd が通常先行処理 |
+| 3 | `INTERFACE` / `PORTCHANNEL_INTERFACE`（local_addr 対応） | `return False` で再試行待ち | runtime は自動再試行 |
+| 4 | `LOOPBACK_INTERFACE|Loopback0` / `Loopback4096` | deps 未充足・`return False` | minigraph が自動生成 |
+| 5 | deps 充足 → post_dependencies_init | 最初の add_peer 前に一回実行 | deps 充足後に自動実行 |
+| 6 | bgpd ソケット存在 | frrcfgd/bgpcfgd が設定投入不可 | docker-fpm-frr 起動シーケンスで保証 |
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
