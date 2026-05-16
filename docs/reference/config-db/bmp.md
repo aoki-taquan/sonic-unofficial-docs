@@ -214,6 +214,36 @@ show bmp
 
 > **スキャン証跡**: `BMPCfg.load()` L34-46 全行読了。値による分岐は is_true() による bool 変換のみ。3 フィールドすべて独立して分岐（相互排他ではない）。
 <!-- /handler-branching -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+### STATE_DB / COUNTERS_DB への書込
+
+**なし。** `bmpcfgd.py` は STATE_DB・COUNTERS_DB へ接続・書込を行わない。
+`frrcfgd.py` 内に "bmp" / "BMP" の参照はゼロ（確認: `frrcfgd.py` 全行 grep）。
+`bgpcfgd/managers_*.py` にも BMP 関連コードは存在しない。
+
+### BMP_STATE_DB への削除操作（唯一の副次書込）
+
+| 操作 | DB | パターン | タイミング | ソース |
+|------|----|---------|----------|--------|
+| `delete_all_by_pattern` | `BMP_STATE_DB` | `BGP_NEIGHBOR*` | CONFIG_DB `BMP` テーブル変更時（常に） | `bmpcfgd.py` L63 |
+| `delete_all_by_pattern` | `BMP_STATE_DB` | `BGP_RIB_IN_TABLE*` | 同上 | `bmpcfgd.py` L64 |
+| `delete_all_by_pattern` | `BMP_STATE_DB` | `BGP_RIB_OUT_TABLE*` | 同上 | `bmpcfgd.py` L65 |
+
+`bmpcfgd` 自身は BMP_STATE_DB に値を **書き込まない**。`reset_bmp_table()` による削除ののち `openbmpd` を再起動し、openbmpd が非同期に BMP_STATE_DB を再構築する。
+
+### FRR vtysh への反映
+
+`bmpcfgd` は FRR vtysh に直接コマンドを発行しない。BMP 設定は FRR テンプレート `bgpd.main.conf.j2` によりコンテナ起動時に静的に注入される。openbmpd 再起動のみで BMP セッションが再確立する設計。
+
+### 根拠（ソース確認）
+
+- `bmpcfgd.py` 全 98 行: `APPL_DB`・`STATE_DB`・`COUNTERS_DB` への接続ゼロ。`BMP_STATE_DB` のみ接続（L76）、かつ操作は delete のみ（L63-65）。
+- `frrcfgd.py`: "bmp" / "BMP" 文字列ゼロヒット。
+- `bgpcfgd/` 全モジュール: BMP 関連コードなし。
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
@@ -255,5 +285,64 @@ YANG バリデーションを通った値は常に正しく処理される。た
 `bgp_rib_in_table` / `bgp_rib_out_table` は DB に書き込まれず未定義のまま残る。
 `bmpcfgd` はそれらを `'false'` として処理する（YANG default の `false` と一致するため実害なし）。
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+FRR テンプレートおよびデーモンコードに埋め込まれた定数。CONFIG_DB には現れないが、BMP 動作に直接影響する。
+
+### FRR BMP 設定定数
+
+ソース: `sonic-buildimage/dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` L130-136
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| BMP target 名 | `sonic-bmp` | `bmp targets sonic-bmp`。FRR vtysh でハードコードされた target station 名。変更不可 |
+| mirror buffer-limit | `4294967214` | `bmp mirror buffer-limit 4294967214`（バイト）。`2^32 - 82` 相当の最大値近似 |
+| stats interval | `1000` ms | `bmp stats interval 1000`。BMP 統計メッセージ送信間隔（1 秒） |
+| connect host | `127.0.0.1` | openbmpd 接続先 IP。ローカルホスト固定（外部 collector への直接送信は非サポート） |
+| connect port | `5000` | `bmp connect 127.0.0.1 port 5000`。openbmpd 待ち受け TCP ポート |
+| min-retry | `10000` ms | BMP セッション再接続最小待機時間（10 秒） |
+| max-retry | `15000` ms | BMP セッション再接続最大待機時間（15 秒） |
+
+### BMP Watchdog 定数
+
+ソース: `sonic-buildimage/dockers/docker-bmp-watchdog/watchdog/src/main.rs` L41, L49-50
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| BMP 生死確認ポート | `5000` | watchdog が `127.0.0.1:5000` への TCP 接続で openbmpd の死活確認。FRR 側ポートと一致 |
+| watchdog HTTP ポート | `50060` | watchdog 自身の Health Check HTTP サーバ（コンテナ内部のみ） |
+
+### bmpcfgd 内部定数
+
+ソース: `sonic-buildimage/src/sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` L20-24
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `BMP_STATE_DB` | `"BMP_STATE_DB"` | BMP 状態テーブル書き込み先 DB 名 |
+| `REDIS_HOSTIP` | `"127.0.0.1"` | Redis 接続先 IP（固定） |
+| `BMP_TABLE` | `"BMP"` | 購読する CONFIG_DB テーブル名 |
+
+> **設計上の注意**: `bmp connect port 5000` は FRR テンプレート、bmpcfgd、watchdog の 3 箇所に独立してハードコードされており、変更する場合はすべてを同期する必要がある。
+<!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差
+
+**プラットフォーム差なし。** BMP は全プラットフォームで同一動作する。
+
+### 根拠
+
+| 確認観点 | 結果 | ソース |
+|---------|------|--------|
+| ビルドフラグ `INCLUDE_SYSTEM_BMP` | `rules/config` でデフォルト `y`。プラットフォーム別 `.mk` による上書きなし | `sonic-buildimage/rules/config:163`、`platform/*/` 全 `.mk` 0 ヒット |
+| `bmpcfgd.py` の ASIC / namespace 分岐 | `device_info` / `is_multi_npu()` / `asic_id` / `namespace` への参照が全 98 行で 0 ヒット | `sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` 全行 |
+| `frrcfgd.py` との関係 | `frrcfgd.py` 内に "bmp" / "BMP" 文字列が 0 ヒット。BMP は `frrcfgd` 経由なし | `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` |
+| `docker-sonic-bmp` コンテナ | ベースは `docker-config-engine-bookworm` のみ。SAI / ASIC SDK 依存なし | `dockers/docker-sonic-bmp/Dockerfile.j2` |
+| SAI 経由の有無 | BMP は TCP レベルのアプリケーション層プロトコル。SAI / ASIC 非依存 | アーキテクチャ上自明 |
+
+multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルのみを購読し、`asicN` namespace への接続は実装されていない。
+<!-- /platform -->
 
 <!-- glossary-links-injected: 9e5a57a09d49 -->
