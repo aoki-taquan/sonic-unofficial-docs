@@ -79,6 +79,34 @@ PREFIX_LIST|<prefix_type>|<ip-prefix>
 
 <!-- ref-triangle:end -->
 
+<!-- cross-refs -->
+## 暗黙参照（被参照テーブル）
+
+PREFIX_LIST テーブルは、以下のテーブル／コンポーネントから **間接的に** 参照される。YANG レベルでの外部キー制約は存在しないが、bgpcfgd ランタイムを介した暗黙的なシンボル依存がある。
+
+### ROUTE_MAP（FRR ポリシ テンプレート経由）
+
+bgpcfgd が PREFIX_LIST エントリを `ip prefix-list` / `ipv6 prefix-list` に展開し、その名前が FRR route-map の `match ip address prefix-list` 句で参照される。
+
+| 参照元テンプレート | 参照される prefix-list 名 | 用途 |
+|---|---|---|
+| `frr/bgpd/templates/general/policies.conf.j2` | `ANCHOR_CONTRIBUTING_ROUTES` | `TO_BGP_PEER_V4/V6 permit 50` で community タグ付き ANCHOR prefix を広報 |
+| `frr/bgpd/templates/general/policies.conf.j2` | `DEFAULT_IPV4` / `DEFAULT_IPV6` | `FROM_BGP_PEER_V4/V6 permit 12` でデフォルトルートを許可 |
+| `frr/bgpd/idf_isolate/idf_isolate.conf.j2` | `PL_LoopbackV4` / `PL_LoopbackV6` | IDF 隔離時に Loopback のみ通過させる route-map |
+| `frr/bgpd/tsa/bgpd.tsa.isolate.conf.j2` | `PL_LoopbackV4` / `PL_LoopbackV6` | TSA 隔離 route-map 内で Loopback prefix をフィルタ |
+| `frr/bgpd/templates/voq_chassis/policies.conf.j2` | `PL_LoopbackV4` / `PL_LoopbackV6` | VoQ Chassis 向け Loopback フィルタ route-map |
+| `frr/bgpd/bgpd.main.conf.j2` | `V4_P2P_IP` / `V6_P2P_IP` | P2P 接続 redistribute route-map |
+
+**証跡**: `dockers/docker-fpm-frr/frr/bgpd/templates/general/policies.conf.j2` L124, L133; `idf_isolate.conf.j2` L2, L5; `tsa/bgpd.tsa.isolate.conf.j2` L7; `bgpd.main.conf.j2` L69, L73.
+
+### BGP_NEIGHBOR / BGP_PEER_GROUP（ピア設定テンプレート経由）
+
+`bgpd.main.conf.j2` の BGP neighbor 設定は `redistribute connected route-map V4_CONNECTED_ROUTES` / `V6_CONNECTED_ROUTES` を参照し、これらの route-map は `prefix-list V4_P2P_IP` / `V6_P2P_IP` に依存する。PREFIX_LIST テーブルが `ANCHOR_PREFIX` / `SUPPRESS_PREFIX` を提供し、対応するピアへの経路広報フィルタ (`TO_BGP_PEER_V4/V6`) を構成する。YANG 上の直接 leafref は存在しないため、シンボル参照はランタイム時のみ解決される。
+
+**証跡**: `bgpd.main.conf.j2` L200, L203; `managers_prefix_list.py` `PrefixListMgr.generate_prefix_list_config()`.
+
+<!-- /cross-refs -->
+
 ## 引用元
 
 [^1]: YANG 定義: `sonic-bgp-prefix-list.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-prefix-list.yang>
