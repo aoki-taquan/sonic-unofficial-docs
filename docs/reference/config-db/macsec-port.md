@@ -239,3 +239,73 @@ show macsec
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 順序依存・起動順 (Phase B)
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp enableMACsec(), isPortStateOk(), removeProfile() -->
+
+### PORT.macsec 有効化の前提条件
+
+`PORT|<ifname>` の `macsec` フィールド SET イベントで `MACsecMgr::enableMACsec()` が呼ばれるが、以下の **2 条件をすべて満たすまで `task_need_retry` を返し続ける**。
+
+1. **`MACSEC_PROFILE` が先にロードされていること**
+   - `m_profiles.find(profile_name)` が失敗（プロファイル未登録）→ `task_need_retry`
+   - `MACSEC_PROFILE|<name>` の SET イベントが `loadProfile()` で処理され、メモリキャッシュに格納されてから初めて有効になる。
+   - 証跡: `cfgmgr/macsecmgr.cpp:488-495`
+
+2. **PORT が STATE_DB で ready 状態であること**
+   - `isPortStateOk(port_name)` が `STATE_PORT_TABLE_NAME` から `state == "ok"` かつ `netdev_oper_status == "up"` を確認する。
+   - どちらか一方でも未達の場合は `task_need_retry`。
+   - 証跡: `cfgmgr/macsecmgr.cpp:500-503, 614-631`
+
+```
+CONFIG_DB MACSEC_PROFILE|<name>  ← 先に存在必須
+  ↓ (loadProfile 完了)
+STATE_DB PORT_TABLE|<ifname>.state == "ok" && netdev_oper_status == "up"
+  ↓ (両条件が揃ってから)
+enableMACsec() → wpa_supplicant 起動 → MKA セッション確立
+```
+
+### プロファイル切替時の順序
+
+ポートに既に MACsec が有効な状態で別のプロファイルを設定した場合:
+
+```
+disableMACsec()  ← 旧プロファイル解除・wpa_supplicant 停止
+  ↓
+enableMACsec()   ← 新プロファイルで wpa_supplicant を再起動・MKA 再確立
+```
+
+切替中に brief traffic interrupt が発生する。`disableMACsec()` が失敗した場合は新プロファイルの有効化に進まず `task_failed` を返す。
+証跡: `cfgmgr/macsecmgr.cpp:519-527`
+
+### プロファイル削除の順序ロック
+
+`MACSEC_PROFILE` の DEL イベントで `removeProfile()` が呼ばれた際、当該プロファイルを参照しているポートが 1 つでも残っている間は `task_need_retry` を返し削除を拒否する。すべてのポートで `disableMACsec()` が完了してから削除が成立する。
+
+```
+MACSEC_PROFILE|<name> DEL
+  ↓
+removeProfile() — m_macsec_ports に当該 profile_name 参照ポートが存在するか検査
+  ├─ 存在あり → task_need_retry (全ポート disableMACsec 完了まで待機)
+  └─ 存在なし → m_profiles.erase() → task_success
+```
+
+証跡: `cfgmgr/macsecmgr.cpp:452-466`
+
+### SAI MACsec オブジェクト作成順 (macsecorch)
+
+APPL_DB 経由で `MACsecOrch` が SAI オブジェクトを生成する順序は厳密に定義されており、前段オブジェクトが未作成の場合は `task_need_retry` で待機する。
+
+```
+1. MACsec Switch Object  (initMACsecObject)   ← スイッチ単位で 1 回のみ
+2. MACsec Port Object    (createMACsecPort)   ← PORT ごと
+3. MACsec SC Object      (createMACsecSC)     ← Secure Channel ごと
+4. MACsec SA Object      (createMACsecSA)     ← Secure Association ごと
+```
+
+削除は逆順 (SA → SC → Port → Switch) で行われる。
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-port-ordering.md`](../../../../meta/_intermediate/cdb-flow/macsec-port-ordering.md)
+<!-- /ordering -->
