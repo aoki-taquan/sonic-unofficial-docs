@@ -568,6 +568,43 @@ ACL_RULE の処理は `AclOrch::init()` が起動時に環境変数 `platform` /
     `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` 等の DTel 系 action は
     barefoot / vs 以外では `DTelOrch` が起動しないため、設定しても SAI に反映されない (`orchdaemon.cpp:502-530`)。
 
+### SAI ASIC capability — action list 動的照会
+
+`AclOrch::queryAclActionCapability()` (`aclorch.cpp:3975-4058`) は init 時に SAI を問い合わせて Ingress/Egress ごとにサポートされる action type 一覧を取得する。ASIC によって返す action set が異なる。
+
+```
+SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT → action_list バッファサイズ取得
+SAI_SWITCH_ATTR_ACL_STAGE_INGRESS / SAI_SWITCH_ATTR_ACL_STAGE_EGRESS → stage ごとの action_list + is_action_list_mandatory 取得
+```
+
+| 項目 | 詳細 |
+|------|------|
+| **デフォルト (SAI 非対応時)** | SAI が `SAI_STATUS_SUCCESS` を返さない場合は `initDefaultAclActionCapabilities()` を呼ぶ。Ingress デフォルト = `PACKET_ACTION, MIRROR_INGRESS, NO_NAT`。Egress デフォルト = `PACKET_ACTION` のみ (`aclorch.cpp:170-196`) |
+| **is_action_list_mandatory** | ASIC が `sai_acl_capability_t.is_action_list_mandatory = true` を返した場合、ACL_TABLE 作成時に action リストを必ず指定する必要がある。Mellanox Spectrum は通常 `false`。Broadcom XGS/DNX は `false`。テーブル作成コード (`aclorch.cpp:4760-4764`) は `addMandatoryActions()` で不足 action を自動補完する |
+| **PACKET_ACTION 有効値** | `aclPacketActionLookup` に定義された `FORWARD` / `DROP` / `COPY` の 3 値のみ有効 (`aclorch.h:83-85, aclorch.cpp:143-148`)。`TRAP` / `LOG` / `DENY` 等は CONFIG_DB から設定不可。`sai_query_attribute_enum_values_capability` でベンダー実装値を照会するが、libsairedis 未対応のため現行実装では全値サポートと仮定する (`aclorch.cpp:4042-4051`) |
+
+!!! note "PACKET_ACTION 差異 (Mellanox / Broadcom)"
+    SONiC レイヤでは FORWARD / DROP / COPY の 3 値のみ受け付ける。ASIC レベルでの `SAI_PACKET_ACTION_TRAP` / `SAI_PACKET_ACTION_LOG` 等は `aclPacketActionLookup` に未登録のため `PACKET_ACTION` フィールドからは指定できない。Mellanox Spectrum と Broadcom XGS はいずれもこの 3 値を SAI でサポートするが、Mellanox は Egress で `PACKET_ACTION` のみをデフォルト capability として宣言し、Broadcom は通常 `PACKET_ACTION + REDIRECT` を宣言する。実際のサポート値は `STATE_DB:ACL_ACTION|PACKET_ACTION` を参照のこと (`aclorch.cpp:4051-4090`)。
+
+### SAI ACL エントリ優先度範囲 (ASIC 上限)
+
+`AclOrch::init()` (`aclorch.cpp:3689-3710`) は DPU スイッチタイプ (`gMySwitchType == "dpu"`) を除いて SAI から優先度範囲を照会し `AclRule::setRulePriorities()` で設定する。
+
+```
+SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY  → 最小優先度
+SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
+```
+
+| プラットフォーム | 優先度範囲 (典型値) | 備考 |
+|----------------|--------------------|------|
+| Mellanox Spectrum | 1 〜 16383 | SAI 照会値。PRIORITY フィールド最大値はこの上限に制約 |
+| Broadcom XGS | 1 〜 65535 | SAI 照会値。実際値は ASIC 世代に依存 |
+| Broadcom DNX | 1 〜 65535 | 同上 |
+| DPU (`gMySwitchType="dpu"`) | 照会しない | `queryAclActionCapability()` 自体をスキップ (`aclorch.cpp:3687-3708`) |
+
+- CONFIG_DB の `PRIORITY` 値がこの上限を超えると `sai_acl_api->create_acl_entry()` が `SAI_STATUS_INVALID_ATTR_VALUE` を返し rule INACTIVE になる。
+- 照会失敗時は `handleSaiGetStatus()` が `AclOrch` 初期化例外をスローする (`aclorch.cpp:3701-3706`)。
+
 <!-- /platform -->
 
 <!-- cross-refs -->
