@@ -262,4 +262,38 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 - `bgpcfgd` が FRR running-config を読み CONFIG_DB と同期
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### `BGP_GLOBALS` 先行必須 (bgp_asn)
+
+`bgp_table_handler_common()` の `BGP_GLOBALS_AF_AGGREGATE_ADDR` 分岐は `self.bgp_asn[vrf]` から `local_asn` を取得し、`router bgp <as> vrf <vrf>` プレフィクスを組み立てる。対応 VRF の `BGP_GLOBALS.local_asn` が CONFIG_DB に**先に**存在しないと vtysh コマンドが組み立てられず、aggregate-address は FRR に流れない。`table_handler_list` (frrcfgd.py L2296-2317) では `BGP_GLOBALS` (3 番目) が `BGP_GLOBALS_AF_AGGREGATE_ADDR` (23 番目) より先に登録されているため load フェーズでは自動保証だが、runtime に aggregate のみ先着した場合は `KeyError` 系の握り潰しで非反映となり、後続で `BGP_GLOBALS` が届いても aggregate は自動再投入されない（再 SET が必要）。<!-- evidence: frrcfgd.py:3169-3186, 2296-2317 -->
+
+### `BGP_GLOBALS_AF` 先行推奨 (address-family コンテキスト)
+
+aggregate-address は FRR で `router bgp <as>` → `address-family <afi> <safi>` → `aggregate-address <prefix>` の階層下に置かれる。`BGP_GLOBALS_AF|<vrf>|<afi_safi>` を先に書いてから aggregate を投入することで、AF レベル属性 (`multipath`、route distance、L2VPN advertise-all-vni 等) と aggregate が同一適用ウィンドウで揃う。順序が逆でも aggregate 自体は反映されるが、AF 属性は AF 設定到着まで非反映。`table_handler_list` では `BGP_GLOBALS_AF` (4 番目) が先のため load フェーズでは自動保証。<!-- evidence: frrcfgd.py:2297, 2317, 3169-3186 -->
+
+### `__init__` snapshot のコード固定順
+
+`BGPConfigDaemon.__init__()` は `BGP_GLOBALS` テーブル取得 (L2207-2213) で `bgp_asn[vrf]` を構築した後、`BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル取得 (L2257-2266) で `af_aggr_list[vrf][prefix] = AggregateAddr()` を構築する。コード上の固定順序により daemon 起動時のスナップショットでは `BGP_GLOBALS` → aggregate の順で読まれる。aggregate 単独で CONFIG_DB にある状態で daemon が起動すると、`af_aggr_list` キャッシュは作られても後続 SET イベントで `bgp_asn[vrf]` 不在となり vtysh 投入は失敗する。<!-- evidence: frrcfgd.py:2207-2213, 2257-2266 -->
+
+### `frrcfgd` 起動順 — bgpd 先行必須
+
+aggregate-address コマンドは `vtysh -c 'configure terminal' -c 'router bgp ...'` 経由で `bgpd` に投入される。`bgpd` の vty socket (`/var/run/frr/bgpd.vty`) が未生成の状態で vtysh を実行すると `failed to connect to any daemon` で失敗、`key_map.run_command()` が False を返し syslog ERR を出して continue する。frrcfgd は失敗時に再試行しないため、bgpd 復活後に CONFIG_DB へ再 SET するか `frrcfg.sh restart` で replay する必要がある。docker-fpm-frr の supervisord は `bgpd` → `frrcfgd` の順を狙うが、warm-restart や crash 復旧時はレースし得る。<!-- evidence: frrcfgd.py:3179-3186 -->
+
+### bgpd CLI 順 — `no aggregate-address` 先行 → `aggregate-address <new>`
+
+`hdl_af_aggregate()` は UPDATE 操作で対象 vrf+prefix が既に `af_aggr_list` に存在する場合、先に `no aggregate-address <prefix>` を生成してから `get_command_cmn()` で実 SET コマンドを追加する。Update = (Delete + Add) の合成で、`as_set` / `summary_only` / `policy` の欠落フィールドが意図せず引き継がれる事故を避けるための CLI 順。同一 vtysh セッションで連続投入されるが、`summary_only=true` 運用中はこの 1 瞬の aggregate 消失で more-specific ルートが一時的に広告される副作用に注意。CLI 順自体は逆転できない（コード固定）。<!-- evidence: frrcfgd.py:1313-1326 -->
+
+### DEL 時の vtysh 投入 → cache pop の順
+
+DEL 操作では `key_map.run_command` で `no aggregate-address` を vtysh に投入してから `self.af_aggr_list[vrf].pop(norm_ip_prefix, None)` を呼ぶ。pop は `None` デフォルトで KeyError は出ない。vtysh 投入失敗時もキャッシュは pop されないが、次回 UPDATE 時の `no` 先行発行のキーとして残るのみでリーク影響は小さい。<!-- evidence: frrcfgd.py:3187-3197 -->
+
+### 不正 `ip_prefix` キーの早期 continue
+
+`normalize_ip_prefix()` が None を返す不正キーは当該 entry のみ skip され、後続エントリの処理は継続する。順序依存なしだが、ログ (`invalid IP prefix format`) を見落とすと該当 aggregate のみ未適用となる。<!-- evidence: frrcfgd.py:3172-3175 -->
+
+詳細スキャンログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
