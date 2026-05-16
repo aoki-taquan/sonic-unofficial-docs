@@ -261,3 +261,27 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` が読み取るフィールド。HLD (`SONiC_in_band_mgmt_via_mgmt_Vrf_HLD.md`) ではデフォルト `"false"`、`mgmtVrfEnabled=true` のときのみ有効と規定。YANG バリデーションの対象外のため、不正値を書き込んでもバリデーションエラーにならない。
 
 <!-- /defaults -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `hostcfgd` が連動して読む関連テーブル (Phase C)
+
+`hostcfgd` の `MgmtIfaceCfg` クラスは `MGMT_VRF_CONFIG` と `MGMT_INTERFACE` を一体として購読し、mgmt VRF の有効化と eth0 アドレス設定を協調して管理する。また `DEVICE_METADATA` は mgmt VRF 有効化に伴うサービス再起動を通じて間接的に関与する。
+
+### 共依存テーブル (起動時 + subscribe)
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | 起動時 + subscribe | `MgmtIfaceCfg.load()` で eth0 アドレス設定を初期ロード。runtime では `update_mgmt_iface()` が MGMT_INTERFACE 変更を受けて `interfaces-config restart` を実行し、mgmt VRF への eth0 組み込みを完了させる | hostcfgd:2248, 1617-1643, 2485 |
+| [`DEVICE_METADATA`](device-metadata.md) | 起動時 + subscribe | `DeviceMetaCfg.load()` で hostname / timezone を初期取得。mgmt VRF 有効化時の SSH / NTP / chrony 再起動が `/etc/hostname` (hostname 由来) および timezone 設定に依存する | hostcfgd:2247, 2267, 2404-2408, 2492-2493 |
+
+### 暗黙参照の詳細
+
+#### MGMT_INTERFACE
+
+`hostcfgd` の `get_interface_ip("eth0")` (hostcfgd:599-600) は NTP / RADIUS の送信元 IP 解決のために `MGMT_INTERFACE` キー一覧を取得する。`mgmtVrfEnabled=true` 時に eth0 が mgmt VRF 名前空間に移動するため、**MGMT_INTERFACE に IP が設定されていないと VRF 有効化後の src_ip 解決が失敗する**。CLI (`config vrf add mgmt`) はこの順序を強制しないため、手動設定時は MGMT_INTERFACE → MGMT_VRF_CONFIG の順で設定することが推奨される。
+
+#### DEVICE_METADATA
+
+vrfmgr も MgmtIfaceCfg も `DEVICE_METADATA` を直接 subscribe して MGMT_VRF_CONFIG の動作を変えることはない。依存は「`mgmtVrfEnabled=true` → chrony / interfaces-config / SSH 再起動 → 各サービスが `DEVICE_METADATA.hostname` / `DEVICE_METADATA.timezone` を参照」という間接経路。hostname が空文字の場合、VRF 有効化後の SSH デーモン再起動で接続が不安定になる可能性がある (hostcfgd:1422, 1516)。
+
+<!-- /cross-refs -->
