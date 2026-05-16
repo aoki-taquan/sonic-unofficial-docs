@@ -177,6 +177,47 @@ show vxlan tunnel
 - 副作用: EVPN NVO 削除時は全 VNI・MAC エントリが一斉削除されトラフィックが断。
 
 <!-- /runtime-trace -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`VXLAN_EVPN_NVO` テーブルへの変更は **2 段階** で伝播する。
+
+1. **vxlanmgrd** (`docker-swss` 内 cfgmgr プロセス) が **CONFIG_DB** を `ConsumerStateTable` (`swss::Orch` 継承) で購読する。`vxlanmgrd.cpp:46-53` で `CFG_VXLAN_EVPN_NVO_TABLE_NAME` を含むテーブルリストを `VxlanMgr` に渡し、`swss::Select` ループ (`SELECT_TIMEOUT=1000ms`) でイベントを待機する。
+2. **orchagent** (`EvpnNvoOrch`) が **APPL_DB** の `APP_VXLAN_EVPN_NVO_TABLE` を `ConsumerStateTable` (`swss::Orch2` 継承) で購読する (`orchdaemon.cpp:358`)。
+
+| 購読者 | 購読 DB | 購読テーブル | API 種別 | ハンドラ |
+|--------|--------|------------|---------|---------|
+| `vxlanmgrd` (VxlanMgr) | CONFIG_DB | `VXLAN_EVPN_NVO` | `ConsumerStateTable` (Orch 継承) | `doVxlanEvpnNvoCreateTask` / `doVxlanEvpnNvoDeleteTask` |
+| orchagent (EvpnNvoOrch) | APPL_DB | `APP_VXLAN_EVPN_NVO_TABLE` | `ConsumerStateTable` (Orch2 継承) | `EvpnNvoOrch::addOperation` / `delOperation` |
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+CONFIG_DB HSET "VXLAN_EVPN_NVO|nvo1" source_vtep vtep1
+  ↓ Redis keyspace → vxlanmgrd ConsumerStateTable バッファ
+swss::Select::select(1000ms) 検出
+  ↓ VxlanMgr::doTask() → doVxlanEvpnNvoCreateTask()
+  ↓ isTunnelActive(vtep) チェック（失敗時 return false → リトライ待ち）
+  ↓ disableLearningForAllVxlanNetdevices()
+  ↓ m_appEvpnNvoTable.set() → APPL_DB "APP_VXLAN_EVPN_NVO_TABLE|nvo1" 書込
+APPL_DB 書込 → orchagent EvpnNvoOrch ConsumerStateTable 検出
+  ↓ EvpnNvoOrch::addOperation()
+  ↓ VxlanTunnelOrch からVTEP ポインタ取得・キャッシュ（SAI 直接呼び出しなし）
+```
+
+- `op == SET_COMMAND` → `addOperation()`、`op == DEL_COMMAND` → `delOperation()` に分岐。
+- `EvpnNvoOrch` 自体は SAI `tunnel_map_api` を直接呼ばない。VTEP SAI オブジェクトは `VxlanTunnelOrch` が先行して `sai_tunnel_api->create_tunnel_map()` で作成済み。
+
+### SAI tunnel_map_api との関係
+
+`vxlanorch.cpp:28` で `extern sai_tunnel_api_t *sai_tunnel_api` を宣言。EVPN NVO フロー自体では tunnel_map_api を直接使用しないが、VXLAN_TUNNEL_MAP テーブル処理 (`VxlanTunnelMapOrch`) が同じ `sai_tunnel_api` を利用して MAP_T → SAI_TUNNEL_MAP_TYPE_* のマッピングオブジェクトを作成する。EVPN NVO は作成済み VTEP ポインタを参照するだけで SAI 呼び出しは行わない。
+
+> **Evidence**: `sonic-swss/cfgmgr/vxlanmgrd.cpp:26-123`、`sonic-swss/cfgmgr/vxlanmgr.cpp:213-285,672-735`、`sonic-swss/orchagent/orchdaemon.cpp:358`、`sonic-swss/orchagent/vxlanorch.h:541-557`、`sonic-swss/orchagent/vxlanorch.cpp:28,124-165,2773-2814`; 詳細分析 `meta/_intermediate/cdb-flow/vxlan-evpn-nvo-pubsub.md`
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
