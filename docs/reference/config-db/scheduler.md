@@ -368,4 +368,77 @@ QUEUE|<port>|<idx> の scheduler 参照を解除  →  SCHEDULER|<name> を DEL
 
 <!-- /constants -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`SCHEDULER` プロファイルは CONFIG_DB 上では独立したエントリだが、`QosOrch` の
+`resolveFieldRefValue` 機構を通じて以下のテーブルから**暗黙的に leafref 参照**される。
+YANG leafref として明示されていない参照もコードレベルで強制される。
+
+### SCHEDULER を参照するテーブル (被参照)
+
+| 参照元テーブル | 参照元フィールド | 参照先キー形式 | SAI 効果 | 参照箇所 |
+|---|---|---|---|---|
+| `QUEUE` | `scheduler` | `SCHEDULER\|<name>` | `SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID` バインド | `qosorch.cpp:1822-1853` |
+| `PORT_QOS_MAP` | `scheduler` | `SCHEDULER\|<name>` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` バインド | `qosorch.cpp:2124-2133` |
+
+### 解決タイミングと retry 挙動
+
+- `QUEUE.scheduler` または `PORT_QOS_MAP.scheduler` が SET された時点で `SCHEDULER|<name>` が
+  未存在の場合、`task_need_retry` が返され参照が解決されるまで SAI バインドは保留される。
+- 参照が解決された後、`setObjectReference()` で参照カウントが増加し、被参照中の SCHEDULER は
+  DEL ハンドラで削除保留 (`m_pendingRemove = true`) となる。
+
+### WRED_PROFILE との連携
+
+- `QUEUE` は `scheduler` と `wred_profile` フィールドを並列に解決する (`qosorch.cpp:1857-1886`)。
+  SCHEDULER (帯域制御) と WRED_PROFILE (ドロップ確率制御) は互いに独立だが、同一 QUEUE に
+  同時適用することで帯域制御と輻輳回避を組み合わせることができる。
+- SCHEDULER と WRED_PROFILE の間に直接の参照関係はない。
+
+### 削除順序制約
+
+```
+QUEUE の scheduler / PORT_QOS_MAP の scheduler 参照を解除
+  ↓
+SCHEDULER|<name> を DEL
+```
+
+参照が残っている間は SAI レベルで EBUSY となり `Failed to remove scheduler profile` エラーが発生する。
+<!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` / `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
+
+APPL_DB / STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書き込みは **一切なし**。
+副次 DB 書き込みは SAI API 経由の ASIC_DB のみ。
+
+### ASIC_DB 書き込み
+
+| ASIC_DB テーブル | 属性 | トリガ | evidence |
+|----------------|------|--------|---------|
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | スケジューラ全属性 (type / weight / meter_type / cir / cbs / pir / pbs) | `handleSchedulerTable` SET で `sai_scheduler_api->create_scheduler()` または `set_scheduler_attribute()` | `qosorch.cpp:L1460, L1446` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | — (削除) | `handleSchedulerTable` DEL で `sai_scheduler_api->remove_scheduler()` | `qosorch.cpp:L1490` |
+| `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER_GROUP:<group_oid>` | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` | QUEUE が当該 SCHEDULER を `scheduler` フィールドで参照するとき `applySchedulerToQueueSchedulerGroup()` が呼ばれ scheduler_group 属性を更新 | `qosorch.cpp:L1690` |
+
+### SCHEDULER → QUEUE 副次バインド経路
+
+```
+SCHEDULER SET
+  └─ sai_scheduler_api->create_scheduler()  → ASIC_DB: SCHEDULER OID 生成
+       ↓ (QUEUE.scheduler フィールドが参照)
+  QUEUE handleQueueTable()
+    └─ applySchedulerToQueueSchedulerGroup(port, queue_ind, scheduler_profile_id)
+         └─ getSchedulerGroup(port, queue_id)  ← SAI_PORT_ATTR_QOS_SCHEDULER_GROUP_LIST 探索
+              └─ sai_scheduler_group_api->set_scheduler_group_attribute()
+                   → ASIC_DB: SCHEDULER_GROUP の SCHEDULER_PROFILE_ID 更新
+```
+
+- **voq モード例外**: `gMySwitchType == "voq"` かつ `SAI_SYSTEM_PORT_TYPE_REMOTE` の場合は `applySchedulerToQueueSchedulerGroup` が早期 return し ASIC 書き込みをスキップする。
+- **DEL 時**: QUEUE 参照が解除されてから `remove_scheduler()` が呼ばれる（`isObjectBeingReferenced` で保護）。QUEUE DEL 時は `scheduler_profile_id = SAI_NULL_OBJECT_ID` を渡してバインドを解除。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 96667c52d98d -->
