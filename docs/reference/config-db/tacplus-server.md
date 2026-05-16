@@ -351,6 +351,50 @@ hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする�
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L86-89 L366-370 L665, sonic-utilities/config/aaa.py L229 L263-267, sonic-host-services/data/templates/tacplus_nss.conf.j2 L46-50 -->
+
+### モジュール定数 (hostcfgd)
+
+| 定数名 | 値 | フィールド | 説明 |
+|--------|----|-----------|----|
+| `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` | `timeout` | `TACPLUS\|global.timeout` 未設定時のデフォルト応答タイムアウト [秒] |
+| `TACPLUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | `auth_type` | `TACPLUS\|global.auth_type` 未設定時のデフォルト認証プロトコル |
+| `TACPLUS_SERVER_PASSKEY_DEFAULT` | `""` (空文字列) | `passkey` | 共有秘密未設定時のフォールバック。空文字列が pam_tacplus に渡され、サーバ設定と不一致なら認証失敗 (silent) |
+
+### TCP ポートデフォルト
+
+TACACS+ 標準 TCP ポートは **49** (IANA well-known)。
+
+| 定義箇所 | 値 | 備考 |
+|---------|----|------|
+| `aaa.py L266` CLI `--port` デフォルト | `49` | `config tacacs add` で省略時に CONFIG_DB へ書き込まれる値 |
+| `sonic-system-tacacs.yang` `tcp_port` leaf | `49` | YANG モデルのデフォルト |
+| `hostcfgd` 内部 | 定数なし | `CONFIG_DB.TACPLUS_SERVER.tcp_port` をそのまま `tacplus_nss.conf.j2` テンプレートに渡す |
+
+### priority レンジ
+
+| 定義箇所 | 範囲 | デフォルト |
+|---------|------|-----------|
+| `aaa.py L267` CLI `--pri` | `IntRange(1, 64)` | `1` |
+| `sonic-system-tacacs.yang` `priority` leaf | `uint8 1..64` | `1` |
+| `hostcfgd L665` ソートロジック | — | 降順 (`reverse=True`)。大きい値ほど PAM 設定で先に記載（高優先度） |
+
+### auth_type 列挙値
+
+`aaa.py L229/L265` および `sonic-system-tacacs.yang` が定義する 4 値:
+
+| 値 | 意味 |
+|----|----|
+| `pap` | PAP (Password Authentication Protocol)。デフォルト。最広互換 |
+| `chap` | CHAP (Challenge Handshake Authentication Protocol) |
+| `mschap` | MS-CHAP (Microsoft CHAP) |
+| `login` | ASCII ログインシーケンス認証 |
+
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
