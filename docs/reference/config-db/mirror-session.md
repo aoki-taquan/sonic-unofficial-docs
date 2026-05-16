@@ -273,3 +273,42 @@ minigraph.py からの `MIRROR_SESSION` 自動派生はなし (minigraph.py の�
 > **スキャン証跡**: `mirrororch.cpp:381-523` を全行読了、8 件分岐抽出。MIRROR_SESSION の minigraph.py 派生がコメントアウトされていることを実ソースで確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/mirrororch.cpp MirrorEntry constructor (L57-77) / mirrororch.h (L21-25) / mirrororch.cpp (L35-45) -->
+
+### フィールドデフォルト値
+
+| 定数名 | 値 | フィールド | 種別 | コード根拠 |
+|-------|-----|-----------|------|-----------|
+| `MirrorEntry::greType` (非 Mellanox) | `0x88be` | `gre_type` | C++ コンストラクタ初期値 | `mirrororch.cpp:71` |
+| `MirrorEntry::greType` (Mellanox) | `0x8949` | `gre_type` | C++ コンストラクタ初期値 (プラットフォーム分岐) | `mirrororch.cpp:67` |
+| `MirrorEntry::dscp` | `8` (CS1 相当) | `dscp` | C++ コンストラクタ初期値 | `mirrororch.cpp:59` |
+| `MirrorEntry::ttl` | `255` | `ttl` | C++ コンストラクタ初期値 | `mirrororch.cpp:60` |
+| `MirrorEntry::queue` | `0` | `queue` | C++ コンストラクタ初期値 | `mirrororch.cpp:61` |
+| `MIRROR_SESSION_DEFAULT_NUM_TC` | `255` | `m_maxNumTC` (queue 上限) | SAI 取得失敗時 fallback | `mirrororch.cpp:45` |
+| `MIRROR_SESSION_DEFAULT_VLAN_PRI` | `0` | ERSPAN VLAN outer PRI | SAI 固定値 | `mirrororch.cpp:35` |
+| `MIRROR_SESSION_DEFAULT_VLAN_CFI` | `0` | ERSPAN VLAN outer CFI | SAI 固定値 | `mirrororch.cpp:36` |
+| `MIRROR_SESSION_DSCP_MIN` | `0` | `dscp` 最小値 | バリデーション用 | `mirrororch.cpp:40` |
+| `MIRROR_SESSION_DSCP_MAX` | `63` | `dscp` 最大値 | バリデーション用 | `mirrororch.cpp:41` |
+| `MIRROR_SESSION_DSCP_SHIFT` | `2` | TOS フィールドへのシフト量 | SAI TOS = `dscp << 2` | `mirrororch.cpp:39` |
+
+### direction / type 有効値 (enum 文字列)
+
+| 定数名 | 値 | フィールド | コード根拠 |
+|-------|-----|-----------|-----------|
+| `MIRROR_RX_DIRECTION` | `"RX"` | `direction` | `mirrororch.h:21` |
+| `MIRROR_TX_DIRECTION` | `"TX"` | `direction` | `mirrororch.h:22` |
+| `MIRROR_BOTH_DIRECTION` | `"BOTH"` | `direction` | `mirrororch.h:23` |
+| `MIRROR_SESSION_SPAN` | `"SPAN"` | `type` | `mirrororch.h:24` |
+| `MIRROR_SESSION_ERSPAN` | `"ERSPAN"` | `type` | `mirrororch.h:25` |
+
+### 注記
+
+- `queue = 0` (デフォルト) のとき `activateSession()` は `SAI_MIRROR_SESSION_ATTR_TC` を SAI に送らない (`mirrororch.cpp:933`)。ハードウェアのデフォルト TC を使用する。
+- `dscp = 8` は YANG に `default` 記述なし。CONFIG_DB 省略時でも GRE 外側 IP に DSCP 8 (CS1) が付与される。
+- `gre_type` のデフォルトはプラットフォーム依存: 非 Mellanox は `0x88be`、Mellanox (`MLNX_PLATFORM_SUBSTRING`) は `0x8949`。
+
+<!-- /constants -->
