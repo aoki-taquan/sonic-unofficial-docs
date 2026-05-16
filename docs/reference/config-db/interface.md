@@ -197,6 +197,54 @@ show ip interfaces
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-16
+
+### PORT 未解決 → retry
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:833-836` | `isIntfStateOk(alias)` が false（STATE_PORT_TABLE に `state=ok` 未登録） | `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → `return false`、`m_toSync` 残留・1000 ms 後に再試行 |
+| `intfsorch.cpp:905-924` | `gPortsOrch->getPort(alias, port)` が false（PortsOrch 未登録） | `it++; continue` → `m_toSync` 残留・再試行。PORT が PortsOrch に登録されるまで SAI 処理不可 |
+
+### VRF 未解決 → retry または即座スキップ
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:839-842` | `vrf_name` 指定時に `isIntfStateOk(vrf_name)` が false | `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` → `return false`、retry |
+| `intfsorch.cpp:826-829` | `m_vrfOrch->isVRFexists(vrf_name)` が false（orchagent 内 VRF 未生成） | `it++; continue` → retry |
+| `intfmgr.cpp:846-849` | 既存 VRF バインド済みのまま別 VRF を指定（`isIntfChangeVrf()` が true） | `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` → エントリ消去（設定スキップ）。unbind → rebind の 2 ステップが必要 |
+| `intfsorch.cpp:860` | Loopback 系で VRF 変更時に IP アドレスが残存 | `SWSS_LOG_ERROR("Failed to set interface '%s' to VRF ID '%d' because it has IP addresses associated with it.")` → VRF 変更スキップ |
+
+### IP format 不正 / silent drop
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:1132` | IPv4 link-local（169.254.x.x）を IP プレフィクスとして設定 | APP_DB への書き込みをスキップ（ログなし）→ orchagent / SAI に届かない（silent drop） |
+| `intfsorch.cpp:571-580` | 同 VRF 内の既存プレフィクスとサブネットオーバーラップ | `SWSS_LOG_NOTICE("Router interface %s IP %s overlaps with %s.")` → `setIntf` が `return false`、重複エントリ削除まで retry |
+| `intfsorch.cpp:740` | `mac_addr` フィールドの MAC アドレスパース失敗 | `SWSS_LOG_ERROR("Invalid mac argument %s to %s()")` → `continue`（エントリ消去、設定スキップ） |
+| `intfsorch.cpp:756` | `nat_zone` フィールドに数値以外または範囲外の値 | `SWSS_LOG_ERROR("Invalid argument %s for nat zone")` → `continue`（エントリ消去、nat_zone 設定スキップ） |
+
+### kernel netlink / ip コマンド失敗
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:117-130` | `ip -6 address add` 失敗（IPv6 未有効） | まず `SWSS_LOG_NOTICE("... trying to enable IPv6 and retry")` → `enableIpv6Flag()` → 再実行。enableIpv6 も失敗時: `SWSS_LOG_ERROR("Failed to enable IPv6 on interface %s")` → return |
+| `intfmgr.cpp:130` | `ip address add/del` が非ゼロ return code（IPv4） | `SWSS_LOG_ERROR("Command '%s' failed with rc %d")` → return（エントリは消去） |
+| `intfmgr.cpp:455` | `ip link set mtu` 失敗 | `SWSS_LOG_WARN("Setting mtu to %s netdev failed ...")` → warn のみ、MTU は旧値のまま処理継続 |
+| `intfmgr.cpp:501` | `ip link set <alias> up/down` 失敗 | `SWSS_LOG_WARN("Setting admin_status to %s netdev failed ...")` → warn のみ |
+| `intfsorch.cpp:1297-1303` | `sai_router_intfs_api->create_router_interface()` が `SAI_STATUS_SUCCESS` 以外 | `SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d")` → `handleSaiCreateStatus` が `task_success` 以外なら `throw runtime_error` → orchagent abort |
+
+### retry メカニズム
+
+- `intfmgrd` の main ループはタイムアウト 1000 ms で `Select::select()` を呼ぶ
+- `doIntfGeneralTask` / `doIntfAddrTask` が `false` を返した場合、エントリは `m_toSync` に残留
+- PORT / VRF が STATE_DB に `state=ok` を書いた瞬間、`doPortTableTask` がキューを再処理
+
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
