@@ -233,4 +233,68 @@ db_migrator.py での VXLAN_TUNNEL マイグレーションなし
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp -->
+
+### 1. VRF 未解決 → `return false` (無制限 retry)
+
+`VxlanVrfMapOrch::addOperation()` (`vxlanorch.cpp:2320-2323`) で VNI→VRF マッピング SET 時に参照先 VRF が VRFOrch にまだ登録されていない場合:
+
+```
+SWSS_LOG_WARN("Vrf '%s' hasn't been created yet", vrf_name.c_str());
+return false;
+```
+
+`return false` によりエントリがキューに残り、次回 `doTask()` で再試行される（無制限 retry）。VRF が後から作成されれば自動的に適用される。rollback なし[^fail1]。
+
+### 2. SAI tunnel 作成失敗 → mapper rollback + `active_ = false` で停止
+
+`VxlanTunnel::createTunnelHw()` (`vxlanorch.cpp:912-921`) で `sai_tunnel_api->create_tunnel()` が失敗すると `SAI_NULL_OBJECT_ID` を返す。orchagent は mapper をロールバックし `active_ = false` にセットして `false` を返す:
+
+```
+deleteMapperHw(mapper_list, map_src);
+ids_.tunnel_id = SAI_NULL_OBJECT_ID;
+active_ = false;
+return false;
+```
+
+`tunnel_obj->isActive()` が false のまま固定され、後続の `VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO` 処理がすべてサスペンドされる。自動 retry なし。DEL + 再 SET でリカバリ[^fail1]。
+
+SAI term table 作成失敗時も同様に tunnel + mapper を全ロールバック (`vxlanorch.cpp:926-937`)。
+
+### 3. 不正 `src_ip` / `dst_ip` アドレスファミリ不一致 → エントリ破棄 (drop)
+
+`VxlanTunnelOrch::addOperation()` (`vxlanorch.cpp:1610-1614`) で src_ip と dst_ip のアドレスファミリ（IPv4/IPv6）が一致しない場合:
+
+```
+SWSS_LOG_ERROR("Format mismatch: 'src_ip' and 'dst_ip' must be of the same family");
+return true;
+```
+
+`return true` でエントリをキューから破棄する。トンネルオブジェクトは作成されない。retry なし。CONFIG_DB のエントリは残存する（YANG バリデーション回避時のみ発生）[^fail1]。
+
+`ttl_mode` の不正値 (`vxlanorch.cpp:1631`) も同様に `return true` で破棄。
+
+### 4. DEL 時に依存オブジェクト残存 → retry 待ち
+
+`VXLAN_TUNNEL` DEL 時に `VXLAN_EVPN_NVO` / `VXLAN_TUNNEL_MAP` / state テーブルエントリが残存している場合、`delOperation()` が `false` を返しキューに残る。cfgmgr 側でも WARN ログを記録してリトライ待ちとなる[^exc1]。
+
+適切な削除順序: `VXLAN_TUNNEL_MAP` → `VXLAN_EVPN_NVO` → `VXLAN_TUNNEL`。
+
+### retry パターンサマリ
+
+| ケース | 挙動 | 自動復旧 |
+|--------|------|----------|
+| VRF 未解決 | `return false` → 無制限 retry | VRF 作成後に自動復旧 |
+| SAI tunnel 作成失敗 | mapper rollback + `active_=false` | 手動 DEL + 再 SET 必要 |
+| src/dst_ip ファミリ不一致・不正 ttl_mode | `return true` エントリ破棄 | なし |
+| DEL 時依存オブジェクト残存 | `return false` → retry 待ち | 依存 DEL 後に自動復旧 |
+| SAI term table 作成失敗 | tunnel/mapper 全 rollback + `false` | 手動 DEL + 再 SET 必要 |
+
+[^fail1]: `sonic-swss/orchagent/vxlanorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vxlanorch.cpp>
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->
