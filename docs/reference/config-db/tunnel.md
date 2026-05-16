@@ -435,4 +435,39 @@ CONFIG_DB の TUNNEL テーブルから読み込まれず、コードに直書�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`tunneldecaporch` が CONFIG_DB → APPL_DB → SAI の経路を処理する際に、以下の副次的な DB 書き込みが発生する。
+
+### ASIC_DB — SAI オブジェクト群
+
+| SAI API | 生成オブジェクト | トリガ条件 |
+|---------|--------------|----------|
+| `sai_router_intfs_api->create_router_interface()` | `SAI_OBJECT_TYPE_ROUTER_INTERFACE` (overlay loopback, MTU=9100) | `addDecapTunnel()` 実行時・常時 |
+| `sai_tunnel_api->create_tunnel()` | `SAI_OBJECT_TYPE_TUNNEL` (IPINIP) | `addDecapTunnel()` 成功時 |
+| `sai_tunnel_api->create_tunnel_term_table_entry()` | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` | `addDecapTunnelTermEntry()` 成功時 |
+
+SAI tunnel に付与される主要属性: `SAI_TUNNEL_ATTR_TYPE=IPINIP`, `SAI_TUNNEL_ATTR_DECAP_ECN_MODE`, `SAI_TUNNEL_ATTR_DECAP_TTL_MODE`, `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE`。  
+`decap_dscp_to_tc_map` が設定済みなら `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` も付与。  
+`decap_tc_to_pg_map` が設定済みなら `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` も付与。
+
+### STATE_DB — STATE_TUNNEL_DECAP_TABLE / STATE_TUNNEL_DECAP_TERM_TABLE
+
+| テーブル | 操作 | トリガ | 書込フィールド |
+|---------|------|-------|--------------|
+| `STATE_TUNNEL_DECAP_TABLE` | SET | SAI create_tunnel 成功後 (`setDecapTunnelStatus()`) | `tunnel_type`, `dscp_mode`, `ecn_mode`, `encap_ecn_mode`, `ttl_mode` |
+| `STATE_TUNNEL_DECAP_TABLE` | DEL | トンネル削除時 | — |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | SET | SAI create_tunnel_term_table_entry 成功後 | `term_type`, `src_ip`(P2P/MP2MP のみ), `subnet_type`(サブネット decap 時のみ) |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | DEL | decap term 削除時 | — |
+
+### MuxOrch への間接 QoS 副次反映
+
+`encap_tc_to_dscp_map` / `encap_tc_to_queue_map` は SAI に直接 push **されない**。tunneldecaporch は OID を内部キャッシュ (`tunnelTable`) に保持し、MuxOrch が `MUX_CABLE` 処理時に `TunnelDecapOrch::getQosMapId()` 経由で取得して自身の SAI 書き込みに利用する。
+
+!!! note "詳細スキャンノート"
+    `meta/_intermediate/cdb-flow/tunnel-side-effects.md`
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: ae9e20070353 -->
