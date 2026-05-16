@@ -184,6 +184,67 @@ show macsec
 
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 順序依存・起動順
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/orchagent/macsecorch.cpp -->
+
+### PORT 先行条件 (macsecmgr)
+
+`PORT.macsec` フィールドが設定されると `MACsecMgr::enableMACsec()` が呼ばれるが、起動にはふたつの前提条件をすべて満たす必要がある。
+
+1. **MACSEC_PROFILE が先に存在すること** — `m_profiles.find(profile_name)` が見つからない場合は `task_need_retry` を返し、プロファイルが登録されるまで再試行し続ける。
+2. **PORT が STATE_DB で ready 状態であること** — `isPortStateOk(port_name)` が `STATE_PORT_TABLE_NAME` を参照し、`state == "ok"` かつ `netdev_oper_status == "up"` でなければ同様に `task_need_retry`。
+
+```
+CONFIG_DB に MACSEC_PROFILE|<name> が存在
+  ↓ (先行必須)
+STATE_DB PORT|<port> state=ok, netdev_oper_status=up
+  ↓ (先行必須)
+enableMACsec() → wpa_supplicant 起動 → MKA セッション確立
+```
+
+ソース: `cfgmgr/macsecmgr.cpp` L487–504
+
+### wpa_supplicant 起動順 (macsecmgr)
+
+`startWPASupplicant()` は `fork()` + `execl()` で `/sbin/wpa_supplicant -s -D macsec_sonic -g <sock>` を起動し、その後 **ソケット (`/var/run/wpa_supplicant/<port>`) が応答を返すまで最大 `RETRY_TIME` 回ポーリング**（`wpa_cli_exec(..., "status")`）してから次処理（`configureMACsec`）に進む。ソケット応答前に `configureMACsec` を呼ぶと接続失敗になるため、ここで暗黙的なブロッキング待機が発生する。
+
+```
+fork() + execl(wpa_supplicant)
+  ↓ (ポーリング待機: RETRY_TIME 回)
+wpa_supplicant ソケット応答
+  ↓
+configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設定
+```
+
+ソース: `cfgmgr/macsecmgr.cpp` L635–678
+
+### SAI macsec_sa 作成順 (macsecorch)
+
+`MACsecOrch` では SAI オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は `task_need_retry` を返し待機する。
+
+```
+1. MACsec Switch Object (initMACsecObject)  ← スイッチ単位で 1 回のみ
+     ↓
+2. MACsec Port Object (createMACsecPort)    ← PORT ごと
+     ↓
+3. MACsec SC (Security Channel) Object (createMACsecSC)
+     ↓
+4. MACsec SA (Security Association) Object (createMACsecSA)
+     ↓ (最初の SA 作成時のみ)
+5. ACL エントリアクションを "packet action" から "MACsec flow" に切り替え
+```
+
+- SC が存在しない状態で `taskUpdateEgressSA` / `taskUpdateIngressSA` を呼ぶと `task_need_retry` → SC 作成まで待機。
+- SA 削除時に当該 SC の SA が 0 件になると、ACL エントリアクションを "MACsec flow" から "packet action" に戻す（逆順クリーンアップ）。
+- Egress SA は `encoding_an` フィールドが一致する AN のみ作成し、不一致は `task_need_retry`。
+- Ingress SA は `active = true` で作成、`active = false` で削除するトリガ型制御。
+
+ソース: `orchagent/macsecorch.cpp` L960–996 (Port), L1887–1909 (SC), L2223–2382 (SA)
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
