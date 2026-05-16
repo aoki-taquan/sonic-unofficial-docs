@@ -165,6 +165,58 @@ show tacacs
 ```
 <!-- /ops-hint -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`AaaCfg`) の `modify_conf_file()` は `TACPLUS_SERVER` / `TACPLUS|global` / `AAA` いずれかが更新されるたびに `/etc/pam.d/common-auth-sonic`・`/etc/tacplus_nss.conf`・`/etc/nsswitch.conf` を**丸ごと再生成**する。このため書き込み順序が中間状態の整合性に直結する。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L399-417 L641-816 -->
+
+### AAA 設定生成順（load フェーズ）
+
+`AaaCfg.load()` は起動時に次の順序で CONFIG_DB を読み込み、最後に `modify_conf_file()` を **1 回だけ**呼ぶ:
+
+1. `AAA` テーブル全行を `aaa_update(..., modify_conf=False)` で取り込む
+2. `TACPLUS|global` 行を `tacacs_global_update(..., modify_conf=False)` で取り込む
+3. `TACPLUS_SERVER` 全行を `tacacs_server_update(..., modify_conf=False)` で取り込む
+4. `RADIUS|global` / `RADIUS_SERVER` / `LDAP|global` / `LDAP_SERVER` を同様に取り込む
+5. `modify_conf_file()` を 1 回実行して PAM / NSS を確定する
+
+この順序は `load_independent_config()` → `AaaCfg.load()` の呼び出し連鎖で保証されており、load フェーズ内での中間 PAM 再生成は起きない。
+
+### PAM 設定書込順（runtime イベント）
+
+runtime 中はテーブル更新のたびに `modify_conf_file()` が呼ばれる。各ハンドラは次の流れで設定ファイルを生成する:
+
+1. `tacplus_global_default`（定数: `timeout=5`, `auth_type=pap`, `passkey=""`）をベースにコピー
+2. `TACPLUS|global` の実値で上書き (`tacplus_global.update(self.tacplus_global)`)
+3. `TACPLUS_SERVER` の各エントリに対して `tacplus_global.copy()` をベースとして per-server 値で上書き
+4. `servers_conf` を `priority` 降順でソート (`sorted(..., key=lambda t: int(t['priority']), reverse=True)`)
+5. Jinja2 テンプレートで `/etc/pam.d/common-auth-sonic.tmp` に展開 → `os.rename()` でアトミックに置換
+6. `/etc/pam.d/sshd` / `/etc/pam.d/login` の `@include` 行を `common-auth-sonic` に書き換え
+7. `nsswitch.conf` の `passwd` 行を `authentication.login` の値に応じて書き換え（tacplus/radius/ldap/none の排他処理）
+8. `/etc/tacplus_nss.conf` を `NSS_TACPLUS_CONF_TEMPLATE` から生成
+9. `audisp-tacplus` に SIGHUP を送信してアカウンティング設定をリロード
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `TACPLUS_SERVER` エントリを先書き → `AAA` 書き込み | 推奨（中間不整合最小化） | runtime は subscribe 後追いで自動更新 |
+| 2 | `TACPLUS\|global.passkey` 設定 → `AAA\|authentication.login = "tacacs+"` 書き込み | **先行必須**（YANG reject + db_migrator が authorization 削除） | 手動 CLI 再設定が必要 |
+| 3 | `AAA\|authentication.login` に `tacacs+` を含む場合のみ nsswitch.conf / PAM に TACACS+ 行が生成 | 機能前提 | `tacacs+` が `login` に含まれない間は servers_conf に値があっても PAM に反映されない |
+| 4 | `priority` 値によるサーバ順序 | 降順ソート（大きい値ほど PAM の先頭）; `priority` が欠如すると `KeyError` → `ValueError` で設定生成中断 | CLI は常に `priority=1` を書く; 直接 DB 操作時は注意 |
+| 5 | `TACPLUS\|global.passkey` → `AAA\|authorization` (db_migrator) | **先行必須**（passkey 未設定で migration が走ると authorization エントリが削除される） | 手動 `config aaa authorization login tacacs+` で再設定 |
+
+### 主要な制約詳細
+
+**TACPLUS_SERVER 先行推奨 (依存 #1)**: `AAA|authentication.login = "tacacs+"` を先に書き込み `TACPLUS_SERVER` エントリを後から追加すると、AAA 書き込み時点で `servers_conf` が空になり `common-auth-sonic` は TACACS+ サーバなしで生成される（実質 `local` 相当）。`TACPLUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になるが、その間 TACACS+ 認証は機能しない（evidence: `hostcfgd:641-725`）。
+
+**passkey 先行必須 (依存 #2 / #5)**: `db_migrator.migrate_aaa()` は `TACPLUS|global.passkey` が空の場合に `AAA|authorization` を削除する。YANG must 制約により `AAA|authentication.login` に `tacacs+` を含む場合、passkey が存在しなければ CLI 書き込み自体が reject される（evidence: `db_migrator.py:869-900`, `sonic-system-aaa.yang:must`）。
+
+**PAM アトミック書き換え**: `common-auth-sonic` は `.tmp` ファイルに書いてから `os.rename()` でアトミックに置換する。書き込み中の部分読み込みは起きないが、rename 前後の 2 つの PAM 状態間に「中間状態ウィンドウ」は存在する（evidence: `hostcfgd:727-731`）。
+
+<!-- /ordering -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
