@@ -259,6 +259,70 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
+
+### buffermgrdyn — handleBufferPoolTable() 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `xoff` フィールドが `ingress_lossless_pool` 以外に設定 | `handleBufferPoolTable()` L2623 | `xoff` を無視し他フィールドは正常処理 | `LOG_ERROR("Field xoff is supported for %s only...")` | `buffermgrdyn.cpp:2625` |
+| SHP 有効化時に SAI 未準備 (`isSharedHeadroomPoolEnabledInSai()` が false) | `handleBufferPoolTable()` L2573 | `task_need_retry` → Consumer が backoff 後に再試行 | なし | `buffermgrdyn.cpp:2575` |
+| SHP 変更後にプロファイルの SAI 同期が未完 | `handleBufferPoolTable()` L2603 | `task_need_retry` → `m_configuredSharedHeadroomPoolSize` をロールバックして再試行 | `SWSS_LOG_NOTICE("Retry mode: checking pending profiles")` | `buffermgrdyn.cpp:2585-2607` |
+| `op` が `SET`/`DEL` 以外 | `handleBufferPoolTable()` L2665 | `task_invalid_entry` → エントリ廃棄 | `LOG_ERROR("Unknown operation type %s")` | `buffermgrdyn.cpp:2665` |
+
+### buffermgrdyn — Lua plugin ロード失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `loadLuaScript()` / `loadRedisScript()` が例外 (dynamic model 初期化時) | コンストラクタ L106-123 | `buffermgrd` が起動を中断 → buffer 管理デーモンが機能しない | `LOG_ERROR("Lua scripts for buffer calculation were not loaded successfully, buffermgrd won't start")` | `buffermgrdyn.cpp:121` |
+
+### buffermgrdyn — updateBufferPoolFromLuaPlugin() 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| Lua plugin が返した `xoff` 値が MMU サイズ超過 | `updateBufferPoolFromLuaPlugin()` L755 | xoff 更新をスキップ・pool size は更新継続 | `LOG_ERROR("Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff but the pool size will be updated")` | `buffermgrdyn.cpp:757` |
+| Lua plugin が返した pool `size` 値が MMU サイズ超過 | `updateBufferPoolFromLuaPlugin()` L786 | pool サイズ更新をスキップ → APPL_DB は前値のまま | `LOG_ERROR("Buffer pool %s: Invalid size %s, exceeding the mmu size %s")` | `buffermgrdyn.cpp:788` |
+| 共有バッファプール未設定で headroom 計算を要求 | `updateBufferPoolFromLuaPlugin()` L684 | headroom 計算をスキップ (silent) | `SWSS_LOG_NOTICE("No shared buffer pool configured")` | `buffermgrdyn.cpp:684` |
+
+### bufferorch — processBufferPool() 失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `m_pendingRemove` フラグ立ちの pool に SET | `processBufferPool()` L407 | `task_need_retry` | `SWSS_LOG_NOTICE("Entry %s %s is pending remove, need retry")` | `bufferorch.cpp:409-410` |
+| pool `type` が `ingress`/`egress`/`both` 以外 | `processBufferPool()` L457 | `task_invalid_entry` → エントリ廃棄 | `LOG_ERROR("Unknown pool type specified:%s")` | `bufferorch.cpp:457-458` |
+| pool `mode` が `static`/`dynamic` 以外 | `processBufferPool()` L484 | `task_invalid_entry` → エントリ廃棄 | `LOG_ERROR("Unknown pool mode specified:%s")` | `bufferorch.cpp:484-485` |
+| 不明フィールド (`percentage` 等) が pool エントリに含まれる | `processBufferPool()` L499 | フィールドをスキップ・SAI 非反映 | `LOG_ERROR("Unknown pool field specified:%s, ignoring")` | `bufferorch.cpp:499` |
+| SAI `set_buffer_pool_attribute` が `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` | `processBufferPool()` L508 | `task_ignore` → ハードウェア非反映のまま成功扱い | `SWSS_LOG_NOTICE("...not implemented. Ignoring it")` | `bufferorch.cpp:508-511` |
+| SAI `set_buffer_pool_attribute` がその他エラー | `processBufferPool()` L513 | `handleSaiSetStatus()` に委譲 → 通常 `task_need_retry` or `task_failed` | `LOG_ERROR("Failed to modify buffer pool...")` | `bufferorch.cpp:515-519` |
+| SAI `create_buffer_pool` 失敗 | `processBufferPool()` L528 | `handleSaiCreateStatus()` に委譲 → 通常 `task_need_retry` | `LOG_ERROR("Failed to create buffer pool %s...")` | `bufferorch.cpp:530-534` |
+| DEL 時に pool がまだ参照されている | `processBufferPool()` L560 | `m_pendingRemove = true` → `task_need_retry` | `SWSS_LOG_NOTICE("Can't remove object %s due to being referenced (%s)")` | `bufferorch.cpp:563-566` |
+| SAI `remove_buffer_pool` 失敗 | `processBufferPool()` L573 | `handleSaiRemoveStatus()` に委譲 | `LOG_ERROR("Failed to remove buffer pool %s...")` | `bufferorch.cpp:575-578` |
+| `op` が `SET`/`DEL` 以外 | `processBufferPool()` L593 | `task_invalid_entry` → エントリ廃棄 | `LOG_ERROR("Unknown operation type %s")` | `bufferorch.cpp:593` |
+
+### bufferorch — watermark capability 検出失敗
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `clear_buffer_pool_stats` が `SAI_STATUS_NOT_SUPPORTED` / `SAI_STATUS_NOT_IMPLEMENTED` | `generateBufferPoolWatermarkCounterIdList()` L322 | `noWmClrCapability` ビットセット → 該当 pool の watermark clear を永続スキップ | `SWSS_LOG_NOTICE("Clear watermark failed on %s, rv: %s")` | `bufferorch.cpp:322-325` |
+| `loadLuaScript("watermark_bufferpool.lua")` が `runtime_error` | `initFlexCounterGroupTable()` L239 | watermark Lua plugin 未ロード → watermark 統計が収集されない | `LOG_ERROR("Buffer pool watermark lua script...not set successfully. Runtime error: %s")` | `bufferorch.cpp:244` |
+
+### リトライ・廃棄の判断フロー
+
+```
+processBufferPool() / handleBufferPoolTable()
+  ↓
+  task_need_retry    → Consumer が backoff 後に再試行 (例: SAI pending remove, SHP SAI sync 待ち)
+  task_invalid_entry → Consumer が当該エントリを廃棄 (例: 不明な op / type / mode)
+  task_ignore        → bufferorch が当該 SET を成功扱いで無視 (例: SAI_STATUS_ATTR_NOT_IMPLEMENTED_0)
+  task_success       → 正常完了
+```
+
+> **スキャン証跡**: `buffermgrdyn.cpp` L100-123, L684-795, L2509-2669 全行読了、`bufferorch.cpp` L232-244, L286-335, L395-597 全行読了、`buffermgr.cpp` L575-590 読了。`task_need_retry` 6件、`task_invalid_entry` 4件、`task_ignore` 1件、`LOG_ERROR` 11件を抽出。
+<!-- /failure -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
 
@@ -364,4 +428,67 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 
 > **証跡**: `buffermgrdyn.cpp` L68-88, L504-511, L2525, L2555-2628 / `bufferorch.cpp` L310-322, L437-471, L497-501, L506-512, L916, L1049, L1134, L1168 / `buffers_config.j2` L36-38, L265-327, L331-348 / `buffers_defaults_objects.j2` (Mellanox SN2700) / `buffers_defaults_t0.j2` (Arista 7260CX3) 全行読了。
 <!-- /platform -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BufferOrch` は `BUFFER_POOL` の SET/DEL 処理後に APPL_STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB へ副次書き込みを行う。`buffermgrdyn` は STATE_DB を読み取るのみで書き込みは発生しない。
+
+### APPL_STATE_DB / `APP_BUFFER_POOL_TABLE`
+
+SAI buffer pool 操作完了後、`m_publisher.publish()` が APPL_STATE_DB へ書き込む。
+書き込みは **xoff (Shared Headroom Pool) フィールドが空でない場合のみ**発生する。
+
+| トリガ | フィールド | 値 | evidence |
+|--------|------------|-----|----------|
+| SHP (xoff) 有効プールの SAI 適用成功 (SET) | `xoff` | 計算済み SHP サイズ (bytes 文字列) | `bufferorch.cpp:555` |
+| DEL 操作完了後 | — (エントリ削除) | — | `bufferorch.cpp:589` |
+
+実装: `orch.h:382` — `ResponsePublisher m_publisher{"APPL_STATE_DB"}`。
+`response_publisher.cpp:141-143` — SAI 成功時は intent_attrs を state_attrs として APPL_STATE_DB に書き込む。
+
+!!! note "通常プール（xoff なし）は書込なし"
+    `ingress_lossy_pool` / `egress_lossless_pool` 等 xoff フィールドを持たないプールでは `m_publisher.publish()` は呼ばれない (`bufferorch.cpp:549-556`)。
+
+### COUNTERS_DB / `COUNTERS_BUFFER_POOL_NAME_MAP`
+
+新規プール作成時に pool 名 → SAI OID マッピングを `COUNTERS_DB` の hash に登録する。
+
+| トリガ | 操作 | フィールド | 値 | evidence |
+|--------|------|-----------|-----|----------|
+| SAI pool 新規作成成功 (SET) | `hset` | `<pool_name>` | SAI OID 文字列 | `bufferorch.cpp:546` |
+| SAI pool 削除成功 (DEL) | `hdel` | `<pool_name>` | — | `bufferorch.cpp:586` |
+
+実装: `bufferorch.cpp:55` — `CounterNameMapUpdater("COUNTERS_DB", COUNTERS_BUFFER_POOL_NAME_MAP)`。
+
+!!! note "既存プール更新時は登録スキップ"
+    SET 操作が既存プールへの更新の場合は `setCounterNameMap` が呼ばれず COUNTERS_DB への書き込みは発生しない (`bufferorch.cpp:540-547`)。
+
+### FLEX_COUNTER_DB / `BUFFER_POOL_WATERMARK`
+
+バッファプール watermark のポーリング設定を FLEX_COUNTER_DB に書き込む。
+FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プール分を一括登録する。
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|----------|
+| `FLEX_COUNTER_STATUS=enable` 受信時 | `set` | `BUFFER_POOL_WATERMARK:<sai_oid>` | `BUFFER_POOL_COUNTER_ID_LIST=<stat_list>` | `bufferorch.cpp:358` |
+| プール削除時 (DEL) | `del` | `BUFFER_POOL_WATERMARK:<sai_oid>` | — | `bufferorch.cpp:281-282` |
+| 起動時 (group 初期化) | `set` | `FLEX_COUNTER_GROUP_TABLE:BUFFER_POOL_WATERMARK` | plugin SHA + poll interval | `bufferorch.cpp:247-252` |
+
+実装: `bufferorch.cpp:62` — コンストラクタで `initFlexCounterGroupTable()` を呼び出し。
+`saihelper.cpp:323` — `gFlexCounterDb = make_unique<DBConnector>("FLEX_COUNTER_DB", 0)` (DB 番号 5)。
+
+!!! note "watermark clear 非対応 ASIC"
+    SAI `clear_buffer_pool_stats` が `NOT_SUPPORTED` / `NOT_IMPLEMENTED` を返す ASIC では `stats_mode=READ` で登録し watermark clear を抑制する (`bufferorch.cpp:310-322`)。
+
+### STATE_DB / `BUFFER_MAX_PARAM_TABLE`（読み取りのみ）
+
+`buffermgrdyn.cpp` は STATE_DB の `BUFFER_MAX_PARAM_TABLE` から MMU サイズ・最大 PG 数・最大キュー数を **読み取る**のみ (`buffermgrdyn.cpp:133-137, 1873-1966`)。書き込みは `portsorch` が行う。
+
+### 副次書込なし
+
+- **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
+- **STATE_DB** (書き込み側): `bufferorch`/`buffermgrdyn` は `BUFFER_MAX_PARAM_TABLE` を読むのみ。
+
+<!-- /side-effects -->
 <!-- glossary-links-injected: 44ea702536a5 -->

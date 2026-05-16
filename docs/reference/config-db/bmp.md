@@ -402,6 +402,29 @@ self.start_bmp()        # supervisorctl start openbmpd
 | 4 | `BMP\|table` フィールド設定 | bmpcfgd が検知し openbmpd を stop→reset→start で制御 |
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`bmpcfgd.py` および `frrcfgd.py` を全行走査して検出した、`BMP` テーブルが暗黙的に依存・生成する関連テーブル。
+
+| 参照先 | DB | 方向 | 直接/間接 | 条件 | ソース |
+|--------|----|------|-----------|------|--------|
+| `BGP_NEIGHBOR*` | `BMP_STATE_DB` | BMP → BMP_STATE_DB (delete) | 間接（openbmpd が populate、bmpcfgd が reset） | `BMP.bgp_neighbor_table` 変更時に常時クリア | `bmpcfgd.py` L63 |
+| `BGP_RIB_IN_TABLE*` | `BMP_STATE_DB` | BMP → BMP_STATE_DB (delete) | 間接（openbmpd が populate、bmpcfgd が reset） | `BMP.bgp_rib_in_table` 変更時に常時クリア | `bmpcfgd.py` L64 |
+| `BGP_RIB_OUT_TABLE*` | `BMP_STATE_DB` | BMP → BMP_STATE_DB (delete) | 間接（openbmpd が populate、bmpcfgd が reset） | `BMP.bgp_rib_out_table` 変更時に常時クリア | `bmpcfgd.py` L65 |
+| `BGP_NEIGHBOR` | `CONFIG_DB` | BGP_NEIGHBOR → BMP dump | 間接（openbmpd の peer リストとして利用） | `bgp_neighbor_table=true` 時、openbmpd が BGP_NEIGHBOR の peer を BMP dump 対象に | `bmpcfgd.py` L41; `frrcfgd.py` L89 |
+| `BGP_GLOBALS` | `CONFIG_DB` | BGP_GLOBALS → FRR BGP context | 間接（FRR BGP セッションの前提） | BMP が送出する peer 情報は FRR bgpd の BGP_GLOBALS 由来の AS・router-id を含む | `frrcfgd.py` L81 |
+
+### 設計メモ
+
+- `bmpcfgd.py` は `BGP_NEIGHBOR` / `BGP_GLOBALS` を **直接読まない**。openbmpd へのライフサイクル管理（stop → reset → start）のみを担う
+- `frrcfgd.py` 内に `bmp` / `BMP` 文字列は **0件**。BMP 設定の FRR 注入は `bgpd.main.conf.j2` テンプレートによりコンテナ起動時に静的に実施される
+- `BMP_STATE_DB` への書込は openbmpd が非同期で実施。`bmpcfgd` は **削除のみ**（`delete_all_by_pattern`）を直接実行する
+- `BGP_MONITORS` テーブル（BMP collector 接続定義）は `bmpcfgd` とは別の管理パスであり、BMP ページの `related.config_db` に列挙済み
+
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
