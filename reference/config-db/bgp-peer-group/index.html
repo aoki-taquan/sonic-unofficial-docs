@@ -22632,6 +22632,117 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS — ブロッキング依存の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_peer_group_af-cascade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_PEER_GROUP_AF — cascade 再適用の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROUTE_MAP — 間接参照の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI 差分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI 差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-peer-group-peer_typeexternal-torspine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        general peer-group (peer_type=external / ToR・Spine など)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-peer-group-peer_typeinternal-ibgpmulti-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal peer-group (peer_type=internal / iBGP・multi-ASIC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-peer-group-peer_typevoq_chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ シャーシ peer-group (peer_type=voq_chassis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-peer-group-peer_typemonitors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP モニタ peer-group (peer_type=monitors)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fallback-phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22684,6 +22795,367 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-bgp_peer_group-bgp_neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須順序: BGP_GLOBALS → BGP_PEER_GROUP → BGP_NEIGHBOR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd ハンドラ起動順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 自動作成の内部順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路の依存宣言
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序違反時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry 分岐 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry 分岐 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-bgppeermgrbase-bgppeergroupmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路 (BGPPeerMgrBase / BGPPeerGroupMgr)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計上の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgdpy-bgp_peer_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd.py BGP_PEER_GROUP ハンドラ直接書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-bgppeermgrbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd BGPPeerMgrBase 経由 — 間接書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路: keyspace 通知 → ハンドラ呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-subscriberstatetable-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路: SubscriberStateTable + Runner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer-group_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 固定設定（CONFIG_DB 値非依存）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="peer-group 固定設定（CONFIG_DB 値非依存）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-peer_v4-peer_v6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        general テンプレート（PEER_V4 / PEER_V6）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-internal_peer_v4-internal_peer_v6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal テンプレート（INTERNAL_PEER_V4 / INTERNAL_PEER_V6）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpmon-bgpmon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGPMON テンプレート（BGPMON）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq_chassis-voq_chassis_v4_peer-voq_chassis_v6_peer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voq_chassis テンプレート（VOQ_CHASSIS_V4_PEER / VOQ_CHASSIS_V6_PEER）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマーデフォルト（frrcfgd 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policiesconfj2-constantsbgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policies.conf.j2 の定数注入（constants.bgp.*）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="policies.conf.j2 の定数注入（constants.bgp.*）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-allow_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        general テンプレート（allow_list 有効時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq_chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voq_chassis テンプレート
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -35140,6 +35612,117 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_GLOBALS — ブロッキング依存の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp_peer_group_af-cascade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP_PEER_GROUP_AF — cascade 再適用の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#route_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROUTE_MAP — 間接参照の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI 差分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI 差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-peer-group-peer_typeexternal-torspine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        general peer-group (peer_type=external / ToR・Spine など)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-peer-group-peer_typeinternal-ibgpmulti-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal peer-group (peer_type=internal / iBGP・multi-ASIC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-peer-group-peer_typevoq_chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ シャーシ peer-group (peer_type=voq_chassis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-peer-group-peer_typemonitors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGP モニタ peer-group (peer_type=monitors)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fallback-phase-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35192,6 +35775,367 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bgp_globals-bgp_peer_group-bgp_neighbor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        必須順序: BGP_GLOBALS → BGP_PEER_GROUP → BGP_NEIGHBOR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd ハンドラ起動順
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 自動作成の内部順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路の依存宣言
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        順序違反時の挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry 分岐 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry 分岐 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-bgppeermgrbase-bgppeergroupmgr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路 (BGPPeerMgrBase / BGPPeerGroupMgr)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計上の注意点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgdpy-bgp_peer_group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd.py BGP_PEER_GROUP ハンドラ直接書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-bgppeermgrbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd BGPPeerMgrBase 経由 — 間接書込
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        frrcfgd 経路: keyspace 通知 → ハンドラ呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpcfgd-subscriberstatetable-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgpcfgd 経路: SubscriberStateTable + Runner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サービス再起動トリガー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#peer-group_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#peer-group-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        peer-group 固定設定（CONFIG_DB 値非依存）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="peer-group 固定設定（CONFIG_DB 値非依存）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-peer_v4-peer_v6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        general テンプレート（PEER_V4 / PEER_V6）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-internal_peer_v4-internal_peer_v6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        internal テンプレート（INTERNAL_PEER_V4 / INTERNAL_PEER_V6）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgpmon-bgpmon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BGPMON テンプレート（BGPMON）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq_chassis-voq_chassis_v4_peer-voq_chassis_v6_peer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voq_chassis テンプレート（VOQ_CHASSIS_V4_PEER / VOQ_CHASSIS_V6_PEER）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frrcfgd_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマーデフォルト（frrcfgd 経路）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policiesconfj2-constantsbgp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        policies.conf.j2 の定数注入（constants.bgp.*）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="policies.conf.j2 の定数注入（constants.bgp.*）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-allow_list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        general テンプレート（allow_list 有効時）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq_chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        voq_chassis テンプレート
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -35509,6 +36453,178 @@
 <p><strong>スキャン証跡</strong>: <code>bgp_neighbor_handler</code> L3942 読了。keepalive/holdtime 組み合わせ制約のみ。</p>
 </blockquote>
 <!-- /handler-branching -->
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>BGP_PEER_GROUP</code> ハンドラが実装レベルで依存する外部テーブルを示す。YANG leafref 宣言のない暗黙依存を含む。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル</th>
+<th>参照フィールド</th>
+<th>方向</th>
+<th>条件</th>
+<th>依存強度</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_GLOBALS</code></td>
+<td><code>local_asn</code></td>
+<td>読み取り</td>
+<td>常時（SET/DEL 両方）</td>
+<td><strong>必須・ブロッキング</strong> — 未設定 VRF は silently drop</td>
+<td><code>frrcfgd.py</code> L2175, L2659</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP_AF</code></td>
+<td><code>route_map_in</code> / <code>route_map_out</code> / afi_safi 設定</td>
+<td>逆参照（cascade 再適用）</td>
+<td>peer-group の <code>asn</code> OP_ADD または OP_DELETE 時</td>
+<td>条件付き — <code>asn</code> 変更で AF 設定を再投入</td>
+<td><code>frrcfgd.py</code> L2551–2563, L2865</td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP</code></td>
+<td><code>route_operation</code></td>
+<td>内部キャッシュ参照</td>
+<td><code>BGP_PEER_GROUP_AF</code> に <code>route_map_in</code>/<code>out</code> が設定されたとき</td>
+<td>条件付き — 未投入でも frrcfgd エラーなし（FRR 側 no-op）</td>
+<td><code>frrcfgd.py</code> L86, L2206, L2669</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp_globals">BGP_GLOBALS — ブロッキング依存の詳細<a class="headerlink" href="#bgp_globals" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は <code>BGP_PEER_GROUP</code> の処理ループ先頭で <code>__get_vrf_asn(vrf)</code> を呼び出し、
+当該 VRF の <code>BGP_GLOBALS.local_asn</code> を取得する。<code>None</code> の場合は LOG_DEBUG を出力して
+当該エントリの処理を <strong>スキップ</strong>（エラーなし）。FRR vtysh コマンド
+<code>router bgp &lt;local_asn&gt; vrf &lt;vrf&gt;</code> の生成に必須のため、<code>BGP_GLOBALS</code> 投入前に
+<code>BGP_PEER_GROUP</code> が到達してもすべて破棄される（<code>frrcfgd.py</code> L2658–2662）。</p>
+<h3 id="bgp_peer_group_af-cascade">BGP_PEER_GROUP_AF — cascade 再適用の詳細<a class="headerlink" href="#bgp_peer_group_af-cascade" title="Permanent link">&para;</a></h3>
+<p>peer-group の <code>asn</code> が OP_ADD/DELETE されると <code>__nbr_impl_action</code> が <code>'apply'</code>/<code>'delete'</code>
+を返し、<code>__apply_dep_vrf_table</code> が <code>BGP_GLOBALS_LISTEN_PREFIX</code>（listen range）と
+<code>BGP_NEIGHBOR</code>（メンバー neighbor）を内部キャッシュから再投入する。
+<code>BGP_PEER_GROUP_AF</code> 自体は <code>bgp_table_handler_common</code> で独立購読されており、
+peer-group 作成後に AF 設定が到達した場合は順次 FRR に投入される（<code>frrcfgd.py</code> L2305, L2865）。</p>
+<h3 id="route_map">ROUTE_MAP — 間接参照の詳細<a class="headerlink" href="#route_map" title="Permanent link">&para;</a></h3>
+<p><code>ROUTE_MAP</code> は frrcfgd が直接購読するテーブル（<code>frrcfgd.py</code> L86: <code>'ROUTE_MAP': ['zebra', 'bgpd', 'ospfd']</code>）。
+<code>BGP_PEER_GROUP_AF</code> の <code>route_map_in</code>/<code>route_map_out</code> フィールド値がそのまま
+FRR <code>neighbor &lt;pg&gt; route-map &lt;name&gt; in/out</code> コマンドの <code>&lt;name&gt;</code> として使用される。
+指定した route-map が FRR に未定義でも frrcfgd はエラーを返さない（FRR 側 no-op）。</p>
+<!-- /cross-refs -->
+
+<!-- platform -->
+<h2 id="sai">プラットフォーム / SAI 差分<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
+<p><code>BGP_PEER_GROUP</code> は FRR (<code>bgpd</code>) 止まりで SAI に直接到達しないが、<code>DEVICE_METADATA</code> の <code>type</code>・<code>sub_role</code>・<code>switch_type</code>・<code>subtype</code> に基づいて Jinja2 テンプレートが切り替わり、FRR へ発行されるコマンドが大きく異なる。frrcfgd 動的更新経路 (<code>frr_mgmt_framework_config=true</code>) は Jinja2 を経由しないため platform 差なし。</p>
+<h3 id="general-peer-group-peer_typeexternal-torspine">general peer-group (<code>peer_type=external</code> / ToR・Spine など)<a class="headerlink" href="#general-peer-group-peer_typeexternal-torspine" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>bgpd/templates/general/peer-group.conf.j2</code></p>
+<table>
+<thead>
+<tr>
+<th><code>DEVICE_METADATA.type</code></th>
+<th>FRR コマンド差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ToRRouter</code></td>
+<td><code>neighbor PEER_V4/V6 allowas-in 1</code> (IPv4 + IPv6 AF)</td>
+</tr>
+<tr>
+<td><code>LeafRouter</code> かつ <code>BGP_BBR.status=enabled</code></td>
+<td><code>neighbor PEER_V4/V6 allowas-in 1</code></td>
+</tr>
+<tr>
+<td><code>SpineRouter &amp;&amp; subtype=UpstreamLC</code> または <code>UpperSpineRouter</code></td>
+<td><code>table-map SELECTIVE_ROUTE_DOWNLOAD_V4/V6</code>；anchor-route community-list + <code>TO_BGP_PEER permit 50/60</code></td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>allowas-in</code> なし、<code>table-map</code> なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="internal-peer-group-peer_typeinternal-ibgpmulti-asic">internal peer-group (<code>peer_type=internal</code> / iBGP・multi-ASIC)<a class="headerlink" href="#internal-peer-group-peer_typeinternal-ibgpmulti-asic" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>bgpd/templates/internal/peer-group.conf.j2</code></p>
+<table>
+<thead>
+<tr>
+<th><code>DEVICE_METADATA</code> 条件</th>
+<th>FRR コマンド差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type=chassis-packet</code></td>
+<td><code>neighbor INTERNAL_PEER_V4/V6 update-source Loopback4096</code> + <code>ttl-security hops 1</code></td>
+</tr>
+<tr>
+<td><code>sub_role=BackEnd</code></td>
+<td>AF 内に <code>neighbor INTERNAL_PEER_V4/V6 route-reflector-client</code>；route-map に <code>set originator-id &lt;Loopback4096&gt;</code></td>
+</tr>
+<tr>
+<td><code>switch_type=chassis-packet &amp;&amp; subtype != DownstreamLC</code></td>
+<td>FALLBACK_COMMUNITY を <code>set tag route_eligible_for_fallback_to_default_tag</code></td>
+</tr>
+<tr>
+<td>その他 (single-ASIC)</td>
+<td><code>route-reflector-client</code> なし、<code>update-source</code> なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="voq-peer-group-peer_typevoq_chassis">VoQ シャーシ peer-group (<code>peer_type=voq_chassis</code>)<a class="headerlink" href="#voq-peer-group-peer_typevoq_chassis" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>bgpd/templates/voq_chassis/peer-group.conf.j2</code></p>
+<table>
+<thead>
+<tr>
+<th><code>DEVICE_METADATA</code> 条件</th>
+<th>FRR コマンド差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgp_asn</code> フィールドあり</td>
+<td><code>neighbor VOQ_CHASSIS_V4/V6_PEER remote-as &lt;bgp_asn&gt;</code></td>
+</tr>
+<tr>
+<td><code>type=ToRRouter</code></td>
+<td><code>neighbor VOQ_CHASSIS_V4/V6_PEER allowas-in 1</code></td>
+</tr>
+<tr>
+<td>全ケース共通</td>
+<td><code>addpath-tx-all-paths</code>、<code>send-community</code> が常に付与</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgp-peer-group-peer_typemonitors">BGP モニタ peer-group (<code>peer_type=monitors</code>)<a class="headerlink" href="#bgp-peer-group-peer_typemonitors" title="Permanent link">&para;</a></h3>
+<p>ソース: <code>bgpd/templates/monitors/peer-group.conf.j2</code></p>
+<table>
+<thead>
+<tr>
+<th><code>DEVICE_METADATA</code> 条件</th>
+<th>FRR コマンド差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>switch_type=voq</code> (chassisdb.conf 存在) または <code>switch_type=chassis-packet</code></td>
+<td><code>neighbor BGPMON update-source Loopback4096</code>；IPv6 AF ブロック有効化</td>
+</tr>
+<tr>
+<td>非 VoQ・非 chassis-packet</td>
+<td><code>neighbor BGPMON update-source &lt;Loopback0 IPv4&gt;</code></td>
+</tr>
+<tr>
+<td>その他</td>
+<td><code>update-source</code> なし、IPv6 AF なし</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>根拠</strong>: <code>bgpd/templates/general/peer-group.conf.j2</code>、<code>internal/peer-group.conf.j2</code>、<code>voq_chassis/peer-group.conf.j2</code>、<code>monitors/peer-group.conf.j2</code>、<code>general/policies.conf.j2</code>、<code>internal/policies.conf.j2</code> を精読。frrcfgd.py は <code>BGP_PEER_GROUP</code> ハンドラ内に <code>switch_type</code> / <code>sub_role</code> 参照なし（動的更新経路は platform 非依存）。詳細: <code>meta/_intermediate/cdb-flow/bgp-peer-group-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
+
 <!-- defaults -->
 <h2 id="fallback-phase-a">暗黙デフォルトとコード由来 fallback (Phase A)<a class="headerlink" href="#fallback-phase-a" title="Permanent link">&para;</a></h2>
 <h3 id="yang">YANG レベル<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
@@ -35626,6 +36742,731 @@
 <h3 id="peer-group">peer-group 自動作成<a class="headerlink" href="#peer-group" title="Permanent link">&para;</a></h3>
 <p>SET 受信時、FRR に peer-group が存在しなければ <code>neighbor &lt;pg_name&gt; peer-group</code> を <strong>属性設定より先に自動発行</strong>する。失敗した場合は LOG_ERR を出力して属性設定全体を skip (<code>frrcfgd.py</code> L2793-2801)。</p>
 <!-- /defaults -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<h3 id="bgp_globals-bgp_peer_group-bgp_neighbor">必須順序: BGP_GLOBALS → BGP_PEER_GROUP → BGP_NEIGHBOR<a class="headerlink" href="#bgp_globals-bgp_peer_group-bgp_neighbor" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd.__update_bgp()</code> は <code>BGP_PEER_GROUP</code> イベント処理時に対象 VRF の <code>local_asn</code> を取得し、未設定（<code>None</code>）の場合はイベントを <strong>silently drop</strong>（<code>LOG_DEBUG</code> のみ）する。<code>BGP_GLOBALS|&lt;vrf&gt;</code> に <code>local_asn</code> が書き込まれてから <code>BGP_PEER_GROUP|&lt;vrf&gt;|&lt;pg_name&gt;</code> を書き込まなければ peer-group 設定が無音で失われる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>CONFIG_DB 書込順（必須）
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>1. BGP_GLOBALS|&lt;vrf&gt;        (local_asn を含む)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>2. BGP_PEER_GROUP|&lt;vrf&gt;|&lt;pg_name&gt;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>3. BGP_NEIGHBOR|&lt;vrf&gt;|&lt;ip&gt;  (peer_group_name で peer-group を参照する場合)
+</span></code></pre></div>
+<h3 id="frrcfgd">frrcfgd ハンドラ起動順<a class="headerlink" href="#frrcfgd" title="Permanent link">&para;</a></h3>
+<p><code>table_handler_list</code>（<code>frrcfgd.py</code> L2293-2338）は <code>BGP_GLOBALS</code>（位置 3）を <code>BGP_PEER_GROUP</code>（位置 11）より前に登録する。<code>config_mode == "unified"</code> の起動時リプレイはこの順番で CONFIG_DB を再適用するため、起動時も上記の順序が保証される。</p>
+<h3 id="peer-group_1">peer-group 自動作成の内部順序<a class="headerlink" href="#peer-group_1" title="Permanent link">&para;</a></h3>
+<p>SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コマンドより先に <code>neighbor &lt;pg_name&gt; peer-group</code> を自動発行する（<code>frrcfgd.py</code> L2793-2802）。自動作成失敗時は <code>LOG_ERR</code> を出力して属性設定全体を skip する。FRR への発行順: ① peer-group 宣言 → ② 属性コマンド群。この内部順序は frrcfgd が自動保証する。</p>
+<h3 id="bgpcfgd">bgpcfgd 経路の依存宣言<a class="headerlink" href="#bgpcfgd" title="Permanent link">&para;</a></h3>
+<p><code>BGPPeerMgrBase.__init__()</code> は <code>deps</code> に <code>DEVICE_METADATA.bgp_asn</code> を宣言し（<code>managers_bgp.py</code> L118-126）、Manager 基底クラスが deps 充足まで <code>set_handler()</code> を保留する。初回ピア追加時は <code>post_dependencies_init_complete</code> フラグにより追加 loopback テンプレートを解決してから peer-group テンプレートを確定する（<code>managers_bgp.py</code> L181-182）。</p>
+<h3 id="_18">順序違反時の挙動<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>違反パターン</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BGP_GLOBALS 未設定で BGP_PEER_GROUP を書く</td>
+<td>frrcfgd が silently drop（LOG_DEBUG のみ）</td>
+<td><code>frrcfgd.py</code> L2658-2662</td>
+</tr>
+<tr>
+<td>BGP_PEER_GROUP 未作成で BGP_NEIGHBOR の <code>peer_group_name</code> を参照</td>
+<td>vtysh エラー（peer-group 未存在）。frrcfgd は LOG_ERR → skip</td>
+<td><code>frrcfgd.py</code> L2826-2827</td>
+</tr>
+<tr>
+<td><code>neighbor &lt;pg&gt; peer-group</code> の自動発行失敗</td>
+<td>LOG_ERR 出力 + 属性設定全体を skip（<code>continue</code>）</td>
+<td><code>frrcfgd.py</code> L2800-2801</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細分析: <code>meta/_intermediate/cdb-flow/bgp-peer-group-ordering.md</code></p>
+</blockquote>
+<!-- /ordering -->
+
+<!-- failure -->
+<h2 id="retry-phase-d">失敗挙動・retry 分岐 (Phase D)<a class="headerlink" href="#retry-phase-d" title="Permanent link">&para;</a></h2>
+<h3 id="frrcfgd_1">frrcfgd 経路<a class="headerlink" href="#frrcfgd_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗トリガー</th>
+<th>結果</th>
+<th>retry</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>対象 VRF の <code>BGP_GLOBALS.local_asn</code> 未設定</td>
+<td>FRR 未投入、CONFIG_DB エントリ残存</td>
+<td>なし (silent skip)</td>
+<td><code>LOG_DEBUG: ignore table BGP_PEER_GROUP update because local_asn for VRF {} was not configured</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>peer-group 自動作成 (<code>neighbor &lt;pg&gt; peer-group</code>) vtysh 失敗</td>
+<td>属性設定全体を skip (<code>continue</code>)、<code>self.bgp_peer_group</code> にエントリ未登録</td>
+<td>なし (外部 re-SET で再試行可)</td>
+<td><code>LOG_ERR: failed to create peer-group %s for VRF %s</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>属性コマンド群 (<code>key_map.run_command</code>) vtysh 失敗</td>
+<td>部分適用の可能性あり、<code>continue</code></td>
+<td>なし</td>
+<td><code>LOG_ERR: failed running BGP neighbor config command</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>peer-group DELETE vtysh 失敗</td>
+<td><code>__delete_vrf_neighbor</code> は呼ばれる (キャッシュは更新)</td>
+<td>なし</td>
+<td><code>LOG_ERR: failed to delete VRF %s bgp neigbor %s</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>bgpd ソケット接続失敗 (起動時)</td>
+<td>frrcfgd 起動失敗、全 BGP テーブル未処理</td>
+<td>最大 100 回 / 2秒間隔</td>
+<td><code>LOG_ERR: failed to connect to frr daemon</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgpcfgd-bgppeermgrbase-bgppeergroupmgr">bgpcfgd 経路 (BGPPeerMgrBase / BGPPeerGroupMgr)<a class="headerlink" href="#bgpcfgd-bgppeermgrbase-bgppeergroupmgr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗トリガー</th>
+<th>結果</th>
+<th>retry</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>Loopback0 IPv4 未設定 かつ <code>bgp_router_id</code> 未設定</td>
+<td><code>add_peer()</code> が <code>False</code> を返す、Manager 基底クラスが deps 充足まで保留</td>
+<td>deps 充足まで自動保留</td>
+<td><code>log_warn: Loopback0 ipv4 address is not presented yet</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>BGPPeerGroupMgr.update_pg()</code> Jinja2 テンプレートエラー</td>
+<td><code>False</code> 返却、peer-group FRR 未投入 (peer 追加処理は継続)</td>
+<td>なし</td>
+<td><code>log_err: Can't render peer-group template: '%s'</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>BGPPeerGroupMgr.update_policy()</code> Jinja2 テンプレートエラー</td>
+<td><code>False</code> 返却、routing policy FRR 未投入</td>
+<td>なし</td>
+<td><code>log_err: Can't render policy template name: '%s'</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>DEVICE_NEIGHBOR_METADATA</code> 未準備 (<code>check_neig_meta=True</code> 時)</td>
+<td><code>add_peer()</code> が <code>False</code>、Manager 基底クラスが保留</td>
+<td>deps 充足まで自動保留</td>
+<td><code>log_info: DEVICE_NEIGHBOR_METADATA is not ready for neighbor</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">設計上の注意点<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>frrcfgd は運用中 retry を持たない</strong>: 失敗時は CONFIG_DB エントリを残したまま次イベントへ進む。FRR との整合性回復にはオペレータが再度 SET する必要がある</li>
+<li><strong>BGP_GLOBALS 不在 → silent skip</strong>: LOG_ERR ではなく LOG_DEBUG のみのため、障害検知にはログレベルの引き上げが必要</li>
+<li><strong>peer-group 自動作成失敗 → 属性全体 skip</strong>: <code>neighbor &lt;pg&gt; peer-group</code> の vtysh 失敗は属性コマンド群の発行を全てブロックする</li>
+<li><strong>rollback 未実装</strong>: 部分失敗時 CONFIG_DB エントリは残存し、FRR 側との整合性は保証されない</li>
+</ul>
+<blockquote>
+<p>詳細分析: <code>meta/_intermediate/cdb-flow/bgp-peer-group-failure.md</code></p>
+</blockquote>
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<h3 id="frrcfgdpy-bgp_peer_group">frrcfgd.py BGP_PEER_GROUP ハンドラ直接書込<a class="headerlink" href="#frrcfgdpy-bgp_peer_group" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd.py</code> は STATE_DB / APPL_DB / COUNTERS_DB への書込クラスをインポートしておらず、
+BGP_PEER_GROUP ハンドラの唯一の外部副作用は <strong>FRR vtysh への設定投入</strong> のみ。</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>書込</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bgpcfgd-bgppeermgrbase">bgpcfgd BGPPeerMgrBase 経由 — 間接書込<a class="headerlink" href="#bgpcfgd-bgppeermgrbase" title="Permanent link">&para;</a></h3>
+<p>BGP_PEER_GROUP の <code>asn</code> フィールド変更時、<code>frrcfgd.py</code> の
+<code>__apply_dep_vrf_table('BGP_NEIGHBOR')</code> (L2848) がメンバーネイバーを再適用し、
+<code>bgpcfgd</code> の <code>BGPPeerMgrBase.update_state_db()</code> が発火する。</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>テーブル</th>
+<th>操作</th>
+<th>キー形式</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>BGP_PEER_CONFIGURED_TABLE</code></td>
+<td>SET</td>
+<td><code>&lt;nbr_ip&gt;</code> (default VRF) または <code>&lt;vrf&gt;\|&lt;nbr_ip&gt;</code></td>
+<td>peer-group <code>asn</code> 変更で BGP_NEIGHBOR re-apply が発火した場合</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>BGP_PEER_CONFIGURED_TABLE</code></td>
+<td>DEL</td>
+<td>同上</td>
+<td>peer-group 削除でメンバー neighbor が削除された場合</td>
+</tr>
+</tbody>
+</table>
+<p>書込経路:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>BGP_PEER_GROUP (asn 変更)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─→ frrcfgd __apply_dep_vrf_table(&#39;BGP_NEIGHBOR&#39;) [frrcfgd.py L2848]
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        └─→ bgpcfgd BGPPeerMgrBase.add_peer() / del_handler()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>              └─→ update_state_db() [managers_bgp.py L239/L487]
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                    └─→ STATE_DB:BGP_PEER_CONFIGURED_TABLE SET/DEL
+</span></code></pre></div>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/bgp-peer-group-side.md</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<p><code>BGP_PEER_GROUP</code> テーブルへの変更通知は <strong>2 つの独立したデーモン</strong> が受信する。方式は下表の通り異なる。</p>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>通信方式</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frrcfgd</code> (sonic-frr-mgmt-framework)</td>
+<td><code>ExtConfigDBConnector.subscribe()</code> + <code>listen()</code></td>
+<td>Redis keyspace <code>PSUBSCRIBE __keyspace@&lt;dbId&gt;__:*</code></td>
+<td><code>bgp_neighbor_handler</code> → <code>bgp_table_handler_common</code> → <code>__update_bgp</code></td>
+</tr>
+<tr>
+<td><code>bgpcfgd</code> (sonic-bgpcfgd) の <code>BGPPeerMgrBase</code></td>
+<td><code>swsscommon.SubscriberStateTable</code> + <code>swsscommon.Select</code></td>
+<td>Redis PUBLISH/SUBSCRIBE チャネルベース</td>
+<td><code>Runner.run()</code> → <code>BGPPeerMgrBase.handler()</code> → <code>set_handler()</code> / <code>del_handler()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>orchagent</code> / <code>syncd</code> 等の APPL_DB / ASIC_DB レイヤは本テーブルを購読しない（FRR <code>bgpd</code> のソフトウェア処理で完結、SAI 非経由）。</p>
+<h3 id="frrcfgd-keyspace">frrcfgd 経路: keyspace 通知 → ハンドラ呼び出し<a class="headerlink" href="#frrcfgd-keyspace" title="Permanent link">&para;</a></h3>
+<p><code>frrcfgd</code> は <code>ConfigDBConnector</code> を継承した <code>ExtConfigDBConnector</code> を使用する。<code>subscribe_all()</code> で <code>BGP_PEER_GROUP</code> に <code>bgp_neighbor_handler</code> を登録し (<code>frrcfgd.py</code> L2303, L2359-2361)、<code>listen()</code> でバックグラウンドスレッドを起動して Redis keyspace を監視する (<code>frrcfgd.py</code> L1547-1552)。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic-db-cli CONFIG_DB hset &#39;BGP_PEER_GROUP|default|PEER_GROUP_1&#39; local_asn 65001
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ HSET 後に Redis 側で keyspace 通知発火
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Redis keyspace PUBLISH &quot;__keyspace@4__:BGP_PEER_GROUP|default|PEER_GROUP_1&quot; &quot;hset&quot;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓ ExtConfigDBConnector.listen_thread() がパターンマッチ (frrcfgd.py:1536-1543)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sub_msg_handler() → client.hgetall(key)  ← 通知後に値を再取得 (frrcfgd.py:1527-1528)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>raw_to_typed() で型変換・list ソート
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ↓ _ConfigDBConnector__fire(&quot;BGP_PEER_GROUP&quot;, &quot;default|PEER_GROUP_1&quot;, data)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>bgp_neighbor_handler(table, key, data)
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  → bgp_table_handler_common(table, key, data, [{&#39;keepalive&#39;, &#39;holdtime&#39;}]) (frrcfgd.py:3942-3943)
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  → bgp_message キューへ enqueue → __update_bgp() で処理 (frrcfgd.py:2790-2863)
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>  → peer-group 未存在なら vtysh &quot;neighbor PEER_GROUP_1 peer-group&quot; を先行実行 (frrcfgd.py:2793-2802)
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>  → 属性コマンド群 key_map.run_command() → vtysh 送出
+</span></code></pre></div>
+<ul>
+<li>keyspace 通知のペイロードは操作名 (<code>hset</code> / <code>del</code>) のみ。フィールド値は <code>client.hgetall(key)</code> で再取得する (<code>frrcfgd.py</code> L1527-1528)。</li>
+<li><code>data is None → DEL、それ以外 → SET</code> の 2 値判定 (<code>ConfigDBConnector</code> 標準動作)。</li>
+<li><code>bgp_neighbor_handler</code> は <code>comb_attr_list=[{'keepalive', 'holdtime'}]</code> を渡す。keepalive / holdtime は両方揃わないと FRR タイマーコマンドが生成されない (<code>frrcfgd.py</code> L3942-3943)。</li>
+<li><code>listen_thread</code> は専用スレッドで動作し、<code>bgp_message</code> キュー経由で <code>__update_bgp</code> に直列化される (<code>frrcfgd.py</code> L1551, L3928-3930)。</li>
+<li>起動時は <code>subscribe_all()</code> 前に <code>config_db.get_table_data([...])</code> で全テーブルの一括スナップショットを取得し (<code>frrcfgd.py</code> L2340)、<code>config_mode == "unified"</code> 時は config replay を実行する (<code>frrcfgd.py</code> L2344-2357)。また、起動時に <code>pg_table = self.config_db.get_table('BGP_PEER_GROUP')</code> で既存 peer-group を <code>self.bgp_peer_group</code> キャッシュに読み込む (<code>frrcfgd.py</code> L2187-2191)。</li>
+</ul>
+<h3 id="bgpcfgd-subscriberstatetable-runner">bgpcfgd 経路: SubscriberStateTable + Runner<a class="headerlink" href="#bgpcfgd-subscriberstatetable-runner" title="Permanent link">&para;</a></h3>
+<p><code>bgpcfgd</code> は <code>swsscommon.SubscriberStateTable</code> を使ったチャネルベース購読を採用する。<code>Runner.add_manager()</code> が <code>BGPPeerMgrBase</code> を登録すると、対応する CONFIG_DB テーブル (<code>CFG_BGP_NEIGHBOR_TABLE_NAME</code> 等) の <code>SubscriberStateTable</code> を生成して <code>swsscommon.Select</code> に追加する (<code>runner.py</code> L49-51)。<strong>bgpcfgd は <code>BGP_PEER_GROUP</code> テーブルを直接購読しない</strong>。<code>BGPPeerGroupMgr</code> (<code>managers_bgp.py</code> L15-84) は <code>BGPPeerMgrBase.add_peer()</code> から呼ばれる内部ヘルパーであり、peer-group の Jinja2 テンプレートをレンダリングして <code>cfg_mgr.push()</code> 経由で FRR に送出する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>CONFIG_DB BGP_NEIGHBOR / BGP_PEER_RANGE などの変更
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓ SubscriberStateTable が PUBLISH 通知を受信
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Runner.run() → selector.select() → subscriber.pop() → key, op, fvs
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  ↓ callback = BGPPeerMgrBase.handler()
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>set_handler() / del_handler()
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  → add_peer() 内で BGPPeerGroupMgr.update() を呼出 (managers_bgp.py:227)
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    → update_policy() / update_pg() → cfg_mgr.push(cmd) → FRR へ vtysh コマンド発行
+</span></code></pre></div>
+<p>CONFIG_DB は永続前提のため TTL は設定されない。</p>
+<h3 id="_20">サービス再起動トリガー<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>契機</th>
+<th>操作</th>
+<th>コード</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGP_PEER_GROUP</code> 変更 (frrcfgd 経路)</td>
+<td>FRR <code>bgpd</code> への vtysh コマンド送出のみ。<code>bgpd</code> プロセス restart なし</td>
+<td><code>frrcfgd.py</code> L2790-2863, L3942</td>
+</tr>
+<tr>
+<td><code>BGP_PEER_GROUP</code> 変更 (bgpcfgd 経路)</td>
+<td>bgpcfgd は BGP_PEER_GROUP を直接購読せず。BGP_NEIGHBOR 変更時に <code>BGPPeerGroupMgr.update()</code> 経由で peer-group テンプレが更新される</td>
+<td><code>managers_bgp.py</code> L156, L227</td>
+</tr>
+<tr>
+<td><code>local_asn</code> 未設定 VRF</td>
+<td>frrcfgd が silent drop (LOG_DEBUG のみ)。bgpcfgd は <code>DEVICE_METADATA.bgp_asn</code> deps 充足まで保留</td>
+<td><code>frrcfgd.py</code> L2658-2662, <code>managers_bgp.py</code> L119</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1506-1555, 1536-1543, 2187-2191, 2303, 2340, 2344-2357, 2359-2361, 2790-2863, 3942-3943</code> (keyspace listen / subscribe / peer-group ハンドラ / 起動スナップショット); <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:31-73</code> (SubscriberStateTable + Select ループ); <code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:15-84, 156-157, 227</code> (BGPPeerGroupMgr / add_peer); 詳細分析 <code>meta/_intermediate/cdb-flow/bgp-peer-group-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>BGP_PEER_GROUP の設定は frrcfgd の <code>cmn_key_map</code> (フィールド→FRR コマンドマッピング) 経由で FRR に投入されるが、bgpcfgd が使う Jinja2 テンプレート群（<code>peer-group.conf.j2</code> / <code>policies.conf.j2</code>）にはいくつかのハードコード定数が存在する。</p>
+<h3 id="peer-group_2">peer-group 名定数<a class="headerlink" href="#peer-group_2" title="Permanent link">&para;</a></h3>
+<p>各テンプレートディレクトリがハードコードする peer-group 名。CONFIG_DB のキーとして使われる <code>&lt;peer_group_name&gt;</code> がこの値に固定される。</p>
+<table>
+<thead>
+<tr>
+<th>テンプレートパス</th>
+<th>peer-group 名</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgpd/templates/general/peer-group.conf.j2</code></td>
+<td><code>PEER_V4</code>（IPv4）、<code>PEER_V6</code>（IPv6）</td>
+<td><code>general/peer-group.conf.j2:4,5</code></td>
+</tr>
+<tr>
+<td><code>bgpd/templates/internal/peer-group.conf.j2</code></td>
+<td><code>INTERNAL_PEER_V4</code>（IPv4）、<code>INTERNAL_PEER_V6</code>（IPv6）</td>
+<td><code>internal/peer-group.conf.j2:4,5</code></td>
+</tr>
+<tr>
+<td><code>bgpd/templates/BGPMON/peer-group.conf.j2</code></td>
+<td><code>BGPMON</code></td>
+<td><code>monitors/peer-group.conf.j2:8</code></td>
+</tr>
+<tr>
+<td><code>bgpd/templates/voq_chassis/peer-group.conf.j2</code></td>
+<td><code>VOQ_CHASSIS_V4_PEER</code>（IPv4）、<code>VOQ_CHASSIS_V6_PEER</code>（IPv6）</td>
+<td><code>voq_chassis/peer-group.conf.j2:4,8</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="peer-group-config_db">peer-group 固定設定（CONFIG_DB 値非依存）<a class="headerlink" href="#peer-group-config_db" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd テンプレート経路でのみ適用される固定設定。frrcfgd 経路（frr_mgmt_framework_config=true 時）は CONFIG_DB フィールド値をそのまま使うため、下記はハードコードされない。</p>
+<h4 id="general-peer_v4-peer_v6">general テンプレート（<code>PEER_V4</code> / <code>PEER_V6</code>）<a class="headerlink" href="#general-peer_v4-peer_v6" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>ハードコード値</th>
+<th>適用条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allowas-in</code></td>
+<td><code>1</code></td>
+<td><code>type == 'ToRRouter'</code>、または <code>type == 'LeafRouter'</code> かつ <code>BGP_BBR.status == 'enabled'</code></td>
+<td><code>general/peer-group.conf.j2:8,11,23,26</code></td>
+</tr>
+<tr>
+<td><code>soft-reconfiguration inbound</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>general/peer-group.conf.j2:14,29</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv4 inbound）</td>
+<td><code>FROM_BGP_PEER_V4</code></td>
+<td>常時</td>
+<td><code>general/peer-group.conf.j2:15</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv4 outbound）</td>
+<td><code>TO_BGP_PEER_V4</code></td>
+<td>常時</td>
+<td><code>general/peer-group.conf.j2:16</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv6 inbound）</td>
+<td><code>FROM_BGP_PEER_V6</code></td>
+<td>常時</td>
+<td><code>general/peer-group.conf.j2:30</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv6 outbound）</td>
+<td><code>TO_BGP_PEER_V6</code></td>
+<td>常時</td>
+<td><code>general/peer-group.conf.j2:31</code></td>
+</tr>
+<tr>
+<td><code>table-map</code> 名（IPv4）</td>
+<td><code>SELECTIVE_ROUTE_DOWNLOAD_V4</code></td>
+<td><code>type == 'SpineRouter' &amp;&amp; subtype == 'UpstreamLC'</code>、または <code>type == 'UpperSpineRouter'</code></td>
+<td><code>general/peer-group.conf.j2:18</code></td>
+</tr>
+<tr>
+<td><code>table-map</code> 名（IPv6）</td>
+<td><code>SELECTIVE_ROUTE_DOWNLOAD_V6</code></td>
+<td>同上</td>
+<td><code>general/peer-group.conf.j2:33</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="internal-internal_peer_v4-internal_peer_v6">internal テンプレート（<code>INTERNAL_PEER_V4</code> / <code>INTERNAL_PEER_V6</code>）<a class="headerlink" href="#internal-internal_peer_v4-internal_peer_v6" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>ハードコード値</th>
+<th>適用条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allowas-in</code></td>
+<td><code>1</code></td>
+<td>常時（IPv4/IPv6 両 AF）</td>
+<td><code>internal/peer-group.conf.j2:15,29</code></td>
+</tr>
+<tr>
+<td><code>soft-reconfiguration inbound</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>internal/peer-group.conf.j2:14,28</code></td>
+</tr>
+<tr>
+<td><code>send-community</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>internal/peer-group.conf.j2:18,32</code></td>
+</tr>
+<tr>
+<td><code>route-reflector-client</code></td>
+<td>—</td>
+<td><code>sub_role == 'BackEnd'</code></td>
+<td><code>internal/peer-group.conf.j2:12,26</code></td>
+</tr>
+<tr>
+<td><code>update-source</code></td>
+<td><code>Loopback4096</code></td>
+<td><code>switch_type == 'chassis-packet'</code></td>
+<td><code>internal/peer-group.conf.j2:7,21</code></td>
+</tr>
+<tr>
+<td><code>ttl-security hops</code></td>
+<td><code>1</code></td>
+<td><code>switch_type == 'chassis-packet'</code></td>
+<td><code>internal/peer-group.conf.j2:8,22</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv4 inbound）</td>
+<td><code>FROM_BGP_INTERNAL_PEER_V4</code></td>
+<td>常時</td>
+<td><code>internal/peer-group.conf.j2:16</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv4 outbound）</td>
+<td><code>TO_BGP_INTERNAL_PEER_V4</code></td>
+<td>常時</td>
+<td><code>internal/peer-group.conf.j2:17</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv6 inbound）</td>
+<td><code>FROM_BGP_INTERNAL_PEER_V6</code></td>
+<td>常時</td>
+<td><code>internal/peer-group.conf.j2:30</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv6 outbound）</td>
+<td><code>TO_BGP_INTERNAL_PEER_V6</code></td>
+<td>常時</td>
+<td><code>internal/peer-group.conf.j2:31</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="bgpmon-bgpmon">BGPMON テンプレート（<code>BGPMON</code>）<a class="headerlink" href="#bgpmon-bgpmon" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>ハードコード値</th>
+<th>適用条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maximum-prefix</code></td>
+<td><code>1</code></td>
+<td>常時（IPv4/IPv6 両 AF）</td>
+<td><code>monitors/peer-group.conf.j2:20,29</code></td>
+</tr>
+<tr>
+<td><code>send-community</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>monitors/peer-group.conf.j2:19,28</code></td>
+</tr>
+<tr>
+<td><code>update-source</code></td>
+<td><code>Loopback4096</code></td>
+<td><code>switch_type == 'voq'</code> または <code>chassis-packet</code></td>
+<td><code>monitors/peer-group.conf.j2:10</code></td>
+</tr>
+<tr>
+<td>route-map 名（inbound）</td>
+<td><code>FROM_BGPMON</code></td>
+<td>常時</td>
+<td><code>monitors/peer-group.conf.j2:17,26</code></td>
+</tr>
+<tr>
+<td>route-map 名（outbound）</td>
+<td><code>TO_BGPMON</code></td>
+<td>常時</td>
+<td><code>monitors/peer-group.conf.j2:18,27</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="voq_chassis-voq_chassis_v4_peer-voq_chassis_v6_peer">voq_chassis テンプレート（<code>VOQ_CHASSIS_V4_PEER</code> / <code>VOQ_CHASSIS_V6_PEER</code>）<a class="headerlink" href="#voq_chassis-voq_chassis_v4_peer-voq_chassis_v6_peer" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>ハードコード値</th>
+<th>適用条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allowas-in</code></td>
+<td><code>1</code></td>
+<td><code>type == 'ToRRouter'</code></td>
+<td><code>voq_chassis/peer-group.conf.j2:15,26</code></td>
+</tr>
+<tr>
+<td><code>addpath-tx-all-paths</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:18,29</code></td>
+</tr>
+<tr>
+<td><code>soft-reconfiguration inbound</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:19,30</code></td>
+</tr>
+<tr>
+<td><code>send-community</code></td>
+<td>—</td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:22,33</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv4 inbound）</td>
+<td><code>FROM_VOQ_CHASSIS_V4_PEER</code></td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:20</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv4 outbound）</td>
+<td><code>TO_VOQ_CHASSIS_V4_PEER</code></td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:21</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv6 inbound）</td>
+<td><code>FROM_VOQ_CHASSIS_V6_PEER</code></td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:31</code></td>
+</tr>
+<tr>
+<td>route-map 名（IPv6 outbound）</td>
+<td><code>TO_VOQ_CHASSIS_V6_PEER</code></td>
+<td>常時</td>
+<td><code>voq_chassis/peer-group.conf.j2:32</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="frrcfgd_2">タイマーデフォルト（frrcfgd 経路）<a class="headerlink" href="#frrcfgd_2" title="Permanent link">&para;</a></h3>
+<p>frrcfgd は <code>keepalive</code> と <code>holdtime</code> の <strong>両方</strong> が CONFIG_DB に存在する場合のみ <code>neighbor &lt;pg&gt; timers &lt;ka&gt; &lt;ht&gt;</code> を生成する（<code>comb_attr_list</code> 制約）。いずれか一方が欠けると FRR デフォルト値が使われる。</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>FRR デフォルト</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>keepalive</td>
+<td><code>60</code> 秒</td>
+<td>FRR BGP デフォルト（CONFIG_DB 省略時）</td>
+</tr>
+<tr>
+<td>holdtime</td>
+<td><code>180</code> 秒</td>
+<td>FRR BGP デフォルト（CONFIG_DB 省略時）</td>
+</tr>
+</tbody>
+</table>
+<p><code>frrcfgd.py</code> L1874: <code>(['keepalive', 'holdtime'], '{no:no-prefix}neighbor {} timers {} {}')</code> — 両フィールド揃い時のみコマンド生成。</p>
+<h3 id="policiesconfj2-constantsbgp">policies.conf.j2 の定数注入（<code>constants.bgp.*</code>）<a class="headerlink" href="#policiesconfj2-constantsbgp" title="Permanent link">&para;</a></h3>
+<p>bgpcfgd テンプレートが参照する runtime 定数。値はデプロイ時の <code>constants.json</code> で注入される。テスト参照値を示す。</p>
+<h4 id="general-allow_list">general テンプレート（allow_list 有効時）<a class="headerlink" href="#general-allow_list" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>定数キー</th>
+<th>テスト参照値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constants.bgp.allow_list.drop_community</code></td>
+<td><code>12345:12345</code></td>
+<td><code>ALLOW_LIST_DEPLOYMENT_ID_0_V4/V6 permit 65535</code> での <code>set community</code></td>
+<td><code>general/policies.conf.j2:25,28,32</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.route_eligible_for_fallback_to_default_tag</code></td>
+<td><code>203</code></td>
+<td>SpineRouter UpstreamLC で <code>FROM_BGP_PEER_V4/V6 permit 13</code> の <code>set tag</code></td>
+<td><code>general/policies.conf.j2:50,75</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.route_do_not_send_appdb_tag</code></td>
+<td><code>202</code></td>
+<td>非 chassis-packet の UpstreamLC SpineRouter の <code>set tag</code></td>
+<td><code>general/policies.conf.j2:49,72</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.internal_fallback_community</code></td>
+<td><code>1111:2222</code></td>
+<td>UpstreamLC SpineRouter の <code>set community ... additive</code></td>
+<td><code>general/policies.conf.j2:53,76</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.local_anchor_route_community</code></td>
+<td><code>12345:555</code></td>
+<td>UpperSpineRouter/UpstreamLC の <code>LOCAL_ANCHOR_ROUTE_COMMUNITY</code></td>
+<td><code>general/policies.conf.j2:107,121,138</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.anchor_route_community</code></td>
+<td><code>12345:666</code></td>
+<td>UpperSpineRouter の <code>ANCHOR_ROUTE_COMMUNITY</code></td>
+<td><code>general/policies.conf.j2:106,121</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.anchor_contributing_route_community</code></td>
+<td><code>12345:777</code></td>
+<td>UpperSpineRouter の <code>TO_BGP_PEER</code> で <code>set community ... additive</code></td>
+<td><code>general/policies.conf.j2:108,125,134</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="voq_chassis">voq_chassis テンプレート<a class="headerlink" href="#voq_chassis" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>定数キー</th>
+<th>テスト参照値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constants.bgp.internal_community</code></td>
+<td><code>12345:556</code></td>
+<td><code>DEVICE_INTERNAL_COMMUNITY</code> community-list、<code>TO_VOQ_CHASSIS</code> で <code>set community</code></td>
+<td><code>voq_chassis/policies.conf.j2:5,33,68</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.internal_fallback_community</code></td>
+<td><code>1111:2222</code></td>
+<td><code>DEVICE_INTERNAL_FALLBACK_COMMUNITY</code> community-list</td>
+<td><code>voq_chassis/policies.conf.j2:6</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.local_anchor_route_community</code></td>
+<td><code>12345:555</code></td>
+<td><code>LOCAL_ANCHOR_ROUTE_COMMUNITY</code>、<code>TO_VOQ_CHASSIS deny 15</code></td>
+<td><code>voq_chassis/policies.conf.j2:4,36,71</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.internal_community_match_tag</code></td>
+<td><code>101</code></td>
+<td><code>FROM_VOQ_CHASSIS permit 1/2</code> の <code>set tag</code></td>
+<td><code>voq_chassis/policies.conf.j2:12,47</code></td>
+</tr>
+<tr>
+<td><code>constants.bgp.route_eligible_for_fallback_to_default_tag</code></td>
+<td><code>203</code></td>
+<td>非 UpstreamLC で <code>FROM_VOQ_CHASSIS permit 3/4</code> の <code>set tag</code></td>
+<td><code>voq_chassis/policies.conf.j2:26,61</code></td>
+</tr>
+<tr>
+<td>local-preference (NO_EXPORT 一致時)</td>
+<td><code>80</code></td>
+<td><code>FROM_VOQ_CHASSIS V4 permit 2</code> / <code>V6 permit 3</code> の <code>set local-preference</code></td>
+<td><code>voq_chassis/policies.conf.j2:16,50</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
 
 <!-- glossary-links-injected: d4d0b1f9b453 -->
 

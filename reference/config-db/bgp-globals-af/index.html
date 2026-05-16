@@ -25025,6 +25025,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-literal-global_af_key_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR コマンド literal (global_af_key_map)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vtysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vtysh コマンドプレフィクス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#address-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        address-family 文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dampening-distance-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dampening / distance FRR 側暗黙デフォルト値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hdl_enum_conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hdl_enum_conversion 変換定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35834,6 +35906,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frr-literal-global_af_key_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FRR コマンド literal (global_af_key_map)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vtysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vtysh コマンドプレフィクス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#address-family" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        address-family 文字列定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dampening-distance-frr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dampening / distance FRR 側暗黙デフォルト値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hdl_enum_conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hdl_enum_conversion 変換定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36856,6 +37000,312 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <p>DEL (<code>data is None</code>) では <code>del_table=True</code> が設定され AF 設定全体を FRR から削除 (<code>frrcfgd.py:3918</code>)。プロセス再起動は発生しない。</p>
 <p>詳細根拠: <code>meta/_intermediate/cdb-flow/bgp-globals-af-pubsub.md</code>。</p>
 <!-- /pubsub -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="frr-literal-global_af_key_map">FRR コマンド literal (<code>global_af_key_map</code>)<a class="headerlink" href="#frr-literal-global_af_key_map" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>distance bgp</code> コマンド雛形</td>
+<td><code>{no:no-prefix}distance bgp {} {} {}</code></td>
+<td><code>ebgp_route_distance</code> / <code>ibgp_route_distance</code> / <code>local_route_distance</code> の 3 フィールド揃い時に <code>address-family</code> 配下へ投入</td>
+<td><code>frrcfgd.py:1824-1826</code></td>
+</tr>
+<tr>
+<td><code>rd vpn export</code> コマンド</td>
+<td><code>{no:no-prefix}rd vpn export {}</code></td>
+<td><code>rd_vpn_export</code> で VPN RD 設定</td>
+<td><code>frrcfgd.py:1827</code></td>
+</tr>
+<tr>
+<td><code>rt vpn export</code> / <code>import</code> / <code>both</code> コマンド</td>
+<td><code>{no:no-prefix}rt vpn export/import/both {}</code></td>
+<td>VPN RT を方向別に設定</td>
+<td><code>frrcfgd.py:1828-1830</code></td>
+</tr>
+<tr>
+<td><code>export vpn</code> / <code>import vpn</code> コマンド</td>
+<td><code>{no:no-prefix}export vpn</code> / <code>{no:no-prefix}import vpn</code></td>
+<td>VPN export/import の有効化フラグ (boolean)</td>
+<td><code>frrcfgd.py:1831-1832</code></td>
+</tr>
+<tr>
+<td><code>redistribute connected</code> コマンド</td>
+<td><code>{no:no-prefix}redistribute connected</code></td>
+<td>connected route を redistribute (boolean)</td>
+<td><code>frrcfgd.py:1833</code></td>
+</tr>
+<tr>
+<td><code>redistribute static route-map</code> コマンド</td>
+<td><code>{no:no-prefix}redistribute static route-map {}</code></td>
+<td>static route を route-map 付き redistribute</td>
+<td><code>frrcfgd.py:1834</code></td>
+</tr>
+<tr>
+<td><code>route-map vpn export/import</code> コマンド</td>
+<td><code>{no:no-prefix}route-map vpn export/import {}</code></td>
+<td>VPN export/import 用 route-map を設定</td>
+<td><code>frrcfgd.py:1835-1836</code></td>
+</tr>
+<tr>
+<td><code>maximum-paths</code> コマンド</td>
+<td><code>{no:no-prefix}maximum-paths {}</code></td>
+<td><code>max_ebgp_paths</code> で eBGP multipath 上限設定</td>
+<td><code>frrcfgd.py:1837</code></td>
+</tr>
+<tr>
+<td><code>maximum-paths ibgp</code> コマンド</td>
+<td><code>{no:no-prefix}maximum-paths ibgp {} {:match-clust-len}</code></td>
+<td><code>max_ibgp_paths</code> + <code>ibgp_equal_cluster_length</code> で iBGP multipath 設定</td>
+<td><code>frrcfgd.py:1838-1839</code></td>
+</tr>
+<tr>
+<td><code>match-clust-len</code> 展開</td>
+<td><code>equal-cluster-length</code></td>
+<td><code>ibgp_equal_cluster_length=true</code> のとき付与されるキーワード</td>
+<td><code>frrcfgd.py:813</code></td>
+</tr>
+<tr>
+<td><code>table-map</code> コマンド</td>
+<td><code>{no:no-prefix}table-map {}</code></td>
+<td><code>route_download_filter</code> で FIB download フィルタを設定</td>
+<td><code>frrcfgd.py:1840</code></td>
+</tr>
+<tr>
+<td><code>bgp dampening</code> コマンド雛形</td>
+<td><code>{no:no-prefix}bgp dampening {} {} {} {}</code></td>
+<td><code>route_flap_dampen</code> 系 4 フィールドで dampening 設定</td>
+<td><code>frrcfgd.py:1841-1845</code></td>
+</tr>
+<tr>
+<td><code>advertise-all-vni</code> コマンド</td>
+<td><code>{no:no-prefix}advertise-all-vni</code></td>
+<td>全 VNI 広告を有効化 (l2vpn_evpn AF、boolean)</td>
+<td><code>frrcfgd.py:1846</code></td>
+</tr>
+<tr>
+<td><code>advertise-svi-ip</code> コマンド</td>
+<td><code>{no:no-prefix}advertise-svi-ip</code></td>
+<td>SVI IP を VTEP 広告 (boolean)</td>
+<td><code>frrcfgd.py:1847</code></td>
+</tr>
+<tr>
+<td><code>advertise-default-gw</code> コマンド</td>
+<td><code>{no:no-prefix}advertise-default-gw</code></td>
+<td>デフォルト GW 広告 (boolean)</td>
+<td><code>frrcfgd.py:1848</code></td>
+</tr>
+<tr>
+<td><code>advertise ipv4/ipv6 unicast</code> コマンド</td>
+<td><code>{no:no-prefix}advertise ipv4/ipv6 unicast</code></td>
+<td>unicast prefix を EVPN へ広告 (boolean)</td>
+<td><code>frrcfgd.py:1849-1850</code></td>
+</tr>
+<tr>
+<td><code>default-originate ipv4/ipv6</code> コマンド</td>
+<td><code>{no:no-prefix}default-originate ipv4/ipv6</code></td>
+<td>default route の originate (boolean)</td>
+<td><code>frrcfgd.py:1851-1852</code></td>
+</tr>
+<tr>
+<td><code>autort</code> コマンド</td>
+<td><code>{no:no-prefix}autort {}</code></td>
+<td>RFC8365 互換 RT 自動生成 (<code>hdl_enum_conversion</code> で <code>_</code> → <code>-</code> 変換)</td>
+<td><code>frrcfgd.py:1853</code></td>
+</tr>
+<tr>
+<td><code>flooding</code> コマンド</td>
+<td><code>{no:no-prefix}flooding {}</code></td>
+<td>BUM flooding モード設定</td>
+<td><code>frrcfgd.py:1854</code></td>
+</tr>
+<tr>
+<td><code>dup-addr-detection</code> コマンド</td>
+<td><code>{no:no-prefix}dup-addr-detection</code></td>
+<td>DAD 有効化 (boolean)</td>
+<td><code>frrcfgd.py:1855</code></td>
+</tr>
+<tr>
+<td><code>dup-addr-detection max-moves</code> コマンド</td>
+<td><code>{no:no-prefix}dup-addr-detection max-moves {} time {}</code></td>
+<td>DAD 上限設定 (<code>dad-max-moves</code> + <code>dad-time</code>)</td>
+<td><code>frrcfgd.py:1856-1857</code></td>
+</tr>
+<tr>
+<td><code>dup-addr-detection freeze</code> コマンド</td>
+<td><code>{no:no-prefix}dup-addr-detection freeze {}</code></td>
+<td>DAD freeze 時間設定</td>
+<td><code>frrcfgd.py:1858</code></td>
+</tr>
+<tr>
+<td><code>rd</code> コマンド</td>
+<td><code>{no:no-prefix}rd {}</code></td>
+<td><code>route-distinguisher</code> で RD 設定</td>
+<td><code>frrcfgd.py:1859</code></td>
+</tr>
+<tr>
+<td><code>route-target import/export</code> コマンド</td>
+<td><code>{no:no-prefix}route-target import/export {}</code></td>
+<td>RT 設定 (<code>import-rts</code> / <code>export-rts</code>)</td>
+<td><code>frrcfgd.py:1860-1861</code></td>
+</tr>
+<tr>
+<td><code>import vrf</code> コマンド</td>
+<td><code>{no:no-prefix}import vrf {}</code></td>
+<td>VRF import 元設定</td>
+<td><code>frrcfgd.py:1862</code></td>
+</tr>
+<tr>
+<td><code>import vrf route-map</code> コマンド</td>
+<td><code>{no:no-prefix}import vrf route-map {}</code></td>
+<td>VRF import route-map 設定</td>
+<td><code>frrcfgd.py:1863</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vtysh">vtysh コマンドプレフィクス定数<a class="headerlink" href="#vtysh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vtysh prefix L1</td>
+<td><code>configure terminal</code></td>
+<td>コマンド投入時の先頭行</td>
+<td><code>frrcfgd.py:2776</code></td>
+</tr>
+<tr>
+<td>vtysh prefix L2</td>
+<td><code>router bgp {} vrf {}</code></td>
+<td>BGP インスタンス選択 (<code>local_asn</code> と <code>vrf</code> を埋め込み)</td>
+<td><code>frrcfgd.py:2777</code></td>
+</tr>
+<tr>
+<td>vtysh prefix L3</td>
+<td><code>address-family {} {}</code></td>
+<td><code>af</code>/<code>ip_type</code> を埋め込んで AF コンテキストに入る</td>
+<td><code>frrcfgd.py:2778</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="address-family">address-family 文字列定数<a class="headerlink" href="#address-family" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AF 分割文字</td>
+<td><code>_</code></td>
+<td><code>&lt;afi_safi&gt;</code> 文字列を <code>split('_')</code> で af と ip_type に分解</td>
+<td><code>frrcfgd.py:2772</code></td>
+</tr>
+<tr>
+<td>小文字正規化</td>
+<td><code>.lower()</code></td>
+<td>key を小文字化してから split (大文字混在を吸収)</td>
+<td><code>frrcfgd.py:2772</code></td>
+</tr>
+<tr>
+<td>cache key フォーマット</td>
+<td><code>BGP_GLOBALS_AF&amp;&amp;{}|{}</code></td>
+<td><code>vrf</code> と <code>key.lower()</code> を埋め込んだ一時キャッシュキー</td>
+<td><code>frrcfgd.py:2774</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dampening-distance-frr">dampening / distance FRR 側暗黙デフォルト値<a class="headerlink" href="#dampening-distance-frr" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FRR <code>DEFAULT_HALF_LIFE</code></td>
+<td><code>15</code> 分</td>
+<td><code>route_flap_dampen=true</code> のみ設定時に FRR が使う dampening half-life</td>
+<td>FRR <code>bgpd/bgp_damp.h</code></td>
+</tr>
+<tr>
+<td>FRR <code>DEFAULT_REUSE</code></td>
+<td><code>750</code></td>
+<td>dampening reuse threshold FRR 既定値</td>
+<td>FRR <code>bgpd/bgp_damp.h</code></td>
+</tr>
+<tr>
+<td>FRR <code>DEFAULT_SUPPRESS</code></td>
+<td><code>2000</code></td>
+<td>dampening suppress threshold FRR 既定値</td>
+<td>FRR <code>bgpd/bgp_damp.h</code></td>
+</tr>
+<tr>
+<td>FRR eBGP distance</td>
+<td><code>20</code></td>
+<td><code>distance bgp</code> 未設定時の eBGP administrative distance</td>
+<td>FRR <code>bgpd</code> 初期値</td>
+</tr>
+<tr>
+<td>FRR iBGP distance</td>
+<td><code>200</code></td>
+<td><code>distance bgp</code> 未設定時の iBGP administrative distance</td>
+<td>FRR <code>bgpd</code> 初期値</td>
+</tr>
+<tr>
+<td>FRR local distance</td>
+<td><code>200</code></td>
+<td><code>distance bgp</code> 未設定時の local administrative distance</td>
+<td>FRR <code>bgpd</code> 初期値</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hdl_enum_conversion">hdl_enum_conversion 変換定数<a class="headerlink" href="#hdl_enum_conversion" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>enum 置換文字</td>
+<td><code>_</code> → <code>-</code></td>
+<td><code>autort</code> フィールド値の <code>_</code> を <code>-</code> に置換して FRR コマンドに渡す (例: <code>rfc8365_compatible</code> → <code>rfc8365-compatible</code>)</td>
+<td><code>frrcfgd.py:1393</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>frrcfgd.py</code> L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。中間ファイル: <code>meta/_intermediate/cdb-flow/bgp-globals-af-constants.md</code></p>
+</blockquote>
+<!-- /constants -->
 
 <!-- glossary-links-injected: 803f36c2634d -->
 
