@@ -401,4 +401,51 @@ per-server 未設定 かつ SYSLOG_CONFIG|GLOBAL 未設定
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1695-1743 (RSyslogCfg) -->
 <!-- /defaults -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+rsyslog 設定生成スクリプト (`rsyslog-config.sh`) および Jinja2 テンプレートに含まれるプラットフォーム固有分岐を示す。
+
+### Multi-ASIC プラットフォーム差異
+
+`rsyslog-config.sh` は起動時に `DEVICE_METADATA|localhost` の `platform` フィールドから `asic.conf` を読み込み、`NUM_ASIC` 値に応じて rsyslog 受信 IP アドレスを切り替える。
+
+| 条件 | `udp_server_ip` の決定方法 | 理由 |
+|------|--------------------------|------|
+| `NUM_ASIC == 1`（シングル NPU） | `lo` (loopback) の先頭 IPv4 アドレス | コンテナがホストの loopback 経由で syslog を送信するため |
+| `NUM_ASIC > 1`（マルチ NPU） | `docker0` の IPv4 アドレス | ネットワーク namespace 内のコンテナが docker0 ブリッジ経由で syslog を送信するため |
+
+また、`rsyslog.conf.j2` は `docker0_ip` 変数が非空かつ `udp_server_ip` と異なる場合にのみ、`docker0` 上への追加 UDP/RELP 受信設定を出力する。シングル NPU では `docker0_ip` は空のままとなる（`dhcp_server` Feature が有効な場合を除く）。
+
+```bash
+# rsyslog-config.sh L15-18
+if [[ ($NUM_ASIC -gt 1) ]]; then
+    udp_server_ip=$(ip -o -4 addr list docker0 | awk '{print $4}' | cut -d/ -f1)
+else
+    udp_server_ip=$(ip -j -4 addr list lo scope host | jq -r -M '.[0].addr_info[0].local')
+fi
+```
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh L3-19 -->
+
+### コンテナ内 rsyslog のプラットフォームフィルタ (pmon)
+
+`rsyslog-container.conf.j2` は `pmon` コンテナ向けに Mellanox 特定プラットフォーム (MSN2700 / MSN2700a1 / MSN2410) 上で PSU ファームウェアに起因するノイズログを抑制するフィルタを適用する。このフィルタは `pmon` コンテナに限定される。SYSLOG_SERVER テーブルのリモート転送設定には影響しない。
+
+```jinja2
+# rsyslog-container.conf.j2 L54-56
+if ($.PLATFORM == "x86_64-mlnx_msn2700-r0" or $.PLATFORM == "x86_64-mlnx_msn2700a1-r0"
+    or $.PLATFORM == "x86_64-mlnx_msn2410-r0") then {
+    if $programname contains "sensord" and $msg contains "Error getting sensor data: dps460/#" then stop
+}
+```
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog-container.conf.j2 L44-57 -->
+
+### SmartSwitch / DPU
+
+ソースコード調査の結果、SmartSwitch DPU 固有の rsyslog 設定生成ロジックは確認されなかった。DPU 上でも同一の `rsyslog-config.sh` + `rsyslog.conf.j2` が使用される。DPU の `NUM_ASIC` は通常 1 であるため、シングル NPU と同等の loopback 受信設定となる。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 639b97382f4c -->
