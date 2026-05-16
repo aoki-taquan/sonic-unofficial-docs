@@ -231,6 +231,57 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+> **調査根拠**: `managers_bgp.py`、`frrcfgd.py`、`policies.conf.j2`（internal）全行精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-internal-neighbor-cross-refs.md`
+
+`BGP_INTERNAL_NEIGHBOR` テーブルは YANG leafref が最小限だが、実行時に以下のテーブルを暗黙参照する。
+
+| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|---|---|---|---|---|
+| `DEVICE_METADATA\|localhost.bgp_asn` | CONFIG_DB | 読み取り (ASN 検証・bgp_asn 取得) | なし | 必須 (deps 宣言) | managers_bgp.py L119, L192 |
+| `DEVICE_METADATA\|localhost.type` | CONFIG_DB | 読み取り (check_deployment_id 判定) | なし | 必須 (deps 宣言) | managers_bgp.py L120 |
+| `DEVICE_METADATA\|localhost.sub_role` | CONFIG_DB | 読み取り (peer-group / route-map 分岐) | なし | プラットフォーム依存 | policies.conf.j2 L8, peer-group.conf.j2 |
+| `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | 読み取り (chassis-packet 分岐) | なし | プラットフォーム依存 | policies.conf.j2 L26, peer-group.conf.j2 |
+| `DEVICE_METADATA\|localhost.bgp_router_id` | CONFIG_DB | 読み取り (originator-id fallback) | なし | 省略可 (Loopback4096 が代替) | policies.conf.j2 L10-11, L21-22 |
+| `BGP_GLOBALS\|<vrf>.local_asn` | CONFIG_DB | 読み取り (router bgp インスタンス生成) | なし | 実質必須 (FRR レイヤ) | frrcfgd.py L2700-2703, L2659-2662 |
+| `LOOPBACK_INTERFACE\|Loopback0` | CONFIG_DB | 読み取り (router_id / local_addr 解決) | なし | 必須 (deps 宣言) | managers_bgp.py L121, L216 |
+| `LOOPBACK_INTERFACE\|Loopback4096` | CONFIG_DB | 読み取り (originator-id / update-source) | なし | internal 専用 deps | managers_bgp.py L146, policies.conf.j2 L7 |
+| `INTERFACE` / `PORTCHANNEL_INTERFACE` | CONFIG_DB | 読み取り (local_addr インターフェース解決) | なし | local_addr が必要な場合は必須 | managers_bgp.py L198-201, deps L124-125 |
+| `ROUTE_MAP\|FROM_BGP_INTERNAL_PEER_V4` | CONFIG_DB / FRR | 書き込み (frrcfgd が生成) | なし | ハードコード参照 | policies.conf.j2 L9, 32, 99 |
+| `ROUTE_MAP\|TO_BGP_INTERNAL_PEER_V4` | CONFIG_DB / FRR | 書き込み (frrcfgd が生成) | なし | ハードコード参照 | policies.conf.j2 L78, 103 |
+| `BGP_PEER_GROUP\|INTERNAL_PEER_V4` | CONFIG_DB / FRR | 書き込み (peer-group.conf.j2 が生成) | なし | ハードコード参照 | peer-group.conf.j2 全体 |
+
+### DEVICE_METADATA — 多目的暗黙参照
+
+`managers_bgp.py` は `deps` リスト（L119-120）に `DEVICE_METADATA|localhost.bgp_asn` と `DEVICE_METADATA|localhost.type` を登録する。これらが CONFIG_DB に存在しない間はテーブルイベント自体がハンドラに届かない。さらに `add_peer()` は `bgp_asn` を直接読み取り（L192）、テンプレート展開時は `CONFIG_DB__DEVICE_METADATA` を辞書全体として渡す（L205）。
+
+`policies.conf.j2` は `DEVICE_METADATA['localhost']['sub_role']` と `switch_type` を分岐条件として使用する（L8, L26）。`bgp_router_id` フィールドは `originator-id` のプライマリソースで、未設定時は Loopback4096 の IPv4 アドレスにフォールバックする（L10-13）。
+
+### BGP_GLOBALS — FRR レイヤの前提条件
+
+`frrcfgd.py` は `BGP_GLOBALS|<vrf>.local_asn` を受信した時点で `router bgp <ASN>` インスタンスを FRR bgpd に生成する（L2700-2703）。`local_asn` が設定されていない VRF への BGP 設定は `vrf_tables` チェック（L2659-2662）でスキップされる。`bgpcfgd` テンプレートが生成する FRR コマンドも `router bgp <ASN>` コンテキスト内で実行されるため、**FRR 側に BGP インスタンスが先に存在していることが前提**。YANG leafref はないが実質的な必須依存。
+
+### PORT / PORTCHANNEL_INTERFACE / INTERFACE — local_addr 解決
+
+`add_peer()` は `local_addr` フィールドを解決するため `get_local_interface()` を呼び出し（L198-201）、`LOCAL.interfaces` と `LOCAL.local_addresses` スロットを参照する（deps L124-125）。対応エントリが未登録の場合は `return False` となり peer 確立が自動再試行待ちになる。YANG leafref はないが、`local_addr` を使用する限り INTERFACE / PORTCHANNEL_INTERFACE が先行して存在する必要がある。
+
+### Loopback0 / Loopback4096 — iBGP 専用依存
+
+- **Loopback0**: deps 宣言（L121）。`add_peer()` は Loopback0 の IPv4 アドレスを取得し、`bgp_router_id` 未設定時の router-id として使用（L184-189）。取得できず `bgp_router_id` も未設定なら `return False`。
+- **Loopback4096**: `peer_type == 'internal'` 専用の deps（L146）。`policies.conf.j2` L7 で `get_ipv4_loopback_address(CONFIG_DB__LOOPBACK_INTERFACE, "Loopback4096")` を直接参照し、`sub_role == 'BackEnd'` 時の `originator-id` に使用。`switch_type == 'chassis-packet'` 時の `update-source Loopback4096` でも参照される。
+
+### ROUTE_MAP / BGP_PEER_GROUP — frrcfgd / テンプレートが自動生成
+
+`FROM_BGP_INTERNAL_PEER_V4`、`TO_BGP_INTERNAL_PEER_V4`（および V6 版）は `policies.conf.j2` が FRR に直接生成するルートマップ。`INTERNAL_PEER_V4` / `INTERNAL_PEER_V6` は `peer-group.conf.j2` が生成するピアグループ。いずれも CONFIG_DB の `ROUTE_MAP` / `BGP_PEER_GROUP` テーブルへの YANG leafref はなく、テンプレート側がハードコードした名称で FRR に注入する。`frrcfgd.py` L81-90 で `BGP_GLOBALS`・`ROUTE_MAP`・`BGP_PEER_GROUP` は `bgpd` デーモン宛テーブルとして登録されており、frrcfgd 経由の設定と bgpcfgd テンプレート経由の設定が同一 FRR インスタンスに並存する。
+
+### SAI 参照
+
+なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、SAI/ASIC に直接触れない。APPL_DB への中継もない。
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
