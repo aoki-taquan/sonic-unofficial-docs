@@ -611,4 +611,77 @@ ROUTE_MAP 名は `ROUTE_MAP_SET` テーブルで管理される。`BGP_NEIGHBOR_
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+frrcfgd の ROUTE_MAP 処理における失敗パターンを全行スキャンして確認した。詳細は `meta/_intermediate/cdb-flow/route-map-failure.md` を参照。
+
+### frrcfgd の失敗パターン
+
+#### 1. vtysh コマンド失敗 → LOG_ERR + silent drop
+
+`frrcfgd.py` L3120-3122: vtysh コマンド送信失敗時に `syslog.LOG_ERR` を出力して `continue`。内部キャッシュ (`self.route_map`) は更新されない。retry なし、rollback なし。
+
+```python
+if not self.__run_command(table, command):
+    syslog.syslog(syslog.LOG_ERR, 'failed to configure route-map {} seq {}'.format(map_name, seq_no))
+    continue
+```
+
+#### 2. `route_operation` 欠落 → `match_*` / `set_*` が全 silent drop
+
+`frrcfgd.py` L3131-3133: `route_operation` が内部キャッシュに未登録の場合、後続フィールドを全て `continue` でスキップ。FRR への反映ゼロ。
+
+```python
+if map_name not in self.route_map or seq_no not in self.route_map[map_name]:
+    syslog.syslog(syslog.LOG_ERR, 'route-map {} seq {} not found for update'.format(map_name, seq_no))
+    continue
+```
+
+#### 3. DEL 時キャッシュ未登録 → FRR ゴーストエントリ残存リスク
+
+`frrcfgd.py` L3140-3142: DEL イベント時にキャッシュ未登録の場合、FRR への `no route-map` 発行をスキップ。CONFIG_DB では DEL 済み、FRR 上には設定が残存するリスクがある。
+
+#### 4. `set_metric_action` + `set_metric` 未設定 → silent drop
+
+`frrcfgd.py` L502-504: `METRIC_SET_VALUE` / `METRIC_ADD_VALUE` / `METRIC_SUBTRACT_VALUE` 指定時に `set_metric` が空の場合、handler が `None` を返しコマンド未生成。
+
+```python
+if metric_param == '':
+    syslog.syslog(syslog.LOG_ERR, 'handle_rmap_set_metric not set for {}'.format(args))
+    return None
+```
+
+#### 5. `set_asn` 未設定で `set_repeat_asn` のみ → silent drop
+
+`hdl_set_asn` が `None` を返しコマンド未生成。LOG_ERR なし（完全 silent）。
+
+#### 6. FRR デーモン接続失敗 → 起動時 100 回 retry
+
+frrcfgd 起動時、FRR Unix socket (`/run/frr/<daemon>.vty`) への接続を **2 秒間隔・最大 100 回（約 200 秒）** リトライ。超過時は `RuntimeError('connect to FRR daemon failed')` でプロセス終了。実行中のコネクション断は retry なし（個別コマンド失敗として処理）。
+
+### 失敗パターンサマリ
+
+| ケース | LOG_ERR | FRR 反映 | retry | 備考 |
+|--------|---------|---------|-------|------|
+| vtysh コマンド失敗 | あり | なし | なし | continue でイベント破棄 |
+| `route_operation` 欠落 | あり | なし | なし | 内部キャッシュ未登録 |
+| DEL 時キャッシュ未登録 | あり | なし | なし | FRR ゴーストエントリ残存 |
+| `set_metric` 未設定 | あり | なし | なし | handler が `None` 返却 |
+| `set_asn` 未設定 | なし | なし | なし | 完全 silent drop |
+| 起動時デーモン接続失敗 | あり | なし | 最大 100 回 | 超過で RuntimeError |
+
+### STATE_DB / ERROR_TABLE
+
+frrcfgd は ROUTE_MAP の失敗を STATE_DB や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
+
+```bash
+journalctl -u frr-mgmt-framework | grep 'route-map'
+vtysh -c 'show route-map'
+```
+
+> **スキャン証跡**: `frrcfgd.py` L47-63 (`g_run_command`), L181-218 (接続 retry), L502-504 (`handle_rmap_set_metric`), L3109-3148 (ROUTE_MAP handler), L1532-1534 (例外吸収)。詳細は `meta/_intermediate/cdb-flow/route-map-failure.md` を参照。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 24dbb72211e3 -->
