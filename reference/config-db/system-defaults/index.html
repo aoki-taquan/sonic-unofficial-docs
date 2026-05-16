@@ -21816,6 +21816,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mux_tunnel_egress_acl-mellanox-enabled-disabled-include_muxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mux_tunnel_egress_acl — Mellanox "enabled" / 他 "disabled" (include_mux=y ビルド時のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#software_bfd-smartswitch-dpu-enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        software_bfd — SmartSwitch DPU プロファイルで "enabled"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polaris-pensando-hwsku-enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        polaris — Pensando hwsku のみ "enabled"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_qos_remap-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnel_qos_remap — ビルド時注入なし、不在 = disabled 扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synchronous_mode-dhcp_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        synchronous_mode / dhcp_server — テーブル外で管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-yang-default-runtime-fallback-absent-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status 全般 — YANG default 無し、runtime fallback は "absent = disabled"
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34941,6 +35024,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来の暗黙デフォルト・Fallback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来の暗黙デフォルト・Fallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mux_tunnel_egress_acl-mellanox-enabled-disabled-include_muxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mux_tunnel_egress_acl — Mellanox "enabled" / 他 "disabled" (include_mux=y ビルド時のみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#software_bfd-smartswitch-dpu-enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        software_bfd — SmartSwitch DPU プロファイルで "enabled"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polaris-pensando-hwsku-enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        polaris — Pensando hwsku のみ "enabled"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tunnel_qos_remap-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tunnel_qos_remap — ビルド時注入なし、不在 = disabled 扱い
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synchronous_mode-dhcp_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        synchronous_mode / dhcp_server — テーブル外で管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status-yang-default-runtime-fallback-absent-disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status 全般 — YANG default 無し、runtime fallback は "absent = disabled"
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-a" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35279,6 +35445,27 @@
 <li>副作用: switch_type の変更は swss/syncd の完全再起動が必要でサービス断が生じる。</li>
 </ul>
 <!-- /runtime-trace -->
+
+<!-- defaults -->
+<h2 id="fallback">コード由来の暗黙デフォルト・Fallback<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h2>
+<p><code>SYSTEM_DEFAULTS</code> テーブルは <a href="../../glossary/#term-yang">YANG</a> (<code>sonic-system-defaults.yang</code>) 上で <code>status</code> を <code>admin_mode</code> enum (<code>enabled</code>/<code>disabled</code>) として宣言しているが、YANG 側に <code>default</code> 宣言は無く、コード側は「エントリ不在 = <code>disabled</code> として扱う」という runtime fallback と、ビルド時テンプレートでの条件付き注入の組み合わせで動作する。</p>
+<h3 id="mux_tunnel_egress_acl-mellanox-enabled-disabled-include_muxy"><code>mux_tunnel_egress_acl</code> — Mellanox <code>"enabled"</code> / 他 <code>"disabled"</code> (<code>include_mux=y</code> ビルド時のみ)<a class="headerlink" href="#mux_tunnel_egress_acl-mellanox-enabled-disabled-include_muxy" title="Permanent link">&para;</a></h3>
+<p><code>init_cfg.json.j2:188-197</code> で <code>include_mux == "y"</code> のビルド時に Dual-ToR ACL エントリを <code>sonic_asic_platform == "mellanox"</code> なら <code>enabled</code>、それ以外 (Broadcom 等) は <code>disabled</code> として焼き込む。<code>include_mux</code> を有効にしないビルドではエントリ自体が生成されず、<code>muxorch</code> 側で「不在 = <code>disabled</code>」として扱われる。</p>
+<h3 id="software_bfd-smartswitch-dpu-enabled"><code>software_bfd</code> — SmartSwitch DPU プロファイルで <code>"enabled"</code><a class="headerlink" href="#software_bfd-smartswitch-dpu-enabled" title="Permanent link">&para;</a></h3>
+<p><code>sonic-config-engine/config_samples.py:186-188</code> の <code>generate_smartswitch_dpu</code> プロファイルが <code>data["SYSTEM_DEFAULTS"]["software_bfd"] = {"status": "enabled"}</code> を強制注入する。通常スイッチ（非 SmartSwitch DPU）には付かない。</p>
+<h3 id="polaris-pensando-hwsku-enabled"><code>polaris</code> — Pensando hwsku のみ <code>"enabled"</code><a class="headerlink" href="#polaris-pensando-hwsku-enabled" title="Permanent link">&para;</a></h3>
+<p><code>config_samples.py:179-184</code> で <code>'pensando' in hwsku.lower()</code> のときに <code>SYSTEM_DEFAULTS = {"polaris": {"status": "enabled"}}</code> を上書き設定する。Pensando DPU 向け SmartSwitch プロファイル限定の fallback。</p>
+<h3 id="tunnel_qos_remap-disabled"><code>tunnel_qos_remap</code> — ビルド時注入なし、不在 = <code>disabled</code> 扱い<a class="headerlink" href="#tunnel_qos_remap-disabled" title="Permanent link">&para;</a></h3>
+<p><code>init_cfg.json.j2</code> / <code>config_samples.py</code> のいずれにも <code>tunnel_qos_remap</code> の自動生成コードは無い。<code>muxorch</code> (sonic-swss) が起動時に <code>SYSTEM_DEFAULTS|tunnel_qos_remap</code> の <code>status</code> を参照するのみで、エントリ不在時は <a href="../../glossary/#term-qos">QoS</a> remap を行わない（概念的 <code>disabled</code> 扱い）。コード由来のデフォルトは「エントリ不在」そのもの。</p>
+<h3 id="synchronous_mode-dhcp_server"><code>synchronous_mode</code> / <code>dhcp_server</code> — テーブル外で管理<a class="headerlink" href="#synchronous_mode-dhcp_server" title="Permanent link">&para;</a></h3>
+<p>文書概要に併記されているが、<code>synchronous_mode</code> の実コード反映先は <code>DEVICE_METADATA|localhost</code> (<code>init_cfg.json.j2:5</code>、<code>include_p4rt=y</code> ビルド時に <code>"enable"</code>)、<code>dhcp_server</code> の実体は <code>FEATURE</code> テーブル (<code>init_cfg.json.j2:77</code>、<code>include_dhcp_server=y</code> ビルド時に <code>state=disabled</code> で登録) であり、<code>SYSTEM_DEFAULTS</code> テーブル自体には注入されない。</p>
+<h3 id="status-yang-default-runtime-fallback-absent-disabled"><code>status</code> 全般 — YANG <code>default</code> 無し、runtime fallback は "absent = disabled"<a class="headerlink" href="#status-yang-default-runtime-fallback-absent-disabled" title="Permanent link">&para;</a></h3>
+<p><code>sonic-system-defaults.yang</code> の <code>status</code> leaf は <code>admin_mode</code> enum 制約のみで <code>default</code> 宣言を持たない。各 daemon (<code>muxorch</code>、<code>orchagent</code> 等) は該当 <code>&lt;name&gt;</code> エントリ不在を <code>disabled</code> として扱い <code>KeyError</code> を出さない設計。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/files/build_templates/init_cfg.json.j2:5, 77, 188-197</code> および <code>src/sonic-config-engine/config_samples.py:160-188</code>、SHA <code>9ea932ec2e18f35e58268ec2e4456b1d4afd65cd</code>。<code>sonic-utilities/scripts/db_migrator.py:670-677</code> (<code>synchronous_mode</code> の DEVICE_METADATA 側補完)、SHA <code>39732bceb8bdefe706518ab40623bbbba6ff33b9</code>。詳細は <code>meta/_intermediate/cdb-flow/system-defaults-defaults.md</code> を参照。</p>
+</blockquote>
+<!-- /defaults -->
+
 <!-- entry-points -->
 <h2 id="direction-a">書き込み入り口 (Direction A)<a class="headerlink" href="#direction-a" title="Permanent link">&para;</a></h2>
 <p>SYSTEM_DEFAULTS テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。</p>

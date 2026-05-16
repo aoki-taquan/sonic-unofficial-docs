@@ -24304,6 +24304,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来のハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来のハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-route-map-prefix-list-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. route-map / prefix-list / community 名テンプレート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-from_bgp_peer-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FROM_BGP_PEER テンプレート (固定 5 段構成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-community-list-allow_list_default_community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. community-list allow_list_default_community
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-route-map-seq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. route-map seq 番号定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-address-family-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. address-family / community センチネル定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-prefix-mask-ipv432-ipv6128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. prefix mask デフォルト (IPv4=32 / IPv6=128)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-prefix_match_tag-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. prefix_match_tag (constants 由来、ハードコードではないが固定挙動)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34919,6 +35013,100 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コード由来のハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コード由来のハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-route-map-prefix-list-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. route-map / prefix-list / community 名テンプレート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-from_bgp_peer-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. FROM_BGP_PEER テンプレート (固定 5 段構成)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-community-list-allow_list_default_community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. community-list allow_list_default_community
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-route-map-seq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. route-map seq 番号定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-address-family-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. address-family / community センチネル定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-prefix-mask-ipv432-ipv6128" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. prefix mask デフォルト (IPv4=32 / IPv6=128)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-prefix_match_tag-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. prefix_match_tag (constants 由来、ハードコードではないが固定挙動)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35499,6 +35687,246 @@
 <h3 id="_8">機能無効時<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p><code>constants["bgp"]["allow_list"]["enabled"]</code> が <code>false</code> または存在しない場合、SET/DEL 両方とも warn log のみで消化される（テーブル処理が完全スキップ）。<code>managers_allow_list.py:699-707</code>。</p>
 <!-- /defaults -->
+
+<!-- constants -->
+<h2 id="phase-e">コード由来のハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>bgpcfgd</code> の <code>managers_allow_list.py</code> と FRR テンプレ <code>policies.conf.j2</code> には、ユーザが <a href="../../glossary/#term-config_db">CONFIG_DB</a> や <a href="../../glossary/#term-yang">YANG</a> から変更できない固定文字列・固定数値が多数埋め込まれている。</p>
+<h3 id="1-route-map-prefix-list-community">1. route-map / prefix-list / community 名テンプレート<a class="headerlink" href="#1-route-map-prefix-list-community" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>役割</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PL_NAME_TMPL</code></td>
+<td><code>"PL_ALLOW_LIST_DEPLOYMENT_ID_%d_COMMUNITY_%s_V%s"</code></td>
+<td>community 単位の prefix-list 名</td>
+<td><code>managers_allow_list.py:16</code></td>
+</tr>
+<tr>
+<td><code>PL_NAME_TMPL_WITH_NEIGH</code></td>
+<td><code>"PL_ALLOW_LIST_DEPLOYMENT_ID_%d_NEIGHBOR_%s_COMMUNITY_%s_V%s"</code></td>
+<td>neighbor_type を含む prefix-list 名</td>
+<td><code>managers_allow_list.py:17</code></td>
+</tr>
+<tr>
+<td><code>COMMUNITY_NAME_TMPL</code></td>
+<td><code>"COMMUNITY_ALLOW_LIST_DEPLOYMENT_ID_%d_COMMUNITY_%s"</code></td>
+<td>community-list 名</td>
+<td><code>managers_allow_list.py:18</code></td>
+</tr>
+<tr>
+<td><code>COMMUNITY_NAME_TMPL_WITH_NEIGH</code></td>
+<td><code>"COMMUNITY_ALLOW_LIST_DEPLOYMENT_ID_%d_NEIGHBOR_%s_COMMUNITY_%s"</code></td>
+<td>neighbor_type を含む community-list 名</td>
+<td><code>managers_allow_list.py:19</code></td>
+</tr>
+<tr>
+<td><code>RM_NAME_TMPL</code></td>
+<td><code>"ALLOW_LIST_DEPLOYMENT_ID_%d_V%s"</code></td>
+<td>route-map 名 (deployment 単位, v4/v6)</td>
+<td><code>managers_allow_list.py:20</code></td>
+</tr>
+<tr>
+<td><code>RM_NAME_TMPL_WITH_NEIGH</code></td>
+<td><code>"ALLOW_LIST_DEPLOYMENT_ID_%d_NEIGHBOR_%s_V%s"</code></td>
+<td>neighbor_type を含む route-map 名</td>
+<td><code>managers_allow_list.py:21</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-from_bgp_peer-5">2. FROM_BGP_PEER テンプレート (固定 5 段構成)<a class="headerlink" href="#2-from_bgp_peer-5" title="Permanent link">&para;</a></h3>
+<p><code>policies.conf.j2</code> (general) は <code>route-map FROM_BGP_PEER_V4</code> / <code>FROM_BGP_PEER_V6</code> をハードコードで生成する。seq 10/11/12/13/100 の順:</p>
+<table>
+<thead>
+<tr>
+<th>seq</th>
+<th>役割</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td><code>call ALLOW_LIST_DEPLOYMENT_ID_0_V{4,6}</code> + <code>on-match next</code></td>
+<td><code>policies.conf.j2:34-36,57-59</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>match community allow_list_default_community</code> (community-list 名はハードコード)</td>
+<td><code>policies.conf.j2:38-39,61-62</code></td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>match ip{,v6} address prefix-list DEFAULT_IPV{4,6}</code> (<code>type=SpineRouter</code> かつ <code>subtype=UpstreamLC</code> のみ生成)</td>
+<td><code>policies.conf.j2:41-45,64-68</code></td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>set tag</code> + <code>set community internal_fallback_community additive</code> (同上ロール限定。<code>switch_type=chassis-packet</code> で tag を <code>route_do_not_send_appdb_tag</code> → <code>route_eligible_for_fallback_to_default_tag</code> に切替)</td>
+<td><code>policies.conf.j2:47-53,70-76</code></td>
+</tr>
+<tr>
+<td>100</td>
+<td>終端 permit (素通り)</td>
+<td><code>policies.conf.j2:84,94</code></td>
+</tr>
+</tbody>
+</table>
+<p>V6 のみ <code>permit 1</code> で <code>on-match next</code> + <code>set ipv6 next-hop prefer-global</code> (<code>policies.conf.j2:90-92</code>)。</p>
+<p><code>DEFAULT_IPV4</code> / <code>DEFAULT_IPV6</code> prefix-list 名と中身 (<code>permit 0.0.0.0/0</code> / <code>permit ::/0</code>) もハードコード (<code>policies.conf.j2:5-6</code>)。</p>
+<h3 id="3-community-list-allow_list_default_community">3. community-list <code>allow_list_default_community</code><a class="headerlink" href="#3-community-list-allow_list_default_community" title="Permanent link">&para;</a></h3>
+<p><code>bgp community-list standard allow_list_default_community</code> (community-list 名はハードコード) に以下 2 メンバを permit (<code>policies.conf.j2:31-32</code>):</p>
+<ul>
+<li><code>no-export</code></li>
+<li><code>{{ constants.bgp.allow_list.drop_community }}</code> (<code>constants.yml</code> で <code>"5060:12345"</code>)</li>
+</ul>
+<p>CONFIG_DB から変更不可。</p>
+<h3 id="4-route-map-seq">4. route-map seq 番号定数<a class="headerlink" href="#4-route-map-seq" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ROUTE_MAP_ENTRY_WITH_COMMUNITY_START</code></td>
+<td><code>10</code></td>
+<td>community 付きエントリ seq 範囲下限</td>
+<td><code>managers_allow_list.py:22</code></td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP_ENTRY_WITH_COMMUNITY_END</code></td>
+<td><code>29990</code></td>
+<td>community 付きエントリ seq 範囲上限</td>
+<td><code>managers_allow_list.py:23</code></td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP_ENTRY_WITHOUT_COMMUNITY_START</code></td>
+<td><code>30000</code></td>
+<td>community なしエントリ seq 範囲下限</td>
+<td><code>managers_allow_list.py:24</code></td>
+</tr>
+<tr>
+<td><code>ROUTE_MAP_ENTRY_WITHOUT_COMMUNITY_END</code></td>
+<td><code>65530</code></td>
+<td>community なしエントリ seq 範囲上限</td>
+<td><code>managers_allow_list.py:25</code></td>
+</tr>
+<tr>
+<td>seq 増分</td>
+<td><code>10</code></td>
+<td><code>range(start, end, 10)</code> で 10 刻み割当</td>
+<td><code>managers_allow_list.py:585</code></td>
+</tr>
+<tr>
+<td>default action 末尾 seq</td>
+<td><code>65535</code></td>
+<td><code>route-map ALLOW_LIST_DEPLOYMENT_ID_*_V{4,6} permit 65535</code> (default_action 用エントリ)</td>
+<td><code>managers_allow_list.py:441,450,463,476,481,511,556</code> / <code>policies.conf.j2:17,20,24,27</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>seq <code>65535</code> は <code>ROUTE_MAP_ENTRY_WITHOUT_COMMUNITY_END (65530)</code> の外側なので、<code>__find_next_seq_number</code> の動的割当と衝突しない。j2 テンプレ起動時に空の <code>ALLOW_LIST_DEPLOYMENT_ID_0_V{4,6} permit 65535</code> が先行投入され、CONFIG_DB に 1 件も <code>BGP_ALLOWED_PREFIXES</code> が無い状態でも default action ルールが存在する。</p>
+</blockquote>
+<h3 id="5-address-family-community">5. address-family / community センチネル定数<a class="headerlink" href="#5-address-family-community" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>V4</code></td>
+<td><code>"v4"</code></td>
+<td>address-family enum (IPv4)</td>
+<td><code>managers_allow_list.py:28</code></td>
+</tr>
+<tr>
+<td><code>V6</code></td>
+<td><code>"v6"</code></td>
+<td>address-family enum (IPv6)</td>
+<td><code>managers_allow_list.py:29</code></td>
+</tr>
+<tr>
+<td><code>EMPTY_COMMUNITY</code></td>
+<td><code>"empty"</code></td>
+<td>community 未指定キー時のセンチネル。prefix-list / route-map 名の <code>COMMUNITY_%s</code> 部分に展開</td>
+<td><code>managers_allow_list.py:15</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-prefix-mask-ipv432-ipv6128">6. prefix mask デフォルト (IPv4=32 / IPv6=128)<a class="headerlink" href="#6-prefix-mask-ipv432-ipv6128" title="Permanent link">&para;</a></h3>
+<p><code>__to_prefix_list</code> (<code>managers_allow_list.py:736-754</code>) は <code>le</code>/<code>ge</code> 修飾子のない prefix を以下のように補完する:</p>
+<table>
+<thead>
+<tr>
+<th>address-family</th>
+<th><code>prefix_mask_default</code></th>
+<th>補完規則</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>V4</code></td>
+<td><code>32</code></td>
+<td>マスク長 &lt; 32 → <code>le 32</code> を自動付与 (<code>10.0.0.0/8</code> → <code>permit 10.0.0.0/8 le 32</code>)。マスク長 == 32 (host route) はそのまま</td>
+<td><code>managers_allow_list.py:744-754</code></td>
+</tr>
+<tr>
+<td><code>V6</code></td>
+<td><code>128</code></td>
+<td>マスク長 &lt; 128 → <code>le 128</code> を自動付与 (<code>2001:db8::/32</code> → <code>permit 2001:db8::/32 le 128</code>)。マスク長 == 128 (host route) はそのまま</td>
+<td><code>managers_allow_list.py:744-754</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>判定は <code>'le' in prefix or 'ge' in prefix</code> (<code>managers_allow_list.py:739</code>) という素朴な文字列マッチで行われるため、prefix 文字列中に偶然 <code>le</code> / <code>ge</code> の 2 文字を含む場合は補完がスキップされる。</p>
+</blockquote>
+<h3 id="7-prefix_match_tag-constants">7. <code>prefix_match_tag</code> (constants 由来、ハードコードではないが固定挙動)<a class="headerlink" href="#7-prefix_match_tag-constants" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constants["bgp"]["allow_list"]["prefix_match_tag"]</code> 定義あり</td>
+<td>community なしの route-map entry に <code>set tag &lt;値&gt;</code> を付与</td>
+<td><code>managers_allow_list.py:434-435,657-664</code></td>
+</tr>
+<tr>
+<td>同 constants 未定義</td>
+<td><code>None</code> のまま。<code>set tag</code> 行を生成しない (constants.yml には未定義)</td>
+<td><code>managers_allow_list.py:657</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><code>policies.conf.j2</code> 側の <code>FROM_BGP_PEER_V*</code> seq 13 で参照される <code>route_do_not_send_appdb_tag</code> / <code>route_eligible_for_fallback_to_default_tag</code> は別の定数 (constants.yml 由来) で、<code>prefix_match_tag</code> とは独立。</p>
+</blockquote>
+<hr />
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/bgp-allowed-prefixes-constants.md</code> を参照。</p>
+<!-- /constants -->
 
 <!-- cdb-exceptions -->
 <h2 id="_9">例外条件・特殊挙動<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
