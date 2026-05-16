@@ -310,4 +310,96 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | SAI 失敗（retry） | Bulk flush の次サイクルで `consumer.m_toSync` から再処理 |
 
 <!-- /failure -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`sonic-swss/cfgmgr/buffermgrdyn.cpp` および `sonic-swss/orchagent/bufferorch.cpp` の egress profile list 処理経路（`handleSingleBufferPortProfileListEntry` / `processEgressBufferProfileList` / `processEgressBufferProfileListBulk`）を調査した結果、以下の副次 DB 書込は**存在しない**。
+
+| DB | 書込 | 根拠 |
+|----|------|------|
+| STATE_DB | **なし** | egress handler 経路に書込コードなし。STATE_DB は MMU サイズ・最大 PG/Queue 数の **読み取り** にのみ使用（`buffermgrdyn.cpp:133,261,1277`） |
+| COUNTERS_DB | **なし** | `bufferorch.cpp:56` で接続を保持するが、egress profile list handler では未使用。buffer pool watermark 用 Lua スクリプト（`bufferorch.cpp:240`）専用 |
+| APPL_STATE_DB | **なし** | 両ファイルの egress profile list 処理経路に該当コードなし |
+| FLEX_COUNTER_DB | **なし** | `bufferorch.cpp:1135` は VOQ スイッチの Port Queue counter 更新用であり、本テーブルの処理とは無関係 |
+
+このテーブルの書込先は **APPL_DB の `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`** のみ（`buffermgrdyn.cpp:3383`）であり、SAI への最終適用は `sai_port_api->set_ports_attribute`（`bufferorch.cpp:2009`）を通じて行われる。
+
+<!-- /side-effects -->
+
+<!-- ordering -->
+## 書込順依存 (Phase B)
+
+このテーブルを有効に設定するには、以下の順序で CONFIG_DB / APPL_DB への書き込みが完了している必要がある。
+
+```
+1. BUFFER_POOL
+2. BUFFER_PROFILE  （egress 方向）
+3. PORT
+4. BUFFER_PORT_EGRESS_PROFILE_LIST  ← 本テーブル
+```
+
+### 依存 1: BUFFER_PROFILE 先行 (dynamic model — buffermgrd 段)
+
+`buffermgrdyn.cpp:checkBufferProfileDirection` は SET 時に `profile_list` の各プロファイルを `m_bufferProfileLookup` で検索する。プロファイルが未登録の場合は `task_need_retry` を返してエントリを保留し、BUFFER_PROFILE 到着後に自動再処理される。<!-- evidence: buffermgrdyn.cpp:3282-3287 -->
+
+### 依存 2: BUFFER_PROFILE 先行 (orchagent 段)
+
+`bufferorch.cpp:processEgressBufferProfileList` は `resolveFieldRefArray` でプロファイル SAI OID を解決する。参照先 BUFFER_PROFILE が APPL_DB に未登録の場合 `task_need_retry` を返す（自動リトライ）。<!-- evidence: bufferorch.cpp:1869-1877 -->
+
+### 依存 3: PORT 先行 (orchagent 段)
+
+同関数末尾で `gPortsOrch->getPort(port_name, port)` を実行する。指定ポートが PortsOrch のマップに存在しない場合は `task_invalid_entry` を返す。**retry なし**のためエントリが破棄される点に注意。<!-- evidence: bufferorch.cpp:1950-1957 -->
+
+| 未先行リソース | 返却ステータス | 自動リトライ |
+|--------------|--------------|-------------|
+| BUFFER_PROFILE 未登録 (buffermgrd) | `task_need_retry` | あり（到着後に再処理） |
+| BUFFER_PROFILE 未登録 (orchagent) | `task_need_retry` | あり |
+| PORT 未登録 (orchagent) | `task_invalid_entry` | **なし**（エントリ破棄） |
+<!-- /ordering -->
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+### Dynamic vs Static バッファモデル
+
+`DEVICE_METADATA.buffer_model` の値によって動作するマネージャが切り替わり、このテーブルの検証レベルが大きく変わる。
+
+| 観点 | Static model (`buffermgr.cpp`) | Dynamic model (`buffermgrdyn.cpp`) |
+|------|-------------------------------|-------------------------------------|
+| 有効条件 | `buffer_model` が `"dynamic"` でない場合 | `buffer_model == "dynamic"` |
+| direction 検証 | なし（orchagent 段のみ） | あり: ingress profile を egress list に指定 → `task_failed` |
+| profile 存在検証 | なし（orchagent 段で retry） | あり: `m_bufferProfileLookup` 未登録 → `task_need_retry` |
+| admin-down port 置換 | なし（CONFIG_DB 値をそのまま APPL_DB へ） | あり: ゼロプロファイルリストへ自動差し替え |
+| buffer pool guard | なし | あり: pool 未準備時は pending |
+| DEL 操作 | APPL_DB から削除 | 削除処理は動作するが `// Not supported on Mellanox platform for now.` 注記付き |
+
+Static model は `dynamic_buffer_model == true` 時に即 `return` する（`buffermgr.cpp:476-480`）。
+
+### ASIC Vendor 差分（Mellanox 固有）
+
+`buffermgrdyn.cpp` は `ASIC_VENDOR` 環境変数でプラットフォームを判別する（`buffermgrdyn.cpp:68-80`）。
+
+| 挙動 | 適用範囲 | evidence |
+|------|---------|---------|
+| Mellanox SN シリーズモデル番号を取得して処理を分岐 | Mellanox のみ | `buffermgrdyn.cpp:84-102` |
+| 8 レーンポートで xon 値を倍増（profile 名に `_8lane` を付与） | Mellanox 4xxx (400G 以外) / 5xxx (800G 以外) | `buffermgrdyn.cpp:504-522` |
+| DEL パスに `// Not supported on Mellanox platform for now.` 注記 | Mellanox での留意事項 | `buffermgrdyn.cpp:3443` |
+
+`_8lane` ロジックは PG バッファプロファイル名の生成に関するものであり、BUFFER_PORT_EGRESS_PROFILE_LIST のキー・フィールド処理そのものには直接影響しない。ただし、このテーブルが参照する `BUFFER_PROFILE` の名前がプラットフォームによって異なる場合がある。
+
+Broadcom・その他ベンダーでは vendor 固有の条件分岐なし。テーブル処理コードは同一パスを通る（Lua ヘッドルームプラグイン名のみ異なる）。
+
+### VOQ Chassis
+
+`bufferorch.cpp` の `processEgressBufferProfileList` / `processEgressBufferProfileListBulk` 内に `gMySwitchType == "voq"` 分岐は **存在しない**。VOQ 固有のキー拡張（4 トークン形式）は BUFFER_QUEUE ハンドラにのみ適用される。
+
+| 項目 | 標準スイッチ | VOQ Chassis |
+|------|------------|------------|
+| `processEgressBufferProfileList` 実行 | 通常通り | 同一コードパス（分岐なし） |
+| 処理開始条件 | `isConfigDone()` | `isInitDone()`（より早い段階） |
+| SAI 属性 | `SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST` | 同じ属性 |
+| `buffermgrdyn.cpp` での処理 | voq 分岐なし | voq 分岐なし |
+
+**結論**: VOQ Chassis において BUFFER_PORT_EGRESS_PROFILE_LIST の挙動は標準スイッチと同一。`doTask(Consumer &)` 内の `isInitDone()` 使用による処理開始タイミングの早期化のみが間接的に関係する（`bufferorch.cpp:2079-2094`）。
+<!-- /platform -->
+
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
