@@ -213,6 +213,48 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙的に参照する CONFIG_DB テーブルを示す。これらは CABLE_LENGTH テーブルの直接フィールドには現れないが、headroom 計算・処理経路・プロファイル生成に必須の依存関係を持つ。
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp, buffermgrdyn.cpp -->
+
+### PORT テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:23,544` / `buffermgrdyn.cpp:449,2266-2359`
+- **参照フィールド**: `speed`, `mtu`, `admin_status`, `lanes`, `autoneg`, `adv_speeds`
+- **依存性質**: 必須前提条件。CABLE_LENGTH 単体では headroom 計算を開始できず、PORT テーブルの `speed` が揃って初めて `refreshPgsForPort()` / `doSpeedUpdateTask()` が実行される。`admin_status=down` のポートは CABLE_LENGTH 更新を受けても計算をスキップ (`buffermgrdyn.cpp:2191-2194`)。
+
+### DEVICE_METADATA テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:470` / `buffermgrdyn.cpp:41,87`
+- **参照フィールド**: `buffer_model`, `platform`
+- **依存性質**: 処理経路分岐。`buffer_model=dynamic` の場合 `buffermgr` は CABLE_LENGTH イベントを全スキップし `buffermgrdyn` が担当する。Mellanox プラットフォームでは `platform` フィールドで headroom 計算 Lua スクリプトを選択する (`buffermgrdyn.cpp:87-94`)。
+
+### BUFFER_POOL テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:27,115,481` / `buffermgrdyn.cpp:443,2509`
+- **参照フィールド**: `mode`, `size`
+- **依存性質**: 制約チェック。CABLE_LENGTH 由来の headroom 計算後、`ingress_lossless_pool` の `mode` を `getPgPoolMode()` で参照し `BUFFER_PROFILE` の `dynamic_th` を設定する。dynamic モードでは SHP (Shared Headroom Pool) サイズとの整合性チェックにも使用される。
+
+### BUFFER_PROFILE テーブル (CONFIG_DB)
+
+- **参照箇所**: `buffermgr.cpp:25,248,487` / `buffermgrdyn.cpp:444,964-1001,2671`
+- **参照フィールド**: `pool`, `xon`, `xoff`, `size`, `dynamic_th`
+- **依存性質**: 読み書き双方向。CABLE_LENGTH 更新のたびに `pg_lossless_<speed>_<cable>_profile` 形式の BUFFER_PROFILE を自動生成・更新・削除する。ユーザ定義の headroom override プロファイルが CONFIG_DB.BUFFER_PROFILE に存在する場合はそちらを優先し、dynamic 自動生成と区別して管理する (`buffermgrdyn.cpp:2671`)。
+
+### 暗黙参照マトリクス
+
+| テーブル | 参照ファイル | 参照フィールド | 種別 |
+|---|---|---|---|
+| `PORT` | buffermgr.cpp, buffermgrdyn.cpp | `speed`, `mtu`, `admin_status`, `lanes` | 必須前提条件 |
+| `DEVICE_METADATA` | buffermgr.cpp, buffermgrdyn.cpp | `buffer_model`, `platform` | 処理経路分岐 |
+| `BUFFER_POOL` | buffermgr.cpp, buffermgrdyn.cpp | `mode`, `size` | 制約チェック |
+| `BUFFER_PROFILE` | buffermgr.cpp, buffermgrdyn.cpp | `pool`, `xon`, `xoff`, `size`, `dynamic_th` | 読み書き双方向 |
+
+<!-- /cross-refs -->
+
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
