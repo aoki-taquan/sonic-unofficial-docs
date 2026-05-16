@@ -572,7 +572,7 @@ SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_
 <!-- /ordering -->
 
 <!-- pubsub -->
-## 通信メカニズム (Redis PUBSUB / keyspace notification)
+## 通信メカニズム (Phase G)
 
 <!-- evidence: meta/_intermediate/cdb-flow/port-pubsub.md -->
 
