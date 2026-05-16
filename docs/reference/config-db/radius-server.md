@@ -233,6 +233,38 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 <!-- /derivation -->
 
+<!-- ordering -->
+## 設定生成順序・PAM 順序 (Phase B)
+
+### RADIUS 設定ファイル生成順序
+
+`hostcfgd` の `modify_conf_file()` は以下の順序で RADIUS 設定を生成する。
+
+1. **グローバル設定マージ**: `radius_global_default` に `RADIUS|global` の値を上書きコピー (`radius_global.update(self.radius_global)`)。
+2. **NAS 情報補完**: `nas_ip` 未設定 → `get_interface_ip("eth0")` で eth0 IP を取得。`nas_id` 未設定 → `get_hostname()` でホスト名を取得。
+3. **サーバエントリ構築**: `RADIUS_SERVER` の各エントリに対し、グローバル設定をコピーして `server.update()` でサーバ固有設定を上書き。
+4. **priority 降順ソート**: `sorted(..., key=lambda t: int(t['priority']), reverse=True)` により `radsrvs_conf` を priority 高い順に並べる（`hostcfgd` L.703）。
+5. **PAM 設定生成**: `common-auth-sonic.j2` テンプレートに `radsrvs_conf`（priority 降順）を渡して `/etc/pam.d/common-auth-sonic` を生成。`AAA.authentication.login` に `radius` が含まれる場合のみ実行（L.722–723）。
+6. **NSS 設定生成**: `radius_nss.conf.j2` テンプレートに同じ `radsrvs_conf` を渡して `/etc/radius_nss.conf` を生成（L.821）。
+7. **per-server ファイル生成**: `radsrvs_conf` の順に `/etc/pam_radius_auth.d/<ip>_<auth_port>.conf` を生成（L.827–837）。ファイル名はサーバ IP と auth_port の組み合わせ。
+8. **aaastatsd 制御**: `radius` が login 認証に含まれ `statistics` が有効な場合 `aaastatsd` を start、そうでなければ stop（L.839–844）。
+
+### PAM スタック内の RADIUS サーバ順序
+
+| 順序決定要因 | 詳細 | evidence |
+|---|---|---|
+| `priority` 降順 | `radsrvs_conf = sorted(..., key=lambda t: int(t['priority']), reverse=True)` — priority 値が大きいサーバが先にリストされ、PAM が先に試行する | `hostcfgd` L.703 |
+| 同 priority の場合 | Python の `sorted()` は安定ソートのため、`self.radius_servers` dict のイテレーション順（登録順）が維持される | Python sort stability |
+| `priority` 未設定時のデフォルト | `radius_global_default['priority'] = 0` — YANG 範囲外 (1..64) の 0 が使われ最低優先度として扱われる | `hostcfgd` L.375 |
+
+### 設定反映タイミング
+
+- RADIUS_SERVER エントリが変更されると `radius_server_update()` → `modify_conf_file()` が即座に呼ばれ、上記手順 1–8 が全実行される（部分更新なし）。
+- PAM の変更は次回ログインから有効。既存 SSH セッションには影響しない。
+- `auth_port` 変更時は旧ポート番号のファイル (`<ip>_<old_port>.conf`) が `/etc/pam_radius_auth.d/` に残留する（自動クリーンアップなし）。
+
+<!-- /ordering -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
@@ -248,6 +280,64 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 > **スキャン証跡**: `RADIUS_SERVER` テーブルは `hostcfgd` が `RADIUS|global` と merged して各サーバの pam_radius_auth.conf を生成する。CLI は `auth_port` と `priority` を必ず書き込むが `auth_type`/`timeout`/`retransmit` は省略時に未書き込みとなり hostcfgd の fallback 定数が使われる。
 
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/radius-server-side-effects.md`
+
+`RADIUS_SERVER` テーブルへの書込みが発生すると、`hostcfgd` の `AaaCfg.modify_conf_file()` が以下の副次処理を行う。DB への書込みは発生しない（すべてファイルシステム書込みと systemd サービス制御）。
+
+### `/etc/pam_radius_auth.d/<ip>_<port>.conf`（PAM 認証設定）
+
+サーバ 1 台ごとに `RADIUS_PAM_AUTH_CONF_DIR + srv['ip'] + "_" + srv['auth_port'] + ".conf"` を生成する。テンプレート: `pam_radius_auth.conf.j2`。パーミッション `0o600`。`radsrvs_conf` が空（RADIUS_SERVER エントリなし）の場合は生成をスキップ。`auth_port` 変更時は旧ポートのファイルが残留する（自動削除なし）。
+
+> **Evidence**: `hostcfgd:825-837`
+
+### `/etc/radius_nss.conf`（NSS RADIUS 設定）
+
+サーバリストと debug/trace フラグを `radius_nss.conf.j2` でレンダリングし、`/etc/radius_nss.conf` に常時上書きする。`radsrvs_conf` が空の場合も実行される（空リスト）。
+
+> **Evidence**: `hostcfgd:818-823`
+
+### `/etc/nsswitch.conf`（NSS passwd エントリ）
+
+`AAA.authentication.login` に `radius` が含まれる場合、`sed` インプレース編集で `passwd` 行に `radius` を追加する。含まれない場合は ` radius` を除去する。
+
+```
+# radius 有効時の sed 操作（L.765-767）
+/^passwd/s/tacplus //
+/^passwd/s/ ldap//
+/radius/b; /^passwd/s/compat/& radius/; /^passwd/s/files/& radius/
+```
+
+> **Evidence**: `hostcfgd:763-780`
+
+### `/etc/pam.d/common-auth-sonic`（PAM 認証スタック）
+
+`common-auth-sonic.j2` テンプレートから生成し、アトミック書込み（`.tmp` → `os.rename()`）で `/etc/pam.d/common-auth-sonic` に反映する。`radius` が `authentication.login` に含まれる場合は `radsrvs_conf` をレンダリングコンテキストに渡す。
+
+> **Evidence**: `hostcfgd:715-731`
+
+### `/etc/pam.d/sshd`、`/etc/pam.d/login`（@include 書き換え）
+
+`common-auth-sonic` が存在する場合は `@include common-auth` → `@include common-auth-sonic` に、存在しない場合は逆方向に `sed` 書き換えする。`/etc/pam.d/sudo` は対象外。
+
+> **Evidence**: `hostcfgd:744-752`
+
+### `aaastatsd` systemd サービス制御
+
+| 条件 | 操作 |
+|------|------|
+| `radius` が `authentication.login` に含まれ `RADIUS\|global.statistics=true` | `service aaastatsd start` |
+| 上記以外 | `service aaastatsd stop` |
+
+失敗時は `CalledProcessError` をキャッチし `LOG_ERR` を記録して継続する。RADIUS_SERVER エントリ変更のたびに毎回評価される。
+
+> **Evidence**: `hostcfgd:839-851`
+
+<!-- /side-effects -->
 
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
@@ -305,6 +395,43 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 
 - `skip_msg_auth`: YANG 未定義・CLI 未実装だが hostcfgd が参照。直接 DB 書き込みのみで設定可能なフィールド
 <!-- /entry-points -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `radius_server_update` が間接読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`hostcfgd` の `radius_server_update()` は `RADIUS_SERVER` テーブルをメモリに反映した後、`modify_conf_file()` を呼ぶ。この関数は `RADIUS_SERVER` 単体ではなく、以下の関連テーブルを結合してから PAM / NSS テンプレを再生成する。
+
+### `modify_conf_file()` 内で結合される共依存テーブル
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`AAA`](aaa.md) (`authentication`) | `modify_conf_file()` 冒頭 | `authentication['login']` に `radius` が含まれるか確認。含まれない場合は RADIUS PAM スタックが組まれず `RADIUS_SERVER` エントリが存在しても認証に使われない | hostcfgd:639,722,763,840 |
+| [`TACPLUS_SERVER`](tacplus-server.md) | `modify_conf_file()` — `servers_conf` 構築 | TACACS+ サーバリストを並列構築。`tacacs+` が `login` に含まれる場合は TACACS が優先され RADIUS が PAM chain に現れない | hostcfgd:648-666 |
+| [`RADIUS`](radius.md) (`radius_global`) | `modify_conf_file()` — `radius_global` 構築 | `nas_ip` / `nas_id` / `src_intf` / `statistics` を各 `RADIUS_SERVER` エントリにマージ | hostcfgd:667-686 |
+
+### 動的 IP / hostname 解決 (`get_interface_ip` / `get_hostname` 経由)
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `get_interface_ip("eth0")` | `RADIUS|global` に `nas_ip` 未設定の場合、eth0 管理 IP を `nas_ip` として自動補完 | hostcfgd:600,671-674 |
+| `INTERFACE` | `get_interface_ip("Eth...")` | `RADIUS_SERVER.src_intf` が物理ポートのとき src_ip を解決 | hostcfgd:586,694 |
+| `VLAN_INTERFACE` | `get_interface_ip("Vlan...")` | `src_intf` が VLAN のとき | hostcfgd:593 |
+| `VLAN_SUB_INTERFACE` | `get_interface_ip` 分岐 | `src_intf` が VLAN sub-interface のとき | hostcfgd:588 |
+| `PORTCHANNEL_INTERFACE` | `get_interface_ip("Po...")` | `src_intf` が PortChannel のとき | hostcfgd:591 |
+| `LOOPBACK_INTERFACE` | `get_interface_ip("Loopback...")` | `src_intf` が Loopback のとき | hostcfgd:595 |
+| [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | `get_hostname()` | `RADIUS|global` に `nas_id` 未設定の場合、ホスト名を `nas_id` として自動補完 | hostcfgd:566-577,675-678 |
+
+### ランタイム subscribe — RADIUS_SERVER に間接影響するテーブル変化
+
+| テーブル | handler | 影響 | evidence |
+|---|---|---|---|
+| [`AAA`](aaa.md) | `aaa_handler` → `aaacfg.aaa_update()` | `authentication['login']` が変化すると RADIUS PAM スタックの有効/無効が即座に切り替わる | hostcfgd:2289-2291,2470 |
+| [`TACPLUS_SERVER`](tacplus-server.md) | `tacacs_server_handler` → `aaacfg.tacacs_server_update()` | TACACS+ サーバ追加/削除で PAM chain の優先順に影響し RADIUS が有効でも適用されなくなる場合がある | hostcfgd:2304,2472 |
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `mgmt_intf_handler` → `handle_radius_nas_ip_chg()` | eth0 IP 変化時に RADIUS `nas_ip` を再計算し pam_radius_auth.conf を再生成 | hostcfgd:2348-2349,2485 |
+| `MGMT_VRF_CONFIG` | `mgmt_vrf_handler` | 管理 VRF 切替時に eth0 の到達性が変わり `nas_ip` 自動補完結果に影響。`vrf: mgmt` を持つ RADIUS_SERVER エントリの接続経路も切り替わる | hostcfgd:2352-2353,2496 |
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/radius-server-cross-refs.md` を参照。
+<!-- /cross-refs -->
 
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
