@@ -219,3 +219,79 @@ auto any_ip = [](const auto& g) {
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-defaults.md`
 <!-- /defaults -->
+
+<!-- ordering -->
+## エントリ投入順序・依存関係 (Phase B)
+
+### 投入の必須順序
+
+DASH ACL オブジェクトには厳密なコード由来の依存関係があり、SDN コントローラは以下の順序でエントリを投入しなければならない。
+
+```
+[前提] DASH_ENI_TABLE が DashOrch で先に作成済み
+    ↓
+[1] DASH_PREFIX_TAG_TABLE
+    ↓  (src_tag / dst_tag で参照するルールより先に必要)
+[2] DASH_ACL_GROUP_TABLE
+    ↓  (グループ未作成状態ではルール作成が task_need_retry)
+[3] DASH_ACL_RULE_TABLE
+    ↓  (ルール 0 件のグループへのバインドは task_failed)
+[4] DASH_ACL_IN_TABLE / DASH_ACL_OUT_TABLE  ← ENI へのバインド
+```
+
+`task_need_retry` が返ったエントリはキューに残り次のループで自動再試行されるが、`task_failed` は破棄されるため SDN コントローラ側での正しい投入順序が必要。
+
+| 違反パターン | 戻り値 | 自動回復 |
+|---|---|---|
+| グループ未作成でルール投入 | `task_need_retry` | グループ作成後に自動解消 |
+| 参照タグ未作成でルール投入 | `task_need_retry` | タグ作成後に自動解消 |
+| ENI 未作成でバインド | `task_need_retry` | ENI 作成後に自動解消 |
+| ルール 0 件グループのバインド | `task_failed` | 自動回復なし（ルール追加後に再投入必要） |
+| バインド中グループの削除 | `task_need_retry` | 全バインド解除後に自動解消 |
+
+### ステージ番号と SAI 属性マッピング
+
+`DashAclGroupMgr::getSaiStage()` (`dashaclgroupmgr.cpp:94`) が `{方向, IPファミリ, ステージ番号}` の 3 次元タプルを SAI 属性 ID に 1:1 マッピングする。20 組の SAI 属性が存在する。
+
+| 方向 | IP ファミリ | ステージ | SAI 属性 |
+|---|---|---|---|
+| IN | IPv4 | 1 | `SAI_ENI_ATTR_INBOUND_V4_STAGE1_DASH_ACL_GROUP_ID` |
+| IN | IPv4 | 2〜5 | `SAI_ENI_ATTR_INBOUND_V4_STAGE{2-5}_DASH_ACL_GROUP_ID` |
+| IN | IPv6 | 1〜5 | `SAI_ENI_ATTR_INBOUND_V6_STAGE{1-5}_DASH_ACL_GROUP_ID` |
+| OUT | IPv4 | 1〜5 | `SAI_ENI_ATTR_OUTBOUND_V4_STAGE{1-5}_DASH_ACL_GROUP_ID` |
+| OUT | IPv6 | 1〜5 | `SAI_ENI_ATTR_OUTBOUND_V6_STAGE{1-5}_DASH_ACL_GROUP_ID` |
+
+ステージは `1`〜`5` のみ有効。範囲外の値は `lexical_convert` が `invalid_argument` をスローして `task_failed` となる。
+
+### ルール内の評価優先度
+
+- `priority` 値を SAI 属性 `SAI_DASH_ACL_RULE_ATTR_PRIORITY` としてそのまま渡す。
+- **値が小さいほど優先度が高い**（`0` = 最高優先度）。
+- orchagent はルールのソートを行わない。優先度評価は DPU ハードウェア側で処理される。
+
+### タグ更新時の非リフレッシュ動作
+
+`DashTagMgr::update()` はメモリ上のプレフィックスリストを更新するだけで、既にバインド済みのグループ・ルールに SAI 再 SET を行わない。タグ更新後も実行中 ACL ルールは旧プレフィックスで評価される。新プレフィックスを反映するにはグループを解除 → ルール削除 → ルール再作成 → 再バインドの手順が必要。
+
+### 削除の逆順制約
+
+削除は投入の逆順で行う必要がある。
+
+```
+[1] DASH_ACL_IN/OUT_TABLE — DEL（バインド解除）
+    ↓
+[2] DASH_ACL_RULE_TABLE — DEL
+    ↓
+[3] DASH_ACL_GROUP_TABLE — DEL（バインド中は task_need_retry）
+    ↓
+[4] DASH_PREFIX_TAG_TABLE — DEL（グループ参照中は task_need_retry）
+```
+
+### warm-reboot 挙動
+
+`DashAclOrch` は `ZmqOrch` を継承し `gDirectory.set()` のみで登録される（`m_orchList` には非登録）。
+
+`warmRestoreAndSyncUp()` の 3 イテレーションループは `m_orchList` に対して実行されるため、**DASH ACL orch は warm-reboot の自動リプレイ対象外**となる。DASH ACL エントリのリストアは SDN コントローラ（gNMI 側）がエントリを再投入することで実現する設計であり、orchagent 自体による状態保存・リプレイ機構は実装されていない（ステートレス warm-reboot）。
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-ordering.md`
+<!-- /ordering -->
