@@ -340,6 +340,28 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp PfcToQueueHandler::addQosItem (L1011-1035) / QosOrch::handlePortQosMapTable (L2186-2205) -->
+
+`MAP_PFC_PRIORITY_TO_QUEUE` テーブルの変更時、`QosOrch` (`PfcToQueueHandler`) は直接 DB API を呼び出さない。すべての副次書込は SAI API 経由で syncd が仲介する形で ASIC_DB に反映される。
+
+| 副次 DB | 書込契機 | 書込内容 | evidence |
+|---|---|---|---|
+| ASIC_DB (syncd 経由) | マップ作成/更新時 | `SAI_OBJECT_TYPE_QOS_MAP` オブジェクト新規作成 (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_QUEUE`) | `qosorch.cpp:1021,1029` |
+| ASIC_DB (syncd 経由) | `PORT_QOS_MAP.pfc_to_queue_map` から参照時 | ポートオブジェクト (`SAI_OBJECT_TYPE_PORT`) の属性 `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` を qos_map OID で更新 | `qosorch.cpp:69,2193` |
+| APPL_DB | — | 書込なし | — |
+| STATE_DB | — | 書込なし | — |
+| COUNTERS_DB | — | 書込なし | — |
+| APPL_STATE_DB | — | 書込なし | — |
+
+**補足**: `PORT_QOS_MAP` 側の `handlePortQosMapTable()` が複数ポートをループし、各ポートに `set_port_attribute` を呼ぶ。マップ削除時には OID に `SAI_NULL_OBJECT_ID` を設定して属性をクリアする。
+
+詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-side-effects.md`
+
+<!-- /side-effects -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
