@@ -264,4 +264,42 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 SET 受信時、FRR に peer-group が存在しなければ `neighbor <pg_name> peer-group` を **属性設定より先に自動発行**する。失敗した場合は LOG_ERR を出力して属性設定全体を skip (`frrcfgd.py` L2793-2801)。
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込順依存 (Phase B)
+
+### 必須順序: BGP_GLOBALS → BGP_PEER_GROUP → BGP_NEIGHBOR
+
+`frrcfgd.__update_bgp()` は `BGP_PEER_GROUP` イベント処理時に対象 VRF の `local_asn` を取得し、未設定（`None`）の場合はイベントを **silently drop**（`LOG_DEBUG` のみ）する。`BGP_GLOBALS|<vrf>` に `local_asn` が書き込まれてから `BGP_PEER_GROUP|<vrf>|<pg_name>` を書き込まなければ peer-group 設定が無音で失われる。
+
+```text
+CONFIG_DB 書込順（必須）
+
+1. BGP_GLOBALS|<vrf>        (local_asn を含む)
+2. BGP_PEER_GROUP|<vrf>|<pg_name>
+3. BGP_NEIGHBOR|<vrf>|<ip>  (peer_group_name で peer-group を参照する場合)
+```
+
+### frrcfgd ハンドラ起動順
+
+`table_handler_list`（`frrcfgd.py` L2293-2338）は `BGP_GLOBALS`（位置 3）を `BGP_PEER_GROUP`（位置 11）より前に登録する。`config_mode == "unified"` の起動時リプレイはこの順番で CONFIG_DB を再適用するため、起動時も上記の順序が保証される。
+
+### peer-group 自動作成の内部順序
+
+SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コマンドより先に `neighbor <pg_name> peer-group` を自動発行する（`frrcfgd.py` L2793-2802）。自動作成失敗時は `LOG_ERR` を出力して属性設定全体を skip する。FRR への発行順: ① peer-group 宣言 → ② 属性コマンド群。この内部順序は frrcfgd が自動保証する。
+
+### bgpcfgd 経路の依存宣言
+
+`BGPPeerMgrBase.__init__()` は `deps` に `DEVICE_METADATA.bgp_asn` を宣言し（`managers_bgp.py` L118-126）、Manager 基底クラスが deps 充足まで `set_handler()` を保留する。初回ピア追加時は `post_dependencies_init_complete` フラグにより追加 loopback テンプレートを解決してから peer-group テンプレートを確定する（`managers_bgp.py` L181-182）。
+
+### 順序違反時の挙動
+
+| 違反パターン | 挙動 | ソース |
+|------------|------|--------|
+| BGP_GLOBALS 未設定で BGP_PEER_GROUP を書く | frrcfgd が silently drop（LOG_DEBUG のみ） | `frrcfgd.py` L2658-2662 |
+| BGP_PEER_GROUP 未作成で BGP_NEIGHBOR の `peer_group_name` を参照 | vtysh エラー（peer-group 未存在）。frrcfgd は LOG_ERR → skip | `frrcfgd.py` L2826-2827 |
+| `neighbor <pg> peer-group` の自動発行失敗 | LOG_ERR 出力 + 属性設定全体を skip（`continue`） | `frrcfgd.py` L2800-2801 |
+
+> 詳細分析: `meta/_intermediate/cdb-flow/bgp-peer-group-ordering.md`
+<!-- /ordering -->
+
 <!-- glossary-links-injected: d4d0b1f9b453 -->
