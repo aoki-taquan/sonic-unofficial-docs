@@ -342,11 +342,17 @@ ERSPAN セッション作成時は `m_routeOrch->attach(this, entry.dstIp)` で 
 |--------------------------|---------|------|----------------|
 | `PORT\|<name>` (`dst_port`) | YANG leafref + OID 解決（必須） | `type = 'SPAN'` かつ `dst_port` に物理ポート名を指定。PortsOrch に存在しない場合 `activateSession()` が `false` を返す | YANG `sonic-mirror-session.yang` / `mirrororch.cpp:942-950` |
 | `PORT\|<name>` / `PORTCHANNEL\|<name>` (`src_port`) | 暗黙 OID 解決（必須） | `src_port` にポート名またはカンマ区切りリストを指定したとき。PHY / LAG のみ受理。VLAN 等は `task_invalid_entry` | `mirrororch.cpp:307-323` (`validateSrcPortList()`), `mirrororch.cpp:886-916` (`configurePortMirrorSession()`) |
+| `ROUTE_TABLE` (APPL_DB / RouteOrch) | 暗黙 nexthop 解決（非同期） | ERSPAN セッション作成時に `m_routeOrch->attach(this, entry.dstIp)` で `dst_ip` のルート解決をサブスクライブ。ルートが存在しない間はセッションが INACTIVE のまま待機し、RouteOrch からの Observer 通知後に `updateSession()` で ACTIVE 化 | `mirrororch.cpp:517` (`createEntry()` ERSPAN ケース), `mirrororch.cpp:563-585` (`update()` RouteOrch イベント処理) |
+| `NEIGHBOR_TABLE` (APPL_DB / NeighOrch) | 暗黙 ARP/ND 解決（非同期） | ERSPAN の `dst_ip` に対応する next-hop MAC が未解決のとき NeighOrch からの `SUBJECT_TYPE_NEIGH_CHANGE` を受けて `updateSession()` → `getNeighborInfo()` で neighbor MAC + ポートを解決。解決後に SAI MIRROR_SESSION の neighbor 属性を更新 | `mirrororch.cpp:169-180` (`update()` NeighOrch 購読), `mirrororch.cpp:660-743` (`getNeighborInfo()`) |
 | `VLAN` / `FDB` (ERSPAN nexthop が VLAN SVI 経由) | 暗黙 VLAN OID + FDB 参照 | ERSPAN の `dst_ip` nexthop が VLAN L3 インタフェース経由のとき。FDB エントリがない間は INACTIVE で待機 | `mirrororch.cpp:711-743` (`getNeighborInfo()` `Port::VLAN` ケース), `mirrororch.cpp:981-1001` (SAI VLAN ヘッダ付与) |
 | `MIRROR_SESSION` ← `ACL_RULE` (被参照) | `refCount` による削除ガード | `ACL_RULE` が `MIRROR_*_ACTION` で当セッションを参照中。`refCount > 0` の状態でセッションを削除しようとすると `runtime_error` をスロー | `mirrororch.cpp:239-269` (refCount 管理), `mirrororch.cpp:539` (削除ガード), `aclorch.cpp:2376` (ACL 側 increaseRefCount) |
 | `DEVICE_METADATA\|localhost\|platform` (間接) | 環境変数経由（起動時のみ） | プロセス起動時の `$platform` 環境変数経由。`platform == MLNX_PLATFORM_SUBSTRING` のとき `gre_type` デフォルトが `0x8949`（Mellanox）、それ以外は `0x88be` | `mirrororch.cpp:57-72` (`MirrorEntry` コンストラクタ), `mirrororch.cpp:395` (`getenv("platform")`) |
 | `POLICER\|<name>` | YANG leafref + runtime 存在確認 | `policer` フィールド指定時。`m_policerOrch->policerExists()` が false なら `task_need_retry`。存在後に `increaseRefCount()` | YANG `sonic-mirror-session.yang` / `mirrororch.cpp:434-443` |
 
+!!! note "ERSPAN の非同期 ACTIVE 化 — ROUTE / NEIGHBOR の二段階解決"
+    ERSPAN セッションは `createEntry()` 直後は INACTIVE。`dst_ip` に対してまず RouteOrch がルートを解決し、次に NeighOrch が next-hop MAC (ARP/ND) を解決して初めて ACTIVE 化する。どちらが欠けても INACTIVE のまま待機し、対応するテーブルが更新されると非同期に `updateSession()` が呼ばれる。
+
+!!! note "ACL_RULE と MIRROR_SESSION の参照方向"
 !!! note "ACL_RULE と MIRROR_SESSION の参照方向"
     `ACL_RULE` が `MIRROR_SESSION` を参照する（一方向）。`MIRROR_SESSION` 自身は `ACL_RULE` テーブルを読み取らないが、`refCount` で被参照数を追跡する。セッション削除時に ACL_RULE 等から参照中（`refCount > 0`）なら削除が失敗する。
 
