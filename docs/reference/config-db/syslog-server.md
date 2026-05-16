@@ -245,6 +245,62 @@ db_migrator.py での SYSLOG_SERVER マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`rsyslog.conf.j2` および `rsyslog-config.sh` に直接埋め込まれた定数。CONFIG_DB フィールドや YANG で変更不可。
+
+### ポート・プロトコルデフォルト定数 (rsyslog.conf.j2)
+
+| 定数 / 用途 | 値 | ソース |
+|------------|-----|--------|
+| デフォルト UDP ポート | **514** | `rsyslog.conf.j2` L89: `conf.get('port', 514)` |
+| デフォルトプロトコル | **`udp`** | `rsyslog.conf.j2` L90: `conf.get('protocol', 'udp')` |
+| デフォルト VRF | **`default`** | `rsyslog.conf.j2` L91: `conf.get('vrf', 'default')` → `device` を付与しない |
+
+### プロトコル enum 文字列定数 (rsyslog.conf.j2)
+
+`protocol` フィールドの値は以下の 2 択のみ。Jinja2 テンプレートは値をそのまま `Protocol=` オプションに渡す。
+
+| 値 | rsyslog Action オプション | 効果 |
+|----|--------------------------|------|
+| `udp` | `Protocol="udp"` | rsyslog omfwd が UDP で転送。パケットロスあり。 |
+| `tcp` | `Protocol="tcp"` | rsyslog omfwd が TCP で転送。接続失敗時はキュー蓄積。 |
+
+`@` / `@@` 形式は古い rsyslog レガシー構文。現実装 (`rsyslog.conf.j2`) は `omfwd` アクション + `Protocol=` オプション形式を使用する。
+
+### 受信ポート定数 (rsyslog.conf.j2)
+
+rsyslog がローカルで待ち受けるポートは固定値でハードコードされている。
+
+| ポート | プロトコル | 用途 | ソース |
+|-------|-----------|------|--------|
+| **514** | UDP | コンテナ → ホスト syslog 受信 (`imudp`) | `rsyslog.conf.j2` L31 |
+| **2514** | RELP | コンテナ → ホスト RELP syslog 受信 (`imrelp`) | `rsyslog.conf.j2` L42 |
+
+### Action 固定オプション定数 (rsyslog.conf.j2 L124)
+
+リモート転送 `action()` に常時付与されるハードコードオプション。CONFIG_DB で変更不可。
+
+| rsyslog オプション | 固定値 | 意味 |
+|-------------------|--------|------|
+| `action.resumeRetryCount` | **`"60"`** | 接続失敗時の再試行上限 |
+| `queue.type` | **`"LinkedList"`** | 転送キュータイプ |
+| `queue.size` | **`"20000"`** | 転送キューサイズ（メッセージ数） |
+
+### VRF 判定文字列定数 (rsyslog.conf.j2 L97)
+
+```jinja2
+{% set device = vrf if vrf != '' and vrf != 'default' -%}
+```
+
+- `'default'` および空文字列は「VRF バインドなし」と判定される文字列定数。
+- `'mgmt'` や任意 VRF 名の場合は `Device="<vrf>"` オプションを付与。
+
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog.conf.j2 L84-125 -->
+<!-- evidence: sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh -->
+<!-- /constants -->
+
 <!-- defaults -->
 ## 暗黙デフォルト (Phase A)
 
