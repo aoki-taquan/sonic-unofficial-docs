@@ -354,6 +354,55 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・外部状態変化 (Phase F)
+
+### FRR vtysh コマンド経路
+
+`PrefixListMgr` は CONFIG_DB への直接書き戻しを行わず、**FRR bgpd** に対して `vtysh` 経由でコマンドを発行する（APP_DB / STATE_DB への書き込みなし）。
+
+#### ANCHOR_PREFIX (`add_radian.conf.j2`)
+
+```
+{ipv} prefix-list ANCHOR_CONTRIBUTING_ROUTES permit {prefix} ge {prefixlen+1}
+router bgp {bgp_asn}
+ address-family ipv4|ipv6 unicast
+  aggregate-address {prefix} route-map TAG_ANCHOR_COMMUNITY
+  exit
+exit
+```
+
+- `ip`/`ipv6 prefix-list ANCHOR_CONTRIBUTING_ROUTES` に `permit <prefix> ge <prefixlen+1>` を追加
+- `router bgp` セクションで `aggregate-address <prefix> route-map TAG_ANCHOR_COMMUNITY` を設定
+- 削除時は `no` プレフィックス付き同コマンドで取り消し
+
+#### SUPPRESS_PREFIX (`add_suppress_prefix.conf.j2`)
+
+```
+{ipv} prefix-list SUPPRESS_IPV4_PREFIX|SUPPRESS_IPV6_PREFIX permit {prefix}
+```
+
+- IPv4 → `ip prefix-list SUPPRESS_IPV4_PREFIX permit <prefix>`
+- IPv6 → `ipv6 prefix-list SUPPRESS_IPV6_PREFIX permit <prefix>`
+- constants に `bgp.prefix_list.SUPPRESS_PREFIX.ipv4_name` / `ipv6_name` が定義されていればその名前を使用
+
+### kernel / データプレーンへの波及
+
+- prefix-list はコントロールプレーン BGP フィルタであり、Linux カーネルルーティングテーブル（ip route）への直接書き込みはない
+- BGP ピアへのルートアドバタイズ/撤退は FRR bgpd が次の UPDATE メッセージ送出時に反映する（即時性あり）
+- aggregate-address 設定変更後、既存 BGP ピアのルートフィルタを再評価させるには `clear bgp * soft` が必要な場合あり
+
+### 副次書込のまとめ
+
+| 書込先 | タイミング | 内容 |
+|--------|------------|------|
+| FRR bgpd (vtysh) | set_handler / del_handler 実行直後 | `ip`/`ipv6 prefix-list` + `aggregate-address` (ANCHOR) または `prefix-list` のみ (SUPPRESS) |
+| APP_DB | なし | — |
+| STATE_DB | なし | — |
+| Linux カーネル | BGP UPDATE 経由 | ルート撤退 / 追加（間接） |
+
+<!-- /side-effects -->
+
 <!-- failure -->
 ## 失敗挙動・エラーパス (Phase D)
 
