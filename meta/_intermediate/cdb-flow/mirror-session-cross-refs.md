@@ -206,12 +206,61 @@ YANG leafref として既にドキュメントに記載済み。cross-refs と�
 
 ---
 
+## 6. ROUTE_TABLE (APPL_DB / RouteOrch) — 暗黙参照
+
+ERSPAN セッション作成時に `createEntry()` は `m_routeOrch->attach(this, entry.dstIp)` を呼び、
+`dst_ip` に対するルート解決を RouteOrch にサブスクライブする:
+
+```cpp
+// mirrororch.cpp:517
+m_routeOrch->attach(this, session.dstIp);
+```
+
+ルートが存在しない間はセッションが INACTIVE のまま待機する。RouteOrch からの Observer 通知
+(`SUBJECT_TYPE_NEXTHOP_CHANGE`) を受けると `update()` が呼ばれ `updateSession()` で ACTIVE 化を試みる
+(`mirrororch.cpp:563-585`)。
+
+- **参照先**: `ROUTE_TABLE|<prefix>` (APPL_DB) / RouteOrch 内部テーブル
+- **参照方向**: 暗黙 nexthop 解決（Observer パターン、非同期）
+- **条件**: `type = 'ERSPAN'` かつ `dst_ip` に到達するルートが存在しないとき
+- **待機動作**: ルート解決まで INACTIVE を維持。ルート追加後に自動再評価される
+
+---
+
+## 7. NEIGHBOR_TABLE (APPL_DB / NeighOrch) — 暗黙参照
+
+ERSPAN の `dst_ip` に対する next-hop の MAC アドレスが未解決の場合、NeighOrch からの
+`SUBJECT_TYPE_NEIGH_CHANGE` を購読して `getNeighborInfo()` で neighbor MAC + 出力ポートを解決する:
+
+```cpp
+// mirrororch.cpp:169-180 (update() — NeighOrch イベント処理)
+case SUBJECT_TYPE_NEIGH_CHANGE:
+{
+    NeighborUpdate *update = static_cast<NeighborUpdate *>(cntx);
+    updateSession(*update);
+    break;
+}
+```
+
+`getNeighborInfo()` (`mirrororch.cpp:660-743`) は neighbor MAC から SAI neighbor entry と出力ポート OID を取得する。
+ARP/ND が解決されると SAI MIRROR_SESSION の neighbor 属性 (`SAI_MIRROR_SESSION_ATTR_DST_MAC_ADDRESS`,
+`SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` 等) が更新される。
+
+- **参照先**: `NEIGH_TABLE|<interface>|<ip>` (APPL_DB) / NeighOrch 内部テーブル
+- **参照方向**: 暗黙 MAC 解決（Observer パターン、非同期）
+- **条件**: `type = 'ERSPAN'` かつ `dst_ip` に対する ARP/ND エントリが未解決のとき
+- **待機動作**: neighbor 解決まで INACTIVE を維持。ARP 解決後に自動再評価される
+
+---
+
 ## 参照関係サマリ
 
 ```
 MIRROR_SESSION
   ├─ [YANG leafref] PORT.name          (dst_port — SPAN 出力ポート、物理のみ)
   ├─ [暗黙] PORT.name / PORTCHANNEL.name (src_port — ミラーソースポート、PHY/LAG のみ)
+  ├─ [暗黙] ROUTE_TABLE (RouteOrch)    (ERSPAN dst_ip のルート解決、非同期 Observer)
+  ├─ [暗黙] NEIGHBOR_TABLE (NeighOrch) (ERSPAN dst_ip の ARP/ND 解決、非同期 Observer)
   ├─ [暗黙] VLAN.vlan_id / FDB         (ERSPAN nexthop が VLAN SVI 経由のとき)
   ├─ [被参照] ACL_RULE → MIRROR_SESSION (ACL_RULE の MIRROR_*_ACTION が参照。refCount で追跡)
   ├─ [間接] DEVICE_METADATA.platform   (platform 環境変数経由で gre_type default を分岐)
@@ -227,6 +276,8 @@ MIRROR_SESSION
 | `dst_port` YANG leafref | `sonic-mirror-session.yang` leaf `dst_port` → `PORT_LIST/name` |
 | `dst_port` OID 解決 | `mirrororch.cpp:942-950` (`activateSession()`) |
 | `src_port` 暗黙参照 | `mirrororch.cpp:307-323` (`validateSrcPortList()`), `mirrororch.cpp:886-916` (`configurePortMirrorSession()`) |
+| ROUTE_TABLE 暗黙参照 | `mirrororch.cpp:517` (`createEntry()` `routeOrch->attach()`), `mirrororch.cpp:563-585` (`update()` RouteOrch イベント) |
+| NEIGHBOR_TABLE 暗黙参照 | `mirrororch.cpp:169-180` (`update()` NeighOrch 購読), `mirrororch.cpp:660-743` (`getNeighborInfo()`) |
 | VLAN 参照 | `mirrororch.cpp:711-743` (`getNeighborInfo()` VLAN ケース), `mirrororch.cpp:981-1001` (SAI VLAN ヘッダ属性) |
 | VLAN_MEMBER_CHANGE 購読 | `mirrororch.cpp:191-196` (`update()`) |
 | ACL_RULE refCount | `mirrororch.cpp:239-269` (`increaseRefCount/decreaseRefCount`), `mirrororch.cpp:539` (削除ガード) |
