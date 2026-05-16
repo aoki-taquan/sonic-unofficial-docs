@@ -182,6 +182,49 @@ VoQ モードでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKE
 !!! warning "READ_AND_CLEAR の副作用"
     `QUEUE_WATERMARK` / `PG_WATERMARK` グループは `READ_AND_CLEAR` モードで動作する。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。`watermarkstat` の PERIODIC / PERSISTENT / USER テーブル分岐は syncd 側の lua スクリプトが処理する。
 
+<!-- ordering -->
+## 書込み順依存・初期化タイミング (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp (initializeQueuesBulk, generateQueueMap,
+     generateQueueMapPerPort, addQueueFlexCounters, addQueueFlexCountersPerPortPerQueueIndex,
+     addPortBufferQueueCounters, createPortBufferQueueCounters),
+     sonic-swss/orchagent/flexcounterorch.cpp (doTask, getQueueConfigurations,
+     FlexCounterOrch constructor, handleDeviceMetadataTable) -->
+
+### allPortsReady 前の自動ブロック
+
+`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:164-167`) は `gPortsOrch->allPortsReady()` が false の間 `return` する。`FLEX_COUNTER_TABLE|QUEUE|FLEX_COUNTER_STATUS = enable` を orchagent 起動前に CONFIG_DB へ書き込んでも、`initializeQueuesBulk()` によるポート SAI OID フェッチ（`SAI_PORT_ATTR_QOS_QUEUE_LIST`）が完了するまで `generateQueueMap()` は実行されない。COUNTERS_DB へのマッピング書き込みは allPortsReady 後に自動的に一括実行される。
+
+### Warm-reboot 60 秒遅延
+
+Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイマーが起動し（`FLEX_COUNTER_DELAY_SEC = 60`、`flexcounterorch.cpp:44`）、60 秒間すべての FlexCounter 処理をブロックする。Cold boot ではこの遅延はなく即時処理される。Warm-reboot 中に `FLEX_COUNTER_TABLE|QUEUE = enable` を書き込んでも最大 60 秒間 `generateQueueMap()` が呼ばれず、COUNTERS_DB のキュー統計が更新されない期間が生じる。
+
+### `BUFFER_QUEUE` と `FLEX_COUNTER_TABLE|QUEUE` の書込み順序
+
+ランタイム中に `BUFFER_QUEUE` エントリが追加されると `createPortBufferQueueCounters()` (`portsorch.cpp:8700-8755`) が呼ばれ、その時点で `getQueueCountersState()` が `true` の場合のみ `addQueueFlexCountersPerPortPerQueueIndex()` が実行される。
+
+- **BUFFER_QUEUE 先・FLEX_COUNTER_TABLE 後**: `BUFFER_QUEUE` 書込み時はカウンタ未登録（`getQueueCountersState()` が false）。後から `FLEX_COUNTER_TABLE|QUEUE = enable` を書くと `addQueueFlexCounters(getQueueConfigurations())` で非ゼロプロファイル付き BUFFER_QUEUE を対象にカウンタが一括登録される。
+- **FLEX_COUNTER_TABLE 先・BUFFER_QUEUE 後**: `BUFFER_QUEUE` 書込み時に `getQueueCountersState()` が `true` のため `createPortBufferQueueCounters()` 内で即時カウンタ登録される。
+- どちらの順序でも最終状態（FLEX_COUNTER_DB のカウンタ登録）は同じになる。
+
+### `m_isQueueMapGenerated` 冪等保護
+
+`generateQueueMap()` (`portsorch.cpp:8391`) は `m_isQueueMapGenerated` フラグで保護されており、一度だけ実行される。`FLEX_COUNTER_TABLE|QUEUE` と `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` を個別に `enable` にしても、2 回目の `generateQueueMap()` 呼び出しは即 `return` する。実際のマッピング生成は最初の enable 処理時のみ。Warm-reboot や orchagent 再起動後はフラグがリセットされ再実行される。
+
+### `DEVICE_METADATA.create_only_config_db_buffers` の影響
+
+`FlexCounterOrch` コンストラクタ起動時に `create_only_config_db_buffers` を読み込み内部キャッシュする。この値が `false`（デフォルト）または VoQ モードでは全ポートの全キューにカウンタを有効化する。`true` の場合は `BUFFER_QUEUE` 非ゼロプロファイル付きキューのみ対象。`DEVICE_METADATA` の事後変更は `handleDeviceMetadataTable()` で動的に反映されるが、`m_isQueueMapGenerated` がすでに `true` のため既登録カウンタには影響しない。既存カウンタを変更するには orchagent 再起動が必要。
+
+### VoQ モードの例外
+
+`gMySwitchType == "voq"` では `generateQueueMapPerPort()` が `getQueueCountersState()` を確認せずに `addQueueFlexCountersPerPortPerQueueIndex()` を直接呼ぶ。また `getQueueConfigurations()` は `createAllAvailableBuffersStr` を返して全キュー有効化する。VoQ モードでは `FLEX_COUNTER_TABLE|QUEUE = disable` / `BUFFER_QUEUE` の書込み順序に関わらずカウンタが収集され続ける。
+
+### BUFFER_QUEUE DEL によるカウンタ停止
+
+`BUFFER_QUEUE` エントリを DEL すると `deletePortBufferQueueCounters()` が呼ばれ、`COUNTERS_QUEUE_NAME_MAP` から該当エントリが削除されて `queue_stat_manager.clearCounterIdList()` でカウンタ登録が抹消される。この操作は `FLEX_COUNTER_TABLE|QUEUE` の状態（enable/disable）に依存しない。`FLEX_COUNTER_TABLE|QUEUE = disable` を先に行う必要はない。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
