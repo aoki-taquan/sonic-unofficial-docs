@@ -285,3 +285,37 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 > **スキャン証跡**: minigraph.py:2281-2297,2869-2880 を確認、4 件分岐抽出。MGMT_INTERFACE は orchagent 非経由を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- failure-behavior -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+### eth0 への IP 設定失敗
+
+`setIntfIp()` (`intfmgr.cpp:78-133`) が `ip address add/del` を実行し、コマンドが非ゼロ終了コードを返した場合:
+
+| 条件 | 挙動 | ログ |
+|------|------|------|
+| IPv4 `ip address add/del` 失敗 | リトライなし・スキップ | `SWSS_LOG_ERROR("Command '%s' failed with rc %d", ...)` (`intfmgr.cpp:130`) |
+| IPv6 `ip address add` 失敗 (1 回目) | `sysctl net.ipv6.conf.<alias>.disable_ipv6=0` でフラグ再有効化してリトライ | `SWSS_LOG_NOTICE("Failed to assign IPv6 on interface %s ... trying to enable IPv6 and retry", ...)` (`intfmgr.cpp:119`) |
+| IPv6 フラグ有効化そのものが失敗 | 即時 `return`（IP 設定断念） | `SWSS_LOG_ERROR("Failed to enable IPv6 on interface %s", ...)` (`intfmgr.cpp:122`) |
+| IPv6 `ip address add` 失敗 (リトライ後も失敗) | エラーログのみ・上位へのリトライ要求なし | `SWSS_LOG_ERROR("Command '%s' failed with rc %d", ...)` (`intfmgr.cpp:130`) |
+
+> **重要**: IP 設定に失敗しても `doIntfAddrTask()` は `true` を返す（`intfmgr.cpp:1170`）。そのため `doTask()` はエントリをキューから除去し、**自動リトライは行われない**。
+
+### カーネル netlink 失敗
+
+`IntfMgr` は `ip` コマンド (`IP_CMD`) 経由でカーネルに netlink 操作を発行する。コマンド失敗 (非ゼロ終了) の一般的な挙動:
+
+| 操作 | 失敗時の挙動 | ソース |
+|------|-------------|--------|
+| `ip address add/del` (IPv4) | `SWSS_LOG_ERROR` のみ。アドレス未設定のまま継続 | `intfmgr.cpp:130` |
+| `ip address add` (IPv6) | フラグ再有効化リトライ → 失敗なら `return` | `intfmgr.cpp:119-131` |
+| `ip link set <alias> master <vrf>` (VRF バインド) | `SWSS_LOG_ERROR` のみ。VRF バインド未完のまま継続 | `intfmgr.cpp:165` |
+| `ip link set <alias> address <mac>` (MAC 設定) | `SWSS_LOG_ERROR` のみ | `intfmgr.cpp:145` |
+| インターフェース未 ready 検出 (`isIntfStateOk` / `isIntfCreated`) | `return false` → エントリをキューに残しポーリングで再試行 | `intfmgr.cpp:1115-1118` |
+
+**インターフェース未 ready の場合のみ自動リトライあり**。その他の netlink 失敗（カーネルエラー・権限不足等）はエラーログを出してエントリを破棄する。
+
+<!-- /failure-behavior -->
