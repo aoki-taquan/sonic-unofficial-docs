@@ -357,4 +357,52 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-net/sonic-swss orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+### 不正 IP / フィールド値による拒否
+
+| 条件 | ログ / 動作 | evidence |
+|------|-----------|----------|
+| `tunnel_type` が `IPINIP` 以外 | `SWSS_LOG_ERROR("Invalid tunnel type %s")` → `valid=false`、エントリ全体スキップ | `tunneldecaporch.cpp:L129` |
+| `src_ip` が不正 IP 文字列 | `std::invalid_argument` 例外を捕捉 → `SWSS_LOG_ERROR(e.what())` → `valid=false`、エントリスキップ | `tunneldecaporch.cpp:L141-144` |
+| `dscp_mode` が `uniform`/`pipe` 以外 | `SWSS_LOG_ERROR("Invalid dscp mode %s")` → `valid=false`、エントリスキップ | `tunneldecaporch.cpp:L157` |
+| `ecn_mode` が `copy_from_outer`/`standard` 以外 | `SWSS_LOG_ERROR("Invalid ecn mode %s")` → `valid=false`、エントリスキップ | `tunneldecaporch.cpp:L173` |
+| `encap_ecn_mode` が `standard` 以外 | `SWSS_LOG_ERROR("Only standard encap ecn mode is supported currently")` → `valid=false`、エントリスキップ | `tunneldecaporch.cpp:L189` |
+| `ttl_mode` が `uniform`/`pipe` 以外 | `SWSS_LOG_ERROR("Invalid ttl mode %s")` → `valid=false`、エントリスキップ | `tunneldecaporch.cpp:L205` |
+| 未知フィールド名 | `SWSS_LOG_ERROR("unknown decap tunnel table attribute '%s'")` → `valid=false`、エントリスキップ | `tunneldecaporch.cpp:L277` |
+
+### VRF 未解決 / QoS マップ未解決
+
+| 条件 | ログ / 動作 | evidence |
+|------|-----------|----------|
+| `decap_dscp_to_tc_map` が未解決（OID = `SAI_NULL_OBJECT_ID`） | `SWSS_LOG_NOTICE("QoS map %s is not ready yet")` → `task_need_retry`、エントリをキューに戻す | `tunneldecaporch.cpp:L218-221` |
+| `decap_tc_to_pg_map` が未解決 | 同上 → `task_need_retry` | `tunneldecaporch.cpp:L233-236` |
+| `encap_tc_to_dscp_map` が未解決 | 同上 → `task_need_retry` | `tunneldecaporch.cpp:L248-251` |
+| `encap_tc_to_queue_map` が未解決 | 同上 → `task_need_retry` | `tunneldecaporch.cpp:L263-266` |
+| tunnel decap term で `tunnel_name` が未登録 | `SWSS_LOG_ERROR("Tunnel %s does not exist.")` → term エントリスキップ | `tunneldecaporch.cpp:L904` |
+
+### SAI tunnel 作成失敗
+
+| 条件 | ログ / 動作 | evidence |
+|------|-----------|----------|
+| `sai_tunnel_api->create_tunnel()` 失敗 | `SWSS_LOG_ERROR("Failed to create tunnel")` → `handleSaiCreateStatus()` → 失敗時 `parseHandleSaiStatusFailure()` でエントリ再処理またはドロップ | `tunneldecaporch.cpp:L852-858` |
+| overlay RIF (`sai_router_intfs_api->create_router_interface()`) 失敗 | `SWSS_LOG_ERROR("Failed to create overlay router interface %d")` → `false` 返却、ASIC_DB 未書込み | `tunneldecaporch.cpp:L756` |
+| `sai_tunnel_api->create_tunnel_term_table_entry()` 失敗 | `SWSS_LOG_ERROR("Failed to create tunnel decap term entry %s.")` → `handleSaiCreateStatus()` 経由で再処理またはドロップ | `tunneldecaporch.cpp:L982-985` |
+| DEL 時 `sai_tunnel_api->remove_tunnel()` 失敗 | `SWSS_LOG_ERROR("Failed to remove tunnel: %" PRIu64)` → `handleSaiRemoveStatus()` 経由 | `tunneldecaporch.cpp:L1194-1198` |
+| DEL 時 overlay RIF `remove_router_interface()` 失敗 | `SWSS_LOG_ERROR("Failed to remove tunnel overlay interface: %" PRIu64)` → `handleSaiRemoveStatus()` 経由 | `tunneldecaporch.cpp:L1203` |
+| `TUNNEL_DECAP_TABLE` DEL 時に decap term が残存 | `SWSS_LOG_ERROR("Failed to remove tunnel %s that has decap terms.")` → DEL 拒否 (`false` 返却) | `tunneldecaporch.cpp:L1184` |
+
+### create-only 属性の変更試行
+
+| 条件 | ログ / 動作 | evidence |
+|------|-----------|----------|
+| 既存トンネルに `ecn_mode` を SET | `SWSS_LOG_WARN("Skip setting ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_DECAP_ECN_MODE is create only")` → `valid=false`、処理中断 | `tunneldecaporch.cpp:L179` |
+| 既存トンネルに `encap_ecn_mode` を SET | `SWSS_LOG_NOTICE("Skip setting encap_ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_ENCAP_ECN_MODE is create only")` → `valid=false`、処理中断 | `tunneldecaporch.cpp:L194` |
+| 既存トンネルの `src_ip` を変更 | `SWSS_LOG_ERROR("cannot modify src ip for existing tunnel")` → 変更拒否（DEL → SET が必要） | `tunneldecaporch.cpp:L149` |
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: 415c3a53ecc2 -->
