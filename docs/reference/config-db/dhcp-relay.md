@@ -599,4 +599,65 @@ DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::
 なし。`dhcp6relay` は Linux カーネルの L4 UDP relay であり SAI/ASIC に一切触れない。
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム差 (Task F Phase H)
+
+> **調査根拠**: `dhcprelayd.py`, `utils.py`, `dhcp_db_monitor.py`, `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2`, `docker-dhcp-relay.supervisord.conf.j2` 全行精読 (2026-05-16)
+
+### 1. SmartSwitch DPU — mid-plane bridge 対応
+
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`dhcprelayd` は `VLAN` テーブルに加え `MID_PLANE_BRIDGE` テーブルも監視し、DPU 向けの IPv4 DHCP リレーを有効化する。
+
+| 項目 | 通常スイッチ | SmartSwitch (DPU) |
+|------|------------|-------------------|
+| リレー対象インタフェース | VLAN テーブルのみ | VLAN + `MID_PLANE_BRIDGE.GLOBAL.bridge`（例: `bridge-midplane`） |
+| イベント監視 | `VlanTableEventChecker` / `VlanIntfTableEventChecker` | 上記に加え `MidPlaneTableEventChecker` を動的有効化 |
+| dhcp_server 無効化時 | VLAN 系 checker を解除 | `MID_PLANE_CHECKER` も解除対象に追加 |
+| DPU への IP 割当 | N/A | `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu0` 等で個別 IP を割当 |
+
+`DHCP_RELAY` テーブル（DHCPv6 設定）自体は引き続き VLAN ベースで動作し、mid-plane bridge 経路とは独立している。
+
+`dhcprelayd.py:97-103`, `utils.py:153-161`。
+
+### 2. DualToR — `interface_id` デフォルト差
+
+`DEVICE_METADATA.localhost.subtype == "DualToR"` の場合、`dhcpv6-relay.agents.j2` が `dhcp6relay` に `-u Loopback0` オプションを追加し、`dual_tor_sock` フラグが立つ。これにより `interface_id` のハードコードデフォルトが変化する。
+
+| 環境 | `dhcp6relay` 起動オプション | `interface_id` デフォルト |
+|------|--------------------------|--------------------------|
+| 通常スイッチ | `-u` オプションなし | `false`（Interface-ID 挿入なし） |
+| DualToR | `-u Loopback0` 付き | `true`（Interface-ID オプション自動挿入） |
+
+さらに DualToR 環境では `STATE_DB::HW_MUX_CABLE_TABLE|<port>` の `state == "standby"` ポートからのパケットをリレーしない制御が追加される (`relay.cpp:915`)。
+
+DHCPv4 側の DualToR オプションは `-U Loopback0 -dt`（大文字 U + `-dt` フラグ）で、DHCPv6 の `-u Loopback0`（小文字 u）と異なる点に注意。
+
+`dhcpv6-relay.agents.j2:9-12`, `config_interface.cpp:117-122`。
+
+### 3. IPv4 vs IPv6 relay の実装差
+
+DHCPv4 と DHCPv6 では relay の設定テーブル・プロセス・ランタイム変更可否がすべて異なる。
+
+| 比較項目 | DHCPv4 relay | DHCPv6 relay |
+|---------|-------------|-------------|
+| 設定テーブル | `VLAN.dhcp_servers`（旧）または `DHCP_SERVER_IPV4`（新） | `DHCP_RELAY` テーブル専用 |
+| プロセス | `dhcrelay`（ISC DHCP）または `dhcp4relay`（SONiC 独自） | `dhcp6relay`（SONiC 独自）|
+| 切替フラグ | `DEVICE_METADATA.localhost.has_sonic_dhcpv4_relay == "True"` で新旧切替 | 切替なし |
+| ランタイム変更 | `dhcprelayd` が kill + 再起動で反映 | dead consumer — コンテナ再起動が必要 |
+| deployment_id 分岐 | `deployment_id == "8"` 時に `-si` オプション追加 | deployment_id 依存なし |
+
+`has_sonic_dhcpv4_relay == "True"` 環境では `dhcprelayd` が DHCP_SERVER_IPV4 テーブルを動的に読んで dhcrelay を管理し、ランタイム設定変更に対応できる。`"False"` 環境では従来の ISC `dhcrelay` を supervisord が VLAN ごとに静的起動する。
+
+`docker-dhcp-relay.supervisord.conf.j2:29-46`, `dhcprelayd.py:112`。
+
+### まとめ
+
+| 差分軸 | 影響フィールド / 挙動 | 検出方法 | ソース |
+|--------|---------------------|----------|--------|
+| SmartSwitch DPU | mid-plane bridge がリレー対象に追加、MidPlaneTableEventChecker 有効化 | `DEVICE_METADATA.subtype == "SmartSwitch"` | `dhcprelayd.py:65,102`, `utils.py:161` |
+| DualToR (DHCPv6) | `interface_id` デフォルト `true`、standby ポートのリレー無効 | `DEVICE_METADATA.subtype == "DualToR"` | `dhcpv6-relay.agents.j2:9-12`, `config_interface.cpp:121` |
+| `has_sonic_dhcpv4_relay` | DHCPv4 relay が ISC dhcrelay か SONiC dhcp4relay か切替 | `DEVICE_METADATA.localhost.has_sonic_dhcpv4_relay` | `supervisord.conf.j2:29-46`, `dhcprelayd.py:112` |
+| IPv4 vs IPv6 | relay プロセス・テーブル・ランタイム変更可否が異なる | プロトコル種別 | `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2` |
+<!-- /platform -->
+
 <!-- glossary-links-injected: 11715e560dc6 -->
