@@ -354,4 +354,19 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 > **SAI Bulk 部分失敗**は `processIngressBufferProfileListBulk()` 内で処理される。`SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` を使用するため、複数ポートの一括 SET において一部ポートが失敗しても処理は継続する。失敗したポートのエントリは `consumer.m_toSync` に再投入され次回リトライされる。
 
 <!-- /failure -->
+
+<!-- side-effects -->
+## 副次 DB 書込（STATE_DB / COUNTERS_DB / APPL_STATE_DB / FLEX_COUNTER_DB）
+
+`buffermgrdyn.cpp` および `bufferorch.cpp` を精査した結果、**BUFFER_PORT_INGRESS_PROFILE_LIST の処理経路に副次 DB 書込は存在しない**。
+
+| 対象 DB | 書込有無 | 根拠 |
+|--------|---------|------|
+| STATE_DB | **なし** | `buffermgrdyn.cpp` は `m_stateBufferPoolTable` / `m_stateBufferProfileTable` に書くが、これらは BUFFER_POOL / BUFFER_PROFILE ハンドラ内のみ。ingress profile list 処理パス (`handleBufferObjectTables` → `handleSingleBufferPortProfileListEntry`) に STATE_DB 書込なし。 |
+| APPL_STATE_DB | **なし** | `m_applStateBufferPoolTable` / `m_applStateBufferProfileTable` の接続はあるが、ingress profile list ハンドラから書込コードは呼ばれない。(`buffermgrdyn.cpp:43-51`) |
+| COUNTERS_DB | **なし** | `bufferorch.cpp:55-56,546` の `m_counterNameMapUpdater` は BUFFER_POOL の set/del 時にのみ呼ばれる。`processIngressBufferProfileList` / `processIngressBufferProfileListBulk` からは呼ばれない。 |
+| FLEX_COUNTER_DB | **なし** | `bufferorch.cpp:247,337,344` の FLEX_COUNTER 操作は buffer pool watermark カウンタ専用。ingress profile list ハンドラは `sai_port_api->set_ports_attribute` (bulk SAI) を呼ぶのみで FLEX_COUNTER_DB には触れない。 |
+
+> **evidence**: `buffermgrdyn.cpp:313,361,887,920`（STATE_DB 書込は BUFFER_POOL/PROFILE ハンドラ内）、`bufferorch.cpp:1663-1848`（`processIngressBufferProfileList` / `processIngressBufferProfileListBulk` — DB 書込なし、SAI のみ）
+<!-- /side-effects -->
 <!-- glossary-links-injected: 021ae16e7b9c -->
