@@ -266,6 +266,67 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 <!-- /handler-branching -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclaglink.cpp / sonic-swss/fdbsyncd/fdbsync.cpp -->
+
+`MCLAG_DOMAIN` を CONFIG_DB に書き込むと、`mclagsyncd` (MclagLink) が iccpd と連携し以下の副次書込が発生する。
+
+### STATE_DB STATE_MCLAG_TABLE
+
+| キー | フィールド | 書込トリガー | evidence |
+|---|---|---|---|
+| `STATE_MCLAG_TABLE\|<domain_id>` | `oper_status = "up"\|"down"` | ICCP セッション up/down 通知 (iccpd → mclagsyncd) | `mclaglink.cpp:mclagsyncdSetIccpState()` |
+| `STATE_MCLAG_TABLE\|<domain_id>` | `role = "active"\|"standby"`, `system_mac` | ICCP ロールネゴシエーション完了 | `mclaglink.cpp:mclagsyncdSetIccpRole()` |
+| `STATE_MCLAG_TABLE\|<domain_id>` | `system_mac` | `MCLAG_MSG_TYPE_SET_SYSTEM_ID` 受信時 | `mclaglink.cpp:mclagsyncdSetSystemId()` |
+| `STATE_MCLAG_TABLE\|<domain_id>` | (エントリ削除) | `MCLAG_MSG_TYPE_DEL_ICCP_INFO` 受信時 | `mclaglink.cpp:mclagsyncdDelIccpInfo()` |
+
+### STATE_DB MCLAG_LOCAL_INTF_TABLE / MCLAG_REMOTE_INTF_TABLE
+
+| キー | フィールド | 書込トリガー | evidence |
+|---|---|---|---|
+| `STATE_MCLAG_LOCAL_INTF_TABLE\|<if_name>` | `port_isolate_peer_link = "true"\|"false"` | ローカル IF port-isolation 変化 | `mclaglink.cpp:setLocalIfPortIsolate()` |
+| `STATE_MCLAG_REMOTE_INTF_TABLE\|<domain_id>\|<if_name>` | `oper_status = "up"\|"down"` | リモートピア IF 状態変化 | `mclaglink.cpp:mclagsyncdSetRemoteIfState()` |
+
+### ASIC_DB 参照 (読取のみ)
+
+`mclagsyncd` は FDB エントリのポート解決のため ASIC_DB を**読み取り専用**で参照する。
+
+```
+ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:<oid>
+  SAI_BRIDGE_PORT_ATTR_PORT_ID   →  ポート OID へのマッピング
+  SAI_BRIDGE_PORT_ATTR_TUNNEL_ID →  トンネル OID（フォールバック）
+```
+
+evidence: `mclaglink.cpp` `getBridgePortIdToAttrPortIdMap()` (L73-L96)
+
+### APPL_DB FDB_TABLE
+
+iccpd からの FDB ADD/DEL 通知を受け、`mclagsyncd` が APPL_DB に書き込む。
+
+```
+FDB_TABLE|Vlan<vid>:<mac>
+  port  =  "<if_name>"
+  type  =  "dynamic" | "dynamic_local"
+```
+
+- ADD: `MCLAG_FDB_OPER_ADD` 受信時に `p_fdb_tbl->set()` を実行
+- DEL: `MCLAG_FDB_OPER_DEL` 受信時に `p_fdb_tbl->del()` を実行
+- APPL_DB FDB_TABLE → fdbsyncd → orchagent → sai_fdb_api → ASIC_DB の順に伝播
+- evidence: `mclaglink.cpp:512-517`
+
+### MlagOrch observer 通知 (内部)
+
+`MlagOrch` は DB に書き込まない代わりに Subject 通知を broadcast し、`FdbOrch` がポート down 時の FDB フラッシュ制御に使用する。
+
+| Subject | トリガー | 効果 |
+|---|---|---|
+| `SUBJECT_TYPE_MLAG_ISL_CHANGE` | `addIslInterface()` / `delIslInterface()` | FdbOrch が ISL 判定を更新 |
+| `SUBJECT_TYPE_MLAG_INTF_CHANGE` | `addMlagInterface()` / `delMlagInterface()` | FdbOrch が MLAG ポートリストを更新; MLAG ポート down 時に FDB フラッシュをスキップ (`fdborch.cpp:1209`) |
+
+<!-- /side-effects -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
