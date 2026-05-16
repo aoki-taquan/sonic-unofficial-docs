@@ -90,6 +90,32 @@ VXLAN_TUNNEL_MAP|<tunnel_name>|<map_name>
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-defaults.md -->
+
+| 挙動 | 実装動作 | コードロケーション |
+|------|---------|------------------|
+| mapping type | 常に `VNI_TO_VLAN_ID` (decap) + `VLAN_ID_TO_VNI` (encap) のペアを自動生成。CONFIG_DB に型指定フィールドなし | `vxlanorch.cpp:759-760` |
+| VRF マッパー初期化 | VLAN MAP 追加時にトンネルが inactive ならば VRF マッパー (`VIRTUAL_ROUTER_ID_TO_VNI` / `VNI_TO_VIRTUAL_ROUTER_ID`) も同時に先行生成 (over-provision) | `vxlanorch.cpp:2065-2072` |
+| `vni` >= 16777215 | `SWSS_LOG_ERROR` + `return true` で永続破棄 (リトライなし)。YANG `vnid_type` 型との二重チェック | `vxlanorch.cpp:2037-2040` |
+| L3VNI の場合 | `VRFOrch::isL3VniVlan()` が真の場合 SAI entry を生成せず `SAI_NULL_OBJECT_ID` を記録 (暗黙 no-op) | `vxlanorch.cpp:2101-2113` |
+| VLAN 未存在 | `PortsOrch::getVlanByVlanId()` が失敗 → `return false` でリトライ待ち | `vxlanorch.cpp:2031-2035` |
+| tunnel 未存在 | `TunnelOrch::isTunnelExists()` が失敗 → `return false` でリトライ待ち | `vxlanorch.cpp:2047-2051` |
+| del_tnl_hw_pending | 親トンネルの HW 削除保留中は MAP 追加もブロック → `return false` でリトライ待ち | `vxlanorch.cpp:2053-2058` |
+
+### 書込み順依存
+
+- `VXLAN_TUNNEL` が未作成の状態で `VXLAN_TUNNEL_MAP` を書くとトンネル存在チェックで `false` 返却 → リトライ。トンネル登録後に自動再処理される。
+- `VLAN` が未作成の状態で MAP を書くと VLAN チェックで `false` 返却 → 同様にリトライ。
+
+### 既知 YANG-実装 discrepancy
+
+- L3VNI 判定は `VRFOrch` の内部状態 (`isL3VniVlan()`) に依存。YANG / CONFIG_DB に L3VNI を明示するフィールドはなく、同じ `vni` 値でも VRF 登録状態により SAI entry が生成されるかどうかが変わる — **外部から観測不可能な silent 挙動差**。
+
+<!-- /defaults -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->

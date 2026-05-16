@@ -44,6 +44,72 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### MACsecMgr — CONFIG_DB Consumer 登録
+
+`MACsecMgr::MACsecMgr(cfgDb, stateDb, tables)` が `Orch(cfgDb, tables)` で次のテーブルを Consumer 登録する。
+
+| テーブル | DB | 目的 |
+|---|---|---|
+| `CFG_MACSEC_PROFILE_TABLE_NAME` ("MACSEC_PROFILE") | CONFIG_DB | MKA プロファイル設定 (CAK/CKN/cipher_suite/policy 等) |
+| `CFG_PORT_TABLE_NAME` ("PORT") | CONFIG_DB | ポートの `macsec` フィールドでプロファイル名参照 |
+
+`doTask()` の TaskMap:
+
+| テーブル | op | メソッド |
+|---|---|---|
+| `MACSEC_PROFILE` | SET | `loadProfile()` — プロファイルをキャッシュ |
+| `MACSEC_PROFILE` | DEL | `removeProfile()` — プロファイルを削除 |
+| `PORT` | SET | `enableMACsec()` — wpa_supplicant 起動・設定投入 |
+| `PORT` | DEL | `disableMACsec()` — wpa_supplicant 停止 |
+
+### wpa_supplicant 経路
+
+`enableMACsec()` が per-port の `wpa_supplicant` を `fork/exec` し、`wpa_cli` コマンドで MKA パラメータ (CAK/CKN/cipher_suite/rekey_period 等) を投入する。`wpa_supplicant` が MKA ネゴシエーションを行い MACsec SA を確立する。
+
+```
+/sbin/wpa_supplicant -s /var/run/<port>  (per-port ソケット)
+  └─ wpa_cli set_network <id> key_mgmt NONE
+  └─ wpa_cli set_network <id> ca_cert / psk (CAK/CKN)
+  └─ wpa_cli set_network <id> mka_rekey_period <N>
+  └─ wpa_cli set_network <id> macsec_policy / macsec_replay_protect
+```
+
+### APP_DB Publish → MACsecOrch → SAI
+
+`wpa_supplicant` の MKA 完了後、APP_DB の MACsec テーブルに書き込まれ `MACsecOrch` が SAI `sai_macsec_api` を呼び出す。
+
+| SAI API | 操作 |
+|---|---|
+| `create_macsec()` / `remove_macsec()` | ingress/egress MACsec オブジェクト |
+| `create_macsec_port()` / `remove_macsec_port()` | ポート MACsec |
+| `create_macsec_flow()` / `remove_macsec_flow()` | フロー |
+| `create_macsec_sc()` / `remove_macsec_sc()` | Secure Channel |
+| `create_macsec_sa()` / `remove_macsec_sa()` | Secure Association |
+
+### 通信フロー
+
+```
+CONFIG_DB MACSEC_PROFILE|<name>  (SET)
+  └─ macsecmgrd  MACsecMgr::loadProfile()
+
+CONFIG_DB PORT|<port>.macsec = <profile>  (SET)
+  └─ macsecmgrd  MACsecMgr::enableMACsec()
+       ├─ fork/exec /sbin/wpa_supplicant  (MKA ネゴシエーション)
+       │    └─ wpa_cli で CAK/CKN/cipher_suite 投入
+       └─ APP_DB APP_MACSEC_PORT_TABLE / *SC_TABLE / *SA_TABLE
+            └─ [orchagent] MACsecOrch::doTask()
+                 └─ sai_macsec_api->create_macsec_sa() 等
+
+ASIC_DB NOTIFICATIONS  (POST 完了通知)
+  └─ MACsecOrch::doTask(NotificationConsumer &)
+       └─ handleNotification() → 初期化継続
+```
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text
@@ -68,6 +134,27 @@ MACSEC_PROFILE|<name>
 | `send_sci` | boolean | `true` | 送信フレームに SCI を含める |
 | `rekey_period` | uint32 | `0` | 能動的 SAK 再生成周期 [秒]。0 で再生成しない |
 
+<!-- defaults -->
+## コード由来デフォルト値
+
+> **出典**: `sonic-swss/cfgmgr/macsecmgr.cpp` (GetValue フォールバック)、`docker-macsec/cli/config/plugins/macsec.py` (`add_profile` コマンド)、`sonic-macsec.yang` (`default` ステートメント) — 三者完全一致。
+
+| フィールド | デフォルト値 | 根拠 |
+|-----------|------------|------|
+| `priority` | `255` | YANG `default 255` / C++ fallback `priority = 255` / CLI `default=255` |
+| `cipher_suite` | `GCM-AES-128` | YANG `default "GCM-AES-128"` / CLI `default="GCM-AES-128"` |
+| `policy` | `security` | YANG `default "security"` / C++ fallback `policy = Policy::SECURITY` / CLI `default="security"` |
+| `enable_replay_protect` | `false` | YANG `default "false"` / C++ fallback `enable_replay_protect = false` / CLI `default=False` |
+| `replay_window` | `0` (暗黙) | C++ fallback `replay_window = 0` / CLI `default=0`。YANG `default` なし (`when` 条件で `enable_replay_protect = true` 時のみ有効) |
+| `send_sci` | `true` | YANG `default "true"` / C++ fallback `send_sci = true` / CLI `default=True` |
+| `rekey_period` | `0` | YANG `default 0` / C++ fallback `rekey_period = 0` / CLI `default=0` |
+| `primary_cak` | — (必須) | YANG `mandatory true` / CLI `required=True` |
+| `primary_ckn` | — (必須) | YANG `mandatory true` / CLI `required=True` |
+| `fallback_cak` | — (省略可) | YANG optional leaf、設定省略時はフォールバック MKA 無効 |
+| `fallback_ckn` | — (省略可) | YANG optional leaf、`fallback_cak` 設定時に必要 |
+
+<!-- /defaults -->
+
 ## 制約 (YANG `must`)
 
 - `fallback_cak` を設定する場合は `primary_cak` と同じ長さ
@@ -90,44 +177,6 @@ MACSEC_PROFILE|<name>
 - [YANG](../../reference/glossary.md#term-yang): [`sonic-macsec`](../yang/sonic-macsec.md)
 
 <!-- ref-triangle:end -->
-
-<!-- cross-refs -->
-## 暗黙参照 (Phase C)
-
-<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
-
-### PORT テーブルからの参照
-
-`PORT` テーブルの `macsec` フィールドに記載されたプロファイル名を `macsecmgrd` (`MACsecMgr::enableMACsec`) が読み取り、`MACSEC_PROFILE` エントリを検索する。プロファイルが未ロードの場合は `task_need_retry` が返却され、ポートの MACsec は有効化されない。
-
-```
-CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
-```
-
-プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (`task_failed`)。
-
-### MACSEC_SC への間接参照
-
-`configureMACsec()` が `wpa_supplicant` を通じて MKA セッションを確立後、`macsecorch` が APPL_DB 経由で SAI MACsec SC (Secure Channel) オブジェクトを生成する。`send_sci` / `policy` / `cipher_suite` の各フィールドが SC の動作モードに直接影響する。
-
-### wpa_supplicant 連携
-
-`macsecmgrd` は MACsec コントロールプレーンとして `/sbin/wpa_supplicant` を子プロセスで起動し、`/sbin/wpa_cli` を介して以下のパラメータを注入する。
-
-| MACSEC_PROFILE フィールド | wpa_cli パラメータ |
-|--------------------------|-------------------|
-| `primary_cak` | `mka_cak` |
-| `primary_ckn` | `mka_ckn` |
-| `priority` | `mka_priority` |
-| `rekey_period` | `mka_rekey_period`（0 の場合は設定しない） |
-| `cipher_suite` | `macsec_ciphersuite` |
-| `send_sci` | `macsec_include_sci` |
-| `enable_replay_protect` | `macsec_replay_protect` |
-| `replay_window` | `macsec_replay_window`（`enable_replay_protect=true` 時のみ） |
-| `policy` | `macsec_integ_only`（`integrity_only` → 1） |
-
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md)
-<!-- /cross-refs -->
 
 ## 引用元
 
@@ -201,6 +250,67 @@ show macsec
 
 <!-- /value-behavior -->
 
+<!-- ordering -->
+## 順序依存・起動順
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/orchagent/macsecorch.cpp -->
+
+### PORT 先行条件 (macsecmgr)
+
+`PORT.macsec` フィールドが設定されると `MACsecMgr::enableMACsec()` が呼ばれるが、起動にはふたつの前提条件をすべて満たす必要がある。
+
+1. **MACSEC_PROFILE が先に存在すること** — `m_profiles.find(profile_name)` が見つからない場合は `task_need_retry` を返し、プロファイルが登録されるまで再試行し続ける。
+2. **PORT が STATE_DB で ready 状態であること** — `isPortStateOk(port_name)` が `STATE_PORT_TABLE_NAME` を参照し、`state == "ok"` かつ `netdev_oper_status == "up"` でなければ同様に `task_need_retry`。
+
+```
+CONFIG_DB に MACSEC_PROFILE|<name> が存在
+  ↓ (先行必須)
+STATE_DB PORT|<port> state=ok, netdev_oper_status=up
+  ↓ (先行必須)
+enableMACsec() → wpa_supplicant 起動 → MKA セッション確立
+```
+
+ソース: `cfgmgr/macsecmgr.cpp` L487–504
+
+### wpa_supplicant 起動順 (macsecmgr)
+
+`startWPASupplicant()` は `fork()` + `execl()` で `/sbin/wpa_supplicant -s -D macsec_sonic -g <sock>` を起動し、その後 **ソケット (`/var/run/wpa_supplicant/<port>`) が応答を返すまで最大 `RETRY_TIME` 回ポーリング**（`wpa_cli_exec(..., "status")`）してから次処理（`configureMACsec`）に進む。ソケット応答前に `configureMACsec` を呼ぶと接続失敗になるため、ここで暗黙的なブロッキング待機が発生する。
+
+```
+fork() + execl(wpa_supplicant)
+  ↓ (ポーリング待機: RETRY_TIME 回)
+wpa_supplicant ソケット応答
+  ↓
+configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設定
+```
+
+ソース: `cfgmgr/macsecmgr.cpp` L635–678
+
+### SAI macsec_sa 作成順 (macsecorch)
+
+`MACsecOrch` では SAI オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は `task_need_retry` を返し待機する。
+
+```
+1. MACsec Switch Object (initMACsecObject)  ← スイッチ単位で 1 回のみ
+     ↓
+2. MACsec Port Object (createMACsecPort)    ← PORT ごと
+     ↓
+3. MACsec SC (Security Channel) Object (createMACsecSC)
+     ↓
+4. MACsec SA (Security Association) Object (createMACsecSA)
+     ↓ (最初の SA 作成時のみ)
+5. ACL エントリアクションを "packet action" から "MACsec flow" に切り替え
+```
+
+- SC が存在しない状態で `taskUpdateEgressSA` / `taskUpdateIngressSA` を呼ぶと `task_need_retry` → SC 作成まで待機。
+- SA 削除時に当該 SC の SA が 0 件になると、ACL エントリアクションを "MACsec flow" から "packet action" に戻す（逆順クリーンアップ）。
+- Egress SA は `encoding_an` フィールドが一致する AN のみ作成し、不一致は `task_need_retry`。
+- Ingress SA は `active = true` で作成、`active = false` で削除するトリガ型制御。
+
+ソース: `orchagent/macsecorch.cpp` L960–996 (Port), L1887–1909 (SC), L2223–2382 (SA)
+
+<!-- /ordering -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -218,6 +328,54 @@ show macsec
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/orchagent/macsecorch.cpp -->
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `cipher_suite` に不正値 | `lexical_convert()` → `throw std::invalid_argument("Invalid cipher_suite : ...")` | `SWSS_LOG_WARN` → `task_failed` | なし |
+| 2 | CAK 長が `cipher_suite` と不一致 | `decodeKey()` → `throw std::invalid_argument("Invalid length for cipher_string : ...")` | `SWSS_LOG_WARN` → `task_failed` | なし |
+| 3 | `policy` に不正値 | `lexical_convert()` → `throw std::invalid_argument("Invalid policy : ...")` | `SWSS_LOG_WARN` → `task_failed` | なし |
+| 4 | `wpa_supplicant` fork 失敗 (`fork()` < 0) | `startWPASupplicant()` | `SWSS_LOG_WARN("Cannot start the wpa_supplicant of the port '%s' : %s")` + `errno` → `task_failed` | なし |
+| 5 | `wpa_supplicant` 起動後 socket 接続タイムアウト | `startWPASupplicant()` retry ループ | `stopWPASupplicant()` + `SWSS_LOG_WARN("Cannot connect to wpa_supplicant.")` → `task_failed` | なし |
+| 6 | MKA プロファイルロード失敗 | `loadMKAProfile()` | `SWSS_LOG_WARN("The MACsec profile '%s' on the port '%s' loading fail")` → `task_failed` | なし |
+| 7 | `enableMACsec()` 内 `runtime_error` | `catch(runtime_error)` | `SWSS_LOG_WARN("Enable MACsec fail : %s")` → ポート非暗号化のまま継続 | なし |
+| 8 | `disableMACsec()` で wpa_supplicant 停止失敗 | `stopMKASession()` / `stopWPASupplicant()` | `SWSS_LOG_WARN("Cannot stop MKA session ...")` / `SWSS_LOG_WARN("Cannot stop WPA_SUPPLICANT ...")` → `task_failed`、プロセス残留の可能性 | なし |
+| 9 | SAI `create/set macsec` 恒久エラー | `parseHandleSaiStatusFailure()` | `task_failed` | なし |
+| 10 | SAI MACsec POST 失敗通知 | `doPostCompletionTask()` | `setMacsecPostState(m_state_db, "fail")` + `SWSS_LOG_ERROR("MACSec POST failed")` | なし |
+| 11 | プロファイル DEL 時にポートが使用中 | `removeProfile()` | `task_need_retry`（全ポート MACsec 無効化まで待機） | 無制限 |
+
+### task_failed 後の挙動
+
+`macsecmgr` が `task_failed` を返すと Consumer はエントリを破棄し、ポートは MACsec 無効のまま継続動作する。`macsecorch` も同様。SAI 一時エラー（`SAI_STATUS_NOT_READY` 等）は `task_need_retry` で無制限再試行される。
+
+### wpa_supplicant 起動失敗の詳細
+
+`fork()` 後に子プロセスが `execv("/sbin/wpa_supplicant", ...)` を実行。Unix socket 接続を一定回数試みて失敗した場合、`stopWPASupplicant()` を呼び出して `wpa_supplicant_pid = 0` にクリアし `task_failed` を返す。ポートの MACsec は有効化されない。<!-- evidence: macsecmgr.cpp L544-558, L676 -->
+
+### SAI POST 失敗の詳細
+
+`macsecorch` 初期化時に `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` を照会。`SAI_SWITCH_MACSEC_POST_STATUS_FAIL` が返ると STATE_DB に `status: fail` を書き込む。その後の通知（`switch_macsec_post_status` / `macsec_post_status`）でも失敗を検出した場合は同様に記録される。<!-- evidence: macsecorch.cpp L710-711, L791-792, L856-857 -->
+
+### STATE_DB / syslog への記録
+
+- SAI POST 失敗のみ STATE_DB に記録される（`MACSEC_POST|switch` エントリ）
+- その他の失敗は `syslog`（`SWSS_LOG_WARN` / `SWSS_LOG_ERROR`）への出力のみ
+- CONFIG_DB のエントリは失敗後も残る
+
+```bash
+# syslog 確認
+journalctl -u macsecmgrd | grep -iE "fail|warn|error"
+# STATE_DB POST ステータス確認
+sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
@@ -271,114 +429,109 @@ show macsec
 - なし
 <!-- /entry-points -->
 
-<!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
-
-### 不正 priority
-
-`priority` フィールドの値を uint8 に変換できない場合（例: 256 以上の数値・非数値文字列）、`get_value()` 内の `boost::bad_lexical_cast` が捕捉され `SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")` が出力される。変換失敗時は `get_value` が `false` を返し、`MACsecProfile::update()` はデフォルト値 `priority = 255` を適用して処理を続行する。エントリ破棄は発生しない。
-
-```
-priority 変換失敗
-  └─ SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")
-  └─ priority = 255 (デフォルト) で継続
-  └─ task_success（エントリ保持）
-```
-
-### CAK 長違反
-
-`primary_cak` / `fallback_cak` の hex 文字列長が `cipher_suite` と不一致の場合、`decodeKey()` が `std::invalid_argument("Invalid length for cipher_string : ...")` を送出する。これは `loadProfile()` の catch ブロックで捕捉され `SWSS_LOG_WARN` が出力されて `task_failed` が返る。**再試行なし**でエントリは破棄される。
-
-| cipher_suite | 期待 CAK 長 | 実際が異なる場合 |
-|---|---|---|
-| `GCM-AES-128` / `GCM-AES-XPN-128` | 66 hex 文字 | `throw std::invalid_argument` → `task_failed` |
-| `GCM-AES-256` / `GCM-AES-XPN-256` | 130 hex 文字 | `throw std::invalid_argument` → `task_failed` |
-
-```
-loadProfile()
-  └─ profile.update(profile_attr)
-       └─ GetValue(ta, primary_cak)
-            └─ decodeKey(cipher_str, cipher_suite)
-                 └─ length mismatch → throw invalid_argument
-  └─ catch(invalid_argument) → SWSS_LOG_WARN
-  └─ return task_failed  ← 再試行なし、エントリ破棄
-```
-
-### SAK refresh（wpa_cli コマンド）失敗
-
-`configureMACsec()` が `wpa_cli_exec_and_check()` を使い `mka_cak` / `mka_priority` 等を `wpa_supplicant` に設定する際、wpa_cli の応答が "OK" で始まらない場合は `std::runtime_error` が送出される。`configureMACsec()` の catch ブロックが `SWSS_LOG_WARN("Enable MACsec fail : %s")` を出力し `false` を返す。`enableMACsec()` はこれを受けて `disableMACsec()` を呼び出してポートを安全な状態に戻す。
-
-`wpa_supplicant` プロセス起動自体が失敗した場合（`startWPASupplicant()` が 0 を返す）は `task_failed`、-1 以下（`fork` 失敗）は `task_need_retry` となる。
-
-```
-enableMACsec()
-  └─ startWPASupplicant()
-       ├─ pid < 0  → SWSS_LOG_WARN → task_need_retry
-       └─ pid == 0 → SWSS_LOG_WARN → task_failed
-  └─ configureMACsec()
-       └─ wpa_cli_exec_and_check() → "OK" でない応答
-            └─ throw runtime_error
-       └─ catch → SWSS_LOG_WARN("Enable MACsec fail : %s")
-       └─ return false
-  └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
-```
-
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
-<!-- /failure -->
-
 <!-- side-effects -->
-## 副次 DB 書込・外部副作用 (Phase F)
+## 副次 DB 書込 (Direction B — orch / mgr が書く先)
 
-<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/orchagent/macsecorch.cpp -->
+> ソース: `sonic-swss/orchagent/macsecorch.cpp`, `sonic-swss/cfgmgr/macsecmgr.cpp`
 
-### ファイルシステム — `/etc/wpa_supplicant.conf`
+### STATE_DB
 
-`macsecmgrd` が `wpa_supplicant` を起動する際、引数 `-c /etc/wpa_supplicant.conf` としてコンフィグファイルパスを渡す（`WPA_CONF` マクロ）。このファイルはビルドイメージに同梱されており、`macsecmgrd` 自身は上書きしない。MKA パラメータ（`mka_cak`、`mka_ckn`、`mka_priority` 等）は `wpa_cli set_network` コマンド経由でランタイムに注入されるため、設定ファイルへの追記は発生しない。
+`MACSEC_PROFILE` を読んだ `macsecmgrd` → `MACsecOrch` が以下のテーブルへ書き込む。
 
-| 対象 | 操作 | タイミング |
-|------|------|-----------|
-| `/etc/wpa_supplicant.conf` | 読み取り専用（起動引数として参照） | `enableMACsec()` 時 |
+| テーブル | キー形式 | 書込フィールド | タイミング |
+|----------|----------|----------------|------------|
+| `STATE_MACSEC_PORT_TABLE` (`MACSEC_PORT_TABLE`) | `<port_name>` | `max_sa_per_sc`, `state=ok` | `MACsecOrch::createMACsecPort()` 成功時 |
+| `STATE_MACSEC_EGRESS_SC_TABLE` | `<port_name>\|<SCI>` | `state=ok` | `MACsecOrch::createMACsecSC()` で egress SC 確立時 |
+| `STATE_MACSEC_INGRESS_SC_TABLE` | `<port_name>\|<SCI>` | `state=ok` | `MACsecOrch::createMACsecSC()` で ingress SC 確立時 |
+| `STATE_MACSEC_EGRESS_SA_TABLE` | `<port_name>\|<SCI>\|<AN>` | `state=ok` | `MACsecOrch::createMACsecSA()` で egress SA 確立時 |
+| `STATE_MACSEC_INGRESS_SA_TABLE` | `<port_name>\|<SCI>\|<AN>` | `state=ok` | `MACsecOrch::createMACsecSA()` で ingress SA 確立時 |
 
-### APPL_DB — MACsec テーブル群
+削除は `del()` で対応 — ポート/SC/SA 削除時に各テーブルのエントリを消去する。
 
-`macsecorch`（`sonic-swss/orchagent/macsecorch.cpp`）が APPL_DB の以下のテーブルを Consumer として購読し、SAI MACsec オブジェクト作成後に STATE_DB へ書き込む。`MACSEC_PROFILE` の各フィールドはプロファイル適用時にこれらテーブル経由で伝播する。
+### ASIC_DB（SAI 経由）
 
-| APPL_DB テーブル | 用途 |
-|-----------------|------|
-| `APP_MACSEC_PORT_TABLE` | MACsec が有効化されたポート情報 |
-| `APP_MACSEC_EGRESS_SC_TABLE` | 送信 Secure Channel (SC) |
-| `APP_MACSEC_INGRESS_SC_TABLE` | 受信 Secure Channel (SC) |
-| `APP_MACSEC_EGRESS_SA_TABLE` | 送信 Secure Association (SA)。SAK が確立するたびに更新 |
-| `APP_MACSEC_INGRESS_SA_TABLE` | 受信 Secure Association (SA)。SAK が確立するたびに更新 |
+`macsecorch.cpp` が `sai_macsec_api` を呼び出し、syncd 経由で ASIC_DB に反映される。
 
-> `macsecmgrd` は APPL_DB への直接書き込みを行わない。APPL_DB への書き込みは `wpa_supplicant` → `macsec_sonic` ドライバ経由のシグナルを受けた `macsecorch` が担う。
+| SAI API 呼び出し | 主な属性 | タイミング |
+|-----------------|----------|------------|
+| `sai_macsec_api->create_macsec()` | `SAI_MACSEC_ATTR_DIRECTION`, `SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE` | MACsec グローバルオブジェクト初回作成 |
+| `sai_macsec_api->create_macsec_port()` | ポート OID, 方向 | MACsecOrch がポートを有効化するとき |
+| `sai_macsec_api->create_macsec_sc()` | SC OID, SCI, 方向, 暗号スイート | SC 確立時 |
+| `sai_macsec_api->create_macsec_sa()` | `SAI_MACSEC_SA_ATTR_AN`, `SAI_MACSEC_SA_ATTR_SAK`, `SAI_MACSEC_SA_ATTR_SALT`, `SAI_MACSEC_SA_ATTR_AUTH_KEY`, `SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `SAI_MACSEC_SA_ATTR_MINIMUM_INGRESS_XPN` | MKA が SA を合意したとき (APP_DB 経由) |
+| `sai_macsec_api->remove_macsec_sa()` | SA OID | SA 削除/ロールオーバー時 |
+| `sai_macsec_api->set_macsec_sa_attribute()` | `SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `SAI_MACSEC_SA_ATTR_MINIMUM_INGRESS_XPN` (XPN 更新) | XPN 再生成が要求されたとき |
 
-### STATE_DB — MACsec テーブル群
+### wpa_supplicant 設定書込
 
-MACsec SA 確立に成功した後、`macsecorch` が STATE_DB の以下のテーブルにステータスを書き込む。
+`macsecmgrd` が `wpa_cli set_network` コマンドで wpa_supplicant プロセスに MKA パラメータを渡す。書込先はプロセス内ランタイム状態（ファイルではなくソケット経由）。
 
-| STATE_DB テーブル | 書き込み契機 | 削除契機 |
-|-----------------|------------|---------|
-| `STATE_MACSEC_PORT_TABLE` | MACsec 有効化成功 (`set`) | MACsec 無効化 (`del`) |
-| `STATE_MACSEC_EGRESS_SC_TABLE` | Egress SC 作成成功 | SC 削除 |
-| `STATE_MACSEC_INGRESS_SC_TABLE` | Ingress SC 作成成功 | SC 削除 |
-| `STATE_MACSEC_EGRESS_SA_TABLE` | Egress SA 作成成功（SAK ロールオーバー毎） | SA 削除 |
-| `STATE_MACSEC_INGRESS_SA_TABLE` | Ingress SA 作成成功（SAK ロールオーバー毎） | SA 削除 |
+| wpa_supplicant フィールド | 対応 CONFIG_DB フィールド | 備考 |
+|--------------------------|--------------------------|------|
+| `macsec_policy` | — | 常に `1` (MACsec 有効) |
+| `macsec_integ_only` | `policy` | `integrity_only` → 1, `security` → 0 |
+| `mka_cak` | `primary_cak` | CAK を暗号スイートに応じてデコードして渡す |
+| `mka_ckn` | `primary_ckn` | そのまま渡す |
+| `mka_priority` | `priority` | MKA アクター優先度 |
+| `mka_rekey_period` | `rekey_period` | `rekey_period > 0` の場合のみ設定 |
+| `macsec_ciphersuite` | `cipher_suite` | GCM-AES-128 / 256 / XPN-128 / XPN-256 |
+| `macsec_include_sci` | `send_sci` | `true` → 1, `false` → 0 |
+| `macsec_replay_protect` | `enable_replay_protect` | `true` → 1, `false` → 0 |
+| `macsec_replay_window` | `replay_window` | `enable_replay_protect=true` の場合のみ設定 |
 
-### STATE_DB — PORT テーブル（参照のみ）
-
-`macsecmgrd` は `STATE_PORT_TABLE` を **読み取り専用** で参照し、ポートが `state=ok` かつ `netdev_oper_status=up` であることを確認してから MACsec を有効化する。このテーブルへの書き込みは行わない。
-
-```
-macsecmgrd::isPortStateOk()
-  └─ STATE_PORT_TABLE.get(port_name)
-       ├─ state == "ok" かつ netdev_oper_status == "up" → enableMACsec() 実行
-       └─ それ以外 → task_need_retry（待機継続）
-```
-
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-side-effects.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-side-effects.md)
+設定後 `enable_network` を呼び出して MKA セッションを開始する。失敗時は `SWSS_LOG_WARN("Enable MACsec fail : %s")` を記録しポートは非暗号化状態のまま継続する。
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### macsecmgr.cpp 固定値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `AES_LEN_128_BYTE` | `66` | GCM-AES-128 / GCM-AES-XPN-128 の CAK hex 文字数チェック値 | `cfgmgr/macsecmgr.cpp:48` |
+| `AES_LEN_256_BYTE` | `130` | GCM-AES-256 / GCM-AES-XPN-256 の CAK hex 文字数チェック値 | `cfgmgr/macsecmgr.cpp:49` |
+| `rekey_period` デフォルト | `0` | フィールド未設定時のフォールバック値。0 = 能動的 SAK 再生成なし | `cfgmgr/macsecmgr.cpp:377-379` |
+| `RETRY_TIME` | `30` (回) | wpa_supplicant 起動失敗時の最大リトライ回数 | `cfgmgr/macsecmgr.cpp:32` |
+| `RETRY_INTERVAL` | `100` ms | リトライ間隔 | `cfgmgr/macsecmgr.cpp:35` |
+| `WPA_SUPPLICANT_CMD` | `"/sbin/wpa_supplicant"` | wpa_supplicant バイナリパス (ハードコード) | `cfgmgr/macsecmgr.cpp:27` |
+| `WPA_CONF` | `"/etc/wpa_supplicant.conf"` | wpa_supplicant 設定ファイルパス | `cfgmgr/macsecmgr.cpp:29` |
+| `SOCK_DIR` | `"/var/run/"` | wpa_supplicant ソケットディレクトリ | `cfgmgr/macsecmgr.cpp:30` |
+
+### cipher_suite 文字列 → SAI enum マッピング
+
+| CONFIG_DB 文字列 | CAK hex 長 | 備考 |
+|----------------|-----------|------|
+| `GCM-AES-128`（デフォルト） | 66 文字 | `AES_LEN_128_BYTE` |
+| `GCM-AES-256` | 130 文字 | `AES_LEN_256_BYTE` |
+| `GCM-AES-XPN-128` | 66 文字 | XPN = Extended Packet Numbering |
+| `GCM-AES-XPN-256` | 130 文字 | XPN = Extended Packet Numbering |
+| その他 | — | `throw std::invalid_argument("Invalid cipher_suite : ...")` |
+
+<!-- evidence: cfgmgr/macsecmgr.cpp:69-91, 113-135 -->
+
+### macsecorch.cpp 固定値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `DEFAULT_CIPHER_SUITE` | `SAI_MACSEC_CIPHER_SUITE_GCM_AES_128` | 新規ポート初期化時のデフォルト cipher suite (`GCM-AES-128` と対応) | `orchagent/macsecorch.cpp:42` |
+| `DEFAULT_ENABLE_ENCRYPT` | `true` | 新規ポート初期化時の暗号化有効フラグ | `orchagent/macsecorch.cpp:40` |
+| `DEFAULT_SCI_IN_SECTAG` | `false` | 新規ポート初期化時の SCI in SecTAG フラグ | `orchagent/macsecorch.cpp:41` |
+| `MACSEC_STAT_XPN_POLLING_INTERVAL_MS` | `1000` ms | XPN cipher 使用時の SA 統計ポーリング間隔 | `orchagent/macsecorch.cpp:27` |
+| `MACSEC_STAT_POLLING_INTERVAL_MS` | `10000` ms | 通常 cipher 使用時の SA 統計ポーリング間隔 | `orchagent/macsecorch.cpp:28` |
+| `EAPOL_ETHER_TYPE` | `0x888E` | EAPOL フレーム識別用 EtherType (ACL バイパス) | `orchagent/macsecorch.cpp:25` |
+| `PAUSE_ETHER_TYPE` | `0x8808` | PAUSE フレーム識別用 EtherType (ACL バイパス) | `orchagent/macsecorch.cpp:26` |
+| `AVAILABLE_ACL_PRIORITIES_LIMITATION` | `32` | MACsec ACL に使用可能な優先度数の上限 | `orchagent/macsecorch.cpp:24` |
+| `PFC_MODE_DEFAULT` | `"bypass"` | PFC フレームの MACsec 処理デフォルトモード | `orchagent/macsecorch.cpp:32` |
+
+### PFC mode 文字列定数
+
+| 値 | 意味 |
+|----|------|
+| `"bypass"`（デフォルト） | PFC フレームを MACsec 暗号化対象から除外 |
+| `"encrypt"` | PFC フレームも MACsec 暗号化 |
+| `"strict_encrypt"` | MACsec 有効ポートでは PFC を必ず暗号化 |
+
+<!-- evidence: orchagent/macsecorch.cpp:29-32 -->
+<!-- /constants -->
 
 <!-- glossary-links-injected: b5626ca1f0f9 -->

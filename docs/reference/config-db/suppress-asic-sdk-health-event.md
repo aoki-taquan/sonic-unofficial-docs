@@ -127,6 +127,87 @@ sonic-db-cli STATE_DB keys 'ASIC_SDK_HEALTH_EVENT_TABLE|*'
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## 暗黙デフォルトとハードコード挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-defaults.md -->
+
+### 1. `categories` 未設定 → 全カテゴリ購読 (= 抑制なし)
+
+`switchorch.cpp:101-107` で「興味のあるカテゴリ集合」の初期値を全 4 カテゴリ (`software` / `firmware` / `cpu_hw` / `asic_hw`) で定義し、`registerAsicSdkHealthEventCategories` (`switchorch.cpp:1366-1408`) は `suppressed_category_list` が空の場合この `universal_set` をそのまま [SAI](../../reference/glossary.md#term-sai) へ登録する。
+
+```cpp
+const std::set<sai_switch_asic_sdk_health_category_t>
+    switch_asic_sdk_health_event_category_universal_set =
+{
+    SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_SW,
+    SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_FW,
+    SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_CPU_HW,
+    SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW
+};
+```
+
+→ CONFIG_DB に該当 severity 行がない、または `categories` が空 / 未設定の場合、**抑制なし = 全イベントを購読** が暗黙デフォルト。
+
+証跡: `sonic-swss/orchagent/switchorch.cpp:101-107, 1366-1408`
+
+---
+
+### 2. 起動時に全カテゴリ抑制 (= `universal_set` が空) なら SAI 登録自体をスキップ
+
+`switchorch.cpp:1390-1394`:
+
+```cpp
+if (isInitializing && interested_categories_set.empty())
+{
+    SWSS_LOG_INFO("All categories are suppressed for severity %s", ...);
+    return;
+}
+```
+
+起動時 (`initAsicSdkHealthEventNotification` 経由) で `categories` に全 4 カテゴリを列挙している severity 行が存在する場合、SAI への登録自体が走らず、その severity の health event 通知ハンドラ自体が有効化されない。実行中 (`SET_COMMAND`) の更新では同条件でも登録は試行される。
+
+証跡: `sonic-swss/orchagent/switchorch.cpp:240-274, 1390-1394`
+
+---
+
+### 3. `max_events` 未設定 → 古いイベント自動削除なし (上限なし)
+
+`eliminate_events.lua:15-23`:
+
+```lua
+local max_events = {}
+for i = 1, #severity_keys do
+    local max_event = redis.call('HGET', severity_keys[i], 'max_events')
+    if max_event ~= false then
+        max_events[string.sub(severity_keys[i], 32, -1)] = tonumber(max_event)
+    end
+end
+if not next (max_events) then
+    return result
+end
+```
+
+どの severity 行にも `max_events` が無ければ Lua script は即 return。個別 severity 行で `max_events` が無い場合も後段 (`if max_events[severity] ~= nil then`) で削除対象から外れる。**=「上限なし、無制限保持」が暗黙デフォルト**。
+
+証跡: `sonic-swss/orchagent/eliminate_events.lua:15-23, 38, 46-59`
+
+---
+
+### 4. イベント上限超過時の削除間隔は固定 3600 秒 (コンパイル時定数)
+
+`switchorch.h:29`:
+
+```cpp
+#define ASIC_SDK_HEALTH_EVENT_ELIMINATE_INTERVAL 3600
+```
+
+`max_events` を超えても **即時削除されるわけではなく**、3600 秒周期の `SelectableTimer` (`switchorch.cpp:287-291`) が走るまで超過したまま `STATE_DB` に保持される。CONFIG_DB から変更不可。
+
+証跡: `sonic-swss/orchagent/switchorch.h:29`, `switchorch.cpp:287-291`
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

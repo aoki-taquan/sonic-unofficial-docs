@@ -1,0 +1,310 @@
+---
+title: COUNTERS_DB PORT カウンタ
+description: "COUNTERS_DB における PORT カウンタ関連エントリ — portsorch が SAI flex counter 経由で収集し COUNTERS_DB に格納する物理ポート統計フィールドの構造・デフォルト・書き込み経路の解説。"
+area: reference
+verification: code-verified
+last_verified: 2026-05-14
+hard: 0
+sources:
+  - repo: sonic-net/sonic-swss
+    path: orchagent/portsorch.cpp
+    ref: 4305596156d7
+  - repo: sonic-net/sonic-swss
+    path: orchagent/portsorch.h
+    ref: 4305596156d7
+  - repo: sonic-net/sonic-swss
+    path: orchagent/flexcounterorch.cpp
+    ref: 4305596156d7
+  - repo: sonic-net/sonic-utilities
+    path: utilities_common/portstat.py
+    ref: 39732bceb8bd
+related:
+  config_db:
+    - FLEX_COUNTER_TABLE
+    - PORT
+  cli:
+    - portstat
+    - counterpoll
+---
+
+# COUNTERS_DB PORT カウンタ
+
+## 概要
+
+[portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて物理ポートごとに取得する統計カウンタ群[^1]。値は `COUNTERS_DB` の `COUNTERS:<oid>` に格納され、`portstat` / `show interface counters` が読み出す。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE|PORT")]
+  ORC["portsorch"]
+  syncd["syncd<br/>FlexCounter"]
+  HW["SAI / ASIC"]
+  CNTDB[("COUNTERS_DB<br/>COUNTERS:<oid>")]
+  CFG --> ORC
+  ORC --> syncd
+  syncd --> HW
+  HW --> syncd
+  syncd --> CNTDB
+```
+
+!!! note "凡例"
+    CONFIG_DB の `FLEX_COUNTER_TABLE|PORT` が `enable` になると portsorch が SAI カウンタ ID リストを syncd へ投入。syncd が 1 s ごとにポーリングして COUNTERS_DB を更新する。
+
+<!-- /cdb-mermaid -->
+
+## key 構造
+
+### ポート名→OID マップ
+
+```text
+COUNTERS_DB / COUNTERS_PORT_NAME_MAP   (Hash)
+  field: <port_name>  (例: Ethernet0)
+  value: <SAI OID>    (例: oid:0x1000000000001)
+```
+
+### カウンタハッシュ
+
+```text
+COUNTERS_DB / COUNTERS:<oid>           (Hash)
+  field: <SAI_PORT_STAT_*>
+  value: <uint64 カウンタ値 (文字列)>
+```
+
+## フィールド一覧
+
+以下は `portsorch.cpp` の `port_stat_ids[]`（物理ポート）に定義されている全 SAI カウンタ ID[^2]。
+
+### 基本 IF カウンタ (RFC 2863)
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_IF_IN_OCTETS` | 受信バイト数 |
+| `SAI_PORT_STAT_IF_IN_UCAST_PKTS` | 受信ユニキャストパケット数 |
+| `SAI_PORT_STAT_IF_IN_NON_UCAST_PKTS` | 受信非ユニキャスト（MC+BC）パケット数 |
+| `SAI_PORT_STAT_IF_IN_DISCARDS` | 受信ディスカードパケット数 |
+| `SAI_PORT_STAT_IF_IN_ERRORS` | 受信エラーパケット数 |
+| `SAI_PORT_STAT_IF_IN_UNKNOWN_PROTOS` | 未知プロトコル受信数 |
+| `SAI_PORT_STAT_IF_OUT_OCTETS` | 送信バイト数 |
+| `SAI_PORT_STAT_IF_OUT_UCAST_PKTS` | 送信ユニキャストパケット数 |
+| `SAI_PORT_STAT_IF_OUT_NON_UCAST_PKTS` | 送信非ユニキャストパケット数 |
+| `SAI_PORT_STAT_IF_OUT_DISCARDS` | 送信ディスカードパケット数 |
+| `SAI_PORT_STAT_IF_OUT_ERRORS` | 送信エラーパケット数 |
+| `SAI_PORT_STAT_IF_OUT_QLEN` | 送信キュー現在長 |
+| `SAI_PORT_STAT_IF_IN_MULTICAST_PKTS` | 受信マルチキャストパケット数 |
+| `SAI_PORT_STAT_IF_IN_BROADCAST_PKTS` | 受信ブロードキャストパケット数 |
+| `SAI_PORT_STAT_IF_OUT_MULTICAST_PKTS` | 送信マルチキャストパケット数 |
+| `SAI_PORT_STAT_IF_OUT_BROADCAST_PKTS` | 送信ブロードキャストパケット数 |
+
+### Ether サイズ別カウンタ
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_ETHER_RX_OVERSIZE_PKTS` | 受信オーバーサイズパケット数 |
+| `SAI_PORT_STAT_ETHER_TX_OVERSIZE_PKTS` | 送信オーバーサイズパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_64_OCTETS` | 受信 64 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_65_TO_127_OCTETS` | 受信 65〜127 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_128_TO_255_OCTETS` | 受信 128〜255 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_256_TO_511_OCTETS` | 受信 256〜511 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_512_TO_1023_OCTETS` | 受信 512〜1023 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_1024_TO_1518_OCTETS` | 受信 1024〜1518 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_1519_TO_2047_OCTETS` | 受信 1519〜2047 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_2048_TO_4095_OCTETS` | 受信 2048〜4095 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_4096_TO_9216_OCTETS` | 受信 4096〜9216 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_IN_PKTS_9217_TO_16383_OCTETS` | 受信 9217〜16383 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_64_OCTETS` | 送信 64 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_65_TO_127_OCTETS` | 送信 65〜127 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_128_TO_255_OCTETS` | 送信 128〜255 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_256_TO_511_OCTETS` | 送信 256〜511 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_512_TO_1023_OCTETS` | 送信 512〜1023 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_1024_TO_1518_OCTETS` | 送信 1024〜1518 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_1519_TO_2047_OCTETS` | 送信 1519〜2047 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_2048_TO_4095_OCTETS` | 送信 2048〜4095 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_4096_TO_9216_OCTETS` | 送信 4096〜9216 バイトパケット数 |
+| `SAI_PORT_STAT_ETHER_OUT_PKTS_9217_TO_16383_OCTETS` | 送信 9217〜16383 バイトパケット数 |
+
+### PFC カウンタ
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_PFC_0_TX_PKTS` 〜 `SAI_PORT_STAT_PFC_7_TX_PKTS` | PFC 優先度 0〜7 送信 PAUSE フレーム数 |
+| `SAI_PORT_STAT_PFC_0_RX_PKTS` 〜 `SAI_PORT_STAT_PFC_7_RX_PKTS` | PFC 優先度 0〜7 受信 PAUSE フレーム数 |
+| `SAI_PORT_STAT_PAUSE_RX_PKTS` | 受信 PAUSE フレーム総数 |
+| `SAI_PORT_STAT_PAUSE_TX_PKTS` | 送信 PAUSE フレーム総数 |
+
+### その他統計
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_ETHER_STATS_TX_NO_ERRORS` | エラーなし送信フレーム数 |
+| `SAI_PORT_STAT_IP_IN_UCAST_PKTS` | 受信 IP ユニキャストパケット数 |
+| `SAI_PORT_STAT_ETHER_STATS_JABBERS` | ジャバーフレーム受信数 |
+| `SAI_PORT_STAT_ETHER_STATS_FRAGMENTS` | フラグメントフレーム受信数 |
+| `SAI_PORT_STAT_ETHER_STATS_UNDERSIZE_PKTS` | アンダーサイズパケット受信数 |
+| `SAI_PORT_STAT_IP_IN_RECEIVES` | 受信 IP パケット総数 |
+
+### FEC カウンタ
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES` | FEC 訂正済みフレーム数 |
+| `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES` | FEC 訂正不能フレーム数 |
+| `SAI_PORT_STAT_IF_IN_FEC_SYMBOL_ERRORS` | FEC シンボルエラー数 |
+| `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0` 〜 `_S15` | FEC コードワードエラー（バケット S0〜S15） |
+| `SAI_PORT_STAT_IF_IN_FEC_CORRECTED_BITS` | FEC 訂正ビット数 |
+
+### Packet Trimming カウンタ
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_TRIM_PACKETS` | トリムパケット数（受信） |
+| `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` | トリムドロップパケット数 |
+| `SAI_PORT_STAT_TX_TRIM_PACKETS` | トリム送信パケット数 |
+
+### DOT3 / IEEE 802.3 カウンタ
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_DOT3_STATS_ALIGNMENT_ERRORS` | アラインメントエラー |
+| `SAI_PORT_STAT_DOT3_STATS_FCS_ERRORS` | FCS エラー |
+| `SAI_PORT_STAT_DOT3_STATS_SINGLE_COLLISION_FRAMES` | シングルコリジョンフレーム |
+| `SAI_PORT_STAT_DOT3_STATS_MULTIPLE_COLLISION_FRAMES` | マルチコリジョンフレーム |
+| `SAI_PORT_STAT_DOT3_STATS_SQE_TEST_ERRORS` | SQE テストエラー |
+| `SAI_PORT_STAT_DOT3_STATS_DEFERRED_TRANSMISSIONS` | 遅延送信 |
+| `SAI_PORT_STAT_DOT3_STATS_LATE_COLLISIONS` | レートコリジョン |
+| `SAI_PORT_STAT_DOT3_STATS_EXCESSIVE_COLLISIONS` | 過剰コリジョン |
+| `SAI_PORT_STAT_DOT3_STATS_INTERNAL_MAC_TRANSMIT_ERRORS` | 内部 MAC 送信エラー |
+| `SAI_PORT_STAT_DOT3_STATS_CARRIER_SENSE_ERRORS` | キャリアセンスエラー |
+| `SAI_PORT_STAT_DOT3_STATS_FRAME_TOO_LONGS` | フレーム過長 |
+| `SAI_PORT_STAT_DOT3_STATS_INTERNAL_MAC_RECEIVE_ERRORS` | 内部 MAC 受信エラー |
+| `SAI_PORT_STAT_DOT3_STATS_SYMBOL_ERRORS` | シンボルエラー |
+
+### PORT_BUFFER_DROP 専用カウンタ
+
+`FLEX_COUNTER_TABLE|PORT_BUFFER_DROP` が `enable` の場合のみ収集される（別 flex counter グループ）。
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_IN_DROPPED_PKTS` | 受信バッファドロップパケット数 |
+| `SAI_PORT_STAT_OUT_DROPPED_PKTS` | 送信バッファドロップパケット数 |
+
+### WRED ポートカウンタ
+
+`FLEX_COUNTER_TABLE|WRED_ECN_PORT` が `enable` かつプラットフォームが対応している場合のみ収集。
+
+| SAI フィールド | 意味 |
+|---------------|------|
+| `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | WRED Green ドロップパケット数 |
+| `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | WRED Yellow ドロップパケット数 |
+| `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` | WRED Red ドロップパケット数 |
+| `SAI_PORT_STAT_WRED_DROPPED_PACKETS` | WRED 合計ドロップパケット数 |
+
+## RATES テーブル
+
+syncd が `port_rates.lua` を定期実行して計算した派生レートを `RATES:<oid>` に書く。
+
+| フィールド | 意味 |
+|-----------|------|
+| `RX_BPS` | 受信ビットレート (bps) |
+| `RX_PPS` | 受信パケットレート (pps) |
+| `RX_UTIL` | 受信ポート利用率 (%) |
+| `TX_BPS` | 送信ビットレート (bps) |
+| `TX_PPS` | 送信パケットレート (pps) |
+| `TX_UTIL` | 送信ポート利用率 (%) |
+| `FEC_PRE_BER` | FEC 前 BER |
+| `FEC_POST_BER` | FEC 後 BER |
+| `FEC_PRE_BER_MAX` | FEC 前 BER 最大値 |
+| `FEC_FLR` | Frame Loss Rate |
+| `FEC_FLR_PREDICTED` | FLR 予測値 |
+| `FEC_FLR_R_SQUARED` | FLR R^2 |
+| `FEC_MAX_T` | FEC 最大 T 値 |
+
+## 書き込み経路
+
+`COUNTERS_DB` は直接 CONFIG_DB から書かれず、すべて orchagent / syncd 経由で書かれる。
+
+| 経路 | 詳細 |
+|------|------|
+| portsorch 初期化 | `COUNTERS_PORT_NAME_MAP` にポート名→OID マッピングを書き込み |
+| syncd FlexCounter | `FLEX_COUNTER_TABLE|PORT` が `enable` になった後、1 秒ごとに SAI カウンタをポーリングして `COUNTERS:<oid>` を更新 |
+| syncd Lua プラグイン | `port_rates.lua` / `port_flr.lua` が `RATES:<oid>` および FLR 関連フィールドを書き込み |
+
+## 関連 CONFIG_DB / CLI
+
+- CONFIG_DB: `FLEX_COUNTER_TABLE` — ポーリング有効化と間隔設定
+- CLI: `show interface counters` (`portstat`)、`counterpoll port enable/disable/interval`
+
+<!-- defaults -->
+## 暗黙デフォルト・コード由来挙動 (Phase A)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/portsorch.h,
+     sonic-swss/orchagent/flexcounterorch.cpp,
+     sonic-utilities/utilities_common/portstat.py -->
+
+### ポーリング間隔のコード由来デフォルト
+
+`FLEX_COUNTER_TABLE|PORT` に `POLL_INTERVAL` が設定されていない場合、portsorch が **ハードコードした初期値**で syncd に投入する[^3]。
+
+| カウンタグループ | ハードコード定数 | 値 |
+|----------------|---------------|-----|
+| `PORT` (通常カウンタ) | `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` (portsorch.cpp:87) | **1000 ms** |
+| `PORT` (rate プラグイン) | `PORT_RATE_FLEX_COUNTER_POLLING_INTERVAL_MS` (portsorch.h:41) | **1000 ms** |
+| `WRED_ECN_PORT` | `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` と同じ (portsorch.cpp:738) | **1000 ms** |
+| `PORT_BUFFER_DROP` | `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `counterpoll` CLI 許容下限 **30000 ms** |
+| `PG_DROP` | `PG_DROP_FLEX_STAT_COUNTER_POLL_MSECS` (portsorch.h:40) | **10000 ms** |
+
+!!! warning "CLI ソフトデフォルトとの違い"
+    `counterpoll show` の表示では PORT グループを「default (1000)」と表示するが、これは CLI 側の表示ロジックのみ。orchagent 側の `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS = 1000` と偶然一致しているだけで、`POLL_INTERVAL` を CONFIG_DB に書かなかった場合は orchagent のハードコード値が実際に syncd へ投入される。
+
+### `FLEX_COUNTER_STATUS` 未設定時の挙動
+
+`FLEX_COUNTER_TABLE|PORT` の `FLEX_COUNTER_STATUS` が `enable` になるまで、syncd は SAI ポーリングを行わない。カウンタ値は 0 のまま（または古い値）。
+
+| 種類 | 詳細 |
+|------|------|
+| コード由来デフォルト | `m_port_counter_enabled = false`（flexcounterorch.h:66）。起動直後はカウンタ収集ゼロ |
+| ビルド時デフォルト | `init_cfg.json.j2` が `FLEX_COUNTER_TABLE|PORT: {FLEX_COUNTER_STATUS: enable}` を書き込む（PHY カウンタ有効） |
+| allPortsReady 依存 | `enable` を受信した時点でポート初期化が完了していない場合、`doTask` が早期 return。ポート ready 後に再適用される |
+
+### PHY ポートのみ対象
+
+```text
+// Set counter stats only for PHY ports to ensure syncd will not try to query
+// the counter statistics from the HW for non-PHY ports.
+if (it.second.m_type != Port::Type::PHY) continue;
+```
+(portsorch.cpp:9113-9117)
+
+LAG / VLAN / CPU ポートは `COUNTERS_PORT_NAME_MAP` に登録されず、`COUNTERS:<oid>` も書かれない。
+
+### SAI フィールド未サポート時の挙動
+
+ASIC が対応していない SAI カウンタは `portstat.py` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る。WRED カウンタは `STATE_DB` の `PORT_COUNTER_CAPABILITIES` で対応確認後、未サポートなら `counter_bucket_dict` から除外される (portstat.py:297-329)。
+
+### gearbox (gb) ポートの別テーブル
+
+gearbox 有効環境では `gb_port_stat_manager` が `GB_COUNTERS_DB` に別途カウンタを書き込む。通常の `COUNTERS_DB` とは独立した DB インデックスを使用。
+
+### WRED カウンタの追加有効化要件
+
+`WRED_ECN_PORT` グループは `FLEX_COUNTER_STATUS = enable` に加え、`STATE_DB` の `PORT_COUNTER_CAPABILITIES|WRED_ECN_PORT_WRED_*_DROP_COUNTER` フィールドが `"true"` である場合のみ収集対象となる。プラットフォームが WRED drop counter を実装していない場合は silent skip。
+
+<!-- /defaults -->
+
+<!-- ref-triangle:start -->
+
+## 関連リファレンス
+
+- [CONFIG_DB FLEX_COUNTER_TABLE](flex-counter-table.md)
+- [CONFIG_DB PORT](port.md)
+- CLI: `portstat`, `counterpoll`
+
+<!-- ref-triangle:end -->
+
+## 引用元
+
+[^1]: portsorch SAI カウンタ ID リスト定義: `sonic-swss/orchagent/portsorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L242>
+[^2]: `port_stat_ids[]` 全定義: `sonic-swss/orchagent/portsorch.cpp:242-342`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L242>
+[^3]: ポーリング間隔ハードコード: `sonic-swss/orchagent/portsorch.cpp:87`, `portsorch.h:40-41`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L87>

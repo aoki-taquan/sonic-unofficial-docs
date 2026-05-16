@@ -91,6 +91,29 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来デフォルト
+
+> **注**: YANG モデル (`sonic-pfc-priority-priority-group-map.yang` revision 2021-04-15) には `default` 文が一切ない。以下はすべてコード由来デフォルトである。
+
+| フィールド | YANG default | コード由来デフォルト | 投入条件 | ソース |
+|-----------|-------------|---------------------|---------|--------|
+| `name` | なし | `"AZURE"` | `asic_type` が `mellanox` または `barefoot` のとき自動生成 | `qos_config.j2:163,405` |
+| `name` | なし | `"AZURE_DUALTOR"` | 同上かつ dualtor 構成で extra queues が存在するとき追加 | `qos_config.j2:398` |
+| `pfc_priority` | なし | `"3"`, `"4"` (AZURE map) | lossless traffic 優先度 2 本のみ | `qos_config.j2:406-407` |
+| `pfc_priority` | なし | `"2"`, `"3"`, `"4"`, `"6"` (AZURE_DUALTOR map) | dualtor 構成時のみ | `qos_config.j2:399-402` |
+| `pg` | なし | `pfc_priority` と同値 (identity mapping) | 上記いずれの場合も `pg = pfc_priority` | `qos_config.j2:399-407` |
+
+### 投入トリガー
+
+`config qos reload` 実行時に `sonic-cfggen` が `qos_config.j2` を展開し CONFIG_DB へ書き込む。`asic_type` が `mellanox` / `barefoot` 以外（例: broadcom, vs）では **PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルは生成されない**。ただし `QosOrch` は ASIC 種別に関わらずテーブルを購読するため、CONFIG_DB に entry がなければ SAI 呼び出しも発生しない。
+
+### priority 0-7 のうち 3 と 4 だけの理由
+
+RoCEv2 lossless クラスは TC 3 と TC 4 の 2 本が標準的な AZURE 構成。他の priority (0,1,2,5,6,7) は best-effort として PFC 対象外とするため PG mapping なし。
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -235,6 +258,68 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 
 <!-- /derivation -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-ordering.md`
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`（本テーブル）を先に作成 | `PORT_QOS_MAP` ハンドラが `resolveFieldRefValue` で本マップの OID を参照。未解決なら `task_need_retry`（自動リトライ） | `qosorch.cpp:2124-2129` |
+
+!!! info "doTask() 実行順保証"
+    `QosOrch::doTask()` は map 系テーブル（DSCP_TO_TC / TC_TO_QUEUE / PFC_PRIORITY_TO_PRIORITY_GROUP_MAP 等）を
+    **PORT_QOS_MAP・QUEUE より先に drain** する (`qosorch.cpp:2235-2251`)。
+    同一 QosOrch サイクル内で config を一括投入した場合でも、本マップが先に SAI 登録される。
+
+### SAI qos_map 制約
+
+`PfcPrioToPgHandler::addQosItem()` は `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP` 型で
+`sai_qos_map_api->create_qos_map()` を呼び出す (`qosorch.cpp:968-977`)。
+SAI 仕様上、`SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` へ有効 OID を渡すには
+map object が事前に存在している必要がある。
+
+### DEL 時の順序制約
+
+DEL ハンドラ (`qosorch.cpp:181-189`) は `isObjectBeingReferenced()` で参照チェックを行い、
+`PORT_QOS_MAP` から参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry` を返す。
+**PORT_QOS_MAP の `pfc_to_pg_map` フィールドを解除（NULL 設定または DEL）してから**
+本マップを削除しなければ、削除は保留され続ける。
+
+### 起動時シーケンス
+
+```
+config qos reload
+  └─ sonic-cfggen が qos_config.j2 を展開
+       ├─ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP エントリ書込み
+       └─ PORT_QOS_MAP.pfc_to_pg_map 書込み
+             └─ QosOrch::doTask() が map 系を先に drain → OID 解決後に PORT_QOS_MAP を適用
+```
+
+<!-- /ordering -->
+
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` が関わる CONFIG_DB テーブル間の暗黙参照を `qosorch.cpp` から抽出した。
+
+| 参照方向 | 参照元テーブル | フィールド | SAI 属性 | evidence |
+|---------|-------------|-----------|---------|---------|
+| 被参照 (referenced by) | `PORT_QOS_MAP` | `pfc_to_pg_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` | `qosorch.cpp:68,107` |
+| 参照管理 | `handlePortQosMapTable` | SET 時 object_id 解決 / DEL 時参照解除 | — | `qosorch.cpp:2046,2077,2108,2133` |
+| SWITCH レベル適用 | なし | PFC マップは SWITCH 直接適用なし | — | `qosorch.cpp:1956` |
+
+- `PORT_QOS_MAP.pfc_to_pg_map` に map 名を設定すると、`QosOrch` が `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` の SAI オブジェクト ID を解決してポートへ適用する (`SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`)。
+- `PORT_QOS_MAP` から参照中に DEL しようとすると `isObjectBeingReferenced()` が true を返し `task_need_retry` で削除保留。
+- `SWITCH` への直接適用は `DSCP_TO_TC_MAP` (`PORT_QOS_MAP|global` 経路) のみで、PFC 系マップは非対象。
+
+> 詳細: `meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
@@ -249,3 +334,43 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 > **スキャン証跡**: `qosorch.cpp` PfcPriorityToPgHandler 部を確認、3 件分岐抽出。qos_config.j2 経由での自動設定を確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- failure -->
+## Phase D: 失敗挙動
+
+ソース: `sonic-swss/orchagent/qosorch.cpp` (`PfcPrioToPgHandler`, `QosMapHandler::processWorkItem`)
+
+### invalid_entry: priority / pg 値不正
+
+`PfcPrioToPgHandler::convertFieldValuesToAttributes()` (qosorch.cpp:947-948) が `stoi()` で
+フィールド名 (`pfc_priority`) と値 (`pg`) を数値変換する。非数値・空文字列を渡すと例外が伝播し
+`task_invalid_entry` が返される (qosorch.cpp:147)。エントリは破棄され再キューされない。
+
+DEL 時に map 名が SAI に存在しない場合も `task_invalid_entry`:
+- ログ: `"Object with name:%s not found."` (qosorch.cpp:178)
+
+不明な op (SET/DEL 以外):
+- ログ: `"Unknown operation type %s"` (qosorch.cpp:198)
+- 結果: `task_invalid_entry`
+
+### failed: SAI API 失敗
+
+| 操作 | SAI 呼び出し | ログ | 結果 |
+|------|------------|------|------|
+| SET (新規) | `create_qos_map()` | `"Failed to create pfc_priority_to_queue map. status:%d"` (qosorch.cpp:977) | `task_failed` |
+| SET (更新) | `set_qos_map_attribute()` | `"Failed to set [%s:%s]"` (qosorch.cpp:153) | `task_failed` |
+| DEL | `remove_qos_map()` | `"Failed to remove QoS map. db name:%s sai object:%"PRIx64` (qosorch.cpp:190) | `task_failed` |
+
+> **注**: create 失敗時のログ文字列は `"pfc_priority_to_queue map"` とコピー由来の誤記になっているが、
+> 実際は `SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP` map の作成失敗を指す (qosorch.cpp:966,977)。
+
+### need_retry: 参照中エントリの DEL
+
+DEL 操作時に `isObjectBeingReferenced()` が true (PORT_QOS_MAP 等から参照が残っている):
+- ログ: `"Can't remove object %s due to being referenced (%s)"` (qosorch.cpp:184)
+- 副作用: `m_pendingRemove = true` がセット → 以降の SET も `task_need_retry` に
+- ログ (保留中 SET): `"Entry %s %s is pending remove, need retry"` (qosorch.cpp:138)
+- 結果: `task_need_retry` → Consumer キューへ戻し、参照解除後に再処理
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-failure.md -->
+<!-- /failure -->
