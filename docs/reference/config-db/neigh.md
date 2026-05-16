@@ -18,6 +18,9 @@ sources:
   - repo: sonic-net/sonic-swss
     path: neighsyncd/neighsync.cpp
     ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/neighorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - NEIGH
@@ -70,6 +73,55 @@ NEIGH|<port>|<ip_address>
 | `neigh` | `yang:mac-address` | 任意 | 対向の MAC アドレス |
 | `family` | `string (IPv4\|IPV4\|IPv6\|IPV6)` | 任意 | IP ファミリ（Consumer は参照しない — 後述） |
 
+<!-- ordering -->
+## 書込み順依存（orchagent / SAI プログラミング経路）
+
+> 本セクションは APPL_DB `NEIGH_TABLE` → orchagent (`neighorch`) → SAI → ASIC の経路を対象とする。
+> CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル Netlink 経路は SAI を経由しない独立経路（詳細は「実コンテナ動作トレース」段階 4 参照）。
+
+### 前提：`allPortsReady()` ガード（最上位）
+
+`NeighOrch::doTask` (neighorch.cpp:881-884) は先頭で `gPortsOrch->allPortsReady()` を確認する。
+PORT / VLAN / LAG などの物理ポート初期化が完了するまで、`NEIGH_TABLE` のいかなるエントリも処理されない。
+
+```cpp
+if (!gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+### 順序依存一覧
+
+| 順序 | 先行必須条件 | ガード箇所 | 違反時の挙動 |
+|------|------------|-----------|------------|
+| 1 | PORT/VLAN 初期化完了（`allPortsReady`） | `doTask`:881 | `doTask` 全体が即 `return`（次サイクル再試行） |
+| 2 | 対象インターフェイス PORT 存在（`getPort`） | `doTask`:942 | `it++; continue`（再試行待ち） |
+| 3 | Router Interface (RIF) 存在（`p.m_rif_id`） | `doTask`:949 | `it++; continue`（再試行待ち） |
+| 4 | RIF ID 再確認（`getRouterIntfsId`） | `addNeighbor`:1204 | `return false`（再試行待ち） |
+| 5 | ARP/ND 解決完了（MAC 確定） | `addNeighbor`:1219 | NEIGH_RESOLVE_TABLE 経由で再解決を要求、MAC 確定後に再 SET |
+| 6 | `create_neighbor_entry` → `create_next_hop` | SAI 発行順:1333→1370 | NH 作成失敗時は `neighbor_entry` をロールバック削除 |
+| 7 | 旧 VLAN DEL → 新 VLAN SET（同 VRF 内のみ自動処理） | `addNeighbor`:1263 | 旧エントリ削除失敗時は `return false`（再試行） |
+
+### ARP/ND 解決と SAI neighbor_entry 作成の関係
+
+APPL_DB `NEIGH_TABLE` に MAC なし（ゼロ MAC）エントリが届いた場合、`NeighOrch` は `NEIGH_RESOLVE_TABLE` へ解決要求を投げ (`resolveNeighborEntry`)、エントリを `m_neighborToResolve` に保持する。
+`neighsyncd` が Netlink から ARP/ND 応答を受信して MAC 付きエントリを `NEIGH_TABLE` へ再書き込みすると、orchagent が `addNeighbor` → `sai_neighbor_api->create_neighbor_entry` を実行する。
+
+```
+NEIGH_TABLE (MAC なし) → resolveNeighborEntry → NEIGH_RESOLVE_TABLE
+                                                       ↓
+                                              カーネル ARP/NDP 解決
+                                                       ↓
+                                           neighsyncd → NEIGH_TABLE (MAC あり)
+                                                       ↓
+                                           addNeighbor → sai_neighbor_api->create_neighbor_entry
+                                                       ↓
+                                           addNextHop  → sai_next_hop_api->create_next_hop
+```
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
@@ -97,6 +149,88 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 カーネルに `NUD_PERMANENT` で設定済みの neighbor エントリは**削除されない**。手動で `ip neigh del` を実行するか再起動が必要。
 
 <!-- /defaults -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/neighorch.cpp`
+
+### SET 処理における失敗経路（addNeighbor / orchagent 経路）
+
+| 失敗条件 | 検出箇所 | 結果 | retry | evidence |
+|---|---|---|---|---|
+| INTERFACE が未解決（`getRouterIntfsId` が `SAI_NULL_OBJECT_ID` を返す） | `addNeighbor()` L1204-1208 | `return false` → Consumer が `it++` でエントリを保留し次 tick で再試行 | あり（自動再試行） | `neighorch.cpp:1205-1208` |
+| MAC アドレスがゼロかつ **既存** neighbor（再学習中）| `doTask()` L986-992 | エントリを `m_toSync` から即 erase（silent drop）。「削除→再学習」の順序保証を前提とした設計 | なし | `neighorch.cpp:986-991` |
+| 同一 IP が別 VLAN に存在し `removeNeighbor` 失敗 | `addNeighbor()` L1300-1304 | `return false` → Consumer が保留・再試行 | あり | `neighorch.cpp:1300-1304` |
+| `sai_neighbor_api->create_neighbor_entry` が `SAI_STATUS_ITEM_ALREADY_EXISTS` | `addNeighbor()` L1337-1342 | エラーログ後 `return true`（retry をスキップ、重複は正常扱い） | なし（skip） | `neighorch.cpp:1337-1342` |
+| `sai_neighbor_api->create_neighbor_entry` がその他 SAI エラー | `addNeighbor()` L1346-1352 | `handleSaiCreateStatus(SAI_API_NEIGHBOR, status)` → 失敗時 `parseHandleSaiStatusFailure` で `return false` | SAI ポリシー依存 | `neighorch.cpp:1346-1352` |
+| `addNextHop` 失敗後のロールバック | `addNeighbor()` L1370-1394 | `sai_neighbor_api->remove_neighbor_entry` でロールバック試行。ロールバックも失敗すれば `return false` | なし | `neighorch.cpp:1370-1395` |
+| prefix route 追加 (`addPrefixRouteForNeighbor`) 失敗 | `addNeighbor()` L1401-1404 | `return false` → Consumer 再試行 | あり | `neighorch.cpp:1401-1404` |
+| `sai_neighbor_api->set_neighbor_entry_attribute` 失敗（既存 neighbor の属性更新） | `addNeighbor()` L1413-1422 | `handleSaiSetStatus(SAI_API_NEIGHBOR, status)` → 失敗時 `return false` | SAI ポリシー依存 | `neighorch.cpp:1413-1422` |
+
+### DEL 処理における失敗経路（removeNeighbor）
+
+| 失敗条件 | 検出箇所 | 結果 | retry | evidence |
+|---|---|---|---|---|
+| next hop の ref_count > 0（参照中の neighbor を削除しようとした） | `removeNeighbor()` L1483-1488 | `return false` → Consumer が `it++` で保留・再試行（タイムアウトなし） | あり（無限） | `neighorch.cpp:1483-1488` |
+| `sai_next_hop_api->remove_next_hop` が `SAI_STATUS_ITEM_NOT_FOUND` | `removeNeighbor()` L1520-1524 | NOTICE ログのみ → neighbor entry 削除処理を継続（next hop 欠如は許容） | なし（継続） | `neighorch.cpp:1520-1524` |
+| `sai_next_hop_api->remove_next_hop` がその他 SAI エラー | `removeNeighbor()` L1527-1533 | `handleSaiRemoveStatus(SAI_API_NEXT_HOP, status)` → 失敗時 `return false` | SAI ポリシー依存 | `neighorch.cpp:1527-1533` |
+| `sai_neighbor_api->remove_neighbor_entry` が `SAI_STATUS_ITEM_NOT_FOUND` | `removeNeighbor()` L1555-1559 | NOTICE ログのみ（既に削除済み扱い）→ CRM デクリメントなし | なし（継続） | `neighorch.cpp:1555-1559` |
+| `sai_neighbor_api->remove_neighbor_entry` がその他 SAI エラー | `removeNeighbor()` L1562-1568 | `handleSaiRemoveStatus(SAI_API_NEIGHBOR, status)` → 失敗時 `return false` | SAI ポリシー依存 | `neighorch.cpp:1562-1568` |
+| DEL 操作で `m_syncdNeighbors` に対象エントリが存在しない | `doTask()` L1034-1036 | `m_toSync` から erase（silent drop、既に削除済みと判断） | なし | `neighorch.cpp:1034-1036` |
+
+### 特殊挙動補足
+
+- **INTERFACE 未解決 → retry**: `rif_id == SAI_NULL_OBJECT_ID` は orchagent 初期化中の一時状態。Consumer ループが `it++` で保留し次の SELECT_TIMEOUT サイクルで再処理。
+- **MAC 不正（ゼロ MAC + 既存 neighbor）**: 既存エントリにゼロ MAC の SET が来た場合、削除なしで即 erase。「DEL が先に来ることを期待」という設計上の制約（`neighorch.cpp:986-988` コメント参照）。
+- **参照中 DEL の無限 retry**: `removeNeighbor` が ref_count > 0 で `false` を返すと Consumer は `it++` でエントリを m_toSync に残し無限に再試行する。Route / NHG 側の参照が解放されて初めて DEL が成功する。
+- **SET 後の pending DEL 消去**: SET 操作成功後、`doTask` は同 key の pending DEL 操作を `m_toSync` から逆順に除去する（`neighorch.cpp:1010-1019`）。過去に失敗した DEL が誤って再実行されるのを防ぐ設計。
+
+> **Note**: 上記は orchagent (`neighorch`) 経路の挙動。CONFIG_DB NEIGH → `nbrmgrd` → Netlink 経路の失敗挙動は上記 `<!-- /defaults -->` セクションを参照。
+<!-- /failure -->
+
+<!-- constants -->
+## SAI ハードコード定数（orchagent/neighorch.cpp 由来）
+
+> **ソース**: `sonic-swss/orchagent/neighorch.cpp` (SHA: `4305596156d70e9797e8a881b3d19b46de0bce0d`)
+>
+> CONFIG_DB `NEIGH` は `nbrmgrd` → Netlink 経路であり SAI を通らない。以下の定数は
+> APPL_DB `NEIGH_TABLE` → `NeighOrch` → SAI / ASIC 経路に関するもの（同一 neighbor エントリの下流 ASIC プログラミング段階）。
+
+### orch 優先度
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `neighorch_pri` | **30** | `NeighOrch` の Consumer 優先度（`Orch` 基底クラスに渡す） |
+
+### SAI neighbor_entry_attr — 使用属性
+
+| SAI 属性 | 値 / 型 | 設定条件 | コード箇所 |
+|---|---|---|---|
+| `SAI_NEIGHBOR_ENTRY_ATTR_DST_MAC_ADDRESS` | MAC 6 バイト | 常時（neighbor 追加時） | `neighorch.cpp:1219` |
+| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` | `booldata = 1`（true）| MUX prefix-neighbor または link-local 条件成立時 | `neighorch.cpp:1258, 2315, 2463` |
+| `SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX` | `uint32`（動的）| VoQ 環境のみ | `neighorch.cpp:2568, 2595, 2712` |
+| `SAI_NEIGHBOR_ENTRY_ATTR_IS_LOCAL` | `booldata`（動的）| VoQ 環境のみ | `neighorch.cpp:2572` |
+
+### IP ファミリ enum
+
+`sai_neighbor_entry_t.ip_address.addr_family` の比較値:
+
+| SAI enum | 対応ファミリ |
+|---|---|
+| `SAI_IP_ADDR_FAMILY_IPV4` | IPv4（明示的に `addr_family == SAI_IP_ADDR_FAMILY_IPV4` で分岐）|
+| `SAI_IP_ADDR_FAMILY_IPV6` | IPv6（上記の else ブランチ）|
+
+### デフォルト packet_action（prefix route 生成時）
+
+| SAI 定数 | 値 | 条件 | コード箇所 |
+|---|---|---|---|
+| `SAI_PACKET_ACTION_FORWARD` | FORWARD（デフォルト）| MUX active 状態 / prefix route 生成時デフォルト | `neighorch.cpp:1104, 2494` |
+| `SAI_PACKET_ACTION_DROP` | DROP | MUX standby 状態（`is_active == false`）| `neighorch.cpp:1108` |
+
+> aging time のハードコード定数は `neighorch.cpp` に存在しない。neighbor のエージング管理は Linux カーネルと SAI プラットフォーム実装に委任されている。
+
+<!-- /constants -->
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス

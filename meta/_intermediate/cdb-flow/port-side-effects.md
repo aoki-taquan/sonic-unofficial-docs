@@ -1,10 +1,20 @@
 # PORT SET/DEL 副次 DB 書込 分析 (Phase F)
 
-生成日: 2026-05-15
+生成日: 2026-05-15  更新日: 2026-05-16
 ソース:
 - `sonic-swss/cfgmgr/portmgr.cpp` / `portmgr.h`
 - `sonic-swss/orchagent/portsorch.cpp` / `portsorch.h`
 - `sonic-swss/portsyncd/portsyncd.cpp`
+
+## 調査対象 DB 適用可否確認
+
+| DB / テーブル名 | portsorch.cpp での使用 | 備考 |
+|----------------|----------------------|------|
+| APPL_DB / `PORT_TABLE` | 使用あり (`m_portTable`) | portmgrd 転送・oper_status・flap_count |
+| APPL_DB / `PORT_TABLE_TX_READY` | **使用なし** | このテーブル名は portsorch.cpp に存在しない。`host_tx_ready` フィールドは STATE_DB の `PORT_TABLE` に書き込まれる (`m_portStateTable.hset(..., "host_tx_ready", ...)`, `portsorch.cpp:2274`) |
+| STATE_DB / `PORT_TABLE` | 使用あり (`m_portStateTable`) | supported_speeds, supported_fecs, host_tx_ready, link_training_status 等 |
+| APPL_STATE_DB | **使用なし** | portsorch は `ResponsePublisher m_publisher{"APPL_STATE_DB"}` を持つ (`orch.h:382`) が、PORT テーブル処理に対して `m_publisher.publish()` を呼び出していないため書き込みは発生しない |
+| COUNTERS_DB | 使用あり (`m_counter_db`) | COUNTERS_PORT_NAME_MAP, Queue/PG マップ群 |
 
 ---
 

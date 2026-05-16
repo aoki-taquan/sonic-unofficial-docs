@@ -586,6 +586,36 @@ CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md`
 <!-- /pubsub -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BGPPeerMgrBase` は CONFIG_DB `BGP_NEIGHBOR` の変化を FRR に反映した後、STATE_DB の `BGP_PEER_CONFIGURED_TABLE` にも書き込む。APPL_DB / ASIC_DB への書込はない。
+
+### 書込先テーブル
+
+| 副次書込先 DB | テーブル名 | key 形式 |
+|------------|----------|---------|
+| STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | `<neighbor>` (default VRF) / `<vrf>\|<neighbor>` (named VRF) |
+
+### 呼び出し経路
+
+| 呼び出し元 | 条件 | STATE_DB 操作 | evidence |
+|----------|------|--------------|----------|
+| `add_peer()` | テンプレートレンダリング成功後 | `SET key data`（全フィールド sorted fvs） | `managers_bgp.py:239` |
+| `apply_admin_status()` | `apply_op()` が `True` の場合のみ | `SET key data` | `managers_bgp.py:353` |
+| `apply_range_changes()` | ip_range 更新成功後 | `SET key data` | `managers_bgp.py:443` |
+| `del_handler()` | `apply_op()` が `True` の場合のみ | `DEL key` | `managers_bgp.py:487` |
+
+### 注意点
+
+- `apply_admin_status()` は FRR への `apply_op()` が `True` を返した場合のみ `update_state_db()` を呼ぶ。FRR 操作失敗時は STATE_DB 書込が発生しない。
+- `admin_status` が `up`/`down` 以外の場合は `change_admin_status()` で早期エラーログ → `apply_admin_status()` 呼び出しなし → STATE_DB 書込なし。
+- `update_state_db()` 内で Exception が発生すると `LOG_ERR` を出すが FRR 操作は既に完了しているため **FRR と STATE_DB が乖離しうる**。`ERROR_TABLE` への記録はなし。
+- DEL 時に key が STATE_DB に存在しない場合は `LOG_WARN` のみで処理続行（no-op）。
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-side.md`
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム / SAI 差分
 

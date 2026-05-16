@@ -102,6 +102,24 @@ evidence: `sonic-swss/cfgmgr/vlanmgrd.cpp:56-61`
 起動時 1 回のみ読み出し (static)。
 evidence: `sonic-swss/cfgmgr/teammgr.cpp:31,54-57`
 
+### stpmgr (sonic-swss/cfgmgr/stpmgrd.cpp)
+
+| 読み取りフィールド | 行 | 用途 |
+|---|---|---|
+| `mac` | L81-88 | STP Bridge ID に使用するシステム MAC を取得。未設定時は起動失敗 |
+
+起動時 1 回のみ読み出し (static)。
+evidence: `sonic-swss/cfgmgr/stpmgrd.cpp:81-88`
+
+### vxlanmgr (sonic-swss/cfgmgr/vxlanmgrd.cpp)
+
+| 読み取りフィールド | 行 | 用途 |
+|---|---|---|
+| `mac` | L65-72 | VXLAN トンネルの内部 switch MAC として設定。未設定時は起動失敗 |
+
+起動時 1 回のみ読み出し (static)。
+evidence: `sonic-swss/cfgmgr/vxlanmgrd.cpp:65-72`
+
 ### nbrmgr (sonic-swss/cfgmgr/nbrmgr.cpp)
 
 | 読み取りフィールド | 行 | 用途 |
@@ -164,22 +182,6 @@ evidence: `sonic-host-services/scripts/hostcfgd:1422,1485-2493`
 
 evidence: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:64,111-113`
 
-### stpmgr (sonic-swss/cfgmgr/stpmgrd.cpp)
-
-| 読み取りフィールド | 行 | 用途 |
-|---|---|---|
-| `mac` (推定) | L81 | STP Bridge ID に使用するシステム MAC |
-
-evidence: `sonic-swss/cfgmgr/stpmgrd.cpp:81`
-
-### vxlanmgr (sonic-swss/cfgmgr/vxlanmgrd.cpp)
-
-| 読み取りフィールド | 行 | 用途 |
-|---|---|---|
-| `mac` (推定) | L68 | VXLAN 内部 MAC 設定 |
-
-evidence: `sonic-swss/cfgmgr/vxlanmgrd.cpp:68`
-
 ## 2. cross-refs セクション構造案
 
 起動時参照 daemon を「参照タイミング」×「フィールド」の 2 軸で整理:
@@ -197,6 +199,9 @@ evidence: `sonic-swss/cfgmgr/vxlanmgrd.cpp:68`
 | nbrmgrd | `switch_type` | VoQ SYSTEM_NEIGH 購読有無 |
 | intfmgrd | `switch_type` | mySwitchType 初期値 |
 | bgpcfgd (main.py) | `type`, `subtype` | AsPathMgr 条件付き登録 |
+| stpmgrd | `mac` | STP Bridge ID MAC 初期設定 |
+| vxlanmgrd | `mac` | VXLAN switch MAC 初期設定 |
+| buffermgrdyn (Mellanox のみ) | `platform` | モデル番号抽出・XON 値決定 |
 
 ### runtime 更新に対応 (subscribe)
 
