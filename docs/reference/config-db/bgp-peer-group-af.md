@@ -266,6 +266,27 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 > **スキャン証跡**: BGP_PEER_GROUP_AF は comb_attr_list なしの `bgp_table_handler_common` に直接渡される。BGP_NEIGHBOR_AF と同一パスを共有。
 <!-- /handler-branching -->
+<!-- failure -->
+## 失敗挙動・retry 分岐 (Phase D)
+
+`frrcfgd.py` の `BGPConfigDaemon` が `BGP_PEER_GROUP_AF` を処理する際に到達しうる失敗パスを示す。
+
+| # | 失敗トリガー | 検出箇所 | 結果 | retry | ソース |
+|---|------------|---------|------|------|--------|
+| 1 | `BGP_GLOBALS.local_asn` が対象 VRF に未設定（VRF guard） | `__update_bgp` L2656–2662 | LOG_DEBUG `ignore table ... local_asn not configured` → `continue`、FRR 未投入、CONFIG_DB エントリ残存 | なし | `frrcfgd.py:2659–2662` |
+| 2 | 対応 `BGP_PEER_GROUP` が bgpd に未登録のまま AF 設定 | `__update_bgp` L2872 | `key_map.run_command` 失敗 → LOG_ERR `failed running BGP neighbor AF config command` → `continue` | なし | `frrcfgd.py:2872–2874` |
+| 3 | vtysh / bgpd コマンドエラー（構文エラー・接続断等） | `g_run_command` L47–63 | LOG_ERR `command execution failure` → `False` 返却 → 上位で `continue` | なし | `frrcfgd.py:52–54` |
+| 4 | `route_map_in` / `route_map_out` 等に指定した ROUTE_MAP が bgpd に未定義 | bgpd 投入時に検出 | bgpd が `rc != 0` → LOG_ERR、`BGP_PEER_GROUP_AF` 再投入なし | なし | `frrcfgd.py:47–63`、`nbr_af_key_map` L1903–1906 |
+| 5 | key フォーマット不正（`\|` 不足など）による `ValueError` | `__update_bgp` L2865–2867 | 例外伝播、subscriber loop へ到達の可能性 | なし | `frrcfgd.py:2866–2867` |
+| 6 | bgpd UNIX socket 接続失敗（起動時） | `BgpdClientMgr.__create_frr_client` L181–200 | 最大 100 回 / 2秒間隔 retry。超過で `RuntimeError` → frrcfgd 起動失敗、全 BGP テーブル未処理 | 100 回（起動時のみ） | `frrcfgd.py:187–200` |
+
+### 設計上の注意点
+
+- **`BGP_PEER_GROUP` の事前確認なし**: `BGP_PEER_GROUP_AF` 処理は peer-group の自動作成を行わない。`BGP_PEER_GROUP` が bgpd に先行登録されていない場合、AF コマンドは bgpd に拒否される（ #2 ）。
+- **ROUTE_MAP の依存関係チェックなし**: frrcfgd は `route_map_in` / `route_map_out` 等の参照先 ROUTE_MAP を事前検証しない。bgpd 投入後に初めてエラーが判明し、ROUTE_MAP が後から定義されても再投入されない（ #4 ）。
+- **運用中 retry ゼロ**: 全失敗パスで `continue` のみ。CONFIG_DB エントリを残したまま次イベントへ進む。整合性回復はユーザーによる再 SET が必要。
+- **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
+<!-- /failure -->
 <!-- defaults -->
 ## 暗黙デフォルトとコード由来の挙動 (Phase A)
 
