@@ -202,6 +202,71 @@ show vlan brief
 - 副作用: ポートを VLAN から削除すると、そのポートの MAC エントリが FDB から自動削除される。
 
 <!-- /runtime-trace -->
+<!-- pubsub -->
+## 通信メカニズム — Redis Pub/Sub
+
+`VLAN_MEMBER` テーブルは **ConsumerStateTable** (Redis PUBLISH/SUBSCRIBE チャンネルベース) を用いて購読される。`SubscriberStateTable` (keyspace PSUBSCRIBE) は使用しない。
+
+### 購読経路
+
+| 購読者 | 購読テーブル | Redis チャンネル | 処理ハンドラ |
+|--------|------------|-----------------|-------------|
+| `vlanmgrd` | CONFIG_DB `VLAN_MEMBER` | `VLAN_MEMBER_CHANNEL@<cfgDbId>` | `doVlanMemberTask()` |
+| `orchagent` (VlanOrch) | APPL_DB `APP_VLAN_MEMBER_TABLE` | `APP_VLAN_MEMBER_TABLE_CHANNEL@<appDbId>` | VlanOrch::doTask() |
+
+### CONFIG_DB → vlanmgrd → APPL_DB → orchagent → SAI の全体フロー
+
+```
+CLI: config vlan member add Vlan100 Ethernet0 --tagging tagged
+  └─ ConfigDBConnector.set_entry("VLAN_MEMBER", ("Vlan100","Ethernet0"), {"tagging_mode":"tagged"})
+       └─ ProducerStateTable (EVALSHA アトミック)
+            SADD VLAN_MEMBER_KEY_SET "Vlan100|Ethernet0"
+            HSET _VLAN_MEMBER|Vlan100|Ethernet0 tagging_mode tagged
+            PUBLISH VLAN_MEMBER_CHANNEL@<cfgDbId> "G"
+
+vlanmgrd (swss::Select ループ、タイムアウト 1000ms)
+  └─ ConsumerStateTable::pops()  ← EVALSHA (SPOP + HGETALL + DEL)
+  └─ doVlanMemberTask(consumer)
+       ├─ isVlanStateOk() && isMemberStateOk() → false なら retry (1000ms 後)
+       ├─ addHostVlanMember(100, "Ethernet0", "tagged")
+       │    └─ ip link set Ethernet0 master Bridge
+       │    └─ bridge vlan del vid 1 dev Ethernet0
+       │    └─ bridge vlan add vid 100 dev Ethernet0        ← kernel bridge (tagged)
+       ├─ m_appVlanMemberTableProducer.set("Vlan100|Ethernet0", fv)
+       │    └─ PUBLISH APP_VLAN_MEMBER_TABLE_CHANNEL@<appDbId> "G"
+       └─ m_stateVlanMemberTable.set("Vlan100|Ethernet0", [("state","ok")])
+
+orchagent (ConsumerStateTable で APP_VLAN_MEMBER_TABLE を購読)
+  └─ VlanOrch::doTask()
+       └─ sai_vlan_api->create_vlan_member(
+              SAI_VLAN_MEMBER_ATTR_VLAN_ID,
+              SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID,
+              SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE = SAI_VLAN_TAGGING_MODE_TAGGED)
+```
+
+### PAC 経路 (STATE_DB ← STATE_OPER_VLAN_MEMBER_TABLE)
+
+PAC (Port Authentication Controller) は STATE_DB `STATE_OPER_VLAN_MEMBER_TABLE` に書き込む。
+`vlanmgrd` は同テーブルを `ConsumerStateTable` で購読し `doVlanPacVlanMemberTask()` で処理する。
+PAC 経路では `tagging_mode = "untagged"` が固定で注入され、APP_DB に `dynamic: yes` が追加される
+（この `dynamic` フィールドは YANG 定義なく CONFIG_DB には書かれない）。
+
+### 主要特性
+
+| 特性 | 値 |
+|------|----|
+| 通知プリミティブ | Redis PUBLISH/SUBSCRIBE (`ConsumerStateTable`) |
+| PUBLISH ペイロード | 固定文字列 `"G"` |
+| keyspace notification | 不使用 |
+| バッチサイズ | `gBatchSize` (デフォルト 128) |
+| Select タイムアウト | 1000ms (vlanmgrd.cpp:22) |
+| タイムアウト時動作 | `vlanmgr.doTask()` で retry (ポート/VLAN 未準備待ち) |
+| warm-restart 対応 | `m_vlanMemberReplay` で STATE_DB 既存エントリをスキップ |
+| Linux bridge 操作 | `bridge vlan add/del` + `ip link set master/nomaster` |
+| SAI API | `sai_vlan_api->create_vlan_member()` / `remove_vlan_member()` |
+
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
