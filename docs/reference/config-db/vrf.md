@@ -276,12 +276,55 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 | 5 | `VRF\|<name>.vni` を 0 に SET | VNI マッピング解除 (vrfmgr.cpp:337)。CLI `del_vrf_vni_map` が自動実行 |
 | 6 | **`VRF\|<name>`** DEL | orchagent の ref_count が 0 になると VRFOrch が SAI VR を削除し STATE_VRF_OBJECT_TABLE を消去。vrfmgrd がそれを確認して Linux デバイスを削除 (vrfmgr.cpp:331-346) |
 
+### SAI virtual_router 作成順序 (vrforch.cpp)
+
+`VRFOrch::addOperation` (vrforch.cpp:27–155) が SAI VR を作成する際の内部シーケンス:
+
+1. `vrf_table_.find(vrf_name) == end` → 新規作成パス
+2. `sai_virtual_router_api->create_virtual_router(&router_id, ...)` — SAI VR オブジェクト生成 (vrforch.cpp:93)
+3. `vrf_table_[vrf_name].vrf_id = router_id; ref_count = 0` — 内部テーブル登録 (vrforch.cpp:107–108)
+4. `gFlowCounterRouteOrch->onAddVR(router_id)` — フローカウンタ登録 (vrforch.cpp:110)
+5. `vni != 0` の場合 `updateVrfVNIMap()` → EVPN VTEP 存在確認 → `vrf_vni_map_table_` 更新 (vrforch.cpp:111–118)
+6. `m_stateVrfObjectTable.hset(vrf_name, "state", "ok")` — STATE_DB に SAI VR 完了を通知 (vrforch.cpp:120)
+
+**依存**: SAI VR 作成が完了し STATE_DB `VRF_OBJECT_TABLE|<name>` に `state=ok` が書かれるまで、`intfsorch` は `isVRFexists()` をブロックとして使用し、ROUTE/NEIGHBOR の処理は SAI VR OID (`vrf_id`) が確立するまで待機する。
+
+### ROUTE / NEIGHBOR からの参照順序
+
+`vrf_table_[name].ref_count` を増減する orchagent コンポーネント (vrforch.h:91–119):
+
+| orchagent | 増加 (increaseVrfRefCount) | 減少 (decreaseVrfRefCount) |
+|-----------|--------------------------|--------------------------|
+| `intfsorch.cpp:504` | インタフェース VRF bind | — |
+| `intfsorch.cpp:640` | — | インタフェース VRF unbind |
+| `intfsorch.cpp:848,855` | VRF 変更時の新 VRF | 旧 VRF unbind |
+| `intfsorch.cpp:1057` | — | インタフェース削除時 |
+| `routeorch.cpp:2013` | ROUTE 追加 | — |
+| `routeorch.cpp:2773,2993` | — | ROUTE 削除 |
+| `mplsrouteorch.cpp:474` | MPLS ROUTE 追加 | — |
+| `mplsrouteorch.cpp:957` | — | MPLS ROUTE 削除 |
+| `srv6orch.cpp:1639` | SRv6 SID 追加 | — |
+| `srv6orch.cpp:1683` | — | SRv6 SID 削除 |
+| `fgnhgorch.cpp:1326` | FG-NHG 追加 | — |
+| `fgnhgorch.cpp:1612` | — | FG-NHG 削除 |
+
+NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない。NEIGHBOR が解決する際にはインタフェース VRF bind が先行している前提であり、NEIGHBOR 削除だけでは ref_count は減少しない。
+
+**CREATE 順序依存**: ROUTE を追加する前に VRF が SAI VR として確立済みである必要がある（routeorch は VRF OID を `m_vrfOrch->getVRFid(vrf_name)` で参照する）。VRF が未確立の場合は routeorch がキューに残す。
+
+**DELETE 順序依存**: VRF DEL 前に ROUTE・INTERFACE・MPLS ROUTE・SRv6 SID・FG-NHG を先にすべて削除して ref_count を 0 にする必要がある。NEIGHBOR エントリは ref_count に影響しないが、インタフェースを削除すると関連 NEIGHBOR も消える。
+
+
 ### 重要な挙動
 
 - **ref_count ガード**: `VRF|<name>` DEL は orchagent 内で `vrf_table_[name].ref_count == 0` になるまで `delOperation` が `return false` を返し続ける (vrforch.cpp:169)。所属インタフェース・ルート・MPLS ルート・SRv6 SID をすべて削除してから VRF を DEL すること。
 - **STATE_DB ready 待機**: `*_INTERFACE` への `vrf_name` 指定は、vrfmgrd が `STATE_DB.VRF_TABLE|<name>` に `state=ok` を書くまで Consumer キューで待機する。逆順でも最終収束するが、VRF 作成が完了するまでインタフェース設定は適用されない。
 - **mgmt VRF 特例**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` による mgmt VRF は hostcfgd の初期化済みを前提とし、Linux VRF デバイス `ip link add` をスキップする (vrfmgr.cpp:176-183)。通常の `VRF` テーブル書込みとは別経路。
 - **VNI 変更制限**: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 `vni=0` に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。
+- **SAI VR 削除シーケンス**: `delOperation` で `ref_count == 0` 確認後 `remove_virtual_router` → `vrf_table_.erase` → `delVrfVNIMap` → `m_stateVrfObjectTable.del()` の順に実行される (vrforch.cpp:173–193)。STATE_DB `VRF_OBJECT_TABLE` 消去が vrfmgrd の Linux VRF デバイス削除トリガになる。
+
+<!-- /ordering -->
+
 
 <!-- /ordering -->
 
@@ -720,5 +763,4 @@ VPP（Vector Packet Processing）SAI バックエンドを使う VS プラット
 `VRF.vni` に非ゼロ値を設定した場合、`VRFOrch::updateVrfVNIMap` が EVPN NVO（VTEP）の存在を確認し、未設定なら `return false` でエントリを破棄する（`vrforch.cpp:225-230`）。VXLAN EVPN を動作させる ASIC（Broadcom TD3/TH2, Mellanox SN シリーズ等）と、EVPN をサポートしない環境（VTEP 設定なし、または EVPN 非対応プラットフォーム）では `vni` フィールドの有効性が異なる。VTEP 未設定環境では `VRF.vni` は常に無効。
 
 <!-- /platform -->
-
 <!-- glossary-links-injected: e2892b76fd9a -->
