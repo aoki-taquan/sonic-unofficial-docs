@@ -455,3 +455,42 @@ CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `
 - **APPL_DB `TUNNEL_ROUTE_TABLE`**: standby ポートはサーバ宛トラフィックをピア ToR へのトンネル経路に迂回させる。`addTunnelRoute()` で prefix → tunnel alias を登録し、active 復帰時に `delTunnelRoute()` で削除。
 
 <!-- /side-effects -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp -->
+
+### state 遷移失敗
+
+| 失敗箇所 | 条件 | 挙動 | ソース行 |
+|---------|------|------|---------|
+| `setState()` — 未定義遷移 | `muxStateTransition` に `(prev, new)` ペアが存在しない | HW mux state のみ更新。SAI プログラミングはスキップ。同一 state なら `SWSS_LOG_NOTICE`、異なる state なら `SWSS_LOG_ERROR` を出力して処理中断 | `muxorch.cpp:523-538` |
+| ハンドラ失敗 → ロールバック | `state_machine_handlers_` が false を返す | `state_` を `prev_state_` に復元、`st_chg_failed_ = true`、`std::runtime_error` をスロー | `muxorch.cpp:547-553` |
+| `stateActive()` — ポート未登録 | `gPortsOrch->getPort()` が失敗 | `SWSS_LOG_NOTICE("Port %s not found")` → false 返却 | `muxorch.cpp:468-471` |
+| `stateActive()` — ACL 削除失敗 | `aclHandler(..., false)` が false | `SWSS_LOG_INFO("Remove ACL drop rule failed")` → false 返却 | `muxorch.cpp:474-478` |
+| `stateStandby()` — ポート未登録 | `gPortsOrch->getPort()` が失敗 | `SWSS_LOG_NOTICE("Port %s not found")` → false 返却 | `muxorch.cpp:493-496` |
+| `stateStandby()` — ACL 追加失敗 | `aclHandler(..., true)` が false | `SWSS_LOG_INFO("Add ACL drop rule failed")` → false 返却 | `muxorch.cpp:504-507` |
+| `rollbackStateChange()` — FAILED/PENDING | `prev_state_` が `FAILED` または `PENDING` | ロールバック不可。`SWSS_LOG_ERROR("[%s] Rollback to %s not supported")` → 処理中断 | `muxorch.cpp:568-572` |
+| `rollbackStateChange()` — ロールバック失敗 | ロールバックハンドラが false を返す | `st_chg_failed_ = true`、`SWSS_LOG_ERROR("[%s] Rollback to %s failed")` | `muxorch.cpp:606-609` |
+
+### Tunnel 未解決 → retry
+
+| 失敗箇所 | 条件 | 挙動 |
+|---------|------|------|
+| `nbrHandler(disable)` — Tunnel NH 未解決 | `createNextHopTunnel()` が `SAI_NULL_OBJECT_ID` を返す | `SWSS_LOG_INFO("Null NH object id, retry for %s")` → false 返却。明示的 retry ループなし。orchagent のタスクキューが次サイクルで再試行 (`muxorch.cpp:667-671`) |
+| `create_nh_tunnel()` — SAI 失敗 | `sai_next_hop_api->create_next_hop()` 失敗 | `SWSS_LOG_ERROR("Tunnel NH create failed for ip %s")` → `SAI_NULL_OBJECT_ID` 返却 (`muxorch.cpp:358-361`) |
+| `create_route()` — SAI 失敗 | `sai_route_api->create_route_entry()` 失敗 (ITEM_ALREADY_EXISTS 以外) | `SWSS_LOG_ERROR("Failed to create tunnel route %s")` → エラー status 返却 (`muxorch.cpp:118-127`) |
+
+### NEIGHBOR 未解決時の挙動
+
+| 失敗箇所 | 条件 | 挙動 |
+|---------|------|------|
+| `enable()` — neighbor 有効化失敗 | `gNeighOrch->enableNeighbors()` が false | false 返却、遷移中断 (`muxorch.cpp:813-816`) |
+| `enable()` / `disable()` — route 更新失敗 | `gRouteOrch->updateNextHopRoutes()` が false | `SWSS_LOG_INFO("Update route failed for NH %s")` → false 返却 |
+| `enable()` / `disable()` — NH グループ更新失敗 | `invalidnexthopinNextHopGroup()` または `validnexthopinNextHopGroup()` が false | `SWSS_LOG_ERROR("Removing/Adding NH failed for %s")` → false 返却 |
+| `disable()` — addRoutes 失敗 | `addRoutes()` が false | false 返却、遷移中断 (`muxorch.cpp:930-933`) |
+| `disable()` — neighbor 無効化失敗 | `gNeighOrch->disableNeighbors()` が false | false 返却 (`muxorch.cpp:935-937`) |
+| `MuxNbrHandler::update()` — 未知 state | state が INIT/ACTIVE/STANDBY 以外 | `SWSS_LOG_NOTICE("State '%s' not handled for nbr %s update")` → no-op (`muxorch.cpp:778-782`) |
+
+<!-- /failure -->
