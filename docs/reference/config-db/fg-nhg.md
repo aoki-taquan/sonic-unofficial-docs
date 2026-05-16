@@ -151,6 +151,79 @@ show fgnhg active-hops
 
 <!-- /value-behavior -->
 
+<!-- defaults -->
+## コード由来のデフォルト・暗黙挙動 (Phase A)
+
+> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `doTaskFgNhg()` L1673–1744 / `doTaskFgNhgMember()` L1969–2030 精読 + `sonic-fine-grained-ecmp.yang` 照合 (2026-05-15)
+
+### `FG_NHG` テーブル
+
+| フィールド | YANG default | fgnhgorch 実装の実効デフォルト | 備考 |
+|-----------|-------------|--------------------------------|------|
+| `bucket_size` | なし | **なし**（0 で `SWSS_LOG_ERROR` → `return true` で破棄、再試行なし） | 実質必須。`bucket_size==0` はエラーで Consumer キューにも残らない |
+| `match_mode` | なし | **`route-based`**（ローカル変数 `FGMatchMode::ROUTE_BASED` 初期値） | 不正値も `SWSS_LOG_WARN` の後 `route-based` にフォールバック |
+| `max_next_hops` | なし | **`0`**（uint32_t 初期化値） | `match_mode==prefix-based` のときのみ参照。`0` で `SWSS_LOG_ERROR` だが処理は継続し SAI 動作が不定に |
+
+```cpp
+// fgnhgorch.cpp L1680–1681
+FGMatchMode match_mode = FGMatchMode::ROUTE_BASED;
+uint32_t max_next_hops = 0;
+...
+// L1685
+uint32_t bucket_size = 0;
+...
+// L1703–1707  不正な match_mode はここで握り潰される
+else if (fvValue(i) != "route-based") {
+    SWSS_LOG_WARN("Received unsupported match_mode %s, defaulted to route-based",
+                  fvValue(i).c_str());
+}
+...
+// L1722–1726  bucket_size 未指定は破棄
+if (bucket_size == 0) {
+    SWSS_LOG_ERROR("Received bucket_size which is 0 for key %s", kfvKey(t).c_str());
+    return true;   // 再試行なし
+}
+```
+
+!!! warning "`match_mode` のタイポは silent fallback"
+    `match_mode` に `"nexthop-based"` / `"prefix-based"` / `"route-based"` 以外を書くと `SWSS_LOG_WARN` の後 `route-based` で登録される。typo はエラーにならず、意図しない FG 判定方式で動き続ける。
+
+### `FG_NHG_MEMBER` テーブル
+
+| フィールド | YANG default | fgnhgorch 実装の実効デフォルト | 備考 |
+|-----------|-------------|--------------------------------|------|
+| `FG_NHG` | なし | **なし**（空で `SWSS_LOG_ERROR` → `return true` で破棄） | leafref 必須。空文字でエントリ破棄 |
+| `bank` | なし | **`0`**（uint32_t 初期化値） | 未指定の全メンバが bank 0 に集約されバンク再分配メカニズムが事実上無効化 |
+| `link` | なし | **`""` 空文字列** → port-down 連動なし。`link_oper_state` は初期値 `LINK_UP` のまま固定 | `link` を設定しないとリンクダウン時のメンバ自動除去が効かない |
+
+```cpp
+// fgnhgorch.cpp L1976
+bool link_oper = LINK_UP;
+...
+// L1980–1982
+string fg_nhg_name = "";
+uint32_t bank = 0;
+string link = "";
+...
+// L2025–2030  link 空時は oper-state 追跡なし
+FGNextHopInfo fg_nh_info = {};
+fg_nh_info.bank = bank;
+if (!link.empty()) {
+    /* PORT/PORTCHANNEL の oper-state 連動を登録 */
+}
+```
+
+!!! warning "`bank` 未指定は単一バンク化"
+    `bank` フィールドを省略すると全メンバが bank 0 に入る。Fine-Grained ECMP の核となる「バンク単位の bucket 再分配」が機能せず、通常 ECMP に近い挙動となる。
+
+### YANG vs 実装
+
+`sonic-fine-grained-ecmp.yang` には `bucket_size` / `match_mode` / `max_next_hops` / `bank` のいずれにも `default` ステートメントが存在しない。デフォルト値は **全て fgnhgorch のローカル変数初期値** に依存しており、CONFIG_DB の他テーブルのように mgmt-framework / db_migrator から fill されることはない。
+
+詳細な調査ログ: `meta/_intermediate/cdb-flow/fg-nhg-defaults.md`
+
+<!-- /defaults -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
