@@ -196,6 +196,61 @@ bool is_match(sai_object_id_t vrf, IpPrefix prefix) const
 - 関連 CLI: `config flow_counters route`、`show flow_counters route`
 - 関連 YANG: 未定義（スキーマの正本は `flowcounterrouteorch.cpp` / `flow_counter_util/route.py`）
 
+<!-- ordering -->
+## 処理順序 — `FlowCounterRouteOrch` の初期化・タスク処理の順序制約 (Phase B)
+
+### orchagent 起動時の初期化順序
+
+`orchdaemon.cpp` の `OrchDaemon::init()` において、`FlowCounterRouteOrch` は `RouteOrch` より**先に**生成される[^4]:
+
+```
+orchdaemon.cpp:253  gFlowCounterRouteOrch = new FlowCounterRouteOrch(...)
+orchdaemon.cpp:337  gRouteOrch = new RouteOrch(...)   ← 後から生成
+```
+
+一方、`m_orchList`（Select ループで処理される順序リスト）では `gFlowCounterRouteOrch` が `gRouteOrch` より前に配置される[^4]:
+
+```
+m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, gBufferOrch,
+               gFlowCounterRouteOrch, gIntfsOrch, ..., gRouteOrch, ... }
+```
+
+コンストラクタ内では `initRouteFlowCounterCapability()` を即時呼び出し、プラットフォームサポート確認と STATE_DB 書き込みを完了させる。サポートあり場合のみ `FLEX_COUNTER_UPD_TIMER`（1 秒周期）を登録する。
+
+### CONFIG_DB 変更のキー処理順序
+
+`doTask(Consumer &consumer)` は `m_toSync`（`std::map<string, ...>`）を **`begin()` から `end()` まで順番に**イテレートする[^1]。`std::map` は辞書順ソート済みであるため、同一 flush バッチ内の複数パターン変更は **キー文字列の辞書順** で処理される。
+
+orchdaemon.cpp のコメント（行 494–498）は複数テーブルを持つ Orch に言及しているが、`FlowCounterRouteOrch` が購読するテーブルは `FLOW_COUNTER_ROUTE_PATTERN` の 1 テーブルのみであるため、テーブル間ソートの影響は受けない[^4]。
+
+### RoutePattern 内部ソート
+
+`mRoutePatternSet`（`std::set<RoutePattern>`）は `RoutePattern::operator<` によりソート済みを維持する[^2]:
+
+```
+比較キー: (vrf_name 辞書順, ip_prefix 順)
+```
+
+デフォルト VRF は `vrf_name = ""` となるため、辞書順で最小（先頭）に配置される。
+
+### バインド処理の遅延キューと再試行順序
+
+`bindFlowCounter()` 呼び出し時に ASIC_DB `VIDTORID` への VID 登録が未完了だった場合、エントリは `mPendingAddToFlexCntr`（`RouterFlowCounterCache` 型、`std::map`）へキューイングされる。`doTask(SelectableTimer &timer)` が 1 秒ごとに全 pending エントリをスキャンし、VID 解決済みのものから順次 FlexDB へ登録する[^1]。
+
+pending キューが空になると `mFlexCounterUpdTimer->stop()` でタイマーを停止する。
+
+### doTask の前提ガード（処理を打ち切る条件）
+
+| 条件 | 打ち切り範囲 |
+|------|-------------|
+| `gRouteOrch == nullptr` | doTask 全体を即時 return |
+| `mRouteFlowCounterSupported == false` | doTask 全体を即時 return |
+| `isRouteFlowCounterEnabled() == false` | counter バインドのみスキップ（パターン登録は保持） |
+| `ASIC_DB:VIDTORID` に VID 未登録 | バインド保留 → pending キューへ |
+
+詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/route-orch-ordering.md` を参照。
+<!-- /ordering -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — `FlowCounterRouteOrch` が依存する関連テーブル (Phase C)
 
@@ -244,6 +299,7 @@ bool is_match(sai_object_id_t vrf, IpPrefix prefix) const
 [^1]: FlowCounterRouteOrch 実装: `orchagent/flex_counter/flowcounterrouteorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp>
 [^2]: RoutePattern 構造体・is_match ロジック: `orchagent/flex_counter/flowcounterrouteorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.h>
 [^3]: テーブル名・デフォルト値定数: `flow_counter_util/route.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/flow_counter_util/route.py>
+[^4]: orchagent 初期化順序・m_orchList: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
 
 <!-- ops-hint -->
 ## 運用ヒント
