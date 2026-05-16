@@ -291,4 +291,69 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 - `SRV6_MY_LOCATORS` (CONFIG_DB) — SRv6 ロケータ設定
 - `VRF` (CONFIG_DB) — VRF 定義
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、SONiC HLD `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
+> evidence: `meta/_intermediate/cdb-flow/srv6-platform.md`
+
+### SAI capability — MySID カウンタ非対応 ASIC
+
+`Srv6Orch::initializeCounters()`（`srv6orch.cpp:120-142`）は起動時に
+`sai_query_attribute_capability(gSwitchId, SAI_OBJECT_TYPE_MY_SID_ENTRY, SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, &capability)`
+を実行し（`srv6orch.cpp:147`）、`capability.set_implemented && capability.create_implemented` が
+`false` の場合は FlexCounter 初期化全体をスキップする。
+
+該当 ASIC での挙動:
+
+| 操作 | 結果 |
+|------|------|
+| `counterpoll srv6 enable` | WARN ログのみ、効果なし |
+| `show srv6 mysid counters` | 常にゼロ表示 |
+| 起動ログ | `"SRv6 counters are not supported on this platform"` (`srv6orch.cpp:125`) |
+| カウンタ変更要求ログ | `"Ignoring SRv6 counters state change as they are not supported on this platform"` (`srv6orch.cpp:257`) |
+
+SONiC は特定ベンダー名（Mellanox / Broadcom 等）を直接判別せず、SAI capability query の結果のみで動的に判断する。
+
+### SID List タイプの ASIC 非対応
+
+`sidlist_type_map`（`srv6orch.cpp:73-79`）は `insert` / `insert.red` / `encaps` / `encaps.red` の
+4 タイプを定義する。ASIC が特定タイプを未実装の場合は SAI から失敗ステータスが返り、
+`"Failed to create srv6 sidlist object"` ログが出力される。orch レイヤには
+タイプ別 capability チェックは存在せず、SAI エラーが実質的な検出手段となる。
+
+### Micro-SID (uSID) behaviors の対応状況
+
+`un` / `ua` / `udt4` / `udt6` / `udt46` / `udx4` / `udx6` は 202211 リリースで追加され、
+SAI 仕様では `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` / `_UA` 等として定義済み[^2]。
+ただし実 ASIC での実装は各ベンダーの SAI SDK バージョンに依存する。
+各 endpoint behavior 個別の capability チェックは orch に実装されていない。
+
+### ECMP adj — orchagent 実装制限（全プラットフォーム共通）
+
+`adj` フィールドがカンマ区切りの複数アドレスを持つ場合、`srv6orch.cpp:1516-1519` で
+`"ECMP adjacency not yet supported"` エラーを返し処理を拒否する。
+これは ASIC 能力に依存しない orchagent の実装制限であり、全プラットフォームで同様。
+
+### VOQ Chassis
+
+`srv6orch.cpp` に VOQ Chassis 固有の分岐コードは存在しない。処理ロジックはスタンドアロン構成と共通。
+ただし VOQ Chassis では NeighOrch が返す nexthop の実体が NPU 間 system port 経由になるため、
+`end.x` / `ua` / `end.dx*` 等の `adj` 解決が遅れる場合があり、
+`m_pendingSRv6MySIDEntries` への保留期間が延びる可能性がある。
+
+### SmartSwitch DPU
+
+`srv6orch.cpp` に `switch_type == "dpu"` 固有の分岐は存在しない。
+DPU は独立した SONiC インスタンスとして動作し、SRv6 サポートは DPU 側 SAI 実装に依存する。
+
+### VPP ソフトウェアスイッチ
+
+`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp` で MySID / SID リスト変換が実装されているが、
+VPP には SID リストの最大エントリ数 16 の制約がある（`SwitchVppSRv6.cpp:235`）。
+17 個以上の SID を含む SID リストは SAI エラーとなる（ハードウェア ASIC にこの制限はない）。
+
+<!-- /platform -->
+
 [^1]: `sonic-swss/orchagent/srv6orch.cpp` (revision 4305596156d70e9797e8a881b3d19b46de0bce0d) より。
+[^2]: SRv6 uSID HLD: <https://github.com/sonic-net/SONiC/blob/master/doc/srv6/SRv6_uSID.md>
