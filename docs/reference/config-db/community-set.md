@@ -330,6 +330,74 @@ CONFIG_DB COMMUNITY_SET / EXTENDED_COMMUNITY_SET
 
 <!-- /pubsub -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+実装コードに直接定義されている文字列定数・enum 値を一覧化する。CONFIG_DB フィールド値を正確に把握するための参照用。
+
+### action フィールド enum 値
+
+`sonic-routing-policy-sets.yang` で定義された `routing-policy-action-type`:
+
+| enum 値 | 説明 | ソース |
+|---|---|---|
+| `permit` | マッチしたルートを許可 | `sonic-routing-policy-sets.yang:30` |
+| `deny` | マッチしたルートを拒否 | `sonic-routing-policy-sets.yang:33` |
+
+!!! note
+    `action` フィールドは CONFIG_DB に記録されるが、`frrcfgd` の `hdl_com_set()` が FRR へ生成するコマンドは常に `permit` 固定（`frrcfgd.py:996-1006`）。`deny` を指定しても FRR 側には `permit` コマンドが発行される。
+
+### set_type フィールド enum 値
+
+| enum 値 | FRR コマンド | 説明 | ソース |
+|---|---|---|---|
+| `STANDARD` | `bgp community-list standard <name> permit <values>` | 数値 community の完全一致マッチ | `sonic-routing-policy-sets.yang:147`, `frrcfgd.py:985-986` |
+| `EXPANDED` | `bgp community-list expanded <name> permit <pattern>` | 正規表現マッチが可能 | `sonic-routing-policy-sets.yang:148`, `frrcfgd.py:985-986` |
+
+### match_action フィールド enum 値
+
+`CommunityList` クラス内部定数との対応:
+
+| enum 値 | 内部定数 | FRR 生成挙動 | ソース |
+|---|---|---|---|
+| `ANY` | `CommunityList.MATCH_ANY = 1` | member ごとに個別 `permit` コマンドを生成（OR 条件） | `frrcfgd.py:1000-1006`, `frrcfgd.py:1571` |
+| `ALL` | `CommunityList.MATCH_ALL = 0` | 全 member を 1 行に結合した `permit` コマンドを生成（AND 条件） | `frrcfgd.py:994-999`, `frrcfgd.py:1570` |
+
+### community_member フォーマット定数
+
+`bgpcfgd/managers_rm.py` の `BGPRouteMapMgr` がコミュニティ値を検証する際の制約:
+
+| フォーマット | 制約 | ソース |
+|---|---|---|
+| `AS:NN` 形式（STANDARD） | AS および NN ともに `range(0, 65536)` (0〜65535) の整数 | `bgpcfgd/managers_rm.py:57-59` |
+| 正規表現パターン（EXPANDED） | 任意文字列（`.*:100` 等）。数値検証なし | `frrcfgd.py:985-986` |
+
+STANDARD 型の well-known community 名（FRR が解釈する文字列リテラル、RFC1997 準拠）:
+
+| well-known 名 | 値 | 説明 |
+|---|---|---|
+| `no-export` | `0xFFFFFF01` (65535:65281) | IBGP および confederation 境界を超えてアドバタイズしない |
+| `no-advertise` | `0xFFFFFF02` (65535:65282) | いかなる BGP ピアにもアドバタイズしない |
+| `local-AS` | `0xFFFFFF03` (65535:65283) | confederation サブ AS 内にのみ配布（RFC 5065） |
+| `internet` | `0x00000000` (0:0) | すべての BGP スピーカーに配布可能 |
+
+これらは FRR vtysh が `bgp community-list` コマンドで直接受理する文字列（`frrcfgd.py:998` の `' '.join(member_list)` 経由でそのまま渡される）。
+
+### extended community マーカー定数 (`CommunityList`)
+
+EXTENDED_COMMUNITY_SET の `community_member` 値のプレフィックスとして使用:
+
+| 定数名 | 値 | 用途 | ソース |
+|---|---|---|---|
+| `CommunityList.RT_TYPE_MARK` | `'route-target:'` | RT (Route Target) を示すプレフィックス。FRR コマンド生成時に `rt` に変換 | `frrcfgd.py:1572` |
+| `CommunityList.SOO_TYPE_MARK` | `'route-origin:'` | SoO (Site of Origin) を示すプレフィックス。FRR コマンド生成時に `soo` に変換 | `frrcfgd.py:1573` |
+
+### seq / シーケンス番号
+
+`COMMUNITY_SET` にはシーケンス番号フィールドなし（`PREFIX_LIST` と異なる）。順序は `community_member` の `ordered-by user` leaf-list で保持される（`sonic-routing-policy-sets.yang:169`）。
+
+> **スキャン証跡**: `frrcfgd.py:981-1007,1569-1603` (`hdl_com_set`, `CommunityList` クラス) 精読、`bgpcfgd/managers_rm.py:54-65` (community_id 検証) 確認、`sonic-routing-policy-sets.yang:28-39,135-173` (action/set_type/match_action/community_member 定義) 精読。定数 4 分類 + well-known 4 件 + ext-community マーカー 2 件抽出。
+<!-- /constants -->
 <!-- side-effects -->
 ## Phase F: 副次 DB 書込・FRR 設定書込 (Direction B)
 
