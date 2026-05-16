@@ -298,6 +298,43 @@ Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ス�
 
 > これらは BREAKOUT_CFG 自身のフィールドではなく、`brkout_mode` 値に依存した **PORT テーブルへの暗黙派生**。YANG に記述なし。
 <!-- /defaults -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`BREAKOUT_CFG` への書込（`config interface breakout`）は CONFIG_DB 内の主テーブル更新にとどまらず、PORT テーブル再構成・STATE_DB ポート状態初期化・COUNTERS_DB キューマップ更新という 3 系統の副次書込を引き起こす。
+
+### CONFIG_DB|PORT テーブル — ポート再構成（直接・同期）
+
+`breakout_Ports()` が `ConfigMgmt.breakOutPort()` を呼び、旧子ポート（現行モード由来）を `PORT` から削除し、新子ポート（目標モード由来）を `PORT` に生成する。これは `BREAKOUT_CFG` への `set_entry` より **前**に実行される。
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|----------|
+| `config interface breakout <port> <mode>` 実行 | del（旧子ポート）+ set（新子ポート） | `PORT\|Ethernet*`（子ポート） | `speed`, `lanes`, `alias`, `subport`, `fec` 等 | `sonic-utilities/config/main.py:5496-5545` |
+
+### STATE_DB|PORT_TABLE — ポート状態エントリの再初期化
+
+DPB 後に orchagent が SAI レイヤでポートを再生成すると `initPort()` が STATE_DB にポートエントリを書き込み、`deInitPort()` が旧ポートのバッファ最大値エントリを削除する。
+
+| トリガ | 操作 | DB / テーブル | フィールド | evidence |
+|--------|------|--------------|-----------|----------|
+| SAI ポート再生成 → `initPort()` | `set` | `STATE_DB\|PORT_TABLE\|<alias>` | `supported_speeds`, `supported_fecs` 等 | `sonic-swss/orchagent/portsorch.cpp:L3172, L3320` |
+| SAI ポート削除 → `deInitPort()` | `del` | `STATE_DB\|BUFFER_MAX_PARAM_TABLE\|<alias>` | （エントリ全体）| `sonic-swss/orchagent/portsorch.cpp:L4331` |
+
+### COUNTERS_DB — キューマップ・ポート名マップ更新
+
+flex counter が有効な環境では、新子ポートのキュー OID マッピング（`COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP`）が生成される。旧子ポートのマッピングは削除される。ポート名マップ（`COUNTERS_PORT_NAME_MAP`）も同様に旧エントリ削除・新エントリ追加が行われる。
+
+| トリガ | 操作 | DB / テーブル | evidence |
+|--------|------|--------------|----------|
+| `initPort()` → `generateQueueMapPerPort()`（queue flex counter 有効時） | `set` | `COUNTERS_DB\|COUNTERS_QUEUE_PORT_MAP`, `COUNTERS_QUEUE_INDEX_MAP`, `COUNTERS_QUEUE_TYPE_MAP` | `sonic-swss/orchagent/portsorch.cpp:L8527-8529` |
+| `deInitPort()` → `removePortBufferQueueCounters()` | `hdel` | 上記 3 テーブル（旧子ポートの OID エントリ） | `sonic-swss/orchagent/portsorch.cpp:L8790-8797` |
+| `deInitPort()` → `delCounterNameMap()` | `del` | `COUNTERS_DB\|COUNTERS_PORT_NAME_MAP` | `sonic-swss/orchagent/portsorch.cpp:L4316` |
+
+!!! note "flex counter 条件付き"
+    COUNTERS_DB へのキューマップ書込は queue flex counter（`FLEX_COUNTER_DB|QUEUE_STAT_COUNTER`）が有効な場合のみ発生する。無効環境では `generateQueueMapPerPort()` は呼ばれない。
+
+詳細分析: `meta/_intermediate/cdb-flow/breakout-cfg-side.md`
+<!-- /side-effects -->
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
