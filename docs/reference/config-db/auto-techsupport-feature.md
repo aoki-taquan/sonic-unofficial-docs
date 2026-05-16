@@ -383,16 +383,39 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | SAI 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
-| multi-asic (`is_multi_npu() == True`) | 影響なし | `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ参照、`asicN` namespace を iterate しない。container 名の asic suffix (`swss0`/`syncd1` 等) は feature 名との `startswith` 前方一致で吸収 |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ参照、`asicN` namespace を iterate しない。container 名の asic suffix (`swss0`/`syncd1` 等) は `trim_masic_suffix()` で末尾数字を剥がした後に CONFIG_DB key を HGET する (`coredump_gen_handler.py:52`) |
 | VOQ chassis (supervisor + line card) | 各 host で独立適用 | chassisdb (REDIS_CHASSIS_SERVER) 非参照。各 line card host で独立にローカル CONFIG_DB を見てローカル `/var/dump/` に techsupport を生成。chassis 全体集中機構なし |
 | namespace (asic0..asicN) | 影響なし | `coredump_gen_handler.py` / `techsupport_cleanup.py` / `auto_techsupport_helper.py` のいずれにも namespace 引数なし。すべて host namespace の `unix:///var/run/redis/redis.sock` に接続 |
+| SmartSwitch DPU | 影響なし | `coredump_gen_handler.py` / `auto_techsupport_helper.py` を `DPU\|smartswitch\|dpu` で grep して 0 ヒット。DPU container で core dump が発生しても host の `AUTO_TECHSUPPORT_FEATURE|<container>` を同一経路で評価するため、schema / handler ロジックに変化なし |
+| container suffix (`trim_masic_suffix`) | 吸収済み | `coredump_gen_handler.py:52` が `trim_masic_suffix(container_name)` を呼び、末尾の連続する数字を除去 (`swss0`→`swss`, `syncd1`→`syncd`)。これにより multi-asic / masic 環境で asic suffix 付きの docker 名も suffix なしの `AUTO_TECHSUPPORT_FEATURE` key と一致する |
 | ベンダー固有 hook | なし | `AUTO_TECHSUPPORT_FEATURE` schema / handler に vendor 分岐なし。`generate_dump` 内の `show platform summary` 等 vendor 依存コマンドは別 entity (本テーブル field 解釈には影響しない) |
 | init_cfg / build template | 分岐なし | `init_cfg.json.j2` の AUTO_TECHSUPPORT_FEATURE ブロックは `{% for feature in FEATURE %}` のみで platform 条件式なし |
+
+### container suffix 処理 (`trim_masic_suffix`)
+
+multi-asic および masic (multi-ASIC-in-container) 環境では docker 名に数字 suffix が付く (`swss0`, `syncd1`, `bgp0` 等)。`coredump_gen_handler.py:52` は `trim_masic_suffix()` (`auto_techsupport_helper.py:200-210`) でこれらを除去してから CONFIG_DB の `AUTO_TECHSUPPORT_FEATURE|<feature>` をルックアップする。
+
+```python
+# auto_techsupport_helper.py:200-210
+def trim_masic_suffix(container_name):
+    """ Trim any masic suffix i.e swss0 -> swss """
+    arr = list(container_name)
+    index = len(arr) - 1
+    while index >= 0:
+        if arr[-1].isdigit():
+            arr.pop()
+        else:
+            break
+        index = index - 1
+    return "".join(arr)
+```
+
+このため `AUTO_TECHSUPPORT_FEATURE` の key は **asic suffix を含まない形式**で書く必要がある (例: `swss0` ではなく `swss`)。誤って suffix 付きで登録しても silent skip となり techsupport が起動しないため注意。
 
 詳細根拠と grep ログは `meta/_intermediate/cdb-flow/auto-techsupport-feature-platform.md` を参照。
 <!-- /platform -->
