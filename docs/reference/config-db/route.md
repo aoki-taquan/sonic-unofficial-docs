@@ -365,6 +365,74 @@ m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, replace);
 [^se3]: `orchagent/flex_counter/flowcounterrouteorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/flex_counter/flowcounterrouteorch.cpp>
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-constants.md -->
+
+### SAI route_entry 属性定数
+
+`RouteOrch` が SAI `sai_route_entry_t` をプログラムする際に使用する属性 ID と packet action 値。
+
+| 定数名 | 種別 | 用途 |
+|--------|------|------|
+| `SAI_ROUTE_ENTRY_ATTR_PACKET_ACTION` | SAI 属性 ID | packet action（DROP / FORWARD）を指定 |
+| `SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` | SAI 属性 ID | nexthop OID を指定 |
+| `SAI_ROUTE_ENTRY_ATTR_PREFIX_AGG_ID` | SAI 属性 ID | prefix aggregation ID を指定 |
+| `SAI_PACKET_ACTION_DROP` | SAI enum | blackhole 経路・初期デフォルト経路の packet action |
+| `SAI_PACKET_ACTION_FORWARD` | SAI enum | 通常 unicast 経路の packet action |
+
+orchagent 起動時に `0.0.0.0/0` と `::/0` のデフォルト経路を `SAI_PACKET_ACTION_DROP` でプログラムし (`routeorch.cpp:138-139`)、FRR から有効な nexthop を受信したタイミングで `SAI_PACKET_ACTION_FORWARD` に切り替える (`routeorch.cpp:2315`)。blackhole 経路は常に `SAI_PACKET_ACTION_DROP` を維持する (`routeorch.cpp:2282`)。
+
+### デフォルト VRF OID (`gVirtualRouterId`)
+
+```cpp
+extern sai_object_id_t gVirtualRouterId;  // routeorch.cpp:17
+```
+
+- orchagent 初期化時に SAI から取得・設定されるグローバル VRF OID。
+- `ROUTE_TABLE:<prefix>`（VRF prefix なし）のキーは自動的に `gVirtualRouterId` に対してプログラムされる (`routeorch.cpp:721`)。
+- `0.0.0.0/0` / `::/0` のデフォルト経路も `gVirtualRouterId` に紐付く (`routeorch.cpp:133, 151, 171`)。
+
+### Bulk batch size (`DEFAULT_MAX_BULK_SIZE`)
+
+```cpp
+#define DEFAULT_MAX_BULK_SIZE 1000   // orchdaemon.cpp:81
+size_t gMaxBulkSize = DEFAULT_MAX_BULK_SIZE;  // orchdaemon.cpp:82
+```
+
+`gRouteBulker`、`gLabelRouteBulker`、`gNextHopGroupMemberBulker` はすべて `gMaxBulkSize` を上限として構築される (`routeorch.cpp:41-43`)。orchagent 起動オプション `--bulk-size` で上書き可能。デフォルトは **1000 エントリ/フラッシュ**。
+
+### ECMP グループ数デフォルト
+
+```cpp
+#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128  // routeorch.cpp:37
+#define DEFAULT_MAX_ECMP_GROUP_SIZE     32   // routeorch.cpp:38
+```
+
+| 定数名 | 値 | 適用条件 |
+|--------|----|---------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI クエリ失敗時のフォールバック ECMP グループ上限 |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォームの補正係数（`m_maxNextHopGroupCount /= 32`） |
+
+### VRF prefix 文字列 (`VRF_PREFIX`)
+
+```cpp
+#define VRF_PREFIX "Vrf"  // orchagent/nexthopkey.h:20
+```
+
+VRF 名の必須プレフィックス。`Vrf` で始まるキー (`routeorch.cpp:706`) は VRF ルックアップを実施して対応する VRF OID を取得する。一致しないキーはデフォルト VRF (`gVirtualRouterId`) として扱われる。
+
+### link-local prefix 定数
+
+```cpp
+IpPrefix default_link_local_prefix("fe80::/10");  // routeorch.cpp:187
+```
+
+orchagent 起動時に `gVirtualRouterId` 配下に `SAI_PACKET_ACTION_FORWARD` + CPU ポート nexthop でプログラムされる。全 link-local パケットを CPU に転送するためのサブネット route。
+
+<!-- /constants -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `STATIC_ROUTE`（静的経路の設定元）、`VRF`
