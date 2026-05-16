@@ -228,6 +228,41 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 > **スキャン証跡**: `bgp_neighbor_handler` L3942 読了。keepalive/holdtime 組み合わせ制約のみ。
 <!-- /handler-branching -->
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BGP_PEER_GROUP` ハンドラが実装レベルで依存する外部テーブルを示す。YANG leafref 宣言のない暗黙依存を含む。
+
+| 参照先テーブル | 参照フィールド | 方向 | 条件 | 依存強度 | ソース |
+|--------------|--------------|------|------|---------|--------|
+| `BGP_GLOBALS` | `local_asn` | 読み取り | 常時（SET/DEL 両方） | **必須・ブロッキング** — 未設定 VRF は silently drop | `frrcfgd.py` L2175, L2659 |
+| `BGP_PEER_GROUP_AF` | `route_map_in` / `route_map_out` / afi_safi 設定 | 逆参照（cascade 再適用） | peer-group の `asn` OP_ADD または OP_DELETE 時 | 条件付き — `asn` 変更で AF 設定を再投入 | `frrcfgd.py` L2551–2563, L2865 |
+| `ROUTE_MAP` | `route_operation` | 内部キャッシュ参照 | `BGP_PEER_GROUP_AF` に `route_map_in`/`out` が設定されたとき | 条件付き — 未投入でも frrcfgd エラーなし（FRR 側 no-op） | `frrcfgd.py` L86, L2206, L2669 |
+
+### BGP_GLOBALS — ブロッキング依存の詳細
+
+frrcfgd は `BGP_PEER_GROUP` の処理ループ先頭で `__get_vrf_asn(vrf)` を呼び出し、
+当該 VRF の `BGP_GLOBALS.local_asn` を取得する。`None` の場合は LOG_DEBUG を出力して
+当該エントリの処理を **スキップ**（エラーなし）。FRR vtysh コマンド
+`router bgp <local_asn> vrf <vrf>` の生成に必須のため、`BGP_GLOBALS` 投入前に
+`BGP_PEER_GROUP` が到達してもすべて破棄される（`frrcfgd.py` L2658–2662）。
+
+### BGP_PEER_GROUP_AF — cascade 再適用の詳細
+
+peer-group の `asn` が OP_ADD/DELETE されると `__nbr_impl_action` が `'apply'`/`'delete'`
+を返し、`__apply_dep_vrf_table` が `BGP_GLOBALS_LISTEN_PREFIX`（listen range）と
+`BGP_NEIGHBOR`（メンバー neighbor）を内部キャッシュから再投入する。
+`BGP_PEER_GROUP_AF` 自体は `bgp_table_handler_common` で独立購読されており、
+peer-group 作成後に AF 設定が到達した場合は順次 FRR に投入される（`frrcfgd.py` L2305, L2865）。
+
+### ROUTE_MAP — 間接参照の詳細
+
+`ROUTE_MAP` は frrcfgd が直接購読するテーブル（`frrcfgd.py` L86: `'ROUTE_MAP': ['zebra', 'bgpd', 'ospfd']`）。
+`BGP_PEER_GROUP_AF` の `route_map_in`/`route_map_out` フィールド値がそのまま
+FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として使用される。
+指定した route-map が FRR に未定義でも frrcfgd はエラーを返さない（FRR 側 no-op）。
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## 暗黙デフォルトとコード由来 fallback (Phase A)
 
