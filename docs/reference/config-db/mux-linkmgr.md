@@ -314,6 +314,95 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-side-effects.md`
+> ソース: `sonic-linkmgrd/src/DbInterface.cpp` L463-473、`sonic-swss-common/common/schema.h` L459-460
+
+`MUX_LINKMGR` パラメータを linkmgrd が読み取った結果、発生する **他 DB への副次書込** を示す。
+
+### STATE_DB への書込
+
+| テーブル | キー形式 | フィールド | 値 | トリガ | 証跡 |
+|---------|---------|-----------|-----|--------|------|
+| `MUX_LINKMGR_TABLE` | `<ifname>` (例: `Ethernet0`) | `state` | `active` / `standby` / `unknown` / `wait` | linkmgrd ステートマシン遷移時 (`setMuxLinkmgrState()`) | `DbInterface.cpp:471` |
+| `MUX_METRICS_TABLE` | `<ifname>` | `linkmgrd_switch_<state>_start` / `_end` | タイムスタンプ (ISO8601) | MUX 切替開始・完了時 (`handlePostMuxMetrics()`) | `DbInterface.cpp:484-` |
+| `MUX_SWITCH_CAUSE` | `<ifname>` | `cause` | 切替原因文字列 | ステートマシン遷移原因記録時 | `DbInterface.h:63` |
+
+`MUX_LINKMGR_TABLE` は `show mux status` CLI が参照する最終的な linkmgrd 状態表示用テーブル。
+
+### APPL_DB への書込 (xcvrd 通信)
+
+linkmgrd は `MUX_LINKMGR` の `interval_v4` / `negative_signal_count` 等の変更によりプローバ動作が変化した結果、以下の APPL_DB テーブルへコマンドを書込む。
+
+| テーブル | キー | フィールド | 値 | 目的 | 証跡 |
+|---------|------|-----------|-----|------|------|
+| `MUX_CABLE_COMMAND_TABLE` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に i2c 経由で MUX ハードウェア状態の読取を指示 | `DbInterface.cpp:443` |
+| `FORWARDING_STATE_COMMAND` (APP_DB) | `<ifname>` | `command` | `"probe"` | xcvrd に gRPC 経由でトランシーバのフォワーディング状態確認を指示 | `DbInterface.cpp:455` |
+
+xcvrd はこれらコマンドを受信後、以下のレスポンステーブルに結果を書き戻す:
+
+- `MUX_CABLE_RESPONSE_TABLE` (APP_DB): MUX state probe レスポンス
+- `FORWARDING_STATE_RESPONSE` (APP_DB): forwarding state probe レスポンス
+
+### 間接連鎖の整理
+
+```
+CONFIG_DB MUX_LINKMGR 変更
+  ↓ linkmgrd がプローバタイマー再設定
+APPL_DB MUX_CABLE_COMMAND_TABLE / FORWARDING_STATE_COMMAND
+  ↓ xcvrd が i2c / gRPC でハードウェア確認
+APPL_DB MUX_CABLE_RESPONSE_TABLE / FORWARDING_STATE_RESPONSE
+  ↓ linkmgrd がステートマシン遷移判定
+STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
+         MUX_METRICS_TABLE (切替タイムスタンプ記録)
+```
+
+> `interval_v4` / `interval_v6` を変更しても即時 STATE_DB 書込は発生しない。次のプローバサイクル後にステート遷移が起きた場合のみ STATE_DB が更新される。
+
+<!-- /side-effects -->
+
+<!-- failure -->
+## Phase D: 失敗挙動 (Failure Behavior)
+
+ソース: `sonic-linkmgrd` — `src/DbInterface.cpp`, `src/MuxPort.cpp`, `src/MuxManager.cpp`, `src/link_manager/LinkManagerStateMachineActiveStandby.cpp`
+
+### 不正値 (Invalid values)
+
+| フィールド | 不正値の例 | linkmgrd の挙動 | ログ |
+|-----------|-----------|----------------|------|
+| `interval_v4` / `interval_v6` / `positive_signal_count` / `negative_signal_count` / `suspend_timer` / `interval_pck_loss_count_update` | 数値以外の文字列 | `boost::bad_lexical_cast` catch → 更新スキップ、直前値を維持 | `MUXLOGWARNING: "bad lexical cast: ..."` (`DbInterface.cpp:1162`) |
+| `interval_sec` (TIMED_OSCILLATION) | 数値以外の文字列 | 同上 (スキップ) | `MUXLOGWARNING: "bad lexical cast: ..."` (`DbInterface.cpp:1201`) |
+| `interval_sec` が 300 未満の整数 | `"100"` | setter 内で `300` に clamp (下限強制)。設定値は反映されない | なし |
+| `interval_pck_loss_count_update` が 50 未満 | `"10"` | setter 内で `50` に clamp | なし |
+| `use_well_known_mac = "enabled"` | YANG 準拠値 | コードは `v == "enable"` で比較 (末尾 `d` が不一致) → 常に `false` (動的 MAC) として動作。**サイレント誤動作** (実装バグ疑い) | なし |
+| `oscillation_enabled` に `"true"` / `"false"` 以外 | `"yes"` / `"1"` | いずれの分岐にも入らず無視。`setOscillationEnabled()` は呼ばれない | なし |
+| `log_verbosity` に不正値 | `"verbose"` | マッチせず info レベルを維持 | なし |
+
+### xcvrd 通信失敗
+
+| ケース | linkmgrd の挙動 | ログ |
+|--------|----------------|------|
+| xcvrd が MUX state probe に対して `"unknown"` を返す | `MuxState::Unknown` へ遷移。状態機械は不定状態のままリトライを繰り返す (`MuxPort.cpp:299`) | なし |
+| xcvrd が応答しない (無応答) | プローブ応答待ちタイマーなし。`swssSelect` のポーリングループが次の通知を待つが、xcvrd 無応答を失敗として検知する機構はない。`MuxState::Unknown` のまま留まる | なし |
+| xcvrd が Active-Active ポートで gRPC 失敗時に `"failure"` を返す | `MuxPort::handleProbeMuxState()` から `handleProbeMuxFailure()` を呼び出す (`MuxPort.cpp:307`)。Active-Standby ポートでは `Unknown` ラベルとして処理 | なし |
+| `swssSelect.select()` が `Select::ERROR` を返す | `MUXLOGERROR` を出力してループ継続。xcvrd 通信は継続される (`DbInterface.cpp:1877`) | `MUXLOGERROR: "Error had been returned in select"` |
+
+### SAI 失敗 (orchagent 経由)
+
+linkmgrd は SAI を直接呼ばない。MUX switchover は orchagent を通じて SAI に要求される。
+
+| ケース | linkmgrd の挙動 | ログ |
+|--------|----------------|------|
+| orchagent が SAI switchover 失敗で STATE_DB の MUX state を `"error"` に設定 | `processMuxStateNotifiction()` → `MuxPort::handleMuxState()` で `MuxState::Error` へマップ → 状態機械は `LinkProberState::Wait` へ遷移 (`LinkManagerStateMachineActiveStandby.cpp:1160-1161`) | なし |
+| `{LinkProberActive, MuxError, LinkUp}` 状態に遷移 | `LinkProberActiveMuxErrorLinkUpTransitionFunction()` が `enterMuxWaitState()` を呼びプローブを再試行 (`LinkManagerStateMachineActiveStandby.cpp:1332`) | `MUXLOGINFO` |
+| `{LinkProberStandby, MuxError, LinkUp}` 状態に遷移 | `LinkProberStandbyMuxErrorLinkUpTransitionFunction()` が `enterMuxWaitState()` を呼びプローブを再試行 (`LinkManagerStateMachineActiveStandby.cpp:1350`) | `MUXLOGINFO` |
+
+> **証跡**: `DbInterface.cpp:49` — `mMuxState = {"active", "standby", "unknown", "Error"}` で `Error` 文字列が明示的に定義されている。`MuxPort.cpp:279,335,391` で `"error"` → `MuxState::Error` への変換を確認。
+
+<!-- /failure -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
