@@ -446,6 +446,82 @@ cable_type == "active-active"   →  PortCableType::ActiveActive   (Y-cable Smar
 詳細根拠は `meta/_intermediate/cdb-flow/mux-linkmgr-platform.md` を参照。
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-constants.md`
+> ソース: `sonic-linkmgrd/src/common/MuxConfig.h`, `sonic-linkmgrd/src/common/MuxLogger.h`, `sonic-linkmgrd/src/LinkMgrdMain.cpp`, `sonic-linkmgrd/src/DbInterface.h`
+
+### MuxConfig.h — C++ メンバ初期化子
+
+`linkmgrd` の動作パラメータはすべて `common::MuxConfig` クラスのメンバ初期化子として焼き込まれている。CONFIG_DB に対応フィールドが存在しない場合は以下の値が有効になる。
+
+| 定数名 (メンバ) | 値 | 単位 | 対応 CONFIG_DB フィールド | 備考 |
+|---|---|---|---|---|
+| `mTimeoutIpv4_msec` | `100` | ms | `interval_v4` | IPv4 ICMP heartbeat 送信間隔 |
+| `mTimeoutIpv6_msec` | `1000` | ms | `interval_v6` | IPv6 ICMP heartbeat 送信間隔 |
+| `mRxTimeoutIpv4_msec` | `300` | ms | — | IPv4 受信タイムアウト (CONFIG_DB 非公開) |
+| `mPositiveStateChangeRetryCount` | `1` | 回 | `positive_signal_count` | active 判定連続受信回数 |
+| `mNegativeStateChangeRetryCount` | `3` | 回 | `negative_signal_count` | standby 判定連続喪失回数 |
+| `mLinkProberStatUpdateIntervalCount` | `300` | 回 | `interval_pck_loss_count_update` | 統計更新間隔 (下限 50 で clamp) |
+| `mSuspendTimeout_msec` | `500` | ms | `suspend_timer` | setter 初期値 (getter は `(neg+1)*interval_v4` を返す) |
+| `mMuxStateChangeRetryCount` | `1` | 回 | — | MuxState 変更リトライ数 |
+| `mLinkStateChangeRetryCount` | `1` | 回 | — | LinkState 変更リトライ数 |
+| `mEnableTimedOscillationWhenNoHeartbeat` | `true` | bool | `oscillation_enabled` | タイマー駆動オシレーション有効 |
+| `mOscillationTimeout_sec` | `300` | 秒 | `interval_sec` | オシレーション間隔 (下限 300 で clamp) |
+| `mDecreasedTimeoutIpv4_msec` | `10` | ms | — | 切替計測時の短縮 IPv4 間隔 |
+| `mMuxReconciliationTimeout_sec` | `10` | 秒 | — | warmboot リコンシリエーション待機 |
+| `mUseWellKnownMacActiveActive` | `true` | bool | `use_well_known_mac` | Active-Active 時 well-known MAC 使用 |
+| `mEnableUseTorMac` | `false` | bool | `src_mac` | ToR MAC を送信元 MAC として使用 |
+| `mNumberOfThreads` | `5` | 本 | — | linkmgrd 内部スレッド数 |
+
+### MuxLogger.h — ログレベルデフォルト
+
+```cpp
+// sonic-linkmgrd/src/common/MuxLogger.h:250
+boost::log::trivial::severity_level mLevel = boost::log::trivial::info;
+```
+
+`MuxLogger` クラス内部の初期値は `info`。
+
+### LinkMgrdMain.cpp — CLI 起動時デフォルト
+
+```cpp
+// sonic-linkmgrd/src/LinkMgrdMain.cpp:46
+static auto DEFAULT_LOGGING_FILTER_LEVEL = boost::log::trivial::debug;
+```
+
+`linkmgrd` を CLI 引数なしで起動した場合の verbosity フィルタは `debug`。`MuxLogger` 内部の `info` 初期値とは異なる点に注意。
+
+### DbInterface.h — DB テーブル名定数
+
+```cpp
+// sonic-linkmgrd/src/DbInterface.h:60-61
+#define STATE_ICMP_ECHO_SESSION_TABLE_NAME  "ICMP_ECHO_SESSION_TABLE"
+#define APP_ICMP_ECHO_SESSION_TABLE_NAME    "ICMP_ECHO_SESSION_TABLE"
+```
+
+ICMP_ECHO_SESSION を STATE_DB / APPL_DB 両方に同名テーブルで管理する。
+
+### IcmpPayload.h — ICMP バッファサイズ
+
+```cpp
+// sonic-linkmgrd/src/link_prober/IcmpPayload.h:39
+#define MUX_MAX_ICMP_BUFFER_SIZE  9100  // bytes
+```
+
+ICMP heartbeat パケットバッファの最大サイズ。Jumbo frame 対応 (MTU 9100)。
+
+### clamp 制約まとめ
+
+| フィールド | clamp 式 | 出典 |
+|---|---|---|
+| `interval_pck_loss_count_update` | `count > 50 ? count : 50` (下限 50) | `MuxConfig.h:131` |
+| `interval_sec` | `force=false` 時 `300` 以下は `300` に丸め | `MuxConfig.h:338-342` |
+| `suspend_timer` | setter 値 500ms は未使用; getter は `(neg+1)*interval_v4` を計算で返す | `MuxConfig.h:308,493` |
+
+<!-- /constants -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
