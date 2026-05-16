@@ -164,6 +164,33 @@ STATIC_ROUTE テーブル変更時に `bgpcfgd` が自動生成する FRR コマ
 
 <!-- /constants -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+調査ソース: `frrcfgd.py`、`bgpcfgd/main.py`、`managers_static_rt.py`、`bgpd.conf.db.addr_family.j2`。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-platform.md`。
+
+**プラットフォーム差なし。** ROUTE_REDISTRIBUTE 経路は FRR vtysh への BGP コマンド生成のみを行う。
+
+### FRR バージョン差
+
+`frrcfgd.py` および `managers_static_rt.py` に `frr_version` / `FRR_MAJOR` 等のバージョン条件分岐は存在しない。SONiC master は FRR バージョンをビルドシステムで統一するため実行時バージョン判定が不要。
+
+### SmartSwitch
+
+SmartSwitch (DPU) 構成において、frrcfgd / bgpcfgd は NPU 側ホストで通常通り動作し、ROUTE_REDISTRIBUTE 処理ロジックに変更はない。SmartSwitch 固有の BGP 設定は別テーブル（`BGP_VOQ_CHASSIS_NEIGHBOR` 等）で管理される。
+
+### VOQ chassis
+
+VOQ chassis の各 linecard では独立した frrcfgd / bgpcfgd が当該ホストの CONFIG_DB を購読する。ROUTE_REDISTRIBUTE はホストスコープの BGP 設定であり、chassis 集中管理の対象外。supervisor / linecard 間の TSA 同期 (`ChassisAppDbMgr`) は redistribute 設定に影響しない。
+
+| プラットフォーム | 動作 | 備考 |
+|-----------------|------|------|
+| 標準 T0/T1/T2 | 変更なし | frrcfgd.py L3149–3168 |
+| VOQ chassis (linecard) | 変更なし | 各 linecard host が独立に処理 |
+| SmartSwitch (NPU 側) | 変更なし | DPU 固有経路は別テーブル |
+| multi-asic | 変更なし | BGP は host namespace 単位 |
+<!-- /platform -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
