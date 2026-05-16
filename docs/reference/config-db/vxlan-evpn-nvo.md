@@ -306,6 +306,47 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/vxlanorch.cpp`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| `source_vtep` が参照する VXLAN_TUNNEL が未登録（`getVxlanTunnel()` → nullptr） | `source_vtep_ptr = nullptr` のまま `true` 返却。後続 EVPN 処理が `getEVPNVtep()` null チェックで silent-drop | ログなし（INFO のみ） | `vxlanorch.cpp:2779-2791` |
+| EVPN VTEP が未 active 状態で Remote VNI 追加到着 | `return false` — タスクキューでリトライ | SWSS_LOG_WARN `"VTEP not yet active.user=%d remote_vtep=%s"` | `vxlanorch.cpp:1696` |
+| `getEVPNVtep()` が nullptr（NVO 未登録）で Remote VNI 追加 | `return false` — タスクキューでリトライ | SWSS_LOG_WARN `"Unable to find EVPN VTEP. user=%d remote_vtep=%s"` | `vxlanorch.cpp:1689` |
+| VXLAN_TUNNEL 名が既存エントリと重複した状態で SET | `return true`（再試行なし）— 上書き不可 | SWSS_LOG_ERROR `"Vxlan tunnel '%s' is already exists"` | `vxlanorch.cpp:1638` |
+| `sai_tunnel_api->create_tunnel()` 失敗 | `throw std::runtime_error` → catch で SWSS_LOG_ERROR | `"Can't create a tunnel object"` / `"Error creating tunnel %s: %s"` | `vxlanorch.cpp:403-411, 846-848` |
+| `sai_tunnel_api->create_tunnel_map()` 失敗 | `throw std::runtime_error` — トンネルマップ未作成 | SWSS_LOG_ERROR `"Can't create tunnel map object"` | `vxlanorch.cpp:147-155` |
+| `sai_next_hop_api->create_next_hop()` 失敗 | `handleSaiCreateStatus()` → task_success 以外の場合 `return SAI_NULL_OBJECT_ID` | SWSS_LOG_ERROR `"NH vxlan tunnel create failed for %s, ip %s, mac %s, vni %d"` | `vxlanorch.cpp:1430-1436` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 結果 | ログ | evidence |
+|---|---|---|---|
+| NVO DEL 到着時に `source_vtep_ptr` が NULL | `return true`（スキップ・再試行なし） | SWSS_LOG_WARN `"NVO Delete failed as VTEP Ptr is NULL"` | `vxlanorch.cpp:2799` |
+| VTEP の HW 削除未完了 (`del_tnl_hw_pending == true`) で NVO DEL | `return false` — タスクキューでリトライ | SWSS_LOG_WARN `"NVO not deleted as hw delete is pending"` | `vxlanorch.cpp:2803-2806` |
+| VXLAN_TUNNEL DEL 到着時にエントリ未存在 | `return true`（スキップ・再試行なし） | SWSS_LOG_ERROR `"Vxlan tunnel '%s' doesn't exist"` | `vxlanorch.cpp:1656` |
+| VTEP に `del_tnl_hw_pending` フラグが立っている状態でトンネル DEL | `return false` — DIP 参照カウントが 0 になるまでリトライ | SWSS_LOG_WARN `"VTEP %s not deleted as hw delete is pending"` | `vxlanorch.cpp:1663` |
+
+### retry 挙動まとめ
+
+| シナリオ | retry 挙動 |
+|---|---|
+| `del_tnl_hw_pending` による NVO / VTEP DEL ブロック | `return false` → 上限なしリトライ。FDB 参照解消後に自動解除 |
+| EVPN VTEP 未登録・非 active での Remote VNI 追加 | `return false` → VTEP active 化後に解消 |
+| SAI API 失敗 / VXLAN_TUNNEL 名重複 | `return true` — **再試行なし**。同一フィールドの再書き込みで再トリガー必要 |
+
+> `EvpnNvoOrch::addOperation()` は `source_vtep_ptr` 解決失敗でも `true` を返す。後続の Remote VNI 処理が `getEVPNVtep()` null チェックで `return false` し続けることが実質的なリトライ機構となる。
+
+詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-nvo-failure.md`
+
+<!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:147-155,403-411,846-848,1430-1436,1638,1656,1663,1689,1696,2779-2811 -->
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込（Phase F）
 
