@@ -112,6 +112,81 @@ show lldp table
 ```
 <!-- /ops-hint -->
 
+<!-- defaults -->
+## コード由来デフォルト
+
+`LLDP_PORT` の per-port フィールドは YANG `default` 文と lldpmgrd / `lldpd.conf.j2` のハードコードで決まる。
+
+### field: `enabled`
+
+**コード由来デフォルト**: `true` (YANG `default`)
+
+```yang
+// sonic-buildimage/src/sonic-yang-models/yang-models/sonic-lldp.yang:24-31
+grouping lldp_mode_config {
+    leaf enabled {
+        type boolean;
+        default true;
+        description "Enable LLDP on this port";
+    }
+```
+
+`LLDP_PORT` は `lldp_mode_config` を `uses` するため、フィールド省略時は `true` 扱い。`config lldp interface <port> disable` で `false` に切り替わるまでは LLDP TX/RX が有効。
+
+### field: `mode`
+
+**コード由来デフォルト**: 未設定 (= lldpd 組み込みの双方向 rx+tx)
+
+`sonic-lldp.yang` の `mode` には `default` 文がなく、enum も `RECEIVE` / `TRANSMIT` の 2 値のみ (`BOTH` は存在しない)。`mode` 未指定時は lldpmgrd が `lldpcli configure ports ... lldp status` を発行しないため、lldpd の組み込みデフォルト (双方向送受信) が有効になる。
+
+### field: portidsubtype (per-port の暗黙デフォルト)
+
+**コード由来デフォルト (per-port)**: `local <PORT.alias>` (alias 空時は port name)
+
+```python
+# sonic-buildimage/dockers/docker-lldp/lldpmgrd:156
+lldpcli_cmd = ["lldpcli", "configure", "ports", port_name, "lldp",
+               "portidsubtype", "local", port_alias]
+```
+
+`port_alias` は `PORT.alias` を参照し、空/None の場合は `port_name` (例: `Ethernet0`) を fallback (lldpmgrd:147-150)。
+
+**コード由来デフォルト (起動時グローバル)**: `ifname`
+
+```jinja2
+{# sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2:30-31 #}
+{# Use ifname globally to avoid MAC-as-Port-ID; lldpmgrd sets alias per port later. #}
+configure lldp portidsubtype ifname
+```
+
+lldpd 起動初期は `ifname` (linux iface 名)、その後 lldpmgrd が CONFIG_DB の `PORT.alias` を読んで per-port で `local <alias>` に上書きする二段構成。
+
+### field: `description`
+
+**コード由来デフォルト**: なし (空のまま `lldpcli` に渡されない)
+
+```python
+# sonic-buildimage/dockers/docker-lldp/lldpmgrd:152-162
+port_desc = port_table_dict.get("description")
+# ...
+if port_desc:
+    lldpcli_cmd += ["description", port_desc]
+else:
+    self.log_info("Unable to retrieve description for port '{}'. "
+                  "Not adding port description".format(port_name))
+```
+
+`description` が空/未設定なら lldpcli の description 引数を省略。lldpd は description 無しで LLDPDU を送信。
+
+### 特殊ポートのスキップ
+
+inband / recirc / backplane prefix を持つポートは `LLDP_PORT` エントリがあっても lldpmgrd が lldpcli への変換をスキップする (`lldpmgrd:141-142`)。CONFIG_DB に書いても lldpd には反映されない。
+
+!!! note "interval / ttl は本テーブルの対象外"
+    LLDPDU 送出周期 (`hello_time`) や保持時間 (`multiplier`、ttl = hello_time × multiplier) は per-port ではなく **グローバル `LLDP` テーブル** のフィールド。YANG では `hello_time` の `default 30`、`multiplier` の `default 4` が定義されている (`sonic-lldp.yang:53,66`)。詳細はグローバル `LLDP` テーブルのページを参照。
+
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
