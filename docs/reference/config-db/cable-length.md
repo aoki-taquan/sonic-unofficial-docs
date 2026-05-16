@@ -212,3 +212,46 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 - `length` の YANG パターン (`[0-9]+m`) 違反値 → YANG バリデーションで拒否される (コード側 fallback なし)
 
 <!-- /defaults -->
+
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgr.cpp, buffermgrdyn.cpp -->
+
+CABLE_LENGTH 更新が引き起こす **他テーブルへの書込み**を示す。書込み先はモードによって異なる。
+
+### static モード (buffermgr)
+
+`doCableTask()` → `doSpeedUpdateTask()` の呼び出しチェーンで CONFIG_DB へ直接書き込む。
+
+| 書込み先 DB | テーブル | 操作 | 条件 |
+|-----------|---------|------|------|
+| CONFIG_DB | `BUFFER_PROFILE` | `set(pg_lossless_<speed>_<cable>_profile)` | プロファイル未存在時のみ新規作成 (`buffermgr.cpp:274`) |
+| CONFIG_DB | `BUFFER_PG` | `set(<port>\|<pg>, {profile: ...})` | lossless PG が未設定の場合 (`buffermgr.cpp:305`) |
+| CONFIG_DB | `BUFFER_PG` | `del(<port>\|<pg>)` | admin-down (Mellanox/Barefoot) かつ default profile 一致時 (`buffermgr.cpp:224`) |
+
+- `length = "0m"` → early return、書込みなし (`buffermgr.cpp:159`)。
+- `length = "None"` → スキップ、書込みなし (`buffermgr.cpp:104`)。
+
+### dynamic モード (buffermgrdyn)
+
+`handleCableLenTable()` → `refreshPgsForPort()` → `allocateProfile()` の呼び出しチェーンで APPL_DB / STATE_DB へ書き込む。
+
+| 書込み先 DB | テーブル | 操作 | 条件 |
+|-----------|---------|------|------|
+| APPL_DB | `BUFFER_PROFILE_TABLE` | `set(pg_lossless_<speed>_<cable>_<mtu>_profile, xon/xoff/size/pool/threshold)` | 新規プロファイル計算時 (`buffermgrdyn.cpp:919`) |
+| STATE_DB | `BUFFER_PROFILE_TABLE` | `set(同名プロファイル, 同フィールド)` | APPL_DB 書込みと同時 (`buffermgrdyn.cpp:920`) |
+| APPL_DB | `BUFFER_PG_TABLE` | `set(<port>\|<pg>, {profile: <name>})` | headroom 計算成功後 (`buffermgrdyn.cpp:1568`) |
+| APPL_DB | `BUFFER_PG_TABLE` | `del(<port>\|<pg>)` | `cable_length == "0m"` かつ lossless PG 存在時 (`buffermgrdyn.cpp:1505`) |
+| APPL_DB | `BUFFER_PROFILE_TABLE` | `del(old_profile)` | 旧プロファイルの参照ポート数がゼロになった時 (`buffermgrdyn.cpp:1047`) |
+| STATE_DB | `BUFFER_PROFILE_TABLE` | `del(old_profile)` | 同上 (`buffermgrdyn.cpp:1049`) |
+| STATE_DB | `BUFFER_POOL_TABLE` | `set(ingress_lossless_pool, size/xoff)` | headroom 更新後に SHP サイズ再計算が発生した場合 (`buffermgrdyn.cpp:887`) |
+
+!!! note "二重書込み"
+    `updateBufferProfileToDb()` は APPL_DB と STATE_DB の `BUFFER_PROFILE_TABLE` に同一内容を同時書込みする (`buffermgrdyn.cpp:919-920`)。`updateBufferPoolToDb()` も同様に `BUFFER_POOL_TABLE` を二重書込みする (`buffermgrdyn.cpp:885-887`)。
+
+!!! note "admin-down / mtu 未設定の例外"
+    - `PORT_ADMIN_DOWN` 状態では `refreshPgsForPort()` が early return → 書込みなし (`buffermgrdyn.cpp:1454-1458`)。
+    - mtu 未設定時は `DEFAULT_MTU_STR="9100"` で仮計算して書き込み、mtu 設定後に再計算・上書き (`buffermgrdyn.cpp:2174`)。
+
+<!-- /side-effects -->
