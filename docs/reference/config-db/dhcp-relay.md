@@ -204,4 +204,56 @@ show dhcprelay_helper ipv4
 - なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込・プロセス制御 (Phase F)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読、`docker_init.sh`、`start.sh` 参照 (2026-05-16)
+
+`dhcprelayd` は `DHCP_RELAY` テーブルを直接購読しないが、DHCP サーバ機能（`DHCP_SERVER_IPV4` / `FEATURE`）の有効・無効に応じて `dhcrelay` プロセスと supervisord を制御する。**STATE_DB への書き込みは行わない**（読み取り専用）。
+
+### STATE_DB 読み取り（書き込みなし）
+
+`_get_dhcp_server_ip()` が STATE_DB の `DHCP_SERVER_IPV4_SERVER_IP|eth0` から `ip` フィールドを読み取る。10 回リトライし、失敗すると `sys.exit(1)` （`dhcprelayd.py:376-384`）。STATE_DB への書き込みは `dhcpservd` が担当する。
+
+### dhcrelay プロセス制御（subprocess 副作用）
+
+`refresh_dhcrelay()` → `_start_dhcrelay_process()` が `/usr/sbin/dhcrelay` を `subprocess.Popen` で起動する。
+
+| 条件 | 動作 |
+|------|------|
+| `DHCP_SERVER_IPV4[intf]['state'] == 'enabled'` かつ VLAN 存在 かつ `DEVICE_METADATA.has_sonic_dhcpv4_relay == 'False'` | dhcrelay を 1 プロセス起動（対象 VLAN を `-id` で列挙、`-iu docker0 <dhcp_server_ip>`） |
+| `force_kill=True`（VLAN_INTERFACE 変更時） | 既存 dhcrelay を強制終了後に再起動 |
+| 既存 dhcrelay の `-id` セットが新セットと同一 かつ `force_kill=False` | 再起動なし（`NOT_KILLED`） |
+| `new_dhcp_interfaces` が空 | dhcrelay 停止のみ |
+
+`dhcpmon` プロセス制御のコードも存在するが、現状はコメントアウト（`dhcprelayd.py:115-116`）。
+
+### supervisord プログラム制御
+
+`dhcp_server` feature の有効/無効遷移時に `supervisorctl stop/start` で supervisord 管理下のプログラムを制御する（`dhcprelayd.py:209-225`）。
+
+| 遷移 | supervisorctl 操作 |
+|------|--------------------|
+| `disabled → enabled` | `supervisorctl stop <isc-dhcpv4-relay-*>` / `<dhcpmon-*>` |
+| `enabled → disabled` | `supervisorctl start <isc-dhcpv4-relay-*>` / `<dhcpmon-*>` |
+
+### supervisord 設定ファイル（コンテナ起動時に生成）
+
+`dhcprelayd` 自体はファイルを書き込まない。コンテナ起動時に `docker_init.sh` が `sonic-cfggen` + `docker-dhcp-relay.supervisord.conf.j2` テンプレートから `/etc/supervisor/conf.d/docker-dhcp-relay.supervisord.conf` を生成する。テンプレートは `DHCP_RELAY` / `VLAN` / `DEVICE_METADATA` を参照し、各 VLAN の dhcrelay / dhcp6relay / dhcpmon プログラムエントリを生成する。
+
+### COUNTERS_DB クリア（コンテナ起動時）
+
+`start.sh` がコンテナ起動時に `COUNTERS_DB` の `DHCPV4_COUNTER_TABLE:*` キーを全削除する。`dhcprelayd` はカウンタ操作を行わない。
+
+### 副次書込なし
+
+| DB | 理由 |
+|----|------|
+| STATE_DB | dhcprelayd は読み取りのみ。書き込みは dhcpservd が担当 |
+| APPL_DB | 書き込みなし |
+| ASIC_DB / SAI | dhcrelay は L4 UDP relay。SAI/ASIC 非経由 |
+
+> **Evidence**: `dhcprelayd.py:110-116, 209-225, 264-288, 290-315, 343-373, 376-384`、`docker_init.sh:12`、`start.sh:6-9`
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: 11715e560dc6 -->
