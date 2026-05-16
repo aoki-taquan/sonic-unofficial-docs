@@ -273,6 +273,53 @@ YANG は `container CONTACT { leaf Contact { ... } }` と定義するが、CLI (
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動・エラー処理 (Phase D)
+
+### `snmp.yml` 未存在 / `snmp_location` キー不在
+
+`snmp_yml_to_configdb.py` はコンテナ起動時に `/etc/sonic/snmp.yml` の存在チェックを行い、
+ファイルが存在しない場合は `sys.exit(1)` で終了する[^3]。
+`start.sh` は終了コードをチェックしないため `sonic-cfggen` へ処理が進み、
+`SNMP_COMMUNITY` なしの `snmpd.conf` が生成される。
+`snmp.yml` に `snmp_location` キーが存在しない場合も同様に `sys.exit(1)` で終了し、
+`SNMP|LOCATION` は CONFIG_DB に登録されず `sysLocation public` (ハードコード) が出力される[^3]。
+
+| 障害 | 結果 | 検出方法 |
+|------|------|----------|
+| `/etc/sonic/snmp.yml` 不在 | community 未設定で全 SNMP アクセス拒否 | syslog: `snmp_location does not exist in snmp.yml file` |
+| `snmp_location` キー不在 | `sysLocation public` ハードコード出力 | `show snmp location` で確認 |
+| `SNMP_COMMUNITY` 未定義 | 全クライアントの GET/SET を snmpd が拒否 (エラーログなし) | `sonic-db-cli CONFIG_DB keys 'SNMP_COMMUNITY*'` で空を確認 |
+
+### `SNMP_COMMUNITY` 未定義によるサイレント全拒否
+
+`snmpd.conf.j2` は `{% if SNMP_COMMUNITY is defined %}` チェックで community 行出力を制御する[^2]。
+`SNMP_COMMUNITY` テーブルが空の場合、community 設定行は一切出力されず、
+snmpd は community なし設定で起動する。全クライアントからの SNMP GET/SET/TRAP が拒否されるが、
+snmpd 自体はエラーを出力しないためサイレント障害となる。
+
+### `SNMP|CONTACT` key 構造不一致によるサイレントフォールバック
+
+CLI (`config/main.py`) は `{contact_name: contact_email}` という任意 key の dict を書き込む。
+YANG は `leaf Contact` を定義するが、テンプレートは `.keys()|first` / `.values()|first` でアクセスする。
+key 名の大文字/小文字が一致しない場合、テンプレートが値を参照できず
+`sysContact Azure Cloud Switch vteam <linuxnetdev@microsoft.com>` (Microsoft ハードコード) が出力される[^2]。
+
+### メモリ超過時の monit による snmp-subagent 再起動
+
+snmp コンテナが 4 GiB を超過し続けると monit が `snmp-subagent` のみ再起動する[^4]。
+snmpd 本体は継続動作するが、subagent 再起動中は MIB ツリーの一部 (FRR 等の AgentX サブエージェント経由情報) が一時的に応答不能となる。
+
+### 設定変更の反映タイミング
+
+`start.sh` が `sonic-cfggen` で `snmpd.conf` を生成するのはコンテナ起動時のみ。
+CONFIG_DB 変更後は `sudo systemctl restart snmp` (または `docker restart snmp`) が必要。ランタイム中のホットリロード機構は存在しない[^3]。
+
+[^3]: `sonic-buildimage/dockers/docker-snmp/snmp_yml_to_configdb.py` / `start.sh`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmp_yml_to_configdb.py>
+[^4]: `sonic-buildimage/dockers/docker-snmp/base_image_files/monit_snmp`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/base_image_files/monit_snmp>
+
+<!-- /failure -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
