@@ -360,4 +360,129 @@ VLAN_SUB_INTERFACE は `ip link add <alias> link <parent> type vlan id <vid>` �
 
 <!-- /cross-refs -->
 
+<!-- failure-behavior -->
+## 失敗挙動（Phase D）
+
+`intfmgrd`（`intfmgr.cpp`）が sub-interface を設定する際に発生しうる 3 種類の失敗パターンを整理する。
+
+### 1. VLAN tag 不正による設定スキップ
+
+short-name 形式（`Po1.10` / `Eth0.100`）で CONFIG_DB の `vlan` フィールドが `"0"` または空のとき、`intfmgr.cpp:936-939` で以下の分岐が実行される。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:936-939
+if (vlanId == "0" || vlanId.empty())
+{
+    SWSS_LOG_INFO("Vlan ID not configured for sub interface %s", alias.c_str());
+    return false;
+}
+```
+
+`return false` はリトライ待ち（`task_need_retry` 相当）を意味し、`SWSS_LOG_INFO` レベルで記録される。`ip link add ... type vlan id` コマンドは実行されない。long-name 形式（`Ethernet0.100`）では `subIntfIdx()` がドット後 ID を自動採用するため、この分岐には到達しない。
+
+### 2. kernel netlink 操作失敗
+
+`addHostSubIntf`（ip link add）、`setHostSubIntfMtu`（ip link set mtu）、`setHostSubIntfAdminStatus`（ip link set up/down）のいずれかで `swss::exec()` が非ゼロを返した場合、各関数は `runtime_error` を `throw` する。呼び出し元の `doTask()` がこれを `catch` して `SWSS_LOG_NOTICE` を記録し、`return false` でリトライ待ちになる。
+
+| 操作 | `SWSS_LOG_NOTICE` メッセージ | コード位置 |
+|------|------------------------------|-----------|
+| `ip link add` 失敗 | `"Sub interface ip link add failure. Runtime error: %s"` | intfmgr.cpp:947 |
+| `ip link set mtu` 失敗 | `"Sub interface ip link set mtu failure. Runtime error: %s"` | intfmgr.cpp:968 |
+| `ip link set admin_status` 失敗 | `"Sub interface ip link set admin status %s failure. Runtime error: %s"` | intfmgr.cpp:998 |
+
+なお `setHostSubIntfMtu` 内で `isIntfStateOk(alias)` が `false`（netdev が既に削除済み）のときは `SWSS_LOG_WARN` を記録して `runtime_error` を throw しない（intfmgr.cpp:451-455）。これは portmgrd による親 IF 削除との競合で起こるケース。
+
+### 3. SAI sub-port RIF 生成失敗
+
+`intfsorch.cpp:1296-1304` で `sai_router_intfs_api->create_router_interface()` が `SAI_STATUS_SUCCESS` 以外を返した場合、`SWSS_LOG_ERROR` を記録し `handleSaiCreateStatus` でリトライ可否を判定する。リトライ不可の場合は `runtime_error("Failed to create router interface.")` を throw し、上位の `doTask()` が `task_need_retry` または例外として扱う。
+
+```cpp
+// sonic-swss/orchagent/intfsorch.cpp:1296-1304
+sai_status_t status = sai_router_intfs_api->create_router_interface(
+    &port.m_rif_id, gSwitchId, (uint32_t)attrs.size(), attrs.data());
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d",
+            port.m_alias.c_str(), status);
+    if (handleSaiCreateStatus(SAI_API_ROUTER_INTERFACE, status) != task_success)
+    {
+        throw runtime_error("Failed to create router interface.");
+    }
+}
+```
+
+SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポート OID）と `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID`（VLAN tag）が必須。どちらかが欠如した状態では `addSubPort` 内の前段チェックにより `create_router_interface` 呼び出し自体に到達しない（intfsorch.cpp:1223-1260）。また `ref_count > 0`（IP アドレスや VRF binding が残存）の状態で削除しようとすると `removeRouterIntfs` が `return false` を返し RIF 削除はスキップされる（intfsorch.cpp:1327-1331）。
+
+### 失敗パターン要約
+
+| 失敗種別 | トリガー | ログレベル | 挙動 |
+|----------|---------|-----------|------|
+| VLAN tag 不正（`vlan == "0"` または空） | short-name 形式で `vlan` 未設定 | `SWSS_LOG_INFO` | リトライ待ち（kernel 操作なし）|
+| kernel netlink 失敗（ip link add / mtu / admin） | `swss::exec()` 非ゼロ返却 | `SWSS_LOG_NOTICE` | リトライ待ち（`return false`）|
+| SAI sub-port RIF 生成失敗 | `create_router_interface()` 非 SUCCESS | `SWSS_LOG_ERROR` | `handleSaiCreateStatus` 判定→ `task_need_retry` or `throw` |
+
+<!-- /failure-behavior -->
+
+<!-- platform-diff -->
+## プラットフォーム差異 (Phase H)
+
+VLAN_SUB_INTERFACE の実挙動はプラットフォームタイプによって以下の点で異なる。
+
+### VOQ Chassis / system_port
+
+VOQ (Virtual Output Queue) chassis 構成では `DEVICE_METADATA|localhost` の `switch_type` フィールドが `"voq"` に設定される。この場合 `intfmgrd` は IPv6 アドレス付与コマンドに `metric 256` を追加する[^ph1]。
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:103-106
+if(mySwitchType == "voq")
+{
+   metric = " metric 256";
+}
+```
+
+**理由**: VOQ system では eBGP/iBGP 経由で学習されるルートと直接接続ルートの metric を同一にすることで ECMP グループを正しく形成する必要がある。IPv4 は connected/static どちらも metric 0 のため変更不要。IPv6 の connected route は kernel がデフォルト 256 を付与するため明示的に揃える。
+
+`orchagent` 側では、VOQ system_port は `Port::SYSTEM` タイプとして扱われ、RIF タイプは通常の物理ポートと同じ `SAI_ROUTER_INTERFACE_TYPE_PORT` が選択される[^ph2]。VLAN_SUB_INTERFACE（`Port::SUBPORT`）を VOQ system_port 上に直接重ねることはサポートされない。
+
+VOQ inband interface (`CFG_VOQ_INBAND_INTERFACE_TABLE_NAME`) は `intfmgrd` の通常処理をスキップし、APP_DB へ直接リレーされる[^ph1]:
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:1195-1200
+if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) &&
+        (op == SET_COMMAND))
+{
+    //No further processing needed. Just relay to orchagent
+    m_appIntfTableProducer.set(keys[0], data);
+    m_stateIntfTable.hset(keys[0], "vrf", "");
+```
+
+voqSyncAddIntf / voqSyncDelIntf (`intfsorch.cpp:1672-1748`) は `CHASSIS_APP_DB` 上の `SYSTEM_INTERFACE_TABLE` にローカル IF の状態を同期する。リモート system_port（`SAI_SYSTEM_PORT_TYPE_REMOTE`）はスキップされ、ローカル側のみ同期対象となる[^ph2]。
+
+### SmartSwitch DPU
+
+SmartSwitch アーキテクチャでは NPU 側と DPU 側でそれぞれ独立した `orchagent` インスタンスが動作する。VLAN_SUB_INTERFACE は NPU 側の物理ポートまたは PortChannel に対して定義し、DPU 側には直接適用しない。DPU 側は独自のインタフェース管理を持ち、`intfmgr.cpp` に DPU 固有分岐は存在しない。DPU 対向の `switch_type` は `"dpu"` となり、VOQ 分岐（`mySwitchType == "voq"`）には入らないため、IPv6 metric 補正も適用されない。
+
+### Mellanox (Spectrum ASIC)
+
+Mellanox/Spectrum は SAI の `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をネイティブサポートする。`intfsorch.cpp` の SUBPORT 分岐（`port.m_parent_port_id` + `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID`）はそのまま動作する[^ph2]。`intfmgr.cpp` 側に Mellanox 固有の条件分岐はなく、MTU 継承・admin_status 合成・kernel netdev 操作は共通コードで処理される。
+
+### Broadcom (ASIC)
+
+Broadcom SAI も `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をサポートする。動作は Mellanox と同様で `intfmgr.cpp` に Broadcom 固有分岐はない。ただし Broadcom プラットフォームでは SAI 実装（`libsai.so`）が VLAN tag の内部処理を担うため、kernel の vlan netdev が持つ VLAN ID と SAI の `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` が一致している必要がある。`intfsorch.cpp:1255-1256` でこの一致が保証される。
+
+### プラットフォーム差異要約
+
+| 観点 | 標準 (非VOQ) | VOQ Chassis | SmartSwitch DPU |
+|------|-------------|-------------|-----------------|
+| IPv6 metric 付与 | なし | `metric 256` 追加 | なし |
+| system_port 上の VLAN_SUB_INTERFACE | サポート (物理/LAG) | 非サポート (SYSTEM タイプは SUB_PORT 不可) | N/A (DPU 側は別管理) |
+| CHASSIS_APP_DB 同期 | なし | voqSyncAddIntf で同期 | なし |
+| inband interface 処理 | 通常 doIntfGeneralTask | APP_DB 直リレー (スキップ) | なし |
+| SAI RIF タイプ | SUB_PORT | PORT (system_port) | SUB_PORT |
+
+[^ph1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+[^ph2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- /platform-diff -->
+
 <!-- glossary-links-injected: 8acafc795b83 -->
