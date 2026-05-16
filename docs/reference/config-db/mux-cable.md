@@ -346,3 +346,31 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 既存 MuxCable オブジェクトへの `neighbor_mode` 動的変更は不可。試みると `SWSS_LOG_ERROR` を出して `return false` (muxorch.cpp:2256-2266)。変更には MUX_CABLE エントリの DELETE + 再 SET（ポート再登録）が必要。
 
 <!-- /ordering -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `MuxCableOrch` / `MuxStateOrch` が書き込む副次テーブル。
+
+<!-- evidence:
+  sonic-swss/orchagent/muxorch.cpp:2285,2513,2544,2559,2570,2640
+  sonic-swss-common/common/schema.h:51,141,457,460
+-->
+
+| 書込先 DB | テーブル名 | キー形式 | フィールド | トリガー | 書込クラス |
+|-----------|-----------|---------|-----------|---------|-----------|
+| STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `neighbor_mode` = `host-route` / `prefix-route` | CONFIG_DB SET → MuxCable 新規生成時 | `MuxOrch::handleMuxCfg()` (muxorch.cpp:2285) |
+| STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `state` = `active` / `standby` / `unknown` / `error` | APPL_DB HW 状態通知受信時 | `MuxStateOrch::updateMuxState()` (muxorch.cpp:2640) |
+| APPL_DB | `HW_MUX_CABLE_TABLE` | `HW_MUX_CABLE_TABLE\|<ifname>` | `state` = `active` / `standby` | active / standby 遷移完了時 | `MuxCableOrch::updateMuxState()` (muxorch.cpp:2513) |
+| STATE_DB | `MUX_METRICS_TABLE` | `MUX_METRICS_TABLE\|<ifname>` | `orch_switch_{active\|standby}_{start\|end}` = タイムスタンプ | 切替開始・完了時（性能計測用） | `MuxCableOrch::updateMuxMetricState()` (muxorch.cpp:2544) |
+| APPL_DB | `TUNNEL_ROUTE_TABLE` | `TUNNEL_ROUTE_TABLE\|<server-prefix>` | `alias` = ポート名 | standby → `addTunnelRoute()` / active → `delTunnelRoute()` | `MuxCableOrch` (muxorch.cpp:2559, 2570) |
+
+### 副次書込の詳細
+
+- **STATE_DB `MUX_CABLE_TABLE` / `neighbor_mode`**: MuxCable オブジェクト新規作成時のみ書込。既存エントリへの再 SET では更新されない（動的変更不可）。
+- **STATE_DB `MUX_CABLE_TABLE` / `state`**: `MuxStateOrch` が APPL_DB `HW_MUX_CABLE_TABLE` を購読し、HW 報告状態とソフトウェア状態が一致すれば `active`/`standby`、不一致なら `unknown`、遷移失敗なら `error` を書き込む二段構成。
+- **APPL_DB `HW_MUX_CABLE_TABLE`**: `xcvrd` (platform-daemons) / `linkmgrd` が購読して実際の MUX ハードウェアを制御する。orchagent からの書込はソフトウェアが期待する MUX 状態の宣言。
+- **STATE_DB `MUX_METRICS_TABLE`**: 性能監視専用。`orch_switch_active_start` / `orch_switch_active_end` 等のフィールドにマイクロ秒精度のタイムスタンプを記録。`show mux metric` コマンドが参照する。
+- **APPL_DB `TUNNEL_ROUTE_TABLE`**: standby ポートはサーバ宛トラフィックをピア ToR へのトンネル経路に迂回させる。`addTunnelRoute()` で prefix → tunnel alias を登録し、active 復帰時に `delTunnelRoute()` で削除。
+
+<!-- /side-effects -->
