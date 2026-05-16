@@ -285,4 +285,32 @@ vtysh -c 'show running-config bgpd'
 
 > **スキャン証跡**: `bgp_table_handler_common()` L3910 全行読了。BGP_GLOBALS 固有の追加分岐なし。keepalive/holdtime の組み合わせ制約のみ。
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+**STATE_DB / COUNTERS_DB への副次書込: なし**
+
+`BGP_GLOBALS` の変更を処理する `frrcfgd.BGPConfigDaemon.bgp_global_handler()`（`frrcfgd.py:3935`）および `bgpcfgd` の全 manager は、**STATE_DB / COUNTERS_DB / APPL_DB への書込を行わない**。出力先は FRR vtysh（プロセス内設定）のみ。
+
+### 根拠
+
+| 検索対象 | 結果 |
+|---------|------|
+| `frrcfgd.py` 全体で `STATE_DB` / `COUNTERS_DB` / `DBConnector` を検索 | ヒット 0 — `frrcfgd` は CONFIG_DB Connector のみ使用 |
+| `bgpcfgd/managers_bgp.py:update_state_db()` の呼び出し元 | `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF` ハンドラのみ（`managers_bgp.py:239,353,443,487`）。BGP_GLOBALS ハンドラからの呼び出しなし |
+| `bgpcfgd/main.py` の Manager 登録 | BGP_GLOBALS 対応 Manager なし（bgpcfgd は BGP_GLOBALS を直接購読しない） |
+
+### 隣接テーブルの副次書込（BGP_GLOBALS とは無関係）
+
+BGP_GLOBALS 以外のテーブルが起因する STATE_DB 書込が同一プロセス内に存在するが、BGP_GLOBALS の SET/DEL では起動されない。
+
+| トリガー CONFIG_DB テーブル | STATE_DB 書込先 | 担当 Manager |
+|---------------------------|----------------|--------------|
+| `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF` | `BGP_PEER_CONFIGURED_TABLE` | `BGPPeerMgrBase.update_state_db()` |
+| `BGP_AGGREGATE_ADDRESS` | `BGP_AGGREGATE_ADDRESS` (STATE_DB) | `AggregateAddressMgr` |
+| `BGP_INTERFACE` | `STATE_INTERFACE_TABLE_NAME` | `ZebraSetSrc` |
+
+> **スキャン証跡**: `frrcfgd.py` 全 3000+ 行、`bgpcfgd/` 全 .py を `STATE_DB`, `COUNTERS_DB`, `hset`, `.set(`, `update_state_db` で検索。BGP_GLOBALS handler と STATE_DB の接点ゼロを確認（`meta/_intermediate/cdb-flow/bgp-globals-side.md` 参照）。
+<!-- /side-effects -->
 <!-- glossary-links-injected: 3c93d6c0b6a4 -->
