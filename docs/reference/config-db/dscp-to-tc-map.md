@@ -142,6 +142,44 @@ show qos map dscp-tc
 > **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/qosorch.cpp:1956,1993`; `orchagent/tunneldecaporch.cpp:831-834`
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 不正 DSCP / TC 値 → `task_invalid_entry`
+
+`DscpToTcMapHandler::convertFieldValuesToAttributes()` は DSCP キーと TC 値を `stoi()` で `uint8_t` に変換するのみで **範囲バリデーションを行わない**。
+
+| 条件 | 挙動 |
+|------|------|
+| DSCP フィールドが非数値文字列 | `std::invalid_argument` 例外 → `task_invalid_entry` (qosorch.cpp:147) |
+| TC 値が非数値文字列 | 同上 |
+| 未知オペレーション (SET/DEL 以外) | `"Unknown operation type %s"` ログ → `task_invalid_entry` (qosorch.cpp:198-199) |
+
+> `#define DSCP_MAX_VAL 63` (qosorch.cpp:119) は `DscpToFcMapHandler` の検証に使われるが、`DscpToTcMapHandler` では **使用されない**。範囲外 DSCP (64..255) を書いても orchagent 側ではじかれず SAI に渡される（ASIC が reject する）。
+
+### SAI `qos_map_api` 失敗 → `task_failed`
+
+| 操作 | SAI API | エラーログ | 戻り値 |
+|------|---------|-----------|--------|
+| 新規作成 | `create_qos_map()` | `"Failed to create dscp_to_tc map. status:%d"` | `SAI_NULL_OBJECT_ID` → `task_failed` (qosorch.cpp:274-277) |
+| 既存更新 | `set_qos_map_attribute()` | `"Failed to modify map. status:%d"` | `false` → `task_failed` (qosorch.cpp:210-212) |
+| 削除 | `remove_qos_map()` | `"Failed to remove DSCP_TO_TC map, status:%d"` | `false` → `task_failed` (qosorch.cpp:290-293) |
+
+`task_failed` を受け取った orchagent はエラーとして記録し **自動再試行しない**。
+
+### MAP 削除時の参照存在チェック → `task_need_retry` ロック
+
+DEL 受信時に `processWorkItem()` は以下を順に評価する (qosorch.cpp:174-194):
+
+1. **MAP が存在しない** (`sai_object == SAI_NULL_OBJECT_ID`) → `"Object with name:%s not found."` + `task_invalid_entry`
+2. **参照中** (`isObjectBeingReferenced()` = true) → `m_pendingRemove = true` セット + `task_need_retry`
+   - 参照元: `PORT_QOS_MAP` の `dscp_to_tc_map` フィールド、`TUNNEL_DECAP_TABLE` の tunnel qos map
+   - pending_remove 中に SET が届いた場合も `task_need_retry` を返す (qosorch.cpp:136-139)
+   - 参照が解除されると次回 Consumer ループで DEL が再処理され正常削除される
+3. **SAI 削除失敗** → `"Failed to remove QoS map. db name:%s sai object:..."` + `task_failed` (qosorch.cpp:190-191)
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.cpp:119,124-201,235-303`
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
