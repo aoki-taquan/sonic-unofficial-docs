@@ -369,4 +369,61 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,64,81,84,100,103,1329,1332,1955-1956,1988,2030-2032`
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム差分
+
+### SAI capability クエリによる分岐
+
+スイッチレベルへの DSCP→TC map 適用時、`applyDscpToTcMapToSwitch()` は
+`sai_query_attribute_capability(SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` で
+`set_implemented` を確認する (`qosorch.cpp:1955-1975`)。
+
+| SAI 応答 | 挙動 |
+|---------|------|
+| `set_implemented == true` | `sai_switch_api->set_switch_attribute()` を発行 |
+| `set_implemented == false` または query 失敗 | **silent skip**（エラーなし、`true` を返す） |
+
+`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` 非対応 ASIC では `PORT_QOS_MAP|global` 設定はノーオペレーションになる。
+
+### Broadcom: スイッチレベル global map の自動生成
+
+`db_migrator.py:700-715` の `migrate_port_qos_map_global()`:
+
+```python
+asics_require_global_dscp_to_tc_map = ["broadcom"]
+if self.asic_type not in asics_require_global_dscp_to_tc_map:
+    return
+```
+
+- **Broadcom ASIC のみ**がアップグレード時に `PORT_QOS_MAP|global` を自動生成する。
+- 複数の `DSCP_TO_TC_MAP` が存在する場合は `get_keys()` の **先頭 1 件（順序未定義）** を適用。
+- Mellanox / その他 ASIC ではこの自動生成は行われない。
+
+### Mellanox: AZURE_UPLINK マップと tunnel_qos_remap
+
+Mellanox プラットフォーム向け `qos.json.j2` は `different_dscp_to_tc_map = true` を設定し、
+`generate_dscp_to_tc_map()` マクロで `AZURE` と `AZURE_UPLINK` の 2 種類を生成する。
+
+`qos_config.j2` はデバイスタイプに応じてポートへの割り当てを切り替える:
+
+| デバイスタイプ | `tunnel_qos_remap` | 適用マップ |
+|---|---|---|
+| LeafRouter（ToR 隣接ポート） | enabled | `AZURE_UPLINK` |
+| DualToR（LeafRouter 隣接ポート） | enabled | `AZURE_UPLINK` |
+| その他全ポート | enabled | `AZURE` |
+| 全デバイス | disabled | `AZURE`（single map） |
+
+### TC 範囲の ASIC 差分
+
+YANG 定義は `tc_type: uint8 range "0..15"` だが、実際の ASIC 対応は以下の通り:
+
+| ASIC | 実用 TC 範囲 | 備考 |
+|------|------------|------|
+| Broadcom（大多数） | 0..7 | TC 8+ で SAI エラー → `task_failed` |
+| Mellanox（大多数） | 0..7 | 同上 |
+| 一部高性能 ASIC | 0..15（可能性） | SAI ベンダー実装依存 |
+
+> **Evidence**: `qosorch.cpp:1955-1975` (capability check); `db_migrator.py:700-715` (Broadcom 限定自動生成); `qos_config.j2:437-447` (AZURE_UPLINK 条件分岐); `device/mellanox/.../qos.json.j2:23,160-170` (`different_dscp_to_tc_map`)
+<!-- /platform -->
+
 <!-- glossary-links-injected: 9e94f614fc2c -->
