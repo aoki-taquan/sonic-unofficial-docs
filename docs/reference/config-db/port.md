@@ -778,6 +778,8 @@ if (!gBufferOrch->isPortReady(pCfg.key))
 
 CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・portsyncd の実装精読から抽出した全副次書き込み。
 
+> **ソース精読メモ**: `APPL_DB PORT_TABLE_TX_READY` という独立テーブルは `portsorch.cpp` に存在しない。`host_tx_ready` フィールドは **STATE_DB の `PORT_TABLE`** (`m_portStateTable`) に書き込まれる (`portsorch.cpp:2274`)。また **APPL_STATE_DB** は portsorch の PORT 処理では使用されない（`ResponsePublisher::publish()` が PORT テーブルに対して呼ばれていないため）。
+
 ### portmgrd — APPL_DB への転送
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
