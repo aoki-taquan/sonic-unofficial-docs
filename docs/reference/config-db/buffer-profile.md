@@ -298,4 +298,63 @@ YANG 定義のデフォルト値と `buffermgrdyn.cpp` / `bufferorch.cpp` 実装
 - **threshold_mode と pool mode の不一致**: `dynamic_th` を指定したが pool が `static` mode の場合 (またはその逆)、`task_failed` でリジェクトされる (`buffermgrdyn.cpp:2726-2735`)。
 
 <!-- /defaults -->
+
+<!-- platform -->
+## プラットフォーム差 (Task F Phase H)
+
+### 1. dynamic vs static buffer model
+
+| 差分点 | dynamic model (Mellanox/Barefoot) | static model (Broadcom 等) |
+|---|---|---|
+| `size` 省略時 | Lua plugin `buffer_headroom_<vendor>.lua` がポート速度・ケーブル長・MTU から自動計算 | CONFIG_DB 値を APPL_DB へ passthrough。空なら APPL_DB も空 |
+| `headroom_type=dynamic` | 有効。`dynamic_calculated=true` + APPL_DB defer (ポート参照まで待機) | dead field。`buffermgr` はそのまま転送 |
+| `xon`/`xoff`/`xon_offset` | Lua plugin 計算値で上書き (`buffermgrdyn.cpp` L989-1001) | CONFIG_DB の明示値をそのまま使用 |
+| 自動生成プロファイル | `pg_lossless_<speed>_<cable>_profile` を `handleBufferProfileTable()` で自動書込み | ビルド時テンプレートの固定値のみ |
+| port down 時の lossless PG | Mellanox/Barefoot のみ lossless PG エントリを削除 (`buffermgr.cpp` L206) | 他ベンダは削除処理なし |
+
+プラットフォームは `ASIC_VENDOR` 環境変数で識別。`buffermgrdyn.cpp` L68-80。
+
+### 2. Mellanox 8-lane ポート — xon 値 2 倍問題
+
+SN4xxx / SN5xxx 系の Mellanox スイッチで、8 レーンポートかつ非最大速度の場合、xon 値が通常の **2 倍** に設定される。
+
+```
+SN4xxx: 8-lane かつ speed != "400000" → xon 2倍 → profile 名に "_8lane" を付加
+SN5xxx: 8-lane かつ speed != "800000" → xon 2倍 → profile 名に "_8lane" を付加
+```
+
+例: 100G 8-lane ポートは `pg_profile_100000_5m_8lane_profile` を使用し、4-lane の `pg_profile_100000_5m_profile` とは別プロファイルになる。
+
+`buffermgrdyn.cpp` L504-523。Broadcom / Marvell / その他には この分岐なし。
+
+### 3. Broadcom trim (packet_discard_action=trim) の ASIC 対応差
+
+`packet_discard_action=trim` の SAI 適用で `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` が返った場合、`task_ignore` として処理継続する（ハードウェア非反映）。
+
+- Broadcom TH4/TH5 系: trim 対応あり
+- Mellanox / Marvell 等: `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` → `task_ignore`
+- trim 禁止制約（ingress PG / ingress profile list / egress profile list への適用禁止）はベンダー問わず共通
+
+`bufferorch.cpp` L760-776。
+
+### 4. VOQ chassis と BUFFER_PROFILE の関係
+
+`gMySwitchType == "voq"` 時:
+
+- `doTask()` 入口のポート初期化チェックが `isInitDone()` に変わる (`bufferorch.cpp` L2079-2086)
+- `BUFFER_PROFILE` テーブルの `processBufferProfile()` には VOQ 固有分岐なし
+- キー形式・フィールド処理・SAI buffer profile 生成経路は non-VOQ と同一
+
+VOQ chassis での主な差分は `BUFFER_QUEUE` 処理（system port ベースの queue id 解決、flex counter 登録）に集中する。
+
+### まとめ
+
+| 差分軸 | 影響するフィールド | ソース |
+|---|---|---|
+| dynamic model (Mellanox/Barefoot) | `size`, `xon`, `xoff`, `xon_offset`, `headroom_type` | `buffermgrdyn.cpp` L68-80, L989 |
+| static model (Broadcom 等) | 全フィールド passthrough | `buffermgr.cpp` L37-44 |
+| Mellanox SN4k/SN5k 8-lane | `xon` 2倍、プロファイル名に `_8lane` | `buffermgrdyn.cpp` L504-523 |
+| trim ASIC 非対応 | `packet_discard_action=trim` → `task_ignore` | `bufferorch.cpp` L760-776 |
+| VOQ chassis | BUFFER_PROFILE 処理変化なし | `bufferorch.cpp` L2079 |
+<!-- /platform -->
 <!-- glossary-links-injected: 22dbf67b9d97 -->
