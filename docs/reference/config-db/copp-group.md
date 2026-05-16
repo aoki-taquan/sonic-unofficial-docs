@@ -242,4 +242,46 @@ show copp config
 
 > **スキャン証跡**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### copporch.h / copporch.cpp 固定値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `default_trap_group` | `"default"` | デフォルトグループ名リテラル。DEL 拒否判定に使用 | `copporch.cpp:184` |
+| `default_trap_ids` | `{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}` | 起動時に強制登録される trap ID リスト | `copporch.cpp:185-187` |
+| TTL_ERROR `trap_priority` | `1` | `initDefaultTrapIds()` で SAI に設定するハードコード優先度。Mellanox/Marvell ではスキップ | `copporch.cpp:357` |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap FlexCounter ポーリング間隔 (10 秒) | `copporch.cpp:189` |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | FlexCounter 更新タイマー間隔 | `copporch.cpp:37` |
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | FlexCounter グループ名 (COUNTERS_DB キー) | `copporch.h:23` |
+
+### プラットフォーム判定文字列 (orch.h)
+
+| 定数 | 値 | 意味 |
+|-----|-----|------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox プラットフォーム判定。`trap_priority` 設定をスキップ |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera 判定。同様に `trap_priority` をスキップ |
+
+`platform` 環境変数に上記文字列が含まれる場合、TTL_ERROR および通常 COPP グループの `trap_priority` は SAI に渡されない (silent drop)。<!-- evidence: copporch.cpp:354,1189; orch.h:41-42 -->
+
+### copp_cfg.j2 デフォルト値
+
+`sonic-buildimage` の Jinja2 テンプレートが生成する初期 COPP グループのハードコード pps 値:
+
+| グループ | queue | cir = cbs (pps) | trap_action | trap_priority |
+|---------|-------|-----------------|-------------|---------------|
+| `default` | 0 | 600 | (未設定→SAI 実装依存) | (未設定) |
+| `queue4_group1` | 4 | 6000 | `trap` | 4 |
+| `queue4_group2` | 4 | 600 | `copy` | 4 |
+| `queue4_group3` | 4 | **100** (Mgmt 型: **300**) | `trap` | 4 |
+| `queue1_group1` | 1 | 6000 | `trap` | 1 |
+| `queue1_group2` | 1 | 600 | `trap` | 1 |
+| `queue1_group3` | 1 | 200 | `trap` | 1 |
+| `queue2_group1` | 2 | 1000 | `trap` | 1 |
+
+`queue4_group3` は `DEVICE_METADATA['localhost']['type']` に `'Mgmt'` を含む場合のみ `cir=cbs=300`、それ以外 `100`。<!-- evidence: copp_cfg.j2:37-43 -->
+
+> **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L1-200, L330-370, `orch.h` L41-42、`copp_cfg.j2` 全行読了。定数 6+2+8 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-group-constants.md`
+<!-- /constants -->
 <!-- glossary-links-injected: 87fa713c3c5e -->
