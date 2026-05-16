@@ -383,6 +383,44 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-platform.md -->
+
+### SAI capability チェックなし — orchagent は直接 push
+
+`PolicerOrch::handlePortStormControlTable()` は `sai_query_attribute_capability()` を呼ばない。storm control policer は ASIC capability の事前確認なしに SAI へ push される。
+
+ASIC が storm control をサポートしない場合、`sai_policer_api->create_policer()` または `sai_port_api->set_port_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、orchagent が `SWSS_LOG_ERROR` を記録して `task_need_retry` または `task_failed` を返す (SAI エラー任せ)。
+
+証跡: `policerorch.cpp:226-313`
+
+### BUM_STORM_CAPABILITY — CLI のみがガード、orchagent はスルー
+
+`STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールドは CLI 側でのみ参照される。
+
+| レイヤ | BUM_STORM_CAPABILITY の扱い | ソース |
+|---|---|---|
+| CLI (`config storm-control add`) | `is_storm_control_supported()` が `STATE_DB` を参照し、`supported == 0` なら CONFIG_DB 書き込みをスキップ | `sonic-utilities/config/main.py:806-824` |
+| orchagent (PolicerOrch) | `BUM_STORM_CAPABILITY` を `TableConnector` で定義しているが、`handlePortStormControlTable()` 内でその値を参照する分岐は存在しない | `orchdaemon.cpp:401`, `policerorch.cpp` |
+
+つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 ASIC でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。
+
+### プラットフォーム依存挙動のまとめ
+
+| 項目 | 内容 |
+|---|---|
+| `kbps=0` | YANG 上は許容値。SAI / ASIC が 0 を無制限として扱うかはプラットフォーム依存 |
+| `SAI_POLICER_ATTR_CBS` | 未設定。SAI / HW デフォルト依存 (プラットフォームにより異なる) |
+| `SAI_POLICER_ATTR_GREEN_PACKET_ACTION` | 未設定。SAI / HW デフォルト依存 |
+| `SAI_POLICER_ATTR_YELLOW_PACKET_ACTION` | 未設定。SAI / HW デフォルト依存 |
+| ASIC 非サポート時 | SAI create/set エラー → `SWSS_LOG_ERROR` + `task_need_retry` / `task_failed` |
+
+証跡: `policerorch.cpp:156-169`, `orchdaemon.cpp:395-407`, `sonic-utilities/config/main.py:806-824`
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 順序依存性 (Phase B)
 
