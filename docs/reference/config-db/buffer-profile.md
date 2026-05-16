@@ -209,6 +209,50 @@ show buffer profile
 **副作用**: プロファイル変更はそれを参照するすべての PG/Queue に即座に影響。`xoff` 変更は PFC pause frame 送信タイミングに影響。
 <!-- /runtime-trace -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `cfgmgr/buffermgr.cpp`, `orchagent/bufferorch.cpp`
+
+### STATE_DB `BUFFER_PROFILE_TABLE` (副次書込 A)
+
+`buffermgrdyn` の `updateBufferProfileToDb()` は APPL_DB への書込と **同時に** STATE_DB の `BUFFER_PROFILE_TABLE` にも同一 fvVector を書込む。
+
+| 操作 | 対象 DB / テーブル | 条件 | evidence |
+|------|------------------|------|----------|
+| `m_stateBufferProfileTable.set(name, fvVector)` | STATE_DB / `BUFFER_PROFILE_TABLE` | `updateBufferProfileToDb()` 内 — `m_bufferPoolReady==true` のとき即時書込 | `buffermgrdyn.cpp:920` |
+| `m_stateBufferProfileTable.set(key, fvs)` | STATE_DB / `BUFFER_PROFILE_TABLE` | warm reboot 時のゼロプロファイル初期化ロード | `buffermgrdyn.cpp:361` |
+| `m_stateBufferProfileTable.del(name)` | STATE_DB / `BUFFER_PROFILE_TABLE` | `releaseProfile()` — APPL_DB 削除と同時 | `buffermgrdyn.cpp:1049` |
+| `m_stateBufferProfileTable.del(zeroProfileName)` | STATE_DB / `BUFFER_PROFILE_TABLE` | ゼロプロファイルアンロード（全ポート admin-up 後） | `buffermgrdyn.cpp:421` |
+
+lossless プロファイルのみ `xon` / `xoff` / `xon_offset` フィールドを含む（lossy では omit）。
+
+### APPL_STATE_DB `BUFFER_PROFILE_TABLE` (副次書込 B — ResponsePublisher)
+
+`BufferOrch` は `Orch::m_publisher` (`ResponsePublisher{"APPL_STATE_DB"}`) 経由で **lossless プロファイルのみ** SAI 反映完了を APPL_STATE_DB に publish する。lossy プロファイル（`xoff` フィールドなし）は publish されない。
+
+| 操作 | 対象 DB / テーブル | 条件 | evidence |
+|------|------------------|------|----------|
+| `m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, name, fvs, SAI_STATUS_SUCCESS, force=true)` | APPL_STATE_DB / `BUFFER_PROFILE_TABLE` | `processBufferProfile()` SET 成功 かつ `is_lossless==true`（`xoff` フィールド存在時） | `bufferorch.cpp:824-833` |
+| `m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, name, [], SAI_STATUS_SUCCESS, force=true)` | APPL_STATE_DB / `BUFFER_PROFILE_TABLE` | `processBufferProfile()` DEL 成功 かつ `is_lossless==true` | `bufferorch.cpp:875-880` |
+
+### COUNTERS_DB / FLEX_COUNTER_DB — BUFFER_PROFILE は対象外
+
+COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書込は **BUFFER_POOL** 操作に紐づく。BUFFER_PROFILE 単体の SET/DEL では COUNTERS_DB / FLEX_COUNTER_DB への書込は発生しない。<!-- evidence: bufferorch.cpp L55-56, L546, L586 — counterNameMapUpdater は processBufferPool() 内のみ呼出 -->
+
+### 副次書込の発火順序
+
+```
+1. buffermgrd(yn): CONFIG_DB BUFFER_PROFILE|<name> SET 受信
+2. updateBufferProfileToDb():
+   2a. APPL_DB  BUFFER_PROFILE_TABLE|<name> SET  ← 主書込
+   2b. STATE_DB BUFFER_PROFILE_TABLE|<name> SET  ← 副次書込 A (同時)
+3. bufferorch: APPL_DB イベント受信 → SAI create_buffer_profile() → ASIC_DB
+4. (is_lossless==true のとき)
+   APPL_STATE_DB BUFFER_PROFILE_TABLE|<name> publish ← 副次書込 B
+```
+<!-- /side-effects -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
