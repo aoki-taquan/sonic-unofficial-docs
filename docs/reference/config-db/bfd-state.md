@@ -159,6 +159,71 @@ TSA (Traffic Shift Away) が有効かつ `shutdown_bfd_during_tsa = "true"` の�
 
 <!-- /value-behavior -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+STATE_DB `BFD_SESSION_TABLE` は CONFIG_DB / APPL_DB 系の `ProducerStateTable` を用いず、**`swss::Table` 直書きのみ** で更新される。書き手は `bfdorch` 1 プロセスに限定され、`NotificationProducer` も専用 channel `PUBLISH` も使用しない。Subscriber は **Redis keyspace 通知** または **HGETALL polling**、および `bfdorch` プロセス内の `Orch::notify` Observer に分岐する。
+
+### 書込パス: SAI 通知 → `swss::Table::hset`
+
+`BfdOrch` ctor (`bfdorch.cpp:63-65, 86`) は ASIC_DB `NOTIFICATIONS` channel に対して:
+
+```cpp
+DBConnector *notificationsDb = new DBConnector("ASIC_DB", 0);
+m_bfdStateNotificationConsumer = new swss::NotificationConsumer(notificationsDb, "NOTIFICATIONS");
+auto bfdStateNotificatier = new Notifier(m_bfdStateNotificationConsumer, this, "BFD_STATE_NOTIFICATIONS");
+Orch::addExecutor(bfdStateNotificatier);
+```
+
+を登録し、SAI 側に `register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) で `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` を query + set する。SAI ASIC が `bfd_session_state_change` を発火するたびに `doTask(NotificationConsumer&)` (`bfdorch.cpp:220-268`) が:
+
+```cpp
+// bfdorch.cpp:252
+m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
+```
+
+を呼び、`state` フィールドのみを上書きする (`state != bfd_session_lookup[id].state` のときに限る)。同時に in-process Observer `notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE, &update)` (`bfdorch.cpp:257-260`) も発火し、`VNetRouteOrch` 等の同 orchagent 内 subscriber を起こす。
+
+セッション作成・削除時の書込みは:
+
+| 行 | 操作 | 契機 |
+|---|---|---|
+| `bfdorch.cpp:78` | `del(alias)` 全件 | コンストラクタ時クリーンアップ |
+| `bfdorch.cpp:565` | `set(state_db_key, fvVector)` | `create_bfd_session()` 成功直後 (`state=Down` 固定) |
+| `bfdorch.cpp:252` | `hset(key, "state", ...)` | SAI 通知受信時 |
+| `bfdorch.cpp:629` | `del(peer)` | `remove_bfd_session()` 内 |
+
+`swss::Table::set/hset/del` は **Redis `HSET`/`HDEL` を直接発行** するのみで、`ProducerStateTable` のような LUA + channel PUBLISH は走らない。よって `BFD_SESSION_TABLE_CHANNEL` のような専用 channel は存在しない。
+
+### 購読パス: keyspace 通知 / HGETALL polling / in-process Observer
+
+| 役割 | 経路 | 根拠 |
+|---|---|---|
+| 同 orchagent 内 (`VNetRouteOrch` 等) | `Orch::notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE)` Observer | `bfdorch.cpp:257-260` |
+| 別プロセス subscriber | `swss::SubscriberStateTable(STATE_DB, STATE_BFD_SESSION_TABLE_NAME)` (Redis keyspace 通知) | swss-common keyspace 通知ベース |
+| CLI / snapshot 読者 | `sonic-db-cli STATE_DB hgetall 'BFD_SESSION_TABLE\|*'` (polling) | `show bfd peers` |
+| gNMI / translib | STATE_DB HGETALL マッピング | sonic-mgmt-common bfd モジュール |
+
+`BFD_SESSION_TABLE` 用の `NotificationProducer` / `ResponsePublisher` / `ZmqProducerStateTable` は SONiC ソース内に存在しない (`bfdorch.cpp` 範囲で確認、`BfdOrch` は `Orch` 直系で `ZmqOrch` 非継承)。
+
+### ソフトウェア BFD 経路 (`BFD_SOFTWARE_SESSION_TABLE`)
+
+`use_software_bfd == true` の場合 (`bfdorch.cpp:133-139, 706-710`) は `m_stateSoftBfdSessionTable->set(createStateDBKey(key), data)` で APPL_DB 入力を転記。こちらも `swss::Table` 直書きで `state` フィールドなし。状態管理は FRR (`bgpcfgd::BfdMgr` 経由) に委譲される。
+
+### 通信パスまとめ
+
+| 役割 | クラス | 経路 | 根拠 |
+|---|---|---|---|
+| SAI → orchagent | `swss::NotificationConsumer` (ASIC_DB `NOTIFICATIONS`) | LPOP + PUBSUB | `bfdorch.cpp:63-65, 220-268` |
+| 書込 (state 初期) | `swss::Table::set` | `HSET STATE_DB BFD_SESSION_TABLE\|<k>` (全フィールド) | `bfdorch.cpp:565` |
+| 書込 (state 変化) | `swss::Table::hset` | `HSET ... state <enum>` | `bfdorch.cpp:252` |
+| 削除 | `swss::Table::del` | `DEL ...` | `bfdorch.cpp:78, 629` |
+| in-process 通知 | `Orch::notify` (Observer) | プロセス内コールバック | `bfdorch.cpp:257-260` |
+| 外部購読 | `SubscriberStateTable` / HGETALL | Redis keyspace 通知 or polling | swss-common keyspace 通知 |
+
+`NotificationProducer` / `ProducerStateTable` / 応答 channel publish は **すべて非使用**。詳細スキャンと根拠コードは `meta/_intermediate/cdb-flow/bfd-state-pubsub.md` を参照。
+<!-- /pubsub -->
+
 <!-- ordering -->
 ## STATE_DB 書込み順依存
 
