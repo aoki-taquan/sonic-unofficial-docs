@@ -133,6 +133,63 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 
 `NEIGH_STATE_TABLE` の `state` は `show bgp summary` が表示する `State/PfxRcd` 列の状態と対応する。ただし bgpmon のポーリング間隔は 15 秒であるため、リアルタイムの FRR 状態とは最大 15 秒の遅延が生じる。
 
+<!-- cross-refs -->
+## 暗黙参照 — `BGPPeerMgrBase` が読み出す関連テーブルと FRR 状態 (Phase C)
+
+`bgpcfgd` の `BGPPeerMgrBase` は CONFIG_DB 上の複数 BGP テーブルを購読し、FRR bgpd へ設定を投入した後に `BGP_PEER_CONFIGURED_TABLE` を更新する。テーブルへの書き込みはこれら暗黙参照が揃って初めて成立する。
+
+### CONFIG_DB 購読テーブル (転写元)
+
+`main.py` L87-91 で `BGPPeerMgrBase` は以下のテーブルを購読し、SET / DEL イベントを `BGP_PEER_CONFIGURED_TABLE` へ転写する。
+
+| CONFIG_DB テーブル | peer_type | `BGP_PEER_CONFIGURED_TABLE` への影響 | evidence |
+|---|---|---|---|
+| `BGP_NEIGHBOR` | `"general"` (外部 eBGP) | SET → エントリ追加、DEL → エントリ削除 | main.py:87, managers_bgp.py:239 |
+| `BGP_INTERNAL_NEIGHBOR` | `"internal"` (iBGP) | SET → エントリ追加、DEL → エントリ削除 | main.py:88 |
+| `BGP_MONITORS` | `"monitors"` | SET → エントリ追加、DEL → エントリ削除 | main.py:89 |
+| `BGP_PEER_RANGE` | `"dynamic"` (listen range) | SET → エントリ追加 (`ip_range` フィールド含む) | main.py:90 |
+| `BGP_VOQ_CHASSIS_NEIGHBOR` | `"voq_chassis"` | SET → エントリ追加 (VOQ シャーシ間 iBGP) | main.py:91 |
+| `BGP_SENTINELS` | `"sentinels"` | SET → エントリ追加 | main.py:91 |
+
+> テーブルごとに独立した `BGPPeerMgrBase` インスタンスが動作するため、`BGP_PEER_CONFIGURED_TABLE` には複数テーブル由来のエントリが混在する。フィールドセットはソーステーブルの内容そのままで固定スキーマはない (managers_bgp.py:289)。
+
+### CONFIG_DB 前提依存テーブル (ピア追加のブロッカー)
+
+`BGPPeerMgrBase.__init__` の `deps` リスト (managers_bgp.py:118-127) により、以下のテーブルが揃うまでピア追加・`update_state_db()` 呼び出しがブロックされる。
+
+| テーブル | キー / フィールド | 用途 | evidence |
+|---|---|---|---|
+| [`DEVICE_METADATA`](device-metadata.md) | `localhost/bgp_asn` | `router bgp <ASN>` コマンド生成 | managers_bgp.py:119,192 |
+| [`DEVICE_METADATA`](device-metadata.md) | `localhost/type` | デバイスロール判定 (spine / leaf 等) | managers_bgp.py:120 |
+| `LOOPBACK_INTERFACE` | `Loopback0` | ルータ ID の IPv4 アドレスを取得 | managers_bgp.py:121,186 |
+| `BGP_DEVICE_GLOBAL` | `tsa_enabled` / `idf_isolation_state` | TSA / IDF isolation ルートマップ適用判定 | managers_bgp.py:122-123 |
+| `DEVICE_NEIGHBOR_METADATA` | — | `use_neighbors_meta = true` のとき、ネイバーのメタ情報検証 | managers_bgp.py:140,220 |
+
+### FRR bgpd 状態の暗黙読み出し
+
+`BGP_PEER_CONFIGURED_TABLE` への書き込みは FRR への設定投入が成功した **後** に行われる (managers_bgp.py:239,353,444)。
+
+| 参照先 | 呼び出し箇所 | 用途 |
+|---|---|---|
+| `vtysh -c 'show bgp vrfs json'` | `load_peers()` — managers_bgp.py:577 | 起動時に FRR 登録済みピアセットを取得し `self.peers` を初期化 |
+| `vtysh -c 'show bgp vrf <vrf> neighbors json'` | `load_peers()` — managers_bgp.py:587 | VRF ごとのネイバー一覧を初期ロード |
+| `vtysh -c 'show bgp peer-group <name> json'` | `get_existing_ip_ranges()` — managers_bgp.py:398 | 動的ピアの ip_range 更新時に既存 range を取得 |
+| `cfg_mgr.push(cmd)` (FRR 設定書き込み) | `apply_op()` — managers_bgp.py:507 | FRR に `neighbor` コマンド投入。**投入後** に `update_state_db()` を呼び出す |
+
+> FRR bgpd が応答不能の場合、`cfg_mgr.push()` は内部キューに留まり、`update_state_db()` も呼ばれない。結果として `BGP_PEER_CONFIGURED_TABLE` への反映が遅延・欠落する可能性がある。
+
+### NEIGH_STATE_TABLE との非同期関係
+
+`BGP_PEER_CONFIGURED_TABLE` が設定完了を示した後、実際の BGP セッション確立状態は `bgpmon` の次回ポーリング (最大 15 秒後) まで `NEIGH_STATE_TABLE` に反映されない。2 テーブル間に常時非同期ウィンドウが存在する。
+
+### 範囲外
+
+- **ASIC_DB BGP セッション state**: bgpcfgd / bgpmon は ASIC_DB を参照しない。ASIC_DB への BGP 関連書き込みは `routeorch` (SWSS) が担当し、本テーブル群とは独立した経路。
+- **`BGP_PEER_GROUP`** (CONFIG_DB): 独立テーブルとして存在しない。peer-group 設定は `BGP_NEIGHBOR` 等の内容から Jinja2 テンプレートで生成され、FRR に直接投入される。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
