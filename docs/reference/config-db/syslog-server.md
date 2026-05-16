@@ -245,4 +245,72 @@ db_migrator.py での SYSLOG_SERVER マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### CONFIG_DB 購読 API
+
+`hostcfgd` は `swsscommon.ConfigDBConnector` の `subscribe()` で `SYSLOG_SERVER` テーブルを購読する。`ConsumerStateTable`（channel ベース）は使用しない。
+
+```python
+# sonic-host-services/scripts/hostcfgd L2499-2503
+# Handle SYSLOG_CONFIG and SYSLOG_SERVER changes
+self.config_db.subscribe(swsscommon.CFG_SYSLOG_CONFIG_TABLE_NAME,
+                         make_callback(self.rsyslog_config_handler))
+self.config_db.subscribe(swsscommon.CFG_SYSLOG_SERVER_TABLE_NAME,
+                         make_callback(self.rsyslog_server_handler))
+```
+
+- `ConfigDBConnector.listen()` が内部で Redis **keyspace 通知** (`__keyspace@4__:SYSLOG_SERVER|*` への PSUBSCRIBE) を購読する。
+- `SYSLOG_SERVER` と `SYSLOG_CONFIG` を独立して登録するが、両ハンドラとも同じ `rsyslog_handler()` を呼び、**両テーブルを一括再取得**してキャッシュ比較後に `systemctl restart rsyslog-config` を発行する。
+
+### ハンドラ呼び出しフロー
+
+```
+SYSLOG_SERVER|<ip> 変更 (hset/del)
+  → keyspace 通知 (__keyspace@4__:SYSLOG_SERVER|<ip>)
+  → rsyslog_server_handler(key, op, data)          # hostcfgd L2417-2419
+  → rsyslog_handler()                              # hostcfgd L2410-2415
+      → get_table(SYSLOG_CONFIG) + get_table(SYSLOG_SERVER)
+      → RSyslogCfg.update_rsyslog_config()         # L1715-1743
+          → キャッシュ差分あり → systemctl restart rsyslog-config
+```
+
+### rsyslog SIGHUP / restart 経路
+
+`rsyslog-config.service` の `ExecStart=/usr/bin/rsyslog-config.sh` が実際の設定反映を行う。
+
+```bash
+# sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh L58-73
+sonic-cfggen -d -t rsyslog.conf.j2 ... > "$TMPFILE"
+
+if [ ! -f /etc/rsyslog.conf ] || ! cmp -s "$TMPFILE" /etc/rsyslog.conf; then
+    cp "$TMPFILE" /etc/rsyslog.conf
+    systemctl restart rsyslog      # 設定変更あり → rsyslogd 完全再起動
+else
+    systemctl kill -s HUP rsyslog  # 設定変更なし → SIGHUP のみ（ログファイル再オープン）
+fi
+```
+
+| 状況 | 操作 | 意味 |
+|------|------|------|
+| `/etc/rsyslog.conf` 変化あり | `systemctl restart rsyslog` | rsyslogd プロセス完全再起動（設定全再読込） |
+| `/etc/rsyslog.conf` 変化なし | `systemctl kill -s HUP rsyslog` | SIGHUP でログファイル再オープン（ログローテーション対応）のみ |
+
+!!! note "SIGHUP の役割"
+    SIGHUP は「設定変更なし時」のログローテーション対応専用。通常の設定反映は `systemctl restart rsyslog` が担う。`hostcfgd` 自身は SIGHUP を受信しても無視する（L111-112）。
+
+### keyspace 通知パターン
+
+| Redis keyspace 通知 | hostcfgd ハンドラ |
+|---------------------|------------------|
+| `__keyspace@4__:SYSLOG_SERVER\|192.168.1.1` `hset` | `rsyslog_server_handler("192.168.1.1", SET, {...})` |
+| `__keyspace@4__:SYSLOG_SERVER\|192.168.1.1` `del` | `rsyslog_server_handler("192.168.1.1", DEL, {})` |
+| `__keyspace@4__:SYSLOG_CONFIG\|GLOBAL` `hset` | `rsyslog_config_handler("GLOBAL", SET, {...})` |
+
+- APPL_DB / STATE_DB への中継なし。SAI 経路なし。
+- 経路: CONFIG_DB → hostcfgd (keyspace 通知) → rsyslog-config.service → rsyslogd restart/SIGHUP
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 639b97382f4c -->
