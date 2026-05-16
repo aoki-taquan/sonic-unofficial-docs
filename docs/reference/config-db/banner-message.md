@@ -44,6 +44,80 @@ BANNER_MESSAGE|global
 
 シングルトン (`global` の 1 行のみ)。
 
+<!-- pubsub -->
+## 通信メカニズム (Redis PUBSUB / keyspace notification)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` の `BannerCfg` クラス全体 (2044-2117) + `register_callbacks()` (2480-2521) 精読、`sonic-buildimage/files/image_config/bannerconfig/banner-config.sh` 精読 (2026-05-15)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/banner-message-pubsub.md`
+
+### 購読方式
+
+`hostcfgd` は `swsscommon.ConfigDBConnector` の `subscribe(table, callback)` でハンドラを登録する方式を採用する。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer` を**直接は使わず**、`ConfigDBConnector.listen()` が内部で Redis keyspace 通知 (`__keyspace@4__:BANNER_MESSAGE|*` の PSUBSCRIBE) を購読してテーブル名一致のコールバックへディスパッチする。`BANNER_MESSAGE` テーブルの購読者は `hostcfgd.BannerCfg` ただ 1 つ。APPL_DB 中継・SAI 経由・NotificationProducer 経由は一切ない。
+
+### 購読登録 (register_callbacks)
+
+```python
+# sonic-host-services/scripts/hostcfgd:2519-2521
+# Handle BANNER_MESSAGE changes
+self.config_db.subscribe(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME,
+                         make_callback(self.banner_handler))
+```
+
+`swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` は C++ 側で定義された `"BANNER_MESSAGE"` 定数。channel ベースの `PUBLISH/SUBSCRIBE` は使わず、CONFIG_DB の `HSET` を契機とする Redis keyspace notification (`notify-keyspace-events`) で通知される。TTL は設定されない (永続前提)。
+
+### ハンドラ動作
+
+| 入口 | 動作 | 副作用 |
+|------|------|--------|
+| `banner_handler(key, op, data)` (hostcfgd:2442) | `op` は無視、`(key, data)` を `BannerCfg.banner_message()` に転送 | LOG_INFO `'BANNER_MESSAGE table handler...'` |
+| `BannerCfg.banner_message(key, data)` (hostcfgd:2084) | `data` 内 1 フィールドでもキャッシュと差分あれば `systemctl restart banner-config` 発行 → 成功時のみキャッシュ更新 | `banner-config.service` (oneshot) を ExecStart |
+| `banner-config.service` 起動 | `/usr/bin/banner-config.sh` 実行 | `/etc/issue.net` → `/etc/issue` → `/etc/motd` → `/etc/logout_message` を順次 `echo -e ... >` 上書き |
+
+差分判定は早期 break (`for k,v in data.items(): if v != self.cache.get(k): update_required=True; break`) で、complete equality ではなく 1 つでも違えば restart 発行。`run_cmd` 失敗時はキャッシュ未更新のため、次回 CONFIG_DB 変化 (同値でも) で自動再試行される。
+
+### 通信シーケンス
+
+```
+config banner motd "..." (CLI)
+  └─ sonic-db-cli CONFIG_DB HSET 'BANNER_MESSAGE|global' motd "..."
+       └─ Redis keyspace notification: __keyspace@4__:BANNER_MESSAGE|global hset
+            └─ hostcfgd ConfigDBConnector.listen() ループが受信
+                 └─ make_callback wrapper: (table, key, data) → (key, op="SET", data)
+                      └─ banner_handler("global", "SET", HGETALL BANNER_MESSAGE|global)
+                           └─ BannerCfg.banner_message("global", data)
+                                ├─ type(data) != dict → silent return
+                                ├─ キャッシュ差分なし → no-op (restart skip)
+                                └─ 差分あり → systemctl restart banner-config
+                                     └─ banner-config.service (Type=oneshot, RemainAfterExit=no)
+                                          └─ /usr/bin/banner-config.sh
+                                               ├─ sonic-db-cli HGET state/login/motd/logout (再読込)
+                                               ├─ [[ $STATE == "enabled" ]] ガード
+                                               └─ echo -e "$LOGIN"  > /etc/issue.net
+                                                  echo -e "$LOGIN"  > /etc/issue
+                                                  echo -e "$MOTD"   > /etc/motd
+                                                  echo -e "$LOGOUT" > /etc/logout_message
+```
+
+### keyspace notification 詳細
+
+| 項目 | 値 |
+|------|-----|
+| 購読 API | `ConfigDBConnector.subscribe('BANNER_MESSAGE', callback)` (hostcfgd:2519-2521) |
+| 通知方式 | Redis keyspace notification (内部で PSUBSCRIBE `__keyspace@4__:BANNER_MESSAGE\|*`) |
+| 通知種別 | `hset` / `del` (HMSET も hset 通知) — op 種別は区別せず `data is None` で `SET` / `DEL` を識別 |
+| dbId | 4 (CONFIG_DB) |
+| Select timeout | `ConfigDBConnector.listen()` 内部 (明示タイムアウトなし、Redis subscribe ブロッキング) |
+| 起動時スナップショット | `BannerCfg.load()` で state/login/motd/logout 4 フィールドを順次 `banner_message()` に渡す (hostcfgd:2079-2082) — 最大 4 回 `systemctl restart banner-config` が連続発行され得る |
+| 実行時変更反映 | 差分判定 → 1 フィールドでも差分があれば 1 回 restart。CLI で 4 フィールドを個別変更すると最大 4 回 restart |
+| ConsumerStateTable / NotificationProducer | 未使用 (`BANNER_MESSAGE` テーブルに対する他購読者・通知 producer なし) |
+| TTL | なし (CONFIG_DB は永続前提) |
+
+### 反映タイミング
+
+CONFIG_DB 書込み → keyspace 通知到達 → `banner_handler` 呼び出し → `systemctl restart banner-config` → `banner-config.sh` が CONFIG_DB を `sonic-db-cli HGET` で再読込 → 4 ファイル順次上書き、までを `O(秒)` で完了。新規 SSH / console 接続から新 banner が表示される。既存セッションへの影響なし (sshd / PAM の再起動・reload は不要)。`banner-config.sh` の 4 ファイル書込みは `set -e` のため途中失敗時は以降スキップで部分書込状態が残存する。
+
+<!-- /pubsub -->
+
 ## フィールド
 
 | フィールド | 型 | 既定 | 説明 |
