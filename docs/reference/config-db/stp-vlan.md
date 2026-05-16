@@ -1,6 +1,6 @@
 ---
 title: STP_VLAN / STP_VLAN_PORT テーブル
-description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A 分析。"
+description: "CONFIG_DB の STP_VLAN・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・PVST 起動順序・sentinel 値を詳細解説。Phase A+B 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -228,6 +228,121 @@ if (stpGlobalTask == false || stpVlanTask == false || stpPortTask == false)
 証跡: `config/stp.py:857-861`
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 処理順序・依存関係 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-ordering.md -->
+
+`stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_VLAN` / `STP_VLAN_PORT` テーブルの処理に対して複数段のガード条件を実装しており、前提テーブルが受信済みでなければ SET を **silent defer** または **silent skip** する。
+
+### 1. stpGlobalTask + stpPortTask — STP_VLAN ガード条件
+
+`doStpVlanTask()` (`stpmgr.cpp:183-185`):
+
+```cpp
+if (stpGlobalTask == false || (stpPortTask == false && !isStpPortEmpty()))
+    return;
+```
+
+`stpGlobalTask` は `STP|GLOBAL` の最初の SET 受信時、`stpPortTask` は `STP_PORT` の最初の SET 受信時に `true` になる。
+ポートが存在しない場合 (`isStpPortEmpty()` = true) は `stpPortTask` 待ちをスキップする。
+
+!!! warning "STP_VLAN より先に STP|GLOBAL / STP_PORT を書き込むこと"
+    `stpGlobalTask` または `stpPortTask` が立っていない状態で `STP_VLAN` SET が到達しても、
+    `doStpVlanTask()` は即 `return` する（消費キューに残りエラーログなし）。
+    次の SELECT ループで再試行されるが、前提フラグが立つまで何度でも defer が続く。
+
+証跡: `stpmgr.cpp:179-188, 85-86, 637-638`
+
+---
+
+### 2. l2ProtoEnabled ガード — STP モード確定が先行必須
+
+SET ハンドラ内 (`stpmgr.cpp:210`):
+
+```cpp
+if (l2ProtoEnabled == L2_NONE || !isVlanStateOk(key))
+{
+    it++;
+    continue;
+}
+```
+
+`l2ProtoEnabled` は `STP|GLOBAL` の `mode` フィールド (`pvst` / `mst`) を受け取った時点で `L2_PVSTP` / `L2_MSTP` に設定される。
+`L2_NONE` のまま `STP_VLAN` SET が届いた場合はイテレータを進めて次ループへ持ち越す（silent skip）。
+
+証跡: `stpmgr.cpp:119, 127, 207-214`
+
+---
+
+### 3. isVlanStateOk — STATE_VLAN 存在確認が先行必須
+
+`isVlanStateOk(key)` は `STATE_DB:STATE_VLAN_TABLE` に対象 VLAN のエントリが存在するか確認する (`stpmgr.cpp:1276-1290`)。
+`vlanmgrd` が VLAN を ASIC に適用してから `STATE_VLAN_TABLE|Vlan<vid>` を書き込む。
+
+!!! warning "VLAN が STATE_VLAN_TABLE に登録される前に STP_VLAN を書くと設定が適用されない"
+    `config spanning-tree enable pvst` を実行した直後など、`vlanmgrd` が STATE_VLAN を未書込の
+    タイミングでは `doStpVlanTask()` が全件スキップする（エラーなし）。
+    `vlanmgrd` が STATE_VLAN を書き込んだ後、次 SELECT ループで自動的に処理される。
+
+証跡: `stpmgr.cpp:210, 1276-1290`
+
+---
+
+### 4. stpGlobalTask + stpVlanTask + stpPortTask — STP_VLAN_PORT ガード条件
+
+`doStpVlanPortTask()` (`stpmgr.cpp:448`):
+
+```cpp
+if (stpGlobalTask == false || stpVlanTask == false || stpPortTask == false)
+    return;
+```
+
+`stpVlanTask` は `STP_VLAN` の最初の SET を受け取った時点で `true` になる。
+`STP_VLAN_PORT` は 3 フラグ全て立つまで処理されない。
+
+#### PVST 推奨書き込み順序
+
+```
+1. STP|GLOBAL       → stpGlobalTask フラグ + l2ProtoEnabled 設定
+2. STP_PORT         → stpPortTask フラグ
+3. STP_VLAN         → stpVlanTask フラグ + m_vlanInstMap 設定
+4. STP_VLAN_PORT    → 全フラグが揃った後
+```
+
+証跡: `stpmgr.cpp:444-450`
+
+---
+
+### 5. m_vlanInstMap — STP_VLAN_PORT は VLAN→インスタンスマップが必須
+
+```cpp
+if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
+{
+    it++;
+    continue;
+}
+```
+
+`m_vlanInstMap[vlan_id]` は `doStpVlanTask()` 内で stpd からの IPC 応答 (`allocateStpVlanInstance()`) によって設定される。
+`STP_VLAN` エントリの処理が完了するまで同 VLAN の `STP_VLAN_PORT` は `INVALID_INSTANCE` チェックにより silent skip される。
+
+証跡: `stpmgr.cpp:483-503`
+
+---
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `STP\|GLOBAL` + `STP_PORT` → `STP_VLAN` 受信 | 先行必須（欠如時 silent defer） | 全フラグ揃い次第 SELECT ループで自動処理 |
+| 2 | `STP\|GLOBAL.mode` 受信 → `l2ProtoEnabled` 確定 → `STP_VLAN` SET | 先行必須（欠如時 silent skip） | `mode` フィールド受信後に自動復旧 |
+| 3 | `STATE_VLAN_TABLE\|Vlan<vid>` 書込み → `STP_VLAN\|Vlan<vid>` 処理 | 先行必須（欠如時 silent skip） | `vlanmgrd` の STATE_VLAN 書込み後に自動復旧 |
+| 4 | `STP\|GLOBAL` + `STP_PORT` + `STP_VLAN` → `STP_VLAN_PORT` 受信 | 先行必須（欠如時 silent defer） | PVST: GLOBAL→PORT→VLAN→VLAN_PORT 順で書き込む |
+| 5 | `STP_VLAN` 処理完了（stpd インスタンス割当） → `STP_VLAN_PORT` 処理 | 先行必須（欠如時 silent skip） | stpd IPC 応答後に `m_vlanInstMap` が設定される |
+
+<!-- /ordering -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
