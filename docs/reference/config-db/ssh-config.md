@@ -327,4 +327,24 @@ self.pamLimitsCfg.update_config_file()
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (Phase D)
+
+`SSH_SERVER` テーブルが直接・間接的に参照するテーブルと参照方向の一覧。
+
+| 参照方向 | 起点フィールド | 相手テーブル | 条件 |
+|---------|-------------|-------------|------|
+| SSH_SERVER → | `max_sessions` (PamLimitsCfg) | `DEVICE_METADATA` | `update_config_file()` が `DEVICE_METADATA\|localhost` キー存在確認。不在かつ `SSH_SERVER\|POLICIES` も不在なら early return (hostcfgd:L1430) |
+| ← SSH_SERVER (間接) | `PasswordAuthentication` (sshd_config) | `AAA` | `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を書き換える。パスワード認証と PAM 認証スタックが実質連動 (hostcfgd:L748-751) |
+| ← SSH_SERVER (間接) | SSH 認証経路 | `MGMT_INTERFACE` | TACACS+/RADIUS の `src_intf=eth0` 時に `AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` の IP を解決 (hostcfgd:L596-606) |
+
+### 詳細
+
+**`DEVICE_METADATA|localhost` (暗黙先行必須)**: `PamLimitsCfg.update_config_file()` は `get_table('DEVICE_METADATA')` で `localhost` キーの存在確認を行い、`localhost["hwsku"]` / `localhost["type"]` を PAM limits テンプレートに渡す（hostcfgd:L1422-1430）。`SSH_SERVER|POLICIES.max_sessions` の PAM への反映は `DEVICE_METADATA|localhost` の存在が前提。通常の SONiC デプロイでは常に存在するため実害なし。
+
+**`AAA` テーブル (/etc/pam.d/sshd 共有)**: `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を直接書き換える（hostcfgd:L748-751）。SSH_SERVER の `password_authentication` フィールドと PAM の認証スタックは独立した設定ファイル管理だが、sshd が両方を参照するため実質的に連動する。`PasswordAuthentication yes` + PAM `common-auth-sonic`（TACACS+）の組み合わせで TACACS+ パスワード認証が有効になる。
+
+**`MGMT_INTERFACE` (間接参照)**: SSH_SERVER テーブルは `MGMT_INTERFACE` を直接参照しないが、SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合、AAA の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
