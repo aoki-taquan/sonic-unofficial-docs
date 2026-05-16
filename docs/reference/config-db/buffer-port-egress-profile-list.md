@@ -276,4 +276,57 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
 | 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### テーブル名・フィールド名定数
+
+| 定数名 | 値 | ソース |
+|---|---|---|
+| `CFG_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME` | `"BUFFER_PORT_EGRESS_PROFILE_LIST"` | `sonic-swss-common/common/schema.h:366` |
+| `APP_BUFFER_PORT_EGRESS_PROFILE_LIST_NAME` | `"BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE"` | `sonic-swss-common/common/schema.h:164` |
+| `buffer_profile_list_field_name` | `"profile_list"` | `sonic-swss/orchagent/bufferorch.cpp:34` |
+
+### SAI 識別子
+
+| 定数名 | 用途 | ソース |
+|---|---|---|
+| `SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST` | egress バッファプロファイルリストをポートに bind する SAI 属性 ID | `bufferorch.cpp:1865` |
+| `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` | Bulk SAI 呼び出し時エラーモード（一部ポート失敗が他ポートをブロックしない） | `bufferorch.cpp:2014` |
+| `SAI_OBJECT_TYPE_PORT` | `SaiAttrWrapper` 生成時に指定するオブジェクト型 | `bufferorch.cpp:1958` |
+
+### direction 値（egress 固定）
+
+`handleSingleBufferPortEgressProfileListEntry` は常に `BUFFER_EGRESS`（文字列 `"egress"`）を `handleSingleBufferPortProfileListEntry` に渡す。ingress profile（`BUFFER_INGRESS` 方向）を egress profile list に指定した場合は `checkBufferProfileDirection` が `task_failed` を返す。
+
+| 内部列挙値 | 文字列表現 | ソース |
+|---|---|---|
+| `BUFFER_EGRESS` | `"egress"` | `buffermgrdyn.cpp:36,3459` |
+| `BUFFER_INGRESS` | `"ingress"` | `buffermgrdyn.cpp:36`（参照用） |
+
+### 区切り文字
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `list_item_delimiter` | `','`（カンマ） | `tokenize(key, list_item_delimiter)` — キー内のポート名分割 |
+| （無名） | `','`（カンマ） | `checkBufferProfileDirection` 内の profile 名リスト分割 |
+
+evidence: `sonic-swss/orchagent/orch.h:32`, `bufferorch.cpp:1862`, `buffermgrdyn.cpp:3278`
+
+### 空リスト（DEL 操作時のハードコード）
+
+DEL 操作時、SAI に count=0 のオブジェクトリストを渡すことで「egress バッファプロファイルなし」を表現する。YANG には記述なし。
+
+| 属性 | ハードコード値 | ソース |
+|---|---|---|
+| `attr.value.objlist.count` | `0` | `bufferorch.cpp:1939` |
+| `attr.value.objlist.list` | 空ベクタの `.data()` ポインタ | `bufferorch.cpp:1940` |
+
+### Bulk SAI 処理順（DEL 優先）
+
+`processEgressBufferProfileListBulk` 内で `{DEL_COMMAND, SET_COMMAND}` の順にループするため、DEL が SET より先に SAI へ送られる。
+
+evidence: `bufferorch.cpp:1990`
+<!-- /constants -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
