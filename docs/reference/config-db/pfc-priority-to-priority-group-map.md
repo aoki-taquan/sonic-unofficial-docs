@@ -424,3 +424,43 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 | `sai_qos_map_api->remove_qos_map()` | MAP 削除（`qosorch.cpp:190`） |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-side-effects.md -->
+
+### MAP SET/DEL の直接副作用
+
+| 副作用 | トリガー | ソース |
+|--------|---------|--------|
+| SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP`) | SET (新規) | `qosorch.cpp:974` |
+| SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:153` |
+| SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:190` |
+| `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
+| 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
+| `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
+
+- **STATE_DB への書き込みなし** — `QosOrch` は PFC_PRIORITY_TO_PRIORITY_GROUP_MAP の処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
+- **APPL_DB への書き込みなし** — `APP_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_NAME` 定数 (`schema.h`) は存在するが master の orchagent は使用しない。
+
+### PORT_QOS_MAP 経由の間接副作用
+
+MAP OID 解決後、`PORT_QOS_MAP` の `handlePortQosMapTable` が自動再実行されて以下が生じる:
+
+| 副作用 | API | ソース |
+|--------|-----|--------|
+| ポートへの `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` 適用 | `sai_port_api->set_port_attribute()` | `qosorch.cpp:2193` |
+| PFC enable bitmask 更新 (`SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL`) | `gPortsOrch->setPortPfc()` | `qosorch.cpp:2215` |
+| PFC watchdog ステータス更新 | `gPortsOrch->setPortPfcWatchdogStatus()` | `qosorch.cpp:2224` |
+
+MAP が未作成の間は `PORT_QOS_MAP` の処理が `task_need_retry` で保留され (`qosorch.cpp:2124-2129`)、
+MAP 作成完了後の `doTask()` サイクルで自動再処理される。
+
+### m_pendingRemove 連鎖
+
+DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセットされ、
+その後この MAP 名への SET 操作も即 `task_need_retry` を返す (`qosorch.cpp:136-139`)。
+参照側 (`PORT_QOS_MAP.pfc_to_pg_map`) の解除後に DEL が再実行されて連鎖が解消する。
+
+<!-- /side-effects -->
