@@ -119,6 +119,84 @@ string type = "dynamic";
 
 <!-- /constants -->
 
+<!-- failure -->
+## 失敗挙動・retry
+
+`addFdbEntry()` (`fdborch.cpp:1277`) の失敗パスを以下に整理する。
+
+### VLAN 未解決 → retry
+
+`doTask()` の SET 経路で `getPort(keys[0], vlan)` が失敗した場合（VLAN 未作成）、
+エントリを `m_toSync` に**残したまま** `it++` で次周回へ先送りする (`fdborch.cpp:738-761`)。
+VLAN が後から作成されると orchagent の select-loop 次回スケジュールで書込が完了する。
+
+```cpp
+// fdborch.cpp:739-745  (VLAN 未解決時の SET 経路)
+if (!m_portsOrch->getPort(keys[0], vlan)) {
+    if (op == DEL_COMMAND) {
+        deleteFdbEntryFromSavedFDB(...);
+        it = consumer.m_toSync.erase(it);
+    } else {
+        it++;          // SET は erase せず次周回再評価
+    }
+    continue;
+}
+```
+
+### PORT 未解決 → saved_fdb_entries に保留
+
+`addFdbEntry()` 内でポートが未作成または `bridge_port_id == SAI_NULL_OBJECT_ID` の場合、
+`saved_fdb_entries[port_name]` に push して**呼出側へ `return true`** を返す
+(`fdborch.cpp:1297-1304`)。`m_toSync` からは消えるが破棄ではなく保留となる。
+
+VLAN メンバーシップ未解決（`isVlanMember()` 失敗）でも同じ `saved_fdb_entries` 保留パスに落ちる
+(`fdborch.cpp:1312-1319`)。
+
+```cpp
+// fdborch.cpp:1297-1320
+if (!m_portsOrch->getPort(port_name, port) || (port.m_bridge_port_id == SAI_NULL_OBJECT_ID)) {
+    saved_fdb_entries[port_name].push_back({entry.mac, vlan.m_vlan_info.vlan_id, fdbData});
+    return true;   // 呼出側には成功扱い
+}
+if (!m_portsOrch->isVlanMember(vlan, port, end_point_ip)) {
+    saved_fdb_entries[port_name].push_back({...});
+    return true;
+}
+```
+
+`fdborch.cpp:39` で `m_portsOrch->attach(this)` により observer 登録済みのため、
+`updateVlanMember(add=true)` イベント到着時に `saved_fdb_entries[port_name]` を走査して
+`addFdbEntry()` を自動 replay する (`fdborch.cpp:1240-1275`)。
+
+### SAI 失敗
+
+`create_fdb_entry()` 失敗時は `SWSS_LOG_ERROR("Failed to create %s FDB %s in %s on %s, rv:%d")` を出力後、
+`handleSaiCreateStatus(SAI_API_FDB, status)` で status 別に判定する
+(`fdborch.cpp:1534`)。
+
+`set_fdb_entry_attribute()` 失敗（MAC update）でも同様に `handleSaiSetStatus()` が呼ばれる
+(`fdborch.cpp:1510`)。
+
+| SAI ハンドラ戻り値 | 処理 |
+|-----------------|------|
+| `task_success` | 成功 / 無視可能 |
+| `task_need_retry` | `m_toSync` に残置して再試行 |
+| `task_failed` | 当該イベントを破棄 |
+| それ以外 | `parseHandleSaiStatusFailure()` でプロセス終了 |
+
+### 不正 type → assert クラッシュ
+
+`fdborch.cpp:830` の `assert(type == "dynamic" || type == "dynamic_local" || type == "static")` により、
+有効値以外の `type` は **orchagent プロセスクラッシュ**を引き起こす（NDEBUG 無効ビルド）。
+リリースビルドでは assert が無効化されるが、その場合は SAI mapping で未定義動作となる。
+
+### 不正 MAC フォーマット
+
+`MacAddress` コンストラクタが例外を送出した場合、呼出元 `doTask()` の try/catch で捕捉され
+`SWSS_LOG_WARN` 出力後に当該エントリを `m_toSync.erase` で破棄する（retry なし）。
+
+<!-- /failure -->
+
 ## key 構造
 
 ```text
