@@ -266,6 +266,36 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 <!-- /handler-branching -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/orchagent/fdborch.cpp / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang -->
+
+### MCLAG_DOMAIN → 参照先
+
+| 参照元フィールド | 参照先テーブル | 参照種別 | evidence |
+|---|---|---|---|
+| `MCLAG_DOMAIN.peer_link` | CONFIG_DB `PORT` / `PORTCHANNEL` | YANG leafref (ISL ポート存在必須) | `sonic-mclag.yang:62-71` |
+| `MCLAG_INTERFACE.if_name` | CONFIG_DB `PORTCHANNEL` | YANG leafref (MLAG member LAG) | `sonic-mclag.yang:115-116` |
+
+### 参照先 → MCLAG_DOMAIN
+
+| 参照元テーブル | 参照フィールド | 参照種別 | evidence |
+|---|---|---|---|
+| `MCLAG_INTERFACE` | `domain_id` leafref | YANG 必須制約 (DOMAIN 先行) | `sonic-mclag.yang:108-109` |
+| `MCLAG_UNIQUE_IP` | (テーブル全体) | YANG must "count(DOMAIN) != 0" | `sonic-mclag.yang:132-134` |
+
+### 下流 FDB テーブルへの暗黙影響
+
+| トリガー | 影響先 | 挙動 | evidence |
+|---|---|---|---|
+| MCLAG_INTERFACE 登録済み PortChannel が oper-down | APPL_DB `FDB_TABLE` | FDB フラッシュをスキップ（ピア側保持のため） | `fdborch.cpp:1209-1212` |
+| MCLAG 広告 FDB の削除 + ポート oper-down | APPL_DB `FDB_TABLE` | 削除 origin を `FDB_ORIGIN_LEARN` に書き換えてローカル MAC 削除 | `fdborch.cpp:1665-1670` |
+
+> **NEIGHBOR への参照なし**: `mlagorch.cpp` は `NEIGHBOR` / `NEIGH` テーブルを直接参照しない。隣接解決は `neighorch` が担当し、MCLAG はポート状態通知に留まる。
+
+<!-- /cross-refs -->
+
 <!-- ordering -->
 ## 書込み順序依存 (Phase B)
 
