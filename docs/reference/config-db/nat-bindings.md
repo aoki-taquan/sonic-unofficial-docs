@@ -240,3 +240,31 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 - `orchagent / NatOrch` が APP_DB エントリを消費して SAI NAT object を作成。
 
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / doDnatPoolTableTask L2968-3031 / sonic-swss/cfgmgr/natmgr.cpp addDynamicNatRule / doNatBindingTask L6868-7100 -->
+
+### NAT_POOL が先行必須
+
+`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリ処理時に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定をスキップする。pool が後から登録された際に binding が自動再トリガーされるため**エントリは失われない**が、iptables/ASIC ルールは pool 登録完了まで反映されない。
+
+```
+# 推奨順序
+SET NAT_POOL|<name>      nat_ip=...  nat_port=...   # pool を先に定義
+SET NAT_BINDINGS|<name>  nat_pool=<name>             # pool 登録後に binding を追加
+```
+
+### NAT_GLOBAL (admin_mode=enabled) が有効化条件
+
+`natmgr.cpp:addDynamicNatRule()` は `isNatEnabled()` が false の場合 `"NAT is not yet enabled"` をログしてスキップする (`natmgr.cpp:4632-4636`)。`admin_mode=enabled` が CONFIG_DB に書き込まれ natmgrd が APPL_DB に伝播するまで、binding に対応する iptables/ASIC ルールは設定されない。
+
+### 安全な DEL 順序
+
+```
+DEL NAT_BINDINGS|<name>    # binding を先に削除
+DEL NAT_POOL|<name>        # pool を後に削除 (binding が残ったまま pool を削除すると孤立エントリになる)
+```
+
+<!-- /ordering -->

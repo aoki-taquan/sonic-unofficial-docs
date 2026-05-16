@@ -266,6 +266,44 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 <!-- /handler-branching -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 -->
+
+### MlagOrch 失敗パス一覧
+
+| # | トリガー | 箇所 | 動作 | retry |
+|---|---------|------|------|-------|
+| 1 | 不正テーブル名 | `doTask()` L62-65 | `SWSS_LOG_ERROR("MLAG receives invalid table %s")` + キューに残留 | なし（永続エラー） |
+| 2 | SET 時 `peer_link` フィールドが空または未存在 | `doMlagDomainTask()` L91-99 | erase してサイレントスキップ。ISL 登録は行われない | なし |
+| 3 | `addIslInterface()` が false を返す | `doMlagDomainTask()` L93-96 | `it++`（erase せず） → 次の doTask() で再試行 | あり（現実装では到達不可） |
+| 4 | 重複 MLAG IF ADD (`m_mlagIntfs` に既存) | `addMlagInterface()` L198-201 | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface %s")` + notify なし | なし |
+| 5 | 未知 MLAG IF の DEL (`m_mlagIntfs` に不在) | `delMlagInterface()` L220-223 | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface %s")` + notify なし | なし |
+| 6 | 不明な op_type | `doMlagDomainTask()` L108-112 / `doMlagInterfaceTask()` L149-152 | `SWSS_LOG_ERROR("MLAG receives unknown operation type %s")` + erase | なし |
+
+### peer_ip バリデーション
+
+`MlagOrch` は `peer_ip` フィールドを参照しない。`peer_ip` の不正値（フォーマット違反等）は YANG (`sonic-mclag.yang` `inet:ipv4-address` 型) でバリデーション段階に拒否され、`mlagorch.cpp` レベルには到達しない。
+
+### PORTCHANNEL 未解決時の挙動
+
+`addIslInterface()` (L156-172) は Port オブジェクトの存在確認を行わない（`gPortsOrch->getPort()` コールなし）。指定した `peer_link` の PORTCHANNEL が CONFIG_DB に未存在でも `addIslInterface()` は成功し `SUBJECT_TYPE_MLAG_ISL_CHANGE` を notify する。PORTCHANNEL 未解決による失敗は下流 observer 側で検知される。
+
+### SAI bridge_port 失敗
+
+`MlagOrch` は SAI API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。SAI bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
+
+### STATE_DB / ERROR_TABLE への記録
+
+`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
+
+```bash
+docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
+```
+
+<!-- /failure -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
@@ -327,6 +365,60 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+MCLAG の通信経路は **MlagOrch 系**（orchagent 内・Observer パターン）と **mclagsyncd 系**（独立デーモン・TCP IPC 経由で iccpd へ転送）の二系統ある。
+
+### CONFIG_DB 購読経路
+
+**MlagOrch** は `Orch` 継承により `MCLAG_DOMAIN`・`MCLAG_INTERFACE` を CONFIG_DB から直接 Consumer として購読する（`orchdaemon.cpp:536-540`）。keyspace 通知 (`__keyspace@4__:MCLAG|*`) を受信し、`doTask()` → `doMlagDomainTask()` / `doMlagInterfaceTask()` でディスパッチする。
+
+**mclagsyncd** は同時に別の SubscriberStateTable で同テーブルを購読する。`MCLAG_DOMAIN` は起動時から購読し、初回 SET 成功後に `MCLAG_INTERFACE` と `MCLAG_UNIQUE_IP` を動的に追加する（`addDomainCfgDependentSelectables()`、`mclaglink.cpp:903-921`）。
+
+### MlagOrch → 内部 Observer 通知 → FdbOrch
+
+MlagOrch は SAI を直接呼ばず、orchagent 内の Observer 通知を使う:
+
+| SubjectType | 発生トリガー | 影響先 |
+|-------------|------------|--------|
+| `SUBJECT_TYPE_MLAG_ISL_CHANGE` | `peer_link` 追加/削除 | FdbOrch が `isIslInterface()` で ISL 判定 |
+| `SUBJECT_TYPE_MLAG_INTF_CHANGE` | MC-LAG メンバー追加/削除 | FdbOrch が `isMlagInterface()` でフラッシュ制御 |
+
+SAI 操作は FdbOrch 経由: MCLAG メンバーが oper-down の場合に `sai_fdb_api->remove_fdb_entry()` を呼ぶ（`fdborch.cpp:1666`）。mclagsyncd は ASIC_DB の `ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:*` を**読み取り専用**で参照し FDB ポート OID を解決する（`mclaglink.cpp:79-95`）。
+
+### mclagsyncd → iccpd TCP IPC
+
+```
+CONFIG_DB ──SubscriberStateTable──▶ mclagsyncd ──TCP 127.0.6.1:2626──▶ iccpd
+```
+
+定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.6.1）、`MCLAG_DEFAULT_PORT = 2626`（`mclag.h:23,56`）。  
+mclagsyncd が TCP サーバとして `listen / accept` し、iccpd が接続する。テーブル変化ごとに差分のみを `write(m_connection_socket, ...)` で送信する。
+
+### mclagsyncd → APPL_DB (ProducerStateTable)
+
+iccpd からの命令を受けて APPL_DB へ書き込む:
+
+| APPL_DB テーブル | 消費者 |
+|-----------------|--------|
+| `MCLAG_FDB_TABLE` | FdbOrch |
+| `ISOLATION_GROUP_TABLE` | IsolationGroupOrch |
+| `INTF_TABLE` / `LAG_TABLE` / `PORT_TABLE` | IntfsOrch / PortsOrch |
+| `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` | AclOrch |
+| `FLUSHFDBREQUEST`（NotificationProducer） | FdbOrch |
+
+### タイムアウト / リトライ
+
+| デーモン | select タイムアウト | リトライ |
+|---------|-------------------|--------|
+| mclagsyncd | 無限（デフォルト max） | 接続断で即時再 accept() |
+| orchagent | 1000 ms (`orchdaemon.cpp:23`) | 特別なバックオフなし |
+| iccpd | 1 秒（CONNECT_INTERVAL_SEC） | TCP 再接続周期 |
+
+> **中間解析メモ**: `meta/_intermediate/cdb-flow/mclag-domain-pubsub.md`
+<!-- /pubsub -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
@@ -357,43 +449,8 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 <!-- /cross-refs -->
 
-<!-- failure -->
-## 失敗挙動 (Phase D)
 
-<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 -->
 
-### MlagOrch 失敗パス一覧
-
-| # | トリガー | 箇所 | 動作 | retry |
-|---|---------|------|------|-------|
-| 1 | 不正テーブル名 | `doTask()` L62-65 | `SWSS_LOG_ERROR("MLAG receives invalid table %s")` + キューに残留 | なし（永続エラー） |
-| 2 | SET 時 `peer_link` フィールドが空または未存在 | `doMlagDomainTask()` L91-99 | erase してサイレントスキップ。ISL 登録は行われない | なし |
-| 3 | `addIslInterface()` が false を返す | `doMlagDomainTask()` L93-96 | `it++`（erase せず） → 次の doTask() で再試行 | あり（現実装では到達不可） |
-| 4 | 重複 MLAG IF ADD (`m_mlagIntfs` に既存) | `addMlagInterface()` L198-201 | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface %s")` + notify なし | なし |
-| 5 | 未知 MLAG IF の DEL (`m_mlagIntfs` に不在) | `delMlagInterface()` L220-223 | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface %s")` + notify なし | なし |
-| 6 | 不明な op_type | `doMlagDomainTask()` L108-112 / `doMlagInterfaceTask()` L149-152 | `SWSS_LOG_ERROR("MLAG receives unknown operation type %s")` + erase | なし |
-
-### peer_ip バリデーション
-
-`MlagOrch` は `peer_ip` フィールドを参照しない。`peer_ip` の不正値（フォーマット違反等）は YANG (`sonic-mclag.yang` `inet:ipv4-address` 型) でバリデーション段階に拒否され、`mlagorch.cpp` レベルには到達しない。
-
-### PORTCHANNEL 未解決時の挙動
-
-`addIslInterface()` (L156-172) は Port オブジェクトの存在確認を行わない（`gPortsOrch->getPort()` コールなし）。指定した `peer_link` の PORTCHANNEL が CONFIG_DB に未存在でも `addIslInterface()` は成功し `SUBJECT_TYPE_MLAG_ISL_CHANGE` を notify する。PORTCHANNEL 未解決による失敗は下流 observer 側で検知される。
-
-### SAI bridge_port 失敗
-
-`MlagOrch` は SAI API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。SAI bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
-
-### STATE_DB / ERROR_TABLE への記録
-
-`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
-
-```bash
-docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
-```
-
-<!-- /failure -->
 
 <!-- ordering -->
 ## 書込み順序依存 (Phase B)
@@ -531,3 +588,79 @@ mclagsyncd が ISOLATION_GROUP_TABLE の MEMBERS を構築する際、ASIC_DB �
 | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` | トンネル bridge port 時のフォールバック | `mclaglink.cpp:90` |
 
 <!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp / sonic-swss/mclagsyncd/mclaglink.cpp / sonic-swss/mclagsyncd/mclaglink.h -->
+
+### MlagOrch (orchagent) 側のプラットフォーム差
+
+`MlagOrch` は **ASIC 識別ロジックを持たない**。`mlagorch.cpp` 全行 (250 行) に `getenv("platform")` / `m_platform` / SAI 直接呼び出しは 0 件。`addIslInterface()` / `addMlagInterface()` は Subject 通知 (`SUBJECT_TYPE_MLAG_ISL_CHANGE` / `SUBJECT_TYPE_MLAG_INTF_CHANGE`) のみを broadcast し、実際の SAI 操作は `FdbOrch` 側が担う。CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` フィールド値はすべてのプラットフォームで共通。
+
+### SAI bridge_port capability と FDB 解決
+
+`mclagsyncd::getBridgePortIdToAttrPortIdMap()` (`mclaglink.cpp:74-99`) が ASIC_DB の `SAI_OBJECT_TYPE_BRIDGE_PORT` を走査し、ポート OID を解決する。
+
+```cpp
+// mclaglink.cpp:87-92
+auto attr_port_id = hash.find("SAI_BRIDGE_PORT_ATTR_PORT_ID");
+if (attr_port_id == hash.end())
+{
+    attr_port_id = hash.find("SAI_BRIDGE_PORT_ATTR_TUNNEL_ID");
+    if (attr_port_id == hash.end())
+        continue;  // 両 attr 不在 → FDB エントリをスキップ
+}
+```
+
+| ASIC 種別 | bridge_port 解決経路 | 影響 |
+|---|---|---|
+| Broadcom / Mellanox (通常ポート) | `SAI_BRIDGE_PORT_ATTR_PORT_ID` (一次) | 正常解決 |
+| VxLAN トンネルポート系 | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` (フォールバック) | 正常解決 |
+| capability 未実装 ASIC | 両 attr 不在 → `continue` | APPL_DB への FDB 伝播スキップ |
+
+### Broadcom / Mellanox MCLAG port isolation 対応差
+
+`mclagsyncd::setPortIsolate()` (`mclaglink.cpp:190-282` / `284-378`) は **環境変数 `platform`** を `getenv()` で取得し、APPL_DB 書込先を 2 経路に分岐させる。`platform` は `docker-iccpd/iccpd.sh` がコンテナ起動時に `asic_type` から設定する。
+
+```cpp
+// mclaglink.h:54-59
+#define BRCM_PLATFORM_SUBSTRING   "broadcom"
+#define BFN_PLATFORM_SUBSTRING    "barefoot"
+#define CTC_PLATFORM_SUBSTRING    "centec"
+#define CLX_PLATFORM_SUBSTRING    "clounix"
+#define MRVL_PRST_PLATFORM_SUBSTRING "marvell-prestera"
+#define MRVL_TL_PLATFORM_SUBSTRING   "marvell-teralynx"
+```
+
+| `platform` 値 | APPL_DB 書込先 | 除外ポート | SAI 経路 |
+|---|---|---|---|
+| `broadcom` / `barefoot` / `centec` / `clounix` / `marvell-prestera` / `marvell-teralynx` | `ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` (TYPE=bridge-port) | MEMBERS から `Ethernet` 系を除外 | `SAI_OBJECT_TYPE_ISOLATION_GROUP` |
+| `mellanox` / `vs` / その他未定義 | `ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` (type=L3, PACKET_ACTION=DROP) | OUT_PORTS から `PortChannel` 系を除外 | `SAI_OBJECT_TYPE_ACL_TABLE` / `ACL_ENTRY` |
+
+ACL fallback (`mellanox` 等) では L3 ACL リソースを 1 テーブル消費する点に注意。
+
+#### 削除挙動差
+
+| 条件 | ISOLATION_GROUP 経路 (Broadcom 等) | ACL fallback (Mellanox 等) |
+|---|---|---|
+| ICCP up + リモート全 I/F down | MEMBERS を空にしてエントリ **保持** | — |
+| ICCP down / dst port 空 (`op_len==0`) | `ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` DEL | `ACL_TABLE_TABLE\|mclag` DEL |
+
+### kernel bridge との連携差
+
+MCLAG は kernel bridge (`brX`) を iccpd が直接操作しない設計。FDB 同期は `APPL_DB FDB_TABLE` → `fdborch` → `sai_fdb_api` の経路のみを使う。`fdbsyncd` が netlink で kernel bridge FDB 変化を監視して APPL_DB に反映する点は Broadcom / Mellanox とも共通。`SUBJECT_TYPE_MLAG_ISL_CHANGE` 受信後の FdbOrch による FDB flush スキップ制御 (`fdborch.cpp:1209-1212`) も全プラットフォーム共通。
+
+### まとめ
+
+| 観点 | platform 差 |
+|---|---|
+| `MlagOrch` (CONFIG_DB → orchagent) | **差なし**（ASIC 識別コード 0 件） |
+| CONFIG_DB `MCLAG_DOMAIN` フィールド値 | 全プラットフォーム共通 |
+| `getBridgePortIdToAttrPortIdMap()` (FDB 解決) | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` フォールバックあり（VxLAN 系で差が出る可能性） |
+| port isolation (mclagsyncd) | `broadcom`/`barefoot`/`centec`/`clounix`/`marvell-*` → `ISOLATION_GROUP_TABLE`、`mellanox`/その他 → ACL fallback |
+| kernel bridge 連携 | 全プラットフォーム共通 (`fdbsyncd` 経由) |
+| multi-ASIC (chassis / T2) | サポート外（host 名前空間 CONFIG_DB のみ参照） |
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/mclag-domain-platform.md`
+<!-- /platform -->
