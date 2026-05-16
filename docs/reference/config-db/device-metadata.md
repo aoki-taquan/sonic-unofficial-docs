@@ -547,7 +547,50 @@ multi-ASIC 環境では `hash_seed + namespace_id` が実際の設定値にな�
 | `bgp.traffic_shift_community` | `12345:12345` | TSA/TSB isolation route-map community |
 | `bgp.internal_community` | `11111:11111` | internal BGP community |
 
-> **スキャン証跡**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`。確認した定数総数: 約 54 個。
+### SwitchOrch ポーリング定数 (`sonic-swss/orchagent/switchorch.cpp`)
+
+`switchorch.cpp` / `switchorch.h` に定義された固定数値。`DEVICE_METADATA.switch_type` や `DEVICE_METADATA.type` の値に依存しないが、SwitchOrch が `DEVICE_METADATA` consumer として動作する際のポーリング周期・重複排除タイマー。
+
+| 定数名 | 値 | 用途 | evidence |
+|--------|-----|------|---------|
+| `SWITCH_STAT_COUNTER_POLLING_INTERVAL_MS` | `60,000` ms | `SwitchOrch` が `FlexCounterManager` を介して SWITCH_STAT カウンタ (dropped_trim / tx_trim パケット) を取得するポーリング間隔 | `sonic-swss/orchagent/switchorch.cpp:32,157` |
+| `DEFAULT_ASIC_SENSORS_POLLER_INTERVAL` | `60` 秒 | `m_sensorsPollerTimer` の初期値。ASIC 温度センサーのポーリング間隔。`ASIC_SENSORS_POLLER_INTERVAL` フィールドで上書き可能 | `sonic-swss/orchagent/switchorch.h:12; switchorch.cpp:154` |
+| `ASIC_SDK_HEALTH_EVENT_ELIMINATE_INTERVAL` | `3,600` 秒 (1 時間) | ASIC SDK health event の重複排除ウィンドウ。同一 severity × category の event を 1 時間以内に重複送信しない | `sonic-swss/orchagent/switchorch.h:29` |
+
+### `switch_type` フィールドの有効 enum 値と既定値
+
+`orchagent/main.cpp:260` は `switch_type` を読み込み、次の 5 値以外は無効として `"switch"` にフォールバックする。
+
+| 値 | SAI_SWITCH_TYPE | 既定 | evidence |
+|----|----------------|------|---------|
+| `switch` | `SAI_SWITCH_TYPE_NPU`（既定） | ◎ 未設定時のフォールバック値 | `sonic-swss/orchagent/main.cpp:251,264` |
+| `voq` | `SAI_SWITCH_TYPE_VOQ` | — | `sonic-swss/orchagent/main.cpp:698` |
+| `fabric` | `SAI_SWITCH_TYPE_FABRIC` | — | `sonic-swss/orchagent/main.cpp:742` |
+| `chassis-packet` | `SAI_SWITCH_TYPE_NPU`（multi-ASIC chassis） | — | `sonic-swss/orchagent/main.cpp:260` |
+| `dpu` | `SAI_SWITCH_TYPE_NPU`（DPU、ZMQ 強制） | — | `sonic-swss/orchagent/main.cpp:260` |
+
+> **注**: `npu` および `dummy-sup` は YANG に定義されているが `main.cpp:260` の有効値リストに含まれない。`npu` は YANG 上の alias として存在するが orchagent は `"switch"` を npu 相当の内部値として使用する。
+
+### `hostname` フィールドの既定値
+
+`DEVICE_METADATA|localhost` に `hostname` が存在しない場合、`config_samples.py` のサンプル設定生成関数が `"sonic"` を書き込む。orchagent は `hostname` 不在時にエラーログを出力して起動を継続する（VoQ モードでは致命的エラー）。
+
+| コンテキスト | 既定値 | evidence |
+|------------|--------|---------|
+| `generate_sample_config()` | `"sonic"` | `sonic-buildimage/src/sonic-config-engine/config_samples.py:50,154` |
+| `migrate_config_db_to_new_schema()` | `"sonic"`（`hostname` キー不在時のみ挿入） | `sonic-buildimage/src/sonic-config-engine/config_samples.py:219-220` |
+| orchagent VoQ モード（`switch_type=voq`） | エラー終了（必須フィールド扱い） | `sonic-swss/orchagent/main.cpp:337-347` |
+
+### `buffer_model` フィールドの enum 値と既定挙動
+
+`cfgmgr/buffermgr.cpp:390-406` が `DEVICE_METADATA|localhost` の `buffer_model` を読み取る。
+
+| 値 | `dynamic_buffer_model` フラグ | 挙動 | evidence |
+|----|-------------------------------|------|---------|
+| `dynamic` | `true` | `buffermgr.cpp:476` の `if (dynamic_buffer_model)` 節に入り、BUFFER_POOL / BUFFER_PROFILE の APPL_DB 転写を **スキップ**（Mellanox/BRCM の dynamic buffer manager が直接 SAI を更新） | `sonic-swss/cfgmgr/buffermgr.cpp:392-394` |
+| `traditional`（またはその他 / 未設定） | `false` | else 節でフラグを `false` に設定し BUFFER_POOL / BUFFER_PROFILE を APPL_DB へ転写 | `sonic-swss/cfgmgr/buffermgr.cpp:397-406` |
+
+> **スキャン証跡**: 対象ファイル `orchagent.sh`, `main.cpp` (sonic-swss), `bgpd.main.conf.j2`, `teamd_increase_retry_count.py`, `fpmsyncd.cpp`, `bgpcfgd/main.py`, `bfdmon.py`, `switch.json.j2`, `constants.yml`, `switchorch.cpp`, `switchorch.h`, `config_samples.py`, `buffermgr.cpp`。確認した定数総数: 約 63 個。
 
 <!-- /constants -->
 
