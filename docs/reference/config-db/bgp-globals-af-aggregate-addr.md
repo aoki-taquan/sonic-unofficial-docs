@@ -153,6 +153,22 @@ YANG の `sonic-bgp-global.yang` は `as_set`、`summary_only`、`policy` すべ
 - frr-mgmt-framework 経路 (`DEVICE_METADATA.frr_mgmt_framework_config=true`) でのみ有効。bgpcfgd テンプレ経路では `BGP_AGGREGATE_ADDRESS` テーブルを使い、両者を混在させると干渉する可能性がある
 <!-- /value-behavior -->
 
+<!-- platform -->
+## プラットフォーム差
+
+`frrcfgd.py` (`src/sonic-frr-mgmt-framework/frrcfgd/`) および `bgpcfgd` (`src/sonic-bgpcfgd/bgpcfgd/`) を全文走査した結果、`BGP_GLOBALS_AF_AGGREGATE_ADDR` の挙動はコミュニティ master 上で **プラットフォーム非依存**である。経路は `frrcfgd` → vtysh → FRR `bgpd` (ユーザ空間ルーティングデーモン) で完結し、SAI / ASIC SDK を直接呼び出さないため、CONFIG_DB スキーマ・キー構造・適用ロジックには ASIC / chassis / multi-asic 差が現れない。
+
+| 観点 | 差の有無 | 根拠 |
+|---|---|---|
+| ASIC ベンダー (Broadcom / Mellanox / Marvell 等) 分岐 | なし | `frrcfgd.py` 全体を `platform|asic|chassis|vendor` で grep して 0 ヒット (偽陽性 1 件は L3384 `'Basic mode...'` の `asic` 部分一致)。aggregate-address 適用は FRR `bgpd` のソフト処理 |
+| switch type (voq / chassis / fabric) 分岐 | なし | `frrcfgd.py` に `voq` / `chassis` / `fabric` 参照 0 件。`hdl_af_aggregate()` (L1313)・`af_aggregate_key_map` (L1982-1983)・per-table 分岐 (L3169, L3187) いずれも ASIC 形態に依存しない |
+| multi-asic / namespace 特殊化 | なし | `frrcfgd.py` に `is_multi_npu()` / `namespace` 参照 0 件。各 asic-namespace は独立 BGP container で同一ロジックを実行 |
+| 一次経路の重複 (bgpcfgd テンプレ vs frr-mgmt-framework) | あり (プラットフォーム非依存) | `BGP_GLOBALS_AF_AGGREGATE_ADDR` を購読するのは `frrcfgd.py` のみ (`DEVICE_METADATA.frr_mgmt_framework_config=true` 経路)。`bgpcfgd/` 配下と `dockers/docker-fpm-frr/` 配下を grep しても 0 ヒット。bgpcfgd テンプレ経路は別テーブル `BGP_AGGREGATE_ADDRESS` を使う点に注意 (ASIC 差ではなく機能経路の切替) |
+| ビルド時 platform オーバライド | なし | `device/<vendor>/<platform>/` 配下に本テーブルを差し替える j2 / json / hwsku-d 由来の差分は検出されず |
+
+詳細な走査ログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-platform.md` を参照。
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
