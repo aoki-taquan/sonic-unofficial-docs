@@ -169,3 +169,47 @@ catch (std::exception &e) {
 
 DHCP_RELAY は SAI 経由でなく Linux カーネル UDP relay (L4)。orchagent は関与しない。
 task_need_retry / task_failed は存在しない。
+
+---
+
+## dhcprelayd (IPv4 リレー管理デーモン) の失敗挙動
+
+調査対象: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` (2026-05-16)
+
+### 18. 不正 server_ip — STATE_DB 取得失敗 → exit(1)
+
+`_get_dhcp_server_ip()` (`dhcprelayd.py:375-385`):
+- `STATE_DB::DHCP_SERVER_IPV4_SERVER_IP|eth0|ip` から DHCP サーバ IP を取得
+- 取得できない場合は 10 秒 sleep × 10 回リトライ
+- `syslog.LOG_INFO "Cannot get dhcp server ip"` (各リトライ)
+- 10 回全失敗: `syslog.LOG_ERR "Cannot get dhcp_server ip from state_db"` → `sys.exit(1)`
+- 原因: `dhcp_server` 機能の dhcpd が未起動または異常終了している場合に発生
+
+### 19. VLAN 未解決 — dhcp_interfaces からの silent discard
+
+`refresh_dhcrelay()` (`dhcprelayd.py:90-99`):
+- `DHCP_SERVER_IPV4` テーブルで `state == "enabled"` のインタフェースを `enabled_dhcp_interfaces` に追加
+- 当該インタフェースが `VLAN` テーブルに存在しない場合 `dhcp_interfaces.discard(dhcp_interface)` で除外
+- ログ出力なし (silent discard)
+- `dhcrelay` 起動コマンドに `-id <vlan>` が含まれず relay が無効化される
+- 将来 VLAN が追加されると `VlanTableEventChecker` が検知して `refresh_dhcrelay()` を再実行する
+
+### 20. isc-dhcp-relay 起動失敗 — zombie 検出 → exit(1)
+
+`_start_dhcrelay_process()` (`dhcprelayd.py:290-313`):
+- `subprocess.Popen(cmds)` で `/usr/sbin/dhcrelay` を起動後 1 秒 sleep
+- `psutil.STATUS_ZOMBIE` を確認
+- zombie の場合: `syslog.LOG_ERR "Failed to start dhcrelay process with: {cmds}"` → `terminate_proc()` → `sys.exit(1)`
+
+### 21. dhcrelay 動作確認失敗 → exit(1) (dhcp_server 機能 disabled 時)
+
+`_check_dhcp_relay_processes()` (`dhcprelayd.py:227-262`):
+- `dhcp_server` 機能 disabled 時に定期実行
+- 実行中の `dhcrelay` プロセスの cmdline と supervisord 設定の期待値を比較
+- 不一致の場合: `syslog.LOG_ERR "Running processes is not as expected! Running: {...}. Expected: {...}"` → `sys.exit(1)` → dhcp_relay コンテナ再起動を強制
+
+### 22. supervisorctl 操作失敗 → exit(1)
+
+`_execute_supervisor_dhcp_relay_process()` (`dhcprelayd.py:209-225`):
+- `supervisorctl stop/start <program>` を実行
+- `res.returncode != 0` の場合: `syslog.LOG_ERR "Error in execute: {res}"` → `sys.exit(1)`
