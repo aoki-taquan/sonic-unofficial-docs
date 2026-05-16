@@ -259,6 +259,40 @@ show buffer pool
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
 <!-- /handler-branching -->
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+### 必須書込み順序
+
+BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の順で CONFIG_DB に書くことが必須。逆順でも最終的には retry で収束するが、dynamic buffer model の warm reboot では失敗の原因になる。
+
+| # | 依存関係 | 種別 | 根拠 |
+|---|----------|------|------|
+| 1 | **BUFFER_POOL → BUFFER_PROFILE** | 強制先行必須 | `m_bufferPoolReady == false` のとき `updateBufferProfileToDb()` は即 return し pending。`bufferorch` は pool 参照未解決で `task_need_retry` | `buffermgrdyn.cpp` L840-898, `bufferorch.cpp` L638-655 |
+| 2 | **BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE** | 強制先行必須 | profile 参照未解決で `task_need_retry`。profile 未作成では PG / QUEUE も作れない | `bufferorch.cpp` L964-972, L1340-1348 |
+| 3 | **PORT オブジェクト存在 → BUFFER_PG / BUFFER_QUEUE** | 強制先行必須 | ポート不在なら `task_invalid_entry` で破棄。admin up **前**に PG/QUEUE を書くことが推奨 | `bufferorch.cpp` L1033-1036, L1577-1585 |
+| 4 | **SAI create-only 制約**: pool 作成前に `type`/`mode` 確定 | 作成後変更不可 | 作成後の `type`/`mode` 変更はサイレントスキップ。YANG 非記載 | `bufferorch.cpp` L437-471 |
+| 5 | **zero pool → zero profile**（投入）/ **zero profile → zero pool**（削除） | vendor 構成限定 | `"The zero profiles are removed first and then the zero pools"` | `buffermgrdyn.cpp` L236-239 |
+| 6 | **dynamic model**: `m_bufferPoolReady` ゲート | dynamic 専用 | Lua plugin によるプールサイズ計算完了まで全上位オブジェクトの SAI 反映をブロック | `buffermgrdyn.cpp` L686-695, L840-857 |
+
+### PORT 先行の詳細
+
+`bufferorch` は BUFFER_PG / BUFFER_QUEUE を処理する際、ポートオブジェクトが存在しなければ `task_invalid_entry` を返してエントリを破棄する（`bufferorch.cpp` L1033-1036, L1113-1114）。また、初期設定以外で admin up 済みポートに PG プロファイルを適用すると `SWSS_LOG_WARN("PG profile '%s' applied after port %s is up")` が出力される。PG / QUEUE はポートの admin up **前**に設定するのが正しい順序。
+
+### SAI create-only 属性（変更不可フィールド）
+
+以下のフィールドは SAI オブジェクト**作成時のみ**有効。既存オブジェクトへの変更は SAI に反映されず LOG_INFO のみ出力される。変更するには SAI オブジェクト削除→再作成が必要。
+
+| テーブル | フィールド | SAI 属性 | evidence |
+|---------|-----------|----------|---------|
+| `BUFFER_POOL` | `type` | `SAI_BUFFER_POOL_ATTR_TYPE` | `bufferorch.cpp` L437-441 |
+| `BUFFER_POOL` | `mode` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE` | `bufferorch.cpp` L469-471 |
+| `BUFFER_PROFILE` | `pool` | `SAI_BUFFER_PROFILE_ATTR_POOL_ID` | `bufferorch.cpp` L656-658 |
+| `BUFFER_PROFILE` | `dynamic_th` / `static_th` 型変更 | `SAI_BUFFER_PROFILE_ATTR_THRESHOLD_MODE` | `bufferorch.cpp` L694-698 |
+
+> **スキャン証跡**: `buffermgr.cpp` L1-600 全行読了、`buffermgrdyn.cpp` L230-970 / L2509-2669 全行読了、`bufferorch.cpp` L89-700 / L960-1590 全行読了。順序依存 6 件検出。
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト / 実装乖離 (Phase A)
 
