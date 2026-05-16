@@ -308,23 +308,6 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 
 <!-- /defaults -->
 
-<!-- platform -->
-## プラットフォーム差 (Phase H)
-
-<!-- evidence: sonic-buildimage/files/image_config/interfaces/interfaces.j2 L143-158 / sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2 L247-262 / sonic-swss/cfgmgr/vrfmgr.cpp L15 -->
-
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| SmartSwitch DPU (`subtype=SmartSwitch` + `switch_type=dpu`) | **eth0 DHCP ブロックが生成されない。`mgmtVrfEnabled=true` でも `/etc/network/interfaces` に `vrf mgmt` 行が追加されず、eth0 の mgmt VRF アサインが発生しない** | `interfaces.j2` L143–158: DPU ノードでは MGMT_INTERFACE なし時の `auto eth0` ブロックをスキップする条件分岐あり |
-| Fabric ASIC (`is_fabric_asic == 1`) | **vrfmgrd が起動しない。MGMT_VRF_CONFIG への書き込みがあっても VRF テーブルマップへの登録が行われない** | `supervisord.conf.j2` L247–262: `{% if is_fabric_asic == 0 %}` ガードで vrfmgrd セクション自体が生成されない |
-| multi-asic | host CONFIG_DB のみ対象。`asicN` namespace は参照しない | `hostcfgd` は引数なし `ConfigDBConnector()` で host namespace に接続。`MGMT_VRF_CONFIG` は host 単位のシングルトンであり各 ASIC namespace に複製されない |
-| VOQ chassis (supervisor + line card) | 各 host で独立適用 | chassis 全体での集中適用機構はなく、各 host の `hostcfgd` が独立に mgmt VRF を管理 |
-| ASIC ベンダー (Broadcom / Mellanox / Marvell 等) | 影響なし | vrfmgrd は SAI 非経由。Linux `ip` コマンドでカーネル VRF netdev を直接操作。`vrfmgr.cpp` に ASIC ベンダー分岐なし |
-| ARM (`aarch64` / `armhf`) vs x86_64 | 差異なし | `vrfmgr.cpp` 全行に `aarch64\|armhf\|ARM\|x86` 分岐 0 ヒット。管理 VRF table ID 6000 はコンパイル時定数で全アーキテクチャ共通 |
-
-詳細根拠は `meta/_intermediate/cdb-flow/mgmt-vrf-config-platform.md` を参照。
-<!-- /platform -->
-
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
