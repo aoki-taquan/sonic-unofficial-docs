@@ -202,6 +202,64 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 
 ---
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`DashRouteOrch` (`dashrouteorch.cpp`) / `DashOrch` (`dashorch.cpp`) は各テーブル間に複数の先行必須依存を持つ。ZMQ / gNMI でテーブルを投入する際は以下の順序を守ること。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 備考 |
+|---|----------|------|------|
+| 1 | `DASH_ROUTE_GROUP_TABLE` → `DASH_ROUTE_TABLE` | 先行必須 | グループ未登録時は `getRouteGroupOid()` が `SAI_NULL_OBJECT_ID` → return false (リトライ) |
+| 2 | `DASH_ENI_TABLE` → `DASH_ROUTE_RULE_TABLE` | 先行必須 | ENI 未登録時は `getEni()` が null → return false (リトライ) |
+| 3 | `DASH_VNET_TABLE` → `DASH_ROUTE_TABLE` | 条件付き先行必須 | `routing_type=vnet`/`vnet_direct` かつ `vnet` 指定時のみ。`routing_type=direct`/`drop` は VNET 不要 |
+| 4 | `DASH_VNET_TABLE` → `DASH_ROUTE_RULE_TABLE` | 条件付き先行必須 | `vnet` フィールド指定時のみ。`gVnetNameToId` に未登録なら return false (リトライ) |
+| 5 | `DASH_ROUTE_TABLE` 全 DEL → `DASH_ENI_ROUTE_TABLE` DEL → `DASH_ROUTE_GROUP_TABLE` DEL | 削除時の順序 | ENI バインド中はルート追加・削除・グループ削除が拒否される (`isRouteGroupBound()=true`) |
+| 6 | `DASH_ROUTE_GROUP_TABLE` → `DASH_ENI_ROUTE_TABLE` | 先行必須 | `setEniRoute()` がグループ OID 未取得なら即 return false (リトライ) |
+
+### 主要制約詳細
+
+**ルートグループ先行 (依存 #1)**: `addOutboundRouting()` は冒頭で `this->getRouteGroupOid(ctxt.route_group)` を呼ぶ。ルートグループが `DASH_ROUTE_GROUP_TABLE` 経由で SAI に登録される前に `DASH_ROUTE_TABLE` の SET メッセージが届いた場合、そのメッセージはリトライキューに残留し続ける（evidence: `dashrouteorch.cpp:70-74`）。
+
+**ENI 先行 (依存 #2)**: `addInboundRouting()` は `dash_orch_->getEni(ctxt.eni)` で ENI の存在を確認する。`DASH_ENI_TABLE` が登録される前の `DASH_ROUTE_RULE_TABLE` は全てリトライされる（evidence: `dashrouteorch.cpp:425-428`）。
+
+**バインド中の操作禁止 (依存 #5)**: `DASH_ENI_ROUTE_TABLE` で ENI とルートグループをバインドすると `bindRouteGroup()` が呼ばれ、`route_group_bind_count_` が 1 以上になる。この状態では:
+
+- `addOutboundRouting()`: SWSS_LOG_WARN + `return true`（メッセージ消費のみ、SAI 書き込みなし）— `dashrouteorch.cpp:65-68`
+- `removeOutboundRouting()`: SWSS_LOG_WARN + `return false`（メッセージ保留）— `dashrouteorch.cpp:231-234`
+- `removeRouteGroup()`: SWSS_LOG_WARN + `return false`（保留）— `dashrouteorch.cpp:755-758`
+
+バインド解除には `DASH_ENI_ROUTE_TABLE` の DEL を先行させ、`unbindRouteGroup()` を経由させること。
+
+### 推奨書込み順序
+
+**追加時**:
+
+```
+1. DASH_ROUTING_TYPE_TABLE   (ルーティングタイプ定義)
+2. DASH_VNET_TABLE           (VNET — vnet/vnet_direct ルート使用時)
+3. DASH_ENI_TABLE            (ENI エントリ)
+4. DASH_ROUTE_GROUP_TABLE    (ルートグループ作成)
+5. DASH_ROUTE_TABLE          (Outbound LPM ルート)
+6. DASH_ROUTE_RULE_TABLE     (Inbound ルートルール)
+7. DASH_ENI_ROUTE_TABLE      (ENI ↔ ルートグループ バインド — 最後)
+```
+
+**削除時** (追加の逆順):
+
+```
+1. DASH_ENI_ROUTE_TABLE DEL  (バインド解除を最初に)
+2. DASH_ROUTE_TABLE DEL
+3. DASH_ROUTE_RULE_TABLE DEL
+4. DASH_ROUTE_GROUP_TABLE DEL
+5. DASH_ENI_TABLE DEL
+6. DASH_VNET_TABLE DEL
+7. DASH_ROUTING_TYPE_TABLE DEL
+```
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
