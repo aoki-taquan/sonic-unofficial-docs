@@ -368,6 +368,59 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 > **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
 <!-- /ordering -->
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`frrcfgd.py` の `nbr_af_key_map` と `bgp_table_handler_common()` の `BGP_PEER_GROUP_AF` 分岐に埋め込まれた定数。`BGP_PEER_GROUP_AF` は `BGP_NEIGHBOR_AF` と同一の `nbr_af_key_map` を共用する。
+
+### FRR コマンド literal (`nbr_af_key_map`)
+
+| フィールド | FRR コマンド literal | evidence |
+|-----------|---------------------|---------|
+| `allow_as_in` (+`allow_as_count`/`allow_as_origin`) | `neighbor <pg> allowas-in <N\|origin>` | `frrcfgd.py:1895` |
+| `admin_status\|ipv4` / `\|ipv6` / `\|l2vpn` | `neighbor <pg> activate` | `frrcfgd.py:1896-1898` |
+| `send_default_route` (+`default_rmap`) | `neighbor <pg> default-originate [route-map <name>]` | `frrcfgd.py:1899` |
+| `default_rmap` | `neighbor <pg> default-originate route-map <name>` | `frrcfgd.py:1900` |
+| `max_prefix_limit` (++`max_prefix_warning_threshold`, +`max_prefix_restart_interval`&`max_prefix_warning_only`) | `neighbor <pg> maximum-prefix <limit> [<threshold>] [restart <interval>\|warning-only]` | `frrcfgd.py:1901-1902` |
+| `route_map_in` | `neighbor <pg> route-map <name> in` | `frrcfgd.py:1903` |
+| `route_map_out` | `neighbor <pg> route-map <name> out` | `frrcfgd.py:1904` |
+| `soft_reconfiguration_in` | `neighbor <pg> soft-reconfiguration inbound` | `frrcfgd.py:1905` |
+| `unsuppress_map_name` | `neighbor <pg> unsuppress-map <name>` | `frrcfgd.py:1906` |
+| `rrclient` | `neighbor <pg> route-reflector-client` | `frrcfgd.py:1907` |
+| `weight` | `neighbor <pg> weight <value>` | `frrcfgd.py:1908` |
+| `as_override` | `neighbor <pg> as-override` | `frrcfgd.py:1909` |
+| `send_community` | `neighbor <pg> send-community <type>` | `frrcfgd.py:1910` |
+| `tx_add_paths` | `neighbor <pg> addpath-tx-all-paths` / `addpath-tx-bestpath-per-AS` | `frrcfgd.py:1911` |
+| `unchanged_as_path` / `unchanged_med` / `unchanged_nexthop` | `neighbor <pg> attribute-unchanged [as-path] [med] [next-hop]` | `frrcfgd.py:1912-1913` |
+| `filter_list_in` | `neighbor <pg> filter-list <name> in` | `frrcfgd.py:1914` |
+| `filter_list_out` | `neighbor <pg> filter-list <name> out` | `frrcfgd.py:1915` |
+| `nhself` | `neighbor <pg> next-hop-self` | `frrcfgd.py:1916` |
+| `nexthop_self_force` | `neighbor <pg> next-hop-self force` | `frrcfgd.py:1917` |
+| `prefix_list_in` | `neighbor <pg> prefix-list <name> in` | `frrcfgd.py:1918` |
+| `prefix_list_out` | `neighbor <pg> prefix-list <name> out` | `frrcfgd.py:1919` |
+| `remove_private_as_enabled` (+`remove_private_as_all`, +`replace_private_as`) | `neighbor <pg> remove-private-AS [all] [replace-AS]` | `frrcfgd.py:1920-1922` |
+| `cap_orf` | `neighbor <pg> capability orf prefix-list <send\|receive\|both>` | `frrcfgd.py:1923` |
+| `route_server_client` | `neighbor <pg> route-server-client` | `frrcfgd.py:1924` |
+
+### vtysh コマンドプレフィクス定数 (`BGP_PEER_GROUP_AF` 分岐)
+
+| 階層 | literal | evidence |
+|------|---------|---------|
+| L1 | `configure terminal` | `frrcfgd.py:2869` |
+| L2 | `router bgp <local_asn> vrf <vrf>` | `frrcfgd.py:2870` |
+| L3 | `address-family <af> <ip_type>` | `frrcfgd.py:2871` |
+
+### address-family 文字列定数 (key parse)
+
+| 処理 | 定数 | evidence |
+|------|------|---------|
+| key 分割 | `\|` (`key.split('\|')` で peer_group_name と afi_safi を分離) | `frrcfgd.py:2866` |
+| af/ip_type 分割 | `_` (`af_type.lower().split('_')` で `ipv4_unicast` → `ipv4`, `unicast`) | `frrcfgd.py:2867` |
+| 小文字正規化 | `.lower()` (大文字混在を吸収) | `frrcfgd.py:2867` |
+| tbl_key ディスパッチキー | `admin_status` (`admin_status\|<af>` の照合に使用) | `frrcfgd.py:2665-2668` |
+
+詳細スキャン結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-constants.md` を参照。
+<!-- /constants -->
 
 <!-- cross-refs -->
 ## 暗黙参照 — `BGPConfigDaemon` が読み出す関連 CONFIG_DB テーブル (Phase C)

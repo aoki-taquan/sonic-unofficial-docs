@@ -381,4 +381,35 @@ configure terminal
 | `send_community='none'` vs 未設定 | DB 上の状態は異なるが FRR 上の効果は同一（送信なし）。`'none'` は `hdl_send_com` で `no send-community all` のみ発行、未設定はコマンド不発行 |
 
 <!-- /defaults -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-side.md`
+
+### 調査結果: 副次書込なし
+
+`frrcfgd.py` が import する DB ライブラリは `ConfigDBConnector`（CONFIG_DB 読み取り専用）のみ。`SonicV2Connector` / StateDB / CountersDB / AppDB の import は存在しない。
+
+`bgp_table_handler_common` ハンドラは以下のフローのみ実行する:
+
+```
+CONFIG_DB 変化通知
+  → bgp_message キューに積む (L3928)
+  → __update_bgp() で vtysh コマンドを組み立て
+  → ['vtysh', '-c', 'configure terminal', ...] をサブプロセス実行
+```
+
+### 副次 DB 書込テーブル
+
+| DB | テーブル | 書込有無 | 根拠 |
+|----|---------|---------|------|
+| STATE_DB | BGP_NEIGHBOR_TABLE 等 | **なし** | `frrcfgd.py` に STATE_DB import / write なし |
+| COUNTERS_DB | — | **なし** | 同上 |
+| APPL_DB | — | **なし** | 同上 |
+| FRR (vtysh) | bgpd 内部ステート | **あり** | `frrcfgd.py:47-52` — vtysh 経由で bgpd へ AF 設定を投入 |
+
+BGP ネイバー AF の動的ステート（セッション状態・受信 prefix 数等）は FRR `bgpd` メモリ内にのみ保持される。`show bgp neighbor` / `show bgp summary` 等の vtysh コマンドで参照し、SONiC Redis DB への書き戻しは行われない。
+
+<!-- /side-effects -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
