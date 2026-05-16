@@ -241,6 +241,58 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 | Decap TTL mode | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | `srv6orch.cpp:535` |
 | Decap DSCP mode | CONFIG_DB の `decap_dscp_mode` 値 | `srv6orch.cpp:530-532` |
 
+<!-- ordering -->
+## 処理順序と依存関係（Phase B 解析）
+
+> 根拠: `srv6orch.cpp` 行 1119–1143, 1384–1543, 2272–2342, `managers_srv6.py` 行 56–115 の全行精読。
+> evidence: `meta/_intermediate/cdb-flow/srv6-ordering.md`
+
+### 投入（SET）推奨順序
+
+```
+1. VRF テーブル            ← end.t / end.dt* / udt* で decap_vrf に custom VRF を使う場合
+2. SRV6_MY_LOCATORS         ← bgpcfgd が FRR へ locator prefix を通知
+3. SRV6_SID_LIST_TABLE      ← fpmsyncd / FRR 経由で SID リストを APP_DB に書き込み
+4. SRV6_MY_SIDS             ← bgpcfgd がロケータ確認後に FRR へ static-sids を反映
+5. SRV6_MY_SID_TABLE        ← Srv6Orch が VRF・Nexthop 確認後に SAI MY_SID_ENTRY を投入
+6. PIC_CONTEXT_TABLE        ← VPN 経路が確立した後に PIC コンテキストを登録
+```
+
+### 削除（DEL）推奨順序
+
+```
+1. PIC_CONTEXT_TABLE 参照ルート  ← ref_count を 0 に下げる
+2. PIC_CONTEXT_TABLE エントリ   ← ref_count == 0 でないと task_need_retry (srv6orch.cpp:2328)
+3. SRV6_MY_SID_TABLE エントリ   ← SID リストへの nexthop 参照を先に解除
+4. SRV6_SID_LIST_TABLE エントリ  ← nexthops.size() > 0 なら task_need_retry (srv6orch.cpp:1133)
+5. SRV6_MY_SIDS                 ← FRR 側 SID 削除 (static-sids no コマンド)
+6. SRV6_MY_LOCATORS             ← FRR 側ロケータ削除 (SID を先に削除してから)
+```
+
+### 各テーブルのペンディング・ブロック機構
+
+| テーブル | 条件 | 挙動 |
+|---------|------|------|
+| `SRV6_MY_SIDS` (bgpcfgd 経由) | ロケータが `SRV6_MY_LOCATORS` に未登録 | `deps` サブスクリプションで保留、ロケータ登録後に自動再試行 (`managers_srv6.py:62–68`) |
+| `SRV6_MY_SID_TABLE` (VRF 系 action) | `m_vrfOrch->isVRFexists()` が false | 即時失敗（`return false`）、ペンディング機構なし (`srv6orch.cpp:1500`) |
+| `SRV6_MY_SID_TABLE` (nexthop 系 action) | `m_neighOrch->hasNextHop()` が false | `m_pendingSRv6MySIDEntries` に登録、neighbor ADD 通知で自動再インストール (`srv6orch.cpp:1532–1542`) |
+| `SRV6_SID_LIST_TABLE` DEL | `nexthops.size() > 0` | `task_need_retry`（参照 nexthop が残っている間はリトライ） |
+| `PIC_CONTEXT_TABLE` DEL | `ref_count > 0` | `task_need_retry`（RouteOrch が参照を解放するまで） |
+
+### IPinIP トンネル自動生成の条件
+
+`un` / `udt46` アクションで IPinIP トンネルを自動生成するには、CONFIG_DB `SRV6_MY_SIDS` の
+`decap_dscp_mode` が設定されている必要がある（`mySidTunnelRequired()` の `dscp_mode.has_value()` 判定）。
+`decap_dscp_mode` 未設定時はトンネルを生成せず、Overlay RIF も作成されない。
+
+### Warm-reboot 非対応
+
+`srv6orch.cpp` / `srv6orch.h` に `WarmStart` / reconcil 実装は存在しない。
+warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み込みして SAI を再プログラムする
+（cold-recovery 相当）。FRR (`bgpcfgd`) 側も warm-reboot ガードを持たないため、
+**warm-reboot 中は SRv6 フォワーディングが一時的に停止する**点に注意すること。
+<!-- /ordering -->
+
 ---
 
 ## 設定例
