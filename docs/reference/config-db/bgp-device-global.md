@@ -333,4 +333,81 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 詳細根拠 (関数本体・呼出関係・SAI attr id) は `meta/_intermediate/cdb-flow/bgp-device-global-platform.md` を参照。
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### managers_device_global.py クラス定数 (L12-14)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `TSA_DEFAULTS` | `"false"` | `tsa_enabled` の Python 側既定値 (`__init__` / `del_handler` / `configure_tsa(data=None)` fallback) | `managers_device_global.py:12` |
+| `WCMP_DEFAULTS` | `"false"` | `wcmp_enabled` の Python 側既定値 | `managers_device_global.py:13` |
+| `IDF_DEFAULTS` | `"unisolated"` | `idf_isolation_state` の Python 側既定値 | `managers_device_global.py:14` |
+
+### フィールド値リテラル — 受理セット
+
+| フィールド | 受理する文字列 | 拒否時 | evidence |
+|-----------|---------------|--------|---------|
+| `tsa_enabled` | `"true"` / `"false"` のみ (小文字厳密一致) | `log_err("TSA: invalid value(...)")` → False 返却 | `managers_device_global.py:103,186-188` |
+| `wcmp_enabled` | `"true"` / `"false"` のみ | `log_err("W-ECMP: invalid value(...)")` → False 返却 | `managers_device_global.py:146-148` |
+| `idf_isolation_state` | `"unisolated"` / `"isolated_withdraw_all"` / `"isolated_no_export"` のみ | `log_err("IDF: invalid value(...)")` → False 返却 | `managers_device_global.py:256-258` |
+
+> `"True"` / `"FALSE"` / `"1"` / `"0"` は YANG `boolean` 形式に反するためすべて拒否される。`BgpGlobalStateOrch` (C++) 側も `value == "true"` という小文字リテラル一致で bool 化する (`bfdorch.cpp:815`)。
+
+### switch_role 受理リスト (L260)
+
+| 文字列 | 用途 | evidence |
+|--------|------|---------|
+| `"SpineRouter"` / `"LowerSpineRouter"` / `"UpperSpineRouter"` | IDF isolate/unisolate の FRR push を実行する 3 ロール。それ以外は `downstream_isolate_unisolate()` が早期 return | `managers_device_global.py:260` |
+
+### chassis 内 BGP セッション識別 substring (L215, L219-222)
+
+| 文字列 | 用途 |
+|--------|------|
+| `"_INTERNAL_"` / `"VOQ_"` | route-map 名にこの substring を含むものは VOQ chassis 内 LC 間 iBGP として扱い、TSA isolate 時も isolate 対象に含める (`internal_route_map="1"`) |
+| `"V4"` / `"V6"` | route-map 名に含めば `ip_version` / `ip_protocol` 変数として j2 に渡す |
+
+### CHASSIS_APP_DB 参照キー (L247)
+
+| 項目 | 値 |
+|------|----|
+| DB | `CHASSIS_APP_DB` |
+| Key | `"BGP_DEVICE_GLOBAL|STATE"` (リテラル) |
+| Field | `"tsa_enabled"` (リテラル) |
+| 失敗時 fallback | `"false"` (`managers_device_global.py:239`) |
+
+### route-map 名抽出 regex (L231)
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `out_route_map` | `r'^\s*neighbor \S+ route-map (\S+) out$'` | bgpd 現行 config からアウトバウンド route-map 名を抽出 |
+
+### FRR コマンドリテラル (テンプレート由来)
+
+| テンプレート | 主要 FRR リテラル | evidence |
+|-------------|-------------------|---------|
+| `bgpd/wcmp/bgpd.wcmp.conf.j2` | `route-map TO_BGP_PEER_V4/V6 permit 100` + `set extcommunity bandwidth num-multipaths` (true) / `no set extcommunity bandwidth` (false) | `bgpd.wcmp.conf.j2:4-18` |
+| `bgpd/tsa/bgpd.tsa.isolate.conf.j2` | `route-map {name} permit 20` + `match {ip} address prefix-list PL_Loopback{V4,V6}`、`route-map {name} permit 30` + `match tag <internal_community_match_tag>`、`route-map {name} deny 40` (catch-all) | `bgpd.tsa.isolate.conf.j2:1-13` |
+| `bgpd/idf_isolate/idf_isolate.conf.j2` | `route-map CHECK_IDF_ISOLATION permit 1/2/3` (Loopback + tag)、`deny 4` (isolated_withdraw_all 限定)、`permit 10` + `set community no-export additive` (isolated_no_export 時) | `idf_isolate.conf.j2:1-22` |
+| `bgpd/idf_isolate/idf_unisolate.conf.j2` | `no route-map CHECK_IDF_ISOLATION permit 1/2/3` + `no route-map ... deny 4` + `permit 10` + `no set community no-export additive` | `idf_unisolate.conf.j2:1-6` |
+
+> route-map 名 `TO_BGP_PEER_V4` / `TO_BGP_PEER_V6` / `CHECK_IDF_ISOLATION` および seq 番号 (`20` / `30` / `40` / `100` / `1` / `2` / `3` / `4` / `10`) はすべて FRR j2 側ハードコードで、CONFIG_DB / constants.yml から差し替え不可。
+
+### BgpGlobalStateOrch (bfdorch.cpp) 側リテラル
+
+| 項目 | 値 | evidence |
+|------|----|---------|
+| `tsa_enabled` 初期値 | `false` (C++ bool) | `bfdorch.cpp:733` |
+| field 名マッチ | `"tsa_enabled"` (`wcmp_enabled` / `idf_isolation_state` は無視) | `bfdorch.cpp:813` |
+| value 比較 | `value == "true"` (小文字厳密一致) | `bfdorch.cpp:815` |
+| SAI attr (v4 offload 照会) | `SAI_SWITCH_ATTR_SUPPORTED_IPV4_BFD_SESSION_OFFLOAD_TYPE` | `bfdorch.cpp:761` |
+| SAI attr (v6 offload 照会) | `SAI_SWITCH_ATTR_SUPPORTED_IPV6_BFD_SESSION_OFFLOAD_TYPE` | `bfdorch.cpp:764` |
+| offload 判定 | `attr.value.u32list.list[0] != SAI_BFD_SESSION_OFFLOAD_TYPE_NONE` | `bfdorch.cpp:787` |
+| capability list 要求サイズ | `1` (`u32list.count = 1` 固定) | `bfdorch.cpp:780-782` |
+
+> orchagent 側は `tsa_enabled` 1 フィールドしか購読しない (`if (type == "tsa_enabled")`)。`wcmp_enabled` / `idf_isolation_state` は完全に bgpcfgd → FRR 経路で閉じ、SAI まで届かない。
+
+> **スキャン証跡**: `managers_device_global.py` 全 288 行読了 (クラス定数 3、受理文字列 8、ロール 3、substring 4、regex 1)。`bfdorch.cpp` L114-200 / L729-829 読了 (リテラル 8、SAI attr id 2)。FRR j2 テンプレート 5 件読了 (route-map 名 3、seq 番号 9 種、extcommunity リテラル 1)。中間ファイル: `meta/_intermediate/cdb-flow/bgp-device-global-constants.md`
+<!-- /constants -->
+
 <!-- glossary-links-injected: 029bff240b1b -->
