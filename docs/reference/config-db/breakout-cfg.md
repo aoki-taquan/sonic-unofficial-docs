@@ -281,6 +281,75 @@ show interfaces breakout
 
 > **スキャン証跡**: config/main.py L5467-5554 全行読了。ランタイムデーモンによる直接消費なし。分岐はすべて CLI コマンドパス内。4 件抽出。
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+`BREAKOUT_CFG` テーブルを直接 Subscribe するランタイムデーモンは存在しない。CLI が CONFIG_DB[PORT] を変更することで、portsyncd → PortsOrch → BufferOrch → SAI の間接連鎖が起動する。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|-------------------|
+| CLI → CONFIG_DB[BREAKOUT_CFG] | Redis `HSET` 直接書き込み | — |
+| CLI → CONFIG_DB[PORT] | `writeConfigDB()` → Redis `HSET` | — |
+| CONFIG_DB[PORT] → portsyncd | 起動時一括読み取り (`getKeys`) | — |
+| portsyncd → APPL_DB[PORT_TABLE] | `ProducerStateTable::set()` | APPL_DB channel |
+| APPL_DB[PORT_TABLE] → PortsOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@appl_db__:PORT_TABLE\|*` |
+| PortsOrch → BufferOrch | 関数呼び出し `gBufferOrch->isPortReady()` | — |
+| PortsOrch → SAI | SAI API 直接呼び出し | `sai_port_api->create_port_bulk()` |
+
+### CLI 起動経路（Producer ロール）
+
+`config interface breakout <port> <mode>` (`sonic-utilities/config/main.py` L5465) が以下を順に実行する:
+
+1. CONFIG_DB[BREAKOUT_CFG] 読み取り → `platform.json` 照合（L5479-5491）
+2. `ConfigMgmt.breakOutPort()` を呼び出し (`config_mgmt.py` L451):
+   - `_shutdownIntf(delPorts)` — 削除対象ポートを `admin_status: down`
+   - `writeConfigDB(delConfigToLoad)` — PORT エントリ削除 → CONFIG_DB
+   - `_verifyAsicDB(timeout=60s)` — ASIC_DB ポーリング確認
+   - `writeConfigDB(addConfigToLoad)` — PORT エントリ追加 → CONFIG_DB
+3. PORT 再構成成功後のみ `CONFIG_DB.set_entry("BREAKOUT_CFG", port, {'brkout_mode': mode})` (L5554)
+
+### PORT 変更を契機とした orchagent 連鎖
+
+`portsyncd` は CONFIG_DB[PORT] のエントリを `ProducerStateTable` 経由で APPL_DB[PORT_TABLE] へ転送する (`portsyncd.cpp` L71,179-214)。`PortsOrch` は `Orch(db, tableNames)` 基底クラスの `addConsumer()` が生成する `ConsumerStateTable(APPL_DB, APP_PORT_TABLE_NAME)` でこれを受信し (`orchdaemon.cpp` L217-232)、`doPortTask()` を呼び出す (`portsorch.cpp` L4555)。
+
+`doPortTask()` 内では `gBufferOrch->isPortReady(port_name)` が `true` になるまで新ポートを `m_pendingPortSet` に保留する (L4779-4784)。DPB 後に BUFFER_PG / BUFFER_QUEUE が書き込まれ BufferOrch が処理完了してから、PortsOrch が `sai_port_api->create_port_bulk()` でポートを SAI に登録する。
+
+### データフロー図
+
+```
+operator: config interface breakout Ethernet0 4x25G
+  ↓ sonic-utilities/config/main.py L5465 (interface_breakout)
+  ↓   CONFIG_DB[PORT|Ethernet*] 削除 & 追加 (writeConfigDB)
+  ↓   CONFIG_DB[BREAKOUT_CFG|Ethernet0] 更新 (L5554) ← 成功後のみ
+        ↓
+portsyncd (portsyncd.cpp L91, L179-214)
+  handlePortConfigFromConfigDB()
+    ProducerStateTable → APPL_DB[PORT_TABLE|Ethernet*]
+    ProducerStateTable → APPL_DB[PORT_TABLE|PortConfigDone]
+        ↓ ConsumerStateTable keyspace 通知
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  Consumer::drain() → PortsOrch::doPortTask() (portsorch.cpp L4555)
+    key == "PortConfigDone" → setPortConfigState(PORT_CONFIG_RECEIVED) (L4598)
+    通常 PORT エントリ:
+      gBufferOrch->isPortReady(port_name)?  (L4779)
+        No  → m_pendingPortSet に保留
+        Yes → addPortBulk() → sai_port_api->create_port_bulk()
+                             → STATE_DB[PORT_TABLE|Ethernet*] 更新
+ASIC (sairedis → ASIC_DB 経由)
+
+BREAKOUT_CFG 直接 Subscribe: なし
+APPL_DB[BREAKOUT_CFG]: なし（BREAKOUT_CFG は CONFIG_DB 専用）
+```
+
+### retry メカニズム
+
+新ポートが `m_pendingPortSet` に保留される条件: `gBufferOrch->isPortReady()` が `false`（BUFFER_PG / BUFFER_QUEUE 未登録）。BufferOrch のエントリが揃い次第、次回 `doPortTask()` 呼び出し時に再試行される。
+
+> **Evidence**: `sonic-utilities/config/main.py:5465-5554` (CLI 起動経路全体)、`sonic-swss/portsyncd/portsyncd.cpp:71,179-214` (ProducerStateTable → APPL_DB)、`sonic-swss/orchagent/orchdaemon.cpp:217-232` (PortsOrch 生成・ConsumerStateTable wiring)、`sonic-swss/orchagent/portsorch.cpp:4555-4604,4779-4788` (doPortTask / isPortReady 保留)、`sonic-swss/orchagent/bufferorch.cpp:254-273` (isPortReady 実装); 詳細分析 `meta/_intermediate/cdb-flow/breakout-cfg-pubsub.md`
+<!-- /pubsub -->
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
