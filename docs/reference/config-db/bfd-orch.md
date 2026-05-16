@@ -97,6 +97,187 @@ CONFIG_DB の `BFD_SESSION|<vrf>|<interface>|<peer_ip>` と同一構造 (区切�
 | UDP 送信元ポート重複 | 最大 3 回リトライ (`NUM_BFD_SRCPORT_RETRIES = 3`、ポート範囲 49152–65535) |
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+APPL_DB `BFD_SESSION_TABLE` を購読する `BfdOrch::doTask(Consumer&)` (`bfdorch.cpp:111-218`) は `aclorch` 等とは異なり `gPortsOrch->allPortsReady()` の早期 return ガードを**持たない**。代わりに `create_bfd_session()` 内で個別に PORT / VRF / SAI capability を解決し、失敗時に `return false` で `it++` 待機する設計になっている。
+
+### 1. BgpGlobalStateOrch 先行と software/hardware 経路の静的固定
+
+```cpp
+// bfdorch.cpp:114-121
+BgpGlobalStateOrch* bgp_global_state_orch = gDirectory.get<BgpGlobalStateOrch*>();
+bool tsa_enabled = false;
+bool use_software_bfd = true;
+if (bgp_global_state_orch)
+{
+    tsa_enabled = bgp_global_state_orch->getTsaState();
+    use_software_bfd = bgp_global_state_orch->getSoftwareBfd();
+}
+```
+
+`BgpGlobalStateOrch` が orchagent 起動シーケンスで `BfdOrch` より先に生成されていないと `gDirectory.get` が null を返し、`use_software_bfd = true`（software 経路）に強制 fallback する。`BgpGlobalStateOrch` コンストラクタ (`bfdorch.cpp:729-736`) は `offload_supported(IPv4) && offload_supported(IPv6)` を**起動時 1 回**だけ評価して `bfd_offload` を確定し、`getSoftwareBfd()` は `!bfd_offload` を返す純粋関数。
+
+→ 順序依存: `BgpGlobalStateOrch` ≺ `BfdOrch` の生成順。経路の動的切替は不可（swss コンテナ再起動が必須）。
+
+### 2. PORT (PortsOrch) 先行必須 — `alias != "default"` 経路のみ
+
+```cpp
+// bfdorch.cpp:482-490 (create_bfd_session 内)
+if (alias != "default")
+{
+    Port port;
+    if (!gPortsOrch->getPort(alias, port))
+    {
+        SWSS_LOG_ERROR("Failed to locate port %s", alias.c_str());
+        return false;  // → doTask の it++ で次イベントループ再試行
+    }
+    ...
+}
+```
+
+出力インタフェース指定 BFD（hardware lookup 無効 = ASIC が次ホップを引かない方式）では `PORT|<alias>` が PortsOrch に登録済みでないと SET が成立しない。一方 `alias == "default"`（hardware lookup 有効）の純 L3 BFD は PORT 未初期化でも処理が進むため、PortsOrch readiness と無関係。
+
+→ 順序依存: 出力インタフェース指定時のみ `PORT|<alias>` が先行必須。
+
+### 3. VRF (VRFOrch) 先行必須 — hardware lookup ＋ 非 default VRF
+
+```cpp
+// bfdorch.cpp:530-541
+attr.id = SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER;
+if (vrf_name == "default")
+{
+    attr.value.oid = gVirtualRouterId;
+}
+else
+{
+    VRFOrch* vrf_orch = gDirectory.get<VRFOrch*>();
+    attr.value.oid = vrf_orch->getVRFid(vrf_name);
+}
+```
+
+`VRFOrch::getVRFid` は未登録 VRF に対して `SAI_NULL_OBJECT_ID` を返すため、後続の `sai_bfd_api->create_bfd_session` が失敗する。`handleSaiCreateStatus` の戻りが `task_need_retry` であれば次イベントループで再試行される。
+
+→ 順序依存: hardware lookup ＋ 非 default VRF では `VRF|<name>` が VRFOrch に登録済みであること。
+
+### 4. SAI state-change 通知ハンドラ登録（最初の SET で 1 回だけ）
+
+```cpp
+// bfdorch.cpp:307-315 (create_bfd_session 入口)
+if (!register_state_change_notif)
+{
+    if (!register_bfd_state_change_notification())
+    {
+        SWSS_LOG_ERROR("BFD session for %s cannot be created", key.c_str());
+        return false;
+    }
+    register_state_change_notif = true;
+}
+```
+
+`register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) は `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` の `set_implemented` capability を照会し、false の ASIC では永続的に false を返す → そのプラットフォームでは**全 BFD セッションが reject** され続ける（順序解消されない致命的依存）。
+
+### 5. software BFD 経路への切替時の書込み順序
+
+```cpp
+// bfdorch.cpp:131-139 (SET) / 180-188 (DEL)
+if (use_software_bfd)
+{
+    m_stateSoftBfdSessionTable->set(createStateDBKey(key), data);
+    it = consumer.m_toSync.erase(it);
+    continue;
+}
+```
+
+`use_software_bfd == true` のとき `create_bfd_session()` を**通らず** STATE_DB `SOFTWARE_BFD_SESSION_TABLE` に転記して即 erase する。PORT / VRF / SAI capability 依存はすべて回避されるが、代わりに後段で STATE_DB を購読する `bgpcfgd/BfdMgr` (→ FRR `bfdd`) の起動順に依存する。`bgpcfgd` の購読開始前に書き込まれた分は反映されないため、起動順は **`bgpcfgd` ≺ `swss/bfdorch`** が望ましい。
+
+→ 順序依存: software 経路は bfdorch 内に依存無し、外部 (`bgpcfgd`) との起動順レースに置換される。
+
+### 6. TSA 連動 — `bfd_session_cache` リプレイの順序
+
+```cpp
+// bfdorch.cpp:155-169 (SET / shutdown_bfd_during_tsa == "true" のとき)
+if (tsa_shutdown_enabled)
+{
+    bfd_session_cache[key] = data;           // 常にキャッシュ更新
+    if (!tsa_enabled)
+    {
+        if (!create_bfd_session(key, data)) { it++; continue; }
+    }
+    else
+    {
+        notify_session_state_down(key);      // TSA 中は SAI セッション作らず Down 通知のみ
+    }
+}
+```
+
+```cpp
+// bfdorch.cpp:683-704
+void BfdOrch::handleTsaStateChange(bool tsaState)
+{
+    for (auto it : bfd_session_cache)
+    {
+        if (tsaState == true)
+        {
+            if (bfd_session_map.find(it.first) != bfd_session_map.end())
+            {
+                notify_session_state_down(it.first);
+                remove_bfd_session(it.first);
+            }
+        }
+        else
+        {
+            if (bfd_session_map.find(it.first) == bfd_session_map.end())
+            {
+                create_bfd_session(it.first, it.second);
+            }
+        }
+    }
+}
+```
+
+`BgpGlobalStateOrch::doTask()` (`bfdorch.cpp:813-826`) が `BGP_DEVICE_GLOBAL|STATE` の `tsa_enabled` フィールド変化を検知して `BfdOrch::handleTsaStateChange()` を呼び、`bfd_session_cache` 全件を **`std::map` キー辞書順**で replay する。TSA exit 時の create は `bfd_session_map` 未登録のものに限るため二重 create は抑止されるが、replay 中に PORT/VRF/SAI capability 状態が変動していれば create が失敗する余地がある。`shutdown_bfd_during_tsa != "true"` の通常セッションは cache 対象外で、TSA 中も SAI セッションが維持される。
+
+→ タイミング依存: TSA cache replay の対象は `shutdown_bfd_during_tsa == "true"` のセッションのみ。replay 順は辞書順で、PORT/VRF 復帰前に enter→exit が走ると create 失敗。
+
+### 7. DEL → SET 同一キー連続書込み
+
+```cpp
+// bfdorch.cpp:190-209 (DEL)
+if (bfd_session_cache.find(key) != bfd_session_cache.end())
+{
+    bfd_session_cache.erase(key);                   // cache 先消し
+    if (!tsa_enabled)
+    {
+        if (!remove_bfd_session(key)) { it++; continue; }
+    }
+}
+else
+{
+    if (!remove_bfd_session(key)) { it++; continue; }
+}
+```
+
+`remove_bfd_session()` は内部で `bfd_session_map.erase` と `bfd_session_lookup.erase(bfd_session_id)` を行う (`bfdorch.cpp:622-635`)。同一 doTask サイクル内では順次処理されるため通常は安全だが、`remove_bfd_session` が失敗 (`it++`) して残った状態で次サイクルに DEL→SET が来ると、SET 側の `bfd_session_map.find(key) != end` チェック (`bfdorch.cpp:316-320`) が古い OID を引いて `"BFD session for %s already exists"` で **no-op return true** になり、新パラメータが反映されない。
+
+### 順序依存サマリ
+
+| 依存項目 | スコープ | 解消メカニズム | evidence |
+|---|---|---|---|
+| BgpGlobalStateOrch 先行 | 起動時 1 回 | null なら software 経路に fallback | bfdorch.cpp:114-121, 729-736 |
+| software / hardware 経路 | 起動時 1 回固定 | SAI capability 1 回照会、動的切替不可 | bfdorch.cpp:749-791 |
+| PORT 初期化 | `alias != "default"` のみ | `getPort` 失敗で `return false` → 再試行 | bfdorch.cpp:482-490 |
+| VRF 登録 | hardware lookup ＋ 非 default VRF | `getVRFid` null → SAI create 失敗 → handleSaiCreateStatus | bfdorch.cpp:530-541 |
+| SAI state-change 通知登録 | 初回 SET 1 回 | capability false で永続 reject | bfdorch.cpp:270-315 |
+| TSA cache replay | TSA enter/exit | `handleTsaStateChange` で辞書順 replay | bfdorch.cpp:141-178, 683-704 |
+| DEL → SET 同一キー | 連続書込 | DEL 失敗時 SET no-op の落とし穴 | bfdorch.cpp:190-209, 316-320 |
+| software 経路の購読側起動順 | software BFD のみ | `bgpcfgd` 先行が望ましい | bfdorch.cpp:131-139 |
+
+!!! warning "PortsOrch readiness ガード非搭載"
+    `BfdOrch::doTask()` は `aclorch` 等と異なり `gPortsOrch->allPortsReady()` の早期 return を持たない。`alias == "default"` の hardware lookup BFD は PORT 未初期化状態でも `create_bfd_session()` まで到達するため、PortsOrch readiness と独立に処理される点に注意。
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -190,6 +371,58 @@ APPL_DB `BFD_SESSION_TABLE` に対応する YANG schema は存在しない。す
 - APPL_DB `BFD_SESSION_TABLE` に対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-swss/orchagent/bfdorch.cpp`
+
+### capability 照会・初期化の失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ | evidence |
+|---|---|---|---|---|
+| `sai_query_attribute_capability(BFD_SESSION_STATE_CHANGE_NOTIFY)` が SUCCESS 以外 | `register_bfd_state_change_notification()` | `false` 返却 → 以後 `create_bfd_session()` が即 reject | `LOG_ERROR` ("Unable to query the BFD change notification capability") | `bfdorch.cpp:276-283` |
+| `capability.set_implemented == false` (BFD 通知未実装 ASIC) | 同上 | `false` 返却 → セッション作成不能 | `LOG_ERROR` ("BFD register change notification not supported") | `bfdorch.cpp:286-289` |
+| 通知ハンドラ登録 (`set_switch_attribute`) 失敗 | 同上 | `false` 返却 → セッション作成不能 | `LOG_ERROR` ("Failed to register BFD notification handler") | `bfdorch.cpp:297-300` |
+| `sai_query_attribute_capability(SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE)` 失敗 | `BgpGlobalStateOrch::offload_supported()` | `false` 返却 → `use_software_bfd=true` 経路へ縮退 | `LOG_ERROR` ("Unable to query BFD offload capability") | `bfdorch.cpp:769-772` |
+| `capability.get_implemented == false` | 同上 | `false` 返却 → software BFD 経路へ縮退 | なし (silent) | `bfdorch.cpp:774-777` |
+| offload type 取得失敗 / `u32list.count == 0` | 同上 | `false` 返却 → software BFD 経路 | `LOG_ERROR` ("Could not get supported BFD offload type, rv: %d") | `bfdorch.cpp:784-790` |
+
+### SET 処理 (`create_bfd_session()`) の失敗経路
+
+| 失敗条件 | 戻り値 | 結果 | ログ | evidence |
+|---|---|---|---|---|
+| capability 不在で初期化未完 | `false` | セッション作成 reject、SAI 未呼出 | `LOG_ERROR` ("BFD session for %s cannot be created") | `bfdorch.cpp:307-313` |
+| 同一キーのセッションが既に存在 | `true` (no-op) | 重複作成スキップ。SAI 未呼出 | `LOG_ERROR` ("BFD session for %s already exists") | `bfdorch.cpp:316-319` |
+| key 分割で vrf が取れない | `false` | task 再試行 | `LOG_ERROR` ("Failed to parse key %s, no vrf is given") | `bfdorch.cpp:323-326` |
+| key 分割で interface (alias) が取れない | `false` | task 再試行 | `LOG_ERROR` ("Failed to parse key %s, no ifname is given") | `bfdorch.cpp:330-333` |
+| `type` フィールドが enum 範囲外 | (継続) | enum 更新せず以前の値で進行 | `LOG_ERROR` ("Invalid BFD session type %s") | `bfdorch.cpp:385` |
+| 未知の属性フィールド | (継続) | 該当 fv を無視 | `LOG_ERROR` ("Unsupported BFD attribute %s") | `bfdorch.cpp:402-406` |
+| `local_addr` (src_ip) 未指定 | `true` (drop) | セッション作成スキップ。再試行されない | `LOG_ERROR` ("Failed to create BFD session %s because source IP is not provided") | `bfdorch.cpp:409-413` |
+| `alias != "default"` だが `gPortsOrch->getPort()` 失敗 (PORT 未準備) | `false` | task 再試行 → PORT 準備後に再評価 | `LOG_ERROR` ("Failed to locate port %s") | `bfdorch.cpp:485-488` |
+| `alias != "default"` かつ `dst_mac` 未指定 | `true` (drop) | セッション作成スキップ | `LOG_ERROR` ("destination MAC address required when hardware lookup not valid") | `bfdorch.cpp:491-495` |
+| `alias != "default"` かつ `vrf_name != "default"` | `true` (drop) | セッション作成スキップ。HW lookup 無効に VRF 非対応 | `LOG_ERROR` ("vrf is not supported when hardware lookup not valid") | `bfdorch.cpp:498-502` |
+| `alias == "default"` かつ `dst_mac` 指定 | `true` (drop) | セッション作成スキップ | `LOG_ERROR` ("destination MAC address not supported when hardware lookup valid") | `bfdorch.cpp:523-527` |
+| `sai_bfd_api->create_bfd_session()` 1 回目失敗 | (retry へ) | `retry_create_bfd_session()` で UDP src port を変えながら **最大 `NUM_BFD_SRCPORT_RETRIES = 3` 回**再試行 | `LOG_WARN` ("BFD create using port number %d failed. Retrying with port number %d") | `bfdorch.cpp:547-552, 585-606` |
+| retry 3 回後も SUCCESS 以外 | `handleSaiCreateStatus()` 次第 | recover 不能なら task fail (orchagent abort の可能性)、recover 可能なら次 iteration へ繰越 | `LOG_ERROR` ("Failed to create bfd session %s, rv:%d") | `bfdorch.cpp:554-562` |
+
+### DEL 処理 (`remove_bfd_session()`) の失敗経路
+
+| 失敗条件 | 戻り値 | 結果 | ログ | evidence |
+|---|---|---|---|---|
+| `bfd_session_map` にキーなし (未作成セッションへの DEL) | `true` (no-op) | STATE_DB / map 操作なし | `LOG_ERROR` ("BFD session for %s does not exist") | `bfdorch.cpp:611-614` |
+| `sai_bfd_api->remove_bfd_session()` 失敗 | `handleSaiRemoveStatus()` 次第 | recover 不能なら task fail → 次 iteration へ繰越 | `LOG_ERROR` ("Failed to remove bfd session %s, rv:%d") | `bfdorch.cpp:619-626` |
+| 不明な op (SET/DEL 以外) | (continue) | task consume してスキップ | `LOG_ERROR` ("Unknown operation type %s") | `bfdorch.cpp:213, 836` |
+
+### 補足
+
+- **`return true` vs `return false`**: `true` は task を **consume** (再試行なし)、`false` は **retry 対象**。`local_addr` 未指定 / `dst_mac` 制約違反など「ユーザー設定上の誤り」は `true` (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は `false` (retry) という設計。
+- **UDP src port retry**: `NUM_BFD_SRCPORT_RETRIES = 3`、ポート範囲 49152–65535。`update_port_number()` が `bfd_src_port()` で port を再生成して attrs を上書き (`bfdorch.cpp:577-606`)。
+- **capability 不在は再起動が必要**: `register_bfd_state_change_notification()` の評価は `BfdOrch` コンストラクタで 1 回のみ。capability 不在のまま swss 起動した場合、SAI 実装が後で更新されても **swss コンテナ再起動なしには hardware BFD は動かない**。
+- **`use_software_bfd` 経路では SAI 失敗は発生しない**: SAI API を呼ばず STATE_DB `SOFTWARE_BFD_SESSION_TABLE` に転記するのみ (`bfdorch.cpp:133-139, 182-188`)。失敗経路は事前検証 (`local_addr` 未指定など) のみに縮小される。
+
+詳細根拠は `meta/_intermediate/cdb-flow/bfd-orch-failure.md` を参照。
+<!-- /failure -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
@@ -247,3 +480,31 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
 
 > **スキャン証跡**: `bfdorch.cpp` L1-60, L33-54, L340-475, L505-530, L580-655, L780-800 を読了。マクロ 8 件、SAI 列挙文字列マップ 4+4=8 件、初期値リテラル 5 件を抽出。中間ファイル: `meta/_intermediate/cdb-flow/bfd-orch-constants.md`
 <!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`BFD_SESSION` (CONFIG_DB → APPL_DB `BFD_SESSION_TABLE`) は YANG 未定義のため leafref は存在しない。以下はすべて `bfdorch.cpp` 実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| [`PORT\|<name>`](port.md) | 読み取り (Port オブジェクト + SAI port OID + MAC) | `<interface> != "default"` (hardware lookup 無効経路)。不在 → `"Failed to locate port"` ERROR + 再試行 | `bfdorch.cpp` L482–520 (`gPortsOrch->getPort(alias, port)`、`port.m_port_id` / `port.m_mac`) |
+| [`VRF\|<name>`](vrf.md) | 読み取り (SAI virtual_router OID) | `<vrf> != "default"` かつ `<interface> == "default"`。default VRF は `gVirtualRouterId` を直接使用 | `bfdorch.cpp` L530–541 (`gDirectory.get<VRFOrch*>()->getVRFid(vrf_name)` → `SAI_BFD_SESSION_ATTR_VIRTUAL_ROUTER`) |
+| [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) | 読み取り (TSA + use_software_bfd フラグ) | 全 `doTask()` 呼び出しの冒頭。`use_software_bfd=true` → SAI 未経由で STATE_DB 転記のみ。`tsa_enabled=true` + `shutdown_bfd_during_tsa=true` → セッション作成スキップ + Down 通知 | `bfdorch.cpp` L114–121, L133–139, L155–178, L755–791 (`BgpGlobalStateOrch::getTsaState()` / `getSoftwareBfd()` / `offload_supported()`) |
+| NEXTHOP / NHG (逆参照: publish) | 通知配信 (`SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE`) | セッション作成時 + 状態変化時。`nhgorch` / `routeorch` / `vxlanmgr` 等の subscriber が BFD 状態に応じて next-hop の up/down を決定 | `bfdorch.cpp` L257–260, L569–572 (`BfdUpdate` notify) |
+| STATE_DB `BFD_SESSION_TABLE` / `SOFTWARE_BFD_SESSION_TABLE` / ASIC_DB `NOTIFICATIONS` | 書き込み + 購読 | 常時。起動時にクリーンアップ、セッション確定値を STATE_DB に書く。ASIC からの `bfd_session_state_change` を購読して `state` 更新 | `bfdorch.cpp` L63–86, L252, L544–567, L629 |
+
+!!! note "NEXTHOP は逆参照（publish 方向）"
+    `bfdorch.cpp` 自体は `NEXTHOP` / `NeighOrch` / `RouteOrch` を **直接参照しない**。
+    next-hop monitoring 用途の BFD は、`STATIC_ROUTE_BFD` / `NEXTHOP_GROUP_MEMBER` 等の上位 Orch（または FRR `bgpcfgd/BfdMgr`）が CONFIG_DB `BFD_SESSION` を作成し、bfdorch は状態変化を notify するだけの **publisher** として動作する。
+    key (`<vrf>:<interface>:<peer_ip>`) がそのまま next-hop の (vrf, intf, ip) と一致するため、subscriber は key マッチで対応 next-hop を特定する。
+
+!!! note "hardware lookup 有効 / 無効による依存切り替え"
+    `<interface> == "default"` (hardware lookup 有効、`SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID=true`):
+    → **VRF テーブルのみ参照**（PORT 参照なし、`dst_mac` 指定不可）。
+    `<interface> != "default"` (hardware lookup 無効、`SAI_BFD_SESSION_ATTR_HW_LOOKUP_VALID=false`):
+    → **PORT テーブルのみ参照**（VRF は `default` 限定、`dst_mac` 必須）。
+    両経路の同時使用は不可（`bfdorch.cpp` L498–503）。
+
+> **中間ファイル**: `meta/_intermediate/cdb-flow/bfd-orch-cross-refs.md`
+<!-- /cross-refs -->
