@@ -234,6 +234,39 @@ show interfaces breakout
 
 > **スキャン証跡**: config/main.py L5467-5554 全行読了。ランタイムデーモンによる直接消費なし。分岐はすべて CLI コマンドパス内。4 件抽出。
 <!-- /handler-branching -->
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ステップの順序が厳守されなければ ASIC エラーや設定乖離が生じる。
+
+### ステップ順序（`ConfigMgmt.breakOutPort()` 内、config_mgmt.py L451-460）
+
+| ステップ | 操作 | 理由 |
+|---------|------|------|
+| 1 | `_shutdownIntf(delPorts)` — 削除対象ポートを `admin_status: down` | トラフィック転送中の SAI 削除を防ぐ |
+| 2 | `writeConfigDB(delConfigToLoad)` — PORT エントリを CONFIG_DB から削除 | orchagent に削除シグナルを送る |
+| 3 | `_verifyAsicDB(timeout=60s)` — ASIC DB からポート消滅を最大 60 秒ポーリング確認 | レーン競合を防ぐため追加前に削除完了を保証 |
+| 4 | `writeConfigDB(addConfigtoLoad)` — 新ポートを CONFIG_DB に追加 | ASIC DB 確認後にのみ新ポート生成 |
+| 5 | `BREAKOUT_CFG.brkout_mode` を更新（CLI main.py L5553） | PORT 再構成成功後に限り BREAKOUT_CFG を更新 |
+
+### VLAN_MEMBER / ACL / BUFFER 再注入の順序
+
+- `_deletePorts()` は YANG データツリー上の依存ノード（VLAN_MEMBER、ACL_TABLE ポートリスト等）を**ポート削除より先に**削除する (`force=True` 時)。`force=False` かつ依存あり → 処理中断。(`config_mgmt.py L480-520`)
+- 新ポート追加後、`_addPorts(loadDefConfig=True)` が `/etc/sonic/port_breakout_config_db.json` から ACL_TABLE / VLAN_MEMBER のデフォルト設定を自動再注入する (`config_mgmt.py L553-572`)。
+- **順序依存**: portsorch は `gBufferOrch->isPortReady(port)` が `true` になるまでポートを pending 保留する (`portsorch.cpp L4779-4788`)。BUFFER_PG / BUFFER_QUEUE を PORT 追加と同時か直後に書き込まないと新ポートが準備完了にならない。
+
+### warm reboot との関係
+
+- warm reboot 中 (`m_isWarmRestoreStage=true`) は `postPortInit()` がスキップされる (`portsorch.cpp L4076-4078`)。
+- `onWarmBootEnd()` 完了後 (`portsorch.cpp L6424`) に初めて新ポートの SAI カウンタ登録・FEC 設定等が実行される。
+- **推奨**: warm reboot と breakout 変更は同一リロードサイクルで同時実施しない。`onWarmBootEnd()` 完了後に breakout を行うことで中途 init 状態を回避できる。
+
+### BREAKOUT_CFG が最後に更新される意味
+
+- CLI handler は `breakout_Ports()` 成功後にのみ `BREAKOUT_CFG` を更新する（`config/main.py L5553`）。PORT 再構成失敗時は `BREAKOUT_CFG` は旧モードのまま残り、実 ASIC 状態との乖離を防ぐ設計になっている。
+- ただし `breakout_Ports()` が Exception で終了した場合は PORT が中途半端に再構成されても `BREAKOUT_CFG` は旧値のままとなるため、`show interfaces breakout` と `sonic-db-cli CONFIG_DB hgetall 'BREAKOUT_CFG|<port>'` を照合して整合を確認する。
+
+<!-- /ordering -->
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
 
