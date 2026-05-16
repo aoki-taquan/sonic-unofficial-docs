@@ -319,3 +319,38 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 **インターフェース未 ready の場合のみ自動リトライあり**。その他の netlink 失敗（カーネルエラー・権限不足等）はエラーログを出してエントリを破棄する。
 
 <!-- /failure-behavior -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-16
+
+### 他テーブル先行必須
+
+`MGMT_INTERFACE` は `intfmgrd` の購読テーブルに**含まれない**（`intfmgrd.cpp:28-35`）。`mgmtintfmgrd`（または同等のデーモン）が担当し、Linux の netns / 管理 VRF 内でのルーティングを設定する。
+
+| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
+|------------------|-----------|-----------|
+| `MGMT_VRF_CONFIG.mgmtVrfEnabled` の設定 | `true` のとき management VRF (`mgmt` ネットワーク名前空間) 内でルートを設定 | `intfmgr.cpp:678`（`VRF_MGMT` 定数） |
+| `DEVICE_METADATA.localhost` の設定 | 管理インタフェース名 (`eth0`) の基本設定が先に存在すること | `intfmgr.cpp` 管理インタフェース処理 |
+| IP プレフィクスロウは属性ロウが先 | `MGMT_INTERFACE|eth0|<ip_prefix>` は `MGMT_INTERFACE|eth0` 属性ロウの設定後に処理 | `intfmgr.cpp:1115`（共通 `isIntfCreated` パターン） |
+
+### MGMT_INTERFACE 設定順序
+
+```
+1. MGMT_VRF_CONFIG (mgmtVrfEnabled) の設定     (management VRF 利用時)
+2. MGMT_INTERFACE|eth0 (属性ロウ)             (IP / GW が設定される前に必要)
+3. MGMT_INTERFACE|eth0|<ip_prefix> 投入        (属性ロウ処理完了後)
+4. ip route add default via <gw> dev eth0      (gwaddr が有効な IPv4 の場合自動設定)
+```
+
+### 特記事項
+
+- `mgmt` という名の VRF 名は `intfmgr.cpp:26` で `VRF_MGMT` 定数として定義されており、`isIntfStateOk()` 内で `STATE_VRF_TABLE` を参照する（`intfmgr.cpp:677-684`）
+- `MGMT_INTERFACE` は orchagent を経由しない（SAI には届かない）。Linux カーネルの mgmt ネットワーク名前空間で完結する
+- orchagent の `allPortsReady()` チェックや `gPortsOrch->getPort()` は適用されない
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/mgmt-interface-ordering.md` 参照。
+
+<!-- /ordering -->
