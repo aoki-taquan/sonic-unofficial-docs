@@ -393,7 +393,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 -->
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L46-135 / addHwDnatPoolEntry L1783-1820 / addHwSnatEntry L1274-1340 / enableNatFeature L2534-2581 / disableNatFeature L2583-2625 / updateNatCounters L4050-4060 / updateNaptCounters L4077-4089 / updateTwiceNatCounters L4108-4119 / updateTwiceNaptCounters L4122-4134 / updateStaticNatCounters L4481-4489 / updateSnatCounters L4569-4577 / sonic-swss/cfgmgr/natmgr.cpp enableNatFeature L5667-5733 / disableNatFeature L5736-5767 / doNatGlobalTask L7300-7374 / addStaticNatEntry L2052-2053 / addDnatPoolEntry L1517-1521 / addConntrackStaticSingleNatEntry L456-490 / addConntrackStaticTwiceNatEntry L491-514 / addConntrackStaticSingleNaptEntry L516-565 -->
 
 ### APPL_DB への副次書込
 
@@ -410,6 +410,35 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 ### STATE_DB への書込
 
 `NatMgr` / `NatOrch` はいずれも STATE_DB への**書込は行わない**。STATE_DB は `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` / `STATE_INTERFACE_TABLE` の readiness ガードとして**読み取り専用**で参照される (`natmgr.cpp:100-139`)。
+
+### ASIC_DB (SAI nat_entry) への副次書込
+
+`NatOrch` (`orchagent` コンテナ) が `sai_nat_api` 経由で ASIC_DB に SAI NAT エントリを書込む。syncd が Redis ASIC_DB に記録し、ASIC へ転送する。
+
+| SAI オブジェクト種別 | SAI nat_type | 書込条件 | ソース |
+|---|---|---|---|
+| `sai_nat_entry_t` (SNAT) | `SAI_NAT_TYPE_SOURCE_NAT` | `admin_mode=enabled` かつ SNAT エントリ追加時 (`addHwSnatEntry`) | `natorch.cpp:1274-1340` |
+| `sai_nat_entry_t` (DNAT) | `SAI_NAT_TYPE_DESTINATION_NAT` | `admin_mode=enabled` かつ DNAT エントリ追加時 (`addHwDnatEntry`) | `natorch.cpp:741-815` |
+| `sai_nat_entry_t` (DNAT Pool) | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | DNAT Pool エントリ追加時 (`addHwDnatPoolEntry`) | `natorch.cpp:1783-1820` |
+| `sai_nat_entry_t` (Twice NAT) | `SAI_NAT_TYPE_DOUBLE_NAT` | Twice NAT エントリ追加時 | `natorch.cpp:980-1020` |
+| `SAI_SWITCH_ATTR_NAT_ENABLE` | switch 属性 | `admin_mode` が `disabled→enabled` / `enabled→disabled` の遷移時 | `natorch.cpp:2555-2560`, `natorch.cpp:2590-2594` |
+
+> ASIC_DB への直接書込は syncd → ASIC ドライバ経由で行われる。NAT エントリは `sai_nat_api->create_nat_entry()` / `remove_nat_entry()` で管理され、`gSwitchId` / `gVirtualRouterId` をキーに含む。
+
+### kernel conntrack への副次書込
+
+`NatMgr` (`natmgrd` コンテナ) が `conntrack` CLI コマンド (`CONNTRACK_CMD`) を `swss::exec()` で実行して Linux kernel netfilter conntrack テーブルへ書込む。APPL_DB / SAI とは独立した直接 kernel 操作であり、DB には記録されない。
+
+| 操作 | 対象 | 書込条件 | ソース |
+|---|---|---|---|
+| conntrack エントリ追加 (`-I`) | Static Single NAT (DNAT/SNAT) — dummy UDP エントリ | `admin_mode=enabled` かつ STATIC_NAT エントリ追加時。timeout = `NAT_TIMEOUT_MAX` (432000秒) | `natmgr.cpp:456-490` |
+| conntrack エントリ追加 (`-I`) | Static Twice NAT — dummy UDP エントリ | STATIC_NAT twice-NAT エントリ追加時 | `natmgr.cpp:491-514` |
+| conntrack エントリ追加 (`-I`) | Static Single NAPT — dummy UDP/TCP エントリ (port 予約目的) | `admin_mode=enabled` かつ STATIC_NAPT エントリ追加時 | `natmgr.cpp:516-565` |
+| conntrack エントリ更新 (`-U`) | Dynamic Single NAT — active セッションの timeout 更新 | NatOrch からの `SETTIMEOUTNAT` 通知受信時 (1日周期) | `natmgr.cpp:372-392` |
+| conntrack エントリ更新 (`-U`) | Dynamic NAPT — active セッションの timeout 更新 | NatOrch からの `SETTIMEOUTNAT` 通知受信時 (1日周期) | `natmgr.cpp:393-416` |
+| conntrack フラッシュ | 全 dynamic NAT エントリ | `FLUSHNATENTRIES` 通知受信時 | `natmgr.cpp:` flush ハンドラ |
+
+> **重要**: kernel conntrack エントリは DB に反映されない。`show nat translations` の表示は conntrack テーブルから直接読み取る。Static エントリ用の dummy conntrack は port 番号を予約するために追加される (同 port が dynamic エントリに割り当てられるのを防ぐ)。
 
 ### COUNTERS_DB への副次書込
 
