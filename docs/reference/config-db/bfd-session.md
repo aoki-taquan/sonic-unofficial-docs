@@ -344,6 +344,32 @@ STATE_DB へ書き戻される `state` 値も固定 (`session_state_lookup`, `bf
 - レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる ([例外条件・特殊挙動](#例外条件特殊挙動) 参照)。
 <!-- /ordering -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) が副次的に書き込む DB は **STATE_DB の 2 テーブル** に閉じる。APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書込は `bfdorch` 起点では存在しない。
+
+| 副次 DB | テーブル | 書込有無 | 操作 | 根拠 |
+|---|---|---|---|---|
+| STATE_DB | `BFD_SESSION_TABLE` | あり (hardware 経路) | SET / DEL / HSET | hardware 経路で SAI `create_bfd_session` 成功直後に SET (`bfdorch.cpp:565`)、SAI `remove_bfd_session` 成功時に DEL (`bfdorch.cpp:629`)、SAI state-change notify ハンドラから `state` フィールドのみ HSET (`bfdorch.cpp:252`)。起動時に stale エントリを cleanup する DEL もあり (`bfdorch.cpp:75-78`) |
+| STATE_DB | `SOFTWARE_BFD_SESSION_TABLE` | あり (software 経路) | SET / DEL | software 経路 (`use_software_bfd=true` または SAI offload capability なし) で `createSoftwareBfdSession()` / `removeSoftwareBfdSession()` が CONFIG_DB の fvVector をそのまま転記 (`bfdorch.cpp:706-716`、`doTask` からの直接呼出 `bfdorch.cpp:136, 185`)。起動時 cleanup DEL もあり (`bfdorch.cpp:81-84`) |
+| APPL_DB | — | なし | — | `bfdorch` は `BFD_SESSION_TABLE` を **subscribe** するのみで、APPL_DB へ Producer/Table の書込呼出は `bfdorch.cpp` に 0 件 (`grep -nE "APPL_DB\|m_app\|appDb" bfdorch.cpp` で no match) |
+| COUNTERS_DB | — | なし | — | `bfdorch.cpp` 全体で `COUNTERS_DB` / `FlexCounter` / `m_counters` への参照が 0 件。SAI には `SAI_BFD_SESSION_STAT_*` enum が存在するが、`bfdorch` には FlexCounterManager 登録呼出が無く `COUNTERS:BFD_SESSION:` キーは master では生成されない |
+| FLEX_COUNTER_DB | — | なし | — | 同上。BFD カウンタの polling 登録は実装されていない |
+| ASIC_DB | — | 間接 (SAI 経由) | — | `sai_bfd_api->create_bfd_session()` 経由で syncd が ASIC_DB を更新するが、`bfdorch` は ASIC_DB を直接書かない |
+
+### キー / 値の要点
+
+- **`STATE_DB:BFD_SESSION_TABLE`**: キー `<vrf>|<alias>|<peer_ip>` (区切り文字 `state_db_key_delimiter`、`get_state_db_key()` `bfdorch.cpp:636-639`)。値は CONFIG_DB から流入した fvVector + 後追いの `state` フィールド (`Down` / `Init` / `Up` / `Admin_Down`、`session_state_lookup` `bfdorch.cpp:31-37`)。
+- **`STATE_DB:SOFTWARE_BFD_SESSION_TABLE`**: キー `createStateDBKey()` (vrf/interface/peer を区切り文字で連結)。値は CONFIG_DB の fvVector をそのまま転記。`state` フィールドは `bfdorch` では書かず、FRR `bfdd` → `bgpcfgd` 側で反映する設計。
+
+### 注記
+
+- software BFD 経路の `state` 反映は `bgpcfgd` `BfdMgr` の責務であり、本ページの主購読者 `bfdorch` の副次書込からは外れる (読出側)。
+- hardware/software の経路判定は起動時の SAI capability 照会で固定される (`bfdorch.cpp:735` / [プラットフォーム差](#プラットフォーム差-phase-h))。
+- 詳細スキャン手順と grep 結果は [`meta/_intermediate/cdb-flow/bfd-session-side.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-side.md) を参照。
+<!-- /side-effects -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
