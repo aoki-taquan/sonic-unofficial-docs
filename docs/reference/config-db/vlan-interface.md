@@ -369,6 +369,72 @@ PUBLISH ペイロードは固定文字列 `"G"`。
 
 <!-- /pubsub -->
 
+<!-- phase-g:start -->
+## SAI RIF 生成経路の詳細 (Phase G)
+
+> ソース: `sonic-swss/orchagent/intfsorch.cpp` (L1180–1318)[^pg1]
+
+### CONFIG_DB Subscribe — intfmgrd 登録経路
+
+`IntfMgr` コンストラクタは `Orch(cfgDb, tableNames)` を呼び出す (`intfmgr.cpp:32`)。`tableNames` には `CFG_VLAN_INTF_TABLE_NAME`（= `"VLAN_INTERFACE"`）が含まれる。`Orch::addConsumer()` は cfgDb の db_id=4 を検出して **`SubscriberStateTable`** を生成し、Redis に対して以下の PSUBSCRIBE を発行する：
+
+```
+PSUBSCRIBE __keyspace@4__:VLAN_INTERFACE|*
+```
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` |
+| keyspace db_id | 4 (CONFIG_DB) |
+| keyspace パターン | `__keyspace@4__:VLAN_INTERFACE\|*` |
+| pop 実装 | `SubscriberStateTable::pops()` — keyspace イベント受信後 `HGETALL` で最新値取得 |
+| Select timeout | 1000 ms → `IntfMgr::doTask()` で `m_toSync` 未処理タスクをリトライ |
+
+### orchagent — IntfsOrch の ConsumerStateTable
+
+`IntfsOrch` は APP_DB (db_id=0) の `APP_INTF_TABLE_NAME`（`"INTF_TABLE"`）を `ConsumerStateTable` で購読する。`INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` し、Lua スクリプト `consumer_state_table_pops.lua` で `SPOP` + `HGETALL` をアトミック実行する。
+
+### SAI RIF 生成属性（VLAN IF 専用）
+
+`IntfsOrch::addRouterIntfs()` (intfsorch.cpp:1180–1319) が VLAN ポートに対して `create_router_interface()` を呼ぶ際に設定する SAI 属性：
+
+| SAI 属性 | 値（VLAN IF の場合） | 証拠 |
+|---------|---------------------|------|
+| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `vrf_id`（省略時 `gVirtualRouterId`） | intfsorch.cpp:1183 |
+| `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` | `port.m_mac` または `gMacAddress`（ゼロ MAC 時） | intfsorch.cpp:1196–1208 |
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_VLAN` | intfsorch.cpp:1219–1221 |
+| `SAI_ROUTER_INTERFACE_ATTR_VLAN_ID` | `port.m_vlan_info.vlan_oid` | intfsorch.cpp:1246–1248 |
+| `SAI_ROUTER_INTERFACE_ATTR_MTU` | `port.m_mtu`（省略時 9100） | intfsorch.cpp:1272–1274 |
+| `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` | `true`（`mpls=enable` 時のみ。省略時は attrs に含めない） | intfsorch.cpp:1276–1285 |
+| `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` | `port.m_nat_zone_id`（`gIsNatSupported` 時のみ） | intfsorch.cpp:1287–1294 |
+
+PHY/LAG と異なり `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` は使用せず、`SAI_ROUTER_INTERFACE_ATTR_VLAN_ID` に VLAN OID を直接設定する点が VLAN SVI の特徴。
+
+### CONFIG_DB → SAI 完全経路サマリ
+
+```
+CLI / minigraph
+  → HSET CONFIG_DB VLAN_INTERFACE|Vlan100 ...
+  → Redis keyspace 通知 (PSUBSCRIBE __keyspace@4__:VLAN_INTERFACE|*)
+  → IntfMgr::doTask() [intfmgr.cpp:1173]
+      isIntfStateOk() / isIntfChangeVrf() チェック
+  → ProducerStateTable EVALSHA
+      SADD INTF_TABLE_KEY_SET "Vlan100"
+      HSET _INTF_TABLE|Vlan100 ...
+      PUBLISH INTF_TABLE_CHANNEL@0 "G"
+  → IntfsOrch::doTask() [intfsorch.cpp:884]
+      gPortsOrch->getPort() で VLAN OID 取得
+      addRouterIntfs() [intfsorch.cpp:1180]
+  → sai_router_intfs_api->create_router_interface(
+        TYPE=SAI_ROUTER_INTERFACE_TYPE_VLAN,
+        VLAN_ID=vlan_oid, MTU=9100, ...)
+  → COUNTER_DB COUNTERS_RIF_NAME_MAP に alias → rif_id を登録
+```
+
+[^pg1]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- phase-g:end -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -473,5 +539,50 @@ VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリト�
 4. neighbor_advertiser はデーモン常駐型で CONFIG_DB を購読。IP 変更は次の gratuitous ARP サイクルで反映される。
 
 <!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-16
+
+### VOQ Chassis — システムインタフェース同期差
+
+`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`VLAN_INTERFACE` テーブルへの SET/DEL に伴う RIF 作成・削除が追加の CHASSIS_APP_DB 同期を引き起こす。
+
+```cpp
+// intfsorch.cpp:1314-1317
+// RIF 作成直後に自動実行
+if(isChassisDbInUse())
+    voqSyncAddIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE に書き込み
+
+// intfsorch.cpp:1367-1370
+// RIF 削除直後に自動実行
+if(isChassisDbInUse())
+    voqSyncDelIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE から削除
+```
+
+`voqSyncAddIntf` はローカルポート（`SAI_SYSTEM_PORT_TYPE_REMOTE` でないもの）のみを同期する。リモートポートの IF は `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` を購読して受信し、`gNeighOrch->ifChangeInformRemoteNextHop` でネクストホップ状態を更新する。
+
+VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 address add ... metric 256` を付与する（通常構成は metric 指定なし）。VOQ システムでは eBGP / iBGP 経路の ECMP グループ一致のために metric=256 を明示する必要があるためである（`intfmgr.cpp:98-106`）。
+
+| 構成 | 追加動作 |
+|------|---------|
+| VOQ chassis (local port/LAG) | RIF 作成・削除時に `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` へ `oper_status` を SET / DEL |
+| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート ASIC にネイバー伝播（`intfsorch.cpp:586-593`） |
+| VOQ chassis (remote port) | `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` からの通知でリモートネクストホップを更新（`intfsorch.cpp:881-892`） |
+| VOQ chassis (IPv6 アドレス追加) | `ip -6 address add ... metric 256` を付与。通常構成は metric 指定なし（`intfmgr.cpp:103-106`） |
+| 通常シングルスイッチ | CHASSIS_APP_DB 操作は一切なし |
+
+> **注意**: `VLAN_INTERFACE` は VLAN SVI であり物理ポートではないため、`voqSyncAddIntf` 内の system port alias 解決は VLAN ポートに対して適用される。VLAN ポートの `m_system_port_info.type` が `SAI_SYSTEM_PORT_TYPE_REMOTE` となる場合、同期はスキップされる。
+
+### SmartSwitch DPU — 現時点でのコード差なし
+
+`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には SmartSwitch / DPU 固有の条件分岐は存在しない（2026-05-16 時点）。DPU 上の `VLAN_INTERFACE` テーブル処理は通常の物理スイッチと同一経路をたどる。SmartSwitch 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
+
+[^ph1]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+[^ph2]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: b8bde3f9637a -->
