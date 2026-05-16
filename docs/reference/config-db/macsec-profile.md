@@ -68,6 +68,27 @@ MACSEC_PROFILE|<name>
 | `send_sci` | boolean | `true` | 送信フレームに SCI を含める |
 | `rekey_period` | uint32 | `0` | 能動的 SAK 再生成周期 [秒]。0 で再生成しない |
 
+<!-- defaults -->
+## コード由来デフォルト値
+
+> **出典**: `sonic-swss/cfgmgr/macsecmgr.cpp` (GetValue フォールバック)、`docker-macsec/cli/config/plugins/macsec.py` (`add_profile` コマンド)、`sonic-macsec.yang` (`default` ステートメント) — 三者完全一致。
+
+| フィールド | デフォルト値 | 根拠 |
+|-----------|------------|------|
+| `priority` | `255` | YANG `default 255` / C++ fallback `priority = 255` / CLI `default=255` |
+| `cipher_suite` | `GCM-AES-128` | YANG `default "GCM-AES-128"` / CLI `default="GCM-AES-128"` |
+| `policy` | `security` | YANG `default "security"` / C++ fallback `policy = Policy::SECURITY` / CLI `default="security"` |
+| `enable_replay_protect` | `false` | YANG `default "false"` / C++ fallback `enable_replay_protect = false` / CLI `default=False` |
+| `replay_window` | `0` (暗黙) | C++ fallback `replay_window = 0` / CLI `default=0`。YANG `default` なし (`when` 条件で `enable_replay_protect = true` 時のみ有効) |
+| `send_sci` | `true` | YANG `default "true"` / C++ fallback `send_sci = true` / CLI `default=True` |
+| `rekey_period` | `0` | YANG `default 0` / C++ fallback `rekey_period = 0` / CLI `default=0` |
+| `primary_cak` | — (必須) | YANG `mandatory true` / CLI `required=True` |
+| `primary_ckn` | — (必須) | YANG `mandatory true` / CLI `required=True` |
+| `fallback_cak` | — (省略可) | YANG optional leaf、設定省略時はフォールバック MKA 無効 |
+| `fallback_ckn` | — (省略可) | YANG optional leaf、`fallback_cak` 設定時に必要 |
+
+<!-- /defaults -->
+
 ## 制約 (YANG `must`)
 
 - `fallback_cak` を設定する場合は `primary_cak` と同じ長さ
@@ -180,6 +201,54 @@ show macsec
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp, sonic-swss/orchagent/macsecorch.cpp -->
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `cipher_suite` に不正値 | `lexical_convert()` → `throw std::invalid_argument("Invalid cipher_suite : ...")` | `SWSS_LOG_WARN` → `task_failed` | なし |
+| 2 | CAK 長が `cipher_suite` と不一致 | `decodeKey()` → `throw std::invalid_argument("Invalid length for cipher_string : ...")` | `SWSS_LOG_WARN` → `task_failed` | なし |
+| 3 | `policy` に不正値 | `lexical_convert()` → `throw std::invalid_argument("Invalid policy : ...")` | `SWSS_LOG_WARN` → `task_failed` | なし |
+| 4 | `wpa_supplicant` fork 失敗 (`fork()` < 0) | `startWPASupplicant()` | `SWSS_LOG_WARN("Cannot start the wpa_supplicant of the port '%s' : %s")` + `errno` → `task_failed` | なし |
+| 5 | `wpa_supplicant` 起動後 socket 接続タイムアウト | `startWPASupplicant()` retry ループ | `stopWPASupplicant()` + `SWSS_LOG_WARN("Cannot connect to wpa_supplicant.")` → `task_failed` | なし |
+| 6 | MKA プロファイルロード失敗 | `loadMKAProfile()` | `SWSS_LOG_WARN("The MACsec profile '%s' on the port '%s' loading fail")` → `task_failed` | なし |
+| 7 | `enableMACsec()` 内 `runtime_error` | `catch(runtime_error)` | `SWSS_LOG_WARN("Enable MACsec fail : %s")` → ポート非暗号化のまま継続 | なし |
+| 8 | `disableMACsec()` で wpa_supplicant 停止失敗 | `stopMKASession()` / `stopWPASupplicant()` | `SWSS_LOG_WARN("Cannot stop MKA session ...")` / `SWSS_LOG_WARN("Cannot stop WPA_SUPPLICANT ...")` → `task_failed`、プロセス残留の可能性 | なし |
+| 9 | SAI `create/set macsec` 恒久エラー | `parseHandleSaiStatusFailure()` | `task_failed` | なし |
+| 10 | SAI MACsec POST 失敗通知 | `doPostCompletionTask()` | `setMacsecPostState(m_state_db, "fail")` + `SWSS_LOG_ERROR("MACSec POST failed")` | なし |
+| 11 | プロファイル DEL 時にポートが使用中 | `removeProfile()` | `task_need_retry`（全ポート MACsec 無効化まで待機） | 無制限 |
+
+### task_failed 後の挙動
+
+`macsecmgr` が `task_failed` を返すと Consumer はエントリを破棄し、ポートは MACsec 無効のまま継続動作する。`macsecorch` も同様。SAI 一時エラー（`SAI_STATUS_NOT_READY` 等）は `task_need_retry` で無制限再試行される。
+
+### wpa_supplicant 起動失敗の詳細
+
+`fork()` 後に子プロセスが `execv("/sbin/wpa_supplicant", ...)` を実行。Unix socket 接続を一定回数試みて失敗した場合、`stopWPASupplicant()` を呼び出して `wpa_supplicant_pid = 0` にクリアし `task_failed` を返す。ポートの MACsec は有効化されない。<!-- evidence: macsecmgr.cpp L544-558, L676 -->
+
+### SAI POST 失敗の詳細
+
+`macsecorch` 初期化時に `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` を照会。`SAI_SWITCH_MACSEC_POST_STATUS_FAIL` が返ると STATE_DB に `status: fail` を書き込む。その後の通知（`switch_macsec_post_status` / `macsec_post_status`）でも失敗を検出した場合は同様に記録される。<!-- evidence: macsecorch.cpp L710-711, L791-792, L856-857 -->
+
+### STATE_DB / syslog への記録
+
+- SAI POST 失敗のみ STATE_DB に記録される（`MACSEC_POST|switch` エントリ）
+- その他の失敗は `syslog`（`SWSS_LOG_WARN` / `SWSS_LOG_ERROR`）への出力のみ
+- CONFIG_DB のエントリは失敗後も残る
+
+```bash
+# syslog 確認
+journalctl -u macsecmgrd | grep -iE "fail|warn|error"
+# STATE_DB POST ステータス確認
+sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース

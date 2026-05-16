@@ -1,0 +1,177 @@
+---
+title: Redis DB 設定 (database_config.json)
+description: "SONiC の Redis インスタンス・データベース構成を定義する database_config.json のリファレンス。インスタンス定義・DB ID マッピング・セパレータ・デフォルト値を網羅する。"
+area: reference
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-swss-common
+    path: common/database_config.json
+    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+  - repo: sonic-net/sonic-swss-common
+    path: common/dbconnector.h
+    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+  - repo: sonic-net/sonic-swss-common
+    path: common/dbconnector.cpp
+    ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-database/database_config.json.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-database/docker-database-init.sh
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+related:
+  config_db: []
+  cli: []
+  yang: []
+---
+
+# Redis DB 設定 (database_config.json)
+
+## 概要
+
+SONiC は Redis を複数データベースに分割して使用し、その構成を `/var/run/redis/sonic-db/database_config.json` で管理する[^1]。このファイルには **Redis インスタンス定義** (接続先 hostname/port/UNIX ソケット) と **データベース定義** (DB ID・セパレータ・所属インスタンス) が含まれる。
+
+`SonicDBConfig` クラス (`sonic-swss-common`) がこの JSON を解析し、すべての DB 接続を仲介する。アプリケーションは `SonicDBConfig::getDbId()` / `getDbSock()` / `getSeparator()` 等の API を通じて DB 情報を取得する[^2]。
+
+<!-- defaults -->
+## コード由来デフォルト値
+
+### ファイルパス定数
+
+| 定数名 | 値 | 出典 |
+|-------|----|------|
+| `DEFAULT_SONIC_DB_CONFIG_FILE` | `/var/run/redis/sonic-db/database_config.json` | `dbconnector.h:90` |
+| `DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE` | `/var/run/redis/sonic-db/database_global.json` | `dbconnector.h:91` |
+| `DEFAULT_UNIXSOCKET` | `/var/run/redis/redis.sock` | `dbconnector.h:169,206` |
+
+`SonicDBConfig::getDbInfo()` 等が初期化前に呼ばれると、`initialize(DEFAULT_SONIC_DB_CONFIG_FILE)` が自動的に実行される[^2]。
+
+### INSTANCES デフォルト値
+
+#### `redis` — 通常ノード主インスタンス
+
+| フィールド | デフォルト値 | 備考 |
+|-----------|-------------|------|
+| `hostname` | `"127.0.0.1"` | `docker-database-init.sh` が `lo` の IP を取得; 失敗時フォールバック |
+| `port` | `6379` | `docker-database-init.sh:20` |
+| `unix_socket_path` | `/var/run/redis/redis.sock` | `database_config.json.j2:7` |
+| `persistence_for_warm_boot` | `"yes"` | Warm Boot 対応フラグ |
+
+#### `redis_chassis` — VoQ Chassis 専用インスタンス
+
+| フィールド | デフォルト値 | 備考 |
+|-----------|-------------|------|
+| `hostname` | `"redis_chassis.server"` | VoQ Supervisor の DNS 名 |
+| `port` | `6380` | `database_config.json.j2:14` |
+| `unix_socket_path` | `/var/run/redis-chassis/redis_chassis.sock` | `database_config.json.j2:15` |
+
+#### `redis_bmp` — BMP 専用インスタンス (通常ノードのみ)
+
+| フィールド | デフォルト値 | 備考 |
+|-----------|-------------|------|
+| `hostname` | HOST_IP と同値 | `database_config.json.j2:31` |
+| `port` | `6400` | `BMP_DB_PORT` 環境変数; `docker-database-init.sh:49` |
+| `unix_socket_path` | `/var/run/redis/redis_bmp.sock` | `database_config.json.j2:33` |
+
+`redis_bmp` は `DATABASE_TYPE=dpudb` または `DATABASE_TYPE=bmcdb` の場合は生成されない。
+
+### DATABASES デフォルト定義
+
+すべてのデータベースは `database_config.json.j2` で固定定義される。各エントリに必須のフィールドは `id`、`separator`、`instance` の 3 つ[^2]。
+
+#### 標準データベース (全ノード共通)
+
+| DB 名 | id | separator | instance |
+|------|----|-----------|----------|
+| `APPL_DB` | `0` | `":"` | `redis` |
+| `ASIC_DB` | `1` | `":"` | `redis` |
+| `COUNTERS_DB` | `2` | `":"` | `redis` |
+| `LOGLEVEL_DB` | `3` | `":"` | `redis` |
+| `CONFIG_DB` | `4` | `"|"` | `redis` |
+| `PFC_WD_DB` | `5` | `":"` | `redis` |
+| `FLEX_COUNTER_DB` | `5` | `":"` | `redis` |
+| `STATE_DB` | `6` | `"|"` | `redis` |
+| `SNMP_OVERLAY_DB` | `7` | `"|"` | `redis` |
+| `RESTAPI_DB` | `8` | `"|"` | `redis` |
+| `GB_ASIC_DB` | `9` | `":"` | `redis` |
+| `GB_COUNTERS_DB` | `10` | `":"` | `redis` |
+| `GB_FLEX_COUNTER_DB` | `11` | `":"` | `redis` |
+| `CHASSIS_APP_DB` | `12` | `"|"` | `redis_chassis` |
+| `CHASSIS_STATE_DB` | `13` | `"|"` | `redis_chassis` |
+| `APPL_STATE_DB` | `14` | `":"` | `redis` |
+
+!!! note "DB ID 共有"
+    `PFC_WD_DB` と `FLEX_COUNTER_DB` は共に id=5 を使用し、同一 Redis DB を指す。
+
+#### DPU 追加データベース (`DATABASE_TYPE=dpudb` 時のみ)
+
+| DB 名 | id | separator | instance | 備考 |
+|------|----|-----------|----------|------|
+| `DPU_APPL_DB` | `15` | `":"` | `redis` / `remote_redis` | `"format": "proto"` 付き |
+| `DPU_APPL_STATE_DB` | `16` | `"|"` | `redis` / `remote_redis` | - |
+| `DPU_STATE_DB` | `17` | `"|"` | `redis` / `remote_redis` | - |
+| `DPU_COUNTERS_DB` | `18` | `":"` | `redis` / `remote_redis` | - |
+
+`REMOTE_DB_IP` / `REMOTE_DB_PORT` が定義されている場合、instance は `remote_redis` に切り替わる。
+
+#### BMP データベース (通常ノード、dpudb/bmcdb 以外)
+
+| DB 名 | id | separator | instance |
+|------|----|-----------|----------|
+| `BMP_STATE_DB` | `20` | `"|"` | `redis_bmp` |
+<!-- /defaults -->
+
+## separator の役割
+
+`separator` はキー文字列でテーブル名と行キーを区切る文字:
+
+- `":"` — `TABLE_NAME:ROW_KEY` 形式 (APPL_DB 系、COUNTERS_DB 系)
+- `"|"` — `TABLE_NAME|ROW_KEY` 形式 (CONFIG_DB、STATE_DB 系)
+
+`SonicDBConfig::getSeparator()` で DB 名または DB ID から取得できる[^2]。
+
+## unix_socket_path の扱い
+
+`parseDatabaseConfig()` では `unix_socket_path` は任意フィールドとして扱われる[^2]:
+
+```cpp
+// dbconnector.cpp:49-53
+auto path = it.value().find("unix_socket_path");
+if (path != it.value().end()) {
+    socket = *path;
+}
+```
+
+`unix_socket_path` が存在しない場合、socket は空文字列となり TCP 接続のみ有効になる。
+
+## 初期化フロー
+
+```
+docker-database-init.sh
+  │
+  ├─ /etc/sonic/database_config.json が存在?
+  │    はい → コピー
+  │    いいえ → /etc/sonic/enable_multidb が存在?
+  │                はい → multi_database_config.json.j2 でレンダリング
+  │                いいえ → database_config.json.j2 でレンダリング
+  │
+  └─ 出力先: /var/run/redis/sonic-db/database_config.json
+```
+
+アプリ側では `SonicDBConfig::initialize()` がこのファイルを読み込む。マルチ ASIC / SmartSwitch 環境では `SonicDBConfig::initializeGlobalConfig()` が `database_global.json` も読み込み、namespace ごとの DB 情報をマッピングする[^2]。
+
+## 関連リファレンス
+
+- C++ API: `swsscommon::SonicDBConfig` (`sonic-swss-common`)
+- Python API: `from swsscommon import swsscommon; swsscommon.SonicDBConfig.load_sonic_db_config()`
+
+## 引用元
+
+[^1]: `sonic-net/sonic-swss-common` `common/database_config.json` — 配布デフォルト JSON。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/database_config.json>
+
+[^2]: `sonic-net/sonic-swss-common` `common/dbconnector.h` / `dbconnector.cpp` — `SonicDBConfig` クラス、`DEFAULT_SONIC_DB_CONFIG_FILE` 定数、`parseDatabaseConfig()` 実装。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/dbconnector.h>
+
+[^3]: `sonic-net/sonic-buildimage` `dockers/docker-database/database_config.json.j2` — 実環境 Jinja2 テンプレート。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/database_config.json.j2>
+
+[^4]: `sonic-net/sonic-buildimage` `dockers/docker-database/docker-database-init.sh` — docker-database 起動スクリプト、ファイル生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/docker-database-init.sh>

@@ -228,11 +228,30 @@ REST/gNMI 書き込み経路なし
 
 ### ハードコードデフォルト / ランタイム注入
 
-なし
+`rest-server.sh` 起動スクリプトがコード由来デフォルトを注入する（下記 `<!-- defaults -->` ブロック参照）。
 
 ### 死活・デッドコード
 
 なし
 <!-- /entry-points -->
+
+<!-- defaults -->
+## コード由来デフォルト (Phase A)
+
+`docker-sonic-mgmt-framework/rest-server.sh` が CONFIG_DB 値を読み込む際に適用するランタイムデフォルト。YANG スキーマに `default` 文が存在しない場合でも、起動スクリプト側で値が補完される。
+
+| フィールド | コード由来デフォルト | 根拠 |
+|-----------|---------------------|------|
+| `client_auth` | `"user"` | `CLIENT_AUTH=$(... jq -r '.client_auth // "user"')` — CONFIG_DB 未設定時にユーザー認証モードを強制 |
+| `log_level` | （省略 = 引数なし = `trace` 相当の詳細ログ） | `LOG_LEVEL=$(... jq -r '.log_level // empty')` — 空の場合は `-v` 引数が付かず rest_server デフォルト (`trace`) が適用 |
+| `server_crt` / `server_key` | `/tmp/cert.pem` / `/tmp/key.pem`（自動生成） | 証明書パスが未設定の場合 `generate_cert --host="localhost,127.0.0.1"` で自己署名証明書を `/tmp/` に生成 |
+| `allow_insecure` (HTTP) | 無効 (`-enablehttp` フラグなし) | 起動引数に HTTP 許可フラグが含まれず、HTTPS のみで起動 |
+| `port` | rest_server バイナリデフォルト（8443） | `SERVER_PORT=$(... jq -r '.port // empty')` — 空の場合は `-port` 引数なし、rest_server の組み込みデフォルトが有効 |
+
+> **スキャン証跡**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
+
+[^3]: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-sonic-mgmt-framework/rest-server.sh>
+
+<!-- /defaults -->
 
 <!-- glossary-links-injected: d5320e852f7a -->

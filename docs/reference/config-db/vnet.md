@@ -236,4 +236,45 @@ db_migrator.py での VNET マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト
+
+### VNET
+
+| フィールド | YANG default | コード実装デフォルト | 出典 |
+|-----------|-------------|---------------------|------|
+| `vxlan_tunnel` | なし (mandatory) | 省略不可 | sonic-vnet.yang |
+| `vni` | なし (mandatory) | 省略不可。orchagent 初期値は `0` だが実質無効 | vnetorch.cpp:442 |
+| `peer_list` | なし | 空セット `{}` — peer なし動作 | vnetorch.cpp:440 |
+| `guid` | なし | [orchagent](../../reference/glossary.md#term-orchagent) 未使用（dead field） | vnetorch.h |
+| `scope` | なし | 空文字列 `""` — [YANG](../../reference/glossary.md#term-yang) を通れば常に `"default"` | vnetorch.cpp:444 |
+| `advertise_prefix` | なし | `false` — prefix を BGP 広告しない | vnetorch.cpp:441 |
+| `overlay_dmac` | なし | `00:00:00:00:00:00`（ゼロ MAC）— ping 機能無効 | macaddress.cpp:10-13, vnetorch.cpp:445 |
+| `src_mac` | なし | [SAI](../../reference/glossary.md#term-sai)/プラットフォームデフォルト（スイッチ MAC） | vnetorch.cpp:449-454 |
+
+### VNET_ROUTE
+
+| フィールド | YANG default | コード実装デフォルト | 出典 |
+|-----------|-------------|---------------------|------|
+| `nexthop` | なし (mandatory) | 省略不可 | sonic-vnet.yang |
+| `ifname` | なし (mandatory) | 省略不可 | sonic-vnet.yang |
+
+### VNET_ROUTE_TUNNEL
+
+| フィールド |YANG default | コード実装デフォルト | 出典 |
+|-----------|-------------|---------------------|------|
+| `endpoint` | なし (mandatory) | 省略不可 | sonic-vnet.yang |
+| `mac_address` | なし | `00:00:00:00:00:00`（ゼロ MAC）per endpoint | vnetorch.cpp:3362-3383 |
+| `vni` | なし | `0` — [VNET](../../reference/glossary.md#term-vnet) 本体の VNI で encapsulation | vnetorch.cpp:3362-3370 |
+| `consistent_hashing_buckets` | なし | [orchagent](../../reference/glossary.md#term-orchagent) 未使用（dead field） | vnetorch.h |
+| `metric` | なし | [orchagent](../../reference/glossary.md#term-orchagent) 未使用（dead field）。経路選択に影響しない | vnetorch.cpp:3196-3290 |
+
+### 注記
+
+- **`guid`・`consistent_hashing_buckets`・`metric` の dead field 性**: これら 3 フィールドは [orchagent](../../reference/glossary.md#term-orchagent) が parse しない（`vnet_request_description` / `vnet_route_description` に登録なし、または登録はあるが `handleTunnel()` 内で使用されない）。[CONFIG_DB](../../reference/glossary.md#term-config_db) に保存されるのみ。
+- **`overlay_dmac` のゼロ MAC ガード**: [orchagent](../../reference/glossary.md#term-orchagent) は `!!overlay_dmac`（`operator bool`）でゼロ MAC を検出し、ゼロ MAC の場合は `setOverlayDMac()` を呼ばない（vnetorch.cpp:525）。
+- **`src_mac` の SAI デフォルト委譲**: 省略時に [SAI](../../reference/glossary.md#term-sai) 属性を渡さないため、プラットフォームの [SAI](../../reference/glossary.md#term-sai) デフォルト（通常はスイッチシステム MAC）が [VRF](../../reference/glossary.md#term-vrf) の src_mac として使われる。
+- **`vni` (VNET_ROUTE_TUNNEL) = 0**: VNI リストが空または 0 の場合、[VXLAN](../../reference/glossary.md#term-vxlan) orch 側でベース tunnel の VNI が encapsulation に使われる（`createNextHopTunnel()` に `vni=0` を渡す）。
+<!-- /defaults -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
