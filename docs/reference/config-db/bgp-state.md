@@ -133,6 +133,66 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 
 `NEIGH_STATE_TABLE` の `state` は `show bgp summary` が表示する `State/PfxRcd` 列の状態と対応する。ただし bgpmon のポーリング間隔は 15 秒であるため、リアルタイムの FRR 状態とは最大 15 秒の遅延が生じる。
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### テーブル名定数 (schema.h)
+
+| C マクロ名 | 文字列値 | ソース |
+|-----------|---------|--------|
+| `STATE_BGP_PEER_CONFIGURED_TABLE_NAME` | `"BGP_PEER_CONFIGURED_TABLE"` | `sonic-swss-common/common/schema.h:511` |
+| `STATE_BGP_TABLE_NAME` | `"BGP_STATE_TABLE"` | `sonic-swss-common/common/schema.h:437` |
+
+`BGP_PEER_CONFIGURED_TABLE_NAME` は `managers_bgp.py:287` で `swsscommon.STATE_BGP_PEER_CONFIGURED_TABLE_NAME` として参照される。`NEIGH_STATE_TABLE` はソースコード中に文字列リテラルとしてハードコードされており、対応する schema.h マクロは存在しない（`bgpmon.py:51,157,179` の文字列リテラル `"NEIGH_STATE_TABLE|*"` が実体）。
+
+### state フィールド文字列定数 (bgpmon.py)
+
+`NEIGH_STATE_TABLE` の `state` フィールド値は FRR `show bgp summary json` の `state` キーをそのまま転写する。bgpmon.py に直接定義はなく、FRR が出力する文字列に依存する。SNMP サブエージェント (`bgp4.py`) は以下の文字列を定数的に扱う:
+
+| `state` 文字列値 | 意味 | 備考 |
+|----------------|------|------|
+| `"Idle"` または `"Idle (Admin)"` | セッション停止中 | SNMP 整数値 1 |
+| `"Connect"` | TCP 接続試行中 | SNMP 整数値 2 |
+| `"Active"` | TCP 接続待機中 | SNMP 整数値 3 |
+| `"OpenSent"` | OPEN メッセージ送信済み | SNMP 整数値 4 |
+| `"OpenConfirm"` | OPEN 確認待ち | SNMP 整数値 5 |
+| `"Established"` | セッション確立済み | SNMP 整数値 6 |
+| `"Clearing"` | セッション解除中 (FRR 独自) | SNMP 対応なし |
+
+### peerType フィールド文字列定数 (bgpmon.py)
+
+| フィールド値 | 判定条件 | ソース |
+|------------|---------|--------|
+| `"i-BGP"` | `remoteAs == localAs` | `bgpmon.py:163,171` |
+| `"e-BGP"` | `remoteAs != localAs` | `bgpmon.py:163,171` |
+
+### 操作種別文字列定数 (managers_bgp.py)
+
+`BGPPeerMgrBase.update_state_db` の `op` 引数として使用されるリテラル:
+
+| 文字列値 | 用途 | ソース |
+|---------|------|--------|
+| `"SET"` | ネイバー追加 / 管理状態変更時に STATE_DB へ書き込む | `managers_bgp.py:239,288,353,443` |
+| `"DEL"` | ネイバー削除時に STATE_DB からエントリを消す | `managers_bgp.py:487,291` |
+
+VRF が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr` とするロジックも文字列リテラル `"default"` としてハードコードされている (`managers_bgp.py:280`)。
+
+### ポーリング・バッチ定数 (bgpmon.py)
+
+| 定数名 / 用途 | 値 | ソース |
+|-------------|----|----|
+| `PIPE_BATCH_MAX_COUNT` — Redis パイプラインのバッチ上限 | **50** | `bgpmon.py:35` |
+| ポーリング sleep — bgpmon メインループの待機間隔 | **15** 秒 (`time.sleep(15)`) | `bgpmon.py:203` |
+| FRR ログ確認待機 — FRR 変化なし時の sleep | **1** 秒 (`time.sleep(1)`) | `bgpmon.py:109,115` |
+
+### ハードコードされたパス・コマンド文字列 (bgpmon.py)
+
+| 文字列値 | 用途 | ソース |
+|---------|------|--------|
+| `"/var/log/frr/frr.log"` | FRR ログファイルのタイムスタンプ監視 | `bgpmon.py:61` |
+| `"show bgp summary json"` | vtysh 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
@@ -200,6 +260,49 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-state-ordering.md`
 <!-- /ordering -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H — コード由来)
+
+`BGP_PEER_CONFIGURED_TABLE` を書き込む `BGPPeerMgrBase.update_state_db()`（managers_bgp.py L271–304）
+および `NEIGH_STATE_TABLE` を書き込む `bgpmon.py` には、`switch_type`・`sub_role`・
+`DEVICE_METADATA.localhost.type` による分岐が**一切存在しない**。
+
+両テーブルのスキーマ・フィールドはすべてのプラットフォームで同一である。
+
+### 根拠
+
+| 検索対象 | 結果 |
+|---------|------|
+| `switch_type` in managers_bgp.py | 0 件（分岐なし） |
+| `sub_role` in managers_bgp.py | 0 件（分岐なし） |
+| `is_chassis()` in managers_bgp.py | 0 件（分岐なし） |
+| `localhost/type` | deps 依存ガード登録のみ、値参照なし（L120） |
+| bgpmon.py の platform 分岐 | 0 件（分岐なし） |
+
+`localhost/type` は `BGPPeerMgrBase.__init__` の deps リスト（L120）に登録されているが、
+これは swsscommon の依存性ガード（キーが CONFIG_DB に存在するまで handler 呼び出しをブロック）
+として利用されているだけであり、値による動作の切り替えには使われていない。
+
+### マルチ ASIC 構成での動作（テーブル内容に変化なし）
+
+マルチ ASIC 構成では、bgpmon および bgpcfgd は各 ASIC コンテナ内で独立して動作し、
+それぞれの namespace 内 STATE_DB に書き込む。テーブルのスキーマ・フィールドに変化はない。
+
+**SNMP 読み取り側**（`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py` L22, L29–30）
+のみマルチ ASIC 対応が存在する。`Namespace.init_namespace_dbs()` で全 namespace（asic0, asic1, …）
+の STATE_DB 接続リストを生成し、`dbs_keys_namespace()` で全 namespace の
+`NEIGH_STATE_TABLE|*` を横断収集して CiscoBgp4MIB を組み立てる。
+これは読み取り側の集約動作であり、テーブル自体のスキーマには影響しない。
+
+### 備考: BGP_VOQ_CHASSIS_NEIGHBOR / BGP_INTERNAL_NEIGHBOR との関係
+
+プラットフォーム固有の BGP セッションは `BGP_NEIGHBOR` ではなく
+`BGP_VOQ_CHASSIS_NEIGHBOR`（VoQ シャーシ）または `BGP_INTERNAL_NEIGHBOR`（マルチ ASIC / chassis-packet）
+テーブルに書き込まれる（minigraph.py によるテーブル振り分け）。
+これらのセッションが bgpcfgd で処理される際も、`BGP_PEER_CONFIGURED_TABLE` への
+書き込みロジック（`update_state_db`）は同一コードが使用される。
+<!-- /platform -->
 
 ## 引用元
 
