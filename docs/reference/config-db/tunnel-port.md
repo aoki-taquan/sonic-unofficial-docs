@@ -132,6 +132,30 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `EvpnNvoOrch` はトンネルポート生成前に複数の前提条件を確認する。各ガードが失敗すると `return false` で再試行キューに戻るため、順序が逆になっても最終的には収束するが、中間状態でトンネルポートが存在しない期間が生じる[^1]。
+
+### 検出された順序依存
+
+| # | 先行必須 | 後続処理 | 違反時の動作 | 自動回復 |
+|---|----------|----------|-------------|---------|
+| 1 | `VXLAN_TUNNEL` が CONFIG_DB に存在 | `VXLAN_TUNNEL_MAP` が orchagent に処理される | `tunnel_obj` null → `return false` → 再試行 | あり |
+| 2 | `VXLAN_EVPN_NVO` が orchagent に処理済み | `addTunnelUser` による `Port_EVPN_*` 生成 | `getEVPNVtep()==NULL` → WARN + `return false` | あり |
+| 3 | `VXLAN_TUNNEL_MAP` 処理で `active_=true` | `addTunnelUser` の `isActive()` ガード通過 | `isActive()==false` → WARN + `return false` | あり |
+| 4 | `VXLAN_TUNNEL_MAP` が存在 | `Port_SRC_VTEP_*` 生成 (DIP 非サポート時) | 生成トリガーが存在しない（永続的） | なし |
+
+### 主要な制約詳細
+
+**VXLAN_EVPN_NVO 先行必須 (依存 #2)**: `addTunnelUser` (vxlanorch.cpp:1685) は `evpn_orch->getEVPNVtep()` を呼ぶ。`VXLAN_EVPN_NVO` エントリが CONFIG_DB に書かれ `EvpnNvoOrch::addOperation` (vxlanorch.cpp:2776) が実行されることで `source_vtep_ptr` が設定される。それ以前は `getEVPNVtep()` が `NULL` を返し、`SWSS_LOG_WARN("Unable to find EVPN VTEP")` が記録されてトンネルポートは生成されない。BGP が EVPN リモート VTEP を学習しても `VXLAN_EVPN_NVO` が未設定なら `Port_EVPN_*` は作られない。
+
+**VTEP isActive() ガード (依存 #3)**: `vtep_ptr->isActive()` (vxlanorch.cpp:1694) は `createTunnelHw()` が SAI `create_tunnel()` を成功させた後に `active_ = true` となる (vxlanorch.cpp:939)。`VXLAN_TUNNEL_MAP` または `VXLAN_VRF_MAP` の追加処理が完了していなければ `active_=false` のままであり、`addTunnelUser` は `SWSS_LOG_WARN("VTEP not yet active")` を出力して失敗する。
+
+**DIP 非サポート時の恒久的依存 (依存 #4)**: `isDipTunnelsSupported() == false` の環境では `Port_SRC_VTEP_*` ポートは `VxlanTunnelMapOrch::addOperation` の内部でのみ生成される。`VXLAN_TUNNEL_MAP` エントリが存在しない限り生成トリガーがなく、自動回復しない。
+
+<!-- /ordering -->
+
 ## 例外条件・特殊挙動
 
 - **二重生成の防止**: `getTunnelPort()` が既存エントリを発見した場合 `addTunnel()` を呼ばない。ポートは 1 remote VTEP につき 1 つのみ存在する (`vxlanorch.cpp:1715`)。
