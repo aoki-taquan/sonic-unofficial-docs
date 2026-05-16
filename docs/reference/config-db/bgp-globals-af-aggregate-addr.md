@@ -296,6 +296,66 @@ DEL 操作では `key_map.run_command` で `no aggregate-address` を vtysh に�
 詳細スキャンログは `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-ordering.md` を参照。
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+スコープ: `frr-mgmt-framework` 経路 (`DEVICE_METADATA.frr_mgmt_framework_config=true`)。bgpcfgd テンプレ経路 (`BGP_AGGREGATE_ADDRESS`) の失敗挙動は別ページを参照。
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | key の prefix 形式不正 / AF と IP family の不一致 | `MatchPrefix.normalize_ip_prefix()` が `None` → `frrcfgd.py:3172-3175` | syslog ERR `'invalid IP prefix format'` → `continue`。FRR 未投入、`af_aggr_list` 未更新 | なし |
+| 2 | `afi_safi` キーが `_` で 2 分割できない | `af_type.lower().split('_')` (L3170) | `ValueError` が `bgp_table_handler_common` を抜けて上位伝播 | なし (再 SET で再評価) |
+| 3 | FRR コマンド失敗 (vtysh 投入失敗 = bgpd vty 不通 / 構文エラー / `router bgp` 未生成) | `key_map.run_command()` が `False` → `frrcfgd.py:3184-3186` | syslog ERR `'failed running BGP IP prefix AF config command'` → `continue`。`af_aggr_list` 更新も skip | なし |
+| 4 | `BGP_GLOBALS` 未到着で `self.bgp_asn[vrf]` 不在 | `local_asn` 取得時 `KeyError` (L3176 直前) | 例外が上位に伝播。後追いで `BGP_GLOBALS` が来ても aggregate は自動再投入されない | なし |
+| 5 | UPDATE 中の `no aggregate-address` 先行発行で bgpd vty 瞬断 | `hdl_af_aggregate` L1313-1328 → F3 と同経路 | 当該コマンド失敗、`af_aggr_list` キャッシュは前回値のまま | なし |
+| 6 | DEL で対象 vrf / prefix が `af_aggr_list` に不在 | L3195-3197 `pop(..., None)` | `KeyError` 抑止で skip (冪等) | — |
+| 7 | `policy=<name>` で `ROUTE_MAP_SET` に当該 name が未登録 | `aggr-policy` format (L928-930) → bgpd 投入 | frrcfgd は ROUTE_MAP 存在検証を行わず、`aggregate-address <prefix> route-map <name>` を bgpd に流す。bgpd は受理するが route-map 未解決で attribute 加工は no-op (silent ineffective)。後から ROUTE_MAP_SET を定義しても **aggregate-address は自動再投入されない** | なし |
+| 8 | 起動時 `/run/frr/bgpd.vty` 接続失敗 | `__create_frr_client` L186-200 | 2 秒間隔で 100 回 retry、超過で `return False` → frrcfgd 起動失敗、aggregate-address を含む全 BGP テーブルが未反映 | 100 回 / 2 秒 |
+| 9 | 運用中 vtysh 送信時 `socket.error` | `__proc_command` L259-264 | syslog ERR `'failed to send command to frr daemon'` → `(False, None)` 返却。再接続なし、CONFIG_DB 側は残存 | なし (frrcfgd プロセス再起動が必要) |
+| 10 | bgpd 応答 `ret_code != 0` (構文エラー等) | `__proc_command` L267-269 | syslog **DEBUG** のみ。上位から見ると「成功」扱いで `af_aggr_list` は更新される (実機との乖離リスク) | なし |
+
+### retry なしの実装上の理由
+
+`frrcfgd` は `bgpcfgd` の `Directory` / `on_bbr_change()` のような依存待機・再投入機構を持たない。`BGP_GLOBALS_AF_AGGREGATE_ADDR` 専用の周期 retry / event-driven 再投入トリガは `frrcfgd.py` 全体に存在しない。FRR コマンド失敗は基本的に「投げっぱなし」で、救済は CONFIG_DB の再 SET か `frrcfg.sh restart` のみ。<!-- evidence: frrcfgd.py:3169-3197 -->
+
+### FRR コマンド失敗時の検出ギャップ
+
+`key_map.run_command()` は `__proc_command` 経由で各 daemon の返り値を確認するが、**`ret_code != 0` (bgpd 構文エラー) のケースは syslog DEBUG レベルでしか記録されない** (L267-269)。F3 (vtysh 送信失敗) と F10 (bgpd 構文エラー) では `run_command` の返り値が異なり、後者は `af_aggr_list` キャッシュが更新されてしまう。STATE_DB / ERROR_TABLE への記録は無いため、DEBUG ログを syslog に流していない構成では失敗を観測できない。
+
+### ROUTE_MAP 順序依存 (frrcfgd は検証しない)
+
+`hdl_af_aggregate()` (L1313-1328) は `ROUTE_MAP_SET` テーブルの存在検証を行わず、`{5:aggr-policy}` をそのまま `route-map <name>` に展開して bgpd に流し込む (L928-930)。route-map 未定義のまま `BGP_GLOBALS_AF_AGGREGATE_ADDR` に `policy=<name>` を SET すると bgpd 上で aggregate-address は生成されるが route-map は未解決のまま attribute 加工が no-op となる。**ROUTE_MAP_SET を後から定義しても aggregate-address は自動再投入されない**ため、ユーザ側で aggregate-address エントリを SET し直す必要がある (`bgpcfgd` の `BGP_AGGREGATE_ADDRESS` 経路で実装される `on_bbr_change` 相当の hook は frr-mgmt-framework 経路には存在しない)。<!-- evidence: frrcfgd.py:928-930, 1313-1328, 1982-1983 -->
+
+### bgpd ソケット失敗時の retry 戦略
+
+- 起動時: `/run/frr/bgpd.vty` への connect は 2 秒間隔で最大 100 回 retry (F8、`frrcfgd.py:186-200`)。超過で `RuntimeError` 相当 (`return False`) → frrcfgd 起動失敗、aggregate-address を含む全 BGP テーブル更新が反映されない。
+- 運用中: 送信途中の `socket.error` には自動再接続が無く (F9、`frrcfgd.py:259-264`)、frrcfgd プロセス再起動が必要 (`__proc_command` は当該コマンドのみ skip)。
+
+### 状態記録 / 観測手段
+
+- `STATE_DB` への記録は**なし** (frr-mgmt-framework 経路は `BGP_AGGREGATE_ADDRESS|*` のような STATE_DB ミラーを持たない)。
+- 失敗観測は syslog のみ:
+
+```bash
+# 失敗ログ確認
+journalctl -u bgp | grep -iE 'invalid IP prefix|failed running BGP IP prefix|failed to (connect|send) .* frr daemon'
+# bgpd 構文エラーは DEBUG レベルなので syslog の DEBUG を有効化する必要あり
+vtysh -c "show running-config bgpd" | grep aggregate-address  # bgpd 反映の最終確認
+```
+
+- `ERROR_TABLE` への記録もなし。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-failure.md`
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3169-3197 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1313-1328 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:928-930 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:181-200 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:255-275 -->
+<!-- /failure -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
