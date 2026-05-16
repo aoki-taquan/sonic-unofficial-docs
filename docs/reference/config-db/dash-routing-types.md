@@ -116,6 +116,61 @@ YANG schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィール�
 - **再登録保護**: `addRoutingTypeEntry()` は既存エントリへの上書きを `SWSS_LOG_WARN` + `return true` でサイレントスキップする (`dashorch.cpp:445-449`)。更新が必要な場合はまず削除してから再設定する必要がある。
 <!-- /defaults -->
 
+<!-- ordering -->
+## エントリ投入順序・依存関係 (Phase B)
+
+### 投入の必須順序
+
+`DASH_ROUTING_TYPE_TABLE` は他の DASH テーブルへの先行依存を持たず、任意のタイミングで書き込める。
+ただし、以下のテーブルは routing type が登録済みであることを前提とする。
+
+```
+[前提なし] DASH_ROUTING_TYPE_TABLE — 最初に書き込み可能
+    ↓
+[1] DASH_VNET_MAPPING_TABLE  ← getRouteTypeActions() で routing_type_entries_ を参照
+```
+
+`DashVnetOrch::addOutboundCaToPa()` (`dashvnetorch.cpp:313-319`) は `DashOrch::getRouteTypeActions()` を呼び出し、`routing_type_entries_` に該当エントリが存在しない場合 `false` を返してリトライキューに戻す。
+`DashRouteOrch` が扱う `DASH_ROUTE_TABLE` / `DASH_ROUTE_GROUP_TABLE` は静的マップ (`sOutboundAction`) を使うため `routing_type_entries_` に依存しない。
+
+| 違反パターン | 挙動 | 自動回復 |
+|---|---|---|
+| routing type 未登録で VNET マッピング投入 | `getRouteTypeActions()` が `false` → VnetMap リトライ | routing type 登録後の次 doTask() で自動解消 |
+| 同一 routing type への SET 二重投入 | `addRoutingTypeEntry()` が `SWSS_LOG_WARN` + スキップ | 自動回復なし（DEL → SET が必要） |
+| VNET マッピング残存状態で routing type DEL | `routing_type_entries_` から即時削除（SAI ガードなし） | 孤立エントリが DPU 側に残る |
+
+### 削除の逆順制約
+
+削除は投入の逆順で行う必要がある。
+
+```
+[1] DASH_VNET_MAPPING_TABLE — DEL（参照エントリを先にすべて削除）
+    ↓
+[2] DASH_ROUTING_TYPE_TABLE — DEL
+```
+
+`removeRoutingTypeEntry()` (`dashorch.cpp:457-469`) は `routing_type_entries_` から即時削除して `return true` を返す。
+既存 VNET マッピングが SAI / DPU 側にプログラム済みでも orchagent はガードしないため、VNET マッピングを先に削除しないと孤立エントリが残る。
+
+### warm-reboot 挙動
+
+`DashOrch` は `addOrchList` に登録されており (`orchdaemon.cpp:1414`)、`warmRestoreAndSyncUp()` の doTask() 3 イテレーション対象となる。
+`m_orchList` の登録順は `DashAclOrch → DashVnetOrch → DashRouteOrch → DashOrch → ...` であり (`orchdaemon.cpp:1412-1420`)、`DashVnetOrch` が `DashOrch` より先に処理される。
+
+warm-reboot 後のリプレイで `DASH_VNET_MAPPING_TABLE` が先にキューに積まれると `getRouteTypeActions()` miss でリトライが発生するが、`DashOrch` が `routing_type_entries_` を補充した後の次イテレーションで自動解消し、3 イテレーション以内に収束する設計となっている。
+
+### 順序依存サマリ
+
+| # | 先行テーブル / 操作 | 後続テーブル / 操作 | 緩和策 |
+|---|-------------------|-------------------|--------|
+| 1 | なし（先行依存なし） | `DASH_ROUTING_TYPE_TABLE` 書込 | 任意のタイミングで書込可 |
+| 2 | `DASH_ROUTING_TYPE_TABLE` 登録 | `DASH_VNET_MAPPING_TABLE` 書込 | routing type 未登録 → VnetMap リトライキュー |
+| 3 | `DASH_ROUTING_TYPE_TABLE` DEL | `DASH_ROUTING_TYPE_TABLE` SET（変更時） | DEL 後に SET を再投入（DEL→SET 順守） |
+| 4 | `DASH_VNET_MAPPING_TABLE` DEL | `DASH_ROUTING_TYPE_TABLE` DEL | 参照元 VNET マッピングを先に削除しないと孤立エントリ |
+
+- 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-ordering.md`
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
