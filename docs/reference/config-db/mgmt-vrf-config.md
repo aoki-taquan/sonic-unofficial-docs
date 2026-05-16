@@ -528,3 +528,86 @@ DEL 処理は `STATE_VRF_OBJECT_TABLE` に orchagent が "mgmt" オブジェク�
 | 6 | non-warm-restart 起動時: `mgmt` VRF netdev は削除されない | 起動時保護 | `vrfmgr.cpp:73-79` のスキップにより double-create 防止；hostcfgd が kernel netdev の master |
 
 <!-- /ordering -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-buildimage/files/image_config/interfaces/interfaces.j2:8-20,143-158 / sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2:33-37,247-262 / sonic-swss/cfgmgr/vrfmgr.cpp:15 / sonic-host-services/scripts/hostcfgd:2249,2268 -->
+
+`MGMT_VRF_CONFIG` の処理は `interfaces.j2` テンプレートと `vrfmgrd` supervisord 生成の 2 箇所でプラットフォーム差を持つ。`hostcfgd` と `vrfmgr` 本体のロジックにはアーキテクチャ依存分岐がなく、差異は設定生成フェーズに集中する。
+
+### A. SmartSwitch DPU — eth0 DHCP ブロックがスキップされ mgmt VRF アサインが行われない
+
+`interfaces.j2` L144–158 では、`MGMT_INTERFACE` が空のフォールバック処理（`auto eth0 / iface eth0 inet dhcp metric 202`）を生成する条件として、**SmartSwitch DPU ノードを明示的に除外**している。
+
+```jinja
+{% if (DEVICE_METADATA is not defined)
+      or (DEVICE_METADATA['localhost']['subtype'] is not defined)
+      or (DEVICE_METADATA['localhost']['switch_type'] is not defined)
+      or not (DEVICE_METADATA['localhost']['subtype'] == 'SmartSwitch'
+              and DEVICE_METADATA['localhost']['switch_type'] == 'dpu') %}
+auto eth0
+iface eth0 inet dhcp
+    metric 202
+{% if (MGMT_VRF_CONFIG) and (MGMT_VRF_CONFIG['vrf_global']['mgmtVrfEnabled'] == "true") %}
+    vrf mgmt
+{% endif %}
+{% endif %}
+```
+
+| 条件 | eth0 DHCP ブロック生成 | mgmt VRF アサイン |
+|---|---|---|
+| 通常スイッチ（T0 / T1 等）で `MGMT_INTERFACE` なし | `auto eth0` + `iface eth0 inet dhcp metric 202` | `mgmtVrfEnabled=true` のとき `vrf mgmt` を付加 |
+| SmartSwitch DPU（`subtype=SmartSwitch` + `switch_type=dpu`） | **生成されない** | **アサインされない** |
+
+DPU は管理インターフェースを持たない前提のため、`mgmtVrfEnabled=true` が CONFIG_DB に書かれても、DPU ノード上では `/etc/network/interfaces` に `vrf mgmt` 行が挿入されず、eth0 の mgmt VRF 所属は起きない。
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:143-158`
+
+### B. Fabric ASIC — vrfmgrd が supervisord に生成されず MGMT_VRF_CONFIG が無視される
+
+`docker-orchagent/supervisord.conf.j2` は ASIC 種別を `is_fabric_asic` フラグで判定し、Fabric ASIC では `vrfmgrd` プログラムブロックを生成しない。
+
+```jinja
+{% if is_fabric_asic == 0 %}
+[program:vrfmgrd]
+command=/usr/bin/vrfmgrd
+...
+{% endif %}
+```
+
+| ASIC 種別 | vrfmgrd 起動 | MGMT_VRF_CONFIG 反映 |
+|---|---|---|
+| 通常 ASIC (`is_fabric_asic == 0`) | あり | `vrfmgr` が VRF テーブルマップと APPL_DB を管理する |
+| Fabric ASIC (`is_fabric_asic == 1`) | **なし** | CONFIG_DB への書き込みは無視される（購読者不在） |
+
+`hostcfgd` は host 側サービスのため Fabric ASIC ノードにも存在しうるが、Fabric ASIC ノードは通常 management port を持たないため eth0 の mgmt VRF 処理は実質無効。
+
+> **evidence**: `sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2:33-37,247-262`
+
+### C. multi-asic / VOQ chassis — MGMT_VRF_CONFIG は host CONFIG_DB のみ対象
+
+`hostcfgd` は引数なし `ConfigDBConnector()` で **host namespace の CONFIG_DB** に接続し、`asicN` namespace の CONFIG_DB は参照しない。
+
+| 構成 | MGMT_VRF_CONFIG の配置 | hostcfgd の参照先 |
+|---|---|---|
+| single-asic | host CONFIG_DB のみ | host CONFIG_DB |
+| multi-asic | host CONFIG_DB のみ | host CONFIG_DB（`asicN` namespace は参照しない） |
+| VOQ chassis | 各 linecard host で独立したシングルトン | 各 host の CONFIG_DB（linecard 間で共有されない） |
+
+VOQ chassis ではスーパーバイザーおよび各 linecard がそれぞれ独立した CONFIG_DB を持つ。`MGMT_VRF_CONFIG` は各 host 単体の管理 VRF を制御するものであり、VOQ chassis 向けの cross-linecard 管理 VRF 集約機能は実装されていない。
+
+> **evidence**: `sonic-host-services/scripts/hostcfgd:2249,2268`（`ConfigDBConnector()` 引数なし）
+
+### D. mgmt VRF table ID — 全プラットフォーム共通の固定値
+
+```cpp
+// sonic-swss/cfgmgr/vrfmgr.cpp:15
+#define MGMT_VRF_TABLE_ID 6000
+```
+
+mgmt VRF の Linux ルーティングテーブル ID は **コンパイル時定数 6000** であり、ASIC ベンダー・CPU アーキテクチャ（ARM / x86_64）を問わず変更不可。通常 VRF の動的割当範囲（1001–5097）の外側に固定されているため衝突しない。`vrfmgr` は `ip link add/del` を呼ばず内部 map のみ管理するため、ARM / x86_64 間の動作差異は **ない**。
+
+> **evidence**: `sonic-swss/cfgmgr/vrfmgr.cpp:12-16`
+
+<!-- /platform -->
