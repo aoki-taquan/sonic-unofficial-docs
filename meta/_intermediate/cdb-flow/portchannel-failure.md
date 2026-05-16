@@ -129,7 +129,43 @@ if (kill(pid, SIGTERM))
 - `/var/run/teamd/<alias>.pid` が存在しない場合: SWSS_LOG_NOTICE で false 返却（エラーではない）。
 - SIGTERM 送信失敗: SWSS_LOG_ERROR で false 返却。
 
-## 6. retry ループ上限
+## 6. 不正 MAC / DEVICE_METADATA 取得失敗 — デーモン起動時クラッシュ
+
+### コード証跡: `teammgr.cpp:52-64`
+
+```cpp
+// Get the MAC address from configuration database
+auto it = find_if(fvVector.begin(), fvVector.end(),
+    [](const FieldValueTuple& fv) { return fv.first == "mac"; });
+if (it == fvVector.end())
+{
+    throw runtime_error("Failed to get MAC address from configuration database");
+}
+m_mac = MacAddress(it->second);
+```
+
+- `DEVICE_METADATA|localhost` に `mac` フィールドが存在しない場合、コンストラクタで `std::runtime_error` を throw。
+- `teammgrd` プロセスがクラッシュし、全 PORTCHANNEL エントリの処理が停止する。
+- 対策: `DEVICE_METADATA` テーブルを正しく設定した上で `teammgrd` を再起動。
+
+## 7. SAI LAG 作成失敗 (orchagent / LagOrch)
+
+### コード証跡: `portsorch.cpp` (LagOrch)
+
+```cpp
+// LAG ID 払い出し失敗 (VoQ 環境)
+SWSS_LOG_ERROR("Failed to allocate unique LAG id for local lag %s rv:%d",
+               alias.c_str(), rv);
+
+// SAI create_lag() 失敗
+SWSS_LOG_ERROR("Failed to create LAG %s lid:", alias.c_str());
+```
+
+- VoQ スイッチ環境で `LagIdAllocator` がユニーク ID を払い出せない場合: SWSS_LOG_ERROR + エントリ破棄。
+- ASIC/SAI が `create_lag()` を拒否した場合 (リソース枯渇等): SWSS_LOG_ERROR + エントリ破棄。
+- 失敗したエントリは orchagent によって再試行されない。`config portchannel del` → `config portchannel add` で再投入が必要。
+
+## 8. retry ループ上限
 
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタは存在しない。
 `m_toSync` はエントリを保持し続け、次の select イテレーションで再試行される（無限リトライ）。
@@ -147,3 +183,6 @@ if (kill(pid, SIGTERM))
 | MACsec Ingress SA 未確立 | 暗黙 continue | SWSS_LOG_INFO | SA 確立後自動再試行 |
 | SIGTERM 送信失敗 | false | SWSS_LOG_ERROR | 手動介入必要 |
 | PID ファイル不在 | false | SWSS_LOG_NOTICE | 無害（非存在なら OK） |
+| MAC 取得失敗 (DEVICE_METADATA) | プロセスクラッシュ | runtime_error → syslog | DEVICE_METADATA 修正 + teammgrd 再起動 |
+| SAI LAG ID 払い出し失敗 | エントリ破棄 | SWSS_LOG_ERROR | LAG 再投入 (del→add) |
+| SAI create_lag() 失敗 | エントリ破棄 | SWSS_LOG_ERROR | ASIC リセットまたはシステム再起動 |

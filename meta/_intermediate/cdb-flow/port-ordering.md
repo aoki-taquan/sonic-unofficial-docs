@@ -102,6 +102,52 @@ allPortsReady() = true → VLAN/LAG/INTERFACE/ACL などの他 orch がアンブ
 
 ---
 
+## 6. PORT 作成時 CreateOnly 属性順序 (addPortBulk)
+
+`PortsOrch::addPortBulk()` (`portsorch.cpp:1248-`) で SAI `create_port()` に渡す属性は以下の順序で `attrList` に積まれる。CreateOnly 属性のためポート作成後は変更不可。
+
+1. `SAI_PORT_ATTR_HW_LANE_LIST` (`lanes.is_set` が true のとき) — `portsorch.cpp:1292`
+2. `SAI_PORT_ATTR_SPEED` (`speed.is_set` が true のとき) — `portsorch.cpp:1300`
+3. `SAI_PORT_ATTR_AUTO_NEG_MODE` (`autoneg.is_set` が true のとき) — `portsorch.cpp:1308`
+4. `SAI_PORT_ATTR_FEC_MODE` + `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` (`fec.is_set` のとき) — `portsorch.cpp:1318`
+5. `SAI_PORT_ATTR_TPID` (`tpid != 0x8100` のとき) — `portsorch.cpp:1337-1344`
+
+HW_LANE_LIST と SPEED は SAI mandatory 属性。lanes/speed なしで create_port() するとエラー。tpid=0x8100(デフォルト)は属性リストに追加しない。
+
+---
+
+## 7. Dynamic Port Breakout (DPB) シーケンス
+
+PORT テーブルの再書き込みにより breakout を実現する。`doTask()` が PORT_CONFIG_RECEIVED を受信したとき:
+
+1. `removePortBulk()` — `m_portListLaneMap` から消えたレーン構成を持つポートを一括削除 (`portsorch.cpp:4703-4718`)
+2. `addPortBulk()` — `m_lanesAliasSpeedMap` に新規追加されたレーン構成のポートを一括作成 (`portsorch.cpp:4725-4748`)
+3. `initPortsBulk()` — バッファカウンタ・PG・serdes などを初期化
+
+DEL が ADD より先に実行される。同一 doTask() 内でアトミックに処理される。
+
+**副作用**: `addSubPort()` は最初のサブポート追加時に親 hostif の VLAN tag を変更 (`portsorch.cpp:2059`)、最後のサブポート削除時に復元 (`portsorch.cpp:2122`)。
+
+---
+
+## 8. host_tx_ready 同期メカニズム
+
+STATE_DB の `PORT_TABLE|<alias>.host_tx_ready` フィールド管理:
+
+### 初期化
+- `initPortsBulk()` → `initHostTxReadyState()` が STATE_DB に `host_tx_ready` がなければ `"false"` で初期化 (`portsorch.cpp:5494`)。
+
+### レガシーモード (`m_cmisModuleAsicSyncSupported == false`)
+`setPortAdminStatus()` 内で同期的に更新 (`portsorch.cpp:2213-2274`):
+- admin_status=down 設定前: `"false"` に設定
+- SAI/gearbox エラー時: `"false"` に設定
+- admin_status=up かつ SAI/gearbox 成功後: `"true"` に設定
+
+### CMIS Async モード (`m_cmisModuleAsicSyncSupported == true`)
+SAI コールバック `on_port_host_tx_ready` が非同期通知 → `setHostTxReady()` で STATE_DB 更新 (`portsorch.cpp:9709-9724`)。admin_status 変更時は `host_tx_ready` を直接変更しない。両モードの切り替えは `SAI_SWITCH_ATTR_RW_HW_TX_SIGNAL_SUPPORT` と `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` 両属性のサポート有無で決まる (`portsorch.cpp:969-980`)。
+
+---
+
 ## ソース証跡
 
 | 知見 | ファイル | 行 |
@@ -117,3 +163,10 @@ allPortsReady() = true → VLAN/LAG/INTERFACE/ACL などの他 orch がアンブ
 | orchList 順序 | `orchdaemon.cpp` | 500 |
 | intfsOrch ref_count 増加 | `intfsorch.cpp` | 498 |
 | bufferOrch ref_count 増加 | `bufferorch.cpp` | 1175,1546 |
+| addPortBulk CreateOnly attrs 順序 | `portsorch.cpp` | 1292-1344 |
+| DPB removePortBulk → addPortBulk 順序 | `portsorch.cpp` | 4703-4748 |
+| addSubPort hostif vlan tag 変更 | `portsorch.cpp` | 2059,2122 |
+| initHostTxReadyState (false 初期化) | `portsorch.cpp` | 5494 |
+| host_tx_ready admin_status 連動 | `portsorch.cpp` | 2213-2274 |
+| host_tx_ready CMIS async コールバック | `portsorch.cpp` | 9709-9724 |
+| CMIS Async モード判定 | `portsorch.cpp` | 969-980 |

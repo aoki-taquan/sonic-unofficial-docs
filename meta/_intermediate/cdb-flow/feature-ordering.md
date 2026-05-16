@@ -2,6 +2,7 @@
 
 対象ページ: `docs/reference/config-db/feature.md`
 生成日: 2026-05-15
+更新日: 2026-05-16 (systemd unit 起動順序・依存 service 順を追記)
 
 ---
 
@@ -137,6 +138,83 @@ if feature.delayed and not self.is_delayed_enabled:
 | パッケージ新規インストール (`sonic-package-manager install`) | `FeatureRegistry.register()` が set_entry で全フィールドを再書き込み — non_cfg_entries は必ず上書き | パッケージインストール後、`delayed` / `has_*_scope` の手動変更は不要（自動復元される） |
 | multi-asic 環境で namespace DB と global DB が不一致 | `featured` が各 namespace DB に mod_entry するため、グローバル DB だけ変更しても全反映されない | `sonic-cfggen` または `sonic-db-cli ALL` を使用して全 DB を同時更新 |
 
+### systemd unit 起動順序 (追記)
+
+#### featured.service の依存関係
+
+ソース: `sonic-host-services/data/debian/sonic-host-services-data.featured.service`
+
+```ini
+[Unit]
+Description=Feature configuration daemon
+Requires=config-setup.service
+After=config-setup.service
+BindsTo=sonic.target
+After=sonic.target
+```
+
+- `featured` は `config-setup.service` 完了後に起動する。
+- `config-setup.service` は `database.service` を `Requires=` する。
+- したがって起動順序は: `docker.service` → `database.service` → `config-setup.service` → `featured.service`
+
+#### 各 feature service の systemd 依存関係
+
+ソース: `sonic-buildimage/files/build_templates/*.service.j2`
+
+| feature service | Requires | After | BindsTo |
+|----------------|----------|-------|---------|
+| `bgp.service` | `config-setup.service` | `config-setup.service swss.service syncd.service` | `sonic.target` |
+| `snmp.service` | `config-setup.service` | `config-setup.service swss.service syncd.service interfaces-config.service` | `sonic.target` |
+| `telemetry.service` | `database.service` | `database.service swss.service syncd.service` | `sonic.target` |
+| `mgmt-framework.service` | `database.service` | `database.service swss.service syncd.service` | `sonic.target` |
+| `gnmi.service` | `database.service` | `database.service swss.service syncd.service` | `sonic.target` |
+| `sflow.service` | - | `swss.service syncd.service hostcfgd.service interfaces-config.service` | `sonic.target` |
+| `nat.service` | `config-setup.service` | `config-setup.service swss.service syncd.service` | `sonic.target` |
+| `dhcp_relay.service` | `config-setup.service` | `config-setup.service swss.service syncd.service teamd.service` | `sonic.target` |
+| `otel.service` | `database.service` | `sonic.target` | `sonic.target` (**Before=swss.service**) |
+| `stp.service` | `updategraph.service swss.service` | `updategraph.service swss.service syncd.service` | `sonic.target` |
+| `pmon.service` | `database.service config-setup.service` | `database.service config-setup.service` | `sonic.target` |
+| `eventd.service` | `config-setup.service` | `rsyslog-config.service` | `sonic.target` |
+
+- `otel.service` は `Before=swss.service` を持ち、`swss` 起動前に起動しなければならない唯一の feature service。
+
+#### delayed フィーチャーの起動シーケンス
+
+ソース: `sonic-host-services/scripts/featured:143-184,659-661`
+
+```
+featured 起動
+  ↓ render_all_feature_states() — 全フィーチャーの state を評価
+  ↓ delayed=False → 即時 enable_feature() → systemctl enable / start
+  ↓ delayed=True  → is_delayed_enabled=False のため enable_feature() をスキップ
+  ↓
+[APPL_DB PORT_TABLE:PortInitDone 受信]  ← swss が port 初期化完了後に書き込む
+  ↓ port_listener() → handle_port_table_timeout() or enable_delayed_services()
+  ↓ is_delayed_enabled=True にセット
+  ↓ delayed=True の全フィーチャーを enable_feature() で順次起動
+
+[OR: PORT_INIT_TIMEOUT_SEC=180 秒経過でタイムアウト]
+  ↓ handle_port_table_timeout() が enable_delayed_services() を呼び出す
+  ↓ delayed=True フィーチャーを強制起動
+```
+
+- warm/fast boot の場合、`featured` は起動直後に `handle_adv_boot()` で `enable_delayed_services()` を呼び出す（`featured:171-172`）。これにより PortInitDone を待たずに delayed フィーチャーが起動する。
+
+#### multi-asic / SmartSwitch のインスタンス化
+
+ソース: `sonic-host-services/scripts/featured:408-424`; `sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996`
+
+```python
+feature_names = (
+    [feature.name] if has_global_scope or not is_multi_npu
+    + [feature.name + '@' + str(asic)] for asic in range(num_npus) if has_per_asic_scope
+    + [feature.name + '@dpu' + str(dpu)] for dpu in range(num_dpus) if has_per_dpu_scope
+)
+```
+
+- `systemd-sonic-generator` がブート時に `/run/systemd/generator/` 配下でインスタンスサービスを動的生成する。
+- SmartSwitch NPU: `database@dpu<N>.service.d/ordering.conf` に `Requires=systemd-networkd-wait-online@bridge-midplane.service` を追加（`systemd-sonic-generator.cpp:985-996`）。これにより DPU database は midplane ネットワーク確立後に起動する。
+
 <!-- /ordering -->
 
 ---
@@ -146,5 +224,12 @@ if feature.delayed and not self.is_delayed_enabled:
 - `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80` — FeatureRegistry.register() の優先順序ロジック
 - `sonic-host-services/scripts/featured:200-217` — auto_restart → state の更新順序
 - `sonic-host-services/scripts/featured:255-275` — delayed フィーチャーの起動条件
+- `sonic-host-services/scripts/featured:143-184` — delayed フィーチャーのイベント処理 (PortInitDone)
+- `sonic-host-services/scripts/featured:408-424` — get_multiasic_feature_instances() でのインスタンス名決定
+- `sonic-host-services/scripts/featured:659-661` — PORT_INIT_TIMEOUT_SEC タイムアウト強制起動
+- `sonic-host-services/data/debian/sonic-host-services-data.featured.service` — featured.service 依存関係定義
+- `sonic-buildimage/files/build_templates/snmp.service.j2` — snmp service の After/Requires
+- `sonic-buildimage/files/build_templates/database.service.j2` — database service の依存関係
+- `sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996` — SmartSwitch DPU DB の midplane 依存注入
 - `sonic-utilities/config/feature.py:24-25` — always_enabled の CLI 変更拒否
 - `sonic-buildimage/files/build_templates/init_cfg.json.j2` — ビルド時初期値注入

@@ -165,6 +165,58 @@ show tacacs
 ```
 <!-- /ops-hint -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`AaaCfg`) の `modify_conf_file()` は `TACPLUS_SERVER` / `TACPLUS|global` / `AAA` いずれかが更新されるたびに `/etc/pam.d/common-auth-sonic`・`/etc/tacplus_nss.conf`・`/etc/nsswitch.conf` を**丸ごと再生成**する。このため書き込み順序が中間状態の整合性に直結する。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L399-417 L641-816 -->
+
+### AAA 設定生成順（load フェーズ）
+
+`AaaCfg.load()` は起動時に次の順序で CONFIG_DB を読み込み、最後に `modify_conf_file()` を **1 回だけ**呼ぶ:
+
+1. `AAA` テーブル全行を `aaa_update(..., modify_conf=False)` で取り込む
+2. `TACPLUS|global` 行を `tacacs_global_update(..., modify_conf=False)` で取り込む
+3. `TACPLUS_SERVER` 全行を `tacacs_server_update(..., modify_conf=False)` で取り込む
+4. `RADIUS|global` / `RADIUS_SERVER` / `LDAP|global` / `LDAP_SERVER` を同様に取り込む
+5. `modify_conf_file()` を 1 回実行して PAM / NSS を確定する
+
+この順序は `load_independent_config()` → `AaaCfg.load()` の呼び出し連鎖で保証されており、load フェーズ内での中間 PAM 再生成は起きない。
+
+### PAM 設定書込順（runtime イベント）
+
+runtime 中はテーブル更新のたびに `modify_conf_file()` が呼ばれる。各ハンドラは次の流れで設定ファイルを生成する:
+
+1. `tacplus_global_default`（定数: `timeout=5`, `auth_type=pap`, `passkey=""`）をベースにコピー
+2. `TACPLUS|global` の実値で上書き (`tacplus_global.update(self.tacplus_global)`)
+3. `TACPLUS_SERVER` の各エントリに対して `tacplus_global.copy()` をベースとして per-server 値で上書き
+4. `servers_conf` を `priority` 降順でソート (`sorted(..., key=lambda t: int(t['priority']), reverse=True)`)
+5. Jinja2 テンプレートで `/etc/pam.d/common-auth-sonic.tmp` に展開 → `os.rename()` でアトミックに置換
+6. `/etc/pam.d/sshd` / `/etc/pam.d/login` の `@include` 行を `common-auth-sonic` に書き換え
+7. `nsswitch.conf` の `passwd` 行を `authentication.login` の値に応じて書き換え（tacplus/radius/ldap/none の排他処理）
+8. `/etc/tacplus_nss.conf` を `NSS_TACPLUS_CONF_TEMPLATE` から生成
+9. `audisp-tacplus` に SIGHUP を送信してアカウンティング設定をリロード
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `TACPLUS_SERVER` エントリを先書き → `AAA` 書き込み | 推奨（中間不整合最小化） | runtime は subscribe 後追いで自動更新 |
+| 2 | `TACPLUS\|global.passkey` 設定 → `AAA\|authentication.login = "tacacs+"` 書き込み | **先行必須**（YANG reject + db_migrator が authorization 削除） | 手動 CLI 再設定が必要 |
+| 3 | `AAA\|authentication.login` に `tacacs+` を含む場合のみ nsswitch.conf / PAM に TACACS+ 行が生成 | 機能前提 | `tacacs+` が `login` に含まれない間は servers_conf に値があっても PAM に反映されない |
+| 4 | `priority` 値によるサーバ順序 | 降順ソート（大きい値ほど PAM の先頭）; `priority` が欠如すると `KeyError` → `ValueError` で設定生成中断 | CLI は常に `priority=1` を書く; 直接 DB 操作時は注意 |
+| 5 | `TACPLUS\|global.passkey` → `AAA\|authorization` (db_migrator) | **先行必須**（passkey 未設定で migration が走ると authorization エントリが削除される） | 手動 `config aaa authorization login tacacs+` で再設定 |
+
+### 主要な制約詳細
+
+**TACPLUS_SERVER 先行推奨 (依存 #1)**: `AAA|authentication.login = "tacacs+"` を先に書き込み `TACPLUS_SERVER` エントリを後から追加すると、AAA 書き込み時点で `servers_conf` が空になり `common-auth-sonic` は TACACS+ サーバなしで生成される（実質 `local` 相当）。`TACPLUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になるが、その間 TACACS+ 認証は機能しない（evidence: `hostcfgd:641-725`）。
+
+**passkey 先行必須 (依存 #2 / #5)**: `db_migrator.migrate_aaa()` は `TACPLUS|global.passkey` が空の場合に `AAA|authorization` を削除する。YANG must 制約により `AAA|authentication.login` に `tacacs+` を含む場合、passkey が存在しなければ CLI 書き込み自体が reject される（evidence: `db_migrator.py:869-900`, `sonic-system-aaa.yang:must`）。
+
+**PAM アトミック書き換え**: `common-auth-sonic` は `.tmp` ファイルに書いてから `os.rename()` でアトミックに置換する。書き込み中の部分読み込みは起きないが、rename 前後の 2 つの PAM 状態間に「中間状態ウィンドウ」は存在する（evidence: `hostcfgd:727-731`）。
+
+<!-- /ordering -->
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -298,5 +350,72 @@ hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする�
 `TACPLUS_SERVER` にエントリがあっても `AAA|authentication.login` に `tacacs+` が含まれない場合、hostcfgd は PAM への TACACS+ 行生成をスキップし nsswitch.conf への `tacplus` 追加も行わない。設定値が存在しても認証に効果なし (silent skip)。
 
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L86-89 L366-370 L665, sonic-utilities/config/aaa.py L229 L263-267, sonic-host-services/data/templates/tacplus_nss.conf.j2 L46-50 -->
+
+### モジュール定数 (hostcfgd)
+
+| 定数名 | 値 | フィールド | 説明 |
+|--------|----|-----------|----|
+| `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` | `timeout` | `TACPLUS\|global.timeout` 未設定時のデフォルト応答タイムアウト [秒] |
+| `TACPLUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | `auth_type` | `TACPLUS\|global.auth_type` 未設定時のデフォルト認証プロトコル |
+| `TACPLUS_SERVER_PASSKEY_DEFAULT` | `""` (空文字列) | `passkey` | 共有秘密未設定時のフォールバック。空文字列が pam_tacplus に渡され、サーバ設定と不一致なら認証失敗 (silent) |
+
+### TCP ポートデフォルト
+
+TACACS+ 標準 TCP ポートは **49** (IANA well-known)。
+
+| 定義箇所 | 値 | 備考 |
+|---------|----|------|
+| `aaa.py L266` CLI `--port` デフォルト | `49` | `config tacacs add` で省略時に CONFIG_DB へ書き込まれる値 |
+| `sonic-system-tacacs.yang` `tcp_port` leaf | `49` | YANG モデルのデフォルト |
+| `hostcfgd` 内部 | 定数なし | `CONFIG_DB.TACPLUS_SERVER.tcp_port` をそのまま `tacplus_nss.conf.j2` テンプレートに渡す |
+
+### priority レンジ
+
+| 定義箇所 | 範囲 | デフォルト |
+|---------|------|-----------|
+| `aaa.py L267` CLI `--pri` | `IntRange(1, 64)` | `1` |
+| `sonic-system-tacacs.yang` `priority` leaf | `uint8 1..64` | `1` |
+| `hostcfgd L665` ソートロジック | — | 降順 (`reverse=True`)。大きい値ほど PAM 設定で先に記載（高優先度） |
+
+### auth_type 列挙値
+
+`aaa.py L229/L265` および `sonic-system-tacacs.yang` が定義する 4 値:
+
+| 値 | 意味 |
+|----|----|
+| `pap` | PAP (Password Authentication Protocol)。デフォルト。最広互換 |
+| `chap` | CHAP (Challenge Handshake Authentication Protocol) |
+| `mschap` | MS-CHAP (Microsoft CHAP) |
+| `login` | ASCII ログインシーケンス認証 |
+
+<!-- /constants -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L665 L728-731 L483-493 L816, sonic-host-services/data/templates/common-auth-sonic.j2 L18 -->
+
+### 不正 `priority` による設定生成中断 (ValueError)
+
+`modify_conf_file()` はサーバーリストを `sorted(..., key=lambda t: int(t['priority']), reverse=True)` でソートする（`hostcfgd L665`）。`priority` フィールドに整数として解釈できない文字列が含まれる場合、`int()` が `ValueError` を送出し `modify_conf_file()` 全体が中断する。PAM 設定ファイル (`/etc/pam.d/common-auth-sonic`) および NSS 設定は更新されず、直前の状態のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled exception）。CLI (`config tacacs add`) は常に `priority=1` を書き込むため通常経路では発生しないが、`sonic-db-cli` 等による直接 DB 操作時に注意が必要。
+
+### PAM 設定ファイル生成失敗
+
+`modify_conf_file()` は Jinja2 テンプレートをレンダリングし `/etc/pam.d/common-auth-sonic.tmp` に書き込んだ後 atomic rename する（`hostcfgd L728-731`）。ファイルシステムの権限不足・ディスクフル・テンプレートレンダリングエラー等が発生した場合、例外は `modify_conf_file()` 内でキャッチされず上位に伝播する。`generate_file_from_template()` 関数経由のパスでは `LOG_ERR: 'Failed generate_file_from_template error={e}'` が出力されるが、`modify_conf_file()` の直接 `open/write/rename` パスでは同等のキャッチがない。認証設定は前回生成済みファイルのまま残る。
+
+### 不正 `auth_type` による pam_tacplus 認証プロトコル失敗 (silent)
+
+hostcfgd は `auth_type` の値を検証せずテンプレートに直接渡す（`hostcfgd L725`）。PAM 設定行は `login={{ server.auth_type }}` として生成される（`common-auth-sonic.j2 L18`）。YANG 列挙 (`pap`/`chap`/`mschap`/`login`) 以外の文字列が設定されると、無効な `login=<値>` が PAM 行に書き込まれる。pam_tacplus はサーバーへの接続を試みるが認証プロトコルのネゴシエーションに失敗し認証拒否 (`auth_err`) となる。hostcfgd 側にはエラーログが出力されない（silent failure）。
+
+### audisp-tacplus SIGHUP 失敗 (accounting への影響)
+
+`notify_audisp_tacplus_reload_config()` は audisp-tacplus プロセスに SIGHUP を送信して accounting 設定を再読み込みさせる（`hostcfgd L483-493`）。PID ファイルが存在しないか `os.kill()` が失敗した場合は `LOG_WARNING: 'Send SIGHUP to audisp-tacplus failed with exception: {}'` を出力して継続する。PAM 認証設定自体は更新済みのため **ログイン認証には影響しない** が、TACACS+ accounting ログが古い設定で動作し続ける。audisp-tacplus が起動していない環境では常に発生する。
+
+<!-- /failure -->
 
 <!-- glossary-links-injected: e0332a023fdb -->

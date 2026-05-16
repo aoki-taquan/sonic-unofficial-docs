@@ -120,6 +120,28 @@ leaf cluster {
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`cluster` フィールドは minigraph XML の `<ClusterName>` タグから `sonic-cfggen` が書き込む。`bgpcfgd` はこのフィールドを直接参照しないため、ordering の影響は限定的。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `DEVICE_NEIGHBOR_METADATA.cluster` パース → `DEVICE_METADATA.cluster` 書き込み | minigraph パース内で同一呼び出し（通常は問題なし） | `sonic-cfggen` が原子的に処理 |
+| 2 | `cluster` フィールド → bgpcfgd | **依存なし** | bgpcfgd は `cluster` フィールドを参照しない |
+| 3 | `DEVICE_METADATA` 全体書き込み → `swss_vars.j2` 展開 | 書き込み後に展開 | `cluster` 不在時は空文字列フォールバック |
+| 4 | minigraph 再適用で `cluster` 削除 | **自動削除なし** | 手動 `sonic-db-cli CONFIG_DB hdel 'DEVICE_METADATA\|localhost' cluster` が必要 |
+
+### 主要な制約詳細
+
+**minigraph 再適用で cluster が残存する問題 (依存 #4)**: `sonic-cfggen -m minigraph.xml --write-to-db` を再実行した際、`<ClusterName>` タグが存在しない場合、`if cluster:` (truthy check) により `DEVICE_METADATA|localhost.cluster` の書き込み自体がスキップされる。既存の `cluster` フィールドは削除されないため、古いクラスタ名が DB に残存する。クリアするには `sonic-db-cli CONFIG_DB hdel 'DEVICE_METADATA|localhost' cluster` を手動実行すること（evidence: `minigraph.py:2170-2172`）。
+
+**CHASSIS_APP_DB との非連携**: `cluster` フィールドは CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ存在し、CHASSIS_APP_DB との直接連携はない。VOQ 構成における `SYSTEM_NEIGH` 等とも独立している。
+
+<!-- /ordering -->
+
 ## 書き込み入り口 (Direction A)
 
 対象テーブル: `DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA` の `cluster` フィールド

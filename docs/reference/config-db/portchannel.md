@@ -461,6 +461,113 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 
 <!-- /ordering -->
 
+<!-- pubsub -->
+## PUBSUB / Keyspace 通知メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-pubsub.md`
+> ソース: `sonic-swss-common/common/subscriberstatetable.cpp`, `producerstatetable.cpp`, `consumerstatetable.cpp`, `sonic-swss/cfgmgr/teammgrd.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+
+### 通知チャネル一覧
+
+| DB | Redis チャネル / パターン | 用途 |
+|---|---|---|
+| CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL\|*` | `TeamMgr` が `PSUBSCRIBE` — PORTCHANNEL SET/DEL 検知 |
+| APPL_DB (db=0) | `LAG_TABLE_CHANNEL@0` | `PortsOrch` の `ConsumerStateTable` が `SUBSCRIBE` — LAG_TABLE SET/DEL 受信 |
+| STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | `TeamMgr` が `SubscriberStateTable` で LAG 状態 (state=ok) を監視 |
+| STATE_DB (db=6) | `__keyspace@6__:PORT_TABLE\|*` | `TeamMgr::doPortUpdateTask()` がポート再作成イベントを検知 |
+
+### CONFIG_DB → TeamMgr: SubscriberStateTable (PSUBSCRIBE)
+
+`SubscriberStateTable` (`subscriberstatetable.cpp:20-22`) は初期化時に以下を実行する:
+
+```python
+m_keyspace = f"__keyspace@4__:PORTCHANNEL|*"
+PSUBSCRIBE(m_keyspace)  # Redis keyspace notification 購読
+```
+
+- CONFIG_DB の `PORTCHANNEL|<name>` キーへの HSET / DEL 操作が発生すると Redis が当該チャネルに `set` / `del` を PUBLISH する
+- `readData()` (`subscriberstatetable.cpp:45-83`) が `redisGetReply()` で非ブロッキング受信し `m_keyspace_event_buffer` に蓄積
+- `pops()` (`subscriberstatetable.cpp:95-165`) がバッファを消費し `KeyOpFieldsValuesTuple` に変換:
+  - `del` イベント → DEL コマンド (テーブル読取りなし)
+  - その他 → `m_table.get()` で実データを取得して SET コマンドに変換
+- 起動時は既存キーを全件バッファに積み込み初期同期を行う
+
+`teammgrd.cpp:55-73` が `TableConnector` 3 本 (PORTCHANNEL / PORTCHANNEL_MEMBER / STATE PORT_TABLE) を `Select` に登録し、fd ベースの epoll で通知を待つ:
+
+```cpp
+Select s;
+s.addSelectables(o->getSelectables());
+while (!received_sigterm) {
+    ret = s.select(&sel, SELECT_TIMEOUT);  // 1000ms タイムアウト
+    auto *c = (Executor *)sel;
+    c->execute();  // → TeamMgr::doTask() → doLagTask()
+}
+```
+
+### TeamMgr → APPL_DB: ProducerStateTable (PUBLISH)
+
+`TeamMgr` は `ProducerStateTable m_appLagTable` (APPL_DB / `LAG_TABLE`) を通じて APP_DB に書き込む。  
+`ProducerStateTable::set()` は Redis Lua スクリプト (EVALSHA) を実行し、以下を **1 トランザクション** で行う:
+
+1. Key を key-set (`LAG_TABLE_KEY_SET`) に `SADD`
+2. フィールドを Hash に `HSET` (`LAG_TABLE|<name>`)
+3. `redis.call('PUBLISH', KEYS[1], ARGV[1])` でチャネル `LAG_TABLE_CHANNEL@0` に通知 PUBLISH (`producerstatetable.cpp:108`)
+
+チャネル名の生成規則 (`table.h:88-96`):
+```
+getChannelName(tag) = "<tableName>_CHANNEL@<tag>"
+// → "LAG_TABLE_CHANNEL@0"
+```
+
+### APPL_DB → PortsOrch (LagOrch): ConsumerStateTable (SUBSCRIBE + EVALSHA)
+
+`orchdaemon.cpp:222` で `APP_LAG_TABLE_NAME` を priority 44 で登録:
+
+```cpp
+{ APP_LAG_TABLE_NAME, portsorch_base_pri + 4 },  // priority=44
+```
+
+`ConsumerStateTable` が `LAG_TABLE_CHANNEL@0` を `SUBSCRIBE` で購読する (`consumerstatetable.cpp:27`)。  
+PUBLISH を受信すると `pops()` (Lua EVALSHA) が key-set から key を取り出し `KeyOpFieldsValuesTuple` に変換し `PortsOrch::doTask()` を起動する。
+
+`portsorch.cpp:6527-6529` での分岐:
+
+```cpp
+else if (table_name == APP_LAG_TABLE_NAME || table_name == CHASSIS_APP_LAG_TABLE_NAME)
+    doLagTask(consumer);  // → SAI create_lag() / remove_lag()
+```
+
+処理優先度順 (`portsorch.cpp:6466-6478`): PORT → LAG (pri 44) → LAG_MEMBER → VLAN → VLAN_MEMBER。
+
+### STATE_DB 書戻しループ
+
+- `orchagent / LagOrch` が SAI LAG 作成完了後に `STATE_DB.LAG_TABLE|<name>` へ `state=ok` を書込む
+- `TeamMgr::isLagStateOk()` が `m_stateLagTable.get()` でこの値を確認し、LAG メンバ追加の可否を判断
+- `TeamMgr::doPortUpdateTask()` は `STATE_DB.PORT_TABLE` の SubscriberStateTable 通知を受け、ポート再作成後に `addLagMember()` を自動再実行する (`teammgr.cpp:439-472`)
+
+### エンドツーエンド通信シーケンス
+
+```
+CONFIG_DB PORTCHANNEL|PortChannelN  HSET
+  │  Redis keyspace notify
+  ▼
+PSUBSCRIBE "__keyspace@4__:PORTCHANNEL|*"
+  │  SubscriberStateTable.pops() → KeyOpFieldsValuesTuple(SET)
+  ▼
+TeamMgr::doLagTask() → addLag() → teamd spawn
+  │  ProducerStateTable.set() → HSET + PUBLISH "LAG_TABLE_CHANNEL@0"
+  ▼
+APPL_DB LAG_TABLE|PortChannelN
+  │  ConsumerStateTable SUBSCRIBE → pops() → KeyOpFieldsValuesTuple(SET)
+  ▼
+PortsOrch::doLagTask() → sai_lag_api->create_lag()
+  │  STATE_DB LAG_TABLE|PortChannelN  state=ok
+  ▼
+TeamMgr::isLagStateOk() = true → addLagMember() 可能
+```
+
+<!-- /pubsub -->
+
 <!-- failure -->
 ## 失敗挙動・リトライ・リカバリ (Phase D)
 
@@ -498,6 +605,27 @@ TeamMgr が PORTCHANNEL_MEMBER SET → addLagMember() → SAI add_ports_to_lag()
 |---|---|---|
 | `/var/run/teamd/<alias>.pid` 不在 | `SWSS_LOG_NOTICE "Failed to remove non-existent port channel %s pid..."` | 非存在 LAG の DEL は無害。false 返却 |
 | `kill(pid, SIGTERM)` 失敗 | `SWSS_LOG_ERROR "Failed to send SIGTERM to port channel %s pid %d: %s"` | teamd が異常終了済みの場合。手動でプロセス確認が必要 |
+
+### 不正 MAC / DEVICE_METADATA 取得失敗
+
+`TeamMgr` コンストラクタ (`teammgr.cpp:52-64`) は起動時に `DEVICE_METADATA|localhost` から `mac` フィールドを読み込む。
+
+| 失敗箇所 | 条件 | 挙動 | ログ / 例外 | リカバリ |
+|---|---|---|---|---|
+| `TeamMgr::TeamMgr()` — MAC アドレス取得失敗 | `DEVICE_METADATA|localhost` に `mac` フィールドが存在しない | `throw runtime_error("Failed to get MAC address from configuration database")` でプロセスクラッシュ | プロセス例外ログ（syslog / journald） | `teamd` 起動不能。`DEVICE_METADATA` を正しく設定して `teammgrd` を再起動 |
+
+> **注意**: この失敗はエントリ単位のリトライではなくデーモン起動時の致命的エラー。`teamd` プロセスが一切起動しないため、全 PORTCHANNEL が operational down になる。
+
+### SAI LAG 作成失敗 (orchagent / LagOrch)
+
+`LagOrch` が APP_DB `LAG_TABLE` を受信し `sai_lag_api->create_lag()` を呼び出す際の失敗パス (`portsorch.cpp`)。
+
+| 失敗箇所 | 条件 | ログ | リカバリ |
+|---|---|---|---|
+| LAG ID 払い出し失敗 | VoQ 環境で `LagIdAllocator` がユニーク ID を払い出せない | `SWSS_LOG_ERROR "Failed to allocate unique LAG id for local lag %s rv:%d"` | LAG ID 枯渇。VoQ シャーシ構成を見直し |
+| SAI `create_lag()` 失敗 | ASIC/SAI が LAG オブジェクト作成を拒否 | `SWSS_LOG_ERROR "Failed to create LAG %s lid:"` | ASIC リソース枯渇またはファームウェア不整合。ASIC リセットまたはシステム再起動が必要 |
+
+> **注意**: SAI LAG 作成失敗時はエントリが `m_syncdApplNotifications` に残り `orchagent` が再処理を試みない。手動で `config portchannel del` → `config portchannel add` による再投入が必要。
 
 ### リトライ上限
 
@@ -550,6 +678,81 @@ PORTCHANNEL テーブルへの SET/DEL は CONFIG_DB 内に留まらず、複数
     にも同一 MTU を書き込む (`teammgr.cpp:517-529`)。
 
 <!-- /side-effects -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/portchannel-constants.md`
+> ソース: `sonic-swss/cfgmgr/portmgr.h`, `sonic-swss/cfgmgr/shellcmd.h`, `sonic-swss/cfgmgr/teammgr.cpp`
+
+### MTU デフォルト値
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `DEFAULT_MTU_STR` | `"9100"` | `portmgr.h:15` | LAG・メンバポートの MTU フォールバック値 |
+
+- LAG 作成時: `string mtu = DEFAULT_MTU_STR;` (`teammgr.cpp:252`) — YANG フィールドなし時は 9100 が適用。
+- メンバポート追加・削除後の再設定でも同様に `DEFAULT_MTU_STR` をフォールバックとして使用 (`teammgr.cpp:805,812,850`)。
+- **YANG-実装 discrepancy**: YANG の `mtu` range は 1..9216 だが、コードデフォルトは 9100 (< 9216)。
+
+### min_links フォールバック
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `min_links` 初期値 | `0` | `teammgr.cpp:248` | `min_links` フィールド省略時のフォールバック |
+
+- `min_links == 0` の場合、teamd conf に `min_ports` フィールドを出力しない (`teammgr.cpp:611`)。
+- teamd デフォルト: `min_ports` 未指定 → 1 ポートでも LAG が operational up。
+- minigraph.py による自動算出式: `ceil(メンバ数 × 0.75)` (`minigraph.py:969,971`)。
+
+### LACP タイマ (fast_rate / slow)
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `fast_rate` 初期値 | `false` | `teammgr.cpp:250` | `fast_rate` フィールド省略時フォールバック |
+
+- `fast_rate == false` の場合、teamd conf に `fast_rate` キーを出力しない (`teammgr.cpp:621`)。
+- teamd の LACP PDU 送受信間隔: デフォルト **30 秒** (slow rate)。`fast_rate: true` 時は **1 秒** (fast rate)。
+- LAG 作成後の `fast_rate` 変更は teamd 再起動まで無効 (`teammgr.cpp:258-259`)。
+
+### LACP key 生成定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| backward compat 値 | `0` | `teammgr.cpp:726` | `lacp_key` 未設定または空文字列時のフォールバック |
+| `"auto"` プレフィックス | `"1"` | `teammgr.cpp:709` | PortChannel 名末尾数字に "1" を前置してキー生成 |
+
+- 例: `PortChannel0001` → LACP key = `10001`。`PortChannel10` → LACP key = `110` (PortChannel010 との衝突回避)。
+- `lacp_key` 未設定 → LACP key = 0 → peer と不一致になる可能性。`db_migrator.py:1154-1157` が retroactive に `'auto'` を付与。
+
+### 管理状態デフォルト
+
+| 定数名 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| `DEFAULT_ADMIN_STATUS_STR` | `"down"` | `portmgr.h:14` | `admin_status` フィールド省略時フォールバック |
+
+- **YANG-実装 discrepancy**: YANG は `mandatory true` だが、実装は `"down"` でフォールバック動作する。
+
+### リトライ / スリープ定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|---|---|---|---|
+| クリーンアップ間スリープ | `10` ms | `teammgr.cpp:183,227` | LAG 削除時の netlink バッファ溢れ防止 |
+| リトライ上限 | なし | — | `task_need_retry` は無限ループ。恒久障害は手動介入必要 |
+
+### バイナリパス (ハードコード)
+
+| 定数名 | 値 | 定義箇所 |
+|---|---|---|
+| `TEAMD_CMD` | `"/usr/bin/teamd"` | `shellcmd.h:13` |
+| `TEAMDCTL_CMD` | `"/usr/bin/teamdctl"` | `shellcmd.h:14` |
+| `IP_CMD` | `"/sbin/ip"` | `shellcmd.h:7` |
+| warm reboot dump path | `"/var/warmboot/teamd/"` | `teammgr.cpp:573` |
+| teamd PID ファイルパス | `"/var/run/teamd/<alias>.pid"` | `teammgr.cpp:659,187` |
+| `partner_system_id_offset` | `40` bytes | `teammgr.cpp:581` (LACP PDU 内パートナー MAC オフセット) |
+
+<!-- /constants -->
+
 <!-- platform -->
 ## プラットフォーム差・SAI capability 分岐
 

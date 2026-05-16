@@ -235,6 +235,58 @@ show feature status
 
 FEATURE テーブルへの書き込みは複数経路が重なるため、フィールドごとに「最終書き込み者」が異なる。誤った順序での操作はユーザ設定の消失やサービス誤動作を引き起こす。
 
+### systemd unit 起動順序
+
+```
+[システム起動]
+  ↓
+docker.service / rc-local.service
+  ↓
+database.service          (Requires=docker.service, After=docker.service rc-local.service)
+  ↓
+config-setup.service      (Requires=database.service config-topology.service)
+  ↓
+featured.service          (Requires=config-setup.service, After=config-setup.service)
+  ↓ featured が CONFIG_DB FEATURE テーブルを読んで render_all_feature_states() 実行
+  ↓ [delayed=False フィーチャー] → 即時 systemctl enable / start
+  ↓ [delayed=True  フィーチャー] → PortInitDone 受信 or 180 秒タイムアウト後に起動
+  ↓
+各 feature service (bgp/teamd/snmp 等)
+```
+
+- `featured.service` は `sonic.target` と `BindsTo` 関係にある（`featured.service:BindsTo=sonic.target`）。
+- `featured` デーモン起動後、`render_all_feature_states()` が全フィーチャーの state を評価し `enabled` なものを `systemctl enable / start` する。
+- `delayed=True` フィーチャーは `APPL_DB PORT_TABLE:PortInitDone` の受信を待ってから起動する（`featured:182-184`）。PortInitDone が来ない場合は `PORT_INIT_TIMEOUT_SEC=180` 秒後に強制起動する（`featured:659-661`）。
+
+### featured が管理する feature service の systemd 依存関係
+
+各 feature の `.service` ファイルはビルド時のテンプレート (`files/build_templates/*.service.j2`) から生成される。主要サービスの依存関係:
+
+| feature service | Requires | After |
+|----------------|----------|-------|
+| `bgp.service` | `config-setup.service` | `config-setup.service swss.service syncd.service` |
+| `snmp.service` | `config-setup.service` | `config-setup.service swss.service syncd.service interfaces-config.service` |
+| `telemetry.service` | `database.service` | `database.service swss.service syncd.service` |
+| `mgmt-framework.service` | `database.service` | `database.service swss.service syncd.service` |
+| `gnmi.service` | `database.service` | `database.service swss.service syncd.service` |
+| `sflow.service` | - | `swss.service syncd.service hostcfgd.service interfaces-config.service` |
+| `nat.service` | `config-setup.service` | `config-setup.service swss.service syncd.service` |
+| `dhcp_relay.service` | `config-setup.service` | `config-setup.service swss.service syncd.service teamd.service` |
+
+すべての feature service は `BindsTo=sonic.target After=sonic.target` を持ち、`sonic.target` 停止時に連動停止する。
+
+### multi-asic / SmartSwitch 環境での instance 起動順序
+
+`featured` は `has_global_scope` / `has_per_asic_scope` / `has_per_dpu_scope` フィールドを参照してインスタンス名を決定する（`featured:408-424`）:
+
+```
+has_global_scope=True   → <feature>.service                   (host インスタンス)
+has_per_asic_scope=True → <feature>@0.service, @1.service, ... (ASIC ごと)
+has_per_dpu_scope=True  → <feature>@dpu0.service, @dpu1.service, ... (DPU ごと)
+```
+
+インスタンス `.service` ファイルは `systemd-sonic-generator` がブート時に `/run/systemd/generator/` 配下に動的生成する。SmartSwitch NPU 環境では `database@dpu<N>.service` に `Requires=systemd-networkd-wait-online@bridge-midplane.service` が追加される（`systemd-sonic-generator.cpp:985-996`）。
+
 ### 書き込み優先順序
 
 ```
@@ -277,7 +329,7 @@ FEATURE テーブルへの書き込みは複数経路が重なるため、フィ
 5. **`always_enabled` / `always_disabled` は CLI で変更不可** (`config/feature.py:24-25`):
    これらの値は init_cfg.json.j2 または FeatureRegistry.register() が設定する。ユーザ変更が必要な場合は DB 直接操作またはビルド設定変更が必要。
 
-> **Evidence**: `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-host-services/scripts/featured:200-217,255-275`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
+> **Evidence**: `sonic-host-services/data/debian/sonic-host-services-data.featured.service`; `sonic-buildimage/files/build_templates/*.service.j2`; `sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996`; `sonic-host-services/scripts/featured:182-184,200-217,255-275,408-424,659-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80`; `sonic-utilities/config/feature.py:24-25`; 詳細分析 `meta/_intermediate/cdb-flow/feature-ordering.md`
 <!-- /ordering -->
 
 <!-- failure -->
@@ -368,6 +420,56 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 > **Evidence**: `sonic-host-services/scripts/featured:75-86,135,375-380,466,551-596`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17,228-237`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:113,117-124`; `sonic-utilities/sonic_package_manager/manifest.py:202-217`
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数
+
+`featured` スクリプト (`sonic-host-services/scripts/featured`) および `sonic_package_manager` (`sonic-utilities`) に埋め込まれた定数。
+
+### タイミング・優先度定数（モジュールレベル）
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `PORT_INIT_TIMEOUT_SEC` | `180` 秒 | `featured:24` | `delayed=True` フィーチャーの強制起動タイムアウト。PortInitDone を 180 秒待っても受信しない場合、`handle_port_table_timeout()` がすべての delayed フィーチャーを強制 enable する |
+| `WAIT_FOR_STABLE_TIMEOUT` | `60` 秒 | `featured:426` | `disable_feature()` が `systemctl stop` 前に `activating` 状態抜けを待つ最大時間。タイムアウト後は警告ログを出力して stop を続行する |
+| `WAIT_FOR_STABLE_POLL_INTERVAL` | `1` 秒 | `featured:427` | `wait_for_service_stable()` 内の `systemctl is-active` ポーリング間隔 |
+| `DEFAULT_SELECT_TIMEOUT` | `1000` ms | `featured:23` | メインイベントループの `selector.select()` タイムアウト。1 秒ごとに PORT_INIT タイムアウト判定を実施 |
+| `HOSTCFGD_MAX_PRI` | `10` | `featured:22` | FEATURE テーブル subscriber の select 優先度（PORT テーブルは `10-1=9`） |
+
+### state / auto_restart 有効値 enum（`Feature.__init__` ハードコード）
+
+`Feature.__init__` の `_get_feature_table_key_render_value()` 呼び出しで `expected_values` としてハードコードされている。これ以外の値が CONFIG_DB に入ると `ValueError` → `handler()` を通じてデーモン全体がクラッシュする。
+
+| フィールド | 有効値セット | 定義場所 |
+|-----------|-----------|---------|
+| `state` | `['enabled', 'disabled', 'always_enabled', 'always_disabled']` | `featured:81` |
+| `delayed` | `['True', 'False']` | `featured:83` |
+| `has_global_scope` | `['True', 'False']`、欠落時デフォルト `'True'` | `featured:84` |
+| `has_per_asic_scope` | `['True', 'False']`、欠落時デフォルト `'False'` | `featured:85` |
+| `auto_restart` | 制約なし（`str`）。`"enabled"` を含む場合 systemd `Restart=always`、それ以外 `Restart=no` | `featured:82,380` |
+
+### クラスレベル定数（`FeatureHandler`）
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `FEATURE_STATE_ENABLED` | `"enabled"` | `featured:132` | STATE_DB に書き込む「起動成功」状態文字列 |
+| `FEATURE_STATE_DISABLED` | `"disabled"` | `featured:133` | STATE_DB に書き込む「停止成功」状態文字列 |
+| `FEATURE_STATE_FAILED` | `"failed"` | `featured:134` | STATE_DB に書き込む「失敗」状態文字列。`systemctl start/stop/mask` 非ゼロ終了時に記録 |
+| `FEATURE_EXCLUSION_LIST` | `{"telemetry", "frr_bmp"}` | `featured:135` | systemd 操作をスキップするフィーチャー名セット。CONFIG_DB の state 変化を検知しても enable/disable を実行しない |
+| `SYSTEMD_SYSTEM_DIR` | `'/etc/systemd/system/'` | `featured:128` | サービスファイルを配置するルートディレクトリ |
+| `SYSTEMD_SERVICE_CONF_DIR` | `'/etc/systemd/system/{}.service.d/'` | `featured:129` | `auto_restart.conf` を配置するサービス別 drop-in ディレクトリ |
+
+### `sonic_package_manager` デフォルト定数
+
+| 定数名 | 値 | 定義場所 | 用途 |
+|--------|-----|---------|------|
+| `DEFAULT_FEATURE_CONFIG['state']` | `'disabled'` | `feature.py:13` | パッケージ新規インストール時のデフォルト state（YANG デフォルト `enabled` と乖離） |
+| `DEFAULT_FEATURE_CONFIG['auto_restart']` | `'enabled'` | `feature.py:14` | 新規インストール時のデフォルト auto_restart |
+| `DEFAULT_FEATURE_CONFIG['high_mem_alert']` | `'disabled'` | `feature.py:15` | 新規インストール時のデフォルト high_mem_alert |
+| `DEFAULT_FEATURE_CONFIG['set_owner']` | `'local'` | `feature.py:16` | 新規インストール時のデフォルト set_owner |
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-24,81-86,128-135,380,426-427,630,644-648,654-661`; `sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17`; 詳細分析 `meta/_intermediate/cdb-flow/feature-constants.md`
+<!-- /constants -->
+
 <!-- cross-refs -->
 ## 暗黙参照マップ
 
@@ -382,5 +484,167 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 | YANG | `FEATURE_LIST` | [`sonic-feature`](../yang/sonic-feature.md) | 全フィールドのスキーマ定義 |
 
 <!-- /cross-refs -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`featured` デーモンは CONFIG_DB の `FEATURE` テーブルを購読して systemd サービスを制御するが、その過程で **STATE_DB・CONFIG_DB・ファイルシステム**の 3 箇所に副次的な書込を行う。
+
+### STATE_DB — FEATURE 状態反映
+
+```
+STATE_DB  FEATURE|<feature_name>  state  <enabled|disabled|failed>
+```
+
+`FeatureHandler.set_feature_state(feature, state)` (`featured:585-590`) が次のタイミングで呼ばれる:
+
+| タイミング | 書込値 | コード箇所 |
+|-----------|--------|-----------|
+| `enable_feature()` 正常完了 | `"enabled"` | `featured:513` |
+| `disable_feature()` 正常完了 | `"disabled"` | `featured:547` |
+| `enable_feature()` / `disable_feature()` でコマンド失敗 | `"failed"` | `featured:510, 544` |
+| `sync_feature_scope()` で stop/disable/mask 失敗 | `"failed"` | `featured:344` |
+
+multi-asic 環境では各 namespace の STATE_DB にも同値を書き込む (`featured:588-590`)。
+
+確認コマンド:
+```bash
+sonic-db-cli STATE_DB hgetall 'FEATURE|bgp'
+```
+
+### CONFIG_DB — フィールド書き戻し (resync 系)
+
+`featured` は起動時および state 変化時に CONFIG_DB へも副次書込を行う。
+
+| メソッド | 書込フィールド | 条件 |
+|---------|--------------|------|
+| `resync_feature_state` (`featured:550-572`) | `state` | rendered 値が `always_enabled`/`always_disabled`、または現 DB 値が Jinja2 テンプレート |
+| `sync_feature_delay_state` (`featured:574-583`) | `delayed` | manifest 値と現 DB 値が不一致 |
+| `_conditional_update_scope` (`featured:289-355`) | `has_per_asic_scope`, `has_global_scope` | rendered 値と現 DB 値が不一致の場合のみ `mod_entry` |
+
+いずれも multi-asic では各 namespace の CONFIG_DB にも書き込む。
+
+### ファイルシステム — systemd unit override ファイル
+
+`auto_restart` フィールド変化または起動時に `/etc/systemd/system/<feature>.service.d/auto_restart.conf` を生成し `Restart=always|no` を書込後、`systemctl daemon-reload` を実行する (`featured:382-403`)。
+
+multi-asic では `<feature>@<asic_id>.service.d/auto_restart.conf` も生成。
+
+**SpineRouter 特例**: `DEVICE_METADATA.localhost.type == 'SpineRouter'` のとき `syncd` / `gbsyncd` は CONFIG_DB の `auto_restart` 値を無視して `Restart=no` を強制書込する (`featured:374-378`)。
+
+### Kubernetes 切替 (set_owner = kube) — featured スコープ外
+
+`set_owner = "kube"` フィールドは `sonic-feature.yang` で定義されているが、**`featured` スクリプト内に kube 制御コードは存在しない**。Kubernetes 管理切替は別のコンポーネント（`hostcfgd` KubeHandler 等）が担う。`featured` の副次書込対象は STATE_DB と CONFIG_DB (resync) およびファイルシステムのみ。
+
+> **Evidence**: `sonic-host-services/scripts/featured:289-355,357-406,508-513,540-547,550-583,585-590`; 詳細分析 `meta/_intermediate/cdb-flow/feature-side-effects.md`
+<!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`FEATURE` テーブルへの変更通知は **`SubscriberStateTable` (keyspace PSUBSCRIBE)** で配信される。`ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
+
+| 購読者 | 購読 API | PSUBSCRIBE パターン | 用途 |
+|--------|---------|---------------------|------|
+| `featured` (`FeatureDaemon`) | `swsscommon.SubscriberStateTable` | `__keyspace@<dbId>__:FEATURE\|*` | 全フィーチャーの state/scope/auto_restart 制御 |
+| `dhcprelayd` (`DhcpServerFeatureStateChecker`) | `swsscommon.SubscriberStateTable` | `__keyspace@<dbId>__:FEATURE\|*` | `dhcp_server` エントリの `state` 変化のみ検出 |
+| `route_check.py` | `get_table` (HGETALL) | 購読なし | 起動時スナップショット (`bgp` の state 確認) |
+
+`containercfgd` は `FEATURE` テーブルを直接購読せず、`SYSLOG_CONFIG_FEATURE` テーブルのみを `ConfigDBConnector.listen()` で購読する。
+
+### featured イベントループ
+
+```
+CONFIG_DB HSET "FEATURE|bgp" state enabled
+  ↓ keyspace PUBLISH "__keyspace@<dbId>__:FEATURE|bgp"  "hset"
+featured SubscriberStateTable.pops()
+  ↓ HGETALL "FEATURE|bgp"  ← 通知後に別途フィールド取得
+feature_handler.handler(key="bgp", op=SET, data={state:enabled,...})
+  ↓ enable_feature(bgp)  →  systemctl start bgp.service
+  ↓ STATE_DB HSET "FEATURE|bgp" state enabled
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は HGETALL で取得する。
+- `featured` は `FEATURE_TBL` (pri=10) と `PORT_TBL` (pri=9) を同一 `swsscommon.Select` で多重化する。
+- ポーリング間隔: `DEFAULT_SELECT_TIMEOUT = 1000 ms`。TIMEOUT 時に `delayed` フィーチャーの PORT_INIT タイムアウト判定を実施。
+- 起動時は `render_all_feature_states()` が `get_table()` で全エントリをスナップショット処理してから Subscribe ループを開始する。
+
+> **Evidence**: `sonic-host-services/scripts/featured:22-23,600-678`; `sonic-swss-common/common/subscriberstatetable.cpp:17-165`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411`; 詳細分析 `meta/_intermediate/cdb-flow/feature-pubsub.md`
+<!-- /pubsub -->
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### 概要
+
+`FEATURE` テーブルの `featured` デーモンは、プラットフォーム構成に応じて 4 軸で挙動が変化する。
+
+### 1. multi-asic (is_multi_npu == True)
+
+`FeatureHandler` は起動時に `device_info.is_multi_npu()` を確認し、multi-asic 環境では namespace ごとに `ConfigDBConnector` と STATE_DB `Table` を初期化する（`featured:142,151-162`）。
+
+**CONFIG_DB / STATE_DB 同期の差異**:
+
+| 操作 | single-asic | multi-asic |
+|------|-------------|-----------|
+| `resync_feature_state()` (`featured:570-573`) | host CONFIG_DB のみ | host + 全 namespace CONFIG_DB |
+| `sync_feature_delay_state()` (`featured:583-584`) | host CONFIG_DB のみ | host + 全 namespace CONFIG_DB |
+| `set_feature_state()` (`featured:588-591`) | host STATE_DB のみ | host + 全 namespace STATE_DB |
+| `sync_feature_scope()` (`featured:312-355`) | `is_multi_npu == False` で全処理スキップ | `has_per_asic_scope` / `has_global_scope` を DB に反映、不要インスタンスを stop/disable/mask |
+
+### 2. feature インスタンス名の生成
+
+`get_multiasic_feature_instances()` (`featured:408-415`) が systemd ユニット名を決定する:
+
+| 構成 | インスタンス名 | 条件 |
+|------|--------------|------|
+| single-asic または `has_global_scope = True` | `<feature>` | `not is_multi_npu` または `has_global_scope` |
+| multi-asic + `has_per_asic_scope = True` | `<feature>@0`, `<feature>@1`, ... | `is_multi_npu == True` かつ `has_per_asic_scope` |
+| SmartSwitch + `has_per_dpu_scope = True` | `<feature>@dpu0`, `<feature>@dpu1`, ... | `num_dpus > 0` |
+| multi-asic + global_scope = False + per_asic = False | インスタンスなし | ホストインスタンスが省略される |
+
+single-asic では `is_multi_npu == False` のため、`has_global_scope` の値に関わらず常にホストインスタンス `[feature.name]` が生成される。
+
+### 3. SmartSwitch / DPU (`has_per_dpu_scope`)
+
+`num_dpus = device_info.get_num_dpus()` (`featured:148`) で DPU 数を取得。SmartSwitch 構成 (`num_dpus > 0`) では `has_per_dpu_scope = True` の feature が DPU ごとのインスタンスを生成する。
+
+- `has_per_dpu_scope` は `sonic_package_manager` の非設定可能フィールド管理外 (`feature.py:228-237`) であり、manifest ではなく CONFIG_DB 値をそのまま参照する。
+- 標準 `init_cfg.json.j2` には `has_per_dpu_scope = True` の feature エントリは存在しない。SmartSwitch 固有 feature はプラットフォーム固有パッケージが別途登録する。
+
+### 4. SpineRouter — `syncd` / `gbsyncd` の auto_restart 強制
+
+`update_systemd_config()` (`featured:373-380`) は `DEVICE_METADATA.localhost.type == 'SpineRouter'` かつ feature が `syncd` / `gbsyncd` の場合、`auto_restart` CONFIG_DB 設定を無視して systemd `Restart=no` を強制する:
+
+```python
+if device_type == 'SpineRouter' and is_dependent_service:
+    restart_field_str = "no"   # CONFIG_DB 値を無視
+else:
+    restart_field_str = "always" if "enabled" in feature_config.auto_restart else "no"
+```
+
+**背景**: SpineRouter (VOQ chassis) では `syncd` が `swss` 依存として連動起動/停止するため、クリティカルプロセスクラッシュ時に二重停止が発生する。また VOQ chassis では早期 `syncd` 再起動がトラフィック断を引き起こす。このため SpineRouter では `config feature autorestart syncd enabled` を実行しても systemd `Restart=always` には変わらない。
+
+### 5. init_cfg.json.j2 ビルド時プラットフォーム条件
+
+ビルド時 Jinja2 テンプレートが `DEVICE_METADATA` / `DEVICE_RUNTIME_METADATA` の値に応じてデフォルト `state` を決定する:
+
+| feature | 条件 | state |
+|---------|------|-------|
+| `bgp` | supervisor モジュール または `ETHERNET_PORTS_PRESENT == False` | `disabled` |
+| `teamd` | `ETHERNET_PORTS_PRESENT == False` | `disabled` |
+| `mux` | `subtype == 'DualToR'` | `enabled` |
+| `mux` | 上記以外 | `always_disabled` |
+| `macsec` | `type in ['SpineRouter', 'UpperSpineRouter', 'LowerRegionalHub']` かつ `MACSEC_SUPPORTED` | `enabled` |
+| `macsec` | 上記以外 | `disabled` |
+| `dhcp_relay` | type が ToR/EPMS/MgmtToR 系 | `disabled` |
+| `gbsyncd` | `sonic_asic_platform == "vs"` のみ追加 | `enabled` |
+| `pmon` | `delayed`: type が `SpineRouter` → `False`、それ以外 → `True` | (delayed のみ) |
+
+`lldp` の `has_global_scope` / `has_per_asic_scope` のみランタイム Jinja2 テンプレートで chassis モジュールタイプに応じて動的決定される（`init_cfg.json.j2:109-110`）。
+
+> **Evidence**: `sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130`; 詳細分析 `meta/_intermediate/cdb-flow/feature-platform.md`
+<!-- /platform -->
 
 <!-- glossary-links-injected: 92d0997ed33c -->

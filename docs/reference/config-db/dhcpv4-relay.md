@@ -106,6 +106,49 @@ DB を YANG バリデーション外で書いた場合、`servers` が空のと�
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.h` 全行精読、`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 精読 (2026-05-16)
+
+### プロトコル定数 (dhcp4relay.h)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `RELAY_PORT` | `67` | dhcp4relay.h:24 | DHCPv4 サーバ・リレー間 UDP ポート (RFC 2131)。BPF フィルタ `"udp and port 67"` で使用 |
+| `CLIENT_PORT` | `68` | dhcp4relay.h:25 | DHCPv4 クライアント向け UDP ポート |
+| `HOP_LIMIT` | `4` | dhcp4relay.h:26 | relay-forward の hop count 閾値。超過パケットは drop |
+| `DHCPv4_OPTION_LIMIT` | `255` | dhcp4relay.h:27 | 処理対象オプションコードの上限値 |
+| `RAWSOCKET_RECV_SIZE` | `1048576` (1 MiB) | dhcp4relay.h:28 | クライアント側 raw socket 受信バッファサイズ |
+| `CLIENT_IF_PREFIX` | `"Ethernet"` | dhcp4relay.h:29 | クライアント I/F 判定プレフィックス |
+| `BUFFER_SIZE` | `9200` バイト | dhcp4relay.h:35 | DHCPv4 メッセージシリアライズ用バッファ。ジャンボフレーム (MTU 9000) 対応マジックナンバー |
+| `MAX_DHCP_PKT_SIZE` | `1472` バイト | dhcp4relay.h:36 | 最大 DHCP パケットサイズ (1500 − IP+UDP ヘッダ 28 バイト) |
+| `MAX_HOP_COUNT` | `16` | dhcp4relay.h:39 | `relay_config.max_hop_count` C++ struct のデフォルト初期値 (YANG default `4` と乖離) |
+| `OPTION_RELAY_MSG` | `82` | dhcp4relay.h:57 | DHCPv4 Option 82 (Relay Agent Information) コード (RFC 3046) |
+
+### 動作定数 (dhcprelayd.py)
+
+| 定数 | 値 | 証拠 | 意味 |
+|-----|-----|------|------|
+| `DEFAULT_SELECT_TIMEOUT` | `5000` ms | dhcprelayd.py:22 | swsscommon Select タイムアウト |
+| dhcrelay 起動待機 sleep | `5` 秒 | dhcprelayd.py:67 | dhcrelay プロセス起動後の固定待機 |
+| dhcp_server_ip ポーリング上限 | `10` 回 | dhcprelayd.py:377 | STATE_DB から dhcp_server IP を取得する最大試行回数 |
+| dhcp_server_ip ポーリング間隔 | `10` 秒 | dhcprelayd.py:383 | 試行失敗時の sleep 間隔 |
+
+### `HOP_LIMIT` vs `MAX_HOP_COUNT` の使い分け
+
+`HOP_LIMIT` (= 4) はパケット受信時の hop count チェックに使用する閾値で、超過パケットを drop する。
+`MAX_HOP_COUNT` (= 16) は `relay_config` struct の `max_hop_count` フィールドの C++ デフォルト初期値。
+`DHCPV4_RELAY.max_hop_count` フィールドが CONFIG_DB から読み込めた場合はその値で上書きされる（YANG range 1..16）。
+DB 未設定時・`stoi()` 例外時はいずれも `MAX_HOP_COUNT = 16` のまま継続する。
+
+### 定数の外部変更可否
+
+`RELAY_PORT` / `CLIENT_PORT` / `HOP_LIMIT` / `MAX_HOP_COUNT` はすべてコンパイル時固定。
+CONFIG_DB・環境変数・設定ファイルから変更不可。
+`max_hop_count` のみ `DHCPV4_RELAY` テーブルフィールド経由で上書き可能（YANG uint8 1..16）。
+<!-- /constants -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 

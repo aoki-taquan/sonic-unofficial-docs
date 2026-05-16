@@ -252,6 +252,253 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | nexthop/ifname/blackhole フィールドのリスト長不一致 | `IpNextHopSet.__init__()` → `log_err` + `raise ValueError` | `set_handler()` が `log_crit` + `return False` でエントリをスキップ | なし |
+| 2 | nexthop が zero-IP かつ ifname 未指定（blackhole でない） | `IpNextHop.__init__()` → `log_err('Mandatory attribute not found for nexthop')` + `raise ValueError` | 対象 nexthop のみ `IpNextHopSet` に追加されずスキップ | なし |
+| 3 | nexthop の IP 文字列が不正 (`socket.inet_pton` 失敗) | `IpNextHop.is_ip_valid()` → `socket.error` | 例外が `set_handler()` の `try/except` でキャッチされ `log_crit` + `return False` | なし |
+| 4 | VRF 未解決（APPL_DB key の `:` 区切りが 1 要素以下） | `StaticRouteMgr.split_key()` → `log_debug` + `raise ValueError` | `set_handler()` / `del_handler()` が例外で中断。当該経路は FRR に設定されない | なし |
+| 5 | vtysh への設定書き込み失敗（FRR デーモン未起動等） | `FRR.write()` → `log_err('can\'t push configuration from file ...')` | コマンドリストは破棄。FRR 設定に反映されない。retcode != 0 を返す | なし |
+| 6 | FRR デーモン起動タイムアウト | `FRR.wait_for_daemons()` → `raise RuntimeError` | bgpcfgd プロセスが起動失敗。`systemctl restart bgp` が必要 | なし |
+| 7 | fpmsyncd: VRF ifindex からの名前解決失敗 | `routesync.cpp` → `SWSS_LOG_ERROR("Fail to get the VRF name (ifindex %u)")` + `return` | 当該 netlink メッセージを破棄。APP_DB に反映されない | なし |
+| 8 | fpmsyncd: VRF 名が `Vrf` プレフィクスで始まらない | `routesync.cpp` → `SWSS_LOG_ERROR("Invalid VRF name %s")` + `return` | 同上。APP_DB に反映されない | なし |
+| 9 | fpmsyncd: RTN_BLACKHOLE / RTN_UNREACHABLE / RTN_PROHIBIT 型ルート受信 | `routesync.cpp` → `SWSS_LOG_ERROR("RTN_BLACKHOLE route not expected")` + `return` | static blackhole は FRR → fpmsyncd ではなく bgpcfgd 経路で処理すべき。fpmsyncd 側は破棄 | なし |
+| 10 | BGP ASN 未設定時の redistribute static 保留 | `set_handler()` → `vrf_pending_redistribution.add(vrf)` | redistribute static コマンドを保留。`on_bgp_asn_change()` 呼び出しまで BGP 広告が行われない | 自動回復 (ASN 設定後) |
+
+### IpNextHopSet 構築例外の詳細
+
+```python
+# managers_static_rt.py (bgpcfgd)
+try:
+    ip_nh_set = IpNextHopSet(is_ipv6, bkh_list, nh_list, intf_list, dist_list, nh_vrf_list)
+    ...
+except Exception as exc:
+    log_crit("Got an exception %s: Traceback: %s" % (str(exc), traceback.format_exc()))
+    return False  # エントリは FRR に設定されない
+```
+
+リスト長不一致の具体例: `nexthop=10.0.0.1,10.0.0.2` かつ `ifname=Ethernet0` (1 要素) → `nums = {2, 1}` → `len(nums) != 1` → `ValueError`。
+
+### FRR vtysh 失敗の詳細
+
+```python
+# frr.py (bgpcfgd)
+ret_code, out, err = run_command(["vtysh", "-f", tmp_filename])
+if ret_code != 0:
+    log_err("ConfigMgr::commit(): can't push configuration from file='%s', rc='%d', stdout='%s', stderr='%s'" % err_tuple)
+return ret_code == 0
+```
+
+`push_list()` は `FRR.write()` を呼ぶ。`vtysh` の戻り値が非 0 の場合はエラーログのみで静的経路は FRR に未反映のまま。bgpcfgd プロセスは継続動作するが、内部の `static_routes` キャッシュは更新済みのため再試行されない。
+
+### STATE_DB / ERROR_TABLE への記録
+
+STATIC_ROUTE に関する `STATE_DB` への障害記録はなし。失敗は `syslog`（`log_crit` / `log_err`）への出力のみ。CONFIG_DB のエントリは失敗後も残る。
+
+```bash
+# bgpcfgd ログ確認
+journalctl -u bgp | grep -i "static route"
+# fpmsyncd ログ確認
+journalctl -u swss | grep -i "VRF name\|RTN_BLACKHOLE"
+```
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/static-route-failure.md`
+<!-- /failure -->
+
+<!-- pubsub -->
+## CONFIG_DB 購読メカニズム (Phase G)
+
+`STATIC_ROUTE` テーブルは `bgpcfgd` の `StaticRouteMgr` が `SubscriberStateTable` 経由で購読し、FRR vtysh コマンドに変換する。
+
+### bgpcfgd — StaticRouteMgr (CONFIG_DB / APPL_DB)
+
+`main.py` が `Runner.add_manager()` で `StaticRouteMgr` を 2 インスタンス登録する。
+
+```python
+# sonic-bgpcfgd/bgpcfgd/main.py L98-99
+StaticRouteMgr(common_objs, "CONFIG_DB", "STATIC_ROUTE"),
+StaticRouteMgr(common_objs, "APPL_DB",  "STATIC_ROUTE"),
+```
+
+`Runner.add_manager()` は各テーブルに対して `swsscommon.SubscriberStateTable` を生成し、`swsscommon.Select` に登録する。
+
+```python
+# sonic-bgpcfgd/bgpcfgd/runner.py L49-52
+subscriber = swsscommon.SubscriberStateTable(conn, table_name)
+self.subscribers.add(subscriber)
+self.selector.addSelectable(subscriber)
+self.callbacks[db][table_name].append(manager.handler)
+```
+
+Redis からのイベント到着時、`runner.py` は `subscriber.pop()` でキー・オペレーション・フィールド値を取得し、`StaticRouteMgr.handler(key, op, fvs)` を呼ぶ。
+
+### set_handler → vtysh 経路
+
+`set_handler` は受け取った `data` から nexthop セットを構築し、差分コマンドを生成して FRR に送信する。
+
+```python
+# managers_static_rt.py L211-218  generate_command
+return '{}{} route {}{}{}{}'.format(
+    'no ' if op == self.OP_DELETE else '',
+    'ipv6' if ip_nh.af == socket.AF_INET6 else 'ip',
+    ip_prefix,
+    ip_nh,                                      # nexthop / blackhole / distance / nexthop-vrf
+    ' vrf {}'.format(vrf) if vrf != 'default' else '',
+    ' tag {}'.format(route_tag)
+)
+```
+
+生成されたコマンドは `cfg_mgr.push_list(cmd_list)` でバッファに積まれ、`Runner.run()` の `cfg_manager.commit()` で `vtysh -f <tmpfile>` として一括実行される。
+
+**FRR vtysh コマンド例:**
+
+```
+ip route 10.0.0.0/24 192.0.2.1 tag 1
+ip route 10.0.0.0/24 blackhole tag 2
+ipv6 route 2001:db8::/32 2001:db8::1 vrf Vrf-red tag 1
+no ip route 10.0.0.0/24 192.0.2.1 tag 1
+```
+
+### advertise フラグと route-tag
+
+`advertise=true` → `ROUTE_ADVERTISE_ENABLE_TAG = '1'`、`advertise=false` (デフォルト) → `ROUTE_ADVERTISE_DISABLE_TAG = '2'` を FRR タグとして付与。初回経路設定時に BGP への redistribute を有効化する vtysh コマンドも発行する。
+
+```python
+# managers_static_rt.py L221-235  enable_redistribution_command
+cmd_list.append("route-map STATIC_ROUTE_FILTER permit 10")
+cmd_list.append(" match tag %s" % self.ROUTE_ADVERTISE_ENABLE_TAG)
+...
+cmd_list.append("  redistribute static route-map STATIC_ROUTE_FILTER")
+```
+
+### 購読フロー要約
+
+```
+CONFIG_DB STATIC_ROUTE
+  └─ bgpcfgd StaticRouteMgr (SubscriberStateTable, CONFIG_DB)
+       ├─ set_handler → IpNextHopSet 構築 → generate_command
+       │    └─ cfg_mgr.push_list → vtysh ip/ipv6 route <prefix> [nexthop|blackhole] [vrf] tag <tag>
+       └─ del_handler → no ip/ipv6 route → vtysh
+
+APPL_DB STATIC_ROUTE
+  └─ bgpcfgd StaticRouteMgr (SubscriberStateTable, APPL_DB)
+       └─ del_handler（BFD セッション全断時 staticroutebfd が削除したエントリを追従）
+            └─ skip_appl_del() で CONFIG_DB 残存確認 → FRR からの削除可否判定
+```
+
+<!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`STATIC_ROUTE` テーブルへの書込が発生すると、`bgpcfgd` の `StaticRouteMgr` が以下の副次処理を行う。
+
+### FRR vtysh コマンド発行
+
+`set_handler` / `del_handler` は `generate_command()` で vtysh コマンド文字列を生成し、
+`cfg_mgr.push_list()` → `FRR.write()` → `vtysh -f <tmpfile>` で FRR に一括投入する[^F1]。
+
+```
+# 追加
+ip route <prefix> <nexthop> [<ifname>] [<distance>] [nexthop-vrf <vrf>] tag <route_tag>
+ipv6 route <prefix> <nexthop> [<ifname>] [<distance>] [nexthop-vrf <vrf>] tag <route_tag>
+ip route <prefix> blackhole tag <route_tag>
+
+# 削除
+no ip route <prefix> <nexthop> [...] tag <route_tag>
+```
+
+`route_tag`: `advertise=true` → `1`（ROUTE_ADVERTISE_ENABLE_TAG）、`advertise=false` → `2`（ROUTE_ADVERTISE_DISABLE_TAG）。
+
+### BGP redistribute コマンド発行
+
+VRF 初回経路追加時（該当 VRF の静的経路が 0 件 → 1 件）に `enable_redistribution_command()` を発行する[^F1]。
+
+```
+route-map STATIC_ROUTE_FILTER permit 10
+ match tag 1
+router bgp <asn> [vrf <vrf>]
+ address-family ipv4
+  redistribute static route-map STATIC_ROUTE_FILTER
+ exit-address-family
+ address-family ipv6
+  redistribute static route-map STATIC_ROUTE_FILTER
+ exit-address-family
+exit
+```
+
+最終経路削除時（0 件になるとき）は `disable_redistribution_command()` で `no redistribute static` を発行する。
+`bgp_asn` が未設定の場合は `vrf_pending_redistribution` に保留し、`on_bgp_asn_change()` で後適用する。
+
+### kernel FIB 反映
+
+FRR `staticd` が vtysh コマンドを受け取り、`zebra` → `netlink` 経由で kernel FIB を更新する。
+nexthop の ARP 解決が必要な場合は ARP/ND 解決完了後に FIB 挿入される。
+`ip route show` / `ip -6 route show` で確認可能。
+
+### STATE_DB
+
+`StaticRouteMgr` は STATE_DB への直接書込を行わない。
+BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し、
+`bfdmon` が STATE_DB `BFD_SESSION_TABLE` を管理する。
+
+### APPL_DB 管理 (StaticRouteTimer)
+
+`static_rt_timer.py` の `StaticRouteTimer` は APPL_DB `STATIC_ROUTE:*` の
+`refresh` フィールドを監視し、デフォルト 180 秒周期で未更新エントリ（`refresh=false`、`expiry≠false`）を削除する（REST API 経由動的経路の有効期限管理）[^F2]。
+
+[^F1]: `bgpcfgd` StaticRouteMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py>
+[^F2]: StaticRouteTimer 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py>
+
+<!-- /side-effects -->
+
+<!-- ordering -->
+## 順序依存関係 (Phase B)
+
+静的経路が CONFIG_DB → FRR → kernel FIB → APPL_DB へ伝播する際の処理順序を以下に示す。
+
+### NEXTHOP 解決順序 (bgpcfgd)
+
+`bgpcfgd` の `StaticRouteMgr.set_handler` では、nexthop 解決を次の順で行う。
+
+1. **BFD フラグ確認（最優先）**: `bfd == "true"` の場合は `staticroutebfd` に委譲してここでは即 `return True`（FRR コマンド生成をスキップ）。
+2. **`IpNextHopSet` 構築**: `nexthop`・`ifname`・`distance`・`nexthop-vrf`・`blackhole` の各フィールドをカンマ区切りで展開し、すべてのリストが同一サイズであることを検証。サイズ不一致は `ValueError` で中断。
+3. **差分計算**: 現行 nexthop セット (`cur_nh_set`) との対称差を取り、削除コマンドを追加コマンドより先に生成（`static_route_commands` 内: `OP_DELETE` リストを先に結合）。
+4. **advertise タグ変更時の全置換**: `route_tag != cur_route_tag` の場合、差分ではなく現行全 nexthop を削除してから新 nexthop をすべて追加する。
+5. **BGP redistribute 有効化**: VRF 内で初めての静的経路の場合のみ `redistribute static` コマンドを末尾に追加。`bgp_asn` 未設定なら `vrf_pending_redistribution` に積んで `on_bgp_asn_change` コールバックで後追い適用。
+
+> **根拠**: `managers_static_rt.py` `set_handler` (L35–80), `static_route_commands` (L185–209), `IpNextHopSet.__init__` (L310–329)
+
+### VRF 先行原則 (fpmsyncd)
+
+`fpmsyncd` の `RouteSync::onMsg` は Netlink メッセージ受信時に次の順序で VRF を解決する。
+
+1. **VRF インデックス取得**: `rtnl_route_get_table()` でルートテーブル ID を取得。テーブル ID が 0 以外の場合、`getIfName()` でデバイス名に変換。
+2. **VNET / VRF 振り分け**: デバイス名が `VNET_PREFIX` で始まる場合は `onVnetRouteMsg`、それ以外は `onRouteMsg` に渡す。デフォルト VRF (table_id = 0) は `vrf = NULL` で `onRouteMsg` を呼ぶ。
+3. **VRF 名検証**: `onRouteMsg` 内で VRF 名が `VRF_PREFIX`（`"Vrf"`）または `MGMT_VRF_PREFIX`（`"mgmt"`）で始まるか検証。mgmt VRF はスキップ、それ以外の不正 VRF は `SWSS_LOG_ERROR` でドロップ。
+4. **key 組み立て**: `<vrf_name>:<prefix>` 形式で `destipprefix` を構築してから `APP_ROUTE_TABLE_NAME` に書き込む。
+
+> **根拠**: `routesync.cpp` `onMsg` (L2053–2103), `onRouteMsg` (L2111–2303)
+
+### kernel FIB 反映順序 (fpmsyncd)
+
+FRR の zebra が Netlink RTM_NEWROUTE / RTM_DELROUTE を送出し、fpmsyncd がそれを受信して APPL_DB へ書き込む流れにおける順序制約。
+
+1. **RTM_DELROUTE 優先処理**: `onRouteMsg` は `nlmsg_type == RTM_DELROUTE` を先に評価して即 `delWithWarmRestart` を呼び出す。ADD 処理よりも DELETE が先に評価される。
+2. **RTN_BLACKHOLE ショートパス**: route type が `RTN_BLACKHOLE` の場合、nexthop 解決を省略して `blackhole = "true"` フィールドだけを APPL_DB に書き込む。
+3. **NHG (NextHop Group) 先行登録**: `rtnl_route_get_nh_id()` が非ゼロの場合、既存の `m_nh_groups` テーブルから NHG を検索する。NHG が未登録の場合は経路をドロップ（エラーログ）。NHG が単一 nexthop の場合は route テーブルに直接展開、複数の場合は `nexthop_group` フィールドを使う。
+4. **eth0 / docker0 フィルタリング**: 出力インターフェースが `eth0`、`docker0`、`eth1-midplane` の場合、ADD ではなく DEL を発行（FRR 7.2→7.5 の挙動変化への対処）。
+5. **APPL_DB 書き込み**: `setRouteWithWarmRestart` で `APP_ROUTE_TABLE_NAME` に最終書き込み。warm-reboot 中は書き込みを defer する。
+
+> **根拠**: `routesync.cpp` `onRouteMsg` (L2149–2303), `onMsg` (L2053–2103)
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## フィールドの暗黙デフォルト (Phase A)
 
@@ -310,5 +557,84 @@ BGP redistribute static に使われる route-map 名は `'STATIC_ROUTE_FILTER'`
 [^bfd]: staticroutebfd 実装: `sonic-buildimage/src/sonic-bgpcfgd/staticroutebfd/main.py` および `vars.py`
 [^timer]: static_rt_timer 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py`
 <!-- /defaults -->
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。参照はコード上に明示的な lookup なしに行われる。
+
+| 参照先テーブル | 参照元 | 参照の性質 |
+|--------------|-------|-----------|
+| `VRF` | bgpcfgd `StaticRouteMgr` | key の `<vrf>` 部分を FRR コマンド `router bgp <asn> vrf <vrf>` に直接展開。VRF 存在確認は FRR 任せ |
+| `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` | bgpcfgd `InterfaceMgr`（`main.py` 購読）| bgpcfgd が同一プロセス内で購読。StaticRouteMgr は `ifname` フィールドをそのまま FRR に渡し、IF 存在確認はしない |
+| `VRF`（カーネル IF 名） | fpmsyncd `routesync` | Netlink route の `rta_table` を `getIfName` でカーネル VRF デバイス名 (`Vrf...`) に変換して APP_DB key に付与 |
+| `INTERFACE`（カーネル IF 名） | fpmsyncd `routesync` | nexthop の `rtnh_ifindex` を `getIfName` で IF 名に変換して APP_DB `ROUTE_TABLE` の `ifname` フィールドにセット |
+
+詳細エビデンス: `meta/_intermediate/cdb-flow/static-route-cross-refs.md`
+<!-- /cross-refs -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+### VOQ Chassis
+
+`bgpcfgd` 起動時に `device_info.is_chassis()` が `True` の場合、`ChassisAppDbMgr` が追加登録され、Supervisor の TSA (Traffic Shift Away) 状態変化を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` から購読する[^3]。これにより Line Card 全体の BGP が isolate/unisolate される。`STATIC_ROUTE` テーブルの処理ロジック自体は VOQ 構成でも共通。VOQ Chassis 固有の BGP peer は `BGP_VOQ_CHASSIS_NEIGHBOR` で別管理されており、静的経路の nexthop 到達性に間接的に影響しうる。
+
+### SmartSwitch DPU
+
+`switch_type == "dpu"` の場合、`bfdmon` が BFD プローブ状態を `STATE_DB.DPU_BFD_PROBE_STATE` ではなく `DPU_STATE_DB.DASH_BFD_PROBE_STATE` から取得する[^4]。`bfd=true` を持つ `STATIC_ROUTE` エントリの BFD 監視経路が異なる DB を参照する点に注意。CONFIG_DB 書き込みおよび FRR への静的経路反映ロジックは DPU 固有差分なし。
+
+### FRR バージョン差
+
+`bgpcfgd` レイヤに FRR バージョン検出・分岐コードは存在しない。`vtysh` へ渡すコマンド文字列（`ip route` / `ipv6 route` 形式）は固定であり、FRR バージョンによる挙動差は bgpcfgd レベルでは吸収されている。
+
+[^3]: bgpcfgd main.py チャーシス分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/main.py>
+[^4]: bfdmon DPU 分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bfdmon/bfdmon.py>
+
+<!-- /platform -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `bgpcfgd/managers_static_rt.py`、`bgpcfgd/static_rt_timer.py`
+
+### StaticRouteMgr クラス定数
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `OP_DELETE` | `'DELETE'` | 差分演算での削除操作識別子 |
+| `OP_ADD` | `'ADD'` | 差分演算での追加操作識別子 |
+| `ROUTE_ADVERTISE_ENABLE_TAG` | `'1'` | [BGP](../../reference/glossary.md#term-bgp) 広告有効時に FRR へ付与する route-map tag 値 |
+| `ROUTE_ADVERTISE_DISABLE_TAG` | `'2'` | [BGP](../../reference/glossary.md#term-bgp) 広告無効時に FRR へ付与する route-map tag 値 |
+
+### IpNextHop デフォルト値
+
+| フィールド | デフォルト値 | コード根拠 |
+|-----------|------------|-----------|
+| `distance` | `0` | `self.distance = 0 if dist is None else int(dist)` |
+| `blackhole` | `'false'` | `'false' if blackhole is None or blackhole == ''` |
+| `ip` (IPv4 ゼロ) | `'0.0.0.0'` | `zero_ip = lambda af: '0.0.0.0' if af == socket.AF_INET else '::'` |
+| `ip` (IPv6 ゼロ) | `'::'` | 同上 |
+
+### プロトコル enum（FRR コマンド文字列）
+
+| AF | FRR コマンドプレフィクス |
+|----|----------------------|
+| IPv4 (`socket.AF_INET`) | `'ip'` |
+| IPv6 (`socket.AF_INET6`) | `'ipv6'` |
+
+### アドレスファミリ enum（redistribute 対象）
+
+redistribute static コマンドは `["ipv4", "ipv6"]` の両 AF に対して発行される。route-map 名は固定値 `STATIC_ROUTE_FILTER`（permit 10、`match tag 1`）。
+
+### StaticRouteTimer 定数
+
+| 定数名 | 値 | 単位 | 用途 |
+|--------|-----|------|------|
+| `DEFAULT_TIMER` | `180` | 秒 | 未更新 static route を APPL_DB から削除するデフォルト有効期間 |
+| `DEFAULT_SLEEP` | `60` | 秒 | タイマーループのポーリング間隔 |
+| `MAX_TIMER` | `172800` | 秒 (48h) | カスタム expiry time の上限値 |
+
+<!-- /constants -->
 
 <!-- glossary-links-injected: 21a1d1474543 -->

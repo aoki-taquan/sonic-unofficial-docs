@@ -157,6 +157,57 @@ NHG 数が上限 (`getMaxNhgCount()`) に達した場合、1 メンバーをラ�
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): なし (APPL_DB 直接操作)
 - 関連テーブル: `FG_NHG` (FG ECMP、別オーケストレータ `FgNhgOrch`)
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存
+
+### 1. NEXTHOP 先行必須（NeighOrch NH 解決待ち）
+
+`syncMembers()` は各メンバーの `getNhId()` が `SAI_NULL_OBJECT_ID` の場合にそのメンバーをスキップし `success = false` を返す。未 sync NH があるとグループ作成が再試行キューに戻る。`NEXTHOP_GROUP_TABLE` を書く前に対応ネクストホップが NeighOrch によって解決済みであること[^1]。
+
+> コード根拠: `nhgorch.cpp:936–944`
+
+### 2. allPortsReady() 先行必須
+
+`NhgOrch::doTask()` の先頭でポート初期化完了を確認し、未完了の場合即 `return`。システム起動直後のエントリは無視される（再試行なし）[^1]。
+
+> コード根拠: `nhgorch.cpp:41–44`
+
+### 3. recursive NHG — メンバー NHG の先行 sync 必須
+
+`nexthop_group` フィールドで指定する各メンバー NHG が `m_syncdNextHopGroups` に存在しない場合は除外して部分適用される。recursive / temporary なメンバーは `SWSS_LOG_ERROR` でエントリ破棄[^1]。
+
+> コード根拠: `nhgorch.cpp:128–153`
+
+### 4. SAI nhg_member 作成順 — グループ本体 → メンバー
+
+`sync()` は必ず ①`create_next_hop_group`（グループ本体）→ ②`syncMembers()`（メンバー一括追加）の順で実行する。メンバー属性の設定順は `NEXT_HOP_GROUP_ID` → `NEXT_HOP_ID` → `WEIGHT`（weight != 0 の場合のみ）[^1]。
+
+> コード根拠: `nhgorch.cpp:775–808`, `nhgorch.cpp:1099–1121`
+
+### 5. メンバー追加は ObjectBulker でバッチ処理
+
+`syncMembers()` は全メンバーの `create_entry()` をバッファリングしてから `flush()` で一括 SAI 呼び出しを行う。適用順序は `std::set<NextHopKey>` の辞書順。インタフェース down のメンバー（`NHFLAGS_IFDOWN`）はスキップ[^1]。
+
+> コード根拠: `nhgorch.cpp:913–964`
+
+### 6. update() — 削除先行・追加後続（ASIC メンバー上限対策）
+
+NHG 更新時は ①`removeMembers()`（旧メンバー削除）→ ②`syncMembers()`（新メンバー追加）の順序が強制される。逆順では ASIC グループメンバー数上限に達して追加失敗する可能性がある[^1]。
+
+> コード根拠: `nhgorch.cpp:988–1087`（コメント: "avoid cases where we reached the ASIC group members limit"）
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | NeighOrch NH 解決 → NEXTHOP_GROUP_TABLE | 先行必須 | 未 sync NH はスキップ・再試行 |
+| 2 | allPortsReady() → NhgOrch doTask() | 先行必須 | 初期化完了前は全エントリ無視 |
+| 3 | メンバー NHG sync → recursive NHG | 先行必須 | 未 sync メンバーは除外、部分適用 |
+| 4 | create_next_hop_group → create_next_hop_group_member | 強制先行（sync() 内） | SAI API 構造上保証 |
+| 5 | removeMembers → syncMembers（update 時） | 強制先行（ASIC 上限回避） | 削除で空きを確保してから追加 |
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

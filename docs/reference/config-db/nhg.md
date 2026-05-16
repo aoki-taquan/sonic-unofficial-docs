@@ -121,4 +121,129 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 
 <!-- /defaults -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### APPL\_DB 購読 — `ConsumerStateTable` ベース
+
+`NhgOrch` は `orchdaemon.cpp` で `APPL_DB::NEXTHOP_GROUP_TABLE` を購読するよう生成・登録される:
+
+```cpp
+// orchdaemon.cpp L338
+gNhgOrch = new NhgOrch(m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME);
+```
+
+基底クラス `NhgOrchCommon → Orch` が **`ConsumerStateTable`** として購読し、orchagent のメインループ (`Select::select()`) に組み込まれる。Redis の `ConsumerStateTable` プロトコル（`PUBLISH` チャネル + keyspace 通知）により変更イベントが `doTask()` に配信される。
+
+> **注意**: `NEXTHOP_GROUP_TABLE` は APPL\_DB テーブルのため CONFIG\_DB Subscribe は使用しない。書き込み元は `fpmsyncd` (`routesync.cpp`) であり、CLI・minigraph は関与しない。
+
+### doTask() ディスパッチ
+
+```
+ConsumerStateTable 通知受信 (fpmsyncd → APPL_DB)
+    └─ NhgOrch::doTask(Consumer& consumer)      ← nhgorch.cpp L37
+            ├─ gPortsOrch->allPortsReady() チェック
+            ├─ SET_COMMAND
+            │       ├─ フィールド解析 (nexthop / ifname / weight / mpls_nh / seg_src / nexthop_group)
+            │       ├─ NHG 数上限チェック → 超過時 createTempNhg()
+            │       ├─ 新規 → NextHopGroup::sync() → SAI create_next_hop_group
+            │       └─ 更新 → NextHopGroup::update() → SAI set/add/remove member
+            └─ DEL_COMMAND
+                    ├─ getRefCount() > 0 → skip (参照カウント非ゼロ)
+                    └─ NextHopGroup::remove() → SAI remove_next_hop_group
+```
+
+### SAI next\_hop\_group\_api 呼び出し
+
+| SAI 関数 | タイミング | コードロケーション |
+|----------|-----------|------------------|
+| `create_next_hop_group()` | 新規 NHG (ECMP タイプ) 作成 | `nhgorch.cpp` L775 |
+| `create_next_hop_group_member()` | `syncMembers()` — `ObjectBulker` 経由でバッチ送信 | `nhgorch.cpp` L913 |
+| `set_next_hop_group_member_attribute()` | メンバー weight 更新 | `nhgorch.cpp` L614 |
+| `remove_next_hop_group_member()` | メンバー削除 (`NhgCommon::remove()` 経由) | `NhgCommon` |
+| `remove_next_hop_group()` | NHG 全体削除 | `NhgCommon::remove()` |
+
+メンバー追加・削除は `ObjectBulker<sai_next_hop_group_api_t>` でバッチ化され、`flush()` 時に一括 SAI 呼び出しが実行される (`nhgorch.cpp` L913)。
+
+### Observer パターン — `NeighOrch` → `NhgOrch`
+
+`NhgOrch` は **Observer (被観察者)** としても機能する。`NeighOrch` が ARP/NDP 状態変化を検知すると次を呼び出す:
+
+| メソッド | トリガー | 動作 |
+|---------|---------|------|
+| `NhgOrch::validateNextHop(nh_key)` | nexthop が解決済みになった | 該当 NH を含む全 NHG を走査 → `syncMembers()` → SAI member create |
+| `NhgOrch::invalidateNextHop(nh_key)` | nexthop が失効した (IF DOWN 等) | 該当 NH を含む全 NHG を走査 → SAI member remove (NHG 自体は保持) |
+
+これによりインタフェース UP/DOWN や ARP 解決に連動して NHG メンバーが動的に追加・削除される。
+
+### CRM (Critical Resource Monitor) 連携
+
+NHG 作成時に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼び出し、ハードウェアリソース使用量を追跡する (`nhgorch.cpp` L795)。
+
+### 起動時スナップショット
+
+orchagent 起動時、`Select::select()` ループ開始前に `ConsumerStateTable` の既存エントリが drain され `doTask()` が一括処理される。再起動後も APPL\_DB の既存 NHG エントリが SAI に再設定される。
+
+<!-- /pubsub -->
+
+<!-- failure -->
+## 失敗挙動・retry / recovery (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nhg-failure.md -->
+
+### retry パターン概要
+
+`NhgOrch::doTask()` は `m_toSync` キューで操作を管理する。`success = false` の場合は `++it` でエントリを残し次回 `doTask()` 呼び出し時に再試行する。`success = true` の場合のみ `m_toSync.erase(it)` で消費する。
+
+| パターン | 代表的なトリガー | 挙動 |
+|---|---|---|
+| **`m_toSync` 残留 retry** | SAI 失敗、NHG 数上限、参照中 DEL、メンバー未解決 | `++it` で残留。次 `doTask()` 時に自動再試行。上限なし |
+| **エントリ即破棄** | フィールド混在、型不一致、SRv6 count 不一致、invalid member type | `m_toSync.erase(it)` で破棄。retry なし。CONFIG 修正が必要 |
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `nexthop_group` と `nexthop`/`ifname` が共存（フィールド混在） | `doTask()` L98-103 | エントリ破棄。retry なし | `SWSS_LOG_ERROR("Nexthop group %s has both regular(ip/alias) and recursive fields")` | `nhgorch.cpp:98-103` |
+| SRv6 NHG で `nexthop` 数と `seg_src` 数が不一致 | `doTask()` L209-214 | エントリ破棄。retry なし | `SWSS_LOG_ERROR("inconsistent number of endpoints and srv6_srcs.")` | `nhgorch.cpp:209-214` |
+| 再帰 NHG のメンバーが recursive または temporary な NHG | `doTask()` L139-157 | エントリ破棄。retry なし | `SWSS_LOG_ERROR("Invalid member nexthop group %s in parent nhg %s")` | `nhgorch.cpp:139-157` |
+| 再帰 NHG で SRv6 と非 SRv6、または overlay と非 overlay のメンバーが混在 | `doTask()` L175-198 | エントリ破棄。retry なし | `SWSS_LOG_ERROR("Inconsistent nexthop group type between %s and %s")` | `nhgorch.cpp:175-198` |
+| 再帰 NHG の全メンバー NHG が未登録 | `doTask()` L160-164 | `++it` で silent retry。メンバー登録後に自動解消 | ログなし | `nhgorch.cpp:160-164` |
+| NHG 数上限到達時、SRv6 NHG 新規作成 | `doTask()` L257-260 | `++it` で retry（temp NHG も作成しない）。リソース解放後に自動解消 | `SWSS_LOG_DEBUG("Next hop group count reached its limit.")` | `nhgorch.cpp:252-260` |
+| NHG 数上限到達時、temp NHG sync 失敗（有効 NH 0 件） | `createTempNhg()` L844-849 | `std::logic_error` throw → catch → `SWSS_LOG_INFO` → skip | `SWSS_LOG_INFO("Got exception: ... while adding temp group %s")` | `nhgorch.cpp:277-282` |
+| SAI `create_next_hop_group` 失敗（ECMP グループ作成失敗） | `NextHopGroup::sync()` L782-791 | `handleSaiCreateStatus()` → `parseHandleSaiStatusFailure()` 経由。`task_need_retry` なら retry | `SWSS_LOG_ERROR("Failed to create next hop group %s, rv:%d")` | `nhgorch.cpp:782-791` |
+| `syncMembers()` でメンバーの NH ID が SAI_NULL_OBJECT_ID（ネイバー未解決） | `NextHopGroup::syncMembers()` L937-944 | `success = false`。`gNeighOrch->resolveNeighbor()` で解決要求。ネイバー解決後に retry | `SWSS_LOG_WARN("Failed to get next hop %s in group %s")` | `nhgorch.cpp:937-944` |
+| `syncMembers()` でバルク create 後の SAI ID が NULL | `NextHopGroup::syncMembers()` L973-977 | `success = false`。成功メンバーは SAI 登録済みのまま部分適用状態 | `SWSS_LOG_ERROR("Failed to create next hop group %s's member %s")` | `nhgorch.cpp:973-977` |
+| 単一メンバー非再帰 NHG で NH ID が SAI_NULL_OBJECT_ID | `NextHopGroup::sync()` L746-749 | `return false` → retry | `SWSS_LOG_WARN("Next hop %s is not synced")` | `nhgorch.cpp:746-749` |
+| SRv6 Nexthop 作成失敗（`createSrv6NexthopWithoutVpn` 失敗） | `NextHopGroupMember::getNhId()` L551-553 | SAI_NULL_OBJECT_ID を返す → 上位でメンバー sync 失敗として retry | `SWSS_LOG_ERROR("Failed to create SRv6 nexthop %s")` | `nhgorch.cpp:551-553` |
+| メンバー weight 更新失敗（SAI set_attribute 失敗） | `NextHopGroup::update()` L1042-1045 | `return false` → retry | `SWSS_LOG_WARN("Failed to update member %s weight")` | `nhgorch.cpp:1042-1045` |
+| NHG update で古いメンバー削除失敗 | `NextHopGroup::update()` L1057-1060 | `return false` → retry。部分削除状態が ASIC に残る可能性あり | `SWSS_LOG_WARN("Failed to remove members from group %s")` | `nhgorch.cpp:1057-1060` |
+| NHG update で新メンバー sync 失敗 | `NextHopGroup::update()` L1080-1083 | `return false` → retry | `SWSS_LOG_WARN("Failed to sync new members for group %s")` | `nhgorch.cpp:1080-1083` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| DEL 対象 NHG が参照中（ref_count > 0） | `doTask()` L413-417 | `success = false` → 残留 retry。参照解除まで削除不可 | `SWSS_LOG_INFO("Unable to remove group %s which is referenced")` | `nhgorch.cpp:413-417` |
+| DEL 対象 NHG が未登録（`m_syncdNextHopGroups` に存在しない） | `doTask()` L407-411 | `success = true` で消費（冪等）。retry なし | `SWSS_LOG_INFO("Unable to find group with key %s to remove")` | `nhgorch.cpp:407-411` |
+| DEL と同一キーに pending SET が存在 | `doTask()` L401-405 | DEL をスキップして SET を適用（正しい最終状態への収束） | ログなし | `nhgorch.cpp:401-405` |
+
+### ECMP リソース枯渇時の暫定動作
+
+NHG 数が上限 (`getMaxNhgCount()`) に達した場合、非 SRv6 NHG は `createTempNhg()` で代表 1 NH のみの temporary group を SAI に登録する:
+
+1. RouteOrch はルート解決を継続できる（ECMP なしの単一 NH ルート）
+2. ECMP 動作は一時的に失われる（トラフィックは 1 NH に集中）
+3. リソース解放後に `doTask()` が temp NHG を完全 NHG に昇格させる
+
+SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時はルート解決そのものが保留される。
+
+### 部分適用の注意
+
+- `syncMembers()` は `ObjectBulker` による bulk create を使用する。flush 後に個別 SAI ID を確認するため、一部成功・一部失敗の部分適用が発生しうる。
+- NHG update 時に古いメンバー削除後・新しいメンバー追加前の間、NHG は縮退した状態で ASIC に存在する。
+- `validateNextHop` / `invalidateNextHop` の失敗時は即 `return false` で後続 NHG への適用を中断する（`nhgorch.cpp:477-483, 513-519`）。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: nhg-2026-0515 -->

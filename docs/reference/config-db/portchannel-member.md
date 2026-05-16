@@ -124,6 +124,46 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-failure.md -->
+
+### 失敗シナリオ一覧
+
+| 失敗シナリオ | 挙動 | ログレベル | リカバリ |
+|---|---|---|---|
+| YANG leafref 違反 (`name`/`port` 参照先なし) | config-load で reject（DB 書き込みなし） | — | エントリ作成前に拒否 |
+| `STATE_PORT_TABLE` 未準備（ポート `state != ok`） | 暗黙 continue（リトライ待機） | なし | portmgrd が STATE_DB を更新後に自動解消 |
+| `STATE_LAG_TABLE` 未準備（teamd 未起動） | 暗黙 continue（リトライ待機） | なし | teamd 起動後に自動解消 |
+| MACsec Ingress SA 未確立（MACsec 有効時のみ） | 暗黙 continue（リトライ待機） | `SWSS_LOG_INFO` | SA 確立後に自動解消 |
+| `ip link show <member>` 失敗（kernel netdev 不在） | `task_ignore`（エントリ破棄） | `SWSS_LOG_WARN`: `Unable to find port %s` | エントリ破棄。ポート復旧後に再投入必要 |
+| ポートが既に別 LAG にスレーブ済み | `task_ignore`（ログなし） | なし | べき等処理 |
+| `teamdctl port add` 失敗 + ポート admin-up | `task_need_retry`（自動再試行） | `SWSS_LOG_INFO`: `Failed to add %s to port channel %s, retry...` | portmgrd 競合とみなし自動再試行 (`teammgr.cpp:779`) |
+| `teamdctl port add` 失敗 + ポート admin-down | `task_failed`（エントリ破棄） | `SWSS_LOG_ERROR`: `Failed to add %s to port channel %s` | 手動介入必要 (`teammgr.cpp:785`) |
+| ポート型が PHY / SYSTEM 以外 | エントリ消去（リトライなし） | `SWSS_LOG_ERROR`: `LAG member port has to be of type PHY or SYSTEM` | ポート型修正後に再投入 (`portsorch.cpp:6292`) |
+| chassis 環境で switch_id ミスマッチ | エントリ消去（リトライなし） | `SWSS_LOG_ERROR`: `System lag switch id mismatch...` | 設計見直し必要 (`portsorch.cpp:6311`) |
+| VLAN_MEMBER 競合（同一ポートが VLAN_MEMBER 在籍中） | 暗黙 skip（ループ継続） | `SWSS_LOG_DEBUG`: `Port %s is still a member of %zu VLAN(s)...` | `VLAN_MEMBER` DEL 後に自動解消 (`portsorch.cpp:6340`) |
+| SAI `create_lag_member` 失敗 | SAI ステータス依存（`handleSaiCreateStatus`） | `SWSS_LOG_ERROR`: `Failed to add member %s to LAG %s...` | SAI 依存（プラットフォーム固有） |
+| SAI `remove_lag_member` 失敗 | SAI ステータス依存（`handleSaiRemoveStatus`） | `SWSS_LOG_ERROR`: `Failed to remove member %s from LAG %s...` | SAI 依存 |
+| DEL 時にメンバーが存在しない (`m_lag_member_id == 0`) | エントリ消去 | `SWSS_LOG_WARN`: `Member %s not found in LAG %s...` | べき等（無害） |
+| `DEVICE_METADATA|localhost|mac` 欠如 | `teammgrd` 起動時に例外スロー → コンテナ停止 | — | MAC アドレス設定後にコンテナ再起動 (`teammgr.cpp:61`) |
+
+### リトライ上限と無限ループ
+
+`teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタが存在しない。
+`m_toSync` はエントリを保持し続け、次の select イテレーションで再試行する設計（無限リトライ）。
+依存状態（`STATE_LAG_TABLE`・`STATE_PORT_TABLE`・MACsec SA）が解消されれば自然に成功する。
+
+### VLAN_MEMBER 競合の詳細
+
+- orchagent は `m_portVlanMember[port].size() > 0` の場合に LAG member 追加を **skip**（エラーではなく継続ループ）。
+- YANG `must` 制約 (`sonic-vlan.yang:302`) と CLI ガード (`config/vlan.py:379`) で二重に防御されているため、
+  通常は YANG validate / CLI 拒否で config-load 前に排除される。
+  しかし `sonic-db-cli` 直接書き込みなど YANG バリデーションをバイパスした場合は orchagent ループに到達しうる。
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

@@ -197,6 +197,54 @@ show ip interfaces
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査対象: `sonic-swss/orchagent/intfsorch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`
+> 調査日: 2026-05-16
+
+### PORT 未解決 → retry
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:833-836` | `isIntfStateOk(alias)` が false（STATE_PORT_TABLE に `state=ok` 未登録） | `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → `return false`、`m_toSync` 残留・1000 ms 後に再試行 |
+| `intfsorch.cpp:905-924` | `gPortsOrch->getPort(alias, port)` が false（PortsOrch 未登録） | `it++; continue` → `m_toSync` 残留・再試行。PORT が PortsOrch に登録されるまで SAI 処理不可 |
+
+### VRF 未解決 → retry または即座スキップ
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:839-842` | `vrf_name` 指定時に `isIntfStateOk(vrf_name)` が false | `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` → `return false`、retry |
+| `intfsorch.cpp:826-829` | `m_vrfOrch->isVRFexists(vrf_name)` が false（orchagent 内 VRF 未生成） | `it++; continue` → retry |
+| `intfmgr.cpp:846-849` | 既存 VRF バインド済みのまま別 VRF を指定（`isIntfChangeVrf()` が true） | `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` → エントリ消去（設定スキップ）。unbind → rebind の 2 ステップが必要 |
+| `intfsorch.cpp:860` | Loopback 系で VRF 変更時に IP アドレスが残存 | `SWSS_LOG_ERROR("Failed to set interface '%s' to VRF ID '%d' because it has IP addresses associated with it.")` → VRF 変更スキップ |
+
+### IP format 不正 / silent drop
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:1132` | IPv4 link-local（169.254.x.x）を IP プレフィクスとして設定 | APP_DB への書き込みをスキップ（ログなし）→ orchagent / SAI に届かない（silent drop） |
+| `intfsorch.cpp:571-580` | 同 VRF 内の既存プレフィクスとサブネットオーバーラップ | `SWSS_LOG_NOTICE("Router interface %s IP %s overlaps with %s.")` → `setIntf` が `return false`、重複エントリ削除まで retry |
+| `intfsorch.cpp:740` | `mac_addr` フィールドの MAC アドレスパース失敗 | `SWSS_LOG_ERROR("Invalid mac argument %s to %s()")` → `continue`（エントリ消去、設定スキップ） |
+| `intfsorch.cpp:756` | `nat_zone` フィールドに数値以外または範囲外の値 | `SWSS_LOG_ERROR("Invalid argument %s for nat zone")` → `continue`（エントリ消去、nat_zone 設定スキップ） |
+
+### kernel netlink / ip コマンド失敗
+
+| 箇所 | 条件 | 挙動 |
+|------|------|------|
+| `intfmgr.cpp:117-130` | `ip -6 address add` 失敗（IPv6 未有効） | まず `SWSS_LOG_NOTICE("... trying to enable IPv6 and retry")` → `enableIpv6Flag()` → 再実行。enableIpv6 も失敗時: `SWSS_LOG_ERROR("Failed to enable IPv6 on interface %s")` → return |
+| `intfmgr.cpp:130` | `ip address add/del` が非ゼロ return code（IPv4） | `SWSS_LOG_ERROR("Command '%s' failed with rc %d")` → return（エントリは消去） |
+| `intfmgr.cpp:455` | `ip link set mtu` 失敗 | `SWSS_LOG_WARN("Setting mtu to %s netdev failed ...")` → warn のみ、MTU は旧値のまま処理継続 |
+| `intfmgr.cpp:501` | `ip link set <alias> up/down` 失敗 | `SWSS_LOG_WARN("Setting admin_status to %s netdev failed ...")` → warn のみ |
+| `intfsorch.cpp:1297-1303` | `sai_router_intfs_api->create_router_interface()` が `SAI_STATUS_SUCCESS` 以外 | `SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d")` → `handleSaiCreateStatus` が `task_success` 以外なら `throw runtime_error` → orchagent abort |
+
+### retry メカニズム
+
+- `intfmgrd` の main ループはタイムアウト 1000 ms で `Select::select()` を呼ぶ
+- `doIntfGeneralTask` / `doIntfAddrTask` が `false` を返した場合、エントリは `m_toSync` に残留
+- PORT / VRF が STATE_DB に `state=ok` を書いた瞬間、`doPortTableTask` がキューを再処理
+
+<!-- /failure -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
@@ -407,27 +455,67 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 ## 書込み順依存 (Phase B)
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
-> 調査日: 2026-05-14
+> 調査日: 2026-05-16 (VLAN/LAG 先行・kernel netlink 順序を追記)
 
 ### 他テーブル先行必須
 
-| 先行テーブル / 条件 | 依存の内容 | コード根拠 |
-|-------------------|-----------|-----------|
-| `PORT` + portmgrd が STATE_DB に `state=ok` を書く | `isIntfStateOk(alias)` が false → `INTERFACE` SET をスキップ・retry | `intfmgr.cpp:831-837` |
-| `VRF` + vrfmgrd が STATE_DB に ready を書く | `isIntfStateOk(vrf_name)` が false → `vrf_name` 付き SET をスキップ | `intfmgr.cpp:839-842` |
-| `INTERFACE|<port>` (L3 enable 行) が STATE_INTERFACE_TABLE に存在 | `isIntfCreated(alias)` が false → IP プレフィクスロウの SET をスキップ | `intfmgr.cpp:1115` |
-| orchagent 側: `VRF` オブジェクトが orchagent 内に存在 | `m_vrfOrch->isVRFexists(vrf_name)` が false → APP_DB 側の処理もスキップ | `intfsorch.cpp:826-830` |
+`intfmgrd` の `isIntfStateOk()` はインタフェース名プレフィクスによって確認先 STATE_DB テーブルを切り替える（`intfmgr.cpp` L649–710）。
+
+| 先行テーブル / 条件 | 確認先 STATE_DB テーブル | 依存の内容 | コード根拠 |
+|-------------------|------------------------|-----------|-----------|
+| `PORT` + portmgrd が `state=ok` を書く | `STATE_PORT_TABLE` | `isIntfStateOk(alias)` が false → `INTERFACE` SET をスキップ・retry | `intfmgr.cpp:686-695` |
+| `PORTCHANNEL` (LAG) + lagmgrd が ready を書く | `STATE_LAG_TABLE` | `isIntfStateOk(alias)` が false → `LAG_INTERFACE` SET をスキップ | `intfmgr.cpp:661-667` |
+| `VLAN` + vlanmgrd が ready を書く | `STATE_VLAN_TABLE` | `isIntfStateOk(alias)` が false → `VLAN_INTERFACE` SET をスキップ | `intfmgr.cpp:653-660` |
+| `VRF` + vrfmgrd が ready を書く | `STATE_VRF_TABLE` | `isIntfStateOk(vrf_name)` が false → `vrf_name` 付き SET をスキップ | `intfmgr.cpp:839-842` |
+| `INTERFACE|<port>` (L3 enable 行) が STATE_INTERFACE_TABLE に存在 | `STATE_INTERFACE_TABLE` | `isIntfCreated(alias)` が false → IP プレフィクスロウの SET をスキップ | `intfmgr.cpp:1115` |
+| orchagent 側: `VRF` オブジェクトが orchagent 内に存在 | — | `m_vrfOrch->isVRFexists(vrf_name)` が false → APP_DB 側の処理もスキップ | `intfsorch.cpp:826-830` |
+| orchagent 側: `gPortsOrch->allPortsReady()` | — | 全ポート ready 前は INTERFACE の SAI 処理全体をブロック | `intfsorch.cpp L665` |
+
+### IP / MTU / VRF 属性の適用順序 (kernel netlink)
+
+`doIntfGeneralTask()` SET パス内での kernel netlink コマンド発行順序（`intfmgr.cpp` L831–1054）:
+
+```
+1. isIntfStateOk(port/LAG/VLAN) ガード        (未 ready → return false)
+2. isIntfStateOk(vrf_name) ガード             (vrf_name 指定時のみ)
+3. isIntfChangeVrf() 確認                     (直接 VRF 変更をブロック)
+4. ip link add <alias> link <parent> type vlan id <vlanId>
+                                              (サブインタフェース新規作成時)
+5. ip link set <alias> mtu <mtu>             (サブ IF, min(parent_mtu, config_mtu))
+6. ip link set <alias> master <vrf>          (VRF binding)
+   または ip link set <alias> nomaster       (VRF 除去)
+7. ip link set <alias> address <mac>         (mac_addr 指定時)
+8. sysctl net.mpls.conf.<alias>.input=1/0    (mpls=enable/disable 時)
+9. echo N > /proc/sys/net/ipv4/conf/<alias>/proxy_arp
+10. echo N > /proc/sys/net/ipv4/conf/<alias>/arp_accept
+11. m_appIntfTableProducer.set(alias, data)  (APP_DB INTF_TABLE SET)
+12. m_stateIntfTable.hset(alias, "vrf", …)   (STATE_DB 書込み)
+```
+
+`doIntfAddrTask()` SET パス（IP プレフィクスロウ、`intfmgr.cpp` L1099–1170）:
+
+```
+1. isIntfStateOk(alias) && isIntfCreated(alias) ガード
+2. ip address add <ip/plen> [broadcast <bcast>] dev <alias>
+   または ip -6 address add <ip/plen> [broadcast <bcast>] dev <alias> [metric 256]
+   (IPv6 失敗時: enableIpv6Flag() してリトライ)
+3. m_appIntfTableProducer.set(appKey, {scope, family})
+4. m_stateIntfTable.hset("<alias>|<ip_prefix>", "state", "ok")
+```
+
+**VRF binding (手順 6) は IP 付与 (doIntfAddrTask 手順 2) より必ず先に完了する**。
+属性ロウ処理が STATE_DB に完了を書いた後でなければ `isIntfCreated()` を通過しないため。
 
 ### SET 後 DEL 順依存
 
 | 操作 | 必須順序 | コード根拠 |
 |------|---------|-----------|
 | L3 enable 行 (`INTERFACE|<port>`) の DEL | すべての IP プレフィクスロウ (`INTERFACE|<port>|<ip>`) を先に DEL してから | `intfmgr.cpp:1058-1063` |
-| VRF 変更 | 直接変更不可。`vrf_name=""` で unbind → 新 VRF で rebind の 2 ステップ | `intfmgr.cpp:846-849` |
+| VRF 変更 | 直接変更不可。`vrf_name=""` で unbind (`ip link set nomaster`) → 新 VRF で rebind の 2 ステップ | `intfmgr.cpp:846-849` |
 
 ### Notification 順序
 
-`intfmgrd` は起動時に `SubscriberStateTable` で `STATE_PORT_TABLE` と `STATE_LAG_TABLE` を購読する。portmgrd / lagmgrd が `state=ok` を STATE_DB に書いた瞬間、intfmgrd の `doPortTableTask` がトリガされ、キューに積まれていた `INTERFACE` エントリが再処理される。このため、**CONFIG_DB に書いた時点ではなく STATE_DB 通知のタイミングで実際の適用が始まる**。
+`intfmgrd` は起動時に `SubscriberStateTable` で `STATE_PORT_TABLE`（pri=100）・`STATE_LAG_TABLE`（pri=200）を購読する。portmgrd / lagmgrd が `state=ok` を STATE_DB に書いた瞬間、intfmgrd の `doPortTableTask` がトリガされ、キューに積まれていた `INTERFACE` / `LAG_INTERFACE` エントリが再処理される。VLAN IF は vlanmgrd → `STATE_VLAN_TABLE` の通知で同様に再処理される。このため、**CONFIG_DB に書いた時点ではなく STATE_DB 通知のタイミングで実際の適用が始まる**。
 
 ### warm-reboot 影響
 
@@ -508,6 +596,36 @@ if (port.m_type == Port::VLAN) {
 | Broadcom (Arista 等) | `config.bcm` ファイル | `SAI_INIT_CONFIG_FILE` で指定 |
 
 RIF (Router Interface) 数上限・ECMP メンバ数はこれらの初期化ファイルで決定される。`INTERFACE` テーブルで大量の L3 IF を作成する場合は ASIC ごとの制限に注意が必要。
+
+### VOQ Chassis — システムインタフェース同期差
+
+`DEVICE_METADATA|localhost.switch_type=voq` のシャーシ構成では、`INTERFACE` テーブルへの SET/DEL が追加の CHASSIS_APP_DB 同期を引き起こす。
+
+```cpp
+// intfsorch.cpp:1316-1317
+// RIF 作成直後に自動実行
+voqSyncAddIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE に書き込み
+
+// intfsorch.cpp:1369-1370
+// RIF 削除直後に自動実行
+voqSyncDelIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE から削除
+```
+
+`voqSyncAddIntf` はローカルポート（`SAI_SYSTEM_PORT_TYPE_REMOTE` でないもの）のみを同期する。リモートポートの IF は `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` を購読して受信し、`gNeighOrch->ifChangeInformRemoteNextHop` でネクストホップ状態を更新する。
+
+VOQ 構成での追加動作:
+
+| 構成 | 追加動作 |
+|------|---------|
+| VOQ chassis (local port) | `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` に `oper_status` を SET |
+| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート ASIC にネイバー伝播 |
+| VOQ chassis (remote port) | `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` からの通知でリモートネクストホップを更新 |
+| VOQ chassis (IPv6 アドレス追加) | `ip -6 address add ... metric 256` を付与 (`intfmgr.cpp:103-106`)。通常構成は metric 指定なし |
+| 通常シングルスイッチ | CHASSIS_APP_DB 操作は一切なし |
+
+### SmartSwitch DPU — 現時点でのコード差なし
+
+`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には SmartSwitch / DPU 固有の条件分岐は存在しない（2026-05-16 時点）。DPU 上の `INTERFACE` テーブル処理は通常の物理ポートと同一経路をたどる。SmartSwitch 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
 
 <!-- /platform -->
 

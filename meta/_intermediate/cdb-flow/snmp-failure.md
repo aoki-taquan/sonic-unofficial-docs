@@ -1,30 +1,35 @@
-# SNMP 失敗挙動調査 (Phase D)
+# SNMP テーブル — Phase D 失敗挙動中間ファイル
 
-## 調査対象ソース
+> 生成日: 2026-05-16  
+> ソース: `sonic-buildimage/dockers/docker-snmp/snmp_yml_to_configdb.py`, `start.sh`, `snmpd.conf.j2`, `base_image_files/monit_snmp`, `sonic-utilities/config/main.py`  
+> 調査者: Claude (batch #6)
 
-- `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`
-- `sonic-buildimage/dockers/docker-snmp/snmp_yml_to_configdb.py`
-- `sonic-buildimage/dockers/docker-snmp/start.sh`
-- `sonic-buildimage/dockers/docker-snmp/base_image_files/monit_snmp`
+## 調査対象
+
+`docs/reference/config-db/snmp.md` の `<!-- failure -->` ブロック向け失敗挙動の抽出。
+ソースとして `hostcfgd` (sonic-host-services) および `docker-snmp` コンテナ起動スクリプトを精読。
 
 ## 失敗挙動一覧
 
-### 1. `snmp.yml` 未存在 → `sys.exit(1)` でコンテナ初期化失敗
+### 1. snmp.yml 不在による sys.exit(1)
 
-`snmp_yml_to_configdb.py` L25-27:
+**ソース**: `snmp_yml_to_configdb.py` L25–27
+
 ```python
 if not os.path.exists('/etc/sonic/snmp.yml'):
     logger.log_info('/etc/sonic/snmp.yml does not exist')
     sys.exit(1)
 ```
-`/etc/sonic/snmp.yml` が存在しない場合はスクリプトが `sys.exit(1)` で終了。
-`start.sh` はこの終了コードをチェックしないため `sonic-cfggen` へ進み、
-`CONFIG_DB` に community 設定なしで `snmpd.conf` が生成される。
-結果: 全 SNMP アクセスが拒否される状態でコンテナが起動する。
 
-### 2. `snmp_location` キー不在 → `sys.exit(1)` で LOCATION 未設定
+`/etc/sonic/snmp.yml` が存在しない場合、スクリプトは `sys.exit(1)` で終了する。
+`start.sh` は終了コードをチェックせず `sonic-cfggen` へ続行するため、
+`SNMP_COMMUNITY` が CONFIG_DB に未登録のまま `snmpd.conf` が生成される。
+結果: 全 SNMP アクセスが拒否される (community 行なし)。
 
-`snmp_yml_to_configdb.py` L51-56:
+### 2. snmp_location キー不在による sys.exit(1)
+
+**ソース**: `snmp_yml_to_configdb.py` L51–56
+
 ```python
 if yaml_snmp_info.get('snmp_location'):
     if 'LOCATION' not in snmp_general_keys:
@@ -33,56 +38,79 @@ else:
     logger.log_info('snmp_location does not exist in snmp.yml file')
     sys.exit(1)
 ```
-`snmp.yml` に `snmp_location` キーがない場合も `sys.exit(1)` で終了。
-この場合 `SNMP|LOCATION` は CONFIG_DB に登録されず、
-`snmpd.conf.j2` のフォールバックにより `sysLocation public` がハードコードで出力される。
 
-### 3. `SNMP_COMMUNITY` 未定義 → 全 SNMP アクセス拒否
+`snmp.yml` に `snmp_location` キーが存在しない場合も `sys.exit(1)`。
+`SNMP|LOCATION` は CONFIG_DB に登録されず、`snmpd.conf.j2` は
+`sysLocation public` (ハードコード) を出力する。
 
-`snmpd.conf.j2` L48-55:
-```jinja2
+### 3. SNMP_COMMUNITY 未定義によるサイレント全拒否
+
+**ソース**: `snmpd.conf.j2` L48–64
+
+```jinja
 {% if SNMP_COMMUNITY is defined %}
 {% for community in SNMP_COMMUNITY %}
-...
+{% if SNMP_COMMUNITY[community]['TYPE'] == 'RO' %}
+rocommunity {{ community }}
+rocommunity6 {{ community }}
+{% endif %}
+{% endfor %}
 {% endif %}
 ```
-`SNMP_COMMUNITY` テーブルが空の場合、community 設定行が一切出力されない。
-snmpd は community なし設定で起動し、全クライアントからの GET/SET/TRAP が拒否される。
-エラーログなし・サイレント障害。
 
-### 4. `SNMP_AGENT_ADDRESS_CONFIG` 未定義 → 全インターフェース公開
+`SNMP_COMMUNITY` テーブルが空の場合、`{% if SNMP_COMMUNITY is defined %}` チェックが失敗し
+community 設定行が一切出力されない。snmpd は community なしで起動し、
+全クライアントの SNMP v1/v2c GET/SET が拒否される。snmpd 自体はエラーを出力しないため
+サイレント障害となる。
 
-`snmpd.conf.j2` L31-34:
-```jinja2
-{% else %}
-agentAddress udp:161
-agentAddress udp6:161
-{% endif %}
+### 4. SNMP|CONTACT key 構造不一致によるサイレントフォールバック
+
+**ソース**: `config/main.py` L4483, `snmpd.conf.j2` L93–97
+
+CLI は `{contact_name: contact_email}` という任意 key の dict を書き込む:
+```python
+db.cfgdb.set_entry('SNMP', 'CONTACT', {contact: contact_email})
+# TODO: ERROR IN YANG MODEL. Contact name is not defined as key
 ```
-`SNMP_AGENT_ADDRESS_CONFIG` が空の場合、snmpd は全インターフェースの UDP:161 をリッスン。
-意図しないインターフェースへの公開が発生する可能性がある。
 
-### 5. `SNMP|CONTACT` フィールド構造の不一致 → サイレントスキップ
+テンプレートは `.keys()|first` / `.values()|first` でアクセスするため、
+key 名の大文字/小文字が YANG 定義と一致しない場合、テンプレートが値を参照できず
+`sysContact Azure Cloud Switch vteam <linuxnetdev@microsoft.com>` (Microsoft ハードコード) が出力される。
 
-YANG は `leaf Contact` を定義するが、CLI (`config/main.py` L4483) は
-`{contact_name: contact_email}` という任意 key の dict を書き込む。
-`snmpd.conf.j2` L94 でも `.keys()|first` / `.values()|first` でアクセス。
-YANG の `Contact` leaf 名は事実上機能しない。
-key 名の大文字/小文字が実装と一致しない場合、テンプレートが該当値を参照できず
-`sysContact Azure Cloud Switch vteam <linuxnetdev@microsoft.com>` (ハードコード) が出力される。
+### 5. メモリ超過時の monit による snmp-subagent 強制再起動
 
-### 6. メモリ超過 → monit による snmp-subagent 自動再起動
+**ソース**: `base_image_files/monit_snmp`
 
-`monit_snmp`:
 ```
 check program container_memory_snmp with path "/usr/bin/memory_checker snmp 4294967296"
     if status == 3 for 10 times within 20 cycles then exec "/usr/bin/docker exec snmp supervisorctl restart snmp-subagent"
 ```
-snmp コンテナが 4 GiB (4294967296 bytes) を超過し続けると monit が `snmp-subagent` を再起動。
-snmpd 本体ではなく subagent のみ再起動されるため、MIB ツリーが一時的に応答不能になる。
 
-### 7. 設定変更の反映はコンテナ再起動時のみ
+snmp コンテナが 4 GiB (4294967296 bytes) を超過し続けると monit が `snmp-subagent` のみ再起動する。
+snmpd 本体は継続動作するが、subagent 再起動中は AgentX サブエージェント経由の MIB 情報
+(FRR 等) が一時的に応答不能となる。
 
-`start.sh` が `sonic-cfggen` を実行して `snmpd.conf` を生成するのはコンテナ起動時のみ。
-CONFIG_DB の変更 (SNMP|LOCATION 更新など) は `docker restart snmp` または
-snmpd リロードが実行されるまで反映されない。ランタイム中のホットリロード機構なし。
+### 6. 設定変更のホットリロード不可
+
+**ソース**: `start.sh`, `supervisord.conf.j2`
+
+`start.sh` が `sonic-cfggen` で `snmpd.conf` を生成するのはコンテナ起動時のみ。
+`supervisord.conf.j2` で `snmpd` の `autorestart=false` 設定のため、
+CONFIG_DB 変更後は `sudo systemctl restart snmp` が必要。
+CLI (`config snmp *`) は変更後に自動的に `systemctl reset-failed && restart snmp.service` を実行するが、
+手動での直接 DB 操作後はリロードされない。
+
+## hostcfgd との関係
+
+`sonic-host-services/scripts/hostcfgd` を全行精読した結果、SNMP テーブルに関する
+購読・ハンドラ処理は実装されていない。SNMP 設定の処理は `docker-snmp` コンテナ内の
+起動スクリプト (`snmp_yml_to_configdb.py`, `sonic-cfggen`) が担当し、
+hostcfgd は SNMP テーブルを購読しない。
+
+## 証拠リンク
+
+- `snmp_yml_to_configdb.py`: <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmp_yml_to_configdb.py>
+- `snmpd.conf.j2`: <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/snmpd.conf.j2>
+- `start.sh`: <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/start.sh>
+- `monit_snmp`: <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-snmp/base_image_files/monit_snmp>
+- `config/main.py` (sonic-utilities): <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
