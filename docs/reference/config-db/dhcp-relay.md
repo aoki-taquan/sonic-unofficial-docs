@@ -507,6 +507,56 @@ VLAN 単位の server listen event 生成失敗は **プロセスを停止させ
 複数 VLAN が設定されている場合、一部の VLAN が LLA 未準備で `is_lla_ready=false` のまま残っていても他 VLAN の relay は正常動作する。その VLAN に関連する CONFIG_DB エントリは残骸として存在するが削除はされない。
 
 > **Evidence**: `sonic-dhcp-relay` `dhcp6relay/src/relay.cpp`, `dhcp6relay/src/config_interface.cpp`, `dhcp6relay/src/sender.cpp`, `dhcp6relay/src/main.cpp`
+
+---
+
+### dhcprelayd (IPv4 リレー管理デーモン) の失敗挙動
+
+> **調査根拠**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py` 全行精読 (2026-05-16)
+
+`dhcprelayd` は `DHCP_SERVER_IPV4` 機能が有効な場合に `isc-dhcp-relay` (`dhcrelay`) プロセスの起動・停止を管理する Python デーモン。`dhcp6relay` とは独立した失敗経路を持つ。
+
+#### 不正 server_ip — STATE_DB 取得失敗 → exit(1)
+
+`_get_dhcp_server_ip()` は `STATE_DB::DHCP_SERVER_IPV4_SERVER_IP|eth0|ip` から DHCP サーバ IP を取得する。取得できない場合は 10 秒 sleep × 10 回リトライ後に `sys.exit(1)` で終了する。
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| STATE_DB に server_ip なし (1〜9 回目) | `syslog.LOG_INFO "Cannot get dhcp server ip"` | 10 秒 sleep 後リトライ |
+| STATE_DB に server_ip なし (10 回目) | `syslog.LOG_ERR "Cannot get dhcp_server ip from state_db"` | `sys.exit(1)` → dhcprelayd プロセス終了 |
+
+プロセス終了後は supervisord が dhcp_relay コンテナを再起動する。`STATE_DB` の `DHCP_SERVER_IPV4_SERVER_IP` は `dhcp_server` 機能 (dhcpd) が書き込む — dhcpd が起動前または異常終了した場合にこの失敗経路に入る。
+
+#### VLAN 未解決 — dhcp_interfaces からの除外 (silent discard)
+
+`refresh_dhcrelay()` は `DHCP_SERVER_IPV4` テーブルで `state == "enabled"` のインタフェースを `dhcp_interfaces` に追加した後、`VLAN` テーブルに存在しないインタフェースを `dhcp_interfaces.discard()` で除外する (`dhcprelayd.py:97-98`)。
+
+| 条件 | 挙動 |
+|------|------|
+| `DHCP_SERVER_IPV4` に enabled エントリあり、かつ `VLAN` テーブルに当該 VLAN が存在しない | `dhcp_interfaces` から除外 → `dhcrelay` 起動コマンドに `-id <vlan>` が含まれない |
+| `MID_PLANE_BRIDGE` にも一致しない場合 | 同上。ログ出力なし (silent discard) |
+
+`enabled_dhcp_interfaces` には残留するため、将来 VLAN が追加されたときに `VlanTableEventChecker` / `VlanIntfTableEventChecker` が変化を検知して `refresh_dhcrelay()` を再実行する設計。
+
+#### isc-dhcp-relay 起動失敗 — zombie 検出 → exit(1)
+
+`_start_dhcrelay_process()` は `subprocess.Popen()` で `dhcrelay` を起動後、1 秒 sleep して `psutil.STATUS_ZOMBIE` を確認する (`dhcprelayd.py:309-313`)。
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| `dhcrelay` が zombie 状態 | `syslog.LOG_ERR "Failed to start dhcrelay process with: {cmds}"` | `terminate_proc()` で zombie 回収 → `sys.exit(1)` |
+| `dhcrelay` が正常起動 | `syslog.LOG_INFO "dhcrelay process started successfully"` | 正常継続 |
+
+#### dhcrelay 動作確認失敗 → exit(1) (`dhcp_server` 機能 disabled 時)
+
+`_check_dhcp_relay_processes()` は `dhcp_server` 機能が disabled の場合に定期実行され、実行中の `dhcrelay` プロセスの cmdline と supervisord 設定の期待値を比較する (`dhcprelayd.py:259-262`)。
+
+| 条件 | ログ | 挙動 |
+|------|------|------|
+| 実行中プロセスが期待値と不一致 | `syslog.LOG_ERR "Running processes is not as expected! Running: {...}. Expected: {...}"` | `sys.exit(1)` → dhcp_relay コンテナ再起動を強制 |
+| 一致 | なし | 正常継続 |
+
+> **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:97-98, 259-262, 290-313, 375-385`
 <!-- /failure -->
 
 <!-- cross-refs -->
