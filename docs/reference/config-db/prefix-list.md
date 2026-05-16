@@ -176,6 +176,38 @@ bgpcfgd は platform 非依存で常時起動し `PrefixListMgr` を無条件登
 
 <!-- /handler-branching -->
 
+<!-- ordering -->
+## 順序依存性 (Phase B)
+
+### PREFIX_LIST エントリの順序
+
+bgpcfgd (`PrefixListMgr`) の PREFIX_LIST テーブルは **シーケンス番号を持たない**。CONFIG_DB キーは `PREFIX_LIST|<prefix_type>|<ip-prefix>` の 2 フィールドのみで、順序情報は格納されない。FRR へ送出されるコマンドも `ip prefix-list <name> permit <prefix>` または `ipv6 prefix-list <name> permit <prefix>` と seq なし形式である（`add_radian.conf.j2` / `add_suppress_prefix.conf.j2` 参照）。FRR 内部でシーケンス番号が自動採番される。
+
+### ROUTE_MAP からの参照順序
+
+`bgpd.main.conf.j2` テンプレートでは prefix-list を **route-map より先に** 宣言する必要がある。テンプレートの生成順は以下の通り：
+
+1. `ip prefix-list <name> permit ...` / `ipv6 prefix-list <name> permit ...` — 静的プレフィクスリスト
+2. `route-map V4_CONNECTED_ROUTES permit 10` → `match ip address prefix-list V4_P2P_IP`
+3. `route-map V6_CONNECTED_ROUTES permit 10` → `match ipv6 address prefix-list V6_P2P_IP`
+
+frrcfgd (`frrcfgd.py`) の `table_handler_list` では `PREFIX_SET` → `PREFIX` → `ROUTE_MAP` の順で登録されており、`PREFIX`/`PREFIX_SET` の処理が `ROUTE_MAP` より前に行われる。これにより route-map が参照する prefix-list は常に先行して FRR に設定される。
+
+### FRR テンプレート適用順
+
+bgpcfgd が PrefixListMgr 経由で FRR に送出するテンプレートコマンド群：
+
+| ステップ | テンプレート | 効果 |
+|---------|------------|------|
+| 1 | `add_radian.conf.j2` (ANCHOR_PREFIX) | `ip/ipv6 prefix-list ANCHOR_CONTRIBUTING_ROUTES permit <prefix> ge <len+1>` → その後 `router bgp <asn>` 内で `aggregate-address` route-map 参照 |
+| 2 | `add_suppress_prefix.conf.j2` (SUPPRESS_PREFIX) | `ip/ipv6 prefix-list <SUPPRESS_IPV4/V6_PREFIX> permit <prefix>` のみ。route-map 参照なし |
+
+**注意**: `ANCHOR_PREFIX` テンプレートは prefix-list 設定と BGP aggregate-address（route-map `TAG_ANCHOR_COMMUNITY` 参照）を **同一 vtysh セッション**で送出する。prefix-list の欠如により aggregate-address が無効化されるリスクを避けるため、両者は `cfg_mgr.push()` により原子的に適用される。
+
+> **スキャン証跡**: `managers_prefix_list.py`、`add_radian.conf.j2`、`add_suppress_prefix.conf.j2`、`bgpd.main.conf.j2`、`frrcfgd.py` (table_handler_list L2293-2338) を確認。
+
+<!-- /ordering -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
