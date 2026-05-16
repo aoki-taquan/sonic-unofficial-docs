@@ -468,6 +468,50 @@ LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポ�
 
 <!-- /constants -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-platform.md -->
+
+### VOQ Chassis — CHASSIS_APP_LAG_MEMBER_TABLE 経由処理
+
+`gMySwitchType == "voq"` 環境では [orchagent](../../reference/glossary.md#term-orchagent) が `CHASSIS_APP_LAG_MEMBER_TABLE` を追加で購読し、ローカル [LAG](../../reference/glossary.md#term-lag) メンバ追加後に `voqSyncAddLagMember()` が `CHASSIS_APP_DB` にも同期する。
+
+| 条件 | 挙動 |
+|------|------|
+| 非 VOQ (通常) | CONFIG_DB → APP_DB `APP_LAG_MEMBER_TABLE` のみ処理 |
+| VOQ chassis — 自 switch の LAG | CHASSIS_APP_DB `CHASSIS_APP_LAG_MEMBER_TABLE` へも `status` フィールド付きで同期 (`portsorch.cpp:L11179-11195`) |
+| VOQ chassis — switch_id が自 switch と一致 | CHASSIS_APP_DB 由来の自 switch LAG メンバ追加はスキップ（二重処理防止）|
+| VOQ chassis — `port_switch_id != lag_switch_id` | `SWSS_LOG_ERROR: "System lag switch id mismatch..."` → エントリ消去 (`portsorch.cpp:L6309-6315`) |
+
+VOQ chassis 環境での LAG system alias は `<hostname>|<asic_name>|PortChannel0001` 形式になる（CHASSIS_APP_DB キー用）。CONFIG_DB 側の `PORTCHANNEL_MEMBER` key 形式は変わらない。
+
+### Mellanox プラットフォーム — distribution-only モード非サポート
+
+LAG メンバの有効化・無効化シーケンスは Mellanox の SAI 制約により固定されている (`portsorch.cpp:L6361-6382`)。
+
+| 操作 | 処理順序 | 理由 |
+|------|----------|------|
+| メンバ有効化 (`status=enabled`) | collection 有効化 → distribution 有効化 | distribution-only モードが Mellanox で非サポート |
+| メンバ無効化 (`status=disabled`) | distribution 無効化 → collection 無効化 | 同上（逆順で distribution-only 状態を回避） |
+
+このシーケンスは orchagent の共通コードパスとして実装されており、Broadcom / その他プラットフォームにも同じ順序が適用される。
+
+### Multi-ASIC — バックエンド LAG 判定
+
+マルチ ASIC 環境では `sonic_py_common.multi_asic.is_port_channel_internal()` が PORTCHANNEL_MEMBER を参照して LAG の内部 (backend) / 外部 (frontend) を判定する (`multi_asic.py:L401-415`)。
+
+| 条件 | 結果 |
+|------|------|
+| シングル ASIC | 常に `False`（判定スキップ）|
+| LAG メンバポートが internal role | LAG は backend (internal) LAG と判定 |
+| LAG メンバポートが external role | LAG は frontend (external) LAG |
+| LAG にメンバなし | `False`（判定不能）|
+
+**混在禁止**: backend ポートと frontend ポートを同一 LAG に混在させることは誤設定であり、`get_back_end_interface_set()` の実装でも想定外扱い (`multi_asic.py:L439-441`)。
+
+<!-- /platform -->
+
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 

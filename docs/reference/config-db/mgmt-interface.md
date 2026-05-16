@@ -246,6 +246,31 @@ enum なし。
 
 <!-- glossary-links-injected: 896d391185a9 -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+YANG leafref を超えた他テーブル・他設定ファイルへの実装上の依存関係。ソース: `intfmgr`（`sonic-swss/cfgmgr/intfmgr.cpp`）および `interfaces.j2`（`sonic-buildimage/files/image_config/interfaces/interfaces.j2`）。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | CONFIG_DB | READ | `interfaces.j2` 生成時。`"true"` のとき `vrf-table 6000` / `vrf mgmt` を追記し、全ルートを mgmt VRF テーブル (6000) へ向ける。`"false"` 時は `default` テーブルを使用 | `interfaces.j2` L9,88,152 |
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | CONFIG_DB | READ | DHCP フォールバックパス (`MGMT_INTERFACE` 未設定) でも `mgmtVrfEnabled=true` なら `vrf mgmt` を付与 | `interfaces.j2` L152-153 |
+| `DEVICE_METADATA\|localhost.subtype` + `switch_type` | CONFIG_DB | READ | `interfaces.j2` で `subtype=SmartSwitch` かつ `switch_type=dpu` のとき DHCP フォールバックブロック自体を生成しない。DPU では `eth0` に何も設定されない | `interfaces.j2` L144-148 |
+| `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | READ | `intfmgr` 起動時に 1 回読み取り。`switch_type=voq` のとき IPv6 アドレス追加に `metric 256` を付与 | `intfmgr.cpp` L71-75 |
+| `DEVICE_METADATA\|bmc.bmc_if_name` / `bmc_if_addr` / `bmc_net_mask` | CONFIG_DB | READ | BMC インタフェースが定義されているとき、`interfaces.j2` が `eth0` よりも先に BMC インタフェース設定ブロックを生成 | `interfaces.j2` L33-39 |
+| `SYSLOG_SERVER` | CONFIG_DB | READ | `SYSLOG_SERVER` が設定されていれば各サーバ IP への policy routing rule (pref 32764) を mgmt テーブルに追加。**未設定**の場合は `10.20.6.16/32` をハードコードで注入 | `interfaces.j2` L101-113 |
+
+!!! note "MGMT_VRF_CONFIG 連携の要点"
+    - `mgmtVrfEnabled=true` が有効なとき、`interfaces.j2` は `auto mgmt` / `vrf-table 6000` / ループバック `lo-m` を生成する。
+    - `MGMT_INTERFACE` エントリの全ルート（ネットワーク経路・デフォルト GW・`forced_mgmt_routes`）が `table 6000` に書き込まれる。
+    - `mgmtVrfEnabled` の変更は `/etc/network/interfaces` の再生成（`hostcfgd` 再起動 or `ifupdown` 再適用）が必要。
+
+!!! note "DEVICE_METADATA 暗黙依存の影響"
+    - `switch_type=voq` のとき `intfmgr` が IPv6 metric を変更するが、これは管理 IF ではなくデータ IF に対する挙動。管理 IF (`eth0`) は `intfmgr` でなく `interfaces.j2` → `hostcfgd` 経由で設定される。
+    - `subtype=SmartSwitch` + `switch_type=dpu` の組み合わせのみ DHCP フォールバックが抑制される。片方だけでは抑制されない。
+
+<!-- /cross-refs -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -286,6 +311,119 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+## Phase G: CONFIG_DB Subscribe 機構 (通信メカニズム)
+
+### hostcfgd — MGMT_INTERFACE Subscribe 登録
+
+`hostcfgd` (`sonic-host-services/scripts/hostcfgd`) が起動時に `ConfigDBConnector.subscribe()` を使って `MGMT_INTERFACE` テーブルを購読する。
+
+```python
+# hostcfgd L2485
+self.config_db.subscribe('MGMT_INTERFACE', make_callback(self.mgmt_intf_handler))
+```
+
+`make_callback()` は内部 helper で、`data is None` のとき op=`"DEL"`、それ以外で op=`"SET"` にマップして `mgmt_intf_handler(key, op, data)` を呼び出す。
+
+### mgmt_intf_handler の処理フロー
+
+```python
+# hostcfgd L2345-2350
+def mgmt_intf_handler(self, key, op, data):
+    key = ConfigDBConnector.deserialize_key(key)
+    mgmt_intf_name = self.__get_intf_name(key)
+    self.aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)
+    self.aaacfg.handle_radius_nas_ip_chg(mgmt_intf_name)
+    self.mgmtifacecfg.update_mgmt_iface(mgmt_intf_name, key, data)
+```
+
+1. RADIUS source interface / NAS IP の再評価 (`AaaCfg`)
+2. `MgmtIfaceCfg.update_mgmt_iface()` で `interfaces-config` サービスを再起動
+
+### MgmtIfaceCfg — interfaces-config 経路
+
+`MgmtIfaceCfg` クラス (`hostcfgd L1605-1669`) が管理インターフェース設定の変化を検知し、`systemctl restart interfaces-config` を発行する。
+
+```python
+# hostcfgd L1636-1637
+run_cmd(['sudo', 'systemctl', 'restart', 'interfaces-config'], True, True)
+```
+
+`interfaces-config.sh` は以下を実行する:
+
+1. `sonic-cfggen -d -j ... -t interfaces.j2,/etc/network/interfaces` を呼び出し CONFIG_DB の現在値から `/etc/network/interfaces` を再生成
+2. `systemctl restart networking` でカーネルに netlink 経由で IP アドレス / ルート設定を反映
+
+### MGMT_VRF_CONFIG 連動
+
+`MGMT_VRF_CONFIG` の変化も同一の `interfaces-config` 再起動経路を通る:
+
+```python
+# hostcfgd L2496-2497
+self.config_db.subscribe(swsscommon.CFG_MGMT_VRF_CONFIG_TABLE_NAME,
+                         make_callback(self.mgmt_vrf_handler))
+```
+
+`mgmt_vrf_handler` → `MgmtIfaceCfg.update_mgmt_vrf()` → `systemctl restart interfaces-config`
+
+### 通信フロー全体図
+
+```
+CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
+  └─ [docker-mgmt/host] hostcfgd
+       │  config_db.subscribe('MGMT_INTERFACE', mgmt_intf_handler)
+       │  mgmt_intf_handler(key, op, data)
+       │    ├─ AaaCfg.handle_radius_source_intf_ip_chg()
+       │    ├─ AaaCfg.handle_radius_nas_ip_chg()
+       │    └─ MgmtIfaceCfg.update_mgmt_iface()
+       │         └─ systemctl restart interfaces-config
+       │
+       └─ interfaces-config.sh
+            │  sonic-cfggen ... -t interfaces.j2,/etc/network/interfaces
+            │  （CONFIG_DB 全体を読み直し /e/n/i を再生成）
+            └─ systemctl restart networking
+                 └─ Linux kernel netlink: ip addr add/del, ip route add/del
+                    （APPL_DB / SAI 非経由 — kernel 直接制御）
+```
+
+> **注**: `intfmgrd` (`sonic-swss/cfgmgr/intfmgrd.cpp`) は `MGMT_INTERFACE` を**購読しない**。管理インターフェース専用の制御経路は `hostcfgd + interfaces-config` であり、データプレーンインターフェース (`IntfMgr`) とは完全に分離されている。
+
+<!-- /pubsub -->
+
+<!-- failure-behavior -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+### eth0 への IP 設定失敗
+
+`setIntfIp()` (`intfmgr.cpp:78-133`) が `ip address add/del` を実行し、コマンドが非ゼロ終了コードを返した場合:
+
+| 条件 | 挙動 | ログ |
+|------|------|------|
+| IPv4 `ip address add/del` 失敗 | リトライなし・スキップ | `SWSS_LOG_ERROR("Command '%s' failed with rc %d", ...)` (`intfmgr.cpp:130`) |
+| IPv6 `ip address add` 失敗 (1 回目) | `sysctl net.ipv6.conf.<alias>.disable_ipv6=0` でフラグ再有効化してリトライ | `SWSS_LOG_NOTICE("Failed to assign IPv6 on interface %s ... trying to enable IPv6 and retry", ...)` (`intfmgr.cpp:119`) |
+| IPv6 フラグ有効化そのものが失敗 | 即時 `return`（IP 設定断念） | `SWSS_LOG_ERROR("Failed to enable IPv6 on interface %s", ...)` (`intfmgr.cpp:122`) |
+| IPv6 `ip address add` 失敗 (リトライ後も失敗) | エラーログのみ・上位へのリトライ要求なし | `SWSS_LOG_ERROR("Command '%s' failed with rc %d", ...)` (`intfmgr.cpp:130`) |
+
+> **重要**: IP 設定に失敗しても `doIntfAddrTask()` は `true` を返す（`intfmgr.cpp:1170`）。そのため `doTask()` はエントリをキューから除去し、**自動リトライは行われない**。
+
+### カーネル netlink 失敗
+
+`IntfMgr` は `ip` コマンド (`IP_CMD`) 経由でカーネルに netlink 操作を発行する。コマンド失敗 (非ゼロ終了) の一般的な挙動:
+
+| 操作 | 失敗時の挙動 | ソース |
+|------|-------------|--------|
+| `ip address add/del` (IPv4) | `SWSS_LOG_ERROR` のみ。アドレス未設定のまま継続 | `intfmgr.cpp:130` |
+| `ip address add` (IPv6) | フラグ再有効化リトライ → 失敗なら `return` | `intfmgr.cpp:119-131` |
+| `ip link set <alias> master <vrf>` (VRF バインド) | `SWSS_LOG_ERROR` のみ。VRF バインド未完のまま継続 | `intfmgr.cpp:165` |
+| `ip link set <alias> address <mac>` (MAC 設定) | `SWSS_LOG_ERROR` のみ | `intfmgr.cpp:145` |
+| インターフェース未 ready 検出 (`isIntfStateOk` / `isIntfCreated`) | `return false` → エントリをキューに残しポーリングで再試行 | `intfmgr.cpp:1115-1118` |
+
+**インターフェース未 ready の場合のみ自動リトライあり**。その他の netlink 失敗（カーネルエラー・権限不足等）はエラーログを出してエントリを破棄する。
+
+<!-- /failure-behavior -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -311,12 +449,173 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 4. ip route add default via <gw> dev eth0      (gwaddr が有効な IPv4 の場合自動設定)
 ```
 
+### STATE_DB ゲートと二重ロック
+
+`doIntfAddrTask`（`intfmgr.cpp:1099`）は ip_prefix ロウを処理する前に二つのガードを通過する必要がある。
+
+1. `isIntfStateOk(alias)`（`L1115`）: `STATE_PORT_TABLE[eth0].state` が存在するまで待機。`portmgrd` が eth0 を up 認識した後に書き込む。
+2. `isIntfCreated(alias)`（`L1115`、`L295`）: `STATE_INTERFACE_TABLE[eth0]` にエントリが存在するまで待機。`doIntfGeneralTask` 成功後に `L1054` で書き込まれる。
+
+どちらかが未達の場合、`doIntfAddrTask` は `false` を返してタスクをキューに残し、Consumer ポーリング（デフォルト **100 ms** 間隔、`intfmgr.cpp:46`）で再試行する。
+
+### カーネル netlink 発行手順
+
+二重ゲート通過後、`setIntfIp(alias, "add", ip_prefix)`（`intfmgr.cpp:1121`）が呼ばれ、以下の netlink 操作が実行される。
+
+| ステップ | netlink 相当コマンド | 補足 |
+|---------|-------------------|------|
+| IP アドレス付与 | `ip addr add <prefix> dev eth0` | IPv4/IPv6 共通。`setIntfIp` 内で実行 |
+| APPL_DB 転送 | `INTF_TABLE[eth0:<prefix>] ← {scope: global, family: IPv4/IPv6}` | SAI ではなく linux カーネルで完結するため orchagent 非経由 |
+| STATE_DB 更新 | `STATE_INTERFACE_TABLE[eth0|<prefix>].state = ok` | 完了シグナル |
+| デフォルトルート | `ip route add default via <gw> dev eth0 metric 201` | `interfaces.j2:L96` (hostcfgd 経由) |
+| mgmt VRF 有効時 | `ip route add ... table mgmt` | `isIntfStateOk` 内 `VRF_MGMT` 定数（`L26,677-684`）で判定 |
+
+IPv4 link-local アドレスは APPL_DB へ転送されない（`intfmgr.cpp:1131-1132`）。
+
 ### 特記事項
 
 - `mgmt` という名の VRF 名は `intfmgr.cpp:26` で `VRF_MGMT` 定数として定義されており、`isIntfStateOk()` 内で `STATE_VRF_TABLE` を参照する（`intfmgr.cpp:677-684`）
 - `MGMT_INTERFACE` は orchagent を経由しない（SAI には届かない）。Linux カーネルの mgmt ネットワーク名前空間で完結する
 - orchagent の `allPortsReady()` チェックや `gPortsOrch->getPort()` は適用されない
+- VRF 変更時（`isIntfChangeVrf`、`L308`）は既存 IP を一度削除してから再追加するため、eth0 VRF 変更は一時的なアドレス喪失を伴う
 
 詳細調査ノートは `meta/_intermediate/cdb-flow/mgmt-interface-ordering.md` 参照。
 
 <!-- /ordering -->
+
+<!-- constants-phaseE -->
+## ハードコード定数 (Phase E / intfmgr)
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp L24-29, sonic-buildimage/src/sonic-config-engine/minigraph.py L2874,2880 -->
+
+`IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) が保持する主要ハードコード定数。
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `DEFAULT_MTU_STR` | **9100** | 通常インターフェースの MTU フォールバック値。`mtu` フィールドが CONFIG_DB に存在しない・空の場合に適用 (`intfmgr.cpp:402`) |
+| `LOOPBACK_DEFAULT_MTU_STR` | **65536** | Loopback インターフェース (`Loopback*`) 作成時の固定 MTU (`intfmgr.cpp:201`) |
+| `MTU_INHERITANCE` | **"0"** | サブインターフェースが親 MTU を継承することを示すセンチネル値 (`intfmgr.cpp:24`) |
+| `VRF_MGMT` | **"mgmt"** | 管理 VRF 名のハードコード文字列。`MGMT_VRF_CONFIG.mgmtVrfEnabled=true` 時に `ip route add ... table mgmt` へ渡される (`intfmgr.cpp:26`) |
+
+### `eth0` プレフィックスハードコード (minigraph.py)
+
+`minigraph.py:2874,2880` にて、管理インターフェース名として `"eth0"` がリテラルでハードコードされている。
+
+```python
+# minigraph.py:2874
+results['MGMT_INTERFACE'].update({('eth0', mgmt_prefix): {'gwaddr': gwaddr}})
+# minigraph.py:2880
+results['MGMT_INTERFACE'].update({('eth0', mgmt_prefix_v6): {'gwaddr': gwaddr_v6}})
+```
+
+XML `ManagementIPInterfaces` に記載されたインターフェース名に関わらず、MGMT_INTERFACE キーの第1要素は常に `eth0` で固定される。複数管理 IF (`eth1` 等) は minigraph 経由では CONFIG_DB に設定されない。
+
+### デフォルト MTU と管理 IF の関係
+
+> **注意**: MGMT_INTERFACE テーブル自体には `mtu` フィールドが YANG で定義されていない。`DEFAULT_MTU_STR=9100` は `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` 等の通常 IF に適用されるものであり、管理 IF (`eth0`) の MTU は kernel / platform デフォルト（通常 **1500**）に依存する。管理 IF の MTU を変更するには `ip link set eth0 mtu <value>` を直接実行するか、プラットフォーム固有の設定が必要。
+
+<!-- /constants-phaseE -->
+
+<!-- phase-f -->
+## 副次 DB 書込 (Phase F)
+
+`MGMT_INTERFACE` テーブルへの書込が発生すると、以下の副次処理が連鎖して行われる。
+
+### hostcfgd → systemd interfaces-config 経路
+
+`hostcfgd` の `MgmtIfaceCfg.update_mgmt_iface()` が CONFIG_DB `MGMT_INTERFACE` の変化を検知し、`systemctl restart interfaces-config` を発行する[^F1]。
+
+```
+CONFIG_DB MGMT_INTERFACE 変化
+  → hostcfgd (MgmtIfaceCfg.update_mgmt_iface)
+    → systemctl restart interfaces-config
+      → sonic-cfggen -d -t interfaces.j2,/etc/network/interfaces  # /etc/network/interfaces 再生成
+        → systemctl restart networking                              # ifupdown2 が eth0 を再設定
+```
+
+`interfaces-config.sh` は `sonic-cfggen` を呼んで `interfaces.j2` から `/etc/network/interfaces` を再生成し、その後 `systemctl restart networking` で `ifupdown2` が eth0 の IP アドレスと経路を反映する。
+
+### kernel netlink 経路
+
+`ifupdown2` / `systemd networking` が `/etc/network/interfaces` を解釈し、カーネルへ以下の netlink メッセージを発行する。DB への書き戻しは行われない。
+
+| 操作 | netlink コマンド | 条件 |
+|------|----------------|------|
+| IP アドレス追加 | `RTM_NEWADDR` (`ip addr add <ip_prefix> dev eth0`) | `gwaddr` あり・なし問わず |
+| デフォルトルート追加 | `RTM_NEWROUTE` (`ip route add default via <gw> dev eth0 metric 201`) | `gwaddr` が有効 IPv4/IPv6 |
+| mgmt VRF テーブルへのルート追加 | `RTM_NEWROUTE table mgmt` | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` |
+| forced_mgmt_routes 各エントリ | `RTM_NEWROUTE` (mgmt または default テーブル) | `forced_mgmt_routes` が 1 件以上 |
+
+### APPL_DB / STATE_DB 書込
+
+`IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) は通常インタフェースの IP prefix 処理時に APPL_DB `INTF_TABLE` および STATE_DB `INTERFACE_TABLE` を更新するが、`MGMT_INTERFACE` は `intfmgrd` の購読テーブルに含まれない。eth0 の管理インタフェース処理は `hostcfgd` + `interfaces-config` 経路で完結し、`intfmgrd` は介在しない。
+
+| 副次書込先 | キー形式 | 書込者 | 条件 |
+|----------|---------|--------|------|
+| kernel routing table (netlink) | — | `ifupdown2` (via `interfaces-config.sh`) | 常時 |
+| `/etc/network/interfaces` | — | `sonic-cfggen` | 設定変化時 |
+| STATE_DB `INTERFACE_TABLE` | — | 書込なし (eth0 は intfmgrd 対象外) | — |
+| APPL_DB `INTF_TABLE` | — | 書込なし (eth0 は intfmgrd 対象外) | — |
+
+### MGMT_VRF_CONFIG 変化時の追加連鎖
+
+`MGMT_VRF_CONFIG.mgmtVrfEnabled` が変化した場合も `MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl restart interfaces-config` を発行し、上記と同じ経路でカーネル設定が更新される[^F1]。
+
+> **スキャン証跡**: `sonic-host-services/scripts/hostcfgd:1626-1661, 2345-2350, 2485` および `sonic-buildimage/files/image_config/interfaces/interfaces-config.sh` を確認。`intfmgrd` 非経由を確認 — 誤読なし。
+
+[^F1]: `sonic-host-services/scripts/hostcfgd` L1637, L1661. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
+
+<!-- /phase-f -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`MGMT_INTERFACE` の処理は `interfaces.j2` テンプレート（`sonic-buildimage`）と `IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) の 2 箇所でプラットフォーム・構成差を持つ。
+
+### A. SmartSwitch DPU — eth0 DHCP フォールバック抑制
+
+`interfaces.j2` L144-158: `MGMT_INTERFACE` が空の場合、通常は `auto eth0 / iface eth0 inet dhcp metric 202` を生成する。ただし以下の条件が **両方** 成立するときはこのブロックを生成しない。
+
+| 条件フィールド | 値 |
+|---|---|
+| `DEVICE_METADATA['localhost']['subtype']` | `"SmartSwitch"` |
+| `DEVICE_METADATA['localhost']['switch_type']` | `"dpu"` |
+
+DPU ノードで `MGMT_INTERFACE` エントリが存在しない場合、`eth0` には何も設定されない（DHCP も静的も不生成）。
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:144-158`
+
+### B. MGMT_VRF_CONFIG による vrf_table 分岐
+
+`interfaces.j2` 内で `vrf_table` 変数が条件分岐し、すべての policy routing rule の向き先テーブルが変わる。
+
+| `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled` | vrf_table 値 | eth0 vrf バインド | DHCP fallback 時の追加設定 |
+|---|---|---|---|
+| `"true"` | `6000` | `vrf mgmt` | `vrf mgmt` スタンザを追加 |
+| それ以外 (未設定含む) | `default` | なし | なし |
+
+`mgmtVrfEnabled=true` 時:
+- mgmt VRF デバイス (`auto mgmt / iface mgmt / vrf-table 6000`) とループバック `lo-m` が生成される（`interfaces.j2` L9-18）
+- `IntfMgr::isIntfStateOk("mgmt")` が `STATE_VRF_TABLE` に "mgmt" エントリが現れるまで `doIntfAddrTask` の処理を保留する（`intfmgr.cpp:677-684`）
+- `ip link set eth0 master mgmt` で eth0 が mgmt VRF に接続される（`intfmgr.cpp:setIntfVrf:149-164`）
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:9-18,88-91,144-158`; `sonic-swss/cfgmgr/intfmgr.cpp:26,677-684`
+
+### C. VoQ (`switch_type=voq`) — IPv6 アドレスメトリック付加
+
+`intfmgr.cpp:70-111`: 起動時に `DEVICE_METADATA.localhost.switch_type` を読み込み、`mySwitchType` に格納する。`mySwitchType == "voq"` の場合、`setIntfIp` の IPv6 `ip -6 address add` コマンドに `metric 256` を付加する。これは VoQ システムで eBGP/iBGP 経路の ECMP グループを揃えるためのハードコード値。通常スイッチ（`switch_type` 未設定）では metric は付加されない。
+
+| `switch_type` 値 | IPv6 addr add メトリック |
+|---|---|
+| `"voq"` | `metric 256` |
+| それ以外 / 未設定 | なし |
+
+> **evidence**: `sonic-swss/cfgmgr/intfmgr.cpp:70-74,93-111`
+
+### D. BMC インターフェース (SmartSwitch 系付加設定)
+
+`interfaces.j2` L33-38: `DEVICE_METADATA['bmc']` キーが存在し `bmc_if_name` / `bmc_if_addr` / `bmc_net_mask` フィールドを持つ場合、BMC 専用の静的 IF ブロックを `eth0` 設定より前に生成する。MGMT_INTERFACE テーブル自体は変化しないが、管理ネットワーク設定ファイルに追加セクションが挿入される。
+
+> **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:33-38`
+
+<!-- /platform -->
