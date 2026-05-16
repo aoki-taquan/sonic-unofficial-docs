@@ -286,6 +286,42 @@ CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: 
 
 <!-- /cdb-exceptions -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `bfdorch` が STATE_DB `BFD_SESSION_TABLE` 書込みに伴い連動する DB / 消費者 (Phase C)
+
+`bfdorch` は STATE_DB `BFD_SESSION_TABLE` を**単体では書かない**。APPL_DB 入力、`BgpGlobalStateOrch` 経由で取得する CONFIG_DB `BGP_DEVICE_GLOBAL` の 2 フラグ、および SAI が返す ASIC_DB のセッション OID と連動し、書込み有無・書込み先テーブル・state 更新タイミングが分岐する。書き込まれた値は複数の orchagent / daemon が observer または SubscriberStateTable で消費する。
+
+### Direction A — `bfdorch` が読み出す関連 DB / Orch
+
+| テーブル / 値 | DB / 経路 | 役割 | evidence |
+|---|---|---|---|
+| [`BFD_SESSION`](bfd-session.md) (APPL_DB `BFD_SESSION_TABLE`) | APPL_DB | Direction A の入り口。SET/DEL が STATE_DB `BFD_SESSION_TABLE` の create/del を駆動 | `bfdorch.cpp` `BfdOrch::doTask(Consumer&)` |
+| [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) `.tsa_enabled` | CONFIG_DB → `BgpGlobalStateOrch::getTsaState()` | TSA 有効時に `shutdown_bfd_during_tsa=true` のセッションを `notify_session_state_down()` + STATE_DB から削除する分岐。`BgpGlobalStateOrch::doTask()` で SET を受けると `BfdOrch::handleTsaStateChange()` 経由で既存 STATE_DB エントリを一斉に再評価 | `bfdorch.cpp:114-120,158,193,683-704,743-748,793-840` |
+| [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) `.use_software_bfd` | CONFIG_DB → `BgpGlobalStateOrch::getSoftwareBfd()` | `true` のとき STATE_DB `BFD_SESSION_TABLE` を書かず、代わりに `BFD_SOFTWARE_SESSION_TABLE` に APPL_DB データを転記。Phase 6 handler-branching の主分岐 | `bfdorch.cpp:116,120,133-136,182-185,749-753` |
+| ASIC_DB `SAI_OBJECT_TYPE_BFD_SESSION` OID | ASIC_DB (via SAI) | `sai_bfd_api->create_bfd_session()` の返却 OID を `bfd_session_lookup` に格納し、SAI 通知 (`bfd_session_state_change`) を STATE_DB key に逆引きして `hset(key, "state", ...)` を発火 | `bfdorch.cpp:249-263,567-572,629-631` |
+| switch `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` | SAI switch attr | SAI 通知ハンドラ登録。**`state` フィールドを動かす唯一のトリガ** | `bfdorch.cpp:277,292` |
+
+> `BfdOrch` と `BgpGlobalStateOrch` は同 `bfdorch.cpp` 内で定義され `gDirectory` 経由で循環参照する。`tsa_enabled` 1 ビットの変化で全 STATE_DB エントリが再評価される点に注意。
+
+### Direction B — STATE_DB `BFD_SESSION_TABLE` を読む消費者
+
+| 消費者 | 参照経路 | 連動内容 | evidence |
+|---|---|---|---|
+| `VNetRouteOrch` / `VNetOrch` | `SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE` observer | BFD Up/Down で VNet monitor ルート (`VNET_MONITORING_TYPE_CUSTOM_BFD` 等) の next-hop を切替 | `vnetorch.cpp:786,968,1375,2457-2487,2661,2761` |
+| `NeighOrch` | `SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE` observer | BFD Up で neighbor (next-hop) を有効化 | `neighorch.cpp:201,631` |
+| `staticroutebfd` (`sonic-bgpcfgd`) | `SubscriberStateTable(STATE_DB, BFD_SESSION_TABLE)` + 起動時 `db.keys(STATE_DB, "BFD_SESSION_TABLE\|*")` | CONFIG_DB `STATIC_ROUTE.bfd=true` のルートで BFD Up セッションが残る next-hop のみを APPL_DB `STATIC_ROUTE_TABLE` に書き出し、全 Down で APPL_DB エントリ削除 | `staticroutebfd/main.py:24,116,118,253,275,296,721,736` |
+| `BfdMonitorOrch` | STATE_DB `BFD_SESSION_TABLE` 直接購読 | BFD 状態オーケストレーション監視 | `orchdaemon.cpp` (BFD_SESSION_TABLE 登録) |
+| `show bfd peers` (sonic-utilities) | STATE_DB `BFD_SESSION_TABLE` ダンプ | CLI 表示 | sonic-utilities `show/bfd.py` |
+
+### 範囲外 (誤解されやすい隣接)
+
+- `STATIC_ROUTE_BFD` という CONFIG_DB テーブル名は**存在しない**。`STATIC_ROUTE.bfd=true` フラグを `staticroutebfd` daemon が読み、本 STATE_DB テーブルを Subscriber で参照して APPL_DB `STATIC_ROUTE_TABLE` を再構築する経路で「STATIC_ROUTE × BFD」連携が成立する。
+- `BFD_SOFTWARE_SESSION_TABLE` (STATE_DB) は `use_software_bfd=true` の代替テーブルで、本ページの分岐先として上で扱う。フィールド詳細は派生ページの対象 (本ページ範囲外)。
+- `bfd_session_lookup` は orchagent プロセス内メモリ (DB ではない) のため暗黙参照には含めない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bfd-state-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
@@ -351,7 +387,6 @@ STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table:
 > **証跡**: `BfdOrch` constructor + cleanup L57-88、`doTask(Consumer)` L99-216、`doTask(NotificationConsumer)` L220-268、`register_bfd_state_change_notification()` L271-303、`create_bfd_session()` L305-575（バリデーション L316-528、SAI 作成 L547-562、STATE_DB 書込み L565-568）、`retry_create_bfd_session()` L583-606、`remove_bfd_session()` L609-633、`createSoftwareBfdSession()` L706-710、`removeSoftwareBfdSession()` L713-715。詳細グレップ証跡は `meta/_intermediate/cdb-flow/bfd-state-failure.md` を参照。
 
 <!-- /failure -->
-
 
 <!-- platform -->
 ## プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
