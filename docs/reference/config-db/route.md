@@ -282,6 +282,145 @@ ROUTE_TABLE|<prefix> DEL
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗・retry 挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/route-failure.md -->
+
+`RouteOrch` (`orchagent/routeorch.cpp`) が `ROUTE_TABLE` エントリを処理する際の失敗分岐とリトライ動作を示す。失敗は大きく「**ハード失敗**（`m_toSync` から erase して破棄）」と「**retry**（`it++` で保留・次イベントで再試行）」に分かれる。
+
+### doTask 入口での早期スキップ / リトライ
+
+| 条件 | ログ / 観測手段 | 振る舞い |
+|------|----------------|---------|
+| `gPortsOrch->allPortsReady()` が false | PortsOrch 側の syslog | 全 `ROUTE_TABLE` タスクを保留（次イベントまで待機） |
+| `m_resync == true` | — | `it++`（erase しない）。`"resync"` complete まで保留 |
+| `Vrf<name>:` プレフィクスだが VRFOrch に VRF が未登録 | `m_toSync` の積み上がり | `it++` で **retry**（VRF 登録後に再評価） |
+| `nhg_index` と `nexthop`/`ifname` の両方が非空 | `Route has both nexthop_group and ips/aliases` (ERROR) | **ハード失敗**（erase） |
+| `aliases.size() == 0 && !blackhole && !srv6_nh` | `Skip the route, empty ifname` (WARN) | **ハード失敗**（erase） |
+| `vni_label` が L3 VNI として未登録 | `received on non L3 VNI` (WARN) | `it++` で **retry** |
+| EVPN: `ipv.size() != rmacv.size()` 等 | `invalid router mac/vni label field` (ERROR) | **ハード失敗**（erase） |
+| `nhg_index` で `NhgOrch::getNhg()` が `out_of_range` | `Next hop group does not exist` (ERROR) | `it++` で **retry** |
+
+```cpp
+// routeorch.cpp:713-714 (VRF 未登録 retry の典型例)
+if (!m_vrfOrch->isVRFexists(vrf_name))
+{
+    it++;
+    continue;
+}
+```
+
+### addRoute() 内: nexthop 解決失敗
+
+**RIF 未作成** (`routeorch.cpp` L2086–2090):
+
+```cpp
+auto next_hop_id = m_intfsOrch->getRouterIntfsId(nexthop.alias);
+if (next_hop_id == SAI_NULL_OBJECT_ID)
+{
+    return false;  // → doTask が it++ で retry
+}
+```
+
+**インタフェース DOWN** (L2106–2109):
+
+```cpp
+if (m_neighOrch->isNextHopFlagSet(nexthop, NHFLAGS_IFDOWN))
+{
+    SWSS_LOG_INFO("Interface down for NH %s, skip this Route for programming",
+                  nexthop.to_string().c_str());
+    return false;  // retry（インタフェース復旧後に再試行）
+}
+```
+
+**neighbor 未解決** (L2147–2154):
+
+```cpp
+SWSS_LOG_INFO("Failed to get next hop %s for %s, resolving neighbor",
+              nexthop.to_string().c_str(), ipPrefix.to_string().c_str());
+m_neighOrch->resolveNeighbor(nexthop);  // ARP/ND probe キック
+return false;  // retry
+```
+
+**ECMP NHG 作成失敗・`addTempRoute` フォールバック** (L2188–2242):
+
+`addNextHopGroup()` が失敗した場合（リソース枯渇等）、`addTempRoute()` で解決済み nexthop 1 本だけを使った仮経路（temp route）を ASIC にプログラムし、元の ECMP 経路は retry 扱いにする。解決済み nexthop が 0 本の場合は仮経路も投入せず retry のみ。
+
+### NHG リソース枯渇 (上限到達)
+
+```cpp
+// routeorch.cpp:1478-1485 (addNextHopGroup)
+if (m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount)
+{
+    SWSS_LOG_DEBUG("Failed to create new next hop group. "
+            "Reaching maximum number of next hop groups.");
+    return false;
+}
+```
+
+- `m_maxNextHopGroupCount` は SAI `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` 由来（Mellanox では ÷32 補正）。
+- NHG 枯渇中に bulker に削除待ちが存在する場合、`doTask` はループを break して `gRouteBulker.flush()` を優先し、解放された NHG スロットを回収してから処理を継続する（`routeorch.cpp:1094–1100`）。
+
+### addRoutePost() / removeRoutePost() での SAI 失敗分岐
+
+SAI 操作は `gRouteBulker.flush()` 後に `object_statuses` に返却ステータスが入る。失敗時の共通パターン:
+
+```cpp
+// routeorch.cpp:2523-2527 (route create 失敗の典型例)
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create route %s with next hop(s) %s", ...);
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_ROUTE, status);
+    if (handle_status != task_success)
+        return parseHandleSaiStatusFailure(handle_status);
+        // task_need_retry → false (retry)
+        // task_failed     → true  (ハード失敗・erase)
+}
+```
+
+特殊ケース: `SAI_STATUS_ITEM_NOT_FOUND` での更新失敗（`routeorch.cpp:2575`）— orchagent の内部キャッシュには経路が存在するが SAI 側では既に削除されている状態（dual-ToR の tunnel route 上書き等）。この場合は `m_syncdRoutes` からエントリを削除して `return false`（次回イテレーションで新規 create として処理される）。
+
+| 失敗カテゴリ | handleSai*Status 結果 | 振る舞い |
+|------------|----------------------|---------|
+| 一般 SAI エラー（一時的） | `task_need_retry` → false | **retry** |
+| 致命的 SAI エラー | `task_failed` → true | **ハード失敗**（erase） |
+| `ITEM_NOT_FOUND`（set 時） | 専用パス: キャッシュ削除 | false → **retry**（次回は新規 create） |
+| FG NHG create 失敗 | `removeFgNhg()` でロールバック後 false | **retry** |
+
+### APPL_STATE_DB への失敗反映
+
+- **retry 扱い**（`return false` でループ継続）の場合は `publishRouteState` を呼ばない → APPL_STATE_DB に何も書かれない（経路が「未確定」のまま）。
+- **成功確定**（SET: `routeorch.cpp:2729`、DEL: `2970`）: `publishRouteState(ctx)` → APPL_STATE_DB `ROUTE_TABLE:<prefix>` に `protocol=<proto>` を書き込む（DEL では fvs 空でエントリ削除）。
+
+```bash
+# APPL_STATE_DB で経路のプログラム状態を確認
+sonic-db-cli APPL_STATE_DB hgetall 'ROUTE_TABLE:10.1.0.0/24'
+# 出力がない場合は orchagent が retry 中（未プログラム）
+# protocol フィールドが存在すれば SAI へのプログラム完了
+```
+
+### 失敗カテゴリ一覧
+
+| 失敗カテゴリ | ログ | 振る舞い |
+|------------|------|---------|
+| Ports 未準備 | PortsOrch 側 | 全タスク保留 |
+| VRF 未作成 | `m_toSync` 積み上がり | retry |
+| NHG ref 不在 | `Next hop group does not exist` | retry |
+| nexthop + nhg_index 同時指定 | `has both nexthop_group and ips/aliases` | **ハード失敗** |
+| ifname 空 (unicast) | `Skip the route, empty ifname` | **ハード失敗** |
+| L3 VNI 非適合 | `received on non L3 VNI` | retry |
+| RIF 未作成 | `Failed to get next hop` | retry |
+| IFDOWN フラグ | `Interface down for NH` | retry |
+| neighbor 未解決 | `resolving neighbor` + ARP/ND probe | retry |
+| NHG 上限到達 | `Reaching maximum number of next hop groups` (DEBUG) | 1-NH temp 経路フォールバック |
+| SAI route create 失敗 | `Failed to create route` | retry or ハード失敗 |
+| SAI ITEM_NOT_FOUND (set 時) | — | キャッシュ削除 → retry |
+
+[^fail1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
+[^fail2]: `orchagent/saihelper.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp>
+<!-- /failure -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
