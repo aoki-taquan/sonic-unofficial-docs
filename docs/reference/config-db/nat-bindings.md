@@ -12,6 +12,9 @@ sources:
   - repo: sonic-net/sonic-swss
     path: cfgmgr/natmgr.h
     ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/natorch.cpp
+    ref: HEAD
   - repo: sonic-net/sonic-utilities
     path: config/nat.py
     ref: HEAD
@@ -244,7 +247,7 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / doDnatPoolTableTask L2968-3031 / sonic-swss/cfgmgr/natmgr.cpp addDynamicNatRule / doNatBindingTask L6868-7100 -->
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / doDnatPoolTableTask L2968-3031 / doNatGlobalTableTask L2904-2966 / addAllDnatPoolEntries L1854-1864 / addAllNatEntries L3178-3271 / sonic-swss/cfgmgr/natmgr.cpp addDynamicNatRule / doNatBindingTask L6868-7100 -->
 
 ### NAT_POOL が先行必須
 
@@ -252,19 +255,57 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 
 ```
 # 推奨順序
-SET NAT_POOL|<name>      nat_ip=...  nat_port=...   # pool を先に定義
-SET NAT_BINDINGS|<name>  nat_pool=<name>             # pool 登録後に binding を追加
+SET NAT_GLOBAL|Values    admin_mode=enabled          # NAT 機能を有効化
+SET NAT_POOL|<name>      nat_ip=...  nat_port=...    # pool を先に定義
+SET NAT_BINDINGS|<name>  nat_pool=<name>              # pool 登録後に binding を追加
 ```
 
-### NAT_GLOBAL (admin_mode=enabled) が有効化条件
+### NAT_GLOBAL (admin_mode=enabled) が有効化条件 — natmgr + NatOrch 二層
 
-`natmgr.cpp:addDynamicNatRule()` は `isNatEnabled()` が false の場合 `"NAT is not yet enabled"` をログしてスキップする (`natmgr.cpp:4632-4636`)。`admin_mode=enabled` が CONFIG_DB に書き込まれ natmgrd が APPL_DB に伝播するまで、binding に対応する iptables/ASIC ルールは設定されない。
+**natmgr 層**: `natmgr.cpp:addDynamicNatRule()` は `isNatEnabled()` が false の場合 `"NAT is not yet enabled"` をログしてスキップする (`natmgr.cpp:4632-4636`)。
+
+**NatOrch 層 (orchagent)**: `natorch.cpp:addNatEntry()` L1907-1913 でも同様に `isNatEnabled()` を確認し、false の場合は SAI 操作をスキップして警告をログする。
+
+```cpp
+// natorch.cpp:1907-1913 (addNatEntry)
+if (!isNatEnabled()) {
+    SWSS_LOG_WARN("NAT Feature is not yet enabled, skipped adding %s %s NAT entry ...",
+                  entry.entry_type.c_str(), entry.nat_type.c_str(), ...);
+    return true;  // SAI 投入せず return
+}
+```
+
+`admin_mode=enabled` が CONFIG_DB に書き込まれ natmgrd が APPL_DB に伝播し、`doNatGlobalTableTask()` が `enableNatFeature()` を呼び出すまで、NatOrch はすべての NAT SAI エントリ投入をスキップする。
+
+### DNAT Pool → NAT エントリの SAI 投入順序 (natorch.cpp 固有)
+
+`enableNatFeature()` (`natorch.cpp:2534-2581`) は NAT feature 有効化時に以下の順序で一括投入する。
+
+```cpp
+// natorch.cpp:2576-2580 (enableNatFeature)
+addAllDnatPoolEntries();   // SAI_NAT_TYPE_DESTINATION_NAT_POOL を先に投入
+addAllNatEntries();        // SNAT/DNAT/NAPT エントリを後に投入
+```
+
+DNAT pool entry (`SAI_NAT_TYPE_DESTINATION_NAT_POOL`) が DNAT entry (`SAI_NAT_TYPE_DESTINATION_NAT`) より必ず先行してハードウェアに投入される設計。`doDnatPoolTableTask()` (`natorch.cpp:2968-3031`) も同様に pool entry を先に `sai_nat_api->create_nat_entry()` で登録する。
+
+### ACL_TABLE bind 順序
+
+`natmgr.cpp:addDynamicNatRule()` は `m_natBindingInfo[key].acls_name` に格納された ACL 名を参照して iptables ルール (`-m set --match-set <acl>`) を設定する。ACL_TABLE エントリそのものは natmgrd が直接検証しないが、ACL_TABLE が未定義のまま binding を設定すると iptables ルールに不整合な ACL 名が埋め込まれるため、ACL_TABLE の定義を先行させることを推奨する。
+
+```
+# ACL bind を含む場合の推奨順序
+SET ACL_TABLE|<acl_name>    ...                      # ACL table を先に定義
+SET NAT_POOL|<name>         nat_ip=...               # pool を定義
+SET NAT_BINDINGS|<name>     nat_pool=<name> access_list=<acl_name>  # binding を最後に追加
+```
 
 ### 安全な DEL 順序
 
 ```
-DEL NAT_BINDINGS|<name>    # binding を先に削除
+DEL NAT_BINDINGS|<name>    # binding を先に削除 (iptables/SAI ルールのクリーンアップ)
 DEL NAT_POOL|<name>        # pool を後に削除 (binding が残ったまま pool を削除すると孤立エントリになる)
+DEL ACL_TABLE|<acl_name>   # ACL は binding 削除後に削除
 ```
 
 <!-- /ordering -->
