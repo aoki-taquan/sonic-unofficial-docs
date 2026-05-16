@@ -242,6 +242,29 @@ show copp config
 
 > **スキャン証跡**: `processCoppTrapGroup` L737-872 全行読了。デフォルトグループ削除拒否が最重要分岐。4 件抽出。
 <!-- /handler-branching -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `COPP_GROUP` への変更が連鎖して書き込まれる副次テーブル一覧。
+
+| 副次 DB | テーブル | 操作 | キーパターン | 主要フィールド | evidence |
+|---|---|---|---|---|---|
+| APPL_DB | `COPP_TABLE` | set | `COPP_TABLE\|<group-name>` | queue, trap_action, meter_type, mode, cir/cbs/pir/pbs, trap_ids 等 | `coppmgr.cpp:152` |
+| APPL_DB | `COPP_TABLE` | del | `COPP_TABLE\|<group-name>` | (全削除) | `coppmgr.cpp:126,288,891` |
+| STATE_DB | `COPP_GROUP_TABLE` | set/del | `COPP_GROUP_TABLE\|<group-name>` | `state=ok` | `coppmgr.cpp:424-436` |
+| STATE_DB | `COPP_TRAP_TABLE` | set/del | `COPP_TRAP_TABLE\|<trap-name>` | `state=ok` (coppmgr) / `hw_status=ok` (copporch) | `coppmgr.cpp:439-451`, `copporch.cpp:236` |
+| STATE_DB | `COPP_TRAP_CAPABILITY_TABLE` | set | `COPP_TRAP_CAPABILITY_TABLE\|traps` | `trap_ids=<comma-list>` | `copporch.cpp:296-299` |
+| ASIC_DB | `VIDTORID` (syncd 経由) | set | SAI OID | hostif_trap_group / policer OID | `copporch.cpp:780` |
+| COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | set/hdel | `""` (hash field = trap_name) | counter_oid | `copporch.cpp:1452-1495` |
+
+**フロー概要**:
+1. `coppmgr` が CONFIG_DB `COPP_GROUP` 変化を検知 → APPL_DB `COPP_TABLE` に書込 + STATE_DB `COPP_GROUP_TABLE` に `state=ok` を記録
+2. `CoppOrch` (orchagent) が APPL_DB `COPP_TABLE` を購読 → SAI `sai_hostif_api->create_hostif_trap_group()` / `set_hostif_trap_group_attribute()` を呼出
+3. `CoppOrch` 起動時に SAI ケーパビリティを問い合わせ → STATE_DB `COPP_TRAP_CAPABILITY_TABLE` に対応 trap_ids を一括記録
+4. トラップにカウンタをバインド → COUNTERS_DB `COUNTERS_TRAP_NAME_MAP` を更新
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
