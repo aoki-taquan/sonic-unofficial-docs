@@ -433,4 +433,74 @@ address-family <af> <safi>
 [^ord5]: comb_attr_list: `frrcfgd.py:3938-3941`.
 <!-- /ordering -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### FRR コマンド literal (`global_af_key_map`)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `distance bgp` コマンド雛形 | `{no:no-prefix}distance bgp {} {} {}` | `ebgp_route_distance` / `ibgp_route_distance` / `local_route_distance` の 3 フィールド揃い時に `address-family` 配下へ投入 | `frrcfgd.py:1824-1826` |
+| `rd vpn export` コマンド | `{no:no-prefix}rd vpn export {}` | `rd_vpn_export` で VPN RD 設定 | `frrcfgd.py:1827` |
+| `rt vpn export` / `import` / `both` コマンド | `{no:no-prefix}rt vpn export/import/both {}` | VPN RT を方向別に設定 | `frrcfgd.py:1828-1830` |
+| `export vpn` / `import vpn` コマンド | `{no:no-prefix}export vpn` / `{no:no-prefix}import vpn` | VPN export/import の有効化フラグ (boolean) | `frrcfgd.py:1831-1832` |
+| `redistribute connected` コマンド | `{no:no-prefix}redistribute connected` | connected route を redistribute (boolean) | `frrcfgd.py:1833` |
+| `redistribute static route-map` コマンド | `{no:no-prefix}redistribute static route-map {}` | static route を route-map 付き redistribute | `frrcfgd.py:1834` |
+| `route-map vpn export/import` コマンド | `{no:no-prefix}route-map vpn export/import {}` | VPN export/import 用 route-map を設定 | `frrcfgd.py:1835-1836` |
+| `maximum-paths` コマンド | `{no:no-prefix}maximum-paths {}` | `max_ebgp_paths` で eBGP multipath 上限設定 | `frrcfgd.py:1837` |
+| `maximum-paths ibgp` コマンド | `{no:no-prefix}maximum-paths ibgp {} {:match-clust-len}` | `max_ibgp_paths` + `ibgp_equal_cluster_length` で iBGP multipath 設定 | `frrcfgd.py:1838-1839` |
+| `match-clust-len` 展開 | `equal-cluster-length` | `ibgp_equal_cluster_length=true` のとき付与されるキーワード | `frrcfgd.py:813` |
+| `table-map` コマンド | `{no:no-prefix}table-map {}` | `route_download_filter` で FIB download フィルタを設定 | `frrcfgd.py:1840` |
+| `bgp dampening` コマンド雛形 | `{no:no-prefix}bgp dampening {} {} {} {}` | `route_flap_dampen` 系 4 フィールドで dampening 設定 | `frrcfgd.py:1841-1845` |
+| `advertise-all-vni` コマンド | `{no:no-prefix}advertise-all-vni` | 全 VNI 広告を有効化 (l2vpn_evpn AF、boolean) | `frrcfgd.py:1846` |
+| `advertise-svi-ip` コマンド | `{no:no-prefix}advertise-svi-ip` | SVI IP を VTEP 広告 (boolean) | `frrcfgd.py:1847` |
+| `advertise-default-gw` コマンド | `{no:no-prefix}advertise-default-gw` | デフォルト GW 広告 (boolean) | `frrcfgd.py:1848` |
+| `advertise ipv4/ipv6 unicast` コマンド | `{no:no-prefix}advertise ipv4/ipv6 unicast` | unicast prefix を EVPN へ広告 (boolean) | `frrcfgd.py:1849-1850` |
+| `default-originate ipv4/ipv6` コマンド | `{no:no-prefix}default-originate ipv4/ipv6` | default route の originate (boolean) | `frrcfgd.py:1851-1852` |
+| `autort` コマンド | `{no:no-prefix}autort {}` | RFC8365 互換 RT 自動生成 (`hdl_enum_conversion` で `_` → `-` 変換) | `frrcfgd.py:1853` |
+| `flooding` コマンド | `{no:no-prefix}flooding {}` | BUM flooding モード設定 | `frrcfgd.py:1854` |
+| `dup-addr-detection` コマンド | `{no:no-prefix}dup-addr-detection` | DAD 有効化 (boolean) | `frrcfgd.py:1855` |
+| `dup-addr-detection max-moves` コマンド | `{no:no-prefix}dup-addr-detection max-moves {} time {}` | DAD 上限設定 (`dad-max-moves` + `dad-time`) | `frrcfgd.py:1856-1857` |
+| `dup-addr-detection freeze` コマンド | `{no:no-prefix}dup-addr-detection freeze {}` | DAD freeze 時間設定 | `frrcfgd.py:1858` |
+| `rd` コマンド | `{no:no-prefix}rd {}` | `route-distinguisher` で RD 設定 | `frrcfgd.py:1859` |
+| `route-target import/export` コマンド | `{no:no-prefix}route-target import/export {}` | RT 設定 (`import-rts` / `export-rts`) | `frrcfgd.py:1860-1861` |
+| `import vrf` コマンド | `{no:no-prefix}import vrf {}` | VRF import 元設定 | `frrcfgd.py:1862` |
+| `import vrf route-map` コマンド | `{no:no-prefix}import vrf route-map {}` | VRF import route-map 設定 | `frrcfgd.py:1863` |
+
+### vtysh コマンドプレフィクス定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| vtysh prefix L1 | `configure terminal` | コマンド投入時の先頭行 | `frrcfgd.py:2776` |
+| vtysh prefix L2 | `router bgp {} vrf {}` | BGP インスタンス選択 (`local_asn` と `vrf` を埋め込み) | `frrcfgd.py:2777` |
+| vtysh prefix L3 | `address-family {} {}` | `af`/`ip_type` を埋め込んで AF コンテキストに入る | `frrcfgd.py:2778` |
+
+### address-family 文字列定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| AF 分割文字 | `_` | `<afi_safi>` 文字列を `split('_')` で af と ip_type に分解 | `frrcfgd.py:2772` |
+| 小文字正規化 | `.lower()` | key を小文字化してから split (大文字混在を吸収) | `frrcfgd.py:2772` |
+| cache key フォーマット | `BGP_GLOBALS_AF&&{}|{}` | `vrf` と `key.lower()` を埋め込んだ一時キャッシュキー | `frrcfgd.py:2774` |
+
+### dampening / distance FRR 側暗黙デフォルト値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| FRR `DEFAULT_HALF_LIFE` | `15` 分 | `route_flap_dampen=true` のみ設定時に FRR が使う dampening half-life | FRR `bgpd/bgp_damp.h` |
+| FRR `DEFAULT_REUSE` | `750` | dampening reuse threshold FRR 既定値 | FRR `bgpd/bgp_damp.h` |
+| FRR `DEFAULT_SUPPRESS` | `2000` | dampening suppress threshold FRR 既定値 | FRR `bgpd/bgp_damp.h` |
+| FRR eBGP distance | `20` | `distance bgp` 未設定時の eBGP administrative distance | FRR `bgpd` 初期値 |
+| FRR iBGP distance | `200` | `distance bgp` 未設定時の iBGP administrative distance | FRR `bgpd` 初期値 |
+| FRR local distance | `200` | `distance bgp` 未設定時の local administrative distance | FRR `bgpd` 初期値 |
+
+### hdl_enum_conversion 変換定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| enum 置換文字 | `_` → `-` | `autort` フィールド値の `_` を `-` に置換して FRR コマンドに渡す (例: `rfc8365_compatible` → `rfc8365-compatible`) | `frrcfgd.py:1393` |
+
+> **スキャン証跡**: `frrcfgd.py` L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-constants.md`
+<!-- /constants -->
+
 <!-- glossary-links-injected: 803f36c2634d -->
