@@ -310,3 +310,39 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 > - `TUNNEL` は TunnelDecapOrch のキャッシュ経由で参照される。`MuxTunnel0` エントリが未作成の場合は `handlePeerSwitch()` が `return false` でリトライされる。
 
 <!-- /cross-refs -->
+
+<!-- ordering -->
+## 順序依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:2271-2275,2348-2353,2380,2445-2447,432-435,445-448,463-483,488-508,2256-2266 -->
+
+### PORT / NEIGHBOR 先行制約
+
+- **PORT 先行必須**: `MuxCable::stateActive()` / `stateStandby()` は冒頭で `gPortsOrch->getPort()` を呼ぶ。ポートが未登録なら `return false` でリトライ待機となり、active/standby 切替は進まない (muxorch.cpp:468, 493)。
+- **NEIGHBOR 後付け取り込みあり**: `handleMuxCfg()` の SET 処理終盤で MUX_CABLE 設定**前**に学習済みのネイバーを `getMuxNeighborsForPort()` → `updateNeighbor()` で取り込む (muxorch.cpp:2288-2315)。NEIGHBOR は MUX_CABLE より先行・後続どちらでも動作する。
+
+### Tunnel encap 先行制約
+
+1. **MuxTunnel0 (TUNNEL テーブル) が最初**: `handlePeerSwitch()` は `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` が空なら `return false` (muxorch.cpp:2348-2353)。Tunnel の decap dst IP が登録されていないと PEER_SWITCH 処理がリトライ待機に入る。
+2. **PEER_SWITCH が次**: PEER_SWITCH テーブルが SET されると `create_tunnel()` で SAI トンネルオブジェクトを生成し `mux_peer_switch_` を確定する (muxorch.cpp:2380-2381)。
+3. **MUX_CABLE は PEER_SWITCH 後**: `handleMuxCfg()` で `mux_peer_switch_.isZero()` の場合は `return false` (muxorch.cpp:2271-2275)。PEER_SWITCH 未設定のまま MUX_CABLE を追加しても処理されない。
+4. **Tunnel NH 先行 (standalone route)**: `createStandaloneTunnelRoute()` は Tunnel NH が `SAI_NULL_OBJECT_ID` なら silent skip (muxorch.cpp:2445-2447)。
+
+### active / standby 状態遷移順序
+
+| 遷移 | 登録ハンドラ | 操作順序 |
+|------|------------|---------|
+| INIT → ACTIVE | `stateInitActive()` | neighbor を local NH に切替のみ |
+| STANDBY → ACTIVE | `stateActive()` | ① ACL drop rule **削除** → ② neighbor を local NH に切替 |
+| INIT → STANDBY | `stateStandby()` | ① neighbor を tunnel NH に切替 → ② ACL drop rule **追加** |
+| ACTIVE → STANDBY | `stateStandby()` | ① neighbor を tunnel NH に切替 → ② ACL drop rule **追加** |
+
+- **初期状態は必ず standby**: コンストラクタで `stateStandby()` を実行してから `MUX_STATE_STANDBY` をセットする (muxorch.cpp:445-448)。Warm restart 時は `MUX_STATE_INIT` で開始し APP_DB sync 後に前回状態へ復元。
+- **standby 遷移では neighbor → ACL の順**: トラフィックをまず tunnel 経由に退避してから drop rule を追加する（逆順だと一瞬パケットロスが拡大する）。
+- **active 遷移では ACL → neighbor の順**: drop rule を先に削除してからネクストホップを切り替える。
+
+### neighbor_mode 変更不可
+
+既存 MuxCable オブジェクトへの `neighbor_mode` 動的変更は不可。試みると `SWSS_LOG_ERROR` を出して `return false` (muxorch.cpp:2256-2266)。変更には MUX_CABLE エントリの DELETE + 再 SET（ポート再登録）が必要。
+
+<!-- /ordering -->
