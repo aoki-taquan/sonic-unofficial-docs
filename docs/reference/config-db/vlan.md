@@ -434,6 +434,41 @@ DEL VLAN|Vlan100
 <!-- platform -->
 ## プラットフォーム差・SAI capability 分岐
 
+<!-- evidence: sonic-swss/cfgmgr/vlanmgr.cpp; sonic-swss/orchagent/portsorch.cpp -->
+
+### VOQ chassis / DPU モード差 (`gMySwitchType`)
+
+`PortsOrch` 初期化時に `gMySwitchType` を参照し、`"dpu"` の場合は以下をスキップする (portsorch.cpp:987-1066)[^plat1]:
+
+| 処理 | 通常モード | DPU モード |
+|------|-----------|-----------|
+| SAI デフォルト 1Q Bridge / VLAN OID 取得 (`SAI_SWITCH_ATTR_DEFAULT_1Q_BRIDGE_ID` 等) | 実行 | スキップ |
+| `removeDefaultVlanMembers()` / `removeDefaultBridgePorts()` | 実行 | スキップ |
+| FDB event notify 設定 (`SAI_SWITCH_ATTR_FDB_EVENT_NOTIFY`) | 実行 | スキップ |
+
+DPU はホスト側 Linux bridge を通常通り作成する（vlanmgr.cpp は `gMySwitchType` を参照しない）。**VOQ chassis** (`gMySwitchType == "voq"`) については LAG/SystemPort 系の分岐が存在するが、`addVlan()` / `removeVlan()` に直接影響する分岐はなく VLAN SAI フローは標準と同一[^plat1]。
+
+### SmartSwitch DPU — `host_ifname` フィールドによる SAI HOSTIF バインド
+
+APP_DB `VLAN_TABLE` の `host_ifname` フィールドが設定されている場合に `createVlanHostIntf()` が呼ばれ、SAI `create_hostif()` で VLAN OID に `SAI_HOSTIF_TYPE_NETDEV` ホストインタフェースをバインドする (portsorch.cpp:5820-5828)[^plat1]。
+
+- `host_ifname` は YANG 外かつ CONFIG_DB の `VLAN` テーブルには未定義。vlanmgrd が受け取った場合は APP_DB に透過転送する (vlanmgr.cpp:416-418, 434)[^plat2]。
+- SmartSwitch NPU→DPU の監視用途で使用。エラー時は graceful failure（プロセスクラッシュしない）。
+- `removeVlan()` 時に `host_intf_id` が設定されていれば `removeVlanHostIntf()` を先に呼ぶ (portsorch.cpp:7457)[^plat1]。
+
+### カーネル Linux bridge vs SAI VLAN — 二重平面の非対称動作
+
+SONiC の VLAN 制御は 2 平面で並列動作し、互いの完了を待たない:
+
+| 平面 | コンポーネント | 実装 |
+|------|--------------|------|
+| カーネル側 | vlanmgrd | `ip link add Bridge type bridge`、`bridge vlan add vid <N>` |
+| ASIC/SAI 側 | orchagent (VlanOrch) | `sai_vlan_api->create_vlan(SAI_VLAN_ATTR_VLAN_ID)` のみ |
+
+- **DPU モードでもカーネル bridge は作成される**。DPU の転送はカーネル bridge を通過しないため、カーネル bridge は制御面・管理面専用となる[^plat2]。
+- **MTU 非対称**: vlanmgrd は `DEFAULT_MTU_STR=9100` を APP_DB に書くが、カーネル netdev MTU の設定は TODO 状態 (vlanmgr.cpp:401-406)。ホスト側と SAI 側で MTU が乖離し得る[^plat2]。
+- **SAI デフォルト属性依存**: `create_vlan()` は `SAI_VLAN_ATTR_VLAN_ID` のみ指定し flooding control 等はベンダー SAI デフォルトに委ねる (portsorch.cpp:7392)。VS SAI と実 ASIC SAI でデフォルト挙動が異なる[^plat1]。
+
 ### SAI Flood control capability — `COMBINED` 非対応 ASIC
 
 orchagent 起動時に `sai_query_attribute_enum_values_capability()` で UUC (Unknown Unicast) / BC (Broadcast) の flood control タイプを問い合わせる (portsorch.cpp:900-931)。`SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` をサポートしない ASIC では、VXLAN EVPN エンドポイント (`VLAN_MEMBER.end_point_ip`) を用いた flood group 設定がエラー終了する (portsorch.cpp:7517-7524)。VS (Virtual Switch) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返し `COMBINED` を返さないため、VS 環境では EVPN flood group は設定不可[^plat1]。
@@ -461,6 +496,7 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 | `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` |
 
 [^plat1]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
+[^plat2]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
 
 <!-- /platform -->
 
