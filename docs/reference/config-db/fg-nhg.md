@@ -377,4 +377,84 @@ if (!link.empty()) {
 
 <!-- /cross-refs -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> **調査根拠**: `sonic-swss/orchagent/fgnhgorch.cpp` `createFineGrainedNextHopGroup()` L257–315 / `isRouteFineGrained()` L1201–1251 精読 (2026-05-16)
+> 詳細証跡: `meta/_intermediate/cdb-flow/fg-nhg-platform.md`
+
+### VS (virtual_switch) プラットフォーム — `real_bucket_size` 省略
+
+`createFineGrainedNextHopGroup()` 内で環境変数 `platform` を `getenv("platform")` で取得し、値が `"vs"` (= `VS_PLATFORM_SUBSTRING`) の場合に SAI の `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリをスキップする。
+
+```cpp
+// fgnhgorch.cpp L261, L284–308
+string platform = getenv("platform") ? getenv("platform") : "";
+...
+if (platform == VS_PLATFORM_SUBSTRING)  // "vs"
+{
+   /* TODO: need implementation for SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE */
+    fgNhgEntry->real_bucket_size = fgNhgEntry->configured_bucket_size;
+}
+else
+{
+    nhg_attr.id = SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE;
+    ...
+    status = sai_next_hop_group_api->get_next_hop_group_attribute(next_hop_group_id, 1, &nhg_attr);
+    if (status != SAI_STATUS_SUCCESS) { ... return false; }
+    fgNhgEntry->real_bucket_size = nhg_attr.value.u32;
+}
+```
+
+| プラットフォーム | `real_bucket_size` 決定方法 | SAI クエリ失敗時 |
+|---|---|---|
+| VS (`platform=vs`) | `configured_bucket_size`（CONFIG_DB の `bucket_size` 値）をそのまま使用 | クエリなし（スキップ） |
+| 実 ASIC (Broadcom / Mellanox 等) | SAI `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ結果を使用 | NHG ロールバック後 `return false`（作成失敗） |
+
+!!! note "VS 環境での注意"
+    VS プラットフォームでは `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` の実装が未完了 (TODO コメント)。`real_bucket_size = configured_bucket_size` として扱うため、**実 ASIC では ASIC 内部アライメントにより `real_bucket_size` が `configured_bucket_size` より大きくなる場合がある**（ハードウェアのバケット数が設定値の倍数に丸められる等）。VS でテストした `bucket_size` 設定が実機で同一動作とは限らない。
+
+### SAI Fine-Grained ECMP 対応 — ASIC ベンダー差
+
+FG ECMP は SAI の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` 型 NHG を使用する。すべての ASIC が本機能をサポートするわけではなく、`sai_next_hop_group_api->create_next_hop_group()` が `SAI_STATUS_NOT_SUPPORTED` 等を返した場合、`RouteOrch::createFineGrainedNextHopGroup()` が `false` を返し FG NHG 作成が失敗する。
+
+```cpp
+// routeorch.cpp L1431–1442
+sai_status_t status = sai_next_hop_group_api->create_next_hop_group(&next_hop_group_id, ...);
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create next hop group rv:%d", status);
+    ...
+    return parseHandleSaiStatusFailure(handle_status);
+}
+```
+
+この場合 syslog に `"Failed to create next hop group"` が出力されるが、**FG_NHG テーブルの設定自体はエラーにならず、CONFIG_DB に残り続ける**。ASIC が FG ECMP をサポートしない環境では FG NHG は実質的に機能しない。
+
+### VRF 対応 — デフォルト VRF のみ
+
+`isRouteFineGrained()` および `syncdContainsFgNhg()` で `vrf_id != gVirtualRouterId`（= デフォルト VRF でない）の場合は即座に `false` を返す。
+
+```cpp
+// fgnhgorch.cpp L1205–1209
+if (!isFineGrainedConfigured || (vrf_id != gVirtualRouterId))
+{
+    SWSS_LOG_DEBUG("Route %s:%s vrf ... NOT fine grained ECMP", ...);
+    return false;
+}
+```
+
+**非デフォルト VRF に所属するルートは FG ECMP の対象外**となり、通常の ECMP にフォールバックする。設計上の制約であり、CONFIG_DB に FG_NHG_PREFIX を投入しても非デフォルト VRF では無視される。
+
+### VOQ / Chassis 構成
+
+FgNhgOrch のコードには VOQ (Virtual Output Queue) chassis 固有の分岐は存在しない。ただし VOQ chassis 構成では以下の制約が生じる可能性がある:
+
+- FG ECMP は `gVirtualRouterId`（デフォルト VRF）に紐付く設計のため、VOQ chassis で VRF が複数スライスに分散する構成では FG ECMP が適用されないルートが発生する
+- `FG_NHG_MEMBER.link` に指定するポートが同一ラインカード上に存在しない場合、`PortsOrch` による oper-state 追跡が正常に動作しない可能性がある（`fgnhgorch.cpp:1377` では `Port::PHY` 型のみ追跡対象）
+
+コード上に明示的な VOQ 分岐がないため、これらは動作保証外の構成である。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 0a0e619e9fbc -->
