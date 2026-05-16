@@ -184,6 +184,102 @@ else if (field == "link_type" && l2ProtoEnabled == L2_MSTP)
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 処理順序・依存関係 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-ordering.md -->
+
+`stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_PORT` テーブルの処理に対してガード条件を実装しており、前提テーブルが受信済みでなければ SET を **silent defer** または **silent skip** する。
+
+### 1. stpGlobalTask ガード — STP_PORT 処理の前提
+
+`doStpPortTask()` (`stpmgr.cpp:630-634`):
+
+```cpp
+if (stpGlobalTask == false)
+    return;
+```
+
+`stpGlobalTask` フラグは `STP|GLOBAL` の最初の SET 受信時に `true` になる。
+`STP_PORT` のイベントは `STP|GLOBAL` が受信済みでなければ即 `return`（silent defer）。
+`stpPortTask` フラグはこの関数内で `true` にセットされる (`stpmgr.cpp:637-638`)。
+
+!!! warning "STP|GLOBAL より先に STP_PORT を書き込まないこと"
+    `stpGlobalTask` が立っていない状態で `STP_PORT` SET が到達しても、
+    `doStpPortTask()` は即 `return` する（エラーログなし）。
+    `STP|GLOBAL` 受信後の次 SELECT ループで自動的に再処理される。
+
+証跡: `stpmgr.cpp:630-638`
+
+---
+
+### 2. l2ProtoEnabled ガード — STP モード確定が先行必須
+
+`doStpPortTask()` 内:
+
+```cpp
+if (l2ProtoEnabled == L2_NONE)
+{
+    it++;   // SET を defer (DEL は即消費・ドロップ)
+    continue;
+}
+```
+
+`l2ProtoEnabled` は `STP|GLOBAL` の `mode` フィールド (`pvst` / `mst`) を受け取った時点で `L2_PVSTP` / `L2_MSTP` に確定する。
+`L2_NONE` のまま `STP_PORT` SET が届いた場合はイテレータを進めて次ループへ持ち越す（silent skip）。
+DEL イベントは `L2_NONE` であっても即座に消費される（適用なし）。
+
+証跡: `stpmgr.cpp:119, 127, doStpPortTask()`
+
+---
+
+### 3. stpPortTask フラグが後段テーブルに与える影響
+
+`stpPortTask` が `true` になると、`STP_VLAN` および `STP_VLAN_PORT` の処理が解禁される:
+
+- `doStpVlanTask()` (`stpmgr.cpp:183`): `stpPortTask == false && !isStpPortEmpty()` の場合 defer
+- `doStpVlanPortTask()` (`stpmgr.cpp:448`): `stpPortTask == false` の場合 defer
+- `doStpMstInstPortTask()` (`stpmgr.cpp:1160`): `stpPortTask == false` の場合 defer
+
+つまり `STP_PORT` は他テーブルのゲートキーパーとして機能する。
+
+証跡: `stpmgr.cpp:183-188, 448-450, 1160-1162`
+
+---
+
+### 推奨書き込み順序
+
+#### PVST
+
+```
+1. STP|GLOBAL       → stpGlobalTask + l2ProtoEnabled 確定
+2. STP_PORT         → stpPortTask フラグ
+3. STP_VLAN         → stpVlanTask フラグ
+4. STP_VLAN_PORT    → 全フラグ揃い後
+```
+
+#### MST
+
+```
+1. STP|GLOBAL       → stpGlobalTask + l2ProtoEnabled 確定
+2. STP_PORT         → stpPortTask フラグ
+3. STP_MST          → stpMstGlobalTask フラグ
+4. STP_MST_INST     → stpMstInstTask フラグ
+5. STP_MST_PORT     → stpPortTask + stpMstInstTask の両方が必要
+```
+
+---
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `STP\|GLOBAL` → `STP_PORT` 受信 | 先行必須（欠如時 silent defer） | `STP\|GLOBAL` 受信後の SELECT ループで自動処理 |
+| 2 | `STP\|GLOBAL.mode` 受信 → `l2ProtoEnabled` 確定 → `STP_PORT` SET | 先行必須（欠如時 silent skip） | `mode` フィールド受信後に自動復旧 |
+| 3 | `STP_PORT` 受信 → `STP_VLAN` / `STP_VLAN_PORT` / `STP_MST_PORT` 受信 | `stpPortTask` が後段ゲート | PVST: GLOBAL→PORT→VLAN→VLAN_PORT 順を維持 |
+
+<!-- /ordering -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
