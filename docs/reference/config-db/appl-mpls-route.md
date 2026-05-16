@@ -217,22 +217,22 @@ APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差
+## プラットフォーム差 (Phase H)
 
-`mplsrouteorch.cpp` / `nhgorch.cpp` / `routeorch.cpp` の MPLS 経路を全文走査した結果、
-APPL_DB `LABEL_ROUTE_TABLE` の挙動はコミュニティ master 上で **プラットフォーム非依存**である。
-差は SAI ベンダ実装側 (INSEG entry サポートの有無、available count の提供) に閉じ、
-CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。
+`mplsrouteorch.cpp` / `nhgorch.cpp` / `routeorch.cpp` / `saihelper.cpp` / `crmorch.cpp` の MPLS 経路を全文走査した結果、APPL_DB `LABEL_ROUTE_TABLE` の orchagent 処理はコミュニティ master 上で **コード上プラットフォーム非依存**である。実質的な差は SAI ベンダー実装側（`inseg_entry` サポートの有無、`sai_object_type_get_availability` の精度）に閉じ、CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。
 
-| 観点 | 差の有無 | 根拠 |
-|---|---|---|
-| SAI MPLS capability の runtime 問合せ | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `sai_query_attribute_capability` / `sai_object_type_query` 参照 0 件。`SAI_API_MPLS` は `saihelper.cpp:220` で一律 `sai_api_query()` され、ベンダが未サポートなら orchagent 起動段階で失敗する。runtime での MPLS 有効/無効判定パスは存在しない |
-| `SAI_SWITCH_ATTR_AVAILABLE_*` による上限取得 | なし | `crmorch.cpp:113` の `CRM_MPLS_INSEG` は `SAI_OBJECT_TYPE_INSEG_ENTRY` (object_type 経由)。IPv4/IPv6 route のような `SAI_SWITCH_ATTR_AVAILABLE_*` 属性は `crmorch.cpp` に存在せず、CRM `used`/`available` の精度はベンダ SAI 実装に依存 |
-| switch type (voq/chassis/fabric) 分岐 | なし | `gMySwitchType` 参照は `routeorch.cpp:106-109` の **IP route ECMP sizing 限定**で、`doLabelTask` には伝搬しない。`mplsrouteorch.cpp` / `nhgorch.cpp` に `voq` / `chassis` / `fabric` 参照は 0 件 |
-| multi-asic namespace 特殊化 | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` / `fpmsyncd/routesync.cpp::onLabelRouteMsg()` に `namespace` / `asic_id` 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行 |
-| VRF 制限 (プラットフォーム非依存) | あり | `fpmsyncd/routesync.cpp:2674-2681` で非デフォルト VRF (`master_index != 0`) は `SWSS_LOG_INFO("Unsupported Non-default VRF")` のみでスキップ。これは fpmsyncd 全体の制約で ASIC タイプとは無関係 |
+| 観点 | 差の有無 | 根拠 | ソース |
+|---|---|---|---|
+| SAI MPLS inseg_entry capability の runtime 問い合わせ | **なし** | `sai_query_attribute_capability` / `sai_object_type_query` for INSEG が `mplsrouteorch.cpp` / `nhgorch.cpp` に 0 件。`SAI_API_MPLS` は `saihelper.cpp:220` で起動時に一括 `sai_api_query()` され、runtime での有効/無効判定パスは存在しない | `saihelper.cpp:220,284` |
+| inseg_entry 非サポート ASIC での挙動 | **差あり (SAI 層)** | `gLabelRouteBulker.create_entry()` が `SAI_STATUS_NOT_SUPPORTED` を返した場合、`handleSaiSetStatus(SAI_API_MPLS, status)` に委譲され retry 永続。CONFIG_DB によるガード・無効化スイッチは実装なし | `mplsrouteorch.cpp:742,781,794,835` |
+| `SAI_SWITCH_ATTR_AVAILABLE_*` による MPLS 上限取得 | **なし** | `CRM_MPLS_INSEG` / `CRM_MPLS_NEXTHOP` は `crmResSaiAvailAttrMap` に**エントリなし**。`sai_object_type_get_availability(SAI_OBJECT_TYPE_INSEG_ENTRY, ...)` 汎用パスで取得するため、精度はベンダー SAI 実装に依存 | `crmorch.cpp:113,801,854` |
+| switch type voq/chassis/fabric 分岐 (MPLS inseg 直接) | **なし** | `mplsrouteorch.cpp` / `nhgorch.cpp` に `gMySwitchType` / `voq` / `chassis` / `fabric` 参照 0 件 | — |
+| voq による NHG 上限クランプの副次的影響 | **差あり (間接)** | voq 環境では `routeorch.cpp:109` で `maxEcmpGroupSize` が 128 にクランプされ、`doLabelTask` の NHG 上限チェック (`mplsrouteorch.cpp:310-316`) に波及。MPLS ECMP NHG の最大メンバー数が 128 に制限される | `routeorch.cpp:109`, `mplsrouteorch.cpp:310-316` |
+| VOQ Chassis inter-ASIC MPLS 転送 | **なし (orchagent 外)** | 各ラインカードが独立した `swss` コンテナを持ち `doLabelTask` を独立実行。inter-ASIC MPLS forwarding は SAI / ASIC ファブリック層の責務で orchagent には可視でない | — |
+| multi-asic namespace 特殊化 | **なし** | `mplsrouteorch.cpp` / `nhgorch.cpp` / `onLabelRouteMsg()` に `namespace` / `asic_id` 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行 | — |
+| VRF 制限 (プラットフォーム非依存) | **あり** | `fpmsyncd/routesync.cpp:2674-2681` で非デフォルト VRF (`master_index != 0`) は `SWSS_LOG_INFO("Unsupported Non-default VRF")` のみでスキップ。ASIC タイプとは無関係な fpmsyncd 全体の制約 | `routesync.cpp:2674-2681` |
 
-詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-platform.md` を参照。
+詳細な走査ログは `meta/_intermediate/cdb-flow/mpls-platform.md` および `meta/_intermediate/cdb-flow/appl-mpls-route-platform.md` を参照。
 <!-- /platform -->
 
 <!-- cross-refs -->
@@ -338,7 +338,7 @@ APPL_DB は YANG 非対応のため leafref は **存在しない**。本セク�
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mpls-route-constants.md`。
+`mplsrouteorch` / `nhgorch` MPLS 経路 / `CrmOrch` MPLS resource から抽出した APPL_DB `LABEL_ROUTE_TABLE` 経路に関わる主要ハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/appl-mpls-route-constants.md` および `meta/_intermediate/cdb-flow/mpls-constants.md`。
 
 ### APPL_DB テーブル名マクロ（`schema.h`）
 

@@ -812,6 +812,65 @@ jq で読み取り export platform=<value> として利用。
 `docker-init.j2:53-67` で `/etc/sonic/chassisdb.conf` が存在する場合、`CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE|asic{N}` から PCI アドレスを取得し CONFIG_DB の `DEVICE_METADATA|localhost.asic_id` を runtime に書き込む。orchagent / hostcfgd 以外が DEVICE_METADATA を書き換える唯一の既知ケース。
 
 evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
+
+### switch_type 分岐: SAI スイッチ起動属性 (orchagent/main.cpp)
+
+`getCfgSwitchType()` (main.cpp:242) が `DEVICE_METADATA|localhost.switch_type` を読み出し、グローバル変数 `gMySwitchType` に設定する。未設定または不明な値は `"switch"` として扱う。
+
+| `switch_type` 値 | SAI 起動属性 | 必須フィールド | evidence |
+|----------------|------------|-------------|---------|
+| `voq` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_VOQ`; `SAI_SWITCH_ATTR_SWITCH_ID = switch_id`; `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES = max_cores`; `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST = <sysport list>` | `switch_id`, `max_cores`, `asic_name`, `hostname` が未設定なら起動失敗 (exit) | sonic-swss/orchagent/main.cpp:694-721 |
+| `fabric` | `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC`; `SAI_SWITCH_ATTR_SWITCH_ID = switch_id` | `switch_id` が未設定なら起動失敗 (exit); MAC アドレス設定をスキップ (`gMySwitchType != "fabric"` 条件 main.cpp:675) | sonic-swss/orchagent/main.cpp:738-770 |
+| `dpu` | `DpuOrchDaemon` を生成; `DPU_APPL_DB` + `DPU_APPL_STATE_DB` に専用 DBConnector を接続; ZMQ sync 強制 (`-z zmq_sync -k 65536`) | — | sonic-swss/orchagent/main.cpp:990-994 |
+| `npu` / `switch` / 未設定 | 通常 `OrchDaemon`; `SAI_SWITCH_ATTR_TYPE` を明示設定しない (SAI デフォルト = NPU) | — | main.cpp:997-999 |
+| `chassis-packet` | 通常 `OrchDaemon`; VoQ と同様に `CHASSIS_APP_DB` に接続するが `SAI_SWITCH_TYPE` は NPU | — | main.cpp:997-999 |
+
+### switch_type 分岐: SAI sync タイムアウト (orchagent/main.cpp)
+
+`SAI_REDIS_SWITCH_ATTR_SYNC_OPERATION_RESPONSE_TIMEOUT` を switch_type に応じて拡張し、SWITCH 作成完了後にデフォルト値へ戻す。
+
+| `switch_type` 値 | タイムアウト倍率 | evidence |
+|----------------|--------------|---------|
+| `voq` / `chassis-packet` / `dpu` | デフォルト × 5 | sonic-swss/orchagent/main.cpp:822-824 |
+| `fabric` | デフォルト × 10 | main.cpp:826-828 |
+| `npu` / それ以外 | デフォルト × 1 (変更なし) | main.cpp:830-833 |
+
+> `ASAN_OPTIONS` 環境変数が設定されている場合は各倍率がさらに × 2 される (ASAN デバッグビルド向け)。
+
+### switch_type 分岐: voq モードの必須フィールド検証 (orchagent/main.cpp)
+
+`switch_type = "voq"` のとき `getSystemPortConfigList()` (main.cpp:290) が以下フィールドを順に検証する。いずれかが未設定・不正な場合は orchagent が exit する。
+
+| フィールド | 必須条件 | エラー時の挙動 |
+|-----------|---------|-------------|
+| `switch_id` | 0 以上の整数として存在 | `return false` → SAI voq 作成スキップ |
+| `max_cores` | 1 以上の整数として存在 | `return false` → SAI voq 作成スキップ |
+| `hostname` | 空でない文字列 | `return false` |
+| `asic_name` | 空でない文字列 | `return false` |
+
+evidence: sonic-swss/orchagent/main.cpp:305-363
+
+### buffer_model 分岐: BUFFER_POOL.mode SAI 属性マッピング (orchagent/bufferorch.cpp)
+
+`buffer_model` フィールドは `buffermgrd` の起動モードを決めるだけでなく、`BUFFER_POOL` テーブルの `mode` フィールド値 (= `"dynamic"` / `"static"`) が bufferorch.cpp 経由で SAI 属性に変換される。
+
+| `BUFFER_POOL.mode` 値 | SAI 属性 | evidence |
+|----------------------|---------|---------|
+| `"dynamic"` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = SAI_BUFFER_POOL_THRESHOLD_MODE_DYNAMIC` | sonic-swss/orchagent/bufferorch.cpp:474-476; orchagent/bufferorch.h:22 |
+| `"static"` | `SAI_BUFFER_POOL_ATTR_THRESHOLD_MODE = SAI_BUFFER_POOL_THRESHOLD_MODE_STATIC` | sonic-swss/orchagent/bufferorch.cpp:478-480; orchagent/bufferorch.h:23 |
+| それ以外 | `task_invalid_entry` エラー → エントリを reject | bufferorch.cpp:484 |
+
+> BUFFER_POOL の `mode` は **create-only** 属性のため、プール作成後に変更しても `bufferorch.cpp:469-471` でスキップされる。`buffer_model = "dynamic"` の環境では `buffermgrd -a /etc/sonic/asic_table.json` (dynamic モード) が BUFFER_POOL エントリを生成し、`mode = "dynamic"` を設定する。`buffer_model = "traditional"` では `buffermgrd -l pg_profile_lookup.ini` が生成し `mode = "static"` を設定する。
+
+### platform 分岐: saihelper — init 時の SAI sync タイムアウト (orchagent/saihelper.cpp)
+
+`sai_initialize_switch()` 内で `getenv("platform")` を読み、INIT_VIEW 送信前後のタイムアウトをベンダ毎に調整する。
+
+| platform 値 | INIT_VIEW 前タイムアウト | INIT_VIEW 後タイムアウト | evidence |
+|-------------|----------------------|----------------------|---------|
+| `mellanox` / `xsight` / `marvell-prestera` | `SAI_REDIS_SYNC_OPERATION_RESPONSE_TIMEOUT` (拡張値) | — (戻さない) | sonic-swss/orchagent/saihelper.cpp:423-440 |
+| `mellanox` / `xsight` | 上記に加え INIT_VIEW 後にデフォルト値へ復元 | デフォルト値に戻す | saihelper.cpp:453-467 |
+| それ以外 | 変更なし | 変更なし | — |
 <!-- /platform -->
 
 <!-- failure -->
@@ -844,6 +903,24 @@ evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
 | bgpcfgd `DeviceGlobalCfgMgr` | IDF ステータスが有効値以外 | `LOG_ERR "IDF: invalid value(X) is provided"` | `return False` → IDF isolation 設定が適用されない | `managers_device_global.py:257-258` |
 | bgpcfgd `DeviceGlobalCfgMgr` | CHASSIS_APP_DB 接続失敗 | `LOG_ERR "Got an exception ..."` | chassis_tsa_status が None → chassis TSA 判定が行われない。ローカル tsa_status のみで判断 | `managers_device_global.py:248-249` |
 | fpmsyncd | `suppress-fib-pending` 値が `"enabled"` 以外 | なし | suppress-fib-pending 無効のまま（if 分岐に入らない）。runtime 変更は動的に反映 | `fpmsyncd.cpp:113-118` |
+| orchagent `main.cpp` | `mac` フィールド不在かつ SAI `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` 取得失敗 | `SWSS_LOG_ERROR("Failed to get MAC address from switch, rv:%d")` | `handleSaiFailure(SAI_API_SWITCH, "get", status, true)` 呼び出し → orchagent プロセス終了（fatal=true） | `sonic-swss/orchagent/main.cpp:877-884` |
+| orchagent `main.cpp` | `switch_type` が `voq`/`fabric`/`chassis-packet`/`switch`/`dpu` 以外の不正値 | `SWSS_LOG_ERROR("Invalid switch type %s configured", switch_type.c_str())` | `switch_type = "switch"` にフォールバックして続行。設定意図と乖離したまま npu モードで SAI 初期化 | `sonic-swss/orchagent/main.cpp:260-264` |
+| buffermgrd (dynamic) | `ASIC_VENDOR` 環境変数未設定（platform 未定義） | `SWSS_LOG_ERROR("Platform environment variable is not defined, buffermgrd won't start")` | 即 `return` → `BufferMgrDynamic` 初期化中断。Lua ヘッドルーム計算スクリプトが読み込まれず、dynamic buffer 機能が完全に停止 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:71` |
+| buffermgrd (static) | `buffer_model` が `"dynamic"` 以外（不正値・空値含む） | なし（サイレント） | `dynamic_buffer_model = false` → static モード（`pg_profile_lookup.ini` ベース）で動作。DEL 操作でも同様に false。不正値でも警告なし | `sonic-swss/cfgmgr/buffermgr.cpp:390-406` |
+
+### switchorch.cpp MAC / switch_type 失敗詳細
+
+`orchagent` 起動時 (`main.cpp`) の MAC 取得フロー:
+
+1. `orchagent.sh:12-16` — `sonic-cfggen` で `DEVICE_METADATA.mac` を取得。不在 / `"None"` → eth0 MAC にフォールバック（起動続行）
+2. `main.cpp:675-679` — `gMySwitchType != "fabric"` かつ `gMacAddress` が設定済みなら SAI `create_switch` に `SAI_SWITCH_ATTR_SRC_MAC_ADDRESS` として渡す
+3. `main.cpp:877-884` — `gMacAddress` が未設定（フォールバックも失敗）の場合のみ SAI `get_switch_attribute` を試みる。SAI が失敗すると `handleSaiFailure(fatal=true)` → プロセス終了
+
+`switch_type` 不正値フロー (`main.cpp:260-264`):
+
+- `getCfgSwitchType()` が既知 5 値 (`voq`/`fabric`/`chassis-packet`/`switch`/`dpu`) 以外を検出 → `SWSS_LOG_ERROR` + `switch_type = "switch"` 強制上書き
+- `system_error` 例外時も同様に `"switch"` にフォールバック (`main.cpp:256`)
+- フィールド不在時は `"switch"` に設定（エラーなし、`main.cpp:251`）
 
 ### STATE_DB / ERROR_TABLE 記録方針
 
@@ -852,11 +929,9 @@ evidence: sonic-buildimage/dockers/docker-orchagent/docker-init.j2:53-67
 - hostcfgd は CONFIG_DB への書き戻しなし（読み取り専用）
 - fpmsyncd の `suppress-fib-pending` runtime 変更: 既存ルートを offloaded マークして遷移（`fpmsyncd.cpp:291-300`）
 
-> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
+> **調査証跡**: `managers_bgp.py` 600+ 行・失敗パス 10 箇所精読、`managers_device_global.py` 287 行・失敗パス 6 箇所精読、`hostcfgd` `DeviceMetaCfg` クラス全メソッド精読、`orchagent.sh` 146 行全読、`DbInterface.cpp:565-599` 精読、`sonic-swss/orchagent/main.cpp:242-284,877-884` 精読（switch_type バリデーション・MAC SAI 取得失敗パス）、`sonic-swss/cfgmgr/buffermgrdyn.cpp:60-130` 精読（platform 未設定失敗パス）、`sonic-swss/cfgmgr/buffermgr.cpp:390-406` 精読（buffer_model 不整合サイレント挙動）。詳細: `meta/_intermediate/cdb-flow/device-metadata-failure.md`
 
 <!-- /failure -->
-
-
 ## 購読者
 
 - `bgpcfgd` / `sonic-frr-mgmt-framework`: `bgp_asn`、`bgp_router_id`、`frr_mgmt_framework_config`、`docker_routing_config_mode`、`default_bgp_status`、`suppress-fib-pending`、`bgp_adv_lo_prefix_as_128`
