@@ -271,4 +271,36 @@ show macsec
 - なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
+
+| 定数名 | 値 | 説明 |
+|--------|----|------|
+| `AES_LEN_128_BYTE` | `66` | 128-bit CAK の hex 文字列長（GCM-AES-128 / GCM-AES-XPN-128） |
+| `AES_LEN_256_BYTE` | `130` | 256-bit CAK の hex 文字列長（GCM-AES-256 / GCM-AES-XPN-256） |
+| `priority` デフォルト | `255` | MKA アクター優先度の既定値（フィールド未指定時） |
+| `rekey_period` デフォルト | `0` | SAK 再生成周期の既定値 [秒]（0 = 能動的再生成なし） |
+| `policy` デフォルト | `SECURITY` | ポリシーの既定値（`security` = MKA SA 確立 + データ暗号化） |
+| `MAX_INTERFACE_REMOVE_RETRIES` | `3` | インターフェース削除失敗時の最大リトライ回数 |
+| `RETRY_TIME` | `30` | 処理リトライ間隔の上限 [ms 単位 tick] |
+| `RETRY_INTERVAL` | `100` | ポーリングインターバル [ms] |
+
+### `policy` enum 値
+
+| 文字列値 | 内部 enum | 挙動 |
+|----------|-----------|------|
+| `security` | `Policy::SECURITY` | MKA SA 確立 + データ暗号化（デフォルト） |
+| `integrity_only` | `Policy::INTEGRITY_ONLY` | MKA SA 確立のみ、実データは平文 |
+
+### CAK 長制約
+
+- **128-bit 系** (`GCM-AES-128` / `GCM-AES-XPN-128`): CAK hex 文字列は正確に **66 文字** (`AES_LEN_128_BYTE`)
+- **256-bit 系** (`GCM-AES-256` / `GCM-AES-XPN-256`): CAK hex 文字列は正確に **130 文字** (`AES_LEN_256_BYTE`)
+- 長さ不一致: `std::invalid_argument("Invalid length for cipher_string : ...")` → `task_invalid_entry`（破棄）
+
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-constants.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-constants.md)
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
