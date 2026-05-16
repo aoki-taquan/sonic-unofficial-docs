@@ -326,3 +326,56 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 > **スキャン証跡**: `minigraph.py:2546-2561` + `intfmgr.cpp` を確認、5 件分岐抽出 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> 調査日: 2026-05-16
+
+### 他テーブル先行必須
+
+`PORTCHANNEL_INTERFACE` は `intfmgrd` が `doIntfGeneralTask()` 内で処理する。`isIntfStateOk()` はエイリアスの先頭を `PortChannel` と照合し `STATE_LAG_TABLE` のエントリ存在を確認する（`intfmgr.cpp:661-667`）。
+
+| 先行テーブル / 条件 | 確認先 STATE_DB | 依存の内容 | コード根拠 |
+|------------------|----------------|-----------|-----------|
+| `PORTCHANNEL` + lagmgrd が `STATE_LAG_TABLE` に書く | `STATE_LAG_TABLE` | `isIntfStateOk(alias)` が false → SET をスキップ・retry | `intfmgr.cpp:661-667` |
+| `VRF` + vrfmgrd が `STATE_VRF_TABLE` に書く | `STATE_VRF_TABLE` | `vrf_name` 指定時。未 ready → retry | `intfmgr.cpp:839-842` |
+| orchagent 側: `gPortsOrch->getPort()` で LAG オブジェクト存在確認 | — | false → `m_toSync` 残留・retry（APP_DB 側でも二段階依存） | `intfsorch.cpp:905-924` |
+| orchagent 側: `m_vrfOrch->isVRFexists(vrf_name)` | — | false → retry（orchagent 内 VRF 未生成） | `intfsorch.cpp:826-830` |
+| `PORTCHANNEL_INTERFACE|<name>` 属性ロウが STATE_INTERFACE_TABLE に存在 | `STATE_INTERFACE_TABLE` | `isIntfCreated()` が false → IP プレフィクスロウをスキップ | `intfmgr.cpp:1115` |
+
+### 属性適用順序 (kernel netlink)
+
+`doIntfGeneralTask()` SET パス（`intfmgr.cpp` L831–1054）:
+
+```
+1. isIntfStateOk("PortChannel*") ガード          (STATE_LAG_TABLE 確認)
+2. isIntfStateOk(vrf_name) ガード                (vrf_name 指定時のみ)
+3. isIntfChangeVrf() 確認                        (直接 VRF 変更をブロック)
+4. ip link set <alias> master <vrf>             (vrf_name 指定時)
+   または ip link set <alias> nomaster          (VRF 除去時)
+5. ip link set <alias> address <mac>            (mac_addr 指定時)
+6. sysctl net.mpls.conf.<alias>.input=1/0       (mpls=enable/disable 時)
+7. m_appIntfTableProducer.set(alias, data)      (APP_DB INTF_TABLE SET)
+8. m_stateIntfTable.hset(alias, "vrf", …)       (STATE_DB 書込み)
+```
+
+### SET 後 DEL 順依存
+
+| 操作 | 必須順序 | コード根拠 |
+|------|---------|-----------|
+| 属性ロウ (`PORTCHANNEL_INTERFACE|<name>`) の DEL | すべての IP プレフィクスロウを先に DEL してから | `intfmgr.cpp:1058-1063` |
+| VRF 変更 | `vrf_name=""` で unbind → 新 VRF で rebind の 2 ステップ | `intfmgr.cpp:846-849` |
+
+### Notification 順序
+
+`intfmgrd` は起動時に `SubscriberStateTable(stateDb, STATE_LAG_TABLE_NAME)` を購読する（pri=200）。lagmgrd が PORTCHANNEL の `state=ok` を STATE_DB に書いた瞬間、`doPortTableTask` がトリガされ、ペンディング中の `PORTCHANNEL_INTERFACE` エントリが再処理される。
+
+### warm-reboot 影響
+
+`buildIntfReplayList()` で CONFIG_DB の `PORTCHANNEL_INTERFACE` キーが `m_pendingReplayIntfList` に収集され（`intfmgr.cpp:276`）、warm-start 時に replay される。replay 完了後 `RECONCILED` に遷移。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/portchannel-interface-ordering.md` 参照。
+
+<!-- /ordering -->
