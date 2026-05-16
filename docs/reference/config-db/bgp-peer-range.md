@@ -335,6 +335,42 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 > **ソース**: `dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/instance.conf.j2`, `bgpcfgd/managers_bgp.py` L358-386, `files/image_config/constants/constants.yml`, `sonic-gnmi/pkg/bypass/bypass.go` L29
 
 <!-- /defaults -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `DEVICE_METADATA.localhost.bgp_asn` が未設定（起動時依存未充足） | `set_handler()` deps チェック | `return False`（swsscommon リトライ待ち） | なし | `managers_bgp.py:118-120` |
+| `DEVICE_METADATA.localhost.deployment_id` 未設定かつ `peer_asn` も未設定 | `instance.conf.j2` Jinja2 レンダリング | `jinja2.TemplateError` → `log_err` + `return True`（drop・リトライなし） | LOG_ERR ("Peer (vrf\|nbr). Error in rendering the template for 'SET' command ...") | `managers_bgp.py:231-234` |
+| Loopback0 IPv4 未設定かつ `bgp_router_id` も未設定 | `set_handler()` L184-189 | `log_warn` + `return False`（リトライ待ち） | LOG_WARN ("LoopbackX ipv4 address is not presented yet...") | `managers_bgp.py:188-189` |
+| `local_addr` 設定済みだがインタフェース情報未登録 | `get_local_interface()` L199-202 | `return False`（リトライ待ち） | LOG_DEBUG ("Peer '...' wait for the corresponding interface to be set") | `managers_bgp.py:200-202` |
+| `DEVICE_NEIGHBOR_METADATA` に peer の `name` が未登録 | `set_handler()` L219-223 | `return False`（リトライ待ち） | LOG_INFO ("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...") | `managers_bgp.py:222-223` |
+| peer-group テンプレートレンダリング失敗 | `BGPPeerGroupMgr.update_pg()` L60-66 | `log_err` + `return False`。peer-group 未適用のまま peer 追加 | LOG_ERR ("Can't render peer-group template: '...'") | `managers_bgp.py:64-66` |
+| vtysh への `apply_op` が内部キュー投入後に失敗 | `apply_op()` → `cfg_mgr.push()`（非同期・戻り値チェックなし） | FRR 側エラーログのみ。`set_handler` は `True` 返却（成功扱い）。BGP listen range が未設定のまま | FRR vtysh エラーログ | `managers_bgp.py:507-508` |
+
+### ip_range 更新における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `vtysh -c "show bgp peer-group <name> json"` が非 0 終了 | `get_existing_ip_ranges()` L412-414 | `log_err` + 空リスト返却 → 既存 range を 0 件扱いで全 range を新規追加として処理 | LOG_ERR ("Can't read ip range of peer 'vrf\|nbr': ...") | `managers_bgp.py:412-414` |
+| `vtysh` 出力の JSON パース失敗 | `get_existing_ip_ranges()` L415-417 | `log_err` + 空リスト返却（上記と同様） | LOG_ERR ("Error in parsing ip range: ...") | `managers_bgp.py:415-417` |
+| `update.conf.j2` レンダリング失敗 | `apply_range_changes()` L436-440 | `log_err` + `return True`（drop）。ip_range 更新未適用 | LOG_ERR ("Peer (vrf\|nbr). Error in rendering the template for 'SET' command ...") | `managers_bgp.py:437-440` |
+| `ip_range` が空文字列 / 空リスト | `change_ip_range()` の `if data['ip_range']:` ガード | silent skip。`bgp listen range` コマンド未発行 | なし | `managers_bgp.py:358` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| `del_handler` 時に peer が `self.peers` 未登録 | `del_handler()` L453-455 | `log_warn` + 即 `return`。DEL 処理全体スキップ | LOG_WARN ("Peer '(vrf\|nbr)' has not been found") | `managers_bgp.py:454-455` |
+| `no bgp listen range` 送出後 vtysh 失敗（FRR 10.1+） | `del_handler()` L468-472 | `log_err` のみ。peer-group 削除処理は継続（FRR 側でも削除失敗の可能性） | LOG_ERR ("Listen range '...' for peer '(vrf\|nbr)' hasn't been disabled") | `managers_bgp.py:472` |
+| `delete.conf.j2` レンダリング失敗 | `del_handler()` L482-483 | `log_err` のみ。不正 cmd で `apply_op` が実行される | LOG_ERR ("Peer (vrf\|nbr). Error in rendering the template for 'DEL' command ...") | `managers_bgp.py:483` |
+| peer-group 削除の `apply_op` 失敗 | `del_handler()` L490-491 | `log_err` のみ。`self.peers` と `self.directory` は削除済み → FRR 内部状態と乖離 | LOG_ERR ("Peer '(vrf\|nbr)' hasn't been removed") | `managers_bgp.py:490-492` |
+
+<!-- /failure -->
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 

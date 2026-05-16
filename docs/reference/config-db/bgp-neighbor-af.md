@@ -434,6 +434,46 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 
 <!-- /side-effects -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-constants.md`
+
+`frrcfgd.py` の `nbr_af_key_map`（L1895-1925）および `BGP_NEIGHBOR_AF` ハンドラ（L2865-2871）に存在する、YANG / CONFIG_DB で管理されないハードコード定数・リテラル一覧。
+
+### FRR コマンドキーワード（`nbr_af_key_map` 由来）
+
+| FRR コマンド断片 | 対応 DB フィールド | ソース行 |
+|---|---|---|
+| `neighbor <X> route-map <name> in` | `route_map_in` | `frrcfgd.py:1903` |
+| `neighbor <X> route-map <name> out` | `route_map_out` | `frrcfgd.py:1904` |
+| `neighbor <X> prefix-list <name> in` | `prefix_list_in` | `frrcfgd.py:1918` |
+| `neighbor <X> prefix-list <name> out` | `prefix_list_out` | `frrcfgd.py:1919` |
+| `neighbor <X> maximum-prefix <limit> [<threshold>] [{:restart}]` | `max_prefix_limit` + 複合 | `frrcfgd.py:1901-1902` |
+| `neighbor <X> weight <value>` | `weight` | `frrcfgd.py:1908` |
+| `neighbor <X> soft-reconfiguration inbound` | `soft_reconfiguration_in` | `frrcfgd.py:1905` |
+| `neighbor <X> unsuppress-map <name>` | `unsuppress_map_name` | `frrcfgd.py:1906` |
+| `neighbor <X> default-originate route-map <name>` | `default_rmap` | `frrcfgd.py:1900` |
+| `neighbor <X> capability orf prefix-list <send\|receive\|both>` | `cap_orf` | `frrcfgd.py:1923` |
+
+### address-family 文字列（ハンドラ分岐由来）
+
+`frrcfgd.py:2867-2871` — `af_type.lower().split('_')` で `(af, ip_type)` に変換し、`'address-family {} {}'.format(af, ip_type)` でリテラル合成して vtysh へ渡す。以下の変換はコードにハードコードされた規則であり、YANG 定義に依存しない。
+
+| CONFIG_DB key 末尾 | FRR `address-family` 文字列 |
+|---|---|
+| `ipv4_unicast` | `address-family ipv4 unicast` |
+| `ipv6_unicast` | `address-family ipv6 unicast` |
+| `l2vpn_evpn` | `address-family l2vpn evpn` |
+
+### 補足
+
+- `inbound` キーワード（`soft-reconfiguration`）: `soft_reconfiguration_in=true` のとき `inbound` が固定付与される（DB 値ではなくコードが決定）。
+- `in` / `out` 方向指定: `route-map` / `prefix-list` の方向は DB フィールド名から類推されるが、実際にはコマンドテンプレート文字列にリテラルとして埋め込まれる。
+- `route-map` / `prefix-list` / `unsuppress-map` の名前は FRR 側名前空間で解決され、CONFIG_DB / YANG では参照先存在を強制しない（暗黙参照）。
+
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動・リトライ分岐 (Phase D)
 
