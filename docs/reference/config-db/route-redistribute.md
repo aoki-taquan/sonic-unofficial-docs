@@ -82,6 +82,77 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 - 関連 CLI: `config bgp`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`ROUTE_REDISTRIBUTE` テーブルの変更は **2 つの異なるデーモン** が異なる API で受信する。
+
+### frrcfgd — ConfigDBConnector.subscribe() (keyspace 通知)
+
+`frrcfgd` は `ExtConfigDBConnector`（`swsscommon.ConfigDBConnector` のサブクラス）の `subscribe()` メソッドで `ROUTE_REDISTRIBUTE` ハンドラを登録し、Redis keyspace 通知を使用する。`ConsumerStateTable` / `PUBLISH` 形式は使用しない。
+
+| 項目 | 値 |
+|------|-----|
+| 購読 API | `ConfigDBConnector.subscribe()` (keyspace 通知 / PSUBSCRIBE) |
+| keyspace パターン | `__keyspace@4__:ROUTE_REDISTRIBUTE\|*` (CONFIG_DB dbId=4) |
+| ハンドラ | `bgp_table_handler_common` |
+| FRR 送出方法 | `vtysh -c <cmd>` (逐次) |
+| 削除時 | `no redistribute <src>` |
+| 起動時スナップショット | `subscribe_all()` → `listen()` 開始時に既存データを一括処理 |
+
+`ROUTE_REDISTRIBUTE` イベント受信後の処理フロー:
+
+1. `key.split('|')` → `(src_proto, dst_proto, af)` を抽出
+2. `af == 'ipv6' and src_proto == 'ospf3'` の場合 `src_proto = 'ospf6'` に変換
+3. `dst_proto != 'bgp'` の場合 `LOG_ERR` 出力して skip
+4. `cmd_prefix = ['configure terminal', 'router bgp <asn> vrf <vrf>', 'address-family <af> unicast']` を生成
+5. `key_map.run_command()` → `__run_command()` → `g_run_command()` → `bgpd_client.run_vtysh_command()` で vtysh 実行
+
+生成 vtysh コマンド例（connected を IPv4 unicast に再配布）:
+
+```
+vtysh -c "configure terminal"
+      -c "router bgp 65100 vrf default"
+      -c "address-family ipv4 unicast"
+      -c "redistribute connected"
+```
+
+`route_redist_key_map` テンプレ (frrcfgd.py L1979-1980):
+
+```
+'{no:no-prefix}redistribute {} {:redist-metric} {:redist-route-map}'
+```
+
+### bgpcfgd — SubscriberStateTable (STATIC_ROUTE 経由)
+
+`bgpcfgd` は `ROUTE_REDISTRIBUTE` テーブルを**直接購読しない**。`STATIC_ROUTE` テーブルを `swsscommon.SubscriberStateTable` で購読し、静的経路の追加・削除をトリガーに `redistribute static route-map STATIC_ROUTE_FILTER` を BGP に設定する。
+
+| 項目 | 値 |
+|------|-----|
+| 購読 API | `swsscommon.SubscriberStateTable` (channel 通知) |
+| 購読テーブル | `STATIC_ROUTE` (CONFIG_DB + APPL_DB) |
+| ハンドラ | `StaticRouteMgr.handler()` |
+| FRR 送出方法 | `cfg_mgr.push_list()` → `vtysh -f <tmpfile>` (バッチ) |
+| 自動生成 route-map | `STATIC_ROUTE_FILTER permit 10` (固定) |
+
+`SubscriberStateTable` は `swsscommon` の Consumer/Producer channel パターンを使用し、`swsscommon.Select` / `selector.select()` でイベントを待機する。
+
+| 比較項目 | frrcfgd | bgpcfgd |
+|---------|---------|---------|
+| 購読 API | `ConfigDBConnector.subscribe()` (keyspace 通知) | `SubscriberStateTable` (channel 通知) |
+| 購読テーブル | `ROUTE_REDISTRIBUTE` | `STATIC_ROUTE` |
+| FRR 送出 | `vtysh -c <cmd>` (逐次) | `vtysh -f <tmpfile>` (バッチ) |
+
+詳細スキャン結果は `meta/_intermediate/cdb-flow/route-redistribute-pubsub.md`。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:2316L (table_handler_list ROUTE_REDISTRIBUTE) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168L (ROUTE_REDISTRIBUTE イベント処理) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1979-1980L (route_redist_key_map) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:49-51L (SubscriberStateTable 登録) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:220-235L (enable_redistribution_command) -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/frr.py:46-48L (vtysh -f バッチ送出) -->
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
