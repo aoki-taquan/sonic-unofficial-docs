@@ -305,6 +305,64 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 > **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。BUFFER_PG と同一パスを共有。2 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`
+
+### queue index 範囲
+
+| モード | key トークン数 | 範囲上限チェック | evidence |
+|---|---|---|---|
+| 非 VOQ | 2 (`<port>\|<qindex>`) | `port.m_queue_ids.size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:943, 1061-1064` |
+| VOQ シャーシ | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:918, 1052-1055` |
+
+YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?`）。実際の上限は SAI / プラットフォームが提供する queue 数次第。
+
+### SAI 識別子
+
+| 定数 | 用途 | evidence |
+|---|---|---|
+| `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | queue に buffer profile を SET する属性 ID | `bufferorch.cpp:1021` |
+| `SAI_NULL_OBJECT_ID` | DEL 時または解決失敗時にセットするヌル OID | `bufferorch.cpp:1005` |
+| `SAI_OBJECT_TYPE_QUEUE` | `SaiAttrWrapper` への object_type 指定 | `bufferorch.cpp:1082` |
+
+queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反映される (`bufferorch.cpp:1269`)。
+
+### フィールド名文字列定数
+
+| 定数変数 | ハードコード値 | evidence |
+|---|---|---|
+| `buffer_profile_field_name` | `"profile"` | `bufferorch.cpp:30` |
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `bufferorch.cpp:22` |
+| `buffer_pool_mode_static_value` | `"static"` | `bufferorch.cpp:23` |
+
+### `_zero_` profile 判定文字列
+
+- 文字列リテラル: `"_zero_"` (ハードコード)
+- `buffer_profile_name.find("_zero_") == std::string::npos` で zero profile 判定 (`bufferorch.cpp:995, 1017, 1400, 1421`)
+- zero profile 時は FlexCounter の queue counter 追加・削除をスキップ
+- zero profile 情報の JSON フィールド名 (buffermgrdyn.cpp):
+
+| JSON フィールド | 用途 | evidence |
+|---|---|---|
+| `"queues_to_apply_zero_profile"` | zero profile を適用する queue インデックスリスト | `buffermgrdyn.cpp:283` |
+| `"egress_zero_profile"` | queue 向け zero profile 名（未指定時は pool の `zero_profile_name` を自動採用） | `buffermgrdyn.cpp:287, 333-334` |
+
+### `m_partiallyAppliedQueues` セット
+
+- 型: `std::set<std::string>`（key 文字列のセット）
+- queue lock 中 (`port.m_queue_lock[ind] == true`) に `task_need_retry` した key を保持
+- ロック解除後: profile 未変更でも登録 key が存在すれば SAI 更新を強制、その後 `erase` (`bufferorch.cpp:979-986`)
+- VOQ モードでは lock チェック自体が存在しないため当セットへの登録は発生しない
+
+### gMySwitchType 比較文字列
+
+- `"voq"` (ハードコード): `bufferorch.cpp:116, 916, 1049` で VOQ モード判定に使用
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-constants.md` を参照。
+<!-- /constants -->
+
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
