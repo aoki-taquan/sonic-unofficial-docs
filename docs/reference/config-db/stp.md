@@ -1,0 +1,299 @@
+---
+title: STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細
+description: "CONFIG_DB の STP (グローバル)・STP_VLAN・STP_PORT・STP_VLAN_PORT テーブルの各フィールドのコード由来デフォルト値・ハードコード挙動・モード別差異を詳細解説。PVST / MSTP Phase A 分析。"
+area: reference
+hard: 0
+verification: code-verified
+last_verified: 2026-05-14
+sources:
+  - repo: sonic-net/sonic-utilities
+    path: config/stp.py
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/stpmgr.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/stpmgr.h
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+related:
+  config_db:
+    - STP
+    - STP_VLAN
+    - STP_PORT
+    - STP_VLAN_PORT
+    - VLAN
+    - PORT
+---
+
+# STP / STP_VLAN / STP_PORT テーブル — 暗黙デフォルト詳細
+
+!!! info "ページの位置付け"
+    このページは `STP`・`STP_VLAN`・`STP_PORT`・`STP_VLAN_PORT` テーブルの **コード由来デフォルト値・ハードコード挙動・モード別差異** を詳述する Phase A 分析ページ。
+    SONiC は PVST (Per-VLAN Spanning Tree) と MSTP (Multiple Spanning Tree Protocol) の 2 モードをサポートする。
+
+## 概要
+
+STP 設定は `stpmgrd` (sonic-swss/cfgmgr/stpmgrd.cpp) が CONFIG_DB を購読し、Unix Domain Socket (`/var/run/stpipc.sock`) 経由で STP デーモンに IPC メッセージを送信する。
+CLI の `config spanning-tree` コマンド (sonic-utilities/config/stp.py) が CONFIG_DB に書き込みを行う。
+
+テーブル構成:
+
+| テーブル | キー形式 | 役割 |
+|---|---|---|
+| `STP` | `GLOBAL` | グローバル STP 設定 (mode, タイマー, rootguard_timeout) |
+| `STP_VLAN` | `Vlan<vid>` | VLAN ごとの STP 設定 (タイマー, priority) |
+| `STP_PORT` | `<intf_name>` | インタフェースごとの STP 設定 (guard, portfast 等) |
+| `STP_VLAN_PORT` | `Vlan<vid>\|<intf>` | per-VLAN per-port の path_cost / priority |
+
+<!-- defaults -->
+## 暗黙デフォルトとハードコード挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-defaults.md -->
+
+### 1. STP|GLOBAL — PVST 有効化時の書き込みデフォルト
+
+`config spanning-tree enable pvst` 実行時に `config/stp.py:520-528` で以下が一括書き込まれる:
+
+```python
+fvs = {
+    'mode': 'pvst',
+    'rootguard_timeout': 30,   # STP_DEFAULT_ROOT_GUARD_TIMEOUT
+    'forward_delay': 15,       # STP_DEFAULT_FORWARD_DELAY
+    'hello_time': 2,           # STP_DEFAULT_HELLO_INTERVAL
+    'max_age': 20,             # STP_DEFAULT_MAX_AGE
+    'priority': 32768          # STP_DEFAULT_BRIDGE_PRIORITY
+}
+```
+
+| フィールド | デフォルト値 | 有効範囲 | 備考 |
+|---|---|---|---|
+| `mode` | `"pvst"` | `pvst` / `mst` | PVST か MSTP を選択 |
+| `rootguard_timeout` | `30` (秒) | 5–600 | PVST のみ有効 |
+| `forward_delay` | `15` (秒) | 4–30 | |
+| `hello_time` | `2` (秒) | 1–10 | |
+| `max_age` | `20` (秒) | 6–40 | |
+| `priority` | `32768` | 0–61440 (4096 の倍数) | ブリッジプライオリティ |
+
+証跡: `config/stp.py:116-134, 520-528`
+
+---
+
+### 2. STP|GLOBAL — MST 有効化時は `mode` のみ書き込み
+
+`config spanning-tree enable mst` 実行時 (`config/stp.py:533-539`) は `mode: "mst"` のみ書き込まれる。
+タイマー類 (`forward_delay`, `hello_time`, `max_age`, `max_hops`) は `STP_MST|GLOBAL` テーブルに保存される。
+
+!!! note "PVST と MST でテーブルが異なる"
+    グローバルタイマーの格納先が PVST は `STP|GLOBAL`、MST は `STP_MST|GLOBAL` と分かれている。
+
+証跡: `config/stp.py:533-539`
+
+---
+
+### 3. STP_VLAN — PVST 有効化時に全 VLAN へ自動適用
+
+PVST 有効化時に `enable_stp_for_vlans()` (`config/stp.py:251-266`) が全 VLAN に対して実行される。
+各 VLAN エントリのデフォルト値は `STP|GLOBAL` の値を継承する:
+
+```python
+fvs = {
+    'enabled': 'true',
+    'forward_delay': <STP|GLOBAL の値>,
+    'hello_time': <STP|GLOBAL の値>,
+    'max_age': <STP|GLOBAL の値>,
+    'priority': <STP|GLOBAL の値>
+}
+```
+
+| フィールド | デフォルト値 | 有効範囲 | 備考 |
+|---|---|---|---|
+| `enabled` | `"true"` | `true` / `false` | VLAN STP 有効化フラグ |
+| `forward_delay` | `15` | 4–30 | グローバルから継承 |
+| `hello_time` | `2` | 1–10 | グローバルから継承 |
+| `max_age` | `20` | 6–40 | グローバルから継承 |
+| `priority` | `32768` | 0–61440 (4096 の倍数) | VLAN ブリッジプライオリティ |
+
+**最大 VLAN 数**: `PVST_MAX_INSTANCES = 255` (config/stp.py:136)。255 VLAN を超えると `logging.warning` のみで警告なく追加が打ち切られる (silent truncation)。
+
+証跡: `config/stp.py:136, 251-266, 278-289`
+
+---
+
+### 4. STP_VLAN — グローバルパラメータ変更時の同期ルール
+
+`update_stp_vlan_parameter()` (`config/stp.py:228-242`) によりグローバル値を変更すると、**各 VLAN のフィールドがグローバルの旧値と一致する場合のみ** 新値に更新される:
+
+```python
+if current_global_value == current_vlan_value:
+    db.mod_entry('STP_VLAN', vlan, {param_type: new_value})
+```
+
+個別に変更された VLAN は同期されない (意図的な設計)。
+
+証跡: `config/stp.py:228-242`
+
+---
+
+### 5. STP_PORT — PVST 時のデフォルト
+
+`enable_stp_for_interfaces()` (`config/stp.py:361-379`) で L2 インタフェース (VLAN メンバ) に対して書き込まれる:
+
+```python
+fvs = {
+    'enabled': 'true',
+    'root_guard': 'false',
+    'bpdu_guard': 'false',
+    'bpdu_guard_do_disable': 'false',
+    'portfast': 'false',
+    'uplink_fast': 'false'
+}
+```
+
+| フィールド | デフォルト | モード | 備考 |
+|---|---|---|---|
+| `enabled` | `"true"` | PVST / MST | |
+| `root_guard` | `"false"` | PVST / MST | |
+| `bpdu_guard` | `"false"` | PVST / MST | |
+| `bpdu_guard_do_disable` | `"false"` | PVST のみ | MST では `bpdu_guard_do` |
+| `portfast` | `"false"` | PVST のみ | MST 時は設定不可 (fail) |
+| `uplink_fast` | `"false"` | PVST のみ | MST 時は設定不可 (fail) |
+| `path_cost` | **未設定** | PVST | 明示設定が必要 (range: 1-200000000) |
+| `priority` | **未設定** | PVST | 明示設定が必要 (range: 0-240) |
+
+証跡: `config/stp.py:292-301, 361-379`
+
+---
+
+### 6. STP_PORT — MST 時のデフォルト
+
+`enable_mst_for_interfaces()` (`config/stp.py:441-470`) で書き込まれる:
+
+```python
+fvs_port = {
+    'edge_port': 'false',
+    'link_type': 'auto',
+    'enabled': 'true',
+    'bpdu_guard': 'false',
+    'bpdu_guard_do': 'false',     # ← PVST の bpdu_guard_do_disable とは別フィールド
+    'root_guard': 'false',
+    'path_cost': 1,               # MST_DEFAULT_PORT_PATH_COST
+    'priority': 128               # MST_DEFAULT_PORT_PRIORITY
+}
+```
+
+| フィールド | デフォルト | 備考 |
+|---|---|---|
+| `edge_port` | `"false"` | MST のみ; PVST 時は設定不可 |
+| `link_type` | `"auto"` | MST のみ; `auto` / `p2p` / `shared` |
+| `bpdu_guard_do` | `"false"` | MST フィールド名 (PVST は `bpdu_guard_do_disable`) |
+| `path_cost` | `1` | MST 有効化時のみ初期値設定 (range: 1-200000000) |
+| `priority` | `128` | MST 有効化時のみ初期値設定 (range: 0-240) |
+
+証跡: `config/stp.py:441-470`
+
+---
+
+### 7. STP_VLAN_PORT — per-VLAN per-port 設定
+
+`STP_VLAN_PORT` テーブルはデフォルト値では **初期書き込みされない**。
+CLI コマンドで明示設定した場合のみエントリが作成される:
+
+| フィールド | 有効範囲 | 設定コマンド |
+|---|---|---|
+| `path_cost` | 1–200000000 | `config spanning-tree vlan interface cost <vid> <intf> <cost>` |
+| `priority` | 0–240 | `config spanning-tree vlan interface priority <vid> <intf> <prio>` |
+
+`doStpVlanPortTask()` (`stpmgr.cpp:408-442`) では `priority` のデフォルトが `-1` (未設定を示す sentinel) として IPC メッセージに設定される。
+
+証跡: `config/stp.py:1285-1321`, `stpmgr.cpp:408-442`
+
+---
+
+### 8. bpdu_guard_do_disable vs bpdu_guard_do — フィールド名 discrepancy
+
+PVST と MST でフィールド名が異なる:
+
+| モード | フィールド名 |
+|---|---|
+| PVST | `bpdu_guard_do_disable` |
+| MST | `bpdu_guard_do` |
+
+同一の物理的機能 (BPDU guard 発動時にポートを shutdown するか否か) にもかかわらず、フィールド名が統一されていない。
+`stpmgr.cpp:processStpPortAttr()` では `bpdu_guard_do_disable` のみ処理しており、MST の `bpdu_guard_do` は現在の実装では **処理されない可能性がある** (YANG-実装 discrepancy)。
+
+証跡: `config/stp.py:294-298, 441-451`, `stpmgr.cpp:586-590`
+
+---
+
+### 9. タイマー整合性制約: 2*(fd-1) >= max_age >= 2*(ht+1)
+
+STP タイマーは `validate_params()` (`config/stp.py:183-187`) により以下の不等式を強制する:
+
+```
+2 * (forward_delay - 1) >= max_age >= 2 * (hello_time + 1)
+```
+
+デフォルト値での検証: `2*(15-1)=28 >= 20 >= 2*(2+1)=6` → 満足
+
+この制約は `STP|GLOBAL` と `STP_VLAN` の両方で個別にチェックされる。
+stpmgrd 側での検証はなく、CONFIG_DB に不正値が書き込まれた場合の動作は未定義。
+
+証跡: `config/stp.py:183-207`
+
+---
+
+### 10. stpmgrd 起動順序ガード — silent defer
+
+`doStpVlanTask()` (`stpmgr.cpp:182-184`) は `stpGlobalTask == false` (グローバル設定未受信) または STP_PORT タスク未完の場合に `return` する (silent defer)。
+
+同様に `doStpVlanPortTask()` は `stpGlobalTask`, `stpVlanTask`, `stpPortTask` すべてが `true` になるまで処理を保留する。
+
+**起動時の書き込み順序がずれると設定が遅延適用される** (エラーなし、syslog なし)。
+
+証跡: `stpmgr.cpp:81-86, 182-184, 448-450`
+
+---
+
+### 11. PVST 最大インスタンス制限 — silent truncation
+
+`PVST_MAX_INSTANCES = 255` (`config/stp.py:136`) を超えた VLAN への STP 適用は `logging.warning` のみで停止する。
+stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合している。
+
+255 を超えるカウントは `get_stp_enabled_vlan_count()` で判定されるが、`get_max_stp_instances()` から返る値は常に固定値 255 である。
+実行時の最大インスタンス数は State DB から取得可能 (`getStpMaxInstances()`)。
+
+証跡: `config/stp.py:136, 260-265`, `stpmgr.h:38`
+
+<!-- /defaults -->
+
+## 発見された discrepancy / 暗黙デフォルト サマリー
+
+| # | 種別 | 対象 | 内容 |
+|---|---|---|---|
+| 1 | コードデフォルト | `STP\|GLOBAL` `rootguard_timeout` | PVST 有効化時に `30` を書き込み |
+| 2 | コードデフォルト | `STP\|GLOBAL` `forward_delay` | PVST 有効化時に `15` を書き込み |
+| 3 | コードデフォルト | `STP\|GLOBAL` `hello_time` | PVST 有効化時に `2` を書き込み |
+| 4 | コードデフォルト | `STP\|GLOBAL` `max_age` | PVST 有効化時に `20` を書き込み |
+| 5 | コードデフォルト | `STP\|GLOBAL` `priority` | PVST 有効化時に `32768` を書き込み |
+| 6 | 継承動作 | `STP_VLAN` 全フィールド | PVST 有効化時に `STP\|GLOBAL` から値を継承 |
+| 7 | silent truncation | `STP_VLAN` 最大数 | 255 VLAN 超過時に警告のみで打ち切り |
+| 8 | 未設定フィールド | `STP_PORT` `path_cost` (PVST) | PVST 初期化時に書き込みなし、明示設定が必要 |
+| 9 | 未設定フィールド | `STP_PORT` `priority` (PVST) | PVST 初期化時に書き込みなし、明示設定が必要 |
+| 10 | コードデフォルト | `STP_PORT` `path_cost` (MST) | MST 有効化時に `1` を書き込み |
+| 11 | コードデフォルト | `STP_PORT` `priority` (MST) | MST 有効化時に `128` を書き込み |
+| 12 | 実装 discrepancy | `bpdu_guard_do_disable` vs `bpdu_guard_do` | PVST/MST でフィールド名が異なり stpmgrd 処理が非対称 |
+| 13 | 未初期化テーブル | `STP_VLAN_PORT` | 明示 CLI 設定前はエントリなし |
+| 14 | silent defer | stpmgrd 起動順序 | グローバル/VLAN/PORT タスク順序に依存した暗黙処理遅延 |
+| 15 | MST モード差異 | `STP\|GLOBAL` タイマー | MST では STP|GLOBAL にタイマー不在 (`STP_MST\|GLOBAL` を使用) |
+
+## 引用元
+
+[^1]: STP CLI 実装: `config/stp.py`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py>
+[^2]: STP Manager 実装: `stpmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp>
+[^3]: STP Manager ヘッダ: `stpmgr.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h>
+
+## 関連ページ
+
+- [CONFIG_DB: VLAN](vlan.md)
+- [CONFIG_DB: PORT](port.md)
+- [CONFIG_DB: PORTCHANNEL](portchannel.md)

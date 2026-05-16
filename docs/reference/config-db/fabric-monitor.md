@@ -62,6 +62,21 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 | `monCapacityThreshWarn` | uint8 | 5..100 | 10 | up 状態ファブリックリンクの割合 (%) 警告閾値 |
 | `monState` | `mode-status` (enable/disable) | — | disable | 監視機能のオン/オフ |
 
+<!-- defaults -->
+## フィールドデフォルト (コード由来)
+
+| フィールド | デフォルト値 | 由来 |
+|---|---|---|
+| `monErrThreshCrcCells` | `1` | YANG `default 1` (sonic-fabric-monitor.yang); orchagent `ERROR_RATE_CRC_CELLS_CFG=1` (fabricportsorch.cpp:46) と一致 |
+| `monErrThreshRxCells` | `61035156` | YANG `default 61035156`; orchagent `ERROR_RATE_RX_CELLS_CFG=61035156` (fabricportsorch.cpp:47) と一致 |
+| `monPollThreshIsolation` | `1` | YANG `default 1`; orchagent `ISOLATION_POLLS_CFG=1` (fabricportsorch.h:44) と一致 |
+| `monPollThreshRecovery` | `8` | YANG `default 8`; orchagent `RECOVERY_POLLS_CFG=8` (fabricportsorch.h:45) と一致 |
+| `monCapacityThreshWarn` | `10` | YANG `default 10`。ただし APPL_DB 未設定時の orchagent フォールバックは `100` (fabricportsorch.cpp:1052) — 後述 Exceptions 参照 |
+| `monState` | `disable` | YANG `default disable`; 監視はデフォルト無効 |
+
+> **Evidence**: `sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-fabric-monitor.yang`; `sonic-swss` `orchagent/fabricportsorch.cpp:46-47,1052` / `orchagent/fabricportsorch.h:44-45`
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
@@ -159,8 +174,9 @@ show fabric isolation
 | [orchagent](../../reference/glossary.md#term-orchagent) (fabricportsorch) | `FABRIC_MONITOR_DATA` エントリが [APPL_DB](../../reference/glossary.md#term-appl_db) に存在しない | `LOG_INFO: "default values not set"` を出力し、ハードコードされたコンパイル時定数 (`ERROR_RATE_CRC_CELLS_CFG` / `ERROR_RATE_RX_CELLS_CFG`) をデフォルトとして使用（fabricportsorch.cpp:139,447） |
 | [orchagent](../../reference/glossary.md#term-orchagent) | `monErrThreshCrcCells` / `monErrThreshRxCells` フィールドが欠落 | 欠落フィールドのみデフォルト定数を維持、取得できたフィールドのみ更新（fabricportsorch.cpp:459-465） |
 | orchagent | リンクアップ直後のエラーカウント | `skipCrcErrorsOnLinkupCount` が閾値未満の間はエラーカウントを無視。ブート時誤検知防止（fabricportsorch.cpp:548-561,770-772） |
+| orchagent | `monCapacityThreshWarn` — APPL_DB 未設定時 | `updateFabricCapacity()` 内の `int threshold = 100` がフォールバック値として使われる (fabricportsorch.cpp:1052)。YANG default は `10` であり乖離あり。APPL_DB に値が存在すれば YANG 由来の値 (10) が優先される |
 
-> **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/fabricportsorch.cpp:139,447-465,548-772`
+> **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/fabricportsorch.cpp:139,447-465,548-772,1052`
 <!-- /cdb-exceptions -->
 
 

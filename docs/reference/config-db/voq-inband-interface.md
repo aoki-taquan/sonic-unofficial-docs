@@ -67,6 +67,21 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 | `name` (key) | leafref → `VOQ_INBAND_INTERFACE_LIST.name` | 親インターフェース |
 | `ip-prefix` (key) | `sonic-ip-prefix` | アサイン IP プレフィックス |
 
+<!-- defaults -->
+## フィールドデフォルト一覧
+
+### VOQ_INBAND_INTERFACE_LIST
+
+| フィールド | デフォルト | 由来 |
+|-----------|-----------|------|
+| `inband_type` | `"port"` | YANG `default "port"` ([sonic-voq-inband-interface.yang](https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-voq-inband-interface.yang)) |
+
+### SYSTEM_PORT_LIST
+
+SYSTEM_PORT の全フィールドはデフォルトなし。`minigraph.py` が minigraph XML の `<SystemPorts>` セクションまたは `InterfaceMetadata` から全量生成して CONFIG_DB に投入する。`system_port_id` は投入時にソート順で `1` から自動採番される (`parse_chassis_deviceinfo_intf_metadata()`)。
+
+<!-- /defaults -->
+
 ## 制約
 
 - `name` は `Ethernet-IB<数値>` パターン

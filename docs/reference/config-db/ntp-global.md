@@ -208,6 +208,32 @@ db_migrator.py での NTP マイグレーションなし
 NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_KEY を直接操作
 <!-- /entry-points -->
 
+<!-- defaults -->
+## フィールド暗黙デフォルト (Phase A — コード由来)
+
+`sonic-host-services/scripts/hostcfgd` の `NtpCfg` クラスと `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` テンプレを精査し、CONFIG_DB に値が無いときの実効デフォルトを整理する。SONiC master は `ntpd` ではなく **chrony** を採用しているため、テンプレ実体は `chrony.conf.j2`（旧 HLD の `ntp.conf.j2` は不在）。
+
+| フィールド | YANG default | コード由来 fallback | 実効デフォルト (未設定時) | chrony.conf 反映 |
+|-----------|-------------|-------------------|------------------------|----------------|
+| `src_intf` | なし | `handle_ntp_source_intf_chg` で `split(';')`→空、テンプレ `ns.source_intf=""` 初期化 | `bindacqaddress` 行を発行せずカーネル経路選択 | `bindacqaddress <IP>` (vrf!=mgmt 時のみ) |
+| `vrf` | なし (`pattern "mgmt\|default"`) | テンプレ `if vrf == 'mgmt'` 分岐のみ、未設定は falsy 扱い | default VRF として動作、`bindacqaddress` 出力 | (条件分岐に使用) |
+| `authentication` | `disabled` | テンプレ `if global.authentication == 'enabled'` 判定 | `disabled` (`keyfile`/`key` 行なし、`NTP_KEY` 未参照) | `keyfile /etc/chrony/chrony.keys` / `key <N>` |
+| `dhcp` | `enabled` | テンプレ末尾の `sourcedir /run/chrony-dhcp` は常時出力 | `enabled` (DHCP 配布 NTP サーバ採用) | SmartSwitch のみ `allow` 判定に寄与 |
+| `server_role` | `enabled` | SmartSwitch NPU (`device_metadata.type != 'SmartSwitchDPU'`) 限定で参照 | `enabled` (通常スイッチではテンプレ未反映) | `allow` / `binddevice bridge-midplane` (SmartSwitch NPU のみ) |
+| `admin_state` | `enabled` | テンプレ・`NtpCfg` 共に未参照 | `enabled` (chrony は常時起動、disabled でも停止しない) | 反映なし |
+
+### 補足
+
+- **`ntp.conf.j2` は実在しない**: 実テンプレは `chrony.conf.j2`。`NtpCfg.CHRONY_RESTART = ['systemctl', 'restart', 'chrony']` (hostcfgd:1280) からも chrony 採用が確定。
+- **`vrf=mgmt` 時の挙動**: `chrony.conf.j2:109` で `bindacqaddress` 発行を抑止し、カーネルの mgmt VRF routing に委ねる。現行テンプレは `interface eth0` ディレクティブを発行しない (handler-branching 表の文言は将来修正候補)。
+- **`admin_state=disabled` のデッドコード性**: テンプレも `NtpCfg` も `admin_state` を分岐に使わないため、CONFIG_DB に `disabled` を書いても chrony は restart されるだけで停止しない。
+- **`trusted_key` は本テーブルに存在しない**: `trusted` は `NTP_SERVER` / `NTP_KEY` の leaf (default `no`) であり `NTP|global` の管轄外。
+- **差分検知**: `ntp_global_update()` (hostcfgd:1344) は `cache == data` のとき no-op。`ntp_srv_key_update()` (hostcfgd:1383-1386) も同様。
+
+調査メモ詳細: `meta/_intermediate/cdb-flow/ntp-global-defaults.md`
+
+<!-- /defaults -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->
