@@ -358,6 +358,50 @@ show vlan brief
 
 <!-- /runtime-trace -->
 
+<!-- failure-behavior -->
+## 失敗挙動（Phase D）
+
+### VLAN 未解決（isVlanStateOk = false）
+
+VLAN_MEMBER エントリの処理時に対応する VLAN が STATE_DB に未登録の場合、`vlanmgrd` はエントリを **リトライキューに残して次のループまで延期**する（vlanmgr.cpp:644 `SWSS_LOG_DEBUG("%s not ready, delaying")`）。エントリは破棄されない。VLAN が後から作成されると自動的に再試行される。
+
+```
+[vlanmgrd] DEBUG: Vlan100|Ethernet0 not ready, delaying
+```
+
+### ポート未解決（isMemberStateOk = false）
+
+ポート（PORT または PORTCHANNEL）が STATE_DB に未登録の場合も同様に延期される（vlanmgr.cpp:641-644）。LAG 削除レース条件（PORTCHANNEL がまだ STATE_DB に残っているが実体が消えている）では、`addHostVlanMember` が `false` を返し `SWSS_LOG_INFO("Netdevice for %s not ready, delaying")` でリトライされる（vlanmgr.cpp:684）。
+
+```
+[vlanmgrd] INFO: Netdevice for Vlan100|PortChannel0001 not ready, delaying
+```
+
+### bridge コマンド失敗
+
+`addHostVlanMember` 内で `ip link set <port> master Bridge` または `bridge vlan add` が失敗した場合の挙動はポート種別で分岐する（vlanmgr.cpp:258-270）:
+
+| ポート種別 | 失敗時の挙動 |
+|-----------|------------|
+| LAG (PortChannel) | `false` を返してリトライ（race condition 対策） |
+| 物理ポート (Ethernet) | 例外を再スロー（`EXEC_WITH_ERROR_THROW` で強制終了相当） |
+
+LAG の場合は `catch(runtime_error)` でキャッチし `return false` → 呼び出し元でリトライ延期となる。物理ポートの場合は例外が上位に伝播し `vlanmgrd` プロセスが異常終了する可能性がある。
+
+### SAI 失敗（orchagent 側）
+
+orchagent の `VlanOrch` が `sai_vlan_api->create_vlan_member()` を呼び出す際に SAI エラーが返った場合、orchagent は `SWSS_LOG_ERROR` を出力してそのエントリをドロップする（retry なし）。STATE_DB の `VLAN_MEMBER` エントリは `state=ok` にならず、vlanmgrd が次回の consumer loop で未完了エントリを再処理しようとするが、SAI 側がエラーを返し続ける場合は永続的に未設定となる。
+
+### tagging_mode 不正値
+
+`tagging_mode` が `untagged` / `tagged` / `priority_tagged` 以外の場合、`SWSS_LOG_ERROR("Wrong tagging_mode")` を出力してエントリを即時破棄する（vlanmgr.cpp:662）。リトライなし。
+
+### 不正キー形式
+
+キーが `Vlan` プレフィクスで始まらない、またはポート名を含まない場合は即時破棄（vlanmgr.cpp:603-625）。
+
+<!-- /failure-behavior -->
+
 <!-- side-effects -->
 ## SET/DEL 副次 DB 書込み
 
