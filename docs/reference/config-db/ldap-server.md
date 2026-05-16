@@ -66,6 +66,34 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 | `port` | inet:port-number | 389 | LDAP サーバポート |
 | `timeout` | uint16 (1..60) | - | クエリ timeout [秒] |
 
+<!-- defaults -->
+## フィールドデフォルト
+
+デフォルト値は 2 層で決まる: (1) **YANG schema `default` 宣言**（CONFIG_DB に書き込む時点で適用）、(2) **`ldap.py` LdapCfg クラス属性**（hostcfgd が `nslcd.conf` を生成する際の fallback）。
+
+### LDAP_SERVER エントリ
+
+| フィールド | YANG default | LdapCfg fallback | 備考 |
+|-----------|-------------|-----------------|------|
+| `priority` | **1** | — | CLI `--priority` 省略時に YANG が適用。hostcfgd の priority ソートに必須 |
+
+### LDAP\|global
+
+| フィールド | YANG default | LdapCfg fallback | 備考 |
+|-----------|-------------|-----------------|------|
+| `bind_timeout` | **5** 秒 | `TIMEOUT_BIND = 5` | 両値一致。nslcd.conf `bind_timelimit 5` に反映 |
+| `version` | **3** | `VERSION = '3'` | 両値一致。nslcd.conf `ldap_version 3` に反映 |
+| `port` | **389** | `PORT = 389` | 両値一致。URI `ldap://ip:389/` に埋め込まれる |
+| `timeout` | なし | `TIMEOUT_SEARCH = 5` 秒 | LdapCfg が `search_timeout` キーで引くため YANG フィールド名 `timeout` との不一致あり[^2] |
+| `bind_dn` | なし | `BIND = ''` (空文字) | 未設定時 nslcd.conf に `binddn ` (空) が出力される |
+| `bind_password` | なし | `BINDPW = ""` (空文字) | 未設定時 nslcd.conf に `bindpw ` (空) が出力される |
+| `base_dn` | なし | `BASE = 'ou=users,dc=example,dc=com'` | 未設定のまま nslcd が起動されることはない (`is_ldap_config_complete` ガード)[^3] |
+| `scope` | (YANG にフィールドなし) | `SCOPE = "sub"` | CONFIG_DB から設定不可。nslcd.conf は常に `scope sub` |
+
+> **注**: `hostcfgd` の `ldap_global_default = {}` は空 dict。TACACS/RADIUS と異なり LDAP は hostcfgd 層での追加デフォルト注入を行わない。YANG default と LdapCfg fallback のみが有効。
+
+<!-- /defaults -->
+
 ## 購読者
 
 - `hostcfgd` (`docker-config-engine`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `nslcd` / `nss-pam-ldapd` 設定
@@ -88,6 +116,8 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 ## 引用元
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-system-ldap.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-system-ldap.yang>
+[^2]: `ldap.py:76` `cfg_timeout()` は `_ldapsrvs_conf[0].get('search_timeout', TIMEOUT_SEARCH)` でキーを引く。CONFIG_DB の YANG フィールド名 `timeout` とは異なるため、DB に `timeout` を設定しても `cfg_timeout()` が拾わない可能性がある。実使用では `bind_timeout` (YANG default 5) が `bind_timelimit` として反映される。
+[^3]: `hostcfgd:437-441` `is_ldap_config_complete()` は `bind_dn`、`base_dn`、`bind_password` の全てが設定されている場合のみ `True` を返す。いずれか未設定の場合 nslcd は起動されない。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -232,5 +262,30 @@ sudo cat /etc/nslcd.conf
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`hostcfgd` (`AaaCfg`) の `modify_conf_file()` はイベントごとに PAM / NSS / NSLCD 設定を**全部まとめて再生成**する。`is_ldap_config_complete()` が全条件を満たすまで `nslcd` は起動しない。書き込み順序が nslcd の可用性に直結する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `LDAP\|global`（`bind_dn` / `base_dn` / `bind_password`）+ `LDAP_SERVER` エントリ → `AAA` `login=ldap` | **先行必須**（欠如時 nslcd 停止） | 後から設定追加で自動復旧（`ldap_global_update` / `aaa_update` が再評価） |
+| 2 | `LDAP_SERVER` → `LDAP\|global` → `AAA` の順で書き込む | 推奨（中間 nslcd 停止回避） | 逆順でも最終的に自動復旧するが nslcd 停止期間が生じる |
+| 3 | `LDAP_SERVER` の `priority` 重複 → フェイルオーバ順序不定 | 運用上の注意 | priority 値の一意性を運用ルールで担保 |
+| 4 | `LDAP\|global` 未設定時の `LDAP_SERVER` 単体 → `LdapCfg` fallback 値（`example.com` 等）が使われる | 設計上の前提 | `LDAP_SERVER` 追加前に `LDAP\|global` を設定済みにする |
+| 5 | load フェーズ内は AAA バッチで一括処理 → 中間状態なし | 自動保証（対策不要） | `AaaCfg.load()` が全テーブルを読んだ後に `modify_conf_file()` を 1 回のみ呼ぶ |
+
+### 主要な制約詳細
+
+**LDAP 先行必須 (依存 #1)**: `is_ldap_config_complete()` は `LDAP|global` の `bind_dn` / `base_dn` / `bind_password` が全て設定済みかつ `LDAP_SERVER` エントリが 1 件以上存在し `AAA|authentication.login` に `ldap` を含む場合のみ `True` を返す。いずれかが欠けた状態で `aaa_update()` が呼ばれると `handle_nslcd_service(False)` が実行され nslcd が停止・mask される（evidence: `hostcfgd:437-442`, `hostcfgd:241-250`）。
+
+**mergeWith による前提 (依存 #4)**: `modify_conf_file()` は `server = ldap_global.copy(); server.update(self.ldap_servers[addr])` で各サーバ設定を構築する。`LDAP|global` が未設定の場合は `LdapCfg` のクラス属性 fallback（`BASE = 'ou=users,dc=example,dc=com'` など）が使われるため、`LDAP_SERVER` のみ先に書いた状態では nslcd 設定が example.com のデフォルト値になる（evidence: `hostcfgd:650-651`, `hostcfgd:706-713`, `ldap.py:8-18`）。
+
+**priority ソートの安定性 (依存 #3)**: `ldapsrvs_conf` は `sorted(..., key=lambda t: int(t['priority']), reverse=True)` で降順ソートされる。Python の `sorted()` は安定ソートだが、同一 priority 値の場合は CONFIG_DB からの取得順（Redis 依存）になるため書き込み順が保証されない（evidence: `hostcfgd:706-713`）。
+
+<!-- /ordering -->
 
 <!-- glossary-links-injected: 32758c44ab11 -->
