@@ -522,6 +522,78 @@ ICMP heartbeat パケットバッファの最大サイズ。Jumbo frame 対応 (
 
 <!-- /constants -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-linkmgr-ordering.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp`、`sonic-linkmgrd/src/DbInterface.cpp`
+
+### MUX_LINKMGR は orchagent 非経由 — 他テーブルと独立
+
+`linkmgrd` は `CFG_MUX_LINKMGR_TABLE_NAME` を CONFIG_DB から直接購読する (`DbInterface.cpp:1820`)。
+orchagent / MuxOrch は MUX_LINKMGR を処理しない。TUNNEL / PEER_SWITCH / MUX_CABLE の
+準備状態とは独立して MUX_LINKMGR を書き込める。
+
+### SET 時の先行必須テーブル
+
+| 先行テーブル | 理由 | ソース |
+|---|---|---|
+| なし（orchagent 側依存なし） | linkmgrd が直接購読するため PortInitDone / SAI 完了を待たない | `DbInterface.cpp:1820` |
+
+### 推奨書込み順序
+
+```
+MUX_LINKMGR|LINK_PROBER  ← プローバパラメータを先に設定
+MUX_LINKMGR|TIMED_OSCILLATION
+       ↓
+MUX_CABLE|<port>          ← ポートごとのリンクプローバが正しいパラメータで開始できる
+```
+
+厳密には MUX_CABLE 処理後の notification でも即時反映されるが、初期化時に正しい
+パラメータが揃っていることを保証するため MUX_LINKMGR を先に書くことを推奨する。
+
+### PEER_SWITCH 連携（orchagent 側の順序依存）
+
+MUX_LINKMGR 自体の依存ではないが、同一 Dual-ToR 設定セット内で密接に関連する:
+
+`muxorch.cpp:2271` — MUX_CABLE エントリ処理時に `mux_peer_switch_.isZero()` を確認:
+
+```cpp
+if (mux_peer_switch_.isZero())
+{
+    SWSS_LOG_INFO("Mux Peer switch addr not yet configured, port '%s'", port_name.c_str());
+    return false;
+}
+```
+
+`mux_peer_switch_` は `handlePeerSwitch()` が PEER_SWITCH テーブルを処理した際に設定される。
+PEER_SWITCH が投入されていないと MUX_CABLE が `return false` でリトライ待機する。
+
+また `handlePeerSwitch()` 自体も MuxTunnel0 の decap dst IP が未設定なら `return false`
+でリトライ待機する (`muxorch.cpp:2348-2353`)。
+
+**orchagent 側の必須順序**:
+```
+TUNNEL (MuxTunnel0 decap dst IP 登録)
+       ↓
+PEER_SWITCH SET  →  mux_peer_switch_ 確定 + create_tunnel()
+       ↓
+MUX_CABLE SET    →  MuxCable オブジェクト生成
+```
+
+!!! warning "PEER_SWITCH DELETE は未実装"
+    `handlePeerSwitch()` の DEL パス (`muxorch.cpp:2387`) は "Not Implemented" のログのみで
+    `mux_peer_switch_` をリセットしない。PEER_SWITCH エントリ削除後も orchagent は旧 peer IP
+    を保持し続けるため、PEER_SWITCH を変更する場合は orchagent の再起動が必要。
+
+### SERVICE_MGMT (kill_radv) の順序非依存
+
+`processMuxLinkmgrConfigNotifiction()` に `SERVICE_MGMT` キーの分岐がない
+(`DbInterface.cpp:1120-1214`)。linkmgrd は `kill_radv` を runtime で読まないため、
+値変更のタイミングは動作に影響しない。
+
+<!-- /ordering -->
+
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 

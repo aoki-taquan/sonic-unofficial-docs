@@ -310,6 +310,86 @@ DEL ACL_TABLE|<acl_name>   # ACL は binding 削除後に削除
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / addTwiceNatEntry L1981-2004 / addHwSnatEntry L1307-1316 / addHwTwiceNatEntry L1387-1397 / addHwDnatPoolEntry L1806-1814 / NatOrch constructor L107-122 -->
+
+### SNAT ハードウェア容量上限到達 (dynamic SNAT/Twice NAT) → 即時エージアウト通知
+
+`natorch.cpp:1882-1889` (`addNatEntry`) および `natorch.cpp:1996-2003` (`addTwiceNatEntry`):
+
+```cpp
+// addNatEntry - dynamic SNAT
+if (totalSnatEntries == maxAllowedSNatEntries)
+{
+    SWSS_LOG_INFO("Reached the max allowed NAT entries in the hardware, dropping new SNAT translation with ip %s and translated ip %s", ...);
+    setTimeoutNotifier->send("AGEOUT-SINGLE-NAT", natKey, fvVector);
+    return true;
+}
+
+// addTwiceNatEntry - dynamic Twice NAT
+if (totalSnatEntries == maxAllowedSNatEntries)
+{
+    SWSS_LOG_INFO("Reached the max allowed NAT entries in the hardware, dropping new Twice NAT translation with src ip %s, dst ip %s ...", ...);
+    setTimeoutNotifier->send("AGEOUT-TWICE-NAT", twiceNatKey, fvVector);
+    return true;
+}
+```
+
+- ログ: `SWSS_LOG_INFO "Reached the max allowed NAT entries in the hardware, dropping new SNAT/Twice NAT translation..."`
+- 効果: エントリをキャッシュに追加せず `AGEOUT-SINGLE-NAT` / `AGEOUT-TWICE-NAT` 通知を送信して即時エージアウト。SAI 登録なし。`return true` でタスクは消費 (retry なし)。
+- **容量 0 の罠**: 起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` の取得が失敗した場合 `maxAllowedSNatEntries=0` のまま (`natorch.cpp:112-118`)。この状態では最初の dynamic SNAT エントリ到着と同時にドロップが発生する。取得失敗のログ: `SWSS_LOG_NOTICE "Failed to get the SNAT available entry count, rv:%d"`。
+
+### SAI NAT エントリ作成失敗 → ERROR + handleSaiCreateStatus
+
+`natorch.cpp:1307-1316` (SNAT), `natorch.cpp:1387-1397` (Twice NAT), `natorch.cpp:1475-1485` (SNAT NAPT), `natorch.cpp:1806-1814` (DNAT Pool):
+
+```cpp
+// SNAT 例 (addHwSnatEntry)
+status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create %s SNAT NAT entry with ip %s and it's translated ip %s",
+                   entry.entry_type.c_str(), ip_address.to_string().c_str(), entry.translated_ip.to_string().c_str());
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_NAT, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+
+// DNAT Pool 例 (addHwDnatPoolEntry)
+if (status != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_ERROR("Failed to create DNAT Pool entry with ip %s", ip_address.to_string().c_str());
+    task_process_status handle_status = handleSaiCreateStatus(SAI_API_NAT, status);
+    if (handle_status != task_success)
+    {
+        return parseHandleSaiStatusFailure(handle_status);
+    }
+}
+```
+
+- ログ: `SWSS_LOG_ERROR "Failed to create %s SNAT NAT entry..."` / `"Failed to create %s Twice NAT entry..."` / `"Failed to create %s SNAT NAPT entry..."` / `"Failed to create DNAT Pool entry with ip %s"`
+- 効果: `parseHandleSaiStatusFailure()` が abort / retry / erase を決定する。DNAT Pool 登録失敗時は対象 IP への DNAT トラフィックがハードウェアでドロップされる。STATE_DB への書き込みなし。
+- NAT feature 未有効化時は SAI 呼び出し前に `SWSS_LOG_WARN "NAT Feature is not yet enabled, skipped adding DNAT Pool entry with ip %s"` でスキップされる (`natorch.cpp:1789-1793`)。
+
+### 失敗挙動サマリ
+
+| # | 条件 | コンポーネント | パターン | retry | STATE_DB 記録 |
+|---|---|---|---|---|---|
+| 1 | SNAT ハードウェア容量上限 (dynamic SNAT) | NatOrch | AGEOUT-SINGLE-NAT 通知 + ドロップ | なし | なし |
+| 2 | Twice NAT ハードウェア容量上限 (dynamic) | NatOrch | AGEOUT-TWICE-NAT 通知 + ドロップ | なし | なし |
+| 3 | SAI SNAT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 4 | SAI Twice NAT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 5 | SAI SNAT NAPT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 6 | SAI DNAT Pool create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
+| 7 | SNAT 容量取得失敗 (orchagent 起動時) | NatOrch | maxAllowedSNatEntries=0 → 全 dynamic SNAT ドロップ | — | なし |
+
+NatOrch は `ERROR_TABLE` への書き込みなし。syslog (`SWSS_LOG_ERROR` / `WARN` / `NOTICE` / `INFO`) のみ。
+<!-- /failure -->
+
 <!-- platform -->
 ## プラットフォーム差・ASIC ベンダー依存 (Phase H)
 
