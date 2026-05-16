@@ -211,4 +211,44 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+実装コードに直接定義されている文字列定数・enum 値を一覧化する。
+
+### source_vtep フィールドキー
+
+| フィールド | 取得方法 | ソース |
+|-----------|---------|--------|
+| `source_vtep` | `request.getAttrString("source_vtep")` | `vxlanorch.cpp:2780` |
+
+- `EvpnNvoOrch::addOperation()` が `"source_vtep"` キーで属性を読み取り、`VxlanTunnelOrch::getVxlanTunnel(vtep_name)` に渡す (`vxlanorch.cpp:2784`)
+
+### SAI tunnel_map_type ハードコードマッピング
+
+EVPN NVO が source_vtep 経由で間接参照する tunnel_map_type の定数マップ (`vxlanorch.cpp:38-46`):
+
+| MAP_T enum | SAI_TUNNEL_MAP_TYPE |
+|-----------|---------------------|
+| `VNI_TO_VLAN_ID` | `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID` |
+| `VLAN_ID_TO_VNI` | `SAI_TUNNEL_MAP_TYPE_VLAN_ID_TO_VNI` |
+| `VRID_TO_VNI` | `SAI_TUNNEL_MAP_TYPE_VIRTUAL_ROUTER_ID_TO_VNI` |
+| `VNI_TO_VRID` | `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID` |
+| `BRIDGE_TO_VNI` | `SAI_TUNNEL_MAP_TYPE_BRIDGE_IF_TO_VNI` |
+| `VNI_TO_BRIDGE` | `SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF` |
+
+- EVPN NVO 確立時、このマップに基づき encap/decap mapper が SAI に設定される
+- `VXLAN_EVPN_NVO` テーブル自体に数値定数はなく、SAI 定数は source_vtep (VXLAN_TUNNEL) 側で設定される
+
+### EvpnNvoOrch ログ定数
+
+| 状態 | ログメッセージ | ソース |
+|------|-------------|--------|
+| add 成功 | `"evpnnvo: %s vtep : %s"` (INFO) | `vxlanorch.cpp:2786` |
+| del 時 VTEP NULL | `"NVO Delete failed as VTEP Ptr is NULL"` (WARN) | `vxlanorch.cpp:2799` |
+| del 時 hw pending | `"NVO not deleted as hw delete is pending"` (WARN) | `vxlanorch.cpp:2805` |
+| del 成功 | `"NVO: %s"` (INFO) | `vxlanorch.cpp:2811` |
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 7e2e79cf3524 -->
