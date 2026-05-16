@@ -367,8 +367,12 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | `STATE_INTERFACE_TABLE` | STATE_DB | READ | NAT エントリ追加前 | L3 インタフェース readiness ガード (`natmgr.cpp:139`) |
 | `APP_PORT_TABLE` (`PortInitDone`) | APPL_DB | READ | natmgrd 起動時 | ポート初期化完了まで全 NAT 処理をブロッキング待機 (`natmgr.cpp:76-92`) |
 | `NAT_POOL` (YANG leafref) | CONFIG_DB | READ | YANG バリデーション | `NAT_BINDINGS.nat_pool` → `NAT_POOL.name` の参照整合性 |
+| `ROUTE_TABLE` (RouteOrch observer) | — | READ | DNAT next-hop 変化時 | `NatOrch` が `m_routeOrch->attach(this, translatedIp)` で next-hop 変化を購読。DNAT translated IP のルート変化を `updateNextHop()` で受信し DNAT エントリを更新 (`natorch.cpp:414,458,504,591`). **BRCM 専用** (`gNhTrackingSupported=true` 時のみ `enableNatFeature()` で attach) |
+| `NEIGH_TABLE` (NeighOrch observer) | — | READ | DNAT 宛先 neighbor 変化時 | `NatOrch` が `m_neighOrch->attach(this)` で neighbor 解決/喪失を購読。`updateNeighbor()` で DNAT エントリを追加/削除 (`natorch.cpp:171-172,2573`). **BRCM 専用** (`gNhTrackingSupported=true` 時のみ) |
 
 > **注意**: `nat_zone` フィールドは INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE / LOOPBACK_INTERFACE の全インタフェース種別で定義され (`uint8`, range `0..3`)、NAT ゾーン番号はそのまま iptables の mark 値として設定されるが、`natmgr` 内部では `nat_zone_value + 1` が使用される（`natmgr.cpp:7513`）。
+
+> **注意 (natorch.cpp 固有)**: `RouteOrch` / `NeighOrch` observer パターンは BRCM プラットフォーム (`gNhTrackingSupported == true`) でのみ有効。非 BRCM 環境では `enableNatFeature()` (`natorch.cpp:2565-2578`) が `m_neighOrch->attach(this)` と `m_routeOrch->attach(this, ...)` を呼ばないため、DNAT translated IP の next-hop が変化しても DNAT エントリは更新されず stale になりうる。
 
 <!-- /cross-refs -->
 
