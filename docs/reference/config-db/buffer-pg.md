@@ -269,4 +269,77 @@ show buffer pg
 
 > **スキャン証跡**: `handleBufferObjectTables` L3502-3553 全行読了。`handleBufferPgTable` は共通ルーターを経由。4 件分岐抽出。
 <!-- /handler-branching -->
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+### 1. Dynamic / Static バッファモデル
+
+`DEVICE_METADATA.localhost.buffer_model` または環境変数 `ASIC_VENDOR` の有無ではなく、Jinja2 テンプレート変数 `dynamic_mode` の定義有無でモデルが決まる。
+
+| モデル | PG 3-4 の初期 profile 値 | PG 0 の初期 profile 値 | 担当デーモン |
+|--------|--------------------------|------------------------|-------------|
+| **Dynamic** (`dynamic_mode` 定義あり) | `"NULL"` → `buffermgrdyn` が速度・ケーブル長から自動計算 | `"ingress_lossy_profile"` | `buffermgrdyn` |
+| **Static** (`dynamic_mode` 未定義) | `"pg_lossless_<speed>_<cable>_profile"` (Jinja2 が直接埋め込み) | `"ingress_lossy_profile"` | `buffermgr` |
+
+- Jinja2 テンプレート: `sonic-buildimage/files/build_templates/buffers_config.j2:263-275`
+- Dynamic モードでは `buffermgrdyn` が `getDynamicProfileName()` で `pg_lossless_<speed>_<cable>_profile` を生成し APPL_DB に書く
+
+### 2. ASIC ベンダー別 PG プロファイル名サフィックス (Mellanox)
+
+環境変数 `ASIC_VENDOR=mellanox` が設定された場合、`buffermgrdyn` は Mellanox SN シリーズのモデル番号を `DEVICE_METADATA.localhost.platform` から抽出し、8 レーンポートに対して特別なプロファイル名サフィックスを付与する。
+
+| 条件 | プロファイル名サフィックス | 例 |
+|------|--------------------------|-----|
+| Mellanox SN4xxx: 8 レーンかつ速度 ≠ 400G | `_8lane` | `pg_lossless_100000_5m_8lane_profile` |
+| Mellanox SN5xxx: 8 レーンかつ速度 ≠ 800G | `_8lane` | `pg_lossless_400000_5m_8lane_profile` |
+| 上記以外 / 非 Mellanox | サフィックスなし | `pg_lossless_100000_5m_profile` |
+
+- ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp:504-522` (`getDynamicProfileName`)
+- 理由: 8 レーンポートは xon 値が 2 倍になるため、4 レーンポートとプロファイルを共有できない
+
+### 3. Gearbox 付きプラットフォーム
+
+外部 Gearbox が存在するプラットフォーム (PHY チップ挿入構成) では、`gearbox_model` 文字列がプロファイル名に挿入される。
+
+| 条件 | プロファイル名形式 |
+|------|--------------------|
+| `gearbox_model` 未設定 | `pg_lossless_<speed>_<cable>_profile` |
+| `gearbox_model` 設定あり | `pg_lossless_<speed>_<cable>_<gearbox_model>_profile` |
+
+- ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp:499-501` (`getDynamicProfileName`)
+- Gearbox 情報は `PORT_PERIPHERAL_TABLE` から取得 (`buffermgrdyn.cpp:174-226`)
+
+### 4. VOQ Chassis (仮想出力キューシャーシ)
+
+`DEVICE_METADATA.localhost.switch_type == "voq"` の場合、`BufferOrch` の BUFFER_PG 処理は通常スイッチと異なる。
+
+| 項目 | 通常スイッチ | VOQ Chassis |
+|------|-------------|-------------|
+| BUFFER_PG key 形式 | `<port>\|<pg_range>` (2 トークン) | `<hostname>\|<asic>\|<port>\|<pg_range>` (4 トークン) |
+| バッファ適用対象 | フロントパネルポートの PG | VOQ (Virtual Output Queue、システムポートに紐づく) |
+| 初期化ゲート | `isConfigDone()` | `isInitDone()` |
+| ポート参照カウント | `increasePortRefCount()` で増減 | スキップ（システムポートは動的生成されない） |
+| Warm reboot ready list | `initBufferReadyList(pg_table)` | `initBufferReadyList(pg_table)` (PG は通常通り) + `initVoqBufferReadyList(queue_table)` |
+
+- ソース: `sonic-swss/orchagent/bufferorch.cpp:116-136, 916-938, 1166-1168, 2079-2086`
+- VOQ モードでは BUFFER_PG は引き続き CONFIG_DB に存在するが、orchagent 側で key を 4 トークンとしてパースしローカル/リモートポートを判別する
+
+### 5. プラットフォーム別 PG 範囲割り当て
+
+プラットフォームが独自の `buffers.json.j2` を持つ場合、PG 範囲割り当てが異なる。
+
+| プラットフォーム | Lossless PG | Lossy PG | 備考 |
+|---------------|-------------|----------|------|
+| 汎用 (buffers_config.j2) | `3-4` | `0` | Dynamic モードのみ 3-4 を NULL で登録 |
+| Supermicro SSE-T7132S (400G固定) | `3-4` | `0`, `1-2`, `5-7` | 速度固定のため `pg_lossless_400000_<cable>_profile` を直接埋め込み |
+| Marvell Falcon / ARM 系 | プラットフォーム独自 `buffers_config.j2` を使用 | 同左 | `device/marvell/` 配下に独自テンプレート |
+| Arista (全機種) | `3-4` (汎用テンプレートに委譲) | `0`, `5-6` | `buffers.json.j2` が `buffers_config.j2` を include するのみ |
+
+- ソース: `sonic-buildimage/device/supermicro/.../buffers.json.j2:124-146`
+- ソース: `sonic-buildimage/files/build_templates/buffers_config.j2:263-275`
+- ソース: `sonic-buildimage/device/marvell/*/buffers_config.j2`
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-platform.md`
+
+<!-- /platform -->
 <!-- glossary-links-injected: 566f959873ea -->
