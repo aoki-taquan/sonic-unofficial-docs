@@ -71,6 +71,83 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 - 関連 CLI: `config interface storm-control <type> <ifname> <kbps>`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-storm-control`
 
+<!-- defaults -->
+## 暗黙デフォルトとハードコード挙動
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-storm-control-defaults.md -->
+
+### kbps — YANG デフォルトなし・コード上必須
+
+YANG の `kbps` leaf に `default` 文は存在しない。`mandatory true` 宣言もないため YANG 上は optional に見えるが、orchagent (`handlePortStormControlTable`) は `kbps` が欠如した場合に `task_failed` を返す。エントリは破棄され `SWSS_LOG_ERROR "Failed to create storm control policer %s, missing mandatory fields"` が記録される。
+
+証跡: `sonic-swss/orchagent/policerorch.cpp:195-200`
+
+### SAI policer ハードコード属性 (YANG / CLI 非公開)
+
+YANG および CLI には存在しないが、orchagent が **常に固定値** で SAI policer を作成する属性:
+
+| SAI 属性 | 固定値 | 変更可否 |
+|---|---|---|
+| `SAI_POLICER_ATTR_METER_TYPE` | `BYTES` | 不可 (ハードコード) |
+| `SAI_POLICER_ATTR_MODE` | `STORM_CONTROL` | 不可 (ハードコード) |
+| `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `DROP` | 不可 (ハードコード) |
+| `SAI_POLICER_ATTR_GREEN_PACKET_ACTION` | 未設定 → SAI/HW デフォルト依存 | 設定不可 |
+| `SAI_POLICER_ATTR_YELLOW_PACKET_ACTION` | 未設定 → SAI/HW デフォルト依存 | 設定不可 |
+| `SAI_POLICER_ATTR_CBS` | 未設定 → SAI/HW デフォルト依存 | 設定不可 |
+
+証跡: `policerorch.cpp:157-169`
+
+### kbps → SAI CIR 変換 (integer truncation)
+
+```
+CIR (bytes/s) = kbps * 1000 / 8
+```
+
+整数演算のため、`kbps` が 8 の倍数でない場合は **切り捨て** が発生する (silent rounding)。  
+例: `kbps=1` → CIR=125 bytes/s (正確)、`kbps=3` → CIR=375 bytes/s (正確)、`kbps=7` → CIR=875 bytes/s (正確)。  
+kbps は通常大きな値のため実用上の影響は限定的だが、低レートでは注意が必要。
+
+証跡: `policerorch.cpp:181-184`
+
+### update 時 remove-then-reapply による瞬間的 storm control 解除
+
+既存エントリを更新する際、orchagent は:
+1. ポートの SAI 属性を `SAI_NULL_OBJECT_ID` に設定 (storm control 一時解除)
+2. CIR のみ更新 (METER_TYPE / MODE / RED_ACTION は不変)
+3. 新 policer oid を再 attach
+
+この操作の間、ポートで storm control が解除されるウィンドウが存在する (ミリ秒オーダー)。
+
+証跡: `policerorch.cpp:273-288`
+
+### allPortsReady ガード (起動時 silent defer)
+
+`gPortsOrch->allPortsReady()` が false の間、`doTask()` は即座 return する。  
+全ポートの初期化完了前に CONFIG_DB に書き込まれた PORT_STORM_CONTROL エントリは **処理を遅延される** (silent defer、エラーなし)。
+
+証跡: `policerorch.cpp:379-382`
+
+### 非 Ethernet / ポート未発見のサイレント破棄
+
+- 非 Ethernet インタフェース: `SWSS_LOG_ERROR` を出力するが `task_success` を返す → エントリは erase (silent drop、リトライなし)
+- ポート未発見: 同様に `task_success` で erase
+
+証跡: `policerorch.cpp:132-144`
+
+### BUM_STORM_CAPABILITY チェック (CLI のみ、orchagent は非チェック)
+
+CLI (`config storm-control add`) は `STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールドを確認し、`0` なら書き込みをスキップする。  
+ただし orchagent 側には同様のチェックは存在せず、直接 DB 書き込みを行った場合は capability 非対応でも処理を試みる (プラットフォーム依存の SAI エラーで失敗する可能性あり)。
+
+証跡: `config/main.py:806-814`
+
+### dead field — CBS / Green / Yellow packet action
+
+YANG にも CLI にも CBS・Green packet action・Yellow packet action は公開されていない。  
+これらは SAI HW デフォルト依存であり、プラットフォームにより挙動が異なる可能性がある。
+
+<!-- /defaults -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
