@@ -401,4 +401,36 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-cross-refs.md` を参照。
 <!-- /cross-refs -->
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+### 検出結果: 副次 DB 書込なし
+
+`frrcfgd.py` の `BGP_PEER_GROUP_AF` ハンドラ (`bgp_table_handler_common`) は **STATE_DB・COUNTERS_DB・APPL_DB への書込を一切行わない**。
+
+#### 根拠
+
+| 調査対象 | 結果 | evidence |
+|---|---|---|
+| `import` 文 | `swsscommon.swsscommon.ConfigDBConnector` のみ。`SonicV2Connector` / `DBConnector` / `ProducerStateTable` 等のインポートなし | `frrcfgd.py:8` |
+| `STATE_DB` 参照 | 0 件 | `grep -n STATE_DB frrcfgd.py` → no match |
+| `COUNTERS_DB` 参照 | 0 件 | `grep -n COUNTERS_DB frrcfgd.py` → no match |
+| `APPL_DB` 参照 | 0 件 | `grep -n APPL_DB frrcfgd.py` → no match |
+| `set_entry` / `hset` / `publish` 呼び出し | CONFIG_DB 読み取り専用の `ExtConfigDBConnector` を使用。書込 API 呼び出しなし | `frrcfgd.py:1506–1529` |
+
+#### 動作の性質
+
+`BGP_PEER_GROUP_AF` ハンドラは **CONFIG_DB → FRR (vtysh) の片方向パイプ**として設計されている。処理フローは以下の通り:
+
+```
+CONFIG_DB BGP_PEER_GROUP_AF (SET/DEL)
+  └─→ frrcfgd bgp_table_handler_common()
+        └─→ FRR vtysh コマンド発行（address-family / neighbor <pg> 配下）
+              └─→ bgpd が内部状態を更新（メモリ内のみ）
+```
+
+BGP セッション状態（Established / Idle 等）や prefix カウンタは bgpd が自律的に STATE_DB へ書き込むが、それは **bgpd → sonic-bgpcfgd の独立した経路**であり `frrcfgd` の BGP_PEER_GROUP_AF ハンドラには含まれない。
+
+> **結論**: Phase F 対象の副次書込は存在しない。FRR vtysh 経由でのみ影響が波及する。
+<!-- /side-effects -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
