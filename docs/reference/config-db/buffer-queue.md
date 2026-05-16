@@ -252,6 +252,28 @@ show buffer queue
 <!-- /entry-points -->
 
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外に、実装レベルで以下のテーブルを暗黙参照する。
+
+| 参照先テーブル | YANG leafref | 参照種別 | 非充足時の挙動 |
+|---------------|:------------:|---------|--------------|
+| `BUFFER_PROFILE` | ✅ | 必須: egress direction チェック + SAI profile OID 解決 | `task_need_retry`（未存在）/ `task_failed`（ingress profile 指定時）|
+| `BUFFER_POOL`（egress） | ✗ | 間接ブロッキング: egress pool 未確立で profile もデファー | BUFFER_QUEUE 書き込み全体がデファー |
+| `PORT` | ✅ | 必須: OID 取得 + admin_status 分岐 | `task_invalid_entry`（未登録）/ admin-down 時は APPL_DB 書き込み保留 |
+| `SYSTEM_PORT` / VOQ | ✗ | VOQ モード専用: key 形式切替と VOQ OID 取得 | token 数不正 → `task_invalid_entry`; VOQ OID 範囲外 → `task_invalid_entry` |
+
+### 詳細
+
+- **BUFFER_PROFILE（direction 制約）**: `buffermgrdyn.cpp` L3320 にて `checkBufferProfileDirection(profileName, BUFFER_EGRESS)` を呼び出し、profile の `direction` 属性を確認する。ingress profile を BUFFER_QUEUE に設定すると即 `task_failed`（`buffermgrdyn.cpp:3290`）。profile が `m_bufferProfileLookup` に未存在なら `task_need_retry`（`buffermgrdyn.cpp:3283`）。
+- **BUFFER_POOL egress（間接ゲート）**: `m_bufferPoolReady` が `false` の間は BUFFER_PROFILE（egress）の書き込み自体がデファーされ（`buffermgrdyn.cpp:892`）、BUFFER_QUEUE の profile 参照解決も連鎖でブロックされる。egress pool 欠如は QUEUE 初期化全体のブロッカーとなる。
+- **PORT（OID + admin_status）**: `orchagent` は `gPortsOrch->getPort(port_name, port)` で PORT OID を取得し（`bufferorch.cpp:1033`）、失敗時は `task_invalid_entry`。`buffermgrd` は PORT が admin-down のとき SAI 適用を保留し（`buffermgrdyn.cpp:3346`）、admin-up 遷移後に再適用する。
+- **SYSTEM_PORT / VOQ**: `gMySwitchType == "voq"` の場合、`processQueue()` は key を `hostname|asic_name|port|qindex` の 4 トークンとして解析し（`bufferorch.cpp:916`）、`gPortsOrch->getPortVoQIds(port)` で VOQ OID を取得してバッファプロファイルを適用する（`bufferorch.cpp:1051`）。flex counter 管理および PORT ref count 管理は VOQ では実施しない（`bufferorch.cpp:1135–1168`）。
+
+詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
