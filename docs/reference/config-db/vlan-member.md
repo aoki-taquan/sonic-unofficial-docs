@@ -132,6 +132,32 @@ vlanmgr.cpp:672 は CONFIG_DB の raw フィールド列をそのまま APP_DB �
 
 [^exc1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
 
+<!-- cross-refs -->
+## 暗黙テーブル参照 (vlanmgrd)
+
+vlanmgr は VLAN_MEMBER エントリを処理する前に以下のテーブルを参照し、ready 状態を確認する。
+YANG leafref による宣言的参照（CVL 検証時）と実装上の暗黙参照の両方を示す。
+
+| 参照先テーブル | DB | 参照種別 | 目的 | 根拠 |
+|---|---|---|---|---|
+| `VLAN` (key[0]) | CONFIG_DB (YANG leafref) | CVL バリデーション | VLAN 名の存在確認 | sonic-vlan.yang L283 |
+| `PORT` (key[1] union 1st) | CONFIG_DB (YANG leafref) | CVL バリデーション | 物理ポート名の存在確認 | sonic-vlan.yang L291–292 |
+| `PORTCHANNEL` (key[1] union 2nd) | CONFIG_DB (YANG leafref) | CVL バリデーション | LAG 名の存在確認 | sonic-vlan.yang L294–295 |
+| `STATE_VLAN_TABLE` | STATE_DB | 暗黙参照・ブロッキング | VLAN が ready か確認。false → delaying リトライ | vlanmgr.cpp:517–531, L642 |
+| `STATE_PORT_TABLE` | STATE_DB | 暗黙参照・ブロッキング | 物理ポートが ready か確認。`state` フィールド必須 | vlanmgr.cpp:503–512, L642 |
+| `STATE_LAG_TABLE` | STATE_DB | 暗黙参照・ブロッキング | PortChannel が ready か確認 | vlanmgr.cpp:495–501, L642 |
+| `STATE_VLAN_MEMBER_TABLE` | STATE_DB | 暗黙参照・重複防止 | 既存エントリ確認（warm-restart 二重処理防止） | vlanmgr.cpp:533–542, L633 |
+| `CFG_VLAN_TABLE` | CONFIG_DB | 暗黙参照・初期化 | 起動時リプレイマップ構築のためのバルク読み取り | vlanmgr.cpp:46–47 |
+
+### 注記
+
+- `STATE_VLAN_TABLE` / `STATE_PORT_TABLE` / `STATE_LAG_TABLE` のいずれかが not ready の場合、
+  VLAN_MEMBER エントリは `"not ready, delaying"` としてリトライキューに残り自動再処理される。
+- CVL をバイパスする経路（warm-restart・minigraph 直接注入・PAC 経路）では YANG leafref チェックが行われず、
+  実装側の STATE_DB チェックのみが有効となる。
+
+<!-- /cross-refs -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
