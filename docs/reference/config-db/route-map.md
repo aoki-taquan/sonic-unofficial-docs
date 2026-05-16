@@ -252,6 +252,67 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`bgpcfgd` の `RouteMapMgr` (`managers_rm.py`) から抽出した ROUTE_MAP 経路に関わるハードコード定数。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-map-constants.md`。
+
+### 処理対象キー定数 (`ROUTE_MAPS`)
+
+`RouteMapMgr` が受け付けるキーは以下の 2 値のみ。それ以外は `log_err` で拒否される。
+
+| 定数 | 値 | evidence |
+|------|-----|---------|
+| `ROUTE_MAPS[0]` | `"FROM_SDN_SLB_ROUTES"` | `managers_rm.py:5` |
+| `ROUTE_MAPS[1]` | `"FROM_SDN_APPLIANCE_ROUTES"` | `managers_rm.py:5` |
+
+### action enum と固定シーケンス番号
+
+`RouteMapMgr` が生成する FRR コマンドの action は `permit` のみ。`deny` は生成しない。シーケンス番号は `100` 固定。
+
+| FRR コマンド | action | seq | evidence |
+|------------|--------|-----|---------|
+| `route-map <key>_RM permit 100` | `permit` | `100` | `managers_rm.py:87` |
+| `no route-map <key>_RM permit 100` | `permit` | `100` | `managers_rm.py:41` |
+
+### `FROM_SDN_SLB_DEPLOYMENT_ID` 定数
+
+ASN 解決時に `constants["deployment_id_asn_map"]` から引くキー。
+
+| 定数名 | 値 | 型 | evidence |
+|--------|-----|-----|---------|
+| `FROM_SDN_SLB_DEPLOYMENT_ID` | `'2'` | str | `managers_rm.py:6` |
+
+### community_id バリデーション範囲
+
+| 検証対象 | 許容範囲 | evidence |
+|---------|---------|---------|
+| community_id 形式 | `<A>:<B>`（コロン区切り 2 要素） | `managers_rm.py:56-57` |
+| `<A>` / `<B>` | `0` 〜 `65535` の整数 | `managers_rm.py:58-59` |
+
+### FRR set 句ハードコード値
+
+| FRR コマンド | ハードコード部分 | 動的部分 | evidence |
+|------------|--------------|---------|---------|
+| ` set as-path prepend <asn> <asn>` | コマンド形式 | `<asn>` = `constants["deployment_id_asn_map"]["2"]` | `managers_rm.py:92` |
+| ` set community <community_id>` | コマンド形式 | `<community_id>` = data フィールド値 | `managers_rm.py:93` |
+| ` set origin incomplete` | `incomplete` 固定 | — | `managers_rm.py:94` |
+
+### route-map 名生成ルール
+
+| テンプレート | 生成例 | evidence |
+|-----------|--------|---------|
+| `<key>_RM` | `FROM_SDN_SLB_ROUTES_RM`, `FROM_SDN_APPLIANCE_ROUTES_RM` | `managers_rm.py:41,87` |
+
+### constants 依存キー
+
+| 定数キー | 型 | 未設定時の挙動 | evidence |
+|---------|-----|-------------|---------|
+| `deployment_id_asn_map` | dict | `log_err` + ASN=None → route-map 更新スキップ | `managers_rm.py:76-81` |
+| `deployment_id_asn_map["2"]` | str/int | `log_err` + ASN=None → route-map 更新スキップ | `managers_rm.py:79-81` |
+
+<!-- /constants -->
+
 <!-- platform -->
 ## プラットフォーム差・ファミリー差
 
