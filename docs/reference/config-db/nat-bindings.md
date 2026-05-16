@@ -268,3 +268,29 @@ DEL NAT_POOL|<name>        # pool を後に削除 (binding が残ったまま po
 ```
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NAT_BINDINGS` エントリが処理される際に `NatOrch` (`natorch.cpp`) が
+暗黙的に依存する他テーブルの関係を示す。
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::isNatEnabled L2345 / addNatEntry L1907 / enableNatFeature L2534-2581 / addAllDnatPoolEntries L1854 / doDnatPoolTableTask L2968 / addHwDnatEntry L414 / updateNextHop L200 / updateNeighbor L259 -->
+
+| 依存方向 | 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
+|---------|--------|--------------|--------------|---------|------|
+| NatOrch → NAT_GLOBAL | `admin_mode` キャッシュ (`isNatEnabled()`) | `NAT_GLOBAL` (CONFIG_DB → APP_NAT_GLOBAL_TABLE) | `NAT_GLOBAL\|Values` | `admin_mode=enabled` が APP_DB に伝播するまで、NAT_BINDINGS に対応する SAI エントリは登録されない。`enableNatFeature()` で有効化後に `addAllNatEntries()` で一括追加 | `natorch.cpp:2345`, `natorch.cpp:1907`, `natorch.cpp:2534-2581` |
+| NatOrch → NAT_POOL (APPL_DB 経由) | `doDnatPoolTableTask()` — `m_dnatPoolEntries` | `APP_NAT_DNAT_POOL_TABLE` (APPL_DB) | `NAT_DNAT_POOL_TABLE\|<ip>` | NAT_POOL の各 IP が APPL_DB に DNAT pool エントリとして書き込まれ、NatOrch が SAI `SAI_NAT_TYPE_DESTINATION_NAT_POOL` エントリを作成する。`enableNatFeature()` 内で `addAllDnatPoolEntries()` として一括適用される | `natorch.cpp:2968-3031`, `natorch.cpp:1854-1864`, `natorch.cpp:2576` |
+| NAT_BINDINGS → NAT_POOL (YANG leafref) | `nat_pool` フィールド | `NAT_POOL` | `NAT_POOL\|<name>` | YANG バリデーション強制参照整合性。`nat_pool` に指定した名前が `NAT_POOL` に存在しなければ YANG レベルで拒否される | `sonic-nat.yang:271` |
+| NAT_BINDINGS → ACL_TABLE | `access_list` フィールド → ACL 名 | `ACL_TABLE` | `ACL_TABLE\|<table_id>` | `access_list` に指定した ACL が `type=L3, stage=INGRESS` で未登録の場合、iptables SNAT ルールがスキップされる。ACL 登録後に `doNatAclTableTask()` が自動再評価 | `natmgr.cpp:7750-7900`, `natmgrd.cpp:119` |
+| NAT_BINDINGS → ACL_RULE | `access_list` フィールド → ACL ルール | `ACL_RULE` | `ACL_RULE\|<table_id>\|<rule_id>` | ACL_RULE の追加・削除が NAT binding の iptables MASQUERADE / SNAT ルールを再評価・更新する | `natmgr.cpp:doNatAclRuleTask()`, `natmgrd.cpp:120` |
+| NatOrch → RouteOrch (BRCM 専用) | `addHwDnatEntry()` — `m_routeOrch->attach()` | RouteOrch (SUBJECT_TYPE_NEXTHOP_CHANGE) | — | DNAT エントリ追加時に translated IP の next-hop 変化を subscribe。BRCM プラットフォームのみ有効 | `natorch.cpp:414,458,504,591`, `natorch.cpp:144-148` |
+| NatOrch → NeighOrch (BRCM 専用) | `enableNatFeature()` — `m_neighOrch->attach()` | NeighOrch (SUBJECT_TYPE_NEIGH_CHANGE) | — | NAT 有効化時に全 neighbor の ARP 解決状態を subscribe し、DNAT translated IP の SAI エントリを neighbor 解決タイミングで差し替える | `natorch.cpp:2573,2610`, `natorch.cpp:259-302` |
+
+### 解決タイミング
+
+- **NAT_GLOBAL `admin_mode` 依存**: `doNatGlobalTableTask()` が `APP_NAT_GLOBAL_TABLE` の `admin_mode=enabled` を検出して `enableNatFeature()` → `addAllNatEntries()` を呼ぶ。有効化前に受信した NAT エントリはキャッシュ (`m_natEntries`) に積まれ、有効化後に一括 SAI 投入される。
+- **NAT_POOL (DNAT pool) 依存**: `doDnatPoolTableTask()` が APPL_DB の `APP_NAT_DNAT_POOL_TABLE` を購読し、pool IP ごとに即時 SAI エントリ作成。`enableNatFeature()` 内で `addAllDnatPoolEntries()` として未投入分を一括追加。
+- **ACL_TABLE / ACL_RULE 依存**: `doNatAclTableTask()` / `doNatAclRuleTask()` が CONFIG_DB の変化を購読。ACL の登録・削除のたびに iptables SNAT ルールを再評価。未解決の ACL 名は次回 ACL 登録時に自動補完される。
+- **RouteOrch / NeighOrch observer (BRCM 専用)**: `gNhTrackingSupported == true` のときのみ有効。DNAT translated IP の next-hop / neighbor 解決状態に応じてリアルタイムに SAI DNAT エントリを差し替える。非 BRCM 環境では経路変更時に stale エントリになるリスクあり。
+<!-- /cross-refs -->
