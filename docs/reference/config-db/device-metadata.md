@@ -1023,7 +1023,51 @@ evidence: `sonic-swss/fpmsyncd/fpmsyncd.cpp:260-304`; `sonic-swss/fpmsyncd/route
 | `hostname` / `timezone` / `syslog_with_osversion` | Linux ファイルシステム・systemd のみ |
 | その他全フィールド | なし（起動時読み取り専用; コンテナ再起動が必要） |
 
-<!-- 証跡: sonic-swss/cfgmgr/buffermgr.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/fpmsyncd/fpmsyncd.cpp, sonic-swss/fpmsyncd/routesync.cpp, sonic-host-services/scripts/hostcfgd -->
+### SwitchOrch 起動時副次書込 (`switch_type` / `switch_id` / `subtype` 読み出し経由)
+
+`switch_type`・`switch_id`・`subtype` はランタイム consumer イベントとして届くのではなく、orchagent 起動時に一括読み出しされる。その結果 `SwitchOrch` コンストラクタが以下の STATE_DB 書込を行う。
+
+#### STATE_DB / `SWITCH_CAPABILITY`
+
+`set_switch_capability()` (switchorch.cpp:1864–1867) が `STATE_DB:SWITCH_CAPABILITY` テーブルに複数のケーパビリティフラグを書き込む:
+
+| 書込フィールド | 値の候補 | evidence |
+|--------------|---------|---------|
+| `PFC_DLR_INIT_CAPABLE` | "true" / "false" | switchorch.cpp:137,143 |
+| `ASIC_SDK_HEALTH_EVENT` | "true" / "false" | switchorch.cpp:231,246 |
+| `REG_FATAL/WARNING/NOTICE_ASIC_SDK_HEALTH_CATEGORY` | "true" / "false" | switchorch.cpp:266,271 |
+| `ORDERED_ECMP_CAPABLE` | "true" / "false" | switchorch.cpp:491,501 |
+| `PORT_EGRESS_SAMPLE_CAPABLE` | "true" / "false" | switchorch.cpp:1886,1892 |
+| `PORT_INGRESS_MIRROR_CAPABLE` / `PORT_EGRESS_MIRROR_CAPABLE` | "true" / "false" | switchorch.cpp:1915,1939 |
+| `PORT_TPID_CAPABLE` / `LAG_TPID_CAPABLE` | "true" / "false" | switchorch.cpp:1975,1995 |
+| `ICMP_OFFLOAD_CAPABLE` | "true" / "false" | switchorch.cpp:2056,2061 |
+| `FAST_LINKUP_CAPABLE` | "true" / "false" | switchorch.cpp:2107,2145 |
+
+`switch_type = fabric` のとき orchagent は `SAI_SWITCH_ATTR_TYPE = SAI_SWITCH_TYPE_FABRIC` で SAI create_switch し、一部ケーパビリティが無効となる (main.cpp:740–770)。
+
+#### STATE_DB / `ASIC_TEMPERATURE_INFO` (タイマー駆動)
+
+SwitchOrch は `ASIC_SENSORS_POLL_TIMER` で `m_asicSensorsTable->set("", values)` を定期呼び出しする。`m_asicSensorsTable` は `STATE_DB:ASIC_TEMPERATURE_INFO` (schema.h:138, switchorch.cpp:1728,1746,1770,1841,1853,1860)。
+
+#### STATE_DB / `ASIC_SDK_HEALTH_EVENT_TABLE` (SAI イベント駆動)
+
+SAI から ASIC SDK health event が通知されたとき `onSwitchAsicSdkHealthEvent()` が `m_asicSdkHealthEventTable->set(timestamp, values)` を呼び出す (switchorch.cpp:1661)。テーブル名は `ASIC_SDK_HEALTH_EVENT_TABLE` (schema.h:507)。
+
+#### ASIC_DB / SAI switch attributes (APPL_DB `SWITCH_TABLE` 経由)
+
+SwitchOrch は APPL_DB `SWITCH_TABLE` を consumer とし、`sai_switch_api->set_switch_attribute(gSwitchId, &attr)` で ASIC_DB に書き込む (switchorch.cpp:722)。`switch_type = voq` 時は起動スクリプトが `SWITCH_TABLE` に `ecmp_hash_seed`/`lag_hash_seed` を書き込み、それが SAI 書込につながる:
+
+| APPL_DB `SWITCH_TABLE` フィールド | SAI 属性 |
+|----------------------------------|---------|
+| `ecmp_hash_seed` | `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_SEED` |
+| `lag_hash_seed` | `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_SEED` |
+| `fdb_aging_time` | `SAI_SWITCH_ATTR_FDB_AGING_TIME` |
+| `vxlan_port` | `SAI_SWITCH_ATTR_VXLAN_DEFAULT_PORT` |
+| `vxlan_router_mac` | `SAI_SWITCH_ATTR_VXLAN_DEFAULT_ROUTER_MAC` |
+
+evidence: `sonic-swss/orchagent/switchorch.cpp:44-54,722,1661,1728,1866`; `sonic-swss/orchagent/orchdaemon.cpp:196`
+
+<!-- 証跡: sonic-swss/cfgmgr/buffermgr.cpp, sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/fpmsyncd/fpmsyncd.cpp, sonic-swss/fpmsyncd/routesync.cpp, sonic-host-services/scripts/hostcfgd, sonic-swss/orchagent/switchorch.cpp -->
 <!-- /side-effects -->
 
 <!-- glossary-links-injected: e22e287b939b -->
