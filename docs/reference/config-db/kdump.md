@@ -202,4 +202,34 @@ show kdump config
 - `hostcfgd` の kdump ハンドラが kernel crashkernel 設定と同期
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数
+
+ソース: `sonic-utilities/scripts/sonic-kdump-config`
+
+| 定数 | 値 | 説明 |
+|------|----|------|
+| `DEFAULT_MEMORY` | `"0M-2G:256M,2G-4G:320M,4G-8G:384M,8G-:448M"` | `memory` フィールドのフォールバック値。DB 未設定時に `get_kdump_memory()` が返す |
+| `DEFAULT_NUM_DUMPS` | `3` | `num_dumps` フィールドのフォールバック値。DB 未設定時に `get_kdump_num_dumps()` が返す |
+| `DEFAULT_ENABLED` | `false` | `enabled` のデフォルト。`get_kdump_administrative_mode()` は DB 未設定時 `False` を返す |
+| `DEFAULT_REMOTE` | `false` | `remote` のデフォルト。`get_kdump_remote()` は DB 未設定時 `False` を返す |
+| `NUM_DUMPS_RANGE` | `1..9` | YANG `uint8` range 制約。CLI / NETCONF 経由時のみ適用 |
+
+### enabled / remote の enum 値
+
+`enabled` と `remote` はどちらも boolean だが、DB 格納形式は文字列 `"true"` / `"false"`。
+判定コードは `value.lower() == 'true'` で大文字小文字を無視する。
+
+### memory フォールバック書式
+
+```
+0M-2G:256M,2G-4G:320M,4G-8G:384M,8G-:448M
+```
+
+- RAM 0〜2 GB → crashkernel 256 MB 確保
+- RAM 2〜4 GB → 320 MB
+- RAM 4〜8 GB → 384 MB
+- RAM 8 GB 超 → 448 MB
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
