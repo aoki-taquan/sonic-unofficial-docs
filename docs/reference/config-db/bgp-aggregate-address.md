@@ -192,6 +192,70 @@ vtysh -c 'show bgp ipv4 unicast'
 **副作用**: 集約ルートが FRR から BGP ピアに広告される。`summary-only` フラグ有無によりより細かいプレフィクスの withdraw が起こる。
 <!-- /runtime-trace -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+`BGP_AGGREGATE_ADDRESS` テーブルは CONFIG_DB → bgpcfgd → FRR vtysh の経路をとる。APPL_DB / SAI への中継は無く、STATE_DB は bgpcfgd 自身が `swsscommon.Table` で直接書き込む。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → bgpcfgd | `SubscriberStateTable` | `__keyspace@{config_db_id}__:BGP_AGGREGATE_ADDRESS\|*` |
+| bgpcfgd → STATE_DB | `swsscommon.Table` (HSET 直接) | `BGP_AGGREGATE_ADDRESS\|<prefix>` (`state=active/inactive`) |
+| bgpcfgd → FRR | vtysh コマンド発行 | `aggregate-address <prefix> [summary-only] [as-set]` |
+| BGP_BBR.status → bgpcfgd | `directory.subscribe()` (in-process callback) | `on_bbr_change()` |
+
+### SubscriberStateTable の動作
+
+`Runner.add_manager()` (`runner.py:31-52`) は `AggregateAddressMgr` 登録時に `SubscriberStateTable(conn, "BGP_AGGREGATE_ADDRESS")` を生成し、`PSUBSCRIBE __keyspace@<config_db_id>__:BGP_AGGREGATE_ADDRESS|*` を発行する。コンストラクタは PSUBSCRIBE 後に `m_table.getKeys()` で既存エントリを `SET` イベントとして再生し、bgpcfgd 起動前に書かれたエントリも取りこぼさない。
+
+### select() ループと handler dispatch
+
+`Runner.run()` (`runner.py:54-73`) は `swsscommon.Select` を `SELECT_TIMEOUT=1000ms` で回す。イベント到着時、全 subscriber を `pop()` で key=None までドレインし、登録済 callback (`Manager.handler`) を呼び出す。ドレイン完了後 `cfg_manager.commit()` で FRR vtysh へバッチ発行する。
+
+`Manager.handler()` (`manager.py:34-53`) は op で分岐する:
+
+1. `SET` かつ全依存 (`DEVICE_METADATA.localhost/bgp_asn`) 解決済 → `AggregateAddressMgr.set_handler()` 即時実行
+2. `SET` かつ依存未解決 → `set_queue` に積み、`on_deps_change()` で再試行
+3. `DEL` → `AggregateAddressMgr.del_handler()` 直接呼出
+
+### BGP_BBR との横方向連携
+
+`AggregateAddressMgr.__init__` (`managers_aggregate_address.py:41`) で `directory.subscribe([(CONFIG_DB, BGP_BBR, status)], self.on_bbr_change)` を登録する。BGP_BBR の `status` が `enabled` / `disabled` に切り替わると、STATE_DB から `bbr-required=true` の全エントリを読み出して FRR への再投入 / 削除を実施する (keyspace ではなく bgpcfgd in-process `directory` 経由)。
+
+### retry メカニズム
+
+`bgp_asn` 未設定で `set_handler` を即実行できない場合は `set_queue` に積まれ、`DEVICE_METADATA.localhost/bgp_asn` の到着時に `on_deps_change()` が再試行する。`set_handler` 自体は常に `True` を返すため、検証失敗・FRR push 失敗は再試行されず `state=inactive` を STATE_DB に書いて沈黙する (recoverable retry なし)。
+
+### データフロー図
+
+```
+CONFIG_DB[BGP_AGGREGATE_ADDRESS|<prefix>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:BGP_AGGREGATE_ADDRESS|*
+bgpcfgd Runner select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ subscriber.pop() → callback dispatch
+  ↓ Manager.handler(key, op, data)
+  ↓   [op==SET] → 依存 (bgp_asn) ガード → AggregateAddressMgr.set_handler()
+  ↓   [op==DEL] → AggregateAddressMgr.del_handler()
+  ↓
+  ├─→ STATE_DB[BGP_AGGREGATE_ADDRESS|<prefix>] state=active/inactive (swsscommon.Table)
+  └─→ cfg_mgr.push("aggregate-address <prefix> [summary-only] [as-set]")
+       ↓ Runner.run() 末尾の cfg_manager.commit()
+       ↓ vtysh -c ...
+      FRR bgpd (BGP UPDATE 経由で peer に集約広告)
+
+APPL_DB 書き込み: なし (FRR 経由で APPL_DB ROUTE_TABLE に副次反映)
+ASIC_DB 書き込み: なし (RouteOrch 経由で間接反映)
+NotificationConsumer: なし
+```
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_aggregate_address.py:23-44 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/runner.py:31-73 -->
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/manager.py:34-64 -->
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
