@@ -284,3 +284,51 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 ### ランタイム注入 (デーモン自動書き込み)
 - なし (chassisd は CONFIG_DB を読むのみ。STATE_DB への書き込みは行うが CONFIG_DB は書き込まない)
 <!-- /entry-points -->
+
+<!-- constants -->
+## ハードコード定数
+
+### admin_status enum 値
+
+`admin_status` フィールドが取りうる文字列値は YANG スキーマおよびコードで固定されている。
+
+| 値 | 意味 | 定義箇所 |
+|----|------|----------|
+| `"up"` | モジュール稼働許可（管理 UP） | `sonic-chassis-module.yang`、chassisd:1219 |
+| `"down"` | モジュール管理停止（管理 DOWN） | `sonic-chassis-module.yang`、chassisd:1222 |
+
+chassisd 内部では整数定数に変換して platform API へ渡す:
+
+| 定数 | 値 | 定義箇所 | 対応 admin_status |
+|------|----|----------|-------------------|
+| `MODULE_ADMIN_DOWN` | `0` | chassisd:103 | `"down"` |
+| `MODULE_ADMIN_UP` | `1` | chassisd:104 | `"up"` |
+
+### type enum (module name prefix)
+
+`CHASSIS_MODULE` key は以下の prefix で始まる。chassisd の入力バリデーション (`key.startswith(...)`) で使用される。
+
+| 定数 | 値 | 定義箇所 |
+|------|----|----------|
+| `ModuleBase.MODULE_TYPE_SUPERVISOR` | `"SUPERVISOR"` | module_base.py:34 |
+| `ModuleBase.MODULE_TYPE_LINE` | `"LINE-CARD"` | module_base.py:35 |
+| `ModuleBase.MODULE_TYPE_FABRIC` | `"FABRIC-CARD"` | module_base.py:36 |
+| `ModuleBase.MODULE_TYPE_DPU` | `"DPU"` | module_base.py:37 |
+
+!!! note "YANG-実装 discrepancy"
+    YANG key パターンは `LINE-CARD[0-9]+|FABRIC-CARD[0-9]+|DPU[0-9]+` のみ許可するが、CLI は `SUPERVISOR` prefix も受け付ける。
+
+### タイムアウト・操作定数
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|----|----------|------|
+| `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` 秒 | chassisd:89 | STATE_DB 更新間隔（poll ベース）|
+| `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD` | `30` 分 | chassisd:90 | モジュール down 後の chassis app DB クリーンアップ遅延 |
+| `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | chassisd:81 | `platform_env.conf` 未設定時のラインカードリブートタイムアウト |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | chassisd:82 | `platform.json` 未設定時の DPU ミッドプレーン再接続タイムアウト |
+| `MAX_DPU_REBOOT_DURATION` | `800` 秒 | chassisd:83 | DPU reboot cause の同一 reboot 判定窓（変更不可のハードコード固定値）|
+| `MODULE_ADMIN_DOWN` | `0` | chassisd:103 | `"down"` を platform API に渡す整数値 |
+| `MODULE_ADMIN_UP` | `1` | chassisd:104 | `"up"` を platform API に渡す整数値 |
+
+> **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:81-104`; `sonic-platform-common` `sonic_platform_base/module_base.py:34-57`
+<!-- /constants -->
