@@ -106,6 +106,45 @@ vlanmgr.cpp:672 は CONFIG_DB の raw フィールド列をそのまま APP_DB �
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`vlanmgrd` (`sonic-swss/cfgmgr/vlanmgr.cpp`) および `orchagent/PortsOrch` (`sonic-swss/orchagent/portsorch.cpp`) が強制する順序制約。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 違反時挙動 |
+|---|----------|------|-----------|
+| 1 | `VLAN` SET 完了 → `VLAN_MEMBER` SET (STATE_VLAN_TABLE ready 待ち) | **強制先行** | 自動リトライ待機（エラーなし） |
+| 2 | `PORT` STATE_DB ready → `VLAN_MEMBER` SET（物理ポート） | **強制先行** | 自動リトライ待機（エラーなし） |
+| 3 | `PORTCHANNEL` STATE_DB ready → `VLAN_MEMBER` SET（LAG） | **強制先行** | 自動リトライ待機（エラーなし） |
+| 4 | `VLAN_MEMBER` DEL 完了 → `VLAN` DEL | **必須（逆順 NG）** | VLAN_MEMBER が孤立・保留永続 |
+| 5 | `INTERFACE` (L3) と `VLAN_MEMBER` は同一 port で排他 | 双方向排他 | `addBridgePort` 拒否、追加不可 |
+
+### 主要な制約詳細
+
+**VLAN 先行必須 (依存 #1)**: `VLAN_MEMBER|Vlan<N>|<port>` の SET 前に `VLAN|Vlan<N>` が vlanmgrd に処理され STATE_DB `VLAN_TABLE|Vlan<N>` に `state=ok` が立っていること。`isVlanStateOk()` (vlanmgr.cpp:517-531) が false の間、該当 VLAN_MEMBER タスクは `it++` で保留される（`SWSS_LOG_DEBUG("%s not ready, delaying")`）。APPL_DB には書かれず外部から無反応に見える（evidence: vlanmgr.cpp:517-531, 641-647）。
+
+**PORT/PORTCHANNEL 先行必須 (依存 #2/3)**: `isMemberStateOk()` (vlanmgr.cpp:491-514) が確認する内容: 物理ポートは `STATE_PORT_TABLE|<port>` エントリの存在かつ `state` フィールドが存在すること、PortChannel は `STATE_LAG_TABLE|<lag>` エントリの存在。portmgrd / lagmgrd が ready を書くまで VLAN_MEMBER は保留（evidence: vlanmgr.cpp:491-514, 641-647）。
+
+**SAI vlan_member 生成順序 (portsorch)**: `portsorch::doVlanMemberTask()` は APPL_DB `VLAN_MEMBER_TABLE` を受けて `addBridgePort(port) && addVlanMember(vlan, port, tagging_mode)` の短絡評価で処理する。bridge port 作成成功後に `sai_vlan_api->create_vlan_member()` が呼ばれる（SAI 属性順: `SAI_VLAN_MEMBER_ATTR_VLAN_ID` → `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID` → `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE`）。その前に `getPort(vlan_alias)` と `getPort(port_alias)` で VLAN・PORT が `m_portList` に存在することを確認しており、未登録なら `it++` 保留（evidence: portsorch.cpp:5895-5940, 7531-7553）。
+
+**DEL 逆順必須 (依存 #4)**: `doVlanTask()` DEL (vlanmgr.cpp:456-471) は VLAN_MEMBER の残存チェックを行わずに `m_stateVlanTable.del()` を即実行する。VLAN を先に DEL すると STATE_DB から `Vlan<N>` が消え、残存 VLAN_MEMBER は `isVlanStateOk()` が永遠に false になり孤立保留状態となる。削除は `VLAN_MEMBER` → `VLAN` の順が必須。portsorch 側の DEL は VLAN_MEMBER 削除後に `bridge port ref_count == 0` であれば `removeBridgePort()` を実行する（VLAN_MEMBER 先・bridge port 後の逆順、evidence: portsorch.cpp:5949-5958）。
+
+### 推奨書込み順序（cold boot）
+
+```
+# 1. DEVICE_METADATA.localhost.mac  （gMacAddress 確定 — vlanmgr.cpp:318-322）
+# 2. PORT|EthernetN                 （portmgrd → STATE_DB.PORT_TABLE state=ok）
+# 3. PORTCHANNEL + PORTCHANNEL_MEMBER（任意）（lagmgrd → STATE_DB.LAG_TABLE）
+# 4. VLAN|VlanN                     （vlanmgrd → STATE_DB.VLAN_TABLE state=ok）
+# 5. VLAN_MEMBER|VlanN|EthernetN   （vlanmgrd → APPL_DB → portsorch → SAI create_vlan_member）
+```
+
+削除は逆順: `VLAN_MEMBER` → `VLAN` → `PORT`。
+
+<!-- /ordering -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
