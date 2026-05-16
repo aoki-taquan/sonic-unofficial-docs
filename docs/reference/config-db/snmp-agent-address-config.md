@@ -301,4 +301,48 @@ CLI は `netifaces.interfaces()` で agentip が実際にホスト NIC に付与
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `snmpd.conf.j2` テンプレートが読む関連 CONFIG_DB テーブル (Phase C)
+
+`SNMP_AGENT_ADDRESS_CONFIG` は `hostcfgd` を経由せず、`docker-snmp` コンテナの Jinja2 テンプレート (`dockers/docker-snmp/snmpd.conf.j2`) が CONFIG_DB を直接読んで `snmpd.conf` を一括生成する。テンプレートは同一レンダリング呼び出し内で以下のテーブルも参照するため、`SNMP_AGENT_ADDRESS_CONFIG` の変更だけでなく隣接テーブルの状態も snmpd の最終的な動作に影響する。
+
+### テンプレートが同時に読む関連テーブル
+
+| テーブル | 参照箇所 (snmpd.conf.j2) | 用途 | evidence |
+|---|---|---|---|
+| [`SNMP`](snmp.md) | L88-97 (`SNMP.LOCATION` / `SNMP.CONTACT`) | `sysLocation` / `sysContact` ディレクティブ生成 | `snmpd.conf.j2:88-97` |
+| `SNMP_COMMUNITY` | L48-64 (`SNMP_COMMUNITY[c]['TYPE']`) | `rocommunity` / `rwcommunity` / `rocommunity6` / `rwcommunity6` 行生成 | `snmpd.conf.j2:48-64` |
+| `SNMP_USER` | L66-77 (`SNMP_USER[u]['SNMP_USER_PERMISSION']` 等) | `rouser` / `rwuser` / `CreateUser` 行生成 | `snmpd.conf.j2:66-77` |
+| `SNMP_TRAP_CONFIG` | L145-173 (`v1TrapDest` / `v2TrapDest` / `v3TrapDest`) | `trapsink` / `trap2sink` / `informsink` 行生成 | `snmpd.conf.j2:145-173` |
+
+> これら 4 テーブルのいずれかが変化しても `docker restart snmp` を実行しなければ snmpd.conf は更新されない。`SNMP_AGENT_ADDRESS_CONFIG` だけ変えても snmpd 再起動で他テーブルの最新値も同時に反映される（一括レンダリング）。
+
+### CLI (`config snmp agentaddress add`) の暗黙読み出し
+
+CLI は CONFIG_DB 書き込み前に以下を参照し、条件不成立の場合は書き込みを拒否する。
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_VRF_CONFIG`](mgmt-vrf-config.md) | `add` 実行時 | `vrf_global.mgmtVrfEnabled == 'true'` のとき `-v` 省略を CLI 層で拒否 | `config/main.py:4153-4157` |
+
+> `MGMT_VRF_CONFIG` は DB レベルで `SNMP_AGENT_ADDRESS_CONFIG` とキー結合しないが、CLI 経由の書き込みパスでは実質的な前提条件となる。直接 `sonic-db-cli` で書き込む場合はこのチェックが働かない。
+
+### minigraph 経由の暗黙依存
+
+`sonic-cfggen -m <minigraph>` による自動生成では、以下テーブルを先に解析したうえで `SNMP_AGENT_ADDRESS_CONFIG` を生成する。
+
+| テーブル | 参照箇所 (minigraph.py) | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | L2314 (`mgmt_intf.keys()`) | 管理 IP アドレスを `SNMP_AGENT_ADDRESS_CONFIG` の key に自動展開 | `minigraph.py:2308-2322` |
+| `LOOPBACK_INTERFACE` | L2314 (`lo_intfs.keys()`) | Loopback0 IP を同様に key へ自動展開 | `minigraph.py:2314` |
+
+multi-asic 環境 (`is_multi_asic() == True`) では両テーブルを解析せず空辞書を生成し、`SNMP_AGENT_ADDRESS_CONFIG` エントリは自動生成されない (`minigraph.py:2323-2324`)。
+
+### hostcfgd は非購読 (確認済み)
+
+`sonic-host-services/scripts/hostcfgd` を `SNMP_AGENT_ADDRESS` でフルテキスト検索した結果 0 件。`docker-snmp` は hostcfgd の subscribe/callback フローを使わず、テンプレート直接レンダリング方式を採る。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/snmp-agent-address-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 59acbdd0f2b6 -->
