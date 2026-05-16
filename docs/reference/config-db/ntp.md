@@ -293,6 +293,64 @@ DEL の逆順序: `NTP_SERVER` の `key` フィールドをクリアまたは `N
 > 中間調査詳細: `meta/_intermediate/cdb-flow/ntp-ordering.md`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `NtpCfg` / テンプレートが読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`hostcfgd` の `NtpCfg` ハンドラおよびテンプレート (`chrony.conf.j2`・`chronyd-starter.sh`) は、`NTP` / `NTP_SERVER` / `NTP_KEY` 以外の以下のテーブルを暗黙的に参照する。
+
+### MGMT_VRF_CONFIG — VRF 選択ランタイム読み出し
+
+`chronyd-starter.sh` はサービス起動時に `sonic-db-cli` 経由で CONFIG_DB を直接読み出す。
+
+| テーブル | 参照フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|---|
+| `MGMT_VRF_CONFIG` | `vrf_global.mgmtVrfEnabled` | chrony サービス起動時 (ExecStartPre) | `"true"` ならば `NTP\|global.vrf` に応じて VRF を選択。`"false"` なら常に default VRF で起動 | `chronyd-starter.sh:3-16` |
+
+`hostcfgd` は `MGMT_VRF_CONFIG` 変更を `mgmt_vrf_handler` で購読し、`MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl stop chrony` → `systemctl start chrony` を発火する (hostcfgd:2352,2496,1655-1669)。NTP 設定変更がなくても管理 VRF 切替で chrony が再起動されるため、**`MGMT_VRF_CONFIG` は NTP に対して間接的な制御テーブルとして機能する**。
+
+> 依存方向の注意: `NTP.vrf=mgmt` は `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` が先行している状態でのみ YANG `must` を通過できる (sonic-ntp.yang:127-129)。逆に `mgmtVrfEnabled` を `false` に戻す前に `NTP.vrf` を `default` に戻さないと、`chronyd-starter.sh` が mgmt VRF で起動を試みてサービス障害になる（書込み順依存は Phase B `<!-- ordering -->` 参照）。
+
+### MGMT_INTERFACE — src_intf=eth0 時の IP アドレス解決
+
+`chrony.conf.j2` は `NTP.src_intf` が `eth0` のとき、`MGMT_INTERFACE` テーブルから IPv4/IPv6 アドレスを解決して `bindacqaddress` ディレクティブを生成する (chrony.conf.j2:91-92)。
+
+`init_cfg.json.j2` はデフォルトで `NTP.src_intf = "eth0"` を注入するため、**標準構成では常に `MGMT_INTERFACE` が参照される**。`eth0` 以外のインタフェース (`Ethernet*` / `Loopback*` / `PortChannel*` / `Vlan*`) が `src_intf` に設定された場合は対応するインタフェーステーブルが参照される（詳細は `NTP.src_intf` — YANG 任意、init_cfg が `"eth0"` を注入 参照）。
+
+| テーブル | 参照タイミング | 用途 | evidence |
+|---|---|---|---|
+| [`MGMT_INTERFACE`](mgmt-interface.md) | `chrony.conf.j2` テンプレート生成時 | `src_intf=eth0` 時の IPv4/IPv6 アドレスを `bindacqaddress` に変換 | `chrony.conf.j2:91-92` |
+
+`hostcfgd` の `mgmt_intf_handler` (hostcfgd:2345-2351) は `MGMT_INTERFACE` 変更を購読するが、コールバック先は `AaaCfg` の RADIUS IP 更新と `MgmtIfaceCfg.update_mgmt_iface()` のみで、`NtpCfg` への直接コールバックはない。`eth0` の IP が変化した場合、次回 NTP 関連の変更で chrony が再起動されるまで `bindacqaddress` の IP は古い値のまま残る。
+
+### DEVICE_METADATA — SmartSwitch 条件分岐
+
+`chrony.conf.j2` は先頭 (L15-16) で `DEVICE_METADATA.localhost` を読み込み、`subtype` / `type` フィールドを SmartSwitch 判定に使用する。
+
+```jinja2
+{% set device_metadata = (DEVICE_METADATA | d({})).get('localhost', {}) -%}
+...
+{% if device_metadata.subtype == 'SmartSwitch' and device_metadata.type != 'SmartSwitchDPU' -%}
+{% if global.server_role == 'enabled' or global.dhcp == 'enabled' -%}
+allow
+binddevice bridge-midplane
+{% endif -%}
+{% endif -%}
+```
+
+| テーブル | 参照フィールド | 用途 | evidence |
+|---|---|---|---|
+| [`DEVICE_METADATA`](device-metadata.md) | `localhost.subtype` / `localhost.type` | SmartSwitch 判定。`subtype=SmartSwitch` かつ `type!=SmartSwitchDPU` のときのみ `NTP.server_role` / `NTP.dhcp` を参照して `allow` + `binddevice bridge-midplane` を生成 | `chrony.conf.j2:15-16,57-63` |
+
+**非 SmartSwitch では `DEVICE_METADATA` の内容に関わらず NTP 動作に影響しない**（条件分岐を通過しないため）。また `hostcfgd` の `device_metadata_handler` (hostcfgd:2404-2408) は hostname / timezone / rsyslog のみ更新し、`NtpCfg` へのコールバックはない。`DEVICE_METADATA.subtype` が変化しても次回 chrony 再起動まで `chrony.conf` は更新されない。
+
+### 範囲外（隣接テーブルだが NtpCfg 参照経路に含まれないもの）
+
+- `LOOPBACK_INTERFACE`: `lpbk_handler` (hostcfgd:2357-2365) が `NtpCfg.handle_ntp_source_intf_chg()` を呼び出す。これは `src_intf` に一致する Loopback が変化した場合のみ chrony 再起動をトリガーする。`NtpCfg` が `LOOPBACK_INTERFACE` の内容を読み取る経路はなく、トリガー専用。
+- `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE`: `src_intf` にこれらが設定された場合は `chrony.conf.j2` の `get_ip_on_interface` が参照するが、`hostcfgd` の NTP ハンドラからのコールバックはない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ntp-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
