@@ -300,4 +300,39 @@ db_migrator.py での SWITCH_TRIMMING マイグレーションなし
 なし
 <!-- /entry-points -->
 
+<!-- ordering -->
+## 書込み順序依存 (Phase B)
+
+<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-ordering.md -->
+
+`SwitchOrch::doCfgSwitchTrimmingTableTask()` (`sonic-swss/orchagent/switchorch.cpp`) と
+`SwitchTrimmingCapabilities` (`orchagent/switch/trimming/capabilities.cpp`) の実装から導出した順序制約。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|---|---|---|
+| 1 | SAI スイッチオブジェクト初期化 (`gSwitchId` 確立) → `SWITCH_TRIMMING\|GLOBAL` SET | **先行必須** (SwitchOrch コンストラクタで capability クエリが即実行される) | orchagent が SAI 初期化を完了してから CONFIG_DB に書き込む; 起動前書き込みはリプレイで問題なし |
+| 2 | `dscp_value=from-tc` + `tc_value` の同時設定 | **推奨同時** (中間状態では TC が前回 SAI 値を保持) | 同一 `hset` / `sonic-db-cli` コールで両フィールドを渡す |
+| 3 | `dscp_value=from-tc` と `queue_index=dynamic` の併用回避 | **設計上の注意** (導出元が循環し得るため非推奨) | どちらか一方のみを動的モードにする |
+| 4 | `SWITCH_TRIMMING\|GLOBAL` DEL は不可 | **禁止** (`operation is not supported` を返し `return false`) | 削除が必要な場合は orchagent 再起動後に再設定 |
+
+### 主要な制約詳細
+
+**SAI 初期化先行必須 (依存 #1)**:
+`SwitchOrch` コンストラクタ (`orchdaemon.cpp L213`) が実行される時点で
+`SwitchTrimmingCapabilities` メンバー変数のコンストラクタ (`capabilities.cpp L142–146`) が
+`queryCapabilities()` を呼び出し、`sai_switch_api->query_attribute_capability(gSwitchId, ...)` で
+各属性の SAI サポート有無を確認する。結果が `trimCap` に格納され以降の全 SET 処理のフィルタとして機能する。
+orchagent 起動前に CONFIG_DB に書き込んでも、orchagent 起動後に capability クエリ完了 → CONFIG_DB
+リプレイという順序で処理されるため問題なし。
+
+**`dscp_value` + `tc_value` の同時設定 (依存 #2)**:
+SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で一括評価するため、
+`from-tc` モードで `tc_value` が欠落した状態で SET が届くと SAI の TC 属性が前回値を保持したままになる。
+中間状態の影響を避けるため 2 フィールドを同一トランザクションで書くことを推奨する
+(`switchorch.cpp L1168–1207` で `tc.is_set` チェック)。
+
+<!-- /ordering -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
