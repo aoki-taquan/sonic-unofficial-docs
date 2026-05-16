@@ -183,6 +183,73 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 
 ---
 
+<!-- ordering -->
+## 書込み順・タイミング依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/portsorch.cpp, sonic-swss/orchagent/debugcounterorch.cpp,
+     sonic-swss/orchagent/flexcounterorch.cpp, sonic-swss/orchagent/orchdaemon.cpp -->
+
+### 1. false 先書き → SAI 問い合わせ → true 更新（自己完結型）
+
+`PortsOrch::initCounterCapabilities()` は **単一コンストラクタ呼び出し内** で 2 フェーズに分けて STATE_DB を更新する[^7]。
+
+1. 全 WRED フィールドを `isSupported="false"` で先書き (portsorch.cpp:1872-1879)
+2. `sai_query_stats_capability()` 成功後、サポートされる enum ごとに `isSupported="true"` に上書き (portsorch.cpp:1892-1968)
+
+| タイミング | PORT_COUNTER_CAPABILITIES | QUEUE_COUNTER_CAPABILITIES |
+|-----------|--------------------------|---------------------------|
+| コンストラクタ開始直後 | 全フィールド `"false"` | 全フィールド `"false"` |
+| SAI 問い合わせ成功後 | サポート済みフィールドのみ `"true"` | サポート済みフィールドのみ `"true"` |
+| SAI 問い合わせ失敗時 | 全フィールド `"false"` のまま | 全フィールド `"false"` のまま |
+
+!!! note "一時的な false 観測"
+    portsorch 初期化完了前に portstat 等が STATE_DB を参照すると全フィールドが `"false"` の中間状態を観測することがある。portstat はカウンタをポーリング対象から除外するだけでエラーを出さない。
+
+### 2. portsorch → debugcounterorch の書き込み順保証
+
+orchdaemon が STATE_DB への書き込み順序を確定的に決定する[^8]。
+
+```
+orchdaemon.cpp:232  gPortsOrch = new PortsOrch(...)
+                      └─ portsorch.cpp:1107 initCounterCapabilities()
+                           → PORT_COUNTER_CAPABILITIES / QUEUE_COUNTER_CAPABILITIES 書き込み
+orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
+                      └─ debugcounterorch.cpp:37 publishDropCounterCapabilities()
+                           → DEBUG_COUNTER_CAPABILITIES 書き込み
+```
+
+`DebugCounterOrch` コンストラクタ内で `gPortsOrch->attach(this)` が呼ばれるのは `publishDropCounterCapabilities()` の**後**であり、DEBUG_COUNTER_CAPABILITIES 書き込みは PORT_COUNTER_CAPABILITIES 完了後に来ることが orchdaemon 構造上保証される。
+
+### 3. warm-reboot 時の flexcounterorch 60 秒遅延は STATE_DB に無影響
+
+- `FlexCounterOrch` は warm-reboot 時に `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマーを起動し、`doTask()` を遅延させる (flexcounterorch.cpp:44, 127-137)。
+- この遅延は **FLEX_COUNTER_DB へのカウンタポーリング登録**を遅らせるためのものであり、`STATE_DB / *_COUNTER_CAPABILITIES` の書き込みには影響しない。
+- `FlexCounterOrch::bake()` は warm-reboot reconcile フェーズで意図的に何もしない（コメント: "FCs are not data plane configuration required during reconciling process"）(flexcounterorch.cpp:525-535)。
+- 結果として STATE_DB 能力テーブルは常に orchagent 起動直後（warm-reboot 開始直後）に書き込まれ、60 秒遅延の影響外となる。
+
+### 4. generatePortCounterMap() との順序関係
+
+| ステップ | 発生タイミング | STATE_DB への影響 |
+|---------|-------------|----------------|
+| `initCounterCapabilities()` | portsorch コンストラクタ（orchagent 起動直後） | `PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` 書き込み |
+| `generatePortCounterMap()` | flexcounterorch が PORT カウンタ enable を受信したとき | `FLEX_COUNTER_DB` への登録のみ（STATE_DB 非関与） |
+| portstat が `PORT_COUNTER_CAPABILITIES` を参照 | カウンタポーリング実行時 | `isSupported` に基づきポーリング対象を決定 |
+
+`generatePortCounterMap()` は `PORT_COUNTER_CAPABILITIES` テーブルを**参照しない**。portstat.py が STATE_DB を参照する時点では常に `initCounterCapabilities()` 完了後であるため、能力情報が未書き込みの状態で参照されることはない[^9]。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `"false"` 先書き → SAI query → `"true"` 更新 | 自己完結（コンストラクタ内） | 起動直後の transient `"false"` は portstat の N/A 表示のみ |
+| 2 | portsorch 初期化 → debugcounterorch 初期化 | orchdaemon が強制保証 | 変更不要 |
+| 3 | warm-reboot 60 秒遅延 | STATE_DB には無影響 | 能力テーブルはコンストラクタで同期書き込み済み |
+| 4 | `initCounterCapabilities` < `generatePortCounterMap` | 常に保証 | portstat 参照時点では能力テーブル書き込み済み |
+
+<!-- /ordering -->
+
+---
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
@@ -201,3 +268,6 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 [^4]: portsorch.cpp:1881-1918。`SAI_STATUS_SUCCESS` の場合のみ更新
 [^5]: debugcounterorch.cpp:315-363。`publishDropCounterCapabilities()` はコンストラクタで呼ばれる (debugcounterorch.cpp:37)
 [^6]: portstat.py:314-329。`is_wred_stats_reqd` が False または `isSupported != "true"` の場合に除外
+[^7]: portsorch.cpp:1850-1968。`initCounterCapabilities()` は portsorch コンストラクタ末尾 (portsorch.cpp:1107) で呼ばれる
+[^8]: orchdaemon.cpp:232 (PortsOrch), orchdaemon.cpp:452 (DebugCounterOrch)。debugcounterorch.cpp:37 で `publishDropCounterCapabilities()` が `gPortsOrch->attach(this)` より前に実行される
+[^9]: portsorch.cpp:9102-9129 (`generatePortCounterMap`)。FLEX_COUNTER_DB への登録のみで STATE_DB への読み書きなし
