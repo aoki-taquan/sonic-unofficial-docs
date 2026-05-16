@@ -97,6 +97,21 @@ DEL ACL_TABLE_TYPE|<type_name>
 - ただし CONFIG_DB 上の `ACL_RULE|<table>|<rule>` エントリは残るため、orchagent 再起動時に孤立エントリが再処理されて "Wait for ACL table to be created" ループに入る。
 - evidence: `aclorch.cpp:4849-4854`
 
+### 7. SAI ACL バインド内部順序（stage / bind point）
+
+`createBindAclTable()` (`aclorch.cpp:5916`) が SAI テーブル作成後に `bindAclTable()` → `AclTable::bind()` → `gPortsOrch->bindAclTable()` を経由して、以下の **3 ステップ固定順序** で SAI 呼び出しを行う（`portsorch.cpp:2883-2930`）:
+
+1. `sai_acl_api->create_acl_table_group`: `SAI_ACL_TABLE_GROUP_ATTR_ACL_STAGE`（INGRESS/EGRESS）と `SAI_ACL_TABLE_GROUP_ATTR_ACL_BIND_POINT_TYPE_LIST`（PORT/LAG/SWITCH/VLAN 等）を含むグループ作成。ポート単位で共有（既存グループは再利用）。
+2. `bindUnbindAclTableGroup`: `SAI_PORT_ATTR_INGRESS_ACL` / `SAI_PORT_ATTR_EGRESS_ACL`（PORT）または `SAI_LAG_ATTR_INGRESS_ACL` / `SAI_LAG_ATTR_EGRESS_ACL`（LAG）にグループ OID をセット。`stage` 値が INGRESS/EGRESS を決定（`aclorch.cpp:166-167`）。
+3. `sai_acl_api->create_acl_table_group_member`: グループと ACL テーブルを紐付け。優先度は固定値 100。
+
+**bind point type 特記事項**:
+- `aclBindPointTypeLookup`（`aclorch.cpp:103-107`）: `PORT` → `SAI_ACL_BIND_POINT_TYPE_PORT`、`PORTCHANNEL` → `SAI_ACL_BIND_POINT_TYPE_LAG`。
+- PFCWD が BRCM DNX プラットフォームのみ `SAI_ACL_BIND_POINT_TYPE_SWITCH` を使用し `gSwitchOrch->bindAclTableToSwitch(ACL_STAGE_EGRESS, oid)` を呼ぶ（`aclorch.cpp:4788`）。
+- DEL 時は逆順: `remove_acl_table_group_member` → `unbindUnbindAclTableGroup` → `remove_acl_table_group`（`portsorch.cpp:2845-2843` の `unbindAclTable`）。
+
+- evidence: `portsorch.cpp:2883-2930`、`aclorch.cpp:5916-5930`、`aclorch.cpp:103-107`
+
 ---
 
 ## 順序依存サマリ
@@ -109,3 +124,4 @@ DEL ACL_TABLE_TYPE|<type_name>
 | 4 | ACL_TABLE SET → ACL_RULE SET | 必須（ACL_RULE は table_oid == SAI_NULL_OBJECT_ID の間 wait） | 自動 wait loop（ACL_TABLE 作成後に即解消） |
 | 5 | type/stage 変更: DEL → SET の順序 | 必須（SET のみでは内部で DEL+create） | SET でも機能するが配下 ACL_RULE が消える |
 | 6 | ACL_TABLE DEL → ACL_TABLE_TYPE DEL（ユーザ定義 type 削除時） | 推奨順序（強制ではないが論理的に必要） | DEL 後 type を消しても既存テーブルへの影響なし |
+| 7 | SAI: create_acl_table → create_acl_table_group → bindAclTableGroup → create_acl_table_group_member | 固定内部順序 | orchagent 内部で自動管理（ユーザ操作不要） |

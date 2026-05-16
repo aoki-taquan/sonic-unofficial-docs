@@ -421,6 +421,20 @@ SET ACL_RULE|<table_name>|<rule_name>  PRIORITY=...
 
 `doAclTableTask()` L5450-5454: 既存 table の `type` または `stage` が変更された場合、orchagent は内部で既存テーブルを削除してから再作成する（配下の ACL_RULE も消える）。変更前に `DEL ACL_RULE|<table>|*` を明示削除することを推奨。`ports` のみ変更する場合は `updateAclTable()` で差分適用されるため DEL 不要。
 
+### SAI ACL バインド順序（stage / bind point）
+
+`createBindAclTable()` (`aclorch.cpp:5916`) は SAI テーブル作成後に `bindAclTable()` (`aclorch.cpp:5949`) を呼ぶ。`bindAclTable()` は実体 `AclTable::bind()` → `gPortsOrch->bindAclTable()` を経由し、ポートへのバインドを以下の **3 ステップ順序** で実行する（`portsorch.cpp:2883-2930`）:
+
+1. **ACL table group 作成** (`sai_acl_api->create_acl_table_group`): `SAI_ACL_TABLE_GROUP_ATTR_ACL_STAGE`（ingress/egress）と `SAI_ACL_TABLE_GROUP_ATTR_ACL_BIND_POINT_TYPE_LIST`（PORT/LAG/SWITCH/VLAN）を指定。グループはポート単位で共有される（既存グループがあれば再利用）。
+2. **ポートへのグループバインド** (`bindUnbindAclTableGroup`): `SAI_PORT_ATTR_INGRESS_ACL` / `SAI_PORT_ATTR_EGRESS_ACL`（PORT）または `SAI_LAG_ATTR_INGRESS_ACL` / `SAI_LAG_ATTR_EGRESS_ACL`（LAG）にグループ OID をセット。`stage` フィールドが INGRESS/EGRESS を決定する。
+3. **ACL table group member 作成** (`sai_acl_api->create_acl_table_group_member`): `SAI_ACL_TABLE_GROUP_MEMBER_ATTR_ACL_TABLE_GROUP_ID`（グループ）と `SAI_ACL_TABLE_GROUP_MEMBER_ATTR_ACL_TABLE_ID`（テーブル）を紐付け。優先度は固定値 100。
+
+**bind point type と `stage` の組み合わせ制約**:
+
+- `BPOINT_TYPES` の各値（`PORT`, `LAG`, `SWITCH`, `VLAN`）は `aclBindPointTypeLookup`（`aclorch.cpp:103-107`）で SAI 型に変換される。
+- PFCWD が BRCM DNX プラットフォームの場合のみ `SAI_ACL_BIND_POINT_TYPE_SWITCH` が使われ、`gSwitchOrch->bindAclTableToSwitch(ACL_STAGE_EGRESS, oid)` を呼ぶ（`aclorch.cpp:4788`）。
+- PORTCHANNEL（LAG）は `getAclBindPortId()` で LAG OID を取得してバインド。VLAN バインドは ACL_TABLE_TYPE の `BPOINT_TYPES` に `VLAN` を含む場合のみ。
+
 ### 安全な DEL 順序
 
 ```
@@ -439,8 +453,9 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 | ACL_TABLE SET → ACL_RULE SET（SAI 反映） | 必須 | 自動 wait loop |
 | type/stage 変更: DEL → SET | 必須 | SET のみでも動作するが配下 ACL_RULE 消失 |
 | ACL_TABLE DEL → ACL_TABLE_TYPE DEL | 推奨 | 強制ではないが論理的に必要 |
+| SAI: create_acl_table → bindAclTableGroup → create_acl_table_group_member | 固定内部順序 | orchagent 内部で自動管理 |
 
-> **スキャン証跡**: `doAclTableTask()` L5346-5518 全行精読、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566 参照。
+> **スキャン証跡**: `doAclTableTask()` L5346-5518 全行精読、`doAclTableTypeTask()` L5738-5774、`removeAclTable()` L4829-4910、`processAclTablePorts()` L5776-5807、`doAclRuleTask()` L5520-5566、`createBindAclTable()` L5916-5930、`PortsOrch::bindAclTable()` L2883-2930（portsorch.cpp）参照。
 <!-- /ordering -->
 
 <!-- runtime-trace -->
