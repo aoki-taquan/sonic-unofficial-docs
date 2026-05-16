@@ -203,4 +203,32 @@ ls -lh /var/dump/
 - なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照（Phase C）
+
+`coredump_gen_handler` が `AUTO_TECHSUPPORT_FEATURE` テーブルを処理する際、以下の外部テーブル・DB を設定フィールドとしてではなく**実行時判定条件または書き込み先**として暗黙的に参照する。
+
+| 参照先 | 参照種別 | 具体的な利用箇所 | evidence |
+|--------|----------|-----------------|----------|
+| `AUTO_TECHSUPPORT\|GLOBAL` (`state`) | 読み取り（実行時条件、先行ガード） | `coredump_gen_handler.py` が `handle_core_dump_creation_event()` の最初で `AUTO_TECHSUPPORT\|GLOBAL` の `state` を確認する。`state != "enabled"` の場合は `AUTO_TECHSUPPORT_FEATURE` を参照せずに早期リターンする。GLOBAL が feature エントリより先に評価される暗黙依存。 | `sonic-utilities/scripts/coredump_gen_handler.py:47-48` |
+| `AUTO_TECHSUPPORT\|GLOBAL` (`rate_limit_interval`) | 読み取り（rate-limit 判定） | `invoke_ts_command_rate_limited()` が `AUTO_TECHSUPPORT\|GLOBAL` の `rate_limit_interval` と本テーブルの同フィールドを両方取得し、グローバル・per-container の二段階 rate-limit を適用する。 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:313-333` |
+| `STATE_DB AUTO_TECHSUPPORT_DUMP_INFO\|{dump_name}` | 読み取り（rate-limit 参照）& 書き込み | `verify_rate_limit_intervals()` が STATE_DB の `AUTO_TECHSUPPORT_DUMP_INFO` テーブルを走査し per-container の前回 dump 作成時刻を取得、rate-limit 判定に使用する。techsupport 生成後は `write_to_state_db()` で container 名付きエントリを書き込む。 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:282-337` |
+
+### 依存関係サマリ
+
+```
+AUTO_TECHSUPPORT|GLOBAL.state (CONFIG_DB)
+  → FEATURE エントリ参照より先に評価（GLOBAL が先行ガード）
+
+AUTO_TECHSUPPORT|GLOBAL.rate_limit_interval (CONFIG_DB)
+  → FEATURE.rate_limit_interval と組み合わせて二段階 rate-limit を適用
+
+AUTO_TECHSUPPORT_FEATURE|{container} (CONFIG_DB)  ← 本テーブル
+  → coredump_gen_handler が state / rate_limit_interval を読み取り
+
+STATE_DB AUTO_TECHSUPPORT_DUMP_INFO|*
+  ↔ rate-limit 判定（読み取り）および dump 記録（書き込み）
+```
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->

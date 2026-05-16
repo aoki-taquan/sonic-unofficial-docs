@@ -219,4 +219,32 @@ global テーブル (single key `GLOBAL`) と feature テーブルを同一ハ�
 - なし
 <!-- /entry-points -->
 
+<!-- cross-refs -->
+## 暗黙参照（Phase C）
+
+`coredump_gen_handler` および `hostcfgd` が `AUTO_TECHSUPPORT` テーブルを処理する際、以下の外部テーブル・DB を設定フィールドとしてではなく**実行時判定条件または書き込み先**として暗黙的に参照する。
+
+| 参照先 | 参照種別 | 具体的な利用箇所 | evidence |
+|--------|----------|-----------------|----------|
+| `AUTO_TECHSUPPORT_FEATURE\|{container}` | 読み取り（実行時条件） | `coredump_gen_handler.py` が `CriticalProcCoreDumpHandle.handle_core_dump_creation_event()` 内で `FEATURE.format(container)` キーの `state` を確認し、feature 単位で techsupport 起動を制御する。`AUTO_TECHSUPPORT\|GLOBAL` の `state=enabled` 確認後に参照される。 | `sonic-utilities/scripts/coredump_gen_handler.py:54-56` |
+| `STATE_DB AUTO_TECHSUPPORT_DUMP_INFO\|{dump_name}` | 書き込み | `invoke_ts_command_rate_limited()` → `write_to_state_db()` にて techsupport dump 名・タイムスタンプ・コンテナ名・イベント種別を STATE_DB に書き込む。rate-limit 判定の基準となる。 | `sonic-utilities/utilities_common/auto_techsupport_helper.py:302-337` |
+| `DEVICE_METADATA\|localhost` (`hostname` 等) | 読み取り（hostcfgd 経由） | `hostcfgd` が `DEVICE_METADATA` テーブルを購読し、システム初期化時に `dev_meta` として読み込む。`AUTO_TECHSUPPORT` の初期有効化フラグ `enable_auto_tech_support` がビルド時テンプレート（`init_cfg.json.j2`）で参照される前提となるシステム識別情報。 | `sonic-host-services/scripts/hostcfgd:1422,2247,2492` |
+
+### 依存関係サマリ
+
+```
+AUTO_TECHSUPPORT|GLOBAL (CONFIG_DB)
+  → coredump_gen_handler が state / rate_limit_interval / max_core_limit を読み取り
+
+AUTO_TECHSUPPORT_FEATURE|{container} (CONFIG_DB)
+  → GLOBAL.state=enabled 後に feature 単位 state を確認（暗黙参照）
+
+DEVICE_METADATA|localhost (CONFIG_DB)
+  → hostcfgd 経由でシステム初期化時に参照（間接依存）
+
+STATE_DB AUTO_TECHSUPPORT_DUMP_INFO|*
+  ← coredump_gen_handler が techsupport dump 情報を書き込み（rate-limit 基準）
+```
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 48d5f456ebb6 -->
