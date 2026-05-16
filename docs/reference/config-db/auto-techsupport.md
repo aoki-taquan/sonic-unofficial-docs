@@ -220,3 +220,67 @@ global テーブル (single key `GLOBAL`) と feature テーブルを同一ハ�
 <!-- /entry-points -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
+
+<!-- ordering -->
+## コア生成から techsupport 起動までの順序依存関係
+
+### 1. カーネル coredump パイプ起動
+
+カーネルが `kernel.core_pattern` に従いプロセスクラッシュを検知し、`coredump-compress` スクリプトへ標準入力でコアデータをパイプする。
+
+```
+kernel.core_pattern = |/usr/local/bin/coredump-compress %e %t %p %P
+kernel.core_pipe_limit = 16
+```
+
+ソース: `sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45,55`
+
+### 2. coredump-compress による圧縮・保存
+
+`coredump-compress` が `/var/core/<prefix>.core.gz` に gzip 圧縮して保存する。コアダンプが Docker コンテナプロセス由来の場合 (`/proc/<PID>/cgroup` から `CONTAINER_ID` を判定) のみ次フェーズへ進む。
+
+ソース: `sonic-utilities/scripts/coredump-compress:12,19-31`
+
+### 3. coredump_gen_handler.py 非同期呼び出し
+
+`coredump-compress` がコンテナ名確定後に `setsid python3 coredump_gen_handler.py <core.gz> <container_name>` を **バックグラウンド (`&`)** で起動する。この非同期化により `coredump-compress` はカーネルのパイプタイムアウトに依存せずに返却できる。
+
+### 4. CONFIG_DB 順序チェック (coredump_gen_handler.py)
+
+`coredump_gen_handler.py` は以下の順序で CONFIG_DB を参照し、いずれかで条件不成立であれば後続をスキップする。
+
+| ステップ | 参照キー | 条件 | 不成立時 |
+|---------|---------|------|---------|
+| 4-1 | `AUTO_TECHSUPPORT\|GLOBAL` `state` | `"enabled"` | syslog NOTICE 出力後 `auto_invoke_ts` スキップ |
+| 4-2 | `AUTO_TECHSUPPORT_FEATURE\|<container>` `state` | `"enabled"` | techsupport 起動スキップ |
+| 4-3 | rate-limit チェック | 前回起動から `rate_limit_interval` 秒経過 | 起動抑制 |
+| 4-4 | メモリ閾値チェック | 空きメモリ ≥ `min_available_mem` かつ `available_mem_threshold` | 起動抑制 |
+
+ソース: `sonic-utilities/scripts/coredump_gen_handler.py:17,47,55-60`
+
+### 5. coredump_cleanup の実行順序
+
+`coredump_gen_handler.py` の `main()` は techsupport 呼び出し後に `handle_coredump_cleanup()` を **同期で** 呼び出す。cleanup は `AUTO_TECHSUPPORT|GLOBAL` `state` が `"enabled"` かつ `max_core_limit` が 0 より大きい場合のみ実施。
+
+ソース: `sonic-utilities/scripts/coredump_gen_handler.py:76-78`
+
+### 6. systemd-coredump との関係
+
+SONiC は **systemd-coredump を使用しない**。`kernel.core_pattern` をパイプ (`|`) で独自スクリプト (`coredump-compress`) に向けることで systemd-coredump の介在を排除している。`/etc/systemd/coredump.conf` は参照されない。
+
+### 7. AUTO_TECHSUPPORT 連携まとめ
+
+```
+クラッシュ発生
+  └─ kernel → coredump-compress (同期パイプ)
+       └─ /var/core/<name>.core.gz 保存
+            └─ coredump_gen_handler.py (非同期 setsid &)
+                 ├─ CONFIG_DB: AUTO_TECHSUPPORT|GLOBAL.state == "enabled" ?
+                 ├─ CONFIG_DB: AUTO_TECHSUPPORT_FEATURE|<c>.state == "enabled" ?
+                 ├─ rate_limit_interval チェック
+                 ├─ メモリ閾値チェック
+                 ├─ show techsupport 起動 → /var/dump/sonic_dump_*.tar.gz
+                 └─ handle_coredump_cleanup (max_core_limit に基づき /var/core 整理)
+```
+<!-- /ordering -->
+
