@@ -124,6 +124,50 @@ BGP_DEVICE_GLOBAL|CONFED
 - `idf_isolation_state=isolated_no_export` と `isolated_withdraw_all` の違い: `no_export` は AS 外への再広告のみ抑制、`withdraw_all` は deny 4 で隣接への送信そのものを遮断
 <!-- /value-behavior -->
 
+<!-- failure -->
+## 失敗挙動・retry 分岐
+
+### set_handler() — data が None
+
+`set_handler()` が `data=None` で呼ばれた場合、即 `log_err` して `return False`。FRR への push は全フィールドでスキップ。retry なし。
+
+### TSA 適用失敗
+
+| 条件 | 挙動 |
+|------|------|
+| `tsa_enabled` が `"true"`/`"false"` 以外 | `isolate_unisolate_device()` 冒頭で `log_err` → `return False`。FRR push なし |
+| `chassis_tsa == "true"` | ローカル TSA 操作をスキップ（chassis 優先）。`log_notice` のみ |
+
+いずれも retry なし。次回 CONFIG_DB イベント到着まで状態は更新されない。
+
+### W-ECMP — Jinja2 レンダリング失敗
+
+`wcmp_template.render()` が `jinja2.TemplateError` を送出した場合: `log_err` 後 `return False`。`cfg_mgr.push()` は呼ばれない。`configure_wcmp()` が `set_wcmp()` の `False` を検知し `directory.put()` もスキップ（キャッシュ不整合を防止）。
+
+`wcmp_enabled` が `"true"`/`"false"` 以外の不正値の場合も `set_wcmp()` 冒頭で即 `return False`。
+
+### IDF 適用失敗
+
+| 条件 | 挙動 |
+|------|------|
+| `idf_isolation_state` が不正値 | `log_err` → `return False`。FRR push なし、directory 更新なし |
+| `switch_role` が SpineRouter 系以外 | `log_debug` → `return True`（失敗ではなくスキップ）。directory 更新なし |
+
+### CHASSIS_APP_DB 接続例外
+
+`get_chassis_tsa_status()` で `SonicV2Connector` 接続例外が発生した場合: `log_err` 後 `chassis_tsa_status = "false"` で返る（フォールセーフ）。chassis TSA なし扱いで処理継続。
+
+### BFD capability 不在
+
+`BGP_DEVICE_GLOBAL` テーブルに BFD フィールドは存在しない。BFD capability 不在による失敗パスは本テーブルのスコープ外。
+
+### retry 機構の総括
+
+`DeviceGlobalCfgMgr` には **retry 機構が存在しない**。失敗は `log_err` 記録後に即 `return False`。再試行は CONFIG_DB の次回変更イベント到着時に自然発生する。
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:61-63,146-162,186-188,244-250,256-263 -->
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
