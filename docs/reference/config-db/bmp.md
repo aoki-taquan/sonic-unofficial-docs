@@ -320,6 +320,88 @@ def register_callbacks(self):
 `BMP` テーブルは `ConsumerStateTable`（channel ベース）および `NotificationProducer` を使用しない。CONFIG_DB → bmpcfgd（keyspace 通知）→ supervisorctl / BMP_STATE_DB の一方向で完結する。
 <!-- /pubsub -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+### 依存 1: `DEVICE_METADATA.bgp_asn` 先行必須（FRR テンプレート経路）
+
+`bgpd.main.conf.j2` L94-139 では `bmp targets sonic-bmp` / `bmp connect` ブロックが  
+**`router bgp <asn>` コンテキストの内側**に配置される。
+
+- `DEVICE_METADATA|localhost.bgp_asn` が未設定・`"none"` の場合、テンプレート条件分岐により `router bgp` ブロック全体が生成されず、`bmp targets` も FRR に投入されない。
+- evidence: `dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2:94-139`
+
+### 依存 2: bgpd 起動後に bgpcfgd が動作する
+
+`supervisord.conf.j2` の依存チェーン（priority順）:
+
+```
+rsyslogd (priority=1)
+  └─ zebra (priority=4)
+       └─ bgpd (priority=5, wait_for=zsocket:exited)
+            └─ bgpcfgd / frrcfgd (priority=6, wait_for=bgpd:running)
+```
+
+- `bgpcfgd` は `dependent_startup_wait_for=bgpd:running` により bgpd 起動完了後に初期化を開始する。
+- `bgpcfgd/main.py` L47 でも `frr.wait_for_daemons(seconds=20)` で能動的に bgpd 応答を確認する。
+- evidence: `dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2:100-179`、`bgpcfgd/main.py:47`
+
+### 依存 3: `router bmp` CLI の内部順序
+
+FRR vtysh での BMP 設定は以下の固定順で注入される（`bgpd.main.conf.j2` L130-136）:
+
+```
+bmp mirror buffer-limit 4294967214
+bmp targets sonic-bmp
+bmp stats interval 1000
+bmp monitor ipv4 unicast pre-policy
+bmp monitor ipv6 unicast pre-policy
+bmp connect 127.0.0.1 port 5000 min-retry 10000 max-retry 15000
+```
+
+- `bmp targets sonic-bmp` の宣言 → `bmp connect` の順が FRR vtysh CLI 階層に準拠する（逆順は無効）。
+- この設定はコンテナ起動時に静的注入される。`bmpcfgd` は実行中に vtysh コマンドを発行しない。
+- evidence: `bgpd.main.conf.j2:130-136`
+
+### 依存 4: openbmpd の stop → BMP_STATE_DB クリア → start 順序
+
+`bmpcfgd.py` L47-49 は `BMP` テーブル変更のたびに必ず以下の順序を実行する:
+
+```python
+self.stop_bmp()         # supervisorctl stop openbmpd
+self.reset_bmp_table()  # BMP_STATE_DB: BGP_NEIGHBOR* / BGP_RIB_* を削除
+self.start_bmp()        # supervisorctl start openbmpd
+```
+
+- stop → reset → start の順が**競合防止の必要条件**。reset を stop より前に実行すると、動作中の openbmpd と BMP_STATE_DB の削除が競合する。
+- `supervisorctl stop` の失敗は catch されないため、openbmpd が予期せず停止済みの場合は `bmpcfgd` 自身がクラッシュする可能性がある。
+- evidence: `bmpcfgd.py:47-49, 56-70`
+
+### 依存 5: `FEATURE|bmp.state=enabled` とコンテナ起動順
+
+`supervisord.conf.j2` L101-107 により bgpd の起動コマンドが分岐する:
+
+- `FEATURE|bmp.state=enabled` または `FEATURE|frr_bmp.state=enabled` → bgpd が `-M bmp` 付きで起動
+- それ以外 → bgpd は `-M bmp` なしで起動（BMP プラグイン無効）
+
+`FEATURE` フラグはコンテナ起動前に確定している必要がある。`BMP|table` の変更だけでは bgpd の `-M bmp` フラグは変わらない。機能有効化の完全な手順:
+
+1. `FEATURE|bmp.state=enabled` を設定
+2. docker-fpm-frr コンテナを再起動（bgpd が `-M bmp` 付きで再起動、`bmp targets` が静的注入される）
+3. `BMP|table` フィールドを設定（bmpcfgd が openbmpd を制御）
+
+- evidence: `supervisord.conf.j2:101-107`、`bgpd.main.conf.j2:126-139`
+
+### 推奨書込み順まとめ
+
+| 順序 | 操作 | 理由 |
+|------|------|------|
+| 1 | `FEATURE\|bmp.state=enabled` | bgpd に `-M bmp` を付与するため（コンテナ起動前） |
+| 2 | `DEVICE_METADATA\|localhost.bgp_asn` | FRR テンプレートの `router bgp` ブロック生成のため |
+| 3 | コンテナ再起動（docker-fpm-frr） | bgpd + bmp targets の静的注入 |
+| 4 | `BMP\|table` フィールド設定 | bmpcfgd が検知し openbmpd を stop→reset→start で制御 |
+
+<!-- /ordering -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
