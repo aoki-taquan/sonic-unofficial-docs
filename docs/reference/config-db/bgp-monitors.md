@@ -240,4 +240,42 @@ vtysh -c 'show bgp summary'
 
 > **スキャン証跡**: `BGPPeerMgrBase` 597 行・public メソッド set_handler/add_peer/update_peer/change_admin_status 読了。monitors は peer_type="monitors"（内部 BGP セッション向け）、loopback 依存ガードが核心分岐。
 <!-- /handler-branching -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読方式: `swsscommon.SubscriberStateTable` + `bgpcfgd Runner`
+
+`BGP_MONITORS` は `bgpcfgd` の `Runner` クラスが `swsscommon.SubscriberStateTable` を直接生成して購読する。`ConfigDBConnector.subscribe()` ラッパは使用しない。
+
+```python
+# bgpcfgd/runner.py:49-52
+subscriber = swsscommon.SubscriberStateTable(conn, "BGP_MONITORS")
+self.selector.addSelectable(subscriber)
+self.callbacks["CONFIG_DB"]["BGP_MONITORS"].append(manager.handler)
+```
+
+`Runner.run()` が `swsscommon.Select.select(timeout=1000ms)` でポーリングし、イベント到着時に `subscriber.pop()` で `(key, op, fvs)` を取り出してコールバックへ渡す。
+
+### イベントディスパッチ
+
+| CONFIG_DB 操作 | bgpcfgd 受信 | 処理メソッド |
+|---------------|-------------|------------|
+| `BGP_MONITORS\|<addr>` HSET | `handler("<addr>", "SET", {フィールド dict})` | `add_peer()` または `update_peer()` |
+| `BGP_MONITORS\|<addr>` DEL  | `handler("<addr>", "DEL", {})` | `del_handler()` → `del_peer()` |
+
+### 登録経路
+
+`bgpcfgd/main.py:89` で `BGPPeerMgrBase(common_objs, "CONFIG_DB", "BGP_MONITORS", "monitors", False)` を生成。`runner.add_manager(mgr)` がデータベース名 `"CONFIG_DB"` とテーブル名 `"BGP_MONITORS"` を取得して `SubscriberStateTable` を作成する (`runner.py:38-52`)。
+
+### frrcfgd との非重複
+
+`frrcfgd`（`sonic-frr-mgmt-framework`）の購読テーブルリスト (`frrcfgd.py:2293-2338`) に `BGP_MONITORS` は含まれない。`frrcfgd` は BGP_NEIGHBOR / BGP_PEER_GROUP 等の sonic-mgmt-framework 経由テーブルを担当し、`BGP_MONITORS` は `bgpcfgd` 専用。二重購読は発生しない。
+
+### 依存関係と再試行
+
+`wait_for_all_deps=False` のため SET は即座に処理試行される。Loopback0 / bgp_router_id 依存が未解決なら `add_peer()` が `return False` し、`set_queue` に退避。依存が揃い次第 `on_deps_change()` が再処理する (`manager.py:55-63`)。
+
+> 詳細解析: `meta/_intermediate/cdb-flow/bgp-monitors-pubsub.md`
+<!-- /pubsub -->
 <!-- glossary-links-injected: a1dd9e34d62e -->
