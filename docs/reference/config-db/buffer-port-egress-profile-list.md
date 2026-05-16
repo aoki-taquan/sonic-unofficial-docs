@@ -276,4 +276,35 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
 | 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込順依存 (Phase B)
+
+このテーブルを有効に設定するには、以下の順序で CONFIG_DB / APPL_DB への書き込みが完了している必要がある。
+
+```
+1. BUFFER_POOL
+2. BUFFER_PROFILE  （egress 方向）
+3. PORT
+4. BUFFER_PORT_EGRESS_PROFILE_LIST  ← 本テーブル
+```
+
+### 依存 1: BUFFER_PROFILE 先行 (dynamic model — buffermgrd 段)
+
+`buffermgrdyn.cpp:checkBufferProfileDirection` は SET 時に `profile_list` の各プロファイルを `m_bufferProfileLookup` で検索する。プロファイルが未登録の場合は `task_need_retry` を返してエントリを保留し、BUFFER_PROFILE 到着後に自動再処理される。<!-- evidence: buffermgrdyn.cpp:3282-3287 -->
+
+### 依存 2: BUFFER_PROFILE 先行 (orchagent 段)
+
+`bufferorch.cpp:processEgressBufferProfileList` は `resolveFieldRefArray` でプロファイル SAI OID を解決する。参照先 BUFFER_PROFILE が APPL_DB に未登録の場合 `task_need_retry` を返す（自動リトライ）。<!-- evidence: bufferorch.cpp:1869-1877 -->
+
+### 依存 3: PORT 先行 (orchagent 段)
+
+同関数末尾で `gPortsOrch->getPort(port_name, port)` を実行する。指定ポートが PortsOrch のマップに存在しない場合は `task_invalid_entry` を返す。**retry なし**のためエントリが破棄される点に注意。<!-- evidence: bufferorch.cpp:1950-1957 -->
+
+| 未先行リソース | 返却ステータス | 自動リトライ |
+|--------------|--------------|-------------|
+| BUFFER_PROFILE 未登録 (buffermgrd) | `task_need_retry` | あり（到着後に再処理） |
+| BUFFER_PROFILE 未登録 (orchagent) | `task_need_retry` | あり |
+| PORT 未登録 (orchagent) | `task_invalid_entry` | **なし**（エントリ破棄） |
+<!-- /ordering -->
 <!-- glossary-links-injected: 5ad0ecc20ddb -->
