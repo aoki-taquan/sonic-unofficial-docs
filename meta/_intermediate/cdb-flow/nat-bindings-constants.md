@@ -86,6 +86,58 @@ if ((entry.nat_type == "snat") and
 
 ---
 
+## タイマー周期定数（natorch.h）
+
+`NatOrch` はコンストラクタで 2 種類の `SelectableTimer` を起動する。周期はヘッダ `natorch.h` でマクロ定義されている。
+
+| マクロ | 値 | 用途 |
+|-------|---|------|
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | hitbit クエリ＋統計カウンタ更新 (`NAT_HITBIT_N_CNTRS_QUERY_TIMER`) |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | conntrack エントリの定期 ageout 通知 (`NAT_CONNTRACK_TIMEOUT_TIMER`) |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | hitbit は `5×6=30` 秒ごとにクエリ（カウンタは毎 5 秒） |
+
+```cpp
+// natorch.h:37-39
+#define NAT_HITBIT_N_CNTRS_QUERY_PERIOD   5        // 5 secs
+#define NAT_CONNTRACK_TIMEOUT_PERIOD      86400    // 1 day
+#define NAT_HITBIT_QUERY_MULTIPLE         6        // Hit bits are queried every 30 secs
+
+// natorch.cpp:94-105
+auto interval      = timespec { .tv_sec = NAT_HITBIT_N_CNTRS_QUERY_PERIOD, .tv_nsec = 0 };
+m_natQueryTimer = new SelectableTimer(interval);
+
+auto timeout_interval = timespec { .tv_sec = NAT_CONNTRACK_TIMEOUT_PERIOD, .tv_nsec = 0 };
+m_natTimeoutTimer = new SelectableTimer(timeout_interval);
+```
+
+---
+
+## デフォルトタイムアウト値（natorch.cpp コンストラクタ）
+
+`NatOrch` コンストラクタで設定されるハードコードデフォルト値。`NAT_GLOBAL` テーブルの `nat_timeout` / `nat_tcp_timeout` / `nat_udp_timeout` フィールドで上書き可能。
+
+| フィールド | デフォルト値 | 単位 | 上書きフィールド |
+|-----------|-----------|------|--------------|
+| `timeout` | `600` | 秒 | `nat_timeout` (NAT_GLOBAL) |
+| `tcp_timeout` | `86400` | 秒 (1 日) | `nat_tcp_timeout` (NAT_GLOBAL) |
+| `udp_timeout` | `300` | 秒 | `nat_udp_timeout` (NAT_GLOBAL) |
+
+```cpp
+// natorch.cpp:66-73
+/* Set NAT default timeout as 600 seconds */
+timeout = 600;
+
+/* Set NAT default tcp timeout as 86400 seconds (1 Day) */
+tcp_timeout = 86400;
+
+/* Set NAT default udp timeout as 300 seconds */
+udp_timeout = 300;
+```
+
+これらの値は初期化時に `COUNTERS_DB` の `NAT_TABLE|Values` キーへ書き込まれる（`natorch.cpp:127-135`）。
+
+---
+
 ## ACL_BIND_POINT について
 
 `natorch.cpp` / `natorch.h` に ACL_BIND_POINT の直接参照は存在しない。NAT の ACL バインドは CONFIG_DB `NAT_BINDINGS.access_list` フィールドで ACL 名を指定し、`natmgrd`（`cfgmgr/natmgr.cpp`）が iptables ルールとして展開する。orchagent レベルでは ACL オブジェクトを直接操作しない。
@@ -94,5 +146,5 @@ if ((entry.nat_type == "snat") and
 
 ## 出典
 
-- `sonic-swss/orchagent/natorch.cpp` lines 769, 847, 923, 1009, 1104, 1200, 1302, 1379, 1466, 1556, 1630, 1713, 1799-1805, 1825-1837, 1879-1880, 2659
-- `sonic-swss/orchagent/natorch.h` lines 18, 36-39
+- `sonic-swss/orchagent/natorch.cpp` lines 66-73, 94-105, 127-135, 769, 847, 923, 1009, 1104, 1200, 1302, 1379, 1466, 1556, 1630, 1713, 1799-1805, 1825-1837, 1879-1880, 2659
+- `sonic-swss/orchagent/natorch.h` lines 36-39
