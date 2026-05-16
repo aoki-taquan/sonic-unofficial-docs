@@ -15,7 +15,7 @@
 
 | 定数名 | 値 | 説明 |
 |--------|-----|------|
-| `LINK_DOWN` | `0` | `link` フィールドが設定されたメンバの初期 oper-state（DOWN 扱い）。`link` 空文字列時は`LINK_UP` 固定 |
+| `LINK_DOWN` | `0` | `link` フィールドが設定されたメンバの初期 oper-state（DOWN 扱い）。`link` 空文字列時は `LINK_UP` 固定 |
 | `LINK_UP` | `1` | `link` フィールド未設定時のデフォルト oper-state 値。リンク状態追跡なしで「常に UP」扱い |
 
 ### bucket_size 検証定数（doTaskFgNhg L1685 / L1722-1726）
