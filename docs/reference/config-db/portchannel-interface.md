@@ -373,6 +373,53 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 ```
 
 <!-- /implicit-ref -->
+
+<!-- failure -->
+## 失敗挙動・エラーハンドリング (Phase D)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
+> 調査日: 2026-05-16
+> 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-interface-failure.md`
+
+### intfmgrd (IntfMgr) の失敗・retry パターン
+
+| 失敗シナリオ | コード根拠 | 戻り値 / 動作 | ログ | リカバリ |
+|---|---|---|---|---|
+| `STATE_LAG_TABLE` 未登録 (LAG 未起動) | `intfmgr.cpp:833-836` | `false` → retry | `SWSS_LOG_DEBUG "Interface is not ready"` | lagmgrd が STATE_LAG_TABLE を書き込み後に自動再試行 |
+| `STATE_VRF_TABLE` 未登録 (`vrf_name` 未生成) | `intfmgr.cpp:839-842` | `false` → retry | `SWSS_LOG_DEBUG "VRF is not ready"` | vrfmgrd が STATE_VRF_TABLE を書き込み後に自動再試行 |
+| VRF 直接変更 (既存 binding → 別 VRF) | `intfmgr.cpp:846-849` | `true` → エントリ破棄 | `SWSS_LOG_ERROR "can not change to %s directly"` | 手動: DEL → SET の順序で再設定 |
+| MPLS `sysctl` 設定失敗 | `intfmgr.cpp:901-904` | `false` → retry | `SWSS_LOG_ERROR "Failed to set MPLS"` | mpls カーネルモジュールのロード後に自動再試行 |
+| IP prefix: 属性ロウ未登録 (`isIntfCreated` false) | `intfmgr.cpp:1115` | `false` → retry | `SWSS_LOG_DEBUG "Interface is not ready"` | 属性ロウ処理完了後に自動再試行 |
+| DEL 時 IP アドレス残存 | `intfmgr.cpp:1060-1063` | `false` → retry | なし (silent) | IP prefix ロウをすべて DEL 後に自動再試行 |
+
+#### VRF 直接変更の特殊挙動
+
+`isIntfChangeVrf(alias, vrf_name)` が true（現在の VRF binding と異なる VRF への直接 SET）の場合、intfmgrd はエントリを破棄 (`return true` → `m_toSync.erase`) する。リトライは発生せず、**自動リカバリなし**。VRF を変更する場合は次の手順が必要:
+
+1. `PORTCHANNEL_INTERFACE|<name>` の `vrf_name` を空にして DEL or 空 SET
+2. `PORTCHANNEL_INTERFACE|<name>` に新しい `vrf_name` を SET
+
+#### DEL 順序制約
+
+属性ロウ (`PORTCHANNEL_INTERFACE|<name>`) の DEL は、すべての IP プレフィクスロウ (`PORTCHANNEL_INTERFACE|<name>|<ip_prefix>`) が先に削除されていないと `getIntfIpCount(alias) > 0` によりブロックされる (`intfmgr.cpp:1060-1063`)。IP アドレスが残存している間は silent retry が継続される。
+
+### orchagent (IntfsOrch) の失敗・retry パターン
+
+| 失敗シナリオ | コード根拠 | 動作 | ログ | リカバリ |
+|---|---|---|---|---|
+| LAG オブジェクト未生成 (`gPortsOrch->getPort` 失敗) | `intfsorch.cpp:905-924` | `it++` → retry | なし (silent) | PortsOrch が LAG オブジェクト生成後に自動再試行 |
+| SAI RIF 作成失敗 (`create_router_interface` 失敗) | `intfsorch.cpp:1297-1304` | `runtime_error` をスロー → orchagent クラッシュ | `SWSS_LOG_ERROR "Failed to create router interface"` | supervisord による orchagent 再起動 |
+| SAI RIF 削除失敗 (`remove_router_interface` 失敗) | `intfsorch.cpp:1352-1355` | `runtime_error` をスロー → orchagent クラッシュ | `SWSS_LOG_ERROR "Failed to remove router interface"` | supervisord による orchagent 再起動 |
+| `mac_addr` SAI SET 失敗 | `intfsorch.cpp:1017-1025` | `task_need_retry` → retry、それ以外は継続 | `SWSS_LOG_ERROR "Failed to set router interface mac"` | SAI 状態回復後に自動再試行 |
+| `loopback_action` SAI SET 失敗 | `intfsorch.cpp:444-454` | `parseHandleSaiStatusFailure()` の結果による | `SWSS_LOG_ERROR "Loopback action set failed"` | SAI 状態に依存 |
+| IP2me ルート作成失敗 (`create_route_entry` 失敗) | `intfsorch.cpp:1400-1403` | `runtime_error` をスロー → orchagent クラッシュ | `SWSS_LOG_ERROR "Failed to create IP2me route"` | supervisord による orchagent 再起動 |
+
+#### orchagent クラッシュを引き起こす失敗
+
+SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interface`・`create_route_entry` (IP2me) の失敗は `runtime_error` をスローして orchagent をクラッシュさせる。これらはハードウェア不整合・SAI 実装バグ・リソース枯渇が主因であり、supervisord が orchagent を再起動する。再起動後も同一 SAI エラーが継続する場合はハードウェア/SAI 実装の調査が必要。
+
+<!-- /failure -->
+
 <!-- platform-diff -->
 ## プラットフォーム差 (Phase H)
 
