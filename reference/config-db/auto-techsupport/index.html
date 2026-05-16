@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -21629,6 +21631,34 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#memory_threshold_checkpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        memory_threshold_check.py 経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredump_gen_handlerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        coredump_gen_handler.py 経由の失敗挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -22032,6 +22062,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#coredump_gen_handler-auto_techsupport_helper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state フィールドの有効 enum 値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd-coredump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd-coredump 統合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22358,6 +22427,100 @@
     <span class="md-ellipsis">
       
         設定変更の反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#techsupport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コア生成から techsupport 起動までの順序依存関係
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コア生成から techsupport 起動までの順序依存関係">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-coredump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. カーネル coredump パイプ起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-coredump-compress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. coredump-compress による圧縮・保存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-coredump_gen_handlerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. coredump_gen_handler.py 非同期呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-config_db-coredump_gen_handlerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. CONFIG_DB 順序チェック (coredump_gen_handler.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-coredump_cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. coredump_cleanup の実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-systemd-coredump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. systemd-coredump との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-auto_techsupport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. AUTO_TECHSUPPORT 連携まとめ
       
     </span>
   </a>
@@ -28413,6 +28576,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -35159,6 +35350,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="例外条件・特殊挙動">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#memory_threshold_checkpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        memory_threshold_check.py 経由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredump_gen_handlerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        coredump_gen_handler.py 経由の失敗挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -35561,6 +35780,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#coredump_gen_handler-auto_techsupport_helper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state-enum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state フィールドの有効 enum 値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd-coredump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd-coredump 統合
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35898,6 +36156,100 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#techsupport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コア生成から techsupport 起動までの順序依存関係
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コア生成から techsupport 起動までの順序依存関係">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-coredump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. カーネル coredump パイプ起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-coredump-compress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. coredump-compress による圧縮・保存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-coredump_gen_handlerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. coredump_gen_handler.py 非同期呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-config_db-coredump_gen_handlerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. CONFIG_DB 順序チェック (coredump_gen_handler.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-coredump_cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. coredump_cleanup の実行順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-systemd-coredump" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. systemd-coredump との関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-auto_techsupport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. AUTO_TECHSUPPORT 連携まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36042,6 +36394,7 @@
 </ul>
 <!-- cdb-exceptions -->
 <h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="memory_threshold_checkpy">memory_threshold_check.py 経由<a class="headerlink" href="#memory_threshold_checkpy" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36077,6 +36430,73 @@
 </tbody>
 </table>
 <!-- evidence: sonic-net/sonic-utilities/scripts/memory_threshold_check.py:153L -->
+
+<!-- failure -->
+<h3 id="coredump_gen_handlerpy">coredump_gen_handler.py 経由の失敗挙動<a class="headerlink" href="#coredump_gen_handlerpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>consumer</th>
+<th>条件</th>
+<th>挙動</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>coredump_gen_handler</code></td>
+<td>core ファイルが生成後 20 秒以内に存在しない (<code>verify_recent_file_creation</code> 失敗)</td>
+<td><code>"Spurious Invocation"</code> を syslog INFO に記録して即返却。techsupport / cleanup いずれも実行しない</td>
+<td><code>coredump_gen_handler.py:73-75</code></td>
+</tr>
+<tr>
+<td><code>coredump_gen_handler</code></td>
+<td><code>AUTO_TECHSUPPORT\|GLOBAL</code> の <code>state</code> が <code>"enabled"</code> 以外</td>
+<td><code>"auto_invoke_ts is disabled"</code> を syslog NOTICE に記録し techsupport 起動をスキップ</td>
+<td><code>coredump_gen_handler.py:47-49</code></td>
+</tr>
+<tr>
+<td><code>coredump_gen_handler</code></td>
+<td><code>AUTO_TECHSUPPORT_FEATURE\|&lt;container&gt;</code> の <code>state</code> が <code>"enabled"</code> 以外</td>
+<td><code>"auto-techsupport feature for &lt;container&gt; is not enabled"</code> を syslog NOTICE に記録し techsupport 起動をスキップ</td>
+<td><code>coredump_gen_handler.py:55-57</code></td>
+</tr>
+<tr>
+<td><code>handle_coredump_cleanup</code></td>
+<td><code>AUTO_TECHSUPPORT\|GLOBAL</code> の <code>state</code> が <code>"enabled"</code> 以外</td>
+<td><code>"coredump_cleanup is disabled"</code> を syslog NOTICE に記録して cleanup をスキップ</td>
+<td><code>coredump_gen_handler.py:17-19</code></td>
+</tr>
+<tr>
+<td><code>handle_coredump_cleanup</code></td>
+<td><code>max_core_limit</code> が <code>float()</code> 変換不可または <code>0</code></td>
+<td>cleanup をスキップ（<code>core_usage = 0.0</code> にフォールバック、<code>if not core_usage</code> 節で早期 return）</td>
+<td><code>coredump_gen_handler.py:22-31</code></td>
+</tr>
+<tr>
+<td><code>invoke_ts_cmd</code></td>
+<td><code>show techsupport</code> が <code>EXT_LOCKFAIL</code> (rc=2) で終了</td>
+<td><code>"Another instance of techsupport running"</code> を syslog NOTICE に記録し、今回の起動を中断</td>
+<td><code>auto_techsupport_helper.py:240</code></td>
+</tr>
+<tr>
+<td><code>invoke_ts_cmd</code></td>
+<td><code>show techsupport</code> が <code>EXT_RETRY</code> (rc=4) で終了かつ再試行上限 (<code>MAX_RETRY_LIMIT=2</code>) 超過</td>
+<td><code>"MAX_RETRY_LIMIT for show techsupport invocation exceeded"</code> を syslog ERR に記録</td>
+<td><code>auto_techsupport_helper.py:243-245</code></td>
+</tr>
+<tr>
+<td><code>invoke_ts_cmd</code></td>
+<td><code>show techsupport</code> が成功 (rc=0) だが stdout に dump 名が見つからない</td>
+<td><code>"no techsupport dump is found"</code> を syslog ERR に記録。STATE_DB への書き込みは行わない</td>
+<td><code>auto_techsupport_helper.py:249-251</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78</code>, <code>utilities_common/auto_techsupport_helper.py:232-254</code></p>
+</blockquote>
+<!-- /failure -->
 <!-- /cdb-exceptions -->
 
 <!-- value-behavior -->
@@ -36441,6 +36861,113 @@ Phase E は <strong>DB / YANG / init_cfg のいずれからも変更不可能な
 </ul>
 <!-- /entry-points -->
 
+<!-- constants -->
+<h2 id="coredump_gen_handler-auto_techsupport_helper">ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)<a class="headerlink" href="#coredump_gen_handler-auto_techsupport_helper" title="Permanent link">&para;</a></h2>
+<p><code>coredump_gen_handler.py</code> および <code>utilities_common/auto_techsupport_helper.py</code> にハードコードされた定数。CONFIG_DB フィールドで上書きできない固定値。</p>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CORE_DUMP_DIR</code></td>
+<td><code>"/var/core"</code></td>
+<td>コアダンプ保存ディレクトリ</td>
+</tr>
+<tr>
+<td><code>CORE_DUMP_PTRN</code></td>
+<td><code>"*.core.gz"</code></td>
+<td>コアダンプファイルのグロブパターン</td>
+</tr>
+<tr>
+<td><code>TS_DIR</code></td>
+<td><code>"/var/dump"</code></td>
+<td>techsupport ダンプ保存ディレクトリ</td>
+</tr>
+<tr>
+<td><code>TS_PTRN</code></td>
+<td><code>"sonic_dump_.*tar.*"</code></td>
+<td>techsupport ダンプ名の正規表現パターン</td>
+</tr>
+<tr>
+<td><code>AUTO_TS</code></td>
+<td><code>"AUTO_TECHSUPPORT\|GLOBAL"</code></td>
+<td>CONFIG_DB キー名</td>
+</tr>
+<tr>
+<td><code>CFG_STATE</code></td>
+<td><code>"state"</code></td>
+<td>state フィールド名 (値: <code>"enabled"</code> / <code>"disabled"</code>)</td>
+</tr>
+<tr>
+<td><code>TIME_BUF</code></td>
+<td><code>20</code> (秒)</td>
+<td>coredump ファイル生成後の有効期間。<code>verify_recent_file_creation</code> が使用し、20秒以上前のファイルは偽陽性として無視</td>
+</tr>
+<tr>
+<td><code>SINCE_DEFAULT</code></td>
+<td><code>"2 days ago"</code></td>
+<td><code>since</code> フィールド未設定時のデフォルト収集期間</td>
+</tr>
+<tr>
+<td><code>EXT_SUCCESS</code></td>
+<td><code>0</code></td>
+<td><code>show techsupport</code> の正常終了コード</td>
+</tr>
+<tr>
+<td><code>EXT_LOCKFAIL</code></td>
+<td><code>2</code></td>
+<td>別インスタンスが実行中の場合の終了コード</td>
+</tr>
+<tr>
+<td><code>EXT_RETRY</code></td>
+<td><code>4</code></td>
+<td>リトライ要求の終了コード</td>
+</tr>
+<tr>
+<td><code>MAX_RETRY_LIMIT</code></td>
+<td><code>2</code></td>
+<td><code>show techsupport</code> の最大リトライ回数</td>
+</tr>
+<tr>
+<td><code>TS_GLOBAL_TIMEOUT</code></td>
+<td><code>"60"</code> (秒)</td>
+<td><code>show techsupport --global-timeout</code> に渡すタイムアウト値</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state-enum"><code>state</code> フィールドの有効 enum 値<a class="headerlink" href="#state-enum" title="Permanent link">&para;</a></h3>
+<p><code>AUTO_TECHSUPPORT|GLOBAL</code> および <code>AUTO_TECHSUPPORT_FEATURE|&lt;feature&gt;</code> の <code>state</code> フィールドで受け付ける値:</p>
+<table>
+<thead>
+<tr>
+<th>値</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"enabled"</code></td>
+<td>coredump 駆動 techsupport 収集を有効化</td>
+</tr>
+<tr>
+<td><code>"disabled"</code></td>
+<td>coredump 駆動 techsupport 収集を無効化 (デフォルト動作は無効)</td>
+</tr>
+</tbody>
+</table>
+<p><code>coredump_gen_handler.py:17</code> で <code>!= "enabled"</code> チェックをしており、それ以外の文字列はすべて <code>disabled</code> と同等に扱われる。</p>
+<h3 id="systemd-coredump">systemd-coredump 統合<a class="headerlink" href="#systemd-coredump" title="Permanent link">&para;</a></h3>
+<p><code>coredump-compress</code> スクリプト (<code>sonic-utilities/scripts/coredump-compress</code>) が kernel の <code>core_pattern</code> ハンドラとして動作し、コア生成後に <code>/var/core/${PREFIX}core.gz</code> へ gzip 圧縮保存する。その後 <code>coredump_gen_handler.py</code> を非同期起動 (<code>setsid ... &amp;</code>)。ログは <code>/tmp/coredump_gen_handler.log</code> に出力される。</p>
+<!-- evidence: sonic-net/sonic-utilities/utilities_common/auto_techsupport_helper.py:33-84 -->
+<!-- evidence: sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78 -->
+<!-- evidence: sonic-net/sonic-utilities/scripts/coredump-compress:19-31 -->
+<!-- /constants -->
+
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
 <p>CONFIG_DB <code>AUTO_TECHSUPPORT</code> テーブルの変更を直接の入力とする host service スクリプト (<code>coredump_gen_handler.py</code> / <code>techsupport_cleanup.py</code>) は、techsupport ダンプ生成および掃除の過程で <strong>STATE_DB</strong> に副次的な書込を行う。CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への書込は発生しない。</p>
@@ -36530,7 +37057,7 @@ Phase E は <strong>DB / YANG / init_cfg のいずれからも変更不可能な
 <li><code>coredump_gen_handler.py</code> 経由: critical process の core dump 検出 → <code>invoke_ts_command_rate_limited()</code> → <code>invoke_ts_cmd()</code> 成功時に <code>write_to_state_db()</code> が呼ばれ STATE_DB に新規エントリ追加。</li>
 <li><code>techsupport_cleanup.py</code> 経由: <code>max_techsupport_limit</code> 超過時に <code>cleanup_process()</code> が物理ファイル削除を返却し、<code>clean_state_db_entries()</code> が対応する STATE_DB エントリを <code>db.delete</code> で除去。</li>
 </ul>
-<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/auto-techsupport-side.md</code> を参照。</p>
+<p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/auto-techsupport-side-effects.md</code> を参照。</p>
 <!-- /side-effects -->
 
 <!-- platform -->
@@ -37080,6 +37607,77 @@ masic suffix を除去してから (<code>swss0</code> → <code>swss</code>) <c
 <!-- /pubsub -->
 
 <!-- glossary-links-injected: 48d5f456ebb6 -->
+
+<!-- ordering -->
+<h2 id="techsupport">コア生成から techsupport 起動までの順序依存関係<a class="headerlink" href="#techsupport" title="Permanent link">&para;</a></h2>
+<h3 id="1-coredump">1. カーネル coredump パイプ起動<a class="headerlink" href="#1-coredump" title="Permanent link">&para;</a></h3>
+<p>カーネルが <code>kernel.core_pattern</code> に従いプロセスクラッシュを検知し、<code>coredump-compress</code> スクリプトへ標準入力でコアデータをパイプする。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kernel.core_pattern = |/usr/local/bin/coredump-compress %e %t %p %P
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>kernel.core_pipe_limit = 16
+</span></code></pre></div>
+<p>ソース: <code>sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45,55</code></p>
+<h3 id="2-coredump-compress">2. coredump-compress による圧縮・保存<a class="headerlink" href="#2-coredump-compress" title="Permanent link">&para;</a></h3>
+<p><code>coredump-compress</code> が <code>/var/core/&lt;prefix&gt;.core.gz</code> に gzip 圧縮して保存する。コアダンプが Docker コンテナプロセス由来の場合 (<code>/proc/&lt;PID&gt;/cgroup</code> から <code>CONTAINER_ID</code> を判定) のみ次フェーズへ進む。</p>
+<p>ソース: <code>sonic-utilities/scripts/coredump-compress:12,19-31</code></p>
+<h3 id="3-coredump_gen_handlerpy">3. coredump_gen_handler.py 非同期呼び出し<a class="headerlink" href="#3-coredump_gen_handlerpy" title="Permanent link">&para;</a></h3>
+<p><code>coredump-compress</code> がコンテナ名確定後に <code>setsid python3 coredump_gen_handler.py &lt;core.gz&gt; &lt;container_name&gt;</code> を <strong>バックグラウンド (<code>&amp;</code>)</strong> で起動する。この非同期化により <code>coredump-compress</code> はカーネルのパイプタイムアウトに依存せずに返却できる。</p>
+<h3 id="4-config_db-coredump_gen_handlerpy">4. CONFIG_DB 順序チェック (coredump_gen_handler.py)<a class="headerlink" href="#4-config_db-coredump_gen_handlerpy" title="Permanent link">&para;</a></h3>
+<p><code>coredump_gen_handler.py</code> は以下の順序で CONFIG_DB を参照し、いずれかで条件不成立であれば後続をスキップする。</p>
+<table>
+<thead>
+<tr>
+<th>ステップ</th>
+<th>参照キー</th>
+<th>条件</th>
+<th>不成立時</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4-1</td>
+<td><code>AUTO_TECHSUPPORT\|GLOBAL</code> <code>state</code></td>
+<td><code>"enabled"</code></td>
+<td>syslog NOTICE 出力後 <code>auto_invoke_ts</code> スキップ</td>
+</tr>
+<tr>
+<td>4-2</td>
+<td><code>AUTO_TECHSUPPORT_FEATURE\|&lt;container&gt;</code> <code>state</code></td>
+<td><code>"enabled"</code></td>
+<td>techsupport 起動スキップ</td>
+</tr>
+<tr>
+<td>4-3</td>
+<td>rate-limit チェック</td>
+<td>前回起動から <code>rate_limit_interval</code> 秒経過</td>
+<td>起動抑制</td>
+</tr>
+<tr>
+<td>4-4</td>
+<td>メモリ閾値チェック</td>
+<td>空きメモリ ≥ <code>min_available_mem</code> かつ <code>available_mem_threshold</code></td>
+<td>起動抑制</td>
+</tr>
+</tbody>
+</table>
+<p>ソース: <code>sonic-utilities/scripts/coredump_gen_handler.py:17,47,55-60</code></p>
+<h3 id="5-coredump_cleanup">5. coredump_cleanup の実行順序<a class="headerlink" href="#5-coredump_cleanup" title="Permanent link">&para;</a></h3>
+<p><code>coredump_gen_handler.py</code> の <code>main()</code> は techsupport 呼び出し後に <code>handle_coredump_cleanup()</code> を <strong>同期で</strong> 呼び出す。cleanup は <code>AUTO_TECHSUPPORT|GLOBAL</code> <code>state</code> が <code>"enabled"</code> かつ <code>max_core_limit</code> が 0 より大きい場合のみ実施。</p>
+<p>ソース: <code>sonic-utilities/scripts/coredump_gen_handler.py:76-78</code></p>
+<h3 id="6-systemd-coredump">6. systemd-coredump との関係<a class="headerlink" href="#6-systemd-coredump" title="Permanent link">&para;</a></h3>
+<p>SONiC は <strong>systemd-coredump を使用しない</strong>。<code>kernel.core_pattern</code> をパイプ (<code>|</code>) で独自スクリプト (<code>coredump-compress</code>) に向けることで systemd-coredump の介在を排除している。<code>/etc/systemd/coredump.conf</code> は参照されない。</p>
+<h3 id="7-auto_techsupport">7. AUTO_TECHSUPPORT 連携まとめ<a class="headerlink" href="#7-auto_techsupport" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>クラッシュ発生
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  └─ kernel → coredump-compress (同期パイプ)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>       └─ /var/core/&lt;name&gt;.core.gz 保存
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>            └─ coredump_gen_handler.py (非同期 setsid &amp;)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>                 ├─ CONFIG_DB: AUTO_TECHSUPPORT|GLOBAL.state == &quot;enabled&quot; ?
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>                 ├─ CONFIG_DB: AUTO_TECHSUPPORT_FEATURE|&lt;c&gt;.state == &quot;enabled&quot; ?
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>                 ├─ rate_limit_interval チェック
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>                 ├─ メモリ閾値チェック
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>                 ├─ show techsupport 起動 → /var/dump/sonic_dump_*.tar.gz
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>                 └─ handle_coredump_cleanup (max_core_limit に基づき /var/core 整理)
+</span></code></pre></div>
+<!-- /ordering -->
 
 <div class="footnote">
 <hr />

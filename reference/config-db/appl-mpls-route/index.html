@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -24102,10 +24104,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差
+        プラットフォーム差 (Phase H)
       
     </span>
   </a>
@@ -24241,7 +24243,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -24506,7 +24508,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         影響範囲のまとめ
@@ -24567,7 +24569,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         サービス再起動トリガー
@@ -28257,6 +28259,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -35095,10 +35125,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
-        プラットフォーム差
+        プラットフォーム差 (Phase H)
       
     </span>
   </a>
@@ -35234,7 +35264,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         補足
@@ -35499,7 +35529,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         影響範囲のまとめ
@@ -35560,7 +35590,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         サービス再起動トリガー
@@ -35831,48 +35861,69 @@ Linux rt_protos 名（例: <code>"bgp"</code>, <code>"zebra"</code>, <code>"stat
 <!-- /side-effects -->
 
 <!-- platform -->
-<h2 id="_8">プラットフォーム差<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<p><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> / <code>routeorch.cpp</code> の MPLS 経路を全文走査した結果、
-APPL_DB <code>LABEL_ROUTE_TABLE</code> の挙動はコミュニティ master 上で <strong>プラットフォーム非依存</strong>である。
-差は SAI ベンダ実装側 (INSEG entry サポートの有無、available count の提供) に閉じ、
-CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。</p>
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> / <code>routeorch.cpp</code> / <code>saihelper.cpp</code> / <code>crmorch.cpp</code> の MPLS 経路を全文走査した結果、APPL_DB <code>LABEL_ROUTE_TABLE</code> の orchagent 処理はコミュニティ master 上で <strong>コード上プラットフォーム非依存</strong>である。実質的な差は SAI ベンダー実装側（<code>inseg_entry</code> サポートの有無、<code>sai_object_type_get_availability</code> の精度）に閉じ、CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。</p>
 <table>
 <thead>
 <tr>
 <th>観点</th>
 <th>差の有無</th>
 <th>根拠</th>
+<th>ソース</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>SAI MPLS capability の runtime 問合せ</td>
-<td>なし</td>
-<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>sai_query_attribute_capability</code> / <code>sai_object_type_query</code> 参照 0 件。<code>SAI_API_MPLS</code> は <code>saihelper.cpp:220</code> で一律 <code>sai_api_query()</code> され、ベンダが未サポートなら orchagent 起動段階で失敗する。runtime での MPLS 有効/無効判定パスは存在しない</td>
+<td>SAI MPLS inseg_entry capability の runtime 問い合わせ</td>
+<td><strong>なし</strong></td>
+<td><code>sai_query_attribute_capability</code> / <code>sai_object_type_query</code> for INSEG が <code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に 0 件。<code>SAI_API_MPLS</code> は <code>saihelper.cpp:220</code> で起動時に一括 <code>sai_api_query()</code> され、runtime での有効/無効判定パスは存在しない</td>
+<td><code>saihelper.cpp:220,284</code></td>
 </tr>
 <tr>
-<td><code>SAI_SWITCH_ATTR_AVAILABLE_*</code> による上限取得</td>
-<td>なし</td>
-<td><code>crmorch.cpp:113</code> の <code>CRM_MPLS_INSEG</code> は <code>SAI_OBJECT_TYPE_INSEG_ENTRY</code> (object_type 経由)。IPv4/IPv6 route のような <code>SAI_SWITCH_ATTR_AVAILABLE_*</code> 属性は <code>crmorch.cpp</code> に存在せず、CRM <code>used</code>/<code>available</code> の精度はベンダ SAI 実装に依存</td>
+<td>inseg_entry 非サポート ASIC での挙動</td>
+<td><strong>差あり (SAI 層)</strong></td>
+<td><code>gLabelRouteBulker.create_entry()</code> が <code>SAI_STATUS_NOT_SUPPORTED</code> を返した場合、<code>handleSaiSetStatus(SAI_API_MPLS, status)</code> に委譲され retry 永続。CONFIG_DB によるガード・無効化スイッチは実装なし</td>
+<td><code>mplsrouteorch.cpp:742,781,794,835</code></td>
 </tr>
 <tr>
-<td>switch type (voq/chassis/fabric) 分岐</td>
-<td>なし</td>
-<td><code>gMySwitchType</code> 参照は <code>routeorch.cpp:106-109</code> の <strong>IP route ECMP sizing 限定</strong>で、<code>doLabelTask</code> には伝搬しない。<code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>voq</code> / <code>chassis</code> / <code>fabric</code> 参照は 0 件</td>
+<td><code>SAI_SWITCH_ATTR_AVAILABLE_*</code> による MPLS 上限取得</td>
+<td><strong>なし</strong></td>
+<td><code>CRM_MPLS_INSEG</code> / <code>CRM_MPLS_NEXTHOP</code> は <code>crmResSaiAvailAttrMap</code> に<strong>エントリなし</strong>。<code>sai_object_type_get_availability(SAI_OBJECT_TYPE_INSEG_ENTRY, ...)</code> 汎用パスで取得するため、精度はベンダー SAI 実装に依存</td>
+<td><code>crmorch.cpp:113,801,854</code></td>
+</tr>
+<tr>
+<td>switch type voq/chassis/fabric 分岐 (MPLS inseg 直接)</td>
+<td><strong>なし</strong></td>
+<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> に <code>gMySwitchType</code> / <code>voq</code> / <code>chassis</code> / <code>fabric</code> 参照 0 件</td>
+<td>—</td>
+</tr>
+<tr>
+<td>voq による NHG 上限クランプの副次的影響</td>
+<td><strong>差あり (間接)</strong></td>
+<td>voq 環境では <code>routeorch.cpp:109</code> で <code>maxEcmpGroupSize</code> が 128 にクランプされ、<code>doLabelTask</code> の NHG 上限チェック (<code>mplsrouteorch.cpp:310-316</code>) に波及。MPLS ECMP NHG の最大メンバー数が 128 に制限される</td>
+<td><code>routeorch.cpp:109</code>, <code>mplsrouteorch.cpp:310-316</code></td>
+</tr>
+<tr>
+<td>VOQ Chassis inter-ASIC MPLS 転送</td>
+<td><strong>なし (orchagent 外)</strong></td>
+<td>各ラインカードが独立した <code>swss</code> コンテナを持ち <code>doLabelTask</code> を独立実行。inter-ASIC MPLS forwarding は SAI / ASIC ファブリック層の責務で orchagent には可視でない</td>
+<td>—</td>
 </tr>
 <tr>
 <td>multi-asic namespace 特殊化</td>
-<td>なし</td>
-<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> / <code>fpmsyncd/routesync.cpp::onLabelRouteMsg()</code> に <code>namespace</code> / <code>asic_id</code> 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行</td>
+<td><strong>なし</strong></td>
+<td><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> / <code>onLabelRouteMsg()</code> に <code>namespace</code> / <code>asic_id</code> 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行</td>
+<td>—</td>
 </tr>
 <tr>
 <td>VRF 制限 (プラットフォーム非依存)</td>
-<td>あり</td>
-<td><code>fpmsyncd/routesync.cpp:2674-2681</code> で非デフォルト VRF (<code>master_index != 0</code>) は <code>SWSS_LOG_INFO("Unsupported Non-default VRF")</code> のみでスキップ。これは fpmsyncd 全体の制約で ASIC タイプとは無関係</td>
+<td><strong>あり</strong></td>
+<td><code>fpmsyncd/routesync.cpp:2674-2681</code> で非デフォルト VRF (<code>master_index != 0</code>) は <code>SWSS_LOG_INFO("Unsupported Non-default VRF")</code> のみでスキップ。ASIC タイプとは無関係な fpmsyncd 全体の制約</td>
+<td><code>routesync.cpp:2674-2681</code></td>
 </tr>
 </tbody>
 </table>
-<p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/appl-mpls-route-platform.md</code> を参照。</p>
+<p>詳細な走査ログは <code>meta/_intermediate/cdb-flow/mpls-platform.md</code> および <code>meta/_intermediate/cdb-flow/appl-mpls-route-platform.md</code> を参照。</p>
 <!-- /platform -->
 
 <!-- cross-refs -->
@@ -36180,7 +36231,7 @@ CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。</p>
 </tr>
 </tbody>
 </table>
-<h3 id="_9">補足<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<h3 id="_8">補足<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>retry vs drop</strong>: <code>doLabelTask</code> のループは <code>addLabelRoute</code> / <code>removeLabelRoute</code> が <code>true</code> を返したときのみ <code>m_toSync.erase(it)</code>。<code>false</code> 戻り値は <code>++it</code> で次サイクル <strong>retry</strong>。入力バリデーション失敗 (両方指定・ifname 空) のみ即 erase される。</li>
 <li><strong>bulker による非同期確定</strong>: <code>addLabelRoute</code> 正常パスの末尾も <code>return false</code> (L664)。これは bulker 登録のみの段階で、確定は <code>addLabelRoutePost</code> が <code>m_syncdLabelRoutes</code> 反映と <code>gCrmOrch-&gt;incCrmResUsedCounter(CRM_MPLS_INSEG)</code> 実行で行う。</li>
@@ -36193,7 +36244,7 @@ CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。</p>
 
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
-<p><code>mplsrouteorch</code> / <code>nhgorch</code> MPLS 経路 / <code>CrmOrch</code> MPLS resource から抽出した APPL_DB <code>LABEL_ROUTE_TABLE</code> 経路に関わる主要ハードコード定数。詳細スキャン結果は <code>meta/_intermediate/cdb-flow/appl-mpls-route-constants.md</code>。</p>
+<p><code>mplsrouteorch</code> / <code>nhgorch</code> MPLS 経路 / <code>CrmOrch</code> MPLS resource から抽出した APPL_DB <code>LABEL_ROUTE_TABLE</code> 経路に関わる主要ハードコード定数。詳細スキャン結果は <code>meta/_intermediate/cdb-flow/appl-mpls-route-constants.md</code> および <code>meta/_intermediate/cdb-flow/mpls-constants.md</code>。</p>
 <h3 id="appl_db-schemah">APPL_DB テーブル名マクロ（<code>schema.h</code>）<a class="headerlink" href="#appl_db-schemah" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36644,7 +36695,7 @@ create/remove は NhgOrch / RouteOrch 双方が観るが、SAI 反映は NeighOr
 bulker flush を待つ。確定は項 8 の post-process ループで <code>addLabelRoutePost</code> が <code>m_syncdLabelRoutes</code>
 反映 + <code>gCrmOrch-&gt;incCrmResUsedCounter(CRM_MPLS_INSEG)</code> を実行して <code>m_toSync.erase</code> する。</p>
 <p>→ タイミング依存: 正常書込みでも 1 サイクル分の遅延（bulker 経由）が乗る。</p>
-<h3 id="_10">影響範囲のまとめ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h3 id="_9">影響範囲のまとめ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36791,7 +36842,7 @@ bulker flush を待つ。確定は項 8 の post-process ループで <code>addL
 </tbody>
 </table>
 <p><code>mplsrouteorch.cpp</code> / <code>nhgorch.cpp</code> には <code>m_publisher</code> / <code>ResponsePublisher</code> / <code>APPL_STATE_DB</code> 参照が <strong>0 件</strong>。MPLS パスは ack channel を持たず、<code>fpmsyncd</code> 側にも APPL_STATE_DB 経由のフィードバック経路は実装されていない（Phase B Side-effects と整合）。</p>
-<h3 id="_11">サービス再起動トリガー<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h3 id="_10">サービス再起動トリガー<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p>なし。<code>LABEL_ROUTE_TABLE</code> の SET/DEL は同一 orchagent プロセス内の <code>doLabelTask</code> で SAI <code>inseg_entry</code> のライブ操作 (<code>create_inseg_entry</code> / <code>remove_inseg_entry</code>) に変換される。systemd unit 再起動・サービス reload は伴わない。</p>
 <h3 id="zmq-feature">ZMQ 経路（feature 有効時のみ）<a class="headerlink" href="#zmq-feature" title="Permanent link">&para;</a></h3>
 <p><code>ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</code> feature が有効なら <code>ZmqConsumerStateTable</code> が <code>LABEL_ROUTE_TABLE</code> を ZMQ TCP socket 経由（Redis をバイパス）で受信する。ハンドラ (<code>doLabelTask</code>) は共通で、APPL_DB 上のデータも <code>dbPersistence</code> 引数に従って永続化される。デフォルトでは無効なので、標準フローは Redis channel PUBLISH 経路。</p>

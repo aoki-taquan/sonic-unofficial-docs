@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -23144,7 +23146,279 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 (publisher)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ディスパッチ経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select タイムアウト・リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-voq-chassis-wred-bind-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 1: VoQ chassis — WRED プロファイルの bind 対象が VoQ に変わる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-voq-chassis-queue-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-minmax-threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-capability-asic-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-wred-build-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 5: プラットフォーム別 WRED テンプレート（build-time）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db-saisyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB 書込み (SAI/syncd 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QUEUE への副次 bind
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecn-enum-ecn_map-qosorchcpp37-44-qosorchh56-63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECN enum — ecn_map (qosorch.cpp:37-44 / qosorch.h:56-63)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-wred_attr-qosorchcpp636-746" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI wred_attr マッピング (qosorch.cpp:636-746)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#threshold-probability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルト threshold / probability ハードコード値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weight-qosorchcpp794-796" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        weight デフォルト (qosorch.cpp:794-796)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -23155,7 +23429,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -23177,7 +23451,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -23189,7 +23463,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -23200,7 +23474,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -23211,7 +23485,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23332,6 +23606,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C: このテーブルを参照するテーブル)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C: このテーブルを参照するテーブル)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QUEUE テーブル (直接名前参照)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP / SCHEDULER (参照なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-time-qos_configj2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build-time 静的参照 (qos_config.j2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-b-cfg-appl-sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23381,6 +23705,45 @@
     <span class="md-ellipsis">
       
         段階 4: タイミング・副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
       
     </span>
   </a>
@@ -28064,6 +28427,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -34952,7 +35343,279 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読 API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publisher" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込み側 (publisher)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ディスパッチ経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select タイムアウト・リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / STATE_DB 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-voq-chassis-wred-bind-voq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 1: VoQ chassis — WRED プロファイルの bind 対象が VoQ に変わる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-voq-chassis-queue-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-sai-minmax-threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-capability-asic-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-wred-build-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        差異 5: プラットフォーム別 WRED テンプレート（build-time）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db-saisyncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB 書込み (SAI/syncd 経由)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queue-bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QUEUE への副次 bind
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ecn-enum-ecn_map-qosorchcpp37-44-qosorchh56-63" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ECN enum — ecn_map (qosorch.cpp:37-44 / qosorch.h:56-63)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-wred_attr-qosorchcpp636-746" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI wred_attr マッピング (qosorch.cpp:636-746)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#threshold-probability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        デフォルト threshold / probability ハードコード値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weight-qosorchcpp794-796" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        weight デフォルト (qosorch.cpp:794-796)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34963,7 +35626,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34985,7 +35648,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -34997,7 +35660,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -35008,7 +35671,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -35019,7 +35682,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35140,6 +35803,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C: このテーブルを参照するテーブル)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C: このテーブルを参照するテーブル)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#queue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QUEUE テーブル (直接名前参照)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port_qos_map-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PORT_QOS_MAP / SCHEDULER (参照なし)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-time-qos_configj2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build-time 静的参照 (qos_config.j2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#direction-b-cfg-appl-sai" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35189,6 +35902,45 @@
     <span class="md-ellipsis">
       
         段階 4: タイミング・副作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
       
     </span>
   </a>
@@ -35797,16 +36549,473 @@
 </blockquote>
 <!-- /handler-branching -->
 
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="api">購読 API<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB の <code>WRED_PROFILE</code> は <code>orchdaemon.cpp:375</code> の <code>qos_tables</code> ベクタ経由で <code>QosOrch</code> に登録される。<code>Orch::addConsumer()</code> が CONFIG_DB を検出し <strong><code>swss::SubscriberStateTable</code></strong> を選択する。</p>
+<ul>
+<li>購読方式: Redis <strong>keyspace 通知</strong> (<code>__keyspace@&lt;dbId&gt;__:WRED_PROFILE|*</code> への <code>PSUBSCRIBE</code>)</li>
+<li>通知到着時に <code>HGETALL</code> で値を再取得し <code>(key, op, fvs)</code> タプルとして <code>pops()</code> で返す</li>
+<li>バッチサイズ: <code>TableConsumable::DEFAULT_POP_BATCH_SIZE = 128</code>（<code>table.h:164</code>、ハードコード）</li>
+<li><code>orchagent -b</code> オプションの影響なし（APPL_DB 側 <code>ConsumerStateTable</code> のみに作用）</li>
+</ul>
+<h3 id="publisher">書き込み側 (publisher)<a class="headerlink" href="#publisher" title="Permanent link">&para;</a></h3>
+<p>CLI <code>config qos reload</code>（<code>sonic-cfggen</code> + <code>qos_config.j2</code>）または firstboot 時のテンプレート展開が <code>swss::Table::set()</code> / <code>HSET</code> を発行。明示的 <code>PUBLISH</code> は行われず Redis keyspace 通知で購読者に伝達。</p>
+<h3 id="_11">ディスパッチ経路<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SubscriberStateTable (PSUBSCRIBE keyspace)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  → Consumer::execute() → pops() (HGETALL)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  → QosOrch::doTask(Consumer&amp;)           # allPortsReady() チェック後
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  → m_qos_handler_map[CFG_WRED_PROFILE_TABLE_NAME]
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  → QosOrch::handleWredProfileTable()    # qosorch.cpp:877
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  → WredMapHandler::processWorkItem()
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  → addQosItem(): sai_wred_api-&gt;create_wred()
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                  [SAI_WRED_ATTR_ECN_MARK_MODE / SAI_WRED_ATTR_*_ENABLE 等]
+</span></code></pre></div>
+<p><code>QosOrch::doTask()</code> は WRED_PROFILE を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（<code>qosorch.cpp:2231-2252</code>）。これにより <code>QUEUE.wred_profile</code> 参照を解決した状態で QUEUE を処理できる。</p>
+<h3 id="select">select タイムアウト・リトライ<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<ul>
+<li>select タイムアウト: <strong>1000 ms</strong> (<code>SELECT_TIMEOUT</code>, <code>orchdaemon.cpp:23</code>)</li>
+<li><code>task_need_retry</code> 時は <code>m_toSync</code> にエントリを残置して次サイクルで再処理</li>
+<li>サービス再起動トリガーなし（SAI ライブ操作のみで完結）</li>
+</ul>
+<h3 id="appl_db-state_db">APPL_DB / STATE_DB 書き込み<a class="headerlink" href="#appl_db-state_db" title="Permanent link">&para;</a></h3>
+<p>なし。<code>WRED_PROFILE</code> は CONFIG_DB → <code>QosOrch</code> → SAI の直接経路で完結し、APPL_DB への中継も STATE_DB への反映も行わない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読方式</td>
+<td><code>SubscriberStateTable</code> (keyspace <code>PSUBSCRIBE</code>)</td>
+</tr>
+<tr>
+<td>バッチサイズ</td>
+<td>128 (<code>DEFAULT_POP_BATCH_SIZE</code>)</td>
+</tr>
+<tr>
+<td>select タイムアウト</td>
+<td>1000 ms</td>
+</tr>
+<tr>
+<td>ハンドラ</td>
+<td><code>QosOrch::handleWredProfileTable()</code> → <code>WredMapHandler</code></td>
+</tr>
+<tr>
+<td>SAI API</td>
+<td><code>sai_wred_api-&gt;create_wred()</code> / <code>set_wred_attribute()</code> / <code>remove_wred()</code></td>
+</tr>
+<tr>
+<td>channel PUBLISH</td>
+<td>使わない</td>
+</tr>
+<tr>
+<td>APPL_DB 中継</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>未使用</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>WRED_PROFILE の処理において、プラットフォーム識別文字列（<code>broadcom</code> / <code>mellanox</code> / <code>cisco-8000</code> 等）による静的分岐は存在しない。SAI capability の動的照会（<code>querySwitchCapability</code> / <code>sai_query_attribute_capability</code>）も WRED 属性に対しては実施されない。確認されるプラットフォーム差は以下の通り。</p>
+<h3 id="1-voq-chassis-wred-bind-voq">差異 1: VoQ chassis — WRED プロファイルの bind 対象が VoQ に変わる<a class="headerlink" href="#1-voq-chassis-wred-bind-voq" title="Permanent link">&para;</a></h3>
+<p><code>gMySwitchType == "voq"</code> の場合、<code>applyWredProfileToQueue()</code> (<code>qosorch.cpp:1715-1730</code>) は物理キュー ID（<code>port.m_queue_ids[queue_ind]</code>）の代わりに <strong>VoQ ID</strong>（<code>gPortsOrch-&gt;getPortVoQIds(port)[queue_ind]</code>）を使用し、SAI 属性 <code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code> を VoQ に設定する。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>bind 対象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gMySwitchType == "voq"</code></td>
+<td><code>getPortVoQIds()</code> で取得した VoQ ID</td>
+</tr>
+<tr>
+<td>それ以外（通常スイッチ / multi-asic / DPU 等）</td>
+<td><code>port.m_queue_ids[queue_ind]</code>（物理キュー）</td>
+</tr>
+</tbody>
+</table>
+<p>VoQ chassis ではローカル ASIC のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（<code>qosorch.cpp:1790-1800</code>）。</p>
+<h3 id="2-voq-chassis-queue-4">差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる<a class="headerlink" href="#2-voq-chassis-queue-4" title="Permanent link">&para;</a></h3>
+<p><code>handleQueueTable()</code> (<code>qosorch.cpp:1772-1810</code>) における QUEUE キー解析:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>キーフォーマット</th>
+<th>不正時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gMySwitchType == "voq"</code></td>
+<td><code>{hostname}\|{asic}\|{port}\|{index}</code> (4 トークン必須)</td>
+<td>4 トークン未満 → <code>task_invalid_entry</code></td>
+</tr>
+<tr>
+<td>それ以外</td>
+<td><code>{port}\|{index}</code> (2 トークン必須)</td>
+<td>2 トークン以外 → <code>task_invalid_entry</code></td>
+</tr>
+</tbody>
+</table>
+<p>VoQ 環境で <code>QUEUE</code> テーブルを書く場合は <code>hostname|asicN|EthernetX|queue_index</code> 形式を使用する必要がある。</p>
+<h3 id="3-sai-minmax-threshold">差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）<a class="headerlink" href="#3-sai-minmax-threshold" title="Permanent link">&para;</a></h3>
+<p>コメント (<code>qosorch.cpp:596-629</code>) に「一部ベンダー SAI では 1 回の SET ごとに min/max の整合性を検証するため、閾値の過渡的な逆転（旧 max &lt; 新 min）がエラーになる」と記されている。対象ベンダーは明示されていない。</p>
+<p>この問題は <strong>2 フェーズ属性適用</strong>（<code>convertFieldValuesToAttributes()</code> の <code>deferred_attributes</code> 機構, L636-694）で吸収されており、ユーザー操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。</p>
+<h3 id="4-sai-capability-asic-sai">差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明<a class="headerlink" href="#4-sai-capability-asic-sai" title="Permanent link">&para;</a></h3>
+<p>WRED の各 SAI 属性（<code>SAI_WRED_ATTR_ECN_MARK_MODE</code>、<code>SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}</code>、<code>SAI_WRED_ATTR_WEIGHT</code>）は能力照会なしで直接 <code>sai_wred_api-&gt;create_wred()</code> / <code>set_wred_attribute()</code> に渡される。ASIC が非対応の場合 SAI がエラーを返し、orchagent はエントリを破棄する（ログ: <code>"Failed to create wred profile: %d"</code>）。対応可否は各ベンダーの <code>libsai</code> 実装に依存。</p>
+<h3 id="5-wred-build-time">差異 5: プラットフォーム別 WRED テンプレート（build-time）<a class="headerlink" href="#5-wred-build-time" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2:486-506</code> のマクロ分岐:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>生成される WRED_PROFILE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hwsku テンプレートが <code>generate_wred_profiles</code> マクロを定義している</td>
+<td>プラットフォーム固有の WRED プロファイル（カスタム閾値・ECN 設定）</td>
+</tr>
+<tr>
+<td>マクロ未定義（デフォルト）</td>
+<td><code>AZURE_LOSSLESS</code>（min=1 MiB / max=2 MiB / prob=5% / ecn=ecn_all）</td>
+</tr>
+</tbody>
+</table>
+<p>runtime の orchagent 側にはプラットフォーム別の分岐なし。差異はすべて build-time の j2 テンプレートで吸収される。</p>
+<div class="admonition note">
+<p class="admonition-title">VoQ スイッチ運用上の注意</p>
+<p>VoQ chassis 環境では QUEUE テーブルのキーを <code>hostname|asic|port|queue_index</code> の 4 トークン形式で書く必要がある。2 トークン形式（通常スイッチ用）を使うと <code>task_invalid_entry</code> で即破棄される。</p>
+</div>
+<!-- /platform -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>WredMapHandler</code> が CONFIG_DB エントリを処理する際の失敗パターンを網羅する。ソース: <code>sonic-swss/orchagent/qosorch.cpp</code>。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗種別</th>
+<th>トリガー条件</th>
+<th>ログメッセージ</th>
+<th>エントリ継続</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>不正 threshold (min &gt; max)</td>
+<td><code>*_min_threshold &gt; *_max_threshold</code> の C++ 側チェック (<code>convertFieldValuesToAttributes()</code> 末尾)</td>
+<td><code>"Wrong wred profile: min threshold is greater than max threshold"</code></td>
+<td>破棄</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SAI <code>create_wred</code> 失敗</td>
+<td><code>sai_wred_api-&gt;create_wred()</code> がエラーを返す（新規作成時）</td>
+<td><code>"Failed to create wred profile: %d"</code></td>
+<td>破棄</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SAI <code>set_wred_attribute</code> 失敗</td>
+<td><code>sai_wred_api-&gt;set_wred_attribute()</code> がエラーを返す（runtime 更新時）</td>
+<td><code>"Failed to set wred profile attribute, id:%d, status:%d"</code></td>
+<td>部分適用（ループ中断）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>参照中 DEL → <code>remove_wred</code> 失敗</td>
+<td><code>QUEUE</code> が参照中の状態で <code>WRED_PROFILE</code> エントリを DEL した場合に SAI がエラー</td>
+<td><code>"Failed to remove scheduler profile, status:%d"</code></td>
+<td>SAI オブジェクト残留</td>
+</tr>
+<tr>
+<td>5</td>
+<td>不正 <code>ecn</code> enum 値</td>
+<td><code>ecn_map.at(fvValue)</code> で <code>std::out_of_range</code> 例外発生（許可値 8 種以外）</td>
+<td>なし（例外伝播、ログなし）</td>
+<td>破棄</td>
+</tr>
+<tr>
+<td>6</td>
+<td>不正 <code>wred_*_enable</code> 値</td>
+<td><code>convertBool()</code> が <code>"true"</code>/<code>"false"</code> 以外を受けて失敗</td>
+<td><code>"Invalid input specified"</code></td>
+<td>破棄</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">詳細<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p><strong>不正 threshold (min &gt; max)</strong> (<code>qosorch.cpp:754-759</code>):
+YANG <code>must</code> 制約（max &gt;= min）は yang-validation 層で弾くが、orchagent も C++ 側で二重チェックする。
+いずれかの色で <code>min &gt; max</code> となる場合、<code>convertFieldValuesToAttributes()</code> が <code>false</code> を返しエントリを破棄する。
+SAI への変更はなく、CONFIG_DB エントリは残る（hardware に下りない状態が続く）。</p>
+<p><strong>SAI 失敗（create / set）</strong>:
+新規作成時は <code>create_wred()</code> 失敗でエントリ破棄。<code>QUEUE.wred_profile</code> が参照している場合、参照先が未登録のまま <code>task_need_retry</code> ループが継続する。
+runtime 更新時は <code>set_wred_attribute()</code> が属性ループを途中で中断するため、失敗前の属性は適用済み・失敗後は未適用という部分適用状態になりうる。</p>
+<p><strong>参照中 DEL</strong>: <code>QUEUE</code> が <code>wred_profile=&lt;name&gt;</code> で参照している WRED_PROFILE を先に削除すると、SAI 側が <code>SAI_STATUS_OBJECT_IN_USE</code> 相当のエラーを返す。<code>removeQosItem()</code> が <code>false</code> を返し SAI オブジェクトが残留する。正しい手順は QUEUE 側を先に DEL（または <code>wred_profile</code> フィールドを除去）してから WRED_PROFILE を DEL する。</p>
+<p><strong>不正 <code>ecn</code> enum</strong>: <code>ecn_map.at()</code> は try-catch なしで呼ばれるため <code>std::out_of_range</code> が上位に伝播し、エントリが無音で破棄される（<code>SWSS_LOG_ERROR</code> なし）。YANG 定義の 8 値以外を CONFIG_DB に直接書き込んだ場合のみ発生。</p>
+<p><strong>不正 <code>wred_*_enable</code></strong>: <code>convertBool()</code> 内で <code>SWSS_LOG_ERROR("Invalid input specified")</code> を出力した後 <code>false</code> を返す。<code>"true"</code>/<code>"false"</code> 以外（例: <code>"yes"</code>, <code>"1"</code>, <code>"TRUE"</code>）で発生。</p>
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp WredMapHandler::convertFieldValuesToAttributes() L585-762, addQosItem() L784-860, removeQosItem() L864-874 -->
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>WRED_PROFILE</code> の SET/DEL を受けた <code>QosOrch</code> (<code>WredMapHandler</code>) は、SAI 経由で ASIC_DB に書き込む。STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書込はない。</p>
+<h3 id="asic_db-saisyncd">ASIC_DB 書込み (SAI/syncd 経由)<a class="headerlink" href="#asic_db-saisyncd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>SAI API</th>
+<th>ASIC_DB への反映</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SET → 新規 (<code>addQosItem()</code>)</td>
+<td><code>sai_wred_api-&gt;create_wred(&amp;sai_object, gSwitchId, ...)</code></td>
+<td><code>ASIC_STATE:SAI_OBJECT_TYPE_WRED:&lt;oid&gt;</code> 生成</td>
+</tr>
+<tr>
+<td>SET → 既存更新 (<code>modifyQosItem()</code>)</td>
+<td><code>sai_wred_api-&gt;set_wred_attribute(sai_object, &amp;attr)</code></td>
+<td><code>ASIC_STATE:SAI_OBJECT_TYPE_WRED:&lt;oid&gt;</code> フィールド更新</td>
+</tr>
+<tr>
+<td>DEL → <code>removeQosItem()</code></td>
+<td><code>sai_wred_api-&gt;remove_wred(sai_object)</code></td>
+<td><code>ASIC_STATE:SAI_OBJECT_TYPE_WRED:&lt;oid&gt;</code> 削除</td>
+</tr>
+<tr>
+<td>QUEUE bind (<code>applyWredProfileToQueue()</code>)</td>
+<td><code>sai_queue_api-&gt;set_queue_attribute(queue_id, SAI_QUEUE_ATTR_WRED_PROFILE_ID)</code></td>
+<td><code>ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:&lt;queue_oid&gt;</code> の <code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code> 更新</td>
+</tr>
+<tr>
+<td>QUEUE unbind (DEL / <code>wred_profile</code> 解除)</td>
+<td>同上、値 <code>SAI_NULL_OBJECT_ID</code></td>
+<td>同上フィールドを <code>NULL</code> に更新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="queue-bind">QUEUE への副次 bind<a class="headerlink" href="#queue-bind" title="Permanent link">&para;</a></h3>
+<p><code>WRED_PROFILE</code> SAI オブジェクト作成後、<code>QUEUE.wred_profile</code> で参照されている場合に <code>applyWredProfileToQueue()</code> が <code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code> を設定してキューに紐付ける。VoQ スイッチ (<code>gMySwitchType == "voq"</code>) では物理キューではなく VoQ ID に適用する (<code>qosorch.cpp:1709-1730</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>副次 bind 条件</th>
+<th>処理</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUEUE.wred_profile=&lt;name&gt;</code> が解決済み</td>
+<td><code>sai_queue_api-&gt;set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)</code></td>
+<td><code>qosorch.cpp:1735-1738</code></td>
+</tr>
+<tr>
+<td><code>QUEUE.wred_profile</code> 未解決 (WRED_PROFILE 未作成)</td>
+<td><code>task_need_retry</code> → WRED_PROFILE 作成後に自動再処理</td>
+<td><code>qosorch.cpp:1864-1870</code></td>
+</tr>
+<tr>
+<td>DEL または <code>wred_profile</code> フィールド削除</td>
+<td><code>SAI_QUEUE_ATTR_WRED_PROFILE_ID = SAI_NULL_OBJECT_ID</code> で unbind</td>
+<td><code>qosorch.cpp:1893</code></td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># WRED SAI オブジェクト確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_WRED:*&#39;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># キューへの bind 確認</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:&lt;queue_oid&gt;&#39;</span><span class="w"> </span>SAI_QUEUE_ATTR_WRED_PROFILE_ID
+</span></code></pre></div>
+<blockquote>
+<p><strong>証跡</strong>: <code>create_wred()</code> L855、<code>set_wred_attribute()</code> L774、<code>remove_wred()</code> L868、<code>set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)</code> L1735-1738。<code>qosorch.cpp</code> 全 WRED 処理経路読了。STATE_DB / COUNTERS_DB への書込なし確認済み。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<h3 id="ecn-enum-ecn_map-qosorchcpp37-44-qosorchh56-63">ECN enum — <code>ecn_map</code> (qosorch.cpp:37-44 / qosorch.h:56-63)<a class="headerlink" href="#ecn-enum-ecn_map-qosorchcpp37-44-qosorchh56-63" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB <code>ecn</code> フィールド文字列を SAI <code>SAI_WRED_ATTR_ECN_MARK_MODE</code> にマッピングするルックアップテーブル。不正値は <code>std::out_of_range</code> → エントリ破棄。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド値</th>
+<th>SAI 属性値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ecn_none</code> (<strong>既定</strong>)</td>
+<td><code>SAI_ECN_MARK_MODE_NONE</code></td>
+<td>qosorch.cpp:37, qosorch.h:56</td>
+</tr>
+<tr>
+<td><code>ecn_green</code></td>
+<td><code>SAI_ECN_MARK_MODE_GREEN</code></td>
+<td>qosorch.cpp:38, qosorch.h:60</td>
+</tr>
+<tr>
+<td><code>ecn_yellow</code></td>
+<td><code>SAI_ECN_MARK_MODE_YELLOW</code></td>
+<td>qosorch.cpp:39, qosorch.h:58</td>
+</tr>
+<tr>
+<td><code>ecn_red</code></td>
+<td><code>SAI_ECN_MARK_MODE_RED</code></td>
+<td>qosorch.cpp:40, qosorch.h:57</td>
+</tr>
+<tr>
+<td><code>ecn_green_yellow</code></td>
+<td><code>SAI_ECN_MARK_MODE_GREEN_YELLOW</code></td>
+<td>qosorch.cpp:41, qosorch.h:62</td>
+</tr>
+<tr>
+<td><code>ecn_green_red</code></td>
+<td><code>SAI_ECN_MARK_MODE_GREEN_RED</code></td>
+<td>qosorch.cpp:42, qosorch.h:61</td>
+</tr>
+<tr>
+<td><code>ecn_yellow_red</code></td>
+<td><code>SAI_ECN_MARK_MODE_YELLOW_RED</code></td>
+<td>qosorch.cpp:43, qosorch.h:59</td>
+</tr>
+<tr>
+<td><code>ecn_all</code></td>
+<td><code>SAI_ECN_MARK_MODE_ALL</code></td>
+<td>qosorch.cpp:44, qosorch.h:63</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-wred_attr-qosorchcpp636-746">SAI wred_attr マッピング (qosorch.cpp:636-746)<a class="headerlink" href="#sai-wred_attr-qosorchcpp636-746" title="Permanent link">&para;</a></h3>
+<p><code>WredMapHandler::convertFieldValuesToAttributes()</code> が各 CONFIG_DB フィールドを SAI 属性 ID に変換する。</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB フィールド</th>
+<th>SAI 属性 ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>green_min_threshold</code></td>
+<td><code>SAI_WRED_ATTR_GREEN_MIN_THRESHOLD</code></td>
+</tr>
+<tr>
+<td><code>green_max_threshold</code></td>
+<td><code>SAI_WRED_ATTR_GREEN_MAX_THRESHOLD</code></td>
+</tr>
+<tr>
+<td><code>yellow_min_threshold</code></td>
+<td><code>SAI_WRED_ATTR_YELLOW_MIN_THRESHOLD</code></td>
+</tr>
+<tr>
+<td><code>yellow_max_threshold</code></td>
+<td><code>SAI_WRED_ATTR_YELLOW_MAX_THRESHOLD</code></td>
+</tr>
+<tr>
+<td><code>red_min_threshold</code></td>
+<td><code>SAI_WRED_ATTR_RED_MIN_THRESHOLD</code></td>
+</tr>
+<tr>
+<td><code>red_max_threshold</code></td>
+<td><code>SAI_WRED_ATTR_RED_MAX_THRESHOLD</code></td>
+</tr>
+<tr>
+<td><code>green_drop_probability</code></td>
+<td><code>SAI_WRED_ATTR_GREEN_DROP_PROBABILITY</code></td>
+</tr>
+<tr>
+<td><code>yellow_drop_probability</code></td>
+<td><code>SAI_WRED_ATTR_YELLOW_DROP_PROBABILITY</code></td>
+</tr>
+<tr>
+<td><code>red_drop_probability</code></td>
+<td><code>SAI_WRED_ATTR_RED_DROP_PROBABILITY</code></td>
+</tr>
+<tr>
+<td><code>wred_green_enable</code></td>
+<td><code>SAI_WRED_ATTR_GREEN_ENABLE</code></td>
+</tr>
+<tr>
+<td><code>wred_yellow_enable</code></td>
+<td><code>SAI_WRED_ATTR_YELLOW_ENABLE</code></td>
+</tr>
+<tr>
+<td><code>wred_red_enable</code></td>
+<td><code>SAI_WRED_ATTR_RED_ENABLE</code></td>
+</tr>
+<tr>
+<td><code>ecn</code></td>
+<td><code>SAI_WRED_ATTR_ECN_MARK_MODE</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="threshold-probability">デフォルト threshold / probability ハードコード値<a class="headerlink" href="#threshold-probability" title="Permanent link">&para;</a></h3>
+<p><strong>drop probability の C++ fallback</strong> (qosorch.cpp:836-850): <code>wred_*_enable=true</code> かつ対応 <code>*_drop_probability</code> フィールド省略時、<code>addQosItem()</code> が SAI 属性リストに自動補完する固定値。</p>
+<table>
+<thead>
+<tr>
+<th>対象色</th>
+<th>SAI 属性</th>
+<th>ハードコード値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Green</td>
+<td><code>SAI_WRED_ATTR_GREEN_DROP_PROBABILITY</code></td>
+<td><code>100</code> (%)</td>
+</tr>
+<tr>
+<td>Yellow</td>
+<td><code>SAI_WRED_ATTR_YELLOW_DROP_PROBABILITY</code></td>
+<td><code>100</code> (%)</td>
+</tr>
+<tr>
+<td>Red</td>
+<td><code>SAI_WRED_ATTR_RED_DROP_PROBABILITY</code></td>
+<td><code>100</code> (%)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>threshold</strong>: YANG・orchagent ともにデフォルト値なし。フィールド省略時は SAI ベンダー依存。<code>AZURE_LOSSLESS</code> テンプレートが min=1,048,576 bytes / max=2,097,152 bytes を設定。</p>
+<h3 id="weight-qosorchcpp794-796">weight デフォルト (qosorch.cpp:794-796)<a class="headerlink" href="#weight-qosorchcpp794-796" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB に <code>weight</code> フィールドは存在しない。<code>addQosItem()</code> は WRED オブジェクト作成時に常に <code>SAI_WRED_ATTR_WEIGHT = 0</code> を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザー設定不可）。</p>
+<!-- /constants -->
+
 <!-- ref-triangle:start -->
 
-<h2 id="_11">関連リファレンス<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-wred-profile/"><code>sonic-wred-profile</code></a></li>
 <li>CLI: <a href="../../cli/config-qos/"><code>config qos</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35815,20 +37024,20 @@
 <!-- /topics-back-ref -->
 
 <!-- ops-hint -->
-<h2 id="_13">運用ヒント<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<h3 id="_14">典型値<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h3 id="_16">典型値<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>WRED_PROFILE|&lt;name&gt;</code>。</li>
 <li><code>ecn</code>: <code>ecn_all</code> / <code>ecn_green</code> / <code>ecn_none</code>。</li>
 <li><code>*_min_threshold</code> / <code>*_max_threshold</code> / <code>*_drop_probability</code>。</li>
 </ul>
-<h3 id="_15">よくある誤設定<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<h3 id="_17">よくある誤設定<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li>min &gt; max に設定すると <a href="../../glossary/#term-sai">SAI</a> がエラーを返し、profile が hardware に下りない。</li>
 </ul>
-<h3 id="_16">確認コマンド<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WRED_PROFILE|AZURE_LOSSY&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>wred
+<h3 id="_18">確認コマンド<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WRED_PROFILE|AZURE_LOSSY&#39;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>wred
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -35840,7 +37049,7 @@
 <p><code>config qos reload</code> の実行フロー:</p>
 <ol>
 <li><code>_clear_qos()</code> (L895-915) で WRED_PROFILE テーブルを全削除:
-   <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">config_db</span><span class="o">.</span><span class="n">delete_table</span><span class="p">(</span><span class="s2">&quot;WRED_PROFILE&quot;</span><span class="p">)</span>
+   <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">config_db</span><span class="o">.</span><span class="n">delete_table</span><span class="p">(</span><span class="s2">&quot;WRED_PROFILE&quot;</span><span class="p">)</span>
 </span></code></pre></div></li>
 <li>プラットフォーム固有の <code>qos.json.j2</code> を <code>sonic-cfggen</code> で展開し <code>--write-to-db</code> で CONFIG_DB に書き込む</li>
 <li>テンプレート内の <code>WRED_PROFILE</code> セクション (<code>AZURE_LOSSLESS</code> 等) が CONFIG_DB に反映される</li>
@@ -35849,7 +37058,7 @@
 <h3 id="cli-config-qos-clear">CLI — config qos clear<a class="headerlink" href="#cli-config-qos-clear" title="Permanent link">&para;</a></h3>
 <p><code>sonic-utilities/config/main.py:895-915</code> (<code>_clear_qos()</code>)</p>
 <p><code>QOS_TABLE_NAMES</code> リストに <code>'WRED_PROFILE'</code> が含まれており、<code>config qos clear</code> で WRED_PROFILE テーブルが全削除される。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">config_db</span><span class="o">.</span><span class="n">delete_table</span><span class="p">(</span><span class="s2">&quot;WRED_PROFILE&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">config_db</span><span class="o">.</span><span class="n">delete_table</span><span class="p">(</span><span class="s2">&quot;WRED_PROFILE&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="build-time-qos_configj2">build-time デフォルト (qos_config.j2)<a class="headerlink" href="#build-time-qos_configj2" title="Permanent link">&para;</a></h3>
 <p><code>sonic-buildimage/files/build_templates/qos_config.j2:486-506</code></p>
@@ -35897,6 +37106,58 @@
 <h3 id="runtime-injection">死活 (runtime injection)<a class="headerlink" href="#runtime-injection" title="Permanent link">&para;</a></h3>
 <p><code>orchagent</code> の <code>QosOrch</code> は WRED_PROFILE を購読するのみ（書き込みなし）。</p>
 <!-- /entry-points -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照 (Phase C: このテーブルを参照するテーブル)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>WRED_PROFILE</code> テーブルは他テーブルから名前で参照される被参照テーブル。参照元と解決フローを以下に示す。</p>
+<h3 id="queue">QUEUE テーブル (直接名前参照)<a class="headerlink" href="#queue" title="Permanent link">&para;</a></h3>
+<p><code>QUEUE</code> テーブルの <code>wred_profile</code> フィールドが <code>WRED_PROFILE</code> のエントリ名を文字列で保持し、<code>QosOrch::handleQueueTable()</code> 内で <code>resolveFieldRefValue()</code> により実オブジェクトに解決される。</p>
+<table>
+<thead>
+<tr>
+<th>参照元テーブル</th>
+<th>参照フィールド</th>
+<th>解決タイミング</th>
+<th>未解決時の挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUEUE</code></td>
+<td><code>wred_profile</code></td>
+<td><code>handleQueueTable()</code> SET パス</td>
+<td><code>task_need_retry</code> — WRED_PROFILE 先行作成を待つ</td>
+<td><code>qosorch.cpp:1856-1867</code></td>
+</tr>
+<tr>
+<td><code>QUEUE</code></td>
+<td><code>wred_profile</code> (DEL)</td>
+<td><code>handleQueueTable()</code> DEL パス</td>
+<td><code>sai_wred_profile = SAI_NULL_OBJECT_ID</code> で unbind</td>
+<td><code>qosorch.cpp:1889-1893</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>解決フロー</strong>:</p>
+<ol>
+<li><code>resolveFieldRefValue(m_qos_maps, wred_profile_field_name, qos_to_ref_table_map.at(wred_profile_field_name), tuple, sai_wred_profile, wred_profile_name)</code> (qosorch.cpp:1857-1859)</li>
+<li>未解決 (<code>ref_resolve_status::not_resolved</code>) → <code>SWSS_LOG_INFO("Missing or invalid wred profile reference")</code> + <code>task_need_retry</code> (L1864-1867)</li>
+<li>解決成功 → <code>setObjectReference(m_qos_maps, CFG_QUEUE_TABLE_NAME, key, wred_profile_field_name, wred_profile_name)</code> (L1886)</li>
+<li><code>applyWredProfileToQueue(port, queue_ind, sai_wred_profile)</code> (L1936) → SAI <code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code> を設定</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">VoQ スイッチ</p>
+<p><code>gMySwitchType == "voq"</code> の場合、<code>applyWredProfileToQueue()</code> (qosorch.cpp:1708-1730) が物理キューではなく VoQ ID に対して WRED を適用する。</p>
+</div>
+<h3 id="port_qos_map-scheduler">PORT_QOS_MAP / SCHEDULER (参照なし)<a class="headerlink" href="#port_qos_map-scheduler" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>PORT_QOS_MAP</code></strong>: <code>wred_profile</code> フィールドを持たない。<code>handlePortQosMapTable()</code> のフィールドループに <code>wred_profile_field_name</code> は含まれない (<code>qosorch.cpp:2021,2124</code>)。ただし <code>PORT_QOS_MAP → QUEUE → wred_profile</code> の間接チェーンは存在する。</li>
+<li><strong><code>SCHEDULER</code></strong>: WRED 属性を扱わない。<code>SchedulerHandler</code> は <code>WRED_PROFILE</code> を参照しない (<code>qosorch.cpp:1333-</code>)。</li>
+</ul>
+<h3 id="build-time-qos_configj2_1">build-time 静的参照 (qos_config.j2)<a class="headerlink" href="#build-time-qos_configj2_1" title="Permanent link">&para;</a></h3>
+<p><code>qos_config.j2:514-660</code> の QUEUE セクションで RoCE キュー (queue 3, 4 等) に <code>"wred_profile": "AZURE_LOSSLESS"</code> を静的設定する。runtime の <code>resolveFieldRefValue()</code> 経由ではなく、firstboot / <code>config qos reload</code> 時のテンプレート展開で CONFIG_DB に書き込まれる。</p>
+<!-- /cross-refs -->
 
 <!-- runtime-trace -->
 <h2 id="direction-b-cfg-appl-sai">起動経路 (Direction B: CFG → APPL → SAI)<a class="headerlink" href="#direction-b-cfg-appl-sai" title="Permanent link">&para;</a></h2>
@@ -35948,6 +37209,66 @@
 <li><strong>db_migrator</strong>: 旧 DB の <code>wred_profile</code> フィールド値 <code>|AZURE_LOSSLESS|</code> 形式を <code>AZURE_LOSSLESS</code> に変換 (<code>db_migrator.py:574-585</code>)。</li>
 </ul>
 <!-- /runtime-trace -->
+
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>QosOrch</code> / <code>WredMapHandler</code> (<code>sonic-swss/orchagent/qosorch.cpp</code>) の処理において、WRED_PROFILE の SAI 作成順・QUEUE からの参照順・SAI bind 順に明確な順序制約が存在する。</p>
+<h3 id="_19">検出された順序依存<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>重要度</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SAI 属性リスト先頭 <code>SAI_WRED_ATTR_WEIGHT=0</code> の固定注入</td>
+<td>内部固定（CONFIG_DB 記述順に依存しない）</td>
+<td>—</td>
+<td><code>addQosItem()</code> が常に保証 (<code>qosorch.cpp:794</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>WRED_PROFILE\|&lt;name&gt;</code> 先行登録 → <code>QUEUE.wred_profile</code> 参照</td>
+<td><strong>先行推奨</strong>（未登録でも retry で最終適用）</td>
+<td>中</td>
+<td><code>task_need_retry</code> 自動再試行 (<code>qosorch.cpp:1869</code>)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SAI WRED create 完了 → <code>SAI_QUEUE_ATTR_WRED_PROFILE_ID</code> bind</td>
+<td><strong>先行必須</strong>（orchagent 内部で保証）</td>
+<td>高（内部）</td>
+<td>orchagent 内部マップ管理で自動保証</td>
+</tr>
+<tr>
+<td>4</td>
+<td>DEL 時: QUEUE <code>wred_profile</code> 解除 → <code>remove_wred()</code></td>
+<td><strong>先行必須</strong>（SAI 参照カウント整合）</td>
+<td>高</td>
+<td>DEL_COMMAND 処理内で自動順序化 (<code>qosorch.cpp:1893</code>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>閾値変更: min/max 逆転を避ける 2 フェーズ適用</td>
+<td>内部固定（orchagent が保証）</td>
+<td>—</td>
+<td><code>convertFieldValuesToAttributes</code> が自動管理 (<code>qosorch.cpp:636-644</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">主要な制約詳細<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<p><strong>SAI WRED 属性の注入順序 (依存 #1)</strong>: <code>addQosItem()</code> は <code>sai_wred_api-&gt;create_wred()</code> 呼び出し前に SAI 属性リストを ① <code>SAI_WRED_ATTR_WEIGHT=0</code>（無条件先頭）、② <code>convertFieldValuesToAttributes()</code> 変換済み属性群、③ <code>*_drop_probability</code> 自動補完（Green → Yellow → Red 順）の順序で構築する（<code>qosorch.cpp:794-850</code>）。CONFIG_DB フィールドの記述順には依存しない。</p>
+<p><strong>WRED_PROFILE → QUEUE 参照の順序 (依存 #2)</strong>: <code>handleQueueTable()</code> は <code>resolveFieldRefValue()</code> で <code>QUEUE.wred_profile</code> 名前参照を解決する。参照先 <code>WRED_PROFILE|&lt;name&gt;</code> が orchagent 内部マップに未登録の場合は <code>task_need_retry</code> を返して Consumer キューに再投入し、WRED_PROFILE 登録後に自動再処理される。<strong>推奨順序</strong>: <code>WRED_PROFILE|&lt;name&gt;</code> を先に CONFIG_DB に書き込み、その後 <code>QUEUE|&lt;port&gt;|&lt;index&gt;</code> の <code>wred_profile</code> フィールドを書き込む（<code>qosorch.cpp:1857-1870</code>）。</p>
+<p><strong>SAI bind 順序 (依存 #3/4)</strong>: <code>applyWredProfileToQueue()</code> は有効な SAI WRED OID が得られた後に <code>sai_queue_api-&gt;set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)</code> を呼ぶ。VoQ スイッチ (<code>gMySwitchType == "voq"</code>) では <code>getPortVoQIds()</code> 経由で VoQ の queue_id を使用する（<code>qosorch.cpp:1716-1730</code>）。DEL 時は <code>sai_wred_profile = SAI_NULL_OBJECT_ID</code> でキューから unbind してから <code>remove_wred()</code> を実行するため SAI 参照カウント整合が保たれる（<code>qosorch.cpp:1893, 864-870</code>）。</p>
+<p><strong>閾値変更の 2 フェーズ適用 (依存 #5)</strong>: min &gt; max の一時的逆転を防ぐため、<code>convertFieldValuesToAttributes()</code> は逆転を引き起こさない属性を Phase 1 で先行適用し、deferred リストを Phase 2 で後から適用する（<code>qosorch.cpp:636-644</code>）。外部からは透過的で CONFIG_DB 書き込み順序は問わない。</p>
+<!-- /ordering -->
+
 <!-- glossary-links-injected: 7c1942297ce7 -->
 
 <div class="footnote">

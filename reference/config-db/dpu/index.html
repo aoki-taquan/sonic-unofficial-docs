@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -25710,7 +25712,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27704,6 +27745,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -34470,7 +34539,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書込み順依存 (Phase B)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検出された順序依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主要な制約詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -34764,7 +34872,59 @@
 </ul>
 <!-- /defaults -->
 
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<!-- ordering -->
+<h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
+<p><code>DPU</code> テーブルは SmartSwitch 起動シーケンスの基点となる。orchagent / caclmgrd / sonic-gnmi / chassisd が参照するため、書き込みタイミングが各コンポーネントの初期化に影響する。</p>
+<h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>依存関係</th>
+<th>方向</th>
+<th>緩和策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>DPU</code> テーブル書き込み → chassisd 起動 / <code>CHASSIS_MODULE</code> 設定</td>
+<td><strong>DPU 先行推奨</strong></td>
+<td>逆順時は chassisd 起動時に DPU 情報が不完全になる可能性</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DPU.state</code> + <code>DPU.pa_ipv4</code> の同時書き込み → orchagent ENI ルール生成</td>
+<td><strong>同時書き込み必須</strong></td>
+<td>欠如フィールドがあると orchagent が request reject</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>DPU.swbus_port</code> 存在 → caclmgrd iptables ルール生成</td>
+<td><strong>書き込み時に同時に含める必要</strong></td>
+<td>欠如時は当該 DPU を完全スキップ（iptables ルールなし）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>DPU.gnmi_port</code> → sonic-gnmi DPU proxy 接続先決定</td>
+<td>任意（フォールバックあり）</td>
+<td>欠如時は <code>50052</code> を試行; ポート不一致で接続失敗</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>DPU</code> テーブル ↔ CHASSIS_APP_DB</td>
+<td><strong>連携なし</strong></td>
+<td>SmartSwitch と VOQ 構成は独立した DB セット</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">主要な制約詳細<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><strong>orchagent 必須フィールドの同時書き込み (依存 #2)</strong>: <code>DashEniFwdOrch</code> の <code>dpu_table_desc.required_attributes</code> に <code>state</code> と <code>pa_ipv4</code> が含まれる。これらのフィールドが欠如した状態で <code>DPU</code> エントリが書き込まれると、ENI フォワーディングルールが生成されない。<code>DPU</code> エントリは <code>state</code>、<code>pa_ipv4</code> を含む完全な状態で一度に書き込むこと（evidence: <code>sonic-swss/orchagent/dash/dashenifwdorch.h:134-137</code>）。</p>
+<p><strong>caclmgrd の swbus_port チェック (依存 #3)</strong>: <code>caclmgrd</code> は <code>swbus_port</code> フィールドが存在しない場合、<code>"Received DPU configuration without swbus_port. Ignore it."</code> を出力して当該 DPU 設定を<strong>完全スキップ</strong>する。DPU-to-DPU swbus 通信のための iptables ルールが生成されないため、SmartSwitch 環境では <code>swbus_port</code> を必ず含めること（evidence: <code>sonic-host-services/scripts/caclmgrd:~1100</code>）。</p>
+<p><strong>CHASSIS_APP_DB との非連携 (依存 #5)</strong>: SmartSwitch DPU テーブルは CONFIG_DB にのみ存在する。CHASSIS_APP_DB (<code>redis_chassis.server:6380</code>) は VOQ 構成のラインカード間 <code>SYSTEM_NEIGH</code> / <code>SYSTEM_LAG</code> 共有に使用されるが、SmartSwitch の <code>SmartSwitchModuleUpdater</code> はこれを使用しない（evidence: <code>chassisd:688-862</code>）。</p>
+<!-- /ordering -->
+
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

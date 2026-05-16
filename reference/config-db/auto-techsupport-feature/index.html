@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -24614,6 +24616,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-suffix-trim_masic_suffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        container suffix 処理 (trim_masic_suffix)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -28402,6 +28421,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -35669,6 +35716,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-suffix-trim_masic_suffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        container suffix 処理 (trim_masic_suffix)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -36568,7 +36632,7 @@
 
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
-<p><strong>プラットフォーム差なし</strong>: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。</p>
+<p><strong>プラットフォーム差なし</strong>: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダーに依らない。</p>
 <table>
 <thead>
 <tr>
@@ -36586,7 +36650,7 @@
 <tr>
 <td>multi-asic (<code>is_multi_npu() == True</code>)</td>
 <td>影響なし</td>
-<td><code>SonicV2Connector(use_unix_socket_path=True)</code> で host CONFIG_DB のみ参照、<code>asicN</code> namespace を iterate しない。container 名の asic suffix (<code>swss0</code>/<code>syncd1</code> 等) は feature 名との <code>startswith</code> 前方一致で吸収</td>
+<td><code>SonicV2Connector(use_unix_socket_path=True)</code> で host CONFIG_DB のみ参照、<code>asicN</code> namespace を iterate しない。container 名の asic suffix (<code>swss0</code>/<code>syncd1</code> 等) は <code>trim_masic_suffix()</code> で末尾数字を剥がした後に CONFIG_DB key を HGET する (<code>coredump_gen_handler.py:52</code>)</td>
 </tr>
 <tr>
 <td>VOQ chassis (supervisor + line card)</td>
@@ -36597,6 +36661,16 @@
 <td>namespace (asic0..asicN)</td>
 <td>影響なし</td>
 <td><code>coredump_gen_handler.py</code> / <code>techsupport_cleanup.py</code> / <code>auto_techsupport_helper.py</code> のいずれにも namespace 引数なし。すべて host namespace の <code>unix:///var/run/redis/redis.sock</code> に接続</td>
+</tr>
+<tr>
+<td>SmartSwitch DPU</td>
+<td>影響なし</td>
+<td><code>coredump_gen_handler.py</code> / <code>auto_techsupport_helper.py</code> を <code>DPU\|smartswitch\|dpu</code> で grep して 0 ヒット。DPU container で core dump が発生しても host の <code>AUTO_TECHSUPPORT_FEATURE|&lt;container&gt;</code> を同一経路で評価するため、schema / handler ロジックに変化なし</td>
+</tr>
+<tr>
+<td>container suffix (<code>trim_masic_suffix</code>)</td>
+<td>吸収済み</td>
+<td><code>coredump_gen_handler.py:52</code> が <code>trim_masic_suffix(container_name)</code> を呼び、末尾の連続する数字を除去 (<code>swss0</code>→<code>swss</code>, <code>syncd1</code>→<code>syncd</code>)。これにより multi-asic / masic 環境で asic suffix 付きの docker 名も suffix なしの <code>AUTO_TECHSUPPORT_FEATURE</code> key と一致する</td>
 </tr>
 <tr>
 <td>ベンダー固有 hook</td>
@@ -36610,6 +36684,22 @@
 </tr>
 </tbody>
 </table>
+<h3 id="container-suffix-trim_masic_suffix">container suffix 処理 (<code>trim_masic_suffix</code>)<a class="headerlink" href="#container-suffix-trim_masic_suffix" title="Permanent link">&para;</a></h3>
+<p>multi-asic および masic (multi-ASIC-in-container) 環境では docker 名に数字 suffix が付く (<code>swss0</code>, <code>syncd1</code>, <code>bgp0</code> 等)。<code>coredump_gen_handler.py:52</code> は <code>trim_masic_suffix()</code> (<code>auto_techsupport_helper.py:200-210</code>) でこれらを除去してから CONFIG_DB の <code>AUTO_TECHSUPPORT_FEATURE|&lt;feature&gt;</code> をルックアップする。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># auto_techsupport_helper.py:200-210</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">trim_masic_suffix</span><span class="p">(</span><span class="n">container_name</span><span class="p">):</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot; Trim any masic suffix i.e swss0 -&gt; swss &quot;&quot;&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">arr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">container_name</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="k">while</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>            <span class="n">arr</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>            <span class="k">break</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="n">index</span> <span class="o">=</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</span></code></pre></div>
+<p>このため <code>AUTO_TECHSUPPORT_FEATURE</code> の key は <strong>asic suffix を含まない形式</strong>で書く必要がある (例: <code>swss0</code> ではなく <code>swss</code>)。誤って suffix 付きで登録しても silent skip となり techsupport が起動しないため注意。</p>
 <p>詳細根拠と grep ログは <code>meta/_intermediate/cdb-flow/auto-techsupport-feature-platform.md</code> を参照。</p>
 <!-- /platform -->
 
@@ -36660,20 +36750,20 @@
 </tbody>
 </table>
 <h3 id="coredump_gen_handler">トリガ経路 (coredump_gen_handler)<a class="headerlink" href="#coredump_gen_handler" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>プロセスクラッシュ → kernel core_dump
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>/usr/local/bin/coredump-compress  (bash)
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓ /bin/gzip -1 - &gt; /var/core/&lt;prefix&gt;core.gz
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  ↓ setsid python3 coredump_gen_handler.py &lt;core.gz&gt; &lt;container_name&gt; &amp;
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>coredump_gen_handler.py
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ├─ db = SonicV2Connector(use_unix_socket_path=True); db.connect(CFG_DB/STATE_DB)
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  ├─ HGET &quot;AUTO_TECHSUPPORT|GLOBAL&quot;            state                  (= &quot;enabled&quot; 確認)
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  ├─ HGET &quot;AUTO_TECHSUPPORT_FEATURE|&lt;feat&gt;&quot;    state                  (= &quot;enabled&quot; 確認)
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  └─ invoke_ts_command_rate_limited()
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>       ├─ HGET &quot;AUTO_TECHSUPPORT|GLOBAL&quot;            rate_limit_interval
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>       ├─ HGET &quot;AUTO_TECHSUPPORT_FEATURE|&lt;feat&gt;&quot;    rate_limit_interval
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>       ├─ verify_rate_limit_intervals (STATE_DB の前回 dump timestamp と比較)
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>       └─ /usr/local/bin/generate_dump  → 完了後 techsupport_cleanup.py
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>プロセスクラッシュ → kernel core_dump
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ↓ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>/usr/local/bin/coredump-compress  (bash)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ↓ /bin/gzip -1 - &gt; /var/core/&lt;prefix&gt;core.gz
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  ↓ setsid python3 coredump_gen_handler.py &lt;core.gz&gt; &lt;container_name&gt; &amp;
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>coredump_gen_handler.py
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ├─ db = SonicV2Connector(use_unix_socket_path=True); db.connect(CFG_DB/STATE_DB)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  ├─ HGET &quot;AUTO_TECHSUPPORT|GLOBAL&quot;            state                  (= &quot;enabled&quot; 確認)
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  ├─ HGET &quot;AUTO_TECHSUPPORT_FEATURE|&lt;feat&gt;&quot;    state                  (= &quot;enabled&quot; 確認)
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  └─ invoke_ts_command_rate_limited()
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>       ├─ HGET &quot;AUTO_TECHSUPPORT|GLOBAL&quot;            rate_limit_interval
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>       ├─ HGET &quot;AUTO_TECHSUPPORT_FEATURE|&lt;feat&gt;&quot;    rate_limit_interval
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>       ├─ verify_rate_limit_intervals (STATE_DB の前回 dump timestamp と比較)
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>       └─ /usr/local/bin/generate_dump  → 完了後 techsupport_cleanup.py
 </span></code></pre></div>
 <h3 id="_28">重要な特性<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
 <ul>

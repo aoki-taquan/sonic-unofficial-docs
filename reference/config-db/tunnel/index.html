@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -23382,56 +23384,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-a" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙デフォルト・コード由来挙動 (Phase A)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙デフォルト・コード由来挙動 (Phase A)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ハードコード値（CONFIG_DB 非連動）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang-discrepancy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG-実装 discrepancy
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-b" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -23448,6 +23400,17 @@
     <span class="md-ellipsis">
       
         SET 操作の推奨順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-adddecaptunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 内部呼び出し順序 (addDecapTunnel)
       
     </span>
   </a>
@@ -23549,7 +23512,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         重要な設計上の注意点
@@ -23560,7 +23523,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         回復シナリオまとめ
@@ -23583,6 +23546,211 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB — SAI オブジェクト群
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-state_tunnel_decap_table-state_tunnel_decap_term_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — STATE_TUNNEL_DECAP_TABLE / STATE_TUNNEL_DECAP_TERM_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#muxorch-qos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MuxOrch への間接 QoS 副次反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 登録経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読テーブルと API 種別
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observer-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observer パターン — PortsOrch ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel_api 呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き戻し (Observer 逆方向)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#h-1-ecn_mode-encap_ecn_mode-sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-1. ecn_mode / encap_ecn_mode — SAI create-only 属性（全プラットフォーム共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-2-dual-tor-qos-dscp-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-2. Dual-ToR QoS DSCP リマッピング — SAI capability 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-3-mellanox-broadcom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-3. Mellanox / Broadcom の明示的なコード分岐なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-4-overlay-rif-mtu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-4. overlay RIF MTU のハードコード（全プラットフォーム固定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-5-p2p-p2mp-mp2mp-decap-term-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-5. P2P / P2MP / MP2MP decap term — SAI capability 事前クエリなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -28230,6 +28398,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -35328,56 +35524,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-a" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙デフォルト・コード由来挙動 (Phase A)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙デフォルト・コード由来挙動 (Phase A)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ハードコード値（CONFIG_DB 非連動）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#yang-discrepancy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        YANG-実装 discrepancy
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-b" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35394,6 +35540,17 @@
     <span class="md-ellipsis">
       
         SET 操作の推奨順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-adddecaptunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 内部呼び出し順序 (addDecapTunnel)
       
     </span>
   </a>
@@ -35495,7 +35652,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         重要な設計上の注意点
@@ -35506,7 +35663,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         回復シナリオまとめ
@@ -35529,6 +35686,211 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asic_db-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ASIC_DB — SAI オブジェクト群
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-state_tunnel_decap_table-state_tunnel_decap_term_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — STATE_TUNNEL_DECAP_TABLE / STATE_TUNNEL_DECAP_TERM_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#muxorch-qos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MuxOrch への間接 QoS 副次反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumer 登録経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読テーブルと API 種別
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observer-portsorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observer パターン — PortsOrch ゲート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel_api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel_api 呼び出し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き戻し (Observer 逆方向)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#h-1-ecn_mode-encap_ecn_mode-sai-create-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-1. ecn_mode / encap_ecn_mode — SAI create-only 属性（全プラットフォーム共通）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-2-dual-tor-qos-dscp-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-2. Dual-ToR QoS DSCP リマッピング — SAI capability 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-3-mellanox-broadcom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-3. Mellanox / Broadcom の明示的なコード分岐なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-4-overlay-rif-mtu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-4. overlay RIF MTU のハードコード（全プラットフォーム固定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h-5-p2p-p2mp-mp2mp-decap-term-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H-5. P2P / P2MP / MP2MP decap term — SAI capability 事前クエリなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -35894,154 +36256,113 @@
 <p>TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLAN_TUNNEL / NVGRE_TUNNEL が使用される</p>
 <!-- /entry-points -->
 
-<!-- defaults -->
-<h2 id="phase-a">暗黙デフォルト・コード由来挙動 (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
-<p>以下は YANG に default 節がなく、コード実装から導出した暗黙の挙動。</p>
-<table>
-<thead>
-<tr>
-<th>フィールド</th>
-<th>省略/未設定時の挙動</th>
-<th>ソース証跡</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tunnel_type</code></td>
-<td><code>tunInfo.type=""</code> で IPINIP 判定不通過 → SET 無視</td>
-<td><code>tunnelmgr.cpp</code> L250</td>
-</tr>
-<tr>
-<td><code>src_ip</code></td>
-<td><code>term_type=P2MP</code> (ワイルドカード) decap term 作成 — 全 IPinIP を受け入れ</td>
-<td><code>tunnelmgr.cpp</code> L280-289</td>
-</tr>
-<tr>
-<td><code>dst_ip</code></td>
-<td>APPL_DB <code>TUNNEL_DECAP_TABLE</code> エントリには<strong>書かれない</strong> (copy_if でフィルタ除外)。decap term キー (<code>tunnel_name\|dst_ip</code>) のみに使用</td>
-<td><code>tunnelmgr.cpp</code> L271-289</td>
-</tr>
-<tr>
-<td><code>dscp_mode</code></td>
-<td><code>SAI_TUNNEL_ATTR_DECAP_DSCP_MODE</code> の <code>attr.value.s32</code> が<strong>未初期化</strong>のまま SAI push → SAI 実装依存の挙動</td>
-<td><code>tunneldecaporch.cpp</code> L820-829</td>
-</tr>
-<tr>
-<td><code>ttl_mode</code></td>
-<td><code>dscp_mode</code> と同様に未初期化整数が SAI push</td>
-<td><code>tunneldecaporch.cpp</code> L808-817</td>
-</tr>
-<tr>
-<td><code>ecn_mode</code></td>
-<td>SAI attr 未設定 (値が一致しない場合は <code>valid=false</code>)。<strong>create-only</strong>: 既存トンネルへの変更 SET で <code>valid=false</code> → SET 全体失敗</td>
-<td><code>tunneldecaporch.cpp</code> L168-183</td>
-</tr>
-<tr>
-<td><code>encap_ecn_mode</code></td>
-<td>省略時は SAI attr 未送信 (<code>if (!encap_ecn.empty())</code> ガード)。<strong>create-only</strong>: 既存トンネルへの変更で SET 全体失敗</td>
-<td><code>tunneldecaporch.cpp</code> L797-805</td>
-</tr>
-<tr>
-<td><code>decap_dscp_to_tc_map</code></td>
-<td>SAI attr 未設定 (<code>SAI_NULL_OBJECT_ID</code> 時は push しない)</td>
-<td><code>tunneldecaporch.cpp</code> L831-837</td>
-</tr>
-<tr>
-<td><code>decap_tc_to_pg_map</code></td>
-<td>SAI attr 未設定</td>
-<td><code>tunneldecaporch.cpp</code> L839-845</td>
-</tr>
-<tr>
-<td><code>encap_tc_to_dscp_map</code></td>
-<td><code>tunnelTable</code> 内に記録のみ、SAI には push しない (muxorch が <code>getQosMapId()</code> で取得)</td>
-<td><code>tunneldecaporch.cpp</code> L255-258</td>
-</tr>
-<tr>
-<td><code>encap_tc_to_queue_map</code></td>
-<td><code>encap_tc_to_dscp_map</code> と同様、record only</td>
-<td><code>tunneldecaporch.cpp</code> L271-274</td>
-</tr>
-</tbody>
-</table>
-<h3 id="config_db">ハードコード値（CONFIG_DB 非連動）<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>定数</th>
-<th>値</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>TUNIF</code></td>
-<td><code>"tun0"</code></td>
-<td>Linux kernel IPinIP トンネル IF 名 (固定、変更不可)</td>
-</tr>
-<tr>
-<td><code>LOOPBACK_SRC</code></td>
-<td><code>"Loopback3"</code></td>
-<td>kernel トンネルの src アドレスを取得する Loopback IF (固定)</td>
-</tr>
-<tr>
-<td><code>OVERLAY_RIF_DEFAULT_MTU</code></td>
-<td><code>9100</code></td>
-<td>Overlay loopback router interface の MTU (固定)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="yang-discrepancy">YANG-実装 discrepancy<a class="headerlink" href="#yang-discrepancy" title="Permanent link">&para;</a></h3>
-<p><code>dst_ip</code> は YANG <code>TUNNEL_LIST</code> のフィールドとして定義されているが、<code>tunnelmgrd</code> は APPL_DB <code>TUNNEL_DECAP_TABLE</code> へコピーする際に <strong>明示的に除外</strong> する (<code>copy_if</code> フィルタ)。YANG を見て APPL_DB スキーマを推測すると <code>dst_ip</code> が tunnel エントリにあると誤解する。実際は decap term のキー部分 (<code>MuxTunnel0|&lt;dst_ip&gt;</code>) にのみ使われる。</p>
-<h3 id="_16">書込み順依存<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>PEER_SWITCH.address_ipv4</code> が設定される前に <code>TUNNEL</code> SET が来ると、<code>m_peerIp</code> が空 → Linux kernel tunnel 未作成 (<code>configIpTunnel()</code> スキップ)。PEER_SWITCH 設定後の再処理は起きない（再SET が必要）。</li>
-<li><code>LOOPBACK_INTERFACE|Loopback3</code> の prefix SET が <code>TUNNEL</code> SET より後に来ると kernel tunnel IF へのアドレス付与が遅延するが、後から届けばキャッシュ経由で付与される。</li>
-<li><code>decap_dscp_to_tc_map</code> / <code>decap_tc_to_pg_map</code> に指定した QoS map が未作成の場合、<code>task_need_retry</code> で当該 tunnel の処理がスタックし続ける。</li>
-</ul>
-<!-- /defaults -->
-
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
 <h3 id="set">SET 操作の推奨順序<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
+<p><code>tunneldecaporch.cpp</code> の <code>addDecapTunnel()</code> は以下のSAI呼び出し順序で実行される。
+各ステップの前提リソースが未作成の場合は <code>task_need_retry</code> またはエラーで処理が中断する。</p>
 <table>
 <thead>
 <tr>
 <th>順序</th>
 <th>テーブル / 操作</th>
 <th>理由</th>
+<th>evidence</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1</td>
 <td><code>LOOPBACK_INTERFACE\|Loopback3\|&lt;ip&gt;</code> SET</td>
-<td><code>tun0</code> ローカル IP ソース (ハードコード <code>Loopback3</code>)</td>
+<td><code>tun0</code> ローカル IP ソース (ハードコード <code>LOOPBACK_SRC="Loopback3"</code>)。後着でも <code>m_tunnelCache</code> 経由で遅延付与</td>
+<td><code>tunnelmgr.cpp</code> L19, L339</td>
 </tr>
 <tr>
 <td>2</td>
 <td><code>PEER_SWITCH\|&lt;name&gt;</code> SET (<code>address_ipv4</code>)</td>
-<td><code>m_peerIp</code> 未設定時は Linux tunnel 未作成、<strong>自動再処理なし</strong></td>
+<td><code>m_peerIp</code> 未設定時は Linux tunnel 未作成。<strong>PEER_SWITCH 設定後の自動再処理なし</strong> — TUNNEL 再 SET が必要</td>
+<td><code>tunnelmgr.cpp</code> L258-261</td>
 </tr>
 <tr>
 <td>3</td>
-<td>QoS map テーブル SET（<code>DSCP_TO_TC_MAP</code> 等）</td>
-<td>未作成 map を参照すると <code>task_need_retry</code> 無限ループ</td>
+<td><code>DSCP_TO_TC_MAP\|&lt;name&gt;</code> SET (使用時)</td>
+<td><code>tunneldecaporch</code> が <code>gQosOrch-&gt;resolveTunnelQosMap()</code> で OID 解決。未作成 map は <code>task_need_retry</code> 無限待機</td>
+<td><code>tunneldecaporch.cpp</code> L215-221</td>
 </tr>
 <tr>
 <td>4</td>
+<td><code>TC_TO_PRIORITY_GROUP_MAP\|&lt;name&gt;</code> SET (使用時)</td>
+<td><code>decap_tc_to_pg_map</code> フィールド使用時に同様の OID 解決が必要</td>
+<td><code>tunneldecaporch.cpp</code> L230-236</td>
+</tr>
+<tr>
+<td>5</td>
 <td><code>TUNNEL\|MuxTunnel0</code> SET</td>
-<td>1-3 が揃ってから。<code>tunnel_type=IPINIP</code> 必須</td>
+<td>1-4 が揃ってから。内部で SAI 呼び出し順序 (下記) に従う</td>
+<td><code>tunneldecaporch.cpp</code> L717-849</td>
 </tr>
 </tbody>
 </table>
+<h3 id="sai-adddecaptunnel">SAI 内部呼び出し順序 (<code>addDecapTunnel</code>)<a class="headerlink" href="#sai-adddecaptunnel" title="Permanent link">&para;</a></h3>
+<p><code>TUNNEL</code> SET を受けた <code>tunneldecaporch</code> は以下の順序で SAI オブジェクトを作成する。</p>
+<table>
+<thead>
+<tr>
+<th>SAI ステップ</th>
+<th>SAI API 呼び出し</th>
+<th>依存リソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Overlay RIF 作成</td>
+<td><code>sai_router_intfs_api-&gt;create_router_interface()</code></td>
+<td><code>gVirtualRouterId</code> (デフォルト VRF) が orchagent 起動時に設定済み必須</td>
+</tr>
+<tr>
+<td>2. トンネル属性設定</td>
+<td>tunnel_attrs に <code>TYPE</code>, <code>OVERLAY_INTERFACE</code>, <code>UNDERLAY_INTERFACE</code>, <code>DECAP_ECN_MODE</code>, <code>DECAP_TTL_MODE</code>, <code>DECAP_DSCP_MODE</code> を push</td>
+<td>ステップ 1 の overlay RIF OID が必要</td>
+</tr>
+<tr>
+<td>3. DSCP_TO_TC_MAP 付与 (任意)</td>
+<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> を push</td>
+<td><code>dscp_to_tc_map_id != SAI_NULL_OBJECT_ID</code> の場合のみ。ステップ 3/4 で OID が解決済みであること</td>
+</tr>
+<tr>
+<td>4. TC_TO_PG_MAP 付与 (任意)</td>
+<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code> を push</td>
+<td><code>tc_to_pg_map_id != SAI_NULL_OBJECT_ID</code> の場合のみ</td>
+</tr>
+<tr>
+<td>5. トンネル作成</td>
+<td><code>sai_tunnel_api-&gt;create_tunnel()</code></td>
+<td>ステップ 1-4 が完了後に一括送信</td>
+</tr>
+<tr>
+<td>6. Decap Term Entry 作成</td>
+<td><code>sai_tunnel_api-&gt;create_tunnel_term_table_entry()</code></td>
+<td>ステップ 5 で取得した <code>tunnel_id</code> と <code>gVirtualRouterId</code> が必要。VR_ID は <code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID</code> として設定</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">VRF (gVirtualRouterId) の暗黙依存</p>
+<p><code>addDecapTunnel()</code> と <code>addDecapTunnelTermEntry()</code> の両方が <code>gVirtualRouterId</code> を参照する。
+これは orchagent 起動時に <code>intfsOrch</code> が初期化するデフォルト VRF の OID であり、
+CONFIG_DB の <code>VRF</code> テーブルとは無関係にハードコードで使われる。
+orchagent が正常起動していることが前提条件。</p>
+</div>
 <h3 id="del-set">変更不可フィールド（DEL → SET が必要）<a class="headerlink" href="#del-set" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>ecn_mode</code> / <code>encap_ecn_mode</code>: SAI <code>create-only</code> 属性。既存トンネルへの変更 SET で <code>valid=false</code> となり、<strong>SET 全体が無効化</strong>される（他フィールドを含む）。変更には <code>TUNNEL</code> DEL 後に再 SET が必要。</li>
+<li><code>ecn_mode</code> / <code>encap_ecn_mode</code>: SAI <code>create-only</code> 属性。既存トンネルへの変更 SET で <code>valid=false</code> となり、<strong>SET 全体（他フィールドを含む）が無効化</strong>される。変更には <code>TUNNEL</code> DEL 後に再 SET が必要。</li>
+<li>evidence: <code>tunneldecaporch.cpp</code> L168-183, L193-198</li>
 </ul>
 <h3 id="del">DEL 操作の安全順序<a class="headerlink" href="#del" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>DEL MUX_CABLE|*        # TUNNEL を参照する MUX_CABLE エントリを先に削除
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>DEL TUNNEL|MuxTunnel0  # tunnelmgrd → APPL_DB DEL → tunneldecaporch → SAI DEL
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>DEL PEER_SWITCH|*      # TUNNEL DEL の後
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>                        # SAI DEL 順: tunnel_term_table_entry → tunnel → overlay RIF
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>DEL PEER_SWITCH|*      # TUNNEL DEL の後
 </span></code></pre></div>
 <blockquote>
 <p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-ordering.md</code></p>
@@ -36283,13 +36604,13 @@ TUNNEL SET より先であることを確認すること。後から届いても
 </tr>
 </tbody>
 </table>
-<h3 id="_17">重要な設計上の注意点<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_16">重要な設計上の注意点<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>configIpTunnel()</code> は常に <code>true</code> を返す</strong>: Linux kernel コマンドが失敗しても LOG_WARN のみ。kernel IF なし状態で APPL_DB だけ設定される可能性がある</li>
 <li><strong>create-only 属性の罠</strong>: <code>ecn_mode</code> / <code>encap_ecn_mode</code> は SAI create-only 属性。既存トンネルへの SET で <code>valid=false</code> となり<strong>同一 SET 内の他フィールド更新も全て無効化</strong>される</li>
 <li><strong>PEER_SWITCH 先行設定必須</strong>: <code>m_peerIp</code> 空の場合 Linux tunnel IF 未作成。PEER_SWITCH を後設定しても <code>tunnelmgrd</code> 自動再処理は発生しないため TUNNEL 再 SET が必要</li>
 </ul>
-<h3 id="_18">回復シナリオまとめ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_17">回復シナリオまとめ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36408,6 +36729,281 @@ TUNNEL SET より先であることを確認すること。後から届いても
 <p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-constants.md</code></p>
 </blockquote>
 <!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>tunneldecaporch</code> が CONFIG_DB → APPL_DB → SAI の経路を処理する際に、以下の副次的な DB 書き込みが発生する。</p>
+<h3 id="asic_db-sai">ASIC_DB — SAI オブジェクト群<a class="headerlink" href="#asic_db-sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>SAI API</th>
+<th>生成オブジェクト</th>
+<th>トリガ条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_router_intfs_api-&gt;create_router_interface()</code></td>
+<td><code>SAI_OBJECT_TYPE_ROUTER_INTERFACE</code> (overlay loopback, MTU=9100)</td>
+<td><code>addDecapTunnel()</code> 実行時・常時</td>
+</tr>
+<tr>
+<td><code>sai_tunnel_api-&gt;create_tunnel()</code></td>
+<td><code>SAI_OBJECT_TYPE_TUNNEL</code> (IPINIP)</td>
+<td><code>addDecapTunnel()</code> 成功時</td>
+</tr>
+<tr>
+<td><code>sai_tunnel_api-&gt;create_tunnel_term_table_entry()</code></td>
+<td><code>SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY</code></td>
+<td><code>addDecapTunnelTermEntry()</code> 成功時</td>
+</tr>
+</tbody>
+</table>
+<p>SAI tunnel に付与される主要属性: <code>SAI_TUNNEL_ATTR_TYPE=IPINIP</code>, <code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code>, <code>SAI_TUNNEL_ATTR_DECAP_TTL_MODE</code>, <code>SAI_TUNNEL_ATTR_DECAP_DSCP_MODE</code>。<br />
+<code>decap_dscp_to_tc_map</code> が設定済みなら <code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> も付与。<br />
+<code>decap_tc_to_pg_map</code> が設定済みなら <code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code> も付与。</p>
+<h3 id="state_db-state_tunnel_decap_table-state_tunnel_decap_term_table">STATE_DB — STATE_TUNNEL_DECAP_TABLE / STATE_TUNNEL_DECAP_TERM_TABLE<a class="headerlink" href="#state_db-state_tunnel_decap_table-state_tunnel_decap_term_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>操作</th>
+<th>トリガ</th>
+<th>書込フィールド</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TABLE</code></td>
+<td>SET</td>
+<td>SAI create_tunnel 成功後 (<code>setDecapTunnelStatus()</code>)</td>
+<td><code>tunnel_type</code>, <code>dscp_mode</code>, <code>ecn_mode</code>, <code>encap_ecn_mode</code>, <code>ttl_mode</code></td>
+</tr>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TABLE</code></td>
+<td>DEL</td>
+<td>トンネル削除時</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TERM_TABLE</code></td>
+<td>SET</td>
+<td>SAI create_tunnel_term_table_entry 成功後</td>
+<td><code>term_type</code>, <code>src_ip</code>(P2P/MP2MP のみ), <code>subnet_type</code>(サブネット decap 時のみ)</td>
+</tr>
+<tr>
+<td><code>STATE_TUNNEL_DECAP_TERM_TABLE</code></td>
+<td>DEL</td>
+<td>decap term 削除時</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="muxorch-qos">MuxOrch への間接 QoS 副次反映<a class="headerlink" href="#muxorch-qos" title="Permanent link">&para;</a></h3>
+<p><code>encap_tc_to_dscp_map</code> / <code>encap_tc_to_queue_map</code> は SAI に直接 push <strong>されない</strong>。tunneldecaporch は OID を内部キャッシュ (<code>tunnelTable</code>) に保持し、MuxOrch が <code>MUX_CABLE</code> 処理時に <code>TunnelDecapOrch::getQosMapId()</code> 経由で取得して自身の SAI 書き込みに利用する。</p>
+<div class="admonition note">
+<p class="admonition-title">詳細スキャンノート</p>
+<p><code>meta/_intermediate/cdb-flow/tunnel-side-effects.md</code><br />
+<code>meta/_intermediate/cdb-flow/tunnel-phaseF-side-effects.md</code></p>
+</div>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="consumer">Consumer 登録経路<a class="headerlink" href="#consumer" title="Permanent link">&para;</a></h3>
+<p><code>TunnelDecapOrch</code> は <code>orchdaemon</code> から APPL_DB テーブルリストを受け取り <code>Orch</code> 基底クラス経由で <code>ConsumerStateTable</code> を登録する。加えてコンストラクタ内で CONFIG_DB の <code>SUBNET_DECAP_TABLE</code> を <code>SubscriberStateTable</code> として個別登録する（<code>addExecutor(new Consumer(...))</code>）。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// orchdaemon.cpp L343-347</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tunnel_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="n">APP_TUNNEL_DECAP_TABLE_NAME</span><span class="p">,</span><span class="w">       </span><span class="c1">// &quot;TUNNEL_DECAP_TABLE&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">APP_TUNNEL_DECAP_TERM_TABLE_NAME</span><span class="w">   </span><span class="c1">// &quot;TUNNEL_DECAP_TERM_TABLE&quot;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">};</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">gTunneldecapOrch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TunnelDecapOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">m_stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">m_configDb</span><span class="p">,</span><span class="w"> </span><span class="n">tunnel_tables</span><span class="p">);</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1">// tunneldecaporch.cpp L39-48</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="k">auto</span><span class="w"> </span><span class="n">cfgSubnetDecapSubTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="n">configDb</span><span class="p">,</span><span class="w"> </span><span class="n">CFG_SUBNET_DECAP_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="n">TableConsumable</span><span class="o">::</span><span class="n">DEFAULT_POP_BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">Orch</span><span class="o">::</span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="n">cfgSubnetDecapSubTable</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">CFG_SUBNET_DECAP_TABLE_NAME</span><span class="p">));</span>
+</span></code></pre></div>
+<h3 id="api">購読テーブルと API 種別<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>DB</th>
+<th>購読 API</th>
+<th>Handler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TUNNEL_DECAP_TABLE</code></td>
+<td>APPL_DB</td>
+<td><code>ConsumerStateTable</code> (Orch 基底)</td>
+<td><code>doDecapTunnelTask()</code></td>
+</tr>
+<tr>
+<td><code>TUNNEL_DECAP_TERM_TABLE</code></td>
+<td>APPL_DB</td>
+<td><code>ConsumerStateTable</code> (Orch 基底)</td>
+<td><code>doDecapTunnelTermTask()</code></td>
+</tr>
+<tr>
+<td><code>SUBNET_DECAP_TABLE</code></td>
+<td>CONFIG_DB</td>
+<td><code>SubscriberStateTable</code> + <code>addExecutor</code></td>
+<td><code>doSubnetDecapTask()</code></td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB の <code>TUNNEL</code> テーブルは <strong>orchagent が直接購読しない</strong>。<code>tunnelmgrd</code> が CONFIG_DB→APPL_DB へ変換し、orchagent は APPL_DB 側を ConsumerStateTable で受け取る二段構成。</p>
+<h3 id="observer-portsorch">Observer パターン — PortsOrch ゲート<a class="headerlink" href="#observer-portsorch" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// tunneldecaporch.cpp L55-58</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">TunnelDecapOrch::doTask</span><span class="p">(</span><span class="n">Consumer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">consumer</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">gPortsOrch</span><span class="o">-&gt;</span><span class="n">allPortsReady</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span><span class="w"> </span><span class="c1">// 全ポート ready まで処理停止</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><code>gPortsOrch-&gt;allPortsReady()</code> が <code>false</code> の間は全トンネルタスクをスキップ。PortsOrch が ready 通知を出すと orchagent の select ループが再度 <code>doTask()</code> を呼び出す（Observer パターンの受動的待機）。</p>
+<h3 id="sai-tunnel_api">SAI tunnel_api 呼び出し<a class="headerlink" href="#sai-tunnel_api" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// tunneldecaporch.cpp L853 / L19</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">extern</span><span class="w"> </span><span class="n">sai_tunnel_api_t</span><span class="o">*</span><span class="w"> </span><span class="n">sai_tunnel_api</span><span class="p">;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sai_tunnel_api</span><span class="o">-&gt;</span><span class="n">create_tunnel</span><span class="p">(</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="o">&amp;</span><span class="n">tunnel_id</span><span class="p">,</span><span class="w"> </span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="n">tunnel_attrs</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">tunnel_attrs</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">task_process_status</span><span class="w"> </span><span class="n">handle_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">handleSaiCreateStatus</span><span class="p">(</span><span class="n">SAI_API_TUNNEL</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>handleSaiCreateStatus()</code> が SAI エラーを <code>task_need_retry</code> / <code>task_success</code> / <code>task_failed</code> に変換。<code>task_need_retry</code> はキューに残留して次サイクルでリトライ（QoS map 未作成時）。</p>
+<h3 id="state_db-observer">STATE_DB 書き戻し (Observer 逆方向)<a class="headerlink" href="#state_db-observer" title="Permanent link">&para;</a></h3>
+<p>SAI <code>create_tunnel()</code> 成功後、<code>stateTunnelDecapTable</code> (STATE_DB <code>STATE_TUNNEL_DECAP_TABLE</code>) と <code>stateTunnelDecapTermTable</code> へエントリを書き戻す（<code>tunneldecaporch.cpp</code> L287 付近）。これが orchagent → STATE_DB 方向の出力パス。</p>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/tunnel-pubsub.md</code></p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="h-1-ecn_mode-encap_ecn_mode-sai-create-only">H-1. <code>ecn_mode</code> / <code>encap_ecn_mode</code> — SAI create-only 属性（全プラットフォーム共通）<a class="headerlink" href="#h-1-ecn_mode-encap_ecn_mode-sai-create-only" title="Permanent link">&para;</a></h3>
+<p><code>SAI_TUNNEL_ATTR_DECAP_ECN_MODE</code> と <code>SAI_TUNNEL_ATTR_ENCAP_ECN_MODE</code> は SAI 仕様上 <strong>create-only</strong> 属性である。この制約は Broadcom / Mellanox を問わず共通であり、<code>tunneldecaporch.cpp</code> で明示的にガードされる。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>// tunneldecaporch.cpp L179
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>SWSS_LOG_WARN(&quot;Skip setting ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_DECAP_ECN_MODE is create only&quot;);
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>// tunneldecaporch.cpp L195
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>SWSS_LOG_NOTICE(&quot;Skip setting encap_ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_ENCAP_ECN_MODE is create only&quot;);
+</span></code></pre></div>
+<p>既存トンネルへの <code>ecn_mode</code> / <code>encap_ecn_mode</code> 変更 SET は <strong>SET 全体が無効化</strong> (<code>valid=false</code>) され、他フィールドの変更も含めてすべて破棄される。変更には <code>TUNNEL|MuxTunnel0</code> DEL 後の再 SET が必要。</p>
+<h3 id="h-2-dual-tor-qos-dscp-sai-capability">H-2. Dual-ToR QoS DSCP リマッピング — SAI capability 依存<a class="headerlink" href="#h-2-dual-tor-qos-dscp-sai-capability" title="Permanent link">&para;</a></h3>
+<p>Dual-ToR (<code>DEVICE_METADATA.subtype = "DualToR"</code>) 環境では、以下の QoS リマッピングフィールドが利用される。これらに対応する SAI 属性は SAI spec 202012 以降に追加されたため、古い SAI 実装では <code>SAI_STATUS_NOT_SUPPORTED</code> が返る場合がある。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>SAI 属性</th>
+<th>担当 orch</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>decap_dscp_to_tc_map</code></td>
+<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code></td>
+<td>tunneldecaporch</td>
+<td>decap 時 DSCP→TC 再マッピング</td>
+</tr>
+<tr>
+<td><code>decap_tc_to_pg_map</code></td>
+<td><code>SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP</code></td>
+<td>tunneldecaporch</td>
+<td>decap 時 TC→PG 再マッピング</td>
+</tr>
+<tr>
+<td><code>encap_tc_to_dscp_map</code></td>
+<td><code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_AND_COLOR_TO_DSCP_MAP</code></td>
+<td>muxorch 経由</td>
+<td>encap 時 TC+Color→DSCP 書換</td>
+</tr>
+<tr>
+<td><code>encap_tc_to_queue_map</code></td>
+<td><code>SAI_TUNNEL_ATTR_ENCAP_QOS_TC_TO_QUEUE_MAP</code></td>
+<td>muxorch 経由</td>
+<td>encap 時 TC→Queue 再マッピング</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">encap 系マップは tunneldecaporch が SAI へ直接 push しない</p>
+<p><code>encap_tc_to_dscp_map</code> / <code>encap_tc_to_queue_map</code> の OID は tunneldecaporch の内部キャッシュ (<code>tunnelTable</code>) に保持され、MuxOrch が <code>MUX_CABLE</code> 処理時に <code>TunnelDecapOrch::getQosMapId()</code> 経由で取得して自身の SAI 書き込みに利用する。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">dscp_mode=pipe が前提</p>
+<p>QoS リマッピングが有効に機能するのは <code>dscp_mode=pipe</code> のときのみ。<code>dscp_mode=uniform</code> では外側 DSCP が内側にコピーされるため、リマッピングの効果が相殺される。</p>
+</div>
+<h3 id="h-3-mellanox-broadcom">H-3. Mellanox / Broadcom の明示的なコード分岐なし<a class="headerlink" href="#h-3-mellanox-broadcom" title="Permanent link">&para;</a></h3>
+<p><code>tunneldecaporch.cpp</code> 内に <code>MLNX_PLATFORM_SUBSTRING</code> (<code>"mellanox"</code>) や <code>BRCM_PLATFORM_SUBSTRING</code> (<code>"broadcom"</code>) を参照するコード分岐は存在しない。プラットフォーム差は SAI API の戻り値（<code>SAI_STATUS_NOT_SUPPORTED</code> 等）でのみ現れる。</p>
+<h3 id="h-4-overlay-rif-mtu">H-4. overlay RIF MTU のハードコード（全プラットフォーム固定）<a class="headerlink" href="#h-4-overlay-rif-mtu" title="Permanent link">&para;</a></h3>
+<p>Overlay loopback ルータインターフェースの MTU は <code>OVERLAY_RIF_DEFAULT_MTU = 9100</code> でハードコードされており、CONFIG_DB から変更できない。Broadcom の最大 MTU 制約が 9100 以下の場合でも同値が SAI に送信される（<code>tunneldecaporch.cpp</code> L14, L750`）。</p>
+<h3 id="h-5-p2p-p2mp-mp2mp-decap-term-sai-capability">H-5. P2P / P2MP / MP2MP decap term — SAI capability 事前クエリなし<a class="headerlink" href="#h-5-p2p-p2mp-mp2mp-decap-term-sai-capability" title="Permanent link">&para;</a></h3>
+<p><code>tunneldecaporch</code> は decap term type の SAI capability を事前クエリせず直接 <code>create_tunnel_term_table_entry()</code> を呼ぶ。</p>
+<ul>
+<li><strong>P2P</strong>: Dual-ToR MuxTunnel の decap terminator。<code>src_ip = PEER_SWITCH.address_ipv4</code>。</li>
+<li><strong>P2MP</strong>: <code>src_ip</code> 未設定時のデフォルト。ワイルドカード decap（全 IPinIP を受け入れ）。</li>
+<li><strong>MP2MP</strong>: Subnet decap (<code>IPINIP_SUBNET</code> / <code>IPINIP_SUBNET_V6</code>) 専用。<code>is_subnet_decap_term &amp;&amp; term_type != MP2MP</code> はエラー（<code>tunneldecaporch.cpp</code> L446-448`）。</li>
+</ul>
+<p>非対応プラットフォームでは SAI エラーが返り、<code>handleSaiCreateStatus()</code> でタスク失敗として処理される（リトライなし）。</p>
+<h3 id="_18">プラットフォーム差まとめ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>影響フィールド</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全プラットフォーム共通</td>
+<td><code>ecn_mode</code>, <code>encap_ecn_mode</code></td>
+<td>SAI create-only。既存トンネルへの変更 SET で SET 全体無効化</td>
+<td><code>tunneldecaporch.cpp</code> L179, L195</td>
+</tr>
+<tr>
+<td>SAI spec 202012 未満</td>
+<td><code>decap_dscp_to_tc_map</code> 等 4 フィールド</td>
+<td>QoS リマッピング SAI 属性が非サポートとなる可能性あり</td>
+<td>SAI spec (202205 対象)</td>
+</tr>
+<tr>
+<td>全プラットフォーム共通</td>
+<td>overlay RIF MTU</td>
+<td>固定値 9100 を SAI に送信。CONFIG_DB 変更不可</td>
+<td><code>tunneldecaporch.cpp</code> L14, L750</td>
+</tr>
+<tr>
+<td>全プラットフォーム共通</td>
+<td><code>ttl_mode</code>, <code>dscp_mode</code></td>
+<td>既存トンネルへの変更は <code>set_tunnel_attribute()</code> 経由で可能。SAI 実装依存で失敗することもある</td>
+<td><code>tunneldecaporch.cpp</code> L1050</td>
+</tr>
+<tr>
+<td>Dual-ToR 環境のみ</td>
+<td><code>encap_tc_to_dscp_map</code>, <code>encap_tc_to_queue_map</code></td>
+<td>MuxOrch 経由で SAI push。tunneldecaporch は内部キャッシュ保持のみ</td>
+<td><code>tunneldecaporch.cpp</code> L257, L272; <code>muxorch.cpp</code> L2367, L2374</td>
+</tr>
+<tr>
+<td>非対応 SAI 実装</td>
+<td>P2P/P2MP/MP2MP decap term</td>
+<td>SAI create_tunnel_term_table_entry 失敗でリトライなし</td>
+<td><code>tunneldecaporch.cpp</code> L979</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>詳細スキャンノート: <code>meta/_intermediate/cdb-flow/ipinip-tunnel-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <!-- glossary-links-injected: ae9e20070353 -->
 

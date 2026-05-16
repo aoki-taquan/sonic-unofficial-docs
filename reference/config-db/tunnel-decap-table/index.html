@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -23481,6 +23483,78 @@
     <span class="md-ellipsis">
       
         warm-restart / cold-restart 影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 IP / フィールド値による拒否
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-qos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 未解決 / QoS マップ未解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel 作成失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-only_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create-only 属性の変更試行
       
     </span>
   </a>
@@ -28108,6 +28182,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -35288,6 +35390,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 IP / フィールド値による拒否
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-qos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 未解決 / QoS マップ未解決
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-tunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI tunnel 作成失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-only_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create-only 属性の変更試行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35835,6 +36009,217 @@
 <p>既存トンネルの <code>src_ip</code> を変更する場合は <code>TUNNEL_DECAP_TABLE</code> エントリを必ず DEL してから SET し直すこと。SET のみでは <code>"cannot modify src ip for existing tunnel"</code> を LOG_ERROR してスキップされる (<code>tunneldecaporch.cpp</code>)。</p>
 </div>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>TUNNEL_DECAP_TABLE</code> エントリが APPL_DB に書かれると <code>tunneldecaporch</code> が以下のテーブル / リソースを暗黙的に参照する。
+YANG leafref は存在せず、すべて実装コードのみに現れる暗黙依存。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gVirtualRouterId</code>（デフォルト VRF OID）</td>
+<td>読み取り（ハードコード）</td>
+<td>TUNNEL_DECAP_TABLE SET 処理時、常時。overlay loopback RIF と tunnel term entry が常にデフォルト VRF に紐付く</td>
+<td><code>tunneldecaporch.cpp</code> L23, L742 (<code>SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID</code>), L922 (<code>SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID</code>)</td>
+</tr>
+<tr>
+<td><code>DSCP_TO_TC_MAP\|&lt;name&gt;</code></td>
+<td>OID 解決（<code>gQosOrch-&gt;resolveTunnelQosMap</code>）</td>
+<td><code>decap_dscp_to_tc_map</code> フィールドに値を指定したとき。未作成 map は <code>task_need_retry</code> 無限待機</td>
+<td><code>tunneldecaporch.cpp</code> L215-221; <code>qosorch.cpp</code> L113</td>
+</tr>
+<tr>
+<td><code>MUX_CABLE</code>（逆参照）</td>
+<td>下流が TUNNEL_DECAP_TABLE を読み取り</td>
+<td><code>MuxOrch</code> が MUX_CABLE SET 処理時に <code>TunnelDecapOrch::getQosMapId()</code> を呼び出し <code>encap_tc_to_dscp_map</code> / <code>encap_tc_to_queue_map</code> の OID を取得して MUX トンネル encap QoS を設定する</td>
+<td><code>tunneldecaporch.cpp</code> L103, L1450-1465; <code>muxorch.cpp</code> L2348-2377</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">デフォルト VRF への固定依存</p>
+<p><code>tunneldecaporch</code> は overlay RIF / tunnel term entry を常に <code>gVirtualRouterId</code>（デフォルト VRF）に紐付ける。
+VRF フィールドは存在せず、VRF 分離したデカプセルトンネルは現行実装では作成できない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">DSCP_TO_TC_MAP の事前作成必須</p>
+<p><code>decap_dscp_to_tc_map</code> に指定する QoS map が未作成の場合、当該 TUNNEL_DECAP_TABLE エントリの処理が
+<code>task_need_retry</code> でスタックし続ける。TUNNEL_DECAP_TABLE SET 前に <code>DSCP_TO_TC_MAP</code> を作成すること。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">MUX_CABLE 削除順序</p>
+<p>TUNNEL_DECAP_TABLE エントリを DEL する前に <code>MUX_CABLE|*</code> の設定を先に削除すること。
+<code>encap_tc_to_dscp_map</code> / <code>encap_tc_to_queue_map</code> は muxorch の QoS 設定専用の暗黙インターフェースであり、
+TUNNEL_DECAP_TABLE DEL 後に muxorch が OID を参照するとエラーになる。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-net/sonic-swss orchagent/tunneldecaporch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d -->
+
+<h3 id="ip">不正 IP / フィールド値による拒否<a class="headerlink" href="#ip" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ / 動作</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tunnel_type</code> が <code>IPINIP</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Invalid tunnel type %s")</code> → <code>valid=false</code>、エントリ全体スキップ</td>
+<td><code>tunneldecaporch.cpp:L129</code></td>
+</tr>
+<tr>
+<td><code>src_ip</code> が不正 IP 文字列</td>
+<td><code>std::invalid_argument</code> 例外を捕捉 → <code>SWSS_LOG_ERROR(e.what())</code> → <code>valid=false</code>、エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L141-144</code></td>
+</tr>
+<tr>
+<td><code>dscp_mode</code> が <code>uniform</code>/<code>pipe</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Invalid dscp mode %s")</code> → <code>valid=false</code>、エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L157</code></td>
+</tr>
+<tr>
+<td><code>ecn_mode</code> が <code>copy_from_outer</code>/<code>standard</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Invalid ecn mode %s")</code> → <code>valid=false</code>、エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L173</code></td>
+</tr>
+<tr>
+<td><code>encap_ecn_mode</code> が <code>standard</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Only standard encap ecn mode is supported currently")</code> → <code>valid=false</code>、エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L189</code></td>
+</tr>
+<tr>
+<td><code>ttl_mode</code> が <code>uniform</code>/<code>pipe</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Invalid ttl mode %s")</code> → <code>valid=false</code>、エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L205</code></td>
+</tr>
+<tr>
+<td>未知フィールド名</td>
+<td><code>SWSS_LOG_ERROR("unknown decap tunnel table attribute '%s'")</code> → <code>valid=false</code>、エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L277</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vrf-qos">VRF 未解決 / QoS マップ未解決<a class="headerlink" href="#vrf-qos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ / 動作</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>decap_dscp_to_tc_map</code> が未解決（OID = <code>SAI_NULL_OBJECT_ID</code>）</td>
+<td><code>SWSS_LOG_NOTICE("QoS map %s is not ready yet")</code> → <code>task_need_retry</code>、エントリをキューに戻す</td>
+<td><code>tunneldecaporch.cpp:L218-221</code></td>
+</tr>
+<tr>
+<td><code>decap_tc_to_pg_map</code> が未解決</td>
+<td>同上 → <code>task_need_retry</code></td>
+<td><code>tunneldecaporch.cpp:L233-236</code></td>
+</tr>
+<tr>
+<td><code>encap_tc_to_dscp_map</code> が未解決</td>
+<td>同上 → <code>task_need_retry</code></td>
+<td><code>tunneldecaporch.cpp:L248-251</code></td>
+</tr>
+<tr>
+<td><code>encap_tc_to_queue_map</code> が未解決</td>
+<td>同上 → <code>task_need_retry</code></td>
+<td><code>tunneldecaporch.cpp:L263-266</code></td>
+</tr>
+<tr>
+<td>tunnel decap term で <code>tunnel_name</code> が未登録</td>
+<td><code>SWSS_LOG_ERROR("Tunnel %s does not exist.")</code> → term エントリスキップ</td>
+<td><code>tunneldecaporch.cpp:L904</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai-tunnel">SAI tunnel 作成失敗<a class="headerlink" href="#sai-tunnel" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ / 動作</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_tunnel_api-&gt;create_tunnel()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to create tunnel")</code> → <code>handleSaiCreateStatus()</code> → 失敗時 <code>parseHandleSaiStatusFailure()</code> でエントリ再処理またはドロップ</td>
+<td><code>tunneldecaporch.cpp:L852-858</code></td>
+</tr>
+<tr>
+<td>overlay RIF (<code>sai_router_intfs_api-&gt;create_router_interface()</code>) 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to create overlay router interface %d")</code> → <code>false</code> 返却、ASIC_DB 未書込み</td>
+<td><code>tunneldecaporch.cpp:L756</code></td>
+</tr>
+<tr>
+<td><code>sai_tunnel_api-&gt;create_tunnel_term_table_entry()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to create tunnel decap term entry %s.")</code> → <code>handleSaiCreateStatus()</code> 経由で再処理またはドロップ</td>
+<td><code>tunneldecaporch.cpp:L982-985</code></td>
+</tr>
+<tr>
+<td>DEL 時 <code>sai_tunnel_api-&gt;remove_tunnel()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to remove tunnel: %" PRIu64)</code> → <code>handleSaiRemoveStatus()</code> 経由</td>
+<td><code>tunneldecaporch.cpp:L1194-1198</code></td>
+</tr>
+<tr>
+<td>DEL 時 overlay RIF <code>remove_router_interface()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("Failed to remove tunnel overlay interface: %" PRIu64)</code> → <code>handleSaiRemoveStatus()</code> 経由</td>
+<td><code>tunneldecaporch.cpp:L1203</code></td>
+</tr>
+<tr>
+<td><code>TUNNEL_DECAP_TABLE</code> DEL 時に decap term が残存</td>
+<td><code>SWSS_LOG_ERROR("Failed to remove tunnel %s that has decap terms.")</code> → DEL 拒否 (<code>false</code> 返却)</td>
+<td><code>tunneldecaporch.cpp:L1184</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-only_1">create-only 属性の変更試行<a class="headerlink" href="#create-only_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>ログ / 動作</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>既存トンネルに <code>ecn_mode</code> を SET</td>
+<td><code>SWSS_LOG_WARN("Skip setting ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_DECAP_ECN_MODE is create only")</code> → <code>valid=false</code>、処理中断</td>
+<td><code>tunneldecaporch.cpp:L179</code></td>
+</tr>
+<tr>
+<td>既存トンネルに <code>encap_ecn_mode</code> を SET</td>
+<td><code>SWSS_LOG_NOTICE("Skip setting encap_ecn_mode since the SAI attribute SAI_TUNNEL_ATTR_ENCAP_ECN_MODE is create only")</code> → <code>valid=false</code>、処理中断</td>
+<td><code>tunneldecaporch.cpp:L194</code></td>
+</tr>
+<tr>
+<td>既存トンネルの <code>src_ip</code> を変更</td>
+<td><code>SWSS_LOG_ERROR("cannot modify src ip for existing tunnel")</code> → 変更拒否（DEL → SET が必要）</td>
+<td><code>tunneldecaporch.cpp:L149</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
 
 <!-- glossary-links-injected: 415c3a53ecc2 -->
 

@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -22649,6 +22651,28 @@
     <span class="md-ellipsis">
       
         removeLag() 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mac-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 MAC / DEVICE_METADATA 取得失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-lag-orchagent-lagorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI LAG 作成失敗 (orchagent / LagOrch)
       
     </span>
   </a>
@@ -28657,6 +28681,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -36177,6 +36229,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#mac-device_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        不正 MAC / DEVICE_METADATA 取得失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-lag-orchagent-lagorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI LAG 作成失敗 (orchagent / LagOrch)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_21" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37456,6 +37530,60 @@ PUBLISH を受信すると <code>pops()</code> (Lua EVALSHA) が key-set から 
 </tr>
 </tbody>
 </table>
+<h3 id="mac-device_metadata">不正 MAC / DEVICE_METADATA 取得失敗<a class="headerlink" href="#mac-device_metadata" title="Permanent link">&para;</a></h3>
+<p><code>TeamMgr</code> コンストラクタ (<code>teammgr.cpp:52-64</code>) は起動時に <code>DEVICE_METADATA|localhost</code> から <code>mac</code> フィールドを読み込む。</p>
+<table>
+<thead>
+<tr>
+<th>失敗箇所</th>
+<th>条件</th>
+<th>挙動</th>
+<th>ログ / 例外</th>
+<th>リカバリ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TeamMgr::TeamMgr()</code> — MAC アドレス取得失敗</td>
+<td><code>DEVICE_METADATA|localhost</code> に <code>mac</code> フィールドが存在しない</td>
+<td><code>throw runtime_error("Failed to get MAC address from configuration database")</code> でプロセスクラッシュ</td>
+<td>プロセス例外ログ（syslog / journald）</td>
+<td><code>teamd</code> 起動不能。<code>DEVICE_METADATA</code> を正しく設定して <code>teammgrd</code> を再起動</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: この失敗はエントリ単位のリトライではなくデーモン起動時の致命的エラー。<code>teamd</code> プロセスが一切起動しないため、全 PORTCHANNEL が operational down になる。</p>
+</blockquote>
+<h3 id="sai-lag-orchagent-lagorch">SAI LAG 作成失敗 (orchagent / LagOrch)<a class="headerlink" href="#sai-lag-orchagent-lagorch" title="Permanent link">&para;</a></h3>
+<p><code>LagOrch</code> が APP_DB <code>LAG_TABLE</code> を受信し <code>sai_lag_api-&gt;create_lag()</code> を呼び出す際の失敗パス (<code>portsorch.cpp</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>失敗箇所</th>
+<th>条件</th>
+<th>ログ</th>
+<th>リカバリ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LAG ID 払い出し失敗</td>
+<td>VoQ 環境で <code>LagIdAllocator</code> がユニーク ID を払い出せない</td>
+<td><code>SWSS_LOG_ERROR "Failed to allocate unique LAG id for local lag %s rv:%d"</code></td>
+<td>LAG ID 枯渇。VoQ シャーシ構成を見直し</td>
+</tr>
+<tr>
+<td>SAI <code>create_lag()</code> 失敗</td>
+<td>ASIC/SAI が LAG オブジェクト作成を拒否</td>
+<td><code>SWSS_LOG_ERROR "Failed to create LAG %s lid:"</code></td>
+<td>ASIC リソース枯渇またはファームウェア不整合。ASIC リセットまたはシステム再起動が必要</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: SAI LAG 作成失敗時はエントリが <code>m_syncdApplNotifications</code> に残り <code>orchagent</code> が再処理を試みない。手動で <code>config portchannel del</code> → <code>config portchannel add</code> による再投入が必要。</p>
+</blockquote>
 <h3 id="_21">リトライ上限<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <p><code>teammgrd</code> の select ループには <code>task_need_retry</code> のリトライ上限カウンタは存在しない。依存状態（teamd 起動環境、ポート STATE_DB 状態）が解消されると自然に成功する設計。無限リトライとなるため、恒久的な環境障害（teamd バイナリ不在、ネットワーク名前空間問題等）は外部から手動介入が必要。</p>
 <!-- /failure -->

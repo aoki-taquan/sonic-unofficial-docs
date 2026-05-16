@@ -21303,6 +21303,8 @@
       
         
       
+        
+      
     
     
     
@@ -21860,6 +21862,39 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#systemd-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd unit 起動順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#featured-feature-service-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        featured が管理する feature service の systemd 依存関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-smartswitch-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / SmartSwitch 環境での instance 起動順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -22039,16 +22074,127 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="ハードコード定数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイミング・優先度定数（モジュールレベル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-auto_restart-enumfeature__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state / auto_restart 有効値 enum（Feature.__init__ ハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#featurehandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        クラスレベル定数（FeatureHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic_package_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic_package_manager デフォルト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙参照マップ
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — FEATURE 状態反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-resync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB — フィールド書き戻し (resync 系)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd-unit-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステム — systemd unit override ファイル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes-set_owner-kube-featured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes 切替 (set_owner = kube) — featured スコープ外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -22080,6 +22226,89 @@
     <span class="md-ellipsis">
       
         featured イベントループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-multi-asic-is_multi_npu-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. multi-asic (is_multi_npu == True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. feature インスタンス名の生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-smartswitch-dpu-has_per_dpu_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SmartSwitch / DPU (has_per_dpu_scope)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-spinerouter-syncd-gbsyncd-auto_restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SpineRouter — syncd / gbsyncd の auto_restart 強制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-init_cfgjsonj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. init_cfg.json.j2 ビルド時プラットフォーム条件
       
     </span>
   </a>
@@ -28219,6 +28448,34 @@
     
   
     FLOW_COUNTER_ROUTE_PATTERN (RouteOrch / FlowCounterRouteOrch)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../route-redistribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ROUTE_REDISTRIBUTE テーブル
   
 
     
@@ -35279,6 +35536,39 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#systemd-unit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        systemd unit 起動順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#featured-feature-service-systemd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        featured が管理する feature service の systemd 依存関係
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-smartswitch-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / SmartSwitch 環境での instance 起動順序
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35458,16 +35748,127 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="ハードコード定数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイミング・優先度定数（モジュールレベル）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-auto_restart-enumfeature__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        state / auto_restart 有効値 enum（Feature.__init__ ハードコード）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#featurehandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        クラスレベル定数（FeatureHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic_package_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic_package_manager デフォルト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
+  <a href="#_23" class="md-nav__link">
     <span class="md-ellipsis">
       
         暗黙参照マップ
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — FEATURE 状態反映
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-resync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB — フィールド書き戻し (resync 系)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemd-unit-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステム — systemd unit override ファイル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes-set_owner-kube-featured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes 切替 (set_owner = kube) — featured スコープ外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -35499,6 +35900,89 @@
     <span class="md-ellipsis">
       
         featured イベントループ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-multi-asic-is_multi_npu-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. multi-asic (is_multi_npu == True)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. feature インスタンス名の生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-smartswitch-dpu-has_per_dpu_scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SmartSwitch / DPU (has_per_dpu_scope)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-spinerouter-syncd-gbsyncd-auto_restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SpineRouter — syncd / gbsyncd の auto_restart 強制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-init_cfgjsonj2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. init_cfg.json.j2 ビルド時プラットフォーム条件
       
     </span>
   </a>
@@ -35917,12 +36401,94 @@
 <!-- ordering -->
 <h2 id="phase-b">書き込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
 <p>FEATURE テーブルへの書き込みは複数経路が重なるため、フィールドごとに「最終書き込み者」が異なる。誤った順序での操作はユーザ設定の消失やサービス誤動作を引き起こす。</p>
+<h3 id="systemd-unit">systemd unit 起動順序<a class="headerlink" href="#systemd-unit" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[システム起動]
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>docker.service / rc-local.service
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>database.service          (Requires=docker.service, After=docker.service rc-local.service)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ↓
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>config-setup.service      (Requires=database.service config-topology.service)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  ↓
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>featured.service          (Requires=config-setup.service, After=config-setup.service)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  ↓ featured が CONFIG_DB FEATURE テーブルを読んで render_all_feature_states() 実行
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>  ↓ [delayed=False フィーチャー] → 即時 systemctl enable / start
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>  ↓ [delayed=True  フィーチャー] → PortInitDone 受信 or 180 秒タイムアウト後に起動
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  ↓
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>各 feature service (bgp/teamd/snmp 等)
+</span></code></pre></div>
+<ul>
+<li><code>featured.service</code> は <code>sonic.target</code> と <code>BindsTo</code> 関係にある（<code>featured.service:BindsTo=sonic.target</code>）。</li>
+<li><code>featured</code> デーモン起動後、<code>render_all_feature_states()</code> が全フィーチャーの state を評価し <code>enabled</code> なものを <code>systemctl enable / start</code> する。</li>
+<li><code>delayed=True</code> フィーチャーは <code>APPL_DB PORT_TABLE:PortInitDone</code> の受信を待ってから起動する（<code>featured:182-184</code>）。PortInitDone が来ない場合は <code>PORT_INIT_TIMEOUT_SEC=180</code> 秒後に強制起動する（<code>featured:659-661</code>）。</li>
+</ul>
+<h3 id="featured-feature-service-systemd">featured が管理する feature service の systemd 依存関係<a class="headerlink" href="#featured-feature-service-systemd" title="Permanent link">&para;</a></h3>
+<p>各 feature の <code>.service</code> ファイルはビルド時のテンプレート (<code>files/build_templates/*.service.j2</code>) から生成される。主要サービスの依存関係:</p>
+<table>
+<thead>
+<tr>
+<th>feature service</th>
+<th>Requires</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgp.service</code></td>
+<td><code>config-setup.service</code></td>
+<td><code>config-setup.service swss.service syncd.service</code></td>
+</tr>
+<tr>
+<td><code>snmp.service</code></td>
+<td><code>config-setup.service</code></td>
+<td><code>config-setup.service swss.service syncd.service interfaces-config.service</code></td>
+</tr>
+<tr>
+<td><code>telemetry.service</code></td>
+<td><code>database.service</code></td>
+<td><code>database.service swss.service syncd.service</code></td>
+</tr>
+<tr>
+<td><code>mgmt-framework.service</code></td>
+<td><code>database.service</code></td>
+<td><code>database.service swss.service syncd.service</code></td>
+</tr>
+<tr>
+<td><code>gnmi.service</code></td>
+<td><code>database.service</code></td>
+<td><code>database.service swss.service syncd.service</code></td>
+</tr>
+<tr>
+<td><code>sflow.service</code></td>
+<td>-</td>
+<td><code>swss.service syncd.service hostcfgd.service interfaces-config.service</code></td>
+</tr>
+<tr>
+<td><code>nat.service</code></td>
+<td><code>config-setup.service</code></td>
+<td><code>config-setup.service swss.service syncd.service</code></td>
+</tr>
+<tr>
+<td><code>dhcp_relay.service</code></td>
+<td><code>config-setup.service</code></td>
+<td><code>config-setup.service swss.service syncd.service teamd.service</code></td>
+</tr>
+</tbody>
+</table>
+<p>すべての feature service は <code>BindsTo=sonic.target After=sonic.target</code> を持ち、<code>sonic.target</code> 停止時に連動停止する。</p>
+<h3 id="multi-asic-smartswitch-instance">multi-asic / SmartSwitch 環境での instance 起動順序<a class="headerlink" href="#multi-asic-smartswitch-instance" title="Permanent link">&para;</a></h3>
+<p><code>featured</code> は <code>has_global_scope</code> / <code>has_per_asic_scope</code> / <code>has_per_dpu_scope</code> フィールドを参照してインスタンス名を決定する（<code>featured:408-424</code>）:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>has_global_scope=True   → &lt;feature&gt;.service                   (host インスタンス)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>has_per_asic_scope=True → &lt;feature&gt;@0.service, @1.service, ... (ASIC ごと)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>has_per_dpu_scope=True  → &lt;feature&gt;@dpu0.service, @dpu1.service, ... (DPU ごと)
+</span></code></pre></div>
+<p>インスタンス <code>.service</code> ファイルは <code>systemd-sonic-generator</code> がブート時に <code>/run/systemd/generator/</code> 配下に動的生成する。SmartSwitch NPU 環境では <code>database@dpu&lt;N&gt;.service</code> に <code>Requires=systemd-networkd-wait-online@bridge-midplane.service</code> が追加される（<code>systemd-sonic-generator.cpp:985-996</code>）。</p>
 <h3 id="_16">書き込み優先順序<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>① init_cfg.json.j2      — ビルド時に全フィールドを初期注入 (set_entry)
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>② db_migrator.py        — 起動時マイグレーション (set_entry / mod_entry)
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>③ FeatureRegistry       — パッケージ登録時 (set_entry、既存 DB 値優先ロジック付き)
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>④ CLI                   — state / auto_restart / set_owner を部分更新 (mod_entry)
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>⑤ featured デーモン     — state / delayed / has_*_scope を条件付き上書き (mod_entry)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>① init_cfg.json.j2      — ビルド時に全フィールドを初期注入 (set_entry)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>② db_migrator.py        — 起動時マイグレーション (set_entry / mod_entry)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>③ FeatureRegistry       — パッケージ登録時 (set_entry、既存 DB 値優先ロジック付き)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>④ CLI                   — state / auto_restart / set_owner を部分更新 (mod_entry)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>⑤ featured デーモン     — state / delayed / has_*_scope を条件付き上書き (mod_entry)
 </span></code></pre></div>
 <h3 id="_17">フィールド別「最終権限」<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
@@ -36021,7 +36587,7 @@
 </li>
 </ol>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80</code>; <code>sonic-host-services/scripts/featured:200-217,255-275</code>; <code>sonic-utilities/config/feature.py:24-25</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-ordering.md</code></p>
+<p><strong>Evidence</strong>: <code>sonic-host-services/data/debian/sonic-host-services-data.featured.service</code>; <code>sonic-buildimage/files/build_templates/*.service.j2</code>; <code>sonic-buildimage/src/systemd-sonic-generator/systemd-sonic-generator.cpp:985-996</code>; <code>sonic-host-services/scripts/featured:182-184,200-217,255-275,408-424,659-661</code>; <code>sonic-utilities/sonic_package_manager/service_creator/feature.py:71-80</code>; <code>sonic-utilities/config/feature.py:24-25</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-ordering.md</code></p>
 </blockquote>
 <!-- /ordering -->
 
@@ -36184,7 +36750,8 @@
 
 <!-- constants -->
 <h2 id="_21">ハードコード定数<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
-<p><code>featured</code> スクリプト (<code>sonic-host-services/scripts/featured</code>) に埋め込まれた定数。</p>
+<p><code>featured</code> スクリプト (<code>sonic-host-services/scripts/featured</code>) および <code>sonic_package_manager</code> (<code>sonic-utilities</code>) に埋め込まれた定数。</p>
+<h3 id="_22">タイミング・優先度定数（モジュールレベル）<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36227,13 +36794,137 @@
 </tr>
 </tbody>
 </table>
+<h3 id="state-auto_restart-enumfeature__init__">state / auto_restart 有効値 enum（<code>Feature.__init__</code> ハードコード）<a class="headerlink" href="#state-auto_restart-enumfeature__init__" title="Permanent link">&para;</a></h3>
+<p><code>Feature.__init__</code> の <code>_get_feature_table_key_render_value()</code> 呼び出しで <code>expected_values</code> としてハードコードされている。これ以外の値が CONFIG_DB に入ると <code>ValueError</code> → <code>handler()</code> を通じてデーモン全体がクラッシュする。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>有効値セット</th>
+<th>定義場所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>state</code></td>
+<td><code>['enabled', 'disabled', 'always_enabled', 'always_disabled']</code></td>
+<td><code>featured:81</code></td>
+</tr>
+<tr>
+<td><code>delayed</code></td>
+<td><code>['True', 'False']</code></td>
+<td><code>featured:83</code></td>
+</tr>
+<tr>
+<td><code>has_global_scope</code></td>
+<td><code>['True', 'False']</code>、欠落時デフォルト <code>'True'</code></td>
+<td><code>featured:84</code></td>
+</tr>
+<tr>
+<td><code>has_per_asic_scope</code></td>
+<td><code>['True', 'False']</code>、欠落時デフォルト <code>'False'</code></td>
+<td><code>featured:85</code></td>
+</tr>
+<tr>
+<td><code>auto_restart</code></td>
+<td>制約なし（<code>str</code>）。<code>"enabled"</code> を含む場合 systemd <code>Restart=always</code>、それ以外 <code>Restart=no</code></td>
+<td><code>featured:82,380</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="featurehandler">クラスレベル定数（<code>FeatureHandler</code>）<a class="headerlink" href="#featurehandler" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FEATURE_STATE_ENABLED</code></td>
+<td><code>"enabled"</code></td>
+<td><code>featured:132</code></td>
+<td>STATE_DB に書き込む「起動成功」状態文字列</td>
+</tr>
+<tr>
+<td><code>FEATURE_STATE_DISABLED</code></td>
+<td><code>"disabled"</code></td>
+<td><code>featured:133</code></td>
+<td>STATE_DB に書き込む「停止成功」状態文字列</td>
+</tr>
+<tr>
+<td><code>FEATURE_STATE_FAILED</code></td>
+<td><code>"failed"</code></td>
+<td><code>featured:134</code></td>
+<td>STATE_DB に書き込む「失敗」状態文字列。<code>systemctl start/stop/mask</code> 非ゼロ終了時に記録</td>
+</tr>
+<tr>
+<td><code>FEATURE_EXCLUSION_LIST</code></td>
+<td><code>{"telemetry", "frr_bmp"}</code></td>
+<td><code>featured:135</code></td>
+<td>systemd 操作をスキップするフィーチャー名セット。CONFIG_DB の state 変化を検知しても enable/disable を実行しない</td>
+</tr>
+<tr>
+<td><code>SYSTEMD_SYSTEM_DIR</code></td>
+<td><code>'/etc/systemd/system/'</code></td>
+<td><code>featured:128</code></td>
+<td>サービスファイルを配置するルートディレクトリ</td>
+</tr>
+<tr>
+<td><code>SYSTEMD_SERVICE_CONF_DIR</code></td>
+<td><code>'/etc/systemd/system/{}.service.d/'</code></td>
+<td><code>featured:129</code></td>
+<td><code>auto_restart.conf</code> を配置するサービス別 drop-in ディレクトリ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sonic_package_manager"><code>sonic_package_manager</code> デフォルト定数<a class="headerlink" href="#sonic_package_manager" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>定義場所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_FEATURE_CONFIG['state']</code></td>
+<td><code>'disabled'</code></td>
+<td><code>feature.py:13</code></td>
+<td>パッケージ新規インストール時のデフォルト state（YANG デフォルト <code>enabled</code> と乖離）</td>
+</tr>
+<tr>
+<td><code>DEFAULT_FEATURE_CONFIG['auto_restart']</code></td>
+<td><code>'enabled'</code></td>
+<td><code>feature.py:14</code></td>
+<td>新規インストール時のデフォルト auto_restart</td>
+</tr>
+<tr>
+<td><code>DEFAULT_FEATURE_CONFIG['high_mem_alert']</code></td>
+<td><code>'disabled'</code></td>
+<td><code>feature.py:15</code></td>
+<td>新規インストール時のデフォルト high_mem_alert</td>
+</tr>
+<tr>
+<td><code>DEFAULT_FEATURE_CONFIG['set_owner']</code></td>
+<td><code>'local'</code></td>
+<td><code>feature.py:16</code></td>
+<td>新規インストール時のデフォルト set_owner</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/featured:22-24,426-427,630,644-648,654-661</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-constants.md</code></p>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/featured:22-24,81-86,128-135,380,426-427,630,644-648,654-661</code>; <code>sonic-utilities/sonic_package_manager/service_creator/feature.py:12-17</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-constants.md</code></p>
 </blockquote>
 <!-- /constants -->
 
 <!-- cross-refs -->
-<h2 id="_22">暗黙参照マップ<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
+<h2 id="_23">暗黙参照マップ<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -36290,6 +36981,88 @@
 </table>
 <!-- /cross-refs -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>featured</code> デーモンは CONFIG_DB の <code>FEATURE</code> テーブルを購読して systemd サービスを制御するが、その過程で <strong>STATE_DB・CONFIG_DB・ファイルシステム</strong>の 3 箇所に副次的な書込を行う。</p>
+<h3 id="state_db-feature">STATE_DB — FEATURE 状態反映<a class="headerlink" href="#state_db-feature" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>STATE_DB  FEATURE|&lt;feature_name&gt;  state  &lt;enabled|disabled|failed&gt;
+</span></code></pre></div>
+<p><code>FeatureHandler.set_feature_state(feature, state)</code> (<code>featured:585-590</code>) が次のタイミングで呼ばれる:</p>
+<table>
+<thead>
+<tr>
+<th>タイミング</th>
+<th>書込値</th>
+<th>コード箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable_feature()</code> 正常完了</td>
+<td><code>"enabled"</code></td>
+<td><code>featured:513</code></td>
+</tr>
+<tr>
+<td><code>disable_feature()</code> 正常完了</td>
+<td><code>"disabled"</code></td>
+<td><code>featured:547</code></td>
+</tr>
+<tr>
+<td><code>enable_feature()</code> / <code>disable_feature()</code> でコマンド失敗</td>
+<td><code>"failed"</code></td>
+<td><code>featured:510, 544</code></td>
+</tr>
+<tr>
+<td><code>sync_feature_scope()</code> で stop/disable/mask 失敗</td>
+<td><code>"failed"</code></td>
+<td><code>featured:344</code></td>
+</tr>
+</tbody>
+</table>
+<p>multi-asic 環境では各 namespace の STATE_DB にも同値を書き込む (<code>featured:588-590</code>)。</p>
+<p>確認コマンド:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FEATURE|bgp&#39;</span>
+</span></code></pre></div></p>
+<h3 id="config_db-resync">CONFIG_DB — フィールド書き戻し (resync 系)<a class="headerlink" href="#config_db-resync" title="Permanent link">&para;</a></h3>
+<p><code>featured</code> は起動時および state 変化時に CONFIG_DB へも副次書込を行う。</p>
+<table>
+<thead>
+<tr>
+<th>メソッド</th>
+<th>書込フィールド</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resync_feature_state</code> (<code>featured:550-572</code>)</td>
+<td><code>state</code></td>
+<td>rendered 値が <code>always_enabled</code>/<code>always_disabled</code>、または現 DB 値が Jinja2 テンプレート</td>
+</tr>
+<tr>
+<td><code>sync_feature_delay_state</code> (<code>featured:574-583</code>)</td>
+<td><code>delayed</code></td>
+<td>manifest 値と現 DB 値が不一致</td>
+</tr>
+<tr>
+<td><code>_conditional_update_scope</code> (<code>featured:289-355</code>)</td>
+<td><code>has_per_asic_scope</code>, <code>has_global_scope</code></td>
+<td>rendered 値と現 DB 値が不一致の場合のみ <code>mod_entry</code></td>
+</tr>
+</tbody>
+</table>
+<p>いずれも multi-asic では各 namespace の CONFIG_DB にも書き込む。</p>
+<h3 id="systemd-unit-override">ファイルシステム — systemd unit override ファイル<a class="headerlink" href="#systemd-unit-override" title="Permanent link">&para;</a></h3>
+<p><code>auto_restart</code> フィールド変化または起動時に <code>/etc/systemd/system/&lt;feature&gt;.service.d/auto_restart.conf</code> を生成し <code>Restart=always|no</code> を書込後、<code>systemctl daemon-reload</code> を実行する (<code>featured:382-403</code>)。</p>
+<p>multi-asic では <code>&lt;feature&gt;@&lt;asic_id&gt;.service.d/auto_restart.conf</code> も生成。</p>
+<p><strong>SpineRouter 特例</strong>: <code>DEVICE_METADATA.localhost.type == 'SpineRouter'</code> のとき <code>syncd</code> / <code>gbsyncd</code> は CONFIG_DB の <code>auto_restart</code> 値を無視して <code>Restart=no</code> を強制書込する (<code>featured:374-378</code>)。</p>
+<h3 id="kubernetes-set_owner-kube-featured">Kubernetes 切替 (set_owner = kube) — featured スコープ外<a class="headerlink" href="#kubernetes-set_owner-kube-featured" title="Permanent link">&para;</a></h3>
+<p><code>set_owner = "kube"</code> フィールドは <code>sonic-feature.yang</code> で定義されているが、<strong><code>featured</code> スクリプト内に kube 制御コードは存在しない</strong>。Kubernetes 管理切替は別のコンポーネント（<code>hostcfgd</code> KubeHandler 等）が担う。<code>featured</code> の副次書込対象は STATE_DB と CONFIG_DB (resync) およびファイルシステムのみ。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/featured:289-355,357-406,508-513,540-547,550-583,585-590</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-side-effects.md</code></p>
+</blockquote>
+<!-- /side-effects -->
+
 <!-- pubsub -->
 <h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
 <h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
@@ -36326,13 +37099,13 @@
 </table>
 <p><code>containercfgd</code> は <code>FEATURE</code> テーブルを直接購読せず、<code>SYSLOG_CONFIG_FEATURE</code> テーブルのみを <code>ConfigDBConnector.listen()</code> で購読する。</p>
 <h3 id="featured">featured イベントループ<a class="headerlink" href="#featured" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB HSET &quot;FEATURE|bgp&quot; state enabled
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  ↓ keyspace PUBLISH &quot;__keyspace@&lt;dbId&gt;__:FEATURE|bgp&quot;  &quot;hset&quot;
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>featured SubscriberStateTable.pops()
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  ↓ HGETALL &quot;FEATURE|bgp&quot;  ← 通知後に別途フィールド取得
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>feature_handler.handler(key=&quot;bgp&quot;, op=SET, data={state:enabled,...})
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  ↓ enable_feature(bgp)  →  systemctl start bgp.service
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  ↓ STATE_DB HSET &quot;FEATURE|bgp&quot; state enabled
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>CONFIG_DB HSET &quot;FEATURE|bgp&quot; state enabled
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  ↓ keyspace PUBLISH &quot;__keyspace@&lt;dbId&gt;__:FEATURE|bgp&quot;  &quot;hset&quot;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>featured SubscriberStateTable.pops()
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  ↓ HGETALL &quot;FEATURE|bgp&quot;  ← 通知後に別途フィールド取得
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>feature_handler.handler(key=&quot;bgp&quot;, op=SET, data={state:enabled,...})
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  ↓ enable_feature(bgp)  →  systemctl start bgp.service
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  ↓ STATE_DB HSET &quot;FEATURE|bgp&quot; state enabled
 </span></code></pre></div>
 <ul>
 <li>keyspace 通知のペイロードは操作名 (<code>hset</code>/<code>del</code> 等) のみ。フィールド値は HGETALL で取得する。</li>
@@ -36344,6 +37117,155 @@
 <p><strong>Evidence</strong>: <code>sonic-host-services/scripts/featured:22-23,600-678</code>; <code>sonic-swss-common/common/subscriberstatetable.cpp:17-165</code>; <code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:388-411</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-pubsub.md</code></p>
 </blockquote>
 <!-- /pubsub -->
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<h3 id="_24">概要<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<p><code>FEATURE</code> テーブルの <code>featured</code> デーモンは、プラットフォーム構成に応じて 4 軸で挙動が変化する。</p>
+<h3 id="1-multi-asic-is_multi_npu-true">1. multi-asic (is_multi_npu == True)<a class="headerlink" href="#1-multi-asic-is_multi_npu-true" title="Permanent link">&para;</a></h3>
+<p><code>FeatureHandler</code> は起動時に <code>device_info.is_multi_npu()</code> を確認し、multi-asic 環境では namespace ごとに <code>ConfigDBConnector</code> と STATE_DB <code>Table</code> を初期化する（<code>featured:142,151-162</code>）。</p>
+<p><strong>CONFIG_DB / STATE_DB 同期の差異</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>single-asic</th>
+<th>multi-asic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resync_feature_state()</code> (<code>featured:570-573</code>)</td>
+<td>host CONFIG_DB のみ</td>
+<td>host + 全 namespace CONFIG_DB</td>
+</tr>
+<tr>
+<td><code>sync_feature_delay_state()</code> (<code>featured:583-584</code>)</td>
+<td>host CONFIG_DB のみ</td>
+<td>host + 全 namespace CONFIG_DB</td>
+</tr>
+<tr>
+<td><code>set_feature_state()</code> (<code>featured:588-591</code>)</td>
+<td>host STATE_DB のみ</td>
+<td>host + 全 namespace STATE_DB</td>
+</tr>
+<tr>
+<td><code>sync_feature_scope()</code> (<code>featured:312-355</code>)</td>
+<td><code>is_multi_npu == False</code> で全処理スキップ</td>
+<td><code>has_per_asic_scope</code> / <code>has_global_scope</code> を DB に反映、不要インスタンスを stop/disable/mask</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-feature">2. feature インスタンス名の生成<a class="headerlink" href="#2-feature" title="Permanent link">&para;</a></h3>
+<p><code>get_multiasic_feature_instances()</code> (<code>featured:408-415</code>) が systemd ユニット名を決定する:</p>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th>インスタンス名</th>
+<th>条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>single-asic または <code>has_global_scope = True</code></td>
+<td><code>&lt;feature&gt;</code></td>
+<td><code>not is_multi_npu</code> または <code>has_global_scope</code></td>
+</tr>
+<tr>
+<td>multi-asic + <code>has_per_asic_scope = True</code></td>
+<td><code>&lt;feature&gt;@0</code>, <code>&lt;feature&gt;@1</code>, ...</td>
+<td><code>is_multi_npu == True</code> かつ <code>has_per_asic_scope</code></td>
+</tr>
+<tr>
+<td>SmartSwitch + <code>has_per_dpu_scope = True</code></td>
+<td><code>&lt;feature&gt;@dpu0</code>, <code>&lt;feature&gt;@dpu1</code>, ...</td>
+<td><code>num_dpus &gt; 0</code></td>
+</tr>
+<tr>
+<td>multi-asic + global_scope = False + per_asic = False</td>
+<td>インスタンスなし</td>
+<td>ホストインスタンスが省略される</td>
+</tr>
+</tbody>
+</table>
+<p>single-asic では <code>is_multi_npu == False</code> のため、<code>has_global_scope</code> の値に関わらず常にホストインスタンス <code>[feature.name]</code> が生成される。</p>
+<h3 id="3-smartswitch-dpu-has_per_dpu_scope">3. SmartSwitch / DPU (<code>has_per_dpu_scope</code>)<a class="headerlink" href="#3-smartswitch-dpu-has_per_dpu_scope" title="Permanent link">&para;</a></h3>
+<p><code>num_dpus = device_info.get_num_dpus()</code> (<code>featured:148</code>) で DPU 数を取得。SmartSwitch 構成 (<code>num_dpus &gt; 0</code>) では <code>has_per_dpu_scope = True</code> の feature が DPU ごとのインスタンスを生成する。</p>
+<ul>
+<li><code>has_per_dpu_scope</code> は <code>sonic_package_manager</code> の非設定可能フィールド管理外 (<code>feature.py:228-237</code>) であり、manifest ではなく CONFIG_DB 値をそのまま参照する。</li>
+<li>標準 <code>init_cfg.json.j2</code> には <code>has_per_dpu_scope = True</code> の feature エントリは存在しない。SmartSwitch 固有 feature はプラットフォーム固有パッケージが別途登録する。</li>
+</ul>
+<h3 id="4-spinerouter-syncd-gbsyncd-auto_restart">4. SpineRouter — <code>syncd</code> / <code>gbsyncd</code> の auto_restart 強制<a class="headerlink" href="#4-spinerouter-syncd-gbsyncd-auto_restart" title="Permanent link">&para;</a></h3>
+<p><code>update_systemd_config()</code> (<code>featured:373-380</code>) は <code>DEVICE_METADATA.localhost.type == 'SpineRouter'</code> かつ feature が <code>syncd</code> / <code>gbsyncd</code> の場合、<code>auto_restart</code> CONFIG_DB 設定を無視して systemd <code>Restart=no</code> を強制する:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">if</span> <span class="n">device_type</span> <span class="o">==</span> <span class="s1">&#39;SpineRouter&#39;</span> <span class="ow">and</span> <span class="n">is_dependent_service</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">restart_field_str</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>   <span class="c1"># CONFIG_DB 値を無視</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">restart_field_str</span> <span class="o">=</span> <span class="s2">&quot;always&quot;</span> <span class="k">if</span> <span class="s2">&quot;enabled&quot;</span> <span class="ow">in</span> <span class="n">feature_config</span><span class="o">.</span><span class="n">auto_restart</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span>
+</span></code></pre></div>
+<p><strong>背景</strong>: SpineRouter (VOQ chassis) では <code>syncd</code> が <code>swss</code> 依存として連動起動/停止するため、クリティカルプロセスクラッシュ時に二重停止が発生する。また VOQ chassis では早期 <code>syncd</code> 再起動がトラフィック断を引き起こす。このため SpineRouter では <code>config feature autorestart syncd enabled</code> を実行しても systemd <code>Restart=always</code> には変わらない。</p>
+<h3 id="5-init_cfgjsonj2">5. init_cfg.json.j2 ビルド時プラットフォーム条件<a class="headerlink" href="#5-init_cfgjsonj2" title="Permanent link">&para;</a></h3>
+<p>ビルド時 Jinja2 テンプレートが <code>DEVICE_METADATA</code> / <code>DEVICE_RUNTIME_METADATA</code> の値に応じてデフォルト <code>state</code> を決定する:</p>
+<table>
+<thead>
+<tr>
+<th>feature</th>
+<th>条件</th>
+<th>state</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bgp</code></td>
+<td>supervisor モジュール または <code>ETHERNET_PORTS_PRESENT == False</code></td>
+<td><code>disabled</code></td>
+</tr>
+<tr>
+<td><code>teamd</code></td>
+<td><code>ETHERNET_PORTS_PRESENT == False</code></td>
+<td><code>disabled</code></td>
+</tr>
+<tr>
+<td><code>mux</code></td>
+<td><code>subtype == 'DualToR'</code></td>
+<td><code>enabled</code></td>
+</tr>
+<tr>
+<td><code>mux</code></td>
+<td>上記以外</td>
+<td><code>always_disabled</code></td>
+</tr>
+<tr>
+<td><code>macsec</code></td>
+<td><code>type in ['SpineRouter', 'UpperSpineRouter', 'LowerRegionalHub']</code> かつ <code>MACSEC_SUPPORTED</code></td>
+<td><code>enabled</code></td>
+</tr>
+<tr>
+<td><code>macsec</code></td>
+<td>上記以外</td>
+<td><code>disabled</code></td>
+</tr>
+<tr>
+<td><code>dhcp_relay</code></td>
+<td>type が ToR/EPMS/MgmtToR 系</td>
+<td><code>disabled</code></td>
+</tr>
+<tr>
+<td><code>gbsyncd</code></td>
+<td><code>sonic_asic_platform == "vs"</code> のみ追加</td>
+<td><code>enabled</code></td>
+</tr>
+<tr>
+<td><code>pmon</code></td>
+<td><code>delayed</code>: type が <code>SpineRouter</code> → <code>False</code>、それ以外 → <code>True</code></td>
+<td>(delayed のみ)</td>
+</tr>
+</tbody>
+</table>
+<p><code>lldp</code> の <code>has_global_scope</code> / <code>has_per_asic_scope</code> のみランタイム Jinja2 テンプレートで chassis モジュールタイプに応じて動的決定される（<code>init_cfg.json.j2:109-110</code>）。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591</code>; <code>sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130</code>; 詳細分析 <code>meta/_intermediate/cdb-flow/feature-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <!-- glossary-links-injected: 92d0997ed33c -->
 
