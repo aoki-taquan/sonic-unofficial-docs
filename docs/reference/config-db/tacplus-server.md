@@ -299,4 +299,46 @@ hostcfgd は `sorted(..., key=lambda t: int(t['priority']))` でソートする�
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `AaaCfg` が TACPLUS_SERVER 処理時に読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`hostcfgd` の `AaaCfg` は `TACPLUS_SERVER` / `TACPLUS` テーブルを `load_independent_config()` (hostcfgd:2221-2230) で一括ロードするが、`modify_conf_file()` (hostcfgd:640-830) 内で PAM/NSS テンプレを再生成する際に他テーブルの値を参照する。
+
+### 有効化制御: `AAA|authentication.login`
+
+`TACPLUS_SERVER` の設定が PAM / `nsswitch.conf` に反映されるかは **`AAA` テーブルに依存する**。
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| [`AAA`](aaa.md) (`authentication.login`) | `if 'tacacs+' in authentication['login'] and servers_conf` | `'tacacs+'` が含まれない場合、TACPLUS_SERVER エントリがあっても PAM/NSS への TACACS+ 行生成をスキップ (silent skip) | hostcfgd:755 |
+| [`AAA`](aaa.md) (`authorization.login`) | `if 'tacacs+' in authorization['login']` | `tacacs_authorization_conf="on"` として `tacplus_nss.conf.j2` に渡す | hostcfgd:784-785 |
+| [`AAA`](aaa.md) (`accounting.login`) | `if 'tacacs+' in accounting['login']` | `tacacs_accounting_conf="on"` として `tacplus_nss.conf.j2` に渡す | hostcfgd:789-790 |
+
+> `AAA|authentication.login` に `tacacs+` がなければ、サーバ設定がどれだけ正しくても認証に効果がない。TACPLUS_SERVER の設定は AAA テーブルへの依存が前提。
+
+### global 設定マージ元: `TACPLUS|global`
+
+`modify_conf_file()` 冒頭で `tacplus_global_default` を `TACPLUS|global` で上書きし、さらに per-server エントリで上書きする 3 段マージ。
+
+| テーブル | 参照箇所 | 用途 | evidence |
+|---|---|---|---|
+| `TACPLUS|global` | `tacplus_global.update(self.tacplus_global)` | `auth_type` / `timeout` / `passkey` / `src_ip` を per-server の継承元として提供 | hostcfgd:648-649 |
+
+### PAM / NSS 設定ファイル連動 (TACACS+ 有効時に書き換えられるファイル)
+
+| ファイル | 内容 | evidence |
+|---|---|---|
+| `/etc/pam.d/common-auth-sonic` | `common-auth-sonic.j2` を展開。TACACS+ chain (`pam_tacplus`) を生成 | hostcfgd:715,725,728-731 |
+| `/etc/nsswitch.conf` | `passwd` 行に `tacplus` を prepend (TACACS+ 有効時) または削除 | hostcfgd:757-761,779 |
+| `/etc/tacplus_nss.conf` | `tacplus_nss.conf.j2` を展開。認証/認可/accounting フラグとサーバ一覧を含む | hostcfgd:805-815 |
+| `/etc/pam.d/sshd` / `/etc/pam.d/login` | `common-auth` → `common-auth-sonic` include に書き換え | hostcfgd:748-749 |
+
+### 範囲外 (誤解されやすい隣接)
+
+- `RADIUS` / `RADIUS_SERVER` / `LDAP` / `LDAP_SERVER`: 同 `modify_conf_file()` 内で処理されるが TACACS+ ブランチとは独立。`authentication['login']` が `'radius'` のとき TACACS+ chain が上書きされ相互排他的。
+- インタフェーステーブル (`MGMT_INTERFACE` 等): RADIUS の `nas_ip` / `src_intf` 解決にのみ使用。TACACS+ 経路には現れない (`TACPLUS.src_intf` は dead code — Phase A 参照)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tacplus-server-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: e0332a023fdb -->
