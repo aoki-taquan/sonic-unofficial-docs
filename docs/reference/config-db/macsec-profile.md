@@ -233,4 +233,56 @@ show macsec
 - なし
 <!-- /entry-points -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Direction B — orch / mgr が書く先)
+
+> ソース: `sonic-swss/orchagent/macsecorch.cpp`, `sonic-swss/cfgmgr/macsecmgr.cpp`
+
+### STATE_DB
+
+`MACSEC_PROFILE` を読んだ `macsecmgrd` → `MACsecOrch` が以下のテーブルへ書き込む。
+
+| テーブル | キー形式 | 書込フィールド | タイミング |
+|----------|----------|----------------|------------|
+| `STATE_MACSEC_PORT_TABLE` (`MACSEC_PORT_TABLE`) | `<port_name>` | `max_sa_per_sc`, `state=ok` | `MACsecOrch::createMACsecPort()` 成功時 |
+| `STATE_MACSEC_EGRESS_SC_TABLE` | `<port_name>\|<SCI>` | `state=ok` | `MACsecOrch::createMACsecSC()` で egress SC 確立時 |
+| `STATE_MACSEC_INGRESS_SC_TABLE` | `<port_name>\|<SCI>` | `state=ok` | `MACsecOrch::createMACsecSC()` で ingress SC 確立時 |
+| `STATE_MACSEC_EGRESS_SA_TABLE` | `<port_name>\|<SCI>\|<AN>` | `state=ok` | `MACsecOrch::createMACsecSA()` で egress SA 確立時 |
+| `STATE_MACSEC_INGRESS_SA_TABLE` | `<port_name>\|<SCI>\|<AN>` | `state=ok` | `MACsecOrch::createMACsecSA()` で ingress SA 確立時 |
+
+削除は `del()` で対応 — ポート/SC/SA 削除時に各テーブルのエントリを消去する。
+
+### ASIC_DB（SAI 経由）
+
+`macsecorch.cpp` が `sai_macsec_api` を呼び出し、syncd 経由で ASIC_DB に反映される。
+
+| SAI API 呼び出し | 主な属性 | タイミング |
+|-----------------|----------|------------|
+| `sai_macsec_api->create_macsec()` | `SAI_MACSEC_ATTR_DIRECTION`, `SAI_MACSEC_ATTR_PHYSICAL_BYPASS_ENABLE` | MACsec グローバルオブジェクト初回作成 |
+| `sai_macsec_api->create_macsec_port()` | ポート OID, 方向 | MACsecOrch がポートを有効化するとき |
+| `sai_macsec_api->create_macsec_sc()` | SC OID, SCI, 方向, 暗号スイート | SC 確立時 |
+| `sai_macsec_api->create_macsec_sa()` | `SAI_MACSEC_SA_ATTR_AN`, `SAI_MACSEC_SA_ATTR_SAK`, `SAI_MACSEC_SA_ATTR_SALT`, `SAI_MACSEC_SA_ATTR_AUTH_KEY`, `SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `SAI_MACSEC_SA_ATTR_MINIMUM_INGRESS_XPN` | MKA が SA を合意したとき (APP_DB 経由) |
+| `sai_macsec_api->remove_macsec_sa()` | SA OID | SA 削除/ロールオーバー時 |
+| `sai_macsec_api->set_macsec_sa_attribute()` | `SAI_MACSEC_SA_ATTR_CONFIGURED_EGRESS_XPN` / `SAI_MACSEC_SA_ATTR_MINIMUM_INGRESS_XPN` (XPN 更新) | XPN 再生成が要求されたとき |
+
+### wpa_supplicant 設定書込
+
+`macsecmgrd` が `wpa_cli set_network` コマンドで wpa_supplicant プロセスに MKA パラメータを渡す。書込先はプロセス内ランタイム状態（ファイルではなくソケット経由）。
+
+| wpa_supplicant フィールド | 対応 CONFIG_DB フィールド | 備考 |
+|--------------------------|--------------------------|------|
+| `macsec_policy` | — | 常に `1` (MACsec 有効) |
+| `macsec_integ_only` | `policy` | `integrity_only` → 1, `security` → 0 |
+| `mka_cak` | `primary_cak` | CAK を暗号スイートに応じてデコードして渡す |
+| `mka_ckn` | `primary_ckn` | そのまま渡す |
+| `mka_priority` | `priority` | MKA アクター優先度 |
+| `mka_rekey_period` | `rekey_period` | `rekey_period > 0` の場合のみ設定 |
+| `macsec_ciphersuite` | `cipher_suite` | GCM-AES-128 / 256 / XPN-128 / XPN-256 |
+| `macsec_include_sci` | `send_sci` | `true` → 1, `false` → 0 |
+| `macsec_replay_protect` | `enable_replay_protect` | `true` → 1, `false` → 0 |
+| `macsec_replay_window` | `replay_window` | `enable_replay_protect=true` の場合のみ設定 |
+
+設定後 `enable_network` を呼び出して MKA セッションを開始する。失敗時は `SWSS_LOG_WARN("Enable MACsec fail : %s")` を記録しポートは非暗号化状態のまま継続する。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
