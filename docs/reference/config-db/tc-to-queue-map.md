@@ -470,6 +470,41 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+### ASIC キャパビリティ
+
+`TC_TO_QUEUE_MAP` ハンドラは SAI の `create_qos_map()` を直接呼ぶのみで、ASIC ケーパビリティクエリ（`querySwitchCapability`）を実施しない。`DSCP_TO_TC_MAP` が `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` でクエリを行うのと異なり、TC→queue マップの対応可否判定は SAI ベンダー実装に委ねられる。`create_qos_map()` 失敗時は `"Failed to create tc_to_queue map. status:%d"` を LOG_ERROR して `task_failed` を返す。
+
+### ベンダー別 queue 数差
+
+`qos_config.j2` の生成優先順:
+
+1. `generate_tc_to_queue_map()` 定義あり かつ `tunnel_qos_remap_enable=true` → プラットフォーム固有関数（`AZURE_UPLINK` 等の追加マップを含む）
+2. `generate_tc_to_queue_map_per_sku()` 定義あり → HWSKU 別マップ
+3. **フォールバック（デフォルト）**: TC 0–7 → queue 0–7 の恒等写像（マップ名 `AZURE`）
+
+`different_tc_to_queue_map=true` かつ `tunnel_qos_remap_enable=true` かつ uplink ポートの条件が揃う場合、PORT_QOS_MAP の `tc_to_queue_map` フィールドに `"AZURE_UPLINK"` が適用される。`AZURE_UPLINK` マップの内容（queue 数を含む）はプラットフォーム固有関数が決定する。
+
+### VOQ chassis 差
+
+`DEVICE_METADATA['localhost']['switch_type'] == 'voq'` のとき VOQ chassis モードとなる。
+
+- `TC_TO_QUEUE_MAP` テーブル本体の生成ロジックは標準と同一（VOQ 固有の分岐なし）
+- `QUEUE` テーブルは SYSTEM_PORT 単位で生成され、queue 3/4 を lossless (`AZURE_LOSSLESS`)、queue 0/1/2/5/6 を best-effort として active ポートのみ明示設定する（通常モードのポートごと 0–7 全指定とは異なる）
+- orchagent の `applyWredProfileToQueue()` では `gMySwitchType == "voq"` 判定があり、VOQ モード時は `getPortVoQIds()` でキュー OID を解決する（通常は `port.m_queue_ids`）。TC_TO_QUEUE_MAP の SAI map 作成パス自体は共通
+
+| 観点 | 通常モード | VOQ chassis |
+|------|-----------|------------|
+| TC_TO_QUEUE_MAP 生成 | qos_config.j2 共通パス | 同上（変化なし） |
+| queue 数 | HWSKU 依存（デフォルト 0–7） | SYSTEM_PORT ベース、一部キューのみ明示 |
+| ポート適用時のキュー ID 解決 | `port.m_queue_ids` | `getPortVoQIds()` |
+| ASIC ケーパビリティクエリ | なし | なし |
+| uplink 別マップ | `AZURE_UPLINK`（条件付き） | 非適用 |
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 16a5b728a75a -->
 
 <!-- pubsub -->
