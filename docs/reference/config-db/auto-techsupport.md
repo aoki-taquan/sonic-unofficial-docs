@@ -388,7 +388,7 @@ CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする ho
 - `coredump_gen_handler.py` 経由: critical process の core dump 検出 → `invoke_ts_command_rate_limited()` → `invoke_ts_cmd()` 成功時に `write_to_state_db()` が呼ばれ STATE_DB に新規エントリ追加。
 - `techsupport_cleanup.py` 経由: `max_techsupport_limit` 超過時に `cleanup_process()` が物理ファイル削除を返却し、`clean_state_db_entries()` が対応する STATE_DB エントリを `db.delete` で除去。
 
-詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-side.md` を参照。
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-side-effects.md` を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
