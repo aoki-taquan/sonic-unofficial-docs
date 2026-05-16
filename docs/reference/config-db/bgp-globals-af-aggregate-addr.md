@@ -348,4 +348,40 @@ vtysh コマンド送出のみで BGP セッション自体は再起動されな
 > **Evidence**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:98, 1313, 1506-1555, 1982-1983, 2118, 2257, 2317, 2340-2357, 2359-2361, 3169-3196, 3955-3956` (keyspace listen / subscribe / `bgp_table_handler_common` / `hdl_af_aggregate` / 起動スナップショット / config replay); 詳細分析 `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-pubsub.md`
 <!-- /pubsub -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### FRR コマンド literal (`frrcfgd.py` ハンドラ)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `af_aggregate_key_map` コマンド雛形 | `{no:no-prefix}aggregate-address {2} {3:aggr-as-set} {4:aggr-summary-only} {5:aggr-policy}` | `address-family <afi> <safi>` 配下に投入する vtysh コマンド | `frrcfgd.py:1982-1983` |
+| `aggr-as-set` 展開 | `as-set` | `as_set=true` のときに付与されるキーワード | `frrcfgd.py:815` |
+| `aggr-summary-only` 展開 | `summary-only` | `summary_only=true` のときに付与されるキーワード | `frrcfgd.py:816` |
+| `aggr-policy` 展開プレフィクス | `route-map ` | `policy` フィールドが非空のとき値の前に付与 | `frrcfgd.py:928-930` |
+| vtysh prefix L1 | `configure terminal` | コマンド投入時の先頭行 | `frrcfgd.py:3179` |
+| vtysh prefix L2 | `router bgp <asn> vrf <vrf>` | BGP インスタンス選択 | `frrcfgd.py:3180` |
+| vtysh prefix L3 | `address-family <afi> <safi>` | AF コンテキスト切替 | `frrcfgd.py:3181` |
+| 登録テーブル名 | `BGP_GLOBALS_AF_AGGREGATE_ADDR` | handler/dispatch/subscribe で使用される一意キー | `frrcfgd.py:98,2118,2139,2317` |
+
+### prefix 正規化定数 (`MatchPrefix`)
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `IPV4_MAXLEN` | `32` | `/` 無し IPv4 prefix に補う host mask 長 | `frrcfgd.py:1606` |
+| `IPV6_MAXLEN` | `128` | `/` 無し IPv6 prefix に補う host mask 長 | `frrcfgd.py:1607` |
+| `af` 判定リテラル | `ipv4` / `ipv6` | `<afi_safi>` を `_` で分割し小文字化、`socket.AF_INET`/`AF_INET6` を選択 | `frrcfgd.py:2261,3171-3172` |
+| 正規化フォーマット | `%s/%d` | `inet_ntop()` 結果 + `mask_len` を連結 | `frrcfgd.py:1614,1621` |
+
+### ハンドラ内ガード値
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `hdl_af_aggregate` 必要引数数 | `5` | `len(args) < 5` で `None` を返し dispatch スキップ | `frrcfgd.py:1314` |
+| boolean 真値リテラル | `'true'` | `data[attr].data == 'true'` 比較で `as_set` / `summary_only` を反映 | `frrcfgd.py:3191` |
+| `AggregateAddr` 内部属性初期値 | `as_set=False`, `summary_only=False` | 内部キャッシュ `af_aggr_list[vrf][prefix]` の既定状態 | `frrcfgd.py:1704-1705` |
+
+> **スキャン証跡**: `frrcfgd.py` L98 / L800-830 / L920-944 / L1313-1328 / L1600-1640 / L1700-1710 / L1982-1983 / L2118 / L2139 / L2256-2270 / L2317 / L3169-3197 を確認。定数 8 + 4 + 3 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-aggregate-addr-constants.md`
+<!-- /constants -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
