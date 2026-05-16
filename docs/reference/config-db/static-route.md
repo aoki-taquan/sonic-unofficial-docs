@@ -316,4 +316,120 @@ BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し�
 
 <!-- /side-effects -->
 
+<!-- ordering -->
+## 順序依存関係 (Phase B)
+
+静的経路が CONFIG_DB → FRR → kernel FIB → APPL_DB へ伝播する際の処理順序を以下に示す。
+
+### NEXTHOP 解決順序 (bgpcfgd)
+
+`bgpcfgd` の `StaticRouteMgr.set_handler` では、nexthop 解決を次の順で行う。
+
+1. **BFD フラグ確認（最優先）**: `bfd == "true"` の場合は `staticroutebfd` に委譲してここでは即 `return True`（FRR コマンド生成をスキップ）。
+2. **`IpNextHopSet` 構築**: `nexthop`・`ifname`・`distance`・`nexthop-vrf`・`blackhole` の各フィールドをカンマ区切りで展開し、すべてのリストが同一サイズであることを検証。サイズ不一致は `ValueError` で中断。
+3. **差分計算**: 現行 nexthop セット (`cur_nh_set`) との対称差を取り、削除コマンドを追加コマンドより先に生成（`static_route_commands` 内: `OP_DELETE` リストを先に結合）。
+4. **advertise タグ変更時の全置換**: `route_tag != cur_route_tag` の場合、差分ではなく現行全 nexthop を削除してから新 nexthop をすべて追加する。
+5. **BGP redistribute 有効化**: VRF 内で初めての静的経路の場合のみ `redistribute static` コマンドを末尾に追加。`bgp_asn` 未設定なら `vrf_pending_redistribution` に積んで `on_bgp_asn_change` コールバックで後追い適用。
+
+> **根拠**: `managers_static_rt.py` `set_handler` (L35–80), `static_route_commands` (L185–209), `IpNextHopSet.__init__` (L310–329)
+
+### VRF 先行原則 (fpmsyncd)
+
+`fpmsyncd` の `RouteSync::onMsg` は Netlink メッセージ受信時に次の順序で VRF を解決する。
+
+1. **VRF インデックス取得**: `rtnl_route_get_table()` でルートテーブル ID を取得。テーブル ID が 0 以外の場合、`getIfName()` でデバイス名に変換。
+2. **VNET / VRF 振り分け**: デバイス名が `VNET_PREFIX` で始まる場合は `onVnetRouteMsg`、それ以外は `onRouteMsg` に渡す。デフォルト VRF (table_id = 0) は `vrf = NULL` で `onRouteMsg` を呼ぶ。
+3. **VRF 名検証**: `onRouteMsg` 内で VRF 名が `VRF_PREFIX`（`"Vrf"`）または `MGMT_VRF_PREFIX`（`"mgmt"`）で始まるか検証。mgmt VRF はスキップ、それ以外の不正 VRF は `SWSS_LOG_ERROR` でドロップ。
+4. **key 組み立て**: `<vrf_name>:<prefix>` 形式で `destipprefix` を構築してから `APP_ROUTE_TABLE_NAME` に書き込む。
+
+> **根拠**: `routesync.cpp` `onMsg` (L2053–2103), `onRouteMsg` (L2111–2303)
+
+### kernel FIB 反映順序 (fpmsyncd)
+
+FRR の zebra が Netlink RTM_NEWROUTE / RTM_DELROUTE を送出し、fpmsyncd がそれを受信して APPL_DB へ書き込む流れにおける順序制約。
+
+1. **RTM_DELROUTE 優先処理**: `onRouteMsg` は `nlmsg_type == RTM_DELROUTE` を先に評価して即 `delWithWarmRestart` を呼び出す。ADD 処理よりも DELETE が先に評価される。
+2. **RTN_BLACKHOLE ショートパス**: route type が `RTN_BLACKHOLE` の場合、nexthop 解決を省略して `blackhole = "true"` フィールドだけを APPL_DB に書き込む。
+3. **NHG (NextHop Group) 先行登録**: `rtnl_route_get_nh_id()` が非ゼロの場合、既存の `m_nh_groups` テーブルから NHG を検索する。NHG が未登録の場合は経路をドロップ（エラーログ）。NHG が単一 nexthop の場合は route テーブルに直接展開、複数の場合は `nexthop_group` フィールドを使う。
+4. **eth0 / docker0 フィルタリング**: 出力インターフェースが `eth0`、`docker0`、`eth1-midplane` の場合、ADD ではなく DEL を発行（FRR 7.2→7.5 の挙動変化への対処）。
+5. **APPL_DB 書き込み**: `setRouteWithWarmRestart` で `APP_ROUTE_TABLE_NAME` に最終書き込み。warm-reboot 中は書き込みを defer する。
+
+> **根拠**: `routesync.cpp` `onRouteMsg` (L2149–2303), `onMsg` (L2053–2103)
+
+<!-- /ordering -->
+
+<!-- defaults -->
+## フィールドの暗黙デフォルト (Phase A)
+
+以下はコード精読により判明したコード由来の暗黙デフォルト。YANG の `default` 宣言と実装が乖離している箇所を含む。
+
+### `advertise` — YANG-実装乖離（重大）
+
+| 状態 | YANG デフォルト | 実装挙動 |
+|------|------------|------|
+| フィールド不在 | `"false"`（広告無効） | `ROUTE_ADVERTISE_ENABLE_TAG='1'`（広告**有効**）が使われる |
+| `"false"` を明示 | `"false"` | `ROUTE_ADVERTISE_DISABLE_TAG='2'`（無効）— 正しい |
+| `"true"` を明示 | — | `ROUTE_ADVERTISE_ENABLE_TAG='1'`（有効）— 正しい |
+
+`managers_static_rt.py` L46 の条件式 `'advertise' in data and data['advertise'] == "false"` のため、フィールド不在は有効タグになる。`config route add` CLI は `advertise` を書かないので、CLI 経由で追加した静的経路は BGP 広告有効として扱われることがある[^mgr]。
+
+### `distance` — ゼロ値は FRR に渡さない
+
+`IpNextHop.__format__` は `distance == 0` の場合 FRR コマンドに distance を含めない。結果として FRR の static route デフォルト AD=1 が使われる。YANG デフォルト `"0"` は「FRR デフォルトを使え」という意味[^mgr]。
+
+### `blackhole` — フィールド不在は `'false'`
+
+`IpNextHop.__init__` は `blackhole is None` または `''` の場合 `'false'` を設定する。`staticroutebfd` は `blackhole=true` の経路を完全スキップするため、BFD+blackhole の組み合わせは動作しない（dead consumer パス）[^mgr]。
+
+### `nexthop-vrf` — staticroutebfd による自動補完
+
+`staticroutebfd` では `nexthop-vrf` フィールドが不在の場合、route key の VRF 名でリストを自動補完する（`vrf * len(nh_list)`）。空要素も同様に補完される[^bfd]。
+
+### BFD セッションのハードコードデフォルト
+
+`bfd=true` 時に staticroutebfd が作成する BFD セッションの既定値[^bfd]:
+
+| パラメータ | 値 |
+|-----------|----|
+| `multihop` | `false` |
+| `rx_interval` | `50` ms |
+| `tx_interval` | `50` ms |
+| `multiplier` | `3` |
+
+### ハードコード: route-map 名
+
+BGP redistribute static に使われる route-map 名は `'STATIC_ROUTE_FILTER'`、シーケンス番号は `10` でハードコードされている（`managers_static_rt.py` L224）[^mgr]。
+
+### 静的経路タイマー (APPL_DB)
+
+`static_rt_timer.py` による APPL_DB エントリの有効期限管理:
+
+| パラメータ | 値 |
+|-----------|----|
+| デフォルト有効期限 | 180秒 |
+| タイマーポーリング間隔 | 60秒 |
+| 最大有効期限 | 172800秒（2日） |
+
+`expiry="false"` のエントリは削除されない。`refresh="true"` のエントリは次サイクルに持ち越し（`false` に更新）。その他は DELETE[^timer]。
+
+[^mgr]: bgpcfgd StaticRouteMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py`
+[^bfd]: staticroutebfd 実装: `sonic-buildimage/src/sonic-bgpcfgd/staticroutebfd/main.py` および `vars.py`
+[^timer]: static_rt_timer 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py`
+<!-- /defaults -->
+
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依存する。参照はコード上に明示的な lookup なしに行われる。
+
+| 参照先テーブル | 参照元 | 参照の性質 |
+|--------------|-------|-----------|
+| `VRF` | bgpcfgd `StaticRouteMgr` | key の `<vrf>` 部分を FRR コマンド `router bgp <asn> vrf <vrf>` に直接展開。VRF 存在確認は FRR 任せ |
+| `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` | bgpcfgd `InterfaceMgr`（`main.py` 購読）| bgpcfgd が同一プロセス内で購読。StaticRouteMgr は `ifname` フィールドをそのまま FRR に渡し、IF 存在確認はしない |
+| `VRF`（カーネル IF 名） | fpmsyncd `routesync` | Netlink route の `rta_table` を `getIfName` でカーネル VRF デバイス名 (`Vrf...`) に変換して APP_DB key に付与 |
+| `INTERFACE`（カーネル IF 名） | fpmsyncd `routesync` | nexthop の `rtnh_ifindex` を `getIfName` で IF 名に変換して APP_DB `ROUTE_TABLE` の `ifname` フィールドにセット |
+
+詳細エビデンス: `meta/_intermediate/cdb-flow/static-route-cross-refs.md`
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 21a1d1474543 -->

@@ -85,6 +85,63 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mgmt_interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang>
 
+<!-- defaults -->
+## コード由来の暗黙デフォルト (Phase A)
+
+<!-- evidence: sonic-buildimage/files/image_config/interfaces/interfaces.j2 / sonic-host-services/scripts/hostcfgd / sonic-utilities/config/main.py / sonic-buildimage/src/sonic-config-engine/minigraph.py -->
+
+### `gwaddr` の省略と DHCP フォールバック
+
+`MGMT_INTERFACE` エントリが **存在しない** 場合、`interfaces.j2` は `iface eth0 inet dhcp metric 202` / `iface eth0 inet6 dhcp` を生成して DHCP にフォールバックする。エントリが存在しても `gwaddr` フィールドが欠落していると、L96 の `ip route add default via <空> dev eth0 metric 201` がカーネルエラーになりデフォルトルートが設定されない。
+
+> **注意**: SmartSwitch DPU (`DEVICE_METADATA.subtype=SmartSwitch` かつ `switch_type=dpu`) では DHCP フォールバック自体が生成されない。エントリ未設定の DPU は `eth0` に何も設定されない。
+
+### ハードコードされたメトリック
+
+| 経路 | メトリック | ソース |
+|------|-----------|--------|
+| 静的設定 (`gwaddr` あり) のデフォルトルート | **201** | `interfaces.j2:96` |
+| DHCP フォールバック (`MGMT_INTERFACE` 未設定) | **202** | `interfaces.j2:151` |
+
+### `forced_mgmt_routes` 省略 → silent drop (エラーなし)
+
+`forced_mgmt_routes` が空リストの場合、`interfaces.j2` の for ループが何も出力しない (no-op)。
+
+### 暗黙の SYSLOG_SERVER ルート注入 (ユーザー不可視)
+
+`interfaces.j2` L101-113:
+- `SYSLOG_SERVER` が設定されていれば syslog サーバ IP への policy routing rule を mgmt table に追加
+- `SYSLOG_SERVER` が**未設定**の場合、`10.20.6.16/32` が **ハードコード**で mgmt VRF / default table に自動注入される
+
+この挙動は `forced_mgmt_routes` に記載されず、ユーザーには不可視。
+
+### IPv6 デフォルトテーブル参照ルール
+
+`mgmtVrfEnabled=false` かつ IPv6 prefix を設定すると `ip -6 rule add pref 32767 lookup default` が自動追加される。
+
+### `vrf_table` の暗黙切り替え
+
+`MGMT_VRF_CONFIG.mgmtVrfEnabled`:
+- `"true"` → VRF table ID **6000**、`vrf mgmt` バインド
+- それ以外 → VRF table ID **`default`** (kernel default routing table)
+
+### `name` (key) のハードコード
+
+CLI (`config/main.py:5710`) は管理 IF 名として `"eth0"` をハードコード使用。minigraph では `eth0`, `eth1`, ... と連番生成。
+
+### minigraph による `gwaddr` 自動算出
+
+`minigraph.py:2873`: 指定プレフィクスの **第1ホストアドレス** を `gwaddr` に自動設定。例: `10.0.0.0/24` → `gwaddr = 10.0.0.1`。
+
+### YANG-実装 discrepancy
+
+| 項目 | YANG | 実装 |
+|------|------|------|
+| `ip_prefix` must 制約 | `gwaddr` との family 一致が必須 | CLI は `{"NULL": "NULL"}` 書き込みで `gwaddr` なしエントリを DB に投入可能 → must 制約が機能しない状態になり得る |
+| `forced_mgmt_routes` 説明 | "default VRF or mgmt VRF" | SYSLOG_SERVER 未設定時に `10.20.6.16/32` が第三の暗黙ルートとして追加される |
+
+<!-- /defaults -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
