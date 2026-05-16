@@ -133,6 +133,93 @@ YANG の `default` 節には値がないが、`bgpcfgd` (`managers_allow_list.py
 
 <!-- /defaults -->
 
+<!-- constants -->
+## コード由来のハードコード定数 (Phase E)
+
+`bgpcfgd` の `managers_allow_list.py` と FRR テンプレ `policies.conf.j2` には、ユーザが [CONFIG_DB](../../reference/glossary.md#term-config_db) や [YANG](../../reference/glossary.md#term-yang) から変更できない固定文字列・固定数値が多数埋め込まれている。
+
+### 1. route-map / prefix-list / community 名テンプレート
+
+| 定数 | 値 | 役割 | 根拠 |
+|------|----|------|------|
+| `PL_NAME_TMPL` | `"PL_ALLOW_LIST_DEPLOYMENT_ID_%d_COMMUNITY_%s_V%s"` | community 単位の prefix-list 名 | `managers_allow_list.py:16` |
+| `PL_NAME_TMPL_WITH_NEIGH` | `"PL_ALLOW_LIST_DEPLOYMENT_ID_%d_NEIGHBOR_%s_COMMUNITY_%s_V%s"` | neighbor_type を含む prefix-list 名 | `managers_allow_list.py:17` |
+| `COMMUNITY_NAME_TMPL` | `"COMMUNITY_ALLOW_LIST_DEPLOYMENT_ID_%d_COMMUNITY_%s"` | community-list 名 | `managers_allow_list.py:18` |
+| `COMMUNITY_NAME_TMPL_WITH_NEIGH` | `"COMMUNITY_ALLOW_LIST_DEPLOYMENT_ID_%d_NEIGHBOR_%s_COMMUNITY_%s"` | neighbor_type を含む community-list 名 | `managers_allow_list.py:19` |
+| `RM_NAME_TMPL` | `"ALLOW_LIST_DEPLOYMENT_ID_%d_V%s"` | route-map 名 (deployment 単位, v4/v6) | `managers_allow_list.py:20` |
+| `RM_NAME_TMPL_WITH_NEIGH` | `"ALLOW_LIST_DEPLOYMENT_ID_%d_NEIGHBOR_%s_V%s"` | neighbor_type を含む route-map 名 | `managers_allow_list.py:21` |
+
+### 2. FROM_BGP_PEER テンプレート (固定 5 段構成)
+
+`policies.conf.j2` (general) は `route-map FROM_BGP_PEER_V4` / `FROM_BGP_PEER_V6` をハードコードで生成する。seq 10/11/12/13/100 の順:
+
+| seq | 役割 | 根拠 |
+|-----|------|------|
+| 10 | `call ALLOW_LIST_DEPLOYMENT_ID_0_V{4,6}` + `on-match next` | `policies.conf.j2:34-36,57-59` |
+| 11 | `match community allow_list_default_community` (community-list 名はハードコード) | `policies.conf.j2:38-39,61-62` |
+| 12 | `match ip{,v6} address prefix-list DEFAULT_IPV{4,6}` (`type=SpineRouter` かつ `subtype=UpstreamLC` のみ生成) | `policies.conf.j2:41-45,64-68` |
+| 13 | `set tag` + `set community internal_fallback_community additive` (同上ロール限定。`switch_type=chassis-packet` で tag を `route_do_not_send_appdb_tag` → `route_eligible_for_fallback_to_default_tag` に切替) | `policies.conf.j2:47-53,70-76` |
+| 100 | 終端 permit (素通り) | `policies.conf.j2:84,94` |
+
+V6 のみ `permit 1` で `on-match next` + `set ipv6 next-hop prefer-global` (`policies.conf.j2:90-92`)。
+
+`DEFAULT_IPV4` / `DEFAULT_IPV6` prefix-list 名と中身 (`permit 0.0.0.0/0` / `permit ::/0`) もハードコード (`policies.conf.j2:5-6`)。
+
+### 3. community-list `allow_list_default_community`
+
+`bgp community-list standard allow_list_default_community` (community-list 名はハードコード) に以下 2 メンバを permit (`policies.conf.j2:31-32`):
+
+- `no-export`
+- `{{ constants.bgp.allow_list.drop_community }}` (`constants.yml` で `"5060:12345"`)
+
+CONFIG_DB から変更不可。
+
+### 4. route-map seq 番号定数
+
+| 定数 | 値 | 用途 | 根拠 |
+|------|----|------|------|
+| `ROUTE_MAP_ENTRY_WITH_COMMUNITY_START` | `10` | community 付きエントリ seq 範囲下限 | `managers_allow_list.py:22` |
+| `ROUTE_MAP_ENTRY_WITH_COMMUNITY_END` | `29990` | community 付きエントリ seq 範囲上限 | `managers_allow_list.py:23` |
+| `ROUTE_MAP_ENTRY_WITHOUT_COMMUNITY_START` | `30000` | community なしエントリ seq 範囲下限 | `managers_allow_list.py:24` |
+| `ROUTE_MAP_ENTRY_WITHOUT_COMMUNITY_END` | `65530` | community なしエントリ seq 範囲上限 | `managers_allow_list.py:25` |
+| seq 増分 | `10` | `range(start, end, 10)` で 10 刻み割当 | `managers_allow_list.py:585` |
+| default action 末尾 seq | `65535` | `route-map ALLOW_LIST_DEPLOYMENT_ID_*_V{4,6} permit 65535` (default_action 用エントリ) | `managers_allow_list.py:441,450,463,476,481,511,556` / `policies.conf.j2:17,20,24,27` |
+
+> seq `65535` は `ROUTE_MAP_ENTRY_WITHOUT_COMMUNITY_END (65530)` の外側なので、`__find_next_seq_number` の動的割当と衝突しない。j2 テンプレ起動時に空の `ALLOW_LIST_DEPLOYMENT_ID_0_V{4,6} permit 65535` が先行投入され、CONFIG_DB に 1 件も `BGP_ALLOWED_PREFIXES` が無い状態でも default action ルールが存在する。
+
+### 5. address-family / community センチネル定数
+
+| 定数 | 値 | 用途 | 根拠 |
+|------|----|------|------|
+| `V4` | `"v4"` | address-family enum (IPv4) | `managers_allow_list.py:28` |
+| `V6` | `"v6"` | address-family enum (IPv6) | `managers_allow_list.py:29` |
+| `EMPTY_COMMUNITY` | `"empty"` | community 未指定キー時のセンチネル。prefix-list / route-map 名の `COMMUNITY_%s` 部分に展開 | `managers_allow_list.py:15` |
+
+### 6. prefix mask デフォルト (IPv4=32 / IPv6=128)
+
+`__to_prefix_list` (`managers_allow_list.py:736-754`) は `le`/`ge` 修飾子のない prefix を以下のように補完する:
+
+| address-family | `prefix_mask_default` | 補完規則 | 根拠 |
+|----------------|----------------------|----------|------|
+| `V4` | `32` | マスク長 < 32 → `le 32` を自動付与 (`10.0.0.0/8` → `permit 10.0.0.0/8 le 32`)。マスク長 == 32 (host route) はそのまま | `managers_allow_list.py:744-754` |
+| `V6` | `128` | マスク長 < 128 → `le 128` を自動付与 (`2001:db8::/32` → `permit 2001:db8::/32 le 128`)。マスク長 == 128 (host route) はそのまま | `managers_allow_list.py:744-754` |
+
+> 判定は `'le' in prefix or 'ge' in prefix` (`managers_allow_list.py:739`) という素朴な文字列マッチで行われるため、prefix 文字列中に偶然 `le` / `ge` の 2 文字を含む場合は補完がスキップされる。
+
+### 7. `prefix_match_tag` (constants 由来、ハードコードではないが固定挙動)
+
+| 条件 | 挙動 | 根拠 |
+|------|------|------|
+| `constants["bgp"]["allow_list"]["prefix_match_tag"]` 定義あり | community なしの route-map entry に `set tag <値>` を付与 | `managers_allow_list.py:434-435,657-664` |
+| 同 constants 未定義 | `None` のまま。`set tag` 行を生成しない (constants.yml には未定義) | `managers_allow_list.py:657` |
+
+> `policies.conf.j2` 側の `FROM_BGP_PEER_V*` seq 13 で参照される `route_do_not_send_appdb_tag` / `route_eligible_for_fallback_to_default_tag` は別の定数 (constants.yml 由来) で、`prefix_match_tag` とは独立。
+
+---
+
+詳細根拠は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-constants.md` を参照。
+<!-- /constants -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
