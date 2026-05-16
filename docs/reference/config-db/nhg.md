@@ -181,4 +181,29 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 
 <!-- /failure -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NEXTHOP_GROUP_TABLE` は APPL\_DB テーブルのため YANG leafref は存在しない。以下はすべて `nhgorch.cpp` 実装レベルの暗黙参照。
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `NEIGH`（NeighOrch — NH の存在確認） | OID 解決（読み取り） | 各 NHG メンバーの nexthop を SAI NH ID に変換するとき。`gNeighOrch->hasNextHop()` → `getNextHopId()` で OID 取得。不在なら `resolveNeighbor()` を呼んで解決待ちへ | `nhgorch.cpp` L544–546 (`getNhId()`), L563–568 (labeled NH 生成), L585 (`resolveNeighbor()`) |
+| `NEIGH`（NeighOrch — refcount 管理） | refcount 増減 | NHG メンバーが SAI に sync されるとき `increaseNextHopRefCount()`、削除時 `decreaseNextHopRefCount()`。単一メンバー NHG では NHG ID = NH の SAI OID を直接借用するため refcount の正確な管理が必須 | `nhgorch.cpp` L633 (`sync()`), L648 (`remove()`), L759 (`NextHopGroup::sync()` 単一 NH パス), L887 (`NextHopGroup::remove()`) |
+| `NEIGH`（NeighOrch — labeled / SRv6 NH の生存管理） | 追加・削除 | MPLS labeled NH は `NhgOrch`・`RouteOrch` が生存を管理し、未参照になった時点で `gNeighOrch->removeMplsNextHop()` を呼ぶ。SRv6 NH は `gSrv6Orch->createSrv6NexthopWithoutVpn()` / `removeSrv6NexthopWithoutVpn()` 経由 | `nhgorch.cpp` L662–681 (`~NextHopGroupMember()`), L566–568 (labeled NH `addNextHop()`) |
+| `NEIGH`（NeighOrch — 隣接解決確認） | 存在確認 | `createTempNhg()` で temporary NHG を作成する際、各 NH の隣接解決状態を `isNeighborResolved()` で確認。未解決メンバーを除いて代表 NH を選択 | `nhgorch.cpp` L838 (`createTempNhg()`) |
+| `ROUTE_TABLE`（RouteOrch — NHG 数上限） | NHG カウント参照 | `doTask()` で SET 処理時に `gRouteOrch->getNhgCount() + NextHopGroup::getSyncedCount() >= gRouteOrch->getMaxNhgCount()` を評価。上限到達時は非 SRv6 NHG を temporary group に降格し、SAI リソース枯渇を回避 | `nhgorch.cpp` L252–264, L320–328 |
+| `ROUTE_TABLE`（RouteOrch — labeled NH 生存共有） | 協調管理 | MPLS labeled NH の生存期間を `NhgOrch` と `RouteOrch` が共同で管理。どちらが先に削除してもよいが、refcount=0 を確認してから `removeMplsNextHop()` を呼ぶ規約 | `nhgorch.cpp` L671–681 (コメント + 実装) |
+
+!!! note "VRF 参照なし"
+    `nhgorch.cpp` は VRF テーブル・`VrfOrch` を直接参照しない。VRF 対応は `NextHopKey` の `vrf_id` フィールドを通じて `RouteOrch` / `NeighOrch` 側が処理する。
+
+!!! note "NEIGH への依存順序"
+    NHG の SAI sync は NEIGH 解決が前提条件。`hasNextHop()` が false のとき `resolveNeighbor()` を呼んで隣接解決をトリガーするが、完了まで NHG は pending のまま (`m_toSync` に残留)。NeighOrch が NH を追加した後、NhgOrch の `doTask()` が再度呼ばれて NHG の sync が完了する。
+
+!!! note "ROUTE_TABLE は被参照元"
+    `ROUTE_TABLE` は本テーブル (`NEXTHOP_GROUP_TABLE`) の `nexthop_group` フィールドを参照する **被参照元** でもある。ルートが NHG を参照している間は DEL_COMMAND で NHG を削除できない (`getRefCount() > 0`)。
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: nhg-2026-0515 -->
