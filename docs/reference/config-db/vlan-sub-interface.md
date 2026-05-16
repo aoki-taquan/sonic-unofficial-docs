@@ -470,7 +470,7 @@ VLAN_SUB_INTERFACE は `ip link add <alias> link <parent> type vlan id <vid>` �
 
 <!-- /cross-refs -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 ## 失敗挙動（Phase D）
 
 `intfmgrd`（`intfmgr.cpp`）が sub-interface を設定する際に発生しうる 3 種類の失敗パターンを整理する。
@@ -531,7 +531,7 @@ SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポー�
 | kernel netlink 失敗（ip link add / mtu / admin） | `swss::exec()` 非ゼロ返却 | `SWSS_LOG_NOTICE` | リトライ待ち（`return false`）|
 | SAI sub-port RIF 生成失敗 | `create_router_interface()` 非 SUCCESS | `SWSS_LOG_ERROR` | `handleSaiCreateStatus` 判定→ `task_need_retry` or `throw` |
 
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- platform-diff -->
 ## プラットフォーム差異 (Phase H)
