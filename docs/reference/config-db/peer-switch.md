@@ -262,3 +262,30 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 > **スキャン証跡**: `orchdaemon.cpp:467-471` + `muxorch.cpp` を確認、3 件分岐抽出。PEER_SWITCH は MuxOrch が MUX_CABLE と同一インスタンスで処理することを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/peer-switch-constants.md`
+> ソース: `sonic-swss/orchagent/muxorch.cpp` + `sonic-swss/orchagent/tunneldecaporch.h`
+
+### MuxTunnel0 固定名
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|------|-----|---------|------|
+| `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h:21` | Dual-ToR トンネルの固定名。`handlePeerSwitch()` が `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` でトンネル設定を取得し、`getNextHopTunnelId(MUX_TUNNEL, mux_peer_switch_)` で next-hop を生成する (`muxorch.cpp:2348`, `2445`) |
+| `CFG_PEER_SWITCH_TABLE_NAME` | `"PEER_SWITCH"` | swsscommon (参照: `orchdaemon.cpp:469`) | MuxOrch が購読する CONFIG_DB テーブル名。handler_map_ への登録キー |
+| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | `muxorch.cpp:48` | MUX 用 ingress ACL テーブル名（マクロ展開） |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | `muxorch.cpp:49` | MUX 用 ACL ルール名 |
+| `MUX_HW_STATE_UNKNOWN` | `"unknown"` | `muxorch.cpp:50` | HW 状態文字列（未確定時） |
+| `MUX_HW_STATE_ERROR` | `"error"` | `muxorch.cpp:51` | HW 状態文字列（エラー時） |
+
+### Dual-ToR 識別子
+
+`CFG_PEER_SWITCH_TABLE_NAME`（= `"PEER_SWITCH"`）のエントリが CONFIG_DB に 1 件以上存在すること自体が Dual-ToR 構成の識別子として機能する。`neighsyncd.cpp:69` はエントリ数 0 を `is_dualtor = false` と判定し、link-local IPv4 neighbor フィルタを無効化する。
+
+### mux_peer_switch_ 内部初期値
+
+`IpAddress` のデフォルト値は `0.0.0.0`（`isZero() == true`）。`PEER_SWITCH` 未投入時は `mux_peer_switch_.isZero()` が true のまま `MUX_CABLE` エントリが `return false` で pending になる (`muxorch.cpp:2271`)。
+
+<!-- /constants -->
