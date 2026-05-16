@@ -251,6 +251,40 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 
 <!-- /handler-branching -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`WredMapHandler` が CONFIG_DB エントリを処理する際の失敗パターンを網羅する。ソース: `sonic-swss/orchagent/qosorch.cpp`。
+
+| # | 失敗種別 | トリガー条件 | ログメッセージ | エントリ継続 |
+|---|---|---|---|---|
+| 1 | 不正 threshold (min > max) | `*_min_threshold > *_max_threshold` の C++ 側チェック (`convertFieldValuesToAttributes()` 末尾) | `"Wrong wred profile: min threshold is greater than max threshold"` | 破棄 |
+| 2 | SAI `create_wred` 失敗 | `sai_wred_api->create_wred()` がエラーを返す（新規作成時） | `"Failed to create wred profile: %d"` | 破棄 |
+| 3 | SAI `set_wred_attribute` 失敗 | `sai_wred_api->set_wred_attribute()` がエラーを返す（runtime 更新時） | `"Failed to set wred profile attribute, id:%d, status:%d"` | 部分適用（ループ中断） |
+| 4 | 参照中 DEL → `remove_wred` 失敗 | `QUEUE` が参照中の状態で `WRED_PROFILE` エントリを DEL した場合に SAI がエラー | `"Failed to remove scheduler profile, status:%d"` | SAI オブジェクト残留 |
+| 5 | 不正 `ecn` enum 値 | `ecn_map.at(fvValue)` で `std::out_of_range` 例外発生（許可値 8 種以外） | なし（例外伝播、ログなし） | 破棄 |
+| 6 | 不正 `wred_*_enable` 値 | `convertBool()` が `"true"`/`"false"` 以外を受けて失敗 | `"Invalid input specified"` | 破棄 |
+
+### 詳細
+
+**不正 threshold (min > max)** (`qosorch.cpp:754-759`):
+YANG `must` 制約（max >= min）は yang-validation 層で弾くが、orchagent も C++ 側で二重チェックする。
+いずれかの色で `min > max` となる場合、`convertFieldValuesToAttributes()` が `false` を返しエントリを破棄する。
+SAI への変更はなく、CONFIG_DB エントリは残る（hardware に下りない状態が続く）。
+
+**SAI 失敗（create / set）**:
+新規作成時は `create_wred()` 失敗でエントリ破棄。`QUEUE.wred_profile` が参照している場合、参照先が未登録のまま `task_need_retry` ループが継続する。
+runtime 更新時は `set_wred_attribute()` が属性ループを途中で中断するため、失敗前の属性は適用済み・失敗後は未適用という部分適用状態になりうる。
+
+**参照中 DEL**: `QUEUE` が `wred_profile=<name>` で参照している WRED_PROFILE を先に削除すると、SAI 側が `SAI_STATUS_OBJECT_IN_USE` 相当のエラーを返す。`removeQosItem()` が `false` を返し SAI オブジェクトが残留する。正しい手順は QUEUE 側を先に DEL（または `wred_profile` フィールドを除去）してから WRED_PROFILE を DEL する。
+
+**不正 `ecn` enum**: `ecn_map.at()` は try-catch なしで呼ばれるため `std::out_of_range` が上位に伝播し、エントリが無音で破棄される（`SWSS_LOG_ERROR` なし）。YANG 定義の 8 値以外を CONFIG_DB に直接書き込んだ場合のみ発生。
+
+**不正 `wred_*_enable`**: `convertBool()` 内で `SWSS_LOG_ERROR("Invalid input specified")` を出力した後 `false` を返す。`"true"`/`"false"` 以外（例: `"yes"`, `"1"`, `"TRUE"`）で発生。
+
+<!-- evidence: sonic-swss/orchagent/qosorch.cpp WredMapHandler::convertFieldValuesToAttributes() L585-762, addQosItem() L784-860, removeQosItem() L864-874 -->
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス

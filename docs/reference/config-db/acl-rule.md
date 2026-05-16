@@ -51,6 +51,101 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/aclorch.cpp AclOrch::doAclRuleTask:5520 / AclTable::add:2988 / AclRuleMirror::activate:2324 / AclRulePacket::getRedirectObjectId:2078 -->
+
+`ACL_RULE` の SAI 反映は複数の外部状態（PortsOrch 初期化、`ACL_TABLE`、`MIRROR_SESSION`、REDIRECT 先 next-hop、SAI リソース余裕）に依存する。違反時の挙動はガード機構により**自動回復するもの**と**rule INACTIVE で erase されるもの**に分かれる。
+
+### 依存 1: PortsOrch 初期化（必須先行・グローバル）
+
+```
+PortsOrch::allPortsReady() == true  先行
+  ↓
+ACL_TABLE / ACL_TABLE_TYPE / ACL_RULE のどの SET も処理開始
+```
+
+`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は何も処理しない。ACL 関連の全 CONFIG_DB エントリは PortsOrch の `PORT` 初期化完了を待つ。
+
+**違反時**: 書込み自体は CONFIG_DB に残り、PortsOrch 完了後の最初のイベントループで一括処理（自動回復）。
+
+### 依存 2: ACL_TABLE 先行（必須先行・自動回復あり）
+
+```
+ACL_TABLE|<table>  SET 完了（SAI OID 割当済み）  先行
+  ↓
+ACL_RULE|<table>|<rule>  SET
+```
+
+`doAclRuleTask()` (`aclorch.cpp:5548-5566`) は `getTableById(table_id)` が `SAI_NULL_OBJECT_ID` の場合、CTRLPLANE 種別ならその場で erase、それ以外は `it++` で `m_toSync` に保留し次の tick で再試行する（無限ポーリング）。
+
+**違反時**: ACL_TABLE が後から SAI に登録されると自動的にルール作成が成功する。CTRLPLANE 種別（`m_ctrlAclTables`）の table_id 配下ルールは INFO ログ後 erase される点に注意。
+
+### 依存 3: MIRROR_SESSION 存在（MIRROR action 限定・存在必須）
+
+```
+MIRROR_SESSION|<sess>  SET（存在化）  先行
+  ↓
+ACL_RULE|<table>|<rule>  with MIRROR_*_ACTION=<sess>  SET
+```
+
+`AclRuleMirror::activate()` (`aclorch.cpp:2331-2335`) は `m_pMirrorOrch->sessionExists(m_sessionName)` が false なら `return false` で rule 作成失敗。セッションが inactive（存在はする）の場合は SAI entry を作らずに保留し、`MirrorSessionUpdate` イベント経由で `AclRuleMirror::onUpdate()` (`aclorch.cpp:2424-2452`) が `activate()` を呼び戻す。
+
+**違反時**: session 不存在ならルール INACTIVE で erase。session が後から作成されても自動回復はせず、ACL_RULE の再 SET が必要。inactive → active の遷移は自動回復される。
+
+### 依存 4: REDIRECT ターゲット解決（推奨先行・自動回復なし）
+
+```
+（REDIRECT_ACTION = <port> / <nexthop> / <nh_group> / <tunnel_nh> の場合）
+PORT / PORTCHANNEL / NEIGH_TABLE / ROUTE_TABLE の対象が解決済み  先行
+  ↓
+ACL_RULE  SET（REDIRECT_ACTION または PACKET_ACTION=REDIRECT:<target>）
+```
+
+`AclRulePacket::getRedirectObjectId()` (`aclorch.cpp:2078-2166`) は PORT/LAG → NextHop → Tunnel NH → NextHopGroup の順でターゲットを解決する。NextHopGroup のみ未存在時に `routeOrch->addNextHopGroup()` で自動作成を試みる。それ以外が解決できない場合は `SAI_NULL_OBJECT_ID` → rule INACTIVE で erase。
+
+**違反時**: rule INACTIVE で erase。MIRROR_SESSION と異なり SubjectType 購読がないため自動回復せず、ACL_RULE の再 SET が必要。
+
+### 依存 5: MIRROR ルールの内容変更は DEL → SET 必須
+
+```
+ACL_RULE|<table>|<rule>  DEL  先行
+  ↓
+ACL_RULE|<table>|<rule>  SET（新属性）
+```
+
+`AclRuleMirror::update()` は未実装で `SWSS_LOG_ERROR` 後に `return false` を返す（`aclorch.cpp:2415-2420`）。同 key への SET だけでは内容変更されない。
+
+**違反時**: 更新 SET が ERROR ログのみで無視される。差分更新は不可。非 MIRROR ルール（L3/L3V6 等）は `AclTable::add()` (`aclorch.cpp:2988-3023`) が既存ルールを `remove()` → `create()` で完全再作成するため、同 key 再 SET で上書き可能。
+
+### 依存 6: DEL 順序（ACL_RULE → ACL_TABLE 推奨）
+
+```
+ACL_RULE|<table>|<rule>  DEL  先行（推奨）
+  ↓
+ACL_TABLE|<table>  DEL
+```
+
+`AclOrch::removeAclTable()` (`aclorch.cpp:4850`) は table 削除前に `m_AclTables[oid].clear()` で配下の全ルールを一括 `remove()` するため、SAI 上は順序不問。ただし CONFIG_DB に ACL_RULE が残ったまま ACL_TABLE のみ DEL すると、orchagent 再起動時の replay で ACL_RULE が依存 2 の待機ループに入り続けるため、**CONFIG_DB 整合性のためルール先 DEL を推奨**。
+
+**違反時**: 機能的には問題なし。再起動後に保留ルールが残るのみ。
+
+### 依存 7: SAI リソース枯渇時の retry cache（自動順序逆転）
+
+```
+（SAI ACL リソース枯渇時）
+新規 ACL_RULE SET → SAI_STATUS_INSUFFICIENT_RESOURCES → retry cache 退避
+  ↓
+同 table 内の既存 ACL_RULE DEL  → notifyRetry(RETRY_CST_SAI_RESOURCE)  → cache 再投入
+```
+
+`doAclRuleTask()` (`aclorch.cpp:5673-5698`, `5716-5720`) は resource-full 失敗を `RETRY_CST_SAI_RESOURCE` 制約付きで retry cache に退避し、同 table_id の rule DEL 成功時に `notifyRetry()` で再投入する。
+
+**違反時**: 自動メカニズム。SET 順序と独立に「枯渇したら退避、空いたら再投入」が回る。
+
+<!-- /ordering -->
+
 ## key 構造
 
 ```text
@@ -345,6 +440,173 @@ ACL_RULE は `AclOrch::doAclRuleTask()` が処理する。同メソッド内で 
 
 <!-- /handler-branching -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### aclorch.cpp 数値・mask 定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ACL counter FlexCounter ポーリング間隔 | `sonic-swss/orchagent/aclorch.cpp:47` |
+| `ACL_COUNTER_DEFAULT_ENABLED_STATE` | `false` | ACL counter FlexCounter 初期無効状態（起動直後はカウンタ更新されない） | `sonic-swss/orchagent/aclorch.cpp:48` |
+| `MAX_META_DATA_VALUE` | `4095` | `META_DATA` / `META_DATA_ACTION` の最大許容値。SAI `u32range.max` がこれを超えると `4095` にクランプ | `sonic-swss/orchagent/aclorch.cpp:52,3619-3621` |
+| `TCP_PROTOCOL_NUM` | `6` | `TCP_FLAGS` あり + `IP_PROTOCOL` 未指定時に自動付与する TCP プロトコル番号（Phase 6 派生） | `sonic-swss/orchagent/aclorch.cpp:54,5645` |
+| `MAC_EXACT_MATCH` | `"ff:ff:ff:ff:ff:ff"` | `INNER_SRC_MAC` / `INNER_DST_MAC` 完全一致 mask（CONFIG_DB 非保存・C++ 内部固定） | `sonic-swss/orchagent/aclorch.cpp:56,957` |
+| `ACL_COUNTER_FLEX_COUNTER_GROUP` | `"ACL_STAT_COUNTER"` | FLEX_COUNTER グループ名 | `sonic-swss/orchagent/aclorch.cpp:4209` |
+
+### SAI mask 固定値 (CONFIG_DB に格納されない・C++ 内部のみ)
+
+| フィールド | mask 値 | ビット幅 | evidence |
+|-----------|---------|---------|---------|
+| `IP_TYPE` / `TUNNEL_VNI` / `META_DATA` | `0xFFFFFFFF` | 32bit | `sonic-swss/orchagent/aclorch.cpp:1046,1162,1208` |
+| `ETHER_TYPE` / `L4_SRC_PORT` / `L4_DST_PORT` / `INNER_ETHER_TYPE` / `INNER_L4_*` | `0xFFFF` | 16bit | `sonic-swss/orchagent/aclorch.cpp:1067,1168` |
+| `VLAN_ID` | `0xFFF` | 12bit | `sonic-swss/orchagent/aclorch.cpp:1072` |
+| `IP_PROTOCOL` / `NEXT_HEADER` / `TC` / `ICMP_*` / `INNER_IP_PROTOCOL` | `0xFF` | 8bit | `sonic-swss/orchagent/aclorch.cpp:1099,1151,1157,1173` |
+| `TCP_FLAGS` / `DSCP` (省略時フォールバック) | `0x3F` | 6bit | `sonic-swss/orchagent/aclorch.cpp:1061,1093` |
+
+`TCP_FLAGS` / `DSCP` は CONFIG_DB に `<data>/<mask>` 形式で明示指定可能。省略時のフォールバックが `0x3F`。
+
+### PRIORITY 範囲 (SAI capability で実行時決定)
+
+| 変数 | 既定値 | 設定タイミング | evidence |
+|-----|--------|--------------|---------|
+| `AclRule::m_minPriority` | `0` (静的初期値) | 起動時に `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` を query して `setRulePriorities()` で上書き | `sonic-swss/orchagent/aclorch.cpp:22,3689-3700`, `sonic-swss/orchagent/aclorch.h:321,376` |
+| `AclRule::m_maxPriority` | `0` (静的初期値) | 起動時に `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` を query して `setRulePriorities()` で上書き | `sonic-swss/orchagent/aclorch.cpp:23,3690-3700`, `sonic-swss/orchagent/aclorch.h:322,377` |
+
+`PRIORITY` 値が `[m_minPriority, m_maxPriority]` 範囲外なら `setPriority()` で ERROR ログ後 `return false` → rule INACTIVE (`aclorch.cpp:1654-1661`)。DPU (`gMySwitchType == "dpu"`) は SAI query をスキップし、静的初期値 `0/0` のままになる。
+
+### 内部 stage 値・デフォルト
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `stage` ローカル変数初期値 | `ACL_STAGE_INGRESS` | ACL_TABLE 解析時の `stage` 未指定フォールバック | `sonic-swss/orchagent/aclorch.cpp:543` |
+| `aclStageLookup[STAGE_INGRESS]` | `ACL_STAGE_INGRESS` | `STAGE` 文字列 → enum 変換マップ | `sonic-swss/orchagent/aclorch.cpp:166` |
+| `aclStageLookup[STAGE_EGRESS]` | `ACL_STAGE_EGRESS` | 同上 | `sonic-swss/orchagent/aclorch.cpp:167` |
+
+### acl_loader (CLI) ハードコード定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `AclLoader.min_priority` | `1` | `createDefaultDenyAclRule()` で生成するデフォルト DROP ルールの `PRIORITY` | `sonic-utilities/acl_loader/main.py:92,811` |
+| `AclLoader.max_priority` | `10000` | `PRIORITY = max_priority - sequence_id` の計算基底値（OpenConfig 経路） | `sonic-utilities/acl_loader/main.py:93` |
+| デフォルト deny `PACKET_ACTION` | `"DROP"` | `full_update` 完了時に L3/L3V6/L3V4V6 テーブルへ自動追加するルールの action | `sonic-utilities/acl_loader/main.py:812` |
+| デフォルト deny `rule_name` | `"DEFAULT_RULE"` | 自動追加 deny ルールの固定 key 部 | `sonic-utilities/acl_loader/main.py:810` |
+
+### REST/gNMI 経路定数
+
+| 定数 | 値 | 用途 | evidence |
+|-----|-----|------|---------|
+| `MAX_PRIORITY` | `65536` | `PRIORITY = MAX_PRIORITY - seqId` の計算基底値（REST/gNMI 経路）。`acl_loader` (`10000`) と異なる | `sonic-mgmt-common/translib/acl_app.go:56` |
+
+`acl_loader` (CLI) と REST/gNMI で計算基底値が異なるため、同一 OpenConfig `sequence-id` でも経路により CONFIG_DB に書き込まれる `PRIORITY` 値が変わる点に注意。
+
+> **スキャン証跡**: `aclorch.h` L22-23,321-322,376-377、`aclorch.cpp` L22-23,47-56,166-167,543,924,957,1046-1208,1654-1661,3610-3621,3689-3700,4209-4212,5640-5645 読了。`acl_loader/main.py` L92-93,805-815、`acl_app.go` L56 読了。定数 6 (cpp) + 5 (mask) + 2 (PRIORITY) + 3 (stage) + 4 (loader) + 1 (gNMI) = 21 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/acl-rule-constants.md`
+<!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+ACL_RULE の処理は `AclOrch::init()` が起動時に環境変数 `platform` / `sub_platform` を読み取り、以下の capability を静的に決定する。MIRROR V6 / L3V4V6 / isCombinedMirrorV6 はすべて env var の **静的比較** で確定。META_DATA 系のみ SAI 動的照会 (`sai_query_attribute_capability`) を使う。
+
+### プラットフォーム識別文字列 (orch.h:40-50)
+
+| 定数 | 値 | プラットフォーム例 |
+|------|----|--------------------|
+| `BRCM_PLATFORM_SUBSTRING` | `"broadcom"` | Broadcom XGS (non-DNX) |
+| `BRCM_DNX_PLATFORM_SUBSTRING` | `"broadcom-dnx"` | Broadcom DNX/Jericho (sub_platform) |
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | Mellanox Spectrum |
+| `BFN_PLATFORM_SUBSTRING` | `"barefoot"` | Intel Tofino (Barefoot) |
+| `VS_PLATFORM_SUBSTRING` | `"vs"` | Virtual Switch (テスト用) |
+| `NPS_PLATFORM_SUBSTRING` | `"nephos"` | Nephos |
+| `CISCO_8000_PLATFORM_SUBSTRING` | `"cisco-8000"` | Cisco Silicon One |
+| `XS_PLATFORM_SUBSTRING` | `"xsight"` | xsight |
+| `CLX_PLATFORM_SUBSTRING` | `"clounix"` | Clounix |
+| `MRVL_PRST_PLATFORM_SUBSTRING` | `"marvell-prestera"` | Marvell Prestera |
+| `MRVL_TL_PLATFORM_SUBSTRING` | `"marvell-teralynx"` | Marvell Teralynx |
+
+### capability 差異一覧
+
+| capability | 有効プラットフォーム | 無効/制限プラットフォーム | 効果 | evidence |
+|---|---|---|---|---|
+| **MIRROR V6** (`isAclMirrorV6Supported`) | broadcom / cisco-8000 / mellanox / barefoot / marvell-prestera / marvell-teralynx / nephos / xsight / clounix / vs | それ以外（未知） | false → `type=MIRRORV6` の ACL_TABLE 作成を reject → IPv6 mirror ルール不可 | `aclorch.cpp:3489-3513` |
+| **isCombinedMirrorV6Table** | broadcom (非 DNX) / barefoot / marvell-teralynx / nephos / vs / その他 | mellanox / cisco-8000 / marvell-prestera / xsight / clounix / broadcom-dnx | true (統合) → `MIRROR` テーブル 1 枚で V4/V6 両対応。false (分離) → `MIRROR` と `MIRRORV6` を別々に作成必須 | `aclorch.cpp:3546-3560` |
+| **L3V4V6 テーブル** (`isAclL3V4V6TableSupported`) | marvell-prestera / marvell-teralynx / vs | それ以外 | false → `type=L3V4V6` の ACL_TABLE 作成を reject → IPv4/IPv6 混在 match ルール不可 | `aclorch.cpp:3515-3533, 2739-2742` |
+| **ACL range 上限** | — | mellanox: 16 / clounix: 16 | 上限超過時 `return NULL` (ERROR ログ) → range match ルールが INACTIVE | `aclorch.cpp:3373-3377, aclorch.h:109-110` |
+| **META_DATA / META_DATA_ACTION** | SAI 動的照会で全 3 属性が実装済みの場合 | SAI が未実装と返した場合 | false → META_DATA match / META_DATA_ACTION は無視 / rule INACTIVE | `aclorch.cpp:3563-3664, 5258-5267` |
+| **PFCWD OUT_PORT match** | broadcom-dnx (sub_platform) | それ以外 | DNX のみ PFCWD テーブルが `SAI_ACL_BIND_POINT_TYPE_SWITCH` + `OUT_PORT` match 対応 | `aclorch.cpp:3811-3830` |
+| **Egress range フィールド** | それ以外 (Egress で range 付加) | broadcom 非 DNX Egress | broadcom 非 DNX の Egress ACL テーブルは range フィールドを強制付加しない → Egress で L4 range match 不可 | `aclorch.cpp:2608-2628` |
+| **DTel 系 action** (`FLOW_OP` / `INT_SESSION` 等) | barefoot / vs | それ以外 | `DTelOrch` 非起動 → DTel action SAI 反映なし | `orchdaemon.cpp:502-530` |
+
+### プラットフォーム別サマリ
+
+| プラットフォーム | MIRROR V6 | Combined Mirror | L3V4V6 | DTel |
+|----------------|-----------|----------------|--------|------|
+| broadcom (非 DNX) | yes | yes (統合) | no | no |
+| broadcom-dnx | yes | no (分離) | no | no |
+| mellanox | yes | no (分離) | no | no |
+| barefoot | yes | yes (統合) | no | **yes** |
+| cisco-8000 | yes | no (分離) | no | no |
+| marvell-prestera | yes | no (分離) | **yes** | no |
+| marvell-teralynx | yes | yes (統合) | **yes** | no |
+| nephos | yes | yes (統合) | no | no |
+| xsight | yes | no (分離) | no | no |
+| clounix | yes | no (分離) | no | no |
+| vs (virtual) | yes | yes (統合) | **yes** | **yes** |
+| 未知 | **no** | yes (統合) | no | no |
+
+!!! note "isCombinedMirrorV6Table の運用上の注意"
+    `isCombinedMirrorV6Table=false` (mellanox / cisco-8000 / marvell-prestera 等) の環境では、
+    IPv6 パケット対象の mirror ルールを適用するには `type=MIRRORV6` の ACL_TABLE を **別途** 作成すること。
+    `MIRROR` テーブルのみを作成した場合、IPv6 mirror ルールが有効にならない (`aclorch.cpp:5811`)。
+
+!!! warning "L3V4V6 制限"
+    `type=L3V4V6` テーブルは marvell-prestera / marvell-teralynx / vs のみ有効。
+    それ以外の環境で ACL_TABLE に `type=L3V4V6` を設定すると、
+    テーブル作成時点で `isAclL3V4V6TableSupported()` が false → reject されルールも一切適用されない (`aclorch.cpp:2739-2742`)。
+
+!!! warning "DTel action の前提"
+    `FLOW_OP` / `INT_SESSION` / `DROP_REPORT_ENABLE` / `TAIL_DROP_REPORT_ENABLE` 等の DTel 系 action は
+    barefoot / vs 以外では `DTelOrch` が起動しないため、設定しても SAI に反映されない (`orchdaemon.cpp:502-530`)。
+
+### SAI ASIC capability — action list 動的照会
+
+`AclOrch::queryAclActionCapability()` (`aclorch.cpp:3975-4058`) は init 時に SAI を問い合わせて Ingress/Egress ごとにサポートされる action type 一覧を取得する。ASIC によって返す action set が異なる。
+
+```
+SAI_SWITCH_ATTR_MAX_ACL_ACTION_COUNT → action_list バッファサイズ取得
+SAI_SWITCH_ATTR_ACL_STAGE_INGRESS / SAI_SWITCH_ATTR_ACL_STAGE_EGRESS → stage ごとの action_list + is_action_list_mandatory 取得
+```
+
+| 項目 | 詳細 |
+|------|------|
+| **デフォルト (SAI 非対応時)** | SAI が `SAI_STATUS_SUCCESS` を返さない場合は `initDefaultAclActionCapabilities()` を呼ぶ。Ingress デフォルト = `PACKET_ACTION, MIRROR_INGRESS, NO_NAT`。Egress デフォルト = `PACKET_ACTION` のみ (`aclorch.cpp:170-196`) |
+| **is_action_list_mandatory** | ASIC が `sai_acl_capability_t.is_action_list_mandatory = true` を返した場合、ACL_TABLE 作成時に action リストを必ず指定する必要がある。Mellanox Spectrum は通常 `false`。Broadcom XGS/DNX は `false`。テーブル作成コード (`aclorch.cpp:4760-4764`) は `addMandatoryActions()` で不足 action を自動補完する |
+| **PACKET_ACTION 有効値** | `aclPacketActionLookup` に定義された `FORWARD` / `DROP` / `COPY` の 3 値のみ有効 (`aclorch.h:83-85, aclorch.cpp:143-148`)。`TRAP` / `LOG` / `DENY` 等は CONFIG_DB から設定不可。`sai_query_attribute_enum_values_capability` でベンダー実装値を照会するが、libsairedis 未対応のため現行実装では全値サポートと仮定する (`aclorch.cpp:4042-4051`) |
+
+!!! note "PACKET_ACTION 差異 (Mellanox / Broadcom)"
+    SONiC レイヤでは FORWARD / DROP / COPY の 3 値のみ受け付ける。ASIC レベルでの `SAI_PACKET_ACTION_TRAP` / `SAI_PACKET_ACTION_LOG` 等は `aclPacketActionLookup` に未登録のため `PACKET_ACTION` フィールドからは指定できない。Mellanox Spectrum と Broadcom XGS はいずれもこの 3 値を SAI でサポートするが、Mellanox は Egress で `PACKET_ACTION` のみをデフォルト capability として宣言し、Broadcom は通常 `PACKET_ACTION + REDIRECT` を宣言する。実際のサポート値は `STATE_DB:ACL_ACTION|PACKET_ACTION` を参照のこと (`aclorch.cpp:4051-4090`)。
+
+### SAI ACL エントリ優先度範囲 (ASIC 上限)
+
+`AclOrch::init()` (`aclorch.cpp:3689-3710`) は DPU スイッチタイプ (`gMySwitchType == "dpu"`) を除いて SAI から優先度範囲を照会し `AclRule::setRulePriorities()` で設定する。
+
+```
+SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY  → 最小優先度
+SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
+```
+
+| プラットフォーム | 優先度範囲 (典型値) | 備考 |
+|----------------|--------------------|------|
+| Mellanox Spectrum | 1 〜 16383 | SAI 照会値。PRIORITY フィールド最大値はこの上限に制約 |
+| Broadcom XGS | 1 〜 65535 | SAI 照会値。実際値は ASIC 世代に依存 |
+| Broadcom DNX | 1 〜 65535 | 同上 |
+| DPU (`gMySwitchType="dpu"`) | 照会しない | `queryAclActionCapability()` 自体をスキップ (`aclorch.cpp:3687-3708`) |
+
+- CONFIG_DB の `PRIORITY` 値がこの上限を超えると `sai_acl_api->create_acl_entry()` が `SAI_STATUS_INVALID_ATTR_VALUE` を返し rule INACTIVE になる。
+- 照会失敗時は `handleSaiGetStatus()` が `AclOrch` 初期化例外をスローする (`aclorch.cpp:3701-3706`)。
+
+<!-- /platform -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
@@ -454,6 +716,44 @@ ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装か
 | ACL_TABLE を DEL する前に ACL_RULE を DEL | **推奨**（必須ではない） | `removeAclTable()` が暗黙に全ルールを SAI から削除するが CONFIG_DB の ACL_RULE エントリは残存するため、再起動時に再投入される | `aclorch.cpp:4849-4857` |
 | SAI リソース枯渇時: 既存ルール DEL → retry 自動発火 | 自動 | ルール DEL 成功時に `notifyRetry()` が同テーブルの待機キャッシュを再処理 | `aclorch.cpp:5716-5720` |
 
+### PRIORITY 値の比較順序
+
+SAI はルールを PRIORITY 値の**数値降順**で評価する（高い値 = 高い優先度）。
+
+- `AclOrch` 初期化時に `SAI_SWITCH_ATTR_ACL_ENTRY_MINIMUM_PRIORITY` / `SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY` を SAI に問い合わせて有効範囲を取得する (`aclorch.cpp:3689-3696`)。
+- `setPriority()` (`aclorch.cpp:1654-1662`) は範囲外の値を拒否（`SWSS_LOG_ERROR` + `return false`）し、rule は INACTIVE になる。
+- `acl_loader` は `PRIORITY = max_priority - sequence_id`（`max_priority=10000`）で降順割り当て; `acl_app.go` は `MAX_PRIORITY=65536` を基準とするため、同 sequence_id でも経路によって格納値が異なる点に注意。
+- `AclRule::update()` は `m_priority != updatedRule.m_priority` のとき `SAI_ACL_ENTRY_ATTR_PRIORITY` を `set_acl_entry_attribute()` で runtime 更新できる (`aclorch.cpp:1534-1547`)。更新は原子的に行われ、同テーブル内の他ルールの評価順序に影響する。
+
+### stage 別 action 適用順序
+
+ACL_TABLE の `stage` フィールド（`INGRESS` / `EGRESS`）が ACL_RULE で使用できる action を決定する。
+
+| stage | 使用可能 MIRROR action | 備考 |
+|---|---|---|
+| `INGRESS` | `MIRROR_INGRESS_ACTION`, `MIRROR_ACTION`（後方互換で INGRESS 扱い） | `MIRROR_ACTION` 旧フィールドは INGRESS 固定 |
+| `EGRESS` | `MIRROR_EGRESS_ACTION` | `MIRROR_ACTION` を使うと意図せず INGRESS mirror が設定される |
+
+- `MIRROR_ACTION`（旧フィールド）は後方互換のため `SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_INGRESS` にマッピングされる (`aclorch.cpp:2268-2271`)。EGRESS テーブルに対してこの旧フィールドを使うと意図しない INGRESS mirror になる。
+- `isActionSupported(stage, ...)` (`aclorch.cpp:1407-1409`) が stage × action の組み合わせを SAI capability に照らして検証するため、platform が対応していない stage-action 組み合わせは `validateAddAction()` で拒否される。
+- INGRESS テーブルに `MATCH_IN_PORTS`、EGRESS テーブルに `MATCH_OUT_PORT/OUT_PORTS` が利用可能（`stageMandatoryMatchFields` `aclorch.cpp:427-494`）。stage を誤ると match フィールドが SAI に反映されない。
+
+### SAI `acl_entry` 属性の設定順序
+
+`AclRule::create()` (`aclorch.cpp:1280-1344`) が `sai_acl_api->create_acl_entry()` に渡す属性リストの構築順序は以下のとおり固定されている。
+
+```
+1. SAI_ACL_ENTRY_ATTR_TABLE_ID   (所属テーブル OID)   ← 必須・先頭固定
+2. SAI_ACL_ENTRY_ATTR_PRIORITY   (PRIORITY 値)
+3. SAI_ACL_ENTRY_ATTR_ADMIN_STATE (= true 固定)
+4. SAI_ACL_ENTRY_ATTR_ACTION_COUNTER (カウンタ OID、存在時のみ)
+5. SAI_ACL_ENTRY_ATTR_FIELD_ACL_RANGE_TYPE (range object list、存在時のみ)
+6. m_matches の各 match フィールド (map イテレーション順)
+7. m_actions の各 action フィールド (map イテレーション順)
+```
+
+この順序は SAI API 仕様上は問わないが、`TABLE_ID` は SAI 実装によって先頭が必須とされるケースがある。アプリケーション側からは構築順序を意識する必要はなく、`AclOrch` が一括で渡す。
+
 ### warm-restart / cold-restart 影響
 
 - `AclOrch` は `onWarmBootEnd()` を**実装しない**（warm-restart 非対応）。orchagent 再起動（cold）で CONFIG_DB replay により自動再構築。
@@ -464,6 +764,43 @@ ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装か
     `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` を含む ACL_RULE の変更は `SET` のみでは適用されない。必ず `DEL` → `SET` の順で操作すること (`aclorch.cpp:2415-2420`)。
 
 <!-- /ordering -->
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+### SET 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|---|
+| `table_id` が空文字 | `doAclRuleTask()` | WARN ログ → `erase(it)` → 恒久スキップ | なし | `aclorch.cpp:5537-5541` |
+| `table_oid == SAI_NULL_OBJECT_ID` かつ CTRLPLANE テーブル | `doAclRuleTask()` | INFO ログ → `erase(it)` → 恒久スキップ | なし | `aclorch.cpp:5554-5561` |
+| `table_oid == SAI_NULL_OBJECT_ID` かつ ACL_TABLE 未作成 | `doAclRuleTask()` | INFO ログ → `it++`（テーブル作成まで待機・再試行） | なし | `aclorch.cpp:5563-5565` |
+| `AclRule::makeShared()` が例外送出 | `doAclRuleTask()` | ERROR ログ → `erase(it)` → **`return`（ループ全体即時中断）** | なし | `aclorch.cpp:5578-5582` |
+| 未知/不正な属性名（全 `validate*` が false） | `doAclRuleTask()` | ERROR ログ → `bAllAttributesOk=false` → break | `INACTIVE` | `aclorch.cpp:5628-5631` |
+| IPv4 match と IPv6 match 同一ルール混在 (`type=L3V4V6`) | `doAclRuleTask()` | ERROR ログ → `bAllAttributesOk=false` | `INACTIVE` | `aclorch.cpp:5656-5663` |
+| `validate()` 失敗 / `bAllAttributesOk=false` | `doAclRuleTask()` | ERROR ログ → `erase(it)` → 恒久スキップ | `INACTIVE` | `aclorch.cpp:5697-5701` |
+| SAI リソース枯渇 (`isSaiStatusResourceFull`) | `doAclRuleTask()` | WARN ログ → retry cache (`RETRY_CST_SAI_RESOURCE`) に退避 | `PENDING_CREATION` | `aclorch.cpp:5673-5693` |
+| retry cache 投入失敗 | `doAclRuleTask()` | ERROR ログ → `it++`（通常リトライキュー残留） | `PENDING_CREATION` | `aclorch.cpp:5688-5692` |
+| `addAclRule()` 失敗（リソース枯渇以外） | `doAclRuleTask()` | `it++`（次サイクルまで待機） | `PENDING_CREATION` | `aclorch.cpp:5695-5697` |
+| `AclTable::add()` → SAI `create_acl_entry` 失敗 | `AclRule::create()` | ERROR ログ → `AclRange::remove()` + `decreaseNextHopRefCount()` → `return false` | — | `aclorch.cpp:1344-1364` |
+| `create_acl_entry` → `SAI_STATUS_ITEM_ALREADY_EXISTS` | `AclRule::create()` | NOTICE ログ → `return true`（冪等・成功扱い） | `ACTIVE` | `aclorch.cpp:1348-1352` |
+| EGR_SET_DSCP ルール追加失敗 (`isUsingEgrSetDscp`) | `addAclRule()` | ERROR ログ → `return false`（メインルール未追加のまま中断） | `PENDING_CREATION` | `aclorch.cpp:4962-4964` |
+| `addAclRule()` 内でテーブル消失 (`table_oid == SAI_NULL_OBJECT_ID`) | `addAclRule()` | ERROR ログ → `return false` | `PENDING_CREATION` | `aclorch.cpp:4972-4975` |
+
+### DEL 処理における失敗経路
+
+| 失敗条件 | 検出箇所 | 結果 | STATE_DB ステータス | evidence |
+|---|---|---|---|---|
+| `removeAclRule()` が false（SAI 削除失敗） | `doAclRuleTask()` | `it++`（次サイクルまで待機） | `PENDING_REMOVAL` | `aclorch.cpp:5724-5727` |
+| 削除対象ルールが既に存在しない | `removeAclRule()` | NOTICE ログ → `return true`（冪等・成功扱い） | ステータス削除 | `aclorch.cpp:5010-5014` |
+| DEL 時 `table_oid == SAI_NULL_OBJECT_ID` | `removeAclRule()` | WARN ログ → `return true`（ルール不在とみなし成功） | ステータス削除 | `aclorch.cpp:5004-5006` |
+
+### 補足
+
+- **`makeShared` 例外の特殊性**: 他の失敗はすべて `it++` または `erase(it)` でループを継続するが、この経路のみ `return` でループ全体を即時中断する。
+- **retry cache 解放契機**: DEL 成功かつ `ruleExisted == true` の場合 `notifyRetry()` で `RETRY_CST_SAI_RESOURCE` 制約が解除され、park 中ルールが再処理対象になる (`aclorch.cpp:5720`)。
+- **STATE_DB 反映先**: `setAclRuleStatus()` → `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) の `status` フィールド (`aclorch.cpp:3479`)。
+
+<!-- /failure -->
 
 <!-- ref-triangle:start -->
 
@@ -619,4 +956,113 @@ Multi-ASIC: 各 namespace の `namespace_configdb` にも同じ操作を適用�
 - **STATE_DB 書き込み**: ルール作成/削除時に `STATE_ACL_RULE_TABLE_NAME` (`"ACL_RULE_TABLE"`) へステータスを書き込む (`aclorch.cpp:3479`)。
 
 <!-- /runtime-trace -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`AclOrch` は `ACL_RULE` の SET/DEL 処理後に CONFIG_DB / APPL_DB 以外の 3 つの DB へ書き込む。
+
+### STATE_DB / `ACL_RULE_TABLE`
+
+ルールの検証・作成ステータスを書き込む。key 形式: `<table_name>|<rule_name>`。
+
+| トリガ | フィールド | 値 | evidence |
+|--------|------------|-----|----------|
+| `addAclRule()` 成功 | `status` | `"active"` | `aclorch.cpp:5670` |
+| SAI リソース枯渇 (retry キャッシュへ退避) | `status` | `"pending_creation"` | `aclorch.cpp:5683,5690,5696` |
+| その他の create 失敗 | `status` | `"pending_creation"` | `aclorch.cpp:5696` |
+| `bAllAttributesOk=false` / `validate()` 失敗 | `status` | `"inactive"` | `aclorch.cpp:5704` |
+| `removeAclRule()` 成功 (DEL) | — (エントリ削除) | — | `aclorch.cpp:5713` |
+
+テーブル名定数: `STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"` (`sonic-swss-common/common/schema.h:515`)。
+
+### COUNTERS_DB / `ACL_COUNTER_RULE_MAP`
+
+SAI ACL counter OID とルール識別子のマッピングを hash フィールドとして登録する。
+`registerFlexCounter()` → `m_countersDb.hset(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier, counterOidStr)`
+
+| トリガ | 操作 | フィールド | evidence |
+|--------|------|-----------|----------|
+| SAI counter 作成成功後 (SET) | `hset` | `<table_name>:<rule_name>` = counter OID | `aclorch.cpp:6041` |
+| `removeAclRule()` 成功後 (DEL) | `hdel` | `<table_name>:<rule_name>` | `aclorch.cpp:6047` |
+
+定数: `COUNTERS_ACL_COUNTER_RULE_MAP = "ACL_COUNTER_RULE_MAP"` (`aclorch.h:45`)。
+
+!!! note "createCounter フラグ"
+    `AclRulePacket` (L3/L3V6) はデフォルト `createCounter=true` のため登録される。
+    `AclRuleMirror` はデフォルト `createCounter=false` のため COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない (`aclorch.cpp:2295-2306`)。
+
+### FLEX_COUNTER_DB / `ACL_STAT_COUNTER:<counter_oid>`
+
+ACL stat counter の flex counter ポーリング設定を書き込む。
+`registerFlexCounter()` → `m_flex_counter_manager.setCounterIdList(oid, CounterType::ACL_COUNTER, attrs)` → `startFlexCounterPolling()` → `gFlexCounterTable->set(key, fvTuples)`
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|----------|
+| SAI counter 作成成功後 (SET) | `set` | `ACL_STAT_COUNTER:<oid>` | `ACL_COUNTER_ATTR_ID_LIST=<attrs>` | `aclorch.cpp:6040`, `saihelper.cpp:1047` |
+| `removeAclRule()` 成功後 (DEL) | `del` | `ACL_STAT_COUNTER:<oid>` | — | `aclorch.cpp:6048`, `flex_counter_manager.cpp:249` |
+
+定数: `ACL_COUNTER_FLEX_COUNTER_GROUP = "ACL_STAT_COUNTER"` (`aclorch.h:116`)。
+DB 番号: `FLEX_COUNTER_DB = 5` (`schema.h:18`)。
+
+!!! warning "ACL カウンタは初期無効"
+    `ACL_COUNTER_DEFAULT_ENABLED_STATE = false` のため、`AclOrch` 起動直後は FLEX_COUNTER_DB のポーリングが無効。`counterpoll acl enable` で有効化するまで stat は収集されない (`aclorch.cpp:48`)。
+
+### 副次書込なし
+
+- **APPL_DB**: `AclOrch` は CONFIG_DB を直接購読するため、中間 APPL_DB 書き込みは発生しない。
+- **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
+
+<!-- /side-effects -->
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+CONFIG_DB の `ACL_RULE` への変更通知は、`AclOrch` が **`swss::SubscriberStateTable`** (Redis keyspace 通知ベース) で購読する。`Orch::addConsumer()` が DB ID で分岐し、CONFIG_DB / STATE_DB / CHASSIS_APP_DB には `SubscriberStateTable` を、それ以外（APPL_DB 等）には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。APPL_DB 側 `ACL_RULE_TABLE` は channel ベース PUBLISH/SUBSCRIBE を使うが、CONFIG_DB 側は **keyspace 通知 `__keyspace@<dbId>__:ACL_RULE|*` への `PSUBSCRIBE`** で変更を検知する。
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, TableConsumable::DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+| 購読者 | 購読 API | 購読テーブル | バッチ |
+|--------|---------|--------------|--------|
+| `orchagent` (`AclOrch`) | `swss::SubscriberStateTable` | `ACL_RULE` | `TableConsumable::DEFAULT_POP_BATCH_SIZE` (128, ハードコード) |
+
+バッチサイズは `sonic-swss-common/common/table.h:164` の `DEFAULT_POP_BATCH_SIZE = 128` で固定され、`Orch::addConsumer()` がこの定数をハードコードで渡す (`orch.cpp:1190`)。APPL_DB 側で使われる `gBatchSize` (`orchagent -b <n>` で上書き可) は CONFIG_DB 側 `ACL_RULE` には**適用されない**。書き込み側 (CLI / `sonic-cfggen` / gNMI) は `swss::Table::set()` または `swsssdk` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config / sonic-cfggen / gNMI
+  ↓ Table::set("<table>|<rule>", fvs)
+CONFIG_DB: HSET "ACL_RULE|<table>|<rule>" <fields>
+  ↓ Redis keyspace event "__keyspace@4__:ACL_RULE|<table>|<rule>" "hset"
+OrchDaemon main loop: m_select->select(&s, 1000ms)  ← SELECT_TIMEOUT
+  ↓ Consumer::execute() → SubscriberStateTable::pops()
+    └─ HGETALL "ACL_RULE|<table>|<rule>" で値再取得
+AclOrch::doTask(consumer)  (aclorch.cpp:4272-4295)
+  ↓ table_name == CFG_ACL_RULE_TABLE_NAME で分岐
+AclOrch::doAclRuleTask(consumer)  (APPL_DB 版と同一ハンドラ)
+  ↓ create / update / remove
+SAI: sai_acl_api->create_acl_entry / set_acl_entry_attribute / remove_acl_entry
+```
+
+- `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。1 秒ごとに wake up して retry / flush を回し、keyspace 通知到着で即座に wake up。
+- `doTask` ディスパッチ (`aclorch.cpp:4283-4292`) は `CFG_ACL_RULE_TABLE_NAME` と `APP_ACL_RULE_TABLE_NAME` を **同一ハンドラ** にまとめるため、フィールド意味論・priority 範囲・action / match セットは APPL_DB 版と完全に共有される。
+- リトライキャッシュは `ACL_RULE` 系統 (CONFIG_DB / APPL_DB) **両方** に作成される (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)`, `aclorch.cpp:4221`)。SAI リソース枯渇や `MIRROR_SESSION` の activate 待ち等で失敗したルールは park され、依存解消時に再試行される。
+
+### サービス再起動トリガー
+
+なし。`AclOrch` は orchagent プロセス内のハンドラであり、`ACL_RULE` の追加・変更・削除は SAI ACL entry のライブ操作 (`sai_acl_api->create_acl_entry` / `set_acl_entry_attribute` / `remove_acl_entry`) のみで反映され、プロセス再起動・サービス restart を伴わない。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,408-422,533,959` (TableConnector / SELECT_TIMEOUT / `new AclOrch(...)` / select ループ)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/aclorch.cpp:4221-4222,4272-4295` (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)` / `doTask` ディスパッチ)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (`SubscriberStateTable` の `PSUBSCRIBE` + `HGETALL` 動作)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/schema.h` (`CFG_ACL_RULE_TABLE_NAME` 定数); 詳細分析 `meta/_intermediate/cdb-flow/acl-rule-pubsub.md`
+<!-- /pubsub -->
 <!-- glossary-links-injected: a78cb4c857bd -->
