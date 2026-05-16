@@ -577,3 +577,58 @@ STATE_DB INTERFACE_TABLE|PortChannelN  vrf=<vrf_name>
 ```
 
 <!-- /pubsub -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `sonic-swss/cfgmgr/intfmgr.cpp` / `sonic-swss/orchagent/intfsorch.cpp`
+
+`PORTCHANNEL_INTERFACE` エントリの SET/DEL が引き起こす CONFIG_DB 以外への書込みと SAI 呼び出しを示す。
+
+### 属性ロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
+
+| 操作 | 対象 DB / テーブル | キー | フィールド / 値 | ソース |
+|------|-----------------|------|--------------|-------|
+| SET | APPL_DB / `INTF_TABLE` | `PortChannel<N>` | 各フィールド (vrf_name, mac_addr, mpls, nat_zone, ipv6_use_link_local_only 等) | `intfmgr.cpp:1053` |
+| SET | STATE_DB / `INTERFACE_TABLE` | `PortChannel<N>` | `vrf` = vrf_name (空なら `""`) | `intfmgr.cpp:1054` |
+| DEL | APPL_DB / `INTF_TABLE` | `PortChannel<N>` | DEL (全フィールド削除) | `intfmgr.cpp:1088` |
+| DEL | STATE_DB / `INTERFACE_TABLE` | `PortChannel<N>` | DEL | `intfmgr.cpp:1089` |
+
+### IP プレフィクスロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
+
+IPv4 link-local (`169.254.x.x/x`) は APPL_DB / STATE_DB への書込みをスキップする (`intfmgr.cpp:1132`)。
+
+| 操作 | 対象 DB / テーブル | キー | フィールド / 値 | ソース |
+|------|-----------------|------|--------------|-------|
+| SET (非 v4-link-local) | APPL_DB / `INTF_TABLE` | `PortChannel<N>:<ip/prefix>` | `scope=global`, `family=IPv4\|IPv6` | `intfmgr.cpp:1134-1137` |
+| SET (非 v4-link-local) | STATE_DB / `INTERFACE_TABLE` | `PortChannel<N>|<ip/prefix>` | `state=ok` | `intfmgr.cpp:1138` |
+| DEL (非 v4-link-local) | APPL_DB / `INTF_TABLE` | `PortChannel<N>:<ip/prefix>` | DEL | `intfmgr.cpp:1161` |
+| DEL (非 v4-link-local) | STATE_DB / `INTERFACE_TABLE` | `PortChannel<N>|<ip/prefix>` | DEL | `intfmgr.cpp:1162` |
+
+### 属性ロウ SET — SAI RIF 生成 (orchagent / IntfsOrch)
+
+orchagent の `IntfsOrch` が APPL_DB `INTF_TABLE` を購読し、SAI Router Interface を生成する。LAG (`Port::LAG`) の場合は `SAI_ROUTER_INTERFACE_TYPE_PORT` / `SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id` が使われる (`intfsorch.cpp:1214-1217, 1241-1243`)。
+
+| 操作 | SAI API | SAI 属性 | 値 | ソース |
+|------|---------|---------|---|-------|
+| SET | `sai_router_intfs_api->create_router_interface()` | `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_PORT` (LAG) | `intfsorch.cpp:1216, 1296` |
+| SET | 同上 | `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` | LAG OID (`m_lag_id`) | `intfsorch.cpp:1241-1243` |
+| SET | 同上 | `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | VRF OID | `intfsorch.cpp:1183-1185` |
+| SET | 同上 | `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` | `mac_addr` or システム MAC | `intfsorch.cpp:1198-1208` |
+| SET | 同上 | `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` | loopback_action 変換値 (設定時のみ) | `intfsorch.cpp:1187-1195` |
+| SET | 同上 | `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` | nat_zone 値 (設定時のみ) | `intfsorch.cpp:1285-1293` |
+| DEL | `sai_router_intfs_api->remove_router_interface()` | — | — | `intfsorch.cpp:1349` |
+
+### COUNTERS_DB / FLEX_COUNTER_DB 書込み (IntfsOrch)
+
+RIF 作成時に `addRifToFlexCounter()` が以下を書き込む:
+
+| 対象 DB / テーブル | キー / フィールド | 書込内容 | ソース |
+|-----------------|-----------------|---------|-------|
+| COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` field=`PortChannel<N>` | RIF SAI OID | `intfsorch.cpp:1537` |
+| COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<rif_oid>` | RIF タイプ文字列 | `intfsorch.cpp:1538` |
+| FLEX_COUNTER_DB / `RIF_STAT_COUNTER:<rif_oid>` | `RIF_COUNTER_ID_LIST` | IN/OUT PACKETS/OCTETS/ERROR 系カウンタ ID リスト | `intfsorch.cpp:1544-1551` |
+
+RIF 削除時は上記エントリを `hdel` / `stopFlexCounterPolling` でクリーンアップする (`intfsorch.cpp:1560-1566`)。
+
+<!-- /side-effects -->
