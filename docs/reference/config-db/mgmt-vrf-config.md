@@ -330,6 +330,64 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・ファイルシステム副作用 (Phase F)
+
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp:289,303,338-339 / sonic-host-services/scripts/hostcfgd:1660-1662,1693 / sonic-buildimage/files/image_config/interfaces/interfaces.j2:9-15,88-90 / sonic-buildimage/files/image_config/interfaces/interfaces-config.sh:69 -->
+
+### vrfmgrd による副次書込み
+
+`vrfmgrd` は `MGMT_VRF_CONFIG` の SET/DEL を処理し、以下の DB へ書き込む。
+
+**SET 時（mgmtVrfEnabled=true かつ in_band_mgmt_enabled=true のみ）:**
+
+| 操作 | 対象 DB | テーブル | キー / フィールド |
+|------|--------|--------|-----------------|
+| `m_stateVrfTable.set("mgmt", [{state:"ok"}])` | STATE_DB | `VRF_TABLE` | `mgmt` / `state=ok` |
+| `m_appVrfTableProducer.set("mgmt", fields)` | APPL_DB | `VRF_TABLE` | `mgmt` |
+
+**DEL 時（または mgmtVrfEnabled=false で SET が DEL に強制変換された場合）:**
+
+| 操作 | 対象 DB | テーブル | キー |
+|------|--------|--------|------|
+| `m_appVrfTableProducer.del("mgmt")` | APPL_DB | `VRF_TABLE` | `mgmt` |
+| `m_stateVrfTable.del("mgmt")` | STATE_DB | `VRF_TABLE` | `mgmt` |
+
+> **mgmt VRF 特殊挙動**: `setLink("mgmt")` / `delLink("mgmt")` は `ip link add/del` を実行せず内部 map の更新のみ。実際のカーネル VRF netdev 作成は `hostcfgd` → `interfaces-config` が担う（責務分離）。
+
+### hostcfgd による `/etc/network/interfaces` 書込みとサービス制御
+
+`hostcfgd` は `mgmtVrfEnabled` が変化するたびに以下を順次実行する:
+
+| 順序 | 操作 | 補足 |
+|------|------|------|
+| 1 | `systemctl stop chrony` | NTP デーモンを一時停止 |
+| 2 | `systemctl restart interfaces-config` | `/etc/network/interfaces` を再生成して `ifup eth0` を実行 |
+| 3 | `systemctl start chrony` | mgmt VRF 内で NTP 再起動 |
+
+`interfaces-config` が実行する `sonic-cfggen -t interfaces.j2,/etc/network/interfaces` により、`/etc/network/interfaces` に以下が書き込まれる（`mgmtVrfEnabled=true` 時）:
+
+```text
+auto mgmt
+iface mgmt
+    vrf-table 6000
+# loopback for mgmt VRF (NTP 等が使用)
+auto lo-m
+    up ip link set dev lo-m master mgmt
+
+# eth0 stanza に追加
+iface eth0
+    vrf mgmt
+```
+
+`mgmtVrfEnabled=true` 時、eth0 の metric=202 デフォルトルートが存在する場合は `ip -4 route del default dev eth0 metric 202` も実行する。
+
+### DEL 遅延条件
+
+orchestrator が `STATE_DB.VRF_OBJECT_TABLE|mgmt` を保持する間、`isVrfObjExist()` が true を返し、`m_appVrfTableProducer.del` / `m_stateVrfTable.del` の実行が無制限に遅延する (vrfmgr.cpp:331–345)。
+
+<!-- /side-effects -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — `hostcfgd` が連動して読む関連テーブル (Phase C)
 
