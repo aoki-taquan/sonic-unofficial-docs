@@ -267,4 +267,34 @@ minigraph.py に sFlow テーブル生成なし
 なし
 <!-- /entry-points -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/sfloworch.cpp`, `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`
+
+| 定数 | 値 | 場所 |
+|------|-----|------|
+| `sample_rate` 最小値 | `256` | `sonic-sflow.yang` L128: `range "256..8388608"` |
+| `sample_rate` 最大値 | `8388608` | `sonic-sflow.yang` L128 |
+| `collector_port` デフォルト | `6343` (UDP, IANA 割当) | `sonic-sflow.yang` L81: `default 6343;` |
+| `polling_interval` デフォルト | `20` 秒 | `sonic-sflow.yang` L163: `default 20;` |
+| `polling_interval` 有効範囲 | `0` または `5..300` | `sonic-sflow.yang` L158 |
+| グローバル `admin_state` 初期値 | `false` (`m_gEnable = false`) | `sflowmgr.cpp` L19 コンストラクタ |
+| グローバル `sample_direction` 初期値 | `"rx"` (`m_gDirection = "rx"`) | `sflowmgr.cpp` L20 コンストラクタ |
+| `SFLOW_SESSION\|all` 初期状態 | `m_intfAllConf = true`（全ポート有効） | `sflowmgr.cpp` L18 コンストラクタ |
+| `ERROR_SPEED` | `"error"` 文字列 | `sflowmgr.h` L13: `#define ERROR_SPEED "error"` |
+| `NA_SPEED` | `"N/A"` 文字列 | `sflowmgr.h` L14: `#define NA_SPEED "N/A"` |
+| デフォルト sampling rate | ポート `oper_speed` 値（line rate と等しい） | `sflowmgr.cpp` L385-401 `findSamplingRate()` |
+| コレクタ最大数 | `2` | `sonic-sflow.yang` `max-elements 2` |
+| SAI samplepacket attribute | `SAI_SAMPLEPACKET_ATTR_SAMPLE_RATE` | `sfloworch.cpp` L26 |
+| SAI API | `sai_samplepacket_api->create_samplepacket()` / `remove_samplepacket()` | `sfloworch.cpp` L29, L49 |
+
+**備考**:
+
+- `sample_rate` の YANG 範囲 (`256..8388608`) はハードウェア制約に由来し、YANG モデルで enforce される。
+- デフォルト sampling rate はポートの `oper_speed`（Mbps 単位数値文字列）を 1:1 で使用。例: 100GbE → `100000`。`oper_speed` が未定義の場合は `cfg_speed` にフォールバック。
+- `agent_id` フィールドのデフォルト値は仕様・コードともに明示されない（オプションフィールド）。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: 8e8594481100 -->
