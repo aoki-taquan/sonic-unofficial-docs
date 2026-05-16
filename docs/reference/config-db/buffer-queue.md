@@ -308,16 +308,16 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`
+ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`, `sonic-swss/orchagent/bufferorch.cpp`, `sonic-swss/cfgmgr/buffermgrdyn.h`, `sonic-swss/orchagent/bufferorch.h`, `sonic-swss/cfgmgr/buffer_headroom_mellanox.lua`
 
 ### queue index 範囲
 
-| モード | key トークン数 | 範囲上限チェック | evidence |
-|---|---|---|---|
-| 非 VOQ | 2 (`<port>\|<qindex>`) | `port.m_queue_ids.size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:943, 1061-1064` |
-| VOQ シャーシ | 4 (`<hostname>\|<asic_name>\|<port>\|<qindex>`) | `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:918, 1052-1055` |
+| モード | key 形式 | トークン数 | 範囲上限チェック | evidence |
+|---|---|---|---|---|
+| 非 VOQ | `<port>\|<qindex>` | **2** | `port.m_queue_ids.size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:943, 1061-1064` |
+| VOQ シャーシ | `<hostname>\|<asic_name>\|<port>\|<qindex>` | **4** | `getPortVoQIds(port).size() <= ind` → `task_invalid_entry` | `bufferorch.cpp:918, 1052-1055` |
 
-YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?`）。実際の上限は SAI / プラットフォームが提供する queue 数次第。
+YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?`）。実際の上限は SAI / プラットフォームが提供する queue 数次第（典型的に 8 queue）。デフォルト j2 テンプレートでは `0-2`・`3-4`・`5-6` の 3 レンジのみ設定する（`buffers_config.j2:307-324`）。
 
 ### SAI 識別子
 
@@ -329,13 +329,38 @@ YANG regex が許容する qindex 範囲は **0〜15**（`(1[0-5]|[0-9])((-)(1[0
 
 queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反映される (`bufferorch.cpp:1269`)。
 
-### フィールド名文字列定数
+### フィールド名文字列定数 (`bufferorch.h`)
 
 | 定数変数 | ハードコード値 | evidence |
 |---|---|---|
-| `buffer_profile_field_name` | `"profile"` | `bufferorch.cpp:30` |
-| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `bufferorch.cpp:22` |
-| `buffer_pool_mode_static_value` | `"static"` | `bufferorch.cpp:23` |
+| `buffer_profile_field_name` | `"profile"` | `bufferorch.h:30` |
+| `buffer_pool_field_name` | `"pool"` | `bufferorch.h:21` |
+| `buffer_pool_mode_dynamic_value` | `"dynamic"` | `bufferorch.h:22` |
+| `buffer_pool_mode_static_value` | `"static"` | `bufferorch.h:23` |
+| `buffer_value_ingress` | `"ingress"` | `bufferorch.h:31` |
+| `buffer_value_egress` | `"egress"` | `bufferorch.h:32` |
+| `buffer_value_both` | `"both"` | `bufferorch.h:33` |
+| `buffer_pool_xoff_field_name` | `"xoff"` | `bufferorch.h:24` |
+| `buffer_xon_field_name` | `"xon"` | `bufferorch.h:25` |
+| `buffer_xon_offset_field_name` | `"xon_offset"` | `bufferorch.h:26` |
+| `buffer_xoff_field_name` | `"xoff"` | `bufferorch.h:27` |
+| `buffer_dynamic_th_field_name` | `"dynamic_th"` | `bufferorch.h:28` |
+| `buffer_static_th_field_name` | `"static_th"` | `bufferorch.h:29` |
+
+### デーモン設定定数 (`buffermgrdyn.h`)
+
+| 定数 | 値 | 意味 |
+|---|---|---|
+| `DEFAULT_MTU_STR` | `"9100"` | profile 名生成時に MTU が未指定の場合に使用するデフォルト MTU (バイト) (`buffermgrdyn.h:15`) |
+| `INGRESS_LOSSLESS_PG_POOL_NAME` | `"ingress_lossless_pool"` | ingress lossless pool 名 (`buffermgrdyn.h:14`) |
+| `BUFFERMGR_TIMER_PERIOD` | `10` | buffermgrd 内部タイマーの周期（秒）。headroom 再計算・retry に使用 (`buffermgrdyn.h:17`) |
+
+### FlexCounter 統計 polling 定数 (`bufferorch.h`)
+
+| 定数 | 値 | 意味 |
+|---|---|---|
+| `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | buffer pool watermark の FlexCounter polling 間隔（ms = 60 秒）(`bufferorch.h:16`) |
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | FlexCounter グループ名 (`bufferorch.h:15`) |
 
 ### `_zero_` profile 判定文字列
 
@@ -359,6 +384,33 @@ queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反
 ### gMySwitchType 比較文字列
 
 - `"voq"` (ハードコード): `bufferorch.cpp:116, 916, 1049` で VOQ モード判定に使用
+
+### headroom 計算 Lua スクリプト内の定数 (`buffer_headroom_mellanox.lua`)
+
+cell_size・pipeline_latency (IPL)・mac_phy_delay はハードコードされず、`STATE_DB.ASIC_TABLE` から取得する。ただし以下の定数はスクリプト内にハードコードされる:
+
+| 定数 | 値 | 意味 | evidence |
+|---|---|---|---|
+| `speed_of_light` | `198000000` m/s (光速の約 2/3) | ケーブル伝播遅延計算用 | `buffer_headroom_mellanox.lua:118` |
+| `minimal_packet_size` | `64` バイト | worst-case cell 占有率算出に使用 | `buffer_headroom_mellanox.lua:120` |
+| IPG (`peer_response_time`) | `pause_quanta * 512 / 8` バイト | IEEE 802.3 の pause quanta を IPG (bytes) に変換 | `buffer_headroom_mellanox.lua:157` |
+
+pause quanta テーブル (IEEE 802.3 31B.3.7 準拠、ハードコード):
+
+| 速度 (Mb/s) | pause_quanta | peer_response_time (バイト) |
+|---|---|---|
+| 800000 (800G) | 905 | 57,920 |
+| 400000 (400G) | 905 | 57,920 |
+| 200000 (200G) | 453 | 28,992 |
+| 100000 (100G) | 394 | 25,216 |
+| 50000 (50G) | 147 | 9,408 |
+| 40000 (40G) | 118 | 7,552 |
+| 25000 (25G) | 80 | 5,120 |
+| 10000 (10G) | 67 | 4,288 |
+| 1000 (1G) | 2 | 128 |
+| 100 (100M) | 1 | 64 |
+
+xoff（PFC pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math.ceil(xoff_value / 1024) * 1024`)。
 
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-constants.md` を参照。
 <!-- /constants -->
