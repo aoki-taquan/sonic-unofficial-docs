@@ -331,4 +331,69 @@ orchagent / syncd / SAI を経由しない。ASIC ケイパビリティ差によ
 <!-- evidence: sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py (grep: platform/hwsku/asic = 0 hits) -->
 <!-- /platform -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`frrcfgd.py` が `BGP_GLOBALS_AF_NETWORK` ハンドラで固定的に使用する
+FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドリテラル、フォーマッタ文字列、syslog メッセージの一覧[^frrcfgd_const]。
+
+### FRR vtysh コマンドキーワード (`frrcfgd.py:1985`)
+
+`af_network_key_map` が生成する [FRR](../../reference/glossary.md#term-frr) コマンドのテンプレート:
+
+```
+{no:no-prefix}network {ip_prefix} {policy:network-policy} {backdoor:network-backdoor}
+```
+
+| リテラル | 値 | 用途 |
+|---------|---|------|
+| `network` | `"network"` | FRR `address-family` 配下のネットワーク注入コマンドキーワード |
+| `no ` (前置子) | `"no "` | 削除操作時に `no-prefix` フォーマッタが付加する否定前置子 (`frrcfgd.py:828`) |
+| `route-map %s` | `"route-map %s"` | `network-policy` フォーマッタが `policy` フィールド非空時に生成する文字列 (`frrcfgd.py:924`) |
+| `backdoor` | `"backdoor"` | `network-backdoor` フォーマッタが `backdoor=true` 時に出力するキーワード (`frrcfgd.py:814`) |
+
+### vtysh セッション・コマンドプレフィクス (`frrcfgd.py:3179-3181`)
+
+```python
+['configure terminal',
+ 'router bgp {local_asn} vrf {vrf}',
+ 'address-family {af} {ip_type}']
+```
+
+| 文字列 | 意味 |
+|--------|------|
+| `"configure terminal"` | FRR vtysh 設定モード開始 |
+| `"router bgp {} vrf {}"` | BGP インスタンス・VRF コンテキスト選択 |
+| `"address-family {} {}"` | AF/SAFI コンテキスト（`af` = `ipv4`/`ipv6`、`ip_type` = `unicast` 等） |
+
+### IP prefix 正規化定数 (`frrcfgd.py:3172`)
+
+| 定数 | 値 | 意味 |
+|------|---|------|
+| `"ipv4"` | 文字列リテラル | `af_type.split('_')[0]` の期待値。IPv4 か IPv6 かを分岐する条件文字列 |
+| `socket.AF_INET` | `2` | IPv4 の `normalize_ip_prefix()` 呼び出し引数 |
+| `socket.AF_INET6` | `10` | IPv6 の `normalize_ip_prefix()` 呼び出し引数 |
+
+### TABLE_DAEMON マッピング (`frrcfgd.py:99`)
+
+| テーブル | デーモン |
+|---------|---------|
+| `'BGP_GLOBALS_AF_NETWORK'` | `['bgpd']` |
+
+`bgpd` のみにコマンドを送信する。`zebra`/`staticd` は対象外。
+
+### syslog メッセージリテラル (`frrcfgd.py:3174-3185`)
+
+| ログレベル | メッセージ | 発火条件 |
+|-----------|-----------|---------|
+| `LOG_ERR` | `'invalid IP prefix format %s for af %s'` | `normalize_ip_prefix()` が `None` を返した場合 |
+| `LOG_INFO` | `'Set address family for IP prefix {} to {} {}'` | 正常処理時の進捗ログ |
+| `LOG_ERR` | `'failed running BGP IP prefix AF config command'` | `run_command()` が `False` を返した場合 |
+
+> 詳細スキャン証跡: `meta/_intermediate/cdb-flow/bgp-globals-af-network-constants.md`
+
+[^frrcfgd_const]: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L99, L811-814, L827-828, L922-924, L1985, L3172-3185。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: fcbe746ecf8b -->
