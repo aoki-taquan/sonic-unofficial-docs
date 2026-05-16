@@ -597,3 +597,61 @@ YANG default と独立してコンストラクタ内でハードコードされ�
 > **注意**: `NAT_CONNTRACK_TIMEOUT_PERIOD = 86400` は `nat_tcp_timeout` のデフォルト値と同値だが意味が異なる。前者は conntrack タイマー起動間隔、後者は NAT セッション age-out 秒数。
 
 <!-- /constants -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::addNatEntry L1866-1935 / enableNatFeature L2534-2581 / addAllDnatPoolEntries L1854-1863 / addAllNatEntries L3178-3258 / doDnatPoolTableTask L2968-3031 / doNatGlobalTableTask L2904-2966 -->
+
+### NAT_GLOBAL (admin_mode=enabled) が最初
+
+`NatOrch::doNatGlobalTableTask()` が `admin_mode` を `"enabled"` に切り替えると `enableNatFeature()` を呼ぶ (`natorch.cpp:2942-2943`)。`enableNatFeature()` は次の順でハードウェアに書き込む:
+
+```
+1. SAI_SWITCH_ATTR_NAT_ENABLE=true  (natorch.cpp:2554-2562)
+2. addAllDnatPoolEntries()           (natorch.cpp:2577)   ← NAT_DNAT_POOL_TABLE エントリを HW に投入
+3. addAllNatEntries()                (natorch.cpp:2580)   ← SNAT/DNAT/NAPT エントリを HW に投入
+```
+
+`admin_mode=disabled` の間は `addNatEntry()` (`natorch.cpp:1907-1913`) がエントリをキャッシュ (`m_natEntries`) に積むだけで SAI 操作をスキップする。`NAT_POOL` / `NAT_BINDINGS` / `STATIC_NAT` をどのタイミングで書いても構わないが、**SAI への実反映は `admin_mode=enabled` の後になる**。
+
+### NAT_POOL は NAT_BINDINGS より先行
+
+`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリを処理する際に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定を**スキップ**する (natmgr.cpp:4632-4636)。pool が後から登録されると `doNatPoolTask()` の末尾で既存 binding を再トリガーする仕組みになっている。
+
+推奨順序:
+
+```
+SET NAT_POOL|<name>      nat_ip=...  nat_port=...   # pool を先に定義
+SET NAT_BINDINGS|<name>  nat_pool=<name>             # pool 登録後に binding を追加
+```
+
+### SAI NAT エントリの投入順序 (orchagent 内)
+
+`NatOrch` が APPL_DB からエントリを受け取り SAI に投入する順序は `doTask()` のディスパッチ順序に依存する (`natorch.cpp:3041-3075`):
+
+| 優先度 | テーブル | SAI 操作 | SAI 型 |
+|--------|---------|---------|--------|
+| 1 | `APP_NAT_TABLE` | `addHwSnatEntry()` / `addHwDnatEntry()` | `SAI_NAT_TYPE_SOURCE_NAT` / `SAI_NAT_TYPE_DESTINATION_NAT` |
+| 2 | `APP_NAPT_TABLE` | `addHwSnaptEntry()` / `addHwDnaptEntry()` | `SAI_NAT_TYPE_SOURCE_NAT` / `SAI_NAT_TYPE_DESTINATION_NAT` |
+| 3 | `APP_NAT_TWICE_TABLE` | `addHwTwiceNatEntry()` | `SAI_NAT_TYPE_DOUBLE_NAT` |
+| 4 | `APP_NAPT_TWICE_TABLE` | `addHwTwiceNaptEntry()` | `SAI_NAT_TYPE_DOUBLE_NAT` |
+| 5 | `APP_NAT_GLOBAL_TABLE` | `enableNatFeature()` / `disableNatFeature()` | `SAI_SWITCH_ATTR_NAT_ENABLE` |
+| 6 | `APP_NAT_DNAT_POOL_TABLE` | `addHwDnatPoolEntry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` |
+
+`enableNatFeature()` は `admin_mode=enabled` を受け取ると **先に** `addAllDnatPoolEntries()` を呼び DNAT pool エントリを ASIC に投入し、その後 `addAllNatEntries()` で SNAT/DNAT エントリを投入する。DNAT pool entry が先行する設計。
+
+### BRCM プラットフォーム — nexthop 解決待ち (DNAT)
+
+`natorch.cpp:144-148`: `getenv("platform")` が `"broadcom"` を含む場合 `gNhTrackingSupported = true`。DNAT エントリは nexthop (L3 隣接) が解決されるまで SAI に投入されない (`addDnatToNhCache()` でキャッシュ待機)。非 BRCM 環境では即時 `addHwDnatEntry()` が呼ばれる。
+
+### 安全な DEL 順序
+
+```
+DEL NAT_BINDINGS|<name>    # binding を先に削除
+DEL NAT_POOL|<name>        # pool を後に削除
+```
+
+`natmgr.cpp:removeNatPool()` は pool 削除時に参照している binding を自動的に無効化するが、CONFIG_DB 上の `NAT_BINDINGS` エントリは残る。CLI 経由では先に `config nat remove binding` を実行する。
+
+<!-- /ordering -->
