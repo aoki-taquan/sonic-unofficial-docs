@@ -81,6 +81,51 @@ VLAN_MEMBER|<vlan_name>|<port>
 - 関連 CLI: `config vlan member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-vlan`
 
+<!-- constants -->
+## ハードコード定数
+
+### vlanmgr.cpp — #define 定数
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `DOT1Q_BRIDGE_NAME` | `"Bridge"` | Linux dot1q ブリッジデバイス名（固定） |
+| `VLAN_PREFIX` | `"Vlan"` | VLAN インタフェース名プレフィクス |
+| `LAG_PREFIX` | `"PortChannel"` | LAG インタフェース名プレフィクス |
+
+出典: `sonic-swss/cfgmgr/vlanmgr.cpp` lines 15–17
+
+### tagging_mode 受理値 (vlanmgr.cpp)
+
+`tagging_mode` フィールドが受理する値は以下 3 値のみ。それ以外は `SWSS_LOG_ERROR("Wrong tagging_mode")` で破棄される (vlanmgr.cpp:659–662)。
+
+| 値 | Linux bridge コマンド |
+|----|--------------------|
+| `"untagged"` | `bridge vlan add ... pvid untagged` (vlanmgr.cpp:238) |
+| `"tagged"` | `bridge vlan add`（pvid/untagged なし） |
+| `"priority_tagged"` | `bridge vlan add ... pvid untagged`（`untagged` と同一コマンド） |
+
+### SAI VLAN_MEMBER 属性 (portsorch.cpp)
+
+`sai_vlan_api->create_vlan_member()` 呼び出し時に設定される SAI 属性。
+
+| SAI 属性 | 値 / 用途 |
+|---------|---------|
+| `SAI_VLAN_MEMBER_ATTR_VLAN_ID` | 所属 VLAN の OID (portsorch.cpp:7531) |
+| `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID` | メンバポートのブリッジポート OID (portsorch.cpp:7535) |
+| `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE` | タグモードの SAI 列挙値 (portsorch.cpp:7541) |
+
+### tagging_mode → SAI 列挙値マッピング (portsorch.cpp:7540–7547)
+
+| CONFIG_DB 値 | SAI 定数 |
+|------------|---------|
+| `"untagged"` | `SAI_VLAN_TAGGING_MODE_UNTAGGED` |
+| `"tagged"` | `SAI_VLAN_TAGGING_MODE_TAGGED` |
+| `"priority_tagged"` | `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` |
+
+SAI 側の初期値は `SAI_VLAN_TAGGING_MODE_TAGGED` (portsorch.cpp:7540)。マッピング外は `assert(false)`。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
