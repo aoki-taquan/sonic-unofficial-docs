@@ -92,6 +92,25 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B — コード由来)
+
+`dialout_client_cli` (`sonic-gnmi/dialout/dialout_client/dialout_client.go`) の `DialOutRun()` / `processTelemetryClientConfig()` を精読して検出した順序依存・タイミング依存。詳細スキャンノート: [`meta/_intermediate/cdb-flow/telemetry-client-ordering.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/telemetry-client-ordering.md)。
+
+| # | 依存関係 | 方向 | 緩和策 / 備考 |
+|---|----------|------|--------------|
+| 1 | `TELEMETRY_CLIENT\|DestinationGroup_<name>` 書込み → `TELEMETRY_CLIENT\|Subscription_<name>` 書込み | 先行推奨 | 起動時一括読み込みは Redis `KEYS` ランダム順。Subscription を先に処理した場合は `destGroupName` 未解決でサイレントスキップ (`dialout_client.go:622-625`)。keyspace notification 経由のオンライン変更では自動回復する |
+| 2 | `gnmi-native` プロセス `running` → `dialout` (dialout_client_cli) 起動 | supervisord `dependent_startup_wait_for` 強制 | `supervisord.conf:68`。gNMI サーバが listen 前に dialout が起動することはない。CONFIG_DB への事前書き込みは可（起動時一括読み込みで反映） |
+| 3 | `database.service` 起動完了 → `gnmi.service` 起動 | systemd `After=` 強制 | `gnmi.service.j2:3-4`。Redis 未起動時に `TELEMETRY_CLIENT` が参照されることはない |
+| 4 | `TELEMETRY_CLIENT\|Global` 書込み → `TELEMETRY_CLIENT\|DestinationGroup_*` 書込み | 推奨先行 | 逆順でも機能するが、後から Global を変更すると `destGrpNameMap` 全グループの gRPC セッションが再起動される (`dialout_client.go:508-512`)。Global → DestinationGroup → Subscription の順が推奨 |
+| 5 | 使用中 `DestinationGroup` DEL → 参照 `Subscription` DEL | 先行必須 | 参照中 DestinationGroup を DEL しようとすると `"<name> is being used"` を返して拒否 (`dialout_client.go:519-522`)。先に Subscription を削除すること |
+
+### 補足
+
+- 依存 #1 は起動時のみの問題。runtime では keyspace notification を受けた `processTelemetryClientConfig()` が再呼び出しされるため、先に Subscription が書かれていても DestinationGroup が後追いで書かれると `setupDestGroupClients()` 経由で自動的にセッションが確立される。
+- 依存 #4 は操作コストの話であり機能上は逆順でも動作する。ただしカットオーバー時のセッション再起動ウィンドウを最小化するため、Global を最初に確定しておくことを推奨。
+<!-- /ordering -->
+
 ## 制約
 
 - `ipv4-port` typedef で `dst_addr` は IPv4:port のカンマ区切りに制約 (IPv6 リテラルは現状不可)[^1]
