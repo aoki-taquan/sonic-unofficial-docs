@@ -259,6 +259,27 @@ vtysh -c 'show bgp neighbor <ip>'
 > **スキャン証跡**: BGP_NEIGHBOR_AF は `bgp_table_handler_common` に直接渡され、BGP_GLOBALS_AF 相当の comb_attr_list 制約はなし。2 件分岐抽出。
 <!-- /handler-branching -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-platform.md`
+
+**プラットフォーム差なし**。`BGP_NEIGHBOR_AF` の適用経路は `frrcfgd` → vtysh → FRR `bgpd`（ユーザ空間）で完結し、SAI / ASIC SDK を直接呼び出さない。
+
+### 根拠
+
+| 観点 | 調査結果 |
+|------|----------|
+| `frrcfgd.py` platform/asic キーワード grep | `platform` / `hwsku` / `asic_type` / `multi_npu` / `is_chassis` 等のキーワードが BGP_NEIGHBOR_AF 処理コードに **0 ヒット** |
+| `BGP_NEIGHBOR_AF` 購読登録 | `bgp_table_handler_common` (L2306) への登録は `if` ガードなし—無条件 |
+| `policies.conf.j2`（全バリアント） | `sentinels` / `monitors` / `dynamic` / `general` / `internal` / `voq_chassis` のいずれも `BGP_NEIGHBOR_AF` を参照せず。`internal` / `voq_chassis` の platform 分岐は route-map / community-list 生成に限定 |
+| multi-asic / VOQ chassis | 各 namespace の `frrcfgd` インスタンスが同一コードで処理。chassis 専用の AF マネージャなし |
+| ビルド時 platform オーバライド | `device/<vendor>/<platform>/` 配下に BGP_NEIGHBOR_AF を上書きするファイルなし |
+
+FRR `address-family` ブロック内の AF コマンド群（`activate` / `route-map` / `maximum-prefix` 等）は FRR ユーザ空間で完結するため、ASIC ベンダー（Broadcom / Mellanox / Marvell / Innovium / Barefoot）・物理形態（T0 / T1 / T2 / VOQ chassis）・single / multi-asic 構成のいずれでも挙動は同一。
+
+<!-- /platform -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -381,4 +402,35 @@ configure terminal
 | `send_community='none'` vs 未設定 | DB 上の状態は異なるが FRR 上の効果は同一（送信なし）。`'none'` は `hdl_send_com` で `no send-community all` のみ発行、未設定はコマンド不発行 |
 
 <!-- /defaults -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-side.md`
+
+### 調査結果: 副次書込なし
+
+`frrcfgd.py` が import する DB ライブラリは `ConfigDBConnector`（CONFIG_DB 読み取り専用）のみ。`SonicV2Connector` / StateDB / CountersDB / AppDB の import は存在しない。
+
+`bgp_table_handler_common` ハンドラは以下のフローのみ実行する:
+
+```
+CONFIG_DB 変化通知
+  → bgp_message キューに積む (L3928)
+  → __update_bgp() で vtysh コマンドを組み立て
+  → ['vtysh', '-c', 'configure terminal', ...] をサブプロセス実行
+```
+
+### 副次 DB 書込テーブル
+
+| DB | テーブル | 書込有無 | 根拠 |
+|----|---------|---------|------|
+| STATE_DB | BGP_NEIGHBOR_TABLE 等 | **なし** | `frrcfgd.py` に STATE_DB import / write なし |
+| COUNTERS_DB | — | **なし** | 同上 |
+| APPL_DB | — | **なし** | 同上 |
+| FRR (vtysh) | bgpd 内部ステート | **あり** | `frrcfgd.py:47-52` — vtysh 経由で bgpd へ AF 設定を投入 |
+
+BGP ネイバー AF の動的ステート（セッション状態・受信 prefix 数等）は FRR `bgpd` メモリ内にのみ保持される。`show bgp neighbor` / `show bgp summary` 等の vtysh コマンドで参照し、SONiC Redis DB への書き戻しは行われない。
+
+<!-- /side-effects -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
