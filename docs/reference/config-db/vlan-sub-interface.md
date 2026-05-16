@@ -12,6 +12,12 @@ sources:
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
     ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/intfmgr.cpp
+    ref: master
+  - repo: sonic-net/sonic-swss
+    path: orchagent/intfsorch.cpp
+    ref: master
 related:
   config_db:
     - VLAN_SUB_INTERFACE
@@ -113,6 +119,69 @@ long-name 形式 (`Ethernet0.100` / `PortChannel10.100`) では `subIntf::subInt
 詳細な調査メモは `meta/_intermediate/cdb-flow/vlan-sub-interface-defaults.md` 参照。
 
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数（Phase E）
+
+`intfmgr.cpp` および `intfsorch.cpp` に直接埋め込まれた定数・SAI 属性をまとめる。
+
+### VLAN tag 範囲
+
+| 定数 | 値 | 出典 |
+|------|----|------|
+| VLAN ID 下限 | `1` | YANG: `sonic-vlan-sub-interface.yang` `range "1..4094"` / intfmgr.cpp:936 で `"0"` はリトライ待ち |
+| VLAN ID 上限 | `4094` | YANG: `sonic-vlan-sub-interface.yang` `range "1..4094"` |
+| `VLAN_SUB_INTERFACE_SEPARATOR` | `"."` | `sonic-swss/tests/test_sub_port_intf.py:54`; intfmgr.cpp:750 で `alias.find(VLAN_SUB_INTERFACE_SEPARATOR)` |
+
+```cpp
+// sonic-swss/cfgmgr/intfmgr.cpp:936-940 (抜粋)
+if (vlanId == "0" || vlanId.empty())
+{
+    SWSS_LOG_INFO("Vlan ID not configured for %s", alias.c_str());
+    return false;
+}
+// 有効範囲 1..4094 は YANG で強制。カーネル側は "ip link add ... type vlan id <vlanId>"
+```
+
+### SAI sub_port_attr（`SAI_ROUTER_INTERFACE_TYPE_SUB_PORT`）
+
+sub-port RIF 作成時に `intfsorch.cpp:1224` で `Port::SUBPORT` ブランチが実行し、以下の SAI 属性を順番に push する。
+
+| SAI 属性 | 値の型 | 内容 |
+|----------|--------|------|
+| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `sai_object_id_t` | VRF OID（全 RIF タイプ共通、先頭に push） |
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` | RIF タイプを sub-port に指定 |
+| `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` | `sai_object_id_t` | 親ポート OID（`port.m_parent_port_id`） |
+| `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` | `uint16_t` | encapsulation VLAN ID（`port.m_vlan_info.vlan_id`） |
+| `SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE` | `bool` | IPv4 転送の有効/無効 |
+| `SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE` | `bool` | IPv6 転送の有効/無効 |
+| `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` | MAC | システム MAC（全 RIF タイプ共通） |
+| `SAI_ROUTER_INTERFACE_ATTR_MTU` | `uint32_t` | MTU 値（全 RIF タイプ共通） |
+
+```cpp
+// sonic-swss/orchagent/intfsorch.cpp:1251-1265 (抜粋)
+case Port::SUBPORT:
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_PORT_ID;
+    attr.value.oid = port.m_parent_port_id;
+    attrs.push_back(attr);
+
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID;
+    attr.value.u16 = port.m_vlan_info.vlan_id;
+    attrs.push_back(attr);
+
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE;
+    attr.value.booldata = port.m_admin_state_up;
+    attrs.push_back(attr);
+
+    attr.id = SAI_ROUTER_INTERFACE_ATTR_ADMIN_V6_STATE;
+    attr.value.booldata = port.m_admin_state_up;
+    attrs.push_back(attr);
+    break;
+```
+
+**出典**: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
+
+<!-- /constants -->
 
 ## key 構造
 
