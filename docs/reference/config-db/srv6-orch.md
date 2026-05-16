@@ -407,4 +407,104 @@ warm-reboot 後は swss 再起動時に APP_DB から全エントリを再読み
 - `SRV6_MY_LOCATORS` (CONFIG_DB) — SRv6 ロケータ設定
 - `VRF` (CONFIG_DB) — VRF 定義
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/srv6orch.cpp`、`sonic-swss/orchagent/srv6orch.h`
+
+### マクロ定義
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `ADJ_DELIMITER` | `','` | `adj` フィールドの複数 nexthop 区切り文字 |
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | IpInIp Decap 用オーバーレイ RIF の MTU (bytes) |
+| `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | ロケータ block 長のデフォルト値 (bits) |
+| `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | ロケータ node 長のデフォルト値 (bits) |
+| `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | ロケータ function 長のデフォルト値 (bits) |
+| `LOCATOR_DEFAULT_ARG_LEN` | `"0"` | ロケータ argument 長のデフォルト値 (bits) |
+| `SRV6_FLEX_COUNTER_UPDATE_TIMER` | `1` (秒) | Flex counter 更新タイマー周期 |
+| `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS` | `10000` (ms) | カウンタポーリング間隔 |
+| `SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"SRV6_STAT_COUNTER"` | Flex counter グループ名 |
+| `COUNTERS_SRV6_NAME_MAP` | `"COUNTERS_SRV6_NAME_MAP"` | COUNTERS_DB 上の SRv6 名前マップキー |
+
+### エンドポイント動作 (action) — SAI enum マッピング
+
+`end_behavior_map` (`srv6orch.cpp` 行 41–61):
+
+| action 文字列 | SAI エンドポイント動作 enum |
+|--------------|--------------------------|
+| `end` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_E` |
+| `end.x` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_X` |
+| `end.t` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_T` |
+| `end.dx6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX6` |
+| `end.dx4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DX4` |
+| `end.dt4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT4` |
+| `end.dt6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT6` |
+| `end.dt46` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_DT46` |
+| `end.b6.encaps` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_ENCAPS` |
+| `end.b6.encaps.red` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_ENCAPS_RED` |
+| `end.b6.insert` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_INSERT` |
+| `end.b6.insert.red` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_B6_INSERT_RED` |
+| `udx6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX6` |
+| `udx4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDX4` |
+| `udt6` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT6` |
+| `udt4` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT4` |
+| `udt46` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UDT46` |
+| `un` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` |
+| `ua` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UA` |
+
+### エンドポイント flavor — SAI enum マッピング
+
+`end_flavor_map` (`srv6orch.cpp` 行 64–70):
+
+| action 文字列 | SAI flavor enum |
+|--------------|----------------|
+| `end`, `end.x`, `end.t`, `ua` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_PSP_AND_USD` |
+| `un` | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE` |
+| 上記以外 | `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_FLAVOR_NONE` (デフォルト初期値) |
+
+### SID リスト種別 (type) — SAI enum マッピング
+
+`sidlist_type_map` (`srv6orch.cpp` 行 73–78):
+
+| type 文字列 | SAI sidlist type enum | フォールバック |
+|------------|----------------------|--------------|
+| `insert` | `SAI_SRV6_SIDLIST_TYPE_INSERT` | — |
+| `insert.red` | `SAI_SRV6_SIDLIST_TYPE_INSERT_RED` | — |
+| `encaps` | `SAI_SRV6_SIDLIST_TYPE_ENCAPS` | — |
+| `encaps.red` | `SAI_SRV6_SIDLIST_TYPE_ENCAPS_RED` | — |
+| 不明・未指定 | `SAI_SRV6_SIDLIST_TYPE_ENCAPS_RED` | 行 1083 参照 |
+
+### アクション別必須リソース分岐
+
+| 判定関数 | `true` となるアクション |
+|----------|----------------------|
+| `mySidVrfRequired()` | `end.t`, `end.dt4`, `end.dt6`, `end.dt46`, `udt4`, `udt6`, `udt46` |
+| `mySidNextHopRequired()` | `end.x`, `end.dx4`, `end.dx6`, `udx4`, `udx6`, `end.b6.encaps`, `end.b6.encaps.red`, `end.b6.insert`, `end.b6.insert.red`, `ua` |
+| `mySidTunnelRequired()` | `un` と `udt46` を除くすべての `u*` 系アクション |
+
+### SAI 属性一覧
+
+| SAI 属性 | 固定値 / 用途 |
+|---------|--------------|
+| `SAI_MY_SID_ENTRY_ATTR_ENDPOINT_BEHAVIOR` | エンドポイント動作種別 |
+| `SAI_MY_SID_ENTRY_ATTR_ENDPOINT_BEHAVIOR_FLAVOR` | PSP/USD flavor |
+| `SAI_MY_SID_ENTRY_ATTR_VRF` | VRF OID |
+| `SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID` | nexthop OID |
+| `SAI_MY_SID_ENTRY_ATTR_TUNNEL_ID` | IpInIp tunnel OID |
+| `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` | Flex counter OID（オプション） |
+| `SAI_SRV6_SIDLIST_ATTR_TYPE` | SID リスト種別 |
+| `SAI_SRV6_SIDLIST_ATTR_SEGMENT_LIST` | IPv6 SID 配列 |
+| `SAI_NEXT_HOP_ATTR_TYPE` | `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` (固定) |
+| `SAI_NEXT_HOP_ATTR_SRV6_SIDLIST_ID` | SID リスト OID |
+| `SAI_NEXT_HOP_ATTR_TUNNEL_ID` | SRv6 トンネル OID |
+| `SAI_TUNNEL_ATTR_TYPE` (SRv6 Encap) | `SAI_TUNNEL_TYPE_SRV6` (固定) |
+| `SAI_TUNNEL_ATTR_PEER_MODE` (SRv6) | `SAI_TUNNEL_PEER_MODE_P2MP` (固定) |
+| `SAI_TUNNEL_ATTR_TYPE` (IpInIp Decap) | `SAI_TUNNEL_TYPE_IPINIP` (固定) |
+| `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` (固定) |
+| `SAI_TUNNEL_ATTR_DECAP_DSCP_MODE` | DSCP mode 設定値依存 (`UNIFORM_MODEL` / `PIPE_MODEL`) |
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` (固定) |
+| `SAI_ROUTER_INTERFACE_ATTR_MTU` | `9100` (`OVERLAY_RIF_DEFAULT_MTU`) |
+<!-- /constants -->
+
 [^1]: `sonic-swss/orchagent/srv6orch.cpp` (revision 4305596156d70e9797e8a881b3d19b46de0bce0d) より。
