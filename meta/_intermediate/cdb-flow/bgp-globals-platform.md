@@ -1,147 +1,124 @@
-# BGP_GLOBALS — Phase H プラットフォーム差 (intermediate)
+# BGP_GLOBALS — プラットフォーム差調査 (Task F Phase H)
 
-## スコープ
-
-- 対象テーブル: `BGP_GLOBALS` (および参考: `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_NETWORK`,
-  `BGP_GLOBALS_AF_AGGREGATE_ADDR`, `BGP_GLOBALS_LISTEN_PREFIX`)。
-- 一次経路: CONFIG_DB → `frr-mgmt-framework` (`frrcfgd.py`) → vtysh → FRR `bgpd`。
-- 補助経路: `bgpcfgd` (`managers_bgp.py` / `managers_device_global.py`) は
-  BGP_GLOBALS 自体は購読しない。`BGP_DEVICE_GLOBAL` 経由で TSA / IDF /
-  W-ECMP の挙動を変更し、結果として `router bgp <asn>` ブロック配下の
-  neighbor / route-map に影響する。
+ソース精読: `bgpcfgd/` (`main.py`, `managers_bgp.py`, `managers_device_global.py`, `managers_chassis_app_db.py`)、`frrcfgd/frrcfgd.py`、`templates/bgpd/bgpd.conf.db.j2`。
 
 ## 結論サマリ
 
-| 観点 | 結果 |
-|------|------|
-| BGP_GLOBALS フィールド本体の値マッピング (router_id / local_asn / keepalive / holdtime / max_med 等) | プラットフォーム差なし。`frrcfgd.py` / `bgpd.conf.db.j2` の全文 grep で `platform` / `asic_type` / `switch_type` / `chassis` / `multi_npu` / `namespace` / `sub_role` の参照 0 ヒット。 |
-| `local_asn` / `router_id` 等の FRR コマンド生成 | ベンダー / HwSku / multi-asic を問わず同一文字列を `vtysh` に push。 |
-| `chassis_tsa` 影響 | **間接**: `BGP_GLOBALS` のフィールド自体は変えない。`BGP_DEVICE_GLOBAL.tsa_enabled` と `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL\|STATE.tsa_enabled` の OR が真のとき、`BGPPeerGroupMgr.update_pg()` が `router bgp <local_asn>` ブロックに TSA 用 route-map を追記する (`managers_bgp.py:69-71`, `managers_device_global.py:171-181, 238-251`)。これは `BGP_GLOBALS` の YANG / CONFIG_DB スキーマ上のフィールドではなく、同一 `router bgp` コンテキスト下に並ぶ neighbor の `route-map ... out` 差し替えに過ぎない。 |
-| `switch_role` (`DEVICE_METADATA.localhost.type`) 影響 | **間接**: `SpineRouter` / `LowerSpineRouter` / `UpperSpineRouter` のみ IDF isolation の route-map push が走る (`managers_device_global.py:260-262`)。`UpstreamLC` または `UpperSpineRouter` で `AsPathMgr` が追加起動 (`main.py:122-129`)。いずれも BGP_GLOBALS フィールド値の書き換えではない。 |
-| `switch_type == 'chassis-packet'` 影響 | **間接**: TSA route-map 整形時に `_INTERNAL_` / `VOQ_` を含む name を `internal_route_map=1` で render し chassis 内 iBGP を保持 (`managers_device_global.py:213-225`)。BGP_GLOBALS のフィールド変換には不介入。 |
-| `device_info.is_chassis()` 影響 | bgpcfgd 起動時に `ChassisAppDbMgr` を追加 (`main.py:112-113`)。これは `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` を購読して `chassis_tsa` を取得するためで、`BGP_GLOBALS` 本体は触れない。 |
-| multi-asic (`is_multi_npu()` / `asicN` namespace) | `frrcfgd` / `bgpd.conf.db.j2` に namespace / multi-asic 専用分岐は無い。各 namespace の CONFIG_DB を独立した `frrcfgd` プロセスが処理する設計のため、ASIC ごとに `router bgp <asn>` が個別生成されるが、テーブル受理ロジックは全 namespace で同一。 |
-| HwSku / ASIC ベンダー (broadcom / mellanox / marvell / cisco-8000 / barefoot / nephos / centec / vs) | grep 0 ヒット。BGP_GLOBALS は SAI 経路を持たないため ASIC 種別非依存。 |
+BGP_GLOBALS 本体（router-id / local_asn / graceful-restart 等）の処理に**プラットフォーム固有分岐はない**。ただし以下の **3 つの隣接機能**がプラットフォーム種別に依存して挙動を変える:
 
-## 一次証跡 (grep)
+1. **chassis TSA 伝播** — `is_chassis()` が true のとき `ChassisAppDbMgr` が追加登録される
+2. **switch_role による IDF isolation スキップ** — `SpineRouter` / `LowerSpineRouter` / `UpperSpineRouter` 以外では IDF 経路分離が無効
+3. **switch_type / subtype による AsPath Manager 限定起動** — `SpineRouter/UpstreamLC` および `UpperSpineRouter` のみ `AsPathMgr` が追加される
 
-### `frrcfgd.py` (3985 行)
+multi-asic 構成では bgpcfgd は各 ASIC コンテナで独立に起動し、各 ASIC 専用の CONFIG_DB を購読する。BGP_GLOBALS の処理自体に namespace 分岐コードはない。
 
-```
-$ grep -cE 'platform|chassis|asic_type|switch_type|multi_npu|namespace|sub_role|TSA' \
-    src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py
-0
-```
+`frrcfgd.py` および `bgpd.conf.db.j2` にはプラットフォーム分岐なし（grep 0 ヒット確認済み）。
 
-`BGP_GLOBALS` のフィールド処理を担う `global_key_map` (L1784-1821)、
-`bgp_global_handler()` (L3918-3937)、`__update_bgp()` (L2685-2727) を含む
-全行に platform / chassis / asic 系の分岐記述は無い。`vrf == 'default'`
-か否かの分岐のみが構文上の場合分けである。
+---
 
-### `bgpd.conf.db.j2` (204 行)
+## 詳細調査
 
-```
-$ grep -cE 'platform|chassis|asic_type|switch_type' \
-    src/sonic-frr-mgmt-framework/templates/bgpd/bgpd.conf.db.j2
-0
+### 1. chassis 環境: `ChassisAppDbMgr` の条件付き登録
+
+`main.py:112-113`:
+```python
+if device_info.is_chassis():
+    managers.append(ChassisAppDbMgr(common_objs, "CHASSIS_APP_DB", "BGP_DEVICE_GLOBAL"))
 ```
 
-`BGP_GLOBALS` 反映テンプレートは vrf / フィールド有無のみで分岐する。
+- 非 chassis 環境: `ChassisAppDbMgr` は登録されない → `CHASSIS_APP_DB` を購読しない
+- chassis 環境: スーパーバイザの `BGP_DEVICE_GLOBAL.tsa_enabled` 変化を監視し、line card の TSA 状態を `DeviceGlobalCfgMgr.isolate_unisolate_device()` に伝播する
 
-### `bgpcfgd/managers_bgp.py` (597 行)
-
+`managers_chassis_app_db.py:40-44`:
+```python
+if "tsa_enabled" in data:
+    if self.lc_tsa == "false":  # line card 自身が TSA 中でない場合のみ
+        self.dev_cfg_mgr.isolate_unisolate_device(data["tsa_enabled"])
 ```
-$ grep -cE 'BGP_GLOBALS|chassis_tsa|switch_type|sub_role' \
-    src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py
-0    # BGP_GLOBALS 文字列の直接購読なし
+
+**BGP_GLOBALS 本体との関係**: TSA は BGP_DEVICE_GLOBAL テーブル経由で適用される route-map 操作であり、BGP_GLOBALS フィールドを直接書き換えない。ただし BGP peer-group テンプレートレンダリング時に `check_state_and_get_tsa_routemaps()` が chassis_tsa を確認する (`managers_device_global.py:238-251`)。
+
+### 2. chassis TSA 状態取得
+
+`managers_device_global.py:238-251`:
+```python
+def get_chassis_tsa_status(self):
+    chassis_tsa_status = "false"
+    if not device_info.is_chassis():
+        return chassis_tsa_status  # 非 chassis は常に "false"
+    ch = swsscommon.SonicV2Connector(...)
+    ch.connect(ch.CHASSIS_APP_DB, False)
+    chassis_tsa_status = ch.get(ch.CHASSIS_APP_DB, "BGP_DEVICE_GLOBAL|STATE", 'tsa_enabled')
+    return chassis_tsa_status
 ```
 
-`BGPPeerMgrBase` は `BGP_NEIGHBOR` / `BGP_INTERNAL_NEIGHBOR` /
-`BGP_MONITORS` / `BGP_PEER_RANGE` / `BGP_VOQ_CHASSIS_NEIGHBOR` /
-`BGP_SENTINELS` を購読するが、`BGP_GLOBALS` は購読しない。
-`router bgp <asn>` を発行するのは neighbor 反映時の peer-group 構築
-(`managers_bgp.py:69-71`) であり、`BGP_GLOBALS.local_asn` の値は
-`DEVICE_METADATA.bgp_asn` または NEIGHBOR_META から取得する別経路を
-通る。
+- 非 chassis: 常に `"false"` を返す（CHASSIS_APP_DB に接続しない）
+- chassis: `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL|STATE.tsa_enabled` を参照
 
-### `bgpcfgd/managers_device_global.py`
+### 3. switch_role による IDF isolation 制御
 
-`chassis_tsa` / `switch_role` / `switch_type` を持つが、いずれも
-`BGP_DEVICE_GLOBAL` テーブル経由で **route-map** と **frr 設定 push** に
-反映するもので、`BGP_GLOBALS` フィールドの値変換には介入しない。
+`managers_device_global.py:260-261`:
+```python
+if self.switch_role and self.switch_role not in ["SpineRouter", "LowerSpineRouter", "UpperSpineRouter"]:
+    log_debug("DeviceGlobalCfgMgr:: Skipping IDF isolation configuration on %s" % self.switch_role)
+    return True
+```
 
-| 関数 | 行 | 役割 | BGP_GLOBALS への作用 |
-|------|----|------|----------------------|
-| `get_chassis_tsa_status()` | 238-251 | `device_info.is_chassis()` 真なら `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL\|STATE.tsa_enabled` を取得 | なし (戻り値は `check_state_and_get_tsa_routemaps()` 経由で neighbor route-map に伝播) |
-| `check_state_and_get_tsa_routemaps()` | 170-181 | tsa_status または chassis_tsa が `true` のとき TSA route-map 文字列を返す | なし (peer-group push 時に `router bgp <asn>` ブロック末尾に追記、`BGP_GLOBALS` フィールドは変更しない) |
-| `downstream_isolate_unisolate()` | 257-... | `switch_role` が SpineRouter / LowerSpineRouter / UpperSpineRouter のときのみ IDF route-map を push | なし |
-| `__generate_routemaps_from_template()` | 213-225 | `_INTERNAL_` / `VOQ_` を含む route-map 名を chassis-packet 用に internal フラグ `1` で render | なし |
+`switch_role` は `DEVICE_METADATA|localhost|type` から取得 (`managers_device_global.py:54`)。
 
-### `bgpcfgd/main.py`
+| switch_role 値 | IDF isolation 適用 |
+|---------------|------------------|
+| `SpineRouter` | 適用される |
+| `LowerSpineRouter` | 適用される |
+| `UpperSpineRouter` | 適用される |
+| `LeafRouter` / `ToRRouter` / 未設定 / 空 | **スキップ** |
 
-| 行 | 条件 | manager | BGP_GLOBALS への作用 |
-|----|------|---------|----------------------|
-| 112-113 | `device_info.is_chassis()` | `ChassisAppDbMgr` を追加 | なし (CHASSIS_APP_DB の `BGP_DEVICE_GLOBAL` を Directory にミラーするのみ) |
-| 122-129 | `type == 'SpineRouter' and subtype == 'UpstreamLC'` または `type == 'UpperSpineRouter'` | `AsPathMgr` を追加 | なし (`DEVICE_METADATA` を購読し as-path access-list を FRR に push) |
+IDF isolation は BGP_DEVICE_GLOBAL テーブルの `idf_isolation_state` で制御され、BGP_GLOBALS を直接操作しない。ただし peer-group テンプレートに反映される。
 
-## 観点別判定
+### 4. switch_type/subtype による AsPath Manager 条件起動
 
-### ASIC ベンダー / HwSku
+`main.py:122-130`:
+```python
+is_upstream_lc = (type == "SpineRouter" and subtype == "UpstreamLC")
+is_upper_spine_router = (type == "UpperSpineRouter")
+if is_upstream_lc or is_upper_spine_router:
+    managers.append(AsPathMgr(common_objs, "CONFIG_DB", "DEVICE_METADATA"))
+```
 
-直接分岐なし。BGP_GLOBALS は SAI を駆動しないため ASIC ベンダー固有の
-capability 問合せ・属性 ID 切替・mandatory フィールド差はそもそも
-発生しない。FRR vtysh への push は文字列のみで完結する。
+AsPath Manager は BGP_GLOBALS ではなく `DEVICE_METADATA` テーブルを購読し、AS_PATH 操作のポリシーを管理する。BGP_GLOBALS テーブルとの直接の相互作用はない。
 
-### multi-asic (`is_multi_npu`)
+### 5. VOQ chassis: BGP_VOQ_CHASSIS_NEIGHBOR
 
-`frrcfgd` は単一プロセスとして起動するが、namespace ごとに CONFIG_DB
-が独立しているため、各 namespace で個別の `frrcfgd` が同一コードで
-動作する。テーブル受理ロジックに `namespace` の参照は無い。
-`BGP_GLOBALS|<vrf>` の key 空間は namespace ごとに独立する。
+`main.py:91`:
+```python
+BGPPeerMgrBase(common_objs, "CONFIG_DB", "BGP_VOQ_CHASSIS_NEIGHBOR", "voq_chassis", False),
+```
 
-### VOQ / packet-based chassis
+VOQ chassis 環境でのみ実際に設定が入るテーブルだが、`BGPPeerMgrBase` は**常時**登録される（条件なし）。データがある場合のみ実際に FRR コマンドが生成される。BGP_GLOBALS 本体処理との分岐関係はない。
 
-`BGP_GLOBALS` 自体には差なし。間接影響:
+### 6. multi-asic: per-ASIC bgpcfgd 独立起動
 
-- 起動時 `ChassisAppDbMgr` 追加で `chassis_tsa` を取得可能化。
-- `chassis_tsa=='true'` のとき `router bgp <asn>` ブロック配下の
-  neighbor `route-map ... out` を TSA 用に差し替え。`BGP_GLOBALS` の
-  `local_asn` / `router_id` / `keepalive` 等は変更されない。
-- `switch_type='chassis-packet'` のときシャーシ内 iBGP セッション
-  (route-map 名に `_INTERNAL_` / `VOQ_` を含む) を `internal_route_map=1`
-  で扱い、TSA 適用時にも shut down しないよう render する。
+multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1`, ...）が独立して `bgpcfgd` を起動する。各インスタンスは対応する ASIC namespace の CONFIG_DB（`asic0`, `asic1`, ...）に接続し、BGP_GLOBALS を購読する。
 
-### switch_role
+`bgpcfgd` コード内に `is_multi_asic()` / `is_multi_npu()` の呼び出しは**存在しない**（全ディレクトリ grep 0 ヒット）。namespace 切り替えやループ処理も実装されていない。各 bgpcfgd インスタンスが単一 CONFIG_DB を前提に設計されているため、multi-asic 対応はコンテナ多重起動で実現される。
 
-`SpineRouter` / `LowerSpineRouter` / `UpperSpineRouter` のとき IDF
-isolation route-map が push される。`UpstreamLC` / `UpperSpineRouter`
-で `AsPathMgr` が追加起動する。`BGP_GLOBALS` のフィールド本体は
-いずれの role でも同一に処理される。
+### 7. frrcfgd: プラットフォーム分岐なし
 
-### vrf == default vs 非 default
+`frrcfgd.py` に `chassis`, `tsa`, `switch_role`, `switch_type`, `multi_asic`, `is_chassis`, `VOQ` 等の文字列でのヒットなし（grep 確認済み）。frrcfgd は platform-agnostic に BGP_GLOBALS を処理する。
 
-唯一の構文上の分岐: `frrcfgd.py:2162-2166, 2442-2447` で `default` VRF
-のみ `DEVICE_METADATA.bgp_asn` を `local_asn` の代替 source として
-受け入れる。これはプラットフォーム差ではなく VRF scope 差。
+### 8. bgpd.conf.db.j2: プラットフォーム分岐なし
 
-## 結論
+`bgpd.conf.db.j2` に `chassis`, `tsa`, `switch_role`, `switch_type`, `multi_asic`, `voq` 等のヒットなし（grep 確認済み）。テンプレート内の分岐は BGP_GLOBALS フィールド値（boolean / uint）のみに依存する。
 
-**BGP_GLOBALS テーブルの値変換・FRR コマンド生成自体にはプラットフォーム
-差・ASIC 差・HwSku 差・multi-asic 差は無い** (grep evidence 上記)。
-`chassis_tsa` / `switch_role` / `switch_type` / `device_info.is_chassis()`
-は `BGP_DEVICE_GLOBAL` 経路で **同一 `router bgp <asn>` ブロック配下の
-neighbor route-map と IDF state push** に影響するが、`BGP_GLOBALS` の
-フィールド値そのものを書き換えない。詳細な分岐挙動は
-`docs/reference/config-db/bgp-device-global.md` の Phase H ブロック
-および `meta/_intermediate/cdb-flow/bgp-device-global-platform.md` を
-参照。
+---
 
-## 参照
+## grep カバレッジ証跡
 
-- `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`
-  (全 3985 行 grep)
-- `sonic-buildimage/src/sonic-frr-mgmt-framework/templates/bgpd/bgpd.conf.db.j2`
-  (全 204 行 grep)
-- `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:69-71, 504-506`
-- `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:12-251`
-- `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:112-129`
+| 検索対象 | ファイル | ヒット数 | 結果 |
+|---------|--------|--------|-----|
+| `chassis\|tsa\|switch_role` | `frrcfgd.py` | 0 | 分岐なし |
+| `chassis\|tsa\|switch_role` | `bgpd.conf.db.j2` | 0 | 分岐なし |
+| `multi.asic\|is_multi_asic` | `bgpcfgd/` 全体 | 0 (テストのみ) | 本番コードに分岐なし |
+| `is_chassis` | `main.py` | 1 | ChassisAppDbMgr 登録のみ |
+| `switch_role\|switch_type` | `managers_device_global.py` | 3 | IDF/AsPath 制御のみ |
+| `VOQ` | `managers_device_global.py` | 1 | TSA route-map 分類のみ |
