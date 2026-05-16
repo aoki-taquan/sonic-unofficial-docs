@@ -325,6 +325,24 @@ REST/gNMI 書き込み経路なし
 
 1. **`VLAN_MEMBER` DEL → `VLAN` DEL**: VLAN を先に DEL すると `STATE_VLAN_TABLE` から対象エントリが即座に削除される。残存する `VLAN_MEMBER` タスクは `isVlanStateOk()` チェックが永遠に false になり孤立する (`vlanmgr.cpp:456-471`)。**必ず VLAN_MEMBER を全削除してから VLAN を削除すること**。
 
+### Linux IF 設定順（addHostVlan / addHostVlanMember 内部）
+
+VLAN SET が受け付けられ `addHostVlan()` が実行される際の **カーネル側コマンド実行順序**（`vlanmgr.cpp:118-143`）:
+
+1. `bridge vlan add vid <N> dev Bridge self` — dot1q ブリッジへの VLAN ID 登録
+2. `ip link add link Bridge up name Vlan<N> address <gMacAddress> type vlan id <N>` — VLAN インタフェース作成（Bridge にリンクし、スイッチ MAC を付与）
+3. `echo 0 > /proc/sys/net/ipv4/conf/Vlan<N>/arp_evict_nocarrier` — ARP evict on nocarrier を無効化（ベストエフォート、失敗しても vlanmgrd はクラッシュしない）
+
+ステップ 1 が完了してから 2 を実行するため、ブリッジに VLAN ID が存在しない状態でインタフェースが作成されることはない。ステップ 2 失敗（`EXEC_WITH_ERROR_THROW`）は `vlanmgrd` プロセスをクラッシュさせる。
+
+VLAN_MEMBER SET が受け付けられ `addHostVlanMember()` が実行される際のコマンド順序（`vlanmgr.cpp:233-273`）:
+
+1. `ip link set <port_alias> master Bridge` — ポートを dot1q ブリッジに収容
+2. `bridge vlan del vid 1 dev <port_alias>` — デフォルト VLAN 1 を削除
+3. `bridge vlan add vid <N> dev <port_alias> [pvid untagged]` — 指定 VLAN ID を追加
+
+これら 3 ステップは 1 つの bash -c 呼び出しで &&チェーン実行される。いずれかが失敗すると以降のステップは実行されない。PortChannel の場合のみ失敗時に `false` を返してリトライ（Ethernet はクラッシュ）。
+
 ### warm-reboot / restart 影響
 
 - **swss docker restart（warm-reboot）**: Linux カーネルのブリッジ・VLAN インタフェースはカーネル空間に残存するため、vlanmgrd は `ip link show Bridge` で存在を確認してブリッジ再作成をスキップする (`vlanmgr.cpp:64-75`)。STATE_DB の既存エントリと照合して重複作成を回避し、`WarmStart::REPLAYED` → `RECONCILED` に自動遷移する (`vlanmgr.cpp:371-378, 479-488`)。
