@@ -400,4 +400,37 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 詳細スキャン結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-constants.md` を参照。
 <!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照 — `BGPConfigDaemon` が読み出す関連 CONFIG_DB テーブル (Phase C)
+
+`frrcfgd` の `BGPConfigDaemon` は `BGP_PEER_GROUP_AF` テーブル単体ではなく、起動時に関連テーブルを一括ロードし、ランタイム処理の前提として参照する。以下は `frrcfgd.py` のスキャンで検出した暗黙参照テーブル。
+
+### 必須前提テーブル
+
+| テーブル | 参照種別 | 用途 | evidence |
+|---|---|---|---|
+| [`BGP_PEER_GROUP`](./bgp-peer-group.md) | 起動時 `get_table()` + ランタイム前提 | 起動時に `self.bgp_peer_group[vrf][pg_name]` キャッシュを構築。peer-group が FRR に存在しない状態で AF 設定を発行すると vtysh コマンドが失敗し `LOG_ERR` を出力する。`BGP_PEER_GROUP_AF` より先に設定する必要がある | frrcfgd.py:2187-2191, 2865, 2873 |
+| `BGP_GLOBALS` | ランタイム guard | `__get_vrf_asn(vrf)` が None (= `local_asn` 未設定) の VRF に対する更新を `LOG_DEBUG` して silent skip する。VRF の `BGP_GLOBALS.local_asn` が設定されるまで `BGP_PEER_GROUP_AF` の変更は無効 | frrcfgd.py:2658-2662 |
+
+### 処理順序依存テーブル
+
+| テーブル | 参照種別 | 用途 | evidence |
+|---|---|---|---|
+| [`BGP_GLOBALS_AF`](./bgp-globals-af.md) | 処理順序依存 | `address-family <af> <type>` コンテキストを事前に FRR へ確立するテーブル。`BGP_PEER_GROUP_AF` のコマンドは同コンテキスト内で発行されるため、`BGP_GLOBALS_AF` の設定が先行している必要がある | frrcfgd.py:2297, 2771-2781, 2869-2871 |
+
+### 文字列名参照テーブル (フィールド値として名前参照)
+
+| テーブル | 参照フィールド | FRR コマンド | evidence |
+|---|---|---|---|
+| `ROUTE_MAP` | `route_map_in` | `neighbor <pg> route-map <name> in` | frrcfgd.py:1903, 2206 |
+| `ROUTE_MAP` | `route_map_out` | `neighbor <pg> route-map <name> out` | frrcfgd.py:1904, 2206 |
+| `ROUTE_MAP` | `default_rmap` | `neighbor <pg> default-originate route-map <name>` | frrcfgd.py:1900, 2206 |
+| `PREFIX` / `PREFIX_SET` | `prefix_list_in` | `neighbor <pg> prefix-list <name> in` | frrcfgd.py:1918, 2227-2247 |
+| `PREFIX` / `PREFIX_SET` | `prefix_list_out` | `neighbor <pg> prefix-list <name> out` | frrcfgd.py:1919, 2227-2247 |
+
+> `ROUTE_MAP` と `PREFIX` / `PREFIX_SET` は `frrcfgd` が起動時に一括ロードしてキャッシュする (L2206, L2227-2247)。フィールド値は FRR に文字列として渡されるだけで DB ルックアップは行われないが、FRR 側で未定義名を参照すると policy が機能しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-peer-group-af-cross-refs.md` を参照。
+<!-- /cross-refs -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
