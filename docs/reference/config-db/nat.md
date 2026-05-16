@@ -367,7 +367,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatGlobalTask L7105-7374 / sonic-swss/orchagent/natorch.cpp doNatGlobalTableTask L2904-2966, enableNatFeature L2534-2581, disableNatFeature L2583-2625 -->
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatGlobalTask L7105-7374, doNatPoolTask L6482-6866 / sonic-swss/orchagent/natorch.cpp doNatGlobalTableTask L2904-2966, enableNatFeature L2534-2581, disableNatFeature L2583-2625, addHwDnatPoolEntry L1780-1818, removeHwDnatPoolEntry L1822-1850, addHwSnatIpEntry L1274-1328 -->
 
 ### NatMgr 層 (CONFIG_DB → APPL_DB)
 
@@ -396,6 +396,41 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | `SAI_SWITCH_ATTR_NAT_ENABLE=true` SAI 失敗 | `handleSaiSetStatus()` で対応 (SAI エラー種別によって abort / retry) | `SWSS_LOG_ERROR "Failed to enable NAT: %d"` | SAI 依存 |
 | `SAI_SWITCH_ATTR_NAT_ENABLE=false` SAI 失敗 | `handleSaiSetStatus()` で対応。内部 `admin_mode="disabled"` は SAI 失敗前に設定済みのため SAI と乖離しうる | `SWSS_LOG_ERROR "Failed to disable NAT: %d"` | SAI 依存 |
 | `admin_mode` が `"enabled"`/`"disabled"` 以外 (APPL_DB 直接書き込み) | `assert()` → **orchagent abort (SIGABRT)** | — | — |
+
+### NatOrch 層 — NAT_POOL / DNAT Pool / SNAT SAI 操作失敗
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp addHwDnatPoolEntry L1780-1818 / removeHwDnatPoolEntry L1822-1850 / addHwSnatIpEntry L1274-1328 / addHwSnatNaptEntry L1434-1490 / doDnatPoolTableTask L2967-3029 -->
+
+| 条件 | パターン | ログ | retry |
+|---|---|---|---|
+| DNAT Pool `create_nat_entry()` SAI 失敗 | `handleSaiCreateStatus()` が abort / retry / 継続を決定。失敗時は `doDnatPoolTableTask` でエントリを `it++` して再キュー | `SWSS_LOG_ERROR "Failed to create DNAT Pool entry with ip %s"` | SAI 依存 |
+| DNAT Pool `remove_nat_entry()` SAI 失敗 | `handleSaiRemoveStatus()` で対応。内部 `m_dnatPoolEntries` からはすでに削除済みのため SAI と乖離しうる | `SWSS_LOG_INFO "Failed to remove DNAT Pool entry with ip %s"` (INFO レベル) | SAI 依存 |
+| SNAT NAT entry `create_nat_entry()` SAI 失敗 | `handleSaiCreateStatus()` で対応。`addedToHw = false` のまま保持 → 再キューにより次回再試行 | `SWSS_LOG_ERROR "Failed to create %s SNAT NAT entry with ip %s ..."` | SAI 依存 |
+| `admin_mode=disabled` 状態で DNAT Pool 追加 | `addHwDnatPoolEntry()` で即 `return true`。SAI 操作なし。エントリは `m_dnatPoolEntries` に挿入済みのため、NAT 有効化時に `addAllDnatPoolEntries()` が一括 SAI 登録 | `SWSS_LOG_WARN "NAT Feature is not yet enabled, skipped adding DNAT Pool entry ..."` | — |
+| DNAT Pool key サイズ != 1 (APPL_DB 直接操作) | erase。IP アドレス単体以外のキーは無効 | `SWSS_LOG_ERROR "Invalid key size, skipping %s"` | なし |
+
+### NatMgr 層 — NAT_POOL 不正 IP range / 参照中 DEL
+
+<!-- evidence: sonic-swss/cfgmgr/natmgr.cpp doNatPoolTask L6482-6866, isPoolMappedtoBinding L181-196 -->
+
+| 条件 | パターン | ログ | retry |
+|---|---|---|---|
+| `nat_ip` の IP が 0.0.0.0 / ループバック / マルチキャスト / ブロードキャスト / 予約済み | erase。YANG の `ip-address-range` typedef はこれらを拒否しないため実装側でガード | `SWSS_LOG_ERROR "Invalid pool IP address ..."` | なし |
+| `nat_ip` 範囲で low >= high (例: `10.0.0.5-10.0.0.3`) | erase。YANG は IP 順序を検証しない | `SWSS_LOG_ERROR "..." ` | なし |
+| `nat_port` に port 0 を含む (例: `0-1024`) | erase。`L4_PORT_MIN=1` 以下を拒否 (`natmgr.cpp:6694`)。YANG は 0 を許容 | `SWSS_LOG_ERROR "Invalid port range ..."` | なし |
+| `nat_ip` が既存 `STATIC_NAT` の global_ip と重複 | erase。pool IP と static NAT IP が衝突するとパケット転送が不定になるためガード | `SWSS_LOG_ERROR "Pool Ip address is overlaps with static NAT entry"` | なし |
+| NAT_POOL DEL 時に対応する NAT_BINDINGS が存在 (参照中 DEL) | DEL をブロックしない。`isPoolMappedtoBinding()` で参照を確認後、`removeDynamicNatRule()` で iptables ルールを削除してからキャッシュを削除。YANG leafref は DB 削除後に整合性を再評価しない | `SWSS_LOG_INFO "Pool %s is mapped on binding %s, deleting the dynamic iptables rules"` | — |
+| NAT_POOL DEL で key がキャッシュに存在しない | erase のみ。APPL_DB 操作なし | `SWSS_LOG_ERROR "Invalid NAT Pool %s from Config_db, do nothing"` | なし |
+
+**注意 — 参照中 DEL の危険**: NAT_POOL を削除するとき、対応する NAT_BINDINGS が DB に残っていてもエラーにならない。natmgr は iptables ルールを削除してキャッシュをクリアするが、NAT_BINDINGS の `nat_pool` leafref は dangling になる。再度 NAT_POOL を同名で追加すれば `addDynamicNatRule()` が再実行されるが、それまでの間は dynamic NAT セッションが確立できない。
+
+### conntrack タイムアウト通知の失敗
+
+<!-- evidence: sonic-swss/orchagent/natorch.cpp updateAllConntrackEntries L3443-3503 / setTimeoutNotifier SETTIMEOUTNAT channel -->
+
+- `updateAllConntrackEntries()` は `NAT_CONNTRACK_TIMEOUT_PERIOD`（86400秒 = 1日）周期の `SelectableTimer` で起動し、`setTimeoutNotifier->send("SET-SINGLE-NAT", ...)` 等を APPL_DB `SETTIMEOUTNAT` チャンネルへ通知する。
+- **通知失敗は検出されない**: `NotificationProducer::send()` の戻り値は未チェック。Redis 障害時はサイレントに drop。
+- **タイマー起動失敗**: `enableNatFeature()` 内 `m_natTimeoutTimer->start()` が SAI 失敗後も無条件に実行される (`natorch.cpp:2568`)。SAI との状態不整合がある場合でも conntrack タイマーは起動する。
 
 ### STATE_DB / ERROR_TABLE への記録
 
