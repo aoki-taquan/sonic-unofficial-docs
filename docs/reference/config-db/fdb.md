@@ -60,6 +60,65 @@ string type = "dynamic";
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数
+
+### FDB type 列挙値（文字列）
+
+`fdborch.cpp:830` の assert が受け入れる有効文字列:
+
+| 文字列値 | 意味 |
+|---------|------|
+| `"static"` | 静的エントリ。エージングしない。手動 / PAC プロビジョニング |
+| `"dynamic"` | 動的エントリ。エージングによって削除される |
+| `"dynamic_local"` | MCLAG ローカル扱い。SAI 上は DYNAMIC だがフラッシュ除外対象 |
+
+有効値以外が渡ると `assert()` でプロセスクラッシュ (`fdborch.cpp:830`)。
+
+### SAI FDB エントリ属性（`sai_fdb_entry_attr_t`）
+
+`addFdbEntry()` 内で設定される SAI 属性一覧 (`fdborch.cpp:1424–1497`):
+
+| SAI 属性 ID | 設定値 / 条件 | コード行 |
+|------------|--------------|---------|
+| `SAI_FDB_ENTRY_ATTR_TYPE` | `SAI_FDB_ENTRY_TYPE_STATIC` / `SAI_FDB_ENTRY_TYPE_DYNAMIC` | L1424–L1435 |
+| `SAI_FDB_ENTRY_ATTR_BRIDGE_PORT_ID` | ポートの bridge port OID | L1449 |
+| `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` | static エントリ時 `true` (MCLAG 連携) | L1444–L1445 |
+| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | VxLAN リモート VTEP IP | L1467 / L1481 |
+| `SAI_FDB_ENTRY_ATTR_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` (`discard="true"`) / `SAI_PACKET_ACTION_FORWARD` | L1496–L1497 |
+
+### FDB フラッシュ属性（`sai_fdb_flush_attr_t`）
+
+`flushFdbAll()` / `flushFdbByVlan()` で使用:
+
+| SAI 属性 ID | 設定値 | コード行 |
+|------------|--------|---------|
+| `SAI_FDB_FLUSH_ATTR_ENTRY_TYPE` | `SAI_FDB_FLUSH_ENTRY_TYPE_DYNAMIC`（static はフラッシュしない） | L949, L1122, L1162 |
+| `SAI_FDB_FLUSH_ATTR_BV_ID` | VLAN の BV OID | L1116, L1159 |
+| `SAI_FDB_FLUSH_ATTR_BRIDGE_PORT_ID` | ポートの bridge port OID | L1109 |
+
+### FDB Origin 列挙値（`FdbOrigin` enum）
+
+`fdborch.h:8–14` 定義:
+
+| 定数 | 値 | 意味 |
+|------|----|------|
+| `FDB_ORIGIN_INVALID` | `0` | 初期値・無効 |
+| `FDB_ORIGIN_LEARN` | `1` | カーネル FDB 学習（自動） |
+| `FDB_ORIGIN_PROVISIONED` | `2` | swssconfig / ユーザー設定 |
+| `FDB_ORIGIN_VXLAN_ADVERTIZED` | `4` | BGP-EVPN VxLAN 広報 |
+| `FDB_ORIGIN_MCLAG_ADVERTIZED` | `8` | MCLAG ピア広報 |
+
+`removeFdbEntry()` のデフォルト引数は `FDB_ORIGIN_PROVISIONED` (`fdborch.h:101`)。
+
+### `discard` フィールドのデフォルト
+
+`fdborch.cpp:775`: `string discard = "false";` — フィールド省略時は `"false"`。
+
+`discard="true"` の場合、SAI に `SAI_PACKET_ACTION_DROP` が設定される (`fdborch.cpp:1497`)。
+
+<!-- /constants -->
+
 ## key 構造
 
 ```text
