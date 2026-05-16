@@ -377,6 +377,9 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 
 **補足**: `PORT_QOS_MAP` 側の `handlePortQosMapTable()` が複数ポートをループし、各ポートに `set_port_attribute` を呼ぶ。マップ削除時には OID に `SAI_NULL_OBJECT_ID` を設定して属性をクリアする。
 
+
+詳細: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-side-effects.md`
+
 <!-- /side-effects -->
 
 <!-- pubsub -->
