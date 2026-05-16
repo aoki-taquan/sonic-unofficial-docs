@@ -495,80 +495,39 @@ CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `
 
 <!-- /failure -->
 
-<!-- pubsub -->
-## 通信メカニズム (Phase G)
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
 
-MUX_CABLE テーブル周辺の Pub/Sub・通知経路を `muxorch.cpp` / `orchdaemon.cpp` から抽出した結果。
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:625-628,1094-1100,2192-2193,2218-2228,2240-2246,2281,2327 -->
 
-### CONFIG_DB → MuxOrch (SubscriberStateTable)
+### Active-Standby vs Active-Active モデル差
 
-`orchdaemon` が起動時に `MuxOrch` を構築し、`CFG_MUX_CABLE_TABLE_NAME`（`"MUX_CABLE"`）と `CFG_PEER_SWITCH_TABLE_NAME` を `SubscriberStateTable` で購読する。
-Redis の keyspace notification に基づき、`HSET`/`DEL` を検知して `doTask()` → `handleMuxCfg()` を呼ぶ。
-明示的な `PUBLISH` は行わず、CONFIG_DB への書き込みのみがトリガとなる。
+| 観点 | Active-Standby (default) | Active-Active |
+|------|--------------------------|---------------|
+| ACL drop rule | standby 遷移時に追加 | **skip** — `cable_type_ == ACTIVE_ACTIVE` 時に `aclHandler` を即 `return true` (muxorch.cpp:625-628) |
+| `soc_ipv4` / `soc_ipv6` | 無視 | `skip_neighbors` に追加し tunnel 経由を抑制 (muxorch.cpp:2218-2228) |
+| `state=detach` | linkmgrd が WARN → 無視 | NIC/ToR を論理的に切り離す active-active 専用機能 |
+| tunnel NH | standby 遷移で peer ToR への SAI tunnel NH を使用 | 両 ToR で tunnel NH 設定可能 |
 
-```cpp
-// orchdaemon.cpp:467-471
-vector<string> mux_tables = {
-    CFG_MUX_CABLE_TABLE_NAME,    // "MUX_CABLE"
-    CFG_PEER_SWITCH_TABLE_NAME   // "PEER_SWITCH"
-};
-gMuxOrch = new MuxOrch(m_configDb, mux_tables, ...);
-```
+### xcvrd (hardware prober / gRPC) 実装差
 
-### APPL_DB → MuxCableOrch (SubscriberStateTable)
+- `prober_type=hardware` では xcvrd が gRPC 経由でハードウェア MUX を制御する。
+- active-active 構成で `soc_ipv4`/`soc_ipv6` が設定されると、当該 IP は `skip_neighbors` セットに登録される。
+- `MuxNbrHandler::updateTunnelRoute()` 呼び出し時、skip_neighbor は tunnel route 更新をスキップ — xcvrd(gRPC) のトラフィックが NIC(SoC) へローカルフローするよう保護される (muxorch.cpp:1094-1100)。
+- `prober_type=software` (linkmgrd ICMP) との差: linkmgrd は APPL_DB 経由で state を切り替えるが、xcvrd は gRPC でハードウェア MUX を直接操作する別経路。
 
-`linkmgrd` が ICMP prober 結果を `APPL_DB::MUX_CABLE_TABLE` へ書き込むと、
-`MuxCableOrch::addOperation()` が呼ばれ `MuxCable::setState()` 経由でステートマシンを駆動する。
+### SmartSwitch DPU 差
 
-```cpp
-// orchdaemon.cpp:474
-MuxCableOrch *mux_cb_orch = new MuxCableOrch(m_applDb, m_stateDb, APP_MUX_CABLE_TABLE_NAME);
-// muxorch.cpp:2508-2513: updateMuxState() → APPL_DB::HW_MUX_CABLE_TABLE に hset
-```
+- `soc_ipv4` / `soc_ipv6` は SmartSwitch の SoC (DPU: Data Processing Unit) に対応するフィールド。
+- SoC IP は `addSkipNeighbors()` で登録され、通常の neighbor → tunnel NH 切替から除外される (muxorch.cpp:2281)。
+- DELETE 時は `removeSkipNeighbors()` でクリア (muxorch.cpp:2327)。
+- `prefix_nbrs_supported_` が `false` の ASIC では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
 
-### STATE_DB MUX_CABLE notify — xcvrd 経路
+### neighbor_mode × ASIC サポート差
 
-`xcvrd`（platform-daemons）が物理 MUX ハードウェアの hw_state を `STATE_DB::HW_MUX_CABLE_TABLE` へ書き込む。
-`MuxStateOrch` がこのテーブルを `SubscriberStateTable` で購読し、HW state とソフトウェア state を照合して
-`STATE_DB::MUX_CABLE_TABLE` へ最終状態（`active`/`standby`/`unknown`/`error`）を書き込む。
+| ASIC 能力 | `prefix_nbrs_supported_` | `neighbor_mode=prefix-route` 効果 |
+|-----------|--------------------------|-----------------------------------|
+| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 対応 | `true` | `MuxPrefixBasedNbrHandler` 選択 |
+| 非対応 | `false` | `MuxNbrHandler` (host-route) に強制降格（ログのみ） |
 
-```cpp
-// orchdaemon.cpp:477
-MuxStateOrch *mux_st_orch = new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME);
-// muxorch.cpp:2638-2640: updateMuxState() → STATE_DB::MUX_CABLE_TABLE["state"]
-// muxorch.cpp:1094: xcvrd(gRPC) 経路は kernel route 再プログラムを skip
-```
-
-### 通信フロー概要
-
-```mermaid
-flowchart TD
-  CLI["config muxcable (CLI)"] -->|HSET| CFG[("CONFIG_DB\nMUX_CABLE")]
-  CFG -->|SubscriberStateTable| MuxOrch["MuxOrch\n(orchagent)"]
-  MuxOrch -->|hset neighbor_mode| STDB_MUX[("STATE_DB\nMUX_CABLE_TABLE")]
-  MuxOrch -->|SAI| SAI["sai_neighbor_api\nACL rules"]
-
-  linkmgrd["linkmgrd\n(docker-mux)"] -->|ProducerStateTable| APPL[("APPL_DB\nMUX_CABLE_TABLE")]
-  APPL -->|SubscriberStateTable| MuxCableOrch["MuxCableOrch\n(orchagent)"]
-  MuxCableOrch -->|setState| MuxOrch
-  MuxCableOrch -->|hset state| APPL_HW[("APPL_DB\nHW_MUX_CABLE_TABLE")]
-  MuxCableOrch -->|hset metrics| STDB_METRICS[("STATE_DB\nMUX_METRICS_TABLE")]
-
-  xcvrd["xcvrd\n(platform-daemons)"] -->|hset hw_state| HW_STATE[("STATE_DB\nHW_MUX_CABLE_TABLE")]
-  HW_STATE -->|SubscriberStateTable| MuxStateOrch["MuxStateOrch\n(orchagent)"]
-  MuxStateOrch -->|setState| MuxOrch
-  MuxStateOrch -->|hset state| STDB_MUX
-```
-
-### チャネル種別まとめ
-
-| 経路 | Publisher | Subscriber | チャネル種別 |
-|------|-----------|------------|-------------|
-| `CONFIG_DB::MUX_CABLE` → MuxOrch | config-cli / minigraph | MuxOrch | SubscriberStateTable (keyspace) |
-| `APPL_DB::MUX_CABLE_TABLE` → MuxCableOrch | linkmgrd | MuxCableOrch | SubscriberStateTable |
-| `STATE_DB::HW_MUX_CABLE_TABLE` → MuxStateOrch | xcvrd | MuxStateOrch | SubscriberStateTable |
-| MuxOrch → `STATE_DB::MUX_CABLE_TABLE` | orchagent | (downstream) | Table::hset (direct write) |
-| MuxCableOrch → `APPL_DB::HW_MUX_CABLE_TABLE` | orchagent | xcvrd / linkmgrd | Table::set (direct write) |
-| MuxCableOrch → `STATE_DB::MUX_METRICS_TABLE` | orchagent | monitoring | Table::hset (direct write) |
-
-<!-- /pubsub -->
+<!-- /platform -->

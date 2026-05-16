@@ -372,3 +372,69 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 ソース: `qosorch.cpp:1637,1715,1772-1792`
 
 <!-- /platform -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-constants.md -->
+
+### global キー定数
+
+| 定数名 | 値 | ソース |
+|--------|---|--------|
+| `PORT_NAME_GLOBAL` | `"global"` | `qosorch.cpp:122` — global デフォルトエントリのキー。`dscp_to_tc_map` のみ `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` 経由で Switch レベルに適用される |
+
+### スカラー定数
+
+| 定数名 | 値 | ソース |
+|--------|---|--------|
+| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` |
+| `EXP_MAX_VAL` | `7` | `qosorch.cpp:120` |
+
+### フィールド名定数 → SAI ポート属性マッピング
+
+`qos_to_attr_map` (qosorch.cpp:60–73) — CONFIG_DB フィールド名と SAI port/switch 属性の対応:
+
+| CONFIG_DB フィールド名 | SAI 属性 |
+|----------------------|---------|
+| `dscp_to_tc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` |
+| `mpls_tc_to_tc_map` | `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_TC_MAP` |
+| `dot1p_to_tc_map` | `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` |
+| `tc_to_queue_map` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` |
+| `tc_to_dot1p_map` | `SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DOT1P_MAP` |
+| `tc_to_dscp_map` | `SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` |
+| `tc_to_pg_map` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` |
+| `pfc_to_pg_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` |
+| `pfc_to_queue_map` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` |
+| `scheduler` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` |
+| `dscp_to_fc_map` | `SAI_PORT_ATTR_QOS_DSCP_TO_FORWARDING_CLASS_MAP` |
+| `exp_to_fc_map` | `SAI_PORT_ATTR_QOS_MPLS_EXP_TO_FORWARDING_CLASS_MAP` |
+
+`global` キー専用: `dscp_to_tc_map` → `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` (Switch レベル) (qosorch.cpp:2030)
+
+<!-- /constants -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: meta/_intermediate/cdb-flow/port-qos-map-cross-refs.md -->
+
+`QosOrch` は `PORT_QOS_MAP` の各フィールドを処理する際、以下のテーブルを **暗黙的に参照** する（`m_qos_maps` 参照カウントマップへ登録、OID 未解決時は `task_need_retry`）。
+
+| PORT_QOS_MAP フィールド | 参照先テーブル | SAI 属性 | qosorch.cpp 行 |
+|---|---|---|---|
+| `dscp_to_tc_map` | `DSCP_TO_TC_MAP` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | 61, 81, 100 |
+| `tc_to_queue_map` | `TC_TO_QUEUE_MAP` | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | 64, 84, 103 |
+| `tc_to_pg_map` | `TC_TO_PRIORITY_GROUP_MAP` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | 67, 89, 106 |
+| `pfc_to_queue_map` | `PFC_PRIORITY_TO_QUEUE_MAP` | `SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP` | 69, 91, 108 |
+| `scheduler` | `SCHEDULER` | `SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID` | 70, 85, 109 |
+| `wred_profile` | `WRED_PROFILE` | (QUEUE レベルで適用) | 86, 110 |
+
+### 参照解決の仕組み
+
+- `QosOrch` コンストラクタ（行 81–116）で各テーブルの `object_reference_map` を `m_qos_maps` に登録。
+- `PortQosMapHandler` の SET 処理（行 2077–2133）で `doesObjectExist()` / `setObjectReference()` を呼び出し、参照先 OID を解決。
+- 参照先テーブルが未存在の場合: `task_need_retry` → 対象テーブル生成後に自動再処理。
+- DEL 時（行 2165–2170）: `removeMeFromObjsReferencedByMe()` で逆参照を解除し、参照先テーブルの削除ブロックを回避。
+
+<!-- /cross-refs -->
