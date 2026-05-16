@@ -377,4 +377,96 @@ if (!link.empty()) {
 
 <!-- /cross-refs -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Producer/Consumer ペア
+
+`FgNhgOrch` は CONFIG_DB の `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` の 3 テーブルを優先度 15 で直接購読する (orchdaemon.cpp L301-309)。APPL_DB 経由ではなく CONFIG_DB を **直接** Subscribe する点が多くの Orch と異なる。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|-------------------|
+| CLI → CONFIG_DB[FG_NHG\|*] | Redis `HSET` (sonic-fine-grained-ecmp_yang.py) | — |
+| CONFIG_DB[FG_NHG\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG\|*` |
+| CONFIG_DB[FG_NHG_PREFIX\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG_PREFIX\|*` |
+| CONFIG_DB[FG_NHG_MEMBER\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG_MEMBER\|*` |
+| FgNhgOrch → NeighOrch | 直接メソッド呼び出し | — |
+| FgNhgOrch → PortsOrch | Observer `attach()/update()` | `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` |
+| FgNhgOrch → APPL_DB[ROUTE_TABLE] | `ProducerStateTable::set()/del()` | APPL_DB channel |
+| FgNhgOrch → SAI | SAI API 直接呼び出し | `sai_next_hop_group_api` / `sai_route_api` |
+
+### CONFIG_DB Consumer 登録
+
+```cpp
+// orchdaemon.cpp L301-309
+const int fgnhgorch_pri = 15;
+vector<table_name_with_pri_t> fgnhg_tables = {
+    { CFG_FG_NHG,        fgnhgorch_pri },
+    { CFG_FG_NHG_PREFIX, fgnhgorch_pri },
+    { CFG_FG_NHG_MEMBER, fgnhgorch_pri }
+};
+gFgNhgOrch = new FgNhgOrch(m_configDb, m_applDb, m_stateDb, fgnhg_tables, gNeighOrch, gIntfsOrch, vrf_orch);
+```
+
+`Orch` 基底クラスの `addConsumer()` が各テーブルへの `ConsumerStateTable` を生成する。`orchdaemon` の `select()` ループがイベントを検出すると `FgNhgOrch::doTask(Consumer& consumer)` を呼び出し、テーブル名で 3 つのハンドラに分岐する (fgnhgorch.cpp L2126-2160)。
+
+### SAI fg_nhg_api 呼び出しフロー
+
+```
+CONFIG_DB[FG_NHG|<name>] SET
+  → doTaskFgNhg() → createFgNhg()
+      sai_next_hop_group_api->create_fine_grained_next_hop_group()
+      sai_next_hop_group_api->query_attr(SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE)
+      → setNewNhgMembers()
+          sai_next_hop_group_api->create_next_hop_group_member()
+
+CONFIG_DB[FG_NHG_PREFIX|<prefix>] SET
+  → doTaskFgNhgPrefix()
+      m_routeTable->del(prefix)         ← APPL_DB[ROUTE_TABLE] 一旦削除
+      (RouteOrch DEL 完了待ち → return false → retry)
+      m_routeTable->set(prefix, ...)    ← FG ルートとして再投入
+      sai_route_api->set_route_entry_attribute(SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID)
+
+CONFIG_DB[FG_NHG_MEMBER|<nh_ip>] SET
+  → doTaskFgNhgMember()
+      m_neighOrch->hasNextHop(nhk)?
+        No  → return false (retry — ARP/NDP 解決待ち)
+        Yes → m_neighOrch->increaseNextHopRefCount()
+              validNextHopInNextHopGroup(nhk)
+              sai_next_hop_group_api->create_next_hop_group_member()
+              バケット再割り当て
+```
+
+### NeighOrch 直接呼び出し
+
+`FgNhgOrch` は NeighOrch を Observer ではなく直接メソッド呼び出しで利用する:
+
+| メソッド | 行 | 役割 |
+|---------|-----|------|
+| `m_neighOrch->hasNextHop(nhk)` | L1415, L2071 | nexthop 解決確認 |
+| `m_neighOrch->getNextHopId(nhk)` | L1459 | SAI next_hop OID 取得 |
+| `m_neighOrch->increaseNextHopRefCount(nhk)` | L1479 | refcount 増加 |
+| `m_neighOrch->decreaseNextHopRefCount(nhk)` | L1547 | refcount 減少 |
+| `m_neighOrch->getNeighborEntry(ip, nhk, mac)` | L70, L82 | IP → NextHopKey 解決 |
+
+nexthop が NeighOrch に未登録の場合は `return false` でエントリをキューに残し、ARP/NDP 解決後に自動リトライされる。
+
+### PortsOrch Observer パターン
+
+コンストラクタで `gPortsOrch->attach(this)` を呼び出し (fgnhgorch.cpp L36)、`SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` を購読する。`FG_NHG_MEMBER.link` に PORT を指定した場合、リンク UP/DOWN 変化がバンク再分配を自動トリガーする (fgnhgorch.cpp L46-92)。
+
+### retry メカニズム
+
+`doTask()` の `entry_handled = false` → `consumer.m_toSync.erase()` をスキップ → 次回 `select()` ループで再処理。主な retry 条件:
+
+- nexthop 未解決 (`m_neighOrch->hasNextHop()` false)
+- 親 FG_NHG エントリ未受信
+- prefix 移行中 (RouteOrch DEL 完了待ち)
+- 全 bank 空でバケット割り当て不能
+
+`return true` のエラーパス（`bucket_size==0`、`fg_nhg_name` 空文字など）は再試行なしで破棄される。
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:301-310` (FgNhgOrch 生成・テーブル登録)、`sonic-swss/orchagent/fgnhgorch.cpp:36` (gPortsOrch->attach)、`fgnhgorch.cpp:40-92` (update/Observer)、`fgnhgorch.cpp:1415,1459,1479,1547` (NeighOrch 呼び出し)、`fgnhgorch.cpp:2126-2160` (doTask ディスパッチ); 詳細分析 `meta/_intermediate/cdb-flow/fg-nhg-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: 0a0e619e9fbc -->
