@@ -201,6 +201,40 @@ show macsec
 
 <!-- /cdb-exceptions -->
 
+<!-- ordering -->
+## 設定順序依存
+
+<!-- evidence: sonic-swss/cfgmgr/macsecmgr.cpp, enableMACsec() L488-495, startWPASupplicant() L543 -->
+
+### MACSEC_PROFILE → PORT.macsec の順序制約
+
+`macsecmgrd` の `enableMACsec()` ハンドラは `PORT` テーブルの `macsec` フィールドを処理する際、
+まず `m_profiles.find(profile_name)` で `MACSEC_PROFILE` が既にロード済みかを確認する。
+プロファイルが未ロードの場合は `task_need_retry` を返してキューに再投入されるため、
+**`PORT.macsec` より先に `MACSEC_PROFILE|<name>` を設定しなければ MACsec 有効化が遅延する**。
+
+```
+1. CONFIG_DB に MACSEC_PROFILE|<name> を SET
+      ↓ loadProfile() → m_profiles に格納
+2. CONFIG_DB に PORT|<ifname>.macsec = <name> を SET
+      ↓ enableMACsec()
+         → m_profiles 確認（未ロードなら task_need_retry、後続リトライで再実行）
+         → isPortStateOk() 確認（ポート up 待ち、未 up なら task_need_retry）
+         → startWPASupplicant()（MKA デーモン起動）
+         → configureMACsec()（SAI へ伝播）
+```
+
+### MACSEC_PROFILE 削除の順序制約
+
+`removeProfile()` は `m_macsec_ports` を走査し、該当プロファイルを使用中のポートがあれば
+`task_need_retry` を返す。PORT.macsec を先に空にしてから MACSEC_PROFILE を削除すること。
+
+### wpa_supplicant 起動前提条件
+
+`startWPASupplicant()` は `MACSEC_PROFILE` と `PORT` の両方が ready になった後に呼び出される。
+ポートが STATE_DB 上で up 状態でない場合も `task_need_retry` となる（`isPortStateOk()` 参照）。
+
+<!-- /ordering -->
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
