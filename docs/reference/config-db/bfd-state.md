@@ -4,7 +4,7 @@ description: "STATE_DB BFD_SESSION_TABLE — bfdorch が SAI セッション作�
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-15
+last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/bfdorch.cpp
@@ -158,6 +158,41 @@ void BfdOrch::createSoftwareBfdSession(const string &key, const vector<swss::Fie
 TSA (Traffic Shift Away) が有効かつ `shutdown_bfd_during_tsa = "true"` のセッションは、`handleTsaStateChange(true)` で `notify_session_state_down()` が呼ばれた後 `remove_bfd_session()` で STATE_DB エントリが削除される。TSA 解除時は再作成される (`bfdorch.cpp:683-704`)。
 
 <!-- /value-behavior -->
+
+<!-- ordering -->
+## STATE_DB 書込み順依存
+
+`bfdorch` は STATE_DB `BFD_SESSION_TABLE` に対して、orchagent シングルスレッドの select loop 上で書込み順を厳密に制御している。consumer (vnetorch / BfdMonitorOrch / `show bfd peers`) はこの順序を前提に状態を解釈する。
+
+### 順序依存サマリ
+
+| # | 依存関係 | 方向 | 補足 |
+|---|----------|------|------|
+| 1 | constructor の STATE_DB 全削除 → notifier 登録 | 強制先行 | 起動直後の stale `state=Up` を consumer に見せない (`bfdorch.cpp:74-86`) |
+| 2 | 初回 `create_bfd_session()` での SAI 通知ハンドラ登録 → STATE_DB 書込み | 遅延（初回のみ） | 登録失敗時は STATE_DB 未書込み (`bfdorch.cpp:307-315`) |
+| 3 | SAI BFD `create_bfd_session()` 成功 → `m_stateBfdSessionTable.set()` → `bfd_session_map` / `bfd_session_lookup` 登録 | 強制先行 | STATE_DB 書込みが先、map 登録が後 (`bfdorch.cpp:544-567`) |
+| 4 | SAI create 失敗（リトライ含む）→ STATE_DB 未書込み | 負の制約 | `handle_status != task_success` 経路 (`bfdorch.cpp:549-562`) |
+| 5 | `bfd_session_lookup` 登録済み → SAI 状態変化通知受信 → `hset("state", ...)` | 強制先行 | 通知 consumer は同 select loop で逐次処理 (`bfdorch.cpp:242-263`) |
+| 6 | 同一 state 通知 → STATE_DB 書込みスキップ | 冪等 | `state != bfd_session_lookup[id].state` のときのみ更新 (`bfdorch.cpp:249-263`) |
+| 7 | TSA 有効化: `notify_session_state_down()` → `remove_bfd_session()` (STATE_DB del) | 強制（notify が先） | consumer は Down 通知の後にエントリ消滅を観測 (`bfdorch.cpp:683-704`) |
+| 8 | TSA 解除の replay: `bfd_session_cache` iteration 順で `create_bfd_session()` | 非決定 | `local_discriminator` は新規連番に置換 (`bfdorch.cpp:696-702`, `641-645`) |
+| 9 | `use_software_bfd` フラグで `BFD_SESSION_TABLE` / `BFD_SOFTWARE_SESSION_TABLE` 経路を排他選択 | 排他 | 同 key 二重書込みなし (`bfdorch.cpp:114-122`, `706-710`) |
+
+### 主要な順序保証の詳細
+
+**(1) 起動時クリーンアップが notifier 登録より先**
+`BfdOrch::BfdOrch()` は `m_stateBfdSessionTable` の全キーを列挙して `del()` した後 (`bfdorch.cpp:74-85`)、`Orch::addExecutor(bfdStateNotificatier)` で SAI 通知 consumer を登録する (`bfdorch.cpp:86`)。orchagent 再起動直後の `BFD_SESSION_TABLE` には**必ず**新規セッションのみが残り、再起動前の `state=Up` を vnetorch が誤って拾うことはない。
+
+**(3) SAI create 成功が STATE_DB 書込みの絶対条件**
+`create_bfd_session()` は `fvVector` を `type` → `local_discriminator` → `local_addr` → `tx_interval` → `rx_interval` → `multiplier` → `multihop` → `state="Down"` の順で組み立て (`bfdorch.cpp:418-544`)、SAI `create_bfd_session()` 成功（または `retry_create_bfd_session()` 経由のリトライ成功）した場合に限り `m_stateBfdSessionTable.set(state_db_key, fvVector)` を実行する (`bfdorch.cpp:547-565`)。STATE_DB 書込みは `bfd_session_map` / `bfd_session_lookup` への登録 (`bfdorch.cpp:566-567`) より**前**に行われる。
+
+**(5) 通知ハンドラは `bfd_session_lookup` 登録済み前提**
+`doTask(NotificationConsumer)` は受信した `bfd_session_id` を `bfd_session_lookup[id]` で逆引きして STATE_DB キーを取得する (`bfdorch.cpp:244-252`)。`bfd_session_lookup` への登録は `create_bfd_session()` の最終段 (`bfdorch.cpp:567`) でのみ行われるため、SAI 通知が早着しても orchagent シングルスレッドの select loop で逐次処理されるため race は発生しない。
+
+**(7) TSA 有効化は Down 通知 → STATE_DB 削除の順**
+`handleTsaStateChange(true)` は各セッションについて先に `notify_session_state_down(key)` で `SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE` を `SAI_BFD_SESSION_STATE_DOWN` で伝播し (`bfdorch.cpp:692`)、続けて `remove_bfd_session(key)` で SAI remove → STATE_DB `del()` を実行する (`bfdorch.cpp:693`, `629`)。consumer は「Down 通知を先に受け取り、その後で `BFD_SESSION_TABLE` エントリが消える」順で観測するため、`state=Up` のスナップショットを抱えたままエントリが消える「孤立 Up」を防ぐ。
+
+<!-- /ordering -->
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
