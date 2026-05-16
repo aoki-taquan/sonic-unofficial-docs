@@ -262,4 +262,42 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 
 <!-- /defaults -->
 
+<!-- cross-refs -->
+## 暗黙参照 — `QosOrch` が TC_TO_QUEUE_MAP を基点に連鎖参照する CONFIG_DB テーブル (Phase C)
+
+`QosOrch` は `TC_TO_QUEUE_MAP` を `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` として作成した後、`PORT_QOS_MAP` ハンドラを通じてポートに bind する。`qos_to_ref_table_map` (qosorch.cpp:L100-116) および `m_qos_maps` 参照カウンタ管理 (qosorch.cpp:L81-87) により、以下のテーブルとの連鎖参照が発生する。
+
+### 上流参照元 (TC_TO_QUEUE_MAP を参照するテーブル)
+
+| テーブル | フィールド | 参照タイミング | 用途 | evidence |
+|---|---|---|---|---|
+| [`PORT_QOS_MAP`](port-qos-map.md) | `tc_to_queue_map` | SET 処理時 `resolveFieldRefValue()` | ポートに bind する TC→Queue マップ名を解決。未作成なら `task_need_retry` | qosorch.cpp:L64,L103,L2077-2133 |
+| [`PORT_QOS_MAP`](port-qos-map.md) | `encap_tc_to_queue_map` | SET 処理時 `resolveFieldRefValue()` | トンネル encap 用 TC→Queue マップ。同じ `TC_TO_QUEUE_MAP` テーブルを参照 | qosorch.cpp:L116 |
+
+`PORT_QOS_MAP` が `tc_to_queue_map` フィールドで `TC_TO_QUEUE_MAP` の名前を参照し、`QosOrch` が OID を解決して `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` をポートにセットする。`TC_TO_QUEUE_MAP` が未作成の場合、`PORT_QOS_MAP` 処理は `task_need_retry` でキューに戻される。
+
+### パイプライン上流 (TC を生成する先行テーブル)
+
+| テーブル | 役割 | TC_TO_QUEUE_MAP との関係 | evidence |
+|---|---|---|---|
+| [`DSCP_TO_TC_MAP`](dscp-to-tc-map.md) | DSCP → TC 変換マップ | パイプライン前段。受信パケットの DSCP 値を TC に変換し、TC_TO_QUEUE_MAP が TC → egress queue に変換する | qosorch.cpp:L61,L81,L100,L1329 |
+
+### パイプライン下流 (Queue 番号を消費するテーブル)
+
+| テーブル | 役割 | TC_TO_QUEUE_MAP との関係 | evidence |
+|---|---|---|---|
+| [`SCHEDULER`](scheduler.md) | キュースケジューラプロファイル | TC_TO_QUEUE_MAP が決定した queue index に対して `SCHEDULER` プロファイルが適用される。`PORT_QOS_MAP.scheduler` フィールドで参照 | qosorch.cpp:L70,L85,L109,L1333 |
+
+### 参照カウンタ連動 (DEL 保留メカニズム)
+
+`QosOrch::m_qos_maps` の `object_reference_map` (qosorch.cpp:L84,L87) が `TC_TO_QUEUE_MAP` と `PORT_QOS_MAP` の参照を追跡する。`PORT_QOS_MAP` がマップを参照している間は `TC_TO_QUEUE_MAP` の DEL は `m_pendingRemove=true` で保留され、参照解放まで SAI `remove_qos_map()` は呼ばれない。
+
+### 範囲外 (誤解されやすい隣接テーブル)
+
+- `QUEUE`: `TC_TO_QUEUE_MAP` が解決した queue index が対象 queue を指定するが、`QosOrch` の `TC_TO_QUEUE_MAP` ハンドラが `QUEUE` テーブルを直接参照するわけではない。`QUEUE` は別途 `handleQueueTable()` が購読する独立テーブル。
+- `WRED_PROFILE`: queue に適用される drop profile だが、`TC_TO_QUEUE_MAP` ハンドラからの直接参照はない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/tc-to-queue-map-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 16a5b728a75a -->
