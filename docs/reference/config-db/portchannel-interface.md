@@ -327,6 +327,52 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 <!-- /handler-branching -->
 
+<!-- implicit-ref -->
+## 暗黙参照 (Phase C)
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
+
+`IntfMgr` は `PORTCHANNEL_INTERFACE` エントリを処理する前に、以下の暗黙的な依存テーブルが STATE_DB に存在することを確認する。存在しない場合はタスクをスキップ（`return false`）し、後で再試行する。
+
+### PORTCHANNEL への暗黙参照
+
+| 参照先 | 確認テーブル | 確認関数 | ソース |
+|---|---|---|---|
+| `PORTCHANNEL.name` (key の LAG 名) | `STATE_DB::LAG_TABLE` | `IntfMgr::isIntfStateOk()` | `intfmgr.cpp:661-668` |
+
+`isIntfStateOk(alias)` はエイリアスが `"PortChannel"` プレフィクスで始まる場合、`m_stateLagTable.get(alias, temp)` で STATE_DB の LAG エントリ存在を確認する。LAG が teamd によって作成され STATE_DB に登録されるまで、`PORTCHANNEL_INTERFACE` の SET 処理は保留される（`intfmgr.cpp:833-836`）。
+
+**影響**: `PORTCHANNEL` テーブルにエントリがあっても LAG が STATE_DB に登録される前に `PORTCHANNEL_INTERFACE` を書いても、intfmgrd は silent retry するため IP アドレス付与が遅延する。
+
+### VRF への暗黙参照
+
+| 参照先 | 確認テーブル | 確認関数 | ソース |
+|---|---|---|---|
+| `VRF.name` (`vrf_name` フィールド値) | `STATE_DB::VRF_TABLE` | `IntfMgr::isIntfStateOk()` | `intfmgr.cpp:677-684, 839-842` |
+
+`vrf_name` が空でない場合、`isIntfStateOk(vrf_name)` を呼び出して `m_stateVrfTable.get(vrf_name, temp)` で VRF の STATE_DB 登録を確認する。VRF が未作成・未登録の場合は `"VRF is not ready, skipping %s"` をログ出力してスキップ（`intfmgr.cpp:839-842`）。
+
+**影響**: `VRF` テーブルへの書き込みと `PORTCHANNEL_INTERFACE` への `vrf_name` 設定は順序依存。vrfmgrd が VRF を STATE_DB に反映するまで intfmgrd は VRF binding を保留する。
+
+### VRF 直接変更の禁止
+
+| 条件 | 動作 | ソース |
+|---|---|---|
+| 既存 VRF binding を別 VRF へ直接変更 | `SWSS_LOG_ERROR` + skip (return true) | `intfmgr.cpp:846-849` |
+
+`isIntfChangeVrf(alias, vrf_name)` が true の場合（現在の VRF と異なる VRF への変更）、`"%s can not change to %s directly, skipping"` エラーを出力して処理を中断する。VRF 変更は一度 `vrf_name` を削除してから再設定する必要がある。
+
+### 参照グラフ
+
+```
+PORTCHANNEL_INTERFACE (intfmgr SET処理)
+  ├─ 暗黙参照 → STATE_DB::LAG_TABLE[<name>]       (intfmgr.cpp:661-668, 833)
+  │              ↑ teamd / lagmgrd が書き込む
+  └─ 暗黙参照 → STATE_DB::VRF_TABLE[<vrf_name>]   (intfmgr.cpp:677-684, 839)
+                 ↑ vrfmgrd が書き込む
+```
+
+<!-- /implicit-ref -->
 <!-- platform-diff -->
 ## プラットフォーム差 (Phase H)
 
