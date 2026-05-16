@@ -311,11 +311,35 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 4. ip route add default via <gw> dev eth0      (gwaddr が有効な IPv4 の場合自動設定)
 ```
 
+### STATE_DB ゲートと二重ロック
+
+`doIntfAddrTask`（`intfmgr.cpp:1099`）は ip_prefix ロウを処理する前に二つのガードを通過する必要がある。
+
+1. `isIntfStateOk(alias)`（`L1115`）: `STATE_PORT_TABLE[eth0].state` が存在するまで待機。`portmgrd` が eth0 を up 認識した後に書き込む。
+2. `isIntfCreated(alias)`（`L1115`、`L295`）: `STATE_INTERFACE_TABLE[eth0]` にエントリが存在するまで待機。`doIntfGeneralTask` 成功後に `L1054` で書き込まれる。
+
+どちらかが未達の場合、`doIntfAddrTask` は `false` を返してタスクをキューに残し、Consumer ポーリング（デフォルト **100 ms** 間隔、`intfmgr.cpp:46`）で再試行する。
+
+### カーネル netlink 発行手順
+
+二重ゲート通過後、`setIntfIp(alias, "add", ip_prefix)`（`intfmgr.cpp:1121`）が呼ばれ、以下の netlink 操作が実行される。
+
+| ステップ | netlink 相当コマンド | 補足 |
+|---------|-------------------|------|
+| IP アドレス付与 | `ip addr add <prefix> dev eth0` | IPv4/IPv6 共通。`setIntfIp` 内で実行 |
+| APPL_DB 転送 | `INTF_TABLE[eth0:<prefix>] ← {scope: global, family: IPv4/IPv6}` | SAI ではなく linux カーネルで完結するため orchagent 非経由 |
+| STATE_DB 更新 | `STATE_INTERFACE_TABLE[eth0|<prefix>].state = ok` | 完了シグナル |
+| デフォルトルート | `ip route add default via <gw> dev eth0 metric 201` | `interfaces.j2:L96` (hostcfgd 経由) |
+| mgmt VRF 有効時 | `ip route add ... table mgmt` | `isIntfStateOk` 内 `VRF_MGMT` 定数（`L26,677-684`）で判定 |
+
+IPv4 link-local アドレスは APPL_DB へ転送されない（`intfmgr.cpp:1131-1132`）。
+
 ### 特記事項
 
 - `mgmt` という名の VRF 名は `intfmgr.cpp:26` で `VRF_MGMT` 定数として定義されており、`isIntfStateOk()` 内で `STATE_VRF_TABLE` を参照する（`intfmgr.cpp:677-684`）
 - `MGMT_INTERFACE` は orchagent を経由しない（SAI には届かない）。Linux カーネルの mgmt ネットワーク名前空間で完結する
 - orchagent の `allPortsReady()` チェックや `gPortsOrch->getPort()` は適用されない
+- VRF 変更時（`isIntfChangeVrf`、`L308`）は既存 IP を一度削除してから再追加するため、eth0 VRF 変更は一時的なアドレス喪失を伴う
 
 詳細調査ノートは `meta/_intermediate/cdb-flow/mgmt-interface-ordering.md` 参照。
 
